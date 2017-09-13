@@ -408,7 +408,7 @@ class Enrolment extends \yii\db\ActiveRecord
                     ->all();
         foreach ($lessons as $lesson) {
             if ($lesson->hasLessonCredit($this->id)) {
-                $invoice->addPayment($lesson, $invoice, $lesson->getLessonCreditAmount($this->id), $this);
+                $invoice->addPayment($lesson, $lesson->getLessonCreditAmount($this->id), $this);
             }
             $lesson->Cancel();
             $lesson->delete();

@@ -28,6 +28,8 @@ use common\components\validators\lesson\conflict\StudentAvailabilityValidator;
 class Lesson extends \yii\db\ActiveRecord
 {
     use Payable;
+    use Invoiceable;
+    
     const TYPE_PRIVATE_LESSON = 1;
     const TYPE_GROUP_LESSON = 2;
 	
@@ -834,7 +836,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->addPrivateLessonLineItem($this);
         $invoice->save();
         if ($this->hasLessonCredit($this->enrolment->id)) {
-            $invoice->addPayment($this, $invoice, $this->getLessonCreditAmount($this->enrolment->id), $this->enrolment);
+            $invoice->addPayment($this, $this->getLessonCreditAmount($this->enrolment->id), $this->enrolment);
         }
         if (!empty($this->extendedLessons)) {
             foreach ($this->extendedLessons as $extendedLesson) {
@@ -845,7 +847,7 @@ class Lesson extends \yii\db\ActiveRecord
                     if ($amount > $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id)) {
                        $amount = $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id);
                     }
-                    $invoice->addPayment($extendedLesson->lesson, $invoice, $amount, $this->enrolment);
+                    $invoice->addPayment($extendedLesson->lesson, $amount, $this->enrolment);
                 }
             }
         }
@@ -876,7 +878,7 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->save();
         if ($this->hasLessonCredit($enrolmentId)) {
             $netPrice = $this->getLessonCreditAmount($enrolmentId);
-            $invoice->addPayment($this, $invoice, $netPrice, $enrolment);
+            $invoice->addPayment($this, $netPrice, $enrolment);
         }
 
         return $invoice;

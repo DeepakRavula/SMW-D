@@ -20,7 +20,6 @@ use common\models\payment\ProformaPaymentFrequency;
  */
 class Invoice extends \yii\db\ActiveRecord
 {
-    use Invoicable;
     use Payable;
     const STATUS_OWING = 1;
     const STATUS_PAID = 2;
