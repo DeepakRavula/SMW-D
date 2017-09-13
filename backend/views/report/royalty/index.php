@@ -42,7 +42,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['i
         $(document).on("click", "#print", function () {
             var dateRange = $('#reportsearch-daterange').val();
             var params = $.param({'ReportSearch[dateRange]': dateRange});
-            var url = '<?php echo Url::to(['report/royalty-print']); ?>?' + params;
+            var url = '<?php echo Url::to(['print/royalty']); ?>?' + params;
             window.open(url, '_blank');
         });
     });
