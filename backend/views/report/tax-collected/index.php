@@ -33,7 +33,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['i
         var dateRange = $('#reportsearch-daterange').val();
         var params = $.param({'ReportSearch[summarizeResults]': (summariesOnly | 0),
             'ReportSearch[dateRange]': dateRange});
-        var url = '<?php echo Url::to(['report/tax-collected-print']); ?>?' + params;
+        var url = '<?php echo Url::to(['print/tax-collected']); ?>?' + params;
         window.open(url, '_blank');
     });
 </script>
