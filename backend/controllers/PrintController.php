@@ -212,24 +212,15 @@ class PrintController extends Controller
 			'dateRange' => $model->dateRange,
         ]);
     }
-    public function actionTeacher()
-    {
-        $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
-        $query = User::find()
-            ->notDeleted()
-            ->location($locationId)
-            ->notDraft();
-        $query->joinWith(['userLocation' => function ($query) {
-                $query->joinWith('teacherAvailability');
-            }]);
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => false,
-        ]);
+    public function actionUser()
+    { 
+        $searchModel = new UserSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination=false;
         $this->layout = '/print';
 
-        return $this->render('/user/teacher/_teacherlistprint', [
+        return $this->render('/user/_print', [
+                'searchModel'=>$searchModel,
                 'dataProvider' => $dataProvider,
         ]);
     }
