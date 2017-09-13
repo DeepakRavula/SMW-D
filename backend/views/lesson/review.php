@@ -191,6 +191,7 @@ Modal::begin([
             $('#spinner').show();
 		});
 		$(document).on('beforeSubmit', '#lesson-review-form', function (e) {
+			 e.preventDefault();
 			var lessonId = $('#lesson-id').val();
 			var showAllReviewLessons = $('#lessonsearch-showallreviewlessons').is(":checked");
 			var vacationId = '<?= $vacationId; ?>';

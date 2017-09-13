@@ -479,14 +479,12 @@ class LessonController extends Controller
 			'status' => true,
 			'data' => $data
 		];
-        if ($model->load(Yii::$app->request->post())) {
-			if(!empty($model->applyContext)) {
-				if($model->isResolveSingleLesson()) {
-					$response = $this->resolveSingleLesson($model, $existingDate);
-				} else {
-					$conflictedLessons = $this->fetchConflictedLesson($model->course);
-					$response = $this->resolveAllLesson($conflictedLessons, $model);
-				}
+        if ($model->load(Yii::$app->request->post()) && !empty($model->applyContext)) {
+			if($model->isResolveSingleLesson()) {
+				$response = $this->resolveSingleLesson($model, $existingDate);
+			} else {
+				$conflictedLessons = $this->fetchConflictedLesson($model->course);
+				$response = $this->resolveAllLesson($conflictedLessons, $model);
 			}
 		} 
 		return $response;
