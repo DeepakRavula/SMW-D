@@ -87,7 +87,6 @@ use common\models\Location;
         </div>
     </div>
     <div class="col-md-12 p-b-20">
-        <h5><strong><?= 'Accounts' ?> </strong></h5> 
         <?php
         echo GridView::widget([
             'dataProvider' => $accountDataProvider,

@@ -224,7 +224,7 @@ class PrintController extends Controller
         ]);
         $this->layout = '/print';
 
-        return $this->render('/user/customer/_accountprint', [
+        return $this->render('/user/customer/_accounts-print', [
                 'model' => $model,
                 'accountDataProvider' => $accountDataProvider,
                 'userModel' => $model,
