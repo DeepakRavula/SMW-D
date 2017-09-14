@@ -224,7 +224,7 @@ Modal::end();
 	$('#merge-lesson-form').on('beforeSubmit', function(e) {
 		e.preventDefault();
 		$.ajax({
-			url    : '<?= Url::to(['lesson/merge', 'id' => $model->id]) ?>',
+			url    : '<?= Url::to(['private-lesson/merge', 'id' => $model->id]) ?>',
 			type   : 'POST',
 			dataType: "json",
 			data   : $('#merge-lesson-form').serialize(),
