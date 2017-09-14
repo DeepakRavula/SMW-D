@@ -104,6 +104,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
         $paymentContent = $this->render('customer/_account', [
             'model' => $model,
             'accountDataProvider' => $accountDataProvider,
+            'userModel'=>$model,
         ]);
 
         $qualificationContent = $this->render('teacher/_view-qualification', [

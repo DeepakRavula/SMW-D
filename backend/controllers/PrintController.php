@@ -16,6 +16,7 @@ use common\models\User;
 use backend\models\search\LessonSearch;
 use backend\models\search\InvoiceSearch;
 use backend\models\search\UserSearch;
+use common\models\CustomerAccount;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
@@ -210,6 +211,23 @@ class PrintController extends Controller
 			'model' => $model,
 			'invoiceDataProvider' => $invoiceDataProvider,
 			'dateRange' => $model->dateRange,
+        ]);
+    }
+    public function actionCustomerAccount($id)
+    {
+        $model = User::findOne(['id' => $id]);
+        $accountQuery = CustomerAccount::find()->where(['userId' => $id])
+            ->orderBy(['transactionId' => SORT_ASC]);
+        $accountDataProvider = new ActiveDataProvider([
+            'query' => $accountQuery,
+            'pagination' => false,
+        ]);
+        $this->layout = '/print';
+
+        return $this->render('/user/customer/_accounts-print', [
+                'model' => $model,
+                'accountDataProvider' => $accountDataProvider,
+                'userModel' => $model,
         ]);
     }
 }
