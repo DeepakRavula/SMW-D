@@ -159,7 +159,7 @@ class ReportController extends Controller {
 			'query' => $invoiceTaxes, 
 		]);
 				
-		return $this->render('tax-collected', [
+		return $this->render('tax-collected/index', [
 			'searchModel' => $searchModel, 
 			'taxDataProvider' => $taxDataProvider,
 		]);
