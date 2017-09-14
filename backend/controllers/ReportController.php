@@ -196,7 +196,7 @@ class ReportController extends Controller {
 			'query' => $royaltyFreeItems, 
 		]);
 				
-		return $this->render('royalty-free-item', [
+		return $this->render('royalty-free-item/index', [
 			'searchModel' => $searchModel, 
 			'royaltyFreeDataProvider' => $royaltyFreeDataProvider,
 		]);
