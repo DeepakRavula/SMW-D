@@ -138,35 +138,10 @@ class PrivateLessonController extends Controller
         return $this->redirect($link);
     }
 
-	  public function actionSplit($id)
+    public function actionSplit($id)
     {
         $model = $this->findModel($id);
-        $lessonDurationSec = $model->durationSec;
-        for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
-            $lesson = clone $model;
-            $lesson->isNewRecord = true;
-            $lesson->id = null;
-            $lesson->duration = Lesson::DEFAULT_MERGE_DURATION;
-            $lesson->status = Lesson::STATUS_UNSCHEDULED;
-            $duration = gmdate('H:i:s', Lesson::DEFAULT_EXPLODE_DURATION_SEC * ($i +1));
-            $lessonDuration = new \DateTime($duration);
-            $date = new \DateTime($model->date);
-            $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
-            $lesson->date = $date->format('Y-m-d H:i:s');
-            $lesson->isExploded = true;
-            $lesson->save();
-            $paymentCycleLesson = new PaymentCycleLesson();
-            $paymentCycleLesson->paymentCycleId = $model->paymentCycle->id;
-            $paymentCycleLesson->lessonId = $lesson->id;
-            $paymentCycleLesson->save();
-            $privateLesson = clone $model->privateLesson;
-            $privateLesson->isNewRecord = true;
-            $privateLesson->id = null;
-            $privateLesson->lessonId = $lesson->id;
-            $privateLesson->save();
-            $model->append($lesson);
-        }
-        $model->cancel();
+        $model->privateLesson->split();
         Yii::$app->session->setFlash('alert', [
             'options' => ['class' => 'alert-success'],
             'body' => 'The Lesson has been exploded successfully.',
@@ -184,14 +159,9 @@ class PrivateLessonController extends Controller
         $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
             . 'H' . $additionalDuration->format('i') . 'M'));
         $model->duration = $lessonDuration->format('H:i:s');
+        $splitLesson = $this->findModel($post['radioButtonSelection']);
         if ($model->validate()) {
-        $lessonSplitUsage = new LessonSplitUsage();
-            $lessonSplitUsage->lessonId = $post['radioButtonSelection'];
-            $lessonSplitUsage->extendedLessonId = $id;
-            $lessonSplitUsage->mergedOn = (new \DateTime())->format('Y-m-d H:i:s');
-            $lessonSplitUsage->save();
-            $lesson = $this->findModel($lessonSplitUsage->lessonId);
-            $lesson->cancel();
+            $splitLesson->privateLesson->merge($model);
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
                 'body' => 'The Lesson has been extended successfully.',
