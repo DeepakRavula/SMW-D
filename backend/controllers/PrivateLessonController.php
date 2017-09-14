@@ -9,8 +9,11 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
+use common\models\PaymentCycleLesson;
 use common\models\Lesson;
-
+use yii\filters\ContentNegotiator;
+use yii\web\Response;
+use common\models\LessonSplitUsage;
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
@@ -23,6 +26,14 @@ class PrivateLessonController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+			'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['merge'],
+                'formatParam' => '_format',
+                'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];
@@ -127,6 +138,74 @@ class PrivateLessonController extends Controller
         return $this->redirect($link);
     }
 
+	  public function actionSplit($id)
+    {
+        $model = $this->findModel($id);
+        $lessonDurationSec = $model->durationSec;
+        for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
+            $lesson = clone $model;
+            $lesson->isNewRecord = true;
+            $lesson->id = null;
+            $lesson->duration = Lesson::DEFAULT_MERGE_DURATION;
+            $lesson->status = Lesson::STATUS_UNSCHEDULED;
+            $duration = gmdate('H:i:s', Lesson::DEFAULT_EXPLODE_DURATION_SEC * ($i +1));
+            $lessonDuration = new \DateTime($duration);
+            $date = new \DateTime($model->date);
+            $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
+            $lesson->date = $date->format('Y-m-d H:i:s');
+            $lesson->isExploded = true;
+            $lesson->save();
+            $paymentCycleLesson = new PaymentCycleLesson();
+            $paymentCycleLesson->paymentCycleId = $model->paymentCycle->id;
+            $paymentCycleLesson->lessonId = $lesson->id;
+            $paymentCycleLesson->save();
+            $privateLesson = clone $model->privateLesson;
+            $privateLesson->isNewRecord = true;
+            $privateLesson->id = null;
+            $privateLesson->lessonId = $lesson->id;
+            $privateLesson->save();
+            $model->append($lesson);
+        }
+        $model->cancel();
+        Yii::$app->session->setFlash('alert', [
+            'options' => ['class' => 'alert-success'],
+            'body' => 'The Lesson has been exploded successfully.',
+        ]);
+        return $this->redirect(['student/view', 'id' => $model->enrolment->student->id, '#'=> 'unscheduledLesson']);
+    }
+	
+    public function actionMerge($id)
+    {
+        $model = $this->findModel($id);
+        $model->setScenario(Lesson::SCENARIO_EDIT);
+        $post = Yii::$app->request->post();
+        $additionalDuration = new \DateTime(Lesson::DEFAULT_MERGE_DURATION);
+        $lessonDuration = new \DateTime($model->duration);
+        $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
+            . 'H' . $additionalDuration->format('i') . 'M'));
+        $model->duration = $lessonDuration->format('H:i:s');
+        if ($model->validate()) {
+        $lessonSplitUsage = new LessonSplitUsage();
+            $lessonSplitUsage->lessonId = $post['radioButtonSelection'];
+            $lessonSplitUsage->extendedLessonId = $id;
+            $lessonSplitUsage->mergedOn = (new \DateTime())->format('Y-m-d H:i:s');
+            $lessonSplitUsage->save();
+            $lesson = $this->findModel($lessonSplitUsage->lessonId);
+            $lesson->cancel();
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'The Lesson has been extended successfully.',
+            ]);
+
+            return $this->redirect(['lesson/view', 'id' => $id]);
+        } else {
+            $errors = ActiveForm::validate($model);
+            return [
+                'errors' => $errors,
+                'status' => false
+            ];
+        }
+    }
     /**
      * Finds the PrivateLesson model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
