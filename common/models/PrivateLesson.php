@@ -99,11 +99,11 @@ class PrivateLesson extends \yii\db\ActiveRecord
     public function merge($model)
     {
         $lessonSplitUsage = new LessonSplitUsage();
-        $lessonSplitUsage->lessonId = $this->lesson->id;
+        $lessonSplitUsage->lessonId = $this->lessonId;
         $lessonSplitUsage->extendedLessonId = $model->id;
         $lessonSplitUsage->mergedOn = (new \DateTime())->format('Y-m-d H:i:s');
         $lessonSplitUsage->save();
-        $lesson = Lesson::findOne($lessonSplitUsage->lessonId);
+        $lesson = Lesson::findOne($this->lessonId);
         $lesson->cancel();
     }
 }
