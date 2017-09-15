@@ -9,8 +9,11 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
+use common\models\PaymentCycleLesson;
 use common\models\Lesson;
-
+use yii\filters\ContentNegotiator;
+use yii\web\Response;
+use common\models\LessonSplitUsage;
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
@@ -23,6 +26,14 @@ class PrivateLessonController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+			'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['merge'],
+                'formatParam' => '_format',
+                'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];
@@ -127,6 +138,44 @@ class PrivateLessonController extends Controller
         return $this->redirect($link);
     }
 
+    public function actionSplit($id)
+    {
+        $model = $this->findModel($id);
+        $model->privateLesson->split();
+        Yii::$app->session->setFlash('alert', [
+            'options' => ['class' => 'alert-success'],
+            'body' => 'The Lesson has been exploded successfully.',
+        ]);
+        return $this->redirect(['student/view', 'id' => $model->enrolment->student->id, '#'=> 'unscheduledLesson']);
+    }
+	
+    public function actionMerge($id)
+    {
+        $model = $this->findModel($id);
+        $model->setScenario(Lesson::SCENARIO_EDIT);
+        $post = Yii::$app->request->post();
+        $additionalDuration = new \DateTime(Lesson::DEFAULT_MERGE_DURATION);
+        $lessonDuration = new \DateTime($model->duration);
+        $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
+            . 'H' . $additionalDuration->format('i') . 'M'));
+        $model->duration = $lessonDuration->format('H:i:s');
+        $splitLesson = $this->findModel($post['radioButtonSelection']);
+        if ($model->validate()) {
+            $splitLesson->privateLesson->merge($model);
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'The Lesson has been extended successfully.',
+            ]);
+
+            return $this->redirect(['lesson/view', 'id' => $id]);
+        } else {
+            $errors = ActiveForm::validate($model);
+            return [
+                'errors' => $errors,
+                'status' => false
+            ];
+        }
+    }
     /**
      * Finds the PrivateLesson model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

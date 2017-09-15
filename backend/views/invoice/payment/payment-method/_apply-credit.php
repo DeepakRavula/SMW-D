@@ -33,7 +33,10 @@ if (!empty($invoiceCredits)) {
             $source = 'Invoice';
             $type = 'invoice';
         }
-        $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->date);
+		$paymentDate = new \DateTime();
+		if(!empty($lastInvoicePayment)) {
+	        $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->date);
+		}
         $results[] = [
             'id' => $invoiceCredit->id,
             'date' => $paymentDate->format('d-m-Y'),
