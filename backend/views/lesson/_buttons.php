@@ -19,7 +19,7 @@ use kartik\switchinput\SwitchInput;
 		<?php endif; ?>
 		<?php if ($model->canExplode()) : ?>
                 <?php
-                    echo Html::a('<span class="btn bg-olive"> Explode</span>', ['lesson/split', 'id' => $model->id], [
+                    echo Html::a('<span class="btn bg-olive"> Explode</span>', ['private-lesson/split', 'id' => $model->id], [
                             'id' => 'split-lesson',
                             'class' => 'm-r-20 del-ce',
                     ])

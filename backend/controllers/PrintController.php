@@ -16,6 +16,8 @@ use common\models\User;
 use backend\models\search\LessonSearch;
 use backend\models\search\InvoiceSearch;
 use backend\models\search\UserSearch;
+use common\models\CustomerAccount;
+use backend\models\search\ReportSearch;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
@@ -210,6 +212,60 @@ class PrintController extends Controller
 			'model' => $model,
 			'invoiceDataProvider' => $invoiceDataProvider,
 			'dateRange' => $model->dateRange,
+        ]);
+    }
+    public function actionCustomerAccount($id)
+    {
+        $model = User::findOne(['id' => $id]);
+        $accountQuery = CustomerAccount::find()->where(['userId' => $id])
+            ->orderBy(['transactionId' => SORT_ASC]);
+        $accountDataProvider = new ActiveDataProvider([
+            'query' => $accountQuery,
+            'pagination' => false,
+        ]);
+        $this->layout = '/print';
+
+        return $this->render('/user/customer/_accounts-print', [
+                'model' => $model,
+                'accountDataProvider' => $accountDataProvider,
+                'userModel' => $model,
+        ]);
+    }
+     public function actionRoyaltyFree()
+    {
+        $searchModel = new ReportSearch();
+        $currentDate = new \DateTime();
+        $searchModel->fromDate = $currentDate->format('1-m-Y');
+        $searchModel->toDate = $currentDate->format('t-m-Y');
+        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $royaltyRequest = $request->get('ReportSearch');
+            $searchModel->dateRange = $royaltyRequest['dateRange'];
+        }
+        $toDate = $searchModel->toDate;
+        if ($toDate > $currentDate) {
+            $toDate = $currentDate;
+        }
+        $locationId = Yii::$app->session->get('location_id');
+        $royaltyFreeItems = InvoiceLineItem::find()
+            ->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
+                    $query->andWhere([
+                        'location_id' => $locationId,
+                        'type' => Invoice::TYPE_INVOICE,
+                    ])
+                    ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                    ->notDeleted();
+                }])
+            ->royaltyFree();
+
+        $royaltyFreeDataProvider = new ActiveDataProvider([
+            'query' => $royaltyFreeItems,
+        ]);
+        $this->layout = '/print';
+        return $this->render('/report/royalty-free-item/_print', [
+                'searchModel' => $searchModel,
+                'royaltyFreeDataProvider' => $royaltyFreeDataProvider,
         ]);
     }
 }

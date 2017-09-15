@@ -61,7 +61,7 @@ echo AdminLteGridView::widget([
 			'headerOptions' => ['class' => 'text-left'],
 			'contentOptions' => ['class' => 'text-left'],
 			'value' => function ($data) {
-				return !empty($data->customer->phoneNumber->number) ? $data->customer->phoneNumber->number : null;
+				return $data->customer->getPhone();
 			},
 		],
 	],

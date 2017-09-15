@@ -59,4 +59,51 @@ class PrivateLesson extends \yii\db\ActiveRecord
         return (new \DateTime($this->expiryDate))->format('Y-m-d H:i:s') <
                 (new \DateTime())->format('Y-m-d H:i:s');
     }
+    
+    public function getLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
+    }
+    
+    public function split()
+    {
+        $model = $this->lesson;
+        $lessonDurationSec = $model->durationSec;
+        for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
+            $lesson = clone $model;
+            $lesson->isNewRecord = true;
+            $lesson->id = null;
+            $lesson->duration = Lesson::DEFAULT_MERGE_DURATION;
+            $lesson->status = Lesson::STATUS_UNSCHEDULED;
+            $duration = gmdate('H:i:s', Lesson::DEFAULT_EXPLODE_DURATION_SEC * ($i +1));
+            $lessonDuration = new \DateTime($duration);
+            $date = new \DateTime($model->date);
+            $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
+            $lesson->date = $date->format('Y-m-d H:i:s');
+            $lesson->isExploded = true;
+            $lesson->save();
+            $paymentCycleLesson = new PaymentCycleLesson();
+            $paymentCycleLesson->paymentCycleId = $model->paymentCycle->id;
+            $paymentCycleLesson->lessonId = $lesson->id;
+            $paymentCycleLesson->save();
+            $privateLesson = clone $this;
+            $privateLesson->isNewRecord = true;
+            $privateLesson->id = null;
+            $privateLesson->lessonId = $lesson->id;
+            $privateLesson->save();
+            $model->append($lesson);
+        }
+        return $model->cancel();
+    }
+    
+    public function merge($model)
+    {
+        $lessonSplitUsage = new LessonSplitUsage();
+        $lessonSplitUsage->lessonId = $this->lessonId;
+        $lessonSplitUsage->extendedLessonId = $model->id;
+        $lessonSplitUsage->mergedOn = (new \DateTime())->format('Y-m-d H:i:s');
+        $lessonSplitUsage->save();
+        $lesson = Lesson::findOne($this->lessonId);
+        $lesson->cancel();
+    }
 }

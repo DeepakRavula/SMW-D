@@ -51,10 +51,11 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 			],
 				[
 				'label' => 'Amount',
+                'format' => ['decimal', 2],
 				'value' => function ($data) {
-                                    $locationId = Yii::$app->session->get('location_id');
-                                    return $data->itemCategory->getNetPrice($locationId, $data->invoice->date);
-                                },
+					$locationId = Yii::$app->session->get('location_id');
+					return $data->itemCategory->getNetPrice($locationId, $data->invoice->date);
+				},
 				'contentOptions' => ['class' => 'text-right'],
 				'hAlign' => 'right',
 				'pageSummary' => true,
