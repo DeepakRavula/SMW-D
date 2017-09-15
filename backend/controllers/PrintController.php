@@ -361,5 +361,17 @@ class PrintController extends Controller
                 'royaltyPayment' => $royaltyPayment,
         ]);
     }
+    public function actionUser()
+    { 
+        $searchModel = new UserSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination=false;
+        $this->layout = '/print';
+
+        return $this->render('/user/_print', [
+                'searchModel'=>$searchModel,
+                'dataProvider' => $dataProvider,
+        ]);
+    }
 
 }
