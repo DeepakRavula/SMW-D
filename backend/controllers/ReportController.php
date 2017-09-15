@@ -115,7 +115,7 @@ class ReportController extends Controller {
 			->royaltyFree()
 			->sum('invoice_line_item.amount');
 				
-		return $this->render('royalty', [
+		return $this->render('royalty/index', [
 			'searchModel' => $searchModel, 
 			'invoiceTaxTotal' => $invoiceTaxTotal,
 			'payments' => $payments,
