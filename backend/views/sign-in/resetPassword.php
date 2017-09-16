@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
 					<div class="form-group">
 						<?php
                         echo Html::submitButton('Save', [
-                            'class' => 'btn btn-primary btn-flat btn-block',
+                            'class' => 'btn btn-info btn-flat btn-block',
                             'name' => 'login-button',
                         ])
                         ?>

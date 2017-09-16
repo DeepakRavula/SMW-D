@@ -19,10 +19,10 @@ use yii\bootstrap\ActiveForm;
     <div class="clearfix"></div>
     </div>
     <div class="form-group">
-       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 		<?php 
             if (!$model->isNewRecord) {
-                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn btn-default']);
             }
         ?>
     </div>

@@ -23,7 +23,7 @@ use yii\bootstrap\ActiveForm;
     <?php echo $form->field($model, 'since')->textInput() ?>
 
     <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?php echo Html::submitButton($model->isNewRecord ? 'Add' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-info']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

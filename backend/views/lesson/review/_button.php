@@ -26,7 +26,7 @@ use yii\helpers\Url;
 	<div class="p-10 text-center">
 		<?=
 		Html::a('Confirm', $url, [
-			'class' => 'btn btn-primary',
+			'class' => 'btn btn-info',
 			'id' => 'confirm-button',
 			'disabled' => $hasConflict,
 			'data' => [

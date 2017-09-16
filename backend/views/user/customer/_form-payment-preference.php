@@ -31,11 +31,11 @@ use yii\helpers\Html;
 	</div>
 	<div class="form-group">
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-        <?= Html::a('Cancel', null, ['id' => 'cancel', 'class' => 'btn btn-primary']); ?>
+        <?= Html::a('Cancel', null, ['id' => 'cancel', 'class' => 'btn btn-default']); ?>
         <?php if (!empty($model->id)) : ?>
             <?= Html::a('Delete', null,
                 [
-                    'class' => 'btn btn-primary payment-preference-delete',
+                    'class' => 'btn btn-danger payment-preference-delete',
                     'preferenceId' => $model->id,
                 ]); ?>
         <?php endif; ?>

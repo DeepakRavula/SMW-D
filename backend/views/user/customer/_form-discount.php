@@ -25,7 +25,7 @@ use common\models\discount\CustomerDiscount;
         </div>
 	</div>
 	<div class="form-group">
-		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>

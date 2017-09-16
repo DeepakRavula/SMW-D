@@ -41,7 +41,7 @@ DynamicFormWidget::begin([
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<i class="fa fa-book"></i> Lesson Schedule
-		<button type="button" class="pull-right add-item btn btn-success btn-xs"><i class="fa fa-plus"></i> Add Lesson</button>
+		<button type="button" class="pull-right add-item btn btn-primary btn-xs"><i class="fa fa-plus"></i> Add Lesson</button>
 		<div class="clearfix"></div>
 	</div>
 	<div class="panel-body container-items"><!-- widgetContainer -->

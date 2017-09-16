@@ -138,7 +138,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
     };
     $(document).ready(function () {
         $('.next-step').removeClass('btn-default');
-        $('.next-step').addClass('btn-success');
+        $('.next-step').addClass('btn-info');
         $('#course-rate-estimation').hide();
         $(document).on('change', '#course-programid, #courseschedule-duration, #payment-frequency-discount, #enrolment-discount', function(){
             var duration = $('#courseschedule-duration').val();

@@ -20,7 +20,7 @@ use yii\bootstrap\ActiveForm;
     <div class="form-group p-10">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
 		<?php if (!$model->isNewRecord) : ?>
-         <?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);?>
+         <?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn btn-default']);?>
 		<?php endif; ?>            
     </div>
 

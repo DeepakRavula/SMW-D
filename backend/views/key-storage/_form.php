@@ -19,7 +19,7 @@ use yii\bootstrap\ActiveForm;
     <?php echo $form->field($model, 'comment')->textarea() ?>
 
     <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? Yii::t('backend', 'Create') : Yii::t('backend', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?php echo Html::submitButton($model->isNewRecord ? Yii::t('backend', 'Create') : Yii::t('backend', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-info']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

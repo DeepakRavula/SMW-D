@@ -16,7 +16,7 @@ use yii\bootstrap\ActiveForm;
         <?php echo $form->field($model, 'content')->textarea(['rows' => '10'])->label(false)?>
     </div>
     <div class="form-group">
-        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
         <?= Html::a('Cancel', '#', ['class' => 'btn btn-default note-cancel-button']); ?>
     </div>
 </div>

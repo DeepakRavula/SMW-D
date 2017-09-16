@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php echo $form->field($model, 'email') ?>
                     <div class="form-group">
                         <?php echo Html::submitButton('Send', [
-                            'class' => 'btn btn-primary btn-flat btn-block',
+                            'class' => 'btn btn-info btn-flat btn-block',
                             'name' => 'login-button',
                         ]) ?>
                     </div>

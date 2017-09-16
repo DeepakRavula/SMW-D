@@ -61,7 +61,7 @@ use yii\jui\DatePicker;
     </div>
     <div class="row-fluid">
     <div class="form-group">
-       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 		<?php if (!$model->isNewRecord) : ?>
         	<?= Html::a('Cancel', '', ['class' => 'btn btn-default unavailability-cancel']);?>
 			<?= Html::a('Delete', [
