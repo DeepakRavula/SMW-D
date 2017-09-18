@@ -259,7 +259,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             }
             $taxStatus         = TaxStatus::findOne(['id' => $this->item->taxStatusId]);
             $this->tax_type    = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-            $this->tax_rate    = $this->netPrice * $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate / 100.0;
+            $this->tax_rate    = $this->netAmount * $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate / 100.0;
             $this->tax_code    = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
             $this->tax_status  = $taxStatus->name;
             if (!isset($this->royaltyFree)) {
@@ -269,7 +269,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
         if (!$insert) {
             $taxType = TaxType::findOne(['name' => $this->tax_type]);
-            $this->tax_rate = $this->netPrice * $taxType->taxCode->rate / 100.0;
+            $this->tax_rate = $this->netAmount * $taxType->taxCode->rate / 100.0;
         }
         return parent::beforeSave($insert);
     }
@@ -372,6 +372,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     }
 
     public function getNetPrice()
+    {
+        return $this->netAmount + $this->tax_rate;
+    }
+    
+    public function getNetAmount()
     {
         return $this->amount - $this->discount;
     }
