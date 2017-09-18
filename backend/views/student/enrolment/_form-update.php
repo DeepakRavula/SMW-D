@@ -87,7 +87,7 @@ use common\models\Course;
 	<div class="clearfix"></div>
     <div class="form-group">
 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
-	['class' => 'btn btn-primary', 'name' => 'signup-button', 'id' => 'preview-button']) ?>
+	['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'preview-button']) ?>
 		<?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-edit-cancel']); ?>
     </div>
 

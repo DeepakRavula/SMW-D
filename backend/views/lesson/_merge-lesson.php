@@ -85,7 +85,7 @@ $splitLessonDataProvider = new ActiveDataProvider([
     ]);
 	?>
 	</div>
-	<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+	<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 	<?php ActiveForm::end(); ?>
 <?php Modal::end(); ?>
 </div>

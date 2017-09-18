@@ -30,7 +30,7 @@ $this->title = Yii::t('backend', 'Edit account')
 		</div>
 	</div>
     <div class="col-md-12">
-        <?php echo Html::submitButton(Yii::t('backend', 'Update'), ['class' => 'btn btn-primary']) ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Update'), ['class' => 'btn btn-info']) ?>
     </div>
     <div class="clearfix"></div>
 

@@ -17,10 +17,10 @@ use yii\bootstrap\ActiveForm;
 		<?php echo $form->field($model, 'payment_method_id')->hiddenInput()->label(false); ?>
 	</div>
     <div class="form-group p-l-20">
-       <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
+       <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 			<?php 
             if (!$model->isNewRecord) {
-                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn btn-default']);
             }
         ?>
     </div>

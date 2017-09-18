@@ -451,8 +451,6 @@ class Lesson extends \yii\db\ActiveRecord
     {
         if (!empty($this->colorCode)) {
             $class = null;
-        } else if ($this->isMissed()) {
-            $class = 'lesson-missed';
         } else if($this->isEnrolmentFirstlesson()) {
             $class = 'first-lesson';
         } else if ($this->isPrivate()) {

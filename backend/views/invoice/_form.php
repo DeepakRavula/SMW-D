@@ -84,7 +84,7 @@ $customer_id = (empty($customer->id)) ? null : (string) $customer->id;
     ]) ?>
 
     <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-info']) ?>
     </div>
     <?php ActiveForm::end(); ?>
 

@@ -19,7 +19,7 @@ use yii\helpers\Url;
 	<div class="clearfix"></div>
     <div class="row-fluid">
     <div class="form-group">
-       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
        <?= Html::a('Cancel', '', ['class' => 'btn btn-default template-cancel']);?>
     </div>
     <div class="clearfix"></div>

@@ -24,7 +24,7 @@ $this->title = Yii::t('backend', 'Edit Profile')
 			<?php echo $form->field($model, 'email') ?>
 		</div>
         <div class="col-md-6">
-            <?php echo Html::submitButton(Yii::t('backend', 'Update'), ['class' => 'btn btn-primary']) ?>
+            <?php echo Html::submitButton(Yii::t('backend', 'Update'), ['class' => 'btn btn-info']) ?>
         </div>
         <div class="clearfix"></div>
     </div>

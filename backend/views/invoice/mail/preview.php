@@ -68,7 +68,7 @@ use common\models\User;
         </div>
     <div class="row-fluid">
     <div class="form-group col-lg-6">
-       <?php echo Html::submitButton(Yii::t('backend', 'Send'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+       <?php echo Html::submitButton(Yii::t('backend', 'Send'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
     </div>
     <div class="clearfix"></div>
     </div>

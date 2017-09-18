@@ -80,7 +80,7 @@ $columns = [
 
 <?=
 	Html::a('Confirm', ['confirm', 'courseId' => $courseModel->id], [
-		'class' => 'btn btn-primary',
+		'class' => 'btn btn-info',
 		'id' => 'confirm-button',
 		'disabled' => $hasConflict,
 		'data' => [

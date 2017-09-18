@@ -20,7 +20,7 @@ foreach ($roles as $name => $description) {
 
 	<?php if ($role === User::ROLE_ADMINISTRATOR): ?>
     <p>
-        <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?php echo Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-info']) ?>
         <?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [

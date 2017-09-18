@@ -13,7 +13,7 @@ use common\components\gridView\AdminLteGridView;
 $this->title = 'Lessons';
 ?>
 <div>
-	<?= Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['course/create'], ['class' => 'btn btn-success btn-sm']);?>
+	<?= Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['course/create'], ['class' => 'btn btn-primary btn-sm']);?>
 		<?php
 $form = ActiveForm::begin([
 		'action' => ['index'],

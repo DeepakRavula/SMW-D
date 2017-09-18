@@ -16,9 +16,9 @@ $form = ActiveForm::begin([
     ]);
 
 ?>
-    <?php yii\widgets\Pjax::begin() ?>
+<?php yii\widgets\Pjax::begin() ?>
 <div id="show-all">
-<?= $form->field($model, 'summarizeResults')->checkbox(['data-pjax' => true]); ?>
+    <?= $form->field($model, 'summarizeResults')->checkbox(['data-pjax' => true]); ?>
 </div>
 <?php \yii\widgets\Pjax::end(); ?>
 <?php ActiveForm::end(); ?>

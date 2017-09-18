@@ -53,7 +53,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
         </div>
 		<div class="clearfix"></div>
    <div class="form-group">
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-primary', 'name' => 'button']) ?>
+        <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
 		<?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-detail-cancel']);
         ?>
 	</div>

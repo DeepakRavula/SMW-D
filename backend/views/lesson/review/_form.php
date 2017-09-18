@@ -52,13 +52,13 @@ use common\models\Lesson;
 	<div class="col-md-12 p-l-20 form-group">
 		<?= Html::submitButton(Yii::t('backend', 'Apply'), [
 			'id' => 'lesson-review-apply',
-			'class' => 'btn btn-primary',
+			'class' => 'btn btn-info',
 			'name' => 'button',
 			'value' => Lesson::APPLY_SINGLE_LESSON
 		]) ?>
 		<?= Html::submitButton(Yii::t('backend', 'Apply All'), [
 			'id' => 'lesson-review-apply-all',
-			'class' => 'btn btn-primary',
+			'class' => 'btn btn-info',
 			'name' => 'button',
 			'value' => Lesson::APPLY_ALL_FUTURE_LESSONS
 		]) ?>

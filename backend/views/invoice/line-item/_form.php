@@ -97,7 +97,7 @@ use common\models\TaxStatus;
             'delete', 'id' => $model->id
         ],
         [
-            'class' => 'btn btn-primary',
+            'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
                 'method' => 'post',

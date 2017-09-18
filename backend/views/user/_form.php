@@ -77,10 +77,10 @@ use yii\bootstrap\Tabs;
 	</div>
 	<div class="row col-md-12">
 		<?php echo $form->field($model, 'section')->hiddenInput()->label(false); ?>
-		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 			<?php
             if (!$model->getModel()->getIsNewRecord()) {
-                echo Html::a('Cancel', ['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id], ['class' => 'btn']);
+                echo Html::a('Cancel', ['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id], ['class' => 'btn btn-default']);
             }
         ?>
 	</div>

@@ -90,7 +90,7 @@ $this->registerJs($js);
 		<?php DynamicFormWidget::end(); ?>
 	<div class="row">
 		<div class="col-md-12">
-		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 			<?php
                 echo Html::a('Cancel', ['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id], ['class' => 'btn btn-default phone-cancel-btn']);
         ?>

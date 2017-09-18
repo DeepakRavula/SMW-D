@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="qualification-index">
 
     <p>
-        <?php echo Html::a('Create Qualification', ['create'], ['class' => 'btn btn-success']) ?>
+        <?php echo Html::a('Create Qualification', ['create'], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?php echo GridView::widget([
