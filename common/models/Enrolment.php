@@ -412,16 +412,7 @@ class Enrolment extends \yii\db\ActiveRecord
 				if ($this->course->isProfessionalDevelopmentDay($day)) {
 					continue;
 				}
-				$lesson = new Lesson();
-				$lesson->setAttributes([
-					'courseId' => $this->course->id,
-					'teacherId' => $this->course->teacherId,
-					'status' => Lesson::STATUS_SCHEDULED,
-					'date' => $day->format('Y-m-d H:i:s'),
-					'duration' => $this->courseSchedule->duration,
-					'isConfirmed' => false,
-				]);
-				$lesson->save();
+				//trigger lesson create event
 			}
 		}
     }

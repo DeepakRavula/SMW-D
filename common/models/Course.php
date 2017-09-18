@@ -314,17 +314,7 @@ class Course extends \yii\db\ActiveRecord
 					if ($this->isProfessionalDevelopmentDay($day)) {
 						continue;
 					}
-					$lesson = new Lesson();
-					$lesson->setAttributes([
-						'courseId' => $this->id,
-						'teacherId' => $this->teacherId,
-						'status' => Lesson::STATUS_SCHEDULED,
-						'date' => $day->format('Y-m-d H:i:s'),
-						'duration' => $duration,
-						'isConfirmed' => false,
-						'isDeleted' => false,
-					]);
-					$lesson->save();
+					//trigger lesson create event
 				}
 			}
 		}
