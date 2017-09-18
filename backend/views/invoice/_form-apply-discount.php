@@ -23,7 +23,7 @@ use common\models\Invoice;
     </div>
 
     <div class="form-group">
-       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
+       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
     </div>
     <?php ActiveForm::end(); ?>
 </div>

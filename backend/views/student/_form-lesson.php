@@ -109,7 +109,7 @@ use kartik\time\TimePicker;
         </div>
         <div class="clearfix"></div>
     <div class="col-md-12 p-l-20 form-group">
-        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default extra-lesson-cancel-button']); ?>
     </div>
     </div>

@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?php echo Html::a(Yii::t('backend', 'Create {modelClass}', [
     'modelClass' => 'Key Storage Item',
-]), ['create'], ['class' => 'btn btn-success']) ?>
+]), ['create'], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?php echo GridView::widget([

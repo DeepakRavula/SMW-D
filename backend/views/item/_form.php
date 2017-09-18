@@ -66,7 +66,7 @@ use kartik\select2\Select2;
             (Item::itemStatuses()) ?>
     </div>
     <div class="form-group col-xs-12">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-info']) ?>
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default item-cancel']);?>
         <?php if (!$model->isNewRecord) {
                 echo Html::a('Delete', ['delete', 'id' => $model->id], [

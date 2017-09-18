@@ -28,7 +28,7 @@ use kartik\daterange\DateRangePicker;
 	</div>
 	<div class="row-fluid">
 		<div class="form-group">
-			<?php echo Html::submitButton(Yii::t('backend', 'Continue'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
+			<?php echo Html::submitButton(Yii::t('backend', 'Continue'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 			<?= Html::a('Cancel', '#', ['class' => 'btn btn-default vacation-cancel-button']); ?>
 		</div>
 	</div>

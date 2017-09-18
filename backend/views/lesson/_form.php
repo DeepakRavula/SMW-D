@@ -107,7 +107,7 @@ use yii\bootstrap\Modal;
 		</div>
 		<?php endif; ?>
    <div class="form-group">
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-primary', 'name' => 'button']) ?>
+        <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
 		<?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-schedule-cancel']);
         ?>
 		<div class="clearfix"></div>

@@ -29,10 +29,10 @@ use yii\helpers\Url;
 	<?php echo $form->field($model, 'sourceId')->hiddenInput()->label(false); ?>
 	<?php echo $form->field($model, 'payment_method_id')->hiddenInput(['class' => 'payment-method-id'])->label(false); ?>
     <div class="form-group">
-       <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-success', 'name' => 'signup-button']) ?>
+       <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 			<?php 
             if (!$model->isNewRecord) {
-                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn']);
+                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn btn-default']);
             }
         ?>
     </div>

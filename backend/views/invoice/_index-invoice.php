@@ -9,7 +9,7 @@ use common\components\gridView\AdminLteGridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $searchModel backend\models\search\InvoiceSearch */
 
-$invoiceAddButton = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['invoice/blank-invoice'], ['class' => 'btn btn-success btn-sm']);
+$invoiceAddButton = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['invoice/blank-invoice'], ['class' => 'btn btn-primary btn-sm']);
 
 $actionButton = (int) $searchModel->type === Invoice::TYPE_INVOICE ?  $invoiceAddButton : null;
 

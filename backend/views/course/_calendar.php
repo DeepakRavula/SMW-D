@@ -16,7 +16,7 @@ use yii\helpers\Url;
     </div>
 </div>
  <div class="form-group">
-	<?= Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary course-apply', 'name' => 'button']) ?>
+	<?= Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-info course-apply', 'name' => 'button']) ?>
 	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default course-cancel']);
 	?>
 	<div class="clearfix"></div>

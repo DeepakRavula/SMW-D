@@ -37,11 +37,17 @@ $this->title = $model->id;
           <div class="invoice-print-address">
         Teacher
         <address>
-          <strong><?= $model->teacher->publicIdentity; ?></strong><br>
-          <?= $model->teacher->primaryAddress->address; ?><br>
-          <?= $model->teacher->primaryAddress->city->name;?>,<?= $model->teacher->primaryAddress->province->name;?><br>
-          Phone: <?= $model->teacher->phoneNumber->number;?><br>
-          Email: <?= $model->teacher->email;?>
+            <strong><?= $model->teacher->publicIdentity; ?></strong><br>
+            <?php if (!empty($model->teacher->primaryAddress)): ?>
+                <?= $model->teacher->primaryAddress->address; ?><br>
+                <?= $model->teacher->primaryAddress->city->name; ?>,<?= $model->teacher->primaryAddress->province->name; ?><br>
+            <?php endif; ?>
+            <?php if (!empty($model->teacher->phoneNumber)): ?>
+                Phone: <?= $model->teacher->phoneNumber->number; ?><br>
+            <?php endif; ?>
+            <?php if (!empty($model->teacher->email)): ?>
+                Email: <?= $model->teacher->email; ?>
+            <?php endif; ?>
         </address>
       </div>
       </div>

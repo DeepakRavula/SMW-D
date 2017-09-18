@@ -64,8 +64,8 @@ $this->render('_view-enrolment', [
 	</div>
     <div class="form-group">
 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
-	['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-		<?= Html::a('Cancel', ['view', 'id' => $model->enrolment->id], ['class' => 'btn']);
+	['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+		<?= Html::a('Cancel', ['view', 'id' => $model->enrolment->id], ['class' => 'btn btn-cancel']);
         ?>
     </div>
 

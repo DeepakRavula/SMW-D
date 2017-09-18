@@ -23,12 +23,12 @@ use yii\helpers\Url;
         <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
     </div>
     <div class="form-group col-xs-12">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-info']) ?>
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default item-category-cancel']);?>
         <?php if (!$model->isNewRecord) {
                 echo Html::a('Delete', ['delete', 'id' => $model->id], [
 			'id' => 'item-delete-button',
-                        'class' => 'btn btn-primary',
+                        'class' => 'btn btn-danger',
                         'data' => [
                             'confirm' => 'Are you sure you want to delete this item?',
                             'method' => 'post',

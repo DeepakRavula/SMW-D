@@ -28,7 +28,7 @@ use yii\helpers\Url;
             <?= $form->field($customer, 'email'); ?>
         </div>
         <div class="col-md-12">
-            <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary m-r-20', 'name' => 'guest-invoice']) ?>
+            <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-info m-r-20', 'name' => 'guest-invoice']) ?>
         </div>
     </div>
 </div>

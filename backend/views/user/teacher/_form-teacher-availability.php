@@ -55,14 +55,14 @@ use yii\helpers\Url;
             ?>
         </div>
         <div class="col-md-12 p-l-20 form-group">
-            <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary', 'name' => 'button']) ?>
-            <?= Html::a('Cancel', null, ['id' => 'cancel', 'class' => 'btn btn-primary']); ?>
+            <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
+            <?= Html::a('Cancel', null, ['id' => 'cancel', 'class' => 'btn btn-default']); ?>
         <?php if (!empty($teacherAvailabilityModel->id)) : ?>
             <?= Html::a('<i class="fa fa-close"></i> Delete', [
                     'teacher-availability/delete', 'id' => $teacherAvailabilityModel->id
                 ],
                 [
-                    'class' => 'btn btn-primary',
+                    'class' => 'btn btn-danger',
                     'data' => [
                         'confirm' => 'Are you sure you want to delete this item?',
                         'method' => 'post',

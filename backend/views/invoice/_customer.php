@@ -46,7 +46,7 @@ use yii\helpers\Url;
 	</div>
 	<div class="row">
 		<div class="col-md-4">
-		<?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary pull-left m-r-20']) ?>
+		<?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-info pull-left m-r-20']) ?>
 		</div>
 	</div>
 <?php ActiveForm::end(); ?>
