@@ -397,18 +397,12 @@ class Enrolment extends \yii\db\ActiveRecord
             return true;
         }
         $interval = new \DateInterval('P1D');
-        $startDate = $this->course->startDate;
-        $endDate = $this->course->endDate;
-        $start = new \DateTime($startDate);
-        $end = new \DateTime($endDate);
+        $start = new \DateTime($this->course->startDate);
+        $end = new \DateTime($this->course->endDate);
         $period = new \DatePeriod($start, $interval, $end);
 		foreach ($period as $day) {
-			$lessonCount = Lesson::find()
-				->andWhere(['courseId' => $this->courseId, 'isConfirmed' => false])
-				->count();
 			$checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
-			$checkLessonCount = (int)$lessonCount < Lesson::MAXIMUM_LIMIT; 
-			if ($checkDay && $checkLessonCount) {
+			if ($checkDay) {
 				if ($this->course->isProfessionalDevelopmentDay($day)) {
 					continue;
 				}

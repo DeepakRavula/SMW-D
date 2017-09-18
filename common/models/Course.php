@@ -6,6 +6,7 @@ use yii\helpers\ArrayHelper;
 use common\models\Program;
 use common\models\Lesson;
 use Yii;
+use Carbon\Carbon;
 use common\models\CourseGroup;
 
 /**
@@ -185,11 +186,10 @@ class Course extends \yii\db\ActiveRecord
 			$endDate = $startDate->add(new \DateInterval('P' . $this->weeksCount .'W'));	
 			$this->endDate = $endDate->format('Y-m-d H:i:s');
         } else {
-            $endDate = new \DateTime($this->startDate);
+            $endDate = (new Carbon($this->startDate))->addMonths(11);
             $startDate = new \DateTime($this->startDate);
             $this->startDate = $startDate->format('Y-m-d H:i:s');
-            $endDate->add(new \DateInterval('P1Y'));
-            $this->endDate = $endDate->format('Y-m-d H:i:s');
+            $this->endDate = $endDate->endOfMonth();
         }
 
         return parent::beforeSave($insert);
