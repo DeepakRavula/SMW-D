@@ -822,7 +822,7 @@ class LessonController extends Controller
 
                     return $this->redirect(['invoice/view', 'id' => $invoice->id]);
                 } else {
-                    $model->paymentCycle->proFormaInvoice->addPrivateLessonLineItem($model);
+                    $model->addPrivateLessonLineItem($model->paymentCycle->proFormaInvoice);
                     $model->paymentCycle->proFormaInvoice->save();
                 }
             } else {
@@ -848,7 +848,7 @@ class LessonController extends Controller
                 $invoice->createdUserId = Yii::$app->user->id;
                 $invoice->updatedUserId = Yii::$app->user->id;
                 $invoice->save();
-                $invoiceLineItem = $invoice->addPrivateLessonLineItem($model);
+                $invoiceLineItem = $model->addPrivateLessonLineItem($invoice);
                 $invoice->save();
             } else {
                 $invoice = $model->proFormaInvoice;

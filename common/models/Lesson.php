@@ -807,52 +807,6 @@ class Lesson extends \yii\db\ActiveRecord
         }
     }
 
-    public function createInvoice()
-    {
-        $invoice = new Invoice();
-        $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
-        $invoice->type = INVOICE::TYPE_INVOICE;
-        return $invoice;
-    }
-	
-    public function createPrivateLessonInvoice()
-    {
-        $invoice = $this->createInvoice();
-        $location_id = $this->enrolment->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => $this->enrolment->student->customer->id]);
-        if (is_a(Yii::$app, 'yii\console\Application')) {
-            $roleUser = User::findByRole(User::ROLE_BOT);
-            $botUser = end($roleUser);
-            $loggedUser = User::findOne(['id' => $botUser->id]);
-        } else {
-            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-        }
-        $invoice->userName = $loggedUser->userProfile->fullName;
-        $invoice->user_id = $this->enrolment->student->customer->id;
-        $invoice->location_id = $location_id;
-        $invoice->save();
-        $invoice->addPrivateLessonLineItem($this);
-        $invoice->save();
-        if ($this->hasLessonCredit($this->enrolment->id)) {
-            $invoice->addPayment($this, $this->getLessonCreditAmount($this->enrolment->id), $this->enrolment);
-        }
-        if (!empty($this->extendedLessons)) {
-            foreach ($this->extendedLessons as $extendedLesson) {
-                $lineItem = $invoice->addPrivateLessonLineItem($extendedLesson->lesson);
-                $invoice->save();
-                if ($extendedLesson->lesson->hasLessonCredit($this->enrolment->id)) {
-                    $amount = $extendedLesson->lesson->getSplitedAmount();
-                    if ($amount > $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id)) {
-                       $amount = $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id);
-                    }
-                    $invoice->addPayment($extendedLesson->lesson, $amount, $this->enrolment);
-                }
-            }
-        }
-
-        return $invoice;
-    }
-
     public function getUnit()
     {
         $getDuration = \DateTime::createFromFormat('H:i:s', $this->duration);
@@ -861,27 +815,6 @@ class Lesson extends \yii\db\ActiveRecord
         return (($hours * 60) + $minutes) / 60;
     }
 
-    public function createGroupInvoice($enrolmentId)
-    {
-        $invoice   = $this->createInvoice();
-        $enrolment = Enrolment::findOne($enrolmentId);
-        $location_id = $enrolment->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => $enrolment->student->customer->id]);
-        $invoice->userName = $user->publicIdentity;
-        $invoice->user_id = $enrolment->student->customer->id;
-        $invoice->location_id = $location_id;
-        $invoice->save();
-        $this->enrolmentId = $enrolmentId;
-        $invoice->addGroupLessonLineItem($this);
-        $invoice->save();
-        if ($this->hasLessonCredit($enrolmentId)) {
-            $netPrice = $this->getLessonCreditAmount($enrolmentId);
-            $invoice->addPayment($this, $netPrice, $enrolment);
-        }
-
-        return $invoice;
-    }
-    
     public function getLessonCreditAmount($enrolmentId)
     {
         return Payment::find()

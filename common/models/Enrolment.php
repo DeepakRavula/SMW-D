@@ -16,6 +16,8 @@ use common\models\discount\EnrolmentDiscount;
  */
 class Enrolment extends \yii\db\ActiveRecord
 {
+    use Invoiceable;
+    
     public $studentIds;
     public $endDate;
     public $toEmailAddress;
@@ -376,53 +378,6 @@ class Enrolment extends \yii\db\ActiveRecord
         return $isExpiring;
     }
 
-    public function addCreditInvoice()
-    {
-        $invoice = new Invoice();
-        $invoice->user_id = $this->customer->id;
-        $invoice->location_id = $this->customer->userLocation->location_id;
-        $invoice->type = Invoice::TYPE_INVOICE;
-        $invoice->save();
-        $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
-        $invoiceLineItem->invoice_id = $invoice->id;
-        $item = Item::findOne(['code' => Item::LESSON_CREDIT]);
-        $invoiceLineItem->item_id = $item->id;
-        $invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_CREDIT;
-        $invoiceLineItem->description = $this->student->studentIdentity .'\'s '
-                . $this->course->program->name . ' Lesson credit';
-        $invoiceLineItem->unit = 1;
-        $invoiceLineItem->amount = 0.0;
-        $invoiceLineItem->code = $invoiceLineItem->getItemCode();
-        $invoiceLineItem->cost = 0;
-        $invoiceLineItem->save();
-        $invoice->tax = $invoiceLineItem->tax_rate;
-        $invoice->total = $invoice->subTotal + $invoice->tax;
-        $invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
-        $invoice->save();
-        $endDate = (new \DateTime($this->course->endDate))->format('Y-m-d');
-        $lessons = Lesson::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['>=', 'DATE(date)', $endDate])
-                    ->andWhere(['courseId' => $this->courseId])
-                    ->all();
-        foreach ($lessons as $lesson) {
-            if ($lesson->hasLessonCredit($this->id)) {
-                $invoice->addPayment($lesson, $lesson->getLessonCreditAmount($this->id), $this);
-            }
-            $lesson->Cancel();
-            $lesson->delete();
-        }
-        $paymentCycles = PaymentCycle::find()
-                ->where(['enrolmentId' => $this->id])
-                ->andWhere(['>', 'DATE(startDate)', $endDate])
-                ->all();
-        foreach($paymentCycles as $paymentCycle) {
-            $paymentCycle->delete();
-        }
-        return $invoice;
-    }
-
     public function beforeSave($insert) {
         if($insert) {
             $this->isDeleted = false;
@@ -467,7 +422,6 @@ class Enrolment extends \yii\db\ActiveRecord
 					'isConfirmed' => false,
 				]);
 				$lesson->save();
-				//print_r($lesson);die;
 			}
 		}
     }
@@ -624,44 +578,6 @@ class Enrolment extends \yii\db\ActiveRecord
                     ->all();
 
         return !empty($lessonSplits);
-    }
-
-    public function createProFormaInvoice()
-    {
-        $locationId = $this->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => $this->student->customer->id]);
-        $invoice = new Invoice();
-        $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
-        if (is_a(Yii::$app, 'yii\console\Application')) {
-            $roleUser = User::findByRole(User::ROLE_BOT);
-            $botUser = end($roleUser);
-            $loggedUser = User::findOne(['id' => $botUser->id]);
-        } else {
-            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-        }
-        $invoice->userName = $loggedUser->userProfile->fullName;
-        $invoice->user_id = $user->id;
-        $invoice->location_id = $locationId;
-        $invoice->dueDate = (new \DateTime($this->firstLesson->date))->format('Y-m-d');
-        $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
-        $invoice->createdUserId = Yii::$app->user->id;
-        $invoice->updatedUserId = Yii::$app->user->id;
-        if (!$invoice->save()) {
-            Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
-        }
-        $invoiceLineItem = $invoice->addGroupProFormaLineItem($this);
-        if (!$invoiceLineItem->save()) {
-            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
-        } else {
-            $invoiceItemLesson = new InvoiceItemEnrolment();
-            $invoiceItemLesson->enrolmentId    = $this->id;
-            $invoiceItemLesson->invoiceLineItemId    = $invoiceLineItem->id;
-            $invoiceItemLesson->save();
-        }
-        if (!$invoice->save()) {
-            Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
-        }
-        return $invoice;
     }
 
     public function isExtra()

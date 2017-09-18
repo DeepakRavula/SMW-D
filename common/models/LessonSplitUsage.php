@@ -69,7 +69,7 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
         if ($insert) {
             if ($this->extendedLesson->hasInvoice()) {
                 $invoice = $this->extendedLesson->invoice;
-                $lineItem = $invoice->addPrivateLessonLineItem($this->lesson);
+                $lineItem = $this->lesson->addPrivateLessonLineItem($invoice);
                 $invoice->save();
                 if ($this->lesson->hasLessonCredit($this->lesson->enrolment->id)) {
                     $amount = $this->lesson->getSplitedAmount();

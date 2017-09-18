@@ -170,7 +170,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ->all();
         foreach ($lessons as $lesson) { 
             $lesson->studentFullName = $this->enrolment->student->fullName;
-            $invoice->addPrivateLessonLineItem($lesson);
+            $lesson->addPrivateLessonLineItem($invoice);
         }
         $invoice->save();
         return $invoice;
