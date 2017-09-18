@@ -384,7 +384,7 @@ class LessonController extends Controller
         }
     }
 
-	public function fetchConflictedLesson($course)
+	public function getConflicts($course, $vacationId = null)
 	{
 		$conflicts = [];
 		$conflictedLessonIds = [];
@@ -394,6 +394,9 @@ class LessonController extends Controller
 			->all();
 		foreach ($draftLessons as $draftLesson) {
 			$draftLesson->setScenario('review');
+			if(!empty($vacationId)) {
+				$draftLesson->vacationId = $vacationId;
+			}
 		}
 		Model::validateMultiple($draftLessons);
 		foreach ($draftLessons as $draftLesson) {
@@ -404,12 +407,24 @@ class LessonController extends Controller
 		}
 
 		$holidayConflictedLessonIds = $course->getHolidayLessons();
-		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
-		$lessons = $draftLessons;
-		if(!empty($conflictedLessonIds)) {
+		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);	
+		return [
+			'conflicts' => $conflicts,
+			'lessonIds' => $conflictedLessonIds
+		];
+	}
+	public function fetchConflictedLesson($course)
+	{
+
+		$conflictedLessons = $this->getConflicts($course, $vacationId = null);
+		$lessons = Lesson::find()
+			->where(['courseId' => $course->id, 'isConfirmed' => false,
+				'status' => Lesson::STATUS_SCHEDULED])
+			->all();
+		if(!empty($conflictedLessons['lessonIds'])) {
 			$lessons = Lesson::find()
 				->orderBy(['lesson.date' => SORT_ASC])
-				->andWhere(['IN', 'lesson.id', $conflictedLessonIds])
+				->andWhere(['IN', 'lesson.id', $conflictedLessons['lessonIds']])
 				->all();	
 		}
 		return $lessons;
@@ -505,39 +520,19 @@ class LessonController extends Controller
         $vacationId = $vacationRequest['id'];
 		$enrolmentType = $enrolmentRequest['type'];
         $courseModel = Course::findOne(['id' => $courseId]);
-		$conflicts = [];
-		$conflictedLessonIds = [];
-			$draftLessons = Lesson::find()
-				->where(['courseId' => $courseModel->id, 'isConfirmed' => false])
-				->andWhere(['status' => Lesson::STATUS_SCHEDULED])
-				->all();
-		foreach ($draftLessons as $draftLesson) {
-			$draftLesson->setScenario('review');
-			if(!empty($vacationId)) {
-				$draftLesson->vacationId = $vacationId;
-			}
-		}
-		Model::validateMultiple($draftLessons);
-		foreach ($draftLessons as $draftLesson) {
-			if(!empty($draftLesson->getErrors('date'))) {
-				$conflictedLessonIds[] = $draftLesson->id;
-			}
-			$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
-		}
 
-		$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
-		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
+		$conflictedLessons = $this->getConflicts($courseModel, $vacationId);
 		$lessonCount = Lesson::find()
 			->andWhere(['courseId' => $courseModel->id,	'isConfirmed' => false])
 			->count();
-		$conflictedLessonIdsCount = count($conflictedLessonIds);
+		$conflictedLessonIdsCount = count($conflictedLessons['lessonIds']);
 		$unscheduledLessonCount = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED, 'isConfirmed' => false])
 			->count();	
 		$query = Lesson::find()
 			->orderBy(['lesson.date' => SORT_ASC]);
 		if(! $showAllReviewLessons) {
-			$query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
+			$query->andWhere(['IN', 'lesson.id', $conflictedLessons['lessonIds']]);
 		}  else {
 			$query->where(['courseId' => $courseModel->id, 'isConfirmed' => false]);
 		}
@@ -555,13 +550,13 @@ class LessonController extends Controller
             'courseModel' => $courseModel,
             'courseId' => $courseId,
             'lessonDataProvider' => $lessonDataProvider,
-            'conflicts' => $conflicts,
+            'conflicts' => $conflictedLessons['conflicts'],
             'rescheduleBeginDate' => $rescheduleBeginDate,
             'rescheduleEndDate' => $rescheduleEndDate,
             'searchModel' => $searchModel,
 			'vacationId' => $vacationId,
 			'model' => $model,
-			'holidayConflictedLessonIds' => $holidayConflictedLessonIds,
+			'holidayConflictedLessonIds' => $courseModel->getHolidayLessons(),
 			'lessonCount' => $lessonCount,
 			'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
 			'unscheduledLessonCount' => $unscheduledLessonCount,
