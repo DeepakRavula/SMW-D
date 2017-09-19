@@ -278,9 +278,11 @@ class InvoiceLineItemController extends Controller
         $data = Json::decode($rawData, true);
         $invoiceLineItem = InvoiceLineItem::findOne($id);
         $invoiceLineItem->load($data, '');
-        $taxCode           = $invoiceLineItem->computeTaxCode($data['taxStatus']);
-        $invoiceLineItem->tax_status = $taxCode->taxStatus->name;
-        $invoiceLineItem->tax_type   = $taxCode->taxType->name;
+        if (!$invoiceLineItem->isLessonItem()) {
+            $taxCode           = $invoiceLineItem->computeTaxCode($data['taxStatus']);
+            $invoiceLineItem->tax_status = $taxCode->taxStatus->name;
+            $invoiceLineItem->tax_type   = $taxCode->taxType->name;
+        }
         $discount = 0.0;
         if (!empty($data['customerDiscount'])) {
             $discount += $invoiceLineItem->amount * $data['customerDiscount'] / 100;
