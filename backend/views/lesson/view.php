@@ -7,6 +7,10 @@ use common\models\Note;
 use common\models\Lesson;
 use yii\bootstrap\Modal;
 use common\models\PrivateLesson;
+use backend\models\EmailForm;
+use yii\helpers\ArrayHelper;
+use common\models\User;
+use common\models\Student;
 
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 /* @var $this yii\web\View */
@@ -99,14 +103,34 @@ $this->params['action-button'] = $this->render('_buttons', [
 			</div>
 		</div>	
 </div>
+<?php $data = ArrayHelper::map(User::find()->orderBy('email')->notDeleted()->all(), 'email', 'email'); 
+$students = Student::find()
+	->notDeleted()
+	->joinWith('enrolment')
+	->andWhere(['courseId' => $model->courseId])
+	->all();
+$emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email'); 
+    $body = null;?>
+	<?php if ($model->getReschedule()) : ?>
+	 <?php $body = $this->render('mail/body', [
+		'model' => $model,
+]); ?>
+    <?php endif; ?>      
+	<?php $content = $this->render('mail/content', [
+		'content' => $body,
+	]); 
+ ?> 
 <?php
-
 Modal::begin([
     'header' => '<h4 class="m-0">Email Preview</h4>',
     'id'=>'lesson-mail-modal',
 ]);
- echo $this->render('mail/preview', [
-		'model' => $model,
+echo $this->render('/mail/_form', [
+	'model' => new EmailForm(),
+	'data' => $data,
+	'emails' => $emails,
+	'subject' => $model->course->program->name . ' lesson reschedule',
+	'content' => $content
 ]);
 Modal::end();
 ?>
@@ -179,7 +203,7 @@ Modal::end();
 		$('#lesson-schedule-modal').modal('show');
 		return false;
 	});
-        $(document).on('beforeSubmit', '#classroom-form', function (e) {
+    $(document).on('beforeSubmit', '#classroom-form', function (e) {
 		$.ajax({
 			url    : $(this).attr('action'),
 			type   : 'post',
@@ -191,6 +215,23 @@ Modal::end();
 			   	{
 					$('#classroom-edit-modal').modal('hide');
 					$.pjax.reload({container: '#lesson-detail', timeout: 6000});
+				}
+			}
+		});
+		return false;
+	});
+	$(document).on('beforeSubmit', '#mail-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   	{
+					$('#lesson-mail-modal').modal('hide');
+					$('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
 				}
 			}
 		});

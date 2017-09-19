@@ -75,9 +75,6 @@ class Lesson extends \yii\db\ActiveRecord
     public $program_name;
     public $showAllReviewLessons = false;
     public $present;
-    public $toEmailAddress;
-    public $subject;
-    public $content;
     public $newDuration;
     public $vacationId;
     public $studentId;
@@ -785,24 +782,6 @@ class Lesson extends \yii\db\ActiveRecord
             }
         }
         return $classroomId;
-    }
-
-    public function sendEmail()
-    {
-        if(!empty($this->toEmailAddress)) {
-            $content = [];
-            foreach($this->toEmailAddress as $email) {
-                $subject                      = $this->subject;
-                $content[] = Yii::$app->mailer->compose('lesson-reschedule', [
-                    'content' => $this->content,
-                ])
-                    ->setFrom(\Yii::$app->params['robotEmail'])
-                    ->setReplyTo($this->course->location->email)
-                    ->setTo($email)
-                    ->setSubject($subject);
-                }
-            return Yii::$app->mailer->sendMultiple($content);
-        }
     }
 
     public function getUnit()

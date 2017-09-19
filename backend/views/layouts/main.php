@@ -11,6 +11,7 @@ use yii\helpers\Url;
 ?>
 <?php $this->beginContent('@backend/views/layouts/common.php'); ?> 
     <div id="notification" style="display: none;" class="alert-danger alert fade in"></div>
+    <div id="success-notification" style="display: none;" class="alert-success alert fade in"></div>
 <?php echo $content ?>
 <?php $this->endContent(); ?>
 <body>

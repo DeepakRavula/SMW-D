@@ -94,6 +94,7 @@ $config = [
 			'private-lesson/*',
             'daily-schedule/*',
 			'text-template/*',
+			'email/*',
 			'print/*',
 			'customer/*',
             // The actions listed here will be allowed to everyone including guests.

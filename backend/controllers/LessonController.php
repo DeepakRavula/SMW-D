@@ -852,30 +852,6 @@ class LessonController extends Controller
         }
     }
 
-    public function actionSendMail($id)
-    {
-        $model      = $this->findModel($id);
-        $lessonRequest = Yii::$app->request->post('Lesson');
-        if($lessonRequest) {
-            $model->toEmailAddress = $lessonRequest['toEmailAddress'];
-            $model->subject = $lessonRequest['subject'];
-            $model->content = $lessonRequest['content'];
-            if($model->sendEmail())
-            {
-                Yii::$app->session->setFlash('alert', [
-                    'options' => ['class' => 'alert-success'],
-                    'body' => ' Mail has been sent successfully',
-                ]);
-            } else {
-                Yii::$app->session->setFlash('alert', [
-                    'options' => ['class' => 'alert-danger'],
-                    'body' => 'The customer doesn\'t have email id',
-                ]);
-            }
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-    }
-
     public function actionModifyClassroom($id, $classroomId)
     {
         $model = Lesson::findOne($id);
