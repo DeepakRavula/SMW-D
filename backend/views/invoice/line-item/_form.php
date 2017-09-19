@@ -44,9 +44,13 @@ use common\models\TaxStatus;
             <?= $form->field($model, 'cost')->textInput();?>
         </div>
         <div class="col-md-3">
-            <?= $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
-                            TaxStatus::find()->all(), 'id', 'name'
-            ), ['prompt' => 'Select', 'id' => 'lineitem-tax_status']);?>
+            <?php if (!$model->isLessonItem()) : ?>
+                <?= $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
+                                TaxStatus::find()->all(), 'id', 'name'
+                ), ['prompt' => 'Select', 'id' => 'lineitem-tax_status']);?>
+            <?php else : ?> 
+                <?= $form->field($model, 'tax_status')->textInput(['readOnly' => true]); ?>
+            <?php endif; ?>
         </div>
         <div class="col-xs-2">
             <?php echo $form->field($model, 'taxPercentage')->textInput(['readonly' => true])->label('Tax (%)') ?>
@@ -120,10 +124,10 @@ use common\models\TaxStatus;
                 data: JSON.stringify({
                     'amount' : $('#amount-line').val(),
                     'taxStatus' : $('#lineitem-tax_status').val(),
-                    'customerDiscount' : $('#customer-value').val(),
-                    'paymentFrequencyDiscount' : $('#payment-frequency-value').val(),
-                    'multiEnrolmentDiscount' : $('#multi-enrolment-discount-value').val(),
-                    'lineItemDiscount' : $('#line-item-value').val(),
+                    'customerDiscount' : $('#customerlineitemdiscount-value').val(),
+                    'paymentFrequencyDiscount' : $('#paymentfrequencylineitemdiscount-value').val(),
+                    'multiEnrolmentDiscount' : $('#enrolmentlineitemdiscount-value').val(),
+                    'lineItemDiscount' : $('#lineitemdiscount-value').val(),
                     'lineItemDiscountType' : $('input[name="LineItemDiscount[valueType]"]').is(":checked")
                 }),
                 success: function(response) {
@@ -136,8 +140,8 @@ use common\models\TaxStatus;
     };
     
     $(document).on("change", '#amount-line, #invoicelineitem-discount, \n\
-        #lineitem-tax_status, #customer-value, #payment-frequency-value, \n\
-        #multi-enrolment-discount-value, #line-item-value', function() {
+        #lineitem-tax_status, #customerlineitemdiscount-value, #paymentfrequencylineitemdiscount-value, \n\
+        #enrolmentlineitemdiscount-value, #lineitemdiscount-value', function() {
         lineItem.computeNetPrice();
         return false;
     });
