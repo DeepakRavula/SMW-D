@@ -26,6 +26,7 @@ class Course extends \yii\db\ActiveRecord
 	const SCENARIO_GROUP_COURSE = 'group-course';
 	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
     const EVENT_CREATE = 'event-create';
+	
     public $lessonStatus;
 	public $rescheduleBeginDate;
 	public $weeksCount;
@@ -313,13 +314,27 @@ class Course extends \yii\db\ActiveRecord
 					if ($this->isProfessionalDevelopmentDay($day)) {
 						continue;
 					}
-					//trigger lesson create event
+					$this->createLesson($this, $day);
 				}
 			}
 		}
 	}
+	
+	public function createLesson($course, $day)
+	{
+		$lesson = new Lesson();
+		$lesson->setAttributes([
+			'courseId' => $course->id,
+			'teacherId' => $course->teacherId,
+			'status' => Lesson::STATUS_SCHEDULED,
+			'date' => $day->format('Y-m-d H:i:s'),
+			'duration' => $course->courseSchedule->duration,
+			'isConfirmed' => false,
+		]);
+		$lesson->save();	
+	}
 
-    public function createExtraLessonEnrolment()
+	public function createExtraLessonEnrolment()
     {
         $enrolment                     = new Enrolment();
         $enrolment->courseId           = $this->id;
