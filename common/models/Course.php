@@ -289,7 +289,6 @@ class Course extends \yii\db\ActiveRecord
 		$lessonLimit = ($this->courseGroup->weeksCount * $lessonsPerWeekCount) / $lessonsPerWeekCount;
 		for($i = 0; $i < $lessonsPerWeekCount; $i++) {
 			$lessonDay = $this->groupCourseSchedule[$i]->day;
-			$duration = $this->groupCourseSchedule[$i]->duration; 
 			$time = $this->groupCourseSchedule[$i]->fromTime; 
 			list($hour, $minute, $second) = explode(':', $this->groupCourseSchedule[$i]->fromTime);  
 			$start = new \DateTime($this->startDate);
@@ -320,7 +319,7 @@ class Course extends \yii\db\ActiveRecord
 						'teacherId' => $this->teacherId,
 						'status' => Lesson::STATUS_SCHEDULED,
 						'date' => $day->format('Y-m-d H:i:s'),
-						'duration' => $duration,
+						'duration' => $this->duration,
 						'isConfirmed' => false,
 						'isDeleted' => false,
 					]);
