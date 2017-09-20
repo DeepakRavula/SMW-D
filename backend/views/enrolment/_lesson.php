@@ -4,6 +4,9 @@ use yii\grid\GridView;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
+use yii\data\ActiveDataProvider;
+use common\models\Lesson;
+use backend\models\EmailForm;
 ?>
 
 <div class="row-fluid p-10">
@@ -34,13 +37,40 @@ use yii\widgets\Pjax;
         ]); ?>
     <?php Pjax::end(); ?> 
 </div>
+<?php 
+	$lessonDataProvider = new ActiveDataProvider([
+		'query' => Lesson::find()
+			->andWhere([
+				'courseId' => $model->course->id,
+				'status' => Lesson::STATUS_SCHEDULED
+			])
+			->isConfirmed()
+			->notDeleted()
+			->orderBy(['lesson.date' => SORT_ASC]),
+			'pagination' => [
+				'pageSize' => 60,
+			 ],
+	]);
+	$body = null;
+	$body = 'Please find the lesson schedule for the program you enrolled on ' . Yii::$app->formatter->asDate($model->course->startDate) ; 
+	$content = $this->render('mail/content', [
+		'toName' => $model->student->customer->publicIdentity,
+		'content' => $body,
+		'model' => $model,
+		'lessonDataProvider' => $lessonDataProvider
+	]); 
+	$emails = !empty($model->student->customer->email) ? $model->student->customer->email : null;
+?>
 <?php
 Modal::begin([
     'header' => '<h4 class="m-0">Email Preview</h4>',
     'id'=>'schedule-mail-modal',
 ]);
- echo $this->render('mail/preview', [
-		'model' => $model,
+echo $this->render('/mail/_form', [
+	'model' => new EmailForm(),
+	'emails' => $emails,
+	'subject' => 'Schedule for ' . $model->student->fullName,
+	'content' => $content
 ]);
 Modal::end();
 ?>
@@ -50,6 +80,23 @@ Modal::end();
 		$('#schedule-mail-modal').modal('show');
 		return false;
   	});
+	$(document).on('beforeSubmit', '#mail-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   	{
+					$('#schedule-mail-modal').modal('hide');
+					$('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+				}
+			}
+		});
+		return false;
+	});
  });
  </script>
 

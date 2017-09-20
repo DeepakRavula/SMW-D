@@ -385,31 +385,6 @@ class EnrolmentController extends Controller
         }
     }
 
-    public function actionSendMail($id)
-    {
-		$model      = $this->findModel($id);
-		$enrolmentRequest = Yii::$app->request->post('Enrolment');
-		if($enrolmentRequest) {
-			$model->toEmailAddress = $enrolmentRequest['toEmailAddress'];
-			$model->subject = $enrolmentRequest['subject'];
-			$model->content = $enrolmentRequest['content'];
-			if($model->sendEmail())
-			{
-				Yii::$app->session->setFlash('alert', [
-					'options' => ['class' => 'alert-success'],
-					'body' => ' Mail has been sent successfully',
-				]);
-			} else {
-				Yii::$app->session->setFlash('alert', [
-					'options' => ['class' => 'alert-danger'],
-					'body' => 'The customer doesn\'t have email id',
-				]);
-			}
-			return $this->redirect(['view', 'id' => $model->id]);
-		}
-		
-        return $this->redirect(['view', 'id' => $model->id]);
-    }
 	public function actionReview($id)
 	{
 		$model = new Lesson();

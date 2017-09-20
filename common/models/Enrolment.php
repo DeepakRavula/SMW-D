@@ -536,24 +536,6 @@ class Enrolment extends \yii\db\ActiveRecord
         }
     }
 
-	public function sendEmail()
-    {
-		if(!empty($this->toEmailAddress)) {
-			$content = [];
-			foreach($this->toEmailAddress as $email) {
-				$subject                      = $this->subject;
-				$content[] = Yii::$app->mailer->compose('lesson-schedule', [
-                	'content' => $this->content,
-            	])
-				->setFrom(\Yii::$app->params['robotEmail'])
-				->setReplyTo($this->course->location->email)
-				->setTo($email)
-				->setSubject($subject);
-			}
-			return Yii::$app->mailer->sendMultiple($content);
-		}
-	}
-
     public function hasExplodedLesson()
     {
         $lessonSplits = Lesson::find()

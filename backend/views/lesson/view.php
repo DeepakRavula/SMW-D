@@ -103,7 +103,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 			</div>
 		</div>	
 </div>
-<?php $data = ArrayHelper::map(User::find()->orderBy('email')->notDeleted()->all(), 'email', 'email'); 
+<?php  
 $students = Student::find()
 	->notDeleted()
 	->joinWith('enrolment')
@@ -127,7 +127,6 @@ Modal::begin([
 ]);
 echo $this->render('/mail/_form', [
 	'model' => new EmailForm(),
-	'data' => $data,
 	'emails' => $emails,
 	'subject' => $model->course->program->name . ' lesson reschedule',
 	'content' => $content

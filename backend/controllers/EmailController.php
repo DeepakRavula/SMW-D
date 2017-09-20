@@ -36,7 +36,7 @@ class EmailController extends Controller
         if($model->load(Yii::$app->request->post())) {
             $content = [];
             foreach($model->to as $email) {
-                $content[] = Yii::$app->mailer->compose('lesson-reschedule', [
+                $content[] = Yii::$app->mailer->compose('content', [
                     'content' => $model->content,
                 ])
 				->setFrom(Yii::$app->params['robotEmail'])

@@ -5,6 +5,8 @@ use yii\bootstrap\ActiveForm;
 use kartik\select2\Select2;
 use yii\imperavi\Widget;
 use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -14,6 +16,7 @@ use yii\helpers\Url;
 <div class="student-form">
 	<?php $model->content = $content;
 	$model->to = $emails;
+	$data = ArrayHelper::map(User::find()->orderBy('email')->notDeleted()->all(), 'email', 'email');
 	?>
 	<?php $form = ActiveForm::begin([
 		'id' => 'mail-form',
