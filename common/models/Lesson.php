@@ -266,12 +266,6 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasMany(LessonSplitUsage::className(), ['extendedLessonId' => 'id']);
     }
 
-	public function getLessonSplitUsage()
-    {
-        return $this->hasOne(LessonSplitUsage::className(), ['lessonSplitId' => 'id'])
-			->via('lessonSplit');
-    }
-
     public function getCourse()
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId']);
@@ -304,8 +298,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getLessonSplitsUsage()
     {
-        return $this->hasMany(LessonSplitUsage::className(), ['lessonId' => 'id'])
-            ->via('lessonSplitsUsage');
+        return $this->hasMany(LessonSplitUsage::className(), ['lessonId' => 'id']);
     }
 
     public function getInvoice()
@@ -376,7 +369,8 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getLessonReschedule()
     {
-        return $this->hasOne(LessonReschedule::className(), ['lessonId' => 'id']);
+        return $this->hasOne(LessonHierarchy::className(), ['lessonId' => 'id'])
+                ->onCondition(['lesson_hierarchy.depth' => true]);
     }
     
     public function getEnrolments()
@@ -407,7 +401,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getReschedule()
     {
-        return $this->hasOne(LessonReschedule::className(), ['rescheduledLessonId' => 'id']);
+        return $this->hasOne(LessonHierarchy::className(), ['childLessonId' => 'id']);
     }
 
     public function getInvoiceLineItem()
@@ -854,47 +848,32 @@ class Lesson extends \yii\db\ActiveRecord
         return !empty($this->invoice);
     }
 
-	public function getPresent()
-	{
-		$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
-		$currentDate = new \DateTime();
-		$result = 'No';
-		if($lessonDate < $currentDate) {
-			$result = 'Yes';
-		}
-		if($this->isMissed()) {
-			$result = 'No';
-		} 
-		return $result;
-	}
-	public function getCreditUsage()
+    public function getPresent()
     {
-		$duration = $this->duration;
-	    $lessonCreditUsage = LessonSplit::find()
-		   ->select(['SEC_TO_TIME( SUM( TIME_TO_SEC(unit))) as unit'])
-		   ->innerJoinWith('lessonSplitUsage')
-		   ->andWhere(['lessonId' => $this->id])
-		   ->one();
-		if(!empty($lessonCreditUsage->unit)) {
-			$originalCredits = new \DateTime($this->duration);
-			$usedCredits = new \DateTime($lessonCreditUsage->unit);
-			$difference = $originalCredits->diff($usedCredits );
-			$duration = $difference ->format('%H:%I');;
-		}
-		return $duration;
-	}
-	public function isHoliday()
+        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
+        $currentDate = new \DateTime();
+        $result = 'No';
+        if($lessonDate < $currentDate) {
+            $result = 'Yes';
+        }
+        if($this->isMissed()) {
+            $result = 'No';
+        } 
+        return $result;
+    }
+    
+    public function isHoliday()
     {
-		$startDate = (new \DateTime($this->course->startDate))->format('Y-m-d');
+        $startDate = (new \DateTime($this->course->startDate))->format('Y-m-d');
        	$holidays = Holiday::find()
 			->andWhere(['>=', 'DATE(date)', $startDate])
-            ->all();
-		$holidayDates = ArrayHelper::getColumn($holidays, function ($element) {
-    		return (new \DateTime($element->date))->format('Y-m-d');
-		});
-		$lessonDate = (new \DateTime($this->date))->format('Y-m-d');
-		return in_array($lessonDate, $holidayDates);
-}
+                        ->all();
+        $holidayDates = ArrayHelper::getColumn($holidays, function ($element) {
+            return (new \DateTime($element->date))->format('Y-m-d');
+        });
+        $lessonDate = (new \DateTime($this->date))->format('Y-m-d');
+        return in_array($lessonDate, $holidayDates);
+    }
 
     public function getSplitedAmount()
     {

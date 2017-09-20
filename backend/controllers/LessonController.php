@@ -31,12 +31,9 @@ use yii\filters\ContentNegotiator;
 use common\models\PaymentCycle;
 use common\models\Invoice;
 use common\models\InvoiceLog;
-use common\models\LessonSplitUsage;
-use common\models\LessonSplit;
 use common\models\timelineEvent\VacationLog;
 use common\models\lesson\BulkReschedule;
 use common\models\lesson\BulkRescheduleLesson;
-use common\models\PaymentCycleLesson;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -124,24 +121,18 @@ class LessonController extends Controller
         $studentDataProvider = new ActiveDataProvider([
             'query' => $groupLessonStudents,
         ]);
-        $splits = LessonSplit::find()
-            ->where(['lessonId' => $id]);
-        $splitDataProvider = new ActiveDataProvider([
-            'query' => $splits,
-        ]);
-		$payments = Payment::find()
+        $payments = Payment::find()
 			->joinWith(['lessonCredit' => function($query) use($id){
 				$query->andWhere(['lesson_payment.lessonId' => $id]);	
 			}]);
-		$paymentsDataProvider = new ActiveDataProvider([
+        $paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments,
         ]);
         return $this->render('view', [
             'model' => $model,
             'noteDataProvider' => $noteDataProvider,
             'studentDataProvider' => $studentDataProvider,
-            'splitDataProvider' => $splitDataProvider,
-			'paymentsDataProvider' => $paymentsDataProvider
+            'paymentsDataProvider' => $paymentsDataProvider
         ]);
     }
 
