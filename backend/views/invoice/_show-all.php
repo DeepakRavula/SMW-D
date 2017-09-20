@@ -16,7 +16,7 @@ $form = ActiveForm::begin([
 	]);
 ?>
 <?php yii\widgets\Pjax::begin() ?>
-<div id="show-all" class="m-r-10">
+<div id="show-all" class="m-r-10 mail-flag">
 <?=
 	$form->field($model, 'isSent')->widget(SwitchInput::classname(),
 		[

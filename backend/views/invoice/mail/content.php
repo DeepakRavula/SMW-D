@@ -1,7 +1,5 @@
 <?php
-use yii\helpers\Html;
 use yii\grid\GridView;
-use common\models\Invoice;
 use common\models\ItemType;
 use common\models\TextTemplate;
 ?>

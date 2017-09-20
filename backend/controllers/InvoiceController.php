@@ -433,31 +433,6 @@ class InvoiceController extends Controller
         $model->save();
     }
 
-    public function actionSendMail($id)
-    {
-        $model      = $this->findModel($id);
-		$invoiceRequest = Yii::$app->request->post('Invoice');
-		if($invoiceRequest) {
-			$model->toEmailAddress = $invoiceRequest['toEmailAddress'];
-			$model->subject = $invoiceRequest['subject'];
-			$model->content = $invoiceRequest['content'];
-			$isMailSend = $model->sendEmail();
-			if($isMailSend)
-			{
-				Yii::$app->session->setFlash('alert', [
-					'options' => ['class' => 'alert-success'],
-					'body' => ' Mail has been send successfully',
-				]);
-			} else {
-				Yii::$app->session->setFlash('alert', [
-					'options' => ['class' => 'alert-danger'],
-					'body' => 'The customer doesn\'t have email id',
-				]);
-			}
-			return $this->redirect(['view', 'id' => $model->id]);
-		}
-    }
-
 	public function actionAllCompletedLessons()
 	{
             $locationId = Yii::$app->session->get('location_id');

@@ -604,27 +604,6 @@ class Invoice extends \yii\db\ActiveRecord
      	return parent::beforeSave($insert);
     }
 
-    public function sendEmail()
-    {
-        if(!empty($this->toEmailAddress)) {
-            $content = [];
-            foreach($this->toEmailAddress as $email) {
-                $subject                      = $this->subject;
-                $content[] = Yii::$app->mailer->compose('generateInvoice', [
-                    'content' => $this->content,
-                ])
-                        ->setFrom(\Yii::$app->params['robotEmail'])
-                        ->setReplyTo($this->location->email)
-                        ->setTo($email)
-                        ->setSubject($subject);
-            }
-            Yii::$app->mailer->sendMultiple($content);
-            $this->isSent = true;
-            $this->save();
-            return $this->isSent;
-        }
-    }
-
     public function canRevert()
     {
         return $this->lineItem && !$this->isReversedInvoice() && !$this->isInvoiceReversed();

@@ -23,6 +23,7 @@ use common\models\User;
 		'action' => Url::to(['email/send'])
 	]);
 	?>
+	<?= $form->field($model, 'id')->hiddenInput(['value' => $id]);?>
 	<div class="row">
         <div class="col-lg-12">
 			<?php

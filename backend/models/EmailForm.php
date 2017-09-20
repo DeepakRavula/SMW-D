@@ -12,6 +12,7 @@ class EmailForm extends Model
 	public $to;
     public $subject;
     public $content;
+	public $id;
 
     /**
      * {@inheritdoc}
@@ -20,6 +21,7 @@ class EmailForm extends Model
     {
         return [
             [['to', 'subject', 'content'], 'required'],
+			[['id'], 'safe']
         ];
     }
 

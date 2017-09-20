@@ -10,6 +10,7 @@ use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 use common\models\Payment;
 use yii\data\ActiveDataProvider;
+use backend\models\EmailForm;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
@@ -58,12 +59,26 @@ if (!empty($lineItem)) {
 
 ?>
 <?php
+$invoiceLineItemsDataProvider = new ActiveDataProvider([
+    'query' => InvoiceLineItem::find()->where(['invoice_id' => $model->id]),
+	'pagination' => false,
+]);
+$content = $this->render('mail/content', [
+		'model' => $model,
+		'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+	]);
+?>
+<?php
 Modal::begin([
     'header' => '<h4 class="m-0">Email Preview</h4>',
     'id'=>'invoice-mail-modal'
 ]);
- echo $this->render('mail/preview', [
-		'model' => $model,
+ echo $this->render('/mail/_form', [
+	'model' => new EmailForm(),
+	'emails' => !empty($model->user->email) ?$model->user->email : null,
+	'subject' => 'Invoice from Arcadia Academy of Music',
+	'content' => $content,
+	'id' => $model->id,
 ]);
 Modal::end();
 ?>
@@ -239,6 +254,25 @@ var payment = {
         });
 		return false;
   	});
+	$(document).on('beforeSubmit', '#mail-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   	{
+					$('#invoice-mail-modal').modal('hide');
+					$('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+					$('.mail-flag').html(response.data);
+					
+				}
+			}
+		});
+		return false;
+	});
 	$(document).on('click', '.payment-cancel-btn', function (e) {
 		$('#payment-modal').modal('hide');
 		return false;

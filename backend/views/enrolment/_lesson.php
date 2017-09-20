@@ -70,7 +70,8 @@ echo $this->render('/mail/_form', [
 	'model' => new EmailForm(),
 	'emails' => $emails,
 	'subject' => 'Schedule for ' . $model->student->fullName,
-	'content' => $content
+	'content' => $content,
+	'id' => null,
 ]);
 Modal::end();
 ?>

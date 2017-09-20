@@ -129,7 +129,8 @@ echo $this->render('/mail/_form', [
 	'model' => new EmailForm(),
 	'emails' => $emails,
 	'subject' => $model->course->program->name . ' lesson reschedule',
-	'content' => $content
+	'content' => $content,
+	'id' => null,
 ]);
 Modal::end();
 ?>
