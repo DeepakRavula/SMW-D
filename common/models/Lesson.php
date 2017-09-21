@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\lesson\BulkRescheduleLesson;
 use common\models\discount\EnrolmentDiscount;
 use yii\helpers\ArrayHelper;
 use valentinek\behaviors\ClosureTable;
@@ -394,14 +395,14 @@ class Lesson extends \yii\db\ActiveRecord
         return !empty($this->enrolments);
         }
 
-    public function isSplitRescheduled()
-    {
-        return !empty($this->reschedule) ? $this->reschedule->lesson->isExploded : false;
-    }
-
     public function getReschedule()
     {
         return $this->hasOne(LessonHierarchy::className(), ['childLessonId' => 'id']);
+    }
+    
+    public function getBulkRescheduleLesson()
+    {
+        return $this->hasOne(BulkRescheduleLesson::className(), ['lessonId' => 'id']);
     }
 
     public function getInvoiceLineItem()
