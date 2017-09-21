@@ -70,5 +70,8 @@ use yii\helpers\Url;
                     });
                     return false;
                 });
+               $(document).on('click', '.classroom-unavailability-cancel-button', function (e) {
+                   $('#classroom-unavailability-modal').modal('hide');
+               });
             });
 </script>

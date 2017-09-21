@@ -54,8 +54,8 @@ use kartik\date\DatePicker;
     <div class="form-group">
         <?php echo Html::submitButton('Save', ['class' => 'btn btn-info']) ?>
         <?php
+        echo Html::a('Cancel', '#', ['class' => 'btn btn-default classroom-unavailability-cancel-button']);
         if (!$model->isNewRecord) {
-            echo Html::a('Cancel', '#', ['class' => 'btn btn-default classroom-unavailability-cancel-button']);
             echo Html::a('Delete', ['delete', 'id' => $model->id], [
                 'id' => 'classroom-unavailability-delete-button',
                 'class' => 'btn btn-danger',
