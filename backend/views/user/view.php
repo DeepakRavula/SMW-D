@@ -10,6 +10,7 @@ use common\models\TeacherRoom;
 use yii\bootstrap\Modal;
 use backend\models\UserForm;
 use common\models\discount\CustomerDiscount;
+use yii\widgets\Pjax;
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 /* @var $this yii\web\View */
@@ -33,10 +34,14 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		]);
 		?>
         <?php if($searchModel->role_name == 'customer'):?>
+		<?php Pjax::Begin([
+			'id' => 'discount-customer'
+		]) ?> 
 		<?= $this->render('customer/_discount', [
 			'model' => $model,
 		]);
 		?>
+		<?php Pjax::end() ?> 
 		<?= $this->render('customer/_opening-balance', [
 			'model' => $model,
             'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
@@ -320,6 +325,9 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 	'model' => $userForm,
 ]);?>
 <?php Modal::end(); ?>
+<?php Pjax::begin([
+	'id' => 'customer-discount-pjax'
+]); ?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0"> Discount</h4>',
     'id' => 'customer-discount-edit-modal',
@@ -329,6 +337,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
     'userModel'=> $model,
 ]);?>
 <?php Modal::end(); ?>
+<?php Pjax::end() ?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Edit</h4>',
     'id' => 'edit-phone-modal',
@@ -381,6 +390,10 @@ $(document).ready(function(){
     });
 	$(document).on('click', '.ob-add-btn', function () {
         $('#ob-modal').modal('show');
+        return false;
+    });
+	$(document).on('click', '.customer-discount-cancel', function () {
+        $('#customer-discount-edit-modal').modal('hide');
         return false;
     });
     $(document).on('click', '.customer-discount-button', function () {
@@ -474,6 +487,25 @@ $(document).ready(function(){
                     $('#customer-merge-modal').modal('show');
                     $('#warning-notification').html('Merging another customer will \n\
                     delete all of their contact data. This can not be undone.').fadeIn();
+                }
+            }
+        });
+        return false;
+    });
+	$(document).on('click', '#customer-discount-delete', function () {
+        $.ajax({
+            url    : '<?= Url::to(['customer-discount/delete', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#customer-discount-edit-modal').modal('hide');
+        			$.pjax.reload({container: '#discount-customer', timeout: 4000}).done(function () {
+    					$.pjax.reload({container: '#customer-discount-pjax', timeout: 6000});
+					});
                 }
             }
         });
@@ -603,8 +635,9 @@ $(document).ready(function(){
             {
                 if(response.status) {
         			$('#customer-discount-edit-modal').modal('hide');
-        			$.pjax.reload({container:"#discount-customer",replace:false,  timeout: 4000});
-                    
+					$.pjax.reload({container: '#discount-customer', timeout: 4000}).done(function () {
+    					$.pjax.reload({container: '#customer-discount-pjax', timeout: 6000});
+					});
                 } else {
                     $('#error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
                 }

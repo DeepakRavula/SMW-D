@@ -26,6 +26,21 @@ use common\models\discount\CustomerDiscount;
 	</div>
 	<div class="form-group">
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+		<?php echo Html::submitButton(Yii::t('backend', 'Cancel'), ['class' => 'btn btn-default customer-discount-cancel', 'name' => 'signup-button']) ?>
+		<?php if(! empty($customerDiscount)) : ?>
+			<?= Html::a('Delete', [
+            'customer-discount/delete', 'id' => $userModel->id
+        ],
+        [
+			'id' => 'customer-discount-delete',
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this payment?',
+                'method' => 'post',
+            ]
+        ]); ?>
+			
+		<?php endif; ?>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>
