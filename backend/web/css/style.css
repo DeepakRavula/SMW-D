@@ -33,6 +33,8 @@ body .user-panel > .info {
     position: relative;
     background: url(/img/select-arrow.png) no-repeat 97% center;
     cursor: pointer;
+	background-color: #3c8dbc;
+    color: white;
 }
 .spinner {
     position: fixed;
