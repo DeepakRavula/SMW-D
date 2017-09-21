@@ -2,6 +2,10 @@
 
 return [
 	'components' => [
+		'backup' => [
+			'class' => 'demi\backup\Component',
+			'backupsFolder' => dirname(dirname(__DIR__)) . '/backups',
+    	],
 		'errorHandler' => [
 			'class' => 'baibaratsky\yii\rollbar\console\ErrorHandler',
 		],
