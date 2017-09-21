@@ -18,9 +18,6 @@ if (empty($discount)) {
 }
 
 ?>
-<?php Pjax::begin([
-	'id' => 'discount-customer'
-]); ?>
 	<?php
 	LteBox::begin([
 		'type' => LteConst::TYPE_DEFAULT,
@@ -35,4 +32,3 @@ if (empty($discount)) {
 		<dd><?= $discount ?></dd>
 	</dl>
 	<?php LteBox::end() ?>
-<?php Pjax::end(); ?>

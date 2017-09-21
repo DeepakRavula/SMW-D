@@ -3,6 +3,8 @@
 namespace common\models\discount;
 
 use common\models\User;
+use common\models\query\CustomerDiscountQuery;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "customer_discount".
@@ -26,6 +28,23 @@ class CustomerDiscount extends \yii\db\ActiveRecord
         return 'customer_discount';
     }
 
+	 public static function find()
+    {
+        return new CustomerDiscountQuery(get_called_class(),parent::find()->where(['customer_discount.isDeleted' => false]));
+    }
+
+	public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+        ];
+    }
     /**
      * @inheritdoc
      */
@@ -34,6 +53,7 @@ class CustomerDiscount extends \yii\db\ActiveRecord
         return [
             [['customerId', 'value'], 'required'],
             [['customerId'], 'integer'],
+			[['isDeleted'], 'safe'],
             [['value'], 'number', 'min' => 0.10, 'max' => 100.00, 'message' => 'Invalid discount'],
         ];
     }
@@ -49,8 +69,12 @@ class CustomerDiscount extends \yii\db\ActiveRecord
             'value' => 'Value',
         ];
     }
-	
-    public function afterSave($insert, $changedAttributes)
+	public function beforeSave($insert) {
+		$this->isDeleted = false;
+		return parent::beforeSave($insert);
+	}
+
+	public function afterSave($insert, $changedAttributes)
     {
          if (!$insert) {
             $this->trigger(self::EVENT_EDIT);

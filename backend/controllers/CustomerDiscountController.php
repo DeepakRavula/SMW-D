@@ -29,7 +29,7 @@ class CustomerDiscountController extends Controller
             ],
 			[
 				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['create'],
+				'only' => ['create', 'delete'],
 				'formats' => [
 					'application/json' => Response::FORMAT_JSON,
 				],
@@ -122,11 +122,14 @@ class CustomerDiscountController extends Controller
      * @param string $id
      * @return mixed
      */
-    public function actionDelete($id)
+	public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+		$customerDiscount = CustomerDiscount::findOne(['customerId' => $id]);
+        $customerDiscount->delete();
+		
+		return [
+			'status' => true,
+		];
     }
 
     /**
