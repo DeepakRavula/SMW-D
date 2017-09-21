@@ -320,9 +320,7 @@ class EnrolmentController extends Controller
 					'status' => Lesson::STATUS_SCHEDULED,
 					'type' => Lesson::TYPE_REGULAR
 				])
-				->joinWith(['reschedule' => function($query) {
-					$query->joinWith('bulkRescheduleLesson');
-				}])
+				->joinWith('bulkRescheduleLesson')
 				->isConfirmed()
 				->between($startDate, $endDate)
 				->all();

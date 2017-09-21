@@ -99,7 +99,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function notRescheduled()
     {
         $this->joinWith(['lessonReschedule' => function($query) {
-                $query->andWhere(['lesson_reschedule.id' => null]);
+            $query->andWhere(['lesson_hierarchy.lessonId' => null]);
         }]);
         return $this;
     }

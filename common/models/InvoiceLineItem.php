@@ -340,11 +340,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return (int) $this->item_type_id === (int) ItemType::TYPE_PRIVATE_LESSON;
     }
 
-    public function isLessonSplit()
-    {
-        return (int) $this->item_type_id === (int) ItemType::TYPE_LESSON_SPLIT;
-    }
-
     public function isGroupLesson()
     {
         return (int) $this->item_type_id === (int) ItemType::TYPE_GROUP_LESSON;
@@ -435,16 +430,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 		return $total;
     }
 	
-    public function getLessonCreditAmount($splitId)
-    {
-        $lesson = Lesson::find()
-				->isConfirmed()
-                    ->joinWith('lessonSplits')
-                    ->andWhere(['lesson_split.id' => $splitId])
-                    ->one();
-        return $lesson->enrolment->program->rate * $this->unit;
-    }
-
     public function isExtraLesson()
     {
         return (int) $this->item_type_id === (int) ItemType::TYPE_EXTRA_LESSON;
@@ -453,11 +438,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function isPaymentCycleLesson()
     {
         return (int) $this->item_type_id === (int) ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
-    }
-
-    public function isPaymentCycleLessonSplit()
-    {
-        return (int) $this->item_type_id === (int) ItemType::TYPE_LESSON_SPLIT;
     }
 
     public function getLessonCreditUnit($lesson)
