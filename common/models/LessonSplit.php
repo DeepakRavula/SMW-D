@@ -71,9 +71,8 @@ class LessonSplit extends \yii\db\ActiveRecord
     public function afterSave($insert,$changedAttributes)
     {
         if ($insert) {
-            if ($this->lesson->hasProFormaInvoice()) {
-                $this->lesson->proFormaInvoice->removeLessonItem($this->lessonId);
-                $this->lesson->proFormaInvoice->addLessonSplitItem($this->id);
+            if ($this->lesson->paymentCycle->hasProFormaInvoice()) {
+                $this->lesson->paymentCycle->proFormaInvoice->addLessonSplitItem($this->id);
             }
         }
 

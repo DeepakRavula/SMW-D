@@ -52,4 +52,9 @@ class InvoiceItemPaymentCycleLessonSplit extends \yii\db\ActiveRecord
     {
         return new \common\models\query\InvoiceItemPaymentCycleLessonSplitQuery(get_called_class());
     }
+
+    public function getLessonSplit()
+    {
+        return $this->hasOne(LessonSplit::className(), ['id' => 'lessonSplitId']);
+    }
 }

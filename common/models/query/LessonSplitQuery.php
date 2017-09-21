@@ -33,4 +33,22 @@ class LessonSplitQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+    public function unUsedSplits($courseId, $locationId)
+    {
+        return $this->joinWith(['lesson' => function ($query) use ($locationId, $courseId) {
+                        $query->joinWith(['lessonReschedule' => function($query) {
+                            $query->andWhere(['lesson_reschedule.lessonId' => null]);
+                        }]);
+                        $query->location($locationId)
+                            ->andWhere(['lesson.courseId' => $courseId]);
+                    }])
+                    ->joinWith(['privateLesson' => function ($query) {
+                        $query->isNotExpired();
+                    }])
+                    ->joinWith('lessonSplitUsage')
+                    ->andWhere(['lesson_split_usage.lessonSplitId' => null])
+                    ->orderBy(['private_lesson.expiryDate' => SORT_ASC])
+                    ->groupBy(['lesson_split.lessonId']);
+    }
 }

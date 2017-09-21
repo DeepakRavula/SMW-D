@@ -435,16 +435,12 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function hasExplodedLesson()
     {
-        $lessons = Lesson::find()
-            ->andWhere(['lesson.courseId' => $this->courseId])
-            ->joinWith(['lessonSplit' => function ($query) {
-                $query->joinWith(['lessonSplitUsage' => function ($query) {
-                    $query->where(['lessonSplitId' => null]);
-                }]);
-                $query->andWhere(['NOT', ['lesson_split.lessonId' => null]]);
-            }])
-            ->one();
+        $courseId = $this->courseId;
+        $locationId = $this->course->locationId;
+        $lessonSplits = LessonSplit::find()
+                    ->unUsedSplits($courseId, $locationId)
+                    ->all();
 
-        return !empty($lessons);
+        return !empty($lessonSplits);
     }
 }

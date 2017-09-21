@@ -198,13 +198,13 @@ class Lesson extends \yii\db\ActiveRecord
     public function getFullDuration()
     {
         $duration = $this->duration;
-        foreach ($this->extendedLessons as $extendedLesson) {
-            $additionalDuration = new \DateTime($extendedLesson->lessonSplit->unit);
-            $lessonDuration = new \DateTime($duration);
-            $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
-                . 'H' . $additionalDuration->format('i') . 'M'));
-            $duration = $lessonDuration->format('H:i:s');
-        }
+            foreach ($this->extendedLessons as $extendedLesson) {
+                $additionalDuration = new \DateTime($extendedLesson->lessonSplit->unit);
+                $lessonDuration = new \DateTime($duration);
+                $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
+                    . 'H' . $additionalDuration->format('i') . 'M'));
+                $duration = $lessonDuration->format('H:i:s');
+            }
         return $duration;
     }
 
@@ -268,17 +268,33 @@ class Lesson extends \yii\db\ActiveRecord
     public function getPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
-                    ->viaTable('payment_cycle_lesson', ['lessonId' => 'id']);
+                    ->via('paymentCycleLesson');
     }
 
     public function getPaymentCycleLesson()
     {
-        return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id']);
+        if ($this->isSplitRescheduled()) {
+            return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'lessonId'])
+                ->via('reschedule');
+        } else {
+            return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id']);
+        }
     }
 
     public function getLessonSplits()
     {
-        return $this->hasMany(LessonSplit::className(), ['lessonId' => 'id']);
+        if ($this->isRescheduled()) {
+            return $this->hasMany(LessonSplit::className(), ['lessonId' => 'lessonId'])
+                ->via('reschedule');
+        } else {
+            return $this->hasMany(LessonSplit::className(), ['lessonId' => 'id']);
+        }
+    }
+
+    public function getLessonSplitsUsage()
+    {
+        return $this->hasMany(LessonSplitUsage::className(), ['lessonId' => 'id'])
+            ->via('lessonSplitsUsage');
     }
 
     public function getInvoice()
@@ -292,7 +308,12 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasMany(InvoiceItemPaymentCycleLesson::className(), ['paymentCycleLessonId' => 'id'])
             ->via('paymentCycleLesson');
+    }
 
+    public function getInvoiceItemPaymentCycleLessonSplits()
+    {
+        return $this->hasMany(InvoiceItemPaymentCycleLessonSplit::className(), ['lessonSplitId' => 'id'])
+            ->via('lessonSplits');
     }
 
     public function getInvoiceLineItems()
@@ -309,7 +330,11 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getProFormaLineItems()
     {
-        if (!$this->isExtra()) {
+        if ($this->isExploded() || $this->isSplitRescheduled()) {
+            return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+                ->via('invoiceItemPaymentCycleLessonSplits')
+                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_LESSON_SPLIT]);
+        } else if (!$this->isExtra()) {
             return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
                 ->via('invoiceItemPaymentCycleLessons')
                     ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
@@ -330,6 +355,11 @@ class Lesson extends \yii\db\ActiveRecord
     public function getLessonReschedule()
     {
         return $this->hasOne(LessonReschedule::className(), ['lessonId' => 'id']);
+    }
+
+    public function isSplitRescheduled()
+    {
+        return !empty($this->reschedule) ? $this->reschedule->lesson->isExploded() : false;
     }
 
     public function getReschedule()
@@ -361,7 +391,12 @@ class Lesson extends \yii\db\ActiveRecord
     public function getProFormaLineItem()
     {
         $lessonId = $this->id;
-        $paymentCycleLessonId = $this->paymentCycleLesson->id;
+        if (!$this->isSplitRescheduled() && !$this->isExploded()) {
+            $paymentCycleLessonId = $this->paymentCycleLesson->id;
+        }
+        if ($this->isSplitRescheduled()) {
+            $lessonId = $this->reschedule->lesson->id;
+        }
         if ($this->hasProFormaInvoice()) {
             if ($this->isExtra()) {
                 return InvoiceLineItem::find()
@@ -370,6 +405,26 @@ class Lesson extends \yii\db\ActiveRecord
                         $query->where(['lessonId' => $lessonId]);
                     }])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON])
+                    ->one();
+            } else if ($this->isSplitRescheduled()) {
+                return InvoiceLineItem::find()
+                    ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
+                    ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_LESSON_SPLIT])
+                    ->joinWith(['lineItemPaymentCycleLessonSplit' => function ($query) use ($lessonId) {
+                        $query->joinWith(['lessonSplit' => function ($query) use ($lessonId) {
+                            $query->where(['lessonId' => $lessonId]);
+                        }]);
+                    }])
+                    ->all();
+            } else if ($this->isExploded()) {
+                return InvoiceLineItem::find()
+                    ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
+                    ->joinWith(['lineItemPaymentCycleLessonSplit' => function ($query) use ($lessonId) {
+                        $query->joinWith(['lessonSplit' => function ($query) use ($lessonId) {
+                            $query->where(['lessonId' => $lessonId]);
+                        }]);
+                    }])
+                    ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_LESSON_SPLIT])
                     ->one();
             } else {
                 return InvoiceLineItem::find()
@@ -547,7 +602,7 @@ class Lesson extends \yii\db\ActiveRecord
         $lesson->isDeleted = false;
 
         return $lesson->validate() && $this->enrolment->hasExplodedLesson()
-            && !$this->isUnscheduled();
+            && !$this->isExploded();
     }
 
     public function getRootLesson()
@@ -700,7 +755,11 @@ class Lesson extends \yii\db\ActiveRecord
         $invoice->addLineItem($this);
         $invoice->save();
         if ($this->hasProFormaInvoice()) {
-            $netPrice = $this->proFormaLineItem->netPrice;
+            if ($this->isSplitRescheduled()) {
+                $netPrice = $invoice->total;
+            } else {
+                $netPrice = $this->proFormaLineItem->netPrice;
+            }
             if ($this->proFormaInvoice->proFormaCredit >= $netPrice) {
                 $invoice->addPayment($this->proFormaInvoice, $netPrice);
             }

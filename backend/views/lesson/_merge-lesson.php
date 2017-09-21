@@ -10,22 +10,9 @@ use yii\helpers\Html;
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <?php
 $courseId = $model->courseId;
-$locationId = Yii::$app->session->get('location_id');
+$locationId = $model->course->locationId;
 $lessons = LessonSplit::find()
-        ->joinWith(['lesson' => function ($query) use ($locationId, $courseId) {
-			$query->joinWith(['lessonReschedule' => function($query) {
-				$query->andWhere(['lesson_reschedule.lessonId' => null]);
-			}]);
-            $query->location($locationId)
-                ->andWhere(['lesson.courseId' => $courseId]);
-        }])
-        ->joinWith(['privateLesson' => function ($query) {
-            $query->isNotExpired();
-        }])
-	->joinWith('lessonSplitUsage')
-        ->andWhere(['lesson_split_usage.lessonSplitId' => null])
-        ->orderBy(['private_lesson.expiryDate' => SORT_ASC])
-        ->groupBy(['lesson_split.lessonId']);
+        ->unUsedSplits($courseId, $locationId);
 $splitLessonDataProvider = new ActiveDataProvider([
 	'query' => $lessons,
 	'pagination' => false
