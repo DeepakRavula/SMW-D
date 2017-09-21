@@ -28,7 +28,17 @@ $config = [
 		'request' => [
 			'enableCsrfValidation' => false,
         ],
-    ],
+		'backup' => [
+			'class' => 'demi\backup\Component',
+			// The directory for storing backups files
+			'backupsFolder' => dirname(dirname(__DIR__)) . '/backups', // <project-root>/backups
+			// Directories that will be added to backup
+//			'directories' => [
+//				'images' => '@frontend/web/images',
+//				'uploads' => '@backend/uploads',
+//			],
+    	]
+	],
     'as locale' => [
         'class' => 'common\behaviors\LocaleBehavior',
         'enablePreferredLanguage' => true,
