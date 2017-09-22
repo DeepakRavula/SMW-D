@@ -38,6 +38,10 @@ use common\models\User;
 			?>
         </div>
 	</div>
+    <div id="spinner" class="spinner col-md-4 col-md-offset-4" style="display:none;">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+<span class="sr-only">Loading...</span>
+    </div>
 	<div class="row">
         <div class="col-lg-12">
 			<?php echo $form->field($model, 'subject')->textInput(['value' => $subject]) ?>
@@ -63,9 +67,16 @@ use common\models\User;
 	</div>
     <div class="row-fluid">
 		<div class="form-group col-lg-6">
-<?php echo Html::submitButton(Yii::t('backend', 'Send'), ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+<?php echo Html::submitButton(Yii::t('backend', 'Send'), ['class' => 'btn btn-info', 'name' => 'signup-button' , 'id' =>'mail-send-button' ,]) ?>
 		</div>
 		<div class="clearfix"></div>
     </div>
 <?php ActiveForm::end(); ?>
 </div>
+<script>
+$(document).ready(function() {
+     $(document).on('click', '#mail-send-button', function (e) {
+        $('#spinner').show();
+    });
+    });
+</script>
