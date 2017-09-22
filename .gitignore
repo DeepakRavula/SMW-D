@@ -4,6 +4,8 @@
 
 # composer
 /vendor
+#db backup
+/backups
 composer.phar
 installer
 

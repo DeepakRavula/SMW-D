@@ -28,7 +28,7 @@ $config = [
 		'request' => [
 			'enableCsrfValidation' => false,
         ],
-    ],
+	],
     'as locale' => [
         'class' => 'common\behaviors\LocaleBehavior',
         'enablePreferredLanguage' => true,

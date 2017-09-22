@@ -100,7 +100,8 @@
     "league/period": "^3.3",
     "nesbot/carbon": "^1.22",
     "valentinek/yii2-closure-table-behavior": "*",
-    "yiister/yii2-adminlte": "~1.0"
+    "yiister/yii2-adminlte": "~1.0",
+    "demi/backup": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",
