@@ -8,57 +8,10 @@ use yii\helpers\Url;
 $this->title = 'Dashboard';
 ?>
 <div class="dashboard-search form-inline">
-	<?php $total = $payments - ($invoiceTaxTotal + $royaltyPayment); ?>
 	<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
 <?php yii\widgets\Pjax::begin(['id' => 'dashboard']); ?>
 
-<div class="row">
-	<div class="col-md-3 col-sm-6 col-xs-12">
-		<?php
-		echo \insolita\wgadminlte\LteInfoBox::widget([
-			'bgIconColor' => '',
-			'bgColor' => 'maroon',
-			'number' => !empty($invoiceTotal) ? $invoiceTotal : 0,
-			'text' => 'Invoice Total',
-			'icon' => 'fa fa-file-text-o',
-		])
-		?>
-	</div>
-	<div class="col-md-3 col-sm-6 col-xs-12">
-		<?php
-		echo \insolita\wgadminlte\LteInfoBox::widget([
-			'bgIconColor' => '',
-			'bgColor' => 'aqua',
-			'number' => !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0,
-			'text' => 'Invoice Tax Total',
-			'icon' => 'fa fa-bookmark-o',
-		])
-		?>
-	</div>
-	<div class="col-md-3 col-sm-6 col-xs-12">
-		<?php
-		echo \insolita\wgadminlte\LteInfoBox::widget([
-			'bgIconColor' => '',
-			'bgColor' => 'green',
-			'number' => !empty($enrolmentGainCount) ? $enrolmentGainCount : 0,
-			'text' => 'Enrolment Gains',
-			'icon' => 'fa fa-user-plus',
-		])
-		?>
-	</div>
-	<div class="col-md-3 col-sm-6 col-xs-12">
-		<?php
-		echo \insolita\wgadminlte\LteInfoBox::widget([
-			'bgIconColor' => '',
-			'bgColor' => 'red',
-			'number' => !empty($enrolmentLossCount) ? $enrolmentLossCount : 0,
-			'text' => 'Enrolment Losses',
-			'icon' => 'fa fa-user-times',
-		])
-		?>
-	</div>	
-</div>
 <div class="row">
 	<div class="col-md-3 col-sm-6 col-xs-12">
 		<?php
@@ -93,55 +46,20 @@ $this->title = 'Dashboard';
 		])
 		?>
 	</div>
-</div>
-<div class="row">
 	<div class="col-md-3 col-sm-6 col-xs-12">
 		<?php
 		echo \insolita\wgadminlte\LteInfoBox::widget([
 			'bgIconColor' => '',
-			'bgColor' => 'teal',
-			'number' => !empty($payments) ? $payments : 0,
-			'text' => 'Payment Received',
-			'icon' => 'fa fa-cart-plus',
+			'bgColor' => 'green',
+			'number' => $lessonsCount,
+			'text' => 'Lessons',
+			'icon' => 'fa fa-music',
 		])
 		?>
 	</div>
-	<div class="col-md-3 col-sm-6 col-xs-12">
-<?php
-echo \insolita\wgadminlte\LteInfoBox::widget([
-	'bgIconColor' => '',
-	'bgColor' => 'fuchsia',
-	'number' => !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0,
-	'text' => 'Tax Collected',
-	'icon' => 'fa fa-money',
-])
-?>
-	</div>
-	<div class="col-md-3 col-sm-6 col-xs-12">
-<?php
-echo \insolita\wgadminlte\LteInfoBox::widget([
-	'bgIconColor' => '',
-	'bgColor' => 'purple',
-	'number' => !empty($royaltyPayment) ? $royaltyPayment : 0,
-	'text' => 'Royalty Free Items',
-	'icon' => 'fa fa-flag',
-])
-?>
-	</div>
-	<div class="col-md-3 col-sm-6 col-xs-12">
-<?php
-echo \insolita\wgadminlte\LteInfoBox::widget([
-	'bgIconColor' => '',
-	'bgColor' => 'navy',
-	'number' => !empty($total) ? $total : 0,
-	'text' => 'Total',
-	'icon' => 'fa fa-usd',
-])
-?>
-	</div>
 </div>
 <div class="row">
-	<div class="col-md-7">
+	<div class="col-md-12">
 		<div class="box box-success">
             <div class="box-header with-border">
 				<h3 class="box-title">Monthly Revenue</h3>
@@ -156,26 +74,26 @@ echo \insolita\wgadminlte\LteInfoBox::widget([
 					<div class="col-md-12 col-sm-8">
 						<div class="pad">
 							<!-- Map will be created here -->
-<?=
-Highcharts::widget([
-	'options' => [
-		'title' => ['text' => ''],
-		'xAxis' => [
-			'categories' => Dashboard::previousMonths(),
-		],
-		'yAxis' => [
-			'title' => ['text' => 'Income'],
-		],
-		'series' => [
-				[
-				'name' => 'Month',
-				'data' => Dashboard::income(),
-				'color' => '#E12E2B'
-			],
-		],
-	],
-]);
-?>	
+							<?=
+							Highcharts::widget([
+								'options' => [
+									'title' => ['text' => ''],
+									'xAxis' => [
+										'categories' => Dashboard::previousMonths(),
+									],
+									'yAxis' => [
+										'title' => ['text' => 'Income'],
+									],
+									'series' => [
+										[
+											'name' => 'Month',
+											'data' => Dashboard::income(),
+											'color' => '#E12E2B'
+										],
+									],
+								],
+							]);
+							?>	
 						</div>
 					</div>
 				</div>
@@ -183,7 +101,106 @@ Highcharts::widget([
             <!-- /.box-body -->
 		</div>
 	</div>
-	<div class="col-md-5">
+</div>
+<div class="row">
+
+	<div class="col-md-4">
+		<div class="box box-success">
+            <div class="box-header with-border">
+				<h3 class="box-title">Enrolment Gains (<?= $enrolmentGainCount; ?>)</h3>
+				<div class="box-tools pull-right">
+					<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+					</button>
+				</div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+				<div class="row">
+					<div class="col-md-12 col-sm-8">
+						<div class="pad">
+							<!-- Map will be created here -->
+							<?=
+							Highcharts::widget([
+								'options' => [
+									'title' => ['text' => ''],
+									'plotOptions' => [
+										'pie' => [
+											'showInLegend' => true,
+											'size' => '80%',
+											'cursor' => 'pointer',
+											'dataLabels' => [
+												'enabled' => false,
+												'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
+											],
+										],
+									],
+									'series' => [
+										[
+											'type' => 'pie',
+											'name' => 'Gain Count',
+											'data' => $enrolmentGains
+										],
+									],
+								],
+							]);
+							?>
+						</div>
+					</div>
+				</div>
+            </div>
+            <!-- /.box-body -->
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="box box-success">
+            <div class="box-header with-border">
+				<h3 class="box-title">Enrolment Losses (<?= $enrolmentLossCount; ?>)</h3>
+				<div class="box-tools pull-right">
+					<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+					</button>
+				</div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+				<div class="row">
+					<div class="col-md-12 col-sm-8">
+						<div class="pad">
+							<!-- Map will be created here -->
+							<div class="m-t-20">
+								<?=
+								Highcharts::widget([
+									'options' => [
+										'title' => ['text' => ''],
+										'plotOptions' => [
+											'pie' => [
+												'showInLegend' => true,
+												'size' => '80%',
+												'cursor' => 'pointer',
+												'dataLabels' => [
+													'enabled' => false,
+													'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
+												],
+											],
+										],
+										'series' => [
+											[
+												'type' => 'pie',
+												'name' => 'Loss Count',
+												'data' => $enrolmentLosses
+											],
+										],
+									],
+								]);
+								?>
+							</div>
+						</div>
+					</div>
+				</div>
+            </div>
+            <!-- /.box-body -->
+		</div>
+	</div>
+	<div class="col-md-4">
 		<div class="box box-success">
             <div class="box-header with-border">
 				<h3 class="box-title">Instruction Hours</h3>
@@ -215,7 +232,7 @@ Highcharts::widget([
 											],
 										],
 										'series' => [
-												[
+											[
 												'type' => 'pie',
 												'name' => 'Hours',
 												'data' => $completedPrograms
@@ -224,116 +241,13 @@ Highcharts::widget([
 									],
 								]);
 								?>
-<?php endif; ?>	
+							<?php endif; ?>	
 						</div>
 					</div>
 				</div>
             </div>
             <!-- /.box-body -->
-		</div>
-	</div>
-	<!-- /.col -->
-</div>
-<div class="row">
-	<div class="col-md-7">
-		<div class="box box-success">
-            <div class="box-header with-border">
-				<h3 class="box-title">Enrolment Gains</h3>
-				<div class="box-tools pull-right">
-					<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-					</button>
-				</div>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body no-padding">
-				<div class="row">
-					<div class="col-md-12 col-sm-8">
-						<div class="pad">
-							<!-- Map will be created here -->
-							<?php if ($enrolmentGains) : ?>
-								<?=
-								Highcharts::widget([
-									'options' => [
-										'title' => ['text' => ''],
-										'plotOptions' => [
-											'pie' => [
-												'showInLegend' => true,
-												'size' => '80%',
-												'cursor' => 'pointer',
-												'dataLabels' => [
-													'enabled' => false,
-													'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
-												],
-											],
-										],
-										'series' => [
-												[
-												'type' => 'pie',
-												'name' => 'Gain Count',
-												'data' => $enrolmentGains
-											],
-										],
-									],
-								]);
-								?>
-							<?php endif; ?>
-						</div>
-					</div>
-				</div>
-            </div>
-            <!-- /.box-body -->
-		</div>
-	</div>
-	<div class="col-md-5">
-		<div class="box box-success">
-            <div class="box-header with-border">
-				<h3 class="box-title">Enrolment Losses</h3>
-				<div class="box-tools pull-right">
-					<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-					</button>
-				</div>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body no-padding">
-				<div class="row">
-					<div class="col-md-12 col-sm-8">
-						<div class="pad">
-							<!-- Map will be created here -->
-								<?php if (!empty($enrolmentLosses)) : ?>
-								<div class="m-t-20">
-									<?=
-									Highcharts::widget([
-										'options' => [
-											'title' => ['text' => ''],
-											'plotOptions' => [
-												'pie' => [
-													'showInLegend' => true,
-													'size' => '80%',
-													'cursor' => 'pointer',
-													'dataLabels' => [
-														'enabled' => false,
-														'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
-													],
-												],
-											],
-											'series' => [
-													[
-													'type' => 'pie',
-													'name' => 'Loss Count',
-													'data' => $enrolmentLosses
-												],
-											],
-										],
-									]);
-									?>
-								</div>
-<?php endif; ?>
-						</div>
-					</div>
-				</div>
-            </div>
-            <!-- /.box-body -->
-		</div>
+		</div>	
 	</div>
 	<!-- /.col -->
 </div>

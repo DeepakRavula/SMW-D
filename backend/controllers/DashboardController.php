@@ -42,17 +42,7 @@ class DashboardController extends \yii\web\Controller
             $toDate = $currentDate;
         }
         $locationId = Yii::$app->session->get('location_id');
-        $invoiceTotal = Invoice::find()
-                        ->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
-                        ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-						->notDeleted()
-                        ->sum('subTotal');
-        $invoiceTaxTotal = Invoice::find()
-                        ->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
-						->andWhere(['status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT]])
-                        ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-						->notDeleted()
-                        ->sum('tax');
+        
         $enrolments = Enrolment::find()
 			->joinWith(['course' => function($query) use($locationId, $searchModel) {
 				$query->joinWith(['program' => function($query) {
@@ -74,23 +64,14 @@ class DashboardController extends \yii\web\Controller
 				->between($searchModel->fromDate, $searchModel->toDate);
 			}])
             ->count('studentId');
-
-        $payments = Payment::find()
-                    ->joinWith(['invoice i' => function ($query) use ($locationId) {
-                        $query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
-                    }])
-                    ->andWhere(['between', 'payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-                    ->sum('payment.amount');
-
-        $royaltyPayment = InvoiceLineItem::find()
-                    ->joinWith(['invoice i' => function ($query) use ($locationId) {
-                        $query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
-                    }])
-					->andWhere(['status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT]])
-                    ->andWhere(['between', 'i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
-					->royaltyFree()
-                    ->sum('invoice_line_item.amount');
-
+		$lessonsCount = Lesson::find()
+			->isConfirmed()
+			->notDeleted()
+			->location($locationId)
+			->andWhere(['NOT IN', 'lesson.status', Lesson::STATUS_CANCELED])
+			->between($searchModel->fromDate, $searchModel->toDate)
+			->count();
+		
         $students = Student::find()
             ->notDeleted()
             ->joinWith(['enrolment' => function ($query) use ($locationId, $searchModel) {
@@ -182,18 +163,15 @@ class DashboardController extends \yii\web\Controller
             ->count();
         return $this->render('index', [
 			'searchModel' => $searchModel,
-			'invoiceTotal' => $invoiceTotal,
-			'invoiceTaxTotal' => $invoiceTaxTotal,
 			'enrolments' => $enrolments,
 			'groupEnrolments' => $groupEnrolments,
-			'payments' => $payments,
 			'students' => $students,
 			'completedPrograms' => $completedPrograms,
-			'royaltyPayment' => $royaltyPayment,
 			'enrolmentGains' => $enrolmentGains,	
 			'enrolmentLosses' => $enrolmentLosses,	
 			'enrolmentGainCount' => $enrolmentGainCount,
 			'enrolmentLossCount' => $enrolmentLossCount,
+			'lessonsCount' => $lessonsCount
 		]);
     }
 }
