@@ -5,6 +5,8 @@ return [
 		'backup' => [
 			'class' => 'demi\backup\Component',
 			'backupsFolder' => dirname(dirname(__DIR__)) . '/backups',
+			'backupFilename' => 'Y_m_d-H_i_s',
+			'expireTime' => 700000,
     	],
 		'errorHandler' => [
 			'class' => 'baibaratsky\yii\rollbar\console\ErrorHandler',
