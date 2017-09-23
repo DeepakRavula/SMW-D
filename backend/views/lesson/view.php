@@ -230,7 +230,8 @@ Modal::end();
 			{
 			   if(response.status)
 			   	{
-					$('#lesson-mail-modal').modal('hide');
+                    $('#spinner').hide();		
+                    $('#lesson-mail-modal').modal('hide');
 					$('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
 				}
 			}
