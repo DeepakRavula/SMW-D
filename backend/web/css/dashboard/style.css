@@ -5,5 +5,22 @@
 	width: 60px;
 }
 .dashboard-search {
-	padding-bottom: 15px;
+    padding-bottom: 15px;
+}
+.dashboard-header-search {
+    margin-top: -12px;
+    margin-left:-30px;
+}
+.highcharts-root {
+    max-height: 240px;
+}
+.highcharts-container {
+    max-width: 2150px;
+}
+.highcharts-background {
+    max-width: 2150px;
+}
+#w4 {
+    max-width: 2150px;
+    max-height: 250px;
 }
