@@ -3,17 +3,31 @@
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use common\models\User;
+use kartik\switchinput\SwitchInput;
 
 ?>
 
 <div class="col-md-12 p-b-20">
     <div class="row">
         <div class="pull-right">
-        <?= Html::a('<i class="fa fa-print"></i>', ['print/customer-account', 'id' => $userModel->id], ['id' => 'account-print', 'target' => '_blank']) ?>
+            <div class="col-md-9 p-b-20">
+                <?= SwitchInput::widget([
+                    'name'=>'account', 
+                    'pluginOptions' => [
+                        'onText' => 'Customer View',
+                        'offText' => 'Company View',
+                        'size' => 'mini'
+                    ]
+                ]); ?>
+            </div>
+            <div class="col-md-3 p-b-20">
+                <?= Html::a('<i class="fa fa-print"></i>', null, ['id' => 'account-print', 'target' => '_blank']) ?>
+            </div>
         </div>
-        </div>   
+    </div>   
     <div>
- <?php
+    <?php
     yii\widgets\Pjax::begin([
         'id' => 'accounts-customer',
         'timeout' => 6000,
@@ -54,7 +68,7 @@ use yii\helpers\Url;
                 'contentOptions' => ['class' => 'text-right'],
                 'label' => 'Credit',
                 'value' => function ($data) {
-                    return !empty($data->credit) ? Yii::$app->formatter->asCurrency($data->credit) : null;
+                    return !empty($data->credit) ? Yii::$app->formatter->asCurrency(abs($data->credit)) : null;
                 }
             ],
                 [
@@ -74,3 +88,25 @@ use yii\helpers\Url;
 </div>
 <?php \yii\widgets\Pjax::end(); ?>
 
+<script>
+    $('input[name="account"]').on('switchChange.bootstrapSwitch', function() {
+        var accountView = $('input[name="account"]').is(":checked");
+        var roleName = "<?php echo User::ROLE_CUSTOMER; ?>";
+        var params = $.param({
+            'UserSearch[accountView]': (accountView | 0),
+            'UserSearch[role_name]': roleName
+        });
+        var url = "<?php echo Url::to(['user/view', 'id' => $userModel->id]); ?>&" + params;
+        $.pjax.reload({ url:url, container:"#accounts-customer", replace:false, timeout: 4000 });  //Reload GridView
+        return false;
+    });
+    
+    $(document).on('click', '#account-print', function () {
+        var accountView = $('input[name="account"]').is(":checked");
+        var params = $.param({
+            'accountView': (accountView | 0)
+        });
+        var url = '<?php echo Url::to(['print/account-view', 'id' => $userModel->id]); ?>&' + params;
+        window.open(url, '_blank');
+    });
+</script>
