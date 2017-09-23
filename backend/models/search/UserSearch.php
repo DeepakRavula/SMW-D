@@ -12,22 +12,34 @@ use common\models\Invoice;
  */
 class UserSearch extends User
 {
-	const STATUS_ALL = 3;
-    
+    const STATUS_ALL = 3;
+        
+    private $accountView;
     public $role_name;
     public $lastname;
     public $firstname;
     public $query;
     public $showAllCustomers;
-	public $showAllTeachers;
+    public $showAllTeachers;
+    
+    public function getAccountView()
+    {
+        return $this->accountView;
+    }
+
+    public function setAccountView($value)
+    {
+        $this->accountView = trim($value);
+    }
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'status', 'created_at', 'updated_at', 'logged_at'], 'integer'],
-            [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname', 'lastname', 'query', 'showAllCustomers', 'showAllTeachers'], 'safe'],
+            [['id', 'status', 'created_at', 'updated_at', 'logged_at', 'accountView'], 'integer'],
+            [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname', 
+                'lastname', 'query', 'showAllCustomers', 'showAllTeachers', 'accountView'], 'safe'],
         ];
     }
 

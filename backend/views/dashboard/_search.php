@@ -13,7 +13,9 @@ use kartik\daterange\DateRangePicker;
         'action' => ['index'],
         'method' => 'get'
     ]); ?>
-        <div class="form-group">
+<div class="form-group">
+    <div class="dashboard-header-search">
+        <div class="col-md-9">
            <?php 
            echo DateRangePicker::widget([
             'model' => $model,
@@ -37,7 +39,11 @@ use kartik\daterange\DateRangePicker;
             ]);
            ?>
         </div>
-	   <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['name' => 'dashboard-apply-button', 'class' => 'btn btn-primary']) ?>
+        <div class="col-md-3">
+            <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['name' => 'dashboard-apply-button', 'class' => 'btn btn-primary']) ?>
+        </div>
+    </div>
+</div>
     <?php ActiveForm::end(); ?>
 <script>
     $(document).ready(function () {

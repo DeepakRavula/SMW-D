@@ -120,7 +120,7 @@ use common\models\Location;
                     'contentOptions' => ['class' => 'text-right'],
                     'label' => 'Credit',
                     'value' => function ($data) {
-                        return !empty($data->credit) ? Yii::$app->formatter->asCurrency($data->credit) : null;
+                        return !empty($data->credit) ? Yii::$app->formatter->asCurrency(abs($data->credit)) : null;
                     }
                 ],
                     [
