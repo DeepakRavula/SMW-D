@@ -6,10 +6,8 @@ use common\models\Dashboard;
 use yii\helpers\Url;
 
 $this->title = 'Dashboard';
-?>
-<div class="dashboard-search form-inline">
-	<?php echo $this->render('_search', ['model' => $searchModel]); ?>
-</div>
+
+$this->params['action-button'] = $this->render('_search', ['model' => $searchModel]); ?>
 <?php yii\widgets\Pjax::begin(['id' => 'dashboard']); ?>
 
 <div class="row">
@@ -57,6 +55,7 @@ $this->title = 'Dashboard';
 		])
 		?>
 	</div>
+</div>
 </div>
 <div class="row">
 	<div class="col-md-12">

@@ -17,6 +17,7 @@ use backend\models\search\LessonSearch;
 use backend\models\search\InvoiceSearch;
 use backend\models\search\UserSearch;
 use common\models\CustomerAccount;
+use common\models\CompanyAccount;
 use backend\models\search\ReportSearch;
 use common\models\PaymentMethod;
 
@@ -215,11 +216,18 @@ class PrintController extends Controller
 			'dateRange' => $model->dateRange,
         ]);
     }
-    public function actionCustomerAccount($id)
+    public function actionAccountView($id, $accountView)
     {
         $model = User::findOne(['id' => $id]);
-        $accountQuery = CustomerAccount::find()->where(['userId' => $id])
-            ->orderBy(['transactionId' => SORT_ASC]);
+        if (!$accountView) {
+            $accountQuery = CompanyAccount::find()
+                    ->where(['userId' => $id])
+                    ->orderBy(['transactionId' => SORT_ASC]);
+        } else {
+            $accountQuery = CustomerAccount::find()
+                    ->where(['userId' => $id])
+                    ->orderBy(['transactionId' => SORT_ASC]);
+        }
         $accountDataProvider = new ActiveDataProvider([
             'query' => $accountQuery,
             'pagination' => false,

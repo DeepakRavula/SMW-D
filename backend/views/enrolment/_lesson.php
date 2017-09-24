@@ -91,7 +91,8 @@ Modal::end();
 			{
 			   if(response.status)
 			   	{
-					$('#schedule-mail-modal').modal('hide');
+                    $('#spinner').hide();		
+                    $('#schedule-mail-modal').modal('hide');
 					$('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
 				}
 			}

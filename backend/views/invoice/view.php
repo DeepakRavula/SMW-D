@@ -264,7 +264,8 @@ var payment = {
 			{
 			   if(response.status)
 			   	{
-					$('#invoice-mail-modal').modal('hide');
+                    $('#spinner').hide();		
+                    $('#invoice-mail-modal').modal('hide');
 					$('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
 					$('.mail-flag').html(response.data);
 					

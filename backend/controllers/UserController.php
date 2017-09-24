@@ -5,7 +5,7 @@ namespace backend\controllers;
 use common\models\Payment;
 use Yii;
 use common\models\User;
-use yii\helpers\Url;
+use common\models\CompanyAccount;
 use common\models\Address;
 use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
@@ -310,12 +310,20 @@ class UserController extends Controller
             'query' => $notes,
         ]);
 	}
-	protected function getAccountDataProvider($id)
+	protected function getAccountDataProvider($id, $accountView)
 	{
-		return new ActiveDataProvider([
-            'query' => CustomerAccount::find()->where(['userId' => $id])
-                ->orderBy(['transactionId' => SORT_ASC]),
-        ]);
+            if (!$accountView) {
+                $accountQuery = CompanyAccount::find()
+                        ->where(['userId' => $id])
+                        ->orderBy(['transactionId' => SORT_ASC]);
+            } else {
+                $accountQuery = CustomerAccount::find()
+                        ->where(['userId' => $id])
+                        ->orderBy(['transactionId' => SORT_ASC]);
+            }
+            return new ActiveDataProvider([
+                'query' => $accountQuery
+            ]);
 	}
 	protected function getPrivateQualificationDataProvider($id)
 	{
@@ -393,7 +401,7 @@ class UserController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
-		$session = Yii::$app->session;
+        $session = Yii::$app->session;
         $locationId = $session->get('location_id');
         $locationAvailabilityMinTime = LocationAvailability::find()
             ->where(['locationId' => $locationId])
@@ -405,10 +413,11 @@ class UserController extends Controller
             ->one();
         $minTime                     = $locationAvailabilityMinTime->fromTime;
         $maxTime                     = $locationAvailabilityMaxTime->toTime;
-		$searchModel = new UserSearch();
+        $searchModel = new UserSearch();
+        $searchModel->accountView = false;
         $db = $searchModel->search(Yii::$app->request->queryParams);
 
-		return $this->render('view', [
+        return $this->render('view', [
             'minTime' => $minTime,
             'maxTime' => $maxTime,
             'model' => $model,
@@ -430,7 +439,7 @@ class UserController extends Controller
             'openingBalanceCredit' => $this->getOpeningBalanceCredit($id),
             'teacherLessonDataProvider' => $this->getTeacherLessonDataProvider($id, $locationId),
             'noteDataProvider' => $this->getNoteDataProvider($id),
-            'accountDataProvider' => $this->getAccountDataProvider($id),
+            'accountDataProvider' => $this->getAccountDataProvider($id, $searchModel->accountView),
             'teachersAvailabilities' => $this->getTeacherAvailabilities($id, $locationId),
 			'privateQualificationDataProvider' => $this->getPrivateQualificationDataProvider($id),
 			'groupQualificationDataProvider' => $this->getGroupQualificationDataProvider($id),
