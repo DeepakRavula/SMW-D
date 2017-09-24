@@ -28,11 +28,11 @@ $this->params['show-all'] = $this->render('_button', [
 ]);
 ?>
 <div class="user-index"> 
+<div class="grid-row-open">
     <?php Pjax::begin([
 		'id' => 'user-index',
 		'timeout' => 6000
 	]); ?>
-<div class="grid-row-open">
         <?= AdminLteGridView::widget([
             'dataProvider' => $dataProvider,
             'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel, $roleName, $originalInvoice) {
@@ -75,8 +75,8 @@ $this->params['show-all'] = $this->render('_button', [
             ],
         ],
     ]); ?>
-</div>
 <?php Pjax::end(); ?>
+</div>
 <div class=" m-b-20">
 <?php if ($searchModel->role_name === User::ROLE_CUSTOMER && YII_ENV !== 'prod'):?>
 	<?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
