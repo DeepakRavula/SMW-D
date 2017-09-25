@@ -7,6 +7,7 @@ use yii\helpers\Url;
 use kartik\grid\GridView;
 use common\models\Lesson;
 use common\models\Qualification;
+use kartik\daterange\DateRangePicker;
 ?>
 <div class="col-md-12">
 	<?php
@@ -15,26 +16,31 @@ use common\models\Qualification;
 	]);
 	?>
 	<div class="row">
-		<div class="col-md-2">
-			<?php
-			echo $form->field($searchModel, 'fromDate')->widget(DatePicker::classname(), [
-				'options' => [
-					'class' => 'form-control',
-				],
-			])
-			?>
-		</div>
-		<div class="col-md-2">
-			<?php
-			echo $form->field($searchModel, 'toDate')->widget(DatePicker::classname(), [
-				'options' => [
-					'class' => 'form-control',
-				],
-			])
-			?>
-		</div>
-		<div class="col-md-2 form-group p-t-5">
-			<Br>
+        <div class="col-md-3 form-group">
+            <?php 
+           echo DateRangePicker::widget([
+            'model' => $model,
+            'attribute' => 'dateRange',
+            'convertFormat' => true,
+            'initRangeExpr' => true,
+            'pluginOptions' => [
+                'autoApply' => true,
+                'ranges' => [
+							Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
+							Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
+							Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+							Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
+						],
+                'locale' => [
+                    'format' => 'M d,Y',
+                ],
+                'opens' => 'right',
+                ],
+
+            ]);
+           ?>
+        </div>
+		<div class="col-md-2 form-group">
 			<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
 		</div>
 		<div class="col-md-2 m-t-25">
