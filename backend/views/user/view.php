@@ -61,7 +61,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			'model' => $model,
 		]);
 		?>
-        <?php if ($searchModel->role_name == 'customer'): ?>
+        <?php if ($searchModel->role_name === User::ROLE_CUSTOMER): ?>
             <?=$this->render('customer/_payment-preference', [
                 'model' => $model,
             ]);
