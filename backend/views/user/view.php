@@ -48,11 +48,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			'openingBalanceCredit' => $openingBalanceCredit
 		]);
 		?>
-        <?= $this->render('customer/_payment-preference', [
-			'model' => $model,
-            ]);
-		?>
-
     <?php endif;?>
 		
 	</div> 
@@ -66,7 +61,12 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			'model' => $model,
 		]);
 		?>
-        
+        <?php if ($searchModel->role_name == 'customer'): ?>
+            <?=$this->render('customer/_payment-preference', [
+                'model' => $model,
+            ]);
+		?>
+<?php endif; ?>
 	</div> 
 
 </div>
