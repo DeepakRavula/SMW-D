@@ -19,7 +19,7 @@ use kartik\daterange\DateRangePicker;
         <div class="col-md-3 form-group">
             <?php 
            echo DateRangePicker::widget([
-            'model' => $model,
+            'model' => $searchModel,
             'attribute' => 'dateRange',
             'convertFormat' => true,
             'initRangeExpr' => true,
@@ -40,14 +40,13 @@ use kartik\daterange\DateRangePicker;
             ]);
            ?>
         </div>
-		<div class="col-md-2 form-group">
+		<div class="col-md-1 form-group">
 			<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
-		</div>
-		<div class="col-md-2 m-t-25">
-			<?= Html::a('<i class="fa fa-print"></i> Print', ['print/teacher-lessons', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
-
-		</div>
-		<div class="clearfix"></div>
+        </div>
+        <div class="col-md-1 form-group">
+                <?= Html::a('<i class="fa fa-print"></i> Print', ['print/teacher-lessons', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default m-r-10', 'target' => '_blank']) ?>
+        </div>
+            <div class="clearfix"></div>
 	</div>
 </div>
 <?php ActiveForm::end(); ?>
@@ -137,11 +136,9 @@ GridView::widget([
 <script>
     $(document).ready(function () {
         $("#teacher-lesson-search-form").on("submit", function () {
-            var fromDate = $('#lessonsearch-fromdate').val();
-            var toDate = $('#lessonsearch-todate').val();
+            var dateRange = $('#lessonsearch-daterange').val();
             $.pjax.reload({container: "#teacher-lesson-grid", replace: false, timeout: 6000, data: $(this).serialize()});
-			var params = $.param({ 'LessonSearch[fromDate]': fromDate,
-            'LessonSearch[toDate]': toDate});
+			var params = $.param({ 'LessonSearch[dateRange]': dateRange});
             var url = '<?= Url::to(['print/teacher-lessons', 'id' => $model->id]); ?>&' + params;
             $('#print-btn').attr('href', url);
             return false;
