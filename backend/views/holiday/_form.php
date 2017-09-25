@@ -40,17 +40,18 @@ use yii\helpers\Url;
     <div class="row-fluid">
     <div class="form-group">
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-		<?php if (!$model->isNewRecord) {
-        	echo Html::a('Cancel', '', ['class' => 'btn btn-default holiday-cancel']);
-                echo Html::a('Delete', ['delete', 'id' => $model->id], [
-			'id' => 'holiday-delete-button',
-                        'class' => 'btn btn-danger',
-                        'data' => [
-                            'confirm' => 'Are you sure you want to delete this item?',
-                            'method' => 'post',
-                        ]
-                ]);
-            }
+		<?php
+        echo Html::a('Cancel', '', ['class' => 'btn btn-default holiday-cancel']);
+        if (!$model->isNewRecord) {
+            echo Html::a('Delete', ['delete', 'id' => $model->id], [
+                'id' => 'holiday-delete-button',
+                'class' => 'btn btn-danger',
+                'data' => [
+                    'confirm' => 'Are you sure you want to delete this item?',
+                    'method' => 'post',
+                ]
+            ]);
+        }
         ?>
     </div>
     <div class="clearfix"></div>

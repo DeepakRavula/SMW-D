@@ -53,8 +53,8 @@ use common\models\Province;
     <div class="form-group">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
         <?php
+        echo Html::a('Cancel', '#', ['class' => 'btn btn-default taxcode-cancel']);
         if (!$model->isNewRecord) {
-            echo Html::a('Cancel', '#', ['class' => 'btn btn-default taxcode-cancel']);
             echo Html::a('Delete', ['delete', 'id' => $model->id], [
                 'id' => 'taxcode-delete-button',
                 'class' => 'btn btn-danger',
