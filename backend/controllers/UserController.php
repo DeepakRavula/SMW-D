@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use common\models\Payment;
 use Yii;
 use common\models\User;
 use common\models\CompanyAccount;
@@ -32,11 +31,10 @@ use common\models\Student;
 use common\models\Program;
 use common\models\LocationAvailability;
 use common\models\InvoiceLineItem;
-use common\models\ItemType;
-use common\models\PaymentMethod;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use common\models\Payment;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -54,7 +52,7 @@ class UserController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['edit-profile', 'edit-phone', 'edit-address'],
+                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-lesson'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -795,5 +793,16 @@ class UserController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+	public function actionEditLesson($lessonId)
+    {
+		$model = Lesson::findOne(['id' => $lessonId]);
+        $data  = $this->renderAjax('teacher/_form-lesson', [
+            'model' => $model,
+        ]); 
+		return [
+			'status' => true,
+			'data' => $data
+		];
     }
 }

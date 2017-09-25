@@ -5,8 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
 use kartik\grid\GridView;
-use common\models\Lesson;
-use common\models\Qualification;
+use yii\bootstrap\Modal;
 ?>
 <div class="col-md-12">
 	<?php
@@ -128,8 +127,35 @@ GridView::widget([
 	'columns' => $columns,
 ]);
 ?>
+ <?php Modal::begin([
+        'header' => '<h4 class="m-0">Edit</h4>',
+        'id' => 'lesson-modal',
+    ]); ?>
+<div id="lesson-content"></div>
+ <?php  Modal::end(); ?>
 <script>
     $(document).ready(function () {
+		$(document).on('click', '.lesson-cancel', function () {
+            $('#lesson-modal').modal('hide');
+		});
+		$(document).on('click', '#teacher-lesson-grid  tbody > tr', function () {
+            var lessonId = $(this).data('key');
+			var params = $.param({ lessonId: lessonId });
+            $.ajax({
+                url    : '<?= Url::to(['user/edit-lesson']);?>?' + params,
+                type   : 'get',
+                dataType: "json",
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $('#lesson-content').html(response.data);
+                        $('#lesson-modal').modal('show');
+                    }
+                }
+            });
+            return false;
+        });
         $("#teacher-lesson-search-form").on("submit", function () {
             var fromDate = $('#lessonsearch-fromdate').val();
             var toDate = $('#lessonsearch-todate').val();
