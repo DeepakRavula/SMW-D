@@ -50,6 +50,7 @@ class StudentValidator extends Validator
 		$vacations = Vacation::find()
 			->andWhere(['enrolmentId' => $model->course->enrolment->id])
 			->andWhere(['>=', 'DATE(fromDate)', (new \DateTime())->format('Y-m-d')])
+             ->andWhere(['isDeleted' => false])
 			->all();
 		foreach($vacations as $vacation) {
 			$date = Carbon::parse($model->date); 
