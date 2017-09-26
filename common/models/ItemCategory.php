@@ -94,7 +94,7 @@ class ItemCategory extends \yii\db\ActiveRecord
      	return parent::beforeSave($insert);
     }
 
-    public function getNetPrice($locationId, $date)
+    public function getItemTotal($locationId, $date)
     {
         $amount = 0;
         $items = InvoiceLineItem::find()
@@ -114,7 +114,7 @@ class ItemCategory extends \yii\db\ActiveRecord
                 }])
                 ->all();
         foreach ($items as $item) {
-            $amount += $item->netPrice;
+            $amount += $item->itemTotal;
         }
 
         return $amount;

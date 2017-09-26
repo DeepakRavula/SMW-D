@@ -10,6 +10,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use common\models\TaxStatus;
 use yii\filters\ContentNegotiator;
 use backend\models\search\InvoiceLineItemSearch;
 
@@ -201,13 +202,16 @@ class ItemCategoryController extends Controller
     public function actionGetItemValues($itemId)
     {
         $item = Item::findOne($itemId);
-
+        $taxStatus = TaxStatus::findOne(['id' => $item->taxStatusId]);
+        $taxPercentage = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate;
         return [
             'description' => $item->description,
             'price' => $item->price,
             'code' => $item->code,
             'royaltyFree' => $item->royaltyFree,
-            'tax' => $item->taxStatusId
+            'tax' => $item->taxStatusId,
+            'taxPercentage' => $taxPercentage,
+            'total' => $item->price * ($taxPercentage / 100)
         ];
     }
 

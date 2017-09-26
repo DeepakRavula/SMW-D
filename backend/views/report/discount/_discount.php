@@ -120,7 +120,7 @@ use kartik\grid\GridView;
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px;width:60px'],
                 'value' => function ($data) {
-                    return $data->netPrice;
+                    return $data->itemTotal;
                 },
             ],
         ];

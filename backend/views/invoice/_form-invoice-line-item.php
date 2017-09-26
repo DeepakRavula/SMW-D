@@ -38,16 +38,10 @@ use kartik\switchinput\SwitchInput;
                 ],
             ])?>
         </div>
-        <div class="col-xs-8">
-            <?php echo $form->field($model, 'description')->textInput()?>
+        <div class="col-xs-6">
+            <?php echo $form->field($model, 'code')->textInput() ?>
         </div>
-        <div class="col-xs-2">
-            <?php echo $form->field($model, 'unit')->textInput()?>
-        </div>
-        <div class="col-xs-2">
-            <?php echo $form->field($model, 'amount')->textInput()?>
-        </div>
-        <div class="col-xs-8">
+        <div class="col-xs-3">
             <?php echo $form->field($model, 'royaltyFree')->widget(SwitchInput::classname(),
                 [
                 'name' => 'royaltyFree',
@@ -61,33 +55,42 @@ use kartik\switchinput\SwitchInput;
                 ],
             ]);?>
         </div>
-    </div>
-    <div class="row tax-compute">
         <div class="col-xs-3">
-            <?php echo $form->field($model, 'tax_type')->textInput(['readonly' => true])?>
+            <?php echo $form->field($model, 'unit')->textInput()?>
         </div>
-        <div class="col-xs-2">
-               <?php echo $form->field($model, 'tax_code')->textInput(['readonly' => true])?>
-        </div>
-        <div class="col-xs-2">
-            <?php echo $form->field($model, 'tax')->textInput(['readonly' => true])?>
-        </div>
-        <div class="col-xs-2">
-            <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true])?>
+        <div class="col-xs-12">
+            <?php echo $form->field($model, 'description')->textInput()?>
         </div>
         <div class="col-xs-3">
-            <?= Html::a('Calculate Tax', '', ['class' => 'btn btn-success btn-xs m-t-30 calculate-tax-button']);?>
+            <?php echo $form->field($model, 'amount')->textInput()->label('Base Price') ?>
+        </div>
+        <div class="col-xs-3">
+            <?php echo $form->field($model, 'crossPrice')->textInput([
+                'readonly' => true, 'id' => 'lineitem-crossprice'
+                ])->label('Cross Price') ?>
+        </div>
+        <div class="col-xs-3">
+            <?php echo $form->field($model, 'netPrice')->textInput([
+                'readonly' => true, 'id' => 'lineitem-netprice'
+                ])->label('Net Price') ?>
+        </div>
+        <div class="col-xs-3">
+            <?php echo $form->field($model, 'itemTotal')->textInput([
+                'readonly' => true, 'id' => 'lineitem-itemtotal'
+                ])->label('Total') ?>
         </div>
     </div>
-
     <div class="row misc-tax-status">
         <div class="col-xs-4">
             <?php echo $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
                         TaxStatus::find()->all(), 'id', 'name'), ['prompt' => 'Select'])
             ?>
         </div>
-        <div class="col-xs-4">
-            <?php echo $form->field($model, 'code')->textInput() ?>
+        <div class="col-xs-2">
+            <?php echo $form->field($model, 'tax')->textInput(['readonly' => true])?>
+        </div>
+        <div class="col-xs-2">
+            <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true])?>
         </div>
     </div>
     <div class="form-group">
@@ -98,28 +101,6 @@ use kartik\switchinput\SwitchInput;
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
-    $('.calculate-tax-button').click(function(){
-        var amount = $('#invoicelineitem-amount').val();
-        var tax = $('#invoicelineitem-tax').val();
-        if(tax == '') {
-            var tax = 5;
-        }
-        $.ajax({
-            url: "<?php echo Url::to(['invoice-line-item/compute-tax']); ?>",
-            type: "POST",
-            contentType: 'application/json',
-            dataType: "json",
-            data: JSON.stringify({
-                    'amount' :amount,
-                    'tax' : tax,
-            }),
-            success: function(response) {
-                var response =  jQuery.parseJSON(JSON.stringify(response));
-                $('#invoicelineitem-tax_rate').val(response);
-            }
-        });
-        return false;
-    });
     $('#invoicelineitem-itemid').change(function(){
         var params   = $.param({ itemId: $('#invoicelineitem-itemid').val() });
         $.ajax({
@@ -132,52 +113,46 @@ $(document).ready(function() {
                 $('#invoicelineitem-amount').val(response.price);
                 $('#invoicelineitem-code').val(response.code);
                 $('#invoicelineitem-unit').val(1);
-                $('#invoicelineitem-tax_status').val(response.tax);
+                $('#lineitem-crossprice').val(response.price);
+                $('#lineitem-netprice').val(response.price);
+                $('#invoicelineitem-tax_status').val(response.tax).trigger('change');
                 if (response.royaltyFree) {
                     $('#line-item-royalty-free').bootstrapSwitch('state', true);
                 } else {
                     $('#line-item-royalty-free').bootstrapSwitch('state', false);
                 }
-                changeTax();
             }
         });
         return false;
     });
-    $('#invoicelineitem-tax_status').change(function(){
+    $('#invoicelineitem-tax_status, #invoicelineitem-unit, #invoicelineitem-amount').change(function(){
         changeTax();
     });
 });
     function changeTax() {
         var taxStatusId = $('#invoicelineitem-tax_status').val();
-        if(taxStatusId && parseInt(taxStatusId) === 2){
-            $('.tax-compute').show();
-            $('#invoicelineitem-tax_type').val('NO TAX');
-            $('#invoicelineitem-tax_code').val('ON');
-            $('#invoicelineitem-tax_rate').val(0.00);
-            $('#invoicelineitem-tax').val(0.00);
-        } else {
-            var amount = $('#invoicelineitem-amount').val();
-            var taxStatusName = $(this).children("option").filter(":selected").text();
-            $.ajax({
-                url: "<?php echo Url::to(['invoice/compute-tax']); ?>",
-                type: "POST",
-                contentType: 'application/json',
-                dataType: "json",
-                data: JSON.stringify({
-                        "amount":amount,
-                        "taxStatusName":taxStatusName,
-                        "taxStatusId":taxStatusId,
-                }),
-                success: function(response) {
-                    var response =  jQuery.parseJSON(JSON.stringify(response));
-                    $('.tax-compute').show();
-                    $('#invoicelineitem-tax_type').val(response.tax_type);
-                    $('#invoicelineitem-tax_code').val(response.code);
-                    $('#invoicelineitem-tax').val(response.tax);
-                    $('#invoicelineitem-tax_rate').val(response.rate);
-                }
-            });
-        }
+        var amount = $('#invoicelineitem-amount').val();
+        var unit = $('#invoicelineitem-unit').val();
+        var taxStatusName = $(this).children("option").filter(":selected").text();
+        $.ajax({
+            url: "<?php echo Url::to(['invoice/compute-tax']); ?>",
+            type: "POST",
+            contentType: 'application/json',
+            dataType: "json",
+            data: JSON.stringify({
+                "unit": unit,
+                "amount":amount,
+                "taxStatusName":taxStatusName,
+                "taxStatusId":taxStatusId,
+            }),
+            success: function(response) {
+                $('#invoicelineitem-tax').val(response.tax);
+                $('#invoicelineitem-tax_rate').val(response.rate);
+                $('#lineitem-crossprice').val(response.crossPrice);
+                $('#lineitem-netprice').val(response.crossPrice);
+                $('#lineitem-itemtotal').val(response.total);
+            }
+        });
     }
 </script>
 <script>

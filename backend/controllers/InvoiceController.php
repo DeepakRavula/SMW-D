@@ -305,14 +305,15 @@ class InvoiceController extends Controller
             ->andWhere(['province_id' => $locationModel->province_id])
             ->orderBy('start_date DESC')
             ->one();
-        $rate = $data['amount'] * $taxCode->rate / 100;
+        $crossPrice = $data['amount'] * $data['unit'];
+        $rate = $crossPrice * $taxCode->rate / 100;
 
         return [
-            'tax_type' => $taxCode->taxType->name,
-            'code' => $taxCode->code,
+            'crossPrice' => $crossPrice,
+            'total' => $crossPrice + $rate,
             'rate' => $rate,
             'tax_status' => $data['taxStatusName'],
-                    'tax' => $taxCode->rate,
+            'tax' => $taxCode->rate,
         ];
     }
 
