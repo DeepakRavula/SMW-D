@@ -54,12 +54,9 @@ use common\models\LocationAvailability;
             ])->label('Reschedule Date');
             ?>
         </div>
-		 <div class="col-md-3" style="padding:0;">
-                <div class="hand lesson-edit-calendar">
-                <p> <label> Calendar View </label></p>
-                <span class="fa fa-calendar" style="font-size:30px; margin:-12px 32px;"></span>
-                </div>
-            </div>
+        </div>
+        <div class="col-md-12">
+			<div id="teacher-lesson"></div>
         </div>
 	   <div class="clearfix"></div>
 		<?php $locationId = Yii::$app->session->get('location_id'); ?>
@@ -71,46 +68,3 @@ use common\models\LocationAvailability;
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>
-
-<?php
-$minLocationAvailability = LocationAvailability::find()
-    ->where(['locationId' => $locationId])
-    ->orderBy(['fromTime' => SORT_ASC])
-    ->one();
-$maxLocationAvailability = LocationAvailability::find()
-    ->where(['locationId' => $locationId])
-    ->orderBy(['toTime' => SORT_DESC])
-    ->one();
-$minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-$maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-?>
-
-<script type="text/javascript">
-$(document).on('click', '.lesson-edit-calendar', function () {
-    $('#lesson-modal').modal('hide');
-    var teacherId = $('#lesson-teacherid').val();
-    var duration = $('#course-duration').val();
-    var params = $.param({teacherId: '' });
-    $('#calendar').fullCalendar({
-        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-        header: false,
-		height:'auto',
-        titleFormat: 'DD-MMM-YYYY, dddd',
-        defaultView: 'agendaDay',
-        minTime: "<?php echo $minTime; ?>",
-        maxTime: "<?php echo $maxTime; ?>",
-        slotDuration: "00:15:00",
-        droppable: false,
-        events: {
-            url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
-            type: 'GET',
-            error: function() {
-                $("#calendar").fullCalendar("refetchEvents");
-            }
-        },
-        allDaySlot:false,
-        editable: true,
-    });
-    return false;
-});
-</script>

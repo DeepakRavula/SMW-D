@@ -6,7 +6,11 @@ use yii\jui\DatePicker;
 use yii\helpers\Url;
 use kartik\grid\GridView;
 use yii\bootstrap\Modal;
+use common\models\LocationAvailability;
 ?>
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <div class="col-md-12">
 	<?php
 	$form = ActiveForm::begin([
@@ -133,7 +137,77 @@ GridView::widget([
     ]); ?>
 <div id="lesson-content"></div>
  <?php  Modal::end(); ?>
+<?php
+$locationId = Yii::$app->session->get('location_id');
+$minLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['fromTime' => SORT_ASC])
+    ->one();
+$maxLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['toTime' => SORT_DESC])
+    ->one();
+$minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+$maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+?>
+
 <script>
+	var calendar = {
+		load : function() {
+			var teacherId = $('#lesson-teacherid').val();
+			var params = $.param({teacherId: teacherId});
+		   $('#teacher-lesson').fullCalendar('destroy');
+            $('#teacher-lesson').fullCalendar({
+            	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+                defaultDate: date,
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'agendaWeek'
+                },
+                allDaySlot: false,
+                slotDuration: '00:15:00',
+                titleFormat: 'DD-MMM-YYYY, dddd',
+                defaultView: 'agendaWeek',
+                minTime: "<?php echo $from_time; ?>",
+                maxTime: "<?php echo $to_time; ?>",
+                selectConstraint: 'businessHours',
+                eventConstraint: 'businessHours',
+                businessHours: availableHours,
+                overlapEvent: false,
+                overlapEventsSeparate: true,
+                events: events,
+                select: function (start, end, allDay) {
+                    $('#extra-lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A'));
+                    $('#lesson-calendar').fullCalendar('removeEvents', 'newEnrolment');
+					var duration = $('#lesson-duration').val();
+					var endtime = start.clone();
+					var durationMinutes = moment.duration(duration).asMinutes();
+					moment(endtime.add(durationMinutes, 'minutes'));
+					
+                    $('#lesson-calendar').fullCalendar('renderEvent',
+                        {
+                            id: 'newEnrolment',
+                            start: start,
+                            end: endtime,
+                            allDay: false
+                        },
+                    true // make the event "stick"
+                    );
+                    $('#lesson-calendar').fullCalendar('unselect');
+                },
+                loading: function (bool) { 
+                        $('#spinner').show();                    
+                },
+                eventAfterAllRender: function (view) {
+                    $('#spinner').hide(); 
+                    $('.fc-short').removeClass('fc-short');
+                },
+                selectable: true,
+                selectHelper: true,
+            });
+		}
+	};
     $(document).ready(function () {
 		$(document).on('click', '.lesson-cancel', function () {
             $('#lesson-modal').modal('hide');
@@ -151,6 +225,7 @@ GridView::widget([
                     {
                         $('#lesson-content').html(response.data);
                         $('#lesson-modal').modal('show');
+                        calendar.load();
                     }
                 }
             });
