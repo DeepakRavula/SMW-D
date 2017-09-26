@@ -59,7 +59,7 @@ use common\models\TaxStatus;
             <?= $form->field($model, 'amount')->textInput(['id' => 'amount-line'])->label('Base Price');?>
         </div>
         <div class="col-md-2">
-            <?= $form->field($model, 'grossPrice')->textInput(['id' => 'amount-line'])->label('Gross Price');?>
+            <?= $form->field($model, 'grossPrice')->textInput()->label('Gross Price');?>
         </div>
         <div class="col-md-3">
             <?= $form->field($model, 'netPrice')->textInput(['readOnly' => true])->label('Net Price');?>
