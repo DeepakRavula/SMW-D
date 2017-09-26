@@ -36,8 +36,9 @@ use yii\helpers\Url;
 
     <div class="form-group">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-		<?php if (!$model->isNewRecord) {
+		<?php 
         	echo Html::a('Cancel', '', ['class' => 'btn btn-default city-cancel']);
+            if (!$model->isNewRecord) {
                 echo Html::a('Delete', ['delete', 'id' => $model->id], [
 			'id' => 'city-delete-button',
                         'class' => 'btn btn-danger',

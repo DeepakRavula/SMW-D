@@ -11,6 +11,7 @@ use yii\bootstrap\Modal;
 use backend\models\UserForm;
 use common\models\discount\CustomerDiscount;
 use yii\widgets\Pjax;
+use common\models\User;
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 /* @var $this yii\web\View */
@@ -48,11 +49,6 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			'openingBalanceCredit' => $openingBalanceCredit
 		]);
 		?>
-        <?= $this->render('customer/_payment-preference', [
-			'model' => $model,
-            ]);
-		?>
-
     <?php endif;?>
 		
 	</div> 
@@ -66,7 +62,12 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 			'model' => $model,
 		]);
 		?>
-        
+        <?php if ($searchModel->role_name === User::ROLE_CUSTOMER): ?>
+            <?=$this->render('customer/_payment-preference', [
+                'model' => $model,
+            ]);
+		?>
+<?php endif; ?>
 	</div> 
 
 </div>

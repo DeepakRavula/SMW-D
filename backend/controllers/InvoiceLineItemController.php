@@ -285,10 +285,10 @@ class InvoiceLineItemController extends Controller
         }
         $discount = 0.0;
         if (!empty($data['customerDiscount'])) {
-            $discount += $invoiceLineItem->amount * $data['customerDiscount'] / 100;
+            $discount += $invoiceLineItem->grossPrice * $data['customerDiscount'] / 100;
         }
         if (!empty($data['paymentFrequencyDiscount'])) {
-            $discount += $invoiceLineItem->amount * $data['paymentFrequencyDiscount'] / 100;
+            $discount += $invoiceLineItem->grossPrice * $data['paymentFrequencyDiscount'] / 100;
         }
         if (!empty($data['multiEnrolmentDiscount'])) {
             $discount += $data['multiEnrolmentDiscount'];
@@ -297,13 +297,15 @@ class InvoiceLineItemController extends Controller
             if ($data['lineItemDiscountType']) {
                 $discount += $data['lineItemDiscount'];
             } else {
-                $discount += $invoiceLineItem->amount * $data['lineItemDiscount'] / 100;
+                $discount += $invoiceLineItem->grossPrice * $data['lineItemDiscount'] / 100;
             }
         }
-        $netPrice = $invoiceLineItem->amount - $discount;
+        $netPrice = $invoiceLineItem->grossPrice - $discount;
         $invoiceLineItem->tax_rate   = $netPrice * $invoiceLineItem->taxType->taxCode->rate / 100;
-		$netPrice += $invoiceLineItem->tax_rate; 
+        $itemTotal = $netPrice + $invoiceLineItem->tax_rate;
         return [
+            'grossPrice' => round($invoiceLineItem->grossPrice, 2),
+            'itemTotal' => round($itemTotal, 2),
             'netPrice' => round($netPrice, 2),
             'taxRate' => round($invoiceLineItem->tax_rate, 2),
             'taxPercentage' => $invoiceLineItem->taxType->taxCode->rate

@@ -238,9 +238,6 @@ class InvoiceController extends Controller
             $invoiceLineItemModel->invoice_id = $model->id;
             $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
             $invoiceLineItemModel->cost        = 0.0;
-			if($invoiceLineItemModel->tax_rate == '') {
-				$invoiceLineItemModel->tax_rate = $invoiceLineItemModel->amount * ( 5 / 100);	
-			}
             if ($invoiceLineItemModel->validate()) {
                 $invoiceLineItemModel->save();
                 $model->save();
@@ -305,14 +302,15 @@ class InvoiceController extends Controller
             ->andWhere(['province_id' => $locationModel->province_id])
             ->orderBy('start_date DESC')
             ->one();
-        $rate = $data['amount'] * $taxCode->rate / 100;
+        $grossPrice = $data['amount'] * $data['unit'];
+        $rate = $grossPrice * $taxCode->rate / 100;
 
         return [
-            'tax_type' => $taxCode->taxType->name,
-            'code' => $taxCode->code,
+            'grossPrice' => $grossPrice,
+            'total' => $grossPrice + $rate,
             'rate' => $rate,
             'tax_status' => $data['taxStatusName'],
-                    'tax' => $taxCode->rate,
+            'tax' => $taxCode->rate,
         ];
     }
 

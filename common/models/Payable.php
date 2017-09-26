@@ -152,7 +152,7 @@ trait Payable
                 if ($this->isExtraLessonProformaInvoice()) {
                     $lesson = Lesson::findOne($this->lineItem->lesson->id);
                 }
-                $amount = $lesson->proFormaLineItem->netPrice - $lesson->getCreditAppliedAmount($lesson->enrolment->id);
+                $amount = $lesson->proFormaLineItem->itemTotal - $lesson->getCreditAppliedAmount($lesson->enrolment->id);
                 if ($amount > $this->proFormaCredit) {
                     $amount = $this->proFormaCredit;
                 }

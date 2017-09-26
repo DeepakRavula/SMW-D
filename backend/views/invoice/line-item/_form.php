@@ -19,15 +19,8 @@ use common\models\TaxStatus;
 	'enableClientValidation' => true
 ]); ?>
    <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <?= $form->field($model, 'code')->textInput();?>
-        </div>
-        <div class="col-md-2">
-            <?= $form->field($model, 'unit')->textInput(['id' => 'unit-line']);?>
-        </div>
-        
-        <div class="col-md-2">
-            <?= $form->field($model, 'amount')->textInput(['id' => 'amount-line'])->label('Base Price');?>
         </div>
         <div class="col-md-3">
             <?= $form->field($model, 'royaltyFree')->widget(SwitchInput::classname(),
@@ -40,10 +33,10 @@ use common\models\TaxStatus;
                 ],
             ]);?>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <?= $form->field($model, 'cost')->textInput();?>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <?php if (!$model->isLessonItem()) : ?>
                 <?= $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
                                 TaxStatus::find()->all(), 'id', 'name'
@@ -52,15 +45,27 @@ use common\models\TaxStatus;
                 <?= $form->field($model, 'tax_status')->textInput(['readOnly' => true]); ?>
             <?php endif; ?>
         </div>
-        <div class="col-xs-2">
+        <div class="col-xs-4">
             <?php echo $form->field($model, 'taxPercentage')->textInput(['readonly' => true])->label('Tax (%)') ?>
         </div>
-        <div class="col-xs-2">
+        <div class="col-xs-4">
             <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true, 'id' => 'lineitem-tax_rate'])?>
         </div>
-	   
+        <div class="col-md-2">
+            <?= $form->field($model, 'unit')->textInput(['id' => 'unit-line']);?>
+        </div>
+        
+        <div class="col-md-2">
+            <?= $form->field($model, 'amount')->textInput(['id' => 'amount-line'])->label('Base Price');?>
+        </div>
+        <div class="col-md-2">
+            <?= $form->field($model, 'grossPrice')->textInput()->label('Gross Price');?>
+        </div>
         <div class="col-md-3">
             <?= $form->field($model, 'netPrice')->textInput(['readOnly' => true])->label('Net Price');?>
+        </div>
+        <div class="col-md-3">
+            <?= $form->field($model, 'itemTotal')->textInput(['readOnly' => true])->label('Total');?>
         </div>
 	<div class="col-md-12">
             <?= $form->field($model, 'description')->textarea();?>
@@ -122,6 +127,7 @@ use common\models\TaxStatus;
                 contentType: 'application/json',
                 dataType: "json",
                 data: JSON.stringify({
+                    'unit' : $('#unit-line').val(),
                     'amount' : $('#amount-line').val(),
                     'taxStatus' : $('#lineitem-tax_status').val(),
                     'customerDiscount' : $('#customerlineitemdiscount-value').val(),
@@ -132,14 +138,16 @@ use common\models\TaxStatus;
                 }),
                 success: function(response) {
                     $('#invoicelineitem-netprice').val(response.netPrice);
+                    $('#invoicelineitem-grossprice').val(response.grossPrice);
                     $('#invoicelineitem-taxpercentage').val(response.taxPercentage);
                     $('#lineitem-tax_rate').val(response.taxRate);
+                    $('#invoicelineitem-itemtotal').val(response.itemTotal);
                 }
             });	
         }
     };
     
-    $(document).on("change", '#amount-line, #invoicelineitem-discount, \n\
+    $(document).on("change", '#amount-line, #invoicelineitem-discount, #unit-line, \n\
         #lineitem-tax_status, #customerlineitemdiscount-value, #paymentfrequencylineitemdiscount-value, \n\
         #enrolmentlineitemdiscount-value, #lineitemdiscount-value', function() {
         lineItem.computeNetPrice();

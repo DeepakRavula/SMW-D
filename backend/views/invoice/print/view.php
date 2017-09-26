@@ -132,7 +132,7 @@
                  'format' => 'currency',
          'label' => 'Net Price',
                  'value' => function ($data) {
-                     return $data->netPrice;
+                     return $data->itemTotal;
                  },
                  'headerOptions' => ['class' => 'text-right'],
                  'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],

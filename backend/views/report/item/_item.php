@@ -53,7 +53,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 				'label' => 'Amount',
 				'value' => function ($data) {
                                     $locationId = Yii::$app->session->get('location_id');
-                                    return $data->item->getNetPrice($locationId, $data->invoice->date);
+                                    return $data->item->getItemTotal($locationId, $data->invoice->date);
 				},
 				'contentOptions' => ['class' => 'text-right'],
 				'hAlign' => 'right',
