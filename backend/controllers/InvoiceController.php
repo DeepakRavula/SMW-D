@@ -238,9 +238,6 @@ class InvoiceController extends Controller
             $invoiceLineItemModel->invoice_id = $model->id;
             $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
             $invoiceLineItemModel->cost        = 0.0;
-			if($invoiceLineItemModel->tax_rate == '') {
-				$invoiceLineItemModel->tax_rate = $invoiceLineItemModel->amount * ( 5 / 100);	
-			}
             if ($invoiceLineItemModel->validate()) {
                 $invoiceLineItemModel->save();
                 $model->save();
