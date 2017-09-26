@@ -350,7 +350,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         if ((int) $this->lineItemDiscount->valueType) {
             return $this->lineItemDiscount->value;
         } else {
-            return ($this->lineItemDiscount->value / 100) * $this->crossPrice;
+            return ($this->lineItemDiscount->value / 100) * $this->grossPrice;
         }
     }
 
@@ -361,7 +361,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $discount = $this->getLineItemDiscountValue();
         }
         if ($this->customerDiscount) {
-            $discount = $this->customerDiscount->value / 100 * $this->crossPrice;
+            $discount = $this->customerDiscount->value / 100 * $this->grossPrice;
         }
         return $discount;
     }
@@ -373,10 +373,10 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getNetPrice()
     {
-        return $this->crossPrice - $this->discount;
+        return $this->grossPrice - $this->discount;
     }
     
-    public function getCrossPrice()
+    public function getGrossPrice()
     {
         return $this->amount * $this->unit;
     }
@@ -386,20 +386,20 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $discount = 0.0;
         if ($this->hasLineItemDiscount()) {
             if ((int) $this->lineItemDiscount->valueType) {
-                $discount += $this->crossPrice < 0 ? - ($this->lineItemDiscount->value) : 
+                $discount += $this->grossPrice < 0 ? - ($this->lineItemDiscount->value) : 
                     $this->lineItemDiscount->value;
             } else {
-                $discount += ($this->lineItemDiscount->value / 100) * $this->crossPrice;
+                $discount += ($this->lineItemDiscount->value / 100) * $this->grossPrice;
             }
         }
         if ($this->hasCustomerDiscount()) {
-            $discount += ($this->customerDiscount->value / 100) * $this->crossPrice;
+            $discount += ($this->customerDiscount->value / 100) * $this->grossPrice;
         }
         if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
-            $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $this->crossPrice;
+            $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $this->grossPrice;
         }
         if ($this->hasMultiEnrolmentDiscount()) {
-            $discount += $this->crossPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :
+            $discount += $this->grossPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :
                 $this->multiEnrolmentDiscount->value;
         }
         return $discount;

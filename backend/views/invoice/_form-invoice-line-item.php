@@ -65,9 +65,9 @@ use kartik\switchinput\SwitchInput;
             <?php echo $form->field($model, 'amount')->textInput()->label('Base Price') ?>
         </div>
         <div class="col-xs-3">
-            <?php echo $form->field($model, 'crossPrice')->textInput([
-                'readonly' => true, 'id' => 'lineitem-crossprice'
-                ])->label('Cross Price') ?>
+            <?php echo $form->field($model, 'grossPrice')->textInput([
+                'readonly' => true, 'id' => 'lineitem-grossprice'
+                ])->label('Gross Price') ?>
         </div>
         <div class="col-xs-3">
             <?php echo $form->field($model, 'netPrice')->textInput([
@@ -113,7 +113,7 @@ $(document).ready(function() {
                 $('#invoicelineitem-amount').val(response.price);
                 $('#invoicelineitem-code').val(response.code);
                 $('#invoicelineitem-unit').val(1);
-                $('#lineitem-crossprice').val(response.price);
+                $('#lineitem-grossprice').val(response.price);
                 $('#lineitem-netprice').val(response.price);
                 $('#invoicelineitem-tax_status').val(response.tax).trigger('change');
                 if (response.royaltyFree) {
@@ -148,8 +148,8 @@ $(document).ready(function() {
             success: function(response) {
                 $('#invoicelineitem-tax').val(response.tax);
                 $('#invoicelineitem-tax_rate').val(response.rate);
-                $('#lineitem-crossprice').val(response.crossPrice);
-                $('#lineitem-netprice').val(response.crossPrice);
+                $('#lineitem-grossprice').val(response.grossPrice);
+                $('#lineitem-netprice').val(response.grossPrice);
                 $('#lineitem-itemtotal').val(response.total);
             }
         });

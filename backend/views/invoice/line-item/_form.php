@@ -51,12 +51,15 @@ use common\models\TaxStatus;
         <div class="col-xs-4">
             <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true, 'id' => 'lineitem-tax_rate'])?>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <?= $form->field($model, 'unit')->textInput(['id' => 'unit-line']);?>
         </div>
         
-        <div class="col-md-3">
+        <div class="col-md-2">
             <?= $form->field($model, 'amount')->textInput(['id' => 'amount-line'])->label('Base Price');?>
+        </div>
+        <div class="col-md-2">
+            <?= $form->field($model, 'grossPrice')->textInput(['id' => 'amount-line'])->label('Gross Price');?>
         </div>
         <div class="col-md-3">
             <?= $form->field($model, 'netPrice')->textInput(['readOnly' => true])->label('Net Price');?>
@@ -135,6 +138,7 @@ use common\models\TaxStatus;
                 }),
                 success: function(response) {
                     $('#invoicelineitem-netprice').val(response.netPrice);
+                    $('#invoicelineitem-grossprice').val(response.grossPrice);
                     $('#invoicelineitem-taxpercentage').val(response.taxPercentage);
                     $('#lineitem-tax_rate').val(response.taxRate);
                     $('#invoicelineitem-itemtotal').val(response.itemTotal);
