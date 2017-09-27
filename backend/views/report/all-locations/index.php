@@ -47,6 +47,14 @@ $this->title = 'All Locations';
                 return !empty($revenue)&& ($revenue > 0) ? round($royaltyValue,2) : 0;
             },
         ],
+            [
+            'label' => 'Advertisement',
+            'value' => function ($data) use ($searchModel) {
+                $revenue = $data->getRevenue($searchModel->fromDate, $searchModel->toDate);
+                $advertisementValue = $revenue * (($data->advertisement->value) / 100);
+                return !empty($revenue) && ($revenue > 0) ? round($advertisementValue, 2) : 0;
+            },
+        ],
     ],
 ]);
 
