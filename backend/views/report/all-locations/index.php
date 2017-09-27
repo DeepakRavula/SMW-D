@@ -39,6 +39,14 @@ $this->title = 'All Locations';
                 return !empty($data->getRevenue($searchModel->fromDate, $searchModel->toDate)) ? $data->getRevenue($searchModel->fromDate, $searchModel->toDate) : 0;
             },
         ],
+            [
+            'label' => 'Royalty',
+            'value' => function ($data) use ($searchModel) {
+                $revenue=$data->getRevenue($searchModel->fromDate, $searchModel->toDate);
+                $royaltyValue=$revenue*(($data->royalty->value)/100);
+                return !empty($revenue)&& ($revenue > 0) ? round($royaltyValue,2) : 0;
+            },
+        ],
     ],
 ]);
 
