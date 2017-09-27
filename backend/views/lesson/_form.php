@@ -127,6 +127,7 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 
 <script type="text/javascript">
 $(document).on('click', '.lesson-edit-calendar', function () {
+    $('#loader').show();
     $('#lesson-schedule-modal').modal('hide');
     var teacherId = $('#lesson-teacherid').val();
     var duration = $('#course-duration').val();
@@ -137,7 +138,7 @@ $(document).on('click', '.lesson-edit-calendar', function () {
         dataType: "json",
         success: function (response)
         {
-            $('#spinner').hide();
+            $('#loader').hide();
             var options = {
                 date: moment(new Date()),
                 duration: duration,
