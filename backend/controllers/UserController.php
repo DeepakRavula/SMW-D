@@ -32,7 +32,7 @@ use common\models\Student;
 use common\models\Program;
 use common\models\LocationAvailability;
 use common\models\InvoiceLineItem;
-use common\models\ItemType;
+use common\models\UserEmail;
 use common\models\PaymentMethod;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
@@ -54,7 +54,7 @@ class UserController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['edit-profile', 'edit-phone', 'edit-address'],
+                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -454,7 +454,7 @@ class UserController extends Controller
      *
      * @return mixed
      */
-	public function saveAddressAndPhone($model, $addressModels, $phoneNumberModels, $qualificationModels)
+	public function saveAddressAndPhone($model, $emailModels, $addressModels, $phoneNumberModels, $qualificationModels)
 	{
         $transaction = \Yii::$app->db->beginTransaction();
 		if ($flag = $model->save(false)) {
@@ -465,7 +465,14 @@ class UserController extends Controller
 				}
 				$model->getModel()->link('addresses', $addressModel);
 			}
-
+                        foreach ($emailModels as $emailModel) {
+                                $emailModel->userId = $model->getModel()->id;
+				if (!($flag = $emailModel->save(false))) {
+					$transaction->rollBack();
+					break;
+				}
+				$model->getModel()->link('addresses', $addressModel);
+			}
 			foreach ($phoneNumberModels as $phoneNumberModel) {
 				$phoneNumberModel->user_id = $model->getModel()->id;
 				if (!($flag = $phoneNumberModel->save(false))) {
@@ -497,6 +504,7 @@ class UserController extends Controller
         $model = new UserForm();
         $addressModels = [new Address()];
         $phoneNumberModels = [new PhoneNumber()];
+        $emailModels = [new UserEmail()];
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
         if ($model->roles === User::ROLE_STAFFMEMBER) {
@@ -520,20 +528,23 @@ class UserController extends Controller
 	        Model::loadMultiple($addressModels, $request->post());	
             $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
             Model::loadMultiple($phoneNumberModels, $request->post());
+            $emailModels = UserForm::createMultiple(UserEmail::classname());
+            Model::loadMultiple($emailModels, $request->post());
 			
 			
             if ($request->isAjax) {
                 $response->format = Response::FORMAT_JSON;
 
                 return ArrayHelper::merge(
-                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels));
+                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($emailModels));
             }
             $valid = $model->validate();
-            $valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($phoneNumberModels)) && $valid;
+            $valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($addressModels)
+                    || Model::validateMultiple($emailModels)) && $valid;
 
             if ($valid) {
                 try {
-					$success = $this->saveAddressAndPhone($model, $addressModels, $phoneNumberModels, $qualificationModels);
+					$success = $this->saveAddressAndPhone($model, $emailModels, $addressModels, $phoneNumberModels, $qualificationModels);
                     if ($success) {
                         Yii::$app->session->setFlash('alert', [
                                 'options' => ['class' => 'alert-success'],
@@ -554,6 +565,7 @@ class UserController extends Controller
 			'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
 			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
 			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
+                        'emailModels' => (empty($emailModels)) ? [new UserEmail()] : $emailModels,
 			'qualificationModels' => (empty($qualificationModels)) ? [new Qualification()] : $qualificationModels,
 			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
         ]);
@@ -578,6 +590,55 @@ class UserController extends Controller
 			}
 		}
 	}
+        
+    public function actionEditEmail($id)
+    {
+        $request = Yii::$app->request;
+        $model = new UserForm();
+        $model->setModel($this->findModel($id));	
+        $emailModels = $model->emails;
+        $data = $this->renderAjax('update/_phone', [
+            'model' => $model,
+            'emailModels' => $emailModels,
+        ]);
+
+        if ($request->isPost) {
+            $oldEmailIDs = ArrayHelper::map($emailModels, 'id', 'id');
+            $emailModels = UserForm::createMultiple(UserEmail::classname(), $emailModels);
+            Model::loadMultiple($emailModels, $request->post());
+            $deletedEmailIDs = array_diff($oldEmailIDs, array_filter(ArrayHelper::map($emailModels, 'id', 'id')));
+
+            $valid = Model::validateMultiple($emailModels);
+            if ($valid) {
+                $transaction = \Yii::$app->db->beginTransaction();
+                try {
+                    if (!empty($deletedEmailIDs)) {
+                        UserEmail::deleteAll(['id' => $deletedEmailIDs]);
+                    }
+                    foreach ($emailModels as $emailModel) {
+                        $emailModel->userId = $id;
+                        if (!$emailModel->save(false)) {
+                            $transaction->rollBack();
+                            break;
+                        }
+                    }
+
+                    $transaction->commit();
+                    return [
+                        'status' => true,
+                    ]; 
+                } catch (Exception $e) {
+                    $transaction->rollBack();
+                }
+            } 
+        } else {
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
+    }
+        
 	public function actionEditPhone($id)
 	{
 		$request = Yii::$app->request;

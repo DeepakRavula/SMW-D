@@ -277,6 +277,11 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(PhoneNumber::className(), ['user_id' => 'id']);
     }
+    
+    public function getEmails()
+    {
+        return $this->hasMany(UserEmail::className(), ['userId' => 'id']);
+    }
 
 	public function getPhone()
     {

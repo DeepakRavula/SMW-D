@@ -53,6 +53,11 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		
 	</div> 
 	<div class="col-md-6">	
+            <?php
+		echo $this->render('_email', [
+			'model' => $model,
+		]);
+		?>
 		<?php
 		echo $this->render('_phone', [
 			'model' => $model,
@@ -424,6 +429,24 @@ $(document).ready(function(){
                     $('#phone-content').html(response.data);
                     $('#edit-phone-modal').modal('show');
                 	$('#edit-phone-modal .modal-dialog').css({'width': '800px'});
+                }
+            }
+        });
+        return false;
+    });
+    $(document).on('click', '.user-email-btn', function () {
+		$.ajax({
+            url    : '<?= Url::to(['user/edit-email', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#email-content').html(response.data);
+                    $('#edit-email-modal').modal('show');
+                	$('#edit-email-modal .modal-dialog').css({'width': '800px'});
                 }
             }
         });
