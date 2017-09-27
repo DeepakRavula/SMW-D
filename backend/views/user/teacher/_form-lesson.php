@@ -25,6 +25,8 @@ use common\models\LocationAvailability;
             ]
         ]); ?>
 		<div class="row">
+			<?php
+            echo $form->field($model, 'duration')->hiddenInput(['value' => (new \DateTime($model->duration))->format('H:i')])->label(false);?>
 	   <div class="col-md-4">
         <?php
         // Dependent Dropdown

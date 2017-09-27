@@ -8,9 +8,6 @@ use kartik\grid\GridView;
 use yii\bootstrap\Modal;
 use common\models\LocationAvailability;
 ?>
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <div class="col-md-12">
 	<?php
 	$form = ActiveForm::begin([
@@ -156,10 +153,10 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 		load : function() {
 			var teacherId = $('#lesson-teacherid').val();
 			var params = $.param({teacherId: teacherId});
-		   $('#teacher-lesson').fullCalendar('destroy');
+		   //$('#teacher-lesson').fullCalendar('destroy');
             $('#teacher-lesson').fullCalendar({
             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-                defaultDate: date,
+                //defaultDate: date,
                 header: {
                     left: 'prev,next today',
                     center: 'title',
@@ -169,36 +166,30 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 slotDuration: '00:15:00',
                 titleFormat: 'DD-MMM-YYYY, dddd',
                 defaultView: 'agendaWeek',
-                minTime: "<?php echo $from_time; ?>",
-                maxTime: "<?php echo $to_time; ?>",
-                selectConstraint: 'businessHours',
-                eventConstraint: 'businessHours',
-                businessHours: availableHours,
+                minTime: "<?php echo $minTime; ?>",
+                maxTime: "<?php echo $maxTime; ?>",
                 overlapEvent: false,
                 overlapEventsSeparate: true,
-                events: events,
-                select: function (start, end, allDay) {
-                    $('#extra-lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A'));
-                    $('#lesson-calendar').fullCalendar('removeEvents', 'newEnrolment');
-					var duration = $('#lesson-duration').val();
-					var endtime = start.clone();
-					var durationMinutes = moment.duration(duration).asMinutes();
-					moment(endtime.add(durationMinutes, 'minutes'));
-					
-                    $('#lesson-calendar').fullCalendar('renderEvent',
-                        {
-                            id: 'newEnrolment',
-                            start: start,
-                            end: endtime,
-                            allDay: false
-                        },
-                    true // make the event "stick"
-                    );
-                    $('#lesson-calendar').fullCalendar('unselect');
-                },
-                loading: function (bool) { 
-                        $('#spinner').show();                    
-                },
+                //events: events,
+//                select: function (start, end, allDay) {
+//                    $('#extra-lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A'));
+//                    $('#lesson-calendar').fullCalendar('removeEvents', 'newEnrolment');
+//					var duration = $('#lesson-duration').val();
+//					var endtime = start.clone();
+//					var durationMinutes = moment.duration(duration).asMinutes();
+//					moment(endtime.add(durationMinutes, 'minutes'));
+//					
+//                    $('#lesson-calendar').fullCalendar('renderEvent',
+//                        {
+//                            id: 'newEnrolment',
+//                            start: start,
+//                            end: endtime,
+//                            allDay: false
+//                        },
+//                    true // make the event "stick"
+//                    );
+//                    $('#lesson-calendar').fullCalendar('unselect');
+//                },
                 eventAfterAllRender: function (view) {
                     $('#spinner').hide(); 
                     $('.fc-short').removeClass('fc-short');
@@ -211,6 +202,11 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
     $(document).ready(function () {
 		$(document).on('click', '.lesson-cancel', function () {
             $('#lesson-modal').modal('hide');
+			return false;
+		});
+		$(document).on('change', '#lesson-teacherid', function () {
+            calendar.load();
+			return false;
 		});
 		$(document).on('click', '#teacher-lesson-grid  tbody > tr', function () {
             var lessonId = $(this).data('key');
@@ -224,6 +220,7 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                     if(response.status)
                     {
                         $('#lesson-content').html(response.data);
+                		$('#lesson-modal .modal-dialog').css({'width': '1000px'});
                         $('#lesson-modal').modal('show');
                         calendar.load();
                     }

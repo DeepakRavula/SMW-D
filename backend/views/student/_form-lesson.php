@@ -33,8 +33,6 @@ use kartik\time\TimePicker;
             $enrolledPrograms = ArrayHelper::map(
                             $query->studentEnrolled($studentModel->id)
                             ->all(), 'id', 'name');
-            
-
             $programs = [];
             foreach ($allPrograms as $program) {
                 $programs[] = [
