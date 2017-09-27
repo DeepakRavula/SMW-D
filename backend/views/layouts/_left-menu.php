@@ -152,7 +152,13 @@ echo Menu::widget([
 					'visible' => Yii::$app->user->can('owner'),
 					'active' => Yii::$app->controller->action->id === 'discount',
 				],
-			]
+                    [
+                    'label' => Yii::t('backend', 'All Locations'),
+                    'icon' => '<i class="fa fa-cny"></i>',
+                    'url' => ['report/all-locations'],
+                    'visible' => Yii::$app->user->can('owner'),
+                ],
+            ]
 		],
                 [
 			'label' => Yii::t('backend', 'Release Notes'),

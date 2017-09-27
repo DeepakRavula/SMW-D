@@ -15,6 +15,7 @@ use common\models\InvoiceLineItem;
 use yii\data\ActiveDataProvider;
 use common\models\PaymentMethod;
 use backend\models\search\DiscountSearch;
+use common\models\Location;
 
 
 /**
@@ -284,6 +285,33 @@ class ReportController extends Controller {
         return $this->render('/report/discount/_print', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+        ]);
+    }
+    public function actionAllLocations()
+    {
+        $searchModel = new ReportSearch();
+        $currentDate = new \DateTime();
+        $searchModel->fromDate = $currentDate->format('1-m-Y');
+        $searchModel->toDate = $currentDate->format('t-m-Y');
+        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $royaltyRequest = $request->get('ReportSearch');
+            $searchModel->dateRange = $royaltyRequest['dateRange'];
+        }
+        $toDate = $searchModel->toDate;
+        if ($toDate > $currentDate) {
+            $toDate = $currentDate;
+        }
+
+        $location = Location::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $location,
+        ]);
+
+        return $this->render('all-locations/index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
         ]);
     }
 }
