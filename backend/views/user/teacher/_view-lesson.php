@@ -7,6 +7,9 @@ use yii\helpers\Url;
 use kartik\grid\GridView;
 use yii\bootstrap\Modal;
 use common\models\LocationAvailability;
+use common\models\Lesson;
+use common\models\Qualification;
+use kartik\daterange\DateRangePicker;
 ?>
 <div class="col-md-12">
 	<?php
@@ -14,35 +17,39 @@ use common\models\LocationAvailability;
 			'id' => 'teacher-lesson-search-form',
 	]);
 	?>
-	<div class="row">
-		<div class="col-md-2">
-			<?php
-			echo $form->field($searchModel, 'fromDate')->widget(DatePicker::classname(), [
-				'options' => [
-					'class' => 'form-control',
-				],
-			])
-			?>
-		</div>
-		<div class="col-md-2">
-			<?php
-			echo $form->field($searchModel, 'toDate')->widget(DatePicker::classname(), [
-				'options' => [
-					'class' => 'form-control',
-				],
-			])
-			?>
-		</div>
-		<div class="col-md-2 form-group p-t-5">
-			<Br>
-			<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
-		</div>
-		<div class="col-md-2 m-t-25">
-			<?= Html::a('<i class="fa fa-print"></i> Print', ['print/teacher-lessons', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
+    <div class="row">
+        <div class="col-md-3 form-group">
+            <?php
+            echo DateRangePicker::widget([
+                'model' => $searchModel,
+                'attribute' => 'dateRange',
+                'convertFormat' => true,
+                'initRangeExpr' => true,
+                'pluginOptions' => [
+                    'autoApply' => true,
+                    'ranges' => [
+                        Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
+                        Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
+                        Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+                        Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
+                    ],
+                    'locale' => [
+                        'format' => 'M d,Y',
+                    ],
+                    'opens' => 'right',
+                ],
+            ]);
 
-		</div>
-		<div class="clearfix"></div>
-	</div>
+            ?>
+        </div>
+        <div class="col-md-1 form-group">
+            <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
+        </div>
+        <div class="col-md-1 form-group">
+            <?= Html::a('<i class="fa fa-print"></i> Print', ['print/teacher-lessons', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default m-r-10', 'target' => '_blank']) ?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
 </div>
 <?php ActiveForm::end(); ?>
 
@@ -229,11 +236,9 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             return false;
         });
         $("#teacher-lesson-search-form").on("submit", function () {
-            var fromDate = $('#lessonsearch-fromdate').val();
-            var toDate = $('#lessonsearch-todate').val();
+            var dateRange = $('#lessonsearch-daterange').val();
             $.pjax.reload({container: "#teacher-lesson-grid", replace: false, timeout: 6000, data: $(this).serialize()});
-			var params = $.param({ 'LessonSearch[fromDate]': fromDate,
-            'LessonSearch[toDate]': toDate});
+            var params = $.param({ 'LessonSearch[dateRange]': dateRange});
             var url = '<?= Url::to(['print/teacher-lessons', 'id' => $model->id]); ?>&' + params;
             $('#print-btn').attr('href', url);
             return false;

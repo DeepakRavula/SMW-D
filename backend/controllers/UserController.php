@@ -261,8 +261,10 @@ class UserController extends Controller
 		$lessonSearchModel = $request->get('LessonSearch');
 		
 		if(!empty($lessonSearchModel)) {
-			$lessonSearch->fromDate = new \DateTime($lessonSearchModel['fromDate']);
-			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
+            $lessonSearch->dateRange = $lessonSearchModel['dateRange'];
+            list($lessonSearch->fromDate, $lessonSearch->toDate) = explode(' - ', $lessonSearch->dateRange);
+			$lessonSearch->fromDate = new \DateTime($lessonSearch['fromDate']);
+			$lessonSearch->toDate = new \DateTime($lessonSearch['toDate']);
 		}
 		$teacherLessons = Lesson::find()
 			->innerJoinWith('enrolment')
@@ -414,6 +416,8 @@ class UserController extends Controller
         $searchModel = new UserSearch();
         $searchModel->accountView = false;
         $db = $searchModel->search(Yii::$app->request->queryParams);
+        $lessonSearchModel=new LessonSearch();
+        $lessonSearchModel->dateRange=(new\DateTime())->format('M,d,Y').'-'.(new\DateTime())->format('M,d,Y');
 
         return $this->render('view', [
             'minTime' => $minTime,
@@ -421,7 +425,7 @@ class UserController extends Controller
             'model' => $model,
             'student' => new Student(),
             'searchModel' => $searchModel,
-            'lessonSearchModel' => new LessonSearch(),
+            'lessonSearchModel' => $lessonSearchModel,
 			'invoiceSearchModel' => new InvoiceSearch(),
 			'dataProvider' => $this->getStudentDataProvider($id),
             'teacherDataProvider' => $this->getTeacherDataProvider($id),
