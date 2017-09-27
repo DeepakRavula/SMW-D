@@ -159,10 +159,6 @@ class Location extends \yii\db\ActiveRecord
         }
         return parent::afterSave($insert, $changedAttributes);
     }
-    public function getInvoice()
-    {
-        return $this->hasMany(Invoice::className(), ['location_id' => 'id']);
-    }
     public function getActiveStudentsCount($fromDate, $toDate)
     {
         $activeStudentsCount = Student::find()
