@@ -205,4 +205,16 @@ class Location extends \yii\db\ActiveRecord
 
         return $total;
     }
+    public function getTax()
+    {
+         $taxCode = TaxCode::find()
+        ->andWhere(['province_id' => $this->province_id,
+            'tax_type_id' => TaxType::HST
+        ])
+        ->orderBy(['id' => SORT_DESC])
+        ->one();
+    $taxPercentage = $taxCode->rate;
+        return $taxPercentage;
+    }
+
 }

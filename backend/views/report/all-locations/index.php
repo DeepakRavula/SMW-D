@@ -55,6 +55,31 @@ $this->title = 'All Locations';
                 return !empty($revenue) && ($revenue > 0) ? round($advertisementValue, 2) : 0;
             },
         ],
+            [
+            'label' => 'HST',
+            'value' => function ($data) use ($searchModel) {
+                $revenue = $data->getRevenue($searchModel->fromDate, $searchModel->toDate);
+                $royaltyValue=$revenue*(($data->royalty->value)/100);
+                $advertisementValue = $revenue * (($data->advertisement->value) / 100);
+                $subTotal=$royaltyValue+$advertisementValue;
+                $taxPercentage=$data->getTax();
+                $taxAmount=$subTotal * ($taxPercentage / 100);
+                return !empty($revenue) && ($revenue > 0) ? round($taxAmount, 2) : 0;
+            },
+        ],
+            [
+            'label' => 'Total',
+            'value' => function ($data) use ($searchModel) {
+                $revenue = $data->getRevenue($searchModel->fromDate, $searchModel->toDate);
+                $royaltyValue = $revenue * (($data->royalty->value) / 100);
+                $advertisementValue = $revenue * (($data->advertisement->value) / 100);
+                $subTotal = $royaltyValue + $advertisementValue;
+                $taxPercentage = $data->getTax();
+                $taxAmount = $subTotal * ($taxPercentage / 100);
+                $total=$subTotal+$taxAmount;
+                return !empty($revenue) && ($revenue > 0) ? round($total,2) : 0;
+            },
+        ],
     ],
 ]);
 
