@@ -176,4 +176,33 @@ class Location extends \yii\db\ActiveRecord
             ->count();
         return $activeStudentsCount;
     }
+    public function getRevenue($fromDate, $toDate)
+    {
+        $invoiceTaxTotal = Invoice::find()
+            ->where(['location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE])
+            ->andWhere(['between', 'date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+            ->notDeleted()
+            ->sum('tax');
+
+        $payments = Payment::find()
+            ->joinWith(['invoice i' => function ($query) {
+                    $query->where(['i.location_id' => $this->id]);
+                }])
+            ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
+            ->notDeleted()
+            ->andWhere(['between', 'payment.date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+            ->sum('payment.amount');
+
+        $royaltyPayment = InvoiceLineItem::find()
+            ->joinWith(['invoice i' => function ($query) {
+                    $query->where(['i.location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE]);
+                }])
+            ->andWhere(['between', 'i.date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+            ->royaltyFree()
+            ->sum('invoice_line_item.amount');
+
+        $total = $payments - $invoiceTaxTotal - $royaltyPayment;
+
+        return $total;
+    }
 }

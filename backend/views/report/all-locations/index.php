@@ -26,15 +26,21 @@ $this->title = 'All Locations';
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
-            'name',
-                [
-                'label' => 'Active Students',
-                'value' => function ($data) use ($searchModel) {
-                    return !empty($data->getActiveStudentsCount($searchModel->fromDate, $searchModel->toDate)) ? $data->getActiveStudentsCount($searchModel->fromDate, $searchModel->toDate) : null;
-                },
-            ],
+        'name',
+            [
+            'label' => 'Active Students',
+            'value' => function ($data) use ($searchModel) {
+                return !empty($data->getActiveStudentsCount($searchModel->fromDate, $searchModel->toDate)) ? $data->getActiveStudentsCount($searchModel->fromDate, $searchModel->toDate) : 0;
+            },
         ],
-    ]);
+            [
+            'label' => 'Revenue',
+            'value' => function ($data) use ($searchModel) {
+                return !empty($data->getRevenue($searchModel->fromDate, $searchModel->toDate)) ? $data->getRevenue($searchModel->fromDate, $searchModel->toDate) : 0;
+            },
+        ],
+    ],
+]);
 
     ?>
 <?php Pjax::end(); ?>
