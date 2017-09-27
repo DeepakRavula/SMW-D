@@ -259,7 +259,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             }
             $taxStatus         = TaxStatus::findOne(['id' => $this->item->taxStatusId]);
             $this->tax_type    = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
-            $this->tax_rate    = $this->netAmount * $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate / 100.0;
+            $this->tax_rate    = $this->netPrice * $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate / 100.0;
             $this->tax_code    = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
             $this->tax_status  = $taxStatus->name;
             if (!isset($this->royaltyFree)) {
@@ -269,7 +269,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
         if (!$insert) {
             $taxType = TaxType::findOne(['name' => $this->tax_type]);
-            $this->tax_rate = $this->netAmount * $taxType->taxCode->rate / 100.0;
+            $this->tax_rate = $this->netPrice * $taxType->taxCode->rate / 100.0;
         }
         return parent::beforeSave($insert);
     }
@@ -350,7 +350,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         if ((int) $this->lineItemDiscount->valueType) {
             return $this->lineItemDiscount->value;
         } else {
-            return ($this->lineItemDiscount->value / 100) * $this->amount;
+            return ($this->lineItemDiscount->value / 100) * $this->grossPrice;
         }
     }
 
@@ -361,19 +361,24 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $discount = $this->getLineItemDiscountValue();
         }
         if ($this->customerDiscount) {
-            $discount = $this->customerDiscount->value / 100 * $this->amount;
+            $discount = $this->customerDiscount->value / 100 * $this->grossPrice;
         }
         return $discount;
+    }
+    
+    public function getItemTotal()
+    {
+        return $this->netPrice + $this->tax_rate;
     }
 
     public function getNetPrice()
     {
-        return $this->netAmount + $this->tax_rate;
+        return $this->grossPrice - $this->discount;
     }
     
-    public function getNetAmount()
+    public function getGrossPrice()
     {
-        return $this->amount - $this->discount;
+        return $this->amount * $this->unit;
     }
 
     public function getDiscount()
@@ -381,20 +386,20 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $discount = 0.0;
         if ($this->hasLineItemDiscount()) {
             if ((int) $this->lineItemDiscount->valueType) {
-                $discount += $this->amount < 0 ? - ($this->lineItemDiscount->value) : 
+                $discount += $this->grossPrice < 0 ? - ($this->lineItemDiscount->value) : 
                     $this->lineItemDiscount->value;
             } else {
-                $discount += ($this->lineItemDiscount->value / 100) * $this->amount;
+                $discount += ($this->lineItemDiscount->value / 100) * $this->grossPrice;
             }
         }
         if ($this->hasCustomerDiscount()) {
-            $discount += ($this->customerDiscount->value / 100) * $this->amount;
+            $discount += ($this->customerDiscount->value / 100) * $this->grossPrice;
         }
         if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
-            $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $this->amount;
+            $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $this->grossPrice;
         }
         if ($this->hasMultiEnrolmentDiscount()) {
-            $discount += $this->amount < 0 ? - ($this->multiEnrolmentDiscount->value) :
+            $discount += $this->grossPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :
                 $this->multiEnrolmentDiscount->value;
         }
         return $discount;
@@ -477,15 +482,14 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         $old = clone $this;
         $this->unit   = $this->unit + $this->getLessonCreditUnit($lesson);
-        $amount = $lesson->enrolment->program->rate * $this->unit;
-        $this->amount = $amount;
+        $this->amount = $lesson->enrolment->program->rate;
         $this->save();
         $creditUsedInvoice = $lesson->invoice;
         if (!$lesson->hasInvoice()) {
             $creditUsedInvoice = $lesson->proFormaInvoice;
         }
         if ($creditUsedInvoice) {
-            if ($this->invoice->addLessonCreditAppliedPayment($this->netPrice - $old->netPrice, $creditUsedInvoice)) {
+            if ($this->invoice->addLessonCreditAppliedPayment($this->itemTotal - $old->itemTotal, $creditUsedInvoice)) {
                 $creditUsedInvoice->save();
             }
         }

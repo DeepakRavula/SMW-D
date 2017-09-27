@@ -60,7 +60,7 @@ use yii\grid\GridView;
             'label' => 'Price',
             'format' => 'currency',
 			'value' => function($data) {
-				return $data->netPrice;	
+				return $data->itemTotal;	
 			},
         ],
     ];
@@ -90,7 +90,7 @@ use yii\grid\GridView;
             'label' => 'Price',
             'format' => 'currency',
 			'value' => function($data) {
-				return $data->netPrice;	
+				return $data->itemTotal;	
 			},
 			'headerOptions' => ['class' => 'text-right'],
 			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],

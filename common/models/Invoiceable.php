@@ -50,8 +50,7 @@ trait Invoiceable
             $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
 			$invoiceLineItem->rate = $rate;
         }
-        $amount = $this->enrolment->program->rate * $invoiceLineItem->unit;
-        $invoiceLineItem->amount       = $amount;
+        $invoiceLineItem->amount       = $this->enrolment->program->rate;
         $studentFullName               = $this->enrolment->student->fullName;
         $description                  = $this->enrolment->program->name.' for '.$studentFullName.' with '
             . $this->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');

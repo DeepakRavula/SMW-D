@@ -861,7 +861,7 @@ class Lesson extends \yii\db\ActiveRecord
         $spiltParts = self::find()
                 ->descendantsOf($parentLesson->id)
                 ->all();
-        return $parentLesson->proFormaLineItem->netPrice / count($spiltParts);
+        return $parentLesson->proFormaLineItem->itemTotal / count($spiltParts);
     }
 
     public function canInvoice()
