@@ -26,13 +26,6 @@ $this->title = 'New Enrolment';
 			</div>
 		</div>
 	<div class="clearfix"></div>
-	 <div class="form-group">
-		<label  class="col-sm-2 control-label">Email</label>
-		<div class="col-sm-6">
-		<?php
-            echo $form->field($model, 'email')->textInput(['placeholder' => 'Email'])->label(false); ?>	
-		</div>
-		</div>
 	<div class="clearfix"></div>
 	 <div class="form-group">
 		<label  class="col-sm-2 control-label">Phone Number</label>
