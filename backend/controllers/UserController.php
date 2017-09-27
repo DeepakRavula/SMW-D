@@ -471,7 +471,6 @@ class UserController extends Controller
 					$transaction->rollBack();
 					break;
 				}
-				$model->getModel()->link('addresses', $addressModel);
 			}
 			foreach ($phoneNumberModels as $phoneNumberModel) {
 				$phoneNumberModel->user_id = $model->getModel()->id;
@@ -595,9 +594,9 @@ class UserController extends Controller
     {
         $request = Yii::$app->request;
         $model = new UserForm();
-        $model->setModel($this->findModel($id));	
+        $model->setModel($this->findModel($id));
         $emailModels = $model->emails;
-        $data = $this->renderAjax('update/_phone', [
+        $data = $this->renderAjax('update/_email', [
             'model' => $model,
             'emailModels' => $emailModels,
         ]);
