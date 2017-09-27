@@ -99,8 +99,10 @@ class PrintController extends Controller
 		$lessonSearchModel = $request->get('LessonSearch');
 		
 		if(!empty($lessonSearchModel)) {
-			$lessonSearch->fromDate = new \DateTime($lessonSearchModel['fromDate']);
-			$lessonSearch->toDate = new \DateTime($lessonSearchModel['toDate']);
+			$lessonSearch->dateRange = $lessonSearchModel['dateRange'];
+            list($lessonSearch->fromDate, $lessonSearch->toDate) = explode(' - ', $lessonSearch->dateRange);
+			$lessonSearch->fromDate = new \DateTime($lessonSearch['fromDate']);
+			$lessonSearch->toDate = new \DateTime($lessonSearch['toDate']);
 		}
 		$teacherLessons = Lesson::find()
 			->innerJoinWith('enrolment')
