@@ -6,7 +6,7 @@ use common\models\User;
 use common\models\UserProfile;
 use common\models\Address;
 use common\models\PhoneNumber;
-use common\models\Program;
+use common\models\UserEmail;
 use common\models\UserLocation;
 use yii\base\Exception;
 use yii\base\Model;
@@ -37,6 +37,7 @@ class UserForm extends Model
     public $phoneextension;
     public $locations;
     private $model;
+    private $emails;
     public $phoneNumbers;
     public $addresses;
     public $section;
@@ -103,7 +104,6 @@ class UserForm extends Model
     public function setModel($model)
     {
         $this->username = $model->username;
-        $this->email = $model->email;
         $this->status = $model->status;
         $this->model = $model;
         $this->roles = ArrayHelper::getColumn(
@@ -116,6 +116,12 @@ class UserForm extends Model
             $this->phoneNumbers = $model->phoneNumbers;
         } else {
             $this->phoneNumbers = [new PhoneNumber()];
+        }
+        
+        if (count($model->emails) > 0) {
+            $this->emails = $model->emails;
+        } else {
+            $this->emails = [new UserEmail()];
         }
 
         if (count($model->addresses) > 0) {
@@ -139,6 +145,15 @@ class UserForm extends Model
         return $this->model;
     }
 
+    public function getEmails()
+    {
+        return $this->emails;
+    }
+
+    public function setEmails($value)
+    {
+        $this->emails = trim($value);
+    }
     /**
      * @return User
      */
