@@ -3,6 +3,7 @@
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use common\components\gridView\AdminLteGridView;
+use common\models\LocationDebt;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -42,42 +43,31 @@ $this->title = 'All Locations';
             [
             'label' => 'Royalty',
             'value' => function ($data) use ($searchModel) {
-                $revenue=$data->getRevenue($searchModel->fromDate, $searchModel->toDate);
-                $royaltyValue=$revenue*(($data->royalty->value)/100);
-                return !empty($revenue)&& ($revenue > 0) ? round($royaltyValue,2) : 0;
+                $royaltyValue=$data->getLocationDebt(LocationDebt::TYPE_ROYALTY,$searchModel->fromDate,$searchModel->toDate);
+                return round($royaltyValue, 2);
             },
         ],
             [
             'label' => 'Advertisement',
             'value' => function ($data) use ($searchModel) {
-                $revenue = $data->getRevenue($searchModel->fromDate, $searchModel->toDate);
-                $advertisementValue = $revenue * (($data->advertisement->value) / 100);
-                return !empty($revenue) && ($revenue > 0) ? round($advertisementValue, 2) : 0;
+                $advertisementValue=$data->getLocationDebt(LocationDebt::TYPE_ADVERTISEMENT,$searchModel->fromDate,$searchModel->toDate);
+                return round($advertisementValue, 2);
             },
         ],
             [
             'label' => 'HST',
             'value' => function ($data) use ($searchModel) {
-                $revenue = $data->getRevenue($searchModel->fromDate, $searchModel->toDate);
-                $royaltyValue=$revenue*(($data->royalty->value)/100);
-                $advertisementValue = $revenue * (($data->advertisement->value) / 100);
-                $subTotal=$royaltyValue+$advertisementValue;
-                $taxPercentage=$data->getTax();
-                $taxAmount=$subTotal * ($taxPercentage / 100);
-                return !empty($revenue) && ($revenue > 0) ? round($taxAmount, 2) : 0;
+                $taxAmount=$data->getTaxAmount($searchModel->fromDate,$searchModel->toDate);
+                return round($taxAmount, 2);
             },
         ],
             [
             'label' => 'Total',
             'value' => function ($data) use ($searchModel) {
-                $revenue = $data->getRevenue($searchModel->fromDate, $searchModel->toDate);
-                $royaltyValue = $revenue * (($data->royalty->value) / 100);
-                $advertisementValue = $revenue * (($data->advertisement->value) / 100);
-                $subTotal = $royaltyValue + $advertisementValue;
-                $taxPercentage = $data->getTax();
-                $taxAmount = $subTotal * ($taxPercentage / 100);
+                $subTotal=$data->SubTotal($searchModel->fromDate,$searchModel->toDate);
+                $taxAmount=$data->getTaxAmount($searchModel->fromDate,$searchModel->toDate);
                 $total=$subTotal+$taxAmount;
-                return !empty($revenue) && ($revenue > 0) ? round($total,2) : 0;
+                return round($total,2);
             },
         ],
     ],

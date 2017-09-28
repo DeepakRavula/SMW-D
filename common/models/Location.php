@@ -205,7 +205,34 @@ class Location extends \yii\db\ActiveRecord
 
         return $total;
     }
-    public function getTax()
+    public function getLocationDebt($locationDebt, $fromDate, $toDate)
+    {
+         $revenue = $this->getRevenue($fromDate, $toDate);
+         if(!empty($revenue) && $revenue>0)
+         {
+        if ($locationDebt === LocationDebt::TYPE_ROYALTY) {
+            $royaltyValue = $this->royalty->value;            
+            $locationDebtValue = $revenue * (($royaltyValue) / 100);
+        } else if ($locationDebt === LocationDebt::TYPE_ADVERTISEMENT) {
+            $advertisementValue = $this->advertisement->value;
+            $revenue = $this->getRevenue($fromDate, $toDate);
+            $locationDebtValue = $revenue * (($advertisementValue) / 100);
+        }
+         }
+         else
+         {
+             $locationDebtValue=0;
+         }
+        return $locationDebtValue;
+    }
+    public function subTotal($fromDate,$toDate)
+    {
+    $royaltyValue=$this->getLocationDebt(LocationDebt::TYPE_ROYALTY,$fromDate,$toDate);
+    $advertisementValue=$this->getLocationDebt(LocationDebt::TYPE_ADVERTISEMENT,$fromDate,$toDate); 
+    $subTotal=$royaltyValue+$advertisementValue;
+    return $subTotal;
+    }
+       public function getTaxAmount($fromDate,$toDate)
     {
          $taxCode = TaxCode::find()
         ->andWhere(['province_id' => $this->province_id,
@@ -214,7 +241,9 @@ class Location extends \yii\db\ActiveRecord
         ->orderBy(['id' => SORT_DESC])
         ->one();
     $taxPercentage = $taxCode->rate;
-        return $taxPercentage;
+    $subTotal=$this->subTotal($fromDate,$toDate);
+    $taxAmount=$subTotal * ($taxPercentage / 100);
+    return $taxAmount;
     }
 
 }
