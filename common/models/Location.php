@@ -159,4 +159,62 @@ class Location extends \yii\db\ActiveRecord
         }
         return parent::afterSave($insert, $changedAttributes);
     }
+    public function getActiveStudentsCount($fromDate, $toDate)
+    {
+        $activeStudentsCount = Student::find()
+            ->notDeleted()
+            ->joinWith(['enrolment' => function ($query) use($fromDate, $toDate) {
+                    $query->joinWith(['course' => function ($query) use($fromDate, $toDate) {
+                            $query->joinWith(['location'])
+                            ->confirmed()
+                            ->between($fromDate, $toDate);
+                        }]);
+                }])
+            ->andWhere(['location.id' => $this->id])
+            ->active()
+            ->distinct(['enrolment.studentId'])
+            ->count();
+        return $activeStudentsCount;
+    }
+    public function getRevenue($fromDate, $toDate)
+    {
+        $invoiceTaxTotal = Invoice::find()
+            ->where(['location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE])
+            ->andWhere(['between', 'date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+            ->notDeleted()
+            ->sum('tax');
+
+        $payments = Payment::find()
+            ->joinWith(['invoice i' => function ($query) {
+                    $query->where(['i.location_id' => $this->id]);
+                }])
+            ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
+            ->notDeleted()
+            ->andWhere(['between', 'payment.date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+            ->sum('payment.amount');
+
+        $royaltyPayment = InvoiceLineItem::find()
+            ->joinWith(['invoice i' => function ($query) {
+                    $query->where(['i.location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE]);
+                }])
+            ->andWhere(['between', 'i.date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+            ->royaltyFree()
+            ->sum('invoice_line_item.amount');
+
+        $total = $payments - $invoiceTaxTotal - $royaltyPayment;
+
+        return $total;
+    }
+    public function getTax()
+    {
+         $taxCode = TaxCode::find()
+        ->andWhere(['province_id' => $this->province_id,
+            'tax_type_id' => TaxType::HST
+        ])
+        ->orderBy(['id' => SORT_DESC])
+        ->one();
+    $taxPercentage = $taxCode->rate;
+        return $taxPercentage;
+    }
+
 }
