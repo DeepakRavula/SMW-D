@@ -72,7 +72,7 @@ $this->registerJs($js);
 	<?= $form->field($emailModel, "[{$index}]email")->textInput(['maxlength' => true]) ?>
 	                    </div>
                         <div class="col-sm-4">
-	                    <?= $form->field($emailModel, "[{$index}]labelId")->widget(Select2::classname(), [
+        <?= $form->field($emailModel, "[{$index}]labelId")->widget(Select2::classname(), [
                                     'data' => ArrayHelper::map(Label::find()
 					->user($model->getModel()->id)
 					->all(), 'id', 'name'),
