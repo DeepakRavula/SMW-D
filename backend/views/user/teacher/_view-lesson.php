@@ -11,6 +11,7 @@ use common\models\Lesson;
 use common\models\Qualification;
 use kartik\daterange\DateRangePicker;
 ?>
+<?php $this->render('/lesson/_color-code'); ?>
 <div class="col-md-12">
 	<?php
 	$form = ActiveForm::begin([
@@ -156,10 +157,11 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 
 <script>
+    $(document).ready(function () {
 	var calendar = {
-		load : function() {
+		load : function(events,availableHours) {
 			var teacherId = $('#lesson-teacherid').val();
-			var params = $.param({teacherId: teacherId});
+			//var params = $.param({teacherId: teacherId});
 		   //$('#teacher-lesson').fullCalendar('destroy');
             $('#teacher-lesson').fullCalendar({
             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -177,7 +179,7 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 maxTime: "<?php echo $maxTime; ?>",
                 overlapEvent: false,
                 overlapEventsSeparate: true,
-                //events: events,
+                events: events,
 //                select: function (start, end, allDay) {
 //                    $('#extra-lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A'));
 //                    $('#lesson-calendar').fullCalendar('removeEvents', 'newEnrolment');
@@ -206,7 +208,25 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             });
 		}
 	};
-    $(document).ready(function () {
+var refreshcalendar = {
+        refresh : function(){
+            var events, availableHours;
+            var teacherId = $('#lesson-teacherid').val();
+            $('#new-lesson-modal .modal-dialog').css({'width': '1000px'});
+                $.ajax({
+                    url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
+                    type: 'get',
+                    dataType: "json",
+                    success: function (response)
+                    {
+                        events = response.events;
+                        availableHours = response.availableHours;
+                        calendar.load(events,availableHours);
+                    }
+                });
+            }
+        };
+
 		$(document).on('click', '.lesson-cancel', function () {
             $('#lesson-modal').modal('hide');
 			return false;
@@ -228,8 +248,9 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                     {
                         $('#lesson-content').html(response.data);
                 		$('#lesson-modal .modal-dialog').css({'width': '1000px'});
+                         refreshcalendar.refresh();
                         $('#lesson-modal').modal('show');
-                        calendar.load();
+                       
                     }
                 }
             });
