@@ -3,6 +3,8 @@
 use wbraganca\dynamicform\DynamicFormWidget;
 use yii\helpers\Html;
 use common\models\Label;
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
 
 /* @var $model backend\models\UserForm */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -69,9 +71,19 @@ $this->registerJs($js);
 	                    <div class="col-sm-4">
 	<?= $form->field($emailModel, "[{$index}]email")->textInput(['maxlength' => true]) ?>
 	                    </div>
-	                    <div class="col-sm-4">
-	<?= $form->field($emailModel, "[{$index}]labelId")->dropDownList(Label::Labels(), ['prompt' => 'Select Label']) ?>
-	                    </div>
+                        <div class="col-sm-4">
+	                    <?= $form->field($emailModel, "[{$index}]labelId")->widget(Select2::classname(), [
+                                    'data' => ArrayHelper::map(Label::find()
+					->user($model->getModel()->id)
+					->all(), 'id', 'name'),
+                                    'options' => ['placeholder' => 'Select Label'],
+                                    'pluginOptions' => [
+                                        'tags' => true,
+                                        'allowClear' => true,
+                                    ],
+                            ])->label('Label');
+                            ?>
+                        </div>
 	                    <div class="clearfix"></div>
 	                </div>
 				</div>

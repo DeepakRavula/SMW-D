@@ -33,7 +33,7 @@ class PhoneNumber extends \yii\db\ActiveRecord
     {
         return [
             [['label_id', 'number'], 'required'],
-            [['label_id', 'extension'], 'integer'],
+            [['extension'], 'integer'],
             [['number'], 'string', 'max' => 16],
             [['is_primary'], 'boolean'],
         ];
@@ -56,7 +56,7 @@ class PhoneNumber extends \yii\db\ActiveRecord
 
     public function getLabel()
     {
-        return $this->hasOne(PhoneLabel::className(), ['id' => 'label_id']);
+        return $this->hasOne(Label::className(), ['id' => 'label_id']);
     }
 
     public function getUser()

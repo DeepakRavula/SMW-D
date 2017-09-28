@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\models\query\LabelQuery;
 use Yii;
 
 /**
@@ -55,5 +56,10 @@ class Label extends \yii\db\ActiveRecord
             self::LABEL_WORK => Yii::t('common', 'Work'),
             self::LABEL_OTHER => Yii::t('common', 'Other'),
         ];
+    }
+    
+    public static function find()
+    {
+        return new LabelQuery(get_called_class());
     }
 }

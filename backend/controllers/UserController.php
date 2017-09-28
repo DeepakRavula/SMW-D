@@ -33,7 +33,7 @@ use common\models\Program;
 use common\models\LocationAvailability;
 use common\models\InvoiceLineItem;
 use common\models\UserEmail;
-use common\models\PaymentMethod;
+use common\models\Label;
 use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
@@ -470,6 +470,16 @@ class UserController extends Controller
 				$model->getModel()->link('addresses', $addressModel);
 			}
                         foreach ($emailModels as $emailModel) {
+                                if (!is_numeric($emailModel->labelId)) {
+                                    $label = new Label();
+                                    $label->name = $emailModel->labelId;
+                                    $label->userAdded = $model->getModel()->id;
+                                    if (!($flag = $label->save(false))) {
+					$transaction->rollBack();
+					break;
+                                    }
+                                    $emailModel->labelId = $label->id;
+                                }
                                 $emailModel->userId = $model->getModel()->id;
 				if (!($flag = $emailModel->save(false))) {
 					$transaction->rollBack();
@@ -477,6 +487,16 @@ class UserController extends Controller
 				}
 			}
 			foreach ($phoneNumberModels as $phoneNumberModel) {
+                                if (!is_numeric($phoneNumberModel->label_id)) {
+                                    $label = new Label();
+                                    $label->name = $phoneNumberModel->label_id;
+                                    $label->userAdded = $model->getModel()->id;
+                                    if (!($flag = $label->save(false))) {
+					$transaction->rollBack();
+					break;
+                                    }
+                                    $phoneNumberModel->label_id = $label->id;
+                                }
 				$phoneNumberModel->user_id = $model->getModel()->id;
 				if (!($flag = $phoneNumberModel->save(false))) {
 					$transaction->rollBack();
@@ -619,6 +639,17 @@ class UserController extends Controller
                         UserEmail::deleteAll(['id' => $deletedEmailIDs]);
                     }
                     foreach ($emailModels as $emailModel) {
+                        if (!is_numeric($emailModel->labelId)) {
+                            $label = new Label();
+                            $label->name = $emailModel->labelId;
+                            $label->userAdded = $model->getModel()->id;
+                            if (!($flag = $label->save(false))) {
+                                
+                                $transaction->rollBack();
+                                break;
+                            }
+                            $emailModel->labelId = $label->id;
+                        }
                         $emailModel->userId = $id;
                         if (!$emailModel->save(false)) {
                             $transaction->rollBack();
@@ -668,6 +699,17 @@ class UserController extends Controller
 						PhoneNumber::deleteAll(['id' => $deletedPhoneIDs]);
 					}
 					foreach ($phoneNumberModels as $phoneNumberModel) {
+                                            if (!is_numeric($phoneNumberModel->label_id)) {
+                                                $label = new Label();
+                                                $label->name = $phoneNumberModel->label_id;
+                                                $label->userAdded = $model->getModel()->id;
+                                                if (!($flag = $label->save(false))) {
+
+                                                    $transaction->rollBack();
+                                                    break;
+                                                }
+                                                $phoneNumberModel->label_id = $label->id;
+                                            }
 						$phoneNumberModel->user_id = $id;
 						if (!$phoneNumberModel->save(false)) {
 							$transaction->rollBack();

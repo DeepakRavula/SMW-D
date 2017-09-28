@@ -5,6 +5,8 @@ use yii\helpers\Html;
 use common\models\Label;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
 
 /* @var $model backend\models\UserForm */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -76,7 +78,17 @@ $this->registerJs($js);
 	<?= $form->field($emailModel, "[{$index}]email")->textInput(['maxlength' => true]) ?>
 	                    </div>
 	                    <div class="col-sm-4">
-	<?= $form->field($emailModel, "[{$index}]labelId")->dropDownList(Label::Labels(), ['prompt' => 'Select Label']) ?>
+	<?= $form->field($emailModel, "[{$index}]labelId")->widget(Select2::classname(), [
+                                    'data' => ArrayHelper::map(Label::find()
+					->user($model->getModel()->id)
+					->all(), 'id', 'name'),
+                                    'options' => ['placeholder' => 'Select Label'],
+                                    'pluginOptions' => [
+                                        'tags' => true,
+                                        'allowClear' => true,
+                                    ],
+                            ])->label('Label');
+                            ?>
 	                    </div>
 	                    <div class="clearfix"></div>
 	                </div>
@@ -94,6 +106,7 @@ $this->registerJs($js);
                 <?php ActiveForm::end(); ?>
 <script type="text/javascript">
 $(document).ready(function(){
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$('.email-container-items').on('change', 'input[type="checkbox"]', function(){
 		var checked = $(this).prop('checked');
 		$('.email-container-items input[type="checkbox"]').prop('checked', false);

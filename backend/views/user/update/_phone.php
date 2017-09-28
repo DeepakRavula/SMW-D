@@ -2,9 +2,11 @@
 
 use wbraganca\dynamicform\DynamicFormWidget;
 use yii\helpers\Html;
-use common\models\PhoneNumber;
+use common\models\Label;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
 
 /* @var $model backend\models\UserForm */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -77,7 +79,17 @@ $this->registerJs($js);
 	<?= $form->field($phoneNumberModel, "[{$index}]number")->textInput(['maxlength' => true]) ?>
 	                    </div>
 	                    <div class="col-sm-4">
-	<?= $form->field($phoneNumberModel, "[{$index}]label_id")->dropDownList(PhoneNumber::phoneLabels(), ['prompt' => 'Select Label']) ?>
+	<?= $form->field($phoneNumberModel, "[{$index}]label_id")->widget(Select2::classname(), [
+                                    'data' => ArrayHelper::map(Label::find()
+					->user($model->getModel()->id)
+					->all(), 'id', 'name'),
+                                    'options' => ['placeholder' => 'Select Label'],
+                                    'pluginOptions' => [
+                                        'tags' => true,
+                                        'allowClear' => true,
+                                    ],
+                            ])->label('Label');
+                            ?>
 	                    </div>
 	                    <div class="col-sm-4">
 	<?= $form->field($phoneNumberModel, "[{$index}]extension")->textInput(['maxlength' => true]) ?>
@@ -99,6 +111,7 @@ $this->registerJs($js);
 	<?php ActiveForm::end(); ?>
 <script type="text/javascript">
 $(document).ready(function(){
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$('.phone-container-items').on('change', 'input[type="checkbox"]', function(){
 		var checked = $(this).prop('checked');
 		$('.phone-container-items input[type="checkbox"]').prop('checked', false);

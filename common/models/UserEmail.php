@@ -30,7 +30,7 @@ class UserEmail extends \yii\db\ActiveRecord
     {
         return [
             [['email', 'labelId', 'isPrimary'], 'required'],
-            [['userId', 'isPrimary', 'labelId'], 'integer'],
+            [['userId', 'isPrimary'], 'integer'],
             [['email'], 'string', 'max' => 255],
         ];
     }

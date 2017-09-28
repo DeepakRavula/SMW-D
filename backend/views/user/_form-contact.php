@@ -7,12 +7,14 @@
     ?>
 	<?php
     echo $this->render('_form-contact-phone', [
+        'model' => $model,
         'phoneNumberModels' => $phoneNumberModels,
         'form' => $form,
     ]);
     ?>
     <?php
     echo $this->render('_form-contact-email', [
+        'model' => $model,
         'emailModels' => $emailModels,
         'form' => $form,
     ]);

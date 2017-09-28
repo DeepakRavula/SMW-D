@@ -2,7 +2,9 @@
 
 use wbraganca\dynamicform\DynamicFormWidget;
 use yii\helpers\Html;
-use common\models\PhoneNumber;
+use common\models\Label;
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
 
 /* @var $model backend\models\UserForm */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -71,7 +73,17 @@ $this->registerJs($js);
 	<?= $form->field($phoneNumberModel, "[{$index}]number")->textInput(['maxlength' => true]) ?>
 	                    </div>
 	                    <div class="col-sm-4">
-	<?= $form->field($phoneNumberModel, "[{$index}]label_id")->dropDownList(PhoneNumber::phoneLabels(), ['prompt' => 'Select Label']) ?>
+	<?= $form->field($phoneNumberModel, "[{$index}]label_id")->widget(Select2::classname(), [
+                                    'data' => ArrayHelper::map(Label::find()
+					->user($model->getModel()->id)
+					->all(), 'id', 'name'),
+                                    'options' => ['placeholder' => 'Select Label'],
+                                    'pluginOptions' => [
+                                        'tags' => true,
+                                        'allowClear' => true,
+                                    ],
+                            ])->label('Label');
+                            ?>
 	                    </div>
 	                    <div class="col-sm-4">
 	<?= $form->field($phoneNumberModel, "[{$index}]extension")->textInput(['maxlength' => true]) ?>

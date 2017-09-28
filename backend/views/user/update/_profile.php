@@ -28,9 +28,6 @@ foreach ($Roles as $name => $description) {
 	</div>
 </div>
 <div class="row">
-	<div class="col-xs-6">
-		<?php echo $form->field($model, 'email') ?>
-	</div>
 	<?php if ($role_name === User::ROLE_ADMINISTRATOR) : ?>
 		<div class="col-xs-6">
 			<?php if (!$model->getModel()->getIsNewRecord()) : ?>
