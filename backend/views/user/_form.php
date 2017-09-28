@@ -28,6 +28,7 @@ use yii\bootstrap\Tabs;
     $addressContent = $this->render('_form-contact', [
         'addressModels' => $addressModels,
         'phoneNumberModels' => $phoneNumberModels,
+        'emailModels' => $emailModels,
         'form' => $form,
     ]); ?>
 	<?php if($model->getModel()->isNewRecord) : ?>

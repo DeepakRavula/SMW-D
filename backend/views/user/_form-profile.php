@@ -14,9 +14,6 @@ foreach ($Roles as $name => $description) {
 <div class="col-md-4">
 	<?php echo $form->field($model, 'lastname') ?>		
 </div>
-<div class="col-md-4">
-	<?php echo $form->field($model, 'email') ?>
-</div>
 </div>
 <div class="row">
 <div class="col-md-4">

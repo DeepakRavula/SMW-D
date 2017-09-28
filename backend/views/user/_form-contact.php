@@ -11,4 +11,10 @@
         'form' => $form,
     ]);
     ?>
+    <?php
+    echo $this->render('_form-contact-email', [
+        'emailModels' => $emailModels,
+        'form' => $form,
+    ]);
+    ?>
 </div>
