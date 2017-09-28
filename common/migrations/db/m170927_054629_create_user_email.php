@@ -14,7 +14,7 @@ class m170927_054629_create_user_email extends Migration
             $this->addColumn('user_email', 'userId', $this->integer()->notNull()->after('id'));
             $this->addColumn('user_email', 'email', $this->string()->notNull()->after('userId'));
             $this->addColumn('user_email', 'labelId', $this->integer()->notNull()->after('email'));
-            $this->addColumn('user_email', 'isPrimary', $this->integer()->notNull()->after('label'));
+            $this->addColumn('user_email', 'isPrimary', $this->integer()->notNull()->after('labelId'));
         }
     }
 
