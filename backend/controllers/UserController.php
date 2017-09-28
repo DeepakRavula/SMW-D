@@ -317,11 +317,11 @@ class UserController extends Controller
             if (!$accountView) {
                 $accountQuery = CompanyAccount::find()
                         ->where(['userId' => $id])
-                        ->orderBy(['transactionId' => SORT_ASC]);
+                        ->orderBy(['transactionId' => SORT_DESC]);
             } else {
                 $accountQuery = CustomerAccount::find()
                         ->where(['userId' => $id])
-                        ->orderBy(['transactionId' => SORT_ASC]);
+                        ->orderBy(['transactionId' => SORT_DESC]);
             }
             return new ActiveDataProvider([
                 'query' => $accountQuery
