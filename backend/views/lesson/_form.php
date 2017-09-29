@@ -108,21 +108,13 @@ use yii\bootstrap\Modal;
     </div>
 <?php ActiveForm::end(); ?>
 </div>
-
-<?php
-$minLocationAvailability = LocationAvailability::find()
-    ->where(['locationId' => $locationId])
-    ->orderBy(['fromTime' => SORT_ASC])
-    ->one();
-$maxLocationAvailability = LocationAvailability::find()
-    ->where(['locationId' => $locationId])
-    ->orderBy(['toTime' => SORT_DESC])
-    ->one();
-$minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-$maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-?>
-
 <script type="text/javascript">
+    $(document).ready(function() {
+    $(document).on('change', '#lesson-teacher', function () {
+            refreshcalendar.refresh();
+            return false;
+        });
+     });
 $(document).on('click', '.glyphicon-remove', function () {
         $('#lesson-date').val('').trigger('change');
     });

@@ -62,7 +62,7 @@ $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s'
 		load : function(events,availableHours) {
 			//var teacherId = $('#lesson-teacherid').val();
 			//var params = $.param({teacherId: teacherId});
-		   //$('#teacher-lesson').fullCalendar('destroy');
+		   $('#lesson-edit-calendar').fullCalendar('destroy');
             $('#lesson-edit-calendar').fullCalendar({
             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                 //defaultDate: date,
@@ -126,9 +126,8 @@ var refreshcalendar = {
                 });
             }
         };
-        $(document).on('change', '#lesson-teacher', function () {
-            refreshcalendar.refresh();
-            return false;
+        $(document).on('change', '#lesson-teacherid', function () {
+        refreshcalendar.refresh();        
         });
      });
     </script>
