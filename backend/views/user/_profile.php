@@ -24,8 +24,6 @@ $boxTools = array_merge($boxTools, $merge);
 	<dl class="dl-horizontal">
 		<dt>Name</dt>
 		<dd><?= $model->publicIdentity; ?></dd>
-		<dt>Email</dt>
-		<dd><?= !empty($model->email) ? $model->email : null; ?></dd>
 		<dt>Role</dt>
 		<dd><?= $role; ?></dd>
 	</dl>
