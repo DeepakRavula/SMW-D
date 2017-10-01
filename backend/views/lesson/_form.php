@@ -109,13 +109,9 @@ use yii\bootstrap\Modal;
 <?php ActiveForm::end(); ?>
 </div>
 <script type="text/javascript">
-    $(document).ready(function() {
-    $(document).on('change', '#lesson-teacher', function () {
-            refreshcalendar.refresh();
-            return false;
-        });
-     });
+$(document).ready(function() {
 $(document).on('click', '.glyphicon-remove', function () {
         $('#lesson-date').val('').trigger('change');
+    });
     });
 </script>

@@ -59,13 +59,13 @@ $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s'
 	});
 
     var calendar = {
-		load : function(events,availableHours) {
+		load : function(events,availableHours,date) {
 			//var teacherId = $('#lesson-teacherid').val();
 			//var params = $.param({teacherId: teacherId});
 		   $('#lesson-edit-calendar').fullCalendar('destroy');
             $('#lesson-edit-calendar').fullCalendar({
             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-                //defaultDate: date,
+                defaultDate: date,
                 header: {
                     left: 'prev,next today',
                     center: 'title',
@@ -77,30 +77,32 @@ $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s'
                 defaultView: 'agendaWeek',
                 minTime: "<?php echo $from_time; ?>",
                 maxTime: "<?php echo $to_time; ?>",
+                selectConstraint: 'businessHours',
+                eventConstraint: 'businessHours',
+                businessHours: availableHours,
                 overlapEvent: false,
                 overlapEventsSeparate: true,
                 events: events,
-//                select: function (start, end, allDay) {
-//                    $('#extra-lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A'));
-//                    $('#lesson-calendar').fullCalendar('removeEvents', 'newEnrolment');
-//					var duration = $('#lesson-duration').val();
-//					var endtime = start.clone();
-//					var durationMinutes = moment.duration(duration).asMinutes();
-//					moment(endtime.add(durationMinutes, 'minutes'));
-//					
-//                    $('#lesson-calendar').fullCalendar('renderEvent',
-//                        {
-//                            id: 'newEnrolment',
-//                            start: start,
-//                            end: endtime,
-//                            allDay: false
-//                        },
-//                    true // make the event "stick"
-//                    );
-//                    $('#lesson-calendar').fullCalendar('unselect');
-//                },
-                eventAfterAllRender: function (view) {
-                    $('#spinner').hide(); 
+                select: function (start, end, allDay) {
+                    $('#lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A'));
+                    $('#lesson-edit-calendar').fullCalendar('removeEvents', 'newEnrolment');
+					var duration = $('#course-duration').val();
+					var endtime = start.clone();
+					var durationMinutes = moment.duration(duration).asMinutes();
+					moment(endtime.add(durationMinutes, 'minutes'));
+					
+                    $('#lesson-edit-calendar').fullCalendar('renderEvent',
+                        {
+                            id: 'newEnrolment',
+                            start: start,
+                            end: endtime,
+                            allDay: false
+                        },
+                    true // make the event "stick"
+                    );
+                    $('#lesson-edit-calendar').fullCalendar('unselect');
+                },
+                eventAfterAllRender: function (view) { 
                     $('.fc-short').removeClass('fc-short');
                 },
                 selectable: true,
@@ -112,7 +114,23 @@ var refreshcalendar = {
         refresh : function(){
             var events, availableHours;
             var teacherId = $('#lesson-teacherid').val();
-            $('#lesson-schedule-modal .modal-dialog').css({'width': '1000px'});
+            alert($('#lesson-date').val());
+             var date = moment($('#lesson-date').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+            if (! moment(date).isValid()) {
+                var date = moment($('#lesson-date').val(), 'DD-MM-YYYY h:mm A', true).format('YYYY-MM-DD');
+            }
+            if (date === 'Invalid date') {
+                alert('invalid');
+                $('#lesson-calendar').fullCalendar('destroy');
+                $('#new-lesson-modal .modal-dialog').css({'width': '600px'});
+                $('.lesson-program').removeClass('col-md-4');
+                $('.lesson-teacher').removeClass('col-md-4');
+                $('.lesson-date').removeClass('col-md-4');
+            } else {
+                $('.lesson-program').addClass('col-md-4');
+                $('.lesson-teacher').addClass('col-md-4');
+                $('.lesson-date').addClass('col-md-4');
+                $('#lesson-schedule-modal .modal-dialog').css({'width': '1000px'});
                 $.ajax({
                     url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
                     type: 'get',
@@ -121,12 +139,13 @@ var refreshcalendar = {
                     {
                         events = response.events;
                         availableHours = response.availableHours;
-                        calendar.load(events,availableHours);
+                        calendar.load(events,availableHours,date);
                     }
                 });
             }
+            }
         };
-        $(document).on('change', '#lesson-teacherid', function () {
+ $(document).on('change', '#lesson-teacherid', function () {
         refreshcalendar.refresh();        
         });
      });
