@@ -61,6 +61,11 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 		
 	</div> 
 	<div class="col-md-6">	
+            <?php
+		echo $this->render('_email', [
+			'model' => $model,
+		]);
+		?>
 		<?php
 		echo $this->render('_phone', [
 			'model' => $model,
@@ -360,27 +365,18 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 ]); ?>
 <div id="address-content"></div>
 <?php Modal::end(); ?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Edit</h4>',
+    'id' => 'edit-email-modal',
+]); ?>
+<div id="email-content"></div>
+<?php Modal::end(); ?>
 <script>
 	$('.availability').click(function () {
 		$('.teacher-availability-create').show();
 	});
 	$('.add-new-student').click(function () {
 		$('#student-create-modal').modal('show');
-	});
-	$('.add-address').bind('click', function () {
-		$('.address-fields').show();
-		$('.hr-ad').hide();
-		setTimeout(function () {
-			$('.add-address').addClass('add-item');
-		}, 100);
-	});
-	
-	$('.add-phone').bind('click', function () {
-		$('.phone-fields').show();
-		$('.hr-ph').hide();
-		setTimeout(function () {
-			$('.add-phone').addClass('add-item-phone');
-		}, 100);
 	});
 	$('#add-misc-item').click(function(){
 		$('#invoice-line-item-modal').modal('show');
@@ -437,8 +433,30 @@ $(document).ready(function(){
         });
         return false;
     });
+    $(document).on('click', '.user-email-btn', function () {
+		$.ajax({
+            url    : '<?= Url::to(['user/edit-email', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#email-content').html(response.data);
+                    $('#edit-email-modal').modal('show');
+                	$('#edit-email-modal .modal-dialog').css({'width': '800px'});
+                }
+            }
+        });
+        return false;
+    });
 	$(document).on('click', '.address-cancel-btn', function () {
         $('#edit-address-modal').modal('hide');
+        return false;
+    });
+    $(document).on('click', '.email-cancel-btn', function () {
+        $('#edit-email-modal').modal('hide');
         return false;
     });
 	$(document).on('click', '.user-address-btn', function () {
@@ -554,6 +572,27 @@ $(document).ready(function(){
                     
                 } else {
 					$('#phone-form').yiiActiveForm('updateMessages', response.errors
+					, true);
+				}
+            }
+        });
+        return false;
+    });
+    
+    $(document).on('beforeSubmit', '#email-form', function () {
+        $.ajax({
+            url    : $(this).attr('action'),
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status) {
+        			$('#edit-email-modal').modal('hide');
+        			$.pjax.reload({container:"#user-email",replace:false,  timeout: 4000});
+                    
+                } else {
+					$('#email-form').yiiActiveForm('updateMessages', response.errors
 					, true);
 				}
             }

@@ -144,10 +144,9 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'email'], 'unique'],
+            [['username'], 'unique'],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['username'], 'filter', 'filter' => '\yii\helpers\Html::encode'],
-            [['email'], 'email'],
             [['customerIds'], 'required', 'on' => self::SCENARIO_MERGE],
             ['customerIds', 'canMerge', 'on' => self::SCENARIO_MERGE],
             [['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate',
@@ -277,6 +276,11 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(PhoneNumber::className(), ['user_id' => 'id']);
     }
+    
+    public function getEmails()
+    {
+        return $this->hasMany(UserEmail::className(), ['userId' => 'id']);
+    }
 
 	public function getPhone()
     {
@@ -317,6 +321,14 @@ class User extends ActiveRecord implements IdentityInterface
     public function getStudent()
     {
         return $this->hasMany(Student::className(), ['customer_id' => 'id']);
+    }
+    
+    public function getEmail()
+    {
+        $email = UserEmail::find()
+                ->where(['userId' => $this->id, 'isPrimary' => true])
+                ->one();
+        return !empty($email) ? $email->email : null;
     }
 
     /**

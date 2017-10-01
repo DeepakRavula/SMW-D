@@ -92,11 +92,14 @@ class LoginForm extends Model
      */
     public function getUser()
     {
-        if ($this->user === false) {
+		if ($this->user === false) {
+            $userName = $this->identity;
             $this->user = User::find()
-                ->andWhere(['or', ['username' => $this->identity], ['email' => $this->identity]])
+                ->joinWith(['emails' => function($query) use ($userName) {
+                    $query->where(['user_email.email' => $userName, 
+                        'user_email.isPrimary' => true]);
+                }])
                 ->notDeleted()
-                ->active()
                 ->one();
         }
 

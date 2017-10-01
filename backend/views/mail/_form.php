@@ -16,7 +16,7 @@ use common\models\User;
 <div class="student-form">
 	<?php $model->content = $content;
 	$model->to = $emails;
-	$data = ArrayHelper::map(User::find()->orderBy('email')->notDeleted()->all(), 'email', 'email');
+	$data = ArrayHelper::map(User::find()->joinWith('emails')->orderBy('user_email.email')->notDeleted()->all(), 'email', 'email');
 	?>
 	<?php $form = ActiveForm::begin([
 		'id' => 'mail-form',

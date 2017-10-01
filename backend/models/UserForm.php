@@ -6,7 +6,7 @@ use common\models\User;
 use common\models\UserProfile;
 use common\models\Address;
 use common\models\PhoneNumber;
-use common\models\Program;
+use common\models\UserEmail;
 use common\models\UserLocation;
 use yii\base\Exception;
 use yii\base\Model;
@@ -20,7 +20,6 @@ use common\models\timelineEvent\UserLog;
 class UserForm extends Model
 {
     public $username;
-    public $email;
     public $status;
     public $roles;
     public $qualifications;
@@ -37,6 +36,7 @@ class UserForm extends Model
     public $phoneextension;
     public $locations;
     private $model;
+    private $emails;
     public $phoneNumbers;
     public $addresses;
     public $section;
@@ -53,15 +53,7 @@ class UserForm extends Model
 
             ['lastname', 'filter', 'filter' => 'trim'],
             ['lastname', 'required', 'on' => 'create'],
-            ['lastname', 'string', 'min' => 2, 'max' => 255], ['email', 'filter', 'filter' => 'trim'],
-
-            ['email', 'email'],
-            ['email', 'unique', 'targetClass' => User::className(), 'filter' => function ($query) {
-                if (!$this->getModel()->isNewRecord) {
-                    $query->andWhere(['not', ['id' => $this->getModel()->id]]);
-                }
-            }],
-
+            ['lastname', 'string', 'min' => 2, 'max' => 255], 
             [['status'], 'integer'],
             ['roles', 'required'],
             [['locations', 'phonelabel', 'phoneextension', 'phonenumber', 'address', 'section'], 'safe'],
@@ -103,7 +95,6 @@ class UserForm extends Model
     public function setModel($model)
     {
         $this->username = $model->username;
-        $this->email = $model->email;
         $this->status = $model->status;
         $this->model = $model;
         $this->roles = ArrayHelper::getColumn(
@@ -116,6 +107,12 @@ class UserForm extends Model
             $this->phoneNumbers = $model->phoneNumbers;
         } else {
             $this->phoneNumbers = [new PhoneNumber()];
+        }
+        
+        if (count($model->emails) > 0) {
+            $this->emails = $model->emails;
+        } else {
+            $this->emails = [new UserEmail()];
         }
 
         if (count($model->addresses) > 0) {
@@ -139,6 +136,15 @@ class UserForm extends Model
         return $this->model;
     }
 
+    public function getEmails()
+    {
+        return $this->emails;
+    }
+
+    public function setEmails($value)
+    {
+        $this->emails = trim($value);
+    }
     /**
      * @return User
      */
@@ -190,7 +196,6 @@ class UserForm extends Model
             $model = $this->getModel();
             $isNewRecord = $model->getIsNewRecord();
             $model->username = $this->username;
-            $model->email = $this->email;
             if ($isNewRecord) {
                 $model->status = User::STATUS_ACTIVE;
             } else {
