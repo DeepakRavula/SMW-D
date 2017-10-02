@@ -23,7 +23,7 @@ use yii\bootstrap\Modal;
             'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
 			'enableClientValidation' => false,
-            'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
+            'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id, 'teacherId' => null]),
             'action' => Url::to(['lesson/update', 'id' => $model->id]),
             'options' => [
                 'class' => 'p-10',
@@ -147,7 +147,7 @@ $(document).on('click', '.lesson-edit-calendar', function () {
                 maxTime: '<?= $maxTime; ?>',
                 eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event',
                     'lessonId' => $model->id]); ?>&teacherId=' + teacherId,
-                validationUrl: '<?= Url::to(['lesson/validate-on-update', 'id' => $model->id]); ?>'
+                validationUrl: '<?= Url::to(['lesson/validate-on-update', 'id' => $model->id, 'teacherId' => null]); ?>'
             };
             $('#calendar-date-time-picker').calendarPicker(options);
         }

@@ -18,7 +18,7 @@ use common\models\LocationAvailability;
             'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
 			'enableClientValidation' => false,
-            'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
+            'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id, 'teacherId' => $model->teacherId]),
             'action' => Url::to(['lesson/update', 'id' => $model->id]),
             'options' => [
                 'class' => 'p-10',

@@ -50,11 +50,13 @@ class LessonReschedule extends Model
         $oldLesson = Lesson::findOne($this->lessonId);
         $rescheduledLesson = Lesson::findOne($this->rescheduledLessonId);
         $oldLesson->append($rescheduledLesson);
-        $paymentCycleLesson = new PaymentCycleLesson();
-        $oldPaymentCycleLesson = PaymentCycleLesson::findOne(['lessonId' => $this->lessonId]);
-        $paymentCycleLesson->paymentCycleId = $oldPaymentCycleLesson->paymentCycleId;
-        $paymentCycleLesson->lessonId = $this->rescheduledLessonId;
-        $paymentCycleLesson->save();
+		if($oldLesson->isPrivate()) {
+			$paymentCycleLesson = new PaymentCycleLesson();
+			$oldPaymentCycleLesson = PaymentCycleLesson::findOne(['lessonId' => $this->lessonId]);
+			$paymentCycleLesson->paymentCycleId = $oldPaymentCycleLesson->paymentCycleId;
+			$paymentCycleLesson->lessonId = $this->rescheduledLessonId;
+			$paymentCycleLesson->save();
+		}
         if (!empty($oldLesson->invoiceLineItem)) {
             $oldLesson->invoiceLineItem->lineItemLesson->lessonId = $this->rescheduledLessonId;
             $oldLesson->invoiceLineItem->lineItemLesson->save();

@@ -160,9 +160,7 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
     $(document).ready(function () {
 	var calendar = {
 		load : function(events,availableHours) {
-			var teacherId = $('#lesson-teacherid').val();
-			//var params = $.param({teacherId: teacherId});
-		   //$('#teacher-lesson').fullCalendar('destroy');
+		    $('#teacher-lesson').fullCalendar('destroy');
             $('#teacher-lesson').fullCalendar({
             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                 //defaultDate: date,
@@ -179,29 +177,28 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 maxTime: "<?php echo $maxTime; ?>",
                 overlapEvent: false,
                 overlapEventsSeparate: true,
+				selectConstraint: 'businessHours',
+				eventConstraint: 'businessHours',
+				businessHours: availableHours,
                 events: events,
-//                select: function (start, end, allDay) {
-//                    $('#extra-lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A'));
-//                    $('#lesson-calendar').fullCalendar('removeEvents', 'newEnrolment');
-//					var duration = $('#lesson-duration').val();
-//					var endtime = start.clone();
-//					var durationMinutes = moment.duration(duration).asMinutes();
-//					moment(endtime.add(durationMinutes, 'minutes'));
-//					
-//                    $('#lesson-calendar').fullCalendar('renderEvent',
-//                        {
-//                            id: 'newEnrolment',
-//                            start: start,
-//                            end: endtime,
-//                            allDay: false
-//                        },
-//                    true // make the event "stick"
-//                    );
-//                    $('#lesson-calendar').fullCalendar('unselect');
-//                },
-                eventAfterAllRender: function (view) {
-                    $('#spinner').hide(); 
-                    $('.fc-short').removeClass('fc-short');
+                select: function (start, end, allDay) {
+                    $('#lesson-date').val(moment(start).format('DD-MM-YYYY hh:mm A'));
+                    $('#teacher-lesson').fullCalendar('removeEvents', 'newEnrolment');
+					var duration = $('#lesson-duration').val();
+					var endtime = start.clone();
+					var durationMinutes = moment.duration(duration).asMinutes();
+					moment(endtime.add(durationMinutes, 'minutes'));
+					
+                    $('#teacher-lesson').fullCalendar('renderEvent',
+                        {
+                            id: 'newEnrolment',
+                            start: start,
+                            end: endtime,
+                            allDay: false
+                        },
+                    true // make the event "stick"
+                    );
+                    $('#teacher-lesson').fullCalendar('unselect');
                 },
                 selectable: true,
                 selectHelper: true,
@@ -212,7 +209,6 @@ var refreshcalendar = {
         refresh : function(){
             var events, availableHours;
             var teacherId = $('#lesson-teacherid').val();
-            $('#new-lesson-modal .modal-dialog').css({'width': '1000px'});
                 $.ajax({
                     url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
                     type: 'get',
@@ -232,7 +228,7 @@ var refreshcalendar = {
 			return false;
 		});
 		$(document).on('change', '#lesson-teacherid', function () {
-            calendar.load();
+            refreshcalendar.refresh();
 			return false;
 		});
 		$(document).on('click', '#teacher-lesson-grid  tbody > tr', function () {
