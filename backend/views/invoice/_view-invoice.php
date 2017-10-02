@@ -9,12 +9,17 @@ use kartik\editable\Editable;
 ?>
 <div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div style="margin-bottom: 10px">
+    <?php yii\widgets\Pjax::begin([
+		'id' => 'invoice-button-listing',
+		'timeout' => 6000,
+	]) ?>
 	<?php if((empty($model->lineItem) || $model->lineItem->isOtherLineItems()) && $model->isInvoice()) :?>
 	<?= Html::a('Add Item', '#', ['class' => 'add-new-misc btn btn-primary btn-sm m-r-10']) ?>
 <?php endif; ?>
 	<?php if(!empty($model->lineItem) && ($model->lineItem->isOtherLineItems())) :?>
 	 <?= Html::a('Apply Discount', '#', ['class' => 'apply-discount btn btn-primary btn-sm']) ?>
     <?php endif; ?>
+    <?php \yii\widgets\Pjax::end(); ?>	
 	  <?php $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
     $lastRole = end($roles);
     if(!empty($model->lineItem) && ($lastRole->name === User::ROLE_ADMINISTRATOR ||
@@ -125,7 +130,30 @@ $(document).ready(function() {
         $.pjax.reload({url:url,container:"#line-item-listing",replace:false,  timeout: 4000});  //Reload GridView
         $('#hide-column').hide();
         $('#show-column').toggle();
-    });
+    }); 
+    $(document).on('beforeSubmit', '#add-misc-item-form', function (e) {
+	$.ajax({
+		url    : $(this).attr('action'),
+		type   : 'post',
+		dataType: "json",
+		data   : $(this).serialize(),
+		success: function(response)
+		{
+		   if(response.status)
+		   {			
+				$('input[name="Payment[amount]"]').val(response.amount);
+                invoice.updateSummarySectionAndStatus();
+				$('#invoice-line-item-modal').modal('hide');
+                $.pjax.reload({container: "#invoice-button-listing", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#line-item-listing", replace: false, async: false, timeout: 6000});
+			}else
+			{
+			 $(this).yiiActiveForm('updateMessages', response.errors, true);
+			}
+		}
+		});
+		return false;
+});
 });
 </script>
 <script>
@@ -147,4 +175,4 @@ $('#delete-button').click(function(){
     });
     return false;
 });
-</script>
+</script>    
