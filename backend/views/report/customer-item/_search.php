@@ -14,11 +14,12 @@ use common\models\User;
 <?php $locationId = \Yii::$app->session->get('location_id'); ?>
 
     <?php $form = ActiveForm::begin([
-        'action' => ['user/view'],
+        'action' => ['report/customer-items'],
         'method' => 'get',
     ]); ?>
     <div class="form-group">
-        
+        <div class="report-header-search">
+        <div class="col-md-5">
             <?php echo DateRangePicker::widget([
                 'model' => $model,
                 'attribute' => 'dateRange',
@@ -27,18 +28,19 @@ use common\models\User;
                 'pluginOptions' => [
                     'autoApply' => true,
                     'ranges' => [
-                        Yii::t('kvdrp', 'This Year') => ["moment().startOf('month')", "moment().endOf('month')"],
-                        Yii::t('kvdrp', 'Last Year') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
+                        Yii::t('kvdrp', 'This Year') => ["moment().startOf('year')", "moment().endOf('year')"],
+                        Yii::t('kvdrp', 'Last Year') => ["moment().subtract(1, 'year').startOf('year')", "moment().subtract(1, 'year').endOf('year')"],
                     ],
                     'locale' => [
                         'format' => 'M d,Y',
                     ],
-                    'opens' => 'right',
+                    'opens' => 'left',
                     ],
 
                 ]);
             ?>
-         
+        </div>
+        <div class="col-md-5"> 
             <?=
                 $form->field($model, 'customerId')->widget(Select2::classname(), [
                     'data' => ArrayHelper::map(User::find()
@@ -53,6 +55,10 @@ use common\models\User;
                     ],
                 ])->label(false);
             ?>
+        </div>
+        <?= $form->field($model, 'isCustomerReport')->hiddenInput()->label(false); ?>
         <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class'=> 'btn btn-box-tool']); ?>
+        </div>
     </div>
     <?php ActiveForm::end(); ?>

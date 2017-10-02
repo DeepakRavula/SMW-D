@@ -1,30 +1,25 @@
 <?php
 
-use yii\helpers\Html;
 use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Items';
-$this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class'=> 'btn btn-box-tool']);
-?>
+$this->params['action-button'] = $this->render('_search', ['model' => $searchModel]); ?>
 
-<div class="payment-search">
-    <div class="form-inline form-group">
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-    </div></div>
 <div class="box">
     <?php echo $this->render('_item', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]); ?>
 </div>
 
 <script>
 $("#print").on("click", function() {
-        var dateRange = $('#invoicelineitemsearch-daterange').val();
+        var dateRange=$('#invoicelineitemsearch-daterange').val();
         var params = $.param({ 
             'InvoiceLineItemSearch[dateRange]': dateRange,
-            'InvoiceLineItemSearch[customerId]': '<?php echo $searchModel->customerId; ?>'
+            'InvoiceLineItemSearch[isCustomerReport]': 1,
+            'InvoiceLineItemSearch[customerId]': '<?= $searchModel->customerId; ?>'
         });
-        var url = '<?php echo Url::to(['user/view']); ?>?' + params;
-        window.open(url, '_blank');
+        var url = '<?php echo Url::to(['print/customer-items-print']); ?>?' + params;
+        window.open(url,'_blank');
     });
 </script>

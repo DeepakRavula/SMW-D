@@ -227,10 +227,11 @@ class ReportController extends Controller {
     
     public function actionCustomerItems()
     {
-        $currentDate = new \DateTime();
+        $currentYearFirstDate = new \DateTime('first day of January');
+        $currentYearLastDate  = new \DateTime('last day of December');
         $searchModel                   = new InvoiceLineItemSearch();
-        $searchModel->fromDate         = $currentDate->format('M d,Y');
-        $searchModel->toDate           = $currentDate->format('M d,Y');
+        $searchModel->fromDate         = $currentYearFirstDate->format('M d,Y');
+        $searchModel->toDate           = $currentYearLastDate->format('M d,Y');
         $searchModel->dateRange        = $searchModel->fromDate.' - '.$searchModel->toDate;
         $searchModel->customerId       = null;
         $searchModel->isCustomerReport = true;

@@ -46,7 +46,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 				[
 				'label' => 'Price',
 				'value' => function ($data) {
-                                    return $data->itemTotal;
+                                    return $data->netPrice;
 				},
 				'contentOptions' => ['class' => 'text-right'],
 				'hAlign' => 'right',
