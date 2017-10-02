@@ -333,7 +333,7 @@ class LessonController extends Controller
 						$duration = new \DateTime($model->duration);
 						$model->duration = $duration->format('H:i:s');
 					}
-					$lessonDate = \DateTime::createFromFormat('Y-m-d g:i A', $model->date);
+					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
 					
                     
 					$model->date = $lessonDate->format('Y-m-d H:i:s');

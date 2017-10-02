@@ -84,7 +84,7 @@ $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s'
                 overlapEventsSeparate: true,
                 events: events,
                 select: function (start, end, allDay) {
-                    $('#lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A'));
+                    $('#lesson-date').val(moment(start).format('DD-MM-YYYY hh:mm A'));
                     $('#lesson-edit-calendar').fullCalendar('removeEvents', 'newEnrolment');
 					var duration = $('#course-duration').val();
 					var endtime = start.clone();
