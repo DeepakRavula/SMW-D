@@ -70,7 +70,12 @@ use yii\bootstrap\Modal;
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div id="lesson-edit-calendar"></div>
+            <div id="lesson-edit-calendar">
+                <div id="loadingspinner" class="spinner" style="" >
+                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                    <span class="sr-only">Loading...</span>
+                </div>  
+            </div>
         </div>
     </div>
     <div class="clearfix"></div>

@@ -17,7 +17,7 @@ LteBox::begin([
 <dl class="dl-horizontal">
 	<dt>Teacher</dt>
 	<dd>
-		<a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => User::ROLE_TEACHER, 'id' => $model->teacherId]) ?>">
+		<a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => User::ROLE_TEACHER, 'id' => $model->teacherId]) ?>"
 		<?= $model->teacher->publicIdentity; ?>
 	</a></dd>
 	<dt>Date</dt>
@@ -52,7 +52,6 @@ $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s'
 		return false;
 	});
 	$(document).on('click', '.edit-lesson-schedule', function () {
-    	$('#spinner').hide();
 		$('#lesson-schedule-modal').modal('show');
         refreshcalendar.refresh();
 		return false;
@@ -102,11 +101,11 @@ $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s'
                     );
                     $('#lesson-edit-calendar').fullCalendar('unselect');
                 },
-                eventAfterAllRender: function (view) { 
-                    $('.fc-short').removeClass('fc-short');
-                },
                 selectable: true,
                 selectHelper: true,
+                 eventAfterAllRender: function () {
+                    $('.fc-short').removeClass('fc-short');
+                },
             });
 		}
 	};
@@ -114,7 +113,6 @@ var refreshcalendar = {
         refresh : function(){
             var events, availableHours;
             var teacherId = $('#lesson-teacherid').val();
-            alert($('#lesson-date').val());
              var date = moment($('#lesson-date').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
             if (! moment(date).isValid()) {
                 var date = moment($('#lesson-date').val(), 'DD-MM-YYYY h:mm A', true).format('YYYY-MM-DD');
@@ -139,6 +137,7 @@ var refreshcalendar = {
                     {
                         events = response.events;
                         availableHours = response.availableHours;
+                        $('#loadingspinner').hide();
                         calendar.load(events,availableHours,date);
                     }
                 });

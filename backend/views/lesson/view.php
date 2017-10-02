@@ -21,7 +21,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 	'model' => $model,
 ]);
 ?>
-<<script src="/plugins/bootbox/bootbox.min.js"></script>
+<script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
