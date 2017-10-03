@@ -87,12 +87,8 @@ class InvoiceLineItemSearch extends InvoiceLineItem
         $query = InvoiceLineItem::find()
             ->joinWith(['invoice' => function($query) use ($locationId, $customerId) {
                 if ($this->isCustomerReport) {
-                    if ($customerId) {
-                        $query->andWhere(['invoice.user_id' => $customerId, 
+                    $query->andWhere(['invoice.user_id' => $customerId, 
                             'invoice.type' => Invoice::TYPE_INVOICE]);
-                    } else {
-                        $query->andWhere(['invoice.type' => Invoice::TYPE_INVOICE]);
-                    }
                 }
                 $query->notDeleted()
                     ->location($locationId)

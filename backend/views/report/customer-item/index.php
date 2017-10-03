@@ -4,7 +4,7 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Items';
+$this->title = 'Items By Customer';
 $this->params['action-button'] = $this->render('_search', ['model' => $searchModel]); ?>
 
 <div class="box">
