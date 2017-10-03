@@ -290,6 +290,14 @@ class User extends ActiveRecord implements IdentityInterface
         }
         return implode(", ", $phones);
     }
+	public function getEmailNames()
+    {
+        $emails = [];
+        foreach ($this->emails as $email) {
+            $emails[] = $email->email;
+        }
+        return implode(", ", $emails);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
