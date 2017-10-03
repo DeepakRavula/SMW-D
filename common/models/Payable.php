@@ -66,7 +66,11 @@ trait Payable
         } else {
             $paymentModel->lessonId = $this->id;
         }
-        $paymentModel->reference = $from->id;
+        if ($from->tableName() === 'lesson') {
+            $paymentModel->reference = $from->getLessonNumber();
+        } else {
+            $paymentModel->reference = $from->getInvoiceNumber();
+        }
         $paymentModel->save();
 	$creditPaymentId = $paymentModel->id;
         if ($this->tableName() === 'lesson') {
@@ -86,7 +90,11 @@ trait Payable
             $paymentModel->lessonId = $from->id;
             $paymentModel->invoiceId = null;
         }
-        $paymentModel->reference = $this->id;
+        if ($this->tableName() === 'invoice') {
+            $paymentModel->reference = $this->getInvoiceNumber();
+        } else {
+            $paymentModel->reference = $this->getLessonNumber();
+        }
         $paymentModel->save();
 
         $debitPaymentId = $paymentModel->id;

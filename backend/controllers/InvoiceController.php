@@ -475,7 +475,7 @@ class InvoiceController extends Controller
             $newLineItem->id = null;
             $newLineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
             $newLineItem->invoice_id = $creditInvoice->id;
-            $newLineItem->amount = - ($newLineItem->amount);
+            $newLineItem->amount = $newLineItem->amount;
             $newLineItem->unit = - ($newLineItem->unit);
             $newLineItem->save();
             foreach ($lineItem->discounts as $discount) {

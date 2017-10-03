@@ -224,6 +224,37 @@ class ReportController extends Controller {
                 'dataProvider' => $dataProvider,
         ]);
     }
+    
+    public function actionCustomerItems()
+    {
+        $currentYearFirstDate = new \DateTime('first day of January');
+        $currentYearLastDate  = new \DateTime('last day of December');
+        $searchModel                   = new InvoiceLineItemSearch();
+        $searchModel->fromDate         = $currentYearFirstDate->format('M d,Y');
+        $searchModel->toDate           = $currentYearLastDate->format('M d,Y');
+        $searchModel->dateRange        = $searchModel->fromDate.' - '.$searchModel->toDate;
+        $searchModel->customerId       = null;
+        $searchModel->isCustomerReport = true;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $invoiceLineItemRequest = $request->get('InvoiceLineItemSearch');
+            $searchModel->dateRange = $invoiceLineItemRequest['dateRange'];
+            if (!empty($invoiceLineItemRequest['customerId'])) {
+                $searchModel->customerId = $invoiceLineItemRequest['customerId'];
+            }
+            if (!empty($invoiceLineItemRequest['isCustomerReport'])) {
+                $searchModel->isCustomerReport = $invoiceLineItemRequest['isCustomerReport'];
+            }
+        }
+        $dataProvider             = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination = false;
+
+        return $this->render('customer-item/index',
+                [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+        ]);
+    }
 
     public function actionItemCategory()
     {

@@ -10,14 +10,7 @@ $columns = [
     [
         'label' => 'Number',
         'value' => function ($data) {
-            if ($data->isCreditApplied() || $data->isCreditUsed()) {
-                $invoice = Invoice::findOne(['id' => $data->reference]);
-                $number = $invoice->getInvoiceNumber();
-            } else {
-                $number = $data->reference;
-            }
-
-            return $number;
+            return $data->reference;
         },
         ],
         [

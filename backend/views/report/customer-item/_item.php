@@ -2,7 +2,6 @@
 
 use kartik\grid\GridView;
 use yii\helpers\Url;
-use common\models\InvoiceLineItem;
 use backend\assets\CustomGridAsset;
 CustomGridAsset::register($this);
 Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
@@ -17,12 +16,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 	<?php $columns = [
 				[
 				'value' => function ($data) {
-					if (!empty($data->invoice->date)) {
-						$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->invoice->date);
-						return $lessonDate->format('l, F jS, Y');
-					}
-
-					return null;
+					return $data->itemCategory->name;
 				},
 				'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
 				'group' => true,
@@ -44,17 +38,15 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 				}
 			],
 				[
-				'label' => 'Item Category',
+				'label' => 'Description',
 				'value' => function ($data) {
-					return $data->itemCategory->name;
+					return $data->description;
 				},
 			],
 				[
-				'label' => 'Amount',
-                'format' => ['decimal', 2],
+				'label' => 'Price',
 				'value' => function ($data) {
-					$locationId = Yii::$app->session->get('location_id');
-					return $data->itemCategory->getItemTotal($locationId, $data->invoice->date);
+                                    return $data->netPrice;
 				},
 				'contentOptions' => ['class' => 'text-right'],
 				'hAlign' => 'right',
@@ -63,21 +55,21 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 			],
 		];
 		?>
-	<?=
-	GridView::widget([
-		'dataProvider' => $dataProvider,
-		'options' => ['class' => ''],
-        'summary' =>'',
-		'showPageSummary' => true,
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-		'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
-		'pjax' => true,
-		'pjaxSettings' => [
-			'neverTimeout' => true,
-			'options' => [
-				'id' => 'item-listing',
-			],
-		],
-		'columns' => $columns,
-	]);
-	?>
+        <?=
+        GridView::widget([
+            'dataProvider' => $dataProvider,
+            'summary' =>'',
+            'options' => ['class' => ''],
+            'showPageSummary' => true,
+            'headerRowOptions' => ['class' => 'bg-light-gray'],
+            'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
+            'pjax' => true,
+            'pjaxSettings' => [
+                'neverTimeout' => true,
+                'options' => [
+                    'id' => 'item-listing',
+                ],
+            ],
+            'columns' => $columns,
+        ]);
+        ?>

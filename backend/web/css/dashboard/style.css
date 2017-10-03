@@ -8,6 +8,12 @@
     padding-bottom: 15px;
 }
 .dashboard-header-search {
+    width: 300px;
+    margin-top: -12px;
+    margin-left:-20px;
+}
+.report-header-search {
+    width: 620px;
     margin-top: -12px;
     margin-left:-30px;
 }
