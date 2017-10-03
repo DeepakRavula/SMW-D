@@ -51,19 +51,15 @@ class InvoiceDiscount extends Model
     public function save()
     {
         if ($this->validate()) {
-            $model = InvoiceLineItem::findOne($this->invoiceLineItemId);
-            if (!$model->isOpeningBalance()) {
-                $lineItemDiscount = $this->getDiscountModel();
-                $lineItemDiscount->invoiceLineItemId = $this->invoiceLineItemId;
-                $lineItemDiscount->value = $this->value;
-                $lineItemDiscount->valueType = $this->valueType;
-                $lineItemDiscount->type = $this->type;
-                if (!$lineItemDiscount->save()) {
-                    throw new Exception('Model not saved');
-                }
-                return !$lineItemDiscount->hasErrors();
+            $lineItemDiscount = $this->getDiscountModel();
+            $lineItemDiscount->invoiceLineItemId = $this->invoiceLineItemId;
+            $lineItemDiscount->value = $this->value;
+            $lineItemDiscount->valueType = $this->valueType;
+            $lineItemDiscount->type = $this->type;
+            if (!$lineItemDiscount->save()) {
+                throw new Exception('Model not saved');
             }
-            return true;
+            return !$lineItemDiscount->hasErrors();
         }
 
         return null;
