@@ -50,6 +50,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 				},
 				'contentOptions' => ['class' => 'text-right'],
 				'hAlign' => 'right',
+                'format' => ['decimal', 2],
 				'pageSummary' => true,
 				'pageSummaryFunc' => GridView::F_SUM
 			],
