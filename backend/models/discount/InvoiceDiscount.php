@@ -2,6 +2,7 @@
 
 namespace backend\models\discount;
 
+use common\models\InvoiceLineItem;
 use common\models\User;
 use yii\base\Exception;
 use yii\base\Model;
@@ -50,15 +51,19 @@ class InvoiceDiscount extends Model
     public function save()
     {
         if ($this->validate()) {
-            $lineItemDiscount = $this->getDiscountModel();
-            $lineItemDiscount->invoiceLineItemId = $this->invoiceLineItemId;
-            $lineItemDiscount->value = $this->value;
-            $lineItemDiscount->valueType = $this->valueType;
-            $lineItemDiscount->type = $this->type;
-            if (!$lineItemDiscount->save()) {
-                throw new Exception('Model not saved');
+            $model = InvoiceLineItem::findOne($this->invoiceLineItemId);
+            if (!$model->isOpeningBalance()) {
+                $lineItemDiscount = $this->getDiscountModel();
+                $lineItemDiscount->invoiceLineItemId = $this->invoiceLineItemId;
+                $lineItemDiscount->value = $this->value;
+                $lineItemDiscount->valueType = $this->valueType;
+                $lineItemDiscount->type = $this->type;
+                if (!$lineItemDiscount->save()) {
+                    throw new Exception('Model not saved');
+                }
+                return !$lineItemDiscount->hasErrors();
             }
-            return !$lineItemDiscount->hasErrors();
+            return true;
         }
 
         return null;

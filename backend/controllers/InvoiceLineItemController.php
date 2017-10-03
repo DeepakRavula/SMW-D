@@ -83,7 +83,7 @@ class InvoiceLineItemController extends Controller
         if ($model->invoice->isReversedInvoice()) {
             $model->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
         }
-        if (!$model->isLessonItem()) {
+        if (!$model->isLessonItem() && !$model->isOpeningBalance()) {
             $model->tax_status = $model->taxStatus;
         }
         $data = $this->renderAjax('/invoice/line-item/_form', [
@@ -99,11 +99,13 @@ class InvoiceLineItemController extends Controller
             $lineItemDiscount->load($post);
             $paymentFrequencyDiscount->load($post);
             $multiEnrolmentDiscount->load($post);
+            if ($model->isLessonItem()) {
+                $paymentFrequencyDiscount->save();
+                $multiEnrolmentDiscount->save();
+            }
             $customerDiscount->save();
-            $paymentFrequencyDiscount->save();
             $lineItemDiscount->save();
-            $multiEnrolmentDiscount->save();
-            if (!$model->isLessonItem()) {
+            if (!$model->isLessonItem() && !$model->isOpeningBalance()) {
                 $taxStatus         = $post['InvoiceLineItem']['tax_status'];
                 $taxCode           = $model->computeTaxCode($taxStatus);
                 $model->tax_status = $taxCode->taxStatus->name;
