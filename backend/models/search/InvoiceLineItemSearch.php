@@ -84,6 +84,9 @@ class InvoiceLineItemSearch extends InvoiceLineItem
         }
         $locationId = Yii::$app->session->get('location_id');
         $customerId = $this->customerId;
+        if (!$customerId) {
+            $customerId = null;
+        }
         $query = InvoiceLineItem::find()
             ->joinWith(['invoice' => function($query) use ($locationId, $customerId) {
                 if ($this->isCustomerReport) {
