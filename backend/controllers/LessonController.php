@@ -52,7 +52,8 @@ class LessonController extends Controller
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['modify-classroom', 'merge', 'update-field',
-                    'validate-on-update', 'modify-lesson', 'edit-classroom', 'payment'],
+                    'validate-on-update', 'modify-lesson', 'edit-classroom', 
+                    'payment', 'substitute'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -206,9 +207,9 @@ class LessonController extends Controller
     {
         $errors = [];
         $model = $this->findModel($id);
-		if(empty($teacherId)) {
-	        $model->setScenario(Lesson::SCENARIO_EDIT);
-		}
+        if(empty($teacherId)) {
+            $model->setScenario(Lesson::SCENARIO_EDIT);
+        }
         if ($model->load(Yii::$app->request->post())) {
             if (!empty($model->date)) {
                 $errors = ActiveForm::validate($model);
@@ -899,5 +900,21 @@ class LessonController extends Controller
             'status' => true,
             'data' => $data
         ];
+    }
+    
+    public function actionSubstitute($id)
+    {
+        $model = $this->findModel($id);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+            return [
+                'status' => $model->save()
+            ];
+        } else {
+            return [
+                'status' => false,
+                'errors' => ActiveForm::validate($model)
+            ];
+        }
     }
 }
