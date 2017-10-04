@@ -163,7 +163,6 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 		    $('#teacher-lesson').fullCalendar('destroy');
             $('#teacher-lesson').fullCalendar({
             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-                //defaultDate: date,
                 header: {
                     left: 'prev,next today',
                     center: 'title',
@@ -177,9 +176,7 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 maxTime: "<?php echo $maxTime; ?>",
                 overlapEvent: false,
                 overlapEventsSeparate: true,
-				selectConstraint: 'businessHours',
-				eventConstraint: 'businessHours',
-				businessHours: availableHours,
+                businessHours: availableHours,
                 events: events,
                 select: function (start, end, allDay) {
                     $('#lesson-date').val(moment(start).format('DD-MM-YYYY hh:mm A'));

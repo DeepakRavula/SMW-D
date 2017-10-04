@@ -903,15 +903,19 @@ class UserController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-	public function actionEditLesson($lessonId)
+    
+    public function actionEditLesson($lessonId)
     {
-		$model = Lesson::findOne(['id' => $lessonId]);
+        $model = Lesson::findOne(['id' => $lessonId]);
+        $teacher = User::findOne($model->teacherId);
+        $model->setScenario(Lesson::SCENARIO_SUBSTITUTE_TEACHER);
         $data  = $this->renderAjax('teacher/_form-lesson', [
             'model' => $model,
+            'userModel' => $teacher
         ]); 
-		return [
-			'status' => true,
-			'data' => $data
-		];
+        return [
+            'status' => true,
+            'data' => $data
+        ];
     }
 }

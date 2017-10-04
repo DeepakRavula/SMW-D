@@ -6,7 +6,6 @@ use kartik\date\DatePicker;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 use common\models\User;
-use common\models\LocationAvailability;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -19,7 +18,7 @@ use common\models\LocationAvailability;
             'enableAjaxValidation' => true,
 			'enableClientValidation' => false,
             'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id, 'teacherId' => $model->teacherId]),
-            'action' => Url::to(['lesson/update', 'id' => $model->id]),
+            'action' => Url::to(['lesson/substitute', 'id' => $model->id]),
             'options' => [
                 'class' => 'p-10',
             ]
@@ -70,3 +69,28 @@ use common\models\LocationAvailability;
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>
+
+<script>
+    $(document).on('submit', '#lesson-edit-form', function () {
+        $.ajax({
+            url    : $(this).attr('action'),
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status) {
+                    $('#lesson-modal').modal('hide');
+                    var dateRange = $('#lessonsearch-daterange').val();
+                    $.pjax.reload({container: "#teacher-lesson-grid", replace: false, timeout: 6000, data: $('#teacher-lesson-search-form').serialize()});
+                    var params = $.param({ 'LessonSearch[dateRange]': dateRange});
+                    var url = '<?= Url::to(['print/teacher-lessons', 'id' => $userModel->id]); ?>&' + params;
+                    $('#print-btn').attr('href', url);
+                } else {
+                    $('#error-notification').html(response.errors[0]).fadeIn().delay(5000).fadeOut();
+                }
+            }
+        });
+        return false;
+    });
+</script>
