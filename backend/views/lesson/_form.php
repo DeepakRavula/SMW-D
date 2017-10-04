@@ -22,15 +22,15 @@ use yii\bootstrap\Modal;
 <?php $form = ActiveForm::begin([
             'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
-			'enableClientValidation' => false,
+            'enableClientValidation' => false,
             'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
             'action' => Url::to(['lesson/update', 'id' => $model->id]),
             'options' => [
                 'class' => 'p-10',
             ]
         ]); ?>
-		<div class="row">
-	   <div class="col-md-4">
+    <div class="row">
+        <div class="col-md-4">
             <?php
             echo $form->field($model, 'duration')->widget(TimePicker::classname(),
                 [
@@ -41,128 +41,82 @@ use yii\bootstrap\Modal;
             ]);
             ?>
         </div>
-	   <div class="col-md-5">
-        <?php
-        // Dependent Dropdown
-        echo $form->field($model, 'teacherId')->dropDownList(
-            ArrayHelper::map(User::find()
-				->teachers($model->course->program->id, Yii::$app->session->get('location_id'))
+        <div class="col-md-4">
+            <?php
+            // Dependent Dropdown
+            echo $form->field($model, 'teacherId')->dropDownList(
+                ArrayHelper::map(User::find()
+                        ->teachers($model->course->program->id, Yii::$app->session->get('location_id'))
                 ->join('LEFT JOIN', 'user_profile','user_profile.user_id = ul.user_id')
-                ->notDeleted()
-                ->orderBy(['user_profile.firstname' => SORT_ASC])
+                        ->notDeleted()
+                        ->orderBy(['user_profile.firstname' => SORT_ASC])
 				->all(),
 			'id', 'userProfile.fullName'
-		))->label();
+            ))->label();
             ?>  
         </div>
-        </div>
-	<div class="row">
-            <div class="col-md-4" style="width:40%;">
+        <div class="col-md-4">
             <div class="form-group field-calendar-date-time-picker-date">
                 <label class="control-label" for="calendar-date-time-picker-date">Reschedule Date</label>
                 <div id="calendar-date-time-picker-date-datetime" class="input-group date">
                     <input type="text" id="lesson-date" class="form-control" name="Lesson[date]"
-                        value='<?php echo Yii::$app->formatter->asDateTime($model->date); ?>' readonly>
+                           value='<?php echo Yii::$app->formatter->asDateTime($model->date); ?>' readonly>
                     <span class="input-group-addon" title="Clear field">
                         <span class="glyphicon glyphicon-remove"></span>
                     </span>
                 </div>
             </div>       
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="lesson-edit-calendar">
+                <div id="loadingspinner" class="spinner" style="" >
+                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                    <span class="sr-only">Loading...</span>
+                </div>  
             </div>
-            <div class="col-md-3" style="padding:0;">
-                <div class="hand lesson-edit-calendar">
-                <p> <label> Calendar View </label></p>
-                <span class="fa fa-calendar" style="font-size:30px; margin:-12px 32px;"></span>
-                </div>
-            </div>
-            </div>
-	   <div class="clearfix"></div>
-		<?php $locationId = Yii::$app->session->get('location_id'); ?>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+            <?php $locationId = Yii::$app->session->get('location_id'); ?>
 		<?php if($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
-	   <div class="row">
-		<div class="col-md-4">
-			<?php
+        <div class="row">
+            <div class="col-md-4">
+                <?php
                 if ($privateLessonModel->isNewRecord) {
                     $date = new \DateTime($model->date);
                     $date->modify('90 days');
                     $privateLessonModel->expiryDate = $date->format('d-m-Y');
                 }
-            ?>
+                ?>
 			<?= $form->field($privateLessonModel, 'expiryDate')->widget(DatePicker::classname(), [
-                'options' => [
-                    'value' => Yii::$app->formatter->asDate($privateLessonModel->expiryDate),
-                ],
-				'layout' => '{input}{picker}',
-                'type' => DatePicker::TYPE_COMPONENT_APPEND,
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'dd-mm-yyyy',
-                ],
-            ]);
-            ?>
-		</div>
-		</div>
-		<?php endif; ?>
-   <div class="form-group">
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
-		<?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-schedule-cancel']);
-        ?>
-		<div class="clearfix"></div>
-	</div>
-	<?php ActiveForm::end(); ?>
-</div>
-
-<?php
-$minLocationAvailability = LocationAvailability::find()
-    ->where(['locationId' => $locationId])
-    ->orderBy(['fromTime' => SORT_ASC])
-    ->one();
-$maxLocationAvailability = LocationAvailability::find()
-    ->where(['locationId' => $locationId])
-    ->orderBy(['toTime' => SORT_DESC])
-    ->one();
-$minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-$maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+                    'options' => [
+                        'value' => Yii::$app->formatter->asDate($privateLessonModel->expiryDate),
+                    ],
+                    'layout' => '{input}{picker}',
+                    'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                    'pluginOptions' => [
+                        'autoclose' => true,
+                        'format' => 'dd-mm-yyyy',
+                    ],
+                ]);
+                ?>
+            </div>
+        </div>
+    <?php endif; ?>
+    <div class="form-group">
+<?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
+<?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-schedule-cancel']);
 ?>
-
+        <div class="clearfix"></div>
+    </div>
+<?php ActiveForm::end(); ?>
+</div>
 <script type="text/javascript">
-$(document).on('click', '.lesson-edit-calendar', function () {
-    $('#loader').show();
-    $('#lesson-schedule-modal').modal('hide');
-    var teacherId = $('#lesson-teacherid').val();
-    var duration = $('#course-duration').val();
-    var params = $.param({ id: teacherId });
-    $.ajax({
-        url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
-        type: 'get',
-        dataType: "json",
-        success: function (response)
-        {
-            $('#loader').hide();
-            var options = {
-                date: moment(new Date()),
-                duration: duration,
-                businessHours: response.availableHours,
-                minTime: '<?= $minTime; ?>',
-                maxTime: '<?= $maxTime; ?>',
-                eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event',
-                    'lessonId' => $model->id]); ?>&teacherId=' + teacherId,
-                validationUrl: '<?= Url::to(['lesson/validate-on-update', 'id' => $model->id]); ?>'
-            };
-            $('#calendar-date-time-picker').calendarPicker(options);
-        }
-    });
-    return false;
-});
-
-$(document).on('after-date-set', function(event, params) {
-$('#lesson-schedule-modal').modal('show');
-    if (!$.isEmptyObject(params.date)) {
-        $('#lesson-date').val(moment(params.date).format('DD-MM-YYYY h:mm A')).trigger('change');
-    }
-});
-
+$(document).ready(function() {
 $(document).on('click', '.glyphicon-remove', function () {
-    $('#lesson-date').val('').trigger('change');
-});
+        $('#lesson-date').val('').trigger('change');
+    });
+    });
 </script>
