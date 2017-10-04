@@ -908,7 +908,6 @@ class UserController extends Controller
     {
         $model = Lesson::findOne(['id' => $lessonId]);
         $teacher = User::findOne($model->teacherId);
-        $model->setScenario(Lesson::SCENARIO_SUBSTITUTE_TEACHER);
         $data  = $this->renderAjax('teacher/_form-lesson', [
             'model' => $model,
             'userModel' => $teacher

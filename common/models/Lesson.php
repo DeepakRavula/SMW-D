@@ -48,7 +48,6 @@ class Lesson extends \yii\db\ActiveRecord
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA = 2;
 
-    const SCENARIO_SUBSTITUTE_TEACHER = 'teacher-substitute';
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_REVIEW = 'review';
     const SCENARIO_EDIT = 'edit';
