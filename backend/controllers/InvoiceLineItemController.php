@@ -59,32 +59,16 @@ class InvoiceLineItemController extends Controller
     public function actionUpdate($id) 
     {
         $model = $this->findModel($id);
-        $lineItemDiscount = new LineItemDiscount();
-        $paymentFrequencyDiscount = new PaymentFrequencyLineItemDiscount();
-        $customerDiscount = new CustomerLineItemDiscount();
-        $multiEnrolmentDiscount = new EnrolmentLineItemDiscount();
-        if ($model->hasCustomerDiscount()) {
-            $customerDiscount = $customerDiscount->setModel($model->customerDiscount);
+        $lineItemDiscount = $model->item->loadLineItemDiscount($id);
+        $paymentFrequencyDiscount = $model->item->loadPaymentFrequencyDiscount($id);
+        $customerDiscount = $model->item->loadCustomerDiscount($id);
+        $multiEnrolmentDiscount = $model->item->loadMultiEnrolmentDiscount($id);
+        if (!$model->isLessonItem() && !$model->isOpeningBalance()) {
+            $model->tax_status = $model->taxStatus;
         }
-        if ($model->hasEnrolmentPaymentFrequencyDiscount()) {
-            $paymentFrequencyDiscount = $paymentFrequencyDiscount->setModel($model->enrolmentPaymentFrequencyDiscount);
-        }
-        if ($model->hasLineItemDiscount()) {
-            $lineItemDiscount = $lineItemDiscount->setModel($model->lineItemDiscount);
-        }
-        if ($model->hasMultiEnrolmentDiscount()) {
-            $multiEnrolmentDiscount = $multiEnrolmentDiscount->setModel($model->multiEnrolmentDiscount);
-        }
-        $customerDiscount->invoiceLineItemId = $id;
-        $paymentFrequencyDiscount->invoiceLineItemId = $id;
-        $lineItemDiscount->invoiceLineItemId = $id;
-        $multiEnrolmentDiscount->invoiceLineItemId = $id;
         $model->setScenario(InvoiceLineItem::SCENARIO_EDIT);
         if ($model->invoice->isReversedInvoice()) {
             $model->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
-        }
-        if (!$model->isLessonItem()) {
-            $model->tax_status = $model->taxStatus;
         }
         $data = $this->renderAjax('/invoice/line-item/_form', [
             'model' => $model,
@@ -95,19 +79,22 @@ class InvoiceLineItemController extends Controller
         ]);
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
-            $customerDiscount->load($post);
-            $lineItemDiscount->load($post);
-            $paymentFrequencyDiscount->load($post);
-            $multiEnrolmentDiscount->load($post);
-            $customerDiscount->save();
-            $paymentFrequencyDiscount->save();
-            $lineItemDiscount->save();
-            $multiEnrolmentDiscount->save();
-            if (!$model->isLessonItem()) {
-                $taxStatus         = $post['InvoiceLineItem']['tax_status'];
-                $taxCode           = $model->computeTaxCode($taxStatus);
-                $model->tax_status = $taxCode->taxStatus->name;
-                $model->tax_type   = $taxCode->taxType->name;
+            if (!$model->isOpeningBalance()) {
+                $customerDiscount->load($post);
+                $lineItemDiscount->load($post);
+                $customerDiscount->save();
+                $lineItemDiscount->save();
+                if (!$model->isLessonItem()) {
+                    $taxStatus         = $post['InvoiceLineItem']['tax_status'];
+                    $taxCode           = $model->computeTaxCode($taxStatus);
+                    $model->tax_status = $taxCode->taxStatus->name;
+                    $model->tax_type   = $taxCode->taxType->name;
+                } else {
+                    $paymentFrequencyDiscount->load($post);
+                    $multiEnrolmentDiscount->load($post);
+                    $paymentFrequencyDiscount->save();
+                    $multiEnrolmentDiscount->save();
+                }
             }
             if($model->save()) {
                 $response = [
