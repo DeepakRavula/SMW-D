@@ -2,6 +2,7 @@
 
 namespace backend\models\discount;
 
+use common\models\InvoiceLineItem;
 use common\models\User;
 use yii\base\Exception;
 use yii\base\Model;
