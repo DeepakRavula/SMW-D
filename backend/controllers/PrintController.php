@@ -20,6 +20,7 @@ use common\models\CustomerAccount;
 use common\models\CompanyAccount;
 use backend\models\search\ReportSearch;
 use common\models\PaymentMethod;
+use backend\models\search\InvoiceLineItemSearch;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
@@ -383,5 +384,36 @@ class PrintController extends Controller
                 'dataProvider' => $dataProvider,
         ]);
     }
+    
+    public function actionCustomerItemsPrint()
+    {
+        $currentYearFirstDate = new \DateTime('first day of January');
+        $currentYearLastDate  = new \DateTime('last day of December');
+        $searchModel                   = new InvoiceLineItemSearch();
+        $searchModel->fromDate         = $currentYearFirstDate->format('M d,Y');
+        $searchModel->toDate           = $currentYearLastDate->format('M d,Y');
+        $searchModel->dateRange        = $searchModel->fromDate.' - '.$searchModel->toDate;
+        $searchModel->customerId       = null;
+        $searchModel->isCustomerReport = true;
+        $request = Yii::$app->request;
+        if ($searchModel->load($request->get())) {
+            $invoiceLineItemRequest = $request->get('InvoiceLineItemSearch');
+            $searchModel->dateRange = $invoiceLineItemRequest['dateRange'];
+            if (!empty($invoiceLineItemRequest['customerId'])) {
+                $searchModel->customerId = $invoiceLineItemRequest['customerId'];
+            }
+            if (!empty($invoiceLineItemRequest['isCustomerReport'])) {
+                $searchModel->isCustomerReport = $invoiceLineItemRequest['isCustomerReport'];
+            }
+        }
+        $dataProvider             = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination = false;
 
+        $this->layout             = '/print';
+
+        return $this->render('/report/customer-item/_print', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+        ]);
+    }
 }

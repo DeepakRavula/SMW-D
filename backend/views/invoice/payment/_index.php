@@ -33,21 +33,7 @@ $columns = [
     [
         'label' => 'Number',
         'value' => function ($data) {
-            $lesson = Lesson::findOne(['id' => $data->reference]);
-            $invoice = Invoice::findOne(['id' => $data->reference]);
-            if (!$data->invoice->isInvoice() && $data->isCreditUsed()) {
-                $number = $lesson->getLessonNumber();	
-            } else if (!$data->invoice->isInvoice() && $data->isCreditApplied()) {
-                $number = $invoice->getInvoiceNumber();
-            } else if ($data->invoice->isInvoice() && $data->isCreditUsed()) {
-                $number = $invoice->getInvoiceNumber();
-            } else if ($data->invoice->isInvoice() && $data->isCreditApplied()) {
-                $number = $lesson->getLessonNumber();
-            } else {
-                $number = $data->reference;
-            }
-
-            return $number;
+            return $data->reference;
         },
         ],
         [

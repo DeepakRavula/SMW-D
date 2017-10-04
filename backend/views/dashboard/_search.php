@@ -33,13 +33,13 @@ use kartik\daterange\DateRangePicker;
                 'locale' => [
                     'format' => 'M d,Y',
                 ],
-                'opens' => 'right',
+                'opens' => 'left',
                 ],
 
             ]);
            ?>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['name' => 'dashboard-apply-button', 'class' => 'btn btn-primary']) ?>
         </div>
     </div>

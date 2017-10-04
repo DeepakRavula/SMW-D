@@ -132,6 +132,13 @@ echo Menu::widget([
 					'active' => (Yii::$app->controller->action->id === 'royalty-free') ? true : false,
 				],
                                 [
+					'label' => Yii::t('backend', 'Items by Customer'),
+					'icon' => '<i class="fa fa-cny"></i>',
+					'url' => ['report/customer-items'],
+					'visible' => Yii::$app->user->can('owner'),
+					'active' => Yii::$app->controller->action->id === 'customer-items'
+				],
+                                [
 					'label' => Yii::t('backend', 'Items'),
 					'icon' => '<i class="fa fa-cny"></i>',
 					'url' => ['/report/items'],
