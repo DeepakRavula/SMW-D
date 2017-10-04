@@ -155,27 +155,3 @@ $(document).ready(function() {
         });
     }
 </script>
-<script>
-$(document).on('beforeSubmit', '#add-misc-item-form', function (e) {
-	$.ajax({
-		url    : $(this).attr('action'),
-		type   : 'post',
-		dataType: "json",
-		data   : $(this).serialize(),
-		success: function(response)
-		{
-		   if(response.status)
-		   {
-				$.pjax.reload({container : '#line-item-listing', timeout:6000});
-				$('input[name="Payment[amount]"]').val(response.amount);
-                invoice.updateSummarySectionAndStatus();
-				$('#invoice-line-item-modal').modal('hide');
-			}else
-			{
-			 $(this).yiiActiveForm('updateMessages', response.errors, true);
-			}
-		}
-		});
-		return false;
-});
-</script>
