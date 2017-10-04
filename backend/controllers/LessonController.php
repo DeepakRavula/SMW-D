@@ -202,11 +202,13 @@ class LessonController extends Controller
         return $response;
     }
 
-    public function actionValidateOnUpdate($id)
+    public function actionValidateOnUpdate($id, $teacherId = null)
     {
         $errors = [];
         $model = $this->findModel($id);
-        $model->setScenario(Lesson::SCENARIO_EDIT);
+		if(empty($teacherId)) {
+	        $model->setScenario(Lesson::SCENARIO_EDIT);
+		}
         if ($model->load(Yii::$app->request->post())) {
             if (!empty($model->date)) {
                 $errors = ActiveForm::validate($model);
@@ -309,33 +311,22 @@ class LessonController extends Controller
 				if (new \DateTime($oldDate) != new \DateTime($model->date) || $oldTeacherId != $model->teacherId) {
 					$model->setScenario(Lesson::SCENARIO_EDIT);
 					$validate = $model->validate();
-					}
+				}
 				$lessonConflict = $model->getErrors('date');
 				$message = current($lessonConflict);
 				if(! empty($lessonConflict)){
-					if(!empty($userModel)) {
-						$response = \Yii::$app->response;
-				        $response->format = Response::FORMAT_JSON;	
-						$redirectionLink = [
-							'status' => false,
-							'message' => $message,
-						];
-					} else {
-						Yii::$app->session->setFlash('alert',
-						[
-						'options' => ['class' => 'alert-danger'],
-						'body' => $message,
-					]);
-						$redirectionLink = $this->redirect(['update', 'id' => $model->id, '#' => 'details']);
-					}
+					$response = \Yii::$app->response;
+					$response->format = Response::FORMAT_JSON;	
+					$redirectionLink = [
+						'status' => false,
+						'message' => $message,
+					];
 				} else {
 					if($model->course->program->isPrivate()) {
 						$duration = new \DateTime($model->duration);
 						$model->duration = $duration->format('H:i:s');
 					}
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-					
-                    
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
                     if(! $model->save()) {
 					   Yii::error('Update Lesson: ' . \yii\helpers\VarDumper::dumpAsString($model->getErrors()));

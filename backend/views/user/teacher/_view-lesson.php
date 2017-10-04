@@ -5,10 +5,13 @@ use yii\widgets\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
 use kartik\grid\GridView;
+use yii\bootstrap\Modal;
+use common\models\LocationAvailability;
 use common\models\Lesson;
 use common\models\Qualification;
 use kartik\daterange\DateRangePicker;
 ?>
+<?php $this->render('/lesson/_color-code'); ?>
 <div class="col-md-12">
 	<?php
 	$form = ActiveForm::begin([
@@ -133,8 +136,122 @@ GridView::widget([
 	'columns' => $columns,
 ]);
 ?>
+ <?php Modal::begin([
+        'header' => '<h4 class="m-0">Edit</h4>',
+        'id' => 'lesson-modal',
+    ]); ?>
+<div id="lesson-content"></div>
+ <?php  Modal::end(); ?>
+<?php
+$locationId = Yii::$app->session->get('location_id');
+$minLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['fromTime' => SORT_ASC])
+    ->one();
+$maxLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['toTime' => SORT_DESC])
+    ->one();
+$minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+$maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+?>
+
 <script>
     $(document).ready(function () {
+	var calendar = {
+		load : function(events,availableHours) {
+		    $('#teacher-lesson').fullCalendar('destroy');
+            $('#teacher-lesson').fullCalendar({
+            	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+                //defaultDate: date,
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'agendaWeek'
+                },
+                allDaySlot: false,
+                slotDuration: '00:15:00',
+                titleFormat: 'DD-MMM-YYYY, dddd',
+                defaultView: 'agendaWeek',
+                minTime: "<?php echo $minTime; ?>",
+                maxTime: "<?php echo $maxTime; ?>",
+                overlapEvent: false,
+                overlapEventsSeparate: true,
+				selectConstraint: 'businessHours',
+				eventConstraint: 'businessHours',
+				businessHours: availableHours,
+                events: events,
+                select: function (start, end, allDay) {
+                    $('#lesson-date').val(moment(start).format('DD-MM-YYYY hh:mm A'));
+                    $('#teacher-lesson').fullCalendar('removeEvents', 'newEnrolment');
+					var duration = $('#lesson-duration').val();
+					var endtime = start.clone();
+					var durationMinutes = moment.duration(duration).asMinutes();
+					moment(endtime.add(durationMinutes, 'minutes'));
+					
+                    $('#teacher-lesson').fullCalendar('renderEvent',
+                        {
+                            id: 'newEnrolment',
+                            start: start,
+                            end: endtime,
+                            allDay: false
+                        },
+                    true // make the event "stick"
+                    );
+                    $('#teacher-lesson').fullCalendar('unselect');
+                },
+                selectable: true,
+                selectHelper: true,
+            });
+		}
+	};
+var refreshcalendar = {
+        refresh : function(){
+            var events, availableHours;
+            var teacherId = $('#lesson-teacherid').val();
+                $.ajax({
+                    url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
+                    type: 'get',
+                    dataType: "json",
+                    success: function (response)
+                    {
+                        events = response.events;
+                        availableHours = response.availableHours;
+                        calendar.load(events,availableHours);
+                    }
+                });
+            }
+        };
+
+		$(document).on('click', '.lesson-cancel', function () {
+            $('#lesson-modal').modal('hide');
+			return false;
+		});
+		$(document).on('change', '#lesson-teacherid', function () {
+            refreshcalendar.refresh();
+			return false;
+		});
+		$(document).on('click', '#teacher-lesson-grid  tbody > tr', function () {
+            var lessonId = $(this).data('key');
+			var params = $.param({ lessonId: lessonId });
+            $.ajax({
+                url    : '<?= Url::to(['user/edit-lesson']);?>?' + params,
+                type   : 'get',
+                dataType: "json",
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $('#lesson-content').html(response.data);
+                		$('#lesson-modal .modal-dialog').css({'width': '1000px'});
+                         refreshcalendar.refresh();
+                        $('#lesson-modal').modal('show');
+                       
+                    }
+                }
+            });
+            return false;
+        });
         $("#teacher-lesson-search-form").on("submit", function () {
             var dateRange = $('#lessonsearch-daterange').val();
             $.pjax.reload({container: "#teacher-lesson-grid", replace: false, timeout: 6000, data: $(this).serialize()});

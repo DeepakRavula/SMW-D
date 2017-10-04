@@ -112,6 +112,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
         var params = $.param({ id: teacherId });
         var lessonId = $(this).parent().parent().data('key');
         var eventParams = $.param({ lessonId: lessonId, teacherId: teacherId });
+        var validationParams = $.param({ id: lessonId, teacherId: '' });
         $.ajax({
             url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
             type: 'get',
@@ -125,7 +126,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                     minTime: '<?= $from_time; ?>',
                     maxTime: '<?= $to_time; ?>',
                     eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event']); ?>?' + eventParams,
-                    validationUrl: '<?= Url::to(['lesson/validate-on-update']); ?>?id=' + lessonId
+                    validationUrl: '<?= Url::to(['lesson/validate-on-update']); ?>?' + validationParams
                 };
                 $('#calendar-date-time-picker').calendarPicker(options);
             }
