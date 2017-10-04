@@ -408,7 +408,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $discount += $this->grossPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :
                 $this->multiEnrolmentDiscount->value;
         }
-        return $discount;
+        return round($discount, 2);
     }
 	
 	public function getTaxLineItemTotal($date)
