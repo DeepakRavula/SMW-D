@@ -22,8 +22,8 @@ use yii\bootstrap\Modal;
 <?php $form = ActiveForm::begin([
             'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
-            'enableClientValidation' => false,
-            'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
+			'enableClientValidation' => false,
+            'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id, 'teacherId' => null]),
             'action' => Url::to(['lesson/update', 'id' => $model->id]),
             'options' => [
                 'class' => 'p-10',

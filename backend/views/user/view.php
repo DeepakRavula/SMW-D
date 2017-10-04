@@ -26,6 +26,14 @@ foreach ($roleNames as $name => $description) {
 $this->title = $model->publicIdentity.' - '.ucwords($searchModel->role_name);
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back']);
 ?>
+<script src="/plugins/bootbox/bootbox.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
+<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
+<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <div class="row">
 	<div class="col-md-6">	
 		<?php
