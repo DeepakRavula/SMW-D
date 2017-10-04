@@ -207,21 +207,18 @@ class Location extends \yii\db\ActiveRecord
     }
     public function getLocationDebt($locationDebt, $fromDate, $toDate)
     {
+        $locationDebtValue=0;
          $revenue = $this->getRevenue($fromDate, $toDate);
          if(!empty($revenue) && $revenue>0)
          {
-        if ($locationDebt === LocationDebt::TYPE_ROYALTY) {
+        if((int)$locationDebt === (int)LocationDebt::TYPE_ROYALTY) {
             $royaltyValue = $this->royalty->value;            
             $locationDebtValue = $revenue * (($royaltyValue) / 100);
-        } else if ($locationDebt === LocationDebt::TYPE_ADVERTISEMENT) {
+        } else if ((int)$locationDebt === (int)LocationDebt::TYPE_ADVERTISEMENT) {
             $advertisementValue = $this->advertisement->value;
             $revenue = $this->getRevenue($fromDate, $toDate);
             $locationDebtValue = $revenue * (($advertisementValue) / 100);
         }
-         }
-         else
-         {
-             $locationDebtValue=0;
          }
         return $locationDebtValue;
     }
