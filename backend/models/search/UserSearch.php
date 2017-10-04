@@ -21,6 +21,7 @@ class UserSearch extends User
     public $query;
     public $showAllCustomers;
     public $showAllTeachers;
+	private $email;
     
     public function getAccountView()
     {
@@ -30,6 +31,15 @@ class UserSearch extends User
     public function setAccountView($value)
     {
         $this->accountView = trim($value);
+    }
+	public function getEmail()
+    {
+        return $this->email;
+    }
+
+    public function setEmail($value)
+    {
+        $this->email = trim($value);
     }
     /**
      * {@inheritdoc}
@@ -98,8 +108,10 @@ class UserSearch extends User
                 ],
             ]
         ]);
-        $query->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'uf.lastname', $this->lastname])
+		$query->joinWith(['emails' => function($query) {
+			$query->andFilterWhere(['like', 'email', $this->email]);	
+		}]);
+        $query->andFilterWhere(['like', 'uf.lastname', $this->lastname])
             ->andFilterWhere(['like', 'uf.firstname', $this->firstname]);
 
         $query->andFilterWhere(['ai.name' => $this->role_name]);

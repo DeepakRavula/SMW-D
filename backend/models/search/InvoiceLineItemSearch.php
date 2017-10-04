@@ -84,13 +84,16 @@ class InvoiceLineItemSearch extends InvoiceLineItem
         }
         $locationId = Yii::$app->session->get('location_id');
         $customerId = $this->customerId;
+        if (!$customerId) {
+            $customerId = null;
+        }
         $query = InvoiceLineItem::find()
             ->joinWith(['invoice' => function($query) use ($locationId, $customerId) {
                 if ($this->isCustomerReport) {
-                    $query->andWhere(['invoice.user_id' => $customerId, 
-                            'invoice.type' => Invoice::TYPE_INVOICE]);
+                    $query->andWhere(['invoice.user_id' => $customerId]);
                 }
                 $query->notDeleted()
+                    ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
                     ->location($locationId)
                     ->between((new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d'));
                     if (!$this->isCustomerReport) {
