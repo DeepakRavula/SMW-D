@@ -37,7 +37,7 @@ use common\models\TaxStatus;
             <?= $form->field($model, 'cost')->textInput();?>
         </div>
         <div class="col-md-4">
-            <?php if (!$model->isLessonItem()) : ?>
+            <?php if (!$model->isLessonItem() && !$model->isOpeningBalance()) : ?>
                 <?= $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
                                 TaxStatus::find()->all(), 'id', 'name'
                 ), ['prompt' => 'Select', 'id' => 'lineitem-tax_status']);?>
@@ -70,10 +70,13 @@ use common\models\TaxStatus;
 	<div class="col-md-12">
             <?= $form->field($model, 'description')->textarea();?>
         </div>
+        <?php if (!$model->isOpeningBalance()) : ?>
+        <?php if ($model->isLessonItem()) : ?>
         <div class="col-md-6">
             <?= $form->field($paymentFrequencyDiscount, 'value')->textInput()
                     ->label('Payment Frequency Discount(%)'); ?>
         </div>
+        <?php endif; ?>
         <div class="col-md-5">
             <?= $form->field($customerDiscount, 'value')->textInput()
                             ->label('Customer Discount(%)'); ?>
@@ -93,11 +96,13 @@ use common\models\TaxStatus;
                 ],
             ])->label('Discount Type');?>
         </div>
+        <?php if ($model->isLessonItem()) : ?>
         <div class="col-md-5">
             <?= $form->field($multiEnrolmentDiscount, 'value')->textInput()
                     ->label('Multi Enrolment Discount($)'); ?>
         </div>
-        
+        <?php endif; ?>
+        <?php endif; ?>
     <div class="col-md-12 p-l-20 form-group">
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
         

@@ -3,6 +3,10 @@
 namespace common\models;
 
 use Yii;
+use backend\models\discount\LineItemDiscount;
+use backend\models\discount\CustomerLineItemDiscount;
+use backend\models\discount\PaymentFrequencyLineItemDiscount;
+use backend\models\discount\EnrolmentLineItemDiscount;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
@@ -185,5 +189,61 @@ class Item extends \yii\db\ActiveRecord
         }
 
         return $amount;
+    }
+    
+    public function loadCustomerDiscount($id)
+    {
+        if (!$this->isOpeningBalance()) {
+            $lineItem = InvoiceLineItem::findOne($id);
+            $customerDiscount = new CustomerLineItemDiscount();
+            if ($lineItem->hasCustomerDiscount()) {
+                $customerDiscount = $customerDiscount->setModel($lineItem->customerDiscount);
+            }
+            $customerDiscount->invoiceLineItemId = $id;
+            return $customerDiscount;
+        }
+        return null;
+    }
+    
+    public function loadPaymentFrequencyDiscount($id)
+    {
+        if ($this->isLesson()) {
+            $lineItem = InvoiceLineItem::findOne($id);
+            $paymentFrequencyDiscount = new PaymentFrequencyLineItemDiscount();
+            if ($lineItem->hasEnrolmentPaymentFrequencyDiscount()) {
+                $paymentFrequencyDiscount = $paymentFrequencyDiscount->setModel($lineItem->enrolmentPaymentFrequencyDiscount);
+            }
+            $paymentFrequencyDiscount->invoiceLineItemId = $id;
+            return $paymentFrequencyDiscount;
+        }
+        return null;
+    }
+    
+    public function loadLineItemDiscount($id)
+    {
+        if (!$this->isOpeningBalance()) {
+            $lineItem = InvoiceLineItem::findOne($id);
+            $lineItemDiscount = new LineItemDiscount();
+            if ($lineItem->hasLineItemDiscount()) {
+                $lineItemDiscount = $lineItemDiscount->setModel($lineItem->lineItemDiscount);
+            }
+            $lineItemDiscount->invoiceLineItemId = $id;
+            return $lineItemDiscount;
+        }
+        return null;
+    }
+    
+    public function loadMultiEnrolmentDiscount($id)
+    {
+        if ($this->isLesson()) {
+            $lineItem = InvoiceLineItem::findOne($id);
+            $multiEnrolmentDiscount = new EnrolmentLineItemDiscount();
+            if ($lineItem->hasMultiEnrolmentDiscount()) {
+                $multiEnrolmentDiscount = $multiEnrolmentDiscount->setModel($lineItem->multiEnrolmentDiscount);
+            }
+            $multiEnrolmentDiscount->invoiceLineItemId = $id;
+            return $multiEnrolmentDiscount;
+        }
+        return null;
     }
 }
