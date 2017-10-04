@@ -295,6 +295,12 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         return $this->taxType->taxCode->rate;
     }
+    
+    public function canApplyCustomerDiscount()
+    {
+        return $this->invoice->user->hasDiscount() && !$this->invoice->isReversedInvoice()
+                && !$this->isOpeningBalance();
+    }
 
     public function afterSave($insert, $changedAttributes)
     {
@@ -302,7 +308,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $this->invoice->save();
         } else {
             if ($this->invoice->user) {
-                if ($this->invoice->user->hasDiscount() && !$this->invoice->isReversedInvoice()) {
+                if ($this->canApplyCustomerDiscount()) {
                     $this->addCustomerDiscount($this->invoice->user);
                 }
             }
@@ -368,17 +374,17 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     
     public function getItemTotal()
     {
-        return $this->netPrice + $this->tax_rate;
+        return round($this->netPrice + $this->tax_rate, 2);
     }
 
     public function getNetPrice()
     {
-        return $this->grossPrice - $this->discount;
+        return round($this->grossPrice - $this->discount, 2);
     }
     
     public function getGrossPrice()
     {
-        return $this->amount * $this->unit;
+        return round($this->amount * $this->unit, 2);
     }
 
     public function getDiscount()
