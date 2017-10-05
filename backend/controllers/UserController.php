@@ -54,8 +54,7 @@ class UserController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email'],
-                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-lesson'],
+                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
