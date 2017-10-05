@@ -74,7 +74,15 @@ echo GridView::widget([
 				return $fullName;
 			},
 		],
-			[
+		[
+			'label' => 'Email',
+			'headerOptions' => ['class' => 'text-left'],
+			'contentOptions' => ['class' => 'text-left'],
+			'value' => function ($data) {
+				return $data->customer->getEmailNames();
+			},
+		],
+		[
 			'label' => 'Phone',
 			'headerOptions' => ['class' => 'text-left'],
 			'contentOptions' => ['class' => 'text-left'],
