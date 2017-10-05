@@ -18,9 +18,9 @@ LteBox::begin([
 <?php if(!empty($model->addresses)) : ?>
 	<?php foreach($model->addresses as $address) : ?>
 <div class="address p-t-10 p-b-10 relative">
-    <div class="col-md-2 p-0"><strong><?= !empty($address->label) ? $address->label : null ?></strong></div> 
+    <div class="col-md-3 p-0"><strong><?= !empty($address->label) ? $address->label : null ?></strong></div> 
     <div class="<?= !empty($address->is_primary) ? 'primary' : null; ?>">
-		<div class="col-md-10">
+		<div class="col-md-9">
     	<?= !empty($address->address) ? $address->address : null ?> <Br>
         <?= !empty($address->city->name) ? $address->city->name : null ?>,
 		 <?= !empty($address->province->name) ? $address->province->name : null ?><Br> 

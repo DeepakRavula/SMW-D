@@ -17,9 +17,9 @@ use yii\widgets\Pjax;
 	?>
 	<?php if(!empty($model->emails)) : ?>
 		<?php foreach($model->emails as $email) : ?>
-			 <div class="col-xs-10 <?= !empty($email->isPrimary) ? 'primary' : null; ?>">
-			<div class="col-xs-2"><strong><?= $email->label->name; ?></strong></div>
-			<div class="col-xs-3"><?= $email->email; ?></div>
+			 <div class="col-xs-11 <?= !empty($email->isPrimary) ? 'primary' : null; ?>">
+			<div class="col-xs-4"><strong><?= $email->label->name; ?></strong></div>
+			<div class="col-xs-5"><?= $email->email; ?></div>
 			</div><br>
 		<?php endforeach; ?>
 	<?php endif; ?>
