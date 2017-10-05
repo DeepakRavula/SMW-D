@@ -53,7 +53,7 @@ class LessonController extends Controller
                 'class' => ContentNegotiator::className(),
                 'only' => ['modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom', 
-                    'payment', 'substitute'],
+                    'payment', 'substitute','update'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -280,6 +280,8 @@ class LessonController extends Controller
     {
         $model = $this->findModel($id);
         $oldDate = $model->date;
+        $response = \Yii::$app->response;
+		$response->format = Response::FORMAT_JSON;
         $model->date =Yii::$app->formatter->asDateTime($model->date);
         $oldTeacherId = $model->teacherId;
         $user = User::findOne(['id'=>Yii::$app->user->id]);
@@ -303,8 +305,11 @@ class LessonController extends Controller
 				$model->date =  $oldDate;
 				$model->status = Lesson::STATUS_UNSCHEDULED;
 				$model->save();
-				$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
-			} else {
+				  $response = [
+                    'status' => true,
+                    'url' => Url::to(['lesson/view', 'id' => $model->id])
+                ];
+            } else {
 				if(!empty($userModel)) {
 					$model->date = $userModel['fromDate'];
 					$model->duration = (new \DateTime($model->duration))->format('H:i');
@@ -316,13 +321,11 @@ class LessonController extends Controller
 				$lessonConflict = $model->getErrors('date');
 				$message = current($lessonConflict);
 				if(! empty($lessonConflict)){
-					$response = \Yii::$app->response;
-					$response->format = Response::FORMAT_JSON;	
-					$redirectionLink = [
-						'status' => false,
-						'message' => $message,
-					];
-				} else {
+					 $response = [
+                        'status' => false,
+                        'errors' => $message
+                    ];
+                } else {
 					if($model->course->program->isPrivate()) {
 						$duration = new \DateTime($model->duration);
 						$model->duration = $duration->format('H:i:s');
@@ -330,13 +333,18 @@ class LessonController extends Controller
 					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
 					$model->date = $lessonDate->format('Y-m-d H:i:s');
                     if(! $model->save()) {
-					   Yii::error('Update Lesson: ' . \yii\helpers\VarDumper::dumpAsString($model->getErrors()));
-					}
-
-					$redirectionLink = $this->redirect(['view', 'id' => $model->id, '#' => 'details']);
-				}
+					   $response = [
+                            'status' => false,
+                            'errors' => $model->getErrors()
+                        ];
+                    }
+                  $response = [
+                        'status' => true,
+                        'url' => Url::to(['lesson/view', 'id' => $model->id])
+                    ];
+                }
 			}
-            return $redirectionLink;
+            return $response;
         }
         return $this->render('_form-private-lesson', [
 			'model' => $model,
