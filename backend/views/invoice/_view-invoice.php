@@ -19,7 +19,7 @@ use kartik\editable\Editable;
 	<?php if(!empty($model->lineItem) && ($model->lineItem->isOtherLineItems())) :?>
 	 <?= Html::a('Apply Discount', '#', ['class' => 'apply-discount btn btn-primary btn-sm']) ?>
     <?php endif; ?>
-    <?php \yii\widgets\Pjax::end(); ?>	
+    
 	  <?php $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
     $lastRole = end($roles);
     if(!empty($model->lineItem) && ($lastRole->name === User::ROLE_ADMINISTRATOR ||
@@ -29,6 +29,7 @@ use kartik\editable\Editable;
         <a id="hide-column" style="display:none"><i class="fa fa-caret-down fa-2x"></i></a>
     </div>
     <?php endif; ?>
+    <?php \yii\widgets\Pjax::end(); ?>	
 	<?php echo $this->render('_line-item', [
         'invoiceModel' => $model,
     ]) ?>
@@ -99,7 +100,7 @@ $(document).ready(function() {
    		return false;
     });
 
-    $('.apply-discount').click(function(){
+    $(document).on('click', '.apply-discount', function () {
         $('#apply-discount-modal').modal('show');
   		return false;
     });
@@ -118,14 +119,14 @@ $(document).ready(function() {
         return false;
     });
     
-    $('#show-column').click(function(){
+    $(document).on('click', '#show-column' ,function(){
         var url = "<?php echo Url::to(['invoice/view', 'id' => $model->id]); ?>&InvoiceSearch[toggleAdditionalColumns]="  + 1;
         $.pjax.reload({url:url,container:"#line-item-listing",replace:false,  timeout: 4000});  //Reload GridView
         $('#show-column').hide();
         $('#hide-column').toggle();
     });
 
-    $('#hide-column').click(function(){
+    $(document).on('click', '#hide-column' ,function(){
         var url = "<?php echo Url::to(['invoice/view', 'id' => $model->id]); ?>&InvoiceSearch[toggleAdditionalColumns]="  + 0;
         $.pjax.reload({url:url,container:"#line-item-listing",replace:false,  timeout: 4000});  //Reload GridView
         $('#hide-column').hide();
