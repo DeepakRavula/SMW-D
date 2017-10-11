@@ -781,13 +781,7 @@ class LessonController extends Controller
 		$model->status = Lesson::STATUS_MISSED;
 		$model->save();
 		$model->trigger(Lesson::EVENT_MISSED);
-		if(empty($model->invoice)) {
-			$invoice = $model->createPrivateLessonInvoice();
-			return $this->redirect(['invoice/view', 'id' => $invoice->id]);
-		} else {
-		   return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
 		}
-	}
 
     public function actionTakePayment($id)
     {

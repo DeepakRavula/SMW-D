@@ -865,8 +865,8 @@ class Lesson extends \yii\db\ActiveRecord
     }
 
     public function canInvoice()
-    {
-        return ($this->isCompleted() && $this->isScheduled()) || $this->isExpired();
+    {  
+        return ($this->isCompleted() && $this->isScheduled()) || $this->isExpired() ||($this->isMissed());
     }
 
     public function createExtraLessonCourse()
