@@ -44,7 +44,7 @@ class EnrolmentController extends Controller
             ],
 			'contentNegotiator' => [
 				'class' => ContentNegotiator::className(),
-				'only' => ['add', 'delete', 'edit','schedule', 'update'],
+				'only' => ['add', 'delete', 'edit','schedule', 'update','edit-end-date'],
 				'formatParam' => '_format',
 				'formats' => [
 				   'application/json' => Response::FORMAT_JSON,
@@ -123,16 +123,12 @@ class EnrolmentController extends Controller
             'model' => $model,
             'multipleEnrolmentDiscount' => $multipleEnrolmentDiscount,
             'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
-			'course' => $model->course
         ]);
         $oldPaymentFrequency = $model->paymentFrequencyId;
         $post = Yii::$app->request->post();
-		$course = $model->course; 
-		$endDate = Carbon::parse($course->endDate)->format('d-m-Y');
-		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');        
         if ($post) {
             $paymentFrequencyDiscount->load($post);
-            $multipleEnrolmentDiscount->load($post);   
+            $multipleEnrolmentDiscount->load($post);
             $multipleEnrolmentDiscount->save();
             $paymentFrequencyDiscount->save();
             if ($model->load($post) && $model->save()) {
@@ -140,20 +136,11 @@ class EnrolmentController extends Controller
                     $model->resetPaymentCycle();
                 }
             }
-			$message = '';
-			if($endDate !== $course->endDate) {
-				
-				$courseEndDate = Carbon::parse($course->endDate)->format('Y-m-d');
-				$course->updateAttributes([
-					'endDate' => Carbon::parse($course->endDate)->format('Y-m-d H:i:s') 
-				]);
-				$invoice = $model->addCreditInvoice();
-				$message = '$' . abs($invoice->invoiceBalance) . ' has been credited to ' . $invoice->user->publicIdentity . ' account.'; 
-			}
+            $message = '';
             return [
-				'status' => true,
-				'message' => $message,
-			];
+                'status' => true,
+                'message' => $message,
+            ];
         } else {
 
             return [
@@ -162,6 +149,7 @@ class EnrolmentController extends Controller
             ];
         }
     }
+
     /**
      * Creates a new Enrolment model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -439,4 +427,36 @@ class EnrolmentController extends Controller
         $invoice = $enrolment->createProFormaInvoice();
 			return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
 	}
+    public function actionEditEndDate($id)
+    {
+        $model = $this->findModel($id);
+        $data = $this->renderAjax('update/_form-enddate', [
+            'model' => $model,
+            'course' => $model->course
+        ]);
+        $post = Yii::$app->request->post();
+        $course = $model->course;
+        $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
+        $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
+        if ($post) {
+            if ($endDate !== $course->endDate) {
+                $courseEndDate = Carbon::parse($course->endDate)->format('Y-m-d');
+                $course->updateAttributes([
+                    'endDate' => Carbon::parse($course->endDate)->format('Y-m-d H:i:s')
+                ]);
+                $invoice = $model->addCreditInvoice();
+                $message = '$' . abs($invoice->invoiceBalance) . ' has been credited to ' . $invoice->user->publicIdentity . ' account.';
+            }
+            return [
+                'status' => true,
+                'message' => $message,
+            ];
+        } else {
+
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
+    }
 }
