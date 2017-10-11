@@ -62,7 +62,7 @@ Modal::begin([
         return false;
     });
  $(document).on('click', '#enrolment-edit-save-btn', function(){
-       $('#loader').show();
+       $('#spinner').show();
     });  
         $(document).on('click', '.enrolment-enddate-cancel', function(){
         $('#enrolment-edit-enddate-modal').modal('hide');
