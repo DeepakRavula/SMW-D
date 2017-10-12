@@ -3,12 +3,24 @@
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use common\models\Course;
+use yii\widgets\Pjax;
+?>
+<?php
+$boxTools="";
+if ($model->program->isPrivate()) {
+    $boxTools = ['<i class="fa fa-pencil edit-enrolment-enddate"></i>'];
+} ?>
+<?php
+Pjax::begin([
+    'id' => 'lesson-schedule'
+]);
 ?>
 <?php
 LteBox::begin([
-	'type' => LteConst::TYPE_DEFAULT,
-	'title' => 'Schedule',
-	'withBorder' => true,
+    'type' => LteConst::TYPE_DEFAULT,
+    'boxTools' => $boxTools,
+    'title' => 'Schedule',
+    'withBorder' => true,
 ])
 ?>
 <dl class="dl-horizontal">
@@ -23,3 +35,4 @@ LteBox::begin([
 	<dd><?= Yii::$app->formatter->asDate($model->course->endDate);?></dd>
 </dl>
 <?php LteBox::end()?>
+<?php Pjax::end(); ?>

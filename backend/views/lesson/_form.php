@@ -70,6 +70,11 @@ use yii\bootstrap\Modal;
     </div>
     <div class="row">
         <div class="col-md-12">
+            <div id="error" style="display:none;" class="alert-danger alert fade in"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
             <div id="lesson-edit-calendar">
                 <div id="loadingspinner" class="spinner" style="" >
                     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>

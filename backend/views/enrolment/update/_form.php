@@ -38,27 +38,10 @@ use kartik\datetime\DateTimePicker;
                             ->label('Multiple Enrolment Discount'); ?>
         </div>
 		<div class="clearfix"></div>
-		<div class="col-md-4">
-           <?php
-			echo $form->field($course, 'endDate')->widget(DateTimePicker::classname(),
-				[
-				'options' => [
-					'value' => (new \DateTime($course->endDate))->format('d-m-Y'),
-				],
-				'layout' => '{input}{picker}',
-				'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
-				'pluginOptions' => [
-					'autoclose' => true,
-					'format' => 'dd-mm-yyyy',
-					'startView' => 2,
-					'minView' => 2,
-				]
-			]);
-			?>
-        </div>
-        <div id="spinner" class="spinner" style="display:none">
-            <img src="/backend/web/img/loader.gif" alt="" height="50" width="52"/>
-        </div>
+		 <div id="spinner" class="spinner" style="display:none">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+</div>
 	<div class="form-group col-xs-12">
             <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'enrolment-edit-save-btn']) ?>
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-edit-cancel']);?>

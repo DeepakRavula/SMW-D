@@ -453,7 +453,7 @@ class Lesson extends \yii\db\ActiveRecord
         } else if ($this->isGroup()) {
             $class = 'group-lesson';
         }
-        if ($this->rootLesson && empty($this->colorCode)) {
+        if ($this->rootLesson && empty($this->colorCode) &&(!($this->isBulkRescheduled()))) {
             $class = 'lesson-rescheduled';
             if ($this->rootLesson->teacherId !== $this->teacherId) {
                 $class = 'teacher-substituted';
@@ -865,8 +865,8 @@ class Lesson extends \yii\db\ActiveRecord
     }
 
     public function canInvoice()
-    {
-        return ($this->isCompleted() && $this->isScheduled()) || $this->isExpired();
+    {  
+        return ($this->isCompleted() && $this->isScheduled()) || $this->isExpired() ||($this->isMissed());
     }
 
     public function createExtraLessonCourse()
@@ -879,5 +879,9 @@ class Lesson extends \yii\db\ActiveRecord
         $course->locationId  = $this->locationId;
         $course->save();
         return $course;
+    }
+    public function isBulkRescheduled()
+    {
+       return $this->bulkRescheduleLesson;
     }
 }

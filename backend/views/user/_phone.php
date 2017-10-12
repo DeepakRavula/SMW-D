@@ -17,10 +17,10 @@ use yii\widgets\Pjax;
 	?>
 	<?php if(!empty($model->phoneNumbers)) : ?>
 		<?php foreach($model->phoneNumbers as $phoneNumber) : ?>
-			 <div class="col-xs-10 <?= !empty($phoneNumber->is_primary) ? 'primary' : null; ?>">
-			<div class="col-xs-2"><strong><?= $phoneNumber->label->name; ?></strong></div>
-			<div class="col-xs-3"><?= $phoneNumber->number; ?></div>
-			<div class="col-xs-5"><?= !empty($phoneNumber->extension) ? $phoneNumber->extension : null; ?></div>
+			 <div class="col-xs-11 <?= !empty($phoneNumber->is_primary) ? 'primary' : null; ?>">
+			<div class="col-xs-4"><strong><?= $phoneNumber->label->name; ?></strong></div>
+			<div class="col-xs-4"><?= $phoneNumber->number; ?></div>
+			<div class="col-xs-4"><?= !empty($phoneNumber->extension) ? $phoneNumber->extension : null; ?></div>
 			</div><br>
 		<?php endforeach; ?>
 	<?php endif; ?>
