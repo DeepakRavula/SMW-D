@@ -430,7 +430,7 @@ class EnrolmentController extends Controller
     public function actionEditEndDate($id)
     {
         $model = $this->findModel($id);
-        $data = $this->renderAjax('update/_form-enddate', [
+        $data = $this->renderAjax('update/_form-schedule', [
             'model' => $model,
             'course' => $model->course
         ]);
