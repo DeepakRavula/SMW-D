@@ -36,7 +36,6 @@ use common\models\Qualification;
             <?= $form->field($model, 'program_id')->widget(Select2::classname(), [
 	    		'data' => ArrayHelper::map($privatePrograms, 'id', 'name'),
 				'pluginOptions' => [
-					'allowClear' => true,
 					'multiple' => false,
 				],
 			]); ?>
@@ -45,9 +44,9 @@ use common\models\Qualification;
             <?= $form->field($model, 'rate')->textInput();?>
         </div>
     <div class="col-md-12 p-l-20 form-group">
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
+        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'pull-right btn btn-info', 'name' => 'button']) ?>
         
-        <?= Html::a('Cancel', '', ['class' => 'btn btn-default qualification-cancel']);?>
+        <?= Html::a('Cancel', '', ['class' => 'pull-right m-r-10 btn btn-default qualification-cancel']);?>
         <div class="clearfix"></div>
 	</div>
 	</div>
