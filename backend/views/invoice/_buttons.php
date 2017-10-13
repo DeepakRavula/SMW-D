@@ -19,9 +19,9 @@ use backend\models\search\InvoiceSearch;
 		])?>
     <?php endif; ?>
 	<?php elseif($model->canRevert()): ?>
-        <?=	Html::a('<i class="fa fa-remove"></i> Return', ['revert-invoice', 'id' => $model->id],
+        <?=	Html::a('<i title="Return" class="fa fa-reply"></i>', ['revert-invoice', 'id' => $model->id],
 		[
-			'class' => 'btn btn-primary btn-sm  m-r-10',
+			'class' => 'm-r-10 btn btn-box-tool',
             'data' => [
                 'confirm' => 'Are you sure you want to return this invoice?',
         	],
