@@ -419,7 +419,7 @@ class UserController extends Controller
         $searchModel->accountView = false;
         $db = $searchModel->search(Yii::$app->request->queryParams);
         $lessonSearchModel=new LessonSearch();
-        $lessonSearchModel->dateRange=(new\DateTime())->format('M,d,Y').'-'.(new\DateTime())->format('M,d,Y');
+        $lessonSearchModel->dateRange=(new\DateTime())->format('M d,Y').' - '.(new\DateTime())->format('M d,Y');
 
         return $this->render('view', [
             'minTime' => $minTime,
