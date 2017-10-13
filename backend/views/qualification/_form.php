@@ -50,7 +50,6 @@ use common\models\Qualification;
             <?= $form->field($model, 'program_id')->widget(Select2::classname(), [
 	    		'data' => ArrayHelper::map($privatePrograms, 'id', 'name'),
 				'pluginOptions' => [
-					'allowClear' => true,
 					'multiple' => false,
 				],
 			]); ?>
@@ -60,7 +59,6 @@ use common\models\Qualification;
             <?= $form->field($model, 'program_id')->widget(Select2::classname(), [
 	    		'data' => ArrayHelper::map($groupPrograms, 'id', 'name'),
 				'pluginOptions' => [
-					'allowClear' => true,
 					'multiple' => false,
 				],
 			]); ?>
@@ -70,15 +68,15 @@ use common\models\Qualification;
             <?= $form->field($model, 'rate')->textInput();?>
         </div>
     <div class="col-md-12 p-l-20 form-group">
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
-        
-        <?= Html::a('Cancel', '', ['class' => 'btn btn-default qualification-cancel']);?>
+        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'pull-right btn btn-info', 'name' => 'button']) ?>
+		<?= Html::a('Cancel', '', ['class' => 'm-r-10 btn btn-default pull-right qualification-cancel']);?>
+       
         <?= Html::a('Delete', [
             'delete', 'id' => $model->id
         ],
         [
 			'id' => 'qualification-delete',
-            'class' => 'btn btn-primary',
+            'class' => 'btn btn-danger pull-left',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this qualification?',
                 'method' => 'post',

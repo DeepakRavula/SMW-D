@@ -196,6 +196,15 @@ echo Menu::widget([
 					'badge' => User::adminCount(),
 					'badgeBgClass' => 'label-default'
 				],
+					[
+					'label' => Yii::t('backend', 'Programs'),
+					'icon' => '<i class="fa fa-table"></i>',
+					'url' => ['/program/index', 'ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
+					'visible' => Yii::$app->user->can('staffmember'),
+					'active' => (Yii::$app->controller->id === 'program') ? true : false,
+					'badge' => Program::find()->active()->count(),
+					'badgeBgClass' => 'label-default'
+				],
 				[
 					'label' => Yii::t('backend', 'Cities'),
 					'icon' => '<i class="fa fa-building"></i>',
@@ -287,15 +296,7 @@ echo Menu::widget([
 					'badge' => User::ownerCount(),
 					'badgeBgClass' => 'label-default'
 				],
-					[
-					'label' => Yii::t('backend', 'Programs'),
-					'icon' => '<i class="fa fa-table"></i>',
-					'url' => ['/program/index', 'ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
-					'visible' => Yii::$app->user->can('staffmember'),
-					'active' => (Yii::$app->controller->id === 'program') ? true : false,
-					'badge' => Program::find()->active()->count(),
-					'badgeBgClass' => 'label-default'
-				],
+				
 					[
 					'label' => Yii::t('backend', 'Classrooms'),
 					'icon' => '<i class="fa fa-home"></i>',

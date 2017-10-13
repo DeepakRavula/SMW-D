@@ -34,7 +34,7 @@ class Qualification extends \yii\db\ActiveRecord
         return [
             [['program_id', 'rate'], 'required'],
             [['teacher_id', 'program_id', 'type',], 'integer'],
-			[['rate'], 'number', 'min' => 1.00, 'max' => 100.00, 'message' => 'Invalid discount'],
+			[['rate'], 'number', 'min' => 1.00, 'max' => 2000.00, 'message' => 'Invalid rate'],
 			[['isDeleted'], 'safe']
         ];
     }

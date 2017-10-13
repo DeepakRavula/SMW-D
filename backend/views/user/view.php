@@ -229,7 +229,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
             ],
 			[
                 'label' => 'Lessons',
-                'content' => $teacherLessonContent,
+                'content' => $timeVoucherContent,
                 'options' => [
                     'id' => 'lesson',
                 ],
@@ -243,11 +243,11 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
             ],
 			[
                 'label' => 'Time Voucher',
-                'content' => $timeVoucherContent,
+                'content' => $teacherLessonContent,
                 'options' => [
                     'id' => 'time-voucher',
                 ],
-            ],
+            ],	
 			[
         	    'label' => 'Notes',
     	        'content' => $noteContent,
