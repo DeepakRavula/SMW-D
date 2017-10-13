@@ -6,6 +6,7 @@ use yii\bootstrap\Tabs;
 
 $this->title = $model->student->fullName.' - '.$model->course->program->name;
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'EnrolmentSearch[showAllEnrolments]' => false], ['class' => 'go-back']);
+$this->params['label'] = $model->course->program->isPrivate() ? '<i title="Private" class="fa fa-lock"></i>' : '<i title="Group" class="fa fa-users"></i>';
 ?>
 <div id="enrolment-enddate-alert" style="display: none;" class="alert-info alert fade in"></div>
 <?= $this->render('_view-enrolment', [
