@@ -58,6 +58,16 @@ if (!$model->isNewRecord) {
 		<div class="form-group">
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default program-cancel']);?>
+           <?php if (!$model->isNewRecord) {
+            echo Html::a('Delete', ['delete', 'id' => $model->id], [
+                'id' => 'holiday-delete-button',
+                'class' => 'btn btn-danger',
+                'data' => [
+                    'confirm' => 'Are you sure you want to delete this item?',
+                    'method' => 'post',
+                ]
+            ]);
+        } ?>
     </div>
     </div>
     <?php ActiveForm::end(); ?>
