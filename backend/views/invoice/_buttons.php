@@ -18,7 +18,8 @@ use backend\models\search\InvoiceSearch;
 			'id' => 'delete-button',
 		])?>
     <?php endif; ?>
-	<?php elseif($model->canRevert()): ?>
+	<?php else : ?>
+		<?php if($model->canRevert()): ?>
         <?=	Html::a('<i title="Return" class="fa fa-reply"></i>', ['revert-invoice', 'id' => $model->id],
 		[
 			'class' => 'm-r-10 btn btn-box-tool',
@@ -28,6 +29,9 @@ use backend\models\search\InvoiceSearch;
 			'id' => 'revert-button',
 		])
 		?>
+		<?php else : ?>
+			<span class="return-invoice m-r-10"></span>	
+    	<?php endif; ?>
     <?php endif; ?>
 <?= Html::a('<i title="Mail" class="fa fa-envelope-o"></i>', '#', [
 	'id' => 'invoice-mail-button',
