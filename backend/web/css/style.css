@@ -79,6 +79,9 @@ body .user-panel > .info {
 .m-r-20 {
 	margin-right:10px;
 }
+.m-l-10 {
+	margin-left:10px;
+}
 .primary-contact {
 	font-size: 15px;
 }
@@ -118,8 +121,4 @@ body .user-panel > .info {
     justify-content: center;
     font-size: 11px;
 	margin-top: 8px;
-}
-.course-icon {
-	font-size: 20px;
-    margin-top: 6px;
 }
