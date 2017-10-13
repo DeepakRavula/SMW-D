@@ -171,6 +171,17 @@ GridView::widget([
       <!-- /.col -->
     </div>
     <!-- /.row -->
+	<div class="boxed col-md-12 pull-right">
+<div class="sign">
+ Teacher Signature <span></span>
+</div>
+<div class="sign">
+Authorizing Signature <span></span>
+</div>
+<div class="sign">
+ Date <span></span>
+</div>
+</div>
 <script>
     $(document).ready(function () {
         window.print();
