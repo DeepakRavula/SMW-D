@@ -33,7 +33,13 @@ trait Invoiceable
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
         $actualLessonDate            = \DateTime::createFromFormat('Y-m-d H:i:s',
                 $this->date);
-        $invoiceLineItem->unit       = $this->unit;
+        if ($this->proFormaLineItem) {
+            $invoiceLineItem->amount = $this->proFormaLineItem->amount;
+            $invoiceLineItem->unit   = $this->proFormaLineItem->unit;
+        } else {
+            $invoiceLineItem->amount = $this->enrolment->program->rate;
+            $invoiceLineItem->unit   = $this->unit;
+        }
         if ($invoice->isProFormaInvoice()) {
             if ($this->isExtra()) {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_EXTRA_LESSON;
@@ -50,7 +56,6 @@ trait Invoiceable
             $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
 			$invoiceLineItem->rate = $rate;
         }
-        $invoiceLineItem->amount       = $this->enrolment->program->rate;
         $studentFullName               = $this->enrolment->student->fullName;
         $description                  = $this->enrolment->program->name.' for '.$studentFullName.' with '
             . $this->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
