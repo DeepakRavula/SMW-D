@@ -18,16 +18,20 @@ use backend\models\search\InvoiceSearch;
 			'id' => 'delete-button',
 		])?>
     <?php endif; ?>
-	<?php elseif($model->canRevert()): ?>
-        <?=	Html::a('<i class="fa fa-remove"></i> Return', ['revert-invoice', 'id' => $model->id],
+	<?php else : ?>
+		<?php if($model->canRevert()): ?>
+        <?=	Html::a('<i title="Return" class="fa fa-reply"></i>', ['revert-invoice', 'id' => $model->id],
 		[
-			'class' => 'btn btn-primary btn-sm  m-r-10',
+			'class' => 'm-r-10 btn btn-box-tool',
             'data' => [
                 'confirm' => 'Are you sure you want to return this invoice?',
         	],
 			'id' => 'revert-button',
 		])
 		?>
+		<?php else : ?>
+			<span class="return-invoice m-r-10"></span>	
+    	<?php endif; ?>
     <?php endif; ?>
 <?= Html::a('<i title="Mail" class="fa fa-envelope-o"></i>', '#', [
 	'id' => 'invoice-mail-button',
