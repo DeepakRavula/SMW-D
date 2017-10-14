@@ -5,47 +5,53 @@ use yii\widgets\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
 use kartik\grid\GridView;
+use kartik\daterange\DateRangePicker;
 ?>
 <div class="col-md-12">
-	<?php
-	$form = ActiveForm::begin([
-		'id' => 'time-voucher-search-form',
-	]);
-	?>
-	<div class="row">
-		<div class="col-md-2">
-			<?php
-			echo $form->field($searchModel, 'fromDate')->widget(DatePicker::classname(), [
-				'options' => [
-					'class' => 'form-control',
-				],
-			])
-			?>
-		</div>
-		<div class="col-md-2">
-			<?php
-			echo $form->field($searchModel, 'toDate')->widget(DatePicker::classname(), [
-				'options' => [
-					'class' => 'form-control',
-				],
-			])
-			?>
-		</div>
-		<div class="col-md-2 form-group p-t-5">
-			<Br>
-			<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
-		</div>
-		<div class="col-md-4 m-t-20">
-			<div class="schedule-index">
-			 <?= $form->field($searchModel, 'summariseReport')->checkbox(['data-pjax' => true]); ?>
-        	</div>
-		</div>
-		<div class="col-md-2 m-t-25">
-			<?= Html::a('<i class="fa fa-print"></i> Print', ['print/time-voucher', 'id' => $model->id], ['id' => 'time-voucher-print-btn', 'class' => 'btn btn-default btn-sm pull-right m-r-10', 'target' => '_blank']) ?>
+    <?php
+    $form = ActiveForm::begin([
+            'id' => 'time-voucher-search-form',
+    ]);
+    ?>
+    <div class="clearfix">
+    </div>
+    <div class="row">
+        <div class="col-md-3 form-group">
+            <?php
+            echo DateRangePicker::widget([
+                'model' => $searchModel,
+                'attribute' => 'dateRange',
+                'convertFormat' => true,
+                'initRangeExpr' => true,
+                'pluginOptions' => [
+                    'autoApply' => true,
+                    'ranges' => [
+                        Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
+                        Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
+                        Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+                        Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
+                    ],
+                    'locale' => [
+                        'format' => 'M d,Y',
+                    ],
+                    'opens' => 'right',
+                ],
+            ]);
 
-		</div>
-		<div class="clearfix"></div>
-	</div>
+            ?>
+        </div>
+        <div class="col-md-1 form-group">
+<?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
+        </div>
+        <div class="col-md-1 form-group">
+<?= Html::a('<i class="fa fa-print"></i> Print', ['print/time-voucher', 'id' => $model->id], ['id' => 'time-voucher-print-btn', 'class' => 'btn btn-default m-r-10', 'target' => '_blank']) ?>
+
+        </div>
+        <div class="pull-right">
+<?= $form->field($searchModel, 'summariseReport')->checkbox(['data-pjax' => true]); ?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
 </div>
 <?php ActiveForm::end(); ?>
 
