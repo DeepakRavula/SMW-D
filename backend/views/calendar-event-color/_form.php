@@ -29,7 +29,7 @@ use kartik\color\ColorInput;
 	?>
 	</div>
 	<?php endforeach; ?>
-	<div class="form-group col-md-12 p-l-20">
+	<div class="form-group pull-right">
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
     </div>
 
