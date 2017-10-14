@@ -360,10 +360,12 @@ class UserController extends Controller
 		$invoiceSearchModel = $request->get('InvoiceSearch');
 		
 		if(!empty($invoiceSearchModel)) {
-			$invoiceSearch->fromDate = new \DateTime($invoiceSearchModel['fromDate']);
-			$invoiceSearch->toDate = new \DateTime($invoiceSearchModel['toDate']);
-			$invoiceSearch->summariseReport = $invoiceSearchModel['summariseReport']; 
-		}
+            $invoiceSearch->dateRange = $invoiceSearchModel['dateRange'];
+            list($invoiceSearch->fromDate, $invoiceSearch->toDate) = explode(' - ', $invoiceSearch->dateRange);
+            $invoiceSearch->fromDate = new \DateTime($invoiceSearch->fromDate);
+            $invoiceSearch->toDate = new \DateTime($invoiceSearch->toDate);
+            $invoiceSearch->summariseReport = $invoiceSearchModel['summariseReport'];
+        }
 		$timeVoucher = InvoiceLineItem::find()
 			->joinWith(['invoice' => function($query) use($invoiceSearch) {
 				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
@@ -419,7 +421,9 @@ class UserController extends Controller
         $searchModel->accountView = false;
         $db = $searchModel->search(Yii::$app->request->queryParams);
         $lessonSearchModel=new LessonSearch();
-        $lessonSearchModel->dateRange=(new\DateTime())->format('M,d,Y').'-'.(new\DateTime())->format('M,d,Y');
+        $lessonSearchModel->dateRange=(new\DateTime())->format('M d,Y').' - '.(new\DateTime())->format('M d,Y');
+        $invoiceSearchModel = new InvoiceSearch();
+        $invoiceSearchModel->dateRange = (new\DateTime())->format('M d,Y') . ' - ' . (new\DateTime())->format('M d,Y');
 
         return $this->render('view', [
             'minTime' => $minTime,
@@ -428,7 +432,7 @@ class UserController extends Controller
             'student' => new Student(),
             'searchModel' => $searchModel,
             'lessonSearchModel' => $lessonSearchModel,
-			'invoiceSearchModel' => new InvoiceSearch(),
+			'invoiceSearchModel' => $invoiceSearchModel,
 			'dataProvider' => $this->getStudentDataProvider($id),
             'teacherDataProvider' => $this->getTeacherDataProvider($id),
             'lessonDataProvider' => $this->getLessonDataProvider($id, $locationId),

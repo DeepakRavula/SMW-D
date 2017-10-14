@@ -31,8 +31,14 @@ $bundle = BackendAsset::register($this);
                         <?php echo $this->params['goback']; ?>
                     </div>
                     <?php endif; ?>
-                    <?php echo $this->title ?>
-                        
+                    <div class="pull-left m-r-10">
+                    	<?php echo $this->title ?>
+                    </div>
+                    <?php if (isset($this->params['label'])) : ?>  
+                    <div class="pull-left course-icon m-r-10">
+                        <?php echo $this->params['label']; ?>
+                    </div>
+                    <?php endif; ?> 
                     <?php if (isset($this->params['action-button'])) : ?>
                         <div class="pull-right action-button">
                             <?php echo $this->params['action-button']; ?>
