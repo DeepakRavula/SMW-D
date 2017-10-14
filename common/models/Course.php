@@ -189,7 +189,7 @@ class Course extends \yii\db\ActiveRecord
         } else {
             $endDate = (new Carbon($this->startDate))->addMonths(11);
             $startDate = new \DateTime($this->startDate);
-            $this->startDate = $startDate->format('Y-m-d H:i:s');
+            $this->startDate = $startDate->format('Y-m-1 H:i:s');
             $this->endDate = $endDate->endOfMonth();
         }
 
@@ -320,15 +320,20 @@ class Course extends \yii\db\ActiveRecord
 		}
 	}
 	
-	public function createLesson($course, $day)
+	public function createLesson($day)
 	{
 		$lesson = new Lesson();
+                if ($day < new \DateTime()) {
+                    $status = Lesson::STATUS_UNSCHEDULED;
+                } else {
+                    $status = Lesson::STATUS_SCHEDULED;
+                }
 		$lesson->setAttributes([
-			'courseId' => $course->id,
-			'teacherId' => $course->teacherId,
-			'status' => Lesson::STATUS_SCHEDULED,
+			'courseId' => $this->id,
+			'teacherId' => $this->teacherId,
+			'status' => $status,
 			'date' => $day->format('Y-m-d H:i:s'),
-			'duration' => $course->courseSchedule->duration,
+			'duration' => $this->courseSchedule->duration,
 			'isConfirmed' => false,
 		]);
 		$lesson->save();	
