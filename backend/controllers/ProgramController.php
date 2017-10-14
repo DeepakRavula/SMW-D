@@ -178,9 +178,8 @@ class ProgramController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-			return [
-				'status' => $model->delete()
-			];
+        $model->delete();
+        return['status' =>true];
        
     }
 
