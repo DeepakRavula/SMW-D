@@ -73,13 +73,13 @@ use kartik\time\TimePicker;
 		]); ?>
         </div>
         <div class="col-md-12">
-			<div class="form-group">
-				<?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['id' => 'group-course-save', 'class' => 'btn btn-info', 'name' => 'signup-button'])
-				?>
+			<div class="pull-right">
 				<?php
 				if (!$model->isNewRecord) {
 					echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn btn-default']);
 				}
+				?>
+                <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['id' => 'group-course-save', 'class' => 'btn btn-info', 'name' => 'signup-button'])
 				?>
 			</div>
 		</div>
