@@ -15,9 +15,10 @@ DateRangePickerAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
-$this->title = 'Student Details';
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'StudentSearch[showAllStudents]' => false], ['class' => 'go-back']);
-?>
+$this->title = $model->fullName;
+$this->params['label'] = $this->render('_title', [
+	'model' => $model,
+]);?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
