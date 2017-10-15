@@ -53,15 +53,19 @@ use common\models\PaymentMethod;
                 ],
             ])->label('Cheque Date'); ?>
         </div>
+   </div>   
+    <div class="row">
+        <div class="col-md-12">
         <div class="clearfix"></div>
-	   <div class="col-md-6 form-group">
+	   <div class="form-group pull-right">
+           <?= Html::a('Cancel', '', ['class' => 'btn btn-default payment-cancel-btn']);?>
         <?= Html::submitButton(Yii::t('backend', 'Pay'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
-        <?= Html::a('Cancel', '', ['class' => 'btn btn-default payment-cancel-btn']);?>
 	</div>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>
-<script>
+</div>
+    <script>
 var paymentMethods = {
 	'cash' : '4',
 	'cheque' : '5'
