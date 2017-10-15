@@ -525,16 +525,15 @@ class UserController extends Controller
 	}
     public function actionCreate()
     {
-		print_r($_POST);die;
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
 
         $model = new UserForm();
-//        $addressModels = [new Address()];
-//        $phoneNumberModels = [new PhoneNumber()];
-//        $emailModels = [new UserEmail()];
+       $addressModel = new Address();
+        $phoneNumberModel = new PhoneNumber();
+        $emailModel = new UserEmail();
         $model->setScenario('create');
-        $model->roles = Yii::$app->request->queryParams['User']['role_name'];
+        $model->roles = Yii::$app->request->queryParams['role_name'];
         if ($model->roles === User::ROLE_STAFFMEMBER) {
             if (!Yii::$app->user->can('createStaff')) {
                 throw new ForbiddenHttpException();
@@ -542,6 +541,9 @@ class UserController extends Controller
         }
         $request = Yii::$app->request;
         if ($model->load($request->post()) && $model->save()) {
+           if($addressModel->save());
+            $phoneNumberModel->save();
+            $emailModel->save();
 			 return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);			
 		}
 //		$teacherQualifications = $request->post('Qualification');
