@@ -15,6 +15,9 @@ DatePickerAsset::register($this);
 /* @var $model common\models\Location */
 
 $this->title = $model->name;
+$this->params['label'] = $this->render('_title', [
+	'model' => $model,
+]);
 $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', '#', ['class' => 'btn btn-primary btn-sm edit-location']); 
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);

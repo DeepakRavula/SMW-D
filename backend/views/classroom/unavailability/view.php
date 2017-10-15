@@ -8,7 +8,9 @@ use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 
 $this->title = $model->name;
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index'], ['class' => 'go-back']);
+$this->params['label'] = $this->render('_title', [
+	'model' => $model,
+]);
 ?>
 <?php
 Modal::begin([

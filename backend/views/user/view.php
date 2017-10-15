@@ -23,9 +23,11 @@ foreach ($roleNames as $name => $description) {
         $roleName = $description;
     }
 }
-$this->title = $model->publicIdentity.' - '.ucwords($searchModel->role_name);
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'UserSearch[role_name]' => $searchModel->role_name], ['class' => 'go-back']);
-?>
+$this->title = $model->publicIdentity;
+$this->params['label'] = $this->render('_title', [
+	'model' => $model,
+	'searchModel' => $searchModel
+]);?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />

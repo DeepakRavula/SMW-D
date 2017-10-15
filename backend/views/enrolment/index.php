@@ -13,7 +13,6 @@ use common\models\Enrolment;
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
 $this->title = 'Enrolments';
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i> Add'), ['create'], ['class' => 'btn bg-primary btn-sm']);
 $this->params['show-all'] = $this->render('_button', [
