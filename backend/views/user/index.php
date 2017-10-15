@@ -126,6 +126,7 @@ $this->params['show-all'] = $this->render('_button', [
 </div>
 <script>
 $(document).ready(function(){
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$(document).on('click', '.add-user', function() {
         $('#add-user-modal .modal-dialog').css({'width': '800px'});
 		$('#add-user-modal').modal('show');
