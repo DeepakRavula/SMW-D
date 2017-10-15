@@ -5,8 +5,19 @@ use common\models\Invoice;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
+use yii\bootstrap\Modal;
 use yii\helpers\ArrayHelper;
 use common\components\gridView\AdminLteGridView;
+use backend\models\UserForm;
+use common\models\Program;
+use common\models\Address;
+use common\models\PhoneNumber;
+use common\models\UserEmail;
+use common\models\Qualification;
+use common\models\Location;
+use kartik\select2\Select2Asset;
+
+Select2Asset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\UserSearch */
@@ -22,11 +33,27 @@ foreach ($roles as $name => $description) {
 $roleName = $searchModel->role_name;
 $originalInvoice = Invoice::TYPE_INVOICE;
 $this->title = Yii::t('backend',  !isset($role) ? 'User' : $role.'s');
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i> Add'), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-primary btn-sm']);
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i> Add'), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-primary btn-sm add-user']);
 $this->params['show-all'] = $this->render('_button', [
 	'searchModel' => $searchModel
 ]);
 ?>
+ <?php
+    Modal::begin([
+        'header' => '<h4 class="m-0">Add</h4>',
+        'id'=>'add-user-modal',
+    ]);?>
+<?= $this->render('_form', [
+	'model' => new UserForm(),
+	'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
+	'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
+	'addressModels' => new Address(),
+	'phoneNumberModels' => new PhoneNumber(),
+	'emailModels' => new UserEmail(),
+	'qualificationModels' => new Qualification(),
+	'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
+]);?>
+<?php Modal::end();?>
 <div class="user-index"> 
 <div class="grid-row-open">
     <?php Pjax::begin([
@@ -99,6 +126,15 @@ $this->params['show-all'] = $this->render('_button', [
 </div>
 <script>
 $(document).ready(function(){
+	$(document).on('click', '.add-user', function() {
+        $('#add-user-modal .modal-dialog').css({'width': '800px'});
+		$('#add-user-modal').modal('show');
+		return false;
+	});
+	$(document).on('click', '.user-add-cancel', function() {
+		$('#add-user-modal').modal('hide');
+		return false;
+	});
   $("#usersearch-showallcustomers").on("change", function() {
       var showAllCustomers = $(this).is(":checked");
       var url = "<?php echo Url::to(['user/index', 'UserSearch[role_name]' => User::ROLE_CUSTOMER]); ?>&UserSearch[query]=" + "<?php echo $searchModel->query; ?>&UserSearch[showAllCustomers]=" + (showAllCustomers | 0);

@@ -525,13 +525,14 @@ class UserController extends Controller
 	}
     public function actionCreate()
     {
+		print_r($_POST);die;
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
 
         $model = new UserForm();
-        $addressModels = [new Address()];
-        $phoneNumberModels = [new PhoneNumber()];
-        $emailModels = [new UserEmail()];
+//        $addressModels = [new Address()];
+//        $phoneNumberModels = [new PhoneNumber()];
+//        $emailModels = [new UserEmail()];
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['User']['role_name'];
         if ($model->roles === User::ROLE_STAFFMEMBER) {
@@ -540,60 +541,62 @@ class UserController extends Controller
             }
         }
         $request = Yii::$app->request;
-        $response = Yii::$app->response;
-		$teacherQualifications = $request->post('Qualification');
-        if ($model->load($request->post())) {
-			$qualificationModels = [];
-			if(!empty($teacherQualifications)) {
-				foreach($teacherQualifications as $teacherQualification) {
-					foreach($teacherQualification as $qualification) {
-						$qualificationModels[] = $qualification;
-					}
-				}
-			}
-			$addressModels = UserForm::createMultiple(Address::classname());
-	        Model::loadMultiple($addressModels, $request->post());	
-            $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
-            Model::loadMultiple($phoneNumberModels, $request->post());
-            $emailModels = UserForm::createMultiple(UserEmail::classname());
-            Model::loadMultiple($emailModels, $request->post());
-			
-			
-            if ($request->isAjax) {
-                $response->format = Response::FORMAT_JSON;
-
-                return ArrayHelper::merge(
-                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($emailModels));
-            }
-            $valid = $model->validate();
-            $valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($addressModels)
-                    || Model::validateMultiple($emailModels)) && $valid;
-
-            if ($valid) {
-                try {
-					$success = $this->saveAddressAndPhone($model, $emailModels, $addressModels, $phoneNumberModels, $qualificationModels);
-                    if ($success) {
-                        Yii::$app->session->setFlash('alert', [
-                                'options' => ['class' => 'alert-success'],
-                                'body' => ucwords($model->roles).' profile has been created successfully',
-                        ]);
-
-                        return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
-                    }
-                } catch (Exception $e) {
-                    $transaction->rollBack();
-                }
-            }
-        }
+        if ($model->load($request->post()) && $model->save()) {
+			 return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);			
+		}
+//		$teacherQualifications = $request->post('Qualification');
+//        if ($model->load($request->post())) {
+//			$qualificationModels = [];
+//			if(!empty($teacherQualifications)) {
+//				foreach($teacherQualifications as $teacherQualification) {
+//					foreach($teacherQualification as $qualification) {
+//						$qualificationModels[] = $qualification;
+//					}
+//				}
+//			}
+//			$addressModels = UserForm::createMultiple(Address::classname());
+//	        Model::loadMultiple($addressModels, $request->post());	
+//            $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
+//            Model::loadMultiple($phoneNumberModels, $request->post());
+//            $emailModels = UserForm::createMultiple(UserEmail::classname());
+//            Model::loadMultiple($emailModels, $request->post());
+//			
+//			
+//            if ($request->isAjax) {
+//                $response->format = Response::FORMAT_JSON;
+//
+//                return ArrayHelper::merge(
+//                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($emailModels));
+//            }
+//            $valid = $model->validate();
+//            $valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($addressModels)
+//                    || Model::validateMultiple($emailModels)) && $valid;
+//
+//            if ($valid) {
+//                try {
+//					$success = $this->saveAddressAndPhone($model, $emailModels, $addressModels, $phoneNumberModels, $qualificationModels);
+//                    if ($success) {
+//                        Yii::$app->session->setFlash('alert', [
+//                                'options' => ['class' => 'alert-success'],
+//                                'body' => ucwords($model->roles).' profile has been created successfully',
+//                        ]);
+//
+//                        return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
+//                    }
+//                } catch (Exception $e) {
+//                    $transaction->rollBack();
+//                }
+//            }
+//        }
 
         return $this->render('create', [
 			'model' => $model,
 			'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
 			'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
-			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
-			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
-                        'emailModels' => (empty($emailModels)) ? [new UserEmail()] : $emailModels,
-			'qualificationModels' => (empty($qualificationModels)) ? [new Qualification()] : $qualificationModels,
+			'addressModels' => new Address(),
+			'phoneNumberModels' => new PhoneNumber(),
+            'emailModels' => new UserEmail(),
+			'qualificationModels' => new Qualification(),
 			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
         ]);
     }

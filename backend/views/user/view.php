@@ -371,6 +371,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 ]); ?>
 <div id="email-content"></div>
 <?php Modal::end(); ?>
+
 <script>
 	$('.availability').click(function () {
 		$('.teacher-availability-create').show();
