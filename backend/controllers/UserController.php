@@ -527,7 +527,6 @@ class UserController extends Controller
     {
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
-    print_r($_POST);die();
         $model = new UserForm();
         $addressModels = new Address();
         $userAddress = new UserAddress();
