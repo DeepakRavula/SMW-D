@@ -41,15 +41,15 @@ Select2Asset::register($this);
 			<?= $form->field($emailModels, 'email')->textInput(['maxlength' => true]) ?>
 		</div>	
 		<div class="col-md-4">
-			<?= $form->field($emailModels, 'label')->widget(Select2::classname(), [
+			<?= $form->field($emailModels, 'labelId')->widget(Select2::classname(), [
 				'data' => ArrayHelper::map(Label::find()
 					->user($model->getModel()->id)
 					->all(), 'id', 'name'),
 				'options' => ['placeholder' => 'Select Label'],
-//				'pluginOptions' => [
-//					'tags' => true,
-//					'allowClear' => true,
-//				],
+				'pluginOptions' => [
+					'tags' => true,
+					'allowClear' => true,
+				],
 		])->label('Label');
 		?>
 		</div>	
