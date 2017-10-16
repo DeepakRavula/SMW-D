@@ -29,9 +29,13 @@ use yii\helpers\Html;
                 (ArrayHelper::map(PaymentMethod::find()->active()->paymentPreference()->all(), 'id', 'name'), ['prompt' => 'Select payment method'])->label('Payment Method'); ?>
         </div>
 	</div>
-	<div class="form-group">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="pull-right">
+                <?= Html::a('Cancel', null, ['id' => 'cancel', 'class' => 'btn btn-default']); ?>
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-        <?= Html::a('Cancel', null, ['id' => 'cancel', 'class' => 'btn btn-default']); ?>
+            </div>
+<div class="pull-left">
         <?php if (!empty($model->id)) : ?>
             <?= Html::a('Delete', null,
                 [
@@ -40,6 +44,8 @@ use yii\helpers\Html;
                 ]); ?>
         <?php endif; ?>
 	</div>
+        </div>
+    </div>
 	<?php ActiveForm::end(); ?>
 </div>
 </div>
