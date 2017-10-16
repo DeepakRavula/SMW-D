@@ -46,13 +46,11 @@ use yii\helpers\Url;
 	<?php echo $form->field($customer, 'id')->hiddenInput()->label(false); ?>
     <div class="row-fluid">
     <div class="form-group">
-       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-		<?php 
-            if (!$model->isNewRecord) {
-                echo Html::a('Cancel','#', ['class' => 'btn btn-default student-profile-cancel-button']);
-            }
-        ?>
-    </div>
+        <div class="pull-right">
+        <?php echo Html::a('Cancel', '#', ['class' => 'btn btn-default student-profile-cancel-button']); ?>
+    <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+        </div>
+        </div>
     <div class="clearfix"></div>
     </div>
     <?php ActiveForm::end(); ?>

@@ -40,10 +40,13 @@ foreach ($Roles as $name => $description) {
 		<?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
 	</div>
 	<?php endif; ?>
-	<div class="col-md-12 m-b-10">
+</div>
+<div class="row">
+	<div class="col-md-12">
+        <div class="pull-right">
+        <?php echo Html::a('Cancel', '#', [ 'id' => 'user-cancel-btn', 'class' => 'btn btn-default']);?>
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-		<?= Html::a('Cancel', '#', [ 'id' => 'user-cancel-btn', 'class' => 'btn btn-default']);
-        ?>
 	</div>
+    </div>
 </div>
 <?php ActiveForm::end(); ?>
