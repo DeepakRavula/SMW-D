@@ -49,7 +49,6 @@ use yii\grid\GridView;
         ],
         [
             'label' => 'Cost',
-            'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
             'value' => function ($data) {
@@ -58,7 +57,8 @@ use yii\grid\GridView;
         ],
         [
             'label' => 'Price',
-            'format' => 'currency',
+			'headerOptions' => ['class' => 'text-right'],
+			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
 			'value' => function($data) {
 				return $data->itemTotal;	
 			},
@@ -88,7 +88,6 @@ use yii\grid\GridView;
 		],
         [
             'label' => 'Price',
-            'format' => 'currency',
 			'value' => function($data) {
 				return $data->itemTotal;	
 			},
