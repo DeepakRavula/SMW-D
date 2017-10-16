@@ -84,11 +84,16 @@ use common\models\Course;
             <div id="enrolment-calendar"></div>
         </div>
 	</div>
-	<div class="clearfix"></div>
-    <div class="form-group">
-<?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
-	['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'preview-button']) ?>
+    <div class="row">
+        <div class="col-md-12">
+	<div class="form-group"></div>
+    <div class="pull-right">
 		<?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-edit-cancel']); ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
+	['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'preview-button']) ?>
+
+    </div>
+        </div>
     </div>
 
 <?php ActiveForm::end(); ?>
