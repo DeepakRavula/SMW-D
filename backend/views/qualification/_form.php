@@ -67,11 +67,17 @@ use common\models\Qualification;
         <div class="col-md-6">
             <?= $form->field($model, 'rate')->textInput();?>
         </div>
-    <div class="col-md-12 p-l-20 form-group">
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'pull-right btn btn-info', 'name' => 'button']) ?>
+    </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
+           <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'pull-right btn btn-info', 'name' => 'button']) ?>
 		<?= Html::a('Cancel', '', ['class' => 'm-r-10 btn btn-default pull-right qualification-cancel']);?>
        
-        <?= Html::a('Delete', [
+        <div class="clearfix"></div>
+	</div>
+        <div class="pull-left">
+<?= Html::a('Delete', [
             'delete', 'id' => $model->id
         ],
         [
@@ -82,8 +88,8 @@ use common\models\Qualification;
                 'method' => 'post',
             ]
         ]); ?>
-        <div class="clearfix"></div>
-	</div>
-	</div>
+        </div>   
+    </div>
 	<?php ActiveForm::end(); ?>
+</div>
 </div>

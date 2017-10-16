@@ -16,7 +16,9 @@ use yii\bootstrap\ActiveForm;
         </div>
 		<?php echo $form->field($model, 'payment_method_id')->hiddenInput()->label(false); ?>
 	</div>
-    <div class="form-group p-l-20">
+    <div class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
        <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 			<?php 
             if (!$model->isNewRecord) {
@@ -24,7 +26,8 @@ use yii\bootstrap\ActiveForm;
             }
         ?>
     </div>
-
+    </div>
+    </div>
     <?php ActiveForm::end(); ?>
 
 </div>
