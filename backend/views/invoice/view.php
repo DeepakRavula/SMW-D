@@ -11,12 +11,13 @@ use yii\widgets\Pjax;
 use common\models\Payment;
 use yii\data\ActiveDataProvider;
 use backend\models\EmailForm;
-
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 
-$this->title = (int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoice' : 'Invoice';
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'InvoiceSearch[type]' => $model->type], ['class' => 'go-back']);
+$this->title = $model->getInvoiceNumber();
+$this->params['label'] = $this->render('_title', [
+	'model' => $model,
+]);
 $this->params['action-button'] = $this->render('_buttons', [
 	'model' => $model,
 ]); ?>

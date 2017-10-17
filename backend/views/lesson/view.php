@@ -15,9 +15,11 @@ use common\models\Student;
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
-$this->title = 'Lessons / Lesson Details';
-$this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
-$this->params['label'] = $model->isPrivate() ? '<i title="Private" class="fa fa-lock"></i>' : '<i title="Group" class="fa fa-users"></i>';
+
+$this->title = $model->course->program->name;
+$this->params['label'] = $this->render('_title', [
+	'model' => $model,
+]);
 $this->params['action-button'] = $this->render('_buttons', [
 	'model' => $model,
 ]);
