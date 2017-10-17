@@ -43,6 +43,7 @@ class TeacherSubstituteController extends Controller
     public function actionIndex()
     {        
         $lessonIds = Yii::$app->request->get('ids');
+        $teacherId = Yii::$app->request->get('teacherId');
         $lessons = Lesson::findAll($lessonIds);
         $programIds = [];
         foreach ($lessons as $lesson) {
@@ -60,11 +61,25 @@ class TeacherSubstituteController extends Controller
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-        $conflicts = null;
+        $conflicts = [];
+        $conflictedLessonIds = [];
+        if ($teacherId) {
+            foreach ($lessons as $lesson) {
+                $lesson->setScenario('review');
+                $lesson->teacherId = $teacherId;
+                if (ActiveForm::validate($lesson)) {
+                    $conflictedLessonIds[] = $lesson->id;
+                    $conflicts[$lesson->id] = end(ActiveForm::validate($lesson));
+                }
+            }
+        }
+        $conflictedLessonIdsCount = count($conflictedLessonIds);
         $data = $this->renderAjax('_form', [
             'lessons' => $lessons,
             'teachers' => $teachers,
             'conflicts' => $conflicts,
+            'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
+            'conflictedLessonIds' => $conflictedLessonIds,
             'lessonDataProvider' => $lessonDataProvider
         ]);
         $response = [

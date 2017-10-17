@@ -105,26 +105,25 @@ Modal::begin([
 		}
 		$("#lessonsearch-showallreviewlessons").on("change", function () {
 			var showAllReviewLessons = $(this).is(":checked");
-                        var courseId = '<?= !empty($courseId)  ? $courseId : null; ?>';
-			var vacationId = '<?= !empty($vacationId)  ? $vacationId : null; ?>';
-			var startDate = '<?= !empty($rescheduleBeginDate)  ? $rescheduleBeginDate : null; ?>';
-			var endDate = '<?= !empty($rescheduleEndDate)  ? $rescheduleEndDate : null; ?>';
+			var vacationId = '<?= $vacationId  ? $vacationId : null; ?>';
+			var startDate = '<?= $rescheduleBeginDate  ? $rescheduleBeginDate : null; ?>';
+			var endDate = '<?= $rescheduleEndDate  ? $rescheduleEndDate : null; ?>';
 			if(vacationId) {
 				var params = $.param({
 					'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-					'Vacation[id]': vacationId, 'courseId': courseId
+					'Vacation[id]': vacationId,
 				});	
 			} else if(startDate && endDate) {
 				var params = $.param({
 					'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-					'Course[startDate]' : startDate, 'Course[endDate]' : endDate, 'courseId': courseId
+					'Course[startDate]' : startDate, 'Course[endDate]' : endDate
 				});
 			} else {
 				var params = $.param({
-					'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0), 'courseId': courseId
+					'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
 				});
 			}
-			var url = "<?php echo Url::to(['lesson/review']); ?>?" + params;
+			var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
 			$.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
 		});
 		
@@ -156,9 +155,9 @@ Modal::begin([
 			 e.preventDefault();
 			var lessonId = $('#lesson-id').val();
 			var showAllReviewLessons = $('#lessonsearch-showallreviewlessons').is(":checked");
-			var vacationId = '<?= !empty($vacationId) ? $vacationId : null; ?>';
+			var vacationId = '<?= $vacationId ? $vacationId : null; ?>';
 			var params = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-				'Vacation[id]': vacationId, 'courseId': '<?php echo !empty($courseId) ? $courseId : null; ?>'
+				'Vacation[id]': vacationId, 'courseId': '<?php echo $courseId ? $courseId : nulll; ?>'
 			});
 			var url = "<?php echo Url::to(['lesson/review']); ?>?" + params;
 			$.ajax({
