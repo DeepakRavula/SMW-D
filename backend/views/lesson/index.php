@@ -1,13 +1,20 @@
 <?php
 
 use yii\bootstrap\Tabs;
-use common\models\Lesson;
+use yii\bootstrap\Html;
+use yii\helpers\Url;
 use backend\models\search\CourseSearch;
 
 $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-
+<div class="pull-right calendar-filter">
+    <?= Html::dropDownList('action', null, ['c'=>'Substitute Teacher'], [
+        'prompt' => 'Select Bulk Action', 'class' => 'form-control',
+        'id' => 'bulk-action',
+        'url' => Url::to(['teacher-substitute/index'])
+    ])?>
+</div>
 <div class="nav-tabs-custom">
 <?php 
 

@@ -86,6 +86,7 @@ $config = [
 			'exam-result/*',
 			'note/*',
 			'teacher-room/*',
+            'teacher-substitute/*',
 			'discount/*',
 			'classroom-unavailability/*',
 			'report/*',

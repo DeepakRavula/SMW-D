@@ -422,6 +422,11 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
+    
+    public function getTeacherProfile()
+    {
+        return $this->hasOne(UserProfile::className(), ['user_id' => 'teacherId']);
+    }
 
 	public function getLessonNumber()
 	{

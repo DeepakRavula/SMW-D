@@ -6,6 +6,7 @@ use backend\models\search\LessonSearch;
 use yii\widgets\Pjax;
 use kartik\grid\GridView;
 use kartik\daterange\DateRangePicker;
+use yii\bootstrap\Modal;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
@@ -14,8 +15,11 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="grid-row-open p-10">
-<?php Pjax::begin(['id' => 'lesson-index','timeout' => 6000,]); ?>
+    <?php Pjax::begin(['id' => 'lesson-index','timeout' => 6000,]); ?>
     <?php $columns = [
+            [
+                'class' => '\kartik\grid\CheckboxColumn'
+            ],
             [
                 'label' => 'Student',
 				'attribute' => 'student',
@@ -28,6 +32,13 @@ $this->params['breadcrumbs'][] = $this->title;
 				'attribute' => 'program',
                 'value' => function ($data) {
                     return !empty($data->course->program->name) ? $data->course->program->name : null;
+                },
+            ],
+            [
+                'label' => 'Teacher',
+		'attribute' => 'teacher',
+                'value' => function ($data) {
+                    return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
                 },
             ],
             [
@@ -94,6 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
      ?>   
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'options' => ['id' => 'lesson-index-1'],
 		'filterModel' => $searchModel,
 		'rowOptions' => function ($model, $key, $index, $grid) {
 			$url = Url::to(['lesson/view', 'id' => $model->id]);
@@ -106,5 +118,34 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
 	<?php Pjax::end(); ?>
 
+<?php Modal::begin([
+        'header' => '<h4 class="m-0">Teacher Substitute</h4>',
+        'id'=>'teacher-substitute-modal',
+]);?>
+<div id="teacher-substitute-content"></div>
+<?php Modal::end(); ?>
 </div>
+
+<script>
+    $(document).on('change', '#bulk-action', function(){
+        var selectedValue = $(this).val();
+        if (selectedValue == "c") {
+            var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+            var params = $.param({ ids: lessonIds });
+            $.ajax({
+                url    : '<?= Url::to(['teacher-substitute/index']) ?>?' +params,
+                type   : 'get',
+                success: function(response)
+                {
+                    if(response.status)
+                        {
+                            $('#teacher-substitute-modal').modal('show');
+                            $('#teacher-substitute-content').html(response.data);
+                        }
+                }
+            });
+            return false;
+        }
+    });
+</script>
 
