@@ -17,11 +17,14 @@ use yii\helpers\Url;
 			<?php echo $form->field($model, 'amount')->textInput(['placeholder' => 'Amount'])->label(false); ?>
         </div>
 	</div>
-	<div class="form-group">
+    <div class="row">
+        <div class="col-md-12">
+	<div class="pull-right">
+        <?php echo Html::a('Cancel', '#', ['class' => 'btn btn-default ob-cancel']);?>
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-		<?php
-            echo Html::a('Cancel', '#', ['class' => 'btn btn-default ob-cancel']);
-        ?>
+		
 	</div>
+        </div>
+    </div>
 	<?php ActiveForm::end(); ?>
 </div>

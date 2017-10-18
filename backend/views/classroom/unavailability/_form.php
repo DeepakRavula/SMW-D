@@ -51,11 +51,14 @@ use kartik\date\DatePicker;
         <?php echo $form->field($model, 'reason')->textarea(['rows' => 6]) ?>
         </div>
     </div>
-    <div class="form-group">
+    <div class="row">
+        <div class="col-md-12">
+    <div class="pull-right">
+        <?php echo Html::a('Cancel', '#', ['class' => 'btn btn-default classroom-unavailability-cancel-button']); ?>
         <?php echo Html::submitButton('Save', ['class' => 'btn btn-info']) ?>
-        <?php
-        echo Html::a('Cancel', '#', ['class' => 'btn btn-default classroom-unavailability-cancel-button']);
-        if (!$model->isNewRecord) {
+    </div>
+    <div class="pull-left">        
+        <?php if (!$model->isNewRecord) {
             echo Html::a('Delete', ['delete', 'id' => $model->id], [
                 'id' => 'classroom-unavailability-delete-button',
                 'class' => 'btn btn-danger',
@@ -65,8 +68,8 @@ use kartik\date\DatePicker;
                 ]
             ]);
         }
-
         ?>
     </div>
+        </div></div>
 <?php ActiveForm::end(); ?>
 </div>

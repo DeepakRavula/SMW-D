@@ -91,12 +91,17 @@ if ($model->isNewRecord) {
 		]);
 		?>
         </div>
+</div>
         <div class="clearfix"></div>
-    <div class="col-md-12 p-l-20 form-group">
+        <div class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
 		<?=  $form->field($model, 'id')->hiddenInput()->label(false);?>
-        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
         <?php echo Html::submitButton(Yii::t('backend', 'Cancel'), ['class' => 'btn btn-default exam-result-cancel-button', 'name' => 'signup-button']) ?>
-        <?php
+        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+        </div>
+            <div class="pull-left">       
+ <?php
                 if (!$model->isNewRecord) {
             echo Html::a('Delete', [
                 'exam-result/delete', 'id' => $model->id
@@ -108,6 +113,7 @@ if ($model->isNewRecord) {
         }
 
         ?>
+</div>
     </div>
     </div>
 <?php ActiveForm::end(); ?>

@@ -59,11 +59,14 @@ use yii\jui\DatePicker;
         </div>
         <div class="clearfix"></div>
     </div>
-    <div class="row-fluid">
-    <div class="form-group">
+    <div class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
+            <?= Html::a('Cancel', '', ['class' => 'btn btn-default unavailability-cancel']);?>
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-		<?php if (!$model->isNewRecord) : ?>
-        	<?= Html::a('Cancel', '', ['class' => 'btn btn-default unavailability-cancel']);?>
+            </div>
+        <div class="pull-left">
+            <?php if (!$model->isNewRecord) : ?>
 			<?= Html::a('Delete', [
             'delete', 'id' => $model->id
         ],
@@ -76,6 +79,7 @@ use yii\jui\DatePicker;
             ]
         ]); ?>
 		<?php endif;?>
+        </div>
     </div>
     <div class="clearfix"></div>
     </div>

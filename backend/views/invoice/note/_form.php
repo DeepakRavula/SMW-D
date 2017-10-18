@@ -15,7 +15,7 @@ use yii\bootstrap\ActiveForm;
 	<div>
         <?php echo $form->field($model, 'content')->textarea(['rows' => '10'])->label(false)?>
     </div>
-    <div class="form-group">
+    <div class="form-group pull-right">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
     </div>
 </div>

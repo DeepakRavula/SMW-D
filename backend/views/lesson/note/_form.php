@@ -15,9 +15,12 @@ use yii\bootstrap\ActiveForm;
 	<div>
         <?php echo $form->field($model, 'content')->textarea(['rows' => '10'])->label(false)?>
     </div>
-    <div class="form-group">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="pull-right">
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
     </div>
 </div>
+    </div>
 <?php ActiveForm::end(); ?>
 </div>

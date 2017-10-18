@@ -32,10 +32,12 @@ use yii\helpers\Html;
             <?= $form->field($model, 'customerIds')->dropDownList([], ['multiple' => 'multiple',
                     'id' => 'user-customerid_to', 'size' => '10']); ?>
         </div>
-        <div class="col-md-12 p-l-20 form-group">
-            <?= Html::submitButton(Yii::t('backend', 'Merge'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
-
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+        <div class="pull-right">
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default customer-merge-cancel']);?>
+            <?= Html::submitButton(Yii::t('backend', 'Merge'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
         </div>
     </div>
 	<?php ActiveForm::end(); ?>

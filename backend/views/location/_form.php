@@ -93,12 +93,14 @@ $this->title = 'Edit Location';
 		</div>
 	</div>
 	<div class="clearfix"></div>
-
-    <div class="form-group">
+<div class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
+        <?php echo Html::a('Cancel', '#', ['class' => 'btn btn-default location-cancel m-r-10']);?>    
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-        <?php
-        echo Html::a('Cancel', '#', ['class' => 'btn btn-default location-cancel m-r-10']);
-        if (!$model->isNewRecord) {
+            </div>
+        <div class="pull-left">
+        <?php if (!$model->isNewRecord) {
             echo Html::a('Delete', ['delete', 'id' => $model->id], ['class' => 'btn btn-danger'], [
                 'data' => [
                     'confirm' => 'Are you sure you want to delete this item?',
@@ -109,6 +111,8 @@ $this->title = 'Edit Location';
 
         ?>
     </div>
+</div>
+</div>
 <?php ActiveForm::end(); ?>
 
 </div>
