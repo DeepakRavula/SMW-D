@@ -52,7 +52,7 @@ $this->params['show-all'] = $this->render('_button', [
 	'emailModels' => new UserEmail(),
 	'qualificationModels' => new Qualification(),
 	'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
-    'searchModel'=>$searchModel,
+    'searchModel' => $searchModel,
 ]);?>
 <?php Modal::end();?>
 <div class="user-index"> 

@@ -557,16 +557,6 @@ class UserController extends Controller
                 return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
             }
         }
-        return $this->render('create', [
-			'model' => $model,
-			'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-			'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
-			'addressModels' => new Address(),
-			'phoneNumberModels' => new PhoneNumber(),
-            'emailModels' => new UserEmail(),
-			'qualificationModels' => new Qualification(),
-			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
-        ]);
     }
 
 	public function actionEditProfile($id)
