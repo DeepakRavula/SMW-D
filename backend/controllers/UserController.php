@@ -37,7 +37,7 @@ use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use common\models\Payment;
-
+use common\models\UserAddress;
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -527,73 +527,44 @@ class UserController extends Controller
     {
         $session = Yii::$app->session;
         $locationId = $session->get('location_id');
-
         $model = new UserForm();
-        $addressModels = [new Address()];
-        $phoneNumberModels = [new PhoneNumber()];
-        $emailModels = [new UserEmail()];
+        $addressModels = new Address();
+        $userAddress = new UserAddress();
+        $phoneNumberModels = new PhoneNumber();
+        $emailModels = new UserEmail();
         $model->setScenario('create');
-        $model->roles = Yii::$app->request->queryParams['User']['role_name'];
+        $model->roles = Yii::$app->request->queryParams['role_name'];
         if ($model->roles === User::ROLE_STAFFMEMBER) {
             if (!Yii::$app->user->can('createStaff')) {
                 throw new ForbiddenHttpException();
             }
         }
         $request = Yii::$app->request;
-        $response = Yii::$app->response;
-		$teacherQualifications = $request->post('Qualification');
-        if ($model->load($request->post())) {
-			$qualificationModels = [];
-			if(!empty($teacherQualifications)) {
-				foreach($teacherQualifications as $teacherQualification) {
-					foreach($teacherQualification as $qualification) {
-						$qualificationModels[] = $qualification;
-					}
-				}
-			}
-			$addressModels = UserForm::createMultiple(Address::classname());
-	        Model::loadMultiple($addressModels, $request->post());	
-            $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname());
-            Model::loadMultiple($phoneNumberModels, $request->post());
-            $emailModels = UserForm::createMultiple(UserEmail::classname());
-            Model::loadMultiple($emailModels, $request->post());
-			
-			
-            if ($request->isAjax) {
-                $response->format = Response::FORMAT_JSON;
-
-                return ArrayHelper::merge(
-                        ActiveForm::validate($model), ActiveForm::validateMultiple($addressModels), ActiveForm::validateMultiple($phoneNumberModels), ActiveForm::validateMultiple($emailModels));
-            }
-            $valid = $model->validate();
-            $valid = (Model::validateMultiple($addressModels) || Model::validateMultiple($addressModels)
-                    || Model::validateMultiple($emailModels)) && $valid;
-
-            if ($valid) {
-                try {
-					$success = $this->saveAddressAndPhone($model, $emailModels, $addressModels, $phoneNumberModels, $qualificationModels);
-                    if ($success) {
-                        Yii::$app->session->setFlash('alert', [
-                                'options' => ['class' => 'alert-success'],
-                                'body' => ucwords($model->roles).' profile has been created successfully',
-                        ]);
-
-                        return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
-                    }
-                } catch (Exception $e) {
-                    $transaction->rollBack();
-                }
+        if ($model->load($request->post()) && $model->save()) {
+            if ($addressModels->load($request->post()) && $phoneNumberModels->load($request->post()) && $emailModels->load($request->post())) {
+                
+                $addressModels->is_primary = true;
+                $addressModels->save();
+                $userAddress->address_id = $addressModels->id;
+                $userAddress->user_id = $model->getModel()->id;
+                $userAddress->save();
+                $phoneNumberModels->user_id = $model->getModel()->id;
+                $phoneNumberModels->is_primary = true;
+                $phoneNumberModels->save();
+                $emailModels->userId = $model->getModel()->id;
+                $emailModels->isPrimary = true;
+                $emailModels->save();
+                return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
             }
         }
-
         return $this->render('create', [
 			'model' => $model,
 			'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
 			'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
-			'addressModels' => (empty($addressModels)) ? [new Address()] : $addressModels,
-			'phoneNumberModels' => (empty($phoneNumberModels)) ? [new PhoneNumber()] : $phoneNumberModels,
-                        'emailModels' => (empty($emailModels)) ? [new UserEmail()] : $emailModels,
-			'qualificationModels' => (empty($qualificationModels)) ? [new Qualification()] : $qualificationModels,
+			'addressModels' => new Address(),
+			'phoneNumberModels' => new PhoneNumber(),
+            'emailModels' => new UserEmail(),
+			'qualificationModels' => new Qualification(),
 			'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
         ]);
     }

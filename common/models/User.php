@@ -491,7 +491,7 @@ class User extends ActiveRecord implements IdentityInterface
         $this->link('userProfile', $profile);
         $this->trigger(self::EVENT_AFTER_SIGNUP);
         $model = new UserForm();
-        $model->roles = Yii::$app->request->queryParams['User']['role_name'];
+        $model->roles = Yii::$app->request->queryParams['role_name'];
         // Default role
         $auth = Yii::$app->authManager;
         $auth->assign($auth->getRole($model->roles), $this->getId());

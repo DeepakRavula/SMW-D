@@ -373,6 +373,7 @@ $this->params['label'] = $this->render('_title', [
 ]); ?>
 <div id="email-content"></div>
 <?php Modal::end(); ?>
+
 <script>
 	$('.availability').click(function () {
 		$('.teacher-availability-create').show();
