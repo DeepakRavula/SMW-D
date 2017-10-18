@@ -82,12 +82,14 @@ class LessonSearch extends Lesson
 			['student.first_name' => $this->student],
 			['student.last_name' => $this->student]
 		]);
-		$query->andFilterWhere(['program.name' => $this->program])
-                    ->joinWith(['teacherProfile' => function ($query) {
+		$query->andFilterWhere(['program.name' => $this->program]);
+                if (!empty($this->teacher)) {
+                    $query->joinWith(['teacherProfile' => function ($query) {
                         $query->andFilterWhere([
                             'LIKE', "CONCAT(user_profile.firstname, ' ', user_profile.lastname)", $this->teacher
                         ]);
                     }]);
+                }
         if (!empty($this->customerId)) {
             $query->student($this->customerId);
         }

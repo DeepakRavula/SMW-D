@@ -6,6 +6,7 @@ use Yii;
 use common\models\lesson\BulkRescheduleLesson;
 use common\models\discount\EnrolmentDiscount;
 use yii\helpers\ArrayHelper;
+use yii\behaviors\BlameableBehavior;
 use valentinek\behaviors\ClosureTable;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\components\validators\lesson\conflict\HolidayValidator;
@@ -16,6 +17,7 @@ use common\components\validators\lesson\conflict\StudentBackToBackLessonValidato
 use common\components\validators\lesson\conflict\IntraEnrolledLessonValidator;
 use common\components\validators\lesson\conflict\TeacherAvailabilityValidator;
 use common\components\validators\lesson\conflict\StudentAvailabilityValidator;
+use common\components\validators\lesson\conflict\TeacherSubstituteValidator;
 
 /**
  * This is the model class for table "lesson".
@@ -48,6 +50,7 @@ class Lesson extends \yii\db\ActiveRecord
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA = 2;
 
+    const SCENARIO_SUBSTITUTE_TEACHER = 'substitute-teacher';
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_REVIEW = 'review';
     const SCENARIO_EDIT = 'edit';
@@ -107,6 +110,11 @@ class Lesson extends \yii\db\ActiveRecord
                 'childAttribute' => 'childLessonId',
                 'parentAttribute' => 'lessonId',
             ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
+            ],
         ];
     }
 
@@ -122,7 +130,7 @@ class Lesson extends \yii\db\ActiveRecord
             }],
             [['courseId', 'status', 'type'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 
-                'isExploded', 'applyContext', 'isConfirmed'], 'safe'],
+                'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId'], 'safe'],
             [['classroomId'], ClassroomValidator::className(), 
 				'on' => [self::SCENARIO_EDIT, self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(), 
@@ -140,6 +148,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['date'], StudentBackToBackLessonValidator::className(), 'on' => [self::SCENARIO_EDIT], 'when' => function($model, $attribute) {
                 return $model->course->program->isPrivate();
             }],
+            [['date'], TeacherSubstituteValidator::className(), 'on' => self::SCENARIO_SUBSTITUTE_TEACHER],
             [['date'], StudentBackToBackLessonValidator::className(), 'on' => [self::SCENARIO_CREATE,
                 self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_GROUP_ENROLMENT_REVIEW]],
             [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],

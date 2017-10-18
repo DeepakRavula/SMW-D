@@ -6,7 +6,7 @@ $(document).on('click', '.calendar-date-time-picker-cancel', function () {
 $.fn.calendarPicker = function(options) {
     $('#calendar-date-time-picker-modal').modal('show');
     $('#calendar-date-time-picker-modal .modal-dialog').css({'width': '1000px'});
-    $(document).on('shown.bs.modal', '#calendar-date-time-picker-modal', function () {
+    $(document).on('shown.bs.modal', '#calendar-date-time-picker-modal', function () {debugger;
         calendar.showCalendar(options);
     });
     $(document).on('change', '#calendar-date-time-picker-date', function () {
