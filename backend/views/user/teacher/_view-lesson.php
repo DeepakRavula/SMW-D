@@ -179,7 +179,7 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 businessHours: availableHours,
                 events: events,
                 select: function (start, end, allDay) {
-                    $('#lesson-date').val(moment(start).format('DD-MM-YYYY hh:mm A'));
+                    $('#lesson-date1').val(moment(start).format('DD-MM-YYYY hh:mm A'));
                     $('#teacher-lesson').fullCalendar('removeEvents', 'newEnrolment');
 					var duration = $('#lesson-duration').val();
 					var endtime = start.clone();

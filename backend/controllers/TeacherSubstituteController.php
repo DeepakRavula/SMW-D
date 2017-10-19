@@ -3,7 +3,10 @@
 namespace backend\controllers;
 
 use Yii;
+use yii\helpers\Url;
 use common\models\Lesson;
+use common\models\LessonHierarchy;
+use common\models\LessonReschedule;
 use common\models\User;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -27,7 +30,7 @@ class TeacherSubstituteController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['index'],
+                'only' => ['index', 'confirm'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -46,25 +49,44 @@ class TeacherSubstituteController extends Controller
         $lessonIds = Yii::$app->request->get('ids');
         $teacherId = Yii::$app->request->get('teacherId');
         $lessons = Lesson::findAll($lessonIds);
+        $resolvingConflict = Yii::$app->request->get('resolvingConflicts');
         $programIds = [];
         $newLessonIds = [];
         $draftLessons = Lesson::find()
                 ->select('id')
+                ->notDeleted()
                 ->notConfirmed()
                 ->andWhere(['createdByUserId' => Yii::$app->user->id])
                 ->all();
-        if ($draftLessons) {
+        if ($draftLessons && !$resolvingConflict) {
+            LessonHierarchy::deleteAll(['childLessonId' => $draftLessons]);
             Lesson::deleteAll(['id' => $draftLessons]);
         }
         $conflicts = [];
+        if ($resolvingConflict) {
+            foreach ($draftLessons as $lesson) {
+                $lesson = Lesson::findOne($lesson->id);
+                $lesson->setScenario('substitute-teacher');
+                $newLessonIds[] = $lesson->id;
+                if (ActiveForm::validate($lesson)) {
+                    $conflictedLessonIds[] = $lesson->id;
+                    $errors = ActiveForm::validate($lesson);
+                    $conflicts[$lesson->id] = $errors['lesson-date'];
+                }
+            }
+        }
         foreach ($lessons as $lesson) {
-            if ($teacherId) {
+            if ($teacherId && !$resolvingConflict) {
                 $newLesson = clone $lesson;
                 $newLesson->isNewRecord = true;
                 $newLesson->id = null;
                 $newLesson->teacherId = $teacherId;
                 $newLesson->isConfirmed = false;
                 $newLesson->save();
+                $lessonRescheduleModel			    = new LessonReschedule();
+                $lessonRescheduleModel->lessonId	    = $lesson->id;
+                $lessonRescheduleModel->rescheduledLessonId = $newLesson->id;
+                $lessonRescheduleModel->save();
                 $newLessonIds[] = $newLesson->id;
                 $newLesson->setScenario('substitute-teacher');
                 if (ActiveForm::validate($newLesson)) {
@@ -72,12 +94,13 @@ class TeacherSubstituteController extends Controller
                     $errors = ActiveForm::validate($newLesson);
                     $conflicts[$newLesson->id] = $errors['lesson-date'];
                 }
-                $query = Lesson::find()
-                    ->notConfirmed()
-                    ->andWhere(['createdByUserId' => Yii::$app->user->id]);
             }
             $programIds[] = $lesson->course->programId;
         }
+        $query = Lesson::find()
+                    ->notDeleted()
+                    ->notConfirmed()
+                    ->andWhere(['createdByUserId' => Yii::$app->user->id]);
         $teachers = User::find()
                 ->teachers($programIds, Yii::$app->session->get('location_id'))
                 ->join('LEFT JOIN', 'user_profile','user_profile.user_id = ul.user_id')
@@ -88,6 +111,7 @@ class TeacherSubstituteController extends Controller
         $conflictedLessonIds = [];
         if (!$teacherId) {
             $query = Lesson::find()
+                    ->notDeleted()
                     ->where(['id' => $newLessonIds]);
         }
         $lessonDataProvider = new ActiveDataProvider([
@@ -110,25 +134,24 @@ class TeacherSubstituteController extends Controller
         return $response;
     }
     
-    public function actionLesson($id)
+    public function actionConfirm()
     {
-        $model = $this->findModel($id);
-        $existingDate = $model->date;
-        $data = $this->renderAjax('lesson/_form', [
-            'model' => $model,
-        ]);
+        $oldLessons = Yii::$app->request->get('ids');
+        foreach ($oldLessons as $lesson) {
+            $oldLesson = Lesson::findOne($lesson);
+            $oldLesson->Cancel();
+        }
+        $lessons = Lesson::find()
+                ->notConfirmed()
+                ->andWhere(['createdByUserId' => Yii::$app->user->id])
+                ->all();
+        foreach ($lessons as $lesson) {
+            $lesson->updateAttributes(['isConfirmed' => true]);
+        }
         $response = [
             'status' => true,
-            'data' => $data
+            'url' => Url::to(['/lesson/index'])
         ];
-        if ($model->load(Yii::$app->request->post()) && !empty($model->applyContext)) {
-            if($model->isResolveSingleLesson()) {
-                $response = $this->resolveSingleLesson($model, $existingDate);
-            } else {
-                $conflictedLessons = $this->fetchConflictedLesson($model->course);
-                $response = $this->resolveAllLesson($conflictedLessons, $model);
-            }
-        } 
         return $response;
     }
 }

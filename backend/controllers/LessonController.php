@@ -907,10 +907,18 @@ class LessonController extends Controller
     public function actionSubstitute($id)
     {
         $model = $this->findModel($id);
-        if ($model->load(Yii::$app->request->post())) {
-            $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+        $newLesson = clone $model;
+        $newLesson->isNewRecord = true;
+        $newLesson->id = null;
+        if ($newLesson->load(Yii::$app->request->post())) {
+            $newLesson->date = (new \DateTime($newLesson->date))->format('Y-m-d H:i:s');
+            $newLesson->save();
+            $lessonRescheduleModel			= new LessonReschedule();
+            $lessonRescheduleModel->lessonId	        = $model->id;
+            $lessonRescheduleModel->rescheduledLessonId = $newLesson->id;
+            $lessonRescheduleModel->save();
             return [
-                'status' => $model->save()
+                'status' => $model->Cancel()
             ];
         } else {
             return [

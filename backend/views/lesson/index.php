@@ -4,6 +4,9 @@ use yii\bootstrap\Tabs;
 use yii\bootstrap\Html;
 use yii\helpers\Url;
 use backend\models\search\CourseSearch;
+use kartik\datetime\DateTimePickerAsset;
+DateTimePickerAsset::register($this);
+require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;

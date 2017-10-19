@@ -1,12 +1,13 @@
 $(document).on('click', '.calendar-date-time-picker-cancel', function () {
     $('#calendar-date-time-picker-modal').modal('hide');
+    $(document).trigger( "after-picker-cancel");
     return false;
 });
 
 $.fn.calendarPicker = function(options) {
     $('#calendar-date-time-picker-modal').modal('show');
     $('#calendar-date-time-picker-modal .modal-dialog').css({'width': '1000px'});
-    $(document).on('shown.bs.modal', '#calendar-date-time-picker-modal', function () {debugger;
+    $(document).on('shown.bs.modal', '#calendar-date-time-picker-modal', function () {
         calendar.showCalendar(options);
     });
     $(document).on('change', '#calendar-date-time-picker-date', function () {
@@ -36,6 +37,7 @@ $.fn.calendarPicker = function(options) {
             var selecetdEvent = $('#calendar-date-time-picker').fullCalendar('clientEvents', 'newEnrolment');
             var params = {
                 name: options.name,
+                lessonId: options.lessonId,
                 date: selecetdEvent[0].start
             };
             $(document).trigger( "after-date-set", params);
@@ -65,6 +67,12 @@ $.fn.calendarPicker = function(options) {
 
 var calendar = {
     showCalendar: function (calendarOptions) {
+        if ($.isEmptyObject(calendarOptions.selectConstraint)) {
+            calendarOptions.selectConstraint = 'businessHours';
+        }
+        if ($.isEmptyObject(calendarOptions.eventConstraint)) {
+            calendarOptions.eventConstraint = 'businessHours';
+        }
         $('#calendar-date-time-picker').fullCalendar('destroy');
         $('#calendar-date-time-picker').fullCalendar({
         	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -81,8 +89,8 @@ var calendar = {
             defaultView: 'agendaWeek',
             minTime: calendarOptions.minTime,
             maxTime: calendarOptions.maxTime,
-            selectConstraint: 'businessHours',
-            eventConstraint: 'businessHours',
+            selectConstraint: calendarOptions.selectConstraint,
+            eventConstraint: calendarOptions.eventConstraint,
             businessHours: calendarOptions.businessHours,
             allowCalEventOverlap: true,
             overlapEventsSeparate: true,
@@ -95,6 +103,7 @@ var calendar = {
             },
             select: function (start) {
                 $('#calendar-date-time-picker').fullCalendar('removeEvents', 'newEnrolment');
+                $('#calendar-date-time-picker-teacher').val(calendarOptions.teacherId);
                 $('#calendar-date-time-picker-date').val(moment(start).format('DD-MM-YYYY h:mm A')).trigger('change');
                 var endtime = start.clone();
                 var durationMinutes = moment.duration(calendarOptions.duration).asMinutes();

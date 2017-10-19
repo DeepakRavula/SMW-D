@@ -6,9 +6,6 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use common\models\LocationAvailability;
 use common\components\gridView\AdminLteGridView;
-use kartik\datetime\DateTimePickerAsset;
-DateTimePickerAsset::register($this);
-require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -64,7 +61,8 @@ $columns = [
 		'buttons' => [
 			'edit' => function  ($url, $model) {
 				return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>','#', [
-					'id' => 'edit-button',
+					'id' => 'edit-button', 'duration' => $model->duration,
+                                        'lessonId' => $model->id,
 					'class' => 'm-l-20'
 				]);
 			},
@@ -90,11 +88,8 @@ AdminLteGridView::widget([
     <?=
     Html::a('Confirm', null, [
             'class' => 'btn btn-info',
-            'id' => 'sub-confirm-button',
-            'disabled' => $hasConflict,
-            'data' => [
-                    'method' => 'post',
-            ],
+            'id' => 'sub-teacher-confirm',
+            'disabled' => $hasConflict
     ])
     ?>
     <?= Html::a('Cancel', null, ['class' => 'btn btn-default', 'id' => 'sub-teacher-cancel']); ?>
@@ -125,6 +120,8 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 <script>
     $(document).on('click', '#edit-button', function () {
         if ($('#teacher-substitute-modal').modal('hide')) {
+            $('#spinner').show();
+            var lessonId = $('#edit-button').attr('lessonId');
             var teacherId = $('#teacher-drop').val();
             var params = $.param({ id: teacherId });
             $.ajax({
@@ -135,8 +132,20 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 {
                     $('#spinner').hide();
                     var options = {
+                        selectConstraint: {
+                            start: '00:01', // a start time (10am in this example)
+                            end: '24:00', // an end time (6pm in this example)
+                            dow: [ 1, 2, 3, 4, 5, 6, 7 ]
+                        },
+                        eventConstraint: {
+                            start: '00:01', // a start time (10am in this example)
+                            end: '24:00', // an end time (6pm in this example)
+                            dow: [ 1, 2, 3, 4, 5, 6, 7 ]
+                        },
+                        lessonId: lessonId,
                         date: moment(new Date()),
-                        duration: '00:30:00',
+                        teacherId: teacherId,
+                        duration: $('#edit-button').attr('duration'),
                         businessHours: response.availableHours,
                         minTime: '<?= $minTime; ?>',
                         maxTime: '<?= $maxTime; ?>',
@@ -168,6 +177,35 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
         return false;
     });
     
+    $(document).on('after-date-set', function(event, params) {
+        $('#teacher-substitute-modal').modal('show');
+        if (!$.isEmptyObject(params.date)) {
+            var selectedValue = $('#teacher-drop').val();
+            var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+            var param1 = $.param({ ids: lessonIds, teacherId: selectedValue, resolvingConflicts: true });
+            var param2 = $.param({ id: params.lessonId });
+            var url = '<?= Url::to(['teacher-substitute/index']) ?>?' +param1;
+            $.ajax({
+                url    : '<?= Url::to(['lesson/substitute']) ?>?' +param2,
+                type   : 'post',
+                dataType: "json",
+                data   : $('#lesson-form').serialize(),
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $.pjax.reload({url: url, container: '#review-lesson-listing', timeout: 6000});
+                    }
+                }
+            });
+            return false;
+        }
+    });
+    
+    $(document).on('after-picker-cancel', function(event, params) {
+        $('#teacher-substitute-modal').modal('show');
+    });
+    
     $(document).ready(function () {
         if ($('#sub-confirm-button').attr('disabled')) {
             $('#sub-confirm-button').bind('click', false);
@@ -176,6 +214,23 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
     
     $(document).on('click', '#sub-teacher-cancel', function () {
         $('#teacher-substitute-modal').modal('hide');
+        return false;
+    });
+    
+    $(document).on('click', '#sub-teacher-confirm', function () {
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        var params = $.param({ ids: lessonIds });
+        $.ajax({
+            url    : '<?= Url::to(['teacher-substitute/confirm']) ?>?' + params,
+            type   : 'get',
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    window.location.href = response.url;
+                }
+            }
+        });
         return false;
     });
 </script>
