@@ -30,6 +30,7 @@ class PasswordResetRequestForm extends Model
             ['email', 'email'],
 			['email', 'exist',
                 'targetClass' => '\common\models\UserEmail',
+				'filter' => ['isPrimary' => true],
                 'message' => 'There is no user with such email.',
             ],
         ];
