@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="release-notes-index "> 
     <?php Pjax::begin([
-		'id' => 'release-notes-refresh',
+		'id' => 'release-notes-listing',
 		'timeout' => 6000
 	]); ?>
     <?php echo AdminLteGridView::widget([
@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php Pjax::end(); ?>
 </div> 
 <script>
-    $(document).ready(function () {
+$(document).ready(function () {
     $(document).on("click", ".add-release-notes", function() {
             $.ajax({
                 url    : '<?= Url::to(['release-notes/create']); ?>',
@@ -61,9 +61,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             });
             
-		return false;
-	});
-    $(document).on('beforeSubmit', '#release-notes-form', function (e) {
+        return false;
+    });
+    $(document).on('beforeSubmit', '#new-release-notes-form', function (e) {
             $.ajax({
                 url: $(this).attr('action'),
                 type: 'post',
@@ -73,15 +73,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 {
                     if (response.status)
                     {
-                        $.pjax.reload({container: '#release-notes-index', timeout: 6000});
+                        $.pjax.reload({container: '#release-notes-listing', timeout: 6000});
                         $('#new-release-notes-modal').modal('hide');
                     } else {
-						$('#release-notes-form').yiiActiveForm('updateMessages',
-                            response.errors, true);	
-					}
+                        $('#release-notes-form').yiiActiveForm('updateMessages',
+                                response.errors, true);
+                    }
                 }
-    	});
-
+            });
+            return false;
+        });
     });
-    });
-    </script>
+</script>
