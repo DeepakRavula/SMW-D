@@ -26,10 +26,13 @@ use yii\bootstrap\ActiveForm;
 
     <?php echo $form->field($model, 'updatedOn')->textInput() ?>
 
-    <div class="form-group">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="pull-right">
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-info']) ?>
     </div>
-
+        </div>
+    </div>
     <?php ActiveForm::end(); ?>
 
 </div>

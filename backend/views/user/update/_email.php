@@ -99,11 +99,15 @@ $this->registerJs($js);
     <div class="clearfix"></div>
 		<hr class="hr-em right-side-faded">
 		<?php DynamicFormWidget::end(); ?>
-                <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-			<?php
-                echo Html::a('Cancel', ['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id], ['class' => 'btn btn-default email-cancel-btn']);
-        ?>
-                <?php ActiveForm::end(); ?>
+ <div class="row">
+     <div class="col-md-12">
+         <div class="pull-right">
+        <?php echo Html::a('Cancel', ['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id], ['class' => 'btn btn-default email-cancel-btn']); ?>        
+        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+     </div>
+     </div>
+ </div>    
+     <?php ActiveForm::end(); ?>
 <script type="text/javascript">
 $(document).ready(function(){
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};

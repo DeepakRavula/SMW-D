@@ -54,10 +54,15 @@ use yii\helpers\Url;
             ]);
             ?>
         </div>
-        <div class="col-md-12 p-l-20 form-group">
-            <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
+    </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
             <?= Html::a('Cancel', null, ['id' => 'cancel', 'class' => 'btn btn-default']); ?>
-        <?php if (!empty($teacherAvailabilityModel->id)) : ?>
+            <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
+        </div>
+       <div class="pull-left">
+ <?php if (!empty($teacherAvailabilityModel->id)) : ?>
             <?= Html::a('<i class="fa fa-close"></i> Delete', [
                     'teacher-availability/delete', 'id' => $teacherAvailabilityModel->id
                 ],
@@ -73,7 +78,7 @@ use yii\helpers\Url;
         <?php ActiveForm::end(); ?>
     </div>
 </div>
-
+</div>
 <script>
 $(document).ready(function () {
     $('#cancel').click(function() {

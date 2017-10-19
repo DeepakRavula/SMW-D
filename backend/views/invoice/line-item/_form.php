@@ -103,11 +103,13 @@ use common\models\TaxStatus;
         </div>
         <?php endif; ?>
         <?php endif; ?>
-    <div class="col-md-12 p-l-20 form-group">
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
-        
+           <div class="col-md-12">
+    <div class="form-group pull-right">
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default line-item-cancel']);?>
-        <?= Html::a('Delete', [
+        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
+    </div>
+<div class="form-group pull-left">       
+ <?= Html::a('Delete', [
             'delete', 'id' => $model->id
         ],
         [
@@ -117,11 +119,11 @@ use common\models\TaxStatus;
                 'method' => 'post',
             ]
         ]); ?>
+</div>
         <div class="clearfix"></div>
 	</div>
 	</div>
 	<?php ActiveForm::end(); ?>
-</div>
 
 <script>
     var lineItem = {

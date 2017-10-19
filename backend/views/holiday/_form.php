@@ -38,11 +38,14 @@ use yii\helpers\Url;
         <div class="clearfix"></div>
     </div>
     <div class="row-fluid">
-    <div class="form-group">
-       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-		<?php
+    <div class="form-group pull-right">
+        <?php
         echo Html::a('Cancel', '', ['class' => 'btn btn-default holiday-cancel']);
-        if (!$model->isNewRecord) {
+        ?>
+       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+    </div>
+     <div class="form-group pull-left">
+         <?php  if (!$model->isNewRecord) {
             echo Html::a('Delete', ['delete', 'id' => $model->id], [
                 'id' => 'holiday-delete-button',
                 'class' => 'btn btn-danger',
@@ -51,9 +54,8 @@ use yii\helpers\Url;
                     'method' => 'post',
                 ]
             ]);
-        }
-        ?>
-    </div>
+        }?>
+     </div>
     <div class="clearfix"></div>
     </div>
     <?php ActiveForm::end(); ?>

@@ -19,14 +19,16 @@ use dosamigos\ckeditor\CKEditor;
         'options' => ['rows' => 6],
         'preset' => 'full',
     ]) ?>
-
-    <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-info']) ?>
-		<?php if (!$model->isNewRecord) : ?>
+<div class="row">
+    <div class="col-md-12">
+    <div class="form-group pull-right">
+        <?php if (!$model->isNewRecord) : ?>
          <?= Html::a('Cancel', ['index'], ['class' => 'btn btn-default']);?>
-		<?php endif; ?> 
+		<?php endif; ?>
+        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-info']) ?>
+    </div> 
     </div>
-
+</div>
     <?php ActiveForm::end(); ?>
 
 </div>

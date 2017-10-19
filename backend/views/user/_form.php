@@ -11,6 +11,7 @@ use common\models\City;
 use common\models\Country;
 use common\models\Province;
 use kartik\select2\Select2Asset;
+use yii\helpers\Url;
 
 Select2Asset::register($this);
 
@@ -24,10 +25,10 @@ Select2Asset::register($this);
 	
 </style>
 <div class="row user-create-form">
-<?php
-$form = ActiveForm::begin(['id' => 'user-form',
-		'enableAjaxValidation' => true,]);
-?>
+ <?php $form = ActiveForm::begin([
+		'action' => Url::to(['user/create', 'role_name' => $searchModel->role_name]),
+		'id' => 'user-form',
+		]); ?>
 	<fieldset class="col-md-12">    	
 		<legend>Basic</legend>
 		<div class="col-md-4">
@@ -40,15 +41,15 @@ $form = ActiveForm::begin(['id' => 'user-form',
 			<?= $form->field($emailModels, 'email')->textInput(['maxlength' => true]) ?>
 		</div>	
 		<div class="col-md-4">
-			<?= $form->field($emailModels, 'label')->widget(Select2::classname(), [
+			<?= $form->field($emailModels, 'labelId')->widget(Select2::classname(), [
 				'data' => ArrayHelper::map(Label::find()
 					->user($model->getModel()->id)
 					->all(), 'id', 'name'),
 				'options' => ['placeholder' => 'Select Label'],
-//				'pluginOptions' => [
-//					'tags' => true,
-//					'allowClear' => true,
-//				],
+				'pluginOptions' => [
+					'tags' => true,
+					'allowClear' => true,
+				],
 		])->label('Label');
 		?>
 		</div>	
@@ -116,6 +117,27 @@ $form = ActiveForm::begin(['id' => 'user-form',
 </div>
 
 <script>
+    $(document).ready(function() {
+     $(document).on('beforeSubmit', '#user-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+						}else
+				{
+				 $('#user-form').yiiActiveForm('updateMessages',
+					   response.errors
+					, true);
+				}
+			}
+		});
+		return false;
+	});
 	$('.add-address').bind('click', function () {
 		$('.address-fields').show();
 		$('.hr-ad').hide();
@@ -144,5 +166,5 @@ $form = ActiveForm::begin(['id' => 'user-form',
 	$('.nav-tabs a').on('shown.bs.tab', function (e) {
 		$('input[name="UserForm[section]"]').val(e.target.hash);
 	});
-
+});
 </script>

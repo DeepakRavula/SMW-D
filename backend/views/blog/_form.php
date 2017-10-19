@@ -21,14 +21,17 @@ use yii\bootstrap\ActiveForm;
         'options' => ['rows' => 6],
         'preset' => 'full',
     ]) ?>
-
-    <div class="form-group">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Save' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-info' : 'btn btn-primary']) ?>
-		<?php if (!$model->isNewRecord) : ?>
+<div class="row">
+    <div class="col-md-12">
+    <div class="form-group pull-right">
+        <?php if (!$model->isNewRecord) : ?>
          <?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn btn-default']);?>
 		<?php endif; ?> 
+        <?php echo Html::submitButton($model->isNewRecord ? 'Save' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-info' : 'btn btn-info']) ?>
+		
     </div>
-
+    </div>
+</div>
     <?php ActiveForm::end(); ?>
 
 </div>

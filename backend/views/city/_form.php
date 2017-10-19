@@ -33,12 +33,15 @@ use yii\helpers\Url;
 		</div>
 </div>
 
-
-    <div class="form-group">
+<div class="row">
+    <div class="col-md-12">
+    <div class="pull-right">
+        <?php echo Html::a('Cancel', '', ['class' => 'btn btn-default city-cancel']);?>
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-		<?php 
-        	echo Html::a('Cancel', '', ['class' => 'btn btn-default city-cancel']);
-            if (!$model->isNewRecord) {
+		
+    </div>
+     <div class="pull-left">   
+        <?php if (!$model->isNewRecord) {
                 echo Html::a('Delete', ['delete', 'id' => $model->id], [
 			'id' => 'city-delete-button',
                         'class' => 'btn btn-danger',
@@ -50,7 +53,8 @@ use yii\helpers\Url;
             }
         ?>
     </div>
-
+</div>
+</div>    
     <?php ActiveForm::end(); ?>
 
 </div>

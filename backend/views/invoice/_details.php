@@ -8,11 +8,13 @@ use yii\helpers\Html;
 <?php
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
-	'title' => $model->getInvoiceNumber(),
+	'title' => 'Details',
 	'withBorder' => true,
 ])
 ?>
 <dl class="dl-horizontal">
+	<dt>ID</dt>
+	<dd><?= $model->getInvoiceNumber(); ?></dd>
 	<dt>Date</dt>
 	<dd><?= Yii::$app->formatter->asDate($model->date); ?></dd>
 	<dt>Status</dt>
@@ -21,5 +23,7 @@ LteBox::begin([
 	  <dt>Due Date</dt>
 		<dd><?= Yii::$app->formatter->asDate($model->dueDate); ?></dd>
 	<?php endif; ?>
+	<dt>Message</dt>
+	<dd><?= $model->notes; ?></dd>
 </dl>
 <?php LteBox::end()?>

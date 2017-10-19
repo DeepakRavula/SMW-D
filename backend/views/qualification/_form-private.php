@@ -43,12 +43,15 @@ use common\models\Qualification;
         <div class="col-md-6">
             <?= $form->field($model, 'rate')->textInput();?>
         </div>
-    <div class="col-md-12 p-l-20 form-group">
+   </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
+            <?= Html::a('Cancel', '', ['class' => 'pull-right m-r-10 btn btn-default qualification-cancel']);?>
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'pull-right btn btn-info', 'name' => 'button']) ?>
-        
-        <?= Html::a('Cancel', '', ['class' => 'pull-right m-r-10 btn btn-default qualification-cancel']);?>
         <div class="clearfix"></div>
 	</div>
 	</div>
+</div>
 	<?php ActiveForm::end(); ?>
 </div>

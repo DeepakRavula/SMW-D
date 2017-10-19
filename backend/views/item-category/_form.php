@@ -22,9 +22,14 @@ use yii\helpers\Url;
     <div class="col-xs-6">
         <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
     </div>
-    <div class="form-group col-xs-12">
+</div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="pull-right">
+        <?php echo Html::a('Cancel', '', ['class' => 'btn btn-default item-category-cancel']);?>        
         <?php echo Html::submitButton($model->isNewRecord ? 'Save' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-info' : 'btn btn-info']) ?>
-        <?= Html::a('Cancel', '', ['class' => 'btn btn-default item-category-cancel']);?>
+            </div>
+            <div class="pull-left">
         <?php if (!$model->isNewRecord) {
                 echo Html::a('Delete', ['delete', 'id' => $model->id], [
 			'id' => 'item-delete-button',
@@ -36,6 +41,8 @@ use yii\helpers\Url;
                 ]);
             }
         ?>
+    </div>
+        </div>
     </div>
 
     <?php ActiveForm::end(); ?>

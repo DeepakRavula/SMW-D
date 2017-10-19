@@ -24,9 +24,13 @@ use common\models\discount\CustomerDiscount;
 			<?php echo $form->field($model, 'value')->textInput(['placeholder' => 'Discount', 'value' => $discount])->label(false); ?>
         </div>
 	</div>
-	<div class="form-group">
+    <div class="row">
+        <div class="col-md-12">
+	<div class="pull-right">
+        <?php echo Html::submitButton(Yii::t('backend', 'Cancel'), ['class' => 'btn btn-default customer-discount-cancel', 'name' => 'signup-button']) ?>
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-		<?php echo Html::submitButton(Yii::t('backend', 'Cancel'), ['class' => 'btn btn-default customer-discount-cancel', 'name' => 'signup-button']) ?>
+    </div>
+     <div class="pull-left">       
 		<?php if(! empty($customerDiscount)) : ?>
 			<?= Html::a('Delete', [
             'customer-discount/delete', 'id' => $userModel->id
@@ -42,5 +46,6 @@ use common\models\discount\CustomerDiscount;
 			
 		<?php endif; ?>
 	</div>
+        </div></div>
 	<?php ActiveForm::end(); ?>
 </div>

@@ -44,9 +44,17 @@ $form = ActiveForm::begin([
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
         <span class="sr-only">Loading...</span>
     </div>
-    <div class="form-group col-xs-12">
-<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'enrolment-enddate-save-btn']) ?>
-<?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-enddate-cancel']); ?>
-    </div>
-<?php ActiveForm::end(); ?>
 </div>
+<div class="row">
+ <div class="form-group col-md-12">
+<div class="pull-right">
+    <div class="col-md-5">
+<?php echo Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-enddate-cancel']); ?>
+    </div>
+    <div class="col-md-5">
+<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'enrolment-enddate-save-btn']) ?>
+    </div>
+    </div>
+    </div>
+</div>
+<?php ActiveForm::end(); ?>

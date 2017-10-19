@@ -26,11 +26,15 @@ use yii\helpers\Html;
 				],
 			]); ?>
         </div>
-        <div class="col-md-12 p-l-20 form-group">
-            <?= Html::submitButton(Yii::t('backend', 'Merge'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
-
-            <?= Html::a('Cancel', '', ['class' => 'btn btn-default merge-cancel']);?>
         </div>
+    <div class="row">
+        <div class="col-md-12">
+        <div class="pull-right">
+            <?= Html::a('Cancel', '', ['class' => 'btn btn-default merge-cancel']);?>
+            <?= Html::submitButton(Yii::t('backend', 'Merge'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
+        </div>
+        </div>
+    </div>
     </div>
 	<?php ActiveForm::end(); ?>
 </div>
