@@ -1,5 +1,4 @@
 <?php
-
 use wbraganca\dynamicform\DynamicFormWidget;
 use yii\helpers\Html;
 use common\models\Location;
@@ -10,26 +9,22 @@ use common\models\Country;
 use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
-
 /* @var $model backend\models\UserForm */
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $roles yii\rbac\Role[] */
 /* @var $permissions yii\rbac\Permission[] */
-
 $js = '
 jQuery(".dynamicform_address").on("afterInsert", function(e, item) {
     jQuery(".dynamicform_address .panel-title-address").each(function(index) {
         jQuery(this).html("Address: " + (index + 1))
     });
 });
-
 jQuery(".dynamicform_address").on("afterDelete", function(e) {
     jQuery(".dynamicform_address .panel-title-address").each(function(index) {
         jQuery(this).html("Address: " + (index + 1))
     });
 });
 ';
-
 $this->registerJs($js);
 ?>
 <?php
@@ -120,10 +115,10 @@ $form = ActiveForm::begin([
 <?php DynamicFormWidget::end(); ?>
 	<div class="row">
 		<div class="col-md-12">
+            <div class="pull-right">
+        <?php echo Html::a('Cancel', ['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id], ['class' => 'btn btn-default address-cancel-btn']); ?>
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-			<?php
-                echo Html::a('Cancel', ['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id], ['class' => 'btn btn-default address-cancel-btn']);
-        ?>
+            </div>
 		</div>
 	</div>
 <?php ActiveForm::end(); ?>
@@ -140,7 +135,6 @@ $(document).ready(function(){
 	$('.address-container-items').on('change', 'input[type="checkbox"]', function(){
 		var checked = $(this).prop('checked');
 		$('.address-container-items input[type="checkbox"]').prop('checked', false);
-
 		if(checked) {
 			$(this).prop('checked', true);
 		} else {
