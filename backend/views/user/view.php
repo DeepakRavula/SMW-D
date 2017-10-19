@@ -26,7 +26,8 @@ foreach ($roleNames as $name => $description) {
 $this->title = $model->publicIdentity;
 $this->params['label'] = $this->render('_title', [
 	'model' => $model,
-	'searchModel' => $searchModel
+	'searchModel' => $searchModel,
+	'roleName' => $roleName
 ]);?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
