@@ -33,7 +33,7 @@ foreach ($roles as $name => $description) {
 $roleName = $searchModel->role_name;
 $originalInvoice = Invoice::TYPE_INVOICE;
 $this->title = Yii::t('backend',  !isset($role) ? 'User' : $role.'s');
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i> Add'), ['create', 'User[role_name]' => $searchModel->role_name], ['class' => 'btn btn-primary btn-sm add-user']);
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i> Add'), ['#'], ['class' => 'btn btn-primary btn-sm add-user']);
 $this->params['show-all'] = $this->render('_button', [
 	'searchModel' => $searchModel
 ]);
@@ -52,6 +52,7 @@ $this->params['show-all'] = $this->render('_button', [
 	'emailModels' => new UserEmail(),
 	'qualificationModels' => new Qualification(),
 	'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
+    'searchModel' => $searchModel,
 ]);?>
 <?php Modal::end();?>
 <div class="user-index"> 
@@ -126,6 +127,7 @@ $this->params['show-all'] = $this->render('_button', [
 </div>
 <script>
 $(document).ready(function(){
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$(document).on('click', '.add-user', function() {
         $('#add-user-modal .modal-dialog').css({'width': '800px'});
 		$('#add-user-modal').modal('show');

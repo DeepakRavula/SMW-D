@@ -29,7 +29,7 @@ class ProgramController extends Controller
             ],
             [
 				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['update', 'create'],
+				'only' => ['update', 'create' ,'delete'],
 				'formats' => [
 					'application/json' => Response::FORMAT_JSON,
 				],
@@ -179,12 +179,8 @@ class ProgramController extends Controller
     {
         $model = $this->findModel($id);
         $model->delete();
-        Yii::$app->session->setFlash('alert', [
-               'options' => ['class' => 'alert-success'],
-               'body' => 'Program has been deleted successfully',
-        ]);
-
-        return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
+        return['status' =>true];
+       
     }
 
     /**

@@ -65,10 +65,15 @@ use kartik\select2\Select2;
         <?php echo $form->field($model, 'status')->dropDownList
             (Item::itemStatuses()) ?>
     </div>
-    <div class="form-group col-xs-12">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-info']) ?>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default item-cancel']);?>
-        <?php if (!$model->isNewRecord) {
+        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-info']) ?>
+        </div> 
+        <div class="pull-left">
+ <?php if (!$model->isNewRecord) {
                 echo Html::a('Delete', ['delete', 'id' => $model->id], [
 			'id' => 'item-delete-button',
                         'class' => 'btn btn-primary',
@@ -80,7 +85,8 @@ use kartik\select2\Select2;
             }
         ?>
     </div>
-
+    </div>
+</div>
     <?php ActiveForm::end(); ?>
 
 </div>

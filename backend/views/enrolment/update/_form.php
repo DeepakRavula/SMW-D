@@ -42,9 +42,10 @@ use kartik\datetime\DateTimePicker;
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>
 </div>
-	<div class="form-group col-xs-12">
-            <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'enrolment-edit-save-btn']) ?>
+            <div class="form-group col-md-12">
+<div class="pull-right">
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-edit-cancel']);?>
-        </div>
+            <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'enrolment-edit-save-btn']) ?>
+</div>        
+</div>
     <?php ActiveForm::end(); ?>
-    </div>

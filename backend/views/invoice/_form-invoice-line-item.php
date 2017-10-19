@@ -93,9 +93,13 @@ use kartik\switchinput\SwitchInput;
             <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true])?>
         </div>
     </div>
-    <div class="form-group">
+    <div class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default add-misc-cancel']);?>
+    </div>
+    </div>
     </div>
     <?php ActiveForm::end(); ?>
 </div>

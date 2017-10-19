@@ -51,11 +51,14 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
         ]);
         ?>
         </div>
-		<div class="clearfix"></div>
-   <div class="form-group">
+    <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="pull-right">
+        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-detail-cancel']); ?>
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
-		<?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-detail-cancel']);
-        ?>
 	</div>
+                </div>
+        </div>
 	<?php ActiveForm::end(); ?>
 </div>

@@ -110,13 +110,16 @@ use yii\bootstrap\Modal;
             </div>
         </div>
     <?php endif; ?>
-    <div class="form-group">
-<?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
-<?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-schedule-cancel']);
-?>
+    <div class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
+            <?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-schedule-cancel']);?> 
+            <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
         <div class="clearfix"></div>
     </div>
-<?php ActiveForm::end(); ?>
+    </div>
+    </div>
+        <?php ActiveForm::end(); ?>
 </div>
 <script type="text/javascript">
 $(document).ready(function() {

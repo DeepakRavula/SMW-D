@@ -50,9 +50,11 @@ DateTimePickerAsset::register($this);
 							'form' => $form,
 						]);
 						?>
+                        <div class="pull-right">
 						<a class="collapsed btn btn-default pull-left m-r-10" href="<?= Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);?>"> Cancel<a>
 						<a class="collapsed btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" id="step1-btn"> Next </a>
-                    </div>
+                        </div>
+                        </div>
                   </div>
                 </div>
                 <div class="panel box box-primary">

@@ -17,12 +17,14 @@ use yii\bootstrap\ActiveForm;
     	<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 	</div>
 	</div>
-    <div class="form-group p-10">
-        <?php echo Html::submitButton($model->isNewRecord ? 'Save' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-info' : 'btn btn-info']) ?>
-		<?php if (!$model->isNewRecord) : ?>
+    <div class="pull-right">
+        <?php if (!$model->isNewRecord) : ?>
          <?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn btn-default']);?>
-		<?php endif; ?>            
+		<?php endif; ?>   
+        <?php echo Html::submitButton($model->isNewRecord ? 'Save' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-info' : 'btn btn-info']) ?>
+		         
     </div>
+    
 
     <?php ActiveForm::end(); ?>
 

@@ -21,11 +21,13 @@ $form = ActiveForm::begin(['id' => 'new-release-notes-form']);
         'options' => ['rows' => 6],
         'preset' => 'full',
     ]) ?>
-
-    <div class="form-group"> 
+<div class="row">
+    <div class="col-md-12">
+         <div class="pull-right"> 
         <?php echo Html::submitButton($model->isNewRecord ? 'Save & Publish' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary btn-sm' : 'btn btn-info btn-sm']) ?> 
     </div> 
-
+  </div>
+</div>
     <?php ActiveForm::end(); ?> 
 
 </div> 
