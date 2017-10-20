@@ -379,14 +379,19 @@ $this->params['label'] = $this->render('_title', [
 	$('.availability').click(function () {
 		$('.teacher-availability-create').show();
 	});
-	$('.add-new-student').click(function () {
-		$('#student-create-modal').modal('show');
-	});
 	$('#add-misc-item').click(function(){
 		$('#invoice-line-item-modal').modal('show');
   	});
 $(document).ready(function(){
-    $(document).on('click', '.customer-merge-cancel', function () {
+	$(document).on('click', '.add-new-student', function () {
+		$('#student-create-modal').modal('show');
+        return false;
+	});
+    $(document).on('click', '.student-profile-cancel-button', function () {
+        $('#student-create-modal').modal('hide');
+        return false;
+    });
+	$(document).on('click', '.customer-merge-cancel', function () {
         $('#customer-merge-modal').modal('hide');
         return false;
     });
