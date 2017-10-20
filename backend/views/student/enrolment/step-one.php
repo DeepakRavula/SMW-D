@@ -19,7 +19,7 @@ use insolita\wgadminlte\LteConst;
 <?php
 $privatePrograms = ArrayHelper::map(Program::find()
             ->active()
-            ->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
+            ->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM])
             ->all(), 'id', 'name')
 ?>
 	<div class="row">
@@ -54,10 +54,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
 		<div class="col-md-4">
 			<?php
             echo $form->field($model, 'programId')->widget(Select2::classname(), [
-                'data' => ArrayHelper::map(Program::find()
-                            ->where(['type' => Program::TYPE_PRIVATE_PROGRAM])
-                            ->active()
-                            ->all(), 'id', 'name'),
+                'data' => $privatePrograms,
                 'options' => ['placeholder' => 'Program']
             ]) ?>
         </div>

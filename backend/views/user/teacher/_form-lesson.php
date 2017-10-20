@@ -58,12 +58,15 @@ use common\models\User;
         </div>
 	   <div class="clearfix"></div>
 		<?php $locationId = Yii::$app->session->get('location_id'); ?>
-   <div class="form-group">
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
-		<?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-cancel']);
-        ?>
+   <div class="row">
+       <div class="col-md-12">
+           <div class="pull-right">
+        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-cancel']);?>
+        <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']); ?>	
 		<div class="clearfix"></div>
 	</div>
+           </div>
+   </div>
 	<?php ActiveForm::end(); ?>
 </div>
 

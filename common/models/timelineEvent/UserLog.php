@@ -25,10 +25,14 @@ class UserLog extends User {
         $userModel = $event->sender;
 		$user = UserProfile::find(['user_id' => $userModel->user_id])->asArray()->one();
         $data = current($event->data);
+		$locationId = 1;
+		if(!empty($userModel->user->userLocation->location_id)) {
+			$locationId = $userModel->user->userLocation->location_id;
+		}
 		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
 			'data' => $user, 
 			'message' => $userModel->loggedUser . ' created new   '.$data.'   {{' . $userModel->fullName . '}}',
-			'locationId' => $userModel->user->userLocation->location_id,
+			'locationId' => $locationId,
 		]));
 		if($timelineEvent) {
 			$timelineEventLink = new TimelineEventLink();

@@ -26,7 +26,8 @@ foreach ($roleNames as $name => $description) {
 $this->title = $model->publicIdentity;
 $this->params['label'] = $this->render('_title', [
 	'model' => $model,
-	'searchModel' => $searchModel
+	'searchModel' => $searchModel,
+	'roleName' => $roleName
 ]);?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
@@ -373,18 +374,24 @@ $this->params['label'] = $this->render('_title', [
 ]); ?>
 <div id="email-content"></div>
 <?php Modal::end(); ?>
+
 <script>
 	$('.availability').click(function () {
 		$('.teacher-availability-create').show();
-	});
-	$('.add-new-student').click(function () {
-		$('#student-create-modal').modal('show');
 	});
 	$('#add-misc-item').click(function(){
 		$('#invoice-line-item-modal').modal('show');
   	});
 $(document).ready(function(){
-    $(document).on('click', '.customer-merge-cancel', function () {
+	$(document).on('click', '.add-new-student', function () {
+		$('#student-create-modal').modal('show');
+        return false;
+	});
+    $(document).on('click', '.student-profile-cancel-button', function () {
+        $('#student-create-modal').modal('hide');
+        return false;
+    });
+	$(document).on('click', '.customer-merge-cancel', function () {
         $('#customer-merge-modal').modal('hide');
         return false;
     });

@@ -22,8 +22,12 @@ use common\models\Invoice;
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+    </div>
+    </div>
     </div>
     <?php ActiveForm::end(); ?>
 </div>
