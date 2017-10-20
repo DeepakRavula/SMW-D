@@ -15,7 +15,7 @@ use kartik\select2\Select2;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="item-form row">
+<div class="item-form">
 
     <?php   $url = Url::to(['item/update', 'id' => $model->id]);
             if ($model->isNewRecord) {
@@ -25,7 +25,7 @@ use kartik\select2\Select2;
         'id' => 'update-item-form',
         'action' => $url,
     ]); ?>
-
+<div class="row">
     <div class="col-xs-6">
         <?php echo $form->field($model, 'itemCategoryId')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(ItemCategory::find()
