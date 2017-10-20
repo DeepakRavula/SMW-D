@@ -314,7 +314,7 @@ class Course extends \yii\db\ActiveRecord
 					if ($this->isProfessionalDevelopmentDay($day)) {
 						continue;
 					}
-					$this->createLesson($this, $day);
+					$this->createLesson($day);
 				}
 			}
 		}
