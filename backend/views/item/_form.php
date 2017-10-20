@@ -70,13 +70,13 @@ use kartik\select2\Select2;
     <div class="col-md-12">
         <div class="pull-right">
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default item-cancel']);?>
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-info']) ?>
+        <?php echo Html::submitButton('Save', ['class' => 'btn btn-info']) ?>
         </div> 
         <div class="pull-left">
  <?php if (!$model->isNewRecord) {
                 echo Html::a('Delete', ['delete', 'id' => $model->id], [
 			'id' => 'item-delete-button',
-                        'class' => 'btn btn-primary',
+                        'class' => 'btn btn-danger',
                         'data' => [
                             'confirm' => 'Are you sure you want to delete this item?',
                             'method' => 'post',
