@@ -201,10 +201,8 @@ GridView::widget([
     $(document).ready(function () {
 		$("#invoicesearch-summarisereport").on("change", function() {
         var summariesOnly = $(this).is(":checked");
-        var fromDate = $('#invoicesearch-fromdate').val();
-        var toDate = $('#invoicesearch-todate').val();
-        var params = $.param({ 'InvoiceSearch[fromDate]': fromDate,
-            'InvoiceSearch[toDate]': toDate, 'InvoiceSearch[summariseReport]': (summariesOnly | 0) });
+        var dateRange = $('#invoicesearch-daterange').val();
+        var params = $.param({ 'InvoiceSearch[dateRange]': dateRange,'InvoiceSearch[summariseReport]': (summariesOnly | 0) });
         var url = '<?php echo Url::to(['user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $model->id]); ?>&' + params;
         $.pjax.reload({url:url,container:"#time-voucher-grid",replace:false,  timeout: 4000});  //Reload GridView
 		var printUrl = '<?= Url::to(['print/time-voucher', 'id' => $model->id]); ?>&' + params;
@@ -212,11 +210,9 @@ GridView::widget([
     });
         $("#time-voucher-search-form").on("submit", function () {
         	var summariesOnly = $("#invoicesearch-summarisereport").is(":checked");
-            var fromDate = $('#invoicesearch-fromdate').val();
-            var toDate = $('#invoicesearch-todate').val();
+           var dateRange = $('#invoicesearch-daterange').val();
+        var params = $.param({ 'InvoiceSearch[dateRange]': dateRange,'InvoiceSearch[summariseReport]': (summariesOnly | 0) });
             $.pjax.reload({container: "#time-voucher-grid", replace: false, timeout: 6000, data: $(this).serialize()});
-			var params = $.param({ 'InvoiceSearch[fromDate]': fromDate,
-            'InvoiceSearch[toDate]': toDate, 'InvoiceSearch[summariseReport]': (summariesOnly | 0) });
             var url = '<?= Url::to(['print/time-voucher', 'id' => $model->id]); ?>&' + params;
             $('#time-voucher-print-btn').attr('href', url);
             return false;
