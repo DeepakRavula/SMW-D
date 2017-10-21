@@ -11,6 +11,8 @@ use kartik\sortinput\SortableInput;
 	}
 	.sortable li {
 		border:0px;
+		margin:0px;
+		padding:0px;
 	}
 </style>
 <?php Pjax::begin([
