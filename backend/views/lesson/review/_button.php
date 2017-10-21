@@ -41,7 +41,7 @@ use yii\helpers\Url;
 			<?= Html::a('Cancel', ['enrolment/index'], ['class' => 'btn btn-default']);
 			?>
 		<?php else :?>
-			<?= Html::a('Cancel', ['course/index'], ['class' => 'btn btn-default']);
+			<?= Html::a('Cancel', ['lesson/index', '#' => 'group'], ['class' => 'btn btn-default']);
 			?>
 		<?php endif; ?>
 	</div>
