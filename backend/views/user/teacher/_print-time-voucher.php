@@ -80,7 +80,7 @@ use kartik\grid\GridView;
     </div>
     <div class="row">
       <div class="col-xs-12 table-responsive">
-          <h2 class="col-md-12"><b><?= $model->publicIdentity . '\'s Time Voucher for ' . $fromDate->format('F jS, Y') . ' to ' . $toDate->format('F jS, Y');?></b></h2>
+          <h2 class="col-md-12"><b><?= $model->publicIdentity . '\'s Time Voucher for ' . (new\DateTime($fromDate))->format('F jS, Y') . ' to ' . (new\DateTime($toDate))->format('F jS, Y');?></b></h2>
 <div class="report-grid">
 <?php
 if(!$searchModel->summariseReport) {
