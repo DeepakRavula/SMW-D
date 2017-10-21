@@ -34,23 +34,9 @@ $message = !empty($textTemplate->message) ? $textTemplate->message : 'Please fin
                     'label' => 'Price',
                     'headerOptions' => ['class' => 'text-right'],
         			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
-                    'format' =>'currency',
                     'value' => function ($data) {
-                        if ($data->item_type_id === ItemType::TYPE_PRIVATE_LESSON) {
-                            return !empty($data->lesson->enrolment->program->rate) ? 
-							$data->lesson->enrolment->program->rate : null;
-                        } else {
-                            return $data->amount;
-                        }
+						return $data->itemTotal;
                     },
-                ],
-                [
-                  'attribute' => 'amount',
-                    'headerOptions' => ['class' => 'text-right'],
-                    'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
-                    'format'=>'currency',
-                  'label' => 'Total',
-                  'enableSorting' => false,
                 ],
             ],
         ]); ?>
@@ -73,24 +59,24 @@ $message = !empty($textTemplate->message) ? $textTemplate->message : 'Please fin
                     <table class="table-invoice-childtable" style="width: 100%; float: right; text-align: left;">
                      <tr>
                       <td style="width: 50%;">SubTotal</td>
-						<td><?= Yii::$app->formatter->format($model->subTotal, ['currency']); ?></td>
+						<td><?= $model->subTotal; ?></td>
                     </tr> 
                      <tr>
                       <td>Tax</td>
-						<td><?= Yii::$app->formatter->format($model->tax, ['currency']); ?></td>
+						<td><?= $model->tax; ?></td>
                     </tr>
-                     <tr>
-                      <td>Paid</td>
-						<td><?= Yii::$app->formatter->format($model->invoicePaymentTotal, ['currency']); ?></td>
-                    </tr>
-                     <tr>
+                    
                       <tr>
                       <td><strong>Total</strong></td>
-						<td><strong><?= Yii::$app->formatter->format($model->total, ['currency']); ?></strong></td>
+						<td><strong><?= $model->total; ?></strong></td>
+                    </tr>
+					 <tr>
+                      <td>Paid</td>
+						<td><?= $model->invoicePaymentTotal; ?></td>
                     </tr>
                       <tr>
                       <td class="p-t-20">Balance</td>
-						<td class="p-t-20"><strong><?= Yii::$app->formatter->format($model->invoiceBalance, ['currency']); ?></strong></td>
+						<td class="p-t-20"><strong><?= $model->invoiceBalance; ?></strong></td>
                     </tr>
                     </table>
                   </td>
