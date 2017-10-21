@@ -428,6 +428,10 @@ var payment = {
 		$('#line-item-edit-modal').modal('hide');
 		return false;
 	});
+    $(document).on("click", '.mail-view-cancel-button', function() {
+		$('#invoice-mail-modal').modal('hide');
+		return false;
+	});
 	$(document).on("click", '.payment-cancel', function() {
 		$('#payment-edit-modal').modal('hide');
 		return false;

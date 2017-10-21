@@ -96,8 +96,9 @@ use kartik\switchinput\SwitchInput;
     <div class="row">
     <div class="col-md-12">
         <div class="pull-right">
+            <?= Html::a('Cancel', '', ['class' => 'btn btn-default add-misc-cancel']);?>
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-        <?= Html::a('Cancel', '', ['class' => 'btn btn-default add-misc-cancel']);?>
+        
     </div>
     </div>
     </div>

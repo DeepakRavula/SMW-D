@@ -44,10 +44,15 @@ use common\models\PaymentMethod;
                <?= $form->field($model, 'reference')->textInput(); ?>
            </div>
        <?php endif; ?>
+   </div>   
+    <div class="row">    
         <div class="clearfix"></div>
-	   <div class="col-md-6 form-group">
+	   <div class="col-md-12">
+           <div class="pull-right">
+        <?= Html::a('Cancel', '', ['class' => 'btn btn-default payment-cancel']);?>       
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
-        <?= Html::a('Cancel', '', ['class' => 'btn btn-default payment-cancel']);?>
+           </div>
+           <div class="pull-left">
 		<?= Html::a('Delete', [
             'delete', 'id' => $model->id
         ],
@@ -59,6 +64,7 @@ use common\models\PaymentMethod;
                 'method' => 'post',
             ]
         ]); ?>
+           </div>
 	</div>
 	</div>
 	<?php ActiveForm::end(); ?>
