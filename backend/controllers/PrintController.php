@@ -135,25 +135,24 @@ class PrintController extends Controller
     {
         $model = User::findOne(['id' => $id]);
 		$request = Yii::$app->request;
-		$invoiceSearch = new InvoiceSearch();
-		$invoiceSearch->fromDate = new \DateTime();
-		$invoiceSearch->toDate = new \DateTime();
-		$invoiceSearchModel = $request->get('InvoiceSearch');
+		$invoiceSearchModel = new InvoiceSearch();
+        $invoiceSearchModel->dateRange = (new\DateTime())->format('M d,Y') . ' - ' . (new\DateTime())->format('M d,Y');
+		$invoiceSearch = $request->get('InvoiceSearch');
 		
-		if(!empty($invoiceSearchModel)) {
-			$invoiceSearch->fromDate = new \DateTime($invoiceSearchModel['fromDate']);
-			$invoiceSearch->toDate = new \DateTime($invoiceSearchModel['toDate']);
-			$invoiceSearch->summariseReport = $invoiceSearchModel['summariseReport']; 
-		}
+		if(!empty($invoiceSearch)) {
+            $invoiceSearchModel->dateRange = $invoiceSearch['dateRange'];
+            list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
+            $invoiceSearchModel->summariseReport = $invoiceSearch['summariseReport'];
+        }
 		$timeVoucher = InvoiceLineItem::find()
-			->joinWith(['invoice' => function($query) use($invoiceSearch) {
+			->joinWith(['invoice' => function($query) use($invoiceSearchModel) {
 				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
-					->between($invoiceSearch->fromDate->format('Y-m-d'), $invoiceSearch->toDate->format('Y-m-d'));
+					->between((new\DateTime($invoiceSearchModel->fromDate))->format('Y-m-d'), (new\DateTime($invoiceSearchModel->toDate))->format('Y-m-d'));
 			}])
 			->joinWith(['lesson' => function($query) use($model){
 				$query->andWhere(['lesson.teacherId' => $model->id]);
 			}]);
-			if($invoiceSearch->summariseReport) {
+			if($invoiceSearchModel->summariseReport) {
 				$timeVoucher->groupBy('DATE(invoice.date)');	
 			} else {
 				$timeVoucher->orderBy(['invoice.date' => SORT_ASC]);
@@ -169,9 +168,9 @@ class PrintController extends Controller
         return $this->render('/user/teacher/_print-time-voucher', [
 			'model' => $model,
 			'timeVoucherDataProvider' => $timeVoucherDataProvider,
-			'fromDate' => $invoiceSearch->fromDate,
-			'toDate' => $invoiceSearch->toDate,
-			'searchModel' => $invoiceSearch
+			'fromDate' => $invoiceSearchModel->fromDate,
+			'toDate' => $invoiceSearchModel->toDate,
+			'searchModel' => $invoiceSearchModel,
         ]);
     }
 		public function actionCustomerInvoice($id)
