@@ -23,7 +23,7 @@ use common\models\User;
 		'action' => Url::to(['email/send'])
 	]);
 	?>
-	<?= $form->field($model, 'id')->hiddenInput(['value' => $id]);?>
+	<?= $form->field($model, 'id')->hiddenInput(['value' => $id])->label(false);?>
 	<div class="row">
         <div class="col-lg-12">
 			<?php
@@ -68,7 +68,8 @@ use common\models\User;
     <div class="row">
         <div class="col-md-12">
             <div class="pull-right">
-<?php echo Html::submitButton(Yii::t('backend', 'Send'), ['class' => 'btn btn-info', 'name' => 'signup-button' , 'id' =>'mail-send-button' ,]) ?>
+                <?= Html::a('Cancel', '#', ['class' => 'btn btn-default mail-view-cancel-button']);?>
+            <?php echo Html::submitButton(Yii::t('backend', 'Send'), ['class' => 'btn btn-info', 'name' => 'signup-button' , 'id' =>'mail-send-button' ,]) ?>
 		</div>
 		<div class="clearfix"></div>
     </div>
@@ -79,6 +80,10 @@ use common\models\User;
 $(document).ready(function() {
      $(document).on('click', '#mail-send-button', function (e) {
         $('#spinner').show();
+    });
+    $(document).on('click', '.mail-view-cancel-button', function (e) {
+        $('#spinner').hide();     
+        
     });
     });
 </script>
