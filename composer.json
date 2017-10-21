@@ -101,7 +101,8 @@
     "nesbot/carbon": "^1.22",
     "valentinek/yii2-closure-table-behavior": "*",
     "yiister/yii2-adminlte": "~1.0",
-    "demi/backup": "*"
+    "demi/backup": "*",
+    "kartik-v/yii2-sortable-input": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",

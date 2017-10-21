@@ -2,8 +2,17 @@
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
+use kartik\sortinput\SortableInput;
 
 ?>
+<style>
+	.sortable {
+		border:0px;
+	}
+	.sortable li {
+		border:0px;
+	}
+</style>
 <?php Pjax::begin([
 	'id' => 'user-email'
 ]); ?>
@@ -16,12 +25,34 @@ use yii\widgets\Pjax;
 	])
 	?>
 	<?php if(!empty($model->emails)) : ?>
-		<?php foreach($model->emails as $email) : ?>
-			 <div class="col-xs-11 <?= !empty($email->isPrimary) ? 'primary' : null; ?>">
-			<div class="col-xs-4"><strong><?= $email->label->name; ?></strong></div>
-			<div class="col-xs-5"><?= $email->email; ?></div>
-			</div><br>
-		<?php endforeach; ?>
+	<?php $emails = [];?>
+		<?php foreach($model->emails as $key => $userEmail) : ?>		
+		<?php 
+            $email = [
+				'content' => $this->render('email/_list', [
+				'email' => $userEmail,
+			])];
+            array_push($emails, $email);
+			if($userEmail->isPrimary) {
+				$value = $emails[$key];
+				unset($emails[$key]);
+				array_unshift($emails, $value);	
+			}
+        ?>
+	<?php endforeach; ?>
+	<?= SortableInput::widget([
+		'sortableOptions' => [
+			'type' => 'list',
+			'pluginEvents' => [
+				'sortupdate' => 'contact.updatePrimary',
+			],
+		],
+		'id' => 'user-email',
+		'name'=> 'user_email',
+		'items' => $emails,
+		'options' => [
+			'class'=>'form-control', 'readonly'=>true]
+	]);?>	
 	<?php endif; ?>
 	<?php LteBox::end() ?>
 <?php Pjax::end(); ?>

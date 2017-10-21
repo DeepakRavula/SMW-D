@@ -376,6 +376,23 @@ $this->params['label'] = $this->render('_title', [
 <?php Modal::end(); ?>
 
 <script>
+	var contact = {
+        updatePrimary :function(event, val, form, data) {
+            var emailId = $('#user-email-sortable').find('.email').val();
+			var id = '<?= $model->id;?>';
+			var params = $.param({'id':id, 'emailId' : emailId});
+            $.ajax({
+                url: "<?php echo Url::to(['user/update-primary']);?>?" + params,
+                type: "POST",
+                dataType: "json",
+                success: function (response)
+                {
+                    $.pjax.reload({container : '#user-email', timeout : 4000});
+                }
+            });
+            return true;
+        }
+    };
 	$('.availability').click(function () {
 		$('.teacher-availability-create').show();
 	});
