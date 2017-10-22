@@ -306,6 +306,11 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(PhoneNumber::className(), ['user_id' => 'id'])
                  ->onCondition(['is_primary' => true]);
     }
+	public function getPrimaryEmail()
+    {
+        return $this->hasOne(UserEmail::className(), ['userId' => 'id'])
+                 ->onCondition(['isPrimary' => true]);
+    }
 
     /**
      * @return \yii\db\ActiveQuery

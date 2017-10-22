@@ -758,7 +758,18 @@ class UserController extends Controller
                     'model' => $model,
         ]);
     }
-
+	public function actionUpdatePrimary($id, $emailId)
+	{
+		$model = $this->findModel($id);
+		if(!empty($model->primaryEmail)) {
+			$model->primaryEmail->updateAttributes([
+				'isPrimary' => false,
+			]);
+		}
+		$email = UserEmail::findOne(['id' => $emailId]);
+		$email->isPrimary = true;
+		$email->save();
+	}
     /**
      * Deletes an existing User model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
