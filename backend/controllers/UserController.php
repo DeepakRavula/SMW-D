@@ -54,7 +54,7 @@ class UserController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson'],
+                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson', 'update-primary-email'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -758,7 +758,7 @@ class UserController extends Controller
                     'model' => $model,
         ]);
     }
-	public function actionUpdatePrimary($id, $emailId)
+	public function actionUpdatePrimaryEmail($id, $emailId)
 	{
 		$model = $this->findModel($id);
 		if(!empty($model->primaryEmail)) {
@@ -768,7 +768,11 @@ class UserController extends Controller
 		}
 		$email = UserEmail::findOne(['id' => $emailId]);
 		$email->isPrimary = true;
-		$email->save();
+		if($email->save()) {
+			return [
+				'status' => true,
+			];
+		}
 	}
     /**
      * Deletes an existing User model.
