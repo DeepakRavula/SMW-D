@@ -25,6 +25,7 @@ use common\models\Invoice;
     <div class="row">
     <div class="col-md-12">
         <div class="pull-right">
+        <?= Html::a('Cancel', '', ['class' => 'btn btn-default invoice-apply-discount-cancel']);?>    
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
     </div>
     </div>
@@ -33,7 +34,8 @@ use common\models\Invoice;
 </div>
 <?php $message = 'Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.'; ?>
 <script>
-$(document).on('beforeSubmit', '#apply-discount-form', function () {
+$(document).ready(function() {
+    $(document).on('beforeSubmit', '#apply-discount-form', function () {
 	var message = '<?= $message;?>';
 	$.ajax({
 		url    : $(this).attr('action'),
@@ -58,5 +60,6 @@ $(document).on('beforeSubmit', '#apply-discount-form', function () {
 		}
 		});
 		return false;
+});
 });
 </script>

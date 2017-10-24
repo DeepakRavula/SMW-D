@@ -81,6 +81,10 @@ Modal::end();
 		$('#schedule-mail-modal').modal('show');
 		return false;
   	});
+    $(document).on("click", '.mail-view-cancel-button', function() {
+		$('#schedule-mail-modal').modal('hide');
+		return false;
+    });
 	$(document).on('beforeSubmit', '#mail-form', function (e) {
 		$.ajax({
 			url    : $(this).attr('action'),

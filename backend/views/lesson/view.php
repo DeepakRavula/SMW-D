@@ -190,6 +190,10 @@ Modal::end();
 		$('#classroom-edit-modal').modal('show');
 		return false;
 	});
+    $(document).on("click", '.mail-view-cancel-button', function() {
+		$('#lesson-mail-modal').modal('hide');
+		return false;
+	});
         $(document).on('click', '#view-payment', function () {
             $.ajax({
                 url    : $(this).attr('url'),

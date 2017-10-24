@@ -13,7 +13,6 @@ use yii\helpers\Url;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <div class="calendar-event-color-form">
-    <div class="row p-20">
         <?php        
         $locationId = Yii::$app->session->get('location_id');
         if (empty ($teacherAvailabilityModel->id)) {
@@ -27,7 +26,7 @@ use yii\helpers\Url;
             'action' => Url::to(['teacher-availability/modify', 
                 'teacherId' => $model->id, 'id' => $id]),
         ]); ?>
-        
+   <div class="row p-20">     
         <div class="col-md-6 form-group">
                 <?= $form->field($roomModel, 'from_time')->widget(TimePicker::classname(), [
                     'options' => [
@@ -75,9 +74,10 @@ use yii\helpers\Url;
                 ]); ?>
         <?php endif; ?>
         </div>
-        <?php ActiveForm::end(); ?>
-    </div>
 </div>
+</div>
+        <?php ActiveForm::end(); ?>
+    
 </div>
 <script>
 $(document).ready(function () {

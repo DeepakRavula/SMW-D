@@ -71,9 +71,8 @@ use common\models\Qualification;
 <div class="row">
     <div class="col-md-12">
         <div class="pull-right">
-           <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'pull-right btn btn-info', 'name' => 'button']) ?>
-		<?= Html::a('Cancel', '', ['class' => 'm-r-10 btn btn-default pull-right qualification-cancel']);?>
-       
+            <?= Html::a('Cancel', '', ['class' => 'btn btn-default qualification-cancel']);?>
+           <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
         <div class="clearfix"></div>
 	</div>
         <div class="pull-left">

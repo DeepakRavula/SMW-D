@@ -99,6 +99,10 @@ $(document).ready(function() {
     	$('#invoice-line-item-modal').modal('hide');
    		return false;
     });
+    $(document).on("click", '.invoice-apply-discount-cancel', function() {
+		$('#apply-discount-modal').modal('hide');
+		return false;
+	});
 
     $(document).on('click', '.apply-discount', function () {
         $('#apply-discount-modal').modal('show');

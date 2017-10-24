@@ -351,30 +351,17 @@ class UserController extends Controller
             'query' => $groupPrograms,
         ]);	
 	}
-	protected function getTimeVoucherDataProvider($id)
+	protected function getTimeVoucherDataProvider($id,$fromDate,$toDate,$summariseReport)
 	{
-		$request = Yii::$app->request;
-		$invoiceSearch = new InvoiceSearch();
-		$invoiceSearch->fromDate = new \DateTime();
-		$invoiceSearch->toDate = new \DateTime();
-		$invoiceSearchModel = $request->get('InvoiceSearch');
-		
-		if(!empty($invoiceSearchModel)) {
-            $invoiceSearch->dateRange = $invoiceSearchModel['dateRange'];
-            list($invoiceSearch->fromDate, $invoiceSearch->toDate) = explode(' - ', $invoiceSearch->dateRange);
-            $invoiceSearch->fromDate = new \DateTime($invoiceSearch->fromDate);
-            $invoiceSearch->toDate = new \DateTime($invoiceSearch->toDate);
-            $invoiceSearch->summariseReport = $invoiceSearchModel['summariseReport'];
-        }
-		$timeVoucher = InvoiceLineItem::find()
-			->joinWith(['invoice' => function($query) use($invoiceSearch) {
+				$timeVoucher = InvoiceLineItem::find()
+			->joinWith(['invoice' => function($query)use($fromDate,$toDate){
 				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
-					->between($invoiceSearch->fromDate->format('Y-m-d'), $invoiceSearch->toDate->format('Y-m-d'));
+					->between((new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d'));
 			}])
 			->joinWith(['lesson' => function($query) use($id){
 				$query->andWhere(['lesson.teacherId' => $id]);
 			}]);
-			if($invoiceSearch->summariseReport) {
+			if($summariseReport) {
 				$timeVoucher->groupBy('DATE(invoice.date)');	
 			} else {
 				$timeVoucher->orderBy(['invoice.date' => SORT_ASC]);
@@ -406,6 +393,7 @@ class UserController extends Controller
     {
         $model = $this->findModel($id);
         $session = Yii::$app->session;
+        $request = Yii::$app->request;
         $locationId = $session->get('location_id');
         $locationAvailabilityMinTime = LocationAvailability::find()
             ->where(['locationId' => $locationId])
@@ -424,6 +412,13 @@ class UserController extends Controller
         $lessonSearchModel->dateRange=(new\DateTime())->format('M d,Y').' - '.(new\DateTime())->format('M d,Y');
         $invoiceSearchModel = new InvoiceSearch();
         $invoiceSearchModel->dateRange = (new\DateTime())->format('M d,Y') . ' - ' . (new\DateTime())->format('M d,Y');
+		$invoiceSearch = $request->get('InvoiceSearch');
+		
+		if(!empty($invoiceSearch)) {
+            $invoiceSearchModel->dateRange = $invoiceSearch['dateRange'];
+            list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
+            $invoiceSearchModel->summariseReport = $invoiceSearch['summariseReport'];
+        }
 
         return $this->render('view', [
             'minTime' => $minTime,
@@ -451,7 +446,7 @@ class UserController extends Controller
             'teachersAvailabilities' => $this->getTeacherAvailabilities($id, $locationId),
 			'privateQualificationDataProvider' => $this->getPrivateQualificationDataProvider($id),
 			'groupQualificationDataProvider' => $this->getGroupQualificationDataProvider($id),
-			'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id),
+			'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id,$invoiceSearchModel->fromDate,$invoiceSearchModel->toDate,$invoiceSearchModel->summariseReport),
 			'unavailability' => $this->getUnavailabilityDataProvider($id)
         ]);
     }
@@ -763,7 +758,18 @@ class UserController extends Controller
                     'model' => $model,
         ]);
     }
-
+	public function actionUpdatePrimary($id, $emailId)
+	{
+		$model = $this->findModel($id);
+		if(!empty($model->primaryEmail)) {
+			$model->primaryEmail->updateAttributes([
+				'isPrimary' => false,
+			]);
+		}
+		$email = UserEmail::findOne(['id' => $emailId]);
+		$email->isPrimary = true;
+		$email->save();
+	}
     /**
      * Deletes an existing User model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
