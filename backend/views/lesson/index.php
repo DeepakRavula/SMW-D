@@ -6,11 +6,12 @@ use yii\helpers\Url;
 use backend\models\search\CourseSearch;
 use kartik\datetime\DateTimePickerAsset;
 DateTimePickerAsset::register($this);
-require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
+require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup-with-teacher.php';
 
 $this->title = 'Lessons';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<div id="index-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="pull-right calendar-filter">
     <?= Html::dropDownList('action', null, ['c'=>'Substitute Teacher'], [
         'prompt' => 'Select Bulk Action', 'class' => 'form-control',

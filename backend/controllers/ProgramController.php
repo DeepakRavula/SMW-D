@@ -11,6 +11,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use common\models\Qualification;
 use backend\models\search\ProgramSearch;
 
 /**
@@ -28,12 +29,12 @@ class ProgramController extends Controller
                 ],
             ],
             [
-				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['update', 'create' ,'delete'],
-				'formats' => [
-					'application/json' => Response::FORMAT_JSON,
-				],
-        	],
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['update', 'create' ,'delete', 'teachers'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
         ];
     }
 
@@ -200,5 +201,51 @@ class ProgramController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+    
+    public function actionTeachers($id, $teacherId)
+    {
+        $teacherQualification = Qualification::findOne([
+            'program_id' => $id, 
+            'teacher_id' => $teacherId,
+            'isDeleted' => false
+        ]);
+        $locationId = Yii::$app->session->get('location_id');
+        $qualifications = Qualification::find()
+			->joinWith(['teacher' => function ($query) use ($locationId) {
+				$query->joinWith(['userLocation' => function ($query) use ($locationId) {
+                     $query->join('LEFT JOIN', 'user_profile','user_profile.user_id = user_location.user_id')
+					->joinWith('teacherAvailability')
+				->where(['location_id' => $locationId]);
+				}]);
+			}])
+			->where(['program_id' => $id])
+                        ->notDeleted()
+			->orderBy(['user_profile.firstname' => SORT_ASC])
+                ->all();
+        $result = [];
+        $output = [];
+        foreach ($qualifications as  $i => $qualification) {
+            $selectd = false;
+            if ($teacherQualification) {
+                if ($qualification->teacher->id === $teacherQualification->teacher_id && $teacherQualification) {
+                    $selectd = true;
+                }
+            } else if ($i === 0) {
+                $selectd = true;
+            }
+            $output[] = [
+                'id' => $qualification->teacher->id,
+                'text' => $qualification->teacher->publicIdentity,
+                'selected' => $selectd
+            ];
+        }
+        $result = [
+            'status' => true,
+            'output' => $output,
+            'selected' => !$teacherQualification ? current($qualifications)->teacher->id : $teacherQualification->teacher_id,
+        ];
+
+        return $result;
     }
 }

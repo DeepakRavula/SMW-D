@@ -2,6 +2,7 @@
 
 use yii\bootstrap\Modal;
 use yii\bootstrap\Html;
+use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use common\models\LocationAvailability;
@@ -16,28 +17,44 @@ if ($conflictedLessonIdsCount > 0) {
     $hasConflict = true;
 }
 ?>
-
-<div class="row">
-    <div class="col-md-5">
-        <?= Html::dropDownList('teacher', null, ArrayHelper::map($teachers, 
-                'id', 'userProfile.fullName'), [ 'prompt' => 'Select Substitute Teacher',
-                    'id' => 'teacher-drop', 'class' => 'form-control'])
+<div class="lesson-qualify">
+<div class="row-fluid">
+    <div class="form-group">
+        <?= '<label class="control-label">Substitute Teacher</label>';
+            echo Select2::widget([
+                'name' => 'teacher',
+                'data' => ArrayHelper::map($teachers, 
+                    'id', 'userProfile.fullName'),
+                'options' => [
+                    'placeholder' => 'Select Substitute Teacher',
+                    'id' => 'teacher-drop',
+                    'class' => 'col-lg-6'
+                ],
+            ]);
         ?>
     </div>
 <?php yii\widgets\Pjax::begin([
 		'id' => 'review-lesson-listing',
 		'timeout' => 6000,
 	]) ?>
-    <div class="col-md-12">
+    
         <?php
 $columns = [
+    [
+		'label' => 'Teacher',
+		'value' => function ($model) {
+			return $model->teacher->publicIdentity;
+		},
+		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
+		'contentOptions' => ['class' => 'kv-sticky-column'],
+                ],
 		[
 		'label' => 'Date/Time',
 		'attribute' => 'date',
 		'format' => 'datetime',
 		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
 		'contentOptions' => ['class' => 'kv-sticky-column'],
-	],
+                ],
 		[
 		'attribute' => 'duration',
 		'value' => function ($model, $key, $index, $widget) {
@@ -62,7 +79,8 @@ $columns = [
 			'edit' => function  ($url, $model) {
 				return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>','#', [
 					'id' => 'edit-button', 'duration' => $model->duration,
-                                        'lessonId' => $model->id,
+                                        'lessonId' => $model->id, 'teacherId' => $model->teacherId,
+                                        'programId' => $model->course->programId,
 					'class' => 'm-l-20'
 				]);
 			},
@@ -81,17 +99,18 @@ AdminLteGridView::widget([
 ?>
 <?php endif; ?>
     </div>
-    
+
 </div>
 <?php if ($newLessonIds) : ?> 
 <div class="form-group">
+    <?php if (!$hasConflict) : ?>
     <?=
     Html::a('Confirm', null, [
             'class' => 'btn btn-info',
-            'id' => 'sub-teacher-confirm',
-            'disabled' => $hasConflict
+            'id' => 'sub-teacher-confirm'
     ])
     ?>
+    <?php endif; ?>
     <?= Html::a('Cancel', null, ['class' => 'btn btn-default', 'id' => 'sub-teacher-cancel']); ?>
 </div>
 <?php endif; ?> 
@@ -118,47 +137,60 @@ $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
 $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 <script>
-    $(document).on('click', '#edit-button', function () {
-        if ($('#teacher-substitute-modal').modal('hide')) {
-            $('#spinner').show();
-            var lessonId = $('#edit-button').attr('lessonId');
-            var teacherId = $('#teacher-drop').val();
-            var params = $.param({ id: teacherId });
-            $.ajax({
-                url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
-                type: 'get',
-                dataType: "json",
-                success: function (response)
+    $(document).off('click', '#edit-button').on('click', '#edit-button', function () {
+        var event = $(this);
+        var params = $.param({ id: event.attr('programid'), teacherId: event.attr('teacherid') });
+        $.ajax({
+            url    : '<?= Url::to(['program/teachers']) ?>?' + params,
+            type   : 'get',
+            success: function(response)
+            {
+                if(response.status)
                 {
-                    $('#spinner').hide();
-                    var options = {
-                        selectConstraint: {
-                            start: '00:01', // a start time (10am in this example)
-                            end: '24:00', // an end time (6pm in this example)
-                            dow: [ 1, 2, 3, 4, 5, 6, 7 ]
-                        },
-                        eventConstraint: {
-                            start: '00:01', // a start time (10am in this example)
-                            end: '24:00', // an end time (6pm in this example)
-                            dow: [ 1, 2, 3, 4, 5, 6, 7 ]
-                        },
-                        lessonId: lessonId,
-                        date: moment(new Date()),
-                        teacherId: teacherId,
-                        duration: $('#edit-button').attr('duration'),
-                        businessHours: response.availableHours,
-                        minTime: '<?= $minTime; ?>',
-                        maxTime: '<?= $maxTime; ?>',
-                        eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event']); ?>?teacherId=' + teacherId
-                    };
-                    $('#calendar-date-time-picker').calendarPicker(options);
+                    var teacherData = response.output;
+                    if ($('#teacher-substitute-modal').modal('hide')) {
+                        $('#spinner').show();
+                        var lessonId = event.attr('lessonid');
+                        var teacherId = response.selected;
+                        var params = $.param({ id: teacherId });
+                        $.ajax({
+                            url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
+                            type: 'get',
+                            dataType: "json",
+                            success: function (response)
+                            {
+                                $('#spinner').hide();
+                                var options = {
+                                    selectConstraint: {
+                                        start: '00:01', // a start time (10am in this example)
+                                        end: '24:00', // an end time (6pm in this example)
+                                        dow: [ 1, 2, 3, 4, 5, 6, 0 ]
+                                    },
+                                    eventConstraint: {
+                                        start: '00:01', // a start time (10am in this example)
+                                        end: '24:00', // an end time (6pm in this example)
+                                        dow: [ 1, 2, 3, 4, 5, 6, 0 ]
+                                    },
+                                    teacherData: teacherData,
+                                    lessonId: lessonId,
+                                    date: moment(new Date()),
+                                    teacherId: teacherId,
+                                    duration: $('#edit-button').attr('duration'),
+                                    businessHours: response.availableHours,
+                                    minTime: '<?= $minTime; ?>',
+                                    maxTime: '<?= $maxTime; ?>',
+                                    eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event']); ?>?teacherId=' + teacherId
+                                };
+                                $('#calendar-date-time-picker').calendarPicker(options);
+                            }
+                        });
+                    }
                 }
-            });
-            return false;
-        }
+            }
+        });
     });
     
-    $(document).on('change', '#teacher-drop', function () {
+    $(document).off('change', '#teacher-drop').on('change', '#teacher-drop', function () {
         var selectedValue = $(this).val();
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         var params = $.param({ ids: lessonIds, teacherId: selectedValue });
@@ -202,22 +234,16 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
         }
     });
     
-    $(document).on('after-picker-cancel', function(event, params) {
+    $(document).on('after-picker-close', function() {
         $('#teacher-substitute-modal').modal('show');
     });
     
-    $(document).ready(function () {
-        if ($('#sub-confirm-button').attr('disabled')) {
-            $('#sub-confirm-button').bind('click', false);
-        }
-    });
-    
-    $(document).on('click', '#sub-teacher-cancel', function () {
+    $(document).off('click', '#sub-teacher-cancel').on('click', '#sub-teacher-cancel', function () {
         $('#teacher-substitute-modal').modal('hide');
         return false;
     });
     
-    $(document).on('click', '#sub-teacher-confirm', function () {
+    $(document).off('click', '#sub-teacher-confirm').on('click', '#sub-teacher-confirm', function () {
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         var params = $.param({ ids: lessonIds });
         $.ajax({

@@ -1,16 +1,31 @@
-$(document).on('click', '.calendar-date-time-picker-cancel', function () {
+$(document).off('click', '.calendar-date-time-picker-cancel').on('click', '.calendar-date-time-picker-cancel', function () {
     $('#calendar-date-time-picker-modal').modal('hide');
-    $(document).trigger( "after-picker-cancel");
     return false;
+});
+
+$(document).off('hidden.bs.modal', '#calendar-date-time-picker-modal').on('hidden.bs.modal', '#calendar-date-time-picker-modal', function () {
+    $(document).trigger( "after-picker-close");
 });
 
 $.fn.calendarPicker = function(options) {
     $('#calendar-date-time-picker-modal').modal('show');
     $('#calendar-date-time-picker-modal .modal-dialog').css({'width': '1000px'});
-    $(document).on('shown.bs.modal', '#calendar-date-time-picker-modal', function () {
+    
+    $(document).off('shown.bs.modal', '#calendar-date-time-picker-modal').on('shown.bs.modal', '#calendar-date-time-picker-modal', function () {
+        if (!$.isEmptyObject(options.teacherData)) {
+            $("#calendar-date-time-picker-teacher").empty();
+            $("#calendar-date-time-picker-teacher").off().select2({
+                data: options.teacherData,
+                width: '100%',
+                theme: 'krajee'
+            });
+            
+        }
+        $('#calendar-date-time-picker-teacher').val(options.teacherId);
         calendar.showCalendar(options);
     });
-    $(document).on('change', '#calendar-date-time-picker-date', function () {
+    
+    $(document).off('change', '#calendar-date-time-picker-date').on('change', '#calendar-date-time-picker-date', function () {
         var validationUrl = options.validationUrl;
         if (!$.isEmptyObject(validationUrl)) {
             $.ajax({
@@ -30,8 +45,7 @@ $.fn.calendarPicker = function(options) {
         return false;
     });
     
-    $(document).off('click', '.calendar-date-time-picker-save');
-    $(document).on('click', '.calendar-date-time-picker-save', function () {
+    $(document).off('click', '.calendar-date-time-picker-save').on('click', '.calendar-date-time-picker-save', function () {
         if (!$.isEmptyObject($('#calendar-date-time-picker').fullCalendar('clientEvents', 'newEnrolment'))){
             $('#calendar-date-time-picker-modal').modal('hide');
             var selecetdEvent = $('#calendar-date-time-picker').fullCalendar('clientEvents', 'newEnrolment');
@@ -46,22 +60,38 @@ $.fn.calendarPicker = function(options) {
         }
         return false;
     });
-
-    $(document).on('change', '#go-to-date', function(){
+    
+    $(document).off('change', '#calendar-date-time-picker-teacher').on('change', '#calendar-date-time-picker-teacher', function(){
         var date = moment($('#go-to-date').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
         if (! moment(date).isValid()) {
             var date = moment($('#go-to-date').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
         }
-        var calendarOptions = {
-            date: date,
-            duration: options.duration,
-            businessHours: options.businessHours,
-            minTime: options.minTime,
-            maxTime: options.maxTime,
-            eventUrl: options.eventUrl,
-            validationUrl: options.validationUrl
-        };
-        calendar.showCalendar(calendarOptions);
+        calendar.teacherChange(options, date);
+    });
+
+    $(document).off('change', '#go-to-date').on('change', '#go-to-date', function(){
+        var date = moment($('#go-to-date').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+        if (! moment(date).isValid()) {
+            var date = moment($('#go-to-date').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
+        }
+        var teacherId = $('#calendar-date-time-picker-teacher').val();
+        if (teacherId == options.teacherId) {
+            var calendarOptions = {
+                duration: options.duration,
+                selectConstraint: options.selectConstraint,
+                eventConstraint: options.eventConstraint,
+                teacherId: teacherId,
+                date: date,
+                businessHours: options.businessHours,
+                minTime: options.minTime,
+                maxTime: options.maxTime,
+                eventUrl: options.eventUrl,
+                validationUrl: options.validationUrl
+            };
+            calendar.showCalendar(calendarOptions);
+        } else {
+            calendar.teacherChange(options, date);
+        }
     });
 };
 
@@ -75,7 +105,7 @@ var calendar = {
         }
         $('#calendar-date-time-picker').fullCalendar('destroy');
         $('#calendar-date-time-picker').fullCalendar({
-        	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
             defaultDate: moment(calendarOptions.date).format('YYYY-MM-DD'),
             header: {
                 left: 'prev,next today',
@@ -103,7 +133,6 @@ var calendar = {
             },
             select: function (start) {
                 $('#calendar-date-time-picker').fullCalendar('removeEvents', 'newEnrolment');
-                $('#calendar-date-time-picker-teacher').val(calendarOptions.teacherId);
                 $('#calendar-date-time-picker-date').val(moment(start).format('DD-MM-YYYY h:mm A')).trigger('change');
                 var endtime = start.clone();
                 var durationMinutes = moment.duration(calendarOptions.duration).asMinutes();
@@ -125,6 +154,34 @@ var calendar = {
             selectable: true,
             selectHelper: true
         });
+    },
+    
+    teacherChange: function (options, date) {
+        var teacherId = $('#calendar-date-time-picker-teacher').val();
+        if (teacherId != options.teacherId) {
+            var params = $.param({ id: teacherId });
+            $.ajax({
+                url: '/admin/teacher-availability/availability-with-events?' + params,
+                type: 'get',
+                success: function (response)
+                {
+                    var businessHours = response.availableHours;
+                    var calendarOptions = {
+                        duration: options.duration,
+                        selectConstraint: options.selectConstraint,
+                        eventConstraint: options.eventConstraint,
+                        teacherId: teacherId,
+                        date: date,
+                        businessHours: businessHours,
+                        minTime: options.minTime,
+                        maxTime: options.maxTime,
+                        eventUrl: '/admin/teacher-availability/show-lesson-event?teacherId=' + teacherId,
+                        validationUrl: options.validationUrl
+                    };
+                    calendar.showCalendar(calendarOptions);
+                }
+            });
+        }
     }
 }
 

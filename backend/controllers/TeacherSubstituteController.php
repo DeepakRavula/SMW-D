@@ -63,18 +63,23 @@ class TeacherSubstituteController extends Controller
             Lesson::deleteAll(['id' => $draftLessons]);
         }
         $conflicts = [];
+        $conflictedLessonIds = [];
         if ($resolvingConflict) {
             foreach ($draftLessons as $lesson) {
                 $lesson = Lesson::findOne($lesson->id);
                 $lesson->setScenario('substitute-teacher');
                 $newLessonIds[] = $lesson->id;
                 if (ActiveForm::validate($lesson)) {
-                    $conflictedLessonIds[] = $lesson->id;
+                    $errors = [];
                     $errors = ActiveForm::validate($lesson);
+                    if (current($errors['lesson-date']) !== Lesson::TEACHER_UNSCHEDULED_ERROR_MESSAGE) {
+                        $conflictedLessonIds[] = $lesson->id;
+                    }
                     $conflicts[$lesson->id] = $errors['lesson-date'];
                 }
             }
         }
+        $status = true;
         foreach ($lessons as $lesson) {
             if ($teacherId && !$resolvingConflict) {
                 $newLesson = clone $lesson;
@@ -90,12 +95,18 @@ class TeacherSubstituteController extends Controller
                 $newLessonIds[] = $newLesson->id;
                 $newLesson->setScenario('substitute-teacher');
                 if (ActiveForm::validate($newLesson)) {
-                    $conflictedLessonIds[] = $newLesson->id;
+                    $errors = [];
                     $errors = ActiveForm::validate($newLesson);
+                    if (current($errors['lesson-date']) !== Lesson::TEACHER_UNSCHEDULED_ERROR_MESSAGE) {
+                        $conflictedLessonIds[] = $newLesson->id;
+                    }
                     $conflicts[$newLesson->id] = $errors['lesson-date'];
                 }
             }
             $programIds[] = $lesson->course->programId;
+            if (current($lessons)->teacherId !== $lesson->teacherId) {
+                $status = false;
+            }
         }
         $query = Lesson::find()
                     ->notDeleted()
@@ -108,7 +119,7 @@ class TeacherSubstituteController extends Controller
                 ->andWhere(['NOT', ['user.id' => end($lessons)->teacherId]])
                 ->orderBy(['user_profile.firstname' => SORT_ASC])
                 ->all();
-        $conflictedLessonIds = [];
+        
         if (!$teacherId) {
             $query = Lesson::find()
                     ->notDeleted()
@@ -128,7 +139,7 @@ class TeacherSubstituteController extends Controller
             'lessonDataProvider' => $lessonDataProvider
         ]);
         $response = [
-            'status' => true,
+            'status' => $status,
             'data' => $data
         ];
         return $response;

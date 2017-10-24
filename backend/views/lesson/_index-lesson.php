@@ -119,7 +119,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<?php Pjax::end(); ?>
 
 <?php Modal::begin([
-        'header' => '<h4 class="m-0">Teacher Substitute</h4>',
+        'header' => '<h4 class="m-0">Substitute Teacher</h4>',
         'id'=>'teacher-substitute-modal',
 ]);?>
 <div id="teacher-substitute-content"></div>
@@ -137,11 +137,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 type   : 'get',
                 success: function(response)
                 {
-                    if(response.status)
-                        {
-                            $('#teacher-substitute-modal').modal('show');
-                            $('#teacher-substitute-content').html(response.data);
-                        }
+                    if (response.status) {
+                        $('#teacher-substitute-modal').modal('show');
+                        $('#teacher-substitute-modal .modal-dialog').css({'width': '1000px'});
+                        $('#teacher-substitute-content').html(response.data);
+                    } else {
+                        $('#index-error-notification').html("Choose lessons with same teacher").fadeIn().delay(5000).fadeOut();
+                    }
                 }
             });
             return false;

@@ -2,6 +2,8 @@
 namespace common\components\validators\lesson\conflict;
 
 use yii\validators\Validator;
+use yii\helpers\ArrayHelper;
+use common\models\User;
 use Yii;
 use common\models\Lesson;
 use common\models\TeacherAvailability;
@@ -11,6 +13,11 @@ class TeacherSubstituteValidator extends Validator
     public function validateAttribute($model, $attribute)
     {
         $locationId = Yii::$app->session->get('location_id');
+        if (!in_array($model->teacherId, ArrayHelper::getColumn(User::find()
+            ->teachers($model->course->programId, $locationId)->notDeleted()->all(), 'id'))) {
+            $this->addError($model, $attribute, 'Please choose an eligible
+                teacher who is qualified to teach ' . $model->course->program->name .'!');
+        }
         $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
         $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
         $lessonDuration = explode(':', $model->fullDuration);
@@ -43,9 +50,9 @@ class TeacherSubstituteValidator extends Validator
             ->teacher($model->teacherId)
             ->day($day)
             ->all();
-    //print_r($teacherAvailabilityDay);die;
+        
         if (empty($teacherAvailabilityDay)) {
-            $this->addError($model,$attribute, 'Warning: Teacher Unscheduled');
+            $this->addError($model,$attribute, Lesson::TEACHER_UNSCHEDULED_ERROR_MESSAGE);
         }
         $availableTime = TeacherAvailability::find()
             ->teacher($model->teacherId)
@@ -53,7 +60,7 @@ class TeacherSubstituteValidator extends Validator
             ->time($lessonStartTime, $lessonEndTime)
             ->all();
         if (empty($availableTime)) {
-            $this->addError($model, $attribute, 'Warning: Teacher Unscheduled');
+            $this->addError($model, $attribute, Lesson::TEACHER_UNSCHEDULED_ERROR_MESSAGE);
         }
     }
 }
