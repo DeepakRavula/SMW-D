@@ -5,22 +5,21 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "user_email".
+ * This is the model class for table "user_contact".
  *
  * @property integer $id
  * @property integer $userId
- * @property string $email
- * @property string $labelId
  * @property integer $isPrimary
+ * @property integer $labelId
  */
-class UserEmail extends \yii\db\ActiveRecord
+class UserContact extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'user_email';
+        return 'user_contact';
     }
 
     /**
@@ -29,9 +28,8 @@ class UserEmail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['email'], 'required'],
-			[['userContactId'], 'integer'],
-            [['email'], 'string', 'max' => 255],
+            [['userId', 'isPrimary', 'labelId'], 'required'],
+            [['userId', 'isPrimary', 'labelId'], 'integer'],
         ];
     }
 
@@ -43,14 +41,17 @@ class UserEmail extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'userId' => 'User ID',
-            'email' => 'Email',
-            'labelId' => 'Label',
             'isPrimary' => 'Is Primary',
+            'labelId' => 'Label ID',
         ];
     }
-    
-    public function getLabel()
+
+    /**
+     * @inheritdoc
+     * @return \common\models\query\UserContactQuery the active query used by this AR class.
+     */
+    public static function find()
     {
-        return $this->hasOne(Label::className(), ['id' => 'labelId']);
+        return new \common\models\query\UserContactQuery(get_called_class());
     }
 }
