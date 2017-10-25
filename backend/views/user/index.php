@@ -40,7 +40,7 @@ $this->params['show-all'] = $this->render('_button', [
 ?>
  <?php
     Modal::begin([
-        'header' => '<h4 class="m-0">Add</h4>',
+        'header' => '<h4 class="m-0">' . $role . 's / Add</h4>',
         'id'=>'add-user-modal',
     ]);?>
 <?= $this->render('_form', [
@@ -129,7 +129,7 @@ $this->params['show-all'] = $this->render('_button', [
 $(document).ready(function(){
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$(document).on('click', '.add-user', function() {
-        $('#add-user-modal .modal-dialog').css({'width': '800px'});
+        $('#add-user-modal .modal-dialog').css({'width': '400px'});
 		$('#add-user-modal').modal('show');
 		return false;
 	});

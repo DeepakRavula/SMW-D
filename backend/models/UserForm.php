@@ -26,14 +26,6 @@ class UserForm extends Model
     public $lastname;
     public $firstname;
     public $addresslabel;
-    public $city;
-    public $province;
-    public $postalcode;
-    public $country;
-    public $address;
-    public $phonenumber;
-    public $phonelabel;
-    public $phoneextension;
     public $locations;
     private $model;
     private $emails;
@@ -56,8 +48,7 @@ class UserForm extends Model
             ['lastname', 'string', 'min' => 2, 'max' => 255], 
             [['status'], 'integer'],
             ['roles', 'required'],
-            [['locations', 'phonelabel', 'phoneextension', 'phonenumber', 'address', 'section'], 'safe'],
-            [['addresslabel', 'postalcode', 'province', 'city', 'country'], 'safe'],
+            [['locations', 'section'], 'safe'],
         ];
     }
 
@@ -74,16 +65,6 @@ class UserForm extends Model
             'roles' => Yii::t('common', 'Roles'),
             'lastname' => Yii::t('common', 'Last Name'),
             'firstname' => Yii::t('common', 'First Name'),
-            'phonelabel' => Yii::t('common', 'Phone Label'),
-            'phonenumber' => Yii::t('common', 'Phone Number'),
-            'phoneextension' => Yii::t('common', 'Phone Extension'),
-            'address' => Yii::t('common', 'Address'),
-            'addresslabel' => Yii::t('common', 'Address Label'),
-            'postalcode' => Yii::t('common', 'Postal code'),
-            'province' => Yii::t('common', 'Province'),
-            'city' => Yii::t('common', 'City'),
-            'country' => Yii::t('common', 'Country'),
-            'teacherAvailabilityDay' => Yii::t('common', 'Day'),
         ];
     }
 
