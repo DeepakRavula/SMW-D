@@ -178,9 +178,16 @@ class ProgramController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $model->delete();
-        return['status' =>true];
-       
+		if($model->deletable()) {
+			$model->delete();
+        	return['status' =>true];	
+			
+		} else {
+			return [
+				'status' => false,
+				'message' => 'You can\'t delete this program. It is associated with course.'
+			];	
+		}
     }
 
     /**
