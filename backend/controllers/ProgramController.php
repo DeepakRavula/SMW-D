@@ -185,7 +185,7 @@ class ProgramController extends Controller
 		} else {
 			return [
 				'status' => false,
-				'message' => 'You can\'t delete this program. It is associated with course.'
+				'message' => 'Unable to delete. There are courses associated with this program.'
 			];	
 		}
     }
