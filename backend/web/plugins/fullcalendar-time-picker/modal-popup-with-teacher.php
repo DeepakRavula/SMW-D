@@ -21,30 +21,29 @@ use kartik\select2\Select2;
     ]);
 ?>
 <div id="calendar-date-time-picker-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
-<div class="row-fluid">
+<div class="row">
     <?php $this->render('/lesson/_color-code'); ?>
-    <div class="form-group">
-        <?php $lessonModel = new Lesson();
-        $form = ActiveForm::begin([
-           'id' => 'lesson-form'
-        ]); ?>
-        <div class="col-md-6">
-            <?= $form->field($lessonModel, 'teacherId')->widget(Select2::classname(), [
-                'data' => null,
-                'options' => [
-                    'placeholder' => 'Select Substitute Teacher',
-                    'id' => 'calendar-date-time-picker-teacher'
-                ]
-            ])->label('Substitute Teacher'); ?>
-        </div>
-        <div class="col-md-6">
-            <?= $form->field($lessonModel, 'date')->textInput([
-                'id' => 'calendar-date-time-picker-date', 'readOnly' => true,
-            ])->label('Reschedule Date');?>
-        </div>
-            
-        <?php ActiveForm::end(); ?>
+    
+    <?php $lessonModel = new Lesson();
+    $form = ActiveForm::begin([
+       'id' => 'lesson-form'
+    ]); ?>
+    <div class="col-md-6">
+        <?= $form->field($lessonModel, 'teacherId')->widget(Select2::classname(), [
+            'data' => null,
+            'options' => [
+                'placeholder' => 'Select Substitute Teacher',
+                'id' => 'calendar-date-time-picker-teacher'
+            ]
+        ])->label('Substitute Teacher'); ?>
     </div>
+    <div class="col-md-6">
+        <?= $form->field($lessonModel, 'date')->textInput([
+            'id' => 'calendar-date-time-picker-date', 'readOnly' => true,
+        ])->label('Reschedule Date');?>
+    </div>
+
+    <?php ActiveForm::end(); ?>
     <div class="col-lg-2 pull-right">
         <?php echo '<label>Go to Date</label>'; ?>
         <?php echo DatePicker::widget([
@@ -62,13 +61,15 @@ use kartik\select2\Select2;
                 ]
         ]); ?>
     </div>
+    <div class="col-lg-12">
     <div id="calendar-date-time-picker" ></div>
-</div>
- <div class="form-group">
-	<?= Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-primary calendar-date-time-picker-save', 'name' => 'button']) ?>
-	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default calendar-date-time-picker-cancel']);
-	?>
-	<div class="clearfix"></div>
+    </div>
+    <div class="col-md-12">
+    <div class="form-group pull-right">
+        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default calendar-date-time-picker-cancel']); ?>
+        <?= Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-info calendar-date-time-picker-save', 'name' => 'button']) ?>
+    </div>
+    </div>    
 </div>
 <?php Modal::end(); ?>
 

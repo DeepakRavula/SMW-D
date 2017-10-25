@@ -140,7 +140,8 @@ class TeacherSubstituteController extends Controller
         ]);
         $response = [
             'status' => $status,
-            'data' => $data
+            'data' => $data,
+            'hasConflicts' => $conflictedLessonIdsCount > 0 ? true : false,
         ];
         return $response;
     }

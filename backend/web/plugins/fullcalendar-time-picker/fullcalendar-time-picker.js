@@ -74,27 +74,10 @@ $.fn.calendarPicker = function(options) {
         if (! moment(date).isValid()) {
             var date = moment($('#go-to-date').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
         }
-        var teacherId = $('#calendar-date-time-picker-teacher').val();
-        if (teacherId == options.teacherId) {
-            var calendarOptions = {
-                duration: options.duration,
-                selectConstraint: options.selectConstraint,
-                eventConstraint: options.eventConstraint,
-                teacherId: teacherId,
-                date: date,
-                businessHours: options.businessHours,
-                minTime: options.minTime,
-                maxTime: options.maxTime,
-                eventUrl: options.eventUrl,
-                validationUrl: options.validationUrl
-            };
-            calendar.showCalendar(calendarOptions);
-        } else {
-            calendar.teacherChange(options, date);
-        }
+        $('#calendar-date-time-picker').fullCalendar('gotoDate', date);
     });
 };
-
+    
 var calendar = {
     showCalendar: function (calendarOptions) {
         if ($.isEmptyObject(calendarOptions.selectConstraint)) {

@@ -20,27 +20,26 @@ use yii\widgets\ActiveForm;
     ]);
 ?>
 <div id="calendar-date-time-picker-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
-<div class="row-fluid">
+<div class="row">
     <?php $this->render('/lesson/_color-code'); ?>
-    <div class="form-group">
-        <?php $lessonModel = new Lesson();
-        $form = ActiveForm::begin([
-           'id' => 'lesson-form'
-        ]); ?>
-            <?= $form->field($lessonModel, 'date')->hiddenInput([
-                'id' => 'calendar-date-time-picker-date',
-            ])->label(false);?>
-            <?= $form->field($lessonModel, 'teacherId')->hiddenInput([
-                'id' => 'calendar-date-time-picker-teacher',
-            ])->label(false);?>
+    
+    <?php $lessonModel = new Lesson();
+    $form = ActiveForm::begin([
+       'id' => 'lesson-form'
+    ]); ?>
+        <?= $form->field($lessonModel, 'date')->hiddenInput([
+            'id' => 'calendar-date-time-picker-date',
+        ])->label(false);?>
+        <?= $form->field($lessonModel, 'teacherId')->hiddenInput([
+            'id' => 'calendar-date-time-picker-teacher',
+        ])->label(false);?>
         <?php ActiveForm::end(); ?>
-    </div>
     <div class="col-lg-2 pull-right">
         <?php echo '<label>Go to Date</label>'; ?>
         <?php echo DatePicker::widget([
                 'name' => 'selected-date',
                 'id' => 'go-to-date',
-                'value' => Yii::$app->formatter->asDate((new \DateTime())->format('d-m-Y')),
+                'value' => Yii::$app->formatter->asDate((new DateTime())->format('d-m-Y')),
                 'type' => DatePicker::TYPE_INPUT,
                 'buttonOptions' => [
                     'removeButton' => true,
@@ -53,12 +52,12 @@ use yii\widgets\ActiveForm;
         ]); ?>
     </div>
     <div id="calendar-date-time-picker" ></div>
-</div>
- <div class="form-group">
-	<?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-primary calendar-date-time-picker-save', 'name' => 'button']) ?>
-	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default calendar-date-time-picker-cancel']);
-	?>
-	<div class="clearfix"></div>
+    <div class="col-lg-12">
+    <div class="form-group pull-right">
+        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default calendar-date-time-picker-cancel']); ?>
+        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info calendar-date-time-picker-save', 'name' => 'button']) ?>
+    </div>
+    </div>
 </div>
 <?php Modal::end(); ?>
 

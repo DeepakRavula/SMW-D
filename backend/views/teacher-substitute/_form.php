@@ -6,7 +6,7 @@ use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use common\models\LocationAvailability;
-use common\components\gridView\AdminLteGridView;
+use kartik\grid\GridView;
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -17,9 +17,9 @@ if ($conflictedLessonIdsCount > 0) {
     $hasConflict = true;
 }
 ?>
-<div class="lesson-qualify">
-<div class="row-fluid">
-    <div class="form-group">
+
+<div class="row">
+    <div class="col-lg-6">
         <?= '<label class="control-label">Substitute Teacher</label>';
             echo Select2::widget([
                 'name' => 'teacher',
@@ -33,6 +33,7 @@ if ($conflictedLessonIdsCount > 0) {
             ]);
         ?>
     </div>
+    
 <?php yii\widgets\Pjax::begin([
 		'id' => 'review-lesson-listing',
 		'timeout' => 6000,
@@ -48,12 +49,20 @@ $columns = [
 		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
 		'contentOptions' => ['class' => 'kv-sticky-column'],
                 ],
+                [
+		'label' => 'Program',
+		'value' => function ($model) {
+			return $model->course->program->name;
+		},
+		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
+		'contentOptions' => ['class' => 'kv-sticky-column'],
+                ],
 		[
 		'label' => 'Date/Time',
 		'attribute' => 'date',
 		'format' => 'datetime',
 		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-		'contentOptions' => ['class' => 'kv-sticky-column'],
+		'contentOptions' => ['class' => 'kv-sticky-column', 'style' => 'width:150px;'],
                 ],
 		[
 		'attribute' => 'duration',
@@ -61,7 +70,7 @@ $columns = [
 			return (new \DateTime($model->duration))->format('H:i');
 		},
 		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-		'contentOptions' => ['class' => 'kv-sticky-column'],
+		'contentOptions' => ['class' => 'kv-sticky-column', 'style' => 'width:80px;'],
 	],
 		[
 		'label' => 'Conflict',
@@ -75,46 +84,47 @@ $columns = [
 	[
 		'class' => 'yii\grid\ActionColumn',
 		'template' => '{edit}',
+                'contentOptions' => ['style' => 'width:40px;'],
 		'buttons' => [
-			'edit' => function  ($url, $model) {
-				return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>','#', [
-					'id' => 'edit-button', 'duration' => $model->duration,
-                                        'lessonId' => $model->id, 'teacherId' => $model->teacherId,
-                                        'programId' => $model->course->programId,
-					'class' => 'm-l-20'
-				]);
-			},
+                    'edit' => function  ($url, $model) {
+                        return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>','#', [
+                            'id' => 'edit-button', 'duration' => $model->duration,
+                            'lessonId' => $model->id, 'teacherId' => $model->teacherId,
+                            'programId' => $model->course->programId,
+                            'class' => 'm-l-20'
+                        ]);
+                    },
 		],
 	],
 ];
 ?>
-	
+<div class="col-lg-12">
 <?php if ($newLessonIds) : ?>
 <?=
-AdminLteGridView::widget([
+GridView::widget([
 	'dataProvider' => $lessonDataProvider,
 	'columns' => $columns,
 	'emptyText' => 'No conflicts here! You are ready to confirm!',
 ]);
 ?>
 <?php endif; ?>
-    </div>
-
 </div>
+<div class="col-lg-12">
 <?php if ($newLessonIds) : ?> 
-<div class="form-group">
-    <?php if (!$hasConflict) : ?>
+<div class="form-group pull-right">
+    <?= Html::a('Cancel', null, ['class' => 'btn btn-default', 'id' => 'sub-teacher-cancel']); ?>
     <?=
     Html::a('Confirm', null, [
             'class' => 'btn btn-info',
-            'id' => 'sub-teacher-confirm'
+            'id' => 'sub-teacher-confirm',
+            'disabled' => $hasConflict
     ])
     ?>
-    <?php endif; ?>
-    <?= Html::a('Cancel', null, ['class' => 'btn btn-default', 'id' => 'sub-teacher-cancel']); ?>
+</div>
 </div>
 <?php endif; ?> 
 <?php \yii\widgets\Pjax::end(); ?>
+</div>
 <?php
 Modal::begin([
 	'header' => '<h4 class="m-0">Edit Lesson</h4>',
@@ -203,6 +213,13 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 if(response.status)
                 {
                     $.pjax.reload({url: url, container: '#review-lesson-listing', timeout: 6000});
+                    if (response.hasConflict) {
+                        $("#sub-teacher-confirm").attr("disabled", true);
+                        $('#sub-teacher-confirm').bind('click', false);
+                    } else {
+                        $("#sub-teacher-confirm").removeAttr('disabled');
+                        $('#sub-teacher-confirm').unbind('click', false);
+                    }
                 }
             }
         });
@@ -243,7 +260,12 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
         return false;
     });
     
+    $(document).off('hidden.bs.modal', '#teacher-substitute-modal').on('hidden.bs.modal', '#teacher-substitute-modal', function () {
+        $('#bulk-action').val('');
+    });
+    
     $(document).off('click', '#sub-teacher-confirm').on('click', '#sub-teacher-confirm', function () {
+        var url = '<?= Url::to(['lesson/index']) ?>';
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         var params = $.param({ ids: lessonIds });
         $.ajax({
@@ -253,7 +275,10 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             {
                 if(response.status)
                 {
-                    window.location.href = response.url;
+                    $('#teacher-substitute-modal').modal('hide');
+                    $.pjax.reload({url: url, container: '#lesson-index', timeout: 6000});
+                    $('#index-success-notification').html("Lessons are substituted to the selected teachers").
+                                fadeIn().delay(5000).fadeOut();
                 }
             }
         });
