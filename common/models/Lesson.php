@@ -59,7 +59,7 @@ class Lesson extends \yii\db\ActiveRecord
     const SCENARIO_SPLIT = 'split';
     const SCENARIO_GROUP_ENROLMENT_REVIEW = 'group-enrolment';
     const SCENARIO_EDIT_CLASSROOM = 'classroom-edit';
-    const TEACHER_UNSCHEDULED_ERROR_MESSAGE = 'Warning: Teacher Unscheduled';
+    const TEACHER_UNSCHEDULED_ERROR_MESSAGE = '<p style="background-color: yellow">Warning: Teacher Unscheduled</p>';
 
     const TEACHER_VIEW = 1;
     const CLASS_ROOM_VIEW = 2;

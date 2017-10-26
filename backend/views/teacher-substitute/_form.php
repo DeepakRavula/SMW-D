@@ -17,7 +17,7 @@ if ($conflictedLessonIdsCount > 0) {
     $hasConflict = true;
 }
 ?>
-
+<div id="modal-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="row">
     <div class="col-lg-6">
         <?= '<label class="control-label">Substitute Teacher</label>';
@@ -73,6 +73,7 @@ $columns = [
 		'contentOptions' => ['class' => 'kv-sticky-column', 'style' => 'width:80px;'],
 	],
 		[
+                'format' => 'raw',
 		'label' => 'Conflict',
 		'headerOptions' => ['class' => 'bg-light-gray'],
 		'value' => function ($data) use ($conflicts) {
@@ -213,12 +214,12 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 if(response.status)
                 {
                     $.pjax.reload({url: url, container: '#review-lesson-listing', timeout: 6000});
-                    if (response.hasConflict) {
+                    if (response.hasConflicts) {
                         $("#sub-teacher-confirm").attr("disabled", true);
-                        $('#sub-teacher-confirm').bind('click', false);
+                        $(document).bind('click', '#sub-teacher-confirm', false);
                     } else {
                         $("#sub-teacher-confirm").removeAttr('disabled');
-                        $('#sub-teacher-confirm').unbind('click', false);
+                        $(document).unbind('click', '#sub-teacher-confirm', false);
                     }
                 }
             }
@@ -265,23 +266,27 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
     });
     
     $(document).off('click', '#sub-teacher-confirm').on('click', '#sub-teacher-confirm', function () {
-        var url = '<?= Url::to(['lesson/index']) ?>';
-        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
-        var params = $.param({ ids: lessonIds });
-        $.ajax({
-            url    : '<?= Url::to(['teacher-substitute/confirm']) ?>?' + params,
-            type   : 'get',
-            success: function(response)
-            {
-                if(response.status)
+        if (!$(this).attr('disabled')) {
+            var url = '<?= Url::to(['lesson/index']) ?>';
+            var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+            var params = $.param({ ids: lessonIds });
+            $.ajax({
+                url    : '<?= Url::to(['teacher-substitute/confirm']) ?>?' + params,
+                type   : 'get',
+                success: function(response)
                 {
-                    $('#teacher-substitute-modal').modal('hide');
-                    $.pjax.reload({url: url, container: '#lesson-index', timeout: 6000});
-                    $('#index-success-notification').html("Lessons are substituted to the selected teachers").
-                                fadeIn().delay(5000).fadeOut();
+                    if(response.status)
+                    {
+                        $('#teacher-substitute-modal').modal('hide');
+                        $.pjax.reload({url: url, container: '#lesson-index', timeout: 6000});
+                        $('#index-success-notification').html("Lessons are substituted to the selected teachers").
+                                    fadeIn().delay(5000).fadeOut();
+                    }
                 }
-            }
-        });
-        return false;
+            });
+            return false;
+        } else {
+            $('#modal-error-notification').html("Resolve all conflicts before confirm").fadeIn().delay(5000).fadeOut();
+        }
     });
 </script>

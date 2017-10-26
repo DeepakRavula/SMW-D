@@ -15,8 +15,7 @@ class TeacherSubstituteValidator extends Validator
         $locationId = Yii::$app->session->get('location_id');
         if (!in_array($model->teacherId, ArrayHelper::getColumn(User::find()
             ->teachers($model->course->programId, $locationId)->notDeleted()->all(), 'id'))) {
-            $this->addError($model, $attribute, 'Please choose an eligible
-                teacher who is qualified to teach ' . $model->course->program->name .'!');
+            $this->addError($model, $attribute, '<p style = "background-color: red">Teacher unqualified</p>');
         }
         $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
         $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
@@ -32,7 +31,7 @@ class TeacherSubstituteValidator extends Validator
             ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
             ->all();
         if ((!empty($teacherLessons)) && empty($model->vacationId)) {
-            $this->addError($model,$attribute, 'Teacher occupied with another lesson');
+            $this->addError($model,$attribute, '<p style = "background-color: red">Teacher occupied with another lesson</p>');
         }
         if(!empty($model->vacationId) && !empty($teacherLessons)) {
             foreach($teacherLessons as $teacherLesson) {
@@ -42,7 +41,7 @@ class TeacherSubstituteValidator extends Validator
                 $conflictedLessonIds[] = $model->id; 
             }	
             if(!empty($conflictedLessonIds)) {
-                $this->addError($model,$attribute, 'Teacher occupied with another lesson');
+                $this->addError($model,$attribute, '<p style = "background-color: red">Teacher occupied with another lesson</p>');
             }
         }
         $day = (new \DateTime($model->date))->format('N');

@@ -69,9 +69,8 @@ class TeacherSubstituteController extends Controller
                 $lesson = Lesson::findOne($lesson->id);
                 $lesson->setScenario('substitute-teacher');
                 $newLessonIds[] = $lesson->id;
-                if (ActiveForm::validate($lesson)) {
-                    $errors = [];
-                    $errors = ActiveForm::validate($lesson);
+                $errors = ActiveForm::validate($lesson);
+                if ($errors) {
                     if (current($errors['lesson-date']) !== Lesson::TEACHER_UNSCHEDULED_ERROR_MESSAGE) {
                         $conflictedLessonIds[] = $lesson->id;
                     }
@@ -94,9 +93,8 @@ class TeacherSubstituteController extends Controller
                 $lessonRescheduleModel->save();
                 $newLessonIds[] = $newLesson->id;
                 $newLesson->setScenario('substitute-teacher');
-                if (ActiveForm::validate($newLesson)) {
-                    $errors = [];
-                    $errors = ActiveForm::validate($newLesson);
+                $errors = ActiveForm::validate($newLesson);
+                if ($errors) {
                     if (current($errors['lesson-date']) !== Lesson::TEACHER_UNSCHEDULED_ERROR_MESSAGE) {
                         $conflictedLessonIds[] = $newLesson->id;
                     }
