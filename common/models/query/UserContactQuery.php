@@ -31,4 +31,9 @@ class UserContactQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+	public function isPrimary()
+	{
+		return $this->andWhere(['user_contact.isPrimary' => true]);
+	}
 }

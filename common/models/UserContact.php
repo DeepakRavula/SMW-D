@@ -54,4 +54,8 @@ class UserContact extends \yii\db\ActiveRecord
     {
         return new \common\models\query\UserContactQuery(get_called_class());
     }
+	public function getEmails()
+    {
+        return $this->hasMany(UserEmail::className(), ['userContactId' => 'id']);
+    }
 }

@@ -53,4 +53,8 @@ class UserEmail extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Label::className(), ['id' => 'labelId']);
     }
+	public function getUserContact()
+    {
+        return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);
+    }
 }
