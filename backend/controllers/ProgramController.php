@@ -240,10 +240,15 @@ class ProgramController extends Controller
                 'selected' => $selectd
             ];
         }
+        if (!$teacherQualification) {
+            $selectd = current($qualifications)->teacher->id;
+        } else {
+            $selectd = $teacherQualification->teacher_id;
+        }
         $result = [
             'status' => true,
             'output' => $output,
-            'selected' => !$teacherQualification ? current($qualifications)->teacher->id : $teacherQualification->teacher_id,
+            'selected' => $selectd,
         ];
 
         return $result;
