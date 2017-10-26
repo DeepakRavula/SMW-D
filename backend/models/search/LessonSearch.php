@@ -26,6 +26,7 @@ class LessonSearch extends Lesson
 	public $summariseReport = false;
 	public $student;
 	public $program;
+        public $teacher;
 	/**
      * {@inheritdoc}
      */
@@ -34,7 +35,8 @@ class LessonSearch extends Lesson
         return [
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport'], 'safe'],
-            [['lessonStatus', 'fromDate', 'toDate', 'type', 'customerId', 'invoiceType','dateRange', 'student', 'program',], 'safe'],
+            [['lessonStatus', 'fromDate', 'toDate', 'type', 'customerId', 
+                'invoiceType','dateRange', 'student', 'program', 'teacher'], 'safe'],
         ];
     }
     
@@ -81,6 +83,13 @@ class LessonSearch extends Lesson
 			['student.last_name' => $this->student]
 		]);
 		$query->andFilterWhere(['program.name' => $this->program]);
+                if (!empty($this->teacher)) {
+                    $query->joinWith(['teacherProfile' => function ($query) {
+                        $query->andFilterWhere([
+                            'LIKE', "CONCAT(user_profile.firstname, ' ', user_profile.lastname)", $this->teacher
+                        ]);
+                    }]);
+                }
         if (!empty($this->customerId)) {
             $query->student($this->customerId);
         }

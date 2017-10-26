@@ -57,7 +57,12 @@ class LessonQuery extends \yii\db\ActiveQuery
 
         return $this;
     }
-
+    
+    public function notConfirmed()
+    {
+        return $this->andWhere(['lesson.isConfirmed' => false]);
+    }
+    
     public function studentEnrolment($locationId, $studentId)
     {
         $this ->joinWith(['course' => function ($query) use ($locationId, $studentId) {

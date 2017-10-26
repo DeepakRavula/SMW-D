@@ -909,8 +909,14 @@ class LessonController extends Controller
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post())) {
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+            $model->save();
+            $parentLesson = $model->parent()->one();
+            $lessonRescheduleModel			= new LessonReschedule();
+            $lessonRescheduleModel->lessonId	        = $parentLesson->id;
+            $lessonRescheduleModel->rescheduledLessonId = $model->id;
+            $lessonRescheduleModel->save();
             return [
-                'status' => $model->save()
+                'status' => true
             ];
         } else {
             return [

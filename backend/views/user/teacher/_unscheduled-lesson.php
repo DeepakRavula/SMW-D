@@ -143,7 +143,13 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 url    : '<?= Url::to(['lesson/update']);?>?' + param,
                 type   : 'post',
                 dataType: "json",
-                data   : $('#unschedule-lesson-form').serialize()
+                data   : $('#unschedule-lesson-form').serialize(),
+                success: function (response)
+                {
+                    if (response.status) {
+                        $.pjax.reload({ container:"#lesson-index", replace:false, timeout: 4000 }); 
+                    }
+                }
             });
             return false;
         }
