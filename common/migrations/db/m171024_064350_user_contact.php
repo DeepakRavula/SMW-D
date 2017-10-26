@@ -21,7 +21,7 @@ class m171024_064350_user_contact extends Migration
 				'id' => $this->primaryKey(),
 				'userContactId' => $this->integer()->notNull(),
 				'number' => $this->char(15)->notNull(),
-                'extension' => $this->integer()->notNull()
+                'extension' => $this->integer()
 			]);
 		}
 		$this->addColumn('user_email', 'userContactId', 
@@ -29,7 +29,7 @@ class m171024_064350_user_contact extends Migration
 		$this->addColumn('user_address', 'userContactId', 
 			$this->integer()->after('id'));
 		$this->addColumn('user_address', 'address', 
-			$this->integer()->after('userContactId'));
+			$this->string()->after('userContactId'));
 		$this->addColumn('user_address', 'cityId', 
 			$this->integer()->after('address'));
 		$this->addColumn('user_address', 'countryId', 
@@ -37,7 +37,7 @@ class m171024_064350_user_contact extends Migration
 		$this->addColumn('user_address', 'provinceId', 
 			$this->integer()->after('countryId'));
 		$this->addColumn('user_address', 'postalCode', 
-			$this->integer()->after('countryId'));
+			$this->string()->after('countryId'));
     }
 
     public function down()

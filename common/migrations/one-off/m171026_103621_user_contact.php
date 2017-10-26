@@ -3,15 +3,33 @@
 use yii\db\Migration;
 use common\models\UserEmail;
 use common\models\UserContact;
-use common\models\Address;
-use common\models\UserAddress;
 use common\models\PhoneNumber;
 use common\models\UserPhone;
+use common\models\Address;
 
-class m171024_071534_user_contact extends Migration
+class m171026_103621_user_contact extends Migration
 {
     public function up()
     {
+		$phones = PhoneNumber::find()->all();
+		foreach($phones as $phone) {
+			$userContact = new UserContact();
+			$userContact->userId = $phone->user_id;
+			$userContact->isPrimary = $phone->is_primary;
+			$userContact->labelId = $phone->label_id;
+			$userContact->save();	
+
+			$userPhone = new UserPhone();
+			$userPhone->number = $phone->number;
+			$userPhone->extension = $phone->extension;
+			$userPhone->userContactId = $userContact->id;
+			if(!$userPhone->save()) {
+				print_r($userContact->id);
+				print_r($userPhone->getErrors());die;
+			}
+		}
+		$this->dropTable('phone_number');
+
 		$emails = UserEmail::find()->all();
 		foreach ($emails as $email) {
 			$userContact = new UserContact();
@@ -26,22 +44,6 @@ class m171024_071534_user_contact extends Migration
 		$this->dropColumn('user_email', 'userId');
 		$this->dropColumn('user_email', 'labelId');
 		$this->dropColumn('user_email', 'isPrimary');
-
-		$phones = PhoneNumber::find()->all();
-		foreach($phones as $phone) {
-			$userContact = new UserContact();
-			$userContact->userId = $phone->user_id;
-			$userContact->isPrimary = $phone->is_primary;
-			$userContact->labelId = $phone->label_id;
-			$userContact->save();	
-
-			$userPhone = new UserPhone();
-			$userPhone->number = $phone->number;
-			$userPhone->extension = $phone->extension;
-			$userPhone->userContactId = $userContact->id;
-			$userPhone->save();
-		}
-		$this->dropTable('phone_number');
 
 		$this->delete('label', [
 			'id' => 3
@@ -59,16 +61,14 @@ class m171024_071534_user_contact extends Migration
 			$userContact->labelId = $address->getLabel();
 			$userContact->save();	
 			
-			$userAddress = new UserAddress();
-			$userAddress->userContactId = $userContact->id;
-			$userAddress->address = $address->address;
-			$userAddress->cityId = $address->city_id;
-			$userAddress->provinceId = $address->province_id;
-			$userAddress->postalCode = $address->postal_code;
-			$userAddress->countryId = $address->country_id;
-			$userAddress->save();
-			print_r($userAddress->getErrors());die;
-				
+			$address->userAddress->updateAttributes([
+				'userContactId' => $userContact->id,
+				'address' => $address->address,
+				'cityId' => $address->city_id,
+				'provinceId' => $address->province_id,
+				'postalCode' => $address->postal_code,
+				'countryId' => $address->country_id, 
+			]);
 		}
 		$this->dropColumn('user_address', 'user_id');
 		$this->dropColumn('user_address', 'address_id');
@@ -77,7 +77,7 @@ class m171024_071534_user_contact extends Migration
 
     public function down()
     {
-        echo "m171024_071534_user_contact cannot be reverted.\n";
+        echo "m171026_103621_user_contact cannot be reverted.\n";
 
         return false;
     }
