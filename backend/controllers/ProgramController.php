@@ -241,7 +241,8 @@ class ProgramController extends Controller
             ];
         }
         if (!$teacherQualification) {
-            $selectd = current($qualifications)->teacher->id;
+            $selectd = !empty(current($qualifications)->teacher->id) ? 
+                    current($qualifications)->teacher->id : null;
         } else {
             $selectd = $teacherQualification->teacher_id;
         }
