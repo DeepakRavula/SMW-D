@@ -23,10 +23,7 @@ class m171026_103621_user_contact extends Migration
 			$userPhone->number = $phone->number;
 			$userPhone->extension = $phone->extension;
 			$userPhone->userContactId = $userContact->id;
-			if(!$userPhone->save()) {
-				print_r($userContact->id);
-				print_r($userPhone->getErrors());die;
-			}
+			$userPhone->save();
 		}
 		$this->dropTable('phone_number');
 
