@@ -29,85 +29,12 @@ Select2Asset::register($this);
 		'action' => Url::to(['user/create', 'role_name' => $searchModel->role_name]),
 		'id' => 'user-form',
 		]); ?>
-	<fieldset class="col-md-12">    	
-		<legend>Basic</legend>
-		<div class="col-md-4">
+		<div class="row">
 			<?php echo $form->field($model, 'firstname') ?>
-		</div>
-		<div class="col-md-4">
 			<?php echo $form->field($model, 'lastname') ?>		
+			<?= $form->field($emailModels, 'email')->textInput(['maxlength' => true])->label('Email (Work)') ?>
 		</div>	
-		<div class="col-md-4">
-			<?= $form->field($emailModels, 'email')->textInput(['maxlength' => true]) ?>
-		</div>	
-		<div class="col-md-4">
-			<?= $form->field($emailModels, 'labelId')->widget(Select2::classname(), [
-				'data' => ArrayHelper::map(Label::find()
-					->user($model->getModel()->id)
-					->all(), 'id', 'name'),
-				'options' => ['placeholder' => 'Select Label'],
-				'pluginOptions' => [
-					'tags' => true,
-					'allowClear' => true,
-				],
-		])->label('Label');
-		?>
-		</div>	
-	</fieldset>	
-	<fieldset class="col-md-12">    	
-		<legend>Phone</legend>
-<div class="col-md-4">
-	<?= $form->field($phoneNumberModels, "number")->textInput(['maxlength' => true]) ?>
-</div>
-<div class="col-md-4">
-	<?=
-	$form->field($phoneNumberModels, "label_id")->widget(Select2::classname(), [
-		'data' => ArrayHelper::map(Label::find()
-				->user($model->getModel()->id)
-				->all(), 'id', 'name'),
-		'options' => ['placeholder' => 'Select Label'],
-		'pluginOptions' => [
-			'tags' => true,
-			'allowClear' => true,
-		],
-	])->label('Label');
-	?>
-</div>
-<div class="col-md-4">
-<?= $form->field($phoneNumberModels, "extension")->textInput(['maxlength' => true]) ?>
-</div>
-		</fieldset>
-		<fieldset class="col-md-12">    	
-		<legend>Address</legend>
-<div class="col-md-4">
-<?= $form->field($addressModels, "label")->dropDownList(Address::labels(), ['prompt' => 'Select Label']) ?>
-</div>
-<div class="col-md-4">
-<?= $form->field($addressModels, "address")->textInput(['maxlength' => true]) ?>
-</div>
-<div class="col-md-4">
-	<?=
-	$form->field($addressModels, "city_id")->dropDownList(
-		ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'), ['class' => 'city form-control'])
-	?>
-</div>
-<div class="col-md-4">
-	<?=
-	$form->field($addressModels, "country_id")->dropDownList(
-		ArrayHelper::map(Country::find()->all(), 'id', 'name'), ['class' => 'country form-control'])
-	?>
-</div>
-<div class="col-md-4">
-	<?=
-	$form->field($addressModels, "province_id")->dropDownList(
-		ArrayHelper::map(Province::find()->all(), 'id', 'name'), ['class' => 'province form-control'])
-	?>
-</div>
-<div class="col-md-4">
-<?= $form->field($addressModels, "postal_code")->textInput(['maxlength' => true]) ?>
-</div>
-		</fieldset>
-<div class="row col-md-12">
+<div class="row pull-right">
 	<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'pull-right btn btn-info', 'name' => 'signup-button']) ?>
 	<?php
 		echo Html::a('Cancel', '#', ['class' => 'pull-right m-r-10 btn user-add-cancel btn-default']);
