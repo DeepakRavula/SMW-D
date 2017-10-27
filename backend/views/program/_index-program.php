@@ -27,14 +27,22 @@ $this->params['show-all'] = $this->render('_button', [
 			'condensed' => true,
         	'hover' => true,
             'columns' => [
-                'name',
                 [
-                'label' => $rateLabel,
-				'attribute' => 'rate', 
-                'value' => function ($data) {
-                    return !empty($data->rate) ? Yii::$app->formatter->asCurrency($data->rate) : null;
-                },
-            ],
+					'attribute' => 'name', 
+					'contentOptions' => ['style' => 'width:250px;'],
+					'value' => function ($data) {
+						return $data->name;
+					},
+				],
+                [
+					'label' => $rateLabel,
+					'attribute' => 'rate', 
+					'headerOptions' => ['class' => 'text-right'],
+					'contentOptions' => ['class' => 'text-right', 'style' => 'width:100px;'],
+					'value' => function ($data) {
+						return !empty($data->rate) ? $data->rate : null;
+					},
+				],
             ],
         ]); ?>
     <?php Pjax::end(); ?>
