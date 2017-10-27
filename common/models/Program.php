@@ -75,7 +75,6 @@ class Program extends \yii\db\ActiveRecord
     {
         if ($insert) {
             $this->status = self::STATUS_ACTIVE;
-            $this->isDeleted = false;
         }
 
         return parent::beforeSave($insert);
