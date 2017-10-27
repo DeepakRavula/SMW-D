@@ -2,14 +2,6 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use yii\bootstrap\Tabs;
-use kartik\select2\Select2;
-use yii\helpers\ArrayHelper;
-use common\models\Label;
-use common\models\Address;
-use common\models\City;
-use common\models\Country;
-use common\models\Province;
 use kartik\select2\Select2Asset;
 use yii\helpers\Url;
 
@@ -21,9 +13,6 @@ Select2Asset::register($this);
 /* @var $roles yii\rbac\Role[] */
 /* @var $permissions yii\rbac\Permission[] */
 ?>
-<style>
-	
-</style>
 <div class="row user-create-form">
  <?php $form = ActiveForm::begin([
 		'action' => Url::to(['user/create', 'role_name' => $searchModel->role_name]),

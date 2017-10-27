@@ -10,6 +10,8 @@ use common\models\TeacherRoom;
 use yii\bootstrap\Modal;
 use backend\models\UserForm;
 use common\models\discount\CustomerDiscount;
+use common\models\UserEmail;
+use common\models\UserContact;
 use yii\widgets\Pjax;
 use common\models\User;
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
@@ -374,6 +376,16 @@ $this->params['label'] = $this->render('_title', [
 ]); ?>
 <div id="email-content"></div>
 <?php Modal::end(); ?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Add Email</h4>',
+    'id' => 'add-email-modal',
+]); ?>
+<?= $this->render('create/_email', [
+	'emailModel' => new UserEmail(),
+	'userContact' => new UserContact(),
+	'model' => $model,
+]);?>
+<?php Modal::end(); ?>
 
 <script>
 	var contact = {
@@ -402,6 +414,11 @@ $this->params['label'] = $this->render('_title', [
 $(document).ready(function(){
 	$(document).on('click', '.add-new-student', function () {
 		$('#student-create-modal').modal('show');
+        return false;
+	});
+	$(document).on('click', '.add-email', function () {
+		$('#add-email-modal').modal('show');
+        $('#add-email-modal .modal-dialog').css({'width': '400px'});
         return false;
 	});
     $(document).on('click', '.student-profile-cancel-button', function () {
@@ -459,30 +476,30 @@ $(document).ready(function(){
         });
         return false;
     });
-    $(document).on('click', '.user-email-btn', function () {
-		$.ajax({
-            url    : '<?= Url::to(['user/edit-email', 'id' => $model->id]); ?>',
-            type   : 'get',
-            dataType: "json",
-            data   : $(this).serialize(),
-            success: function(response)
-            {
-                if(response.status)
-                {
-                    $('#email-content').html(response.data);
-                    $('#edit-email-modal').modal('show');
-                	$('#edit-email-modal .modal-dialog').css({'width': '800px'});
-                }
-            }
-        });
-        return false;
-    });
+//    $(document).on('click', '.user-email-btn', function () {
+//		$.ajax({
+//            url    : '<?= Url::to(['user/edit-email', 'id' => $model->id]); ?>',
+//            type   : 'get',
+//            dataType: "json",
+//            data   : $(this).serialize(),
+//            success: function(response)
+//            {
+//                if(response.status)
+//                {
+//                    $('#email-content').html(response.data);
+//                    $('#edit-email-modal').modal('show');
+//                	$('#edit-email-modal .modal-dialog').css({'width': '800px'});
+//                }
+//            }
+//        });
+//        return false;
+//    });
 	$(document).on('click', '.address-cancel-btn', function () {
         $('#edit-address-modal').modal('hide');
         return false;
     });
     $(document).on('click', '.email-cancel-btn', function () {
-        $('#edit-email-modal').modal('hide');
+        $('#add-email-modal').modal('hide');
         return false;
     });
 	$(document).on('click', '.user-address-btn', function () {
@@ -614,7 +631,7 @@ $(document).ready(function(){
             success: function(response)
             {
                 if(response.status) {
-        			$('#edit-email-modal').modal('hide');
+        			$('#add-email-modal').modal('hide');
         			$.pjax.reload({container:"#user-email",replace:false,  timeout: 4000});
                     
                 } else {

@@ -753,13 +753,13 @@ class UserController extends Controller
 	{
 		$model = $this->findModel($id);
 		if(!empty($model->primaryEmail)) {
-			$model->primaryEmail->updateAttributes([
+			$model->primaryEmail->userContact->updateAttributes([
 				'isPrimary' => false,
 			]);
 		}
 		$email = UserEmail::findOne(['id' => $emailId]);
-		$email->isPrimary = true;
-		$email->save();
+		$email->userContact->isPrimary = true;
+		$email->userContact->save();
 	}
     /**
      * Deletes an existing User model.

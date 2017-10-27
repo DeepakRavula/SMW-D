@@ -21,7 +21,7 @@ use kartik\sortinput\SortableInput;
 	<?php
 	LteBox::begin([
 		'type' => LteConst::TYPE_DEFAULT,
-		'boxTools' => '<i title="Edit" class="fa fa-pencil user-email-btn"></i>',
+		'boxTools' => '<i title="Add" class="fa fa-plus add-email"></i>',
 		'title' => 'Email',
 		'withBorder' => true,
 	])

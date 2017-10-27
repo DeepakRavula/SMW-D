@@ -29,7 +29,7 @@ class UserContact extends \yii\db\ActiveRecord
     {
         return [
             [['userId', 'isPrimary', 'labelId'], 'required'],
-            [['userId', 'isPrimary', 'labelId'], 'integer'],
+            [['userId','labelId'], 'integer'],
         ];
     }
 
