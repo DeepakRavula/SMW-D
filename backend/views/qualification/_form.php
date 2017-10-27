@@ -49,6 +49,7 @@ use common\models\Qualification;
         <div class="col-md-6">
             <?= $form->field($model, 'program_id')->widget(Select2::classname(), [
 	    		'data' => ArrayHelper::map($privatePrograms, 'id', 'name'),
+				'disabled' => true,
 				'pluginOptions' => [
 					'multiple' => false,
 				],
@@ -58,6 +59,7 @@ use common\models\Qualification;
 	   <div class="col-md-6">
             <?= $form->field($model, 'program_id')->widget(Select2::classname(), [
 	    		'data' => ArrayHelper::map($groupPrograms, 'id', 'name'),
+				'disabled' => true,
 				'pluginOptions' => [
 					'multiple' => false,
 				],
