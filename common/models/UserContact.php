@@ -58,4 +58,8 @@ class UserContact extends \yii\db\ActiveRecord
     {
         return $this->hasMany(UserEmail::className(), ['userContactId' => 'id']);
     }
+	public function getLabel()
+    {
+        return $this->hasOne(Label::className(), ['id' => 'labelId']);
+    }
 }

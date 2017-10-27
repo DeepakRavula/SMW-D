@@ -29,6 +29,7 @@ use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use common\models\Student;
 use common\models\Program;
+use common\models\UserContact;
 use common\models\LocationAvailability;
 use common\models\InvoiceLineItem;
 use common\models\UserEmail;
@@ -521,7 +522,6 @@ class UserController extends Controller
     public function actionCreate()
     {
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
         $model = new UserForm();
         $emailModels = new UserEmail();
         $model->setScenario('create');
@@ -533,9 +533,13 @@ class UserController extends Controller
         }
         $request = Yii::$app->request;
         if ($model->load($request->post()) && $model->save() && $emailModels->load($request->post())) {
-			$emailModels->userId = $model->getModel()->id;
-			$emailModels->isPrimary = true;
-			$emailModels->labelId = Label::LABEL_WORK;
+			$userContact = new UserContact();
+			$userContact->userId = $model->getModel()->id;
+			$userContact->labelId = Label::LABEL_WORK;
+			$userContact->isPrimary = true;
+			$userContact->save();
+
+			$emailModels->userContactId = $userContact->id;
 			$emailModels->save();
 			return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
         }

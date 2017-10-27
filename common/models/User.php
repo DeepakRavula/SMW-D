@@ -217,8 +217,8 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getAddresses()
     {
-        return $this->hasMany(Address::className(), ['id' => 'address_id'])
-          ->viaTable('user_address', ['user_id' => 'id']);
+        return $this->hasMany(UserAddress::className(), ['userContactId' => 'id'])
+			->via('userContact');
     }
 
 	public function getQualifications()
@@ -262,7 +262,8 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getPhoneNumber()
     {
-        return $this->hasOne(PhoneNumber::className(), ['user_id' => 'id']);
+        return $this->hasOne(UserPhone::className(), ['userContactId' => 'id'])
+			->via('userContact');
     }
 
 	public function getCustomerDiscount()

@@ -35,7 +35,7 @@ use kartik\sortinput\SortableInput;
 				'email' => $userEmail,
 			])];
             array_push($emails, $email);
-			if($userEmail->isPrimary) {
+			if($userEmail->userContact->isPrimary) {
 				$value = $emails[$key];
 				unset($emails[$key]);
 				array_unshift($emails, $value);	

@@ -55,4 +55,8 @@ class UserPhone extends \yii\db\ActiveRecord
     {
         return new \common\models\query\UserPhoneQuery(get_called_class());
     }
+	public function getUserContact()
+    {
+        return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);
+    }
 }
