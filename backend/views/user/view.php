@@ -394,12 +394,14 @@ $this->params['label'] = $this->render('_title', [
 			var id = '<?= $model->id;?>';
 			var params = $.param({'id':id, 'emailId' : emailId});
             $.ajax({
-                url: "<?php echo Url::to(['user/update-primary']);?>?" + params,
+                url: "<?php echo Url::to(['user/update-primary-email']);?>?" + params,
                 type: "POST",
                 dataType: "json",
                 success: function (response)
                 {
-                    $.pjax.reload({container : '#user-email', timeout : 4000});
+					if(response) {
+                    	$.pjax.reload({container : '#user-email', timeout : 4000});
+					}
                 }
             });
             return true;
