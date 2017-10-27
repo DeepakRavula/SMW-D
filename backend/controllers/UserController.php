@@ -758,8 +758,8 @@ class UserController extends Controller
 			]);
 		}
 		$email = UserEmail::findOne(['id' => $emailId]);
-		$email->isPrimary = true;
-		if($email->save()) {
+		$email->userContact->isPrimary = true;
+		if($email->userContact->save()) {
 			return [
 				'status' => true,
 			];
