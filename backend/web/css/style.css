@@ -149,3 +149,6 @@ legend
 	margin-right:15px;
 	margin-left:15px;
 }
+.not-primary dt {
+	font-weight:inherit;
+}

@@ -21,7 +21,7 @@ use kartik\sortinput\SortableInput;
 		<?php foreach($model->emails as $key => $userEmail) : ?>		
 		<?php 
             $email = [
-				'content' => $this->render('email/_list', [
+				'content' => $this->render('contact/_email-list', [
 				'email' => $userEmail,
 			])];
             array_push($emails, $email);
@@ -39,7 +39,6 @@ use kartik\sortinput\SortableInput;
 				'sortupdate' => 'contact.updatePrimary',
 			],
 		],
-		'id' => 'user-email',
 		'name'=> 'user_email',
 		'items' => $emails,
 		'options' => [

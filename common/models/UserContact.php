@@ -14,6 +14,9 @@ use Yii;
  */
 class UserContact extends \yii\db\ActiveRecord
 {
+	const TYPE_EMAIL = 1;
+	const TYPE_PHONE = 2;
+	const TYPE_ADDRESS = 3;
     /**
      * @inheritdoc
      */
@@ -29,7 +32,7 @@ class UserContact extends \yii\db\ActiveRecord
     {
         return [
             [['userId', 'isPrimary', 'labelId'], 'required'],
-            [['userId','labelId'], 'integer'],
+            [['userId'], 'integer'],
         ];
     }
 
@@ -54,12 +57,21 @@ class UserContact extends \yii\db\ActiveRecord
     {
         return new \common\models\query\UserContactQuery(get_called_class());
     }
-	public function getEmails()
+	public function getEmail()
     {
-        return $this->hasMany(UserEmail::className(), ['userContactId' => 'id']);
+        return $this->hasOne(UserEmail::className(), ['userContactId' => 'id']);
+    }
+	public function getPhone()
+    {
+        return $this->hasOne(UserPhone::className(), ['userContactId' => 'id']);
+    }
+	public function getAddress()
+    {
+        return $this->hasOne(UserAddress::className(), ['userContactId' => 'id']);
     }
 	public function getLabel()
     {
         return $this->hasOne(Label::className(), ['id' => 'labelId']);
     }
+	
 }

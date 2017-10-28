@@ -43,4 +43,22 @@ class UserAddress extends \yii\db\ActiveRecord
             'address_id' => 'Address ID',
         ];
     }
+	public function getUserContact()
+    {
+        return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);
+    }
+	public function getCity()
+    {
+        return $this->hasOne(City::className(), ['id' => 'cityId']);
+    }
+
+    public function getProvince()
+    {
+        return $this->hasOne(Province::className(), ['id' => 'provinceId']);
+    }
+
+    public function getCountry()
+    {
+        return $this->hasOne(Country::className(), ['id' => 'countryId']);
+    }
 }
