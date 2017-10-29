@@ -765,43 +765,7 @@ class UserController extends Controller
      *
      * @return mixed
      */
-    public function actionDelete($id)
-    {
-        $model = new UserForm();
-        $model->setModel($this->findModel($id));
-
-        $role = $model->roles;
-        if (($role === User::ROLE_TEACHER) && (!Yii::$app->user->can('deleteTeacherProfile'))) {
-            throw new ForbiddenHttpException();
-        }
-        if (($role === User::ROLE_CUSTOMER) && (!Yii::$app->user->can('deleteCustomerProfile'))) {
-            throw new ForbiddenHttpException();
-        }
-        if (($role === User::ROLE_OWNER) && (!Yii::$app->user->can('deleteOwnerProfile'))) {
-            throw new ForbiddenHttpException();
-        }
-        if (($role === User::ROLE_STAFFMEMBER) && (!Yii::$app->user->can('deleteStaffProfile'))) {
-            throw new ForbiddenHttpException();
-        }
-
-        $db = Yii::$app->db;
-        $command = $db->createCommand('DELETE u, up, pn, ua, a,ul,raa  FROM `user` u
-			LEFT JOIN `user_profile` up ON u.`id` = up.`user_id`
-			LEFT JOIN `phone_number` pn ON u.`id` = pn.`user_id`
-			LEFT JOIN `user_address` ua ON u.`id` = ua.`user_id` 
-			LEFT JOIN `user_location` ul ON ul.`user_id` = u.`id`           
-			LEFT JOIN `address` a ON a.`id` = ua.`address_id` 
-			LEFT JOIN `rbac_auth_assignment` raa ON raa.`user_id` = u.`id`  
-			WHERE u.`id` = :id', [':id' => $id]);
-        $command->execute();
-
-        Yii::$app->session->setFlash('alert', [
-            'options' => ['class' => 'alert-success'],
-            'body' => ucwords($model->roles).' profile has been deleted successfully',
-        ]);
-
-        return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
-    }
+  
 
     /**
      * Deletes an existing User model.
@@ -811,25 +775,7 @@ class UserController extends Controller
      *
      * @return mixed
      */
-    public function actionDeleteAllStaffMembers()
-    {
-        $db = Yii::$app->db;
-        $command = $db->createCommand("DELETE u, up, pn, ua, a,raa  FROM `user` u
-			LEFT JOIN `user_profile` up ON u.`id` = up.`user_id`
-			LEFT JOIN `phone_number` pn ON u.`id` = pn.`user_id`
-			LEFT JOIN `user_address` ua ON u.`id` = ua.`user_id`
-			LEFT JOIN `address` a ON a.`id` = ua.`address_id` 
-			LEFT JOIN `rbac_auth_assignment` raa ON raa.`user_id` = u.`id`  
-			WHERE raa.`item_name` = 'staffmember'");
-        $command->execute();
-
-        Yii::$app->session->setFlash('alert', [
-            'options' => ['class' => 'alert-success'],
-            'body' => Yii::t('backend', 'All staffmembers records have been deleted successfully ', []),
-        ]);
-
-        return $this->redirect(['index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER]);
-    }
+ 
 
     /**
      * Finds the User model based on its primary key value.
