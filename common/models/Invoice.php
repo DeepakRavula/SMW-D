@@ -127,22 +127,29 @@ class Invoice extends \yii\db\ActiveRecord
     public static function invoiceCount()
     {
         $locationId = Yii::$app->session->get('location_id');
+         $fromDate = (new \DateTime('first day of this month'))->format('M d,Y');
+         $toDate   = (new \DateTime('last day of this month'))->format('M d,Y');
         return self::find()
-                ->location($locationId)
-                ->notDeleted()
+                ->notDeleted()        
+                ->userLocation($locationId)
                 ->invoice()
+                ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($fromDate))->format('Y-m-d'),
+                    (new \DateTime($toDate))->format('Y-m-d')])
                 ->andWhere(['isCanceled' => false])
+                ->groupBy('invoice.invoice_number')        
                 ->count();
     }
     
     public static function pfiCount()
     {
         $locationId = Yii::$app->session->get('location_id');
-        return self::find()
-                ->location($locationId)
+         return self::find()
                 ->notDeleted()
+                ->userLocation($locationId) 
+                ->unpaid()
                 ->proFormaInvoice()
                 ->andWhere(['isCanceled' => false])
+                ->groupBy('invoice.invoice_number')
                 ->count();
     }
     

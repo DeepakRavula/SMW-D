@@ -190,4 +190,15 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 			$query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
 		}]);
 	}
+    public function userLocation($locationId)
+    {
+        $this->joinWith(['user' => function ($query) use($locationId){
+                       $query->joinWith('userProfile up')
+                             ->joinWith('phoneNumber pn')
+                             ->joinWith(['userLocation' => function($query) use($locationId){
+                                    $query->andWhere(['user_location.location_id' => $locationId]);
+				  }]);
+        }]);    
+        return $this;
+    }
 }

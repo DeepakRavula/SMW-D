@@ -211,10 +211,13 @@ class Student extends \yii\db\ActiveRecord
     }
 	public static function count()
     {
-		$locationId = Yii::$app->session->get('location_id');
-        return self::find()
+          $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+          $locationId = Yii::$app->session->get('location_id');
+            return self::find()
 			->location($locationId)
 			->notDeleted()
+                        ->enrolled($currentDate)
+                        ->active()
 			->count();
     }
 }
