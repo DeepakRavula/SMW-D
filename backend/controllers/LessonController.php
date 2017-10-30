@@ -184,6 +184,7 @@ class LessonController extends Controller
                 $model->courseId          = $course->id;
             }
             $model->status = Lesson::STATUS_SCHEDULED;
+            $model->isConfirmed = true;
             $model->isDeleted = false;
             $model->type = Lesson::TYPE_EXTRA;
             $lessonDate = \DateTime::createFromFormat('Y-m-d g:i A', $model->date);

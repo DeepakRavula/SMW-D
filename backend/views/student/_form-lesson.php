@@ -24,7 +24,7 @@ use kartik\time\TimePicker;
 	'action' => Url::to(['lesson/create', 'studentId' => $studentModel->id]),
 ]); ?>
 <div class="row">
-        <div class="col-md-3 lesson-program">
+        <div class="col-md-6 lesson-program">
             <?php $query = Program::find()
                             ->active()
                             ->privateProgram();
@@ -47,7 +47,7 @@ use kartik\time\TimePicker;
                 'options' => ['placeholder' => 'Select program', 'id' => 'lesson-program']
             ])->label('Program - <a id="show-all">Click to show all</a>'); ?>
         </div>
-    	<div class="col-md-3 lesson-teacher">
+    	<div class="col-md-6 lesson-teacher">
         <?php $locationId = Yii::$app->session->get('location_id');
         $teachers = ArrayHelper::map(
                     User::find()
@@ -71,7 +71,7 @@ use kartik\time\TimePicker;
             ]);
         ?>
         </div>
-		 <div class="col-md-2">
+		 <div class="col-md-4 lesson-duration">
             <?php
             echo $form->field($model, 'duration')->widget(TimePicker::classname(),
                 [
