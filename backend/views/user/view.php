@@ -540,6 +540,25 @@ $(document).ready(function(){
         });
         return false;
     });
+	$(document).on('click', '#user-delete-button', function () {
+		$.ajax({
+            url    : '<?= Url::to(['user/delete', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                	window.location.href = response.url;
+                } else {
+                    $('#lesson-conflict').html(response.message).fadeIn().delay(5000).fadeOut();
+						
+				}
+            }
+        });
+        return false;
+    });
 	$(document).on('beforeSubmit', '#address-form', function () {
         $.ajax({
             url    : $(this).attr('action'),

@@ -32,6 +32,8 @@ use common\models\Program;
 use common\models\UserContact;
 use common\models\LocationAvailability;
 use common\models\InvoiceLineItem;
+use common\models\timelineEvent\TimelineEventLink;
+use yii\helpers\Url;
 use common\models\UserEmail;
 use common\models\Label;
 use yii\web\ForbiddenHttpException;
@@ -55,7 +57,7 @@ class UserController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson', 'update-primary-email'],
+                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson', 'update-primary-email', 'delete'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -647,6 +649,34 @@ class UserController extends Controller
             'data' => $data
         ];
     }
+	public function deleteContact($id) {
+		$model = $this->findModel($id);
+		if(!empty($model->emails)) {
+			foreach($model->emails as $email) {
+				$email->userContact->delete();
+				$email->delete();
+			}
+		}
+		if(!empty($model->phoneNumbers)) {
+			foreach($model->phoneNumbers as $phone) {
+				$phone->userContact->delete();
+				$phone->delete();
+			}
+		}
+		if(!empty($model->addresses)) {
+			foreach($model->addresses as $address) {
+				$address->userContact->delete();
+				$address->delete();
+			}
+		}
+		if(!empty($model->logs)) {
+			foreach($model->logs as $log) {
+				TimelineEventLink::deleteAll(['timelineEventId' => $log->timelineEvent->id]);
+				$log->timelineEvent->delete();
+				$log->delete();
+			}
+		}		
+	}
 	public function actionDelete($id)
     {
         $model = new UserForm();
@@ -665,24 +695,37 @@ class UserController extends Controller
         if (($role === User::ROLE_STAFFMEMBER) && (!Yii::$app->user->can('deleteStaffProfile'))) {
             throw new ForbiddenHttpException();
         }
-		if(empty($model->student)) {
-			$db = Yii::$app->db;
-			$command = $db->createCommand('DELETE u, up, pn, ua, a,ul,raa  FROM `user` u
-				LEFT JOIN `user_profile` up ON u.`id` = up.`user_id`
-				LEFT JOIN `phone_number` pn ON u.`id` = pn.`user_id`
-				LEFT JOIN `user_address` ua ON u.`id` = ua.`user_id` 
-				LEFT JOIN `user_location` ul ON ul.`user_id` = u.`id`           
-				LEFT JOIN `address` a ON a.`id` = ua.`address_id` 
-				LEFT JOIN `rbac_auth_assignment` raa ON raa.`user_id` = u.`id`  
-				WHERE u.`id` = :id', [':id' => $id]);
-			$command->execute();
+		
+		if(in_array($role, [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER, User::ROLE_STAFFMEMBER])) {
+			$this->deleteContact($id);
+			$response = [
+				'status' => true,
+				'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
+			];	
+		}else if($role === User::ROLE_CUSTOMER && empty($model->student)) {
+			$this->deleteContact($id);
+			$response = [
+				'status' => true,
+				'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
+			];
+		} else {
+			$response = [
+				'status' => false,
+				'message' => 'Unable to delete. There are student(s) associated with this ' . $role
+			];
+		}else if($role === User::ROLE_TEACHER && empty($model->qualifications)) {
+			die('dfgd');
+			$this->deleteContact($id);
+			$response = [
+				'status' => true,
+				'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
+			];
+		} else {
+			$response = [
+				'status' => false,
+				'message' => 'Unable to delete. There are qualification(s) associated with this ' . $role
+			];
 		}
-
-        Yii::$app->session->setFlash('alert', [
-            'options' => ['class' => 'alert-success'],
-            'body' => ucwords($model->roles).' profile has been deleted successfully',
-        ]);
-
-        return $this->redirect(['index', 'UserSearch[role_name]' => $model->roles]);
+		return $response;
     }
 }
