@@ -106,8 +106,9 @@ class UserContactController extends Controller
 		$model = User::findOne(['id' => $id]);
 		if((int)$contactType === UserContact::TYPE_EMAIL) {
                     $primaryEmail = UserEmail::find()
-                    ->joinWith(['userContact'])
-                    ->andWhere(['user_contact.isPrimary' => true])
+                     ->joinWith(['userContact' => function($query) {
+                       $query->primary();
+}])
                     ->andWhere(['userId' => $model->id])
                     ->one();
             if(!empty($primaryEmail)) {
@@ -120,8 +121,9 @@ class UserContactController extends Controller
 			];
 		} elseif ((int)$contactType === UserContact::TYPE_PHONE) {
 			$primaryPhone = UserPhone::find()
-                    ->joinWith(['userContact'])
-                    ->andWhere(['user_contact.isPrimary' => true])
+                     ->joinWith(['userContact' => function($query) {
+                       $query->primary();
+}])
                     ->andWhere(['userId' => $model->id])
                     ->one();
 			if(!empty($primaryPhone)) {
@@ -134,8 +136,9 @@ class UserContactController extends Controller
 			];
 		} elseif ((int)$contactType === UserContact::TYPE_ADDRESS) {
 			$primaryAddress = UserAddress::find()
-                    ->joinWith(['userContact'])
-                    ->andWhere(['user_contact.isPrimary' => true])
+                     ->joinWith(['userContact' => function($query) {
+                       $query->primary();
+}])
                     ->andWhere(['userId' => $model->id])
                     ->one();
 			if(!empty($primaryAddress)) {
