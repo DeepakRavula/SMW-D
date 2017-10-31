@@ -105,14 +105,13 @@ class UserContactController extends Controller
 	{
 		$model = User::findOne(['id' => $id]);
 		if((int)$contactType === UserContact::TYPE_EMAIL) {
-			$primaryEmail = UserContact::find()
-				->joinWith('email')
-				->isPrimary()
-                                ->andWhere(['user_contact.id' => 'user_email.userContactId'])
-				->andWhere(['userId' => $model->id])
-				->one();
-			if(!empty($primaryEmail)) {
-				$primaryEmail->updateAttributes([
+                    $primaryEmail = UserEmail::find()
+                    ->joinWith(['userContact'])
+                    ->andWhere(['user_contact.isPrimary' => true])
+                    ->andWhere(['userId' => $model->id])
+                    ->one();
+            if(!empty($primaryEmail)) {
+				$primaryEmail->userContact->updateAttributes([
 					'isPrimary' => false,
 				]);
 			}
@@ -120,14 +119,13 @@ class UserContactController extends Controller
 				'status' => true
 			];
 		} elseif ((int)$contactType === UserContact::TYPE_PHONE) {
-			$primaryPhone = UserContact::find()
-				->joinWith('phone')
-				->isPrimary()
-                                 ->andWhere(['user_contact.id' => 'user_phone.userContactId'])
-				->andWhere(['userId' => $model->id])
-				->one();
+			$primaryPhone = UserPhone::find()
+                    ->joinWith(['userContact'])
+                    ->andWhere(['user_contact.isPrimary' => true])
+                    ->andWhere(['userId' => $model->id])
+                    ->one();
 			if(!empty($primaryPhone)) {
-				$primaryPhone->updateAttributes([
+				$primaryPhone->userContact->updateAttributes([
 					'isPrimary' => false,
 				]);
 			}
@@ -135,14 +133,13 @@ class UserContactController extends Controller
 				'status' => true
 			];
 		} elseif ((int)$contactType === UserContact::TYPE_ADDRESS) {
-			$primaryAddress = UserContact::find()
-				->joinWith('address')
-				->isPrimary()
-                                ->andWhere(['user_contact.id' => 'user_address.userContactId'])
-				->andWhere(['userId' => $model->id])
-				->one();
+			$primaryAddress = UserAddress::find()
+                    ->joinWith(['userContact'])
+                    ->andWhere(['user_contact.isPrimary' => true])
+                    ->andWhere(['userId' => $model->id])
+                    ->one();
 			if(!empty($primaryAddress)) {
-				$primaryAddress->updateAttributes([
+				$primaryAddress->userContact->updateAttributes([
 					'isPrimary' => false,
 				]);
 			}
