@@ -10,6 +10,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
+use yii\filters\ContentNegotiator;
+use yii\web\Response;
 
 /**
  * Release_notesController implements the CRUD actions for ReleaseNotes model.
@@ -25,6 +27,14 @@ class ReleaseNotesController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['create'],
+                'formatParam' => '_format',
+                'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
+                ],
+            ], 
         ];
     }
 
@@ -66,17 +76,24 @@ class ReleaseNotesController extends Controller
      */
     public function actionCreate()
     {
+        
         $model = new ReleaseNotes();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('Y-m-d H:i:s');
         $model->user_id = Yii::$app->user->id;
+         $data  = $this->renderAjax('_form', [
+            'model' => $model,
+        ]); 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+			return [
+				'status' => true,
+			];
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        } 
     }
 
     /**

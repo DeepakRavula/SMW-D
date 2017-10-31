@@ -4,7 +4,6 @@ namespace common\models;
 
 use Yii;
 use common\models\query\ProgramQuery;
-use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "program".
@@ -34,7 +33,7 @@ class Program extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return new ProgramQuery(get_called_class(),parent::find()->where(['program.isDeleted' => false]));
+        return new ProgramQuery(get_called_class(),parent::find());
     }
 
     /**
@@ -68,13 +67,7 @@ class Program extends \yii\db\ActiveRecord
     public function behaviors()
     {
         return [
-            'softDeleteBehavior' => [
-                'class' => SoftDeleteBehavior::className(),
-                'softDeleteAttributeValues' => [
-                    'isDeleted' => true,
-                ],
-                'replaceRegularDelete' => true
-            ],
+            
         ];
     }
    
@@ -82,7 +75,6 @@ class Program extends \yii\db\ActiveRecord
     {
         if ($insert) {
             $this->status = self::STATUS_ACTIVE;
-            $this->isDeleted = false;
         }
 
         return parent::beforeSave($insert);
@@ -127,5 +119,13 @@ class Program extends \yii\db\ActiveRecord
 	{
 		return (int) $this->type === self::TYPE_GROUP_PROGRAM;
 	}
-
+	public function deletable()
+	{
+		$course = Course::find()
+			->innerJoinWith(['program' =>function($query) {
+				$query->andWhere(['programId' => $this->id]);
+			}]) 
+			->exists();
+		return empty($course);
+	}
 }

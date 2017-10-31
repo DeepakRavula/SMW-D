@@ -11,7 +11,9 @@ use dosamigos\ckeditor\CKEditor;
 
 <div class="release-notes-form"> 
 
-    <?php $form = ActiveForm::begin(); ?> 
+    <?php
+$form = ActiveForm::begin(['id' => 'new-release-notes-form']);
+?> 
 
     <?php echo $form->errorSummary($model); ?> 
     
