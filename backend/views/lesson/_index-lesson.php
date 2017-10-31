@@ -10,7 +10,7 @@ use yii\bootstrap\Modal;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Lessons';
+$this->title = 'Private Lessons';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

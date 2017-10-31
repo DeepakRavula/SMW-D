@@ -84,7 +84,7 @@ $logContent = $this->render('log', [
             ],
         ],
         [
-            'label' => 'Logs',
+            'label' => 'History',
             'content' => $logContent,
             'options' => [
                       'id' => 'logs',
