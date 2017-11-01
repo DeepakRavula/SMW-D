@@ -154,3 +154,7 @@ body .user-panel > .info {
     pointer-events:none;
     border:none;
  }
+.course-form {
+	margin-top: -35px;
+    margin-left: 80px;
+}
