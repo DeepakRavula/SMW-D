@@ -18,7 +18,7 @@ use common\models\Invoice;
  	<div class="row">
         <div class="col-xs-3">
     		<?php $invoiceModel->setScenario(Invoice::SCENARIO_DISCOUNT);
-            echo $form->field($invoiceModel, 'discountApplied')->textInput()->hint('%') ?>
+            echo $form->field($invoiceModel, 'discountApplied')->textInput()->label('Apply Discount (%)'); ?>
         </div>
     </div>
 
@@ -46,7 +46,8 @@ $(document).ready(function() {
 		{
 		   if(response.status)
 		   {
-				$.pjax.reload({container : '#line-item-listing', timeout:6000});
+				 $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
+                 $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
 				$('input[name="Payment[amount]"]').val(response.amount);
                 invoice.updateSummarySectionAndStatus();
 				$('#invoice-discount-warning').html(message).fadeIn().delay(8000).fadeOut();

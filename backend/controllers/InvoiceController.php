@@ -28,6 +28,7 @@ use common\models\Note;
 use common\models\PaymentCycle;
 use common\models\InvoiceReverse;
 use common\models\InvoiceLog;
+use common\models\UserEmail;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -45,7 +46,7 @@ class InvoiceController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['delete', 'get-payment-amount','update-customer', 'update-walkin'],
+                'only' => ['delete', 'note', 'get-payment-amount','update-customer', 'update-walkin'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -117,7 +118,7 @@ class InvoiceController extends Controller
 		$request = Yii::$app->request;
         $model = $this->findModel($id);
 		$invoiceRequest = $request->post('Invoice');
-        $customerId = $invoiceRequest['customer_id'];
+        $customerId = $invoiceRequest['user_id'];
 		$model->user_id = $customerId;
 		if($model->save()) {
 			return [
@@ -132,11 +133,12 @@ class InvoiceController extends Controller
         $model = $this->findModel($id);
 		$customer = new User();
 		$userProfile = new UserProfile();
+        $userEmail= new UserEmail();
 		if ($customer->load($request->post()) && $userProfile->load($request->post())) {
 			if ($customer->save()) {
 				$model->user_id = $customer->id;
 				$model->save();
-
+                
 				$userProfile->user_id = $customer->id;
 				$userProfile->save();
 				$auth = Yii::$app->authManager;
@@ -149,7 +151,18 @@ class InvoiceController extends Controller
 			}
 		}
 	}
-    public function actionView($id)
+	public function actionNote($id)
+	{
+        $model = $this->findModel($id);
+		if($model->load(Yii::$app->request->post()) && $model->save()) {
+			return [
+				'status' => true,
+			];
+		}
+		
+	}
+
+	public function actionView($id)
     {
         $model = $this->findModel($id);
         $request = Yii::$app->request;
@@ -207,12 +220,7 @@ class InvoiceController extends Controller
             $customer = User::findOne(['id' => $model->user_id]);
             $userModel = UserProfile::findOne(['user_id' => $customer->id]);
         }
-		if ($model->load(\Yii::$app->getRequest()->getBodyParams(), '') && $model->hasEditable && $model->save()) {
-			$response = Yii::$app->response;
-			$response->format = Response::FORMAT_JSON;
-                return ['output' => $model->notes, 'message' => ''];
-        }
-
+		
         return $this->render('view', [
             'model' => $model,
             'searchModel' => $searchModel,
