@@ -10,10 +10,10 @@ use common\components\gridView\AdminLteGridView;
 /* @var $searchModel backend\models\search\GroupCourseSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Lessons';
+$this->title = 'Group Lessons';
 ?>
-<div>
 	<?= Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['course/create'], ['class' => 'btn btn-primary btn-sm']);?>
+<div class="course-form">
 		<?php
 $form = ActiveForm::begin([
 		'action' => ['index'],

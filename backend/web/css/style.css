@@ -82,6 +82,55 @@ body .user-panel > .info {
 .m-l-10 {
 	margin-left:10px;
 }
+.m-b-10 {
+	margin-bottom:10px;
+}
+.primary-contact {
+	font-size: 15px;
+}
+.sortable {
+	border:0px;
+}
+.sortable li {
+	border:0px;
+	margin:0px;
+	padding:0px;
+}
+.primary dt {
+	font-weight:bold;
+}
+.primary dd {
+	font-weight:bold;
+}
+
+@media (min-width: 768px) {
+  .dl-invoice-summary dt {
+    float: left;
+    width: 230px;
+    overflow: hidden;
+    clear: left;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .dl-invoice-summary dd {
+    margin-left: 290px;
+  }
+  
+}
+.lesson-colorcode{
+    width: 15px; 
+    height:15px;
+    pointer-events:none;
+    border:none;
+ }
+.course-form {
+	margin-top: -35px;
+    margin-left: 80px;
+}
+.not-primary dt {
+	font-weight:inherit;
+}
 .primary-contact {
 	font-size: 15px;
 }

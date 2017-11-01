@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
@@ -9,14 +10,17 @@ use yii\bootstrap\ActiveForm;
 ?>
 <div class="lesson-form">
 <?php $form = ActiveForm::begin([
-	'id' => 'invoice-note-form',
+	'id' => 'invoice-message-form',
+	'action' => Url::to(['invoice/note', 'id' => $model->id])
 ]); ?>
-<div class="row p-20">
-	<div>
-        <?php echo $form->field($model, 'content')->textarea(['rows' => '10'])->label(false)?>
+<div class="row">
+	<div class="col-md-12">
+        <?php echo $form->field($model, 'notes')->textarea(['rows' => 6])->label(false)?>
     </div>
     <div class="form-group pull-right">
-        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+		<?php echo Html::a('Cancel', '', ['class' => 'm-r-10 btn btn-default invoice-note-cancel']) ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'm-r-10 btn btn-info', 'name' => 'signup-button']) ?>
+		
     </div>
 </div>
 <?php ActiveForm::end(); ?>

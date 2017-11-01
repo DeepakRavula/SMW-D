@@ -2,6 +2,9 @@
 use yii\helpers\Url;
 use common\models\Lesson;
 ?>
-<a href="<?= Url::to(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);?>">Lessons</a>  / 
+<?php if($model->course->program->isPrivate()) :?>
+	<a href="<?= Url::to(['index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);?>">Private Lessons</a>
+<?php else :?>
+	<a href="<?= Url::to(['index', 'LessonSearch[type]' => Lesson::TYPE_GROUP_LESSON]);?>">Group Lessons</a>	
+<?php endif; ?>	/ 
 <?= $model->course->program->name;?>
-<span class="m-l-10"><?= $model->course->program->isPrivate() ? '<i title="Private" class="fa fa-lock"></i>' : '<i title="Group" class="fa fa-users"></i>';?></span>

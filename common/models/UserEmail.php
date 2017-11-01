@@ -29,8 +29,8 @@ class UserEmail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['email', 'labelId', 'isPrimary'], 'required'],
-            [['userId', 'isPrimary'], 'integer'],
+            [['email'], 'required'],
+			[['userContactId'], 'integer'],
             [['email'], 'string', 'max' => 255],
         ];
     }
@@ -49,8 +49,9 @@ class UserEmail extends \yii\db\ActiveRecord
         ];
     }
     
-    public function getLabel()
+   
+	public function getUserContact()
     {
-        return $this->hasOne(Label::className(), ['id' => 'labelId']);
+        return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);
     }
 }

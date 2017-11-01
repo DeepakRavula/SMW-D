@@ -30,7 +30,6 @@ class PasswordResetRequestForm extends Model
             ['email', 'email'],
 			['email', 'exist',
                 'targetClass' => '\common\models\UserEmail',
-				'filter' => ['isPrimary' => true],
                 'message' => 'There is no user with such email.',
             ],
         ];
@@ -46,9 +45,11 @@ class PasswordResetRequestForm extends Model
         /* @var $user User */
         $userName = $this->email;
 		$user = User::find()
-			->joinWith(['emails' => function($query) use ($userName) {
-				$query->where(['user_email.email' => $userName, 
-					'user_email.isPrimary' => true]);
+			->joinWith(['userContact' => function($query) use($userName) {
+				$query->joinWith(['email' => function($query) use($userName){
+					$query->andWhere(['email' => $userName]);
+				}])
+				->primary();
 			}])
 			->notDeleted()
 			->one();
