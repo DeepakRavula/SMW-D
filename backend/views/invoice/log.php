@@ -3,7 +3,8 @@
 use yii\grid\GridView;
 use common\models\timelineEvent\TimelineEvent;
 use yii\data\ActiveDataProvider;
-
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -31,6 +32,13 @@ $dataProvider = new ActiveDataProvider([
 ]);
 
 ?>
+<?php
+LteBox::begin([
+	'type' => LteConst::TYPE_DEFAULT,
+	'title' => 'History',
+	'withBorder' => true,
+])
+?>
 <div class="student-index">  
 <?php echo GridView::widget([
 	'dataProvider' => $dataProvider,
@@ -48,3 +56,4 @@ $dataProvider = new ActiveDataProvider([
 	],
 ]); ?>
 </div>
+<?php LteBox::end() ?>

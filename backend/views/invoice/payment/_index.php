@@ -8,6 +8,9 @@ use yii\helpers\Url;
 use yii\grid\GridView;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
+use yii\widgets\Pjax;
 
 ?>
 <?php Modal::begin([
@@ -22,10 +25,23 @@ Modal::end(); ?>
 <?= $this->render('payment-method/_apply-credit', [
 	'invoice' => $model,
 ]);?>
-<div style="margin-bottom: 10px">
-<?= Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i> Add'), ['#'], ['class' => 'btn btn-primary btn-sm m-r-10 add-payment']);?>
-	<?= Html::a(Yii::t('backend', 'Apply Credit'), ['#'], ['class' => 'btn btn-primary btn-sm apply-credit']);?>
+ <?php Pjax::Begin(['id' => 'invoice-view-payment-tab', 'timeout' => 6000]); ?> 
+<?php $boxTools = null;?>
+<?php $boxTools = '<i title="Add" class="fa fa-plus add-payment m-r-10"></i>' ?>
+<?php
+	LteBox::begin([
+		'type' => LteConst::TYPE_DEFAULT,
+		'boxTools' => $boxTools,
+		'title' => 'Payments',
+		'withBorder' => true,
+	])
+	?>
+
+
+<div style="margin-bottom: 10px">   
+<?= Html::a(Yii::t('backend', 'Apply Credit'), ['#'], ['class' => 'btn btn-primary btn-sm apply-credit']);?>
 </div>
+ 
 <?php
 $columns = [
     'date:date',
@@ -51,7 +67,10 @@ $columns = [
 		'id' => 'payment-grid',
         'dataProvider' => $invoicePaymentsDataProvider,
         'columns' => $columns,
-		'summary' => ''
+	'summary' => '',
+        'options' => ['class' => 'col-md-12'],
+	'tableOptions' => ['class' => 'table table-condensed'],
+	'headerRowOptions' => ['class' => 'bg-light-gray'],    
     ]);
     ?>
 <?php \yii\widgets\Pjax::end(); ?>	
@@ -63,13 +82,10 @@ $columns = [
 	}
 ?>
 <?php if ((int) $model->type === Invoice::TYPE_INVOICE):?>
-<div id="invoice-payment-detail" class="pull-right col-md-4  m-b-20">
-<?php echo $this->render('_invoice-summary', [
-        'model' => $model,
-    ]) ?>
-</div>
 <div class="clearfix"></div>
 <?php endif; ?>
+<?php LteBox::end() ?>
+<?php Pjax::end(); ?>
 <script type="text/javascript">
 $(document).ready(function(){
   	$('td').click(function () {
@@ -97,7 +113,7 @@ $(document).ready(function(){
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#invoice-payment-listing', timeout : 4000});
+					$.pjax.reload({container : '#invoice-view-payment-tab', timeout : 6000});
 					invoice.updateSummarySectionAndStatus();
 					$('#credit-modal').modal('hide');
 				}else
