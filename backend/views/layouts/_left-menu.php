@@ -64,12 +64,19 @@ echo Menu::widget([
 			'badge' => User::teacherCount(),
 			'badgeBgClass' => 'label-default'
 		],
-			[
-			'label' => Yii::t('backend', 'Lessons'),
-			'url' => ['/lesson/index'],
+		[
+			'label' => Yii::t('backend', 'Private Lessons'),
+			'url' => ['/lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON],
 			'icon' => '<i class="fa fa-music"></i>',
 			'visible' => Yii::$app->user->can('staffmember'),
-			'active' => (Yii::$app->controller->id === 'lesson') ? true : false,
+			'active' => (isset(Yii::$app->request->queryParams['LessonSearch']['type']) && Yii::$app->request->queryParams['LessonSearch']['type'] == Lesson::TYPE_PRIVATE_LESSON) ? true : false,
+		],
+		[
+			'label' => Yii::t('backend', 'Group Lessons'),
+			'url' => ['/lesson/index', 'LessonSearch[type]' => Lesson::TYPE_GROUP_LESSON],
+			'icon' => '<i class="fa fa-music"></i>',
+			'visible' => Yii::$app->user->can('staffmember'),
+			'active' => (isset(Yii::$app->request->queryParams['LessonSearch']['type']) && Yii::$app->request->queryParams['LessonSearch']['type'] == Lesson::TYPE_GROUP_LESSON) ? true : false,
 		],
 			[
 			'label' => Yii::t('backend', 'Proforma Invoices'),

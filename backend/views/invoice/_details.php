@@ -5,13 +5,18 @@ use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
 use yii\helpers\Html;
 ?>
-<?php
+<?php $boxTools = '<i title="Edit" class="fa fa-pencil add-invoice-note m-r-10"></i>';?> 
+<?php if(empty($model->notes)) :?>
+<?php $boxTools = '<i title="Add" class="fa fa-plus add-invoice-note m-r-10"></i>';?> <?php endif;?> 
+	<?php
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
 	'title' => 'Details',
+	'boxTools' => $boxTools,
 	'withBorder' => true,
 ])
 ?>
+
 <dl class="dl-horizontal">
 	<dt>ID</dt>
 	<dd><?= $model->getInvoiceNumber(); ?></dd>

@@ -183,12 +183,14 @@ use yii\bootstrap\Modal;
                 $('#lesson-calendar').fullCalendar('destroy');
                 $('#new-lesson-modal .modal-dialog').css({'width': '600px'});
                 $('.lesson-program').removeClass('col-md-4');
+                $('.lesson-duration').removeClass('col-md-4');
                 $('.lesson-teacher').removeClass('col-md-4');
                 $('.lesson-date').removeClass('col-md-4');
             } else {
-                $('.lesson-program').addClass('col-md-4');
+                $('.lesson-program').addClass('col-md-3');
                 $('.lesson-teacher').addClass('col-md-4');
-                $('.lesson-date').addClass('col-md-4');
+                $('.lesson-duration').addClass('col-md-2');
+                $('.lesson-date').addClass('col-md-3');
                 $('#new-lesson-modal .modal-dialog').css({'width': '1000px'});
                 $.ajax({
                     url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
@@ -234,6 +236,8 @@ use yii\bootstrap\Modal;
                         var teacher = $('#lesson-teacher').val();
                         if (!$.isEmptyObject(teacher)) {
                             calendar.refresh();
+                        } else {
+                            $('#spinner').hide(); 
                         }
                     }
                 }

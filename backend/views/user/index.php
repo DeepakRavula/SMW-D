@@ -94,25 +94,6 @@ $this->params['show-all'] = $this->render('_button', [
     ]); ?>
 <?php Pjax::end(); ?>
 </div>
-<div class=" m-b-20">
-<?php if ($searchModel->role_name === User::ROLE_CUSTOMER && YII_ENV !== 'prod'):?>
-	<?php echo Html::a(Yii::t('backend', 'Delete All Customers', [
-        'modelClass' => 'User',
-        ]),
-        ['customer/delete-all'],
-        ['class' => 'btn pull-left'])
-    ?>
-<?php endif; ?>
-<?php if ($searchModel->role_name === User::ROLE_STAFFMEMBER && YII_ENV !== 'prod'):?>
-	<?php echo Html::a(Yii::t('backend', 'Delete All Staff Members', [
-        'modelClass' => 'User',
-        ]),
-        ['delete-all-staff-members'],
-        ['class' => 'btn pull-left delete_staff_all_button'])
-    ?>
-<?php endif; ?>    
-<div class="clearfix"></div>
-</div>
 </div>
 <script>
 $(document).ready(function(){

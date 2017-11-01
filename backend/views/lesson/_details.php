@@ -24,19 +24,8 @@ LteBox::begin([
 	<dd><?= !empty($model->classroom->name) ? $model->classroom->name : 'None'; ?></dd>
 	<dt>Status</dt>
 	<dd><?= $model->getStatus(); ?></dd>
-    <div class="row">
-     <div class="col-md-4">
          <dt> Color Code</dt>
-     </div>
-     <div class="col-md-4">  
-    <?php echo ColorInput::widget([
-    'model' => $model, 
-    'name'=>'colorcode',
-    'value' => $model->getColorCode(),   
-    'disabled'=>true,  
-        ]);?>
-    </div>    
-    </div>
+         <dd>  <?=  Html::input('text', 'colorcode','', ['class' => $model->getClass().' lesson-colorcode','style'=>'background:'.$model->getColorCode().';']); ?></dd>
 </dl>
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>

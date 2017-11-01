@@ -82,6 +82,9 @@ body .user-panel > .info {
 .m-l-10 {
 	margin-left:10px;
 }
+.m-b-10 {
+	margin-bottom:10px;
+}
 .primary-contact {
 	font-size: 15px;
 }
@@ -122,32 +125,34 @@ body .user-panel > .info {
 	font-size: 20px;
     margin-top: 6px;
 }
-fieldset 
-{
-	border: 1px solid #ddd !important;
-	margin: 0;
-	xmin-width: 0;
-	padding: 10px;       
-	position: relative;
-	border-radius:4px;
-	padding-left:10px!important;
-	margin-bottom: 10px;
-}	
-
-legend
-{
-	font-size:14px;
-	font-weight:bold;
-	margin-bottom: 0px; 
-	width: 35%; 
-	border: 1px solid #ddd;
-	border-radius: 4px; 
-	padding: 5px 5px 5px 10px; 
-	background-color: #ffffff;
-}
 .user-create-form {
 	margin-right:15px;
 	margin-left:15px;
+}
+@media (min-width: 768px) {
+  .dl-invoice-summary dt {
+    float: left;
+    width: 230px;
+    overflow: hidden;
+    clear: left;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .dl-invoice-summary dd {
+    margin-left: 290px;
+  }
+  
+}
+.lesson-colorcode{
+    width: 15px; 
+    height:15px;
+    pointer-events:none;
+    border:none;
+ }
+.course-form {
+	margin-top: -35px;
+    margin-left: 80px;
 }
 .not-primary dt {
 	font-weight:inherit;

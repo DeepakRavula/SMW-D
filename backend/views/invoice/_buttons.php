@@ -29,7 +29,8 @@ use backend\models\search\InvoiceSearch;
 			'id' => 'revert-button',
 		])
 		?>
-		<?php else : ?>
+    	<?php endif; ?>
+		<?php if(!empty($model->reversedInvoice)) : ?>
 			<span class="return-invoice m-r-10"></span>	
     	<?php endif; ?>
     <?php endif; ?>

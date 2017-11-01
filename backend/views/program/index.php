@@ -9,6 +9,7 @@ use yii\helpers\Url;
 $this->title = 'Programs';
 ?>
 
+<div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="nav-tabs-custom">
 <?php 
 
@@ -80,7 +81,11 @@ $indexProgram = $this->render('_index-program', [
                     if(response.status) {
                         $.pjax.reload({container: '#program-listing', timeout: 6000});
                         $('#program-modal').modal('hide');
-                    }
+                    } else {
+						$('#error-notification').html(response.message).fadeIn().delay(8000).fadeOut();
+                        $('#program-modal').modal('hide');
+					}
+
                 }
             });
             return false;

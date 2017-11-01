@@ -61,7 +61,6 @@ if (!$model->isNewRecord) {
                     <?php
                     if (!$model->isNewRecord) {
                         echo Html::a('Delete', ['delete', 'id' => $model->id], [
-                            'id' => 'holiday-delete-button',
                             'class' => 'btn btn-danger',
                             'data' => [
                                 'confirm' => 'Are you sure you want to delete this item?',

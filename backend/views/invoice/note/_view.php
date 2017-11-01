@@ -3,9 +3,18 @@
 use yii\widgets\ListView;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
+?>
+<?php
+LteBox::begin([
+	'type' => LteConst::TYPE_DEFAULT,
+	'title' => 'Comments',
+	'withBorder' => true,
+])
 ?>
 <?php echo ListView::widget([
 	'dataProvider' =>  $noteDataProvider,
@@ -23,3 +32,4 @@ use yii\helpers\Html;
 	</div>
 </div>
 <?php ActiveForm::end(); ?>
+<?php LteBox::end() ?>

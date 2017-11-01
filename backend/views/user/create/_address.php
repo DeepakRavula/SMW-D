@@ -41,20 +41,20 @@ use yii\helpers\Url;
 			],
 		])->label('Label');
 		?>
-		<?= $form->field($addressModel, "address")->textInput(['maxlength' => true]) ?>
+		<?= $form->field($addressModel, "address")->textInput(['maxlength' => true])->label('Address') ?>
 		<?=
 		$form->field($addressModel, "cityId")->dropDownList(
-			ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'), ['class' => 'city form-control'])
+			ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'), ['class' => 'city form-control'])->label('City')
 		?>
 		<?=
 		$form->field($addressModel, "countryId")->dropDownList(
-			ArrayHelper::map(Country::find()->all(), 'id', 'name'), ['class' => 'country form-control'])
+			ArrayHelper::map(Country::find()->all(), 'id', 'name'), ['class' => 'country form-control'])->label('Country')
 		?>
 		<?=
 		$form->field($addressModel, "provinceId")->dropDownList(
-			ArrayHelper::map(Province::find()->all(), 'id', 'name'), ['class' => 'province form-control'])
+			ArrayHelper::map(Province::find()->all(), 'id', 'name'), ['class' => 'province form-control'])->label('Province')
 		?>
-		<?= $form->field($addressModel, "postalCode")->textInput(['maxlength' => true]) ?>
+		<?= $form->field($addressModel, "postalCode")->textInput(['maxlength' => true])->label('Postal Code') ?>
     </div>
 	<div class="row pull-right">
 		<?php echo Html::a('Cancel', '#', ['class' => 'btn btn-default address-cancel-btn']); ?>
