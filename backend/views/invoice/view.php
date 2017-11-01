@@ -227,6 +227,10 @@ var invoice = {
 		$('#invoice-customer-modal').modal('show');
 		return false;
   	});
+        $(document).on('click', '.invoice-customer-update-cancel-button', function (e) {
+		$('#invoice-customer-modal').modal('hide');
+		return false;
+  	});
 	$(document).on('click', '.invoice-note-cancel', function (e) {
 		$('#message-modal').modal('hide');
 		return false;
