@@ -64,6 +64,10 @@ $this->params['label'] = $this->render('_title', [
 			'openingBalanceCredit' => $openingBalanceCredit
 		]);
 		?>
+            <?=$this->render('customer/_payment-preference', [
+                'model' => $model,
+            ]);
+		?>
     <?php endif;?>
 		
 	</div> 
@@ -82,13 +86,7 @@ $this->params['label'] = $this->render('_title', [
 			'model' => $model,
 		]);
 		?>
-        <?php if ($searchModel->role_name === User::ROLE_CUSTOMER): ?>
-            <?=$this->render('customer/_payment-preference', [
-                'model' => $model,
-            ]);
-		?>
-<?php endif; ?>
-	</div> 
+        	</div> 
 
 </div>
 
@@ -379,6 +377,11 @@ $this->params['label'] = $this->render('_title', [
 <div id="email-content"></div>
 <?php Modal::end(); ?>
 <?php Modal::begin([
+    'header' => '<h4 class="m-0">Edit</h4>',
+    'id' => 'edit-user-email-modal',
+]); ?>
+<?php Modal::end(); ?>
+<?php Modal::begin([
     'header' => '<h4 class="m-0">Add Email</h4>',
     'id' => 'add-email-modal',
 ]); ?>
@@ -457,6 +460,30 @@ $(document).ready(function(){
 		$('#add-email-modal').modal('show');
         $('#add-email-modal .modal-dialog').css({'width': '400px'});
         return false;
+	});
+        $(document).on('click', '.user-email-edit', function () {
+		var contactId = $(this).attr('id') ;
+                alert(contactId);
+                var params='?id='+contactId;
+              $.ajax({
+                url    : '<?= Url::to(['user-contact/edit-email']); ?>'+params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#edit-user-email-modal .modal-body').html(response.data);
+                        $('#edit-user-email-modal').modal('show');
+                    } else {
+                        $('#edit-email-form').yiiActiveForm('updateMessages',
+                                response.errors
+                                , true);
+                    }
+                }
+            });
+            
+		return false;
 	});
 	$(document).on('click', '.add-address-btn', function () {
 		$('#add-address-modal').modal('show');

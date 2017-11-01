@@ -8,7 +8,8 @@ use common\models\UserContact;
 <?= Html::hiddenInput('contactType', UserContact::TYPE_EMAIL, ['class' => 'contactType']);?>
 <div class="<?= !empty($email->userContact->isPrimary) ? 'primary' : 'not-primary'; ?>">
 <dl class="dl-horizontal">
-	<dt><?= $email->userContact->label->name; ?></dt>
-	<dd><?= $email->email; ?></dd>
+    <dt><?= $email->userContact->label->name; ?></dt>
+	<dd><?= $email->email; ?>  <?php echo' <i title="Edit" id="'.$email->userContactId.'" class="fa fa-pencil user-email-edit m-l-10"></i>';?></dd>
+      
 </dl>
 </div>
