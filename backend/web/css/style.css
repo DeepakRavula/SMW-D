@@ -153,6 +153,21 @@ legend
 	margin-right:15px;
 	margin-left:15px;
 }
+@media (min-width: 768px) {
+  .dl-invoice-summary dt {
+    float: left;
+    width: 230px;
+    overflow: hidden;
+    clear: left;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .dl-invoice-summary dd {
+    margin-left: 290px;
+  }
+  
+}
 .lesson-colorcode{
     width: 15px; 
     height:15px;

@@ -28,6 +28,10 @@ $this->params['action-button'] = $this->render('_buttons', [
 <?php endif; ?>
 <div id="customer-update" style="display:none;" class="alert-success alert fade in"></div>
 <div id="invoice-discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
+<div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
+<?php Pjax::begin([
+	'id' => 'invoice-view',
+]);?>
 <div class="row">
 	<div class="col-md-6">
 		<?=
@@ -37,7 +41,6 @@ $this->params['action-button'] = $this->render('_buttons', [
 		?>
 	</div>
     <?php if (!empty($customer)):?>
-	<?php Pjax::Begin(['id' => 'invoice-customer', 'timeout' => 6000]); ?>
 	<div class="col-md-6">
 		<?=
 		$this->render('_customer-details', [
@@ -47,9 +50,10 @@ $this->params['action-button'] = $this->render('_buttons', [
 		]);
 		?>	
 	</div>
-	<?php Pjax::end(); ?>
+	
 	<?php endif; ?>
 </div>
+
 <?php
 $lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->id]);
 if (!empty($lineItem)) {
@@ -83,105 +87,65 @@ Modal::begin([
 ]);
 Modal::end();
 ?>
-<?php if((empty($model->lineItem) || $model->lineItem->isMisc())) : ?>
-<div class="nav-tabs-custom">
-<?php 
 
-$customerContent = $this->render('_customer', [
-    'model' => $model,
-    'customer' => $customer,
-]);
-$guestContent = $this->render('_guest', [
-    'model' => $model,
-    'userModel' => $userModel,
-    'customer' => $customer,
-]);
-?>
-<?php echo Tabs::widget([
-    'items' => [
-        [
-            'label' => 'Customer',
-            'content' => $customerContent,
-            'options' => [
-                    'id' => 'customer-tab',
-                ],
-        ],
-        [
-            'label' => 'Walk-in',
-            'content' => $guestContent,
-            'options' => [
-                    'id' => 'guest-tab',
-                ],
-        ],
-    ],
-]); ?>
+<?php Pjax::end(); ?>
+<div class="row">
+	<div class="col-md-12">  
+		<?=
+		$this->render('line-item/_item', [
+			'model' => $model,
+			'customer' => $customer,
+			'searchModel' => $searchModel,
+			'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+		]);
+		?>   
+	</div>
 </div>
-<?php endif; ?>
-<div class="nav-tabs-custom">
-<?php 
-$payments = Payment::find()
-	->joinWith(['invoicePayments' => function ($query) use($model) {
-		$query->where(['invoice_id' => $model->id]);
-	}])
-	->groupBy('payment.payment_method_id');
-
-$paymentsDataProvider = new ActiveDataProvider([
-	'query' => $payments,
-]);
-$invoiceContent = $this->render('_view-invoice', [
-    'model' => $model,
-    'customer' => $customer,
-    'searchModel' => $searchModel,
-    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-	'paymentsDataProvider' => $paymentsDataProvider
-]);
-$paymentContent = $this->render('payment/_index', [
-    'model' => $model,
-    'invoicePayments' => $invoicePayments,
-    'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
-]);
-$noteContent = $this->render('note/view', [
-	'model' => new Note(),
-	'noteDataProvider' => $noteDataProvider
-]);
-$logContent = $this->render('log', [
-	'model' => $model,
-]);
-
-?>
-<?php echo Tabs::widget([
-    'items' => [
-        [
-            'label' => 'Items',
-            'content' => $invoiceContent,
-            'options' => [
-                    'id' => 'invoice',
-        ],
-        ],
-		 [
-            'label' => 'Payments',
-            'content' => $paymentContent,
-            'options' => [
-                'id' => 'payment',
-        	],
-        ],
-		[
-            'label' => 'Comments',
-            'content' => $noteContent,
-            'options' => [
-                'id' => 'comment',
-        ],
-        ],
-       
-		[
-            'label' => 'History',
-            'content' => $logContent,
-            'options' => [
-                    'id' => 'log',
-        ],
-    ],
-    ],
-]); ?>
+<div class="row">
+	<div class="col-md-8">     
+		<?= $this->render('payment/_index', [
+			'model' => $model,
+			'invoicePayments' => $invoicePayments,
+			'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
+		]);?>
+	</div>
+	<?php Pjax::Begin(['id' => 'invoice-bottom-summary', 'timeout' => 6000]); ?>
+	<div class="col-md-4">
+		<?=
+		$this->render('_view-bottom-summary', [
+			'model' => $model,
+		]);
+		?>	
+	</div>
+    <?php Pjax::end(); ?>
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<?=
+		 $this->render('note/view', [
+			'model' => new Note(),
+			'noteDataProvider' => $noteDataProvider
+		]);
+		?>
+	</div>
+	<?php Pjax::Begin(['id' => 'invoice-user-history', 'timeout' => 6000]); ?>
+	<div class="col-md-6">
+		<?=
+		$this->render('log', [
+			'model' => $model,
+		]);
+		?>	
+	</div>
+	<?php Pjax::end(); ?>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<?=
+		$this->render('note/_reminder', [
+			'model' => $model,
+		]);
+		?>
+	</div>
 </div>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Edit Line Item</h4>',
@@ -190,12 +154,29 @@ $logContent = $this->render('log', [
 
 <div id="line-item-edit-content"></div>
 <?php Modal::end();?>
-
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Message</h4>',
+    'id' => 'message-modal',
+]); ?>
+<?= $this->render('note/_form', [
+	'model' => $model,
+]); ?>
+<?php Modal::end();?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Edit Payment</h4>',
     'id' => 'payment-edit-modal',
 ]); ?>
 <div id="payment-edit-content"></div>
+<?php Modal::end();?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Add Customer</h4>',
+    'id' => 'invoice-customer-modal',
+]); ?>
+<?= $this->render('_customer', [
+    'model' => $model,
+    'customer' => $customer,
+    'userModel' => $userModel,
+]);?>
 <?php Modal::end();?>
 <script>
 var invoice = {
@@ -221,15 +202,33 @@ var invoice = {
         return false;
     }
 }
-var payment = {
-	onEditableGridSuccess :function(event, val, form, data) {
-            invoice.updateSummarySectionAndStatus();
-        }
-}
  $(document).ready(function() {
-	 $(document).on('click', '#invoice-note', function (e) {
-		$('#note-content').val('');
-		$('#invoice-note-modal').modal('show');
+ 	$('#guest').hide();
+	$(document).on('click', '.customer', function (e) {
+		$('.customer').addClass('active');	
+		$('.guest').removeClass('active');
+ 		$('#guest').hide();
+ 		$('#customer').show();
+		return false;
+  	});
+       	$(document).on('click', '.guest', function (e) {
+		$('.guest').addClass('active');	
+		$('.customer').removeClass('active');	
+ 		$('#customer').hide();
+ 		$('#guest').show();
+		return false;
+  	});
+	$(document).on('click', '.add-invoice-note', function (e) {
+		$('#message-modal').modal('show');
+		return false;
+  	});
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+	$(document).on('click', '.add-invoice-customer', function (e) {
+		$('#invoice-customer-modal').modal('show');
+		return false;
+  	});
+	$(document).on('click', '.invoice-note-cancel', function (e) {
+		$('#message-modal').modal('hide');
 		return false;
   	});
 	$(document).on('click', '#invoice-mail-button', function (e) {
@@ -301,6 +300,23 @@ var payment = {
 		});
 		return false;
 	});
+		$(document).on('beforeSubmit', '#invoice-message-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$.pjax.reload({container: '#invoice-view', replace:false, timeout: 6000});
+					$('#message-modal').modal('hide');
+				}
+			}
+		});
+		return false;
+	});
 	$(document).on('beforeSubmit', '#payment-form', function (e) {
 		e.preventDefault();
 		$.ajax({
@@ -313,8 +329,10 @@ var payment = {
 			   if(response.status)
 			   {
 					$('#payment-modal').modal('hide');
-					$.pjax.reload({container: '#invoice-payment-listing', replace:false, timeout: 6000});
-					payment.onEditableGridSuccess();
+					$.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
+                                        $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                                        $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+					//payment.onEditableGridSuccess();
 				}else
 				{
 				 $('#payment-form').yiiActiveForm('updateMessages',
@@ -371,9 +389,11 @@ var payment = {
 			{
 			   if(response.status)
 				{
-					$.pjax.reload({container: '#line-item-listing', replace:false, timeout: 6000});
-					payment.onEditableGridSuccess();
-					invoice.onEditableGridSuccess();
+					$.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+                   $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000}); 
+					//payment.onEditableGridSuccess();
+					//invoice.onEditableGridSuccess();
 					if(response.message) {
 						$('#invoice-discount-warning').html(response.message).fadeIn().delay(8000).fadeOut();
 					}
@@ -395,9 +415,11 @@ var payment = {
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#invoice-payment-listing', timeout:6000});
+					$.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
 					$('input[name="Payment[amount]"]').val(response.amount);
-					payment.onEditableGridSuccess();
+					//payment.onEditableGridSuccess();
                     $('#payment-edit-modal').modal('hide');
 				}else
 				{
@@ -416,9 +438,9 @@ var payment = {
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#invoice-payment-listing', timeout : 6000});
-					payment.onEditableGridSuccess();
-                                        $('#payment-edit-modal').modal('hide');
+					$.pjax.reload({container : '#invoice-view', timeout : 6000});
+					//payment.onEditableGridSuccess();
+                    $('#payment-edit-modal').modal('hide');
 				} 
 			}
 			});
@@ -446,8 +468,9 @@ var payment = {
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#invoice-customer', async : false, timeout : 6000});
+					$.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
+                                        $('#invoice-customer-modal').modal('hide');
 				}else
 				{
 				 $('#customer-form').yiiActiveForm('updateMessages',
@@ -467,8 +490,9 @@ var payment = {
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container : '#invoice-customer', async : false, timeout : 6000});
+					$.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
+                                        $('#invoice-customer-modal').modal('hide');
 				}else
 				{
 				 $('#walkin-customer-form').yiiActiveForm('updateMessages',
