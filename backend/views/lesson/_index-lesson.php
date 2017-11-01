@@ -10,7 +10,7 @@ use yii\bootstrap\Modal;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Lessons';
+$this->title = 'Private Lessons';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -103,6 +103,7 @@ $this->params['breadcrumbs'][] = $this->title;
             array_shift($columns);
         }
      ?>   
+    <div class="box">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'options' => ['id' => 'lesson-index-1'],
@@ -116,6 +117,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => $columns,
     ]); ?>
+	</div>
 	<?php Pjax::end(); ?>
 
 <?php Modal::begin([
