@@ -46,7 +46,7 @@ class PasswordResetRequestForm extends Model
         $userName = $this->email;
 		$user = User::find()
 			->joinWith(['userContact' => function($query) use($userName) {
-				$query->joinWith(['emails' => function($query) use($userName){
+				$query->joinWith(['email' => function($query) use($userName){
 					$query->andWhere(['email' => $userName]);
 				}])
 				->primary();
