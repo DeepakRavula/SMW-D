@@ -9,12 +9,7 @@ use yii\bootstrap\Modal;
 use yii\helpers\ArrayHelper;
 use common\components\gridView\AdminLteGridView;
 use backend\models\UserForm;
-use common\models\Program;
-use common\models\Address;
-use common\models\PhoneNumber;
 use common\models\UserEmail;
-use common\models\Qualification;
-use common\models\Location;
 use kartik\select2\Select2Asset;
 
 Select2Asset::register($this);
@@ -45,13 +40,7 @@ $this->params['show-all'] = $this->render('_button', [
     ]);?>
 <?= $this->render('_form', [
 	'model' => new UserForm(),
-	'roles' => ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name'),
-	'programs' => ArrayHelper::map(Program::find()->active()->all(), 'id', 'name'),
-	'addressModels' => new Address(),
-	'phoneNumberModels' => new PhoneNumber(),
 	'emailModels' => new UserEmail(),
-	'qualificationModels' => new Qualification(),
-	'locations' => ArrayHelper::map(Location::find()->all(), 'id', 'name'),
     'searchModel' => $searchModel,
 ]);?>
 <?php Modal::end();?>

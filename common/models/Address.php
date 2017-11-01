@@ -77,6 +77,11 @@ class Address extends \yii\db\ActiveRecord
           ->viaTable('user_address', ['address_id' => 'id']);
     }
 
+	public function getUserAddress()
+    {
+        return $this->hasOne(UserAddress::className(), ['address_id' => 'id']);
+    }
+	
     public function getCity()
     {
         return $this->hasOne(City::className(), ['id' => 'city_id']);
@@ -98,8 +103,19 @@ class Address extends \yii\db\ActiveRecord
             ->where(['user_address.user_id' => $user_id])
             ->one();
     }
+	public function getLabel()
+	{
+		if($this->label == 'Home') {
+			$labelId = 1;
+		} elseif($this->label == 'Work') {
+			$labelId = 2;
+		} else {
+			$labelId = 3;
+		}
+		return $labelId;
+	}
 
-    public static function labels()
+	public static function labels()
     {
         return [
             self::LABEL_HOME => Yii::t('common', 'Home'),

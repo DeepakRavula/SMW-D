@@ -5,23 +5,13 @@ use yii\widgets\Pjax;
 use kartik\sortinput\SortableInput;
 
 ?>
-<style>
-	.sortable {
-		border:0px;
-	}
-	.sortable li {
-		border:0px;
-		margin:0px;
-		padding:0px;
-	}
-</style>
 <?php Pjax::begin([
 	'id' => 'user-email'
 ]); ?>
 	<?php
 	LteBox::begin([
 		'type' => LteConst::TYPE_DEFAULT,
-		'boxTools' => '<i title="Edit" class="fa fa-pencil user-email-btn"></i>',
+		'boxTools' => '<i title="Add" class="fa fa-plus add-email"></i>',
 		'title' => 'Email',
 		'withBorder' => true,
 	])
@@ -31,11 +21,11 @@ use kartik\sortinput\SortableInput;
 		<?php foreach($model->emails as $key => $userEmail) : ?>		
 		<?php 
             $email = [
-				'content' => $this->render('email/_list', [
+				'content' => $this->render('contact/_email-list', [
 				'email' => $userEmail,
 			])];
             array_push($emails, $email);
-			if($userEmail->isPrimary) {
+			if($userEmail->userContact->isPrimary) {
 				$value = $emails[$key];
 				unset($emails[$key]);
 				array_unshift($emails, $value);	
@@ -49,7 +39,6 @@ use kartik\sortinput\SortableInput;
 				'sortupdate' => 'contact.updatePrimary',
 			],
 		],
-		'id' => 'user-email',
 		'name'=> 'user_email',
 		'items' => $emails,
 		'options' => [

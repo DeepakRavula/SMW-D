@@ -95,7 +95,6 @@ class UserSearch extends User
         $query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
         $query->leftJoin(['user_location ul'], 'ul.user_id = user.id');
         $query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
-        $query->leftJoin(['phone_number pn'], 'pn.user_id = user.id');
 		$dataProvider->setSort([
             'attributes' => [
                 'firstname' => [

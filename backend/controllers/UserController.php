@@ -29,6 +29,7 @@ use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use common\models\Student;
 use common\models\Program;
+use common\models\UserContact;
 use common\models\LocationAvailability;
 use common\models\InvoiceLineItem;
 use common\models\UserEmail;
@@ -54,7 +55,7 @@ class UserController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson'],
+                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson', 'update-primary-email'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -521,7 +522,6 @@ class UserController extends Controller
     public function actionCreate()
     {
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
         $model = new UserForm();
         $emailModels = new UserEmail();
         $model->setScenario('create');
@@ -533,9 +533,13 @@ class UserController extends Controller
         }
         $request = Yii::$app->request;
         if ($model->load($request->post()) && $model->save() && $emailModels->load($request->post())) {
-			$emailModels->userId = $model->getModel()->id;
-			$emailModels->isPrimary = true;
-			$emailModels->labelId = Label::LABEL_WORK;
+			$userContact = new UserContact();
+			$userContact->userId = $model->getModel()->id;
+			$userContact->labelId = Label::LABEL_WORK;
+			$userContact->isPrimary = true;
+			$userContact->save();
+
+			$emailModels->userContactId = $userContact->id;
 			$emailModels->save();
 			return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
         }
@@ -561,172 +565,6 @@ class UserController extends Controller
 		}
 	}
         
-    public function actionEditEmail($id)
-    {
-        $request = Yii::$app->request;
-        $model = new UserForm();
-        $model->setModel($this->findModel($id));
-        $emailModels = $model->emails;
-        $data = $this->renderAjax('update/_email', [
-            'model' => $model,
-            'emailModels' => $emailModels,
-        ]);
-
-        if ($request->isPost) {
-            $oldEmailIDs = ArrayHelper::map($emailModels, 'id', 'id');
-            $emailModels = UserForm::createMultiple(UserEmail::classname(), $emailModels);
-            Model::loadMultiple($emailModels, $request->post());
-            $deletedEmailIDs = array_diff($oldEmailIDs, array_filter(ArrayHelper::map($emailModels, 'id', 'id')));
-
-            $valid = Model::validateMultiple($emailModels);
-            if ($valid) {
-                $transaction = \Yii::$app->db->beginTransaction();
-                try {
-                    if (!empty($deletedEmailIDs)) {
-                        UserEmail::deleteAll(['id' => $deletedEmailIDs]);
-                    }
-                    foreach ($emailModels as $emailModel) {
-                        if (!is_numeric($emailModel->labelId)) {
-                            $label = new Label();
-                            $label->name = $emailModel->labelId;
-                            $label->userAdded = $model->getModel()->id;
-                            if (!($flag = $label->save(false))) {
-                                
-                                $transaction->rollBack();
-                                break;
-                            }
-                            $emailModel->labelId = $label->id;
-                        }
-                        $emailModel->userId = $id;
-                        if (!$emailModel->save(false)) {
-                            $transaction->rollBack();
-                            break;
-                        }
-                    }
-
-                    $transaction->commit();
-                    return [
-                        'status' => true,
-                    ]; 
-                } catch (Exception $e) {
-                    $transaction->rollBack();
-                }
-            } 
-        } else {
-            return [
-                'status' => true,
-                'data' => $data,
-            ];
-        }
-    }
-        
-	public function actionEditPhone($id)
-	{
-		$request = Yii::$app->request;
-		$model = new UserForm();
-        $model->setModel($this->findModel($id));	
-        $phoneNumberModels = $model->phoneNumbers;
-		$data = $this->renderAjax('update/_phone', [
-			'model' => $model,
-			'phoneNumberModels' => $phoneNumberModels,
-		]);
-		
-        $response = Yii::$app->response;
-        if ($request->isPost) {
-            $oldPhoneIDs = ArrayHelper::map($phoneNumberModels, 'id', 'id');
-            $phoneNumberModels = UserForm::createMultiple(PhoneNumber::classname(), $phoneNumberModels);
-            Model::loadMultiple($phoneNumberModels, $request->post());
-            $deletedPhoneIDs = array_diff($oldPhoneIDs, array_filter(ArrayHelper::map($phoneNumberModels, 'id', 'id')));
-
-            $valid = Model::validateMultiple($phoneNumberModels);
-            if ($valid) {
-                $transaction = \Yii::$app->db->beginTransaction();
-                try {
-					if (!empty($deletedPhoneIDs)) {
-						PhoneNumber::deleteAll(['id' => $deletedPhoneIDs]);
-					}
-					foreach ($phoneNumberModels as $phoneNumberModel) {
-                                            if (!is_numeric($phoneNumberModel->label_id)) {
-                                                $label = new Label();
-                                                $label->name = $phoneNumberModel->label_id;
-                                                $label->userAdded = $model->getModel()->id;
-                                                if (!($flag = $label->save(false))) {
-
-                                                    $transaction->rollBack();
-                                                    break;
-                                                }
-                                                $phoneNumberModel->label_id = $label->id;
-                                            }
-						$phoneNumberModel->user_id = $id;
-						if (!$phoneNumberModel->save(false)) {
-							$transaction->rollBack();
-							break;
-						}
-					}
-                    
-					$transaction->commit();
-					return [
-						'status' => true,
-					]; 
-                } catch (Exception $e) {
-                    $transaction->rollBack();
-                }
-            } 
-        } else {
-			return [
-				'status' => true,
-				'data' => $data,
-			];
-		}
-	}
-	public function actionEditAddress($id)
-	{
-		$request = Yii::$app->request;
-		$model = new UserForm();
-        $model->setModel($this->findModel($id));	
-        $addressModels = $model->addresses;
-		$data = $this->renderAjax('update/_address', [
-			'model' => $model,
-			'addressModels' => $addressModels,
-		]);
-		
-        if ($request->isPost) {
-            $oldAddressIDs = ArrayHelper::map($addressModels, 'id', 'id');
-            $addressModels = UserForm::createMultiple(Address::classname(), $addressModels);
-            Model::loadMultiple($addressModels, $request->post());
-            $deletedAddressIDs = array_diff($oldAddressIDs, array_filter(ArrayHelper::map($addressModels, 'id', 'id')));
-
-            $valid = Model::validateMultiple($addressModels);
-            if ($valid) {
-                $transaction = \Yii::$app->db->beginTransaction();
-                try {
-					if (!empty($deletedAddressIDs)) {
-						Address::deleteAll(['id' => $deletedAddressIDs]);
-					}
-					foreach ($addressModels as $addressModel) {
-						if (!$addressModel->save(false)) {
-							$transaction->rollBack();
-							break;
-						}
-						$model->getModel()->link('addresses', $addressModel);
-					}
-                    
-					$transaction->commit();
-					return [
-						'status' => true,
-					]; 
-                } catch (Exception $e) {
-                    $transaction->rollBack();
-                }
-            } 
-        } else {
-			return [
-				'status' => true,
-				'data' => $data,
-			];
-		}
-	}
-
     /**
      * Updates an existing User model.
      *
@@ -745,18 +583,7 @@ class UserController extends Controller
                     'model' => $model,
         ]);
     }
-	public function actionUpdatePrimary($id, $emailId)
-	{
-		$model = $this->findModel($id);
-		if(!empty($model->primaryEmail)) {
-			$model->primaryEmail->updateAttributes([
-				'isPrimary' => false,
-			]);
-		}
-		$email = UserEmail::findOne(['id' => $emailId]);
-		$email->isPrimary = true;
-		$email->save();
-	}
+	
     /**
      * Deletes an existing User model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
