@@ -286,7 +286,7 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->lineItem->isExtraLesson();
     }
 
-    public function isProformaPaymentFrequencyApplicabe()
+    public function isProformaPaymentFrequencyApplicable()
     {
         return $this->isProFormaInvoice() && !$this->isExtraLessonProformaInvoice()
             && !$this->proformaPaymentFrequency && $this->lineItem;
@@ -295,7 +295,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
-            if ($this->isProformaPaymentFrequencyApplicabe()) {
+            if ($this->isProformaPaymentFrequencyApplicable()) {
                 $this->createProformaPaymentFrequency();
             }
             $oldTotal = clone $this;

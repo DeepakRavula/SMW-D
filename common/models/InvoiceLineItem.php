@@ -344,7 +344,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function isExtraLesson()
     {
-        return $this->item_type_id === ItemType::TYPE_EXTRA_LESSON;
+        return (int) $this->item_type_id === (int) ItemType::TYPE_EXTRA_LESSON;
     }
 
     public function getLessonCreditUnit($splitId)
