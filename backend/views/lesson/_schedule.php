@@ -12,7 +12,7 @@ if ($model->isScheduled()) {
     $toolBoxHtml .= '&nbsp;&nbsp;&nbsp;';
     $toolBoxHtml .= '<div class="dropdown">
                         <i class="fa fa-angle-down fa-lg"></i>
-                        <div class="dropdown-content">
+                        <div class="dropdown-content dropdown-menu-right">
                             <a id="lesson-unschedule" href="#">Unschedule Lesson</a>
                         </div>
                     </div>';
