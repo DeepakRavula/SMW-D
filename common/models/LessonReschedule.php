@@ -52,14 +52,18 @@ class LessonReschedule extends \yii\db\ActiveRecord
     {
         if ($insert) {
             $oldLesson = Lesson::findOne($this->lessonId);
-            if (!empty($oldLesson->invoice->lineItem)) {
-                $oldLesson->invoice->lineItem->item_id = $this->rescheduledLessonId;
-                $oldLesson->invoice->lineItem->save();
-            }
             if (!empty($this->paymentCycleLesson)) {
                 $this->paymentCycleLesson->lessonId = $this->rescheduledLessonId;
                 $this->paymentCycleLesson->save();
             }
+            if (!empty($oldLesson->invoiceLineItem)) {
+                $oldLesson->invoiceLineItem->item_id = $this->rescheduledLessonId;
+                $oldLesson->invoiceLineItem->save();
+            } else if (!empty($oldLesson->proFormaLineItem)) {
+                $oldLesson->proFormaLineItem->item_id = $this->paymentCycleLesson->id;
+                $oldLesson->proFormaLineItem->save();
+            }
+            
         }
 
         return parent::afterSave($insert, $changedAttributes);

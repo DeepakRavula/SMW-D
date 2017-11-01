@@ -117,7 +117,8 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ->notDeleted()
             ->location($locationId)
             ->andWhere(['courseId' => $this->enrolment->course->id])
-            ->andWhere(['status' => Lesson::STATUS_SCHEDULED])
+            ->notRescheduled()
+            ->andWhere(['OR', ['status' => Lesson::STATUS_SCHEDULED], ['status' => Lesson::STATUS_UNSCHEDULED]])
             ->between($startDate, $endDate)
             ->all();
         foreach ($lessons as $lesson) {
@@ -143,16 +144,9 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $invoice->createdUserId = Yii::$app->user->id;
         $invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
-        $startDate = \DateTime::createFromFormat('Y-m-d', $this->startDate);
-        $endDate   = \DateTime::createFromFormat('Y-m-d', $this->endDate);
         $lessons = Lesson::find()
-            ->location($locationId)
-            ->unInvoicedProForma()
-            ->andWhere(['courseId' => $this->enrolment->courseId])
-            ->between($startDate, $endDate)
-            ->andWhere(['OR', 'lesson.status' => Lesson::STATUS_SCHEDULED,
-                'lesson.status' => Lesson::STATUS_UNSCHEDULED])
-            ->andWhere(['NOT', ['lesson.type' => Lesson::TYPE_EXTRA]])
+            ->joinWith('paymentCycleLesson')
+            ->andWhere(['payment_cycle_lesson.paymentCycleId' => $this->id])
             ->all();
         foreach ($lessons as $lesson) {
             $lesson->studentFullName = $this->enrolment->student->fullName;
