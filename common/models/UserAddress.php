@@ -25,8 +25,10 @@ class UserAddress extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'address_id'], 'required'],
-            [['user_id', 'address_id'], 'integer'],
+			[['address', 'cityId', 'provinceId', 'countryId'], 'required'],
+            [['userContactId', 'cityId', 'provinceId', 'countryId'], 'integer'],
+            [['address'], 'string', 'max' => 64],
+            [['postalCode'], 'string', 'max' => 16],
         ];
     }
 
@@ -40,5 +42,23 @@ class UserAddress extends \yii\db\ActiveRecord
             'user_id' => 'User ID',
             'address_id' => 'Address ID',
         ];
+    }
+	public function getUserContact()
+    {
+        return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);
+    }
+	public function getCity()
+    {
+        return $this->hasOne(City::className(), ['id' => 'cityId']);
+    }
+
+    public function getProvince()
+    {
+        return $this->hasOne(Province::className(), ['id' => 'provinceId']);
+    }
+
+    public function getCountry()
+    {
+        return $this->hasOne(Country::className(), ['id' => 'countryId']);
     }
 }

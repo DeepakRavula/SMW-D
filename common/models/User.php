@@ -217,8 +217,8 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getAddresses()
     {
-        return $this->hasMany(Address::className(), ['id' => 'address_id'])
-          ->viaTable('user_address', ['user_id' => 'id']);
+        return $this->hasMany(UserAddress::className(), ['userContactId' => 'id'])
+			->via('userContact');
     }
 
 	public function getQualifications()
@@ -262,7 +262,8 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getPhoneNumber()
     {
-        return $this->hasOne(PhoneNumber::className(), ['user_id' => 'id']);
+        return $this->hasOne(UserPhone::className(), ['userContactId' => 'id'])
+			->via('userContact');
     }
 
 	public function getCustomerDiscount()
@@ -274,12 +275,17 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getPhoneNumbers()
     {
-        return $this->hasMany(PhoneNumber::className(), ['user_id' => 'id']);
+        return $this->hasMany(UserPhone::className(), ['userContactId' => 'id'])
+			->via('userContact');
     }
-    
+   	public function getUserContact()
+    {
+        return $this->hasMany(UserContact::className(), ['userId' => 'id']);
+    } 
     public function getEmails()
     {
-        return $this->hasMany(UserEmail::className(), ['userId' => 'id']);
+        return $this->hasMany(UserEmail::className(), ['userContactId' => 'id'])
+			->via('userContact');
     }
 
 	public function getPhone()
@@ -306,12 +312,7 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(PhoneNumber::className(), ['user_id' => 'id'])
                  ->onCondition(['is_primary' => true]);
     }
-	public function getPrimaryEmail()
-    {
-        return $this->hasOne(UserEmail::className(), ['userId' => 'id'])
-                 ->onCondition(['isPrimary' => true]);
-    }
-
+	
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -335,12 +336,14 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(Student::className(), ['customer_id' => 'id']);
     }
-    
+	
     public function getEmail()
     {
         $email = UserEmail::find()
-                ->where(['userId' => $this->id, 'isPrimary' => true])
-                ->one();
+			->joinWith(['userContact' => function($query) {
+                $query->andWhere(['userId' => $this->id, 'isPrimary' => true]);
+			}])
+            ->one();
         return !empty($email) ? $email->email : null;
     }
 

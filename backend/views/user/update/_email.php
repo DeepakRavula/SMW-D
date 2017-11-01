@@ -61,7 +61,7 @@ $this->registerJs($js);
 				<div class="item-block email-item"><!-- widgetBody -->
 					<h4>
 						<span class="panel-title-email m-r-10 pull-left">Email : <?= ($index + 1) ?></span>
-						<em class="pull-left primary-contact"><?= $form->field($emailModel, "[{$index}]isPrimary")->checkbox() ?></em>
+						<em class="pull-left primary-contact"><?= $form->field($emailModel->userContact, "[{$index}]isPrimary")->checkbox() ?></em>
 						<button type="button" class="pull-right email-remove-item btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
 						<div class="clearfix"></div>
 					</h4>
@@ -71,14 +71,13 @@ $this->registerJs($js);
                         echo Html::activeHiddenInput($emailModel, "[{$index}]id");
                     }
                     ?>
-
 	                <div class="row">
                         <div class="clearfix"></div>
 	                    <div class="col-sm-4">
 	<?= $form->field($emailModel, "[{$index}]email")->textInput(['maxlength' => true]) ?>
 	                    </div>
 	                    <div class="col-sm-4">
-	<?= $form->field($emailModel, "[{$index}]labelId")->widget(Select2::classname(), [
+	<?= $form->field($emailModel->userContact, "[{$index}]labelId")->widget(Select2::classname(), [
                                     'data' => ArrayHelper::map(Label::find()
 					->user($model->getModel()->id)
 					->all(), 'id', 'name'),

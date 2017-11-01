@@ -21,6 +21,7 @@ use kartik\switchinput\SwitchInput;
 			'handleWidth' => 61,
 			'onText' => 'Present',
 			'offText' => 'Absent',
+			'size' => 'mini'
 		],
 	])->label(false);
 	?>
