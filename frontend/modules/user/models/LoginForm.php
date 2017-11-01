@@ -99,7 +99,7 @@ class LoginForm extends Model
 					$query->joinWith(['emails' => function($query) use($userName){
 						$query->andWhere(['email' => $userName]);
 					}])
-					->isPrimary();
+					->primary();
 				}])
                 ->notDeleted()
                 ->one();
