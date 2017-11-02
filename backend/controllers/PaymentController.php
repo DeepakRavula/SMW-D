@@ -293,10 +293,13 @@ class PaymentController extends Controller
     public function actionEditOtherPayments($model, $newAmount)
     {
         $model->amount = $newAmount;
+        $invoiceModel = $model->invoice;
+        $invoiceModel->balance=$invoiceModel->total-abs($newAmount);
+        $invoiceModel->save();
         $model->save();
         $result = [
             'status' => true,
-			'amount' => $model->invoiceBalance,
+            'amount' => $model->invoiceBalance,
         ];
 
         return $result;
@@ -314,6 +317,8 @@ class PaymentController extends Controller
             $lineItemModel->amount = abs($newAmount);
             $invoiceModel->subTotal = $lineItemModel->amount;
             $invoiceModel->total    = $invoiceModel->subTotal + $invoiceModel->tax;
+            $invoiceTotal= $invoiceModel->subTotal + $invoiceModel->tax;
+            $invoiceModel->balance=$invoiceTotal-abs($newAmount);
 
         }
         $lineItemModel->save();
@@ -321,7 +326,7 @@ class PaymentController extends Controller
 
         $result = [
             'status' => true,
-			'amount' => $model->invoiceBalance,
+            'amount' => $model->invoiceBalance,
         ];
 
         return $result;
@@ -333,12 +338,13 @@ class PaymentController extends Controller
         $model->lastAmount = $model->amount;
         $model->amount = $newAmount;
         $model->differnce = $model->amount - $model->lastAmount;
+        $model->invoiceBalance= $model->invoiceBalance + $model->difference;
         if ($model->validate()) {
             $model->save();
 
             $result = [
             	'status' => true,
-				'amount' => $model->invoiceBalance,
+		'amount' => $model->invoiceBalance,
             ];
         } else {
             $errors = ActiveForm::validate($model);
@@ -357,6 +363,7 @@ class PaymentController extends Controller
         $model->lastAmount = $model->amount;
         $model->amount = $newAmount;
         $model->differnce = $model->amount - $model->lastAmount;
+        $model->invoiceBalance= $model->invoiceBalance + $model->difference;
         if ($model->validate()) {
             $model->save();
 

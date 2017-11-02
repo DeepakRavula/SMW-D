@@ -203,6 +203,7 @@ class InvoiceLineItemController extends Controller
                     }
                 }
                 $invoiceModel->save();
+                $invoiceModel->updateInvoiceAttributes();
                 $response = [
                     'status' => true,
                     'invoiceStatus' => $invoiceModel->getStatus(),

@@ -39,25 +39,27 @@ $this->params['action-button'] = $this->render('_buttons', [
 			'model' => $model,
 		]);
 		?>
-		<?=
-		$this->render('_schedule', [
-			'model' => $model,
-		]);
-		?>
-	</div>
-	<div class="col-md-6">
-            <?php if (!$model->isGroup()): ?>
+		<?php if (!$model->isGroup()): ?>
 		<?=
 		$this->render('_student', [
 			'model' => $model,
 		]);
 		?>
-            <?php endif; ?>
+		<?php endif;?>
+	</div>
+	<div class="col-md-6">
+		<?=
+		$this->render('_schedule', [
+			'model' => $model,
+		]);
+		?>
+    <?php if (!$model->isGroup()): ?>
 		<?=
 		$this->render('_attendance', [
 			'model' => $model,
 		]);
 		?>	
+    <?php endif; ?>
 	</div>
 </div>
 <div class="row">
@@ -146,6 +148,7 @@ echo $this->render('/mail/_form', [
 	'subject' => $model->course->program->name . ' lesson reschedule',
 	'content' => $content,
 	'id' => null,
+        'userModel'=>$model->enrolment->student->customer,
 ]);
 Modal::end();
 ?>

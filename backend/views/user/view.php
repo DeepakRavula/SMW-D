@@ -456,11 +456,15 @@ $(document).ready(function(){
         return false;
 	});
 	$(document).on('click', '.add-email', function () {
-		$('#add-email-modal').modal('show');
+                $('#useraddress-address').val('');
+                $("#usercontact-labelid").val('');
+                $('#add-email-modal').modal('show');
         $('#add-email-modal .modal-dialog').css({'width': '400px'});
         return false;
 	});
 	$(document).on('click', '.add-address-btn', function () {
+                $('#userphone-number').val('');
+                $("#userphone-extension").val('');
 		$('#add-address-modal').modal('show');
        $('#add-address-modal .modal-dialog').css({'width': '500px'});
         return false;
@@ -470,6 +474,8 @@ $(document).ready(function(){
         return false;
 	});
 	$(document).on('click', '.add-phone-btn', function () {
+                 $('#userphone-number').val('');
+                $("#userphone-extension").val('');
 		$('#add-phone-modal').modal('show');
         $('#add-phone-modal .modal-dialog').css({'width': '400px'});
         return false;

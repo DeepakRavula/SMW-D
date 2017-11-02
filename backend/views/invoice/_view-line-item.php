@@ -2,6 +2,7 @@
 use common\models\InvoiceLineItem;
 use common\models\Qualification;
 use yii\grid\GridView;
+use yii\widgets\Pjax;
 ?>
 <?php if ($searchModel->toggleAdditionalColumns) {
     $columns = [
@@ -96,15 +97,16 @@ use yii\grid\GridView;
         ],
     ];
 }?>
-<?php yii\widgets\Pjax::begin([
-		'id' => 'line-item-listing',
-		'timeout' => 6000,
-	]) ?>
+<?php Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
 	<?= GridView::widget([
-		'id' => 'line-item-grid',
+	'id' => 'line-item-grid',
         'dataProvider' => $invoiceLineItemsDataProvider,
         'columns' => $columns,
-		'summary' => ''
+        'summary' => '',
+        'options' => ['class' => 'col-md-12'],
+	'tableOptions' => ['class' => 'table table-condensed'],
+	'headerRowOptions' => ['class' => 'bg-light-gray'],
+    
     ]);
     ?>
-<?php \yii\widgets\Pjax::end(); ?>	
+ <?php Pjax::end(); ?>

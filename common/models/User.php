@@ -606,13 +606,19 @@ class User extends ActiveRecord implements IdentityInterface
     }
 	public static function customerCount()
     {
-		return self::find()
+	 $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+                
+            return self::find()
 			->joinWith('userLocation ul')
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'customer'])
 			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
                         ->notDeleted()
+                        ->joinWith(['student' => function ($query) use ($currentDate) {
+                            $query->enrolled($currentDate);
+                            }])
 			->active()
+                        ->groupBy('user.id')
 			->count();
     }
 	
@@ -623,8 +629,12 @@ class User extends ActiveRecord implements IdentityInterface
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'teacher'])
 			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                        ->joinWith(['userLocation' => function ($query) {
+                            $query->joinWith('teacherAvailability');
+                        }])
 			->active()
                         ->notDeleted()
+                        ->groupBy('user.id')        
 			->count();
     }
 	public static function staffCount()

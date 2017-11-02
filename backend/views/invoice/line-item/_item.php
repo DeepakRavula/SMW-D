@@ -5,22 +5,35 @@ use yii\helpers\Url;
 use common\models\User;
 use yii\widgets\ActiveForm;
 use kartik\editable\Editable;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
+use yii\bootstrap\Modal;
+use common\models\InvoiceLineItem;
+use yii\widgets\Pjax;
 
 ?>
-<div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
-<div style="margin-bottom: 10px">
-    <?php yii\widgets\Pjax::begin([
-		'id' => 'invoice-button-listing',
-		'timeout' => 6000,
-	]) ?>
-	<?php if((empty($model->lineItem) || $model->lineItem->isOtherLineItems()) && $model->isInvoice()) :?>
-	<?= Html::a('Add Item', '#', ['class' => 'add-new-misc btn btn-primary btn-sm m-r-10']) ?>
-<?php endif; ?>
+<?php echo $this->render('/invoice/_line-item', [
+        'invoiceModel' => $model,
+    ]) ?>
+<?php Pjax::Begin(['id' => 'invoice-view-tab-item', 'timeout' => 6000]); ?>
+<?php $boxTools = null;?>
 	<?php if(!empty($model->lineItem) && ($model->lineItem->isOtherLineItems())) :?>
-	 <?= Html::a('Apply Discount', '#', ['class' => 'apply-discount btn btn-primary btn-sm']) ?>
+	 <?php $boxTools = '<i title="Discount" class = "fa fa-percent apply-discount m-r-10"></i>' ?>
     <?php endif; ?>
-    
-	  <?php $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+<?php if((empty($model->lineItem) || $model->lineItem->isOtherLineItems()) && $model->isInvoice()) :?>
+<?php $boxTools = $boxTools .'<i title="Add" class="fa fa-plus add-new-misc m-r-10"></i>' ?>
+<?php endif; ?>
+<?php
+	LteBox::begin([
+		'type' => LteConst::TYPE_DEFAULT,
+		'boxTools' => $boxTools,
+		'title' => 'Items',
+		'withBorder' => true,
+	])
+	?>
+
+<div style="margin-bottom: 10px">
+  <?php $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
     $lastRole = end($roles);
     if(!empty($model->lineItem) && ($lastRole->name === User::ROLE_ADMINISTRATOR ||
         $lastRole->name === User::ROLE_OWNER)) :?>
@@ -29,62 +42,15 @@ use kartik\editable\Editable;
         <a id="hide-column" style="display:none"><i class="fa fa-caret-down fa-2x"></i></a>
     </div>
     <?php endif; ?>
-    <?php \yii\widgets\Pjax::end(); ?>	
-	<?php echo $this->render('_line-item', [
-        'invoiceModel' => $model,
-    ]) ?>
-</div>
-<div>
-	<?php echo $this->render('_view-line-item', [
+	<?php echo $this->render('/invoice/_view-line-item', [
 		'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 		'searchModel' => $searchModel,
 	]) ?>	
 </div>
-    <div class="row">
-        <!-- /.col -->
-        <div class="col-xs-12">
-          <div id="invoice-summary-section" class="table-responsive">
-            <table class="table table-invoice-total">
-              <tbody>
-                <tr>
-                  <td colspan="4">
-                    <div class="row-fluid m-t-20">
-					<em><strong>Notes:</strong></em><Br>
-					<?=
-					 Editable::widget([
-						'name'=>'notes', 
-						'asPopover' => true,
-						'inputType' => Editable::INPUT_TEXTAREA,
-						'value' => $model->notes,
-						'header' => 'Printed Notes',
-						'submitOnEnter' => false,
-						'size'=>'lg',
-						'options' => ['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Enter Printed notes...'],
-					])
-					?>  
-                    </div>
-
-                  </td>
-                  <td colspan="2">
-                      <?php
-                      echo $this->render('_view-bottom-summary', [
-                          'model' => $model,
-                      ]);
-
-                      ?>	
-
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- /.col -->
-        </div>
 <div class="clearfix"></div>
-<div class="reminder_notes text-muted well well-sm no-shadow">
-    <?php echo $model->reminderNotes; ?>
-</div>
+
+<?php LteBox::end() ?>
+ <?php Pjax::end(); ?>
 <script>
 $(document).ready(function() {
     $('.add-new-misc').click(function(){
@@ -108,6 +74,10 @@ $(document).ready(function() {
         $('#apply-discount-modal').modal('show');
   		return false;
     });
+    $(document).on('click', '.invoice-discount-cancel', function () {
+        $('#apply-discount-modal').modal('hide');
+  		return false;
+    });
     
     $('input[name="Invoice[isSent]"]').on('switchChange.bootstrapSwitch', function(event, state) {
 	$.ajax({
@@ -125,14 +95,14 @@ $(document).ready(function() {
     
     $(document).on('click', '#show-column' ,function(){
         var url = "<?php echo Url::to(['invoice/view', 'id' => $model->id]); ?>&InvoiceSearch[toggleAdditionalColumns]="  + 1;
-        $.pjax.reload({url:url,container:"#line-item-listing",replace:false,  timeout: 4000});  //Reload GridView
+        $.pjax.reload({url:url,container:"#invoice-view-lineitem-listing",replace:false,  timeout: 4000});  //Reload GridView
         $('#show-column').hide();
         $('#hide-column').toggle();
     });
 
     $(document).on('click', '#hide-column' ,function(){
         var url = "<?php echo Url::to(['invoice/view', 'id' => $model->id]); ?>&InvoiceSearch[toggleAdditionalColumns]="  + 0;
-        $.pjax.reload({url:url,container:"#line-item-listing",replace:false,  timeout: 4000});  //Reload GridView
+        $.pjax.reload({url:url,container:"#invoice-view-lineitem-listing",replace:false,  timeout: 4000});  //Reload GridView
         $('#hide-column').hide();
         $('#show-column').toggle();
     }); 
@@ -147,10 +117,14 @@ $(document).ready(function() {
 		   if(response.status)
 		   {			
 				$('input[name="Payment[amount]"]').val(response.amount);
-                invoice.updateSummarySectionAndStatus();
+                //invoice.updateSummarySectionAndStatus();
 				$('#invoice-line-item-modal').modal('hide');
-                $.pjax.reload({container: "#invoice-button-listing", replace: false, async: false, timeout: 6000});
-                $.pjax.reload({container: "#line-item-listing", replace: false, async: false, timeout: 6000});
+                //$.pjax.reload({container: "#invoice-lineitem-view", replace: false, async: false, timeout: 6000});
+               // $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+                
 			}else
 			{
 			 $(this).yiiActiveForm('updateMessages', response.errors, true);

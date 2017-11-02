@@ -1,32 +1,28 @@
-<table class="table-invoice-childtable" style="float:right; width:auto;">
-    <tr>
-        <td id="invoice-discount">Discounts</td>
-        <td><?= $model->totalDiscount; ?></td>
-    </tr>
-    <tr>
-        <td>SubTotal</td>
-        <td>
-            <?= $model->subTotal; ?>
-        </td>
-    </tr>
-    <tr>
-        <td>Tax</td>
-        <td>
-            <?= $model->tax; ?>
-        </td>
-    </tr>
-    <tr>
-        <td><strong>Total</strong></td>
-        <td><strong><?= $model->total; ?></strong></td>
-    </tr>
-    <tr>
-        <td>Paid</td>
-        <td>
-            <?= $model->invoicePaymentTotal; ?>
-        </td>
-    </tr>
-    <tr class="last-balance">
-        <td class="p-t-0"><strong>Balance</strong></td>
-        <td class="p-t-0"><strong><?= $model->balance; ?></strong></td>
-    </tr>
-</table>
+<?php
+
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
+?>
+<?php
+	LteBox::begin([
+		'type' => LteConst::TYPE_DEFAULT,
+		'boxTools' => '',
+		'title' => 'Totals',
+		'withBorder' => true,
+	])
+	?>
+<dl class="dl-invoice-summary">
+	<dt id="invoice-discount">Discounts</dt>
+	<dd><?= $model->totalDiscount; ?></dd>
+	<dt>SubTotal</dt>
+	<dd><?= $model->subTotal; ?></dd>
+	<dt>Tax</dt>
+	<dd><?= $model->tax; ?></dd>
+	<dt>Total</dt>
+	<dd><?= $model->total; ?></dd>
+	<dt>Paid</dt>
+	<dd> <?= !empty($model->invoicePaymentTotal)? $model->invoicePaymentTotal : '0.00' ?></dd>
+	<dt>Balance</dt>
+	<dd> <?= $model->balance; ?></dd>
+</dl>
+<?php LteBox::end() ?>
