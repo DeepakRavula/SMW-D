@@ -45,6 +45,11 @@ $this->params['action-button'] = Html::a('<i title="Delete" class="fa fa-trash">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
+<div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
+<div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
+<div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
+<div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 <div class="row">
 	<div class="col-md-6">	
 		<?php
@@ -93,14 +98,7 @@ $this->params['action-button'] = Html::a('<i title="Delete" class="fa fa-trash">
 		?>
 <?php endif; ?>
 	</div> 
-
 </div>
-
-<div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
-<div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
-<div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
-<div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
-<div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
     <div class="nav-tabs-custom">
 		<?php $roles = Yii::$app->authManager->getRolesByUser($model->id);
         $role = end($roles); ?>
