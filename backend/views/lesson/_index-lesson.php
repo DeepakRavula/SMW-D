@@ -129,13 +129,11 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 <script>
-    $(document).on('change', '#bulk-action', function(){
+    $(document).on('click', '#substitute-teacher', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
-        var selectedValue = $(this).val();
         if ($.isEmptyObject(lessonIds)) {
             $('#index-error-notification').html("Choose any lessons to substitute teacher").fadeIn().delay(5000).fadeOut();
-            $('#bulk-action').val('');
-        } else if (selectedValue == "c") {
+        } else {
             var params = $.param({ ids: lessonIds });
             $.ajax({
                 url    : '<?= Url::to(['teacher-substitute/index']) ?>?' +params,
@@ -148,7 +146,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         $('#teacher-substitute-content').html(response.data);
                     } else {
                         $('#index-error-notification').html("Choose lessons with same teacher").fadeIn().delay(5000).fadeOut();
-                        $('#bulk-action').val('');
                     }
                 }
             });

@@ -15,12 +15,16 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 <div id="index-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <?php 
 if((int)$searchModel->type === Lesson::TYPE_PRIVATE_LESSON) : ?>
-<div class="m-b-10 col-sm-3">
-    <?= Html::dropDownList('action', null, ['c'=>'Substitute Teacher'], [
-        'prompt' => 'Select Bulk Action', 'class' => 'form-control',
-        'id' => 'bulk-action',
-        'url' => Url::to(['teacher-substitute/index'])
-    ])?>
+<div class="m-b-10 pull-right">
+    <div class="btn-group">
+        <button class="btn">Bulk Action</button>
+        <button class="btn dropdown-toggle" data-toggle="dropdown">
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li><a id="substitute-teacher" href="#">Substitute Teacher</a></li>
+        </ul>
+    </div>
 </div>
 <div class="clearfix"></div>
 
