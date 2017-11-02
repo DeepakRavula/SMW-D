@@ -289,9 +289,4 @@ trait Invoiceable
         }
         return $invoice;
     }
-    
-    public function transferLessonCredit()
-    {
-        
-    }
 }

@@ -74,6 +74,7 @@ class VacationController extends Controller
 		$data = $this->renderAjax('/student/vacation/_form', [
 			'model' => new Vacation(),
 			'enrolmentId' => $enrolmentId,
+                        'studentId' => $enrolment->studentId
 		]);
 		
 		$request = Yii::$app->request;

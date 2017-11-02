@@ -6,6 +6,10 @@ use kartik\daterange\DateRangePicker;
 
 ?>
 <div class="payments-form">
+    <div id="loader" class="spinner" style="display:none">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+    </div>
 	<?php $form = ActiveForm::begin([
             'id' => 'vacation-create-form',
             'action' => Url::to(['vacation/create', 'enrolmentId' => $enrolmentId])
@@ -39,7 +43,9 @@ use kartik\daterange\DateRangePicker;
 </div>
 
 <script>
-    $(document).on('submit', '#vacation-create-form', function () {
+    $(document).on('beforeSubmit', '#vacation-create-form', function () {
+        var url = "<?= Url::to(['student/view', 'id' => $studentId]); ?>";
+        $('#loader').show();
         $.ajax({
             url    : "<?= Url::to(['vacation/create', 'enrolmentId' => $enrolmentId]); ?>",
             type   : 'post',
@@ -47,9 +53,12 @@ use kartik\daterange\DateRangePicker;
             data   : $(this).serialize(),
             success: function(response)
             {
+                $('#loader').hide();
                 if(response.status) {
                     $('#vacation-modal').modal('hide');
                     $('#enrolment-delete-success').html('vacation has been created successfully').fadeIn().delay(3000).fadeOut();
+                    $.pjax.reload({url: url, container: "#student-lesson-listing", replace: false, async: false, timeout: 4000});
+                    $.pjax.reload({url: url, container: "#student-vacation", replace: false, async: false, timeout: 4000});
                 }
             }
         });
