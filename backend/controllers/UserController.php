@@ -698,33 +698,39 @@ class UserController extends Controller
 		
 		if(in_array($role, [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER, User::ROLE_STAFFMEMBER])) {
 			$this->deleteContact($id);
+			$model->getModel()->delete();
 			$response = [
 				'status' => true,
 				'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
 			];	
-		}else if($role === User::ROLE_CUSTOMER && empty($model->student)) {
-			$this->deleteContact($id);
-			$response = [
-				'status' => true,
-				'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
-			];
-		} else {
-			$response = [
-				'status' => false,
-				'message' => 'Unable to delete. There are student(s) associated with this ' . $role
-			];
-		}else if($role === User::ROLE_TEACHER && empty($model->qualifications)) {
-			die('dfgd');
-			$this->deleteContact($id);
-			$response = [
-				'status' => true,
-				'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
-			];
-		} else {
-			$response = [
-				'status' => false,
-				'message' => 'Unable to delete. There are qualification(s) associated with this ' . $role
-			];
+		}else if($role === User::ROLE_CUSTOMER) {
+			if(empty($model->getModel()->student)) {
+				$this->deleteContact($id);
+				$model->getModel()->delete();
+				$response = [
+					'status' => true,
+					'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
+				];
+			} else {
+				$response = [
+					'status' => false,
+					'message' => 'Unable to delete. There are student(s) associated with this ' . $role
+				];
+			}
+		}else if($role === User::ROLE_TEACHER) {
+			if(empty($model->qualifications)) {
+				$this->deleteContact($id);
+				$model->getModel()->delete();
+				$response = [
+					'status' => true,
+					'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
+				];
+			} else {
+				$response = [
+					'status' => false,
+					'message' => 'Unable to delete. There are qualification(s) associated with this ' . $role
+				];
+			}
 		}
 		return $response;
     }

@@ -35,12 +35,11 @@ $this->params['label'] = $this->render('_title', [
 ]);
 $this->params['action-button'] = Html::a('<i title="Delete" class="fa fa-trash"></i>', ['delete', 'id' => $model->id],
 		[ 
-			'class' => 'm-r-10 btn btn-box-tool',
+			'class' => 'm-r-10 btn btn-box-tool user-delete-button',
             'data' => [
             	'confirm' => 'Are you sure you want to delete this customer?',
             	'method' => 'post',
             ],
-			'id' => 'user-delete-button',
 ]); ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
@@ -540,24 +539,32 @@ $(document).ready(function(){
         });
         return false;
     });
-	$(document).on('click', '#user-delete-button', function () {
-		$.ajax({
-            url    : '<?= Url::to(['user/delete', 'id' => $model->id]); ?>',
-            type   : 'get',
-            dataType: "json",
-            data   : $(this).serialize(),
-            success: function(response)
-            {
-                if(response.status)
-                {
-                	window.location.href = response.url;
-                } else {
-                    $('#lesson-conflict').html(response.message).fadeIn().delay(5000).fadeOut();
-						
-				}
-            }
-        });
-        return false;
+	$(document).on('click', '.user-delete-button', function () {
+		var id = '<?= $model->id;?>';
+		 bootbox.confirm({ 
+  			message: "Are you sure you want to delete this user?", 
+  			callback: function(result){
+				if(result) {
+					$('.bootbox').modal('hide');
+				$.ajax({
+					url: '<?= Url::to(['user/delete']); ?>?id=' + id,
+					type: 'post',
+					success: function (response)
+					{
+						if (response.status)
+						{
+                            window.location.href = response.url;
+						} else {
+							$('#lesson-conflict').html(response.message).fadeIn().delay(5000).fadeOut();
+
+						}
+					}
+				});
+				return false;	
+			}
+			}
+		});	
+		return false;
     });
 	$(document).on('beforeSubmit', '#address-form', function () {
         $.ajax({
