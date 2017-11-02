@@ -261,10 +261,6 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
         return false;
     });
     
-    $(document).off('hidden.bs.modal', '#teacher-substitute-modal').on('hidden.bs.modal', '#teacher-substitute-modal', function () {
-        $('#bulk-action').val('');
-    });
-    
     $(document).off('click', '#sub-teacher-confirm').on('click', '#sub-teacher-confirm', function () {
         if (!$(this).attr('disabled')) {
             var url = '<?= Url::to(['lesson/index']) ?>';

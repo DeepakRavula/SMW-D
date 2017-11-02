@@ -53,9 +53,11 @@ class LessonReschedule extends Model
 		if($oldLesson->isPrivate()) {
 			$paymentCycleLesson = new PaymentCycleLesson();
 			$oldPaymentCycleLesson = PaymentCycleLesson::findOne(['lessonId' => $this->lessonId]);
-			$paymentCycleLesson->paymentCycleId = $oldPaymentCycleLesson->paymentCycleId;
-			$paymentCycleLesson->lessonId = $this->rescheduledLessonId;
-			$paymentCycleLesson->save();
+                        if ($oldPaymentCycleLesson) {
+                            $paymentCycleLesson->paymentCycleId = $oldPaymentCycleLesson->paymentCycleId;
+                            $paymentCycleLesson->lessonId = $this->rescheduledLessonId;
+                            $paymentCycleLesson->save();
+                        }
 		}
         if (!empty($oldLesson->invoiceLineItem)) {
             $oldLesson->invoiceLineItem->lineItemLesson->lessonId = $this->rescheduledLessonId;

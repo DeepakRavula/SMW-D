@@ -881,4 +881,21 @@ class LessonController extends Controller
             ];
         }
     }
+    
+    public function actionUnschedule($id)
+    {
+        $model = $this->findModel($id);
+        if ($model->unschedule()) {
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-success'],
+                'body' => 'Lesson unscheduled successfully!',
+            ]);
+        } else {
+            Yii::$app->session->setFlash('alert', [
+                'options' => ['class' => 'alert-danger'],
+                'body' => 'Lesson cannot be unscheduled',
+            ]);
+        }
+        return $this->redirect(['lesson/view', 'id' => $model->id]); 
+    }
 }
