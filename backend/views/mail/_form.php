@@ -6,7 +6,7 @@ use kartik\select2\Select2;
 use yii\imperavi\Widget;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
-use common\models\User;
+use common\models\UserEmail;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -16,8 +16,12 @@ use common\models\User;
 <div class="student-form">
 	<?php $model->content = $content;
 	$model->to = $emails;
-	$data = ArrayHelper::map(User::find()->joinWith('emails')->orderBy('user_email.email')->notDeleted()->all(), 'email', 'email');
-	?>
+        $data=null;
+        if(!empty($userModel))
+        {
+        $data = ArrayHelper::map(UserEmail::find()->joinWith('userContact')->andWhere(['user_contact.userId'=>$userModel->id])->orderBy('user_email.email')->all(), 'email', 'email');
+        }
+        ?>
 	<?php $form = ActiveForm::begin([
 		'id' => 'mail-form',
 		'action' => Url::to(['email/send'])
