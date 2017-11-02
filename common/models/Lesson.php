@@ -899,4 +899,10 @@ class Lesson extends \yii\db\ActiveRecord
     {
        return $this->bulkRescheduleLesson;
     }
+    
+    public function unschedule()
+    {
+        $this->status = self::STATUS_UNSCHEDULED;
+        return $this->save();
+    }
 }
