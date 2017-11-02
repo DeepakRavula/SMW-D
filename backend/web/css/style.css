@@ -157,3 +157,6 @@ body .user-panel > .info {
 .not-primary dt {
 	font-weight:inherit;
 }
+dl {
+	margin-bottom:0px;
+}
