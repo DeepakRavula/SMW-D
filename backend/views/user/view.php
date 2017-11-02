@@ -377,7 +377,7 @@ $this->params['label'] = $this->render('_title', [
 <div id="email-content"></div>
 <?php Modal::end(); ?>
 <?php Modal::begin([
-    'header' => '<h4 class="m-0">Edit</h4>',
+    'header' => '<h4 class="m-0">Edit Email</h4>',
     'id' => 'edit-user-email-modal',
 ]); ?>
 <?php Modal::end(); ?>
@@ -465,7 +465,6 @@ $(document).ready(function(){
 	});
         $(document).on('click', '.user-email-edit', function () {
 		var contactId = $(this).attr('id') ;
-                alert(contactId);
                 var params='?id='+contactId;
               $.ajax({
                 url    : '<?= Url::to(['user-contact/edit-email']); ?>'+params,
@@ -476,6 +475,7 @@ $(document).ready(function(){
                     if (response.status)
                     {
                         $('#edit-user-email-modal .modal-body').html(response.data);
+                         $('#edit-user-email-modal .modal-dialog').css({'width': '400px'});
                         $('#edit-user-email-modal').modal('show');
                     } else {
                         $('#edit-email-form').yiiActiveForm('updateMessages',
@@ -487,6 +487,26 @@ $(document).ready(function(){
             
 		return false;
 	});
+         $(document).on('beforeSubmit', '#edit-email-form', function () {
+              $.ajax({
+                url    : $(this).attr('action'),
+                type   : 'post',
+                dataType: "json",
+                data   : $(this).serialize(),
+                    success: function(response)
+                        {
+                            if(response.status) {
+        			$('#edit-user-email-modal').modal('hide');
+        			$.pjax.reload({container:"#user-email",replace:false,  timeout: 4000});
+                    
+                             } else {
+					$('#address-form').yiiActiveForm('updateMessages', response.errors
+					, true);
+				}
+            }
+        });
+        return false;
+    });
 	$(document).on('click', '.add-address-btn', function () {
                 $('#userphone-number').val('');
                 $("#userphone-extension").val('');
@@ -498,6 +518,11 @@ $(document).ready(function(){
 		$('#add-address-modal').modal('hide');
         return false;
 	});
+        $(document).on('click', '.edit-email-cancel-btn', function () {
+		$('#edit-user-email-modal').modal('hide');
+        return false;
+	});
+        
 	$(document).on('click', '.add-phone-btn', function () {
                  $('#userphone-number').val('');
                 $("#userphone-extension").val('');

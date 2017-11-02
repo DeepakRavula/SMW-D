@@ -154,41 +154,34 @@ class UserContactController extends Controller
 		$contact->updateAttributes(['isPrimary' => true]);
 		return $response;
 	}
-        public function actionEditEmail($id)
-	{
-                $response = Yii::$app->response;
-		$response->format = Response::FORMAT_JSON;
-		$userContact = UserContact::find()->where(['id' =>$id]);
-                $emailModel = UserEmail::find()->where(['userContactId'=> $id]);
-                $data  = $this->renderAjax('/user/update/_user-email', [
+        public function actionEditEmail($id) {
+        $response = Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+        $userContact = UserContact::find()->where(['id' => $id])->one();
+        $emailModel = UserEmail::find()->where(['userContactId' => $id])->one();
+        $data = $this->renderAjax('//user/update/_user-email', [
             'emailModel' => $emailModel,
             'userContact' => $userContact,
-        ]); 
-           if ($email->load(Yii::$app->request->post()) && $contact->load(Yii::$app->request->post()) ) {
-	       	$contact->userId = $id;
-		$contact->isPrimary = false;
-		if (!is_numeric($contact->labelId)) {
-			$label = new Label();
-			$label->name = $contact->labelId;
-			$label->userAdded = $id;
-			$label->save();
-			$contact->labelId = $label->id;
-		}
-		if($contact->save()) {
-			$email->userContactId = $contact->id;
-			$email->save();
-			return [
-				'status' => true,
-			];
-		}
-        }
-		return [
-			'status' => true,
-			'data' => $data
-		];
+        ]);
+        if ($emailModel->load(Yii::$app->request->post()) && $userContact->load(Yii::$app->request->post())) {
+            $emailModel->save();
 
-		
-		
-		
-	}
+            if (!is_numeric($userContact->labelId)) {
+                $label = new Label();
+                $label->name = $userContact->labelId;
+                $label->userAdded = $userContact->userId;
+                $label->save();
+                $userContact->labelId = $label->id;
+            }
+            $userContact->save();
+            return [
+                'status' => true,
+            ];
+        }
+        return [
+            'status' => true,
+            'data' => $data
+        ];
+    }
+
 }
