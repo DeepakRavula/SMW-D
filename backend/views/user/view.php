@@ -35,11 +35,7 @@ $this->params['label'] = $this->render('_title', [
 ]);
 $this->params['action-button'] = Html::a('<i title="Delete" class="fa fa-trash"></i>', ['delete', 'id' => $model->id],
 		[ 
-			'class' => 'm-r-10 btn btn-box-tool user-delete-button',
-            'data' => [
-            	'confirm' => 'Are you sure you want to delete this customer?',
-            	'method' => 'post',
-            ],
+			'class' => 'm-r-10 btn btn-box-tool user-delete-button', 
 ]); ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />

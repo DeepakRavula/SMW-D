@@ -704,7 +704,7 @@ class UserController extends Controller
 				'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
 			];	
 		}else if($role === User::ROLE_CUSTOMER) {
-			if(empty($model->getModel()->student)) {
+                    if(empty($model->getModel()->student)) {
 				$this->deleteContact($id);
 				$model->getModel()->delete();
 				$response = [
@@ -718,7 +718,7 @@ class UserController extends Controller
 				];
 			}
 		}else if($role === User::ROLE_TEACHER) {
-			if(empty($model->qualifications)) {
+                   if(empty($model->getModel()->qualifications)) {
 				$this->deleteContact($id);
 				$model->getModel()->delete();
 				$response = [
