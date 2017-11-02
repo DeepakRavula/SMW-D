@@ -194,7 +194,7 @@ trait Invoiceable
         return $invoice;
     }
     
-    public function addCreditInvoice()
+    public function addCreditInvoice($startDate = null, $endDate)
     {
         $invoice = new Invoice();
         $invoice->user_id = $this->customer->id;
@@ -216,27 +216,38 @@ trait Invoiceable
         $invoice->tax = $invoiceLineItem->tax_rate;
         $invoice->total = $invoice->subTotal + $invoice->tax;
         $invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
-        $invoice->save();
-        $endDate = (new \DateTime($this->course->endDate))->format('Y-m-d');
-        $lessons = Lesson::find()
+        $endDate = (new \DateTime($endDate))->format('Y-m-d');
+        $query = Lesson::find()
                     ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['>=', 'DATE(date)', $endDate])
-                    ->andWhere(['courseId' => $this->courseId])
+                    ->isConfirmed();
+        if ($startDate) {
+            $startDate = (new \DateTime($startDate))->format('Y-m-d');
+            $query->andWhere(['AND', ['>=', 'DATE(date)', $startDate], ['<=', 'DATE(date)', $endDate]]);
+        } else {
+            $query->andWhere(['>=', 'DATE(date)', $endDate]);
+        }
+        $lessons = $query->andWhere(['courseId' => $this->courseId])
                     ->all();
         foreach ($lessons as $lesson) {
             if ($lesson->hasLessonCredit($this->id)) {
+                $invoice->save();
                 $invoice->addPayment($lesson, $lesson->getLessonCreditAmount($this->id), $this);
             }
             $lesson->Cancel();
             $lesson->delete();
         }
-        $paymentCycles = PaymentCycle::find()
-                ->where(['enrolmentId' => $this->id])
-                ->andWhere(['>', 'DATE(startDate)', $endDate])
-                ->all();
+        $paymentCycleQuery = PaymentCycle::find()
+                ->where(['enrolmentId' => $this->id]);
+        if ($startDate) {
+            $paymentCycleQuery->andWhere(['AND', ['<=', 'DATE(startDate)', $startDate], ['>=', 'DATE(endDate)', $endDate]]);
+        } else {
+            $paymentCycleQuery->andWhere(['>', 'DATE(startDate)', $endDate]);
+        }
+        $paymentCycles = $paymentCycleQuery->all();
         foreach($paymentCycles as $paymentCycle) {
-            $paymentCycle->delete();
+            if (!$paymentCycle->hasLessons()) {
+                $paymentCycle->delete();
+            }
         }
         return $invoice;
     }
@@ -277,5 +288,10 @@ trait Invoiceable
             Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
         }
         return $invoice;
+    }
+    
+    public function transferLessonCredit()
+    {
+        
     }
 }

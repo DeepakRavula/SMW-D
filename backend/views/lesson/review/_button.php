@@ -3,12 +3,7 @@ use common\models\Program;
 use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
-<?php if (!empty($vacationId)) : ?>
-	<?php $url = Url::to(['confirm',
-		'courseId' => $courseId, 
-		'Vacation[id]' => $vacationId,
-	]);?>
-<?php elseif (!empty($rescheduleBeginDate) && !empty($rescheduleEndDate)): ?>
+<?php if (!empty($rescheduleBeginDate) && !empty($rescheduleEndDate)): ?>
 	<?php $url = Url::to(['confirm', 
 		'courseId' => $courseId, 
 		'Course[startDate]' => $rescheduleBeginDate,

@@ -122,7 +122,7 @@ Modal::begin([
                     $('#enrolment-edit-enddate-modal').modal('hide');
 					if(response.message) {
 						$('#enrolment-enddate-alert').html(response.message).fadeIn().delay(5000).fadeOut();
-                        $.pjax.reload({container: '#lesson-schedule', timeout: 6000});
+                        paymentFrequency.onEditableSuccess();
 					}
 				}
 			}
@@ -153,11 +153,13 @@ Modal::begin([
 	});
 
 	var paymentFrequency = {
-		onEditableSuccess: function (event, val, form, data) {
+		onEditableSuccess: function () {
 			var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"
 			$.pjax.reload({url: url, container: "#payment-cycle-listing", replace: false, async: false, timeout: 4000});
 			$.pjax.reload({url: url, container: "#enrolment-view", replace: false, async: false, timeout: 4000});
-			$.pjax.reload({url: url, container: "#course-endDate", replace: false, async: false, timeout: 4000});
+                        $.pjax.reload({url: url, container: "#lesson-index", replace: false, async: false, timeout: 4000});
+                        $.pjax.reload({url: url, container: "#course-endDate", replace: false, async: false, timeout: 4000});
+			$.pjax.reload({url: url, container: "#lesson-schedule", replace: false, async: false, timeout: 4000});
 		}
 	}
 </script>

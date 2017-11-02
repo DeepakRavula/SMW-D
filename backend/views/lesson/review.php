@@ -21,7 +21,7 @@ $this->params['show-all'] = $this->render('review/_show-all', [
 			'courseModel' => $courseModel,
 		]);
 		?>
-		<?php if(empty($rescheduleBeginDate) && empty($vacationId)) : ?>
+		<?php if(empty($rescheduleBeginDate)) : ?>
 			<?=
 			$this->render('review/_summary', [
 				'holidayConflictedLessonIds' => $holidayConflictedLessonIds,
@@ -101,7 +101,6 @@ AdminLteGridView::widget([
 <?php \yii\widgets\Pjax::end(); ?>
 	
 <?= $this->render('review/_button', [
-	'vacationId' => $vacationId,
 	'hasConflict' => $hasConflict,
 	'rescheduleBeginDate' => $rescheduleBeginDate,
     'rescheduleEndDate' => $rescheduleEndDate,
@@ -144,15 +143,9 @@ Modal::begin([
 		}
 		$("#lessonsearch-showallreviewlessons").on("change", function () {
 			var showAllReviewLessons = $(this).is(":checked");
-			var vacationId = '<?= $vacationId; ?>';
 			var startDate = '<?= $rescheduleBeginDate; ?>';
 			var endDate = '<?= $rescheduleEndDate; ?>';
-			if(vacationId) {
-				var params = $.param({
-					'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-					'Vacation[id]': vacationId,
-				});	
-			} else if(startDate && endDate) {
+			if(startDate && endDate) {
 				var params = $.param({
 					'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
 					'Course[startDate]' : startDate, 'Course[endDate]' : endDate
@@ -194,10 +187,7 @@ Modal::begin([
 			 e.preventDefault();
 			var lessonId = $('#lesson-id').val();
 			var showAllReviewLessons = $('#lessonsearch-showallreviewlessons').is(":checked");
-			var vacationId = '<?= $vacationId; ?>';
-			var params = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-				'Vacation[id]': vacationId
-			});
+			var params = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0)});
 			var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
 			$.ajax({
                 url: '<?= Url::to(['lesson/update-field']); ?>?id=' + lessonId,

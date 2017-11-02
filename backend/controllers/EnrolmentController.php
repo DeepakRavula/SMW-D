@@ -444,7 +444,8 @@ class EnrolmentController extends Controller
                 $course->updateAttributes([
                     'endDate' => Carbon::parse($course->endDate)->format('Y-m-d H:i:s')
                 ]);
-                $invoice = $model->addCreditInvoice();
+                $startDate = null;
+                $invoice = $model->addCreditInvoice($startDate, $course->endDate);
                 $message = '$' . abs($invoice->invoiceBalance) . ' has been credited to ' . $invoice->user->publicIdentity . ' account.';
             }
             return [

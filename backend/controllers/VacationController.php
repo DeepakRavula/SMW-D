@@ -92,13 +92,9 @@ class VacationController extends Controller
             $transaction->commit();
 			$model->enrolmentId = $enrolmentId;
 			if($model->save()) {
-
-				return $this->redirect([
-					'lesson/review',
-					'courseId' => $enrolment->course->id,
-					'LessonSearch[showAllReviewLessons]' => false,
-					'Vacation[id]' => $model->id,
-				]);
+                            return [
+				'status' => true
+                            ]; 
 			} else {
 				Yii::error('Vacation Create: ' . \yii\helpers\VarDumper::dumpAsString($model->getErrors()));
 			}

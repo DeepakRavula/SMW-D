@@ -81,7 +81,7 @@ class Vacation extends \yii\db\ActiveRecord
 		list($fromDate, $toDate) = explode(' - ', $this->dateRange);
         $this->fromDate = (new \DateTime($fromDate))->format('Y-m-d H:i:s');
         $this->toDate = (new \DateTime($toDate))->format('Y-m-d H:i:s');
-        $this->isConfirmed = false;
+        $this->isConfirmed = true;
         $this->isDeleted = false;
 		
         return parent::beforeSave($insert);
@@ -91,25 +91,13 @@ class Vacation extends \yii\db\ActiveRecord
 	{
 		if (!$insert) {
 			return parent::afterSave($insert, $changedAttributes);
-		}
-		$fromDate = new \DateTime($this->fromDate);
-		$toDate = new \DateTime($this->toDate);
-		$lessons	 = Lesson::find()
-			->andWhere([
-				'courseId' => $this->enrolment->course->id,
-				'lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED]
-			])
-			->between($fromDate, $toDate)
-			->all();
-		foreach($lessons as $lesson) {
-			$lesson->id			 = null;
-			$lesson->isNewRecord = true;
-			$lesson->status		 = Lesson::STATUS_SCHEDULED;
-			$lesson->isConfirmed = false;
-			$lesson->save();
-		}
+		} else {
+                    $fromDate = (new \DateTime($this->fromDate))->format('Y-m-d H:i:s');
+                    $toDate = (new \DateTime($this->toDate))->format('Y-m-d H:i:s');
+                    $this->enrolment->addCreditInvoice($fromDate, $toDate);
+                }
 		
-		return parent::afterSave($insert, $changedAttributes);
+                return parent::afterSave($insert, $changedAttributes);
 	}
 	public function getEnrolment()
     {
