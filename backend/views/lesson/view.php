@@ -148,6 +148,7 @@ echo $this->render('/mail/_form', [
 	'subject' => $model->course->program->name . ' lesson reschedule',
 	'content' => $content,
 	'id' => null,
+        'userModel'=>$model->enrolment->student->customer,
 ]);
 Modal::end();
 ?>
