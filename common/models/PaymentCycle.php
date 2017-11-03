@@ -69,6 +69,13 @@ class PaymentCycle extends \yii\db\ActiveRecord
     {
         return $this->hasMany(PaymentCycleLesson::className(), ['paymentCycleId' => 'id']);
     }
+    
+    public function getLessons()
+    {
+        return $this->hasMany(Lesson::className(), ['id' => 'lessonId'])
+                ->via('paymentCycleLessons')
+                ->onCondition(['lesson.isDeleted' => false]);
+    }
 
     public function getInvoiceItemPaymentCycleLessons()
     {
@@ -220,5 +227,10 @@ class PaymentCycle extends \yii\db\ActiveRecord
             $this->addError($attribute,
                 'ProForma-Invoice can be generated only for current and next payment cycle only.');
         }
+    }
+    
+    public function hasLessons()
+    {
+        return $this->lessons;
     }
 }

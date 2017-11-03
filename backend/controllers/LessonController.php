@@ -19,7 +19,6 @@ use common\models\Student;
 use common\models\CourseSchedule;
 use yii\web\Response;
 use common\models\Payment;
-use common\models\Vacation;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\timelineEvent\TimelineEventEnrolment;
@@ -31,7 +30,6 @@ use yii\filters\ContentNegotiator;
 use common\models\PaymentCycle;
 use common\models\Invoice;
 use common\models\InvoiceLog;
-use common\models\timelineEvent\VacationLog;
 use common\models\lesson\BulkReschedule;
 use common\models\lesson\BulkRescheduleLesson;
 
@@ -376,7 +374,7 @@ class LessonController extends Controller
         }
     }
 
-	public function getConflicts($course, $vacationId = null)
+	public function getConflicts($course)
 	{
 		$conflicts = [];
 		$conflictedLessonIds = [];
@@ -386,9 +384,6 @@ class LessonController extends Controller
 			->all();
 		foreach ($draftLessons as $draftLesson) {
 			$draftLesson->setScenario('review');
-			if(!empty($vacationId)) {
-				$draftLesson->vacationId = $vacationId;
-			}
 		}
 		Model::validateMultiple($draftLessons);
 		foreach ($draftLessons as $draftLesson) {
@@ -408,7 +403,7 @@ class LessonController extends Controller
 	public function fetchConflictedLesson($course)
 	{
 
-		$conflictedLessons = $this->getConflicts($course, $vacationId = null);
+		$conflictedLessons = $this->getConflicts($course);
 		$lessons = Lesson::find()
 			->where(['courseId' => $course->id, 'isConfirmed' => false,
 				'status' => Lesson::STATUS_SCHEDULED])
@@ -504,16 +499,14 @@ class LessonController extends Controller
         $request = Yii::$app->request;
         $lessonSearchRequest = $request->get('LessonSearch');
         $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
-        $vacationRequest = $request->get('Vacation');
         $courseRequest = $request->get('Course');
         $enrolmentRequest = $request->get('Enrolment');
         $rescheduleBeginDate = $courseRequest['startDate'];
         $rescheduleEndDate = $courseRequest['endDate'];
-        $vacationId = $vacationRequest['id'];
 		$enrolmentType = $enrolmentRequest['type'];
         $courseModel = Course::findOne(['id' => $courseId]);
 
-		$conflictedLessons = $this->getConflicts($courseModel, $vacationId);
+		$conflictedLessons = $this->getConflicts($courseModel);
 		$lessonCount = Lesson::find()
 			->andWhere(['courseId' => $courseModel->id,	'isConfirmed' => false])
 			->count();
@@ -528,12 +521,6 @@ class LessonController extends Controller
 		}  else {
 			$query->where(['courseId' => $courseModel->id, 'isConfirmed' => false]);
 		}
-		if(!empty($vacationId)) {
-			$query = Lesson::find()
-				->andWhere(['courseId' => $courseModel->id,
-					'status' => Lesson::STATUS_SCHEDULED,
-					'isConfirmed' => false]);
-		}
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
 			'pagination' => false,
@@ -546,7 +533,6 @@ class LessonController extends Controller
             'rescheduleBeginDate' => $rescheduleBeginDate,
             'rescheduleEndDate' => $rescheduleEndDate,
             'searchModel' => $searchModel,
-			'vacationId' => $vacationId,
 			'model' => $model,
 			'holidayConflictedLessonIds' => $courseModel->getHolidayLessons(),
 			'lessonCount' => $lessonCount,
@@ -614,10 +600,8 @@ class LessonController extends Controller
         $request = Yii::$app->request;
         $courseRequest = $request->get('Course');
         $enrolmentRequest = $request->get('Enrolment');
-        $vacationRequest = $request->get('Vacation');
         $rescheduleEndDate = $courseRequest['endDate'];
         $rescheduleBeginDate = $courseRequest['startDate'];
-        $vacationId = $vacationRequest['id'];
         $enrolmentType = $enrolmentRequest['type'];
 		if(!empty($enrolmentType)) {
 			$courseModel->enrolment->student->updateAttributes([
@@ -626,31 +610,6 @@ class LessonController extends Controller
 			$courseModel->enrolment->student->customer->updateAttributes([
 				'status' => User::STATUS_ACTIVE
 			]);
-		}
-		if(! empty($vacationId)) {
-			$vacation = Vacation::findOne(['id' => $vacationId]);
-			$fromDate = new \DateTime($vacation->fromDate);
-			$toDate = new \DateTime($vacation->toDate);
-			$vacation->isConfirmed = true;
-			$vacation->save();
-			$oldLessons = Lesson::find()
-				->andWhere([
-					'courseId' => $courseId,
-					'isConfirmed' => true,
-					'lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED]
-				])
-				->between($fromDate, $toDate)
-				->all();
-			$oldLessonIds = [];
-			foreach ($oldLessons as $oldLesson) {
-				$oldLessonIds[] = $oldLesson->id;
-				$oldLesson->status = Lesson::STATUS_CANCELED;
-				$oldLesson->save();
-			}
-			$userModel = User::findOne(['id' => Yii::$app->user->id]);
-			$vacation->on(Vacation::EVENT_CREATE, [new VacationLog(), 'create']);
-			$vacation->userName = $userModel->publicIdentity;
-			$vacation->trigger(Vacation::EVENT_CREATE); 
 		}
         if( ! empty($rescheduleBeginDate) && ! empty($rescheduleEndDate)) {
 			$startDate = new \DateTime($rescheduleBeginDate);
@@ -678,7 +637,7 @@ class LessonController extends Controller
 				]);
 			}
 		}
-		if(! empty($vacationId) || ! empty($rescheduleBeginDate)) {
+		if(! empty($rescheduleBeginDate)) {
 			foreach ($lessons as $i => $lesson) {
 				$lessonRescheduleModel = new LessonReschedule();
 				$lessonRescheduleModel->lessonId = $oldLessonIds[$i];
@@ -712,8 +671,7 @@ class LessonController extends Controller
 			]);
 			$lesson->markAsRoot();
 		}
-        if (!empty($courseModel->enrolment) && empty($courseRequest) &&
-            empty($vacationRequest)) {
+        if (!empty($courseModel->enrolment) && empty($courseRequest)) {
             $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
@@ -723,10 +681,7 @@ class LessonController extends Controller
 			$enrolmentModel->trigger(Enrolment::EVENT_CREATE);
         }
 		if ($courseModel->program->isPrivate()) {
-			if (!empty($vacationId)) {
-				$message = 'Vacation has been created successfully';
-				$link	 = $this->redirect(['student/view', 'id' => $courseModel->enrolment->student->id, '#' => 'vacation']);
-			} elseif(! empty($rescheduleBeginDate)) {
+			if(! empty($rescheduleBeginDate)) {
 				$message = 'Future lessons have been changed successfully';
 				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} else {
