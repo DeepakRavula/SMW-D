@@ -392,8 +392,8 @@ $this->params['label'] = $this->render('_title', [
 ]); ?>
 <?= $this->render('create/_phone', [
 	'phoneModel' => new UserPhone(),
-	'userContact' => new UserContact(),
-	'model' => $model,
+	'model' => new UserContact(),
+	'userModel' => $model,
 ]);?>
 <?php Modal::end(); ?>
 <?php Modal::begin([
@@ -779,5 +779,27 @@ $(document).ready(function(){
         });
         return false;
     });
+       $(document).on('click', '.user-phone-edit', function () {
+ 		var contactId = $(this).attr('id') ;
+               $.ajax({
+                 url    : '<?= Url::to(['user-contact/edit-phone']); ?>?id=' + contactId,
+                 type: 'get',
+                 dataType: "json",
+                 success: function (response)
+                 {
+                     if (response.status)
+                     {
+                         $('#add-phone-modal .modal-body').html(response.data);
+                          $('#add-phone-modal .modal-dialog').css({'width': '400px'});
+                         $('#add-phone-modal').modal('show');
+                     } else {
+                         $('#phone-form').yiiActiveForm('updateMessages',
+                                 response.errors
+                                 , true);
+                     }
+                 }
+             });
+ 		return false;
+ 	});
 });
 </script>
