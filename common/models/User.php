@@ -119,7 +119,6 @@ class User extends ActiveRecord implements IdentityInterface
                 'softDeleteAttributeValues' => [
                     'isDeleted' => true,
                 ],
-                'replaceRegularDelete' => true
             ]
         ];
     }
