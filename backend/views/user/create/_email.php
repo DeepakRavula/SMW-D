@@ -14,17 +14,21 @@ use yii\helpers\ArrayHelper;
 ?>
 <div class="row user-create-form">
 <?php
+  $url = Url::to(['user-contact/edit-email', 'id' => $model->id]);
+    if ($model->isNewRecord) {
+        $url = Url::to(['user-contact/create-email','id' => $userModel->id]);
+    }
 $form = ActiveForm::begin([
 		'id' => 'email-form',
-		'action' => Url::to(['user-contact/create-email', 'id' => $model->id])
+		'action' => $url,
 	]);
 ?>
 <div class="row">
 		<?= $form->field($emailModel, "email")->textInput(['maxlength' => true]) ?>
 		<?=
-		$form->field($userContact, "labelId")->widget(Select2::classname(), [
+		$form->field($model, "labelId")->widget(Select2::classname(), [
 			'data' => ArrayHelper::map(Label::find()
-					->user($model->id)
+					->user($userModel->id)
 					->all(), 'id', 'name'),
 			'options' => ['placeholder' => 'Select Label'],
 			'pluginOptions' => [

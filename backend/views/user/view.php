@@ -64,6 +64,10 @@ $this->params['label'] = $this->render('_title', [
 			'openingBalanceCredit' => $openingBalanceCredit
 		]);
 		?>
+            <?=$this->render('customer/_payment-preference', [
+                'model' => $model,
+            ]);
+		?>
     <?php endif;?>
 		
 	</div> 
@@ -82,13 +86,7 @@ $this->params['label'] = $this->render('_title', [
 			'model' => $model,
 		]);
 		?>
-        <?php if ($searchModel->role_name === User::ROLE_CUSTOMER): ?>
-            <?=$this->render('customer/_payment-preference', [
-                'model' => $model,
-            ]);
-		?>
-<?php endif; ?>
-	</div> 
+        	</div> 
 
 </div>
 
@@ -379,13 +377,13 @@ $this->params['label'] = $this->render('_title', [
 <div id="email-content"></div>
 <?php Modal::end(); ?>
 <?php Modal::begin([
-    'header' => '<h4 class="m-0">Add Email</h4>',
+    'header' => '<h4 class="m-0">Email</h4>',
     'id' => 'add-email-modal',
 ]); ?>
 <?= $this->render('create/_email', [
 	'emailModel' => new UserEmail(),
-	'userContact' => new UserContact(),
-	'model' => $model,
+	'model' => new UserContact(),
+	'userModel' => $model,
 ]);?>
 <?php Modal::end(); ?>
 <?php Modal::begin([
@@ -460,7 +458,30 @@ $(document).ready(function(){
         $('#add-email-modal .modal-dialog').css({'width': '400px'});
         return false;
 	});
-	$(document).on('click', '.add-address-btn', function () {
+        $(document).on('click', '.user-email-edit', function () {
+		var contactId = $(this).attr('id') ;
+              $.ajax({
+                url    : '<?= Url::to(['user-contact/edit-email']); ?>?id=' + contactId,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#add-email-modal .modal-body').html(response.data);
+                         $('#add-email-modal .modal-dialog').css({'width': '400px'});
+                        $('#add-email-modal').modal('show');
+                    } else {
+                        $('#email-form').yiiActiveForm('updateMessages',
+                                response.errors
+                                , true);
+                    }
+                }
+            });
+            
+		return false;
+	});
+  	$(document).on('click', '.add-address-btn', function () {
                 $('#userphone-number').val('');
                 $("#userphone-extension").val('');
 		$('#add-address-modal').modal('show');
@@ -471,6 +492,11 @@ $(document).ready(function(){
 		$('#add-address-modal').modal('hide');
         return false;
 	});
+        $(document).on('click', '.edit-email-cancel-btn', function () {
+		$('#edit-user-email-modal').modal('hide');
+        return false;
+	});
+        
 	$(document).on('click', '.add-phone-btn', function () {
                  $('#userphone-number').val('');
                 $("#userphone-extension").val('');

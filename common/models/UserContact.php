@@ -73,5 +73,13 @@ class UserContact extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Label::className(), ['id' => 'labelId']);
     }
+    public function getUserLocation()
+    {
+      return $this->hasOne(UserLocation::className(), ['user_id' => 'userId']);  
+    }
+    public function getUser()
+    {
+     return $this->hasOne(User::className(), ['id' => 'userId']);     
+    }
 	
 }
