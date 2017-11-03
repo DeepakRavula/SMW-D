@@ -241,7 +241,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
 			->via('userContact')
-			->onCondition(['is_primary' => true]);
+			->onCondition(['isPrimary' => true]);
     }
 
     public function getCustomerPaymentPreference()
@@ -313,7 +313,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
 		return $this->hasOne(UserPhone::className(), ['userContactId' => 'id'])
 			->via('userContact')
-			->onCondition(['is_primary' => true]);
+			->onCondition(['isPrimary' => true]);
     }
 	
     /**
