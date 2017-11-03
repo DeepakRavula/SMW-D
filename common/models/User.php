@@ -239,9 +239,12 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getPrimaryAddress()
     {
-        return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
-			->via('userContact')
-			->onCondition(['isPrimary' => true]);
+		
+        return UserAddress::find()
+			->joinWith(['userContact' => function($query) {
+				$query->primary();
+			}])
+			->one();
     }
 
     public function getCustomerPaymentPreference()
@@ -254,9 +257,11 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getBillingAddress()
     {
-        return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
-			->via('userContact')
-          	->onCondition(['label' => Label::LABEL_BILLING]);
+		return UserAddress::find()
+			->joinWith(['userContact' => function($query) {
+				$query->andWhere(['label' => Label::LABEL_BILLING]);
+			}])
+			->one();
     }
 
     /**
