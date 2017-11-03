@@ -17,10 +17,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 if((int)$searchModel->type === Lesson::TYPE_PRIVATE_LESSON) : ?>
 <div class="m-b-10 pull-right">
     <div class="btn-group">
-        <button class="btn">Bulk Action</button>
-        <button class="btn dropdown-toggle" data-toggle="dropdown">
-            <span class="caret"></span>
-        </button>
+        <button class="btn dropdown-toggle" data-toggle="dropdown">Bulk Action&nbsp;&nbsp;<span class="caret"></span></button>
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a id="substitute-teacher" href="#">Substitute Teacher</a></li>
         </ul>
