@@ -377,18 +377,13 @@ $this->params['label'] = $this->render('_title', [
 <div id="email-content"></div>
 <?php Modal::end(); ?>
 <?php Modal::begin([
-    'header' => '<h4 class="m-0">Edit Email</h4>',
-    'id' => 'edit-user-email-modal',
-]); ?>
-<?php Modal::end(); ?>
-<?php Modal::begin([
-    'header' => '<h4 class="m-0">Add Email</h4>',
+    'header' => '<h4 class="m-0">Email</h4>',
     'id' => 'add-email-modal',
 ]); ?>
 <?= $this->render('create/_email', [
 	'emailModel' => new UserEmail(),
-	'userContact' => new UserContact(),
-	'model' => $model,
+	'model' => new UserContact(),
+	'userModel' => $model,
 ]);?>
 <?php Modal::end(); ?>
 <?php Modal::begin([
@@ -474,11 +469,11 @@ $(document).ready(function(){
                 {
                     if (response.status)
                     {
-                        $('#edit-user-email-modal .modal-body').html(response.data);
-                         $('#edit-user-email-modal .modal-dialog').css({'width': '400px'});
-                        $('#edit-user-email-modal').modal('show');
+                        $('#add-email-modal .modal-body').html(response.data);
+                         $('#add-email-modal .modal-dialog').css({'width': '400px'});
+                        $('#add-email-modal').modal('show');
                     } else {
-                        $('#edit-email-form').yiiActiveForm('updateMessages',
+                        $('#email-form').yiiActiveForm('updateMessages',
                                 response.errors
                                 , true);
                     }
@@ -487,27 +482,7 @@ $(document).ready(function(){
             
 		return false;
 	});
-         $(document).on('beforeSubmit', '#edit-email-form', function () {
-              $.ajax({
-                url    : $(this).attr('action'),
-                type   : 'post',
-                dataType: "json",
-                data   : $(this).serialize(),
-                    success: function(response)
-                        {
-                            if(response.status) {
-        			$('#edit-user-email-modal').modal('hide');
-        			$.pjax.reload({container:"#user-email",replace:false,  timeout: 4000});
-                    
-                             } else {
-					$('#address-form').yiiActiveForm('updateMessages', response.errors
-					, true);
-				}
-            }
-        });
-        return false;
-    });
-	$(document).on('click', '.add-address-btn', function () {
+  	$(document).on('click', '.add-address-btn', function () {
                 $('#userphone-number').val('');
                 $("#userphone-extension").val('');
 		$('#add-address-modal').modal('show');

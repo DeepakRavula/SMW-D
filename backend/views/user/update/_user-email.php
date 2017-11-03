@@ -23,7 +23,7 @@ use yii\helpers\ArrayHelper;
         <div class="col-md-12">
             <?= $form->field($emailModel, "email")->textInput(); ?>
             <?=
-            $form->field($userContact, "labelId")->widget(Select2::classname(), [
+            $form->field($model, "labelId")->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(Label::find()
                                 ->all(), 'id', 'name'),
                 'options' => ['placeholder' => 'Select Label'],

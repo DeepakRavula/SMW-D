@@ -23,7 +23,7 @@ class UserContactController extends Controller
         return [
 			'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['create-email', 'create-phone', 'update-primary', 'create-address'],
+                'only' => ['create-email', 'create-phone', 'update-primary', 'create-address','edit-email'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -155,25 +155,24 @@ class UserContactController extends Controller
 		return $response;
 	}
         public function actionEditEmail($id) {
-        $response = Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
-        $userContact = UserContact::find()->where(['id' => $id])->one();
-        $emailModel = UserEmail::find()->where(['userContactId' => $id])->one();
-        $data = $this->renderAjax('//user/update/_user-email', [
+        $model = $this->findModel($id);
+        $emailModel = $model->email;
+        $data = $this->renderAjax('//user/create/_email', [
             'emailModel' => $emailModel,
-            'userContact' => $userContact,
+            'model' => $model,
+            'userModel'=>$model->user,
         ]);
-        if ($emailModel->load(Yii::$app->request->post()) && $userContact->load(Yii::$app->request->post())) {
+        if ($emailModel->load(Yii::$app->request->post()) && $model->load(Yii::$app->request->post())) {
             $emailModel->save();
 
-            if (!is_numeric($userContact->labelId)) {
+            if (!is_numeric($model->labelId)) {
                 $label = new Label();
-                $label->name = $userContact->labelId;
-                $label->userAdded = $userContact->userId;
+                $label->name = $model->labelId;
+                $label->userAdded = $model->userId;
                 $label->save();
-                $userContact->labelId = $label->id;
+                $model->labelId = $label->id;
             }
-            $userContact->save();
+            $model->save();
             return [
                 'status' => true,
             ];
@@ -183,5 +182,19 @@ class UserContactController extends Controller
             'data' => $data
         ];
     }
+   protected function findModel($id)
+    {
+        $session = Yii::$app->session;
+        $locationId = $session->get('location_id');
+        $model = UserContact::find()->location($locationId)
+                ->where(['user_contact.id' => $id])
+                ->one();
+        if ($model !== null) {
+            return $model;
+        }else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+    
 
 }
