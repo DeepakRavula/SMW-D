@@ -460,9 +460,8 @@ $(document).ready(function(){
 	});
         $(document).on('click', '.user-email-edit', function () {
 		var contactId = $(this).attr('id') ;
-                var params='?id='+contactId;
               $.ajax({
-                url    : '<?= Url::to(['user-contact/edit-email']); ?>'+params,
+                url    : '<?= Url::to(['user-contact/edit-email']); ?>?id=' + contactId,
                 type: 'get',
                 dataType: "json",
                 success: function (response)

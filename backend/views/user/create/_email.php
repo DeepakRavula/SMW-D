@@ -28,7 +28,7 @@ $form = ActiveForm::begin([
 		<?=
 		$form->field($model, "labelId")->widget(Select2::classname(), [
 			'data' => ArrayHelper::map(Label::find()
-					->user($model->id)
+					->user($userModel->id)
 					->all(), 'id', 'name'),
 			'options' => ['placeholder' => 'Select Label'],
 			'pluginOptions' => [
