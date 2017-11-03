@@ -323,7 +323,7 @@ $(document).on('click', '.evaluation-delete', function () {
 						if (response.status)
 						{
 							$.pjax.reload({container: '#student-vacation', skipOuterContainers:true, timeout:6000});
-							$('#enrolment-delete-success').html('vacation has been deleted successfully').fadeIn().delay(3000).fadeOut();
+							$('#enrolment-delete-success').html('Vacation has been deleted successfully').fadeIn().delay(3000).fadeOut();
 						}
 					}
 				});

@@ -56,7 +56,7 @@ use kartik\daterange\DateRangePicker;
                 $('#loader').hide();
                 if(response.status) {
                     $('#vacation-modal').modal('hide');
-                    $('#enrolment-delete-success').html('vacation has been created successfully').fadeIn().delay(3000).fadeOut();
+                    $('#enrolment-delete-success').html('Vacation has been created successfully').fadeIn().delay(3000).fadeOut();
                     $.pjax.reload({url: url, container: "#student-lesson-listing", replace: false, async: false, timeout: 4000});
                     $.pjax.reload({url: url, container: "#student-vacation", replace: false, async: false, timeout: 4000});
                 }
