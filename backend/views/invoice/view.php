@@ -84,6 +84,7 @@ Modal::begin([
 	'subject' => 'Invoice from Arcadia Academy of Music',
 	'content' => $content,
 	'id' => $model->id,
+        'userModel'=>$model->user,
 ]);
 Modal::end();
 ?>

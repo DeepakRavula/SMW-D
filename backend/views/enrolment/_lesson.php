@@ -72,6 +72,7 @@ echo $this->render('/mail/_form', [
 	'subject' => 'Schedule for ' . $model->student->fullName,
 	'content' => $content,
 	'id' => null,
+        'userModel'=>$model->student->customer,
 ]);
 Modal::end();
 ?>
