@@ -42,9 +42,26 @@ $form = ActiveForm::begin([
 	?>
 	<?= $form->field($phoneModel, "extension")->textInput(['maxlength' => true]) ?>
 </div>
-<div class="row pull-right">
+    <div class="row">
+        <div class="col-md-12">
+<div class="pull-right">
 	<?php echo Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default phone-cancel-btn']); ?>
 <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 </div>
+                     <div class="pull-left">       
+ <?php
+                if (!$model->isNewRecord) {
+            echo Html::a('Delete', [
+                '#', 'id' => $model->id
+                ], [
+                'id' => $model->id,
+                'title' => Yii::t('yii', 'Delete'),
+                'class' => 'user-contact-delete btn btn-danger',
+            ]);
+        }
+
+        ?>
+         </div>
+        </div></div>
 <?php ActiveForm::end(); ?>
 </div>

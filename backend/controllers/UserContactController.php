@@ -238,6 +238,37 @@ class UserContactController extends Controller
             'data' => $data
         ];
     }
+     
+		 public function actionDelete($id)
+    {
+		$response = Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+		
+		$model = $this->findModel($id);
+                if(!empty($model->email))
+                {
+                $contactDetailModel=$model->email;
+                $url="email";
+                }
+                elseif(!empty($model->phone))
+                {
+                $contactDetailModel=$model->phone;
+                $url="phone";
+                }
+                elseif(!empty($model->address))
+                {
+                $contactDetailModel=$model->address;
+                $url="address";
+                }
+        if($model->delete()) {
+            $contactDetailModel->delete();
+        	return [
+				'status' => true,
+                                'url'=>$url,
+			];
+		}
+    }
+
    protected function findModel($id)
     {
         $session = Yii::$app->session;

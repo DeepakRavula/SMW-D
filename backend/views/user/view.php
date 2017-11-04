@@ -817,6 +817,44 @@ $(document).ready(function(){
                  }
              });
  		return false;
- 	});   
+ 	});
+        	        $(document).on('click', '.user-contact-delete', function () {
+		var contactId = $(this).attr('id') ;
+		 bootbox.confirm({ 
+  			message: "Are you sure you want to delete?", 
+  			callback: function(result){
+				if(result) {
+					$('.bootbox').modal('hide');
+				$.ajax({
+					url: '<?= Url::to(['user-contact/delete']); ?>?id=' + contactId,
+					type: 'post',
+					success: function (response)
+					{
+						if (response.status)
+						{
+                                                    if(response.url==="email")
+                                                    {
+                                                        $('#add-email-modal').modal('hide');
+                                                        $.pjax.reload({container: '#user-email', timeout: 6000});
+                                                    }
+                                                    else if (response.url==="phone")
+                                                    {
+                                                        $('#add-phone-modal').modal('hide');
+                                                        $.pjax.reload({container: '#user-phone', timeout: 6000});
+                                                    }
+                                                    else if(response.url==="address")
+                                                    {
+                                                        $('#add-address-modal').modal('hide');
+							$.pjax.reload({container: '#user-address', timeout: 6000});
+                                                    }
+						} 
+					}
+				});
+				return false;	
+			}
+			}
+		});	
+		return false;
+        });
 });
 </script>
