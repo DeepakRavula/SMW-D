@@ -15,17 +15,21 @@ use yii\helpers\ArrayHelper;
 ?>
 <div class="row user-create-form">
 <?php
+ $url = Url::to(['user-contact/edit-phone', 'id' => $model->id]);
+    if ($model->isNewRecord) {
+        $url = Url::to(['user-contact/create-phone','id' => $userModel->id]);
+    }
 $form = ActiveForm::begin([
 		'id' => 'phone-form',
-		'action' => Url::to(['user-contact/create-phone', 'id' => $model->id])
+		'action' => $url,
 	]);
 ?>
 <div class="row">
 	<?= $form->field($phoneModel, "number")->textInput(['maxlength' => true]) ?>
 	<?=
-	$form->field($userContact, "labelId")->widget(Select2::classname(), [
+	$form->field($model, "labelId")->widget(Select2::classname(), [
 		'data' => ArrayHelper::map(Label::find()
-				->user($model->id)
+				->user($userModel->id)
 				->all(), 'id', 'name'),
 		'options' => [
 			'id' => 'phone-label',
@@ -38,9 +42,26 @@ $form = ActiveForm::begin([
 	?>
 	<?= $form->field($phoneModel, "extension")->textInput(['maxlength' => true]) ?>
 </div>
-<div class="row pull-right">
+    <div class="row">
+        <div class="col-md-12">
+<div class="pull-right">
 	<?php echo Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default phone-cancel-btn']); ?>
 <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 </div>
+                     <div class="pull-left">       
+ <?php
+                if (!$model->isNewRecord) {
+            echo Html::a('Delete', [
+                '#', 'id' => $model->id
+                ], [
+                'id' => $model->id,
+                'title' => Yii::t('yii', 'Delete'),
+                'class' => 'user-contact-delete btn btn-danger',
+            ]);
+        }
+
+        ?>
+         </div>
+        </div></div>
 <?php ActiveForm::end(); ?>
 </div>

@@ -18,9 +18,13 @@ use yii\helpers\Url;
 ?>
 <div class="row user-create-form">
 	<?php
+        $url = Url::to(['user-contact/edit-address', 'id' => $model->id]);
+    if ($model->isNewRecord) {
+        $url = Url::to(['user-contact/create-address','id' => $userModel->id]);
+    }
 	$form = ActiveForm::begin([
 			'id' => 'address-form',
-			'action' => Url::to(['user-contact/create-address', 'id' => $model->id])
+			'action' =>$url,
 	]);
 	?>
 	<div class="row">
@@ -28,9 +32,9 @@ use yii\helpers\Url;
 		$locationModel = Location::findOne(['id' => Yii::$app->session->get('location_id')]);
 		?>
 		<?=
-		$form->field($userContact, "labelId")->widget(Select2::classname(), [
+		$form->field($model, "labelId")->widget(Select2::classname(), [
 			'data' => ArrayHelper::map(Label::find()
-					->user($model->id)
+					->user($userModel->id)
 					->all(), 'id', 'name'),
 			'options' => [
 				'id' => 'address-label',
@@ -60,6 +64,20 @@ use yii\helpers\Url;
 		<?php echo Html::a('Cancel', '#', ['class' => 'btn btn-default address-cancel-btn']); ?>
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 	</div>
+             <div class="pull-left">       
+ <?php
+                if (!$model->isNewRecord) {
+            echo Html::a('Delete', [
+                '#', 'id' => $model->id
+                ], [
+                'id' => $model->id,
+                'title' => Yii::t('yii', 'Delete'),
+                'class' => 'user-contact-delete btn btn-danger',
+            ]);
+        }
+
+        ?>
+         </div>
 	<?php ActiveForm::end(); ?>
 </div>
 <script>
