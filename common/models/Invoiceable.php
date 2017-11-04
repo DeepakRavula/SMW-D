@@ -196,26 +196,6 @@ trait Invoiceable
     
     public function addCreditInvoice($startDate = null, $endDate)
     {
-        $invoice = new Invoice();
-        $invoice->user_id = $this->customer->id;
-        $invoice->location_id = $this->customer->userLocation->location_id;
-        $invoice->type = Invoice::TYPE_INVOICE;
-        $invoice->save();
-        $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
-        $invoiceLineItem->invoice_id = $invoice->id;
-        $item = Item::findOne(['code' => Item::LESSON_CREDIT]);
-        $invoiceLineItem->item_id = $item->id;
-        $invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_CREDIT;
-        $invoiceLineItem->description = $this->student->studentIdentity .'\'s '
-                . $this->course->program->name . ' Lesson credit';
-        $invoiceLineItem->unit = 1;
-        $invoiceLineItem->amount = 0.0;
-        $invoiceLineItem->code = $invoiceLineItem->getItemCode();
-        $invoiceLineItem->cost = 0;
-        $invoiceLineItem->save();
-        $invoice->tax = $invoiceLineItem->tax_rate;
-        $invoice->total = $invoice->subTotal + $invoice->tax;
-        $invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
         $endDate = (new \DateTime($endDate))->format('Y-m-d');
         $query = Lesson::find()
                     ->notDeleted()
@@ -228,9 +208,39 @@ trait Invoiceable
         }
         $lessons = $query->andWhere(['courseId' => $this->courseId])
                     ->all();
+        $hasCredit = false;
         foreach ($lessons as $lesson) {
             if ($lesson->hasLessonCredit($this->id)) {
-                $invoice->save();
+                $hasCredit = true;
+            }
+        }
+        if ($hasCredit) {
+            $invoice = new Invoice();
+            $invoice->user_id = $this->customer->id;
+            $invoice->location_id = $this->customer->userLocation->location_id;
+            $invoice->type = Invoice::TYPE_INVOICE;
+            $invoice->save();
+            $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
+            $invoiceLineItem->invoice_id = $invoice->id;
+            $item = Item::findOne(['code' => Item::LESSON_CREDIT]);
+            $invoiceLineItem->item_id = $item->id;
+            $invoiceLineItem->item_type_id = ItemType::TYPE_LESSON_CREDIT;
+            $invoiceLineItem->description = $this->student->studentIdentity .'\'s '
+                    . $this->course->program->name . ' Lesson credit';
+            $invoiceLineItem->unit = 1;
+            $invoiceLineItem->amount = 0.0;
+            $invoiceLineItem->code = $invoiceLineItem->getItemCode();
+            $invoiceLineItem->cost = 0;
+            $invoiceLineItem->save();
+            $invoice->tax = $invoiceLineItem->tax_rate;
+            $invoice->total = $invoice->subTotal + $invoice->tax;
+            $invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
+        }
+        foreach ($lessons as $lesson) {
+            if ($lesson->hasLessonCredit($this->id)) {
+                if ($hasCredit) {
+                    $invoice->save();
+                }
                 $invoice->addPayment($lesson, $lesson->getLessonCreditAmount($this->id), $this);
             }
             $lesson->Cancel();
@@ -239,9 +249,12 @@ trait Invoiceable
         $paymentCycleQuery = PaymentCycle::find()
                 ->where(['enrolmentId' => $this->id]);
         if ($startDate) {
-            $paymentCycleQuery->andWhere(['AND', ['<=', 'DATE(startDate)', $startDate], ['>=', 'DATE(endDate)', $endDate]]);
+            $paymentCycleQuery->andWhere(['OR', ['between', "DATE(endDate)", $startDate, $endDate],
+                                ['between', "DATE(startDate)", $startDate, $endDate]]);
         } else {
-            $paymentCycleQuery->andWhere(['>', 'DATE(startDate)', $endDate]);
+            $paymentCycleQuery->andWhere(['OR', 
+                ['AND', ['<', 'DATE(startDate)', $endDate], ['>', 'DATE(endDate)', $endDate]],
+                ['>', 'DATE(startDate)', $endDate]]);
         }
         $paymentCycles = $paymentCycleQuery->all();
         foreach($paymentCycles as $paymentCycle) {
@@ -249,7 +262,7 @@ trait Invoiceable
                 $paymentCycle->delete();
             }
         }
-        return $invoice;
+        return $hasCredit ? $invoice : null;
     }
     
     public function createProFormaInvoice()
