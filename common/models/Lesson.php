@@ -13,7 +13,6 @@ use common\components\validators\lesson\conflict\HolidayValidator;
 use common\components\validators\lesson\conflict\ClassroomValidator;
 use common\components\validators\lesson\conflict\TeacherValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
-use common\components\validators\lesson\conflict\StudentBackToBackLessonValidator;
 use common\components\validators\lesson\conflict\IntraEnrolledLessonValidator;
 use common\components\validators\lesson\conflict\TeacherAvailabilityValidator;
 use common\components\validators\lesson\conflict\StudentAvailabilityValidator;
@@ -147,12 +146,7 @@ class Lesson extends \yii\db\ActiveRecord
 				self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function($model, $attribute) {
                 return $model->course->program->isPrivate();
             }],
-            [['date'], StudentBackToBackLessonValidator::className(), 'on' => [self::SCENARIO_EDIT], 'when' => function($model, $attribute) {
-                return $model->course->program->isPrivate();
-            }],
             [['date'], TeacherSubstituteValidator::className(), 'on' => self::SCENARIO_SUBSTITUTE_TEACHER],
-            [['date'], StudentBackToBackLessonValidator::className(), 'on' => [self::SCENARIO_CREATE,
-                self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_GROUP_ENROLMENT_REVIEW]],
             [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],
             ['duration', TeacherAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
             ['duration', StudentAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
