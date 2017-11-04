@@ -12,6 +12,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 use backend\models\UserForm;
 use common\models\discount\CustomerDiscount;
+use common\models\Label;
 
 /**
  * User model.
@@ -118,7 +119,6 @@ class User extends ActiveRecord implements IdentityInterface
                 'softDeleteAttributeValues' => [
                     'isDeleted' => true,
                 ],
-                'replaceRegularDelete' => true
             ]
         ];
     }
@@ -238,8 +238,12 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getPrimaryAddress()
     {
-        return $this->hasOne(Address::className(), ['id' => 'address_id'])
-          ->viaTable('user_address', ['user_id' => 'id']);
+		
+        return UserAddress::find()
+			->joinWith(['userContact' => function($query) {
+				$query->primary();
+			}])
+			->one();
     }
 
     public function getCustomerPaymentPreference()
@@ -252,9 +256,11 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getBillingAddress()
     {
-        return $this->hasOne(Address::className(), ['id' => 'address_id'])
-          ->viaTable('user_address', ['user_id' => 'id'])
-          ->onCondition(['label' => Address::LABEL_BILLING]);
+		return UserAddress::find()
+			->joinWith(['userContact' => function($query) {
+				$query->andWhere(['label' => Label::LABEL_BILLING]);
+			}])
+			->one();
     }
 
     /**
@@ -309,8 +315,9 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getPrimaryPhoneNumber()
     {
-        return $this->hasOne(PhoneNumber::className(), ['user_id' => 'id'])
-                 ->onCondition(['is_primary' => true]);
+		return $this->hasOne(UserPhone::className(), ['userContactId' => 'id'])
+			->via('userContact')
+			->onCondition(['isPrimary' => true]);
     }
 	
     /**
