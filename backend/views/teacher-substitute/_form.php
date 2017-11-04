@@ -263,7 +263,6 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
     
     $(document).off('click', '#sub-teacher-confirm').on('click', '#sub-teacher-confirm', function () {
         if (!$(this).attr('disabled')) {
-            var url = '<?= Url::to(['lesson/index']) ?>';
             var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
             var params = $.param({ ids: lessonIds });
             $.ajax({
@@ -274,7 +273,7 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                     if(response.status)
                     {
                         $('#teacher-substitute-modal').modal('hide');
-                        $.pjax.reload({url: url, container: '#lesson-index', timeout: 6000});
+                        $.pjax.reload({url: response.url, container: '#lesson-index', timeout: 6000});
                         $('#index-success-notification').html("Lessons are substituted to the selected teachers").
                                     fadeIn().delay(5000).fadeOut();
                     }
