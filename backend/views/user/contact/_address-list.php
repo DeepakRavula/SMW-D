@@ -5,7 +5,7 @@ use common\models\UserContact;
 ?>
 <?= Html::hiddenInput('id', $address->userContactId, ['class' => 'contact']);?>
 <?= Html::hiddenInput('contactType', UserContact::TYPE_ADDRESS, ['class' => 'contactType']);?>
-<div id="<?= $address->userContact->id; ?>" class="<?= !empty($address->userContact->isPrimary) ? 'primary' : 'not-primary'; ?> user-address-edit">
+<div id="<?= $address->userContact->id; ?>" class="<?= !empty($address->userContact->isPrimary) ? 'primary' : 'not-primary'; ?> user-address-edit user-contact-list">
 <dl class="dl-horizontal">
    <?php  if(!empty($address->city->name)):?>
 	<dt><?= $address->userContact->label->name; ?></dt>
