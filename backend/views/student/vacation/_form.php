@@ -120,7 +120,7 @@ use yii\grid\GridView;
     <?php endif; ?>
     <?php if ($creditAmount) : ?>  
         <div class="col-lg-12">
-            <?= '<label class="control-label">Available Credit Amount: </label>' ?> <?= $creditAmount; ?>
+            <?= '<label class="control-label">Estimated credits to be transferred to customer\'s account: </label>' ?> <?= $creditAmount; ?>
         </div>
     <?php endif; ?>
     <?php \yii\widgets\Pjax::end(); ?>
