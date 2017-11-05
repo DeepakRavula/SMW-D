@@ -718,7 +718,7 @@ class UserController extends Controller
 				];
 			}
 		}else if($role === User::ROLE_TEACHER) {
-                   if(empty($model->getModel()->qualifications)) {
+                   if(empty($model->getModel()->qualifications) && empty($model->getModel()->courses)) {
 				$this->deleteContact($id);
 				$model->getModel()->delete();
 				$response = [
@@ -728,7 +728,7 @@ class UserController extends Controller
 			} else {
 				$response = [
 					'status' => false,
-					'message' => 'Unable to delete. There are qualification(s) associated with this ' . $role
+					'message' => 'Unable to delete. There are qualification/course(s) associated with this ' . $role
 				];
 			}
 		}

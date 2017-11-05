@@ -343,6 +343,10 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(Student::className(), ['customer_id' => 'id']);
     }
+	 public function getCourses()
+    {
+        return $this->hasMany(Course::className(), ['teacherId' => 'id']);
+    }
 	
     public function getEmail()
     {
