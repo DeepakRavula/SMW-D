@@ -41,6 +41,9 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use common\models\Payment;
 use common\models\UserAddress;
+use Intervention\Image\ImageManagerStatic;
+use trntv\filekit\actions\DeleteAction;
+use trntv\filekit\actions\UploadAction;
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -91,6 +94,19 @@ class UserController extends Controller
                     /* @var $file \League\Flysystem\File */
                     // do something (resize, add watermark etc)
                 },
+            ],
+			'avatar-upload' => [
+                'class' => UploadAction::className(),
+                'deleteRoute' => 'avatar-delete',
+                'on afterSave' => function ($event) {
+                    /* @var $file \League\Flysystem\File */
+                    $file = $event->file;
+                    $img = ImageManagerStatic::make($file->read())->fit(215, 215);
+                    $file->put($img->encode());
+                }
+            ],
+            'avatar-delete' => [
+                'class' => DeleteAction::className()
             ],
         ];
     }
@@ -552,8 +568,10 @@ class UserController extends Controller
 		$request = Yii::$app->request;
 		$model = new UserForm();
         $model->setModel($this->findModel($id));	
-		if ($model->load($request->post())) {
+		$userProfile  = $model->getModel()->userProfile;
+		if ($model->load($request->post()) && $userProfile->load($request->post())) {
 			if($model->save()) {
+				$userProfile->save();
 				return [
 				   'status' => true,
 				];	

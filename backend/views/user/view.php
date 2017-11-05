@@ -351,6 +351,7 @@ $this->params['action-button'] = Html::a('<i title="Delete" class="fa fa-trash">
 ]); ?>
 <?= $this->render('update/_profile', [
 	'model' => $userForm,
+	'userProfile' => $model->userProfile,
 ]);?>
 <?php Modal::end(); ?>
 <?php Pjax::begin([
@@ -670,8 +671,9 @@ $(document).ready(function(){
             {
                 if(response.status) {
         			$('#user-edit-modal').modal('hide');
-        			$.pjax.reload({container:"#user-profile",replace:false,  timeout: 4000});
-                    
+        			$.pjax.reload({container:"#user-profile",replace:false,  timeout: 4000}).done(function () {
+    					$.pjax.reload({container: '#user-header', timeout: 6000});
+					});
                 } else {
                   $('#user-update-form').yiiActiveForm('updateMessages', response.errors, true); 
                 }
