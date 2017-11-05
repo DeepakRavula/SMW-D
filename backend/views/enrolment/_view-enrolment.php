@@ -120,14 +120,14 @@ Modal::begin([
                 if(response.status)
                 {
                     $('#enrolment-edit-enddate-modal').modal('hide');
-					if(response.message) {
-						$('#enrolment-enddate-alert').html(response.message).fadeIn().delay(5000).fadeOut();
-                        paymentFrequency.onEditableSuccess();
-					}
-				}
-			}
-		});
-		return false;
+                    paymentFrequency.onEditableSuccess();
+                    if(response.message) {
+                        $('#enrolment-enddate-alert').html(response.message).fadeIn().delay(5000).fadeOut();
+                    }
+                }
+            }
+        });
+            return false;
 	});
 
     $(document).on('beforeSubmit', '#enrolment-update-form', function(){
@@ -143,14 +143,12 @@ Modal::begin([
                 {
                     $('#enrolment-edit-modal').modal('hide');
                     paymentFrequency.onEditableSuccess();
-					if(response.message) {
-						$('#enrolment-enddate-alert').html(response.message).fadeIn().delay(5000).fadeOut();
-					}
-				}
-			}
-		});
-		return false;
-	});
+                    $('#enrolment-enddate-alert').html(response.message).fadeIn().delay(5000).fadeOut();
+                }
+            }
+        });
+        return false;
+    });
 
 	var paymentFrequency = {
 		onEditableSuccess: function () {
