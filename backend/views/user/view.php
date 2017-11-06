@@ -401,8 +401,8 @@ $this->params['action-button'] = Html::a('<i title="Delete" class="fa fa-trash">
 ]); ?>
 <?= $this->render('create/_phone', [
 	'phoneModel' => new UserPhone(),
-	'userContact' => new UserContact(),
-	'model' => $model,
+	'model' => new UserContact(),
+	'userModel' => $model,
 ]);?>
 <?php Modal::end(); ?>
 <?php Modal::begin([
@@ -411,8 +411,8 @@ $this->params['action-button'] = Html::a('<i title="Delete" class="fa fa-trash">
 ]); ?>
 <?= $this->render('create/_address', [
 	'addressModel' => new UserAddress(),
-	'userContact' => new UserContact(),
-	'model' => $model,
+	'model' => new UserContact(),
+	'userModel' => $model,
 ]);?>
 <?php Modal::end(); ?>
 <script>
@@ -501,11 +501,6 @@ $(document).ready(function(){
 		$('#add-address-modal').modal('hide');
         return false;
 	});
-        $(document).on('click', '.edit-email-cancel-btn', function () {
-		$('#edit-user-email-modal').modal('hide');
-        return false;
-	});
-        
 	$(document).on('click', '.add-phone-btn', function () {
                  $('#userphone-number').val('');
                 $("#userphone-extension").val('');
@@ -816,5 +811,49 @@ $(document).ready(function(){
         });
         return false;
     });
+       $(document).on('click', '.user-phone-edit', function () {
+ 		var contactId = $(this).attr('id') ;
+               $.ajax({
+                 url    : '<?= Url::to(['user-contact/edit-phone']); ?>?id=' + contactId,
+                 type: 'get',
+                 dataType: "json",
+                 success: function (response)
+                 {
+                     if (response.status)
+                     {
+                         $('#add-phone-modal .modal-body').html(response.data);
+                          $('#add-phone-modal .modal-dialog').css({'width': '400px'});
+                         $('#add-phone-modal').modal('show');
+                     } else {
+                         $('#phone-form').yiiActiveForm('updateMessages',
+                                 response.errors
+                                 , true);
+                     }
+                 }
+             });
+ 		return false;
+ 	});
+            $(document).on('click', '.user-address-edit', function () {
+ 		var contactId = $(this).attr('id') ;
+               $.ajax({
+                 url    : '<?= Url::to(['user-contact/edit-address']); ?>?id=' + contactId,
+                 type: 'get',
+                 dataType: "json",
+                 success: function (response)
+                 {
+                     if (response.status)
+                     {
+                         $('#add-address-modal .modal-body').html(response.data);
+                          $('#add-address-modal .modal-dialog').css({'width': '400px'});
+                         $('#add-address-modal').modal('show');
+                     } else {
+                         $('#address-form').yiiActiveForm('updateMessages',
+                                 response.errors
+                                 , true);
+                     }
+                 }
+             });
+ 		return false;
+ 	});   
 });
 </script>

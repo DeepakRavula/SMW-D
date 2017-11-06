@@ -73,14 +73,14 @@ class LessonController extends Controller
         $searchModel->lessonStatus = Lesson::STATUS_SCHEDULED;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         if (!empty($lessonRequest['dateRange'])) {
-				$searchModel->dateRange = $lessonRequest['dateRange'];
-			}
+            $searchModel->dateRange = $lessonRequest['dateRange'];
+        }
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
-
+    
     /**
      * Displays a single Lesson model.
      *

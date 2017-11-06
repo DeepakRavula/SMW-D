@@ -23,7 +23,7 @@ class UserContactController extends Controller
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['create-email', 'create-phone', 'update-primary', 'create-address','edit-email'],
+                'only' => ['create-email', 'create-phone', 'update-primary', 'create-address','edit-email','edit-phone','edit-address'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -164,6 +164,62 @@ class UserContactController extends Controller
         ]);
         if ($emailModel->load(Yii::$app->request->post()) && $model->load(Yii::$app->request->post())) {
             $emailModel->save();
+
+            if (!is_numeric($model->labelId)) {
+                $label = new Label();
+                $label->name = $model->labelId;
+                $label->userAdded = $model->userId;
+                $label->save();
+                $model->labelId = $label->id;
+            }
+            $model->save();
+            return [
+                'status' => true,
+            ];
+        }
+        return [
+            'status' => true,
+            'data' => $data
+        ];
+    }
+    public function actionEditPhone($id) {
+        $model = $this->findModel($id);
+        $phoneModel = $model->phone;
+        $data = $this->renderAjax('//user/create/_phone', [
+            'phoneModel' => $phoneModel,
+            'model' => $model,
+            'userModel' => $model->user,
+        ]);
+        if ($phoneModel->load(Yii::$app->request->post()) && $model->load(Yii::$app->request->post())) {
+            $phoneModel->save();
+
+            if (!is_numeric($model->labelId)) {
+                $label = new Label();
+                $label->name = $model->labelId;
+                $label->userAdded = $model->userId;
+                $label->save();
+                $model->labelId = $label->id;
+            }
+            $model->save();
+            return [
+                'status' => true,
+            ];
+        }
+        return [
+            'status' => true,
+            'data' => $data
+        ];
+    }
+        public function actionEditAddress($id) {
+        $model = $this->findModel($id);
+        $addressModel = $model->address;
+        $data = $this->renderAjax('//user/create/_address', [
+            'addressModel' => $addressModel,
+            'model' => $model,
+            'userModel' => $model->user,
+        ]);
+        if ($addressModel->load(Yii::$app->request->post()) && $model->load(Yii::$app->request->post())) {
+            $addressModel->save();
 
             if (!is_numeric($model->labelId)) {
                 $label = new Label();
