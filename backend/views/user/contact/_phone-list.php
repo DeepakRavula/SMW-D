@@ -5,10 +5,10 @@ use common\models\UserContact;
 ?>
 <?= Html::hiddenInput('id', $phoneNumber->userContactId, ['class' => 'contact']);?>
 <?= Html::hiddenInput('contactType', UserContact::TYPE_PHONE, ['class' => 'contactType']);?>
-<div class="<?= !empty($phoneNumber->userContact->isPrimary) ? 'primary' : 'not-primary'; ?>">
+<div id="<?=$phoneNumber->userContactId ?>" class="<?= !empty($phoneNumber->userContact->isPrimary) ? 'primary' : 'not-primary'; ?> user-phone-edit">
 <dl class="dl-horizontal">
 	<dt><?= $phoneNumber->userContact->label->name; ?></dt>
-	<dd><?= $phoneNumber->number; ?></dd>
+	<dd><?= $phoneNumber->number; ?> </dd>
 	<dd><?= !empty($phoneNumber->extension) ? '<strong>Ext:</strong> ' . $phoneNumber->extension : null; ?></dd>
 </dl>
 </div>
