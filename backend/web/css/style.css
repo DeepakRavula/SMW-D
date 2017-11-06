@@ -188,10 +188,8 @@ dl {
 }
 
 .dropdown-content a:hover {background-color: #f1f1f1}
-
-.user-profile {
-    width: 40px;
-    height: 40px;
-    border: 2px solid transparent;
-    border-radius: 50%;
+.user-contact-list
+{
+  margin-top: -20px; 
+  margin-left: -50px;  
 }
