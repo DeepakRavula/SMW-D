@@ -23,18 +23,19 @@ class LessonSearch extends Lesson
     public $customerId;
     public $invoiceType;
     public $showAllReviewLessons = false;
-	public $summariseReport = false;
-	public $student;
-	public $program;
-        public $teacher;
-	/**
+    public $summariseReport = false;
+    public $student;
+    public $program;
+    public $teacher;
+    public $ids;
+    /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
-            [['date', 'showAllReviewLessons', 'summariseReport'], 'safe'],
+            [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
             [['lessonStatus', 'fromDate', 'toDate', 'type', 'customerId', 
                 'invoiceType','dateRange', 'student', 'program', 'teacher'], 'safe'],
         ];
@@ -131,6 +132,14 @@ class LessonSearch extends Lesson
             if ((int) $this->invoiceType !== Invoice::TYPE_INVOICE) {
                 $query->andWhere(['between', 'DATE(lesson.date)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
             }
+        }
+        
+        if (!empty($this->ids)) {
+            $lessonQuery = Lesson::find()
+                    ->where(['id' => $this->ids]);
+            $dataProvider = new ActiveDataProvider([
+                'query' => $lessonQuery,
+            ]);
         }
 
         return $dataProvider;

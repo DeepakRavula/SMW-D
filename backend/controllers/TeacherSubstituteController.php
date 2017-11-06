@@ -155,12 +155,14 @@ class TeacherSubstituteController extends Controller
                 ->notConfirmed()
                 ->andWhere(['createdByUserId' => Yii::$app->user->id])
                 ->all();
+        $lessonIds = [];
         foreach ($lessons as $lesson) {
+            $lessonIds[] = $lesson->id;
             $lesson->updateAttributes(['isConfirmed' => true]);
         }
         $response = [
             'status' => true,
-            'url' => Url::to(['/lesson/index'])
+            'url' => Url::to(['/lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[ids]' => $lessonIds])
         ];
         return $response;
     }
