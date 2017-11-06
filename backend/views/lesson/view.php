@@ -49,7 +49,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 	</div>
 	<div class="col-md-6">
 		<?=
-		$this->render('_schedule', [
+		$this->render('schedule/_view', [
 			'model' => $model,
 		]);
 		?>

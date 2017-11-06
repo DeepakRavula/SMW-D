@@ -16,13 +16,9 @@ use yii\widgets\Pjax;
         'invoiceModel' => $model,
     ]) ?>
 <?php Pjax::Begin(['id' => 'invoice-view-tab-item', 'timeout' => 6000]); ?>
-<?php $boxTools = null;?>
-	<?php if(!empty($model->lineItem) && ($model->lineItem->isOtherLineItems())) :?>
-	 <?php $boxTools = '<i title="Discount" class = "fa fa-percent apply-discount m-r-10"></i>' ?>
-    <?php endif; ?>
-<?php if((empty($model->lineItem) || $model->lineItem->isOtherLineItems()) && $model->isInvoice()) :?>
-<?php $boxTools = $boxTools .'<i title="Add" class="fa fa-plus add-new-misc m-r-10"></i>' ?>
-<?php endif; ?>
+<?php $boxTools = $this->render('_button', [
+	'model' => $model,
+]);?>
 <?php
 	LteBox::begin([
 		'type' => LteConst::TYPE_DEFAULT,

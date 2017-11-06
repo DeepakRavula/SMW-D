@@ -7,16 +7,9 @@ use common\models\User;
 use common\models\LocationAvailability;
 ?>
 <?php
-$toolBoxHtml = '<i title="Edit" class="fa fa-pencil edit-lesson-schedule"></i>';
-if ($model->isScheduled()) {
-    $toolBoxHtml .= '&nbsp;&nbsp;&nbsp;';
-    $toolBoxHtml .= '<div class="dropdown">
-                        <i class="fa fa-angle-down fa-lg"></i>
-                        <div class="dropdown-content dropdown-menu-right">
-                            <a id="lesson-unschedule" href="#">Unschedule Lesson</a>
-                        </div>
-                    </div>';
-}
+$toolBoxHtml = $this->render('_button', [
+	'model' => $model,
+]);
 LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
 	'boxTools' => $toolBoxHtml,
@@ -177,14 +170,6 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             });
             return false;
         });
-    });
-    
-    $(document).on('click', '.dropdown', function () {
-        $('.dropdown-content').css({'display': 'block'});
-    });
-    
-    $("body *:not(.dropdown)").click(function() {
-        $('.dropdown-content').css({'display': 'none'});
     });
     
     $(document).on('click', '#lesson-unschedule', function () {
