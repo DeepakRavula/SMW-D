@@ -671,7 +671,7 @@ $(document).ready(function(){
             {
                 if(response.status) {
         			$('#user-edit-modal').modal('hide');
-        			$.pjax.reload({container:"#user-profile",replace:false,  timeout: 4000}).done(function () {
+        			$.pjax.reload({container:"#user-profile",replace:false,  timeout: 6000}).done(function () {
     					$.pjax.reload({container: '#user-header', timeout: 6000});
 					});
                 } else {
