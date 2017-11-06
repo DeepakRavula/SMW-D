@@ -139,7 +139,7 @@ class CustomerController extends UserController
                         $log->userId = $id;
                         $log->save();
                     }
-                    $customer->delete();
+                    $customer->softDelete();
                 }
                 return [
                     'status' => true,

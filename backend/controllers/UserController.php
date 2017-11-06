@@ -32,6 +32,8 @@ use common\models\Program;
 use common\models\UserContact;
 use common\models\LocationAvailability;
 use common\models\InvoiceLineItem;
+use common\models\timelineEvent\TimelineEventLink;
+use yii\helpers\Url;
 use common\models\UserEmail;
 use common\models\Label;
 use yii\web\ForbiddenHttpException;
@@ -39,6 +41,9 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use common\models\Payment;
 use common\models\UserAddress;
+use Intervention\Image\ImageManagerStatic;
+use trntv\filekit\actions\DeleteAction;
+use trntv\filekit\actions\UploadAction;
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -55,7 +60,7 @@ class UserController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson', 'update-primary-email'],
+                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson', 'update-primary-email', 'delete'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -89,6 +94,19 @@ class UserController extends Controller
                     /* @var $file \League\Flysystem\File */
                     // do something (resize, add watermark etc)
                 },
+            ],
+			'avatar-upload' => [
+                'class' => UploadAction::className(),
+                'deleteRoute' => 'avatar-delete',
+                'on afterSave' => function ($event) {
+                    /* @var $file \League\Flysystem\File */
+                    $file = $event->file;
+                    $img = ImageManagerStatic::make($file->read())->fit(215, 215);
+                    $file->put($img->encode());
+                }
+            ],
+            'avatar-delete' => [
+                'class' => DeleteAction::className()
             ],
         ];
     }
@@ -550,8 +568,10 @@ class UserController extends Controller
 		$request = Yii::$app->request;
 		$model = new UserForm();
         $model->setModel($this->findModel($id));	
-		if ($model->load($request->post())) {
+		$userProfile  = $model->getModel()->userProfile;
+		if ($model->load($request->post()) && $userProfile->load($request->post())) {
 			if($model->save()) {
+				$userProfile->save();
 				return [
 				   'status' => true,
 				];	
@@ -646,5 +666,90 @@ class UserController extends Controller
             'status' => true,
             'data' => $data
         ];
+    }
+	public function deleteContact($id) {
+		$model = $this->findModel($id);
+		if(!empty($model->emails)) {
+			foreach($model->emails as $email) {
+				$email->userContact->delete();
+				$email->delete();
+			}
+		}
+		if(!empty($model->phoneNumbers)) {
+			foreach($model->phoneNumbers as $phone) {
+				$phone->userContact->delete();
+				$phone->delete();
+			}
+		}
+		if(!empty($model->addresses)) {
+			foreach($model->addresses as $address) {
+				$address->userContact->delete();
+				$address->delete();
+			}
+		}
+		if(!empty($model->logs)) {
+			foreach($model->logs as $log) {
+				TimelineEventLink::deleteAll(['timelineEventId' => $log->timelineEvent->id]);
+				$log->timelineEvent->delete();
+				$log->delete();
+			}
+		}		
+	}
+	public function actionDelete($id)
+    {
+        $model = new UserForm();
+        $model->setModel($this->findModel($id));
+
+        $role = $model->roles;
+        if (($role === User::ROLE_TEACHER) && (!Yii::$app->user->can('deleteTeacherProfile'))) {
+            throw new ForbiddenHttpException();
+        }
+        if (($role === User::ROLE_CUSTOMER) && (!Yii::$app->user->can('deleteCustomerProfile'))) {
+            throw new ForbiddenHttpException();
+        }
+        if (($role === User::ROLE_OWNER) && (!Yii::$app->user->can('deleteOwnerProfile'))) {
+            throw new ForbiddenHttpException();
+        }
+        if (($role === User::ROLE_STAFFMEMBER) && (!Yii::$app->user->can('deleteStaffProfile'))) {
+            throw new ForbiddenHttpException();
+        }
+		
+		if(in_array($role, [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER, User::ROLE_STAFFMEMBER])) {
+			$this->deleteContact($id);
+			$model->getModel()->delete();
+			$response = [
+				'status' => true,
+				'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
+			];	
+		}else if($role === User::ROLE_CUSTOMER) {
+                    if(empty($model->getModel()->student)) {
+				$this->deleteContact($id);
+				$model->getModel()->delete();
+				$response = [
+					'status' => true,
+					'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
+				];
+			} else {
+				$response = [
+					'status' => false,
+					'message' => 'Unable to delete. There are student(s) associated with this ' . $role
+				];
+			}
+		}else if($role === User::ROLE_TEACHER) {
+                   if(empty($model->getModel()->qualifications)) {
+				$this->deleteContact($id);
+				$model->getModel()->delete();
+				$response = [
+					'status' => true,
+					'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
+				];
+			} else {
+				$response = [
+					'status' => false,
+					'message' => 'Unable to delete. There are qualification(s) associated with this ' . $role
+				];
+			}
+		}
+		return $response;
     }
 }

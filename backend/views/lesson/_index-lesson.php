@@ -108,6 +108,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'options' => ['id' => 'lesson-index-1'],
 		'filterModel' => $searchModel,
+        'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true]),
 		'rowOptions' => function ($model, $key, $index, $grid) {
 			$url = Url::to(['lesson/view', 'id' => $model->id]);
 

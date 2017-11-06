@@ -3,14 +3,13 @@
  * @var yii\web\View
  */
 use backend\assets\BackendAsset;
-use common\models\timelineEvent\TimelineEvent;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\User;
 use common\models\Location;
 use common\models\UserLocation;
-use yii\web\JsExpression;
+use yii\widgets\Pjax;
 
 $bundle = BackendAsset::register($this);
 ?>
@@ -80,7 +79,7 @@ $bundle = BackendAsset::register($this);
                             <ul class="dropdown-menu">
                                 <!-- User image -->
                                 <li class="user-header light-blue">
-                                    <img src="<?php echo Yii::$app->user->identity->userProfile->getAvatar($this->assetManager->getAssetUrl($bundle, 'img/anonymous.jpg')) ?>" class="img-circle" alt="User Image" />
+                                    <img src="<?php echo Yii::$app->user->identity->userProfile->getAvatar($this->assetManager->getAssetUrl($bundle, 'img/anonymous.jpg')) ?>" class="img-circle" />
                                     <p>
                                         <?= Yii::$app->user->identity->userProfile->fullName ?> - <?= Yii::$app->user->identity->getRoleName(); ?>
                                         <small>Member since <?= date('Y M', Yii::$app->user->identity->created_at) ?>

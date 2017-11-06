@@ -32,7 +32,11 @@ $this->params['label'] = $this->render('_title', [
 	'model' => $model,
 	'searchModel' => $searchModel,
 	'roleName' => $roleName
-]);?>
+]);
+$this->params['action-button'] = Html::a('<i title="Delete" class="fa fa-trash"></i>', ['delete', 'id' => $model->id],
+		[ 
+			'class' => 'm-r-10 btn btn-box-tool user-delete-button', 
+]); ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
@@ -41,6 +45,11 @@ $this->params['label'] = $this->render('_title', [
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
+<div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
+<div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
+<div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
+<div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 <div class="row">
 	<div class="col-md-6">	
 		<?php
@@ -86,15 +95,14 @@ $this->params['label'] = $this->render('_title', [
 			'model' => $model,
 		]);
 		?>
-        	</div> 
-
+        <?php if ($searchModel->role_name === User::ROLE_CUSTOMER): ?>
+            <?=$this->render('customer/_payment-preference', [
+                'model' => $model,
+            ]);
+		?>
+<?php endif; ?>
+	</div> 
 </div>
-
-<div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
-<div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
-<div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
-<div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
-<div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
     <div class="nav-tabs-custom">
 		<?php $roles = Yii::$app->authManager->getRolesByUser($model->id);
         $role = end($roles); ?>
@@ -343,6 +351,7 @@ $this->params['label'] = $this->render('_title', [
 ]); ?>
 <?= $this->render('update/_profile', [
 	'model' => $userForm,
+	'userProfile' => $model->userProfile,
 ]);?>
 <?php Modal::end(); ?>
 <?php Pjax::begin([
@@ -558,6 +567,33 @@ $(document).ready(function(){
         });
         return false;
     });
+	$(document).on('click', '.user-delete-button', function () {
+		var id = '<?= $model->id;?>';
+		 bootbox.confirm({ 
+  			message: "Are you sure you want to delete this user?", 
+  			callback: function(result){
+				if(result) {
+					$('.bootbox').modal('hide');
+				$.ajax({
+					url: '<?= Url::to(['user/delete']); ?>?id=' + id,
+					type: 'post',
+					success: function (response)
+					{
+						if (response.status)
+						{
+                            window.location.href = response.url;
+						} else {
+							$('#lesson-conflict').html(response.message).fadeIn().delay(5000).fadeOut();
+
+						}
+					}
+				});
+				return false;	
+			}
+			}
+		});	
+		return false;
+    });
 	$(document).on('beforeSubmit', '#address-form', function () {
         $.ajax({
             url    : $(this).attr('action'),
@@ -630,8 +666,9 @@ $(document).ready(function(){
             {
                 if(response.status) {
         			$('#user-edit-modal').modal('hide');
-        			$.pjax.reload({container:"#user-profile",replace:false,  timeout: 4000});
-                    
+        			$.pjax.reload({container:"#user-profile",replace:false,  timeout: 6000}).done(function () {
+    					$.pjax.reload({container: '#user-header', timeout: 6000});
+					});
                 } else {
                   $('#user-update-form').yiiActiveForm('updateMessages', response.errors, true); 
                 }

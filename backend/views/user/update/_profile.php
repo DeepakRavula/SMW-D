@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use trntv\filekit\widget\Upload;
 
 $Roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 foreach ($Roles as $name => $description) {
@@ -40,6 +41,13 @@ foreach ($Roles as $name => $description) {
 		<?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
 	</div>
 	<?php endif; ?>
+	<div class="col-xs-6">
+    <?= $form->field($userProfile, 'picture')->widget(Upload::classname(),
+        [
+        'url' => ['avatar-upload']
+    ])
+    ?>
+    </div>
 </div>
 <div class="row">
 	<div class="col-md-12">

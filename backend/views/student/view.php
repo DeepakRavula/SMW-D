@@ -202,9 +202,10 @@ $this->params['label'] = $this->render('_title', [
 				{
 				   if(response.status)
 				   {
-						$('.vacation-content').html(response.data);
-						$('#vacation-modal').modal('show');
-					}
+                                        $('.vacation-content').html(response.data);
+                                        $('#vacation-modal').modal('show');
+                                        $('#vacation-modal .modal-dialog').css({'width': '800px'});
+                                    }
 				}
 			});
 			return false;

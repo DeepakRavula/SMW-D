@@ -446,7 +446,12 @@ class EnrolmentController extends Controller
                 ]);
                 $startDate = null;
                 $invoice = $model->addCreditInvoice($startDate, $course->endDate);
-                $message = '$' . abs($invoice->invoiceBalance) . ' has been credited to ' . $invoice->user->publicIdentity . ' account.';
+                if (!$invoice) {
+                    $credit = 0;
+                } else {
+                    $credit = abs($invoice->invoiceBalance);
+                }
+                $message = '$' . $credit . ' has been credited to ' . $model->customer->publicIdentity . ' account.';                print_r($message);die;
             }
             return [
                 'status' => true,
