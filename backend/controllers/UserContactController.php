@@ -23,7 +23,7 @@ class UserContactController extends Controller
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['create-email', 'create-phone', 'update-primary', 'create-address','edit-email','edit-phone','edit-address'],
+                'only' => ['create-email', 'create-phone', 'update-primary', 'create-address','edit-email','edit-phone','edit-address', 'delete'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -241,30 +241,22 @@ class UserContactController extends Controller
      
 		 public function actionDelete($id)
     {
-		$response = Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
-		
 		$model = $this->findModel($id);
-                if(!empty($model->email))
-                {
-                $contactDetailModel=$model->email;
-                $url="email";
-                }
-                elseif(!empty($model->phone))
-                {
-                $contactDetailModel=$model->phone;
-                $url="phone";
-                }
-                elseif(!empty($model->address))
-                {
-                $contactDetailModel=$model->address;
-                $url="address";
-                }
+		if(!empty($model->email)) {
+			$contactModel = $model->email;
+			$type = UserContact::TYPE_EMAIL;
+		} elseif(!empty($model->phone)) {
+			$contactModel = $model->phone;
+			$type = UserContact::TYPE_PHONE;
+		} elseif(!empty($model->address)) {
+			$contactModel = $model->address;
+			$type = UserContact::TYPE_ADDRESS;
+		}
         if($model->delete()) {
-            $contactDetailModel->delete();
+            $contactModel->delete();
         	return [
 				'status' => true,
-                                'url'=>$url,
+                'type' => $type,
 			];
 		}
     }

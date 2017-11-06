@@ -855,7 +855,7 @@ $(document).ready(function(){
              });
  		return false;
  	});
-        	        $(document).on('click', '.user-contact-delete', function () {
+    $(document).on('click', '.user-contact-delete', function () {
 		var contactId = $(this).attr('id') ;
 		 bootbox.confirm({ 
   			message: "Are you sure you want to delete?", 
@@ -869,21 +869,16 @@ $(document).ready(function(){
 					{
 						if (response.status)
 						{
-                                                    if(response.url==="email")
-                                                    {
-                                                        $('#add-email-modal').modal('hide');
-                                                        $.pjax.reload({container: '#user-email', timeout: 6000});
-                                                    }
-                                                    else if (response.url==="phone")
-                                                    {
-                                                        $('#add-phone-modal').modal('hide');
-                                                        $.pjax.reload({container: '#user-phone', timeout: 6000});
-                                                    }
-                                                    else if(response.url==="address")
-                                                    {
-                                                        $('#add-address-modal').modal('hide');
-							$.pjax.reload({container: '#user-address', timeout: 6000});
-                                                    }
+							if(response.type == contactTypes.email) {
+	                    		$('#add-email-modal').modal('hide');
+                            	$.pjax.reload({container: '#user-email', timeout: 6000});
+							} else if (response.type == contactTypes.phone) {
+								$('#add-phone-modal').modal('hide');
+								$.pjax.reload({container: '#user-phone', timeout: 6000});
+							} else {
+								$('#add-address-modal').modal('hide');
+								$.pjax.reload({container: '#user-address', timeout: 6000});
+							};
 						} 
 					}
 				});
