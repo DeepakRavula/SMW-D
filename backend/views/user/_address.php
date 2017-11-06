@@ -6,6 +6,16 @@ use yii\widgets\Pjax;
 use kartik\sortinput\SortableInput;
 
 ?>
+<style>
+.sortable {
+	border:0px;
+}
+.sortable li {
+	border:0px;
+	margin:0px;
+	padding:0px;
+}
+</style>
 <?php Pjax::begin([
 	'id' => 'user-address'
 ]); ?>
