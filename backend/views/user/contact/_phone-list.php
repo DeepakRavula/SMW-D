@@ -9,6 +9,6 @@ use common\models\UserContact;
 <dl class="dl-horizontal">
 	<dt><?= $phoneNumber->userContact->label->name; ?></dt>
 	<dd><?= $phoneNumber->number; ?> </dd>
-	<dd><?= !empty($phoneNumber->extension) ? '<strong>Ext:</strong> ' . $phoneNumber->extension : null; ?></dd>
+	<dd><?= !empty($phoneNumber->extension) ? 'Ext: ' . $phoneNumber->extension : null; ?></dd>
 </dl>
 </div>
