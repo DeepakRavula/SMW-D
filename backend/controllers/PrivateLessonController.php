@@ -181,7 +181,6 @@ class PrivateLessonController extends Controller
 	{
         $model = $this->findModel($id);
 		$post = Yii::$app->request->post();
-		//print_r($post);die;
 		if($model->load($post) && $model->save()) {
 			return [
 				'status' => true,
