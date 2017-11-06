@@ -728,17 +728,6 @@ class LessonController extends Controller
         }
     }
 
-	public function actionMissed($id)
-	{
-        $model = $this->findModel($id);
-		$model->on(Lesson::EVENT_MISSED, [new TimelineEventLesson(), 'missed']);
-		$user = User::findOne(['id' => Yii::$app->user->id]);
-		$model->userName = $user->publicIdentity;
-		$model->status = Lesson::STATUS_MISSED;
-		$model->save();
-		$model->trigger(Lesson::EVENT_MISSED);
-		}
-
     public function actionTakePayment($id)
     {
         $model = Lesson::findOne(['id' => $id]);

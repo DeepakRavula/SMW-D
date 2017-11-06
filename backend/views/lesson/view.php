@@ -55,7 +55,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 		?>
     <?php if (!$model->isGroup()): ?>
 		<?=
-		$this->render('_attendance', [
+		$this->render('attendance/_view', [
 			'model' => $model,
 		]);
 		?>	
@@ -187,10 +187,27 @@ Modal::end();
 	'privateLessonModel' => !empty($privateLessonModel) ? $privateLessonModel : null
 ]);?>
 <?php Modal::end(); ?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Edit Attendance</h4>',
+    'id' => 'attendance-modal',
+]); ?>
+<?= $this->render('attendance/_form', [
+	'model' => $model,
+]);?>
+<?php Modal::end(); ?>
 <script>
  $(document).ready(function() {
  	$(document).on('click', '.edit-lesson-detail', function () {
 		$('#classroom-edit-modal').modal('show');
+		return false;
+	});
+	$(document).on('click', '.edit-attendance', function () {
+		$('#attendance-modal').modal('show');
+        $('#attendance-modal .modal-dialog').css({'width': '400px'});
+		return false;
+	});
+	$(document).on('click', '.attendance-cancel', function () {
+		$('#attendance-modal').modal('hide');
 		return false;
 	});
     $(document).on("click", '.mail-view-cancel-button', function() {
@@ -293,14 +310,31 @@ Modal::end();
 		});
 		return false;
 	});
-	$('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
+	$(document).on('beforeSubmit', '#attendance-form', function (e) {
 		$.ajax({
-			url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
-			type   : 'POST',
-			dataType: "json",
-			data   : $('#lesson-present-form').serialize(),
-			success: function(response) {}
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: 'json',
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$.pjax.reload({container: '#lesson-attendance', timeout: 6000});
+					$('#attendance-modal').modal('hide');
+				}
+			}
 		});
-	});	
+		return false;
+	});
+//	$('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
+//		$.ajax({
+//			url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
+//			type   : 'POST',
+//			dataType: "json",
+//			data   : $('#lesson-present-form').serialize(),
+//			success: function(response) {}
+//		});
+//	});	
 });
 </script>

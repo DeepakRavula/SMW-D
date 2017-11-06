@@ -30,7 +30,7 @@ class PrivateLessonController extends Controller
             ],
 			'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['merge'],
+                'only' => ['merge', 'update-attendance'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -176,6 +176,18 @@ class PrivateLessonController extends Controller
             ];
         }
     }
+	
+	public function actionUpdateAttendance($id)
+	{
+        $model = $this->findModel($id);
+		$post = Yii::$app->request->post();
+		//print_r($post);die;
+		if($model->load($post) && $model->save()) {
+			return [
+				'status' => true,
+			];
+		}
+	}
     /**
      * Finds the PrivateLesson model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

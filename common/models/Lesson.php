@@ -35,12 +35,10 @@ class Lesson extends \yii\db\ActiveRecord
     const TYPE_PRIVATE_LESSON = 1;
     const TYPE_GROUP_LESSON = 2;
 	
-    const STATUS_DRAFT = 1;
     const STATUS_SCHEDULED = 2;
     const STATUS_COMPLETED = 3;
     const STATUS_CANCELED = 4;
     const STATUS_UNSCHEDULED = 5;
-    const STATUS_MISSED = 6;
     const DEFAULT_MERGE_DURATION = '00:15:00';
     const DEFAULT_LESSON_DURATION = '00:15:00';
     const DEFAULT_EXPLODE_DURATION_SEC = 900;
@@ -130,7 +128,7 @@ class Lesson extends \yii\db\ActiveRecord
             }],
             [['courseId', 'status', 'type'], 'integer'],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 
-                'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId'], 'safe'],
+                'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId', 'isPresent'], 'safe'],
             [['classroomId'], ClassroomValidator::className(), 
 				'on' => [self::SCENARIO_EDIT, self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(), 
@@ -205,11 +203,6 @@ class Lesson extends \yii\db\ActiveRecord
         $lessonDate  = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
         $currentDate = new \DateTime();
         return $lessonDate <= $currentDate;
-    }
-
-    public function isMissed()
-    {
-        return (int) $this->status === self::STATUS_MISSED;
     }
 
     public function isCanceled()
@@ -532,13 +525,6 @@ class Lesson extends \yii\db\ActiveRecord
                     $status .= ' (Expired)';
                 }
             break;
-            case self::STATUS_MISSED:
-                if (!$this->isCompleted()) {
-                        $status = 'Scheduled';
-                } else {
-                        $status = 'Completed';
-                }
-            break;
         }
 
         return $status;
@@ -839,16 +825,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getPresent()
     {
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
-        $currentDate = new \DateTime();
-        $result = 'No';
-        if($lessonDate < $currentDate) {
-            $result = 'Yes';
-        }
-        if($this->isMissed()) {
-            $result = 'No';
-        } 
-        return $result;
+        return $this->isPresent ? 'Yes' : 'No';
     }
     
     public function isHoliday()
@@ -875,7 +852,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function canInvoice()
     {  
-        return ($this->isCompleted() && $this->isScheduled()) || $this->isExpired() ||($this->isMissed());
+        return ($this->isCompleted() && $this->isScheduled()) || $this->isExpired() ||(!$this->isPresent);
     }
 
     public function createExtraLessonCourse()

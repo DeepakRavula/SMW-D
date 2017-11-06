@@ -124,7 +124,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function invoicableLessons()
     {
         return $this->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED,
-                'lesson.status' => Lesson::STATUS_DRAFT]]]);
+                'lesson.isConfirmed' => false]]]);
     }
 
     public function unInvoiced()

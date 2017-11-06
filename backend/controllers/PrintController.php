@@ -111,7 +111,7 @@ class PrintController extends Controller
 			->where(['lesson.teacherId' => $model->id])
 			->isConfirmed()
 			->notDeleted()
-			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
+			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED]])
 			->between($lessonSearch->fromDate, $lessonSearch->toDate)
 			->orderBy(['date' => SORT_ASC]);
 			

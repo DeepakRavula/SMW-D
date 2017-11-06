@@ -69,7 +69,7 @@ class LessonSearch extends Lesson
 			->notDeleted()
 			->location($locationId)
 			->activePrivateLessons()
-			->andWhere(['NOT IN', 'lesson.status', [Lesson::STATUS_CANCELED, Lesson::STATUS_MISSED]])
+			->andWhere(['NOT IN', 'lesson.status', [Lesson::STATUS_CANCELED]])
                 ->orderBy(['lesson.date' => SORT_ASC]);
 
         $dataProvider = new ActiveDataProvider([

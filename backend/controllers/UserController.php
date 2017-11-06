@@ -151,7 +151,7 @@ class UserController extends Controller
 		$lessonQuery = Lesson::find()
                 ->location($locationId)
                 ->student($id)
-                ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED]])
+                ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
 				->isConfirmed()
                 ->notDeleted();
 
@@ -292,7 +292,7 @@ class UserController extends Controller
 			->location($locationId)
 			->where(['lesson.teacherId' => $id])
 			->notDeleted()
-			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_MISSED, Lesson::STATUS_SCHEDULED]])
+			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED]])
 			->isConfirmed()
 			->between($lessonSearch->fromDate, $lessonSearch->toDate)
 			->orderBy(['date' => SORT_ASC]);
