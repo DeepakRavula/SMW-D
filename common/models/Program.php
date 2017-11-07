@@ -44,7 +44,7 @@ class Program extends \yii\db\ActiveRecord
         return [
             [['name', 'rate'], 'required'],
             [['name'], 'string', 'min' => 3, 'max' => 255],
-            [['rate'], 'number'],
+            [['rate'], 'number','numberPattern' => '/^\d+(.\d{1,2})?$/', 'message' => 'Enter 2 digits after decimal point.'],
             [['status'], 'integer'],
             [['type'], 'safe'],
         ];
