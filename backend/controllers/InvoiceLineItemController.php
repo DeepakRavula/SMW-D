@@ -274,12 +274,12 @@ class InvoiceLineItemController extends Controller
         $discount = 0.0;
         $lineItemPrice = $invoiceLineItem->grossPrice;
         if (!empty($data['multiEnrolmentDiscount'])) {
-            $discount += $data['multiEnrolmentDiscount'];
+            $discount += $lineItemPrice < 0 ? - ($data['multiEnrolmentDiscount']) : $data['multiEnrolmentDiscount'];
             $lineItemPrice -= $discount;
         }
         if (!empty($data['lineItemDiscount'])) {
             if ($data['lineItemDiscountType']) {
-                $discount += $data['lineItemDiscount'];
+                $discount += $lineItemPrice < 0 ? - ($data['lineItemDiscount']) : $data['lineItemDiscount'];
             } else {
                 $discount += $lineItemPrice * $data['lineItemDiscount'] / 100;
             }
