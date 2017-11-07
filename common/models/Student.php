@@ -218,6 +218,7 @@ class Student extends \yii\db\ActiveRecord
 			->notDeleted()
                         ->enrolled($currentDate)
                         ->active()
+                        ->groupBy('student.id')
 			->count();
     }
 }
