@@ -637,7 +637,7 @@ class Invoice extends \yii\db\ActiveRecord
             }
         }
 
-        return $discount;
+        return round($discount, 4);
     }
 
     public function isReversedInvoice()
