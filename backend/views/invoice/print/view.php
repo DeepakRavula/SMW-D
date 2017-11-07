@@ -61,12 +61,11 @@
           <strong><?php echo isset($model->user->publicIdentity) ? $model->user->publicIdentity : null?></strong><br>
           <?php
           $addresses = $model->user->addresses;
-          foreach ($addresses as $address) {
-              if ($address->label === 'Billing') {
-                  $billingAddress = $address;
-                  break;
-              }
+          if(!empty($model->user->billingAddress))
+          {
+           $billingAddress = $model->user->billingAddress;   
           }
+          
           $phoneNumber = $model->user->phoneNumber;
           ?>
           <?php if (!empty($billingAddress->address)) : ?>
@@ -129,7 +128,7 @@
          'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
          ],
          [
-                 'format' => 'currency',
+                 
          'label' => 'Net Price',
                  'value' => function ($data) {
                      return $data->itemTotal;

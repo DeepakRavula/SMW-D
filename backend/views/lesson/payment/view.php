@@ -15,7 +15,7 @@ $columns = [
         ],
         [
             'attribute' => 'amount',
-			'format' => 'currency',
+			
 			'headerOptions' => ['class' => 'text-right'],
 			'contentOptions' => ['class' => 'text-right']
         ],
