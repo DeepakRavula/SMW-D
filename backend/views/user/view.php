@@ -33,10 +33,10 @@ $this->params['label'] = $this->render('_title', [
 	'searchModel' => $searchModel,
 	'roleName' => $roleName
 ]);
-$this->params['action-button'] = Html::a('<i title="Delete" class="fa fa-trash"></i>', ['delete', 'id' => $model->id],
-		[ 
-			'class' => 'm-r-10 btn btn-box-tool user-delete-button', 
-]); ?>
+$this->params['action-button'] = $this->render('_action-button', [
+	'model' => $model,
+	'searchModel' => $searchModel,
+]);?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />

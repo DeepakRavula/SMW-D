@@ -603,7 +603,11 @@ class User extends ActiveRecord implements IdentityInterface
         $role  = end($roles);
         return $role->name === self::ROLE_CUSTOMER;
     }
-
+	public function getRoleById($id)
+    {
+		$roles = Yii::$app->authManager->getRolesByUser($id);
+		return end($roles)->name;
+    }
     public function getRoleName()
     {
 		$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
