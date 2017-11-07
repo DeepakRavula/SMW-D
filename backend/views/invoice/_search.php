@@ -19,6 +19,7 @@ use kartik\daterange\DateRangePicker;
         'method' => 'get',
     ]); ?>
 	<?php if((int) $model->type === Invoice::TYPE_INVOICE) : ?>
+	<?php $class = 'invoice';?>
     <div class="col-md-3">
         <?php
         echo DateRangePicker::widget([
@@ -44,6 +45,7 @@ use kartik\daterange\DateRangePicker;
     </div>
 	<?php endif; ?>
 	<?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE) : ?>
+	<?php $class = 'pro-forma';?>
 	<div class="col-md-3">
     <label>Due Date</label>
     <?php
@@ -77,7 +79,7 @@ use kartik\daterange\DateRangePicker;
     <?php endif; ?>
     <div class="col-md-2">
         <?php echo $form->field($model, 'type')->hiddenInput()->label(false); ?>
-        <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary']) ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => $class . '-search btn btn-primary']) ?>
     </div>
     <?php ActiveForm::end(); ?>
     </div>

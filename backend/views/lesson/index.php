@@ -15,22 +15,11 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 <div id="index-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <?php 
 if((int)$searchModel->type === Lesson::TYPE_PRIVATE_LESSON) : ?>
-<div class="m-b-10 pull-right">
-    <div class="btn-group">
-        <button class="btn dropdown-toggle" data-toggle="dropdown">Bulk Action&nbsp;&nbsp;<span class="caret"></span></button>
-        <ul class="dropdown-menu dropdown-menu-right">
-            <li><a id="substitute-teacher" href="#">Substitute Teacher</a></li>
-        </ul>
-    </div>
-</div>
-<div class="clearfix"></div>
-
 <?= $this->render('_index-lesson', [
     'searchModel' => $searchModel,
     'dataProvider' => $dataProvider,
 ]);?>
 <?php else : ?>
-<div>
 <?php
 $courseSearchModel = new CourseSearch();
 $dataProvider = $courseSearchModel->search(Yii::$app->request->queryParams);
@@ -41,4 +30,3 @@ $dataProvider = $courseSearchModel->search(Yii::$app->request->queryParams);
 ]);
 ?>
 <?php endif;?>
-</div>

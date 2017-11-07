@@ -194,4 +194,3 @@ $this->params['action-button'] = $actionButton; ?>
     ]); ?>
 	<?php \yii\widgets\Pjax::end(); ?>
     </div>
-</div>

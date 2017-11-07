@@ -11,7 +11,9 @@ use yii\bootstrap\Modal;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Private Lessons';
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['action-button'] = $this->render('_action-menu', [
+	'searchModel' => $searchModel
+]);
 ?>
 
 <div class="grid-row-open p-10">

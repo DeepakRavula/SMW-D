@@ -16,7 +16,7 @@ $form = ActiveForm::begin([
 	]);
 ?>
 <?php yii\widgets\Pjax::begin() ?>
-<div id="show-all">
+<div id="show-all" class="checkbox-btn">
 	<?php if ($searchModel->role_name === User::ROLE_CUSTOMER):?>
 		<?= $form->field($searchModel, 'showAllCustomers')->checkbox(['data-pjax' => true]); ?>
     <?php endif; ?>

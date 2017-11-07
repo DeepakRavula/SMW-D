@@ -11,23 +11,11 @@ use common\components\gridView\AdminLteGridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Group Lessons';
+$this->params['action-button'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['course/create'], ['class' => 'btn btn-primary btn-sm']);
+$this->params['show-all'] = $this->render('_button', [
+	'searchModel' => $searchModel
+]);
 ?>
-	<?= Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['course/create'], ['class' => 'btn btn-primary btn-sm']);?>
-<div class="course-form">
-		<?php
-$form = ActiveForm::begin([
-		'action' => ['index'],
-		'method' => 'get',
-	'fieldConfig' => [
-        'options' => [
-            'tag' => false,
-        ],
-    ],
-	]);
-?>
-<?= $form->field($searchModel, 'showAllCourses')->checkbox(['data-pjax' => true]); ?>
-<?php ActiveForm::end(); ?>
-</div>
 <div class="clearfix"></div>
     <div class="grid-row-open">  
     <?php yii\widgets\Pjax::begin(['id' => 'group-courses']) ?>
