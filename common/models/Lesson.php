@@ -315,11 +315,13 @@ class Lesson extends \yii\db\ActiveRecord
         if (!$this->isGroup()) {
             return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
                 ->via('invoiceItemLessons')
-                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
+                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON,
+                            'invoice_line_item.isDeleted' => false]);
         } else {
             return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
                 ->via('invoiceItemsEnrolment')
-                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_GROUP_LESSON]);
+                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_GROUP_LESSON,
+                        'invoice_line_item.isDeleted' => false]);
         }
     }
 
@@ -339,11 +341,13 @@ class Lesson extends \yii\db\ActiveRecord
         if (!$this->isExtra()) {
             return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
                 ->via('invoiceItemPaymentCycleLessons')
-                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
+                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON,
+                        'invoice_line_item.isDeleted' => false]);
         } else {
             return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
                 ->via('invoiceItemLessons')
-                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON]);
+                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON,
+                        'invoice_line_item.isDeleted' => false]);
         }
     }
    
@@ -405,6 +409,7 @@ class Lesson extends \yii\db\ActiveRecord
         $lessonId = $this->id;
         if ($this->hasInvoice()) {
         return InvoiceLineItem::find()
+                ->notDeleted()
             ->where(['invoice_id' => $this->invoice->id])
             ->joinWith(['lineItemLesson' => function ($query) use ($lessonId) {
                 $query->where(['lessonId' => $lessonId]);
@@ -477,6 +482,7 @@ class Lesson extends \yii\db\ActiveRecord
         if ($this->hasProFormaInvoice()) {
             if ($this->isExtra()) {
                 return InvoiceLineItem::find()
+                        ->notDeleted()
                     ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
                     ->joinWith(['lineItemLesson' => function ($query) use ($lessonId) {
                         $query->where(['lessonId' => $lessonId]);
@@ -485,6 +491,7 @@ class Lesson extends \yii\db\ActiveRecord
                     ->one();
             } else {
                 return InvoiceLineItem::find()
+                        ->notDeleted()
                     ->andWhere(['invoice_id' => $model->proFormaInvoice->id])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
                     ->joinWith(['lineItemPaymentCycleLesson' => function ($query) use ($paymentCycleLessonId) {
@@ -607,6 +614,14 @@ class Lesson extends \yii\db\ActiveRecord
         }
 
         return parent::beforeSave($insert);
+    }
+    
+    public function beforeSoftDelete()
+    {
+        if (!$this->lessonCredit && $this->proFormaLineItem) {
+            $this->proFormaLineItem->delete();
+        }
+        return true;
     }
 
     public function afterSave($insert, $changedAttributes)

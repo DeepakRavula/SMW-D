@@ -194,6 +194,7 @@ class Location extends \yii\db\ActiveRecord
             ->sum('payment.amount');
 
         $royaltyPayment = InvoiceLineItem::find()
+                ->notDeleted()
             ->joinWith(['invoice i' => function ($query) {
                     $query->where(['i.location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE]);
                 }])

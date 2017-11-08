@@ -30,7 +30,9 @@ class PrintController extends Controller
 	public function actionInvoice($id)
     {
         $model = Invoice::findOne(['id' => $id]);
-        $invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
+        $invoiceLineItems = InvoiceLineItem::find()
+                ->notDeleted()
+                ->where(['invoice_id' => $id]);
         $payments = Payment::find()
             ->joinWith(['invoicePayments' => function ($query) use ($id) {
                 $query->where(['invoice_id' => $id]);
@@ -145,6 +147,7 @@ class PrintController extends Controller
             $invoiceSearchModel->summariseReport = $invoiceSearch['summariseReport'];
         }
 		$timeVoucher = InvoiceLineItem::find()
+                        ->notDeleted()
 			->joinWith(['invoice' => function($query) use($invoiceSearchModel) {
 				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
 					->between((new\DateTime($invoiceSearchModel->fromDate))->format('Y-m-d'), (new\DateTime($invoiceSearchModel->toDate))->format('Y-m-d'));
@@ -260,6 +263,7 @@ class PrintController extends Controller
         }
         $locationId = Yii::$app->session->get('location_id');
         $royaltyFreeItems = InvoiceLineItem::find()
+                ->notDeleted()
             ->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
                     $query->andWhere([
                         'location_id' => $locationId,
@@ -297,6 +301,7 @@ class PrintController extends Controller
         }
         $locationId = Yii::$app->session->get('location_id');
         $invoiceTaxes = InvoiceLineItem::find()
+                ->notDeleted()
             ->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
                     $query->andWhere([
                         'location_id' => $locationId,
@@ -355,6 +360,7 @@ class PrintController extends Controller
             ->sum('payment.amount');
 
         $royaltyPayment = InvoiceLineItem::find()
+                ->notDeleted()
             ->joinWith(['invoice i' => function ($query) use ($locationId) {
                     $query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
                 }])

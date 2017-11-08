@@ -57,6 +57,7 @@ use yii\widgets\Pjax;
             },
         ],
         [
+            'format' => ['decimal', 4], 
             'label' => 'Price',
 			'headerOptions' => ['class' => 'text-right'],
 			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
@@ -88,6 +89,7 @@ use yii\widgets\Pjax;
 			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
 		],
         [
+            'format' => ['decimal', 4], 
             'label' => 'Price',
 			'value' => function($data) {
 				return $data->itemTotal;	

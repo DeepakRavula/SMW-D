@@ -98,6 +98,7 @@ class ItemCategory extends \yii\db\ActiveRecord
     {
         $amount = 0;
         $items = InvoiceLineItem::find()
+                ->notDeleted()
                 ->joinWith(['invoice' => function($query) use ($locationId, $date) {
                     $query->notDeleted()
                         ->location($locationId)

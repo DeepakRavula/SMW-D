@@ -109,6 +109,7 @@ class ReportController extends Controller {
 			->sum('payment.amount');
 
 		$royaltyPayment = InvoiceLineItem::find()
+                        ->notDeleted()
 			->joinWith(['invoice i' => function ($query) use ($locationId) {
 					$query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
 				}])
@@ -141,6 +142,7 @@ class ReportController extends Controller {
 		}
 		$locationId = Yii::$app->session->get('location_id');
 		$invoiceTaxes = InvoiceLineItem::find()
+                        ->notDeleted()
 			->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
 				$query->andWhere([
 					'location_id' => $locationId,
@@ -183,6 +185,7 @@ class ReportController extends Controller {
 		}
 		$locationId = Yii::$app->session->get('location_id');
 		$royaltyFreeItems = InvoiceLineItem::find()
+                        ->notDeleted()
 			->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
 				$query->andWhere([
 					'location_id' => $locationId,
