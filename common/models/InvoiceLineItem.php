@@ -353,62 +353,62 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getLineItemDiscountValue()
     {
+        $lineItemPrice = $this->grossPrice;
+        if ($this->hasMultiEnrolmentDiscount()) {
+            $discount += $lineItemPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :
+                $this->multiEnrolmentDiscount->value;
+            $lineItemPrice -= $discount;
+        }
         if ((int) $this->lineItemDiscount->valueType) {
             return $this->lineItemDiscount->value;
         } else {
-            return ($this->lineItemDiscount->value / 100) * $this->grossPrice;
+            return ($this->lineItemDiscount->value / 100) * $lineItemPrice;
         }
     }
 
-    public function getOtherDiscountValue()
-    {
-        $discount = 0.0;
-        if ($this->lineItemDiscount) {
-            $discount = $this->getLineItemDiscountValue();
-        }
-        if ($this->customerDiscount) {
-            $discount = $this->customerDiscount->value / 100 * $this->grossPrice;
-        }
-        return $discount;
-    }
-    
     public function getItemTotal()
     {
-        return round($this->netPrice + $this->tax_rate, 2);
+        return $this->netPrice + $this->tax_rate;
     }
 
     public function getNetPrice()
     {
-        return round($this->grossPrice - $this->discount, 2);
+        return $this->grossPrice - $this->discount;
     }
     
     public function getGrossPrice()
     {
-        return round($this->amount * $this->unit, 2);
+        return $this->amount * $this->unit;
     }
 
     public function getDiscount()
     {
         $discount = 0.0;
+        $lineItemPrice = $this->grossPrice;
+        if ($this->hasMultiEnrolmentDiscount()) {
+            $discount += $lineItemPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :
+                $this->multiEnrolmentDiscount->value;
+            $lineItemPrice -= $discount;
+        }
         if ($this->hasLineItemDiscount()) {
             if ((int) $this->lineItemDiscount->valueType) {
-                $discount += $this->grossPrice < 0 ? - ($this->lineItemDiscount->value) : 
+                $discount += $lineItemPrice < 0 ? - ($this->lineItemDiscount->value) : 
                     $this->lineItemDiscount->value;
             } else {
-                $discount += ($this->lineItemDiscount->value / 100) * $this->grossPrice;
+                $discount += ($this->lineItemDiscount->value / 100) * $lineItemPrice;
             }
+            $lineItemPrice -= $discount;
         }
         if ($this->hasCustomerDiscount()) {
-            $discount += ($this->customerDiscount->value / 100) * $this->grossPrice;
+            $discount += ($this->customerDiscount->value / 100) * $lineItemPrice;
+            $lineItemPrice -= $discount;
         }
         if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
-            $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $this->grossPrice;
+            $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $lineItemPrice;
+            $lineItemPrice -= $discount;
         }
-        if ($this->hasMultiEnrolmentDiscount()) {
-            $discount += $this->grossPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :
-                $this->multiEnrolmentDiscount->value;
-        }
-        return round($discount, 2);
+        
+        return round($discount, 4);
     }
 	
 	public function getTaxLineItemTotal($date)

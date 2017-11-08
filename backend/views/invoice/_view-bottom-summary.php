@@ -21,7 +21,7 @@ use insolita\wgadminlte\LteConst;
 	<dt>Total</dt>
 	<dd><?= $model->total; ?></dd>
 	<dt>Paid</dt>
-	<dd> <?= !empty($model->invoicePaymentTotal)? $model->invoicePaymentTotal : '0.00' ?></dd>
+	<dd> <?= !empty($model->invoicePaymentTotal)? $model->invoicePaymentTotal : '0.0000' ?></dd>
 	<dt>Balance</dt>
 	<dd> <?= $model->balance; ?></dd>
 </dl>
