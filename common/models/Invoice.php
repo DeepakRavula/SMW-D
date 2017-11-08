@@ -400,7 +400,7 @@ class Invoice extends \yii\db\ActiveRecord
             ->andWhere(['NOT', ['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]])
             ->sum('payment.amount');
 
-        return !empty($paymentTotal) ? $paymentTotal : 0;
+        return !empty($paymentTotal) ? $paymentTotal : 0.0000;
     }
 
     public function getInvoicePaymentTotal()
