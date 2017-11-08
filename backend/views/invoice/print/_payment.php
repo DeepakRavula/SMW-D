@@ -24,7 +24,7 @@ echo GridView::widget([
 			},
 		],
 		[
-			'format' => 'currency',
+			
 			'value' => function ($data) {
 				return $data->invoice->getInvoicePaymentMethodTotal($data->payment_method_id);
 			},

@@ -54,7 +54,7 @@ $columns = [
         ],
         [
             'attribute' => 'amount',
-			'format' => 'currency',
+			
         ],
     ]; ?>
 
