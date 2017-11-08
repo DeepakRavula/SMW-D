@@ -275,7 +275,7 @@ class InvoiceLineItemController extends Controller
         $lineItemPrice = $invoiceLineItem->grossPrice;
         if (!empty($data['multiEnrolmentDiscount'])) {
             $discount += $lineItemPrice < 0 ? - ($data['multiEnrolmentDiscount']) : $data['multiEnrolmentDiscount'];
-            $lineItemPrice -= $discount;
+            $lineItemPrice = $invoiceLineItem->grossPrice - $discount;
         }
         if (!empty($data['lineItemDiscount'])) {
             if ($data['lineItemDiscountType']) {
@@ -283,15 +283,14 @@ class InvoiceLineItemController extends Controller
             } else {
                 $discount += $lineItemPrice * $data['lineItemDiscount'] / 100;
             }
-            $lineItemPrice -= $discount;
+            $lineItemPrice = $invoiceLineItem->grossPrice - $discount;
         }
         if (!empty($data['customerDiscount'])) {
             $discount += $lineItemPrice * $data['customerDiscount'] / 100;
-            $lineItemPrice -= $discount;
+            $lineItemPrice = $invoiceLineItem->grossPrice - $discount;
         }
         if (!empty($data['paymentFrequencyDiscount'])) {
             $discount += $lineItemPrice * $data['paymentFrequencyDiscount'] / 100;
-            $lineItemPrice -= $discount;
         }
         
         $netPrice = $invoiceLineItem->grossPrice - $discount;

@@ -425,7 +425,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
         if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
             $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $lineItemPrice;
-            $lineItemPrice = $this->grossPrice - $discount;
         }
         
         return round($discount, 4);
