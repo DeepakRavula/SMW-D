@@ -451,12 +451,13 @@ class EnrolmentController extends Controller
                 } else {
                     $credit = abs($invoice->invoiceBalance);
                 }
-                $message = '$' . $credit . ' has been credited to ' . $model->customer->publicIdentity . ' account.';                print_r($message);die;
+                $message = '$' . $credit . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
             }
-            return [
+            $response = [
                 'status' => true,
                 'message' => $message,
             ];
+            return $response;
         } else {
 
             return [

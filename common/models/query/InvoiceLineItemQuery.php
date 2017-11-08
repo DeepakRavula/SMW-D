@@ -35,8 +35,13 @@ class InvoiceLineItemQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+    
+    public function notDeleted()
+    {
+        return $this->andWhere(['invoice_line_item.isDeleted' => false]);
+    }
 
-	public function taxRate($date, $locationId)
+    public function taxRate($date, $locationId)
 	{
 		$this->joinWith(['invoice' => function($query) use($date, $locationId) {
 			$query->andWhere([

@@ -175,6 +175,7 @@ class Item extends \yii\db\ActiveRecord
     {
         $amount = 0;
         $items = InvoiceLineItem::find()
+                ->notDeleted()
                 ->joinWith(['invoice' => function($query) use ($locationId) {
                     $query->notDeleted()
                         ->location($locationId);

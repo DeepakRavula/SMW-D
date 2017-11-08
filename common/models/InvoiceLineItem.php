@@ -7,6 +7,7 @@ use common\models\ItemType;
 use common\models\TaxStatus;
 use common\models\query\InvoiceLineItemQuery;
 use common\models\discount\InvoiceLineItemDiscount;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 /**
  * This is the model class for table "invoice_line_item".
  *
@@ -48,6 +49,19 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         return 'invoice_line_item';
     }
+    
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ]
+        ];
+    }
 
     /**
      * {@inheritdoc}
@@ -75,7 +89,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             },
             ],
             [['royaltyFree', 'invoice_id', 'item_id', 'item_type_id', 'tax_code',
-                'tax_status', 'tax_type', 'tax_rate', 'userName', 'cost', 'code'], 'safe'],
+                'tax_status', 'tax_type', 'tax_rate', 'userName', 'cost', 'code', 'isDeleted'], 'safe'],
         ];
     }
 
@@ -215,6 +229,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
                 ->where(['invoice.type' => Invoice::TYPE_INVOICE]);
     }
+    
+    public function afterSoftDelete()
+    {
+        return $this->invoice->save();
+    }
 
     /**
      * {@inheritdoc}
@@ -265,6 +284,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             if (!isset($this->royaltyFree)) {
                 $this->royaltyFree = $this->item->royaltyFree;
             }
+            $this->isDeleted = false;
         }
 
         if (!$insert) {
@@ -378,7 +398,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     
     public function getGrossPrice()
     {
-        return $this->amount * $this->unit;
+        return round($this->amount * $this->unit, 4);
     }
 
     public function getDiscount()
@@ -388,7 +408,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         if ($this->hasMultiEnrolmentDiscount()) {
             $discount += $lineItemPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :
                 $this->multiEnrolmentDiscount->value;
-            $lineItemPrice -= $discount;
+            $lineItemPrice = $this->grossPrice - $discount;
         }
         if ($this->hasLineItemDiscount()) {
             if ((int) $this->lineItemDiscount->valueType) {
@@ -397,15 +417,15 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             } else {
                 $discount += ($this->lineItemDiscount->value / 100) * $lineItemPrice;
             }
-            $lineItemPrice -= $discount;
+            $lineItemPrice = $this->grossPrice - $discount;
         }
         if ($this->hasCustomerDiscount()) {
             $discount += ($this->customerDiscount->value / 100) * $lineItemPrice;
-            $lineItemPrice -= $discount;
+            $lineItemPrice = $this->grossPrice - $discount;
         }
         if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
             $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $lineItemPrice;
-            $lineItemPrice -= $discount;
+            $lineItemPrice = $this->grossPrice - $discount;
         }
         
         return round($discount, 4);
@@ -415,6 +435,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
 		$locationId = $this->invoice->location_id;
 		$taxTotal = self::find()
+                        ->notDeleted()
         	->taxRateSummary($date, $locationId)
             ->sum('tax_rate');
 
@@ -425,6 +446,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
 		$locationId = $this->invoice->location_id;
 		$amount = self::find()
+                        ->notDeleted()
         	->taxRateSummary($date, $locationId)
             ->sum('amount');
 
@@ -435,6 +457,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
 		$locationId = $this->invoice->location_id;
 		$total = self::find()
+                        ->notDeleted()
         	->taxRateSummary($date, $locationId)
             ->sum('amount+tax_rate');
 
@@ -461,6 +484,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 	public function getLessonDuration($date, $teacherId)
 	{
 		$totalDuration = InvoiceLineItem::find()
+                        ->notDeleted()
 			->joinWith(['invoice' => function($query) use($date, $teacherId) {
 				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
 					->between($date, $date);
@@ -474,6 +498,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 	public function getLessonCost($date, $teacherId)
 	{
 		$totalCost = InvoiceLineItem::find()
+                        ->notDeleted()
 			->joinWith(['invoice' => function($query) use($date, $teacherId) {
 				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
 					->between($date, $date);

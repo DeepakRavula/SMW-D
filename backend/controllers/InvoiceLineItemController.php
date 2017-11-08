@@ -298,10 +298,10 @@ class InvoiceLineItemController extends Controller
         $invoiceLineItem->tax_rate   = $netPrice * $invoiceLineItem->taxType->taxCode->rate / 100;
         $itemTotal = $netPrice + $invoiceLineItem->tax_rate;
         return [
-            'grossPrice' => round($invoiceLineItem->grossPrice, 4),
-            'itemTotal' => round($itemTotal, 4),
-            'netPrice' => round($netPrice, 4),
-            'taxRate' => round($invoiceLineItem->tax_rate, 4),
+            'grossPrice' => Yii::$app->formatter->asDecimal($invoiceLineItem->grossPrice, 4),
+            'itemTotal' => Yii::$app->formatter->asDecimal($itemTotal, 4),
+            'netPrice' => Yii::$app->formatter->asDecimal($netPrice, 4),
+            'taxRate' => Yii::$app->formatter->asDecimal($invoiceLineItem->tax_rate, 4),
             'taxPercentage' => $invoiceLineItem->taxType->taxCode->rate
         ];
     }

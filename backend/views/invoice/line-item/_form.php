@@ -59,13 +59,16 @@ use common\models\TaxStatus;
             <?= $form->field($model, 'amount')->textInput(['id' => 'amount-line'])->label('Base Price');?>
         </div>
         <div class="col-md-2">
-            <?= $form->field($model, 'grossPrice')->textInput()->label('Gross Price');?>
+            <?= $form->field($model, 'grossPrice')->textInput(['readOnly' => true, 
+                'value' => Yii::$app->formatter->asDecimal($model->grossPrice, 4)])->label('Gross Price');?>
         </div>
         <div class="col-md-3">
-            <?= $form->field($model, 'netPrice')->textInput(['readOnly' => true])->label('Net Price');?>
+            <?= $form->field($model, 'netPrice')->textInput(['readOnly' => true, 
+                'value' => Yii::$app->formatter->asDecimal($model->netPrice, 4)])->label('Net Price');?>
         </div>
         <div class="col-md-3">
-            <?= $form->field($model, 'itemTotal')->textInput(['readOnly' => true])->label('Total');?>
+            <?= $form->field($model, 'itemTotal')->textInput(['readOnly' => true,
+                'value' => Yii::$app->formatter->asDecimal($model->itemTotal, 4)])->label('Total');?>
         </div>
 	<div class="col-md-12">
             <?= $form->field($model, 'description')->textarea();?>

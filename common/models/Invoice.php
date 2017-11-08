@@ -155,12 +155,14 @@ class Invoice extends \yii\db\ActiveRecord
     
     public function getLineItems()
     {
-        return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id']);
+        return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id'])
+                ->onCondition(['invoice_line_item.isDeleted' => false]);
     }
     
     public function getLineItem()
     {
-        return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id']);
+        return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id'])
+                ->onCondition(['invoice_line_item.isDeleted' => false]);
     }
     
     public function getProformaPaymentFrequency()
@@ -177,7 +179,8 @@ class Invoice extends \yii\db\ActiveRecord
     public function getProFormaLineItem()
     {
         return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id'])
-            ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON]);
+            ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON,
+                'invoice_line_item.isDeleted' => false]);
     }
     
     public function getInvoiceItemPaymentCycleLesson()
@@ -235,13 +238,14 @@ class Invoice extends \yii\db\ActiveRecord
     public function getLineItemTotal()
     {
         return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id'])
+                ->onCondition(['invoice_line_item.isDeleted' => false])
                 ->sum('invoice_line_item.amount');
     }
 
     public function getLineItemTax()
     {
-        return $this->hasMany(InvoiceLineItem::className(),
-                    ['invoice_id' => 'id'])
+        return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id'])
+                ->onCondition(['invoice_line_item.isDeleted' => false])
                 ->sum('invoice_line_item.tax_rate');
     }
 
@@ -637,7 +641,7 @@ class Invoice extends \yii\db\ActiveRecord
             }
         }
 
-        return round($discount, 4);
+        return $discount;
     }
 
     public function isReversedInvoice()

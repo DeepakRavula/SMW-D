@@ -128,8 +128,11 @@
          'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
          ],
          [
-                 
-         'label' => 'Net Price',
+            'format' => ['currency', 'USD', [
+                            \NumberFormatter::MIN_FRACTION_DIGITS => 4,
+                            \NumberFormatter::MAX_FRACTION_DIGITS => 4,
+                        ]],
+            'label' => 'Net Price',
                  'value' => function ($data) {
                      return $data->itemTotal;
                  },
@@ -158,33 +161,54 @@
               <table class="table-invoice-childtable" style="float:right; width:auto;">
                   <tr>
                       <td id="invoice-discount">Discounts</td>
-                      <td><?= Yii::$app->formatter->format($model->totalDiscount, ['currency']); ?></td>
+                      <td><?= Yii::$app->formatter->format($model->totalDiscount, ['currency', 'USD', [
+                            \NumberFormatter::MIN_FRACTION_DIGITS => 4,
+                            \NumberFormatter::MAX_FRACTION_DIGITS => 4,
+                        ]]); ?>
+                      </td>
                   </tr>
                   <tr>
                       <td>SubTotal</td>
                       <td>
-                          <?= Yii::$app->formatter->format($model->subTotal, ['currency']); ?>
+                            <?= Yii::$app->formatter->format($model->subTotal, ['currency', 'USD', [
+                                \NumberFormatter::MIN_FRACTION_DIGITS => 4,
+                                \NumberFormatter::MAX_FRACTION_DIGITS => 4,
+                            ]]); ?>
                       </td>
                   </tr>
                   <tr>
                       <td>Tax</td>
                       <td>
-                          <?= Yii::$app->formatter->format($model->tax, ['currency']); ?>
+                            <?= Yii::$app->formatter->format($model->tax, ['currency', 'USD', [
+                                \NumberFormatter::MIN_FRACTION_DIGITS => 4,
+                                \NumberFormatter::MAX_FRACTION_DIGITS => 4,
+                            ]]); ?>
                       </td>
                   </tr>
                   <tr>
                       <td><strong>Total</strong></td>
-                      <td><strong><?= Yii::$app->formatter->format($model->total, ['currency']); ?></strong></td>
+                      <td><strong><?= Yii::$app->formatter->format($model->total, ['currency', 'USD', [
+                            \NumberFormatter::MIN_FRACTION_DIGITS => 4,
+                            \NumberFormatter::MAX_FRACTION_DIGITS => 4,
+                        ]]); ?>
+                          </strong>
+                      </td>
                   </tr>
                   <tr>
                       <td>Paid</td>
                       <td>
-                          <?= Yii::$app->formatter->format($model->invoicePaymentTotal, ['currency']); ?>
+                            <?= Yii::$app->formatter->format($model->invoicePaymentTotal, ['currency', 'USD', [
+                                \NumberFormatter::MIN_FRACTION_DIGITS => 4,
+                                \NumberFormatter::MAX_FRACTION_DIGITS => 4,
+                            ]]); ?>
                       </td>
                   </tr>
                   <tr class="last-balance">
                       <td class="p-t-0"><strong>Balance</strong></td>
-                      <td class="p-t-0"><strong><?= Yii::$app->formatter->format($model->balance, ['currency']); ?></strong></td>
+                      <td class="p-t-0"><strong><?= Yii::$app->formatter->format($model->balance, ['currency', 'USD', [
+                            \NumberFormatter::MIN_FRACTION_DIGITS => 4,
+                            \NumberFormatter::MAX_FRACTION_DIGITS => 4,
+                        ]]); ?></strong></td>
                   </tr>
               </table>
           </div>

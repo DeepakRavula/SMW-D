@@ -60,6 +60,7 @@ class DiscountSearch extends Invoice
         $toDate = $this->toDate->format('Y-m-d');
         $locationId = Yii::$app->session->get('location_id');
         $query = InvoiceLineItem::find()
+                ->notDeleted()
 			->joinWith(['invoice' => function($query) use($locationId) {
 				$query->andWhere([
                                     'location_id' => $locationId,

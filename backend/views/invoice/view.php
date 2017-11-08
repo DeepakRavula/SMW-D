@@ -55,7 +55,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 </div>
 
 <?php
-$lineItem = InvoiceLineItem::findOne(['invoice_id' => $model->id]);
+$lineItem = InvoiceLineItem::find()->notDeleted()->andWhere(['invoice_id' => $model->id])->one();
 if (!empty($lineItem)) {
     $itemTypeId = $lineItem->item_type_id;
 } else {
@@ -65,7 +65,9 @@ if (!empty($lineItem)) {
 ?>
 <?php
 $invoiceLineItemsDataProvider = new ActiveDataProvider([
-    'query' => InvoiceLineItem::find()->where(['invoice_id' => $model->id]),
+    'query' => InvoiceLineItem::find()
+        ->notDeleted()
+        ->andWhere(['invoice_id' => $model->id]),
 	'pagination' => false,
 ]);
 $content = $this->render('mail/content', [
