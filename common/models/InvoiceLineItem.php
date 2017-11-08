@@ -229,6 +229,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
                 ->where(['invoice.type' => Invoice::TYPE_INVOICE]);
     }
+    
+    public function afterSoftDelete()
+    {
+        return $this->invoice->save();
+    }
 
     /**
      * {@inheritdoc}
@@ -403,7 +408,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         if ($this->hasMultiEnrolmentDiscount()) {
             $discount += $lineItemPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :
                 $this->multiEnrolmentDiscount->value;
-            $lineItemPrice -= $discount;
+            $lineItemPrice = $this->grossPrice - $discount;
         }
         if ($this->hasLineItemDiscount()) {
             if ((int) $this->lineItemDiscount->valueType) {
@@ -412,15 +417,15 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             } else {
                 $discount += ($this->lineItemDiscount->value / 100) * $lineItemPrice;
             }
-            $lineItemPrice -= $discount;
+            $lineItemPrice = $this->grossPrice - $discount;
         }
         if ($this->hasCustomerDiscount()) {
             $discount += ($this->customerDiscount->value / 100) * $lineItemPrice;
-            $lineItemPrice -= $discount;
+            $lineItemPrice = $this->grossPrice - $discount;
         }
         if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
             $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $lineItemPrice;
-            $lineItemPrice -= $discount;
+            $lineItemPrice = $this->grossPrice - $discount;
         }
         
         return round($discount, 4);
