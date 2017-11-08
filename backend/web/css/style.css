@@ -194,9 +194,8 @@ dl {
   margin-left: -50px; 
   background-color: transparent;
 }
-.sortable
-{
-  background-color: transparent;
+.sortable li:focus, .sortable li:hover {
+   background-color: transparent !important ;
 }
 
 .user-profile {
