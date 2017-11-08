@@ -596,6 +596,7 @@ class Lesson extends \yii\db\ActiveRecord
         }
         if ($insert) {
             $this->isDeleted = false;
+            $this->isPresent = true;
             if (empty($this->isExploded)) {
                 $this->isExploded = false;
             }
