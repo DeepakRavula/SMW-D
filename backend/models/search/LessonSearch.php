@@ -163,8 +163,8 @@ class LessonSearch extends Lesson
     public static function attendanceStatuses()
     {
         return [
-            Lesson::STATUS_PRESENT => 'Present',
-            Lesson::STATUS_ABSENT=> 'Absent',
+            Lesson::STATUS_PRESENT => 'Yes',
+            Lesson::STATUS_ABSENT=> 'No',
         ];
     }
 }
