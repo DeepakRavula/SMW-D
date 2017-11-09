@@ -122,6 +122,12 @@ class LessonSearch extends Lesson
         } elseif ($this->attendanceStatus === Lesson::STATUS_ABSENT) {
             $query->andFilterWhere(['lesson.isPresent' => false]);
         } 
+        if ($this->invoiceStatus === self::STATUS_INVOICED) {
+            $query->invoiced();
+        }  elseif ($this->invoiceStatus === self::STATUS_UNINVOICED) {
+            $query->unInvoiced();
+           
+        }
         if (!empty($this->dateRange)) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
 

@@ -110,9 +110,7 @@ $this->params['action-button'] = $this->render('_action-menu', [
                 'value' => function ($data) {
                     $status = null;
                     if (!empty($data->isPresent)) {
-                        $status = 'Yes';
-                    } else {
-                        $status = 'No';
+                        return $data->getPresent();
                     }
 
                     return $status;
