@@ -99,6 +99,21 @@ $this->params['action-button'] = $this->render('_action-menu', [
                     return $status;
                 },
             ],
+              [
+                'label' => 'Present',
+				'attribute' => 'attendanceStatus',
+                'filter' => LessonSearch::attendanceStatuses(),
+                'value' => function ($data) {
+                    $status = null;
+                    if (!empty($data->isPresent)) {
+                        $status = 'Yes';
+                    } else {
+                        $status = 'No';
+                    }
+
+                    return $status;
+                },
+            ], 
         ];
 
         if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {

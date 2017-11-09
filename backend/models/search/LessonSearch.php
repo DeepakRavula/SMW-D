@@ -28,6 +28,7 @@ class LessonSearch extends Lesson
     public $program;
     public $teacher;
     public $ids;
+    public $attendanceStatus;
     /**
      * {@inheritdoc}
      */
@@ -36,7 +37,7 @@ class LessonSearch extends Lesson
         return [
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
-            [['lessonStatus', 'fromDate', 'toDate', 'type', 'customerId', 
+            [['lessonStatus', 'fromDate', 'attendanceStatus','toDate', 'type', 'customerId', 
                 'invoiceType','dateRange', 'student', 'program', 'teacher'], 'safe'],
         ];
     }
@@ -116,6 +117,11 @@ class LessonSearch extends Lesson
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_UNSCHEDULED) {
             $query->andFilterWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
         }
+        if ($this->attendanceStatus === Lesson::STATUS_PRESENT) {
+            $query->andFilterWhere(['lesson.isPresent' => true]);
+        } elseif ($this->attendanceStatus === Lesson::STATUS_ABSENT) {
+            $query->andFilterWhere(['lesson.isPresent' => false]);
+        } 
         if (!empty($this->dateRange)) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
 
@@ -152,6 +158,13 @@ class LessonSearch extends Lesson
             Lesson::STATUS_SCHEDULED => 'Scheduled',
             self::STATUS_INVOICED => 'Invoiced',
 			Lesson::STATUS_UNSCHEDULED => 'Unscheduled'
+        ];
+    }
+    public static function attendanceStatuses()
+    {
+        return [
+            Lesson::STATUS_PRESENT => 'Present',
+            Lesson::STATUS_ABSENT=> 'Absent',
         ];
     }
 }
