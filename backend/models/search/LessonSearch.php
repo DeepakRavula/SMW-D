@@ -13,8 +13,8 @@ use common\models\Invoice;
  */
 class LessonSearch extends Lesson
 {
-    const STATUS_INVOICED = 'invoiced';
-    const STATUS_UNINVOICED='uninvoiced';
+    const STATUS_INVOICED = 'Yes';
+    const STATUS_UNINVOICED='No';
 	
     public $lessonStatus;
     public $invoiceStatus;
@@ -162,8 +162,8 @@ class LessonSearch extends Lesson
      public static function invoiceStatuses()
     {
         return [
-            self::STATUS_INVOICED => 'Invoiced',
-            self::STATUS_UNINVOICED => 'UnInvoiced'
+            self::STATUS_INVOICED => 'Yes',
+            self::STATUS_UNINVOICED => 'No'
         ];
     }
 }
