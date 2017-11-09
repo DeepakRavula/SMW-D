@@ -83,6 +83,7 @@ class VacationController extends Controller
             $lessonsQuery   = Lesson::find()
                             ->notDeleted()
                             ->isConfirmed()
+                            ->andWhere(['courseId' => $enrolment->courseId])
                             ->andWhere(['AND', ['>=', 'DATE(date)', $startDate], ['<=', 'DATE(date)', $endDate]]);
             $paymentCyclesQuery = PaymentCycle::find()
                     ->where(['enrolmentId' => $enrolmentId])

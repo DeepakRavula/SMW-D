@@ -13,7 +13,7 @@ use insolita\wgadminlte\LteConst;
 	?>
 <dl class="dl-invoice-summary">
 	<dt id="invoice-discount">Discounts</dt>
-	<dd><?= $model->totalDiscount; ?></dd>
+	<dd><?= Yii::$app->formatter->asDecimal($model->totalDiscount, 4); ?></dd>
 	<dt>SubTotal</dt>
 	<dd><?= $model->subTotal; ?></dd>
 	<dt>Tax</dt>
@@ -21,7 +21,8 @@ use insolita\wgadminlte\LteConst;
 	<dt>Total</dt>
 	<dd><?= $model->total; ?></dd>
 	<dt>Paid</dt>
-	<dd> <?= !empty($model->invoicePaymentTotal)? $model->invoicePaymentTotal : '0.00' ?></dd>
+	<dd> <?= !empty($model->invoicePaymentTotal)? Yii::$app->formatter->asDecimal($model->invoicePaymentTotal, 4) : 
+            Yii::$app->formatter->asDecimal(0, 4) ?></dd>
 	<dt>Balance</dt>
 	<dd> <?= $model->balance; ?></dd>
 </dl>

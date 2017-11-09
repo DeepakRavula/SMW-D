@@ -168,7 +168,9 @@ class InvoiceController extends Controller
         $request = Yii::$app->request;
         $searchModel = new InvoiceSearch();
         $searchModel->load($request->get());
-        $invoiceLineItems = InvoiceLineItem::find()->where(['invoice_id' => $id]);
+        $invoiceLineItems = InvoiceLineItem::find()
+                ->notDeleted()
+                ->andWhere(['invoice_id' => $id]);
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoiceLineItems,
             'pagination' => false,
@@ -259,7 +261,7 @@ class InvoiceController extends Controller
                 $response = [
                     'invoiceStatus' => $model->getStatus(),
                     'status' => true,
-					'amount' => round($model->invoiceBalance, 2)
+					'amount' => round($model->invoiceBalance, 4)
                 ];
             } else {
                 $invoiceLineItemModel = ActiveForm::validate($invoiceLineItemModel);

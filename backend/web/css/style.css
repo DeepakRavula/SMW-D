@@ -191,8 +191,13 @@ dl {
 .user-contact-list
 {
   margin-top: -20px; 
-  margin-left: -50px;  
+  margin-left: -50px; 
+  background-color: transparent;
 }
+.sortable li:focus, .sortable li:hover {
+   background-color: transparent !important ;
+}
+
 .user-profile {
     width: 40px;
     height: 40px;
