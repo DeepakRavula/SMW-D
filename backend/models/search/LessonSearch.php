@@ -13,9 +13,11 @@ use common\models\Invoice;
  */
 class LessonSearch extends Lesson
 {
-    const STATUS_INVOICED = 'invoiced';
+    const STATUS_INVOICED = 'Yes';
+    const STATUS_UNINVOICED='No';
 	
     public $lessonStatus;
+    public $invoiceStatus;
     public $fromDate;
     public $toDate;
     public $dateRange;
@@ -37,7 +39,7 @@ class LessonSearch extends Lesson
         return [
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
-            [['lessonStatus', 'fromDate', 'attendanceStatus','toDate', 'type', 'customerId', 
+            [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId', 
                 'invoiceType','dateRange', 'student', 'program', 'teacher'], 'safe'],
         ];
     }
@@ -112,8 +114,6 @@ class LessonSearch extends Lesson
             $query->completed();
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_SCHEDULED) {
             $query->scheduled();
-        } elseif ($this->lessonStatus === self::STATUS_INVOICED) {
-            $query->invoiced();
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_UNSCHEDULED) {
             $query->andFilterWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
         }
@@ -156,8 +156,14 @@ class LessonSearch extends Lesson
         return [
             Lesson::STATUS_COMPLETED => 'Completed',
             Lesson::STATUS_SCHEDULED => 'Scheduled',
-            self::STATUS_INVOICED => 'Invoiced',
-			Lesson::STATUS_UNSCHEDULED => 'Unscheduled'
+            Lesson::STATUS_UNSCHEDULED => 'Unscheduled'
+        ];
+    }
+     public static function invoiceStatuses()
+    {
+        return [
+            self::STATUS_INVOICED => 'Yes',
+            self::STATUS_UNINVOICED => 'No'
         ];
     }
     public static function attendanceStatuses()
