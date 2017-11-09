@@ -11,6 +11,17 @@ namespace common\models;
  */
 class UserAddress extends \yii\db\ActiveRecord
 {
+	private $labelId;
+
+	public function getLabelId()
+    {
+        return $this->labelId;
+    }
+
+    public function setLabelId($value)
+    {
+        $this->labelId = trim($value);
+    }
     /**
      * {@inheritdoc}
      */
@@ -29,6 +40,7 @@ class UserAddress extends \yii\db\ActiveRecord
             [['userContactId', 'cityId', 'provinceId', 'countryId'], 'integer'],
             [['address'], 'string', 'max' => 64],
             [['postalCode'], 'string', 'max' => 16],
+			[['labelId'], 'safe']
         ];
     }
 

@@ -14,6 +14,17 @@ use Yii;
  */
 class UserPhone extends \yii\db\ActiveRecord
 {
+	private $labelId;
+
+	public function getLabelId()
+    {
+        return $this->labelId;
+    }
+
+    public function setLabelId($value)
+    {
+        $this->labelId = trim($value);
+    }
     /**
      * @inheritdoc
      */
@@ -31,6 +42,7 @@ class UserPhone extends \yii\db\ActiveRecord
             [['userContactId', 'number'], 'required'],
             [['userContactId', 'extension'], 'integer'],
             [['number'], 'string', 'max' => 15],
+			[['labelId'], 'safe']
         ];
     }
 

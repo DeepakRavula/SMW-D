@@ -15,6 +15,17 @@ use Yii;
  */
 class UserEmail extends \yii\db\ActiveRecord
 {
+	private $labelId;
+
+	public function getLabelId()
+    {
+        return $this->labelId;
+    }
+
+    public function setLabelId($value)
+    {
+        $this->labelId = trim($value);
+    }
     /**
      * @inheritdoc
      */
@@ -32,6 +43,7 @@ class UserEmail extends \yii\db\ActiveRecord
             [['email'], 'required'],
 			[['userContactId'], 'integer'],
             [['email'], 'string', 'max' => 255],
+			[['labelId'], 'safe']
         ];
     }
 

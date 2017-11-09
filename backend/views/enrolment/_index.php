@@ -2,12 +2,13 @@
 use yii\helpers\Url;
 use common\models\Course;
 use common\models\UserProfile;
-use common\models\Address;
-use common\models\PhoneNumber;
+use common\models\UserAddress;
+use common\models\UserPhone;
+use common\models\UserContact;
 use common\models\User;
 use common\models\Student;
-use yii\bootstrap\Modal;
 use yii\bootstrap\ActiveForm;
+use common\models\UserEmail;
 use common\models\CourseSchedule;
 use common\models\discount\EnrolmentDiscount;
 use kartik\datetime\DateTimePickerAsset;
@@ -70,9 +71,11 @@ DateTimePickerAsset::register($this);
                      <?=
 						$this->render('new/_form-customer', [
 							'model' => new User(),
-							'phoneModel' => new PhoneNumber(),
-							'addressModel' => new Address(),
+							'userEmail' => new UserEmail(),
+							'phoneModel' => new UserPhone(),
+							'addressModel' => new UserAddress(),
 							'userProfile' => new UserProfile(),
+							'userContact' => new UserContact(),
 							'form' => $form,
 						]);
 						?> 
@@ -134,7 +137,7 @@ echo $this->render('new/_calendar', [
 				messages["courseschedule-day"].length ||
 				messages["course-teacherid"].length ||
 				messages["userprofile-firstname"].length ||
-				messages["userprofile-lastname"].length || messages["address-address"].length || messages["phonenumber-number"].length){ 
+				messages["userprofile-lastname"].length ){ 
 			} else {
 				$.ajax({
                 url: $('#new-enrolment-form').attr('action'),
