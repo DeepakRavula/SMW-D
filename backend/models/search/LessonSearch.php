@@ -116,10 +116,11 @@ class LessonSearch extends Lesson
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_UNSCHEDULED) {
             $query->andFilterWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
         }
-         if ($this->invoiceStatus == self::STATUS_INVOICED) {
+         if ($this->invoiceStatus === self::STATUS_INVOICED) {
             $query->invoiced();
-        }  elseif ((int)$this->invoiceStatus === self::STATUS_UNINVOICED) {
-            $query->andFilterWhere(['IN','lesson.staus', Lesson::STATUS_UNSCHEDULED,Lesson::STATUS_CANCELED,Lesson::STATUS_SCHEDULED]);
+        }  elseif ($this->invoiceStatus === self::STATUS_UNINVOICED) {
+            $query->unInvoiced();
+           
         }
         if (!empty($this->dateRange)) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
