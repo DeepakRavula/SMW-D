@@ -14,8 +14,10 @@ use common\models\Invoice;
 class LessonSearch extends Lesson
 {
     const STATUS_INVOICED = 'invoiced';
+    const STATUS_UNINVOICED='uninvoiced';
 	
     public $lessonStatus;
+    public $invoiceStatus;
     public $fromDate;
     public $toDate;
     public $dateRange;
@@ -36,7 +38,7 @@ class LessonSearch extends Lesson
         return [
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
-            [['lessonStatus', 'fromDate', 'toDate', 'type', 'customerId', 
+            [['lessonStatus','invoiceStatus', 'fromDate', 'toDate', 'type', 'customerId', 
                 'invoiceType','dateRange', 'student', 'program', 'teacher'], 'safe'],
         ];
     }
@@ -152,6 +154,13 @@ class LessonSearch extends Lesson
             Lesson::STATUS_SCHEDULED => 'Scheduled',
             self::STATUS_INVOICED => 'Invoiced',
 			Lesson::STATUS_UNSCHEDULED => 'Unscheduled'
+        ];
+    }
+     public static function invoiceStatuses()
+    {
+        return [
+            self::STATUS_INVOICED => 'Invoiced',
+            self::STATUS_UNINVOICED => 'UnInvoiced'
         ];
     }
 }

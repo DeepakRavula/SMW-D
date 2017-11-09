@@ -91,7 +91,7 @@ $this->params['action-button'] = $this->render('_action-menu', [
             [
                 'label' => 'Invoiced ?',
                 'attribute'=> 'invoiceStatus',
-                'filterType'=>KartikGridView::FILTER_SWITCH,
+                'filter'=>LessonSearch::invoiceStatuses(),
                 'value' => function ($data) {
                     $status = null;
                     if (!empty($data->invoice)) {
