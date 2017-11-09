@@ -139,7 +139,7 @@ class InvoiceController extends Controller
                 $userEmail= new UserEmail();
         if (!empty($model->user_id)) {
             $customer = User::findOne(['id' => $model->user_id]);
-            $userModel = UserProfile::findOne(['user_id' => $customer->id]);
+            $userProfile = UserProfile::findOne(['user_id' => $customer->id]);
             $userEmail=UserEmail::find()
                         ->joinWith(['userContact uc' => function ($query) use ($model) {
                 $query->where(['uc.userId' => $model->user_id]);
@@ -147,7 +147,7 @@ class InvoiceController extends Controller
                     ->one();
         }
                  if ($userProfile->load($request->post())&& $userEmail->load($request->post())) {
-                    
+                    if (empty($model->user_id)) {
 			if ($customer->save()) {
 				$model->user_id = $customer->id;
 				$model->save();
@@ -161,12 +161,23 @@ class InvoiceController extends Controller
                                 $userEmail->save();
 				$auth = Yii::$app->authManager;
 				$auth->assign($auth->getRole(User::ROLE_GUEST), $customer->id);
-
-				return [
+                                return [
 					'status' => true,
-					'message' => 'customer has been updated successfully.'
+					'message' => 'customer has been Added successfully.'
 				];
 			}
+                        }
+                  
+                      else
+                      {
+                         $userProfile->save();
+                         $userEmail->save();
+                         return [
+					'status' => true,
+					'message' => 'customer has been Updated successfully.'
+				];
+                      }
+				
 		}
 	}
 	public function actionNote($id)
