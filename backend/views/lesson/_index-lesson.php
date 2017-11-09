@@ -65,7 +65,7 @@ $this->params['action-button'] = $this->render('_action-menu', [
 						'locale' => [
 							'format' => 'M d,Y',
 						],
-						'opens' => 'right'
+						'opens' => 'left'
 					],
 				]),
                 'value' => function ($data) {
