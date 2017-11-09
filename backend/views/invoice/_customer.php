@@ -85,7 +85,7 @@ Select2Asset::register($this);
             <?= $form1->field($userModel, 'lastname'); ?>
         </div>
         <div class="col-md-4">
-            <?= $form1->field($customer, 'email'); ?>
+            <?= $form1->field($userEmail, 'email'); ?>
         </div>
         <div class="col-md-12">
             <div class="pull-right">
