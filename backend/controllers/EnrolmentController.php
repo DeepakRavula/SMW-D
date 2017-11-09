@@ -44,7 +44,8 @@ class EnrolmentController extends Controller
             ],
 			'contentNegotiator' => [
 				'class' => ContentNegotiator::className(),
-				'only' => ['add', 'delete', 'edit','schedule', 'update','edit-end-date'],
+				'only' => ['add', 'delete', 'edit','schedule', 
+                                    'update','edit-end-date', 'edit-program-rate'],
 				'formatParam' => '_format',
 				'formats' => [
 				   'application/json' => Response::FORMAT_JSON,
@@ -137,6 +138,31 @@ class EnrolmentController extends Controller
                 }
             }
             $message = '';
+            return [
+                'status' => true,
+                'message' => $message,
+            ];
+        } else {
+
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
+    }
+    
+    public function actionEditProgramRate($id)
+    {
+        $model = $this->findModel($id);
+        $data = $this->renderAjax('update/_form-rate', [
+            'model' => $model
+        ]);
+        $post = Yii::$app->request->post();
+        if ($post) {
+            if ($model->load($post)) {
+                $model->save();
+            }
+            $message = 'Program Rate successfully updated!';
             return [
                 'status' => true,
                 'message' => $message,
