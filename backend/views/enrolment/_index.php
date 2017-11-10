@@ -137,7 +137,7 @@ echo $this->render('new/_calendar', [
 				messages["courseschedule-day"].length ||
 				messages["course-teacherid"].length ||
 				messages["userprofile-firstname"].length ||
-				messages["userprofile-lastname"].length ){ 
+				messages["userprofile-lastname"].length || messages["useraddress-address"].length || messages["userphone-number"].length){ 
 			} else {
 				$.ajax({
                 url: $('#new-enrolment-form').attr('action'),

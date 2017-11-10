@@ -1,7 +1,5 @@
 <?php
 
-use common\models\PhoneNumber;
-use common\models\Address;
 use common\models\City;
 use common\models\Country;
 use common\models\Province;

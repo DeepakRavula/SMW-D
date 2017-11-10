@@ -196,6 +196,20 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @return \yii\db\ActiveQuery
      */
+	public function getUserContact()
+    {
+        return $this->hasMany(UserContact::className(), ['userId' => 'id']);
+    } 
+	public function getPrimaryContact()
+    {
+        return $this->hasMany(UserContact::className(), ['userId' => 'id'])
+			->onCondition(['user_contact.isPrimary' => true]);
+    } 
+	public function getBillingContact()
+    {
+        return $this->hasMany(UserContact::className(), ['userId' => 'id'])
+			->onCondition(['user_contact.labelId' => Label::LABEL_BILLING]);	
+    } 
     public function getUserLocation()
     {
         return $this->hasOne(UserLocation::className(), ['user_id' => 'id']);
@@ -220,7 +234,17 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasMany(UserAddress::className(), ['userContactId' => 'id'])
 			->via('userContact');
     }
-
+	
+	public function getPrimaryAddress()
+    {
+		return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
+			->via('primaryContact');
+    }
+	public function getBillingAddress()
+    {
+		return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
+			->via('billingContact');
+    }
 	public function getQualifications()
 	{
 		return $this->hasMany(Qualification::className(), ['teacher_id' => 'id']);
@@ -233,61 +257,33 @@ class User extends ActiveRecord implements IdentityInterface
         }
         return parent::beforeSave($insert);
     }
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPrimaryAddress()
-    {
-		
-        return UserAddress::find()
-			->joinWith(['userContact' => function($query) {
-				$query->primary();
-			}])
-			->one();
-    }
-
+    
     public function getCustomerPaymentPreference()
     {
         return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'id']);
     }
     
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBillingAddress()
+	public function getPhoneNumbers()
     {
-		return UserAddress::find()
-			->joinWith(['userContact' => function($query) {
-				$query->andWhere(['label' => Label::LABEL_BILLING]);
-			}])
-			->one();
+        return $this->hasMany(UserPhone::className(), ['userContactId' => 'id'])
+			->via('userContact');
     }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getPhoneNumber()
     {
         return $this->hasOne(UserPhone::className(), ['userContactId' => 'id'])
 			->via('userContact');
     }
-
+	public function getPrimaryPhoneNumber()
+    {
+		return $this->hasOne(UserContact::className(), ['id' => 'userContactId'])
+			->via('phoneNumbers')
+			->onCondition(['user_contact.isPrimary' => true]);
+	}	
 	public function getCustomerDiscount()
     {
         return $this->hasOne(CustomerDiscount::className(), ['customerId' => 'id']);
     }
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPhoneNumbers()
-    {
-        return $this->hasMany(UserPhone::className(), ['userContactId' => 'id'])
-			->via('userContact');
-    }
-   	public function getUserContact()
-    {
-        return $this->hasMany(UserContact::className(), ['userId' => 'id']);
-    } 
+    
     public function getEmails()
     {
         return $this->hasMany(UserEmail::className(), ['userContactId' => 'id'])
@@ -310,19 +306,7 @@ class User extends ActiveRecord implements IdentityInterface
         }
         return implode(", ", $emails);
     }
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPrimaryPhoneNumber()
-    {
-		return $this->hasOne(UserPhone::className(), ['userContactId' => 'id'])
-			->via('userContact')
-			->onCondition(['isPrimary' => true]);
-    }
-	
-    /**
-     * @return \yii\db\ActiveQuery
-     */
+    
     public function getLocation()
     {
         return $this->hasOne(UserLocation::className(), ['user_id' => 'id']);

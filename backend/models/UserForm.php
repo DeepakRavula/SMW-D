@@ -4,8 +4,6 @@ namespace backend\models;
 
 use common\models\User;
 use common\models\UserProfile;
-use common\models\Address;
-use common\models\PhoneNumber;
 use common\models\UserEmail;
 use common\models\UserLocation;
 use yii\base\Exception;
@@ -22,16 +20,10 @@ class UserForm extends Model
     public $username;
     public $status;
     public $roles;
-    public $qualifications;
     public $lastname;
     public $firstname;
-    public $addresslabel;
     public $locations;
     private $model;
-    private $emails;
-    public $phoneNumbers;
-    public $addresses;
-    public $section;
 	
     /**
      * {@inheritdoc}
@@ -48,7 +40,7 @@ class UserForm extends Model
             ['lastname', 'string', 'min' => 2, 'max' => 255], 
             [['status'], 'integer'],
             ['roles', 'required'],
-            [['locations', 'section'], 'safe'],
+            [['locations'], 'safe'],
         ];
     }
 
@@ -84,30 +76,6 @@ class UserForm extends Model
         );
         $this->roles = end($this->roles);
 
-        if (count($model->phoneNumbers) > 0) {
-            $this->phoneNumbers = $model->phoneNumbers;
-        } else {
-            $this->phoneNumbers = [new PhoneNumber()];
-        }
-        
-        if (count($model->emails) > 0) {
-            $this->emails = $model->emails;
-        } else {
-            $this->emails = [new UserEmail()];
-        }
-
-        if (count($model->addresses) > 0) {
-            $this->addresses = $model->addresses;
-        } else {
-            $this->addresses = [new Address()];
-        }
-
-		if (count($model->qualifications) > 0) {
-            $this->qualifications = $model->qualifications;
-        } else {
-            $this->qualifications = [new Qualification()];
-        }
-
         $userFirstName = UserProfile::findOne(['user_id' => $model->getId()]);
         if (!empty($userFirstName)) {
             $this->firstname = $userFirstName->firstname;
@@ -117,15 +85,6 @@ class UserForm extends Model
         return $this->model;
     }
 
-    public function getEmails()
-    {
-        return $this->emails;
-    }
-
-    public function setEmails($value)
-    {
-        $this->emails = trim($value);
-    }
     /**
      * @return User
      */
@@ -136,32 +95,6 @@ class UserForm extends Model
         }
 
         return $this->model;
-    }
-
-    public static function createMultiple($modelClass, $multipleModels = [])
-    {
-        $model = new $modelClass();
-        $formName = $model->formName();
-        $post = Yii::$app->request->post($formName);
-        $models = [];
-
-        if (!empty($multipleModels)) {
-            $keys = array_keys(ArrayHelper::map($multipleModels, 'id', 'id'));
-            $multipleModels = array_combine($keys, $multipleModels);
-        }
-
-        if ($post && is_array($post)) {
-            foreach ($post as $i => $item) {
-                if (isset($item['id']) && !empty($item['id']) && isset($multipleModels[$item['id']])) {
-                    $models[] = $multipleModels[$item['id']];
-                } else {
-                    $models[] = new $modelClass();
-                }
-            }
-        }
-        unset($model, $formName, $post);
-
-        return $models;
     }
 
     /**

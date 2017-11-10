@@ -40,7 +40,7 @@ LteBox::begin([
 		<dt>Province</dt>
 		<dd><?= $customer->billingAddress->province->name; ?></dd>
 		<dt>Postal</dt>
-		<dd><?= $customer->billingAddress->postal_code; ?></dd>
+		<dd><?= $customer->billingAddress->postalCode; ?></dd>
 	<?php endif; ?>
 	<?php if (!empty($customer->phoneNumber)): ?>
 		<dt>Phone</dt>

@@ -53,6 +53,9 @@ class UserAddress extends \yii\db\ActiveRecord
             'id' => 'ID',
             'user_id' => 'User ID',
             'address_id' => 'Address ID',
+			'cityId' => 'City',
+			'provinceId' => 'Province',
+			'countryId' => 'Country'
         ];
     }
 	public function getUserContact()

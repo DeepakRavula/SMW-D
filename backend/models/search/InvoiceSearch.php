@@ -74,18 +74,6 @@ class InvoiceSearch extends Invoice
             return $dataProvider;
         }
 
-        $query->joinWith(['user' => function ($query) use($locationId){
-            $query->joinWith('userProfile up')
-                  ->joinWith('phoneNumber pn')
-				  ->joinWith(['userLocation' => function($query) use($locationId){
-					  $query->andWhere(['user_location.location_id' => $locationId]);
-				  }]);
-        }]);
-        $query->groupBy('invoice.invoice_number');
-        $query->andFilterWhere(['like', 'up.firstname', $this->query])
-              ->orFilterWhere(['like', 'up.lastname', $this->query])
-              ->orFilterWhere(['like', 'pn.number', $this->query]);
-
         $this->fromDate = \DateTime::createFromFormat('M d,Y', $this->fromDate);
         $this->toDate = \DateTime::createFromFormat('M d,Y', $this->toDate);
         if ((int) $this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {

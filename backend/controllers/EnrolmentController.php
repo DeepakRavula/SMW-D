@@ -13,6 +13,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use common\models\Label;
 use common\models\CourseSchedule;
 use common\models\Student;
 use yii\filters\ContentNegotiator;
@@ -174,7 +175,15 @@ class EnrolmentController extends Controller
 	{
 		$userContact = new UserContact();
 		$userContact->userId = $userId;
-		$userContact->labelId = $labelId;
+		if (!is_numeric($labelId)) {
+            $label = new Label();
+            $label->name = $labelId;
+            $label->userAdded = $userId;
+            $label->save();
+            $userContact->labelId = $label->id;
+        } else {
+			$userContact->labelId = $labelId;
+		}
 		$userContact->isPrimary = false;
 		$userContact->save();	
 		return $userContact;

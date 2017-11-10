@@ -44,36 +44,18 @@
                     To
                     <address>
                         <strong><?php echo isset($studentModel->customer->publicIdentity) ? $studentModel->customer->publicIdentity : null ?></strong><br>
-                        <?php if (!empty($studentModel->customer->addresses)) : ?>
-                            <?php
-                            foreach ($studentModel->customer->addresses as $address) {
-                                if ($address->label === 'Billing') {
-                                    $billingAddress = $address;
-                                    break;
-                                }
-                            }
-
-                            ?>
-                        <?php endif; ?>
-                        <?php $phoneNumber = !empty($studentModel->customer->phoneNumber) ? $studentModel->customer->phoneNumber : null; ?>
-                        <?php if (!empty($billingAddress->address)) : ?>
-                            <?= $billingAddress->address; ?>
-                        <?php endif; ?><br>
-                        <?php if (!empty($billingAddress->city->name)) : ?>
-                            <?= $billingAddress->city->name; ?>
-                        <?php endif; ?>                          
-                        <?php if (!empty($billingAddress->province->name)) : ?>
-                            <?= ', ' . $billingAddress->province->name; ?>
-                        <?php endif; ?><br>
-                        <?php if (!empty($billingAddress->postal_code)) : ?>
-                            <?= $billingAddress->postal_code; ?><br/>
-                        <?php endif; ?>
-                        <?php if (!empty($phoneNumber)) : ?>
-                            Phone:<?php echo $phoneNumber->number; ?>
-                        <?php endif; ?><br>
-                        <?php if (!empty($studentModel->customer->email)): ?>
-                            E-mail:<?php echo $studentModel->customer->email ?>
-                        <?php endif; ?>
+					<?php if (!empty($studentModel->customer->billingAddress)) : ?>
+						<?= $studentModel->customer->billingAddress->address; ?><br>
+						<?= $studentModel->customer->billingAddress->city->name; ?>
+						<?= ', ' . $studentModel->customer->billingAddress->province->name; ?><br>
+						<?= $studentModel->customer->billingAddress->postalCode; ?><br/>
+					<?php endif; ?>
+					<?php if (!empty($studentModel->customer->phoneNumber)) : ?>
+						Phone:<?php echo $studentModel->customer->phoneNumber->number; ?>
+					<?php endif; ?><br>
+					<?php if (!empty($studentModel->customer->email)): ?>
+						E-mail:<?php echo $studentModel->customer->email ?>
+					<?php endif; ?>
                     </address>
                 </div>
             </div>

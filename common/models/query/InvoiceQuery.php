@@ -193,10 +193,9 @@ class InvoiceQuery extends \yii\db\ActiveQuery
     public function userLocation($locationId)
     {
         $this->joinWith(['user' => function ($query) use($locationId){
-                       $query->joinWith('userProfile up')
-                             ->joinWith('phoneNumber pn')
-                             ->joinWith(['userLocation' => function($query) use($locationId){
-                                    $query->andWhere(['user_location.location_id' => $locationId]);
+		   $query->joinWith('userProfile up')
+				 ->joinWith(['userLocation' => function($query) use($locationId){
+						$query->andWhere(['user_location.location_id' => $locationId]);
 				  }]);
         }]);    
         return $this;
