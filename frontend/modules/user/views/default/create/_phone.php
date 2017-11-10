@@ -13,7 +13,7 @@ use yii\helpers\ArrayHelper;
 /* @var $roles yii\rbac\Role[] */
 /* @var $permissions yii\rbac\Permission[] */
 ?>
-<div class="row user-create-form">
+<div class="user-create-form">
 <?php
  $url = Url::to(['user-contact/edit-phone', 'id' => $model->id]);
     if ($model->isNewRecord) {
@@ -25,8 +25,11 @@ $form = ActiveForm::begin([
 	]);
 ?>
 <div class="row">
+    <div class="col-md-12">
 	<?= $form->field($phoneModel, "number")->textInput(['maxlength' => true]) ?>
-	<?=
+    </div>
+<div class="col-md-12">	
+        <?=
 	$form->field($model, "labelId")->widget(Select2::classname(), [
 		'data' => ArrayHelper::map(Label::find()
 				->user($userModel->id)
@@ -40,12 +43,15 @@ $form = ActiveForm::begin([
 		],
 	])->label('Label');
 	?>
+</div>
+    <div class="col-md-12">
 	<?= $form->field($phoneModel, "extension")->textInput(['maxlength' => true]) ?>
+    </div>
 </div>
     <div class="row">
         <div class="col-md-12">
 <div class="pull-right">
-	<?php echo Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default phone-cancel-btn']); ?>
+	<?php echo Html::a('Cancel', '#', ['class' => 'btn btn-default phone-cancel-btn']); ?>
 <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 </div>
                      <div class="pull-left">       

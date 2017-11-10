@@ -12,7 +12,7 @@ use yii\helpers\ArrayHelper;
 /* @var $roles yii\rbac\Role[] */
 /* @var $permissions yii\rbac\Permission[] */
 ?>
-<div class="row user-create-form">
+<div class="user-create-form">
 <?php
   $url = Url::to(['user-contact/edit-email', 'id' => $model->id]);
     if ($model->isNewRecord) {
@@ -24,6 +24,7 @@ $form = ActiveForm::begin([
 	]);
 ?>
 <div class="row">
+    <div class="col-md-12">
 		<?= $form->field($emailModel, "email")->textInput(['maxlength' => true]) ?>
 		<?=
 		$form->field($model, "labelId")->widget(Select2::classname(), [
@@ -38,7 +39,10 @@ $form = ActiveForm::begin([
 		])->label('Label');
 		?>
 </div>
-	<div class="row pull-right">
+</div>
+    <div class="row">
+        <div class="col-md-12">
+	<div class="pull-right">
 		<?php echo Html::a('Cancel', '#', ['class' => 'btn btn-default email-cancel-btn']); ?>        
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 	</div>
@@ -55,6 +59,9 @@ $form = ActiveForm::begin([
         }
 
         ?>
+                 </div>
+    </div>
          </div>
 <?php ActiveForm::end(); ?>
+
 </div>

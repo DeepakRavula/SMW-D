@@ -16,7 +16,7 @@ use yii\helpers\Url;
 /* @var $roles yii\rbac\Role[] */
 /* @var $permissions yii\rbac\Permission[] */
 ?>
-<div class="row user-create-form">
+<div class="user-create-form">
 	<?php
         $url = Url::to(['user-contact/edit-address', 'id' => $model->id]);
     if ($model->isNewRecord) {
@@ -28,6 +28,7 @@ use yii\helpers\Url;
 	]);
 	?>
 	<div class="row">
+            <div class="col-md-12">
 		<?php
 		$locationModel = Location::findOne(['id' => Yii::$app->session->get('location_id')]);
 		?>
@@ -45,22 +46,36 @@ use yii\helpers\Url;
 			],
 		])->label('Label');
 		?>
+            </div>
+            <div class="col-md-12">
 		<?= $form->field($addressModel, "address")->textInput(['maxlength' => true])->label('Address') ?>
+            </div>
+             <div class="col-md-12">
 		<?=
 		$form->field($addressModel, "cityId")->dropDownList(
 			ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'), ['class' => 'city form-control'])->label('City')
 		?>
+            </div>
+             <div class="col-md-12">
+                        <?=
+		$form->field($addressModel, "provinceId")->dropDownList(
+			ArrayHelper::map(Province::find()->all(), 'id', 'name'), ['class' => 'province form-control'])->label('Province')
+		?>
+                 </div>
+             <div class="col-md-12">
 		<?=
 		$form->field($addressModel, "countryId")->dropDownList(
 			ArrayHelper::map(Country::find()->all(), 'id', 'name'), ['class' => 'country form-control'])->label('Country')
 		?>
-		<?=
-		$form->field($addressModel, "provinceId")->dropDownList(
-			ArrayHelper::map(Province::find()->all(), 'id', 'name'), ['class' => 'province form-control'])->label('Province')
-		?>
-		<?= $form->field($addressModel, "postalCode")->textInput(['maxlength' => true])->label('Postal Code') ?>
+             </div>
+		
+		 <div class="col-md-12">
+                        <?= $form->field($addressModel, "postalCode")->textInput(['maxlength' => true])->label('Postal Code') ?>
     </div>
-	<div class="row pull-right">
+        </div>
+    <div class="row">
+        <div class="col-md-12">
+	<div class="pull-right">
 		<?php echo Html::a('Cancel', '#', ['class' => 'btn btn-default address-cancel-btn']); ?>
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 	</div>
@@ -78,6 +93,8 @@ use yii\helpers\Url;
 
         ?>
          </div>
+            </div>
+    </div>
 	<?php ActiveForm::end(); ?>
 </div>
 <script>
