@@ -2,12 +2,15 @@
 
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
-use common\models\Course;
+
 ?>
+
 <?php
+$boxTools = $this->render('_details-box-tools');
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
 	'title' => 'Details',
+        'boxTools' => $boxTools,
 	'withBorder' => true,
 ])
 ?>
@@ -19,7 +22,7 @@ LteBox::begin([
 	<dt>Teacher</dt>
 	<dd><?= $model->course->teacher->publicIdentity; ?></dd>
 	<dt>Rate</dt>
-	<dd><?= $model->course->program->rate; ?></dd>
+	<dd><?= $model->programRate; ?></dd>
 	<dt>Duration</dt>
 	<dd><?= (new \DateTime($model->courseSchedule->duration))->format('H:i'); ?></dd>
 </dl>
