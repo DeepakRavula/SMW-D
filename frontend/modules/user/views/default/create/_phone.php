@@ -52,7 +52,7 @@ $form = ActiveForm::begin([
         <div class="col-md-12">
 <div class="pull-right">
 	<?php echo Html::a('Cancel', '#', ['class' => 'btn btn-default phone-cancel-btn']); ?>
-<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 </div>
                      <div class="pull-left">       
  <?php

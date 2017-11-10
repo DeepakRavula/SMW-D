@@ -158,7 +158,7 @@ class UserContactController extends Controller
     public function actionEditEmail($id) {
         $model = $this->findModel($id);
         $emailModel = $model->email;
-        $data = $this->renderAjax('//user/create/_email', [
+        $data = $this->renderAjax('/default/create/_email', [
             'emailModel' => $emailModel,
             'model' => $model,
             'userModel' => $model->user,
@@ -186,7 +186,7 @@ class UserContactController extends Controller
     public function actionEditPhone($id) {
         $model = $this->findModel($id);
         $phoneModel = $model->phone;
-        $data = $this->renderAjax('//user/create/_phone', [
+         $data = $this->renderAjax('/default/create/_phone', [
             'phoneModel' => $phoneModel,
             'model' => $model,
             'userModel' => $model->user,
@@ -214,7 +214,7 @@ class UserContactController extends Controller
         public function actionEditAddress($id) {
         $model = $this->findModel($id);
         $addressModel = $model->address;
-        $data = $this->renderAjax('//user/create/_address', [
+         $data = $this->renderAjax('/default/create/_address', [
             'addressModel' => $addressModel,
             'model' => $model,
             'userModel' => $model->user,
