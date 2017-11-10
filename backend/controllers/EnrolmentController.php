@@ -13,17 +13,20 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use common\models\Label;
 use common\models\CourseSchedule;
 use common\models\Student;
 use yii\filters\ContentNegotiator;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
 use common\models\timelineEvent\TimelineEventEnrolment;
+use common\models\UserPhone;
+use common\models\UserAddress;
+use common\models\UserEmail;
+use common\models\UserContact;
 use common\models\UserLocation;
 use common\models\User;
 use common\models\UserProfile;
-use common\models\PhoneNumber;
-use common\models\Address;
 use Carbon\Carbon;
 use common\models\discount\EnrolmentDiscount;
 use backend\models\discount\MultiEnrolmentDiscount;
@@ -168,7 +171,23 @@ class EnrolmentController extends Controller
             ]);
         }
     }
-
+	public function createUserContact($userId, $labelId)
+	{
+		$userContact = new UserContact();
+		$userContact->userId = $userId;
+		if (!is_numeric($labelId)) {
+            $label = new Label();
+            $label->name = $labelId;
+            $label->userAdded = $userId;
+            $label->save();
+            $userContact->labelId = $label->id;
+        } else {
+			$userContact->labelId = $labelId;
+		}
+		$userContact->isPrimary = false;
+		$userContact->save();	
+		return $userContact;
+	}
 	public function actionAdd()
     {
 		$locationId = Yii::$app->session->get('location_id');
@@ -177,8 +196,9 @@ class EnrolmentController extends Controller
 		$courseSchedule = new CourseSchedule();
 		$user = new User();
 		$userProfile = new UserProfile();
-		$phoneNumber = new PhoneNumber();
-		$address = new Address();
+		$phoneNumber = new UserPhone();
+		$address = new UserAddress();
+		$userEmail = new UserEmail();
 		$userLocation = new UserLocation();
 		$student = new Student();
 		$multipleEnrolmentDiscount = new EnrolmentDiscount();
@@ -188,13 +208,13 @@ class EnrolmentController extends Controller
 		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
 		$user->load(Yii::$app->getRequest()->getBodyParams(), 'User');
 		$userProfile->load(Yii::$app->getRequest()->getBodyParams(), 'UserProfile');
-		$phoneNumber->load(Yii::$app->getRequest()->getBodyParams(), 'PhoneNumber');
-		$address->load(Yii::$app->getRequest()->getBodyParams(), 'Address');
+		$phoneNumber->load(Yii::$app->getRequest()->getBodyParams(), 'UserPhone');
+		$address->load(Yii::$app->getRequest()->getBodyParams(), 'UserAddress');
+		$userEmail->load(Yii::$app->getRequest()->getBodyParams(), 'UserEmail');
 		$student->load(Yii::$app->getRequest()->getBodyParams(), 'Student');
 		$courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');
 		$paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
         $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
-		
 		$user->status = User::STATUS_DRAFT;
         if($user->save()){
 			$auth = Yii::$app->authManager;
@@ -205,14 +225,19 @@ class EnrolmentController extends Controller
 			$userLocation->location_id = $locationId;
 			$userLocation->user_id = $user->id;
 			$userLocation->save();
+			$userContact = $this->createUserContact($user->id, $userEmail->labelId);
+			$userEmail->userContactId = $userContact->id;
+			$userEmail->save();
 			
 			//save address and phone number
 			if(!empty($address->address)) {
+				$userContact = $this->createUserContact($user->id, $address->labelId);
+				$address->userContactId = $userContact->id;
 				$address->save();
-				$user->link('addresses', $address);
 			}
 			if(!empty($phoneNumber->number)) {
-				$phoneNumber->user_id = $user->id;
+				$userContact = $this->createUserContact($user->id, $phoneNumber->labelId);
+				$phoneNumber->userContactId = $userContact->id;
 				$phoneNumber->save();
 			}
 			//save student

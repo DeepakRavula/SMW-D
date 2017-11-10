@@ -5,8 +5,6 @@ namespace backend\controllers;
 use Yii;
 use common\models\User;
 use common\models\CompanyAccount;
-use common\models\Address;
-use common\models\PhoneNumber;
 use common\models\TeacherAvailability;
 use common\models\Qualification;
 use common\models\Enrolment;
@@ -471,73 +469,6 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new User model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     *
-     * @return mixed
-     */
-	public function saveAddressAndPhone($model, $emailModels, $addressModels, $phoneNumberModels, $qualificationModels)
-	{
-        $transaction = \Yii::$app->db->beginTransaction();
-		if ($flag = $model->save(false)) {
-			foreach ($addressModels as $addressModel) {
-				if (!($flag = $addressModel->save(false))) {
-					$transaction->rollBack();
-					break;
-				}
-				$model->getModel()->link('addresses', $addressModel);
-			}
-                        foreach ($emailModels as $emailModel) {
-                                if (!is_numeric($emailModel->labelId)) {
-                                    $label = new Label();
-                                    $label->name = $emailModel->labelId;
-                                    $label->userAdded = $model->getModel()->id;
-                                    if (!($flag = $label->save(false))) {
-					$transaction->rollBack();
-					break;
-                                    }
-                                    $emailModel->labelId = $label->id;
-                                }
-                                $emailModel->userId = $model->getModel()->id;
-				if (!($flag = $emailModel->save(false))) {
-					$transaction->rollBack();
-					break;
-				}
-			}
-			foreach ($phoneNumberModels as $phoneNumberModel) {
-                                if (!is_numeric($phoneNumberModel->label_id)) {
-                                    $label = new Label();
-                                    $label->name = $phoneNumberModel->label_id;
-                                    $label->userAdded = $model->getModel()->id;
-                                    if (!($flag = $label->save(false))) {
-					$transaction->rollBack();
-					break;
-                                    }
-                                    $phoneNumberModel->label_id = $label->id;
-                                }
-				$phoneNumberModel->user_id = $model->getModel()->id;
-				if (!($flag = $phoneNumberModel->save(false))) {
-					$transaction->rollBack();
-					break;
-				}
-			}
-			foreach ($qualificationModels as $qualificationModel) {
-				$qualification = new Qualification();
-				$qualification->program_id = $qualificationModel['program_id'];
-				$qualification->rate = $qualificationModel['rate'];
-				$qualification->teacher_id = $model->getModel()->id;
-				$qualification->isDeleted = false;
-				$qualification->type = Qualification::TYPE_HOURLY;	
-				if($qualification->program->isGroup()) {
-					$qualification->type = Qualification::TYPE_FIXED;	
-				}
-				$qualification->save();
-			}
-		}
-        $transaction->commit();
-		return $flag;
-	}
     public function actionCreate()
     {
         $session = Yii::$app->session;
@@ -605,26 +536,6 @@ class UserController extends Controller
         ]);
     }
 	
-    /**
-     * Deletes an existing User model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param int $id
-     *
-     * @return mixed
-     */
-  
-
-    /**
-     * Deletes an existing User model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param int $id
-     *
-     * @return mixed
-     */
- 
-
     /**
      * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

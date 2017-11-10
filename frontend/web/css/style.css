@@ -123,21 +123,15 @@ a.desc:after {
 	padding: 15px; 
     margin: 15px;
 }
-.primary {
-    position: relative;
+.not-primary dt {
+	font-weight:inherit;
 }
-.primary:before {
-    content: "Primary";
-    color: white;
-    font-weight: bold;
-    position: absolute;
-    top: 0;
-    right: 0;
-    background: green;
-    border-radius: 30px;
-    padding: 1px 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
+.primary-contact {
+	font-size: 15px;
+}
+.primary dt {
+	font-weight:bold;
+}
+.primary dd {
+	font-weight:bold;
 }

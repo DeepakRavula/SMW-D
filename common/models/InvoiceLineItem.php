@@ -373,6 +373,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getLineItemDiscountValue()
     {
+		$discount = 0;
         $lineItemPrice = $this->grossPrice;
         if ($this->hasMultiEnrolmentDiscount()) {
             $discount += $lineItemPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :

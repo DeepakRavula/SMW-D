@@ -102,7 +102,7 @@ $config = [
                 'actions' => ['index'],
             ],
             [
-                'controllers' => ['schedule'],
+                'controllers' => ['schedule', 'user/user-contact'],
                 'allow' => true,
                 'roles' => ['teacher', 'customer'],
             ],

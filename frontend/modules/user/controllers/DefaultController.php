@@ -104,14 +104,15 @@ class DefaultController extends Controller
             'model' => $model,
         ]);
     }
-	public function actionEditProfile($id)
+		public function actionEditProfile($id)
 	{
 		$request = Yii::$app->request;
 		$model = new UserForm();
-        $user = User::findOne(['id' => $id]);
-        $model->setModel($user);	
-		if ($model->load($request->post())) {
+        $model->setModel($this->findModel($id));	
+		$userProfile  = $model->getModel()->userProfile;
+		if ($model->load($request->post()) && $userProfile->load($request->post())) {
 			if($model->save()) {
+				$userProfile->save();
 				return [
 				   'status' => true,
 				];	
@@ -119,7 +120,7 @@ class DefaultController extends Controller
 				$errors = ActiveForm::validate($model);
                 return [
                     'status' => false,
-                    'errors' => current($errors)
+                    'errors' => $errors
                 ];
 			}
 		}

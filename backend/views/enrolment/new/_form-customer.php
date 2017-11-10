@@ -1,11 +1,11 @@
 <?php
 
-use common\models\PhoneNumber;
-use common\models\Address;
-use yii\helpers\ArrayHelper;
 use common\models\City;
 use common\models\Country;
 use common\models\Province;
+use yii\helpers\ArrayHelper;
+use common\models\Label;
+use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
@@ -36,14 +36,58 @@ $this->title = 'New Enrolment';
 			<?= $form->field($phoneModel, 'extension')->textInput(['placeholder' => 'Ext'])->label(false); ?>
 		</div>
 		<div class="col-sm-2">
-			<?= $form->field($phoneModel, 'label_id')->dropDownList(PhoneNumber::phoneLabels())->label(false);; ?>
+			<?=
+	$form->field($phoneModel, "labelId")->widget(Select2::classname(), [
+		'data' => ArrayHelper::map(Label::find()
+				->andWhere(['userAdded' => false])
+				->all(), 'id', 'name'),
+		'options' => [
+			'id' => 'phone-label',
+			'placeholder' => 'Select Label'],
+		'pluginOptions' => [
+			'tags' => true,
+		],
+	])->label(false);
+	?>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+		 <div class="form-group">
+		<label  class="col-sm-2 control-label">Email</label>
+		<div class="col-sm-3">
+			<?= $form->field($userEmail, "email")->textInput(['maxlength' => true])->label(false) ?>
+		</div>
+		<div class="col-sm-2">
+			<?=
+		$form->field($userEmail, "labelId")->widget(Select2::classname(), [
+			'data' => ArrayHelper::map(Label::find()
+					->andWhere(['userAdded' => false])
+					->all(), 'id', 'name'),
+			'options' => ['placeholder' => 'Select Label'],
+			'pluginOptions' => [
+				'tags' => true,
+			],
+		])->label(false);
+		?>
 		</div>
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
 		<label  class="col-sm-2 control-label">Address</label>
 		<div class="col-sm-3">
-			<?= $form->field($addressModel, 'label')->dropDownList(Address::labels())->label(false); ?>
+			<?=
+	$form->field($addressModel, "labelId")->widget(Select2::classname(), [
+		'data' => ArrayHelper::map(Label::find()
+				->andWhere(['userAdded' => false])
+				->all(), 'id', 'name'),
+		'options' => [
+			'id' => 'address-label',
+			'placeholder' => 'Select Label'],
+		'pluginOptions' => [
+			'tags' => true,
+		],
+	])->label(false);
+	?>
 		</div>	
 	</div>	
 	<div class="clearfix"></div>
@@ -57,11 +101,11 @@ $this->title = 'New Enrolment';
 	<div class="form-group">
 		<label  class="col-sm-2 control-label"></label>
 		<div class="col-sm-3">
-			<?= $form->field($addressModel, 'city_id')->dropDownList(
+			<?= $form->field($addressModel, 'cityId')->dropDownList(
                 ArrayHelper::map(City::find()->all(), 'id', 'name'));?>
 		</div>	
 		<div class="col-sm-3">
-			<?= $form->field($addressModel, 'province_id')->dropDownList(
+			<?= $form->field($addressModel, 'provinceId')->dropDownList(
                 ArrayHelper::map(Province::find()->all(), 'id', 'name')); ?>
 		</div>
 	</div>	
@@ -69,11 +113,11 @@ $this->title = 'New Enrolment';
 	<div class="form-group">
 		<label  class="col-sm-2 control-label"></label>
 		<div class="col-sm-3">
-			<?= $form->field($addressModel, 'country_id')->dropDownList(
+			<?= $form->field($addressModel, 'countryId')->dropDownList(
                 ArrayHelper::map(Country::find()->all(), 'id', 'name'));?>
 		</div>	
 		<div class="col-sm-3">
-			<?= $form->field($addressModel, 'postal_code')->textInput(['placeholder' => 'Postal Code'])->label(false); ?>
+			<?= $form->field($addressModel, 'postalCode')->textInput(['placeholder' => 'Postal Code'])->label(false); ?>
 		</div>
 	</div>	
 	<div class="clearfix"></div>

@@ -1,8 +1,5 @@
 <?php
    use yii\grid\GridView;
-   use common\models\InvoiceLineItem;
-   use backend\models\search\InvoiceSearch;
-   use common\models\ItemType;
    /* @var $this yii\web\View */
    /* @var $model common\models\Invoice */
 
