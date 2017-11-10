@@ -42,6 +42,15 @@ $this->title = $model->publicIdentity;
 <?php $userForm = new UserForm();
     $userForm->setModel($model);?>
 <?php Modal::begin([
+    'header' => '<h4 class="m-0"> Edit</h4>',
+    'id' => 'user-edit-modal',
+]); ?>
+<?= $this->render('update/_profile', [
+	'model' => $userForm,
+	'userProfile' => $model->userProfile,
+]);?>
+<?php Modal::end(); ?>
+<?php Modal::begin([
     'header' => '<h4 class="m-0">Edit</h4>',
     'id' => 'edit-phone-modal',
 ]); ?>
@@ -125,8 +134,7 @@ $this->title = $model->publicIdentity;
 $(document).ready(function(){
 	$.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$(document).on('click', '.add-email', function () {
-		$('#useraddress-address').val('');
-		$("#usercontact-labelid").val('');
+		$('#useremail-email').val('');
 		$('#add-email-modal').modal('show');
         $('#add-email-modal .modal-dialog').css({'width': '400px'});
         return false;
@@ -155,8 +163,11 @@ $(document).ready(function(){
 		return false;
 	});
   	$(document).on('click', '.add-address-btn', function () {
-                $('#userphone-number').val('');
-                $("#userphone-extension").val('');
+                $('#useraddress-address').val('');
+                $('#useraddress-cityid').val('');
+                $('#useraddress-provinceid').val('');
+                $('#useraddress-countryid').val('');
+                $('#useraddress-postalcode').val('');
 		$('#add-address-modal').modal('show');
        $('#add-address-modal .modal-dialog').css({'width': '500px'});
         return false;
@@ -166,7 +177,7 @@ $(document).ready(function(){
         return false;
 	});
 	$(document).on('click', '.add-phone-btn', function () {
-                 $('#userphone-number').val('');
+                $('#userphone-number').val('');
                 $("#userphone-extension").val('');
 		$('#add-phone-modal').modal('show');
         $('#add-phone-modal .modal-dialog').css({'width': '400px'});

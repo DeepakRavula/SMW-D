@@ -17,7 +17,7 @@ foreach ($Roles as $name => $description) {
 		'id' => 'user-update-form',
         'enableAjaxValidation' => true,
 		'enableClientValidation' => false,
-		'action' => Url::to(['user/edit-profile', 'id' => $model->getModel()->id])
+		'action' => Url::to(['default/edit-profile', 'id' => $model->getModel()->id])
 	]);
     ?>
 <div class="row">

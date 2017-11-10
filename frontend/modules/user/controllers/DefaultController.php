@@ -224,4 +224,23 @@ class DefaultController extends Controller
 			];
 		}
 	}
+            protected function findModel($id)
+    {
+        $session = Yii::$app->session;
+        $locationId = $session->get('location_id');
+        $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+        $lastRole = end($roles);
+        $adminModel = User::findOne(['id' => $id]);
+        $model = User::find()->location($locationId)
+                ->where(['user.id' => $id])
+                ->notDeleted()
+                ->one();
+        if ($model !== null) {
+            return $model;
+        } elseif ($lastRole->name === User::ROLE_ADMINISTRATOR && $adminModel != null) {
+            return $adminModel;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
 }
