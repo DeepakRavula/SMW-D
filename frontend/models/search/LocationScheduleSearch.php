@@ -41,12 +41,17 @@ class LocationScheduleSearch extends Lesson
     public function search($params)
     {
 		$userId = Yii::$app->user->id;
+                $locationId= Yii::$app->session->get('location_id');
 		$roles = Yii::$app->authManager->getRolesByUser($userId);
 		$role = end($roles);
 		$user = User::findOne(['id' => $userId]);
 		if($role->name !== User::ROLE_ADMINISTRATOR) {
 			$this->locationId = $user->userLocation->location_id; 
 		}
+                else
+                {
+                    $this->locationId=$locationId;
+                } 
         $query = Lesson::find()
 			->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED,
 				'DATE(date)' => (new \DateTime())->format('Y-m-d')	
