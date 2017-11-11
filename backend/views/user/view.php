@@ -3,7 +3,6 @@
 
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\Tabs;
-use yii\helpers\Html;
 use common\models\Note;
 use yii\helpers\Url;
 use common\models\TeacherRoom;
@@ -368,52 +367,22 @@ $this->params['action-button'] = $this->render('_action-button', [
 <?php Modal::end(); ?>
 <?php Pjax::end() ?>
 <?php Modal::begin([
-    'header' => '<h4 class="m-0">Edit</h4>',
-    'id' => 'edit-phone-modal',
-]); ?>
-<div id="phone-content"></div>
-<?php Modal::end(); ?>
-<?php Modal::begin([
-    'header' => '<h4 class="m-0">Edit</h4>',
-    'id' => 'edit-address-modal',
-]); ?>
-<div id="address-content"></div>
-<?php Modal::end(); ?>
-<?php Modal::begin([
-    'header' => '<h4 class="m-0">Edit</h4>',
-    'id' => 'edit-email-modal',
+    'header' => '<h4 class="m-0">Email</h4>',
+    'id' => 'email-modal',
 ]); ?>
 <div id="email-content"></div>
 <?php Modal::end(); ?>
 <?php Modal::begin([
-    'header' => '<h4 class="m-0">Email</h4>',
-    'id' => 'add-email-modal',
+    'header' => '<h4 class="m-0">Phone</h4>',
+    'id' => 'phone-modal',
 ]); ?>
-<?= $this->render('create/_email', [
-	'emailModel' => new UserEmail(),
-	'model' => new UserContact(),
-	'userModel' => $model,
-]);?>
+<div id="phone-content"></div>
 <?php Modal::end(); ?>
 <?php Modal::begin([
-    'header' => '<h4 class="m-0">Add Phone</h4>',
-    'id' => 'add-phone-modal',
+    'header' => '<h4 class="m-0">Address</h4>',
+    'id' => 'address-modal',
 ]); ?>
-<?= $this->render('create/_phone', [
-	'phoneModel' => new UserPhone(),
-	'model' => new UserContact(),
-	'userModel' => $model,
-]);?>
-<?php Modal::end(); ?>
-<?php Modal::begin([
-    'header' => '<h4 class="m-0">Add Address</h4>',
-    'id' => 'add-address-modal',
-]); ?>
-<?= $this->render('create/_address', [
-	'addressModel' => new UserAddress(),
-	'model' => new UserContact(),
-	'userModel' => $model,
-]);?>
+<div id="address-content"></div>
 <?php Modal::end(); ?>
 <script>
 	var contactTypes = {
@@ -460,56 +429,12 @@ $(document).ready(function(){
 		$('#student-create-modal').modal('show');
         return false;
 	});
-	$(document).on('click', '.add-email', function () {
-                $('#useraddress-address').val('');
-                $("#usercontact-labelid").val('');
-                $('#add-email-modal').modal('show');
-        $('#add-email-modal .modal-dialog').css({'width': '400px'});
-        return false;
-	});
-        $(document).on('click', '.user-email-edit', function () {
-		var contactId = $(this).attr('id') ;
-              $.ajax({
-                url    : '<?= Url::to(['user-contact/edit-email']); ?>?id=' + contactId,
-                type: 'get',
-                dataType: "json",
-                success: function (response)
-                {
-                    if (response.status)
-                    {
-                        $('#add-email-modal .modal-body').html(response.data);
-                         $('#add-email-modal .modal-dialog').css({'width': '400px'});
-                        $('#add-email-modal').modal('show');
-                    } else {
-                        $('#email-form').yiiActiveForm('updateMessages',
-                                response.errors
-                                , true);
-                    }
-                }
-            });
-            
-		return false;
-	});
-  	$(document).on('click', '.add-address-btn', function () {
-                $('#userphone-number').val('');
-                $("#userphone-extension").val('');
-		$('#add-address-modal').modal('show');
-       $('#add-address-modal .modal-dialog').css({'width': '500px'});
-        return false;
-	});
 	$(document).on('click', '.address-cancel-btn', function () {
-		$('#add-address-modal').modal('hide');
-        return false;
-	});
-	$(document).on('click', '.add-phone-btn', function () {
-                 $('#userphone-number').val('');
-                $("#userphone-extension").val('');
-		$('#add-phone-modal').modal('show');
-        $('#add-phone-modal .modal-dialog').css({'width': '400px'});
+		$('#address-modal').modal('hide');
         return false;
 	});
 	$(document).on('click', '.phone-cancel-btn', function () {
-		$('#add-phone-modal').modal('hide');
+		$('#phone-modal').modal('hide');
         return false;
 	});
     $(document).on('click', '.student-profile-cancel-button', function () {
@@ -546,25 +471,7 @@ $(document).ready(function(){
         return false;
     });
     $(document).on('click', '.email-cancel-btn', function () {
-        $('#add-email-modal').modal('hide');
-        return false;
-    });
-	$(document).on('click', '.user-address-btn', function () {
-		$.ajax({
-            url    : '<?= Url::to(['user/edit-address', 'id' => $model->id]); ?>',
-            type   : 'get',
-            dataType: "json",
-            data   : $(this).serialize(),
-            success: function(response)
-            {
-                if(response.status)
-                {
-                    $('#address-content').html(response.data);
-                    $('#edit-address-modal').modal('show');
-                	$('#edit-address-modal .modal-dialog').css({'width': '800px'});
-                }
-            }
-        });
+        $('#email-modal').modal('hide');
         return false;
     });
 	$(document).on('click', '.user-delete-button', function () {
@@ -603,7 +510,7 @@ $(document).ready(function(){
             success: function(response)
             {
                 if(response.status) {
-        			$('#add-address-modal').modal('hide');
+        			$('#address-modal').modal('hide');
         			$.pjax.reload({container:"#user-address",replace:false,  timeout: 4000});
                     
                 } else {
@@ -686,7 +593,7 @@ $(document).ready(function(){
             success: function(response)
             {
                 if(response.status) {
-        			$('#add-email-modal').modal('hide');
+        			$('#email-modal').modal('hide');
         			$.pjax.reload({container:"#user-email",replace:false,  timeout: 4000});
                     
                 } else {
@@ -706,7 +613,7 @@ $(document).ready(function(){
             success: function(response)
             {
                 if(response.status) {
-        			$('#add-phone-modal').modal('hide');
+        			$('#phone-modal').modal('hide');
         			$.pjax.reload({container:"#user-phone",replace:false,  timeout: 6000});
                 } else {
 					$('#phone-form').yiiActiveForm('updateMessages', response.errors
@@ -733,15 +640,6 @@ $(document).ready(function(){
         });
         return false;
     });
-	$(document).on('click', '.add-group-qualification', function () {
-		$('.group-qualification-fields').show();
-		$('.hr-quali').hide();
-	});
-	$(document).on('click', '.add-qualification', function () {
-		$('.qualification-fields').show();
-		$('.hr-quali').hide();
-	});
-	
 	$('a[data-toggle="tab"]').on('shown.bs.tab', function (event) {
         if(event.currentTarget.text === 'Availability') {
             $('#availability-calendar').fullCalendar('render');
@@ -811,50 +709,6 @@ $(document).ready(function(){
         });
         return false;
     });
-       $(document).on('click', '.user-phone-edit', function () {
- 		var contactId = $(this).attr('id') ;
-               $.ajax({
-                 url    : '<?= Url::to(['user-contact/edit-phone']); ?>?id=' + contactId,
-                 type: 'get',
-                 dataType: "json",
-                 success: function (response)
-                 {
-                     if (response.status)
-                     {
-                         $('#add-phone-modal .modal-body').html(response.data);
-                          $('#add-phone-modal .modal-dialog').css({'width': '400px'});
-                         $('#add-phone-modal').modal('show');
-                     } else {
-                         $('#phone-form').yiiActiveForm('updateMessages',
-                                 response.errors
-                                 , true);
-                     }
-                 }
-             });
- 		return false;
- 	});
-            $(document).on('click', '.user-address-edit', function () {
- 		var contactId = $(this).attr('id') ;
-               $.ajax({
-                 url    : '<?= Url::to(['user-contact/edit-address']); ?>?id=' + contactId,
-                 type: 'get',
-                 dataType: "json",
-                 success: function (response)
-                 {
-                     if (response.status)
-                     {
-                         $('#add-address-modal .modal-body').html(response.data);
-                          $('#add-address-modal .modal-dialog').css({'width': '400px'});
-                         $('#add-address-modal').modal('show');
-                     } else {
-                         $('#address-form').yiiActiveForm('updateMessages',
-                                 response.errors
-                                 , true);
-                     }
-                 }
-             });
- 		return false;
- 	});
     $(document).on('click', '.user-contact-delete', function () {
 		var contactId = $(this).attr('id') ;
 		 bootbox.confirm({ 
@@ -888,5 +742,83 @@ $(document).ready(function(){
 		});	
 		return false;
         });
+	$(document).on('click', '.add-email, .user-email-edit', function () {
+ 		var userId = '<?= $model->id;?>';
+ 		var contactId = $(this).attr('id') ;
+ 		if (contactId === undefined) {
+ 			var customUrl = '<?= Url::to(['user-contact/create-email']); ?>?id=' + userId;
+ 		} else {
+ 			var customUrl = '<?= Url::to(['user-contact/edit-email']); ?>?id=' + contactId;
+ 		}
+ 	  	$.ajax({
+ 			url    : customUrl,
+ 			type   : 'post',
+ 			dataType: "json",
+ 			data   : $(this).serialize(),
+ 			success: function(response)
+ 			{
+ 				if(response.status)
+ 				{
+ 					$('#email-content').html(response.data);
+ 			        $('#email-modal .modal-dialog').css({'width': '400px'});
+ 					$('#email-modal').modal('show');
+ 				}
+ 			}
+ 		});
+ 		return false;
+  	});
+
+ 	$(document).on('click', '.add-address-btn, .user-address-edit', function () {
+ 		var userId = '<?= $model->id;?>';
+  		var contactId = $(this).attr('id') ;
+ 
+ 		if (contactId === undefined) {
+ 			var customUrl = '<?= Url::to(['user-contact/create-address']); ?>?id=' + userId;
+ 		} else {
+ 			var customUrl = '<?= Url::to(['user-contact/edit-address']); ?>?id=' + contactId;
+ 		}
+ 	  	$.ajax({
+ 			url    : customUrl,
+ 			type   : 'post',
+ 			dataType: "json",
+ 			data   : $(this).serialize(),
+ 			success: function(response)
+ 			{
+ 				if(response.status)
+ 				{
+ 					$('#address-content').html(response.data);
+ 			        $('#address-modal .modal-dialog').css({'width': '400px'});
+ 					$('#address-modal').modal('show');
+ 				}
+ 			}
+ 		});
+  		return false;
+  	});
+
+ 	$(document).on('click', '.add-phone-btn, .user-phone-edit', function () {
+ 		var userId = '<?= $model->id;?>';
+ 		var contactId = $(this).attr('id') ;
+ 		if (contactId === undefined) {
+ 			var customUrl = '<?= Url::to(['user-contact/create-phone']); ?>?id=' + userId;
+ 		} else {
+ 			var customUrl = '<?= Url::to(['user-contact/edit-phone']); ?>?id=' + contactId;
+ 		}
+ 	  	$.ajax({
+ 			url    : customUrl,
+ 			type   : 'post',
+ 			dataType: "json",
+ 			data   : $(this).serialize(),
+ 			success: function(response)
+ 			{
+ 				if(response.status)
+ 				{
+ 					$('#phone-content').html(response.data);
+ 			        $('#phone-modal .modal-dialog').css({'width': '400px'});
+ 					$('#phone-modal').modal('show');
+ 				}
+ 			}
+ 		});
+ 		return false;
+  	});
 });
 </script>

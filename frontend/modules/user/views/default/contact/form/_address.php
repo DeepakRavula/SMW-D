@@ -39,10 +39,9 @@ use yii\helpers\Url;
 					->all(), 'id', 'name'),
 			'options' => [
 				'id' => 'address-label',
-				'placeholder' => 'Select Label'],
+			],
 			'pluginOptions' => [
 				'tags' => true,
-				'allowClear' => true,
 			],
 		])->label('Label');
 		?>
@@ -86,7 +85,6 @@ use yii\helpers\Url;
                 '#', 'id' => $model->id
                 ], [
                 'id' => $model->id,
-                'title' => Yii::t('yii', 'Delete'),
                 'class' => 'user-contact-delete btn btn-danger',
             ]);
         }
@@ -100,9 +98,9 @@ use yii\helpers\Url;
 <script>
  $(document).ready(function () {
 	$(document).on('click', '.address-add-item', function () {
-		var cityId = '<?= $locationModel->city_id; ?>';
-		var countryId = '<?= $locationModel->country_id; ?>';
-		var ProvinceId = '<?= $locationModel->province_id; ?>';
+		var cityId = '<?= $userModel->userLocation->location->city_id; ?>';
+		var countryId = '<?= $userModel->userLocation->location->country_id; ?>';
+		var ProvinceId = '<?= $userModel->userLocation->location->province_id; ?>';
 		$('.address-city').find('.city').val(cityId);
 		$('.address').find('.country').val(countryId);
 		$('.address').find('.province').val(ProvinceId);

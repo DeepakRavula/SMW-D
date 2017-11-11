@@ -33,75 +33,111 @@ class UserContactController extends Controller
             
         ];
     }
-	public function actionCreateEmail($id)
-	{
-        $email = new UserEmail();
-        $contact = new UserContact();
-        $email->load(Yii::$app->request->post());
-        $contact->load(Yii::$app->request->post());
-        $contact->userId = $id;
-        $contact->isPrimary = false;
-        if (!is_numeric($contact->labelId)) {
-            $label = new Label();
-            $label->name = $contact->labelId;
-            $label->userAdded = $id;
-            $label->save();
-            $contact->labelId = $label->id;
-        }
-		if($contact->save()) {
-            $email->userContactId = $contact->id;
-            $email->save();
-            return [
-                'status' => true,
-            ];
-        }
-    }
-	public function actionCreatePhone($id)
-	{
-        $phone = new UserPhone();
-        $contact = new UserContact();
-        $phone->load(Yii::$app->request->post());
-        $contact->load(Yii::$app->request->post());
-        $contact->userId = $id;
-        $contact->isPrimary = false;
-        if (!is_numeric($contact->labelId)) {
-            $label = new Label();
-            $label->name = $contact->labelId;
-            $label->userAdded = $id;
-            $label->save();
-            $contact->labelId = $label->id;
-        }
-		if($contact->save()) {
-            $phone->userContactId = $contact->id;
-            $phone->save();
-            return [
-                'status' => true,
-            ];
-        }
-    }
-	public function actionCreateAddress($id)
-	{
-        $address = new UserAddress();
-        $contact = new UserContact();
-        $address->load(Yii::$app->request->post());
-        $contact->load(Yii::$app->request->post());
-        $contact->userId = $id;
-        $contact->isPrimary = false;
-        if (!is_numeric($contact->labelId)) {
-            $label = new Label();
-            $label->name = $contact->labelId;
-            $label->userAdded = $id;
-            $label->save();
-            $contact->labelId = $label->id;
-        }
-		if($contact->save()) {
-            $address->userContactId = $contact->id;
-            $address->save();
-            return [
-                'status' => true,
-            ];
-        }
-    }
+	public function actionCreateEmail($id) {
+		$user = User::findOne(['id' => $id]);
+		$email = new UserEmail();
+		$contact = new UserContact();
+		$data = $this->renderAjax('/default/contact/form/_email', [
+			'emailModel' => $email,
+			'model' => $contact,
+			'userModel' => $user,
+		]);
+		if ($email->load(Yii::$app->request->post()) &&
+			$contact->load(Yii::$app->request->post())) {
+			$contact->userId = $id;
+			$contact->isPrimary = false;
+			if (!is_numeric($contact->labelId)) {
+				$label = new Label();
+				$label->name = $contact->labelId;
+				$label->userAdded = $id;
+				$label->save();
+				$contact->labelId = $label->id;
+			}
+			if ($contact->save()) {
+				$email->userContactId = $contact->id;
+				$email->save();
+				return [
+					'status' => true,
+				];
+			}
+		} else {
+			return [
+				'status' => true,
+				'data' => $data
+			];
+		}
+	}
+
+	public function actionCreatePhone($id) {
+		$user = User::findOne(['id' => $id]);
+		$contact = new UserContact();
+		$phone = new UserPhone();
+		$data = $this->renderAjax('/default/contact/form/_phone', [
+			'phoneModel' => $phone,
+			'model' => $contact,
+			'userModel' => $user,
+		]);
+		if ($phone->load(Yii::$app->request->post()) &&
+			$contact->load(Yii::$app->request->post())) {
+			$contact->userId = $id;
+			$contact->isPrimary = false;
+			if (!is_numeric($contact->labelId)) {
+				$label = new Label();
+				$label->name = $contact->labelId;
+				$label->userAdded = $id;
+				$label->save();
+				$contact->labelId = $label->id;
+			}
+			if ($contact->save()) {
+				$phone->userContactId = $contact->id;
+				$phone->save();
+				return [
+					'status' => true,
+				];
+			}
+		} else {
+			return [
+				'status' => true,
+				'data' => $data
+			];
+		}
+	}
+
+	public function actionCreateAddress($id) {
+		$user = User::findOne(['id' => $id]);
+		$address = new UserAddress();
+		$contact = new UserContact();
+		$data = $this->renderAjax('/default/contact/form/_address', [
+			'addressModel' => new UserAddress(),
+			'model' => new UserContact(),
+			'userModel' => $user,
+		]);
+		if ($address->load(Yii::$app->request->post()) &&
+			$contact->load(Yii::$app->request->post())) {
+			$contact->userId = $id;
+			$contact->isPrimary = false;
+			if (!is_numeric($contact->labelId)) {
+				$label = new Label();
+				$label->name = $contact->labelId;
+				$label->userAdded = $id;
+				$label->save();
+				$contact->labelId = $label->id;
+			}
+			if ($contact->save()) {
+				$address->userContactId = $contact->id;
+				$address->save();
+				return [
+					'status' => true,
+				];
+			}
+		} else {
+			return [
+				'status' => true,
+				'data' => $data
+			];
+		}
+	}
+
 	public function actionUpdatePrimary($id, $contactId, $contactType)
 	{
         $model = User::findOne(['id' => $id]);
@@ -158,7 +194,7 @@ class UserContactController extends Controller
     public function actionEditEmail($id) {
         $model = $this->findModel($id);
         $emailModel = $model->email;
-        $data = $this->renderAjax('/default/create/_email', [
+        $data = $this->renderAjax('/default/contact/form/_email', [
             'emailModel' => $emailModel,
             'model' => $model,
             'userModel' => $model->user,
@@ -186,7 +222,7 @@ class UserContactController extends Controller
     public function actionEditPhone($id) {
         $model = $this->findModel($id);
         $phoneModel = $model->phone;
-         $data = $this->renderAjax('/default/create/_phone', [
+         $data = $this->renderAjax('/default/contact/form/_phone', [
             'phoneModel' => $phoneModel,
             'model' => $model,
             'userModel' => $model->user,
@@ -214,7 +250,7 @@ class UserContactController extends Controller
         public function actionEditAddress($id) {
         $model = $this->findModel($id);
         $addressModel = $model->address;
-         $data = $this->renderAjax('/default/create/_address', [
+         $data = $this->renderAjax('/default/contact/form/_address', [
             'addressModel' => $addressModel,
             'model' => $model,
             'userModel' => $model->user,
@@ -240,7 +276,7 @@ class UserContactController extends Controller
         ];
     }
      
-		 public function actionDelete($id)
+	public function actionDelete($id)
     {
 		$model = $this->findModel($id);
 		if(!empty($model->email)) {
