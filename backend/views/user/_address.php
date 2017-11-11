@@ -14,6 +14,7 @@ use kartik\sortinput\SortableInput;
 	border:0px;
 	margin:0px;
 	padding:0px;
+	list-style: none;
 }
 </style>
 <?php Pjax::begin([
