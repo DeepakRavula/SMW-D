@@ -29,6 +29,8 @@ use common\models\PaymentCycle;
 use common\models\InvoiceReverse;
 use common\models\InvoiceLog;
 use common\models\UserEmail;
+use common\models\UserContact;
+use common\models\Label;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -131,24 +133,51 @@ class InvoiceController extends Controller
 	{
 		$request = Yii::$app->request;
         $model = $this->findModel($id);
-		$customer = new User();
+                 $customer = new User();
 		$userProfile = new UserProfile();
-        $userEmail= new UserEmail();
-		if ($customer->load($request->post()) && $userProfile->load($request->post())) {
+                $userContact=new UserContact;
+                $userEmail= new UserEmail();
+        if (!empty($model->user_id)) {
+            $customer = User::findOne(['id' => $model->user_id]);
+            $userProfile = UserProfile::findOne(['user_id' => $customer->id]);
+            $userEmail=UserEmail::find()
+                        ->joinWith(['userContact uc' => function ($query) use ($model) {
+                $query->where(['uc.userId' => $model->user_id]);
+			}])
+                    ->one();
+        }
+                 if ($userProfile->load($request->post())&& $userEmail->load($request->post())) {
+                    if (empty($model->user_id)) {
 			if ($customer->save()) {
 				$model->user_id = $customer->id;
 				$model->save();
-                
 				$userProfile->user_id = $customer->id;
 				$userProfile->save();
+                                $userContact->userId=$customer->id;
+                                $userContact->isPrimary=true;
+                                $userContact->labelId= Label::LABEL_HOME;
+                                $userContact->save();
+                                $userEmail->userContactId=$userContact->id;
+                                $userEmail->save();
 				$auth = Yii::$app->authManager;
 				$auth->assign($auth->getRole(User::ROLE_GUEST), $customer->id);
-
-				return [
+                                return [
 					'status' => true,
-					'message' => 'customer has been updated successfully.'
+					'message' => 'customer has been Added successfully.'
 				];
 			}
+                        }
+                  
+                      else
+                      {
+                         $userProfile->save();
+                         $userEmail->save();
+                         return [
+					'status' => true,
+					'message' => 'customer has been Updated successfully.'
+				];
+                      }
+				
 		}
 	}
 	public function actionNote($id)
@@ -218,9 +247,15 @@ class InvoiceController extends Controller
 
 		$customer = new User();
         $userModel = new UserProfile();
+         $userEmail=new UserEmail();
 		if (!empty($model->user_id)) {
             $customer = User::findOne(['id' => $model->user_id]);
             $userModel = UserProfile::findOne(['user_id' => $customer->id]);
+            $userEmail=UserEmail::find()
+                        ->joinWith(['userContact uc' => function ($query) use ($model) {
+                $query->where(['uc.userId' => $model->user_id]);
+			}])
+                    ->one();
         }
 		
         return $this->render('view', [
@@ -230,6 +265,7 @@ class InvoiceController extends Controller
             'invoicePayments' => $customerInvoicePaymentsDataProvider,
             'customer' => empty($customer) ? new User() : $customer,
             'userModel' => $userModel,
+            'userEmail' =>$userEmail,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'noteDataProvider' => $noteDataProvider
         ]);

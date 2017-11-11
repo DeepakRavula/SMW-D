@@ -179,6 +179,7 @@ Modal::end();
     'model' => $model,
     'customer' => $customer,
     'userModel' => $userModel,
+    'userEmail'=>$userEmail,
 ]);?>
 <?php Modal::end();?>
 <script>
