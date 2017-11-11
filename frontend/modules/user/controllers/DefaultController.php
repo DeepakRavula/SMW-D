@@ -14,8 +14,6 @@ use common\models\User;
 use frontend\models\UserForm;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use common\models\Address;
-use common\models\PhoneNumber;
 use yii\base\Model;
 
 class DefaultController extends Controller
