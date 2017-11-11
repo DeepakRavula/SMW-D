@@ -13,13 +13,14 @@ DateTimePickerAsset::register($this);
 ?>
 <div class="row">
 	<div class="col-md-6">
+            <?php Pjax::begin(['id' => 'enrolment-view']); ?>
 		<?=
 		$this->render('_details', [
 			'model' => $model,
 		]);
 		?>
 		<?php if ($model->course->program->isPrivate()) : ?>
-			<?php Pjax::begin(['id' => 'enrolment-view']); ?>
+			
 			<?=
 			$this->render('_pf', [
 				'model' => $model,
@@ -38,6 +39,14 @@ DateTimePickerAsset::register($this);
 	</div>
 <?php Pjax::end(); ?>
 </div>
+<?php
+Modal::begin([
+	'header' => '<h4 class="m-0">Program Rate Edit</h4>',
+	'id' => 'enrolment-rate-edit-modal',
+]);
+?>
+<div id="enrolment-rate-edit-content"></div>
+<?php Modal::end(); ?>
 <?php
 Modal::begin([
 	'header' => '<h4 class="m-0">Enrolment Edit</h4>',
@@ -61,6 +70,10 @@ Modal::begin([
         $('#enrolment-edit-modal').modal('hide');
         return false;
     });
+    $(document).on('click', '.enrolment-rate-cancel', function(){
+        $('#enrolment-rate-edit-modal').modal('hide');
+        return false;
+    });
  $(document).on('click', '#enrolment-edit-save-btn', function(){
        $('#spinner').show();
     });  
@@ -71,6 +84,42 @@ Modal::begin([
  $(document).on('click', '#enrolment-enddate-save-btn', function(){
        $('#loader').show();
     });  
+    $(document).on('beforeSubmit', '#enrolment-rate-form', function(){
+        $.ajax({
+            url    : '<?= Url::to(['enrolment/edit-program-rate', 'id' => $model->id]); ?>',
+            type   : 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#enrolment-rate-edit-modal').modal('hide');
+                    if(response.message) {
+                        $('#enrolment-enddate-alert').html(response.message).fadeIn().delay(5000).fadeOut();
+                    }
+                    paymentFrequency.onEditableSuccess();
+                }
+            }
+        });
+        return false;
+    });
+    $(document).on('click', '.edit-enrolment-rate', function(){
+        $.ajax({
+            url    : '<?= Url::to(['enrolment/edit-program-rate', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#enrolment-rate-edit-content').html(response.data);
+                    $('#enrolment-rate-edit-modal').modal('show');
+                }
+            }
+        });
+        return false;
+    });
     $(document).on('click', '.edit-enrolment', function(){
         $.ajax({
             url    : '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',

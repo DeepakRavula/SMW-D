@@ -19,6 +19,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
 	
     public $studentId;
     public $paymentFrequency;
+    public $programRate;
     public $discount;
 
     /**
@@ -37,7 +38,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
         return [
             [['day', 'fromTime'], 'required'],
             [['courseId', 'paymentFrequency'], 'integer'],
-            [['fromTime', 'duration', 'discount', 'paymentFrequency'], 'safe'],
+            [['fromTime', 'duration', 'discount', 'paymentFrequency', 'programRate'], 'safe'],
         ];
     }
 
@@ -103,6 +104,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
             $enrolmentModel->courseId = $this->courseId;
             $enrolmentModel->studentId = $this->studentId;
             $enrolmentModel->paymentFrequencyId = $this->paymentFrequency;
+            $enrolmentModel->programRate = $this->programRate;
             $enrolmentModel->type = Enrolment::TYPE_REGULAR;
             $enrolmentModel->save();
         }

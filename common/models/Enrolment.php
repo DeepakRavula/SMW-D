@@ -65,7 +65,7 @@ class Enrolment extends \yii\db\ActiveRecord
             [['courseId'], 'required'],
             [['courseId', 'studentId'], 'integer'],
             [['paymentFrequencyId', 'type',  'isDeleted', 'isConfirmed',
-                'hasEditable'], 'safe'],
+                'hasEditable', 'programRate'], 'safe'],
         ];
     }
 
@@ -379,6 +379,9 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function beforeSave($insert) {
         if($insert) {
+            if (empty($this->programRate)) {
+                $this->programRate = $this->course->program->rate;
+            }
             $this->isDeleted = false;
             if (empty($this->isConfirmed)) {
                 $this->isConfirmed = false;

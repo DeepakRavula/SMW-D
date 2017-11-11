@@ -29,6 +29,15 @@ $this->title = 'New Enrolment';
             ])->label(false);
             ?>
 			</div>
+            <?php $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'name');
+		$role = end($roles);
+            ?>
+            <?php if ($role === User::ROLE_ADMINISTRATOR) : ?>
+                        <label class="col-sm-2 control-label">Program Rate</label>
+			<div class="col-sm-3">
+                            <?php echo $form->field($courseSchedule, 'programRate')->textInput()->label(false); ?>
+			</div>
+            <?php endif; ?>
 		</div>
 	<div class="clearfix"></div>
 	<div class="form-group">
@@ -126,52 +135,41 @@ $this->title = 'New Enrolment';
 	<div class="clearfix"></div>
 </div> <!-- ./container -->
 <script>
-	function rateEstimation(duration, programRate, pfDiscount, enrolmentDiscount) {
-		var timeArray = duration.split(':');
-    	var hours = parseInt(timeArray[0]);
-    	var minutes = parseInt(timeArray[1]);
-		var unit = ((hours * 60) + (minutes)) / 60;
-		var amount = (programRate * unit).toFixed(2);
-		if(pfDiscount === '') {
-			var pfDiscount = 0;
-		} 
-		var pfDiscountedAmount = amount * (pfDiscount / 100); 
-		var enrolmentDiscountPerLesson = enrolmentDiscount / 4;
-		var totalDiscountPerLesson = pfDiscountedAmount + enrolmentDiscountPerLesson; 
-		var discountedRate = (amount - totalDiscountPerLesson).toFixed(2);
-		var discountedMonthlyRate = (discountedRate * 4).toFixed(2); 
-		$('#rate').text('$' + discountedRate);
-		$('#monthly-rate').text('$' + discountedMonthlyRate);
-	}
-	function fetchProgram(duration, programId, pfDiscount, enrolmentDiscount) {
-		$.ajax({
-			url: '<?= Url::to(['program/fetch-rate']); ?>' + '?id=' + programId,
-			type: 'get',
-			dataType: "json",
-			success: function (response)
-			{
-				programRate = response;
-				rateEstimation(duration,programRate, pfDiscount, enrolmentDiscount);
-			}
-		});
+	function fetchProgram(duration, programId, pfDiscount, enrolmentDiscount, programRate) {
+            var params = $.param({duration: duration, id: programId, paymentFrequencyDiscount: pfDiscount,
+                multiEnrolmentDiscount: enrolmentDiscount, rate: programRate });
+            $.ajax({
+                url: '<?= Url::to(['student/fetch-program-rate']); ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    $('#rate').text('$' + response.ratePerLesson);
+                    $('#monthly-rate').text('$' + response.ratePerMonth);
+                    $('#courseschedule-programrate').val(response.rate);
+                }
+            });
 	}
     $(document).ready(function () {
 		$('#rate').text('$0.00');
 		$('#monthly-rate').text('$0.00');
-		$(document).on('change', '#course-programid', function(){
+		$(document).off().on('change', '#courseschedule-duration, #courseschedule-programrate, #enrolment-discount, #course-programid, #payment-frequency-discount', function(){
 			var duration = $('#courseschedule-duration').val();
+                        if ($(this).attr('id') != "course-programid") {
+                            var programRate = $('#courseschedule-programrate').val();
+                        } else {
+                            var programRate = null;
+                        }
 			var programId = $('#course-programid').val();
 			var pfDiscount = $('#payment-frequency-discount').val();
 			var enrolmentDiscount = $('#enrolment-discount').val();
-			fetchProgram(duration, programId, pfDiscount, enrolmentDiscount);
-		});
-		$(document).on('change', '#courseschedule-duration, #enrolment-discount, #payment-frequency-discount', function(){
-			var duration = $('#courseschedule-duration').val();
-			var programId = $('#course-programid').val();
-			var pfDiscount = $('#payment-frequency-discount').val();
-			var enrolmentDiscount = $('#enrolment-discount').val();
-			if (duration && programId || pfDiscount || enrolmentDiscount) {
-				fetchProgram(duration, programId, pfDiscount, enrolmentDiscount);
+                        if (!duration) {
+                            $('#rate').text('$0.00');
+                            $('#monthly-rate').text('$0.00');
+                            return false;
+                        }
+			if (programId) {
+				fetchProgram(duration, programId, pfDiscount, enrolmentDiscount, programRate);
 			}
 		});
 	});

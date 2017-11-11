@@ -37,7 +37,7 @@ trait Invoiceable
             $invoiceLineItem->amount = $this->proFormaLineItem->amount;
             $invoiceLineItem->unit   = $this->proFormaLineItem->unit;
         } else {
-            $invoiceLineItem->amount = $this->enrolment->program->rate;
+            $invoiceLineItem->amount = $this->enrolment->programRate;
             $invoiceLineItem->unit   = $this->unit;
         }
         if ($invoice->isProFormaInvoice()) {
@@ -78,7 +78,7 @@ trait Invoiceable
                 $this->date);
         $enrolment                     = Enrolment::findOne($this->enrolmentId);
         $courseCount                   = $enrolment->courseCount;
-        $lessonAmount                  = $this->course->program->rate / $courseCount;
+        $lessonAmount                  = $this->course->programRate / $courseCount;
         $qualification = Qualification::findOne(['teacher_id' => $enrolment->firstLesson->teacherId,
             'program_id' => $enrolment->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
@@ -114,7 +114,7 @@ trait Invoiceable
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
         $invoiceLineItem->cost       = $rate;
         $invoiceLineItem->rate = $rate;
-        $invoiceLineItem->amount = $this->program->rate;
+        $invoiceLineItem->amount = $this->programRate;
         $studentFullName = $this->student->fullName;
         $invoiceLineItem->description  = $this->program->name . ' for '. $studentFullName . ' with '
             . $this->firstLesson->teacher->publicIdentity;

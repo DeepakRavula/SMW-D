@@ -8,7 +8,7 @@ use kartik\date\DatePicker;
 use common\models\LocationAvailability;
 use yii\helpers\Url;
 use kartik\select2\Select2;
-use kartik\switchinput\SwitchInput;
+use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 
@@ -34,7 +34,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
             ]);
             ?>
         </div>
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<?php
             echo $form->field($model, 'startDate')->widget(DatePicker::classname(),
                 [
@@ -58,6 +58,14 @@ $privatePrograms = ArrayHelper::map(Program::find()
                 'options' => ['placeholder' => 'Program']
             ]) ?>
         </div>
+            <div class="col-md-2">
+                <?php $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'name');
+                    $role = end($roles);
+                ?>
+                <?php if ($role === User::ROLE_ADMINISTRATOR) : ?>
+                    <?php echo $form->field($courseSchedule, 'programRate')->textInput()->label('Program Rate'); ?>
+                <?php endif; ?>
+            </div>
 	</div>
         <div class="col-md-3">
             <?= $form->field($courseSchedule, 'paymentFrequency')->widget(Select2::classname(), [
@@ -117,9 +125,9 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 <script>
     var enrolment = {
-	fetchProgram: function(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount) {
+	fetchProgram: function(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate) {
             var params = $.param({duration: duration, id: programId, paymentFrequencyDiscount: paymentFrequencyDiscount,
-                multiEnrolmentDiscount: multiEnrolmentDiscount });
+                multiEnrolmentDiscount: multiEnrolmentDiscount, rate: programRate });
             $.ajax({
                 url: '<?= Url::to(['student/fetch-program-rate']); ?>?' + params,
                 type: 'get',
@@ -129,6 +137,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                     $('#course-rate-estimation').show();
                     $('#before-discount').text(response.beforeDiscount);
                     $('#after-discount').text(response.afterDiscount);
+                    $('#courseschedule-programrate').val(response.rate);
                 }
             });
 	}
@@ -137,12 +146,22 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
         $('.next-step').removeClass('btn-default');
         $('.next-step').addClass('btn-info');
         $('#course-rate-estimation').hide();
-        $(document).on('change', '#course-programid, #courseschedule-duration, #payment-frequency-discount, #enrolment-discount', function(){
+        $(document).on('change', '#course-programid, #courseschedule-duration, #courseschedule-programrate, #payment-frequency-discount, #enrolment-discount', function(){
+            if ($(this).attr('id') != "course-programid") {
+                var programRate = $('#courseschedule-programrate').val();
+            } else {
+                var programRate = null;
+            }
             var duration = $('#courseschedule-duration').val();
+            if (!duration) {
+                $('#before-discount').text('Four 00mins Lessons @ $0 each = $0/mn');
+                $('#after-discount').text('Four 00mins Lessons @ $0 each = $0/mn');
+                return false;
+            }
             var programId = $('#course-programid').val();
             var paymentFrequencyDiscount = $('#payment-frequency-discount').val();
             var multiEnrolmentDiscount = $('#enrolment-discount').val();
-            enrolment.fetchProgram(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount);
+            enrolment.fetchProgram(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate);
         });
         $('#stepwizard_step1_next').click(function() {
                 var $active = $('.wizard .nav-tabs li.active');
