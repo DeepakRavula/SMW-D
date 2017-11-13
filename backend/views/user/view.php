@@ -94,12 +94,6 @@ $this->params['action-button'] = $this->render('_action-button', [
 			'model' => $model,
 		]);
 		?>
-        <?php if ($searchModel->role_name === User::ROLE_CUSTOMER): ?>
-            <?=$this->render('customer/_payment-preference', [
-                'model' => $model,
-            ]);
-		?>
-<?php endif; ?>
 	</div> 
 </div>
     <div class="nav-tabs-custom">
