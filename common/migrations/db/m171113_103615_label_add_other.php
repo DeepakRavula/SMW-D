@@ -7,7 +7,7 @@ class m171113_103615_label_add_other extends Migration
 {
     public function up()
     {
-        $label = Label::findOne(['id' =>Label::LABEL_BILLING]);
+        $label = Label::findOne(['id' =>Label::LABEL_OTHER]);
         $label->updateAttributes([
             'name' => 'Other'
         ]);
