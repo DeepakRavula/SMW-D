@@ -724,13 +724,13 @@ $(document).ready(function(){
 						if (response.status)
 						{
 							if(response.type == contactTypes.email) {
-	                    		$('#add-email-modal').modal('hide');
+	                    		$('#email-modal').modal('hide');
                             	$.pjax.reload({container: '#user-email', timeout: 6000});
 							} else if (response.type == contactTypes.phone) {
-								$('#add-phone-modal').modal('hide');
+								$('#phone-modal').modal('hide');
 								$.pjax.reload({container: '#user-phone', timeout: 6000});
 							} else {
-								$('#add-address-modal').modal('hide');
+								$('#address-modal').modal('hide');
 								$.pjax.reload({container: '#user-address', timeout: 6000});
 							};
 						} 
