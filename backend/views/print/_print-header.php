@@ -47,8 +47,9 @@
       <!-- /.col -->
       <div class="col-md-4 invoice-col">
           <div class="invoice-print-address">
-        To
+       
         <?php if(!empty($userModel)) : ?>
+               To
         <address>
           <strong><?php echo isset($userModel->publicIdentity) ? $userModel->publicIdentity : null?></strong><br>
           <?php
