@@ -5,73 +5,12 @@ use common\models\Lesson;
 use common\models\Qualification;
 ?>
     <!-- title row -->
-     <div class="row">
-      <div class="col-md-12">
-        <h2 class="page-header">
-          <span class="logo-lg"><b>Arcadia</b>SMW</span>
-          <small class="pull-right"><?=  Yii::$app->formatter->asDate('now');?></small>
-        </h2>
-      </div>
-       </div>
-    <!-- info row -->
-    <div class="row invoice-info">
-      <div class="col-md-6 invoice-col">
-          <div class="invoice-print-address">
-        From
-        <address>
-         Arcadia Music Academy ( <?= $model->userLocation->location->name;?> )<br/>
-			<?php if (!empty($model->userLocation->location->address)): ?>
-				<?= $model->userLocation->location->address ?><br>
-			<?php endif; ?>
-                <?php if (!empty($model->userLocation->location->city_id)): ?>
-				<?= $model->userLocation->location->city->name ?>
-			<?php endif; ?>
-			<?php if (!empty($model->userLocation->location->province_id)): ?>
-				<?= ', ' . $model->userLocation->location->province->name ?><br/>
-			<?php endif; ?>     
-                 <?php if (!empty($model->userLocation->location->postal_code)): ?>
-              <?= $model->userLocation->location->postal_code; ?>
-          <?php endif; ?>
-          <br/>
-          <?php if (!empty($model->userLocation->location->phone_number)): ?>
-              <?= $model->userLocation->location->phone_number ?>
-          <?php endif; ?>
-          <br/>
-          <?php if (!empty($model->email)): ?>
-              <?= $model->email ?>
-          <?php endif; ?>
-          <br/>
-          www.arcadiamusicacademy.com
-        </address>
-          </div>
-      </div>
-      <!-- /.col -->
-      <div class="col-md-6 invoice-col">
-          <div class="invoice-print-address">
-        Teacher
-        <address>
-           <?php $primaryAddress=$model->primaryAddress;
-                 $phoneNumber=$model->phoneNumber;   
-           ?>
-          <strong><?php echo $model->publicIdentity; ?></strong><br>
-          <?php if (!empty($primaryAddress->address)): ?>
-              <?php echo $primaryAddress->address; ?><br>
-          <?php endif; ?>
-           <?php if (!empty($primaryAddress->city->name)): ?>
-              <?php echo $primaryAddress->city->name; ?>,
-          <?php endif; ?>
-          <?php if (!empty($primaryAddress->province->name)): ?>
-              <?php echo $primaryAddress->province->name; ?><br>
-          <?php endif; ?>
-          <?php if (!empty($phoneNumber->number)): ?>
-               Phone:<?php echo $phoneNumber->number; ?><br>
-          <?php endif; ?> <br>
-            <?php if (!empty($model->email)): ?>
-            Email:  <?php echo $model->email; ?><br>
-          <?php endif; ?>
-        </address>
-          </div>
-      </div>
+    <?php
+   echo $this->render('/print/_print-header', [
+       'userModel'=>$model,
+       'locationModel'=>$model->userLocation->location,
+]);
+   ?>
       <!-- /.col -->
      <div class="col-sm-4 invoice-col">
         <b>Lessons</b><br>
