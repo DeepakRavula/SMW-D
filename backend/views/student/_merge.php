@@ -20,7 +20,6 @@ use yii\helpers\Html;
                                     'id' => 'student'
 				],
 				'pluginOptions' => [
-                                    'allowClear' => true,
                                     'multiple' => false,
                                     'placeholder' => 'select student',
 				],

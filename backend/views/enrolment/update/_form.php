@@ -24,9 +24,7 @@ use kartik\datetime\DateTimePicker;
         <div class="col-md-8">
             <?= $form->field($model, 'paymentFrequencyId')->widget(Select2::classname(), [
                                 'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'),
-				'pluginOptions' => [
-                                    'allowClear' => true,
-                                ]
+				
             ]); ?>
         </div>
         <div class="col-md-6">

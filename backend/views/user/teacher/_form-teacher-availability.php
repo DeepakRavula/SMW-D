@@ -47,9 +47,6 @@ use yii\helpers\Url;
                 'data' => ArrayHelper::map(Classroom::find()->andWhere(['locationId' => $locationId])->orderBy(['name' => SORT_ASC])->all(),
                         'id', 'name'),
                 'options' => ['placeholder' => 'Select Classroom', 'class' => 'form-control'],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
             ]);
             ?>
         </div>
