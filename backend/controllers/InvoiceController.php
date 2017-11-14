@@ -212,7 +212,15 @@ class InvoiceController extends Controller
         $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $customerInvoicePayments,
         ]);
-
+         $session = Yii::$app->session;
+        $locationId = $session->get('location_id');
+        $userData=User::find()
+            ->joinWith(['userLocation ul' => function ($query) use ($locationId) {
+                $query->where(['ul.location_id' => $locationId]);
+			}]);
+            $userDataProvider = new ActiveDataProvider([
+            'query' => $userData,
+        ]);
         $invoicePayments = Payment::find()
 			->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                 $query->where(['ip.invoice_id' => $model->id]);
@@ -252,7 +260,8 @@ class InvoiceController extends Controller
             'userModel' => $userModel,
             'userEmail' =>$userEmail,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
-            'noteDataProvider' => $noteDataProvider
+            'noteDataProvider' => $noteDataProvider,
+            'userDataProvider'=>$userDataProvider,
         ]);
     }
 

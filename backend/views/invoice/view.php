@@ -47,6 +47,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 			'model' => $model,
 			'customer' => $customer,
 			'searchModel' => $searchModel,
+            'userDataProvider'=>$userDataProvider,
 		]);
 		?>	
 	</div>
@@ -180,6 +181,7 @@ Modal::end();
     'customer' => $customer,
     'userModel' => $userModel,
     'userEmail'=>$userEmail,
+    'userDataProvider'=>$userDataProvider,
 ]);?>
 <?php Modal::end();?>
 <script>
@@ -227,7 +229,7 @@ var invoice = {
 		return false;
   	});
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-	$(document).on('click', '.add-invoice-customer', function (e) {
+	$(document).on('click', '.add-customer-invoice-button', function (e) {
 		$('#invoice-customer-modal').modal('show');
 		return false;
   	});
