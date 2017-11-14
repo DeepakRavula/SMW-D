@@ -6,7 +6,7 @@ use common\models\Location;
 
 ?>
 <?php
-   echo $this->render('/print/_print-header', [
+   echo $this->render('/print/_header', [
        'userModel'=>$model,
        'locationModel'=>$model->userLocation->location,
 ]);

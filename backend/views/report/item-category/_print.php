@@ -8,7 +8,7 @@ use common\models\Location;
 <?php $reportText = 'Summary'; ?>
 <?php $model = Location::findOne(['id' => Yii::$app->session->get('location_id')]); ?>
 <?php
-   echo $this->render('/print/_print-header', [
+   echo $this->render('/print/_header', [
        'locationModel'=>$model,
 ]);
    ?>

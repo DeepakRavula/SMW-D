@@ -10,8 +10,8 @@ $this->title = $model->id;
 <section class="invoice">
     <!-- title row -->
  <?php
-   echo $this->render('/print/_print-header', [
-       'model'=>$model,
+   echo $this->render('/print/_header', [
+       'courseModel'=>$model,
        'userModel'=>$model->teacher,
        'locationModel'=>$model->teacher->userLocation->location,
 ]);

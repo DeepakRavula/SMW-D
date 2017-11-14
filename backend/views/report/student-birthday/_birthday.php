@@ -11,7 +11,7 @@ $this->title = 'Student Birthdays';
 
 ?>
 <?php
-   echo $this->render('/print/_print-header', [
+   echo $this->render('/print/_header', [
        'locationModel'=>$model,
 ]);
    ?>

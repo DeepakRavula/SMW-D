@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="invoice-view p-10">
 <?php
-   echo $this->render('/print/_print-header', [
+   echo $this->render('/print/_header', [
        'userModel'=>$model,
        'locationModel'=>$model->userLocation->location,
 ]);

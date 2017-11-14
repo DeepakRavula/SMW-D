@@ -3,8 +3,8 @@
       <div class="col-md-12">
         <h2 class="page-header">
           <span class="logo-lg"><img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png" /></span>
-          <?php if (!empty($model)): ?>
-          <small class="pull-right"><?= Yii::$app->formatter->asDate($model->date); ?></small>
+          <?php if (!empty($invoiceModel) ): ?>
+          <small class="pull-right"><?= Yii::$app->formatter->asDate($invoiceModel->date); ?></small>
           <?php else: ?>
           <small class="pull-right"><?= Yii::$app->formatter->asDate('now'); ?></small>
          <?php endif; ?>
@@ -83,7 +83,20 @@
         </address>
       </div>
       </div>
-      <?php if(!empty($model)):?>
+      <?php if(!empty($invoiceModel)):?>
+      <div class="col-md-2 invoice-col">
+        <b><?= $model->getInvoiceNumber();?></b><br>
+        <br>
+        <b>Date:</b><?= Yii::$app->formatter->asDate($model->date); ?> <br>
+        <b>Status:</b>  <?= $model->getStatus(); ?><br>
+        <?php if (!empty($model->dueDate)) : ?>
+        <b>Due Date:</b><?= Yii::$app->formatter->asDate($model->dueDate);?>
+           <?php endif; ?>
+        <?php endif; ?>
+      </div>
+      <!-- /.col -->
+    </div>
+     <?php if(!empty($courseModel)):?>
       <div class="col-md-2 invoice-col">
         <b><?= $model->getInvoiceNumber();?></b><br>
         <br>

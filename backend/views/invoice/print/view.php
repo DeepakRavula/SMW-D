@@ -8,8 +8,8 @@
    $this->params['breadcrumbs'][] = $this->title;
    ?>
 <?php
-   echo $this->render('/print/_print-header', [
-       'model'=>$model,
+   echo $this->render('/print/_header', [
+       'invoiceModel'=>$model,
        'userModel'=>$model->user,
        'locationModel'=>$model->location,
 ]);
