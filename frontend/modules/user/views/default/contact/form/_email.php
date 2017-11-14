@@ -31,10 +31,8 @@ $form = ActiveForm::begin([
 			'data' => ArrayHelper::map(Label::find()
 					->user($userModel->id)
 					->all(), 'id', 'name'),
-			'options' => ['placeholder' => 'Select Label'],
 			'pluginOptions' => [
 				'tags' => true,
-				'allowClear' => true,
 			],
 		])->label('Label');
 		?>
@@ -53,7 +51,6 @@ $form = ActiveForm::begin([
                 '#', 'id' => $model->id
                 ], [
                 'id' => $model->id,
-                'title' => Yii::t('yii', 'Delete'),
                 'class' => 'user-contact-delete btn btn-danger',
             ]);
         }

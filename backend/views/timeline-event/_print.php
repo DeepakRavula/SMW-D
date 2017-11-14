@@ -6,48 +6,11 @@ use common\models\Location;
 /* @var $model common\models\Invoice */
 ?>
   <?php $model = Location::findOne(['id' => Yii::$app->session->get('location_id')]); ?>
-<div class="row">
-    <div class="col-md-12">
-        <h2 class="page-header">
-            <span class="logo-lg"><b>Arcadia</b>SMW</span>
-            <small class="pull-right"><?= Yii::$app->formatter->asDate('now'); ?></small>
-        </h2>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-6 invoice-col">
-        <div class="invoice-print-address">
-            From
-            <address>
-                <b>Arcadia Music Academy ( <?= $model->name; ?> )</b><br>
-                <?php if (!empty($model->address)): ?>
-                    <?= $model->address; ?>
-                <?php endif; ?>
-                <br/>
-                <?php if (!empty($model->city_id)): ?>
-                    <?= $model->city->name; ?>,
-                <?php endif; ?>        
-                <?php if (!empty($model->province_id)): ?>
-                    <?= $model->province->name; ?>
-                <?php endif; ?>
-                <br/>
-                <?php if (!empty($model->postal_code)): ?>
-                    <?= $model->postal_code; ?>
-                <?php endif; ?>
-                <br/>
-                <?php if (!empty($model->phone_number)): ?>
-                    <?= $model->phone_number ?>
-                <?php endif; ?>
-                <br/>
-                <?php if (!empty($model->email)): ?>
-                    <?= $model->email ?>
-                <?php endif; ?>
-                <br/>
-                www.arcadiamusicacademy.com
-            </address>
-        </div>
-    </div>
-</div>
+<?php
+   echo $this->render('/print/_header', [
+       'locationModel'=>$model,
+]);
+   ?>
 <?php
 $columns = [
 		[

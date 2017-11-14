@@ -130,12 +130,12 @@ class Invoice extends \yii\db\ActiveRecord
          $fromDate = (new \DateTime('first day of this month'))->format('M d,Y');
          $toDate   = (new \DateTime('last day of this month'))->format('M d,Y');
         return self::find()
-                ->notDeleted()        
-                ->userLocation($locationId)
+                ->notDeleted()      
+                ->notCanceled()
+                ->andWhere(['location_id' => $locationId])
                 ->invoice()
                 ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($fromDate))->format('Y-m-d'),
                     (new \DateTime($toDate))->format('Y-m-d')])
-                ->andWhere(['isCanceled' => false])
                 ->groupBy('invoice.invoice_number')        
                 ->count();
     }
@@ -145,10 +145,10 @@ class Invoice extends \yii\db\ActiveRecord
         $locationId = Yii::$app->session->get('location_id');
          return self::find()
                 ->notDeleted()
-                ->userLocation($locationId) 
-                ->unpaid()
+                ->notCanceled() 
+                 ->andWhere(['location_id' => $locationId])
+                 ->unpaid()
                 ->proFormaInvoice()
-                ->andWhere(['isCanceled' => false])
                 ->groupBy('invoice.invoice_number')
                 ->count();
     }

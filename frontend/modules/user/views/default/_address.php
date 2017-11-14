@@ -3,34 +3,60 @@ use yii\helpers\Html;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
+use kartik\sortinput\SortableInput;
+
 ?>
+<style>
+.sortable {
+	border:0px;
+}
+.sortable li {
+	border:0px;
+	margin:0px;
+	padding:0px;
+}
+</style>
 <?php Pjax::begin([
 	'id' => 'user-address'
 ]); ?>
 <?php
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => '<i class="fa fa-pencil user-address-btn"></i>',
+	'boxTools' => '<i class="fa fa-plus add-address-btn"></i>',
 	'title' => 'Addresses',
 	'withBorder' => true,
 ])
 ?>
 <?php if(!empty($model->addresses)) : ?>
-	<?php foreach($model->addresses as $address) : ?>
-<div class="address p-t-9 p-b-10 relative">
-    <div class="col-md-2 p-0"><strong><?= !empty($address->label) ? $address->label : null ?></strong></div> 
-    <div class="<?= !empty($address->is_primary) ? 'primary' : null; ?>">
-		<div class="col-md-9">
-    	<?= !empty($address->address) ? $address->address : null ?> <Br>
-        <?= !empty($address->city->name) ? $address->city->name : null ?>,
-		 <?= !empty($address->province->name) ? $address->province->name : null ?><Br> 
-        <?= !empty($address->country->name) ? $address->country->name : null ?> 
-		<?= !empty($address->postal_code) ? $address->postal_code : null ?>
-    </div>
-	</div>
-    <div class="clearfix"></div>
-</div>
+	<?php $addresses = [];?>
+		<?php foreach($model->addresses as $key => $userAddress) : ?>		
+		<?php 
+            $address = [
+				'content' => $this->render('contact/view/_address', [
+				'address' => $userAddress,
+			])];
+            array_push($addresses, $address);
+			if($userAddress->userContact->isPrimary) {
+				$value = $addresses[$key];
+				unset($addresses[$key]);
+				array_unshift($addresses, $value);	
+			}
+        ?>
 	<?php endforeach; ?>
-<?php endif; ?>
-<?php LteBox::end() ?>
+	<?= SortableInput::widget([
+		'sortableOptions' => [
+            'showHandle' => true,
+            'handleLabel' =>'<i class="fa fa-arrows"></i>',
+			'type' => 'list',
+			'pluginEvents' => [
+				'sortupdate' => 'contact.updatePrimary',
+			],
+		],
+		'name'=> 'user_address',
+		'items' => $addresses,
+		'options' => [
+			'class'=>'form-control', 'readonly'=>true]
+	]);?>	
+	<?php endif; ?>
+	<?php LteBox::end() ?>
 <?php Pjax::end(); ?>

@@ -38,10 +38,9 @@ use yii\helpers\Url;
 					->all(), 'id', 'name'),
 			'options' => [
 				'id' => 'address-label',
-				'placeholder' => 'Select Label'],
+			],
 			'pluginOptions' => [
 				'tags' => true,
-				'allowClear' => true,
 			],
 		])->label('Label');
 		?>
@@ -71,7 +70,6 @@ use yii\helpers\Url;
                 '#', 'id' => $model->id
                 ], [
                 'id' => $model->id,
-                'title' => Yii::t('yii', 'Delete'),
                 'class' => 'user-contact-delete btn btn-danger',
             ]);
         }

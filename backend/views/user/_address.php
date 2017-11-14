@@ -14,6 +14,7 @@ use kartik\sortinput\SortableInput;
 	border:0px;
 	margin:0px;
 	padding:0px;
+	list-style: none;
 }
 </style>
 <?php Pjax::begin([
@@ -32,7 +33,7 @@ LteBox::begin([
 		<?php foreach($model->addresses as $key => $userAddress) : ?>		
 		<?php 
             $address = [
-				'content' => $this->render('contact/_address-list', [
+				'content' => $this->render('contact/view/_address', [
 				'address' => $userAddress,
 			])];
             array_push($addresses, $address);

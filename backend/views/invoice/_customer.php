@@ -84,9 +84,7 @@ Select2Asset::register($this);
         <div class="col-md-4">
             <?= $form1->field($userModel, 'lastname'); ?>
         </div>
-        <div class="col-md-4">
-            <?= $form1->field($userEmail, 'email'); ?>
-        </div>
+        
         <div class="col-md-12">
             <div class="pull-right">
              <?= Html::a('Cancel', '#', ['class' => 'btn btn-default invoice-customer-update-cancel-button']);?>    

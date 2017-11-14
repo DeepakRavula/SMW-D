@@ -2,7 +2,7 @@
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
-
+use kartik\sortinput\SortableInput;
 ?>
 <?php Pjax::begin([
 	'id' => 'user-phone'
@@ -10,19 +10,41 @@ use yii\widgets\Pjax;
 	<?php
 	LteBox::begin([
 		'type' => LteConst::TYPE_DEFAULT,
-		'boxTools' => '<i title="Edit" class="fa fa-pencil user-phone-btn"></i>',
+		'boxTools' => '<i title="Add Phone" class="fa fa-plus add-phone-btn"></i>',
 		'title' => 'Phone',
 		'withBorder' => true,
 	])
 	?>
 	<?php if(!empty($model->phoneNumbers)) : ?>
-		<?php foreach($model->phoneNumbers as $phoneNumber) : ?>
-			 <div class="col-xs-10 <?= !empty($phoneNumber->is_primary) ? 'primary' : null; ?>">
-			<div class="col-xs-2"><strong><?= $phoneNumber->label->name; ?></strong></div>
-			<div class="col-xs-3"><?= $phoneNumber->number; ?></div>
-			<div class="col-xs-5"><?= !empty($phoneNumber->extension) ? $phoneNumber->extension : null; ?></div>
-			</div><br>
-		<?php endforeach; ?>
+	<?php $phones = [];?>
+		<?php foreach($model->phoneNumbers as $key => $phoneNumber) : ?>		
+		<?php 
+            $phone = [
+				'content' => $this->render('contact/view/_phone', [
+				'phoneNumber' => $phoneNumber,
+			])];
+            array_push($phones, $phone);
+			if($phoneNumber->userContact->isPrimary) {
+				$value = $phones[$key];
+				unset($phones[$key]);
+				array_unshift($phones, $value);	
+			}
+        ?>
+	<?php endforeach; ?>
+	<?= SortableInput::widget([
+		'sortableOptions' => [
+            'showHandle' => true,
+            'handleLabel' =>'<i class="fa fa-arrows"></i>',
+			'type' => 'list',
+			'pluginEvents' => [
+				'sortupdate' => 'contact.updatePrimary',
+			],
+		],
+		'name'=> 'user_phone',
+		'items' => $phones,
+		'options' => [
+			'class'=>'form-control', 'readonly'=>true]
+	]);?>	
 	<?php endif; ?>
 	<?php LteBox::end() ?>
 <?php Pjax::end(); ?>

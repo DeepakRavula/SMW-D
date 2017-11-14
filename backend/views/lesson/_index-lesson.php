@@ -22,7 +22,8 @@ $this->params['action-button'] = $this->render('_action-menu', [
     <?php Pjax::begin(['id' => 'lesson-index','timeout' => 6000,]); ?>
     <?php $columns = [
             [
-                'class' => '\kartik\grid\CheckboxColumn'
+                'class' => '\kartik\grid\CheckboxColumn',
+				'mergeHeader' => false
             ],
             [
                 'label' => 'Student',

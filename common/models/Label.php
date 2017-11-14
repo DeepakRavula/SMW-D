@@ -16,7 +16,7 @@ class Label extends \yii\db\ActiveRecord
 {
     const LABEL_HOME = 1;
     const LABEL_WORK = 2;
-    const LABEL_BILLING = 3;
+    const LABEL_OTHER = 3;
     /**
      * @inheritdoc
      */

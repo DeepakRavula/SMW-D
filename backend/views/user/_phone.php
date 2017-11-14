@@ -20,7 +20,7 @@ use kartik\sortinput\SortableInput;
 		<?php foreach($model->phoneNumbers as $key => $phoneNumber) : ?>		
 		<?php 
             $phone = [
-				'content' => $this->render('contact/_phone-list', [
+				'content' => $this->render('contact/view/_phone', [
 				'phoneNumber' => $phoneNumber,
 			])];
             array_push($phones, $phone);
