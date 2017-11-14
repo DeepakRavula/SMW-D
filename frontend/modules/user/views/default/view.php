@@ -68,6 +68,7 @@ $this->title = $model->publicIdentity;
 ]); ?>
 <div id="address-content"></div>
 <?php Modal::end(); ?>
+<script src="/plugins/bootbox/bootbox.min.js"></script>
 <script>
 	var contactTypes = {
 		'email' : 1,

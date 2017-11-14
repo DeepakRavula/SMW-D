@@ -153,7 +153,7 @@ $this->title = 'New Enrolment';
     $(document).ready(function () {
 		$('#rate').text('$0.00');
 		$('#monthly-rate').text('$0.00');
-		$(document).off().on('change', '#courseschedule-duration, #courseschedule-programrate, #enrolment-discount, #course-programid, #payment-frequency-discount', function(){
+		$(document).on('change', '#courseschedule-duration, #courseschedule-programrate, #enrolment-discount, #course-programid, #payment-frequency-discount', function(){
 			var duration = $('#courseschedule-duration').val();
                         if ($(this).attr('id') != "course-programid") {
                             var programRate = $('#courseschedule-programrate').val();
