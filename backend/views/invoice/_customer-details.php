@@ -32,15 +32,15 @@ LteBox::begin([
 	<?= $customer->publicIdentity?>
 	</a>
 	</dd>
-    <?php if (!empty($customer->billingAddress)) : ?>
+    <?php if (!empty($customer->primaryAddress)) : ?>
 		<dt>Address</dt>
-		<dd><?= $customer->billingAddress->address; ?></dd>
+		<dd><?= $customer->primaryAddress->address; ?></dd>
 		<dt>City</dt>
-		<dd><?= $customer->billingAddress->city->name; ?></dd>
+		<dd><?= $customer->primaryAddress->city->name; ?></dd>
 		<dt>Province</dt>
-		<dd><?= $customer->billingAddress->province->name; ?></dd>
+		<dd><?= $customer->primaryAddress->province->name; ?></dd>
 		<dt>Postal</dt>
-		<dd><?= $customer->billingAddress->postalCode; ?></dd>
+		<dd><?= $customer->primaryAddress->postalCode; ?></dd>
 	<?php endif; ?>
 	<?php if (!empty($customer->phoneNumber)): ?>
 		<dt>Phone</dt>
