@@ -184,6 +184,16 @@ Modal::end();
     'userDataProvider'=>$userDataProvider,
 ]);?>
 <?php Modal::end();?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Add Customer</h4>',
+    'id' => 'invoice-walkin-customer-modal',
+]); ?>
+<?= $this->render('_walkincustomer', [
+    'model' => $model,
+    'userModel' => new User(),
+    'userEmail'=>new UserEmail(),
+]);?>
+<?php Modal::end();?>
 <script>
 var invoice = {
     onEditableGridSuccess : function(event, val, form, data) {
