@@ -240,6 +240,10 @@ var invoice = {
 		$('#invoice-customer-modal').modal('hide');
 		return false;
   	});
+        $(document).on('click', '.invoice-walkin-customer-update-cancel-button', function (e) {
+		$('#invoice-walkin-customer-modal').modal('hide');
+		return false;
+  	});
 	$(document).on('click', '.invoice-note-cancel', function (e) {
 		$('#message-modal').modal('hide');
 		return false;
@@ -505,7 +509,7 @@ var invoice = {
 			   {
 					$.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                                        $('#invoice-customer-modal').modal('hide');
+                                        $('#invoice-walkin-customer-modal').modal('hide');
 				}else
 				{
 				 $('#walkin-customer-form').yiiActiveForm('updateMessages',

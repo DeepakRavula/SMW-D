@@ -28,7 +28,7 @@ use yii\helpers\Url;
         
         <div class="col-md-12">
             <div class="pull-right">
-             <?= Html::a('Cancel', '#', ['class' => 'btn btn-default invoice-customer-update-cancel-button']);?>    
+             <?= Html::a('Cancel', '#', ['class' => 'btn btn-default invoice-walkin-customer-update-cancel-button']);?>    
             <?php echo Html::submitButton('Add ', ['class' => 'btn btn-info m-r-10', 'name' => 'guest-invoice']) ?>
             </div>
             </div>
