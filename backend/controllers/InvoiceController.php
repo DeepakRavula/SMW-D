@@ -115,13 +115,11 @@ class InvoiceController extends Controller
         return $this->redirect(['view', 'id' => $invoice->id]);
     }
 
-	public function actionUpdateCustomer($id)
+	public function actionUpdateCustomer($id,$customerId)
 	{
 		$request = Yii::$app->request;
         $model = $this->findModel($id);
-		$invoiceRequest = $request->post('Invoice');
-        $customerId = $invoiceRequest['user_id'];
-		$model->user_id = $customerId;
+	$model->user_id = $customerId;
 		if($model->save()) {
 			return [
 				'status' => true,

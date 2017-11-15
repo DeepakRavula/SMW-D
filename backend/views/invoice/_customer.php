@@ -79,11 +79,9 @@ Select2Asset::register($this);
 			'contentOptions' => ['style' => 'width:50px'],
 			'template' => '{view}',
 			'buttons' => [
-				'view' => function ($url, $model) {
+				'view' => function ($url, $userModel) use($model) {
 					$url = Url::to(['invoice/update-customer', 'id' => $model->id]);
-					return Html::a('Add', $url, [
-						'title' => Yii::t('yii', 'Add'),
-					]);
+					return Html::a('Add', $url, ['class' => 'add-customer-in-invoice','id' => $userModel->id ]);
 				},
 			]
         ],        
