@@ -139,7 +139,6 @@ trait Invoiceable
     {
         $invoice = $this->createInvoice();
         $location_id = $this->enrolment->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => $this->enrolment->student->customer->id]);
         if (is_a(Yii::$app, 'yii\console\Application')) {
             $roleUser = User::findByRole(User::ROLE_BOT);
             $botUser = end($roleUser);

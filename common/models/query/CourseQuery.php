@@ -25,6 +25,11 @@ class CourseQuery extends \yii\db\ActiveQuery
     {
         return parent::all($db);
     }
+    
+    public function needToRenewal($priorDate)
+    {
+        return $this->andWhere(['DATE(course.endDate)' => $priorDate->format('Y-m-d')]);
+    }
 
     /**
      * {@inheritdoc}
@@ -49,7 +54,7 @@ class CourseQuery extends \yii\db\ActiveQuery
     public function privateProgram()
     {
         return $this->joinWith(['program' => function ($query) {
-            $query->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+            $query->andWhere(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
         }]);
     }
 

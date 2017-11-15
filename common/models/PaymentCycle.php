@@ -127,7 +127,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = $this->enrolment->course->locationId;
         $startDate  = new \DateTime($this->startDate);
         $endDate    = new \DateTime($this->endDate);
         $lessons = Lesson::find()

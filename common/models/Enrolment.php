@@ -398,6 +398,12 @@ class Enrolment extends \yii\db\ActiveRecord
 			|| (!$insert) || $this->isExtra()) {
             return true;
         }
+        $enrolmentProgramRate = new EnrolmentProgramRate();
+        $enrolmentProgramRate->enrolmentId = $this->id;
+        $enrolmentProgramRate->startDate  = (new Carbon($this->course->startDate))->format('Y-m-d');
+        $enrolmentProgramRate->endDate = (new Carbon($this->course->endDate))->format('Y-m-d');
+        $enrolmentProgramRate->programRate = $this->course->program->rate;
+        $enrolmentProgramRate->save();  
         $interval = new \DateInterval('P1D');
         $start = new \DateTime($this->course->startDate);
         $end = new \DateTime($this->course->endDate);
@@ -484,11 +490,11 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function resetPaymentCycle()
     {
-        if (!empty($this->firstUnPaidProFormaPaymentCycle)) {            
+        if (!empty($this->firstUnPaidProFormaPaymentCycle)) {        
             $startDate = \DateTime::createFromFormat('Y-m-d',
                 $this->firstUnPaidProFormaPaymentCycle->startDate);        
-            $enrolmentLastPaymentCycleEndDate = \DateTime::createFromFormat('Y-m-d',
-                $this->lastPaymentCycle->endDate);
+            $enrolmentLastPaymentCycleEndDate = \DateTime::createFromFormat('Y-m-d H:i:s', 
+                    $this->course->endDate);
             $intervalMonths = $this->diffInMonths($startDate, $enrolmentLastPaymentCycleEndDate);
             $this->deleteUnPaidProformaPaymentCycles();
             $paymentCycleCount = (int) ($intervalMonths / $this->paymentsFrequency->frequencyLength);

@@ -320,9 +320,12 @@ class Course extends \yii\db\ActiveRecord
 		}
 	}
 	
-	public function createLesson($day)
+	public function createLesson($day, $isConfirmed = null)
 	{
-		$lesson = new Lesson();
+            if (!$isConfirmed) {
+                $isConfirmed = false;
+            }
+                $lesson = new Lesson();
                 if ($day < new \DateTime()) {
                     $status = Lesson::STATUS_UNSCHEDULED;
                 } else {
@@ -334,7 +337,7 @@ class Course extends \yii\db\ActiveRecord
 			'status' => $status,
 			'date' => $day->format('Y-m-d H:i:s'),
 			'duration' => $this->courseSchedule->duration,
-			'isConfirmed' => false,
+			'isConfirmed' => $isConfirmed,
 		]);
 		$lesson->save();	
 	}
