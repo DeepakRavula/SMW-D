@@ -9,6 +9,8 @@ use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 use common\models\Payment;
+use common\models\UserProfile;
+use common\models\UserEmail;
 use yii\data\ActiveDataProvider;
 use backend\models\EmailForm;
 /* @var $this yii\web\View */
@@ -190,7 +192,7 @@ Modal::end();
 ]); ?>
 <?= $this->render('_walkincustomer', [
     'model' => $model,
-    'userModel' => new User(),
+    'userModel' => new UserProfile(),
     'userEmail'=>new UserEmail(),
 ]);?>
 <?php Modal::end();?>
@@ -229,6 +231,11 @@ var invoice = {
 		$('#invoice-customer-modal').modal('show');
 		return false;
   	});
+        $(document).on('click', '.add-walkin-customer-invoice-button', function (e) {
+		$('#invoice-walkin-customer-modal').modal('show');
+		return false;
+  	});
+        
         $(document).on('click', '.invoice-customer-update-cancel-button', function (e) {
 		$('#invoice-customer-modal').modal('hide');
 		return false;

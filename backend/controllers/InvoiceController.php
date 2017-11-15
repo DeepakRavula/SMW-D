@@ -130,16 +130,21 @@ class InvoiceController extends Controller
 	public function actionUpdateWalkin($id)
 	{
 		$request = Yii::$app->request;
-        $model = $this->findModel($id);
+                $model = $this->findModel($id);
                  $customer = new User();
 		$userProfile = new UserProfile();
-                if (!empty($model->user_id)) {
-            $customer = User::findOne(['id' => $model->user_id]);
-            $userProfile = UserProfile::findOne(['user_id' => $customer->id]);
-                }
-                 if ($userProfile->load($request->post())) {
-                    if (empty($model->user_id)) {
+                $userContact=new UserContact();
+                $userEmail=new UserEmail();
+                 if ($userProfile->load($request->post()) && $userEmail->load($request->post())) {
 			if ($customer->save()) {
+                                $userProfile->user_id=$customer->id;
+                                $userProfile->save();
+                                $userContact->userId=$customer->id;
+                                $userContact->isPrimary=true;
+                                $userContact-> labelId= Label::LABEL_WORK;   
+                                $userContact->save();
+                                $userEmail->userContactId=$userContact->id;
+                                $userEmail->save();
 				$model->user_id = $customer->id;
 				$model->save();
 				$auth = Yii::$app->authManager;
@@ -150,18 +155,6 @@ class InvoiceController extends Controller
 				];
 			}
                         }
-                  
-                      else
-                      {
-                         $userProfile->save();
-                        
-                         return [
-					'status' => true,
-					'message' => 'customer has been Updated successfully.'
-				];
-                      }
-				
-		}
 	}
 	public function actionNote($id)
 	{
