@@ -65,7 +65,7 @@ class Enrolment extends \yii\db\ActiveRecord
             [['courseId'], 'required'],
             [['courseId', 'studentId'], 'integer'],
             [['paymentFrequencyId', 'type',  'isDeleted', 'isConfirmed',
-                'hasEditable', 'programRate'], 'safe'],
+                'hasEditable'], 'safe'],
         ];
     }
 

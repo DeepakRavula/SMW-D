@@ -273,6 +273,14 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PrivateLesson::className(), ['lessonId' => 'id']);
     }
+    
+    public function getEnrolmentProgramRate()
+    {
+        return $this->hasOne(EnrolmentProgramRate::className(), ['enrolmentId' => 'id'])
+                ->via('enrolment')
+                ->onCondition(['AND', ['<=', 'enrolment_program_rate.startDate', (new \DateTime($this->date))->format('Y-m-d')],
+                    ['>=', 'enrolment_program_rate.endDate', (new \DateTime($this->date))->format('Y-m-d')]]);
+    }
 
     public function getClassroom()
     {
