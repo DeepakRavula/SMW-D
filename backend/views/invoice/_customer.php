@@ -52,8 +52,7 @@ Select2Asset::register($this);
                                     'options' => ['placeholder' => 'Select customer'],
                                     'pluginOptions' => [
                                         'tags' => true,
-                                        'allowClear' => true,
-                                    ],
+                                               ],
                             ])->label('Label');
                             ?>
 		</div>

@@ -37,7 +37,6 @@ use common\models\Student;
                      ->all(),
                 'id', 'userProfile.fullName'),
             'pluginOptions' => [
-				'allowClear' => true,
 				'multiple' => false,
 				'placeholder' => 'User',
 			],
@@ -53,7 +52,6 @@ use common\models\Student;
             ->orderBy(['first_name' => SORT_ASC])
             ->all(), 'id', 'fullName'),
             'pluginOptions' => [
-				'allowClear' => true,
 				'multiple' => false,
 				'placeholder' => 'Student',
 			],

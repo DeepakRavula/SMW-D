@@ -86,7 +86,6 @@ $this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class
                 'name' => 'Program',
                 'id' => 'program-selector',
                 'pluginOptions' => [
-                    'allowClear' => true,
                     'items' => ArrayHelper::map(Program::find()->active()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
                     'value' => null,
                     'placeholder' => 'Program',
@@ -100,7 +99,6 @@ $this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class
                 'name' => 'Teacher',
                 'id' => 'teacher-selector',
                 'pluginOptions' => [
-                    'allowClear' => true,
                     'items' => ArrayHelper::map($availableTeachersDetails, 'id', 'name'),
                     'value' => null,
                     'placeholder' => 'Teacher',
@@ -280,7 +278,6 @@ function loadTeachers(program) {
 function setTeachers(teachers){
     $('#teacher-selector').selectivity('destroy');
     $('#teacher-selector').selectivity({
-        allowClear: true,
         items: teachers,
         value: null,
         placeholder: 'Select Teacher',

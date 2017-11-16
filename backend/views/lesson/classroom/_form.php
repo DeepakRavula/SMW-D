@@ -37,7 +37,6 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 					   ->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
 			   'pluginOptions' => [
 				   'placeholder' => 'Select Classroom',
-				   'allowClear' => true
 			   ]
 		   ]);
 		   ?>

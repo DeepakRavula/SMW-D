@@ -35,7 +35,6 @@ $customer_id = (empty($customer->id)) ? null : (string) $customer->id;
     <?=
         $form->field($model, 'customer_id')->widget(SelectivityWidget::classname(), [
             'pluginOptions' => [
-                'allowClear' => true,
                 'multiple' => false,
                 'items' => $customers,
                 'value' => (empty($customer->id)) ? null : (string) $customer->id,

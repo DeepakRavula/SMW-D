@@ -50,10 +50,7 @@ use common\models\User;
                             ->all(),
                             'id', 'publicIdentity'),
                     'options' => ['placeholder' => 'Select Customer', 'class' => 'form-control'],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
-                ])->label(false);
+                         ])->label(false);
             ?>
         </div>
         <?= $form->field($model, 'isCustomerReport')->hiddenInput()->label(false); ?>

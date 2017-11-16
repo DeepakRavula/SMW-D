@@ -68,7 +68,6 @@ if ($model->isNewRecord) {
                                     'id' => 'examresult-programid'
 				],
 				'pluginOptions' => [
-                                    'allowClear' => true,
                                     'multiple' => false,
                                     'placeholder' => 'Select Program',
 				],

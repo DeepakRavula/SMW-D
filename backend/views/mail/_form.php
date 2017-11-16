@@ -35,7 +35,6 @@ use common\models\UserEmail;
 				'data' => $data,
 				'pluginOptions' => [
 					'tags' => true,
-					'allowClear' => true,
 					'multiple' => true,
 				],
 			]);
