@@ -212,10 +212,19 @@ class InvoiceController extends Controller
         ]);
          $session = Yii::$app->session;
         $locationId = $session->get('location_id');
-        $userData=User::find()
-            ->joinWith(['userLocation ul' => function ($query) use ($locationId) {
-                $query->where(['ul.location_id' => $locationId]);
-			}]);
+        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+                
+            $userData=User::find()
+			->joinWith('userLocation ul')
+			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+			->where(['raa.item_name' => 'customer'])
+			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+                        ->notDeleted()
+                        ->joinWith(['student' => function ($query) use ($currentDate) {
+                            $query->enrolled($currentDate);
+                            }])
+			->active()
+                        ->groupBy('user.id');
             $userDataProvider = new ActiveDataProvider([
             'query' => $userData,
         ]);
