@@ -15,7 +15,7 @@ $form = ActiveForm::begin([
 	]);
 ?>
 <?php yii\widgets\Pjax::begin() ?>
-<div id="show-all">
+<div id="show-all" class="pull-right">
 <?= $form->field($searchModel, 'showAllReviewLessons')->checkbox(['data-pjax' => true]); ?>
 </div>
 <?php \yii\widgets\Pjax::end(); ?>
