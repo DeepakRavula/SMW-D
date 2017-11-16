@@ -382,10 +382,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function beforeSave($insert) {
         if($insert) {
-            if (empty($this->programRate)) {
-                $this->programRate = $this->course->program->rate;
-            }
-            $this->isDeleted = false;
+             $this->isDeleted = false;
             if (empty($this->isConfirmed)) {
                 $this->isConfirmed = false;
             }
