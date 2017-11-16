@@ -7,7 +7,7 @@ use yii\helpers\Html;
 use common\models\User;
 use yii\helpers\Url;
 ?>
-<?php $boxTools = $this->render('_customer-button', [
+<?php $boxTools = $this->render('_button', [
 	'model' => $model,
 ]);
 LteBox::begin([

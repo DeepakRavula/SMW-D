@@ -45,7 +45,7 @@ $this->params['action-button'] = $this->render('_buttons', [
     <?php if (!empty($customer)):?>
 	<div class="col-md-6">
 		<?=
-		$this->render('_customer-details', [
+		$this->render('customer/view', [
 			'model' => $model,
 			'customer' => $customer,
 			'searchModel' => $searchModel,
@@ -178,7 +178,7 @@ Modal::end();
     'header' => '<h4 class="m-0">Add Customer</h4>',
     'id' => 'invoice-customer-modal',
 ]); ?>
-<?= $this->render('_customer', [
+<?= $this->render('customer/_view', [
     'model' => $model,
     'customer' => $customer,
     'userModel' => $userModel,
@@ -187,10 +187,10 @@ Modal::end();
 ]);?>
 <?php Modal::end();?>
 <?php Modal::begin([
-    'header' => '<h4 class="m-0">Add Customer</h4>',
-    'id' => 'invoice-walkin-customer-modal',
+    'header' => '<h4 class="m-0">Add Walk-in</h4>',
+    'id' => 'walkin-modal',
 ]); ?>
-<?= $this->render('_walkincustomer', [
+<?= $this->render('customer/_walkin', [
     'model' => $model,
     'userModel' => new UserProfile(),
     'userEmail'=>new UserEmail(),
@@ -227,12 +227,13 @@ var invoice = {
 		return false;
   	});
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-	$(document).on('click', '.add-customer-invoice-button', function (e) {
+	$(document).on('click', '.add-customer', function (e) {
 		$('#invoice-customer-modal').modal('show');
 		return false;
   	});
-        $(document).on('click', '.add-walkin-customer-invoice-button', function (e) {
-		$('#invoice-walkin-customer-modal').modal('show');
+    $(document).on('click', '.add-walkin', function (e) {
+		$('#walkin-modal .modal-dialog').css({'width': '400px'});
+		$('#walkin-modal').modal('show');
 		return false;
   	});
         
@@ -240,8 +241,8 @@ var invoice = {
 		$('#invoice-customer-modal').modal('hide');
 		return false;
   	});
-        $(document).on('click', '.invoice-walkin-customer-update-cancel-button', function (e) {
-		$('#invoice-walkin-customer-modal').modal('hide');
+        $(document).on('click', '.walkin-cancel-button', function (e) {
+		$('#walkin-modal').modal('hide');
 		return false;
   	});
 	$(document).on('click', '.invoice-note-cancel', function (e) {
@@ -509,7 +510,7 @@ var invoice = {
 			   {
 					$.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                                        $('#invoice-walkin-customer-modal').modal('hide');
+                                        $('#walkin-modal').modal('hide');
 				}else
 				{
 				 $('#walkin-customer-form').yiiActiveForm('updateMessages',
@@ -519,7 +520,7 @@ var invoice = {
 		});
 		return false;
 	});
-        $(document).on("click", '.add-customer-in-invoice', function() {
+        $(document).on("click", '.add-customer-invoice', function() {
              var customerId=$(this).attr('id');
              var params = $.param({'customerId': customerId });
 	$.ajax({

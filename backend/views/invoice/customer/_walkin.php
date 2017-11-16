@@ -15,25 +15,15 @@ use yii\helpers\Url;
 		'action' => Url::to(['invoice/create-walkin', 'id' => $model->id])
     ]); ?>
 
-    <div class="row">
-        <div class="col-md-6">
+    <div class="row col-md-12">
             <?= $form->field($userModel, 'firstname'); ?>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
             <?= $form->field($userModel, 'lastname'); ?>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
             <?= $form->field($userEmail, 'email'); ?>
-        </div>
       </div>
     <div class="row">  
         <div class="col-md-12">
             <div class="pull-right">
-             <?= Html::a('Cancel', '#', ['class' => 'btn btn-default invoice-walkin-customer-update-cancel-button']);?>    
+             <?= Html::a('Cancel', '#', ['class' => 'btn btn-default walkin-cancel-button']);?>    
             <?php echo Html::submitButton('Save', ['class' => 'btn btn-info', 'name' => 'guest-invoice']) ?>
             </div>
             </div>
