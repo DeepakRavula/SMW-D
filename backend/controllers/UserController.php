@@ -483,7 +483,9 @@ class UserController extends Controller
         }
         $request = Yii::$app->request;
         if ($model->load($request->post()) && $model->save() && $emailModels->load($request->post())) {
-			$userContact = new UserContact();
+			if(!empty($emailModels->email))
+                        {
+                        $userContact = new UserContact();
 			$userContact->userId = $model->getModel()->id;
 			$userContact->labelId = Label::LABEL_WORK;
 			$userContact->isPrimary = true;
@@ -491,6 +493,7 @@ class UserController extends Controller
 
 			$emailModels->userContactId = $userContact->id;
 			$emailModels->save();
+                        }
 			return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
         }
     }
