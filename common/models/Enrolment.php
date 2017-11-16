@@ -143,13 +143,16 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Vacation::className(), ['studentId' => 'studentId']);
     }
-
+     public function getEnrolmentProgramRate()
+    {
+      return $this->hasOne(EnrolmentProgramRate::className(), ['enrolmentId' => 'id']);  
+    }
     public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'programId'])
             ->viaTable('course', ['id' => 'courseId']);
     }
-
+    
     public function hasProFormaInvoice()
     {
         return !empty($this->proFormaInvoice);

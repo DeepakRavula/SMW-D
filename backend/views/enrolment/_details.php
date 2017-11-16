@@ -22,7 +22,7 @@ LteBox::begin([
 	<dt>Teacher</dt>
 	<dd><?= $model->course->teacher->publicIdentity; ?></dd>
 	<dt>Rate</dt>
-	<dd><?= $model->programRate; ?></dd>
+	<dd><?= $model->enrolmentProgramRate->programRate; ?></dd>
 	<dt>Duration</dt>
 	<dd><?= (new \DateTime($model->courseSchedule->duration))->format('H:i'); ?></dd>
 </dl>
