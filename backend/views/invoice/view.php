@@ -9,6 +9,8 @@ use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 use common\models\Payment;
+use common\models\UserProfile;
+use common\models\UserEmail;
 use yii\data\ActiveDataProvider;
 use backend\models\EmailForm;
 /* @var $this yii\web\View */
@@ -184,6 +186,16 @@ Modal::end();
     'userDataProvider'=>$userDataProvider,
 ]);?>
 <?php Modal::end();?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Add Customer</h4>',
+    'id' => 'invoice-walkin-customer-modal',
+]); ?>
+<?= $this->render('_walkincustomer', [
+    'model' => $model,
+    'userModel' => new UserProfile(),
+    'userEmail'=>new UserEmail(),
+]);?>
+<?php Modal::end();?>
 <script>
 var invoice = {
     onEditableGridSuccess : function(event, val, form, data) {
@@ -219,8 +231,17 @@ var invoice = {
 		$('#invoice-customer-modal').modal('show');
 		return false;
   	});
+        $(document).on('click', '.add-walkin-customer-invoice-button', function (e) {
+		$('#invoice-walkin-customer-modal').modal('show');
+		return false;
+  	});
+        
         $(document).on('click', '.invoice-customer-update-cancel-button', function (e) {
 		$('#invoice-customer-modal').modal('hide');
+		return false;
+  	});
+        $(document).on('click', '.invoice-walkin-customer-update-cancel-button', function (e) {
+		$('#invoice-walkin-customer-modal').modal('hide');
 		return false;
   	});
 	$(document).on('click', '.invoice-note-cancel', function (e) {
@@ -488,7 +509,7 @@ var invoice = {
 			   {
 					$.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                                        $('#invoice-customer-modal').modal('hide');
+                                        $('#invoice-walkin-customer-modal').modal('hide');
 				}else
 				{
 				 $('#walkin-customer-form').yiiActiveForm('updateMessages',

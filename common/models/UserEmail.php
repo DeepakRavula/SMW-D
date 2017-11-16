@@ -40,7 +40,6 @@ class UserEmail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['email'], 'required'],
 			[['userContactId'], 'integer'],
             [['email'], 'string', 'max' => 255],
 			[['labelId'], 'safe']
