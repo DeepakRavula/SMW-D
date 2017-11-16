@@ -48,7 +48,7 @@ class InvoiceController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['delete', 'note', 'get-payment-amount','update-customer', 'update-walkin'],
+                'only' => ['delete', 'note', 'get-payment-amount','update-customer', 'create-walkin'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -127,7 +127,7 @@ class InvoiceController extends Controller
 			];
 		} 
 	}
-	public function actionUpdateWalkin($id)
+	public function actionCreateWalkin($id)
 	{
 		$request = Yii::$app->request;
                 $model = $this->findModel($id);
