@@ -7,12 +7,9 @@ use yii\helpers\Html;
 use common\models\User;
 use yii\helpers\Url;
 ?>
-<?php if (!empty($model->user_id)) : ?>
-<?php $boxTools = '<i title="edit" class="fa fa-pencil add-invoice-customer m-r-10"></i>'; ?> 
-<?php else : ?>
-<?php $boxTools = '<i title="Add" class="fa fa-plus add-invoice-customer m-r-10"></i>';?>
-<?php endif;?>
-<?php
+<?php $boxTools = $this->render('_customer-button', [
+	'model' => $model,
+]);
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
 	'boxTools' => $boxTools,

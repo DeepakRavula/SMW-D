@@ -115,13 +115,11 @@ class InvoiceController extends Controller
         return $this->redirect(['view', 'id' => $invoice->id]);
     }
 
-	public function actionUpdateCustomer($id)
+	public function actionUpdateCustomer($id,$customerId)
 	{
 		$request = Yii::$app->request;
         $model = $this->findModel($id);
-		$invoiceRequest = $request->post('Invoice');
-        $customerId = $invoiceRequest['user_id'];
-		$model->user_id = $customerId;
+	$model->user_id = $customerId;
 		if($model->save()) {
 			return [
 				'status' => true,
@@ -212,7 +210,15 @@ class InvoiceController extends Controller
         $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $customerInvoicePayments,
         ]);
-
+         $session = Yii::$app->session;
+        $locationId = $session->get('location_id');
+        $userData=User::find()
+            ->joinWith(['userLocation ul' => function ($query) use ($locationId) {
+                $query->where(['ul.location_id' => $locationId]);
+			}]);
+            $userDataProvider = new ActiveDataProvider([
+            'query' => $userData,
+        ]);
         $invoicePayments = Payment::find()
 			->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                 $query->where(['ip.invoice_id' => $model->id]);
@@ -252,7 +258,8 @@ class InvoiceController extends Controller
             'userModel' => $userModel,
             'userEmail' =>$userEmail,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
-            'noteDataProvider' => $noteDataProvider
+            'noteDataProvider' => $noteDataProvider,
+            'userDataProvider'=>$userDataProvider,
         ]);
     }
 

@@ -47,6 +47,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 			'model' => $model,
 			'customer' => $customer,
 			'searchModel' => $searchModel,
+                        'userDataProvider'=>$userDataProvider,
 		]);
 		?>	
 	</div>
@@ -180,6 +181,7 @@ Modal::end();
     'customer' => $customer,
     'userModel' => $userModel,
     'userEmail'=>$userEmail,
+    'userDataProvider'=>$userDataProvider,
 ]);?>
 <?php Modal::end();?>
 <script>
@@ -207,27 +209,13 @@ var invoice = {
     }
 }
  $(document).ready(function() {
- 	$('#guest').hide();
-	$(document).on('click', '.customer', function (e) {
-		$('.customer').addClass('active');	
-		$('.guest').removeClass('active');
- 		$('#guest').hide();
- 		$('#customer').show();
-		return false;
-  	});
-       	$(document).on('click', '.guest', function (e) {
-		$('.guest').addClass('active');	
-		$('.customer').removeClass('active');	
- 		$('#customer').hide();
- 		$('#guest').show();
-		return false;
-  	});
+ 
 	$(document).on('click', '.add-invoice-note', function (e) {
 		$('#message-modal').modal('show');
 		return false;
   	});
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-	$(document).on('click', '.add-invoice-customer', function (e) {
+	$(document).on('click', '.add-customer-invoice-button', function (e) {
 		$('#invoice-customer-modal').modal('show');
 		return false;
   	});
@@ -505,6 +493,30 @@ var invoice = {
 				{
 				 $('#walkin-customer-form').yiiActiveForm('updateMessages',
 					response.errors, true);
+				}
+			}
+		});
+		return false;
+	});
+        $(document).on("click", '.add-customer-in-invoice', function() {
+             var customerId=$(this).attr('id');
+             var params = $.param({'customerId': customerId });
+	$.ajax({
+                	url    : $(this).attr('href') + '&' +params,
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+                                        $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
+					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
+                                        $('#invoice-customer-modal').modal('hide');
+                               
+				}else
+				{
+				 
 				}
 			}
 		});
