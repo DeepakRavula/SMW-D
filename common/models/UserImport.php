@@ -60,8 +60,10 @@ class UserImport extends Model
             }
 
             $user = User::find()
-                ->joinWith(['phoneNumber' => function ($query) use ($row) {
-                    $query->where(['number' => $row['Billing Home Tel']]);
+                ->joinWith(['userContact' => function ($query) use ($row) {
+                    $query->joinWith(['phone' => function ($query) use ($row) {
+						$query->andWhere(['number' => $row['Billing Home Tel']]);	
+					}]);
                 }])
                 ->notDeleted()
                 ->one();
@@ -94,13 +96,8 @@ class UserImport extends Model
 
             try {
                 $user = new User();
-                $user->email = $row['Email Address'];
                 $user->password = Yii::$app->security->generateRandomString(8);
                 $user->status = User::STATUS_ACTIVE;
-                if (!$user->validate(['email'])) {
-                    $user->email = null;
-                    $errors[] = 'Error on Line '.($i + 2).': Invalid Email address. Skipping email address for customer named, "'.$row['Billing First Name'].'"';
-                }
                 if ($user->save()) {
                     ++$customerCount;
                 }
@@ -138,69 +135,91 @@ class UserImport extends Model
 					
                     ++$studentCount;
                 }
+				if(!empty($row['Email Address'])) {
+					if (!$userEmail->validate(['email'])) {
+						$errors[] = 'Error on Line '.($i + 2).': Invalid Email address. Skipping email address for customer named, "'.$row['Billing First Name'].'"';
+                	} else {
+						$userContact = new UserContact();
+						$userContact->userId = $user->id;
+						$userContact->isPrimary = true;
+						$userContact->labelId = Label::LABEL_HOME;
+						$userContact->save();
 
-                $address = new Address();
-                $address->label = 'Billing';
-
+						$userEmail = new UserEmail();
+						$userEmail->userContactId = $userContact->id;
+						$userEmail->email = $row['Email Address'];
+						$userEmail->save();
+					}	
+				}
+                
                 $cityName = $row['Billing City'];
                 $addressName = $row['Billing Address'];
                 $pincodeName = $row['Billing Postal Code'];
-
-                $address->address = $addressName;
-                $city = City::findOne(['name' => $cityName]);
-
-                if (empty($city)) {
-                    $city = new City();
-                    $city->name = $row['City'];
-                    $city->province_id = 1;
-                    $city->save();
-                }
-
-                $address->city_id = $city->id;
-                $address->province_id = 1;
-                $address->country_id = 1;
-                $address->postal_code = $pincodeName;
-                if (!$address->validate(['address'])) {
-                    $address->address = null;
+				
+				if (empty($addressName)) {
                     $errors[] = 'Error on Line '.($i + 2).': Address is missing. Skipping  address for customer named, "'.$row['Billing First Name'].'"';
-                }
-                $address->save();
+                } else {
+					$city = City::findOne(['name' => $cityName]);
 
-                $user->link('addresses', $address);
+					if (empty($city)) {
+						$city = new City();
+						$city->name = $row['City'];
+						$city->province_id = 1;
+						$city->save();
+					}
+					$userContact = new UserContact();
+					$userContact->userId = $user->id;
+					$userContact->isPrimary = true;
+					$userContact->labelId = Label::LABEL_HOME;
+					$userContact->save();
 
+					$address = new UserAddress();
+					$address->userContactId = $userContact->id;
+					$address->address = $addressName;
+					$address->cityId = $city->id;
+					$address->provinceId = 1;
+					$address->countryId = 1;
+					$address->postalCode = $pincodeName;
+					$address->save();
+				}
                 if (!empty($row['Billing Home Tel'])) {
                     $phoneNumber = $row['Billing Home Tel'];
-                    $phone = new PhoneNumber();
+					$userContact = new UserContact();
+					$userContact->userId = $user->id;
+					$userContact->isPrimary = true;
+					$userContact->labelId = Label::LABEL_HOME;
+					$userContact->save();
+                    $phone = new UserPhone();
                     $phone->number = $phoneNumber;
-                    $phone->label_id = PhoneNumber::LABEL_HOME;
-                    $phone->user_id = $user->id;
                     $phone->save();
                 }
                 if (!empty($row['Billing Work Tel'])) {
                     $phoneNumber = $row['Billing Work Tel'];
-                    $phone = new PhoneNumber();
+                   	$userContact = new UserContact();
+					$userContact->userId = $user->id;
+					$userContact->isPrimary = true;
+					$userContact->labelId = Label::LABEL_WORK;
+					$userContact->save();
+                    $phone = new UserPhone();
                     $phone->number = $phoneNumber;
-                    $phone->label_id = PhoneNumber::LABEL_WORK;
-                    $phone->user_id = $user->id;
-
                     if (!empty($row['Billing Work Tel Ext.'])) {
                         $phone->extension = $row['Billing Work Tel Ext.'];
                     }
-
                     $phone->save();
                 }
 
                 if (!empty($row['Billing Other Tel'])) {
                     $phoneNumber = $row['Billing Other Tel'];
-                    $phone = new PhoneNumber();
+                    $userContact = new UserContact();
+					$userContact->userId = $user->id;
+					$userContact->isPrimary = true;
+					$userContact->labelId = Label::LABEL_WORK;
+					$userContact->save();
+                    $phone = new UserPhone();
                     $phone->number = $phoneNumber;
-                    $phone->label_id = PhoneNumber::LABEL_OTHER;
-                    $phone->user_id = $user->id;
-
                     if (!empty($row['Billing Other Tel Ext.'])) {
                         $phone->extension = $row['Billing Other Tel Ext.'];
                     }
-
                     $phone->save();
                 }
 				if(!empty($row['Opening Balance'])) {
