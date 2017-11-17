@@ -39,7 +39,8 @@ use common\models\Lesson;
 		]);
 		?>
 	</div>
-    <div class="col-md-5 form-group m-t-25">
+    <div class="col-md-6 form-group m-t-25">
+        <div class="pull-right">
 		<?= Html::submitButton(Yii::t('backend', 'Apply'), [
 			'id' => 'lesson-review-apply',
 			'class' => 'btn btn-info m-t-10',
@@ -55,6 +56,7 @@ use common\models\Lesson;
 		<?= Html::a('Cancel','#', ['id' => 'lesson-review-cancel','class' => 'btn btn-default']);
 		?>
 		<div class="clearfix"></div>
+        </div>
 	</div>
 </div>
      <div class="row">
@@ -75,6 +77,9 @@ use common\models\Lesson;
 	<?= $form->field($model, 'applyContext')->hiddenInput()->label(false);?>
 <div class="row">
 	<div class="col-md-12 p-l-20 form-group">
+            <div class="pull-right">
+            <?= Html::a('Cancel','#', ['id' => 'lesson-review-cancel','class' => 'btn btn-default']);
+		?>
 		<?= Html::submitButton(Yii::t('backend', 'Apply'), [
                     
 			'id' => 'lesson-review-apply',
@@ -88,10 +93,9 @@ use common\models\Lesson;
 			'name' => 'button',
 			'value' => Lesson::APPLY_ALL_FUTURE_LESSONS
 		]) ?>
-		<?= Html::a('Cancel','#', ['id' => 'lesson-review-cancel','class' => 'btn btn-default']);
-		?>
 		<div class="clearfix"></div>
 	</div>
+        </div>
 </div>
 <?php ActiveForm::end(); ?>
 <script type="text/javascript">
