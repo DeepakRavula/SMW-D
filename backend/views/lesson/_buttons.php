@@ -38,10 +38,6 @@ use kartik\switchinput\SwitchInput;
 	<?= Html::a('<i title="Delete" class="fa fa-trash-o"></i>', ['private-lesson/delete', 'id' => $model->id], [
 		'class' => 'btn btn-box-tool m-r-10',
 		'id' => 'lesson-delete',
-		'data' => [
-			'confirm' => 'Are you sure you want to delete this lesson?',
-			'method' => 'post',
-		],
 	])
 	?>	
 <?php endif; ?>

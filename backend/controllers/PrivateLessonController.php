@@ -25,12 +25,11 @@ class PrivateLessonController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['post'],
                 ],
             ],
 			'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['merge', 'update-attendance'],
+                'only' => ['merge', 'update-attendance', 'delete'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -121,21 +120,20 @@ class PrivateLessonController extends Controller
     {
         $model = $this->findModel($id);
 		if (($model->hasProFormaInvoice() && $model->proFormaInvoice->hasPayments()) || ($model->hasInvoice() && $model->invoice->hasPayments())) {
-			$class = 'alert-danger';
-			$link = Url::to(['lesson/view', 'id' => $model->id]);
-			$message = 'Lesson has payments. You can\'t delete this lesson.';
+			$response = [
+				'status' => false,
+				'message' => 'Lesson has payments. You can\'t delete this lesson.',
+			];
 		} else {
 			$model->delete();
-			$class = 'alert-success';
-			$link = Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]);
-			$message = 'Lesson has been deleted successfully';
+			$response = [
+				'status' => true,
+				'url' => Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]),
+				'message' => 'Lesson has been deleted successfully',
+			];
 		}
 
-		Yii::$app->session->setFlash('alert', [
-			'options' => ['class' => $class],
-			'body' => $message,
-                ]);
-        return $this->redirect($link);
+        return $response;
     }
 
     public function actionSplit($id)
