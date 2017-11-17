@@ -124,9 +124,9 @@ $teacherId = $courseModel->teacher->id;
                     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                     defaultDate: date,
                     header: {
-                        left: 'prev,next today',
+                        left: 'prev',
                         center: 'title',
-                        right: 'agendaWeek'
+                        right:  'next',
                     },
                     allDaySlot: false,
                     slotDuration: '00:15:00',
