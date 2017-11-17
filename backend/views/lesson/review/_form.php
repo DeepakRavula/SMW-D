@@ -18,7 +18,7 @@ use common\models\Lesson;
 ?>
 <div class="row">
 	<div class="col-md-6">
-			   <div class="col-md-4">
+			   <div class="col-md-6">
             <div class="form-group field-calendar-date-time-picker-date">
                 <label class="control-label" for="calendar-date-time-picker-date">Reschedule Date</label>
                 <div id="calendar-date-time-picker-date-datetime" class="input-group date">
@@ -41,6 +41,16 @@ use common\models\Lesson;
 		]);
 		?>
 	</div>
+     <div class="row">
+        <div class="col-md-12">
+            <div id="lesson-edit-calendar">
+                <div id="loadingspinner" class="spinner" style="" >
+                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                    <span class="sr-only">Loading...</span>
+                </div>  
+            </div>
+        </div>
+    </div>
     <div id="spinner" class="spinner col-md-4 col-md-offset-4" style="display:none;">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
 <span class="sr-only">Loading...</span>
@@ -66,3 +76,10 @@ use common\models\Lesson;
 	</div>
 </div>
 <?php ActiveForm::end(); ?>
+<script type="text/javascript">
+$(document).ready(function() {
+$(document).on('click', '.glyphicon-remove', function () {
+        $('#lesson-date').val('').trigger('change');
+    });
+    });
+</script>
