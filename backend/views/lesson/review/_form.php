@@ -18,20 +18,18 @@ use common\models\Lesson;
 ?>
 <div class="row">
 	<div class="col-md-6">
-			<?php
-			echo $form->field($model, 'date')->widget(DateTimePicker::classname(), [
-				'options' => [
-					'value' => $model->isUnscheduled() ? '' : Yii::$app->formatter->asDateTime($model->date),
-				],
-				'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
-				'pluginOptions' => [
-					'autoclose' => true,
-					'format' => 'dd-mm-yyyy HH:ii P',
-					'showMeridian' => true,
-					'minuteStep' => 15,
-				],
-			])->label('Date & Time');
-			?>
+			   <div class="col-md-4">
+            <div class="form-group field-calendar-date-time-picker-date">
+                <label class="control-label" for="calendar-date-time-picker-date">Reschedule Date</label>
+                <div id="calendar-date-time-picker-date-datetime" class="input-group date">
+                    <input type="text" id="lesson-date" class="form-control" name="Lesson[date]"
+                           value='<?php echo Yii::$app->formatter->asDateTime($model->date); ?>' readonly>
+                    <span class="input-group-addon" title="Clear field">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </span>
+                </div>
+            </div>       
+        </div>
 		</div>
 	<div class="col-md-4">
 		<?php

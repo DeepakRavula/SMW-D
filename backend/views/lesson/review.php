@@ -5,15 +5,23 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\bootstrap\Modal;
 use common\components\gridView\AdminLteGridView;
+use common\models\LocationAvailability;
 
 use kartik\datetime\DateTimePickerAsset;
 DateTimePickerAsset::register($this);
-
+require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 $this->title = 'Review Lessons';
 $this->params['show-all'] = $this->render('review/_show-all', [
 	'searchModel' => $searchModel
 ]);
 ?>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
+<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
+<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <div class="row">
 	<div class="col-md-6">
 		<?=
@@ -116,6 +124,20 @@ Modal::begin([
 ]); ?>
 <div id="review-lesson-content"></div>
 <?php Modal::end();?>		
+<?php
+$locationId = Yii::$app->session->get('location_id');
+$minLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['fromTime' => SORT_ASC])
+    ->one();
+$maxLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['toTime' => SORT_DESC])
+    ->one();
+$from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+$to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+$teacherId=$courseModel->teacher->id;
+?>
 <script>
 	var review = {
 		onEditableGridSuccess: function () {
@@ -141,6 +163,74 @@ Modal::begin([
 		if ($('#confirm-button').attr('disabled')) {
 			$('#confirm-button').bind('click', false);
 		}
+                 var calendar = {
+            load: function (events, availableHours) {
+                //var teacherId = $('#lesson-teacherid').val();
+                //var params = $.param({teacherId: teacherId});
+                $('#lesson-edit-calendar').fullCalendar('destroy');
+                $('#lesson-edit-calendar').fullCalendar({
+                    schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'agendaWeek'
+                    },
+                    allDaySlot: false,
+                    slotDuration: '00:15:00',
+                    titleFormat: 'DD-MMM-YYYY, dddd',
+                    defaultView: 'agendaWeek',
+                    minTime: "<?php echo $from_time; ?>",
+                    maxTime: "<?php echo $to_time; ?>",
+                    selectConstraint: 'businessHours',
+                    eventConstraint: 'businessHours',
+                    businessHours: availableHours,
+                    overlapEvent: false,
+                    overlapEventsSeparate: true,
+                    events: events,
+                    select: function (start, end, allDay) {
+                        $('#lesson-edit-calendar').fullCalendar('removeEvents', 'newEnrolment');
+                        var duration = $('#course-duration').val();
+                        var endtime = start.clone();
+                        var durationMinutes = moment.duration(duration).asMinutes();
+                        moment(endtime.add(durationMinutes, 'minutes'));
+
+                        $('#lesson-edit-calendar').fullCalendar('renderEvent',
+                                {
+                                    id: 'newEnrolment',
+                                    start: start,
+                                    end: endtime,
+                                    allDay: false
+                                },
+                                true // make the event "stick"
+                                );
+                        $('#lesson-edit-calendar').fullCalendar('unselect');
+                    },
+                    selectable: true,
+                    selectHelper: true,
+                    eventAfterAllRender: function () {
+                        $('.fc-short').removeClass('fc-short');
+                    },
+                });
+            }
+        };
+        var refreshcalendar = {
+            refresh: function () {
+                var events, availableHours;
+                var teacherId = <?=$teacherId?>;
+                        $.ajax({
+                        url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
+                        type: 'get',
+                        dataType: "json",
+                        success: function (response)
+                        {
+                            alert(response.events);
+                            events = response.events;
+                            availableHours = response.availableHours;
+                             calendar.load(events,availableHours);
+                        }
+                    });
+            }
+        };
 		$("#lessonsearch-showallreviewlessons").on("change", function () {
 			var showAllReviewLessons = $(this).is(":checked");
 			var startDate = '<?= $rescheduleBeginDate; ?>';
@@ -174,6 +264,7 @@ Modal::begin([
                     {
                         $('#review-lesson-content').html(response.data);
                         $('#review-lesson-modal').modal('show');
+                         refreshcalendar.refresh();
                     }
                 }
             });
