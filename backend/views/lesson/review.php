@@ -4,6 +4,7 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\bootstrap\Modal;
+use yii\grid\GridView;
 use common\components\gridView\AdminLteGridView;
 use common\models\LocationAvailability;
 
@@ -11,9 +12,6 @@ use kartik\datetime\DateTimePickerAsset;
 DateTimePickerAsset::register($this);
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 $this->title = 'Review Lessons';
-$this->params['show-all'] = $this->render('review/_show-all', [
-	'searchModel' => $searchModel
-]);
 ?>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
@@ -29,6 +27,8 @@ $this->params['show-all'] = $this->render('review/_show-all', [
 			'courseModel' => $courseModel,
 		]);
 		?>
+	</div>
+	<div class="col-md-6">
 		<?php if(empty($rescheduleBeginDate)) : ?>
 			<?=
 			$this->render('review/_summary', [
@@ -40,74 +40,22 @@ $this->params['show-all'] = $this->render('review/_show-all', [
 			?>
 		<?php endif; ?>
 	</div>
-	<div class="col-md-6">
-		<?=
-		$this->render('review/_teacher-availability', [
-			'courseModel' => $courseModel,
-		]);
-		?>
-	</div>
 </div>
-
 <?php
 $hasConflict = false;
 if ($conflictedLessonIdsCount > 0) {
 		$hasConflict = true;
 	}
 ?>
-<?php
-$columns = [
-		[
-		'label' => 'Date/Time',
-		'attribute' => 'date',
-		'format' => 'datetime',
-		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-		'contentOptions' => ['class' => 'kv-sticky-column'],
-	],
-		[
-		'attribute' => 'duration',
-		'value' => function ($model, $key, $index, $widget) {
-			return (new \DateTime($model->duration))->format('H:i');
-		},
-		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-		'contentOptions' => ['class' => 'kv-sticky-column'],
-	],
-		[
-		'label' => 'Conflict',
-		'headerOptions' => ['class' => 'bg-light-gray'],
-		'value' => function ($data) use ($conflicts) {
-			if (!empty($conflicts[$data->id])) {
-				return current($conflicts[$data->id]);
-			}
-		},
-	],
-	[
-		'class' => 'yii\grid\ActionColumn',
-		'template' => '{edit}',
-		'buttons' => [
-			'edit' => function  ($url, $model) {
-				return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>','#', [
-					'id' => 'edit-button-' . $model->id,
-					'class' => 'review-lesson-edit-button m-l-20'
-				]);
-			},
-		],
-	],
-];
-?>
-	<?php yii\widgets\Pjax::begin([
-		'id' => 'review-lesson-listing',
-		'timeout' => 6000,
-	]) ?>
-<?=
-AdminLteGridView::widget([
-	'dataProvider' => $lessonDataProvider,
-	'columns' => $columns,
-	'emptyText' => 'No conflicts here! You are ready to confirm!',
-]);
-?>
-<?php \yii\widgets\Pjax::end(); ?>
-	
+<div class="row">
+	<div class="col-md-12">
+		<?= $this->render('review/_view', [
+			'searchModel' => $searchModel,
+			'lessonDataProvider' => $lessonDataProvider,
+			'conflicts' => $conflicts
+		]);?>
+	</div>
+</div>
 <?= $this->render('review/_button', [
 	'hasConflict' => $hasConflict,
 	'rescheduleBeginDate' => $rescheduleBeginDate,
@@ -163,7 +111,7 @@ $teacherId=$courseModel->teacher->id;
 		if ($('#confirm-button').attr('disabled')) {
 			$('#confirm-button').bind('click', false);
 		}
-                 var calendar = {
+                var calendar = {
             load: function (events, availableHours) {
                 //var teacherId = $('#lesson-teacherid').val();
                 //var params = $.param({teacherId: teacherId});
@@ -231,7 +179,7 @@ $teacherId=$courseModel->teacher->id;
                     });
             }
         };
-		$("#lessonsearch-showallreviewlessons").on("change", function () {
+		$(document).on('change', '#lessonsearch-showallreviewlessons', function () {
 			var showAllReviewLessons = $(this).is(":checked");
 			var startDate = '<?= $rescheduleBeginDate; ?>';
 			var endDate = '<?= $rescheduleEndDate; ?>';

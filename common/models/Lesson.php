@@ -173,7 +173,7 @@ class Lesson extends \yii\db\ActiveRecord
 			'classroomId' => 'Classroom',
 			'summariseReport' => 'Summarize Results',
 			'toEmailAddress' => 'To',
-			'showAllReviewLessons' => 'Show All'
+			'showAllReviewLessons' => 'Show All',
         ];
     }
 

@@ -48,7 +48,7 @@ class InvoiceController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['delete', 'note', 'get-payment-amount','update-customer', 'create-walkin'],
+                'only' => ['delete', 'note', 'get-payment-amount','update-customer', 'create-walkin', 'fetch-user'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -207,18 +207,18 @@ class InvoiceController extends Controller
         $locationId = $session->get('location_id');
         $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
                 
-            $userData=User::find()
+        $userData=User::find()
 			->joinWith('userLocation ul')
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'customer'])
 			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
-                        ->notDeleted()
-                        ->joinWith(['student' => function ($query) use ($currentDate) {
-                            $query->enrolled($currentDate);
-                            }])
+			->notDeleted()
+			->joinWith(['student' => function ($query) use ($currentDate) {
+				$query->enrolled($currentDate);
+			}])
 			->active()
-                        ->groupBy('user.id');
-            $userDataProvider = new ActiveDataProvider([
+            ->groupBy('user.id');
+        $userDataProvider = new ActiveDataProvider([
             'query' => $userData,
         ]);
         $invoicePayments = Payment::find()
@@ -264,7 +264,39 @@ class InvoiceController extends Controller
             'userDataProvider'=>$userDataProvider,
         ]);
     }
-
+	public function actionFetchUser($id, $userName)
+	{
+		$model = $this->findModel($id);
+        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+		$userData = User::find()
+			->joinWith(['userLocation ul' => function($userData) use($userName){
+				$userData->joinWith(['userProfile' => function($userData) use($userName){ 
+					$userData->andWhere(['LIKE', 'user_profile.firstname', $userName])
+					->orWhere(['LIKE', 'user_profile.lastname', $userName]);
+				}]);
+			}])
+			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+			->andWhere(['raa.item_name' => 'customer'])
+			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+			
+			->notDeleted()
+			->joinWith(['student' => function ($query) use ($currentDate) {
+				$query->enrolled($currentDate);
+			}])
+			->active()
+            ->groupBy('user.id');
+        $userDataProvider = new ActiveDataProvider([
+            'query' => $userData,
+        ]);	
+		$data = $this->renderAjax('customer/_list', [
+			'userDataProvider' => $userDataProvider,
+			'model' => $model
+		]);
+		return [
+			'status' => true,
+			'data' => $data
+		];
+	}
     public function actionAddMisc($id)
     {
         $response = \Yii::$app->response;
