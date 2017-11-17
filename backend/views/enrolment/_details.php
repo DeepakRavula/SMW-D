@@ -21,8 +21,12 @@ LteBox::begin([
 	</dd>
 	<dt>Teacher</dt>
 	<dd><?= $model->course->teacher->publicIdentity; ?></dd>
-	<dt>Rate</dt>
-	<dd><?= $model->enrolmentProgramRate->programRate; ?></dd>
+        <?php foreach ($model->enrolmentProgramRates as $enrolmentProgramRate) : ?>
+	<dt>Rate <?= $enrolmentProgramRate->startDate . '-' . $enrolmentProgramRate->endDate ?></dt>
+	<dd><?= $enrolmentProgramRate->programRate; ?></dd>
+        <?php endforeach; ?>
+        <dt>Auto Renewal</dt>
+	<dd><?= $model->isAutoRenew ? "Enabled" : 'Disabled' ; ?></dd>
 	<dt>Duration</dt>
 	<dd><?= (new \DateTime($model->courseSchedule->duration))->format('H:i'); ?></dd>
 </dl>

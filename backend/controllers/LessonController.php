@@ -675,7 +675,7 @@ class LessonController extends Controller
             $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
-            $enrolmentModel->setPaymentCycle();
+            $enrolmentModel->setPaymentCycle($enrolmentModel->firstLesson->date);
             $user = User::findOne(['id' => Yii::$app->user->id]);
 			$enrolmentModel->on(Enrolment::EVENT_CREATE,[new TimelineEventEnrolment(), 'create'], ['userName' => $user->publicIdentity]);
 			$enrolmentModel->trigger(Enrolment::EVENT_CREATE);

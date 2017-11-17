@@ -131,19 +131,25 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $startDate  = new \DateTime($this->startDate);
         $endDate    = new \DateTime($this->endDate);
         $lessons = Lesson::find()
-			->isConfirmed()
-            ->notDeleted()
-            ->location($locationId)
-            ->andWhere(['courseId' => $this->enrolment->course->id])
-            ->notRescheduled()
-            ->andWhere(['OR', ['status' => Lesson::STATUS_SCHEDULED], ['status' => Lesson::STATUS_UNSCHEDULED]])
-            ->between($startDate, $endDate)
-            ->all();
+                    ->isConfirmed()
+                    ->regular()
+                    ->paymentCycleLessonExcluded()
+                    ->notDeleted()
+                    ->location($locationId)
+                    ->andWhere(['courseId' => $this->enrolment->course->id])
+                    ->notRescheduled()
+                    ->andWhere(['OR', ['status' => Lesson::STATUS_SCHEDULED], ['status' => Lesson::STATUS_UNSCHEDULED]])
+                    ->between($startDate, $endDate)
+                    ->all();
         foreach ($lessons as $lesson) {
             $paymentCycleLesson                 = new PaymentCycleLesson();
             $paymentCycleLesson->paymentCycleId = $this->id;
             $paymentCycleLesson->lessonId       = $lesson->id;
             $paymentCycleLesson->save();
+            if ($this->proFormaInvoice) {
+                $lesson->addPrivateLessonLineItem($this->proFormaInvoice);
+                $this->proFormaInvoice->save();
+            }
         }
         return parent::afterSave($insert, $changedAttributes);
     }

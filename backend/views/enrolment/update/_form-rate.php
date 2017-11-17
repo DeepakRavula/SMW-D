@@ -2,6 +2,8 @@
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
+use common\models\User;
 
 /* 
  * To change this license header, choose License Headers in Project Properties.
@@ -16,10 +18,21 @@ use yii\helpers\Url;
         'id' => 'enrolment-rate-form',
         'action' => Url::to(['enrolment/edit', 'id' => $model->id]),
     ]); ?>
-    <div class="row">
-        <div class="col-md-8">
-            <?= $form->field($model, 'programRate')->textInput(); ?>
+<div class="row">
+    <?php
+        $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'name');
+        $role = end($roles);
+    ?>
+    <div class="col-md-4">
+        <?= $form->field($model, 'isAutoRenew')->textInput(); ?>
+    </div>
+    <?php if ($role === User::ROLE_ADMINISTRATOR) : ?>
+        <?php foreach ($enrolmentProgramRates as $enrolmentProgramRate) : ?>
+        <div class="col-md-4">
+            <?= $form->field($enrolmentProgramRate, 'programRate')->textInput(); ?>
         </div>
+        <?php endforeach; ?>
+    <?php endif; ?>    
 		<div class="clearfix"></div>
 		 <div id="spinner" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -30,5 +43,6 @@ use yii\helpers\Url;
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-rate-cancel']);?>
             <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'enrolment-edit-save-btn']) ?>
 </div>        
+</div>
 </div>
     <?php ActiveForm::end(); ?>

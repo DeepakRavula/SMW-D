@@ -41,7 +41,7 @@ DateTimePickerAsset::register($this);
 </div>
 <?php
 Modal::begin([
-	'header' => '<h4 class="m-0">Program Rate Edit</h4>',
+	'header' => '<h4 class="m-0">Edit</h4>',
 	'id' => 'enrolment-rate-edit-modal',
 ]);
 ?>
