@@ -32,6 +32,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<div id="view-danger-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="row">
 	<div class="col-md-6">
 		<?=
@@ -327,14 +328,32 @@ Modal::end();
 		});
 		return false;
 	});
-//	$('input[name="Lesson[present]"]').on('switchChange.bootstrapSwitch', function(event, state) {
-//		$.ajax({
-//			url    : '<?= Url::to(['lesson/missed', 'id' => $model->id]) ?>',
-//			type   : 'POST',
-//			dataType: "json",
-//			data   : $('#lesson-present-form').serialize(),
-//			success: function(response) {}
-//		});
-//	});	
+	$(document).on('click', '#lesson-delete', function () {
+		var id = '<?= $model->id;?>';
+		 bootbox.confirm({ 
+  			message: "Are you sure you want to delete this lesson?", 
+  			callback: function(result){
+				if(result) {
+					$('.bootbox').modal('hide');
+				$.ajax({
+					url: '<?= Url::to(['private-lesson/delete']); ?>?id=' + id,
+					type: 'post',
+					success: function (response)
+					{
+						if (response.status)
+						{
+                            window.location.href = response.url;
+							$('#index-success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+						} else {
+							$('#view-danger-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+						}
+					}
+				});
+				return false;	
+			}
+			}
+		});	
+		return false;
+    });
 });
 </script>
