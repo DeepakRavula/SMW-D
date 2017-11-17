@@ -272,3 +272,10 @@ dl {
 .invoice-search {
 	margin-top :-15px;
 }
+.invoice-customer {
+	margin-left:10px;
+}
+.invoice-customer label{
+	margin-top:-8px;
+	font-size: 18px;
+}

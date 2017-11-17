@@ -49,7 +49,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 			'model' => $model,
 			'customer' => $customer,
 			'searchModel' => $searchModel,
-                        'userDataProvider'=>$userDataProvider,
+            'userDataProvider' => $userDataProvider,
 		]);
 		?>	
 	</div>
@@ -197,29 +197,6 @@ Modal::end();
 ]);?>
 <?php Modal::end();?>
 <script>
-var invoice = {
-    onEditableGridSuccess : function(event, val, form, data) {
-        invoice.updateSummarySectionAndStatus();
-    },
-    updateInvoiceStatus : function(status){
-        $('#invoice-status').text(status);
-
-    },
-    updateSummarySectionAndStatus : function() {
-        $.ajax({
-            url    : '<?= Url::to(['invoice/fetch-summary-and-status', 'id' => $model->id]) ?>',
-            type   : 'GET',
-            dataType: "json",
-            success: function(response)
-            {
-                $('#invoice-summary-section').html(response.summary);
-                invoice.updateInvoiceStatus(response.status);
-                $('#invoice-payment-detail').html(response.details);
-            }
-        });
-        return false;
-    }
-}
  $(document).ready(function() {
  
 	$(document).on('click', '.add-invoice-note', function (e) {
@@ -228,6 +205,7 @@ var invoice = {
   	});
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$(document).on('click', '.add-customer', function (e) {
+		$('#invoice-username').val('');
 		$('#invoice-customer-modal').modal('show');
 		return false;
   	});
@@ -350,7 +328,6 @@ var invoice = {
 					$.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
                                         $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                                         $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
-					//payment.onEditableGridSuccess();
 				}else
 				{
 				 $('#payment-form').yiiActiveForm('updateMessages',
@@ -410,8 +387,6 @@ var invoice = {
 					$.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
                    $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000}); 
-					//payment.onEditableGridSuccess();
-					//invoice.onEditableGridSuccess();
 					if(response.message) {
 						$('#invoice-discount-warning').html(response.message).fadeIn().delay(8000).fadeOut();
 					}
@@ -437,7 +412,6 @@ var invoice = {
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
 					$('input[name="Payment[amount]"]').val(response.amount);
-					//payment.onEditableGridSuccess();
                     $('#payment-edit-modal').modal('hide');
 				}else
 				{
@@ -457,7 +431,6 @@ var invoice = {
 			   if(response.status)
 			   {
 					$.pjax.reload({container : '#invoice-view', timeout : 6000});
-					//payment.onEditableGridSuccess();
                     $('#payment-edit-modal').modal('hide');
 				} 
 			}
