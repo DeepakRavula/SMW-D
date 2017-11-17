@@ -2,6 +2,7 @@
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use kartik\switchinput\SwitchInput;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 
@@ -23,16 +24,31 @@ use common\models\User;
         $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'name');
         $role = end($roles);
     ?>
-    <div class="col-md-4">
-        <?= $form->field($model, 'isAutoRenew')->textInput(); ?>
-    </div>
+    
     <?php if ($role === User::ROLE_ADMINISTRATOR) : ?>
-        <?php foreach ($enrolmentProgramRates as $enrolmentProgramRate) : ?>
-        <div class="col-md-4">
-            <?= $form->field($enrolmentProgramRate, 'programRate')->textInput(); ?>
+        <div class="col-md-6">
+            <label>Rate From <?= $enrolmentProgramRate->startDate . ' To ' . $enrolmentProgramRate->endDate ?></label>
+            <?= $form->field($enrolmentProgramRate, 'programRate')->textInput()->label(false); ?>
         </div>
-        <?php endforeach; ?>
-    <?php endif; ?>    
+    <?php else : ?>
+        <div class="col-md-6">
+            <?= $form->field($enrolmentProgramRate, 'programRate')->hiddenInput()->label(false); ?>
+        </div>
+    <?php endif; ?>   
+    
+    <div class="col-md-4">
+        <?php echo $form->field($model, 'isAutoRenew')->widget(SwitchInput::classname(),
+                [
+                'pluginOptions' => [
+                    'size' => 'Medium',
+                    'onColor' => 'success',
+                    'offColor' => 'danger',
+                    'handleWidth' => 60,
+                    'onText' => 'Enable',
+                    'offText' => 'Disable',
+                ],
+        ])->label('Auto Renew');?>
+    </div>
 		<div class="clearfix"></div>
 		 <div id="spinner" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>

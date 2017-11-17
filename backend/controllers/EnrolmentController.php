@@ -159,17 +159,15 @@ class EnrolmentController extends Controller
         $model = $this->findModel($id);
         $data = $this->renderAjax('update/_form-rate', [
             'model' => $model,
-            'enrolmentProgramRates' => $model->enrolmentProgramRates,
+            'enrolmentProgramRate' => $model->enrolmentProgramRate,
         ]);
-        $enrolmentProgramRates = $model->enrolmentProgramRates;
+        $enrolmentProgramRate = $model->enrolmentProgramRate;
+        
         $post = Yii::$app->request->post();
         if ($post) {
-            if ($model->load($post)) {
-                Model::loadMultiple($enrolmentProgramRates, $post);
+            if ($model->load($post) && $enrolmentProgramRate->load($post)) {
                 $model->save();
-                foreach ($enrolmentProgramRates as $enrolmentProgramRate) {
-                    $enrolmentProgramRate->save();
-                }
+                $enrolmentProgramRate->save();
                 $message = 'Program Rate successfully updated!';
                 return [
                     'status' => true,
