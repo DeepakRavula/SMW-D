@@ -47,7 +47,7 @@ Modal::begin([
 ?>
 <?= $this->render('update/_form-rate', [
 	'model' => $model,
-	'enrolmentProgramRate' => $model->enrolmentProgramRate,
+	'enrolmentProgramRates' => $model->enrolmentProgramRates,
 ]);?>
 <?php Modal::end(); ?>
 <?php
