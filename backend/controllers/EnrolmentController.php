@@ -158,19 +158,22 @@ class EnrolmentController extends Controller
     {
         $model = $this->findModel($id);
         $data = $this->renderAjax('update/_form-rate', [
-            'model' => $model->enrolmentProgramRate,
+            'model' => $model,
+            'enrolmentProgramRate' => $model->enrolmentProgramRate,
         ]);
-        $model=$model->enrolmentProgramRate;
+        $enrolmentProgramRate = $model->enrolmentProgramRate;
+        
         $post = Yii::$app->request->post();
         if ($post) {
-            if ($model->load($post)) {
+            if ($model->load($post) && $enrolmentProgramRate->load($post)) {
                 $model->save();
+                $enrolmentProgramRate->save();
+                $message = 'Program Rate successfully updated!';
+                return [
+                    'status' => true,
+                    'message' => $message,
+                ];
             }
-            $message = 'Program Rate successfully updated!';
-            return [
-                'status' => true,
-                'message' => $message,
-            ];
         } else {
 
             return [
@@ -314,7 +317,7 @@ class EnrolmentController extends Controller
             $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
-            $enrolmentModel->setPaymentCycle();
+            $enrolmentModel->setPaymentCycle($enrolmentModel->firstLesson->date);
         }
 		Yii::$app->session->setFlash('alert', [
 			'options' => ['class' => 'alert-success'],

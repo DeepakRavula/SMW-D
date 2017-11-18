@@ -28,6 +28,7 @@ class Enrolment extends \yii\db\ActiveRecord
 	public $enrolmentCount;
     public $userName;
 	
+    const AUTO_RENEWAL_DAYS_FROM_END_DATE = 90;
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA   = 2;
 	const TYPE_REVERSE = 'reverse';
@@ -65,7 +66,7 @@ class Enrolment extends \yii\db\ActiveRecord
             [['courseId'], 'required'],
             [['courseId', 'studentId'], 'integer'],
             [['paymentFrequencyId', 'type',  'isDeleted', 'isConfirmed',
-                'hasEditable'], 'safe'],
+                'hasEditable', 'isAutoRenew'], 'safe'],
         ];
     }
 
@@ -139,14 +140,21 @@ class Enrolment extends \yii\db\ActiveRecord
             ->orderBy(['payment_cycle.startDate' => SORT_ASC]);
     }
 
-	public function getVacation()
+    public function getVacation()
     {
         return $this->hasOne(Vacation::className(), ['studentId' => 'studentId']);
     }
-     public function getEnrolmentProgramRate()
+    
+    public function getEnrolmentProgramRate()
     {
       return $this->hasOne(EnrolmentProgramRate::className(), ['enrolmentId' => 'id']);  
     }
+    
+    public function getEnrolmentProgramRates()
+    {
+      return $this->hasMany(EnrolmentProgramRate::className(), ['enrolmentId' => 'id']);  
+    }
+    
     public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'programId'])
@@ -389,6 +397,7 @@ class Enrolment extends \yii\db\ActiveRecord
             if (empty($this->type)) {
                 $this->type = self::TYPE_REGULAR;
             }
+            $this->isAutoRenew = true;
         }
         return parent::beforeSave($insert);
     }
@@ -520,9 +529,9 @@ class Enrolment extends \yii\db\ActiveRecord
         }
     }
 
-    public function setPaymentCycle()
+    public function setPaymentCycle($startDate)
     {
-        $enrolmentStartDate      = \DateTime::createFromFormat('Y-m-d H:i:s', $this->firstLesson->date);
+        $enrolmentStartDate      = new \DateTime($startDate);
         $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
         for ($i = 0; $i <= (int) 12 / $this->paymentsFrequency->frequencyLength; $i++) {
             if ($i !== 0) {

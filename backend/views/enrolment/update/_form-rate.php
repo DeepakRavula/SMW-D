@@ -2,6 +2,7 @@
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use common\models\User;
 
 /* 
  * To change this license header, choose License Headers in Project Properties.
@@ -16,19 +17,35 @@ use yii\helpers\Url;
         'id' => 'enrolment-rate-form',
         'action' => Url::to(['enrolment/edit', 'id' => $model->id]),
     ]); ?>
-    <div class="row">
-        <div class="col-md-8">
-            <?= $form->field($model, 'programRate')->textInput(); ?>
+<div class="row">
+    <?php $user = User::findOne(Yii::$app->user->id); ?>
+    
+    <div class="col-md-4">
+        <label>Auto Renew</label>
+        <?= $form->field($model, 'isAutoRenew')->checkbox(['data-toggle' => "toggle", 
+            "data-on" => "Enable", "data-off" => "Disable", 'data-width' => '100',
+            "data-onstyle" => "success", "data-offstyle" => "danger"])->label(false); ?>
+    </div>
+    <?php if ($user->isAdmin()) : ?>
+        <div class="col-md-6">
+            <label>Rate From <?= $enrolmentProgramRate->startDate . ' To ' . $enrolmentProgramRate->endDate ?></label>
+            <?= $form->field($enrolmentProgramRate, 'programRate')->textInput()->label(false); ?>
         </div>
-		<div class="clearfix"></div>
-		 <div id="spinner" class="spinner" style="display:none">
-    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-    <span class="sr-only">Loading...</span>
-</div>
-            <div class="form-group col-md-12">
-<div class="pull-right">
+    <?php else : ?>
+        <div class="col-md-6">
+            <?= $form->field($enrolmentProgramRate, 'programRate')->hiddenInput()->label(false); ?>
+        </div>
+    <?php endif; ?>   
+    
+    <div id="spinner" class="spinner" style="display:none">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+    </div>
+    <div class="form-group col-md-12">
+        <div class="pull-right">
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-rate-cancel']);?>
             <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'enrolment-edit-save-btn']) ?>
-</div>        
+        </div>        
+    </div>
 </div>
     <?php ActiveForm::end(); ?>

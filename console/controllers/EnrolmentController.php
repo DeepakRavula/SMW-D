@@ -5,6 +5,7 @@ namespace console\controllers;
 use Yii;
 use Carbon\Carbon;
 use common\models\User;
+use common\models\Enrolment;
 use yii\console\Controller;
 use common\models\Course;
 use common\models\EnrolmentProgramRate;
@@ -20,13 +21,17 @@ class EnrolmentController extends Controller
     
     public function actionAutoRenewal()
     {
-        $priorDate = (new \DateTime())->modify('+90 day');
+        $priorDate = (new Carbon())->addDays(Enrolment::AUTO_RENEWAL_DAYS_FROM_END_DATE);
         $courses = Course::find()
                 ->confirmed()
                 ->needToRenewal($priorDate)
                 ->privateProgram()
                 ->all();
         foreach ($courses as $course) {
+            $lastPaymentCycle = $course->enrolment->lastPaymentCycle;
+            $lastPaymentCycleStartDate = new Carbon($lastPaymentCycle->startDate);
+            $lastPaymentCycleEndDate = new Carbon($lastPaymentCycle->endDate);
+            $lastPaymentCycleMonthCount = $lastPaymentCycleEndDate->diffInMonths($lastPaymentCycleStartDate);
             $renewalStartDate = (new Carbon($course->endDate))->addDays(1);
             $renewalEndDate = (new Carbon($course->endDate))->addMonths(11)->endOfMonth();
             $enrolmentProgramRate = new EnrolmentProgramRate();
@@ -50,7 +55,16 @@ class EnrolmentController extends Controller
                     $course->createLesson($day, $isConfirmed);
                 }
             }
-            $course->enrolment->resetPaymentCycle();
+            if ($lastPaymentCycleMonthCount !== $course->enrolment->paymentsFrequency->frequencyLength) {
+                $lastPaymentCycle->endDate = $lastPaymentCycleStartDate
+                        ->addMonth($course->enrolment->paymentsFrequency->frequencyLength)
+                        ->subDay(1);
+                $lastPaymentCycle->save();
+                $nextPaymentCycleStartDate = (new Carbon($lastPaymentCycle->endDate))->addDay(1);
+                $course->enrolment->setPaymentCycle($nextPaymentCycleStartDate);
+            } else {
+                $course->enrolment->setPaymentCycle($renewalStartDate);
+            }
         }
     }
 }
