@@ -47,7 +47,7 @@ LteBox::begin([
 	<?= SortableInput::widget([
 		'sortableOptions' => [
             'showHandle' => true,
-            'handleLabel' =>'<i class="fa fa-arrows"></i>',
+            'handleLabel' =>false,
 			'type' => 'list',
 			'pluginEvents' => [
 				'sortupdate' => 'contact.updatePrimary',

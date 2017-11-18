@@ -193,12 +193,12 @@ dl {
 .dropdown-content a:hover {background-color: #f1f1f1}
 .user-contact-list
 {
-  margin-top: -20px; 
   margin-left: -50px; 
   background-color: transparent;
 }
 .sortable li:focus, .sortable li:hover {
    background-color: transparent !important ;
+   cursor: move;
 }
 
 .user-profile {
