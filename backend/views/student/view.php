@@ -36,6 +36,14 @@ $this->params['label'] = $this->render('_title', [
 </div>
 <div class="row">
 	<?php
+	echo $this->render('enrolment/view', [
+		'model' => $model,
+		'enrolmentDataProvider' => $enrolmentDataProvider,
+	]);
+	?>
+</div>
+<div class="row">
+	<?php
 	echo $this->render('exam-result/view', [
 		'model' => new ExamResult(),
 		'studentModel' => $model,
@@ -43,23 +51,10 @@ $this->params['label'] = $this->render('_title', [
 	]);
 	?>
 </div>
-<div class="row">
-	<?php
-	echo $this->render('enrolment/_view', [
-		'model' => $model,
-		'enrolmentDataProvider' => $enrolmentDataProvider,
-	]);
-	?>
-</div>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div class="nav-tabs-custom">
 		<?php
-		$enrolmentContent = $this->render('enrolment/_view', [
-			'model' => $model,
-			'enrolmentDataProvider' => $enrolmentDataProvider,
-		]);
-
 		$lessonContent = $this->render('_lesson', [
 			'lessonDataProvider' => $lessonDataProvider,
 			'model' => $model,
@@ -92,13 +87,6 @@ $this->params['label'] = $this->render('_title', [
 			]);
 		}
 		$items = [
-				[
-				'label' => 'Enrolments',
-				'content' => $enrolmentContent,
-				'options' => [
-					'id' => 'enroment',
-				],
-			],
 				[
 				'label' => 'Lessons',
 				'content' => $lessonContent,
@@ -165,6 +153,10 @@ $this->params['label'] = $this->render('_title', [
         $(document).on('click', '#add-private-enrol', function () {
             $('#private-enrol-modal').modal('show');
             return false;
+		});
+		$(document).on('click', '.private-enrol-cancel', function() {
+			$('#private-enrol-modal').modal('hide');
+			return false;
 		});
         $(document).on('click', '.merge-cancel', function () {
             $('#student-merge-modal').modal('hide');

@@ -119,6 +119,9 @@ class ViewAction extends Action
 		
 		return new ActiveDataProvider([
 			'query' => $query,
+			'pagination' => [
+				'pageSize' => 5
+			]
 		]);
 	}
 	protected function findModel($id)
