@@ -5,6 +5,7 @@ namespace console\controllers;
 use Yii;
 use Carbon\Carbon;
 use common\models\User;
+use common\models\Enrolment;
 use yii\console\Controller;
 use common\models\Course;
 use common\models\EnrolmentProgramRate;
@@ -20,7 +21,7 @@ class EnrolmentController extends Controller
     
     public function actionAutoRenewal()
     {
-        $priorDate = (new \DateTime())->modify('+348 day');
+        $priorDate = (new Carbon())->addDays(Enrolment::AUTO_RENEWAL_DAYS_FROM_END_DATE);
         $courses = Course::find()
                 ->confirmed()
                 ->needToRenewal($priorDate)

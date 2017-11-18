@@ -2,8 +2,6 @@
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use kartik\switchinput\SwitchInput;
-use yii\helpers\ArrayHelper;
 use common\models\User;
 
 /* 
@@ -20,12 +18,15 @@ use common\models\User;
         'action' => Url::to(['enrolment/edit', 'id' => $model->id]),
     ]); ?>
 <div class="row">
-    <?php
-        $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'name');
-        $role = end($roles);
-    ?>
+    <?php $user = User::findOne(Yii::$app->user->id); ?>
     
-    <?php if ($role === User::ROLE_ADMINISTRATOR) : ?>
+    <div class="col-md-4">
+        <label>Auto Renew</label>
+        <?= $form->field($model, 'isAutoRenew')->checkbox(['data-toggle' => "toggle", 
+            "data-on" => "Enable", "data-off" => "Disable", 'data-width' => '100',
+            "data-onstyle" => "success", "data-offstyle" => "danger"])->label(false); ?>
+    </div>
+    <?php if ($user->isAdmin()) : ?>
         <div class="col-md-6">
             <label>Rate From <?= $enrolmentProgramRate->startDate . ' To ' . $enrolmentProgramRate->endDate ?></label>
             <?= $form->field($enrolmentProgramRate, 'programRate')->textInput()->label(false); ?>
@@ -36,20 +37,15 @@ use common\models\User;
         </div>
     <?php endif; ?>   
     
-    <div class="col-md-4">
-		<label> Auto Renew </label>
-		<?= $form->field($model, 'isAutoRenew')->label(false)->checkbox(['label' => '', 'data-toggle' => "toggle", "data-on" => "Yes", "data-off" => "No", "data-onstyle" => "success", "data-offstyle" => "default"]); ?>
+    <div id="spinner" class="spinner" style="display:none">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
     </div>
-		<div class="clearfix"></div>
-		 <div id="spinner" class="spinner" style="display:none">
-    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-    <span class="sr-only">Loading...</span>
-</div>
-            <div class="form-group col-md-12">
-<div class="pull-right">
+    <div class="form-group col-md-12">
+        <div class="pull-right">
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-rate-cancel']);?>
             <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'enrolment-edit-save-btn']) ?>
-</div>        
-</div>
+        </div>        
+    </div>
 </div>
     <?php ActiveForm::end(); ?>

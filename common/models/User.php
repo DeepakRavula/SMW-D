@@ -702,4 +702,11 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return !empty($this->invoice);
     }
+    
+    public function isAdmin()
+    {
+        $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($this->id), 'name');
+        $role = end($roles);
+        return $role === self::ROLE_ADMINISTRATOR;
+    }
 }
