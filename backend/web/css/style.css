@@ -85,6 +85,9 @@ body .user-panel > .info {
 .m-b-10 {
 	margin-bottom:10px;
 }
+.m-t-25 {
+    margin-top: 25px !important;
+}
 .primary-contact {
 	font-size: 15px;
 }
@@ -117,7 +120,7 @@ dl {
     white-space: nowrap;
   }
   .dl-invoice-summary dd {
-    margin-left: 290px;
+	text-align: right;
   }
   
 }
