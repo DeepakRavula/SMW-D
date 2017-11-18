@@ -123,10 +123,9 @@ $teacherId = $courseModel->teacher->id;
                 $('#lesson-edit-calendar').fullCalendar({
                     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                     defaultDate: date,
-                    header: {
-                        left: 'prev',
+                   header: {
+                        left: 'prev,next today',
                         center: 'title',
-                        right:  'next',
                     },
                     allDaySlot: false,
                     slotDuration: '00:15:00',
