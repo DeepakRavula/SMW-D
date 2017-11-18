@@ -43,6 +43,14 @@ $this->params['label'] = $this->render('_title', [
 	]);
 	?>
 </div>
+<div class="row">
+	<?php
+	echo $this->render('enrolment/_view', [
+		'model' => $model,
+		'enrolmentDataProvider' => $enrolmentDataProvider,
+	]);
+	?>
+</div>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div class="nav-tabs-custom">
@@ -154,6 +162,10 @@ $this->params['label'] = $this->render('_title', [
 
 <script>
     $(document).ready(function () {
+        $(document).on('click', '#add-private-enrol', function () {
+            $('#private-enrol-modal').modal('show');
+            return false;
+		});
         $(document).on('click', '.merge-cancel', function () {
             $('#student-merge-modal').modal('hide');
             return false;

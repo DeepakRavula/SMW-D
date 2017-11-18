@@ -10,7 +10,6 @@ use common\models\User;
 $this->title = 'Student Enrolment';
 
 ?>
- <div class="nav-tabs-custom">
 <?php 
 
 $privateCourseContent = $this->render('_form-private', [
@@ -41,5 +40,3 @@ $groupCourseContent = $this->render('_form-group', [
     ],
 ]);
 ?>
-<div class="clearfix"></div>
- </div>

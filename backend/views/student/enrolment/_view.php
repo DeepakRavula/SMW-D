@@ -4,48 +4,33 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\bootstrap\Modal;
 use common\models\LocationAvailability;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
+use common\models\Course;
 
 ?>
-<div class="row p-10">
-    <div class="pull-right m-r-10">
-    <?= Html::a('<i title="Add" class="fa fa-plus"></i>', ['enrolment', 'id' => $model->id], ['class' => 'add-new-lesson text-add-new']); ?>
-    <div class="clearfix"></div>
-    </div>
-	<?php
-    Modal::begin([
-        'header' => '<h4 class="m-0">Delete Enrolment Preview</h4>',
-        'id' => 'enrolment-preview-modal',
-    ]);
-    Modal::end();
-?>
-	<?php
-    Modal::begin([
-        'header' => '<h4 class="m-0">Add Vacation</h4>',
-        'id' => 'vacation-modal',
-    ]);?>
-	<div class="vacation-content"></div>
-   <?php Modal::end();?>
-    <div>
-    <?php yii\widgets\Pjax::begin([
-		'id' => 'enrolment-grid',
-        'timeout' => 6000,
-    ]) ?>
+<?php yii\widgets\Pjax::begin([
+	'id' => 'enrolment-grid',
+	'timeout' => 6000,
+]) ?>	
+<div class="col-md-12">	
+<?php
+	$toolBoxHtml = $this->render('_button', [
+		'model' => $model,
+	]);
+		LteBox::begin([
+			'type' => LteConst::TYPE_DEFAULT,
+			'boxTools' => $toolBoxHtml,
+			'title' => 'Enrolments',
+			'withBorder' => true,
+		])
+		?>
 	<?= $this->render('_list', [
 		'enrolmentDataProvider' => $enrolmentDataProvider, 
 	]); ?>
-    
-    <?php \yii\widgets\Pjax::end(); ?>
+   		<?php LteBox::end() ?> 
     </div>
-</div>
-
-<?php
-Modal::begin([
-	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
-	'id' => 'enrolment-edit-modal',
-]);
-?>
-<div id="enrolment-edit-content"></div>
-<?php Modal::end(); ?>
+    <?php \yii\widgets\Pjax::end(); ?>
 <?php
     $locationId = Yii::$app->session->get('location_id');
     $minLocationAvailability = LocationAvailability::find()
@@ -59,6 +44,36 @@ Modal::begin([
     $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
     $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
+<?php
+Modal::begin([
+	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
+	'id' => 'enrolment-edit-modal',
+]);
+?>
+<div id="enrolment-edit-content"></div>
+<?php Modal::end(); ?>
+<?php
+    Modal::begin([
+        'header' => '<h4 class="m-0">Delete Enrolment Preview</h4>',
+        'id' => 'enrolment-preview-modal',
+    ]);
+    Modal::end();
+?>
+	<?php
+    Modal::begin([
+        'header' => '<h4 class="m-0">Add Vacation</h4>',
+        'id' => 'vacation-modal',
+    ]);?>
+	<div class="vacation-content"></div>
+   <?php Modal::end();?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Add Private Enrolment</h4>',
+    'id' => 'private-enrol-modal',
+]); ?>
+	<?= $this->render('test', [
+		'model' => new Course(), 
+	]);?>
+<?php Modal::end(); ?>
 <script type="text/javascript">
 $(document).ready(function() {
     var calendar = {
