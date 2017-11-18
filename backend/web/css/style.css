@@ -117,7 +117,7 @@ dl {
     white-space: nowrap;
   }
   .dl-invoice-summary dd {
-    margin-left: 290px;
+	text-align: right;
   }
   
 }

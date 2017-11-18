@@ -38,3 +38,5 @@ use backend\models\search\InvoiceSearch;
 	'id' => 'invoice-mail-button',
 	'class' => 'm-r-10 btn btn-box-tool']) ?>
 <?= Html::a('<i title="Print" class="fa fa-print m-r-10"></i>', ['print/invoice', 'id' => $model->id], ['class' => 'm-r-10 btn btn-box-tool', 'target' => '_blank']) ?>
+<?= strtoupper($model->getStatus()) . ' $'?>
+<?= !empty($model->invoicePaymentTotal)? Yii::$app->formatter->asDecimal($model->invoicePaymentTotal, 4) : Yii::$app->formatter->asDecimal(0, 4) ?>
