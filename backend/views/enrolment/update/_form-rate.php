@@ -37,17 +37,8 @@ use common\models\User;
     <?php endif; ?>   
     
     <div class="col-md-4">
-        <?php echo $form->field($model, 'isAutoRenew')->widget(SwitchInput::classname(),
-                [
-                'pluginOptions' => [
-                    'size' => 'Medium',
-                    'onColor' => 'success',
-                    'offColor' => 'danger',
-                    'handleWidth' => 60,
-                    'onText' => 'Enable',
-                    'offText' => 'Disable',
-                ],
-        ])->label('Auto Renew');?>
+		<label> Auto Renew </label>
+		<?= $form->field($model, 'isAutoRenew')->label(false)->checkbox(['label' => '', 'data-toggle' => "toggle", "data-on" => "Yes", "data-off" => "No", "data-onstyle" => "success", "data-offstyle" => "default"]); ?>
     </div>
 		<div class="clearfix"></div>
 		 <div id="spinner" class="spinner" style="display:none">

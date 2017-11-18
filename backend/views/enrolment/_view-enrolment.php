@@ -45,7 +45,10 @@ Modal::begin([
 	'id' => 'enrolment-rate-edit-modal',
 ]);
 ?>
-<div id="enrolment-rate-edit-content"></div>
+<?= $this->render('update/_form-rate', [
+	'model' => $model,
+	'enrolmentProgramRate' => $model->enrolmentProgramRate,
+]);?>
 <?php Modal::end(); ?>
 <?php
 Modal::begin([
@@ -104,20 +107,9 @@ Modal::begin([
         });
         return false;
     });
-    $(document).on('click', '.edit-enrolment-rate', function(){
-        $.ajax({
-            url    : '<?= Url::to(['enrolment/edit-program-rate', 'id' => $model->id]); ?>',
-            type   : 'get',
-            dataType: "json",
-            success: function(response)
-            {
-                if(response.status)
-                {
-                    $('#enrolment-rate-edit-content').html(response.data);
-                    $('#enrolment-rate-edit-modal').modal('show');
-                }
-            }
-        });
+    $(document).on('click', '.edit-enrolment-rate', function() {                  
+        $('#spinner').hide(); 
+		$('#enrolment-rate-edit-modal').modal('show');
         return false;
     });
     $(document).on('click', '.edit-enrolment', function(){
