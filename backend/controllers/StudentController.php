@@ -145,8 +145,8 @@ class StudentController extends Controller
         $post = $request->post();
         $courseModel = new Course();
 		$courseSchedule = new CourseSchedule();
-                $multipleEnrolmentDiscount = new EnrolmentDiscount();
-                $paymentFrequencyDiscount = new EnrolmentDiscount();
+		$multipleEnrolmentDiscount = new EnrolmentDiscount();
+		$paymentFrequencyDiscount = new EnrolmentDiscount();
 		$courseModel->load($post);
 		$courseSchedule->load($post);
 		
@@ -242,13 +242,13 @@ class StudentController extends Controller
 			$minutes     = $getDuration->format('i');
 			$unit        = (($hours * 60) + $minutes) / 60;
 			$lessonDuration = $hours != 00 ? $hours . 'hr' . $minutes . 'mins' : $minutes . 'mins';
-                        if ($rate) {
-                            $ratePerLesson = $unit * $rate;
-                        } else {
-                            $rate = $program->rate;
-                            $ratePerLesson = $unit * $program->rate;
-                        }
-                        $ratePerMonth = $ratePerLesson * 4;
+			if ($rate) {
+				$ratePerLesson = $unit * $rate;
+			} else {
+				$rate = $program->rate;
+				$ratePerLesson = $unit * $program->rate;
+			}
+			$ratePerMonth = $ratePerLesson * 4;
 			$discount = 0.0;
 			if ($multiEnrolmentDiscount) {
 				$discount += $multiEnrolmentDiscount / 4;
@@ -260,14 +260,12 @@ class StudentController extends Controller
 			}
 			$ratePerLessonWithDiscount = $ratePerLesson - $discount;
 			$ratePerMonthWithDiscount = $ratePerLessonWithDiscount * 4;
-			$beforeDiscount = 'Four ' . $lessonDuration . ' Lessons @ $'. $ratePerLesson . ' each = $' . $ratePerMonth . '/mn';
-			$afterDiscount = 'Four ' . $lessonDuration . ' Lessons @ $'. $ratePerLessonWithDiscount . ' each = $' . $ratePerMonthWithDiscount . '/mn';
 			return [
-				'beforeDiscount' => $beforeDiscount,
-				'afterDiscount' => $afterDiscount,
-                                'ratePerLesson' => $ratePerLessonWithDiscount,
-                                'ratePerMonth' => $ratePerMonthWithDiscount,
-                                'rate' => $rate
+				'ratePerLessonWithDiscount' => $ratePerLessonWithDiscount,
+				'ratePerMonthWithDiscount' => $ratePerMonthWithDiscount,
+				'ratePerLesson' => $ratePerLesson,
+				'ratePerMonth' => $ratePerMonth,
+				'rate' => $rate
 			];
 		}
     }

@@ -282,3 +282,10 @@ dl {
 	margin-top:-8px;
 	font-size: 18px;
 }
+.hint-label {
+	font-weight:bold;
+}
+#private-enrol-modal .modal-dialog .modal-content .modal-body {
+    overflow-y: auto;
+    height: 550px;
+}

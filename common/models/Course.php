@@ -69,9 +69,9 @@ class Course extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'programId' => 'Program Name',
-            'teacherId' => 'Teacher Name',
-            'locationId' => 'Location Name',
+            'programId' => 'Program',
+            'teacherId' => 'Teacher',
+            'locationId' => 'Location',
             'day' => 'Day',
             'fromTime' => 'From Time',
             'duration' => 'Duration',

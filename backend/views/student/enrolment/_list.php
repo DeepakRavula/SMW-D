@@ -20,7 +20,7 @@ echo GridView::widget([
 		];
 	},
 	'options' => ['class' => 'col-md-12'],
-	'tableOptions' => ['class' => 'table table-bordered'],
+	'tableOptions' => ['class' => 'table table-condensed'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => [
 			[
