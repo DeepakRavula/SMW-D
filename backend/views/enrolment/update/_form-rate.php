@@ -19,24 +19,31 @@ use common\models\User;
     ]); ?>
 <div class="row">
     <?php $user = User::findOne(Yii::$app->user->id); ?>
-    
-    <div class="col-md-4">
-        <label>Auto Renew</label>
-        <?= $form->field($model, 'isAutoRenew')->checkbox(['data-toggle' => "toggle", 
-            "data-on" => "Enable", "data-off" => "Disable", 'data-width' => '100',
-            "data-onstyle" => "success", "data-offstyle" => "danger"])->label(false); ?>
-    </div>
+    <?php foreach ($enrolmentProgramRates as $key => $enrolmentProgramRate) : ?>
     <?php if ($user->isAdmin()) : ?>
         <div class="col-md-6">
             <label>Rate From <?= $enrolmentProgramRate->startDate . ' To ' . $enrolmentProgramRate->endDate ?></label>
-            <?= $form->field($enrolmentProgramRate, 'programRate')->textInput()->label(false); ?>
+            <?= $form->field($enrolmentProgramRate, 'programRate')->textInput([
+                    'id' => 'program-rate' . $key, 'name' => 'EnrolmentProgramRate['. $key . '][programRate]'
+                ])->label(false); 
+            ?>
         </div>
     <?php else : ?>
         <div class="col-md-6">
-            <?= $form->field($enrolmentProgramRate, 'programRate')->hiddenInput()->label(false); ?>
+            <?= $form->field($enrolmentProgramRate, 'programRate')->hiddenInput([
+                'id' => 'program-rate' . $key, 'name' => 'EnrolmentProgramRate['. $key . '][programRate]'
+                ])->label(false); 
+            ?>
         </div>
     <?php endif; ?>   
-    
+    <?php endforeach; ?>   
+    <div class="col-md-12">
+        <label>Auto Renew</label>
+        <?= $form->field($model, 'isAutoRenew')->checkbox(['data-toggle' => "toggle", 
+            "data-on" => "Enable", "data-off" => "Disable", 'data-width' => '100',
+            "data-onstyle" => "success", "data-offstyle" => "danger"])->label(false); 
+        ?>
+    </div>
     <div id="spinner" class="spinner" style="display:none">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
         <span class="sr-only">Loading...</span>
