@@ -170,13 +170,5 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             var multiEnrolmentDiscount = $('#enrolment-discount').val();
             enrolment.fetchProgram(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate);
         });
-//		$('#enrolment-form').on('beforeSubmit', function (e) {
-//            var courseDay = $('#courseschedule-day').val();
-//            if( ! courseDay) {
-//            	$('#error-notification').html("Please choose a day in the calendar").fadeIn().delay(3000).fadeOut();
-//				 $(window).scrollTop(0);
-//				return false;
-//            }
-//        });
-    });
+});
 </script>

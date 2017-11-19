@@ -39,6 +39,8 @@ $this->params['label'] = $this->render('_title', [
 	echo $this->render('enrolment/view', [
 		'model' => $model,
 		'enrolmentDataProvider' => $enrolmentDataProvider,
+		'groupCourseDataProvider' => $groupCourseDataProvider
+		
 	]);
 	?>
 </div>
@@ -154,6 +156,11 @@ $this->params['label'] = $this->render('_title', [
             $('#private-enrol-modal').modal('show');
             return false;
 		});
+		$(document).on('click', '#add-group-enrol', function () {
+            $('#group-enrol-modal').modal('show');
+        	$('#group-enrol-modal .modal-dialog').css({'width': '800px'});
+            return false;
+		});
 		$(document).on('click', '.private-enrol-cancel', function() {
 			$('#private-enrol-modal').modal('hide');
 			return false;
@@ -177,6 +184,17 @@ $this->params['label'] = $this->render('_title', [
                         $('#student-merge-modal').modal('show');
                     }
                 }
+            });
+            return false;
+        });
+		$(document).on('click', '.group-enrol-btn', function () {
+            $.ajax({
+                url    : $(this).attr('href'),
+                type   : 'get',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {}
             });
             return false;
         });

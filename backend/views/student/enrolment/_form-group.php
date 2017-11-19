@@ -4,6 +4,7 @@ use yii\grid\GridView;
 use yii\bootstrap\ActiveForm;
 use common\models\Course;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\GroupCourseSearch */
@@ -11,32 +12,21 @@ use yii\helpers\Html;
 
 ?>
 
-<div class="group-course-index col-md-12"> 
-    
-   <?php $form = ActiveForm::begin([
-        'method' => 'post',
-    ]); ?>
-    <?php yii\widgets\Pjax::begin() ?>
+<div class="user-create-index"> 
     <?php echo GridView::widget([
         'dataProvider' => $groupCourseDataProvider,
-        'tableOptions' => ['class' => 'table table-bordered'],
+        'tableOptions' => ['class' => 'table table-condensed'],
+		'summary' => '',
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
             [
-                'class' => 'yii\grid\CheckboxColumn',
-                'multiple' => false,
-                'name' => 'courseId',
-                'checkboxOptions' => ['class' => 'courseId'],
-                // you may configure additional properties here
-            ],
-            [
-                'label' => 'Course Name',
+                'label' => 'Course',
                 'value' => function ($data) {
                     return !empty($data->program->name) ? $data->program->name : null;
                 },
             ],
             [
-                'label' => 'Teacher Name',
+                'label' => 'Teacher',
                 'value' => function ($data) {
                     return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
                 },
@@ -77,32 +67,17 @@ use yii\helpers\Html;
                     return !empty($data->endDate) ? Yii::$app->formatter->asDate($data->endDate) : null;
                 },
             ],
+			[
+				'class' => 'yii\grid\ActionColumn',
+				'contentOptions' => ['style' => 'width:50px'],
+				'template' => '{enrol}',
+				'buttons' => [
+					'enrol' => function ($url, $model) use($student) {
+						$url = Url::to(['enrolment/group', 'courseId' => $model->id, 'studentId' => $student->id]);
+						return Html::a('Enrol', $url, ['class' => 'group-enrol-btn']);
+					},
+				]
+			],       
         ],
     ]); ?>
-    <?php \yii\widgets\Pjax::end(); ?>
-	<div class="form-group">
-		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info group-course-save', 'name' => 'signup-button']) ?>
-    </div>
-    <?php ActiveForm::end(); ?>
 </div>
-<script type="text/javascript">
-$(document).ready(function(){
-	$('#group-course').on('change', '.courseId', function(){
-		var checked = $(this).prop('checked');
-		$('#group-course .courseId').prop('checked', false);
-
-		if(checked) {
-			$(this).prop('checked', true);
-		} else {
-			$(this).prop('checked', false);
-		}
-	});
-    $('.group-course-save').on('click', function(event){
-        var count = $(".courseId:checked").length;
-        if(count==0){
-            event.preventDefault();
-            $('#notification').html("No group course selected").fadeIn().delay(1000).fadeOut();
-        }
-    });
-});
-</script>

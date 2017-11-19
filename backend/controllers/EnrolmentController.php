@@ -20,6 +20,7 @@ use yii\filters\ContentNegotiator;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
 use common\models\timelineEvent\TimelineEventEnrolment;
+use common\models\PaymentFrequency;
 use common\models\UserPhone;
 use common\models\UserAddress;
 use common\models\UserEmail;
@@ -110,7 +111,18 @@ class EnrolmentController extends Controller
         ]);
     }
 
-    public function actionEdit($id)
+	public function actionGroup($courseId, $studentId)
+	{
+		$enrolmentModel = new Enrolment();
+		$enrolmentModel->courseId = $courseId;
+		$enrolmentModel->studentId = $studentId;
+		$enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
+		$enrolmentModel->save();
+
+		return $this->redirect(['enrolment/review', 'id' => $enrolmentModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
+	}
+
+	public function actionEdit($id)
     {
         $model = $this->findModel($id);
         $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
@@ -415,20 +427,12 @@ class EnrolmentController extends Controller
         }
     }
 
-	public function actionReview($id)
+		public function getConflicts($course, $enrolment)
 	{
-		$model = new Lesson();
-		$enrolment = Enrolment::findOne(['id' => $id]);
-        $searchModel = new LessonSearch();
-		$request = Yii::$app->request;
-        $lessonSearchRequest = $request->get('LessonSearch');
-        $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
-        $courseModel = $enrolment->course;
 		$conflicts = [];
 		$conflictedLessonIds = [];
-
 		$lessons = Lesson::find()
-			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
+			->where(['courseId' => $course->id, 'status' => Lesson::STATUS_SCHEDULED])
 			->all();
 		foreach ($lessons as $lesson) {
 			$lesson->setScenario(Lesson::SCENARIO_GROUP_ENROLMENT_REVIEW);
@@ -441,23 +445,55 @@ class EnrolmentController extends Controller
 			}
 			$conflicts[$lesson->id] = $lesson->getErrors('date');
 		}
-		$query = Lesson::find();
+		
+		$holidayConflictedLessonIds = $course->getHolidayLessons();
+		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);	
+		return [
+			'conflicts' => $conflicts,
+			'lessonIds' => $conflictedLessonIds
+		];
+	}
+	public function actionReview($id)
+	{
+		$enrolment = Enrolment::findOne(['id' => $id]);
+		$model = new Lesson();
+        $searchModel = new LessonSearch();
+        $request = Yii::$app->request;
+        $lessonSearchRequest = $request->get('LessonSearch');
+        $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
+		$courseModel = $enrolment->course;
+
+		$conflictedLessons = $this->getConflicts($courseModel, $enrolment);
+		$lessonCount = Lesson::find()
+			->andWhere(['courseId' => $courseModel->id,	'isConfirmed' => false])
+			->count();
+		$conflictedLessonIdsCount = count($conflictedLessons['lessonIds']);
+		$unscheduledLessonCount = Lesson::find()
+			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED, 'isConfirmed' => false])
+			->count();	
+		
+		$query = Lesson::find()
+			->orderBy(['lesson.date' => SORT_ASC]);
 		if(! $showAllReviewLessons) {
-			$query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
+			$query->andWhere(['IN', 'lesson.id', $conflictedLessons['lessonIds']]);
 		}  else {
-				$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED]);
+			$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED]);
 		}
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
+			'pagination' => false,
         ]);
-
         return $this->render('review', [
             'courseModel' => $courseModel,
-            'lessonDataProvider' => $lessonDataProvider,
-            'conflicts' => $conflicts,
-			'model' => $model,
-            'searchModel' => $searchModel,
 			'enrolment' => $enrolment,
+            'lessonDataProvider' => $lessonDataProvider,
+            'conflicts' => $conflictedLessons['conflicts'],
+            'searchModel' => $searchModel,
+			'model' => $model,
+			'holidayConflictedLessonIds' => $courseModel->getHolidayLessons(),
+			'lessonCount' => $lessonCount,
+			'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
+			'unscheduledLessonCount' => $unscheduledLessonCount,
         ]);
 	}
 	public function actionConfirmGroup($id)
