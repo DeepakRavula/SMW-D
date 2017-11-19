@@ -20,6 +20,9 @@ $config = [
         ],
     ],
     'components' => [
+		'session' => [
+            'name' => 'PHPBACKSESSID',
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
