@@ -465,11 +465,11 @@ class EnrolmentController extends Controller
 
 		$conflictedLessons = $this->getConflicts($courseModel, $enrolment);
 		$lessonCount = Lesson::find()
-			->andWhere(['courseId' => $courseModel->id,	'isConfirmed' => false])
+			->andWhere(['courseId' => $courseModel->id,	'isConfirmed' => true])
 			->count();
 		$conflictedLessonIdsCount = count($conflictedLessons['lessonIds']);
 		$unscheduledLessonCount = Lesson::find()
-			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED, 'isConfirmed' => false])
+			->andWhere(['courseId' => $courseModel->id, 'isConfirmed' => true])
 			->count();	
 		
 		$query = Lesson::find()
@@ -477,8 +477,9 @@ class EnrolmentController extends Controller
 		if(! $showAllReviewLessons) {
 			$query->andWhere(['IN', 'lesson.id', $conflictedLessons['lessonIds']]);
 		}  else {
-			$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED]);
+			$query->andWhere(['couriseId' => $courseModel->id, 'isConfirmed' => true]);
 		}
+	
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
 			'pagination' => false,
