@@ -18,6 +18,9 @@ $config = [
         ],
     ],
     'components' => [
+		'session' => [
+            'name' => 'PHPFRONTSESSID',
+        ],
         'authClientCollection' => [
             'class' => 'yii\authclient\Collection',
             'clients' => [
