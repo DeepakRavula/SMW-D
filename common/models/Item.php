@@ -247,4 +247,35 @@ class Item extends \yii\db\ActiveRecord
         }
         return null;
     }
+    
+    public function addToInvoice($invoice)
+    {
+        foreach ($invoice->lineItems as $lineItem) {
+            if ($lineItem->item_id === $this->id) {
+                $lineItem->unit += 1; 
+                return $lineItem->save();
+            }
+        }
+        $invoiceLineItemModel = new InvoiceLineItem();
+        $userModel = User::findOne(['id' => Yii::$app->user->id]);
+        $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
+        $invoiceLineItemModel->userName = $userModel->publicIdentity;
+        $invoiceLineItemModel->invoice_id = $invoice->id;
+        $invoiceLineItemModel->item_id = $this->id;
+        $invoiceLineItemModel->unit = true;
+        $invoiceLineItemModel->description = $this->description;
+        $invoiceLineItemModel->amount = $this->price;
+        $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
+        $invoiceLineItemModel->cost        = 0.0;
+        if (!$invoiceLineItemModel->save()) {
+            print_r($invoiceLineItemModel->getErrors());die;
+        }
+        $invoice->save();
+        if ($invoice->user) {
+            if ($invoice->user->hasDiscount()) {
+                $invoiceLineItemModel->addCustomerDiscount($invoice->user);
+            }
+        }
+        return $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
+    }
 }

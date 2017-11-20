@@ -1,19 +1,14 @@
 <?php
-use yii\helpers\Html;
-use backend\models\search\InvoiceSearch;
 use yii\helpers\Url;
 use common\models\User;
-use yii\widgets\ActiveForm;
-use kartik\editable\Editable;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
-use yii\bootstrap\Modal;
-use common\models\InvoiceLineItem;
 use yii\widgets\Pjax;
 
 ?>
 <?php echo $this->render('/invoice/_line-item', [
         'invoiceModel' => $model,
+    'itemDataProvider' => $itemDataProvider
     ]) ?>
 <?php Pjax::Begin(['id' => 'invoice-view-tab-item', 'timeout' => 6000]); ?>
 <?php $boxTools = $this->render('_button', [
@@ -49,17 +44,14 @@ use yii\widgets\Pjax;
  <?php Pjax::end(); ?>
 <script>
 $(document).ready(function() {
-    $('.add-new-misc').click(function(){
-        $('input[type="text"]').val('');
-        $('.tax-compute').hide();
-        $('#invoicelineitem-tax_status').val('');
-        $('.misc-tax-status').show();
+    $(document).on('click', '.add-new-misc', function () {
         $('#invoice-line-item-modal').modal('show');
         return false;
     });
-    $('.add-misc-cancel').click(function(){
+    $(document).on('click', '.add-misc-cancel', function () {
     	$('#invoice-line-item-modal').modal('hide');
-   		return false;
+        $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
+        return false;
     });
     $(document).on("click", '.invoice-apply-discount-cancel', function() {
 		$('#apply-discount-modal').modal('hide');

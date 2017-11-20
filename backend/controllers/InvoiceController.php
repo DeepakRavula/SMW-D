@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Invoice;
-use common\models\InvoiceDiscount;
+use common\models\Item;
 use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use common\models\Enrolment;
@@ -48,7 +48,8 @@ class InvoiceController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['delete', 'note', 'get-payment-amount','update-customer', 'create-walkin', 'fetch-user'],
+                'only' => ['delete', 'note', 'get-payment-amount', 'update-customer', 
+                    'create-walkin', 'fetch-user', 'add-misc'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -221,6 +222,14 @@ class InvoiceController extends Controller
         $userDataProvider = new ActiveDataProvider([
             'query' => $userData,
         ]);
+        
+        $itemData = Item::find()
+                ->notDeleted()
+                ->location($locationId)
+                ->active();
+        $itemDataProvider = new ActiveDataProvider([
+            'query' => $itemData,
+        ]);
         $invoicePayments = Payment::find()
 			->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                 $query->where(['ip.invoice_id' => $model->id]);
@@ -261,7 +270,8 @@ class InvoiceController extends Controller
             'userEmail' =>$userEmail,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'noteDataProvider' => $noteDataProvider,
-            'userDataProvider'=>$userDataProvider,
+            'userDataProvider'=> $userDataProvider,
+            'itemDataProvider' => $itemDataProvider
         ]);
     }
 	public function actionFetchUser($id, $userName)
@@ -297,44 +307,16 @@ class InvoiceController extends Controller
 			'data' => $data
 		];
 	}
-    public function actionAddMisc($id)
+    public function actionAddMisc($id, $itemId)
     {
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
-        $model = $this->findModel($id);
-        $invoiceLineItemModel = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_LINE_ITEM_CREATE]);
-        $userModel = User::findOne(['id' => Yii::$app->user->id]);
-        $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
-        $invoiceLineItemModel->userName = $userModel->publicIdentity;
-        if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
-            $invoiceLineItemModel->invoice_id = $model->id;
-            $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
-            $invoiceLineItemModel->cost        = 0.0;
-            if ($invoiceLineItemModel->validate()) {
-                $invoiceLineItemModel->save();
-                $model->save();
-                if ($model->user) {
-                    if ($model->user->hasDiscount()) {
-                        $invoiceLineItemModel->addCustomerDiscount($model->user);
-                    }
-                }
-                $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
+        $invoiceModel = $this->findModel($id);
+        $itemModel = Item::findOne($itemId);
+        $itemModel->addToInvoice($invoiceModel);
 
-                $response = [
-                    'invoiceStatus' => $model->getStatus(),
-                    'status' => true,
-					'amount' => round($model->invoiceBalance, 4)
-                ];
-            } else {
-                $invoiceLineItemModel = ActiveForm::validate($invoiceLineItemModel);
-                $response = [
-                    'status' => false,
-                    'errors' => $invoiceLineItemModel,
-                ];
-            }
-
-            return $response;
-        }
+        return [
+            'status' => true,
+            'message' => 'Line item added successfully!'
+        ];
     }
 
     public function actionFetchSummaryAndStatus($id)

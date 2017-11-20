@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Item;
+use common\models\Invoice;
+use yii\data\ActiveDataProvider;
 use backend\models\search\ItemSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -28,7 +30,7 @@ class ItemController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['update', 'create'],
+                'only' => ['update', 'create', 'filter'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -183,5 +185,28 @@ class ItemController extends Controller
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
         ]);
+    }
+    
+    public function actionFilter($invoiceId, $string)
+    {
+        $invoiceModel = Invoice::findOne($invoiceId);
+        $locationId = Yii::$app->session->get('location_id');
+        $itemData = Item::find()
+                ->notDeleted()
+                ->andWhere(['LIKE', 'item.code', $string])
+                ->orWhere(['LIKE', 'item.description', $string])
+                ->location($locationId)
+                ->active();
+        $itemDataProvider = new ActiveDataProvider([
+            'query' => $itemData,
+        ]);
+        $data = $this->renderAjax('/invoice/_form-invoice-line-item', [
+            'invoiceModel' => $invoiceModel,
+            'itemDataProvider' => $itemDataProvider
+        ]);
+        return [
+            'status' => true,
+            'data' => $data
+        ];
     }
 }

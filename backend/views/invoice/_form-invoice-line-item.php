@@ -1,13 +1,9 @@
 <?php
 
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
-use yii\helpers\ArrayHelper;
-use common\models\TaxStatus;
-use common\models\ItemCategory;
-use kartik\depdrop\DepDrop;
+use yii\grid\GridView;
 use yii\helpers\Url;
-use kartik\switchinput\SwitchInput;
+use yii\helpers\Html;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
@@ -15,148 +11,88 @@ use kartik\switchinput\SwitchInput;
 ?>
 
 <div id="invoice-line-item-modal" class="invoice-line-item-form">
-    <?php $form = ActiveForm::begin([
-        'id' => 'add-misc-item-form',
-        'action' => Url::to(['invoice/add-misc', 'id' => $invoiceModel->id]),
+    <div>
+    <?php Pjax::Begin(['id' => 'item-add-listing', 'timeout' => 6000]); ?>
+    <?= GridView::widget([
+            'dataProvider' => $itemDataProvider,
+            'summary' => false,
+            'id'=>'invoice-view-user-gridview',
+            'tableOptions' => ['class' => 'table table-condensed'],
+            'headerRowOptions' => ['class' => 'bg-light-gray'],
+            'columns' => [
+            [
+                'label' => 'Code',
+                'value' => function ($data) {
+                    return $data->code;
+                },
+            ],
+            [
+                'label' => 'Description',
+                'value' => function ($data) {
+                    return $data->description;
+                },
+            ],
+            [
+                'label' => 'Price',
+                'value' => function ($data) {
+                    return $data->price;
+                },
+            ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'contentOptions' => ['style' => 'width:50px'],
+                'template' => '{add}',
+                'buttons' => [
+                    'add' => function ($url, $model) use($invoiceModel) {
+                        $url = Url::to(['invoice/add-misc', 'id' => $invoiceModel->id, 'itemId' => $model->id]);
+                        return Html::a('Add', null, ['class' => 'add-item-invoice', 'url' => $url]);
+                    },
+                ]
+            ],        
+        ],
     ]); ?>
+    </div>
+    <?php Pjax::end(); ?>
     <div class="row">
-        <div class="col-xs-6">
-            <?php echo $form->field($model, 'itemCategoryId')->dropDownList(
-                    ArrayHelper::map(ItemCategory::find()
-                        ->notDeleted()
-                        ->active()
-                        ->all(), 'id', 'name'), ['prompt' => 'Select Category']) ?>
-        </div>
-        <div class="col-xs-6">
-            <?php echo $form->field($model, 'item_id')->widget(DepDrop::classname(),
-                [
-                'options' => ['id' => 'invoicelineitem-itemid'],
-                'pluginOptions' => [
-                        'depends' => ['invoicelineitem-itemcategoryid'],
-                        'placeholder' => 'Select Item',
-                        'url' => Url::to(['item-category/items']),
-                ],
-            ])?>
-        </div>
-        <div class="col-xs-6">
-            <?php echo $form->field($model, 'code')->textInput() ?>
-        </div>
-        <div class="col-xs-3">
-            <?php echo $form->field($model, 'royaltyFree')->widget(SwitchInput::classname(),
-                [
-                'name' => 'royaltyFree',
-				'options' => [
-					'id' => 'line-item-royalty-free',
-				],
-                'pluginOptions' => [
-                    'handleWidth' => 30,
-                    'onText' => 'Yes',
-                    'offText' => 'No',
-                ],
-            ]);?>
-        </div>
-        <div class="col-xs-3">
-            <?php echo $form->field($model, 'unit')->textInput()?>
-        </div>
-        <div class="col-xs-12">
-            <?php echo $form->field($model, 'description')->textInput()?>
-        </div>
-        <div class="col-xs-3">
-            <?php echo $form->field($model, 'amount')->textInput()->label('Base Price') ?>
-        </div>
-        <div class="col-xs-3">
-            <?php echo $form->field($model, 'grossPrice')->textInput([
-                'readonly' => true, 'id' => 'lineitem-grossprice'
-                ])->label('Gross Price') ?>
-        </div>
-        <div class="col-xs-3">
-            <?php echo $form->field($model, 'netPrice')->textInput([
-                'readonly' => true, 'id' => 'lineitem-netprice'
-                ])->label('Net Price') ?>
-        </div>
-        <div class="col-xs-3">
-            <?php echo $form->field($model, 'itemTotal')->textInput([
-                'readonly' => true, 'id' => 'lineitem-itemtotal'
-                ])->label('Total') ?>
+        <div class="col-md-12">
+            <div class="pull-right">
+                <?= Html::a('Cancel', '', ['class' => 'btn btn-default add-misc-cancel']);?>    
+            </div>
         </div>
     </div>
-    <div class="row misc-tax-status">
-        <div class="col-xs-4">
-            <?php echo $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
-                        TaxStatus::find()->all(), 'id', 'name'), ['prompt' => 'Select'])
-            ?>
-        </div>
-        <div class="col-xs-2">
-            <?php echo $form->field($model, 'tax')->textInput(['readonly' => true])?>
-        </div>
-        <div class="col-xs-2">
-            <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true])?>
-        </div>
-    </div>
-    <div class="row">
-    <div class="col-md-12">
-        <div class="pull-right">
-            <?= Html::a('Cancel', '', ['class' => 'btn btn-default add-misc-cancel']);?>
-       <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-        
-    </div>
-    </div>
-    </div>
-    <?php ActiveForm::end(); ?>
 </div>
+
 <script type="text/javascript">
-$(document).ready(function() {
-    $('#invoicelineitem-itemid').change(function(){
-        var params   = $.param({ itemId: $('#invoicelineitem-itemid').val() });
+    $(document).on('click', '.add-item-invoice', function() {
         $.ajax({
-            url: "<?php echo Url::to(['item-category/get-item-values'])?>?" + params,
-            type: "POST",
-            contentType: 'application/json',
-            dataType: "json",
+            url: $(this).attr('url'),
+            type: 'get',
             success: function(response) {
-                $('#invoicelineitem-description').val(response.description);
-                $('#invoicelineitem-amount').val(response.price);
-                $('#invoicelineitem-code').val(response.code);
-                $('#invoicelineitem-unit').val(1);
-                $('#lineitem-grossprice').val(response.price);
-                $('#lineitem-netprice').val(response.price);
-                $('#invoicelineitem-tax_status').val(response.tax).trigger('change');
-                if (response.royaltyFree) {
-                    $('#line-item-royalty-free').bootstrapSwitch('state', true);
-                } else {
-                    $('#line-item-royalty-free').bootstrapSwitch('state', false);
+                if (response.status) {
+                    $('#invoice-line-item-modal').modal('hide');
+                    $('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
+                    $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000}); 
+                    $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000}); 
                 }
             }
         });
         return false;
     });
-    $('#invoicelineitem-tax_status, #invoicelineitem-unit, #invoicelineitem-amount').change(function(){
-        changeTax();
-    });
-});
-    function changeTax() {
-        var taxStatusId = $('#invoicelineitem-tax_status').val();
-        var amount = $('#invoicelineitem-amount').val();
-        var unit = $('#invoicelineitem-unit').val();
-        var taxStatusName = $(this).children("option").filter(":selected").text();
+    
+    $(document).on('keyup paste', '#item-search', function() {
+        var string = $(this).val();
+        var params = $.param({ 'string': string });
         $.ajax({
-            url: "<?php echo Url::to(['invoice/compute-tax']); ?>",
-            type: "POST",
-            contentType: 'application/json',
-            dataType: "json",
-            data: JSON.stringify({
-                "unit": unit,
-                "amount":amount,
-                "taxStatusName":taxStatusName,
-                "taxStatusId":taxStatusId,
-            }),
+            url: $(this).attr('url') + '&' + params,
+            type: 'get',
             success: function(response) {
-                $('#invoicelineitem-tax').val(response.tax);
-                $('#invoicelineitem-tax_rate').val(response.rate);
-                $('#lineitem-grossprice').val(response.grossPrice);
-                $('#lineitem-netprice').val(response.grossPrice);
-                $('#lineitem-itemtotal').val(response.total);
+                if (response.status) {
+                    $('#item-list-content').html(response.data);
+                }
             }
         });
-    }
+        return false;
+    });
 </script>

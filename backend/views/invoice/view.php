@@ -103,6 +103,7 @@ Modal::end();
 			'customer' => $customer,
 			'searchModel' => $searchModel,
 			'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                        'itemDataProvider' => $itemDataProvider
 		]);
 		?>   
 	</div>
