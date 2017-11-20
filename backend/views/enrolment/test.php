@@ -11,6 +11,7 @@ use common\models\UserPhone;
 use common\models\UserContact;
 use common\models\User;
 use common\models\UserEmail;
+use common\models\Student;
 ?>
 <style>
 .requestwizard-modal{
@@ -74,7 +75,7 @@ use common\models\UserEmail;
 			            <p>Customer</p>
 			        </div>
 			        <div class="requestwizard-step">
-			            <a href="#step-3" type="button" class="btn btn-default btn-circle" disabled="disabled">2</a>
+			            <a href="#step-3" type="button" class="btn btn-default btn-circle" disabled="disabled">3</a>
 			            <p>Student</p>
 			        </div>
 		    	</div>
@@ -82,16 +83,7 @@ use common\models\UserEmail;
 <div class="clearfix"></div>	
 <?php $form = ActiveForm::begin([
 	'id' => 'new-enrolment-form',
-	'action' => Url::to(['enrolment/add']),
-	'layout' => 'horizontal',
-	'fieldConfig' => [
-		'horizontalCssClasses' => [
-			'label' => 'col-md-6 control-label',
-			'hint' => 'hint-label',
-			 'wrapper' => 'col-md-5',
-		],
-	],
-	
+//	'action' => Url::to(['enrolment/add']),
 ]); ?>
 	    <div class="row setup-content" id="step-1">
 	       <?= $this->render('new/_form', [
@@ -116,39 +108,11 @@ use common\models\UserEmail;
 			?> 
 	    </div>
 	    <div class="row setup-content" id="step-3">
-	        <div class="col-xs-12">
-	            <div class="col-md-12">
-	                <div class="form-group">
-	                    <label class="control-label">What type of material are you interested in</label>
-	                    <input maxlength="200" type="text" required="required" class="form-control" placeholder="Enter Company Name" />
-	                </div>
-	                <div class="form-group">
-	                    <label class="control-label">Select the type of edge</label>
-	                    <input maxlength="200" type="text" required="required" class="form-control" placeholder="Enter Company Name" />
-	                </div>
-	                <div class="form-group">
-	                    <label class="control-label">Select the type of sink (if applicable)</label>
-	                    <input maxlength="200" type="text" required="required" class="form-control" placeholder="Enter Company Address"  />
-	                </div>
-	                <div class="form-group">
-	                    <label class="control-label">Backsplash height</label>
-	                    <input maxlength="200" type="text" required="required" class="form-control" placeholder="Enter Company Address"  />
-	                </div>
-	                <div class="form-group">
-	                    <label class="control-label">Drawing</label>
-	                    <input maxlength="200" type="text" required="required" class="form-control" placeholder="Enter Company Address"  />
-	                </div>
-	                <div class="form-group">
-	                    <label class="control-label">Additional Note</label>
-	                    <input maxlength="200" type="text" required="required" class="form-control" placeholder="Enter Company Address"  />
-	                </div>
-	                <button class="btn btn-primary nextBtn btn-lg pull-right" type="button" >Next</button>
-	            </div>
-	        </div>
+	     hi 
 	    </div>
 <?php ActiveForm::end(); ?>
 <script>
-	$(document).ready(function () {
+$(document).ready(function () {
 
     var navListItems = $('div.setup-panel div a'),
             allWells = $('.setup-content'),

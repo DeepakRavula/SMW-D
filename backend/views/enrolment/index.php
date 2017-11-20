@@ -15,7 +15,7 @@ use yii\bootstrap\Modal;
 /* @var $searchModel backend\models\search\EnrolmentSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 $this->title = 'Enrolments';
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i> Add'), '#', ['class' => 'new-enrol-btn btn bg-primary btn-sm']);
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" ></i> Add'), '#', ['class' => 'new-enrol-btn btn btn-primary btn-sm']);
 $this->params['show-all'] = $this->render('_button', [
 	'searchModel' => $searchModel
 ]);
@@ -148,6 +148,10 @@ $this->params['show-all'] = $this->render('_button', [
 $(document).ready(function(){
 	$(document).on('click', '.new-enrol-btn', function() {
 		$('#reverse-enrol-modal').modal('show');
+        return false;	
+	});
+	$(document).on('click', '.new-enrol-cancel', function() {
+		$('#reverse-enrol-modal').modal('hide');
         return false;	
 	});
   $("#enrolmentsearch-showallenrolments").on("change", function() {
