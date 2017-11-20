@@ -8,6 +8,7 @@ use common\models\LocationAvailability;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\time\TimePicker;
+use kartik\select2\Select2;
 
 
 /* @var $this yii\web\View */
@@ -28,9 +29,17 @@ use kartik\time\TimePicker;
 	<div class="row p-10">
 		<div class="col-md-3">
 			<?php
-			echo $form->field($model, 'programId')->dropDownList(
-				ArrayHelper::map(Program::find()->group()->active()
-						->all(), 'id', 'name'), ['prompt' => 'Select Program'])->label('Program');
+			echo $form->field($model, 'programId')->widget(Select2::classname(), [
+				'data' =>ArrayHelper::map(Program::find()->group()->active()
+						->all(), 'id', 'name'),
+                            'options' => [
+                                    'id' => 'course-programid'
+				],
+				'pluginOptions' => [
+                                    'multiple' => false,
+                                    'placeholder' => 'Select Program',
+				],
+			]);
 			?>
 		</div>
 		<div class="col-md-3">
@@ -38,6 +47,7 @@ use kartik\time\TimePicker;
 			// Dependent Dropdown
 			echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
 				'options' => ['id' => 'course-teacherid'],
+                                 'type' => DepDrop::TYPE_SELECT2,
 				'pluginOptions' => [
 					'depends' => ['course-programid'],
 					'placeholder' => 'Select...',
@@ -128,14 +138,14 @@ use kartik\time\TimePicker;
             return false;
         }
     });
-    
+
     $(document).on('change', '#course-teacherid', function() {
         $('.remove-item').click();
         $('.day').val('');
         $('.time').val('');
         return false;
-    }); 
-        
+    });
+
     $(document).on('after-date-set', function(event, params) {
         if (!$.isEmptyObject(params.date)) {
             params.name.find('.lesson-time').find('.time').val(moment(params.date).format('DD-MM-YYYY h:mm A'));
