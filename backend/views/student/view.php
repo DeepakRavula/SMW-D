@@ -9,6 +9,7 @@ use yii\bootstrap\Modal;
 use common\models\Note;
 use kartik\select2\Select2Asset;
 use kartik\daterange\DateRangePickerAsset;
+use yii\widgets\Pjax;
 
 Select2Asset::register($this);
 DateRangePickerAsset::register($this);              
@@ -35,6 +36,7 @@ $this->params['label'] = $this->render('_title', [
 	?>
 </div>
 <div class="row">
+<?php Pjax::begin(['id' => 'enrolment-list']);?>
 	<?php
 	echo $this->render('enrolment/view', [
 		'model' => $model,
@@ -43,6 +45,7 @@ $this->params['label'] = $this->render('_title', [
 		
 	]);
 	?>
+<?php Pjax::end();?>
 </div>
 <div class="row">
 	<?php
@@ -194,7 +197,12 @@ $this->params['label'] = $this->render('_title', [
                 dataType: "json",
                 data   : $(this).serialize(),
                 success: function(response)
-                {}
+                {
+					if(response) {
+						$.pjax.reload({container: '#enrolment-list', timeout: 6000});
+						$('#group-enrol-modal').modal('hide');
+					}
+				}
             });
             return false;
         });
