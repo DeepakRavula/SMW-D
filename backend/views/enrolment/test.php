@@ -108,7 +108,12 @@ use common\models\Student;
 			?> 
 	    </div>
 	    <div class="row setup-content" id="step-3">
-	     hi 
+	     <?=
+		$this->render('new/_form-student', [
+			'model' => new Student(),
+			'form' => $form,
+		]);
+		?> 
 	    </div>
 <?php ActiveForm::end(); ?>
 <script>
