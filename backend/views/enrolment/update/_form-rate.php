@@ -38,10 +38,7 @@ use common\models\User;
     <?php endif; ?>   
     <?php endforeach; ?>   
     <div class="col-md-12">
-        <label>Auto Renew</label>
-        <?= $form->field($model, 'isAutoRenew')->checkbox(['data-toggle' => "toggle", 
-            "data-on" => "Enable", "data-off" => "Disable", 'data-width' => '100',
-            "data-onstyle" => "success", "data-offstyle" => "danger"])->label(false); 
+        <?= $form->field($model, 'isAutoRenew')->checkbox(); 
         ?>
     </div>
     <div id="spinner" class="spinner" style="display:none">

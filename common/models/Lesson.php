@@ -174,6 +174,7 @@ class Lesson extends \yii\db\ActiveRecord
 			'summariseReport' => 'Summarize Results',
 			'toEmailAddress' => 'To',
 			'showAllReviewLessons' => 'Show All',
+			'isPresent' => 'Present'
         ];
     }
 

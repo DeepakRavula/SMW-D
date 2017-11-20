@@ -9,8 +9,7 @@ use yii\helpers\Url;
 <?php $form = ActiveForm::begin(['id' => 'attendance-form',
 	'action' => Url::to(['private-lesson/update-attendance', 'id' => $model->id])]); ?>
 <div class="row">
-	<label>Present</label>
-	<?= $form->field($model, 'isPresent')->label(false)->checkbox(['label' => '', 'data-toggle' => "toggle", "data-on" => "Yes", "data-off" => "No", "data-onstyle" => "success", "data-offstyle" => "default"]); ?>
+	<?= $form->field($model, 'isPresent')->checkbox(); ?>
 </div>
 <div class="row pull-right">
   <?= Html::a('Cancel', '#', ['class' => 'btn btn-default attendance-cancel']);?> 
