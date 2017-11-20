@@ -34,7 +34,7 @@ use kartik\sortinput\SortableInput;
 	<?= SortableInput::widget([
 		'sortableOptions' => [
             'showHandle' => true,
-            'handleLabel' =>false,
+            'handleLabel' =>'<i class="fa fa-arrows"></i>',
 			'type' => 'list',
 			'pluginEvents' => [
 				'sortupdate' => 'contact.updatePrimary',
