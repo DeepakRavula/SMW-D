@@ -98,3 +98,4 @@ $form->field($addressModel, "labelId")->widget(Select2::classname(), [
 		<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
 		<button class="nextBtn btn btn-info pull-right" type="button" >Next</button>
 	</div>
+</div>    
