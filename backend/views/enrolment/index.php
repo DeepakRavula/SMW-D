@@ -9,12 +9,13 @@ use common\models\Student;
 use common\models\UserProfile;
 use common\components\gridView\KartikGridView;
 use common\models\Enrolment;
+use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 $this->title = 'Enrolments';
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" aria-hidden="true"></i> Add'), ['create'], ['class' => 'btn bg-primary btn-sm']);
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus" ></i> Add'), '#', ['class' => 'new-enrol-btn btn btn-primary btn-sm']);
 $this->params['show-all'] = $this->render('_button', [
 	'searchModel' => $searchModel
 ]);
@@ -137,8 +138,22 @@ $this->params['show-all'] = $this->render('_button', [
 	],
 	]);
 	?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">New Enrolment</h4>',
+    'id' => 'reverse-enrol-modal',
+]); ?>
+<?= $this->render('test');?>
+<?php Modal::end(); ?>
 <script>
 $(document).ready(function(){
+	$(document).on('click', '.new-enrol-btn', function() {
+		$('#reverse-enrol-modal').modal('show');
+        return false;	
+	});
+	$(document).on('click', '.new-enrol-cancel', function() {
+		$('#reverse-enrol-modal').modal('hide');
+        return false;	
+	});
   $("#enrolmentsearch-showallenrolments").on("change", function() {
       var showAllEnrolments = $(this).is(":checked");
       var url = "<?php echo Url::to(['enrolment/index']); ?>?EnrolmentSearch[showAllEnrolments]=" + (showAllEnrolments | 0);

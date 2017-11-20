@@ -6,6 +6,7 @@ use common\models\Province;
 use yii\helpers\ArrayHelper;
 use common\models\Label;
 use kartik\select2\Select2;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
@@ -13,112 +14,87 @@ use kartik\select2\Select2;
 
 $this->title = 'New Enrolment';
 ?>
-<div class="container p-0">
-		 <div class="form-group">
-			<label class="col-sm-2 control-label">Name</label>
-			<div class="col-sm-3">
-				<?php
-            echo $form->field($userProfile, 'firstname')->textInput(['placeholder' => 'First Name'])->label(false); ?>
-			</div>
-			<div class="col-sm-3">
-				<?php
-            echo $form->field($userProfile, 'lastname')->textInput(['placeholder' => 'Last Name'])->label(false); ?>
-			</div>
-		</div>
-	<div class="clearfix"></div>
-	<div class="clearfix"></div>
-	 <div class="form-group">
-		<label  class="col-sm-2 control-label">Phone Number</label>
-		<div class="col-sm-3">
-			<?= $form->field($phoneModel, 'number')->textInput(['placeholder' => 'Number'])->label(false); ?>
-		</div>
-		<div class="col-sm-1">
-			<?= $form->field($phoneModel, 'extension')->textInput(['placeholder' => 'Ext'])->label(false); ?>
-		</div>
-		<div class="col-sm-2">
-			<?=
-	$form->field($phoneModel, "labelId")->widget(Select2::classname(), [
-		'data' => ArrayHelper::map(Label::find()
-				->andWhere(['userAdded' => false])
-				->all(), 'id', 'name'),
-		'options' => [
-			'id' => 'phone-label',
-			'placeholder' => 'Select Label'],
-		'pluginOptions' => [
-			'tags' => true,
-		],
-	])->label(false);
-	?>
-		</div>
+<div class="row user-create-form">
+	<div class="col-md-6">
+		<?php echo $form->field($userProfile, 'firstname')->textInput(); ?>
 	</div>
-	<div class="clearfix"></div>
-		 <div class="form-group">
-		<label  class="col-sm-2 control-label">Email</label>
-		<div class="col-sm-3">
-			<?= $form->field($userEmail, "email")->textInput(['maxlength' => true])->label(false) ?>
-		</div>
-		<div class="col-sm-2">
-			<?=
-		$form->field($userEmail, "labelId")->widget(Select2::classname(), [
-			'data' => ArrayHelper::map(Label::find()
-					->andWhere(['userAdded' => false])
-					->all(), 'id', 'name'),
-			'options' => ['placeholder' => 'Select Label'],
-			'pluginOptions' => [
-				'tags' => true,
-			],
-		])->label(false);
+	<div class="col-md-6">
+		<?php echo $form->field($userProfile, 'lastname')->textInput(); ?>
+	</div>
+	<div class="col-md-6">
+<?= $form->field($phoneModel, 'number')->textInput(); ?>
+	</div>
+	<div class="col-md-6">
+<?= $form->field($userEmail, "email")->textInput(['maxlength' => true]) ?>
+	</div>
+	<div class="col-md-6">
+<?=
+$form->field($userEmail, "labelId")->widget(Select2::classname(), [
+	'data' => ArrayHelper::map(Label::find()
+			->andWhere(['userAdded' => false])
+			->all(), 'id', 'name'),
+	'pluginOptions' => [
+		'tags' => true,
+	],
+])->label('Label');
+?>
+	</div>
+	<div class="col-md-4">
+<?=
+$form->field($phoneModel, "labelId")->widget(Select2::classname(), [
+	'data' => ArrayHelper::map(Label::find()
+			->andWhere(['userAdded' => false])
+			->all(), 'id', 'name'),
+	'options' => [
+		'id' => 'phone-label',
+	],
+	'pluginOptions' => [
+		'tags' => true,
+	],
+])->label('Label');
+?>
+	</div>
+	<div class="col-md-2">
+<?= $form->field($phoneModel, 'extension')->textInput(); ?>
+	</div>
+	
+	<div class="col-md-4">
+<?=
+$form->field($addressModel, "labelId")->widget(Select2::classname(), [
+	'data' => ArrayHelper::map(Label::find()
+			->andWhere(['userAdded' => false])
+			->all(), 'id', 'name'),
+	'options' => [
+		'id' => 'address-label',
+	],
+	'pluginOptions' => [
+		'tags' => true,
+	],
+])->label('Label');
+?>
+	</div>
+	<div class="col-md-4">
+<?= $form->field($addressModel, 'address')->textInput(['placeholder' => 'Street Address']); ?>
+	</div>
+	<div class="col-md-4">
+<?= $form->field($addressModel, 'cityId')->dropDownList(
+	ArrayHelper::map(City::find()->all(), 'id', 'name'));
+?>
+	</div>
+	<div class="col-md-4">
+		<?= $form->field($addressModel, 'provinceId')->dropDownList(
+			ArrayHelper::map(Province::find()->all(), 'id', 'name'));
 		?>
-		</div>
 	</div>
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label">Address</label>
-		<div class="col-sm-3">
-			<?=
-	$form->field($addressModel, "labelId")->widget(Select2::classname(), [
-		'data' => ArrayHelper::map(Label::find()
-				->andWhere(['userAdded' => false])
-				->all(), 'id', 'name'),
-		'options' => [
-			'id' => 'address-label',
-			'placeholder' => 'Select Label'],
-		'pluginOptions' => [
-			'tags' => true,
-		],
-	])->label(false);
-	?>
-		</div>	
-	</div>	
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label"></label>
-		<div class="col-sm-3">
-			<?= $form->field($addressModel, 'address')->textInput(['placeholder' => 'Street Address'])->label(false); ?>
-		</div>	
-	</div>	
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label"></label>
-		<div class="col-sm-3">
-			<?= $form->field($addressModel, 'cityId')->dropDownList(
-                ArrayHelper::map(City::find()->all(), 'id', 'name'));?>
-		</div>	
-		<div class="col-sm-3">
-			<?= $form->field($addressModel, 'provinceId')->dropDownList(
-                ArrayHelper::map(Province::find()->all(), 'id', 'name')); ?>
-		</div>
-	</div>	
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label"></label>
-		<div class="col-sm-3">
-			<?= $form->field($addressModel, 'countryId')->dropDownList(
-                ArrayHelper::map(Country::find()->all(), 'id', 'name'));?>
-		</div>	
-		<div class="col-sm-3">
-			<?= $form->field($addressModel, 'postalCode')->textInput(['placeholder' => 'Postal Code'])->label(false); ?>
-		</div>
-	</div>	
-	<div class="clearfix"></div>
-</div> <!-- ./container -->
+	<div class="col-md-4">
+		<?= $form->field($addressModel, 'countryId')->dropDownList(
+			ArrayHelper::map(Country::find()->all(), 'id', 'name'));
+		?>
+	</div>
+	<div class="col-md-4">
+<?= $form->field($addressModel, 'postalCode')->textInput(['placeholder' => 'Postal Code']); ?>
+	</div>
+	<div class="form-group pull-right">
+		<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
+		<button class="nextBtn btn btn-info pull-right" type="button" >Next</button>
+	</div>
