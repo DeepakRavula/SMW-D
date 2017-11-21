@@ -13,57 +13,6 @@ use common\models\User;
 use common\models\UserEmail;
 use common\models\Student;
 ?>
-<style>
-.requestwizard-modal{
-	background: rgba(255, 255, 255, 0.8);
-	box-shadow: rgba(0, 0, 0, 0.3) 20px 20px 20px;
-}
-.requestwizard-step p {
-    margin-top: 10px;
-}
-
-.requestwizard-row {
-    display: table-row;
-}
-
-.requestwizard {
-    display: table;
-    width: 100%;
-    position: relative;
-}
-
-.requestwizard-step button[disabled] {
-    opacity: 1 !important;
-    filter: alpha(opacity=100) !important;
-}
-.requestwizard-row:before {
-    top: 14px;
-    bottom: 0;
-    position: absolute;
-    content: " ";
-    width: 100%;
-    height: 1px;
-    background-color: #ccc;
-    z-order: 0;
-
-}
-
-.requestwizard-step {
-    display: table-cell;
-    text-align: center;
-    position: relative;
-}
-
-.btn-circle {
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  padding: 6px 0 6px 0;
-  font-size: 12px;
-  line-height: 1.428571429;
-  border-radius: 15px;
-}
-</style>
 			<div class="requestwizard">
 				<div class="requestwizard-row setup-panel">
 					<div class="requestwizard-step">
