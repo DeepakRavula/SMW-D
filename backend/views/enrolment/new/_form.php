@@ -116,6 +116,7 @@ use kartik\depdrop\DepDrop;
 	</div>
 	<?= $form->field($courseSchedule, 'day')->hiddenInput()->label(false); ?>
 	<?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false); ?>
+	<div class="clearfix"></div>
 	<div class="form-group pull-right">
 		<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
 		<button class="nextBtn btn btn-info pull-right" type="button" >Next</button>
