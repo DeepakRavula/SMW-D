@@ -137,7 +137,6 @@ $this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class
         ]);?>
 </div>
 
-<?php $url = env('FRONTEND_SCHEDULE_URL'); ?>
 <script type="text/javascript">
 var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
@@ -241,7 +240,8 @@ $(document).ready(function() {
 $(document).ready(function () {
 	$(document).on('click', '.tv-icon', function(e){ 
     e.preventDefault(); 
-    var url = '<?= $url; ?>'; 
+	var date = moment($('#datepicker').datepicker("getDate")).format('DD-MM-YYYY');
+    var url = "<?= Url::to(['daily-schedule/index']);?>?date=" + date; 
     window.open(url, '_blank');
 });
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {

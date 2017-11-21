@@ -130,7 +130,8 @@ $config = [
             [
                 'controllers' => [
 					'schedule', 'student', 'exam-result','note',
-					'classroom-unavailability', 'calendar','item', 'item-category', 
+					'classroom-unavailability', 'calendar','item', 
+					'item-category', 'daily-schedule',
 					'release-notes', 'lesson', 'invoice', 'timeline-event',
 					'enrolment','teacher-room', 'program', 'customer', 'email',
 					'teacher-availability', 'group-course', 'group-lesson',
