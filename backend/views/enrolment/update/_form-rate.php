@@ -22,7 +22,8 @@ use common\models\User;
     <?php foreach ($enrolmentProgramRates as $key => $enrolmentProgramRate) : ?>
     <?php if ($user->isAdmin()) : ?>
         <div class="col-md-6">
-            <label>Rate From <?= $enrolmentProgramRate->startDate . ' To ' . $enrolmentProgramRate->endDate ?></label>
+            <label>Rate From <?= (new \DateTime($enrolmentProgramRate->startDate))->format('d-m-Y') 
+                . ' To ' . (new \DateTime($enrolmentProgramRate->endDate))->format('d-m-Y') ?></label>
             <?= $form->field($enrolmentProgramRate, 'programRate')->textInput([
                     'id' => 'program-rate' . $key, 'name' => 'EnrolmentProgramRate['. $key . '][programRate]'
                 ])->label(false); 
