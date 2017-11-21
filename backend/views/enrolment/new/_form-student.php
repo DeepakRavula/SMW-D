@@ -31,6 +31,6 @@ $this->title = 'New Enrolment';
 	<div class="clearfix"></div>
 	<div class="pull-right">
 		<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
-		<button class="nextBtn btn btn-info pull-right" type="button" >Save</button>
+		 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'new-enrol-save-btn']) ?>
 	</div>
 </div> <!-- ./container -->

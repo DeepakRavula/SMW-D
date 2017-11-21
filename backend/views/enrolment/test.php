@@ -115,6 +115,7 @@ use common\models\Student;
 		]);
 		?> 
 	    </div>
+<?= $this->render('new/_calendar');?>
 <?php ActiveForm::end(); ?>
 <script>
 $(document).ready(function () {

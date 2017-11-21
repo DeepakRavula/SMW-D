@@ -154,6 +154,18 @@ $(document).ready(function(){
 		$('#reverse-enrol-modal').modal('hide');
         return false;	
 	});
+	 $(document).on('beforeSubmit', '#new-enrolment-form', function(){
+        $.ajax({
+            url    : '<?= Url::to(['enrolment/add']); ?>',
+            type   : 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function(response)
+            {
+            }
+        });
+        return false;
+    });
   $("#enrolmentsearch-showallenrolments").on("change", function() {
       var showAllEnrolments = $(this).is(":checked");
       var url = "<?php echo Url::to(['enrolment/index']); ?>?EnrolmentSearch[showAllEnrolments]=" + (showAllEnrolments | 0);
