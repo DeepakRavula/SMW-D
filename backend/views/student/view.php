@@ -157,6 +157,7 @@ $this->params['label'] = $this->render('_title', [
     $(document).ready(function () {
         $(document).on('click', '#add-private-enrol', function () {
             $('#private-enrol-modal').modal('show');
+            $('#private-enrol-modal .modal-dialog').css({'width': '1000px'});
             return false;
 		});
 		$(document).on('click', '#add-group-enrol', function () {

@@ -6,6 +6,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 
 ?>
 <?= $this->render('/lesson/_color-code');?>
+<div id="enrolment-calendar"></div>
 <?php
     $locationId = Yii::$app->session->get('location_id');
     $minLocationAvailability = LocationAvailability::find()
@@ -20,34 +21,87 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
     $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 <script type="text/javascript">
-    $(document).on('click', '.private-enrol-picker', function(){
-        var teacherId = $('#course-teacherid').val();
-        var duration = $('#courseschedule-duration').val();
-        $.ajax({
-            url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?id=' + teacherId,
-            type: 'get',
-            dataType: "json",
-            success: function (response)
-            {
-                var options = {
-                    date: moment(new Date()),
-                    duration: duration,
-                    businessHours: response.availableHours,
-                    minTime: '<?= $from_time; ?>',
-                    maxTime: '<?= $to_time; ?>',
-                    eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event']); ?>?lessonId=&teacherId=' + teacherId
-                };
-                $('#calendar-date-time-picker').calendarPicker(options);
-            }
-        });
-        return false;
-    });
-    
-    $(document).on('after-date-set', function(event, params) {
-        if (!$.isEmptyObject(params.date)) {
-            $('#course-startdate').val(moment(params.date).format('DD-MM-YYYY h:mm A'));
-            $('#courseschedule-day').val(moment(params.date).format('dddd'));
-            $('#courseschedule-fromtime').val(moment(params.date).format('h:mm A'));
-        }
-    });
-</script>
+ $(document).ready(function() {
+     var calendar = {
+         refresh : function(){
+             var events, availableHours;
+             var teacherId = $('#course-teacher').val();
+             var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+ 			if (! moment(date).isValid()) {
+                 var date = moment($('#course-startdate').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
+             }
+ 			$('#enrolment-edit-modal .modal-dialog').css({'width': '1000px'});
+ 			$.ajax({
+ 				url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
+ 				type: 'get',
+ 				dataType: "json",
+ 				success: function (response)
+ 				{
+ 					events = response.events;
+ 					availableHours = response.availableHours;
+ 					enrolment.refreshCalendar(availableHours, events, date);
+ 				}
+ 			});
+         }
+     };
+ 	var enrolment = {
+         refreshCalendar : function(availableHours, events, date){
+             $('#enrolment-calendar').fullCalendar('destroy');
+             $('#enrolment-calendar').fullCalendar({
+             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+                 defaultDate: date,
+                 header: {
+                     left: 'prev,next today',
+                     center: 'title',
+                     right: 'agendaWeek'
+                 },
+                 allDaySlot: false,
+ 				height:450,
+                 slotDuration: '00:15:00',
+                 titleFormat: 'DD-MMM-YYYY, dddd',
+                 defaultView: 'agendaWeek',
+                 minTime: "<?php echo $from_time; ?>",
+                 maxTime: "<?php echo $to_time; ?>",
+                 selectConstraint: 'businessHours',
+                 eventConstraint: 'businessHours',
+                 businessHours: availableHours,
+                 overlapEvent: false,
+                 overlapEventsSeparate: true,
+                 events: events,
+                 select: function (start, end, allDay) {
+                     $('#course-startdate').val(moment(start).format('DD-MM-YYYY hh:mm A'));
+                     $('#courseschedule-fromtime').val(moment(start).format('hh:mm A'));
+                     $('#enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
+ 					$('#courseschedule-day').val(moment(start).day());
+ 					var endtime = start.clone();
+                 	var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();
+                 	moment(endtime.add(durationMinutes, 'minutes'));
+                     $('#enrolment-calendar').fullCalendar('renderEvent',
+                         {
+                             id: 'newEnrolment',
+                             start: start,
+                             end: endtime,
+                             allDay: false
+                         },
+                     true // make the event "stick"
+                     );
+                     $('#enrolment-calendar').fullCalendar('unselect');
+                 },
+                 eventAfterAllRender: function (view) {
+                     $('.fc-short').removeClass('fc-short');
+                 },
+                 selectable: true,
+                 selectHelper: true,
+             });
+         }
+     };
+ 	$(document).on('change', '#course-startdate', function () {
+ 		calendar.refresh();
+ 	});
+ 	$(document).on('change', '#course-teacher', function() {
+ 		$('#courseschedule-day').val('');
+ 		calendar.refresh();
+ 		return false;
+ 	});
+ });
+ </script>
