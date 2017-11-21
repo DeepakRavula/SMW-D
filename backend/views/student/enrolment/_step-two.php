@@ -8,7 +8,8 @@ use kartik\date\DatePickerAsset;
 
 DatePickerAsset::register($this);
 ?>
-<div class="row user-create-form">
+<div class="user-create-form">
+    <div class="row">
 <div class="col-md-3 m-r-10">
 <?php
     // Dependent Dropdown
@@ -55,7 +56,12 @@ DatePickerAsset::register($this);
 <div class="clearfix"></div>
 <?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false);?>
 <?= $this->render('_calendar'); ?>
-<div class="form-group pull-right">
+<div class="row m-t-25">
+    <div class="col-md-12">
+<div class="pull-right">
 	  <?= Html::a('Cancel', '#', ['class' => 'btn btn-default private-enrol-cancel']); ?>
-	 <button class="btn btn-info nextBtn" type="button" >Save</button>
+	 <button class="btn btn-info nextBtn" type="submit" >Save</button>
+</div>
+    </div>
+</div>
 </div>
