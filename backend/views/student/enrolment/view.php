@@ -87,6 +87,15 @@ Modal::begin([
 	]);?>
 <?php Modal::end(); ?>
 <?= $this->render('_calendar', []);?>
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Add Group Enrolment</h4>',
+    'id' => 'group-enrol-modal',
+]); ?>
+<?= $this->render('_form-group', [
+	'groupCourseDataProvider' => $groupCourseDataProvider,
+	'student' => $model
+	]);?>
+<?php Modal::end(); ?>
 <script type="text/javascript">
 $(document).ready(function() {
 	$(document).on('click', '.enrolment-edit-cancel', function() {

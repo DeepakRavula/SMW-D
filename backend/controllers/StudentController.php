@@ -4,23 +4,17 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Student;
-use common\models\Enrolment;
-use common\models\Lesson;
 use common\models\Program;
 use common\models\Course;
 use backend\models\search\StudentSearch;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use common\models\CourseSchedule;
-use common\models\ExamResult;
-use common\models\Note;
 use common\models\StudentLog;
 use common\models\User;
 use common\models\discount\EnrolmentDiscount;
-use common\models\PaymentFrequency;
 use common\models\TeacherAvailability;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
@@ -150,7 +144,7 @@ class StudentController extends Controller
 		$courseModel->load($post);
 		$courseSchedule->load($post);
 		
-        if (Yii::$app->request->isPost && empty($post['courseId'])) {
+        if (Yii::$app->request->isPost) {
             $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
             $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
             $courseModel->locationId = $locationId;
@@ -177,39 +171,6 @@ class StudentController extends Controller
 			}
             return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
         }
-        if (!empty($post['courseId'])) {
-            $enrolmentModel = new Enrolment();
-            $enrolmentModel->courseId = current($post['courseId']);
-            $enrolmentModel->studentId = $model->id;
-            $enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
-            $enrolmentModel->save();
-
-            return $this->redirect(['enrolment/review', 'id' => $enrolmentModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
-        }
-
-        $groupEnrolments = Enrolment::find()
-                ->select(['courseId'])
-                ->joinWith(['course' => function ($query) use ($locationId) {
-                    $query->groupProgram($locationId);
-                }])
-                ->where(['enrolment.studentId' => $model->id])
-				->isConfirmed();
-        $groupCourses = Course::find()
-                ->joinWith(['program' => function ($query) {
-                    $query->group();
-                }])
-                ->where(['NOT IN', 'course.id', $groupEnrolments])
-                ->andWhere(['locationId' => $locationId])
-               ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])  
-				->confirmed();
-        $groupCourseDataProvider = new ActiveDataProvider([
-            'query' => $groupCourses,
-        ]);
-
-        return $this->render('/student/enrolment/view', [
-            'model' => $model,
-            'groupCourseDataProvider' => $groupCourseDataProvider,
-        ]);
     }
 
     /**

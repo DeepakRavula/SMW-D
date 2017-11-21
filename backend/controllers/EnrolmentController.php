@@ -20,6 +20,7 @@ use yii\filters\ContentNegotiator;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
 use common\models\timelineEvent\TimelineEventEnrolment;
+use common\models\PaymentFrequency;
 use common\models\UserPhone;
 use common\models\UserAddress;
 use common\models\UserEmail;
@@ -48,7 +49,7 @@ class EnrolmentController extends Controller
 			'contentNegotiator' => [
 				'class' => ContentNegotiator::className(),
 				'only' => ['add', 'delete', 'edit','schedule', 
-                                    'update','edit-end-date', 'edit-program-rate'],
+                        'group', 'update','edit-end-date', 'edit-program-rate'],
 				'formatParam' => '_format',
 				'formats' => [
 				   'application/json' => Response::FORMAT_JSON,
@@ -110,7 +111,21 @@ class EnrolmentController extends Controller
         ]);
     }
 
-    public function actionEdit($id)
+	public function actionGroup($courseId, $studentId)
+	{
+		$enrolmentModel = new Enrolment();
+		$enrolmentModel->courseId = $courseId;
+		$enrolmentModel->studentId = $studentId;
+		$enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
+		$enrolmentModel->isConfirmed = true;
+		if($enrolmentModel->save()) {
+			return [
+				'status' => true,
+			];
+		}
+	}
+
+	public function actionEdit($id)
     {
         $model = $this->findModel($id);
         $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
@@ -415,62 +430,6 @@ class EnrolmentController extends Controller
         }
     }
 
-	public function actionReview($id)
-	{
-		$model = new Lesson();
-		$enrolment = Enrolment::findOne(['id' => $id]);
-        $searchModel = new LessonSearch();
-		$request = Yii::$app->request;
-        $lessonSearchRequest = $request->get('LessonSearch');
-        $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
-        $courseModel = $enrolment->course;
-		$conflicts = [];
-		$conflictedLessonIds = [];
-
-		$lessons = Lesson::find()
-			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED])
-			->all();
-		foreach ($lessons as $lesson) {
-			$lesson->setScenario(Lesson::SCENARIO_GROUP_ENROLMENT_REVIEW);
-			$lesson->studentId = $enrolment->student->id;
-		}
-		Model::validateMultiple($lessons);
-		foreach ($lessons as $lesson) {
-			if(!empty($lesson->getErrors('date'))) {
-				$conflictedLessonIds[] = $lesson->id;
-			}
-			$conflicts[$lesson->id] = $lesson->getErrors('date');
-		}
-		$query = Lesson::find();
-		if(! $showAllReviewLessons) {
-			$query->andWhere(['IN', 'lesson.id', $conflictedLessonIds]);
-		}  else {
-				$query->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_SCHEDULED]);
-		}
-        $lessonDataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-
-        return $this->render('review', [
-            'courseModel' => $courseModel,
-            'lessonDataProvider' => $lessonDataProvider,
-            'conflicts' => $conflicts,
-			'model' => $model,
-            'searchModel' => $searchModel,
-			'enrolment' => $enrolment,
-        ]);
-	}
-	public function actionConfirmGroup($id)
-	{
-		$enrolment = Enrolment::findOne(['id' => $id]);
-		$enrolment->isConfirmed = true;
-		$enrolment->save();
-        $user = User::findOne(['id' => Yii::$app->user->id]);
-        $enrolment->on(Enrolment::EVENT_GROUP, [new TimelineEventEnrolment(), 'groupCourseEnrolment'], ['userName' => $user->publicIdentity]);
-        $enrolment->trigger(Enrolment::EVENT_GROUP);
-        $invoice = $enrolment->createProFormaInvoice();
-			return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
-	}
     public function actionEditEndDate($id)
     {
         $model = $this->findModel($id);

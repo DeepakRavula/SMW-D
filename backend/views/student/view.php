@@ -9,6 +9,7 @@ use yii\bootstrap\Modal;
 use common\models\Note;
 use kartik\select2\Select2Asset;
 use kartik\daterange\DateRangePickerAsset;
+use yii\widgets\Pjax;
 
 Select2Asset::register($this);
 DateRangePickerAsset::register($this);              
@@ -35,12 +36,16 @@ $this->params['label'] = $this->render('_title', [
 	?>
 </div>
 <div class="row">
+<?php Pjax::begin(['id' => 'enrolment-list']);?>
 	<?php
 	echo $this->render('enrolment/view', [
 		'model' => $model,
 		'enrolmentDataProvider' => $enrolmentDataProvider,
+		'groupCourseDataProvider' => $groupCourseDataProvider
+		
 	]);
 	?>
+<?php Pjax::end();?>
 </div>
 <div class="row">
 	<?php
@@ -154,6 +159,11 @@ $this->params['label'] = $this->render('_title', [
             $('#private-enrol-modal').modal('show');
             return false;
 		});
+		$(document).on('click', '#add-group-enrol', function () {
+            $('#group-enrol-modal').modal('show');
+        	$('#group-enrol-modal .modal-dialog').css({'width': '800px'});
+            return false;
+		});
 		$(document).on('click', '.private-enrol-cancel', function() {
 			$('#private-enrol-modal').modal('hide');
 			return false;
@@ -177,6 +187,22 @@ $this->params['label'] = $this->render('_title', [
                         $('#student-merge-modal').modal('show');
                     }
                 }
+            });
+            return false;
+        });
+		$(document).on('click', '.group-enrol-btn', function () {
+            $.ajax({
+                url    : $(this).attr('href'),
+                type   : 'get',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+					if(response) {
+						$.pjax.reload({container: '#enrolment-list', timeout: 6000});
+						$('#group-enrol-modal').modal('hide');
+					}
+				}
             });
             return false;
         });
