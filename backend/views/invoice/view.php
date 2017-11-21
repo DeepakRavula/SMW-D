@@ -236,6 +236,10 @@ Modal::end();
 		$('#credit-modal').modal('show');
 		return false;
   	});
+	$(document).on('click', '.apply-credit-cancel', function (e) {
+		$('#credit-modal').modal('hide');
+		return false;
+  	});
 	$(document).on('click', '.add-payment', function (e) {
 		$('#payment-modal').modal('show');
 		$.ajax({
