@@ -24,14 +24,12 @@ class BackendAsset extends AssetBundle
         'css/teacher/style.css',
         'plugins/jquery-timepicker/jquery.timepicker.css',
         'plugins/jquery-multiselect/style.css',
-		'plugins/bootstrap-toggle/css/bootstrap-toggle.css',
     ];
     public $js = [
         'plugins/momentjs/moment-with-locales.js',
         'plugins/jquery-timepicker/jquery.timepicker.js',
         'plugins/jquery-multiselect/multiselect.js',
         'plugins/jquery-multiselect/multiselect.min.js',
-		'plugins/bootstrap-toggle/js/bootstrap-toggle.min.js'
     ];
 
     public $depends = [

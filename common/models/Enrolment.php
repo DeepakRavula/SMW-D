@@ -83,7 +83,8 @@ class Enrolment extends \yii\db\ActiveRecord
             'isDeleted' => 'Is Deleted',
             'paymentFrequencyId' => 'Payment Frequency',
 			'toEmailAddress' => 'To',
-			'showAllEnrolments' => 'Show All'
+			'showAllEnrolments' => 'Show All',
+			'isAutoRenew' => 'Auto Renew'
         ];
     }
 
