@@ -9,7 +9,7 @@ use yii\helpers\Url;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="payments-form p-l-20 form-well-smw form-well m-t-10 m-b-0">
+<div class="user-create-form row">
     <?php $form = ActiveForm::begin([
         'id' => 'apply-credit-form',
         'action' => Url::to(['payment/credit-payment', 'id' => $invoice->id]),
@@ -29,10 +29,7 @@ use yii\helpers\Url;
 	<?php echo $form->field($model, 'sourceId')->hiddenInput()->label(false); ?>
 	<?php echo $form->field($model, 'payment_method_id')->hiddenInput(['class' => 'payment-method-id'])->label(false); ?>
     <div class="form-group pull-right">
-        <?php 
-            if (!$model->isNewRecord) {
-                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn btn-default']);
-            }
+        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default apply-credit-cancel']);
         ?>
        <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 			
