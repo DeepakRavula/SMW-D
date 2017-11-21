@@ -617,7 +617,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function canRevert()
     {
-        return $this->lineItem && !$this->isReversedInvoice() && !$this->isInvoiceReversed();
+        return $this->lineItem && !$this->isReversedInvoice() && !$this->isInvoiceReversed() && !$this->isOpeningBalance();
     }
 
     public function getNetSubtotal()

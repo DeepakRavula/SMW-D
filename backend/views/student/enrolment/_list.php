@@ -3,7 +3,6 @@ use yii\grid\GridView;
 use common\models\Course;
 use yii\helpers\Html;
 use yii\helpers\Url;
-
 ?>
 <?php
 echo GridView::widget([
