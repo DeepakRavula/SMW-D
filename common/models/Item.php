@@ -8,6 +8,7 @@ use backend\models\discount\CustomerLineItemDiscount;
 use backend\models\discount\PaymentFrequencyLineItemDiscount;
 use backend\models\discount\EnrolmentLineItemDiscount;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii\helpers\VarDumper;
 
 /**
  * This is the model class for table "item".
@@ -268,14 +269,9 @@ class Item extends \yii\db\ActiveRecord
         $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
         $invoiceLineItemModel->cost        = 0.0;
         if (!$invoiceLineItemModel->save()) {
-            print_r($invoiceLineItemModel->getErrors());die;
+            Yii::error('Line item create error: '.VarDumper::dumpAsString($invoiceLineItemModel->getErrors()));
         }
         $invoice->save();
-        if ($invoice->user) {
-            if ($invoice->user->hasDiscount()) {
-                $invoiceLineItemModel->addCustomerDiscount($invoice->user);
-            }
-        }
         return $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
     }
 }
