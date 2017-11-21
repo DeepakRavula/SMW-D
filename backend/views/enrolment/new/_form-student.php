@@ -19,14 +19,7 @@ $this->title = 'New Enrolment';
             echo $form->field($model, 'last_name')->textInput(['placeholder' => 'Last Name']); ?>
 			</div>
 		<div class="col-md-5">
-		<?php echo $form->field($model, 'birth_date')->widget(DatePicker::classname(), [
-                'type' => DatePicker::TYPE_COMPONENT_APPEND,
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'dd-mm-yyyy',
-                ],
-            ]);
-            ?>
+		 <?php echo $form->field($model, 'birth_date')->textInput()?>
         </div>
 	<div class="clearfix"></div>
 	<div class="pull-right">
@@ -34,3 +27,19 @@ $this->title = 'New Enrolment';
 		 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'new-enrol-save-btn']) ?>
 	</div>
 </div> <!-- ./container -->
+<script>
+$(document).ready(function() {
+$.fn.datepicker.noConflict();
+	$('#student-birth_date').datepicker({
+	   altField: '#student-birth_date',
+	   altFormat: 'dd-mm-yy',
+	   changeMonth: true,
+	   changeYear: true,
+	   yearRange : '-70:today',
+	   onChangeMonthYear:function(y, m, i){
+		   var d = i.selectedDay;
+		   $(this).datepicker('setDate', new Date(y, m-1, d));
+	   }
+	});
+});
+</script>

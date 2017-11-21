@@ -20,6 +20,8 @@ $this->params['show-all'] = $this->render('_button', [
 	'searchModel' => $searchModel
 ]);
 ?>
+<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
+<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 	<?php $columns = [
 		[
             'attribute' => 'program',
@@ -142,8 +144,9 @@ $this->params['show-all'] = $this->render('_button', [
     'header' => '<h4 class="m-0">New Enrolment</h4>',
     'id' => 'reverse-enrol-modal',
 ]); ?>
-<?= $this->render('test');?>
+<?= $this->render('_index');?>
 <?php Modal::end(); ?>
+<?= $this->render('new/_calendar');?>
 <script>
 $(document).ready(function(){
 	$(document).on('click', '.new-enrol-btn', function() {
