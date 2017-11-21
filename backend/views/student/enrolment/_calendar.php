@@ -25,7 +25,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
      var calendar = {
          refresh : function(){
              var events, availableHours;
-             var teacherId = $('#course-teacher').val();
+             var teacherId = $('#course-teacherid').val();
              var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
  			if (! moment(date).isValid()) {
                  var date = moment($('#course-startdate').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
@@ -53,8 +53,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                  header: {
                      left: 'prev,next today',
                      center: 'title',
-                     right: 'agendaWeek'
-                 },
+                     },
                  allDaySlot: false,
  				height:450,
                  slotDuration: '00:15:00',
@@ -72,7 +71,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                      $('#course-startdate').val(moment(start).format('DD-MM-YYYY hh:mm A'));
                      $('#courseschedule-fromtime').val(moment(start).format('hh:mm A'));
                      $('#enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
- 					$('#courseschedule-day').val(moment(start).day());
+ 					$('#courseschedule-day').val(moment(start).format('dddd'));
  					var endtime = start.clone();
                  	var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();
                  	moment(endtime.add(durationMinutes, 'minutes'));
@@ -98,7 +97,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
  	$(document).on('change', '#course-startdate', function () {
  		calendar.refresh();
  	});
- 	$(document).on('change', '#course-teacher', function() {
+ 	$(document).on('change', '#course-teacherid', function() {
  		$('#courseschedule-day').val('');
  		calendar.refresh();
  		return false;

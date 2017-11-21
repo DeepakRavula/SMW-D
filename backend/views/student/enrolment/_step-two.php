@@ -27,7 +27,7 @@ DatePickerAsset::register($this);
     ]);
     ?>
 </div>
-<div class="col-md-4 m-r-10">
+<div class="col-md-2 m-r-10">
 	<?php
 	echo $form->field($model, 'startDate', ['horizontalCssClasses' => [
 		'label' => '',
@@ -45,7 +45,7 @@ DatePickerAsset::register($this);
 	]);
 	?>
 </div>
-<div class="col-md-3 m-r-10">
+<div class="col-md-2 m-r-10">
 	<?= $form->field($courseSchedule, 'day', ['horizontalCssClasses' => [
 		'label' => '',
 		'wrapper' => '',
