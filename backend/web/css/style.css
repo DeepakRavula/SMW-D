@@ -263,3 +263,11 @@ dl {
   line-height: 1.428571429;
   border-radius: 15px;
 }
+#private-enrol-modal .modal-dialog .modal-content .modal-body {
+    overflow-y: auto;
+    height: 550px;
+}
+#courseschedule-duration, #rate-per-month, #payment-frequency-discount,
+#enrolment-discount, #discounted-rate-per-month{
+	text-align:right;
+}
