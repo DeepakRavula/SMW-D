@@ -88,6 +88,12 @@ body .user-panel > .info {
 .m-t-25 {
     margin-top: 25px !important;
 }
+.f-s-18 {
+	font-size:18px;
+}
+.fa-pencil, .fa-chain, .fa-angle-down, .fa-plus {
+	cursor:pointer;
+}
 .primary-contact {
 	font-size: 15px;
 }
@@ -197,7 +203,9 @@ dl {
     border: 2px solid transparent;
     border-radius: 50%;
 }
-
+.location-header {
+	margin-top:15px;
+}
 .invoice-search {
 	margin-top :10px;
 }
