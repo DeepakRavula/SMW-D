@@ -1,146 +1,56 @@
 <?php
 
 use yii\helpers\Url;
-use common\models\User;
 use yii\bootstrap\ActiveForm;
-use kartik\select2\Select2;
-use common\models\Program;
-use common\models\PaymentFrequency;
-use yii\helpers\ArrayHelper;
-use kartik\time\TimePicker;
-use kartik\date\DatePicker;
 use yii\helpers\Html;
 use common\models\LocationAvailability;
-use kartik\depdrop\DepDrop;
+use common\models\Course;
+use common\models\CourseSchedule;
+use backend\models\discount\EnrolmentDiscount;
 ?>
 <div class="user-create-form">
+
+		<div class="requestwizard">
+				<div class="requestwizard-row setup-panel">
+					<div class="requestwizard-step">
+			            <a href="#step-1" type="button" class="btn btn-primary btn-circle">1</a>
+			            <p>Program</p>
+			        </div>
+			        <div class="requestwizard-step">
+			            <a href="#step-2" type="button" class="btn btn-default btn-circle" disabled="disabled">2</a>
+			            <p>Teacher</p>
+			        </div>
+		    	</div>
+			</div>
 <?php
 $form = ActiveForm::begin([
 		'id' => 'enrolment-form',
 		'layout' => 'horizontal',
 		'action' => Url::to(['student/enrolment', 'id' => $student->id]),
-		'fieldConfig' => [
-			'horizontalCssClasses' => [
-				'label' => 'col-md-6 control-label',
-				'hint' => 'hint-label',
-				 'wrapper' => 'col-md-5',
-			],
-		],
 	]);
-?>
-<?php
-$privatePrograms = ArrayHelper::map(Program::find()
-			->active()
-			->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM])
-			->all(), 'id', 'name')
-?>
-<?php
-echo $form->field($model, 'programId')->widget(Select2::classname(), [
-	'data' => $privatePrograms,
-	'options' => ['placeholder' => 'Program']
-])
-?>
-
-<?php if (Yii::$app->user->identity->isAdmin()) : ?>
-	<?php
-	echo $form->field($courseSchedule, 'programRate', [
-			'inputTemplate' => '<div class="input-group">'
-			. '<span class="input-group-addon">$</span>{input}<span class="input-group-addon">/hr</span></div>',]
-		)->textInput(['class' => 'col-md-2 form-control	'])
-		->label('Rate(per hour)');
-	?>
-<?php endif; ?>
-<?php
-echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(), [
-	'pluginOptions' => [
-		'showMeridian' => false,
-		'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
-	],
-]);
-?>
-<?php
-    // Dependent Dropdown
-    echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
-        [
-		  'type' => DepDrop::TYPE_SELECT2,
-        'options' => ['id' => 'course-teacherid'],
-        'pluginOptions' => [
-            'depends' => ['course-programid'],
-            'placeholder' => 'Select...',
-            'url' => Url::to(['course/teachers']),
-        ],
-    ]);
-    ?>
-	<?php
-	echo $form->field($model, 'startDate', [
-		'inputTemplate' => '<div class="input-group">'
-		. '{input}<span class="input-group-addon"><i class="fa fa-calendar private-enrol-picker"></i></span></div>',])->textInput(['readOnly' => true])->label('Date & Time');
-	?>
-<div class="form-group">
-	<label class="control-label col-md-6 control-label">Rate(per month)</label>
-	<div class="col-md-5">
-		<div class="input-group">
-			<span class="input-group-addon">$</span>
-			<input type="text" readonly="true" id="rate-per-month" class="form-control"  autocomplete="off">
-			<span class="input-group-addon">/mn</span>
-		</div>
-	</div>
-</div>
-<?=
-$form->field($courseSchedule, 'paymentFrequency')->widget(Select2::classname(), [
-	'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')
-])
-?>
-<?=
-$form->field($paymentFrequencyDiscount, 'discount', [
-	'inputTemplate' => '<div class="input-group">'
-	. '{input}<span class="input-group-addon">%</span></div>'])->textInput([
-	'id' => 'payment-frequency-discount',
-	'name' => 'PaymentFrequencyDiscount[discount]'
-])->label('Payment Frequency Discount');
-?>
-<?=
-$form->field($multipleEnrolmentDiscount, 'discount', [
-	'inputTemplate' => '<div class="input-group">'
-	. '<span class="input-group-addon">$</span>{input}<span class="input-group-addon">/mn</span></div>'])->textInput([
-	'id' => 'enrolment-discount',
-	'name' => 'MultipleEnrolmentDiscount[discount]'
-])->label('Multiple Enrol. Discount');
-?>
-<div class="form-group">
-	<label class="control-label col-md-6 control-label">Discounted Rate</label>
-	<div class="col-md-5">
-		<div class="input-group">
-			<span class="input-group-addon">$</span>
-			<input type="text" readonly="true" id="discounted-rate-per-month" class="form-control"  autocomplete="off">
-			<span class="input-group-addon">/mn</span>
-		</div>
-	</div>
-</div>
-	<?= $form->field($courseSchedule, 'day')->hiddenInput()->label(false);?>
-<?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false);?>
- <div class="form-group pull-right">
-	  <?= Html::a('Cancel', '#', ['class' => 'btn btn-default private-enrol-cancel']); ?>
-        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-       
-    </div>
+?>	
+	    <div class="row setup-content" id="step-1">
+	    <?= $this->render('_step-one', [
+			'model' => new Course(), 
+			'courseSchedule' => new CourseSchedule(),
+			'paymentFrequencyDiscount' => new EnrolmentDiscount(),
+			'multipleEnrolmentDiscount' => new EnrolmentDiscount(),
+			'student' => $model,
+			'form' => $form
+		]);?> 
+	    </div>
+	    <div class="row setup-content" id="step-2">
+			<?= $this->render('_step-two', [
+				'model' => new Course(), 
+				'courseSchedule' => new CourseSchedule(),
+				'form' => $form
+		]);?>  
+	    </div>
 <?php ActiveForm::end(); ?>
-    </div>
-<?php
-$locationId = Yii::$app->session->get('location_id');
-$minLocationAvailability = LocationAvailability::find()
-    ->where(['locationId' => $locationId])
-    ->orderBy(['fromTime' => SORT_ASC])
-    ->one();
-$maxLocationAvailability = LocationAvailability::find()
-    ->where(['locationId' => $locationId])
-    ->orderBy(['toTime' => SORT_DESC])
-    ->one();
-$from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-$to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-?>
+		</div>
+
 <script>
-    var enrolment = {
+var enrolment = {
 	fetchProgram: function(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate) {
 		var params = $.param({duration: duration, id: programId, paymentFrequencyDiscount: paymentFrequencyDiscount,
 			multiEnrolmentDiscount: multiEnrolmentDiscount, rate: programRate });
@@ -156,19 +66,58 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 			}
 		});
 	}
-    };
-    $(document).ready(function () {
-        $(document).on('change', '#course-programid, #courseschedule-duration, #courseschedule-programrate, #payment-frequency-discount, #enrolment-discount', function(){
-            if ($(this).attr('id') != "course-programid") {
-                var programRate = $('#courseschedule-programrate').val();
-            } else {
-                var programRate = null;
-            }
-            var duration = $('#courseschedule-duration').val();
-            var programId = $('#course-programid').val();
-            var paymentFrequencyDiscount = $('#payment-frequency-discount').val();
-            var multiEnrolmentDiscount = $('#enrolment-discount').val();
-            enrolment.fetchProgram(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate);
+};
+$(document).ready(function () {
+	$(document).on('change', '#course-programid, #courseschedule-duration, #courseschedule-programrate, #payment-frequency-discount, #enrolment-discount', function(){
+		if ($(this).attr('id') != "course-programid") {
+			var programRate = $('#courseschedule-programrate').val();
+		} else {
+			var programRate = null;
+		}
+		var duration = $('#courseschedule-duration').val();
+		var programId = $('#course-programid').val();
+		var paymentFrequencyDiscount = $('#payment-frequency-discount').val();
+		var multiEnrolmentDiscount = $('#enrolment-discount').val();
+		enrolment.fetchProgram(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate);
         });
+    var navListItems = $('div.setup-panel div a'),
+            allWells = $('.setup-content'),
+            allNextBtn = $('.nextBtn');
+
+    allWells.hide();
+
+    navListItems.click(function (e) {
+        e.preventDefault();
+        var $target = $($(this).attr('href')),
+                $item = $(this);
+
+        if (!$item.hasClass('disabled')) {
+            navListItems.removeClass('btn-primary').addClass('btn-default');
+            $item.addClass('btn-primary');
+            allWells.hide();
+            $target.show();
+            $target.find('input:eq(0)').focus();
+        }
+    });
+
+    allNextBtn.click(function(){
+        var curStep = $(this).closest(".setup-content"),
+            curStepBtn = curStep.attr("id"),
+            nextStepWizard = $('div.setup-panel div a[href="#' + curStepBtn + '"]').parent().next().children("a"),
+            curInputs = curStep.find("input[type='text'],input[type='url']"),
+            isValid = true;
+ $(".form-group").removeClass("has-error");
+        for(var i=0; i<curInputs.length; i++){
+            if (!curInputs[i].validity.valid){
+                isValid = false;
+                $(curInputs[i]).closest(".form-group").addClass("has-error");
+            }
+        }
+
+        if (isValid)
+            nextStepWizard.removeAttr('disabled').trigger('click');
+    });
+
+    $('div.setup-panel div a.btn-primary').trigger('click');
 });
 </script>
