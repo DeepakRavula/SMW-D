@@ -21,12 +21,7 @@ $this->title = 'New Enrolment';
 	<div class="col-md-6">
 		<?php echo $form->field($userProfile, 'lastname')->textInput(); ?>
 	</div>
-	<div class="col-md-6">
-<?= $form->field($phoneModel, 'number')->textInput(); ?>
-	</div>
-	<div class="col-md-6">
-<?= $form->field($userEmail, "email")->textInput(['maxlength' => true]) ?>
-	</div>
+	
 	<div class="col-md-6">
 <?=
 $form->field($userEmail, "labelId")->widget(Select2::classname(), [
@@ -38,6 +33,9 @@ $form->field($userEmail, "labelId")->widget(Select2::classname(), [
 	],
 ])->label('Label');
 ?>
+	</div>
+	<div class="col-md-6">
+<?= $form->field($userEmail, "email")->textInput(['maxlength' => true]) ?>
 	</div>
 	<div class="col-md-4">
 <?=
@@ -53,6 +51,9 @@ $form->field($phoneModel, "labelId")->widget(Select2::classname(), [
 	],
 ])->label('Label');
 ?>
+	</div>
+	<div class="col-md-6">
+<?= $form->field($phoneModel, 'number')->textInput(); ?>
 	</div>
 	<div class="col-md-2">
 <?= $form->field($phoneModel, 'extension')->textInput(); ?>

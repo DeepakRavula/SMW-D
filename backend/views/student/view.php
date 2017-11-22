@@ -20,6 +20,8 @@ $this->title = $model->fullName;
 $this->params['label'] = $this->render('_title', [
 	'model' => $model,
 ]);?>
+<div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
+<div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
@@ -56,8 +58,7 @@ $this->params['label'] = $this->render('_title', [
 	]);
 	?>
 </div>
-<div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
-<div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
+
 <div class="nav-tabs-custom">
 		<?php
 		$lessonContent = $this->render('_lesson', [

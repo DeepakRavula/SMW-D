@@ -13,6 +13,7 @@ use common\models\User;
 use common\models\UserEmail;
 use common\models\Student;
 ?>
+<div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 			<div class="requestwizard">
 				<div class="requestwizard-row setup-panel">
 					<div class="requestwizard-step">
@@ -32,7 +33,6 @@ use common\models\Student;
 <div class="clearfix"></div>	
 <?php $form = ActiveForm::begin([
 	'id' => 'new-enrolment-form',
-//	'action' => Url::to(['enrolment/add']),
 ]); ?>
 	    <div class="row setup-content" id="step-1">
 	       <?= $this->render('new/_form-course', [
@@ -68,7 +68,13 @@ use common\models\Student;
 <?php ActiveForm::end(); ?>
 <script>
 $(document).ready(function () {
-
+	$('#new-enrolment-form').on('afterValidate', function (event, messages) {
+		if(messages["course-programid"].length || messages["userprofile-lastname"].length || messages["userprofile-firstname"].length || messages["userphone-number"].length || messages["useraddress-address"].length) {
+			$('#notification').remove();
+			$('#error-notification').html('Form has error. Please fix and try again.').fadeIn().delay(3000).fadeOut();
+		}  else{
+		}
+    });
     var navListItems = $('div.setup-panel div a'),
             allWells = $('.setup-content'),
             allNextBtn = $('.nextBtn');
