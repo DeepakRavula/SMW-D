@@ -265,6 +265,6 @@ dl {
 }
 
 #courseschedule-duration, #rate-per-month, #payment-frequency-discount,
-#enrolment-discount, #discounted-rate-per-month{
+#enrolment-discount, #discounted-rate-per-month,#courseschedule-programrate{
 	text-align:right;
 }
