@@ -47,7 +47,7 @@ class InvoiceLineItemController extends Controller
         ];
     }
 
-	public function actionComputeTax()
+    public function actionComputeTax()
     {
         $data = Yii::$app->request->rawBody;
         $data = Json::decode($data, true);
@@ -181,45 +181,15 @@ class InvoiceLineItemController extends Controller
         return $result;
     }
 
-    public function actionApplyDiscount($id)
+    public function actionApplyDiscount()
     {
-        $invoiceModel = Invoice::findOne($id);
-        $invoiceModel->setScenario(Invoice::SCENARIO_DISCOUNT);
-        if ($invoiceModel->load(Yii::$app->request->post())) {
-            if ($invoiceModel->validate()) {
-                $invoiceLineItems = $invoiceModel->lineItems;
-                foreach ($invoiceLineItems as $invoiceLineItem) {
-                    if ($invoiceLineItem->hasLineItemDiscount()) {
-                        $invoiceLineItem->lineItemDiscount->value = $invoiceModel->discountApplied;
-                        $invoiceLineItem->lineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
-                        $invoiceLineItem->lineItemDiscount->save();
-                    } else {
-                        $invoiceLineItemDiscount = new InvoiceLineItemDiscount();
-                        $invoiceLineItemDiscount->invoiceLineItemId = $invoiceLineItem->id;
-                        $invoiceLineItemDiscount->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
-                        $invoiceLineItemDiscount->value = $invoiceModel->discountApplied;
-                        $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
-                        $invoiceLineItemDiscount->save();
-                    }
-                }
-                $invoiceModel->save();
-                $invoiceModel->updateInvoiceAttributes();
-                $response = [
-                    'status' => true,
-                    'invoiceStatus' => $invoiceModel->getStatus(),
-					'amount' => round($invoiceModel->invoiceBalance,4)
-                ];
-            } else {
-                $errors = ActiveForm::validate($invoiceModel);
-                $response = [
-                    'status' => false,
-                    'errors' => $errors,
-                ];
-            }
+        $model = $this->findModel($id);
+        $lineItemDiscount = $model->item->loadLineItemDiscount($id);
+        $paymentFrequencyDiscount = $model->item->loadPaymentFrequencyDiscount($id);
+        $customerDiscount = $model->item->loadCustomerDiscount($id);
+        $multiEnrolmentDiscount = $model->item->loadMultiEnrolmentDiscount($id);
 
-            return $response;
-        }
-
+        return $response;
     }
 
     public function actionDelete($id)

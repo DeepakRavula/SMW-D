@@ -121,13 +121,15 @@ use yii\widgets\Pjax;
  <?php Pjax::end(); ?>
 
 <script>
-    $(document).on("click", 'input[name="selection[]"], input[name="selection_all"]', function(event) {
+    $(document).on("click", "input[type='checkbox']", function(event) {
+        event.stopPropagation();
+    });
+    $(document).on("change", "input[type='checkbox']", function() {
         var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
         if (selectedRows.length >= 2) {
-            $('.apply-discount').text('Edit Discounts...');
+            $('.apply-discount').text('Edit Discounts');
         } else {
-            console.log(1);
+            $('.apply-discount').text('Edit Discount');
         }
-        event.stopPropagation();
     });
 </script>

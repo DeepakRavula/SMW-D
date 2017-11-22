@@ -59,8 +59,18 @@ $(document).ready(function() {
 	});
 
     $(document).on('click', '.apply-discount', function () {
-        $('#apply-discount-modal').modal('show');
-  		return false;
+        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
+        var params = $.param({ ids: selectedRows });
+        $.ajax({
+            url    : '<?= Url::to(['invoice-line-item/apply-discount']) ?>?' + params,
+            type   : 'get',
+            dataType: "json",
+            success: function(response)
+            {
+                $('#apply-discount-modal').modal('show');
+            }
+        });
+        return false;
     });
     $(document).on('click', '.invoice-discount-cancel', function () {
         $('#apply-discount-modal').modal('hide');
