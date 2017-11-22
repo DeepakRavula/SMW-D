@@ -10,6 +10,7 @@ use yii\grid\GridView;
         'dataProvider' => $paymentCycleDataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'options' => ['id' => 'enrolment-payment-cycle-grid'],
         'columns' => [
             'startDate:date',
             'endDate:date',
