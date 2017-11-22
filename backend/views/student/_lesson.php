@@ -32,7 +32,7 @@ use yii\bootstrap\Modal;
 
             return ['data-url' => $url];
         },
-        'options' => ['class' => 'col-md-12'],
+        'options' => ['class' => 'col-md-12', 'id' => 'student-lesson-grid'],
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
