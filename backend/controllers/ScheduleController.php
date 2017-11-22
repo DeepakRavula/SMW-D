@@ -143,7 +143,7 @@ class ScheduleController extends Controller
 			}])
 			->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
 			->isConfirmed()
-			->andWhere(['DATE(lesson.date)' => (new \DateTime($date))->format('Y-m-d')])
+			->andWhere(['DATE(lesson.date)' => $date->format('Y-m-d')])
 			->notDeleted()
 			->all();
         return $lessons;
