@@ -64,11 +64,13 @@ use yii\widgets\Pjax;
 
 <script type="text/javascript">
     $(document).on('click', '.add-item-invoice', function() {
+        $('#item-spinner').show();
         $.ajax({
             url: $(this).attr('url'),
             type: 'get',
             success: function(response) {
                 if (response.status) {
+                    $('#item-spinner').hide();
                     $('#invoice-line-item-modal').modal('hide');
                     $('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
@@ -82,17 +84,16 @@ use yii\widgets\Pjax;
     });
     
     $(document).on('keyup paste', '#item-search', function() {
-        var string = $(this).val();
-        var params = $.param({ 'string': string });
-        $.ajax({
-            url: $(this).attr('url') + '&' + params,
-            type: 'get',
-            success: function(response) {
-                if (response.status) {
-                    $('#item-list-content').html(response.data);
-                }
+        var searchVal = $(this).val().toLowerCase();
+        $('#item-add-listing tbody > tr').addClass('hide');
+        $('#item-add-listing tbody > tr').each(function(){
+            var text = $(this).text().toLowerCase();
+            if(text.indexOf(searchVal) != -1)
+            {
+                $(this).removeClass('hide');
             }
         });
         return false;
     });
 </script>
+

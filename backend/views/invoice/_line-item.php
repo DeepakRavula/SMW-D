@@ -13,6 +13,10 @@ Modal::begin([
     <?= Html::textInput('search', '', ['id' => 'item-search', 
         'url' => Url::to(['item/filter', 'invoiceId' => $invoiceModel->id])]); ?>
 </div>
+<div id="item-spinner" class="spinner" style="display:none">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+</div>
 <div id="item-list-content">
 <?= $this->render('_form-invoice-line-item', [
         'invoiceModel' => $invoiceModel,
