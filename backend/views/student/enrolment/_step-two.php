@@ -8,18 +8,15 @@ use kartik\date\DatePickerAsset;
 
 DatePickerAsset::register($this);
 ?>
-<div class="user-create-form">
-    <div class="row">
-<div class="col-md-3 m-r-10">
+<h4><strong>Teacher</strong></h4>
+<div class="row user-create-form">
+<div class="col-md-4">
 <?php
     // Dependent Dropdown
-    echo $form->field($model, 'teacherId',['horizontalCssClasses' => [
-		'label' => '',
-		'wrapper' => '',
-]])->widget(DepDrop::classname(),
+    echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
         [
 		  'type' => DepDrop::TYPE_SELECT2,
-        'options' => ['id' => 'course-teacherid'],
+        //'options' => ['id' => 'course-teacherid'],
         'pluginOptions' => [
             'depends' => ['course-programid'],
             'placeholder' => 'Select...',
@@ -28,14 +25,10 @@ DatePickerAsset::register($this);
     ]);
     ?>
 </div>
-<div class="col-md-2 m-r-10">
+<div class="col-md-4">
 	<?php
-	echo $form->field($model, 'startDate', ['horizontalCssClasses' => [
-		'label' => '',
-		'wrapper' => '',
-],
-		])->widget(DatePicker::classname(), [
-		'type' => DatePicker::TYPE_INPUT,
+	echo $form->field($model, 'startDate')->widget(DatePicker::classname(), [
+		'type' => DatePicker::TYPE_COMPONENT_APPEND,
 		'options' => [
 			'value' => (new \DateTime())->format('d-m-Y'),
 		],
@@ -46,22 +39,18 @@ DatePickerAsset::register($this);
 	]);
 	?>
 </div>
-<div class="col-md-2 m-r-10">
-	<?= $form->field($courseSchedule, 'day', ['horizontalCssClasses' => [
-		'label' => '',
-		'wrapper' => '',
-]])->textInput(['readOnly' => true])->label('Day');?>
-</div>
+<div class="col-md-4">
+	<?= $form->field($courseSchedule, 'day')->textInput(['readOnly' => true])->label('Day');?>
 </div>
 <div class="clearfix"></div>
 <?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false);?>
 <?= $this->render('_calendar'); ?>
-<div class="row m-t-25">
-    <div class="col-md-12">
+<div class="clearfix"></div>
 <div class="pull-right">
-	  <?= Html::a('Cancel', '#', ['class' => 'btn btn-default private-enrol-cancel']); ?>
-	 <button class="btn btn-info nextBtn" type="submit" >Save</button>
+	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default private-enrol-cancel']); ?>
+	<button class="btn btn-info" type="submit" >Preview Lessons</button>
 </div>
-    </div>
+<div class="pull-left">
+	<button class="btn btn-info step2-back" type="submit" >Back</button>
 </div>
 </div>
