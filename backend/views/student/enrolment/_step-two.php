@@ -16,10 +16,8 @@ DatePickerAsset::register($this);
     echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
         [
 		  'type' => DepDrop::TYPE_SELECT2,
-        //'options' => ['id' => 'course-teacherid'],
         'pluginOptions' => [
             'depends' => ['course-programid'],
-            'placeholder' => 'Select...',
             'url' => Url::to(['course/teachers']),
         ],
     ]);
@@ -46,11 +44,11 @@ DatePickerAsset::register($this);
 <?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false);?>
 <?= $this->render('_calendar'); ?>
 <div class="clearfix"></div>
-<div class="pull-right">
+<div class="pull-right m-t-10">
 	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default private-enrol-cancel']); ?>
 	<button class="btn btn-info" type="submit" >Preview Lessons</button>
 </div>
-<div class="pull-left">
+<div class="pull-left m-t-10">
 	<button class="btn btn-info step2-back" type="submit" >Back</button>
 </div>
 </div>
