@@ -39,11 +39,13 @@ DynamicFormWidget::begin([
 ]);
 ?>
 <div class="panel panel-default">
+    
 	<div class="panel-heading">
 		<i class="fa fa-book"></i> Lesson Schedule
 		<button type="button" class="pull-right add-item btn btn-primary btn-xs"><i class="fa fa-plus"></i> Add Lesson</button>
 		<div class="clearfix"></div>
 	</div>
+  
 	<div class="panel-body container-items"><!-- widgetContainer -->
 		<?php foreach ($courseSchedule as $index => $schedule): ?>
 			<div class="item panel panel-default"><!-- widgetBody -->
@@ -53,6 +55,7 @@ DynamicFormWidget::begin([
 					<div class="clearfix"></div>
 				</div>
 				<div class="panel-body">
+                      <div class="col-md-12">
 					<?php
 					// necessary for update action.
 					if (!$schedule->isNewRecord) {
@@ -60,11 +63,11 @@ DynamicFormWidget::begin([
 					}
 					?>
 					<div class="row">
-						<div class="col-sm-3 hand course-calendar-icon">
-							<label class="control-label">Check The Schedule</label>
-							<span class="fa fa-calendar" style="font-size:30px; margin:-1px 32px;"></span>
+						<div class="col-md-2 hand course-calendar-icon">
+							<label class="control-label">Schedule</label>
+							<span class="fa fa-calendar" style="font-size:25px; margin:5px 12px;"></span>
 						</div>
-						<div class="col-sm-4 lesson-day">
+						<div class="col-md-4 lesson-day">
 							<?= $form->field($schedule, "[{$index}]day")
 							->textInput(['maxlength' => true,
 							'class' => 'day form-control',
@@ -72,7 +75,7 @@ DynamicFormWidget::begin([
 							]) ?>
 
 						</div>
-						<div class="col-sm-4 lesson-time">
+						<div class="col-md-6 lesson-time">
 							<?= $form->field($schedule, "[{$index}]fromTime")
 							->textInput(['maxlength' => true,
 							'class' => 'time form-control',
@@ -80,6 +83,7 @@ DynamicFormWidget::begin([
 							])->label('Time') ?>
 						</div>
 					</div><!-- end:row -->
+                      </div>
 				</div>
 			</div>
 		<?php endforeach; ?>

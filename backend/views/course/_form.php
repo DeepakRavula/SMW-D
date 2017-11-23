@@ -19,7 +19,7 @@ use kartik\select2\Select2;
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 	<div class="row">
             <div class="col-md-12">
-		<div class="col-md-6">
+		<div class="col-md-10">
 			<?php
 			echo $form->field($model, 'programId')->widget(Select2::classname(), [
 				'data' =>ArrayHelper::map(Program::find()->group()->active()
@@ -34,7 +34,7 @@ use kartik\select2\Select2;
 			]);
 			?>
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-10">
 			<?php
 			// Dependent Dropdown
 			echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
@@ -48,7 +48,7 @@ use kartik\select2\Select2;
 			])->label('Teacher');
 			?>
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-10">
 			<?=
 			$form->field($model, 'duration')->widget(TimePicker::classname(), [
 				'pluginOptions' => [
@@ -61,7 +61,7 @@ use kartik\select2\Select2;
 			]);
 			?>
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-10">
 			<?= $form->field($model, 'weeksCount')->textInput()->label('Number Of Weeks'); ?>
 		</div>
             </div>
