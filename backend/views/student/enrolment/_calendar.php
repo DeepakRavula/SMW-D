@@ -26,6 +26,8 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
          refresh : function(){
              var events, availableHours;
              var teacherId = $('#course-teacherid').val();
+             if(teacherId!==null && teacherId!=="")
+             {
              var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
  			if (! moment(date).isValid()) {
                  var date = moment($('#course-startdate').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
@@ -42,6 +44,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
  					enrolment.refreshCalendar(availableHours, events, date);
  				}
  			});
+            }
          }
      };
  	var enrolment = {
