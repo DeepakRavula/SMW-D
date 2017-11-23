@@ -78,7 +78,8 @@ use common\models\Invoice;
     header: {
       left: 'prev,next today',
       center: 'title',
-    },
+      right:'',
+        },
 	allDaySlot : false,
 	slotDuration: '00:15:00',
 	titleFormat: 'DD-MMM-YYYY, dddd',

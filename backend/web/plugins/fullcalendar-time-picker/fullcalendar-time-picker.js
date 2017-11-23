@@ -93,7 +93,6 @@ var calendar = {
             header: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'agendaWeek'
             },
             allDaySlot: false,
             height: 450,

@@ -56,6 +56,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                  header: {
                      left: 'prev,next today',
                      center: 'title',
+                     right:'',
                      },
                  allDaySlot: false,
  				height:450,
