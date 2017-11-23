@@ -24,6 +24,7 @@ use yii\helpers\Html;
 <div class="clearfix"></div>	
 <?php $form = ActiveForm::begin([
 	'id' => 'group-course-form',
+        'action' => Url::to(['course/create']),
 ]); ?>
 	    <div class="row setup-content" id="step-1">
 	       <?= $this->render('/course/_form', [
@@ -43,7 +44,7 @@ use yii\helpers\Html;
 			<div class="pull-right">
 				<?php
 					echo Html::a('Cancel', [''], ['class' => 'btn btn-default']);
-                                        echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['id' => 'group-course-save', 'class' => 'btn btn-info', 'name' => 'signup-button'])
+                                        echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['id' => 'group-course-save', 'class' => 'btn btn-info m-l-10', 'name' => 'signup-button'])
 				?>
 			</div>
 		</div>
