@@ -96,29 +96,5 @@ $(document).ready(function() {
 		$('#enrolment-edit-modal').modal('hide');
 		return false;
 	});
-	
-	$(document).on('click', '.enrolment-edit', function (e) {
-		var enrolmentId = $(this).parent().parent().data('key');
-		var param = $.param({id: enrolmentId });
-		$.ajax({
-			url    : '<?= Url::to(['enrolment/update']); ?>?' + param,
-			type   : 'get',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-					$('#enrolment-edit-content').html(response.data);
-					$('#enrolment-edit-modal').modal('show');
-                    var teacher = $('#course-teacher').val();
-					if (!$.isEmptyObject(teacher)) {
-						calendar.refresh();
-					}
-				}
-			}
-		});
-		return false;
-	});
 });
 </script>
