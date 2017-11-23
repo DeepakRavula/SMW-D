@@ -59,6 +59,8 @@ $(document).ready(function () {
 	$(document).on('click', '.step2-next', function() {
 		$('#step-1, #step-2').hide();
 		$('#step-3').show();
+		var lastName = $('#userprofile-lastname').val();
+		$('#student-last_name').val(lastName);
 		return false;
 	});
 	$(document).on('click', '.step2-back', function() {

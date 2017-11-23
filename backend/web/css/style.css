@@ -91,7 +91,7 @@ body .user-panel > .info {
 .f-s-18 {
 	font-size:18px;
 }
-.fa-pencil, .fa-chain, .fa-angle-down, .fa-plus {
+.fa-pencil, .fa-chain, .fa-angle-down, .fa-plus, .fa-calendar {
 	cursor:pointer;
 }
 .primary-contact {
