@@ -94,7 +94,7 @@ $this->params['show-all'] = $this->render('_button', [
 	 echo $this->render('_index', []);
 	Modal::end();
 	?>
-<?= $this->render('_calendar', []); ?>
+<?= $this->render('_calendar'); ?>
 <script>
 $(document).ready(function(){
  $("#coursesearch-showallcourses").on("change", function() {
