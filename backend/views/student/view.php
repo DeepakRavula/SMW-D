@@ -177,7 +177,7 @@ $this->params['label'] = $this->render('_title', [
              header: {
                  left: 'prev,next today',
                  center: 'title',
-                 right: 'agendaWeek'
+                 right: ''
              },
              allDaySlot: false,
              slotDuration: '00:15:00',
