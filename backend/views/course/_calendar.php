@@ -15,11 +15,6 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 </div>
     </div>
 </div>
- <div class="pull-right">
-     <?= Html::a('Cancel', '#', ['class' => 'btn btn-default course-cancel']);?><?= Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-info course-apply', 'name' => 'button']) ?>
-	
-	<div class="clearfix"></div>
-</div>
 <?php
     $locationId = Yii::$app->session->get('location_id');
     $minLocationAvailability = LocationAvailability::find()

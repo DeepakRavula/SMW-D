@@ -4,6 +4,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use common\models\Course;
 use common\models\CourseSchedule;
+use yii\helpers\Html;
 
 ?>
 
@@ -36,7 +37,16 @@ use common\models\CourseSchedule;
 				'courseSchedule' => [new CourseSchedule()], 
 				'form' => $form,
 			]);?> 
+                        
                     </div>
+                <div class="col-md-12">
+			<div class="pull-right">
+				<?php
+					echo Html::a('Cancel', [''], ['class' => 'btn btn-default']);
+                                        echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['id' => 'group-course-save', 'class' => 'btn btn-info', 'name' => 'signup-button'])
+				?>
+			</div>
+		</div>
                 </div>
 	    
 <?php ActiveForm::end(); ?>
