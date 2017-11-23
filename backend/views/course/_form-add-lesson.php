@@ -64,7 +64,7 @@ DynamicFormWidget::begin([
 							<label class="control-label">Check The Schedule</label>
 							<span class="fa fa-calendar" style="font-size:30px; margin:-1px 32px;"></span>
 						</div>
-						<div class="col-sm-3 lesson-day">
+						<div class="col-sm-4 lesson-day">
 							<?= $form->field($schedule, "[{$index}]day")
 							->textInput(['maxlength' => true,
 							'class' => 'day form-control',
@@ -72,7 +72,7 @@ DynamicFormWidget::begin([
 							]) ?>
 
 						</div>
-						<div class="col-sm-3 lesson-time">
+						<div class="col-sm-4 lesson-time">
 							<?= $form->field($schedule, "[{$index}]fromTime")
 							->textInput(['maxlength' => true,
 							'class' => 'time form-control',

@@ -16,6 +16,7 @@ $this->title = 'Private Lessons';
 $this->params['action-button'] = $this->render('_action-menu', [
 	'searchModel' => $searchModel
 ]);
+require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup-with-teacher.php';
 ?>
 
 <div class="grid-row-open p-10">
