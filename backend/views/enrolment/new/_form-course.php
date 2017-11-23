@@ -10,6 +10,7 @@ use yii\helpers\Html;
 use common\models\LocationAvailability;
 use kartik\depdrop\DepDrop;
 ?>
+<h4><strong>Program</strong></h4>
 <div class="row user-create-form">
 	<?php
 	$privatePrograms = ArrayHelper::map(Program::find()
@@ -119,8 +120,9 @@ use kartik\depdrop\DepDrop;
 	<div class="clearfix"></div>
 	<div class="form-group pull-right">
 		<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
-		<button class="nextBtn btn btn-info pull-right" type="button" >Next</button>
+		<button class="step1-next btn btn-info pull-right" type="button" >Next</button>
     </div>
+	
 </div>
 <?php
 $locationId = Yii::$app->session->get('location_id');

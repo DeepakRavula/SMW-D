@@ -14,6 +14,7 @@ use yii\helpers\Html;
 
 $this->title = 'New Enrolment';
 ?>
+<h4><strong>Customer</strong></h4>
 <div class="row user-create-form">
 	<div class="col-md-6">
 		<?php echo $form->field($userProfile, 'firstname')->textInput(); ?>
@@ -97,6 +98,9 @@ $form->field($addressModel, "labelId")->widget(Select2::classname(), [
 	</div>
 	<div class="form-group pull-right">
 		<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
-		<button class="nextBtn btn btn-info pull-right" type="button" >Next</button>
+		<button class="step2-next btn btn-info pull-right" type="button" >Next</button>
 	</div>
+	<div class="form-group pull-left">
+		<button class="step2-back btn btn-info" type="button" >Back</button>
+    </div>
 </div>    

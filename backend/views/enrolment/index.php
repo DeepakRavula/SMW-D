@@ -151,6 +151,8 @@ $this->params['show-all'] = $this->render('_button', [
 <script>
 $(document).ready(function(){
 	$(document).on('click', '.new-enrol-btn', function() {
+		$('#step-2,#step-3').hide();
+		$('#step-1').show();
 		$('#reverse-enrol-modal').modal('show');
         return false;	
 	});
