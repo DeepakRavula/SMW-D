@@ -273,6 +273,11 @@ dl {
 }
 
 #courseschedule-duration, #rate-per-month, #payment-frequency-discount,
-#enrolment-discount, #discounted-rate-per-month,#courseschedule-programrate{
+#enrolment-discount, #discounted-rate-per-month,#courseschedule-programrate,#course-duration,#course-weekscount{
 	text-align:right;
+}
+#group-course-create-modal .modal-dialog .modal-content .modal-body {
+    overflow-y: auto;
+    overflow-x:hidden;
+    height:400px;
 }

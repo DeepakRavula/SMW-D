@@ -71,8 +71,4 @@ use kartik\select2\Select2;
     </div>
         </div>
      
-      <div class="form-group pull-right">
-		<?= Html::a('Cancel', '#', ['class' => 'btn btn-default  new-enrol-cancel']); ?>
-		<button class="nextBtn btn btn-info m-r-20" type="button" >Next</button>
-                </div>
-
+      

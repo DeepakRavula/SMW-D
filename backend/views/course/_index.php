@@ -27,10 +27,17 @@ use yii\helpers\Html;
         'action' => Url::to(['course/create']),
 ]); ?>
 	    <div class="row setup-content" id="step-1">
+                <div class="m-t-25"></div>
 	       <?= $this->render('/course/_form', [
 				'model' => new Course(), 
 				'form' => $form,
 			]);?>
+                <div class="m-t-25"></div>
+                <div class="form-group pull-right">
+		<?= Html::a('Cancel', '#', ['class' => 'btn btn-default group-course-cancel']); ?>
+		<button class="nextBtn btn btn-info m-r-20" type="button" >Next</button>
+                </div>
+
 	    </div>
 	    <div class="row setup-content" id="step-2">
                     <div class="col-md-10 m-l-20">
@@ -43,7 +50,7 @@ use yii\helpers\Html;
                 <div class="col-md-12">
 			<div class="pull-right">
 				<?php
-					echo Html::a('Cancel', [''], ['class' => 'btn btn-default']);
+					echo Html::a('Cancel', [''], ['class' => 'btn btn-default group-course-cancel']);
                                         echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['id' => 'group-course-save', 'class' => 'btn btn-info m-l-10', 'name' => 'signup-button'])
 				?>
 			</div>
@@ -93,5 +100,9 @@ $(document).ready(function () {
     });
 
     $('div.setup-panel div a.btn-primary').trigger('click');
+      $(document).on('click', '.group-course-cancel', function() {                  
+        $('#group-course-create-modal').modal('hide');
+        return false;
+    });
 });
 </script>
