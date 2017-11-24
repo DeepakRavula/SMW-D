@@ -26,7 +26,7 @@ use kartik\switchinput\SwitchInput;
 		. '{input}<span class="input-group-addon" style="background-color:lightgrey;">%</span></div>'])->textInput(['placeholder' => 'nochange'])->label(false); ?>
         </div>
         <div class="col-xs-2">
-            <?= $form->field($paymentFrequencyDiscount, 'clearValue')->checkbox()->label('clear'); ?>
+            <?= $form->field($paymentFrequencyDiscount, 'clearValue')->checkbox(['class' => 'clear-value'])->label('clear'); ?>
         </div>
         <?php endif; ?>
         <div class="col-xs-6 pull-left">
@@ -37,7 +37,7 @@ use kartik\switchinput\SwitchInput;
 		. '{input}<span class="input-group-addon" style="background-color: lightgrey;">%</span></div>'])->textInput(['placeholder' => 'nochange'])->label(false); ?>
         </div>
         <div class="col-xs-2">
-            <?= $form->field($customerDiscount, 'clearValue')->checkbox()->label('clear'); ?>
+            <?= $form->field($customerDiscount, 'clearValue')->checkbox(['class' => 'clear-value'])->label('clear'); ?>
         </div>
         <?php if ($model->isLessonItem()) : ?>
         <div class="col-xs-6 pull-left">
@@ -48,7 +48,7 @@ use kartik\switchinput\SwitchInput;
 		. '<span class="input-group-addon" style="background-color: lightgrey;">$</span>{input}</div>'])->textInput(['placeholder' => 'nochange'])->label(false); ?>
         </div>
         <div class="col-xs-2">
-            <?= $form->field($multiEnrolmentDiscount, 'clearValue')->checkbox()->label('clear'); ?>
+            <?= $form->field($multiEnrolmentDiscount, 'clearValue')->checkbox(['class' => 'clear-value'])->label('clear'); ?>
         </div>
         <?php endif; ?>
         <div class="col-xs-5 pull-left">
@@ -68,7 +68,7 @@ use kartik\switchinput\SwitchInput;
             <?= $form->field($lineItemDiscount, 'value')->textInput(['placeholder' => 'nochange'])->label(false); ?>
         </div>
         <div class="col-xs-2">
-            <?= $form->field($lineItemDiscount, 'clearValue')->checkbox()->label('clear'); ?>
+            <?= $form->field($lineItemDiscount, 'clearValue')->checkbox(['class' => 'clear-value'])->label('clear'); ?>
         </div>
         <?php endif; ?> 
     </div>
@@ -106,5 +106,13 @@ $(document).off('beforeSubmit', '#apply-discount-form').on('beforeSubmit', '#app
         }
     });
     return false;
+});
+
+$(document).on('change', '.clear-value', function () {
+    var id = $(this).attr('id');
+    var value = id.split("-");
+    if ($(this).is(':checked')) {
+        $('#' + value[0] + '-value').val('');
+    }
 });
 </script>
