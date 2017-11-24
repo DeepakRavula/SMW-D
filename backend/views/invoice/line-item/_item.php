@@ -63,7 +63,7 @@ $(document).ready(function() {
         if ($.isEmptyObject(selectedRows)) {
             $('#invoice-error-notification').html('Please select atleast a item to edit discount!').fadeIn().delay(5000).fadeOut();
         } else {
-            var params = $.param({ ids: selectedRows });
+            var params = $.param({ 'InvoiceLineItem[ids]': selectedRows });
             $.ajax({
                 url    : '<?= Url::to(['invoice-line-item/apply-discount']) ?>?' + params,
                 type   : 'get',

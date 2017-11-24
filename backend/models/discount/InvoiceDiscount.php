@@ -55,7 +55,11 @@ class InvoiceDiscount extends Model
         if ($this->validate()) {
             $lineItemDiscount = $this->getDiscountModel();
             $lineItemDiscount->invoiceLineItemId = $this->invoiceLineItemId;
-            $lineItemDiscount->value = $this->value;
+            if ($this->clearValue) {
+                $lineItemDiscount->value = null;
+            } else {
+                $lineItemDiscount->value = $this->value;
+            }
             $lineItemDiscount->valueType = $this->valueType;
             $lineItemDiscount->type = $this->type;
             if (!$lineItemDiscount->save()) {

@@ -3,18 +3,12 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\discount\InvoiceLineItemDiscount;
-use backend\models\discount\CustomerLineItemDiscount;
-use backend\models\discount\EnrolmentLineItemDiscount;
-use backend\models\discount\PaymentFrequencyLineItemDiscount;
-use backend\models\discount\LineItemDiscount;
 use common\models\Payment;
 use common\models\PaymentMethod;
 use common\models\InvoiceLineItem;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
 use yii\bootstrap\ActiveForm;
-use common\models\Invoice;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -183,7 +177,7 @@ class InvoiceLineItemController extends Controller
 
     public function actionApplyDiscount()
     {
-        $lineItemIds = Yii::$app->request->get('ids');
+        $lineItemIds = Yii::$app->request->get('InvoiceLineItem')['ids'];
         $isLineItemDiscountValueDiff = false;
         $isPaymentFrequencyDiscountValueDiff = false;
         $isCustomerDiscountValueDiff = false;
@@ -200,16 +194,16 @@ class InvoiceLineItemController extends Controller
                 $customerDiscountValue = $customerDiscount ? $customerDiscount->value : null;
                 $multiEnrolmentDiscountValue = $multiEnrolmentDiscount ? $multiEnrolmentDiscount->value : null;
             } else {
-                if ($lineItemDiscountValue !== $lineItemDiscount ? $lineItemDiscount->value : null) {
+                if ((float) $lineItemDiscountValue !== (float) ($lineItemDiscount ? $lineItemDiscount->value : null)) {
                     $isLineItemDiscountValueDiff = true;
                 }
-                if ($paymentFrequencyDiscountValue !== $paymentFrequencyDiscount ? $paymentFrequencyDiscount->value : null) {
+                if ((float) $paymentFrequencyDiscountValue !== (float) ($paymentFrequencyDiscount ? $paymentFrequencyDiscount->value : null)) {
                     $isPaymentFrequencyDiscountValueDiff = true;
                 }
-                if ($customerDiscountValue !== $customerDiscount ? $customerDiscount->value : null) {
+                if ((float) $customerDiscountValue !== (float) ($customerDiscount ? $customerDiscount->value : null)) {
                     $isCustomerDiscountValueDiff = true;
                 }
-                if ($multiEnrolmentDiscountValue !== $multiEnrolmentDiscount ? $multiEnrolmentDiscount->value : null) {
+                if ((float) $multiEnrolmentDiscountValue !== (float) ($multiEnrolmentDiscount ? $multiEnrolmentDiscount->value : null)) {
                     $isMultiEnrolmentDiscountValueDiff = true;
                 }
             }
@@ -229,7 +223,26 @@ class InvoiceLineItemController extends Controller
         ]);
         $post = Yii::$app->request->post();
         if ($post) {
-            
+            foreach ($lineItemIds as $lineItemId) {
+                $model = $this->findModel($lineItemId);
+                $lineItemDiscount = $model->item->loadLineItemDiscount($lineItemId);
+                $lineItemDiscount->load($post);
+                $customerDiscount = $model->item->loadCustomerDiscount($lineItemId);
+                $customerDiscount->load($post);
+                $lineItemDiscount->save();
+                $customerDiscount->save();
+                if ($model->isLessonItem()) {
+                    $paymentFrequencyDiscount = $model->item->loadPaymentFrequencyDiscount($lineItemId);
+                    $paymentFrequencyDiscount->load($post);
+                    $multiEnrolmentDiscount = $model->item->loadMultiEnrolmentDiscount($lineItemId);
+                    $multiEnrolmentDiscount->load($post);
+                    $paymentFrequencyDiscount->save();
+                    $multiEnrolmentDiscount->save();
+                }
+            }
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,

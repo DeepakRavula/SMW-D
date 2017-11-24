@@ -85,33 +85,26 @@ use kartik\switchinput\SwitchInput;
 </div>
 <?php $message = 'Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.'; ?>
 <script>
-$(document).ready(function() {
-    $(document).on('beforeSubmit', '#apply-discount-form', function () {
-	var message = '<?= $message;?>';
-	$.ajax({
-		url    : $(this).attr('action'),
-		type   : 'post',
-		dataType: "json",
-		data   : $(this).serialize(),
-		success: function(response)
-		{
-		   if(response.status)
-		   {
-				 $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
-                 $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
-				$('input[name="Payment[amount]"]').val(response.amount);
-                invoice.updateSummarySectionAndStatus();
-				$('#invoice-discount-warning').html(message).fadeIn().delay(8000).fadeOut();
-				$('#apply-discount-modal').modal('hide');
-			}else
-			{
-			 $(this).yiiActiveForm('updateMessages',
-				   response.errors
-				, true);
-			}
-		}
-		});
-		return false;
-});
+$(document).off('beforeSubmit', '#apply-discount-form').on('beforeSubmit', '#apply-discount-form', function () {
+    var message = '<?= $message;?>';
+    $.ajax({
+        url    : $(this).attr('action'),
+        type   : 'post',
+        dataType: "json",
+        data   : $(this).serialize(),
+        success: function(response)
+        {
+            if(response.status)
+            {
+                $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                $('#invoice-discount-warning').html(message).fadeIn().delay(8000).fadeOut();
+                $('#apply-discount-modal').modal('hide');
+            } else {
+                $(this).yiiActiveForm('updateMessages', response.errors , true);
+            }
+        }
+    });
+    return false;
 });
 </script>
