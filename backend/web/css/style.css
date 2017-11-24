@@ -85,8 +85,17 @@ body .user-panel > .info {
 .m-b-10 {
 	margin-bottom:10px;
 }
+.m-t-10 {
+    margin-top: 10px;
+}
 .m-t-25 {
     margin-top: 25px !important;
+}
+.f-s-18 {
+	font-size:18px;
+}
+.fa-pencil, .fa-chain, .fa-angle-down, .fa-plus, .fa-calendar {
+	cursor:pointer;
 }
 .primary-contact {
 	font-size: 15px;
@@ -197,7 +206,9 @@ dl {
     border: 2px solid transparent;
     border-radius: 50%;
 }
-
+.location-header {
+	margin-top:15px;
+}
 .invoice-search {
 	margin-top :10px;
 }
@@ -214,10 +225,8 @@ dl {
 	margin-top:-8px;
 	font-size: 18px;
 }
-.hint-label {
-	font-weight:bold;
-}
-#private-enrol-modal .modal-dialog .modal-content .modal-body {
-    overflow-y: auto;
-    height: 550px;
+
+#courseschedule-duration, #rate-per-month, #payment-frequency-discount,
+#enrolment-discount, #discounted-rate-per-month,#courseschedule-programrate{
+	text-align:right;
 }

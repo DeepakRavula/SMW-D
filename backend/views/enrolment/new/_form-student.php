@@ -1,6 +1,7 @@
 <?php
 
 use kartik\date\DatePicker;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
@@ -8,31 +9,41 @@ use kartik\date\DatePicker;
 
 $this->title = 'New Enrolment';
 ?>
-<div class="container p-0">
-		 <div class="form-group">
-			<label class="col-sm-2 control-label">Name</label>
-			<div class="col-sm-3">
+<h4><strong>Student</strong></h4>
+<div class="row user-create-form">
+			<div class="col-md-5">
 				<?php
-            echo $form->field($model, 'first_name')->textInput(['placeholder' => 'First Name'])->label(false); ?>
+            echo $form->field($model, 'first_name')->textInput(['placeholder' => 'First Name']); ?>
 			</div>
-			<div class="col-sm-3">
+			<div class="col-md-5">
 				<?php
-            echo $form->field($model, 'last_name')->textInput(['placeholder' => 'Last Name'])->label(false); ?>
+            echo $form->field($model, 'last_name')->textInput(['placeholder' => 'Last Name']); ?>
 			</div>
-		</div>
-	<div class="clearfix"></div>
-	 <div class="form-group">
-		<label  class="col-sm-2 control-label">Date of Birth</label>
-		<div class="col-sm-3">
-		<?php echo $form->field($model, 'birth_date')->widget(DatePicker::classname(), [
-                'type' => DatePicker::TYPE_COMPONENT_APPEND,
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'dd-mm-yyyy',
-                ],
-            ])->label(false);
-            ?>
+		<div class="col-md-5">
+		 <?php echo $form->field($model, 'birth_date')->textInput()?>
         </div>
-	</div>
 	<div class="clearfix"></div>
+	<div class="pull-right">
+		<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
+		 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'new-enrol-save-btn']) ?>
+	</div>
+	<div class="form-group pull-left">
+		<button class="step3-back btn btn-info" type="button" >Back</button>
+    </div>
 </div> <!-- ./container -->
+<script>
+$(document).ready(function() {
+$.fn.datepicker.noConflict();
+	$('#student-birth_date').datepicker({
+	   altField: '#student-birth_date',
+	   altFormat: 'dd-mm-yy',
+	   changeMonth: true,
+	   changeYear: true,
+	   yearRange : '-70:today',
+	   onChangeMonthYear:function(y, m, i){
+		   var d = i.selectedDay;
+		   $(this).datepicker('setDate', new Date(y, m-1, d));
+	   }
+	});
+});
+</script>

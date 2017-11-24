@@ -19,16 +19,9 @@ DateTimePickerAsset::register($this);
 			'model' => $model,
 		]);
 		?>
-		<?php if ($model->course->program->isPrivate()) : ?>
-			
-			<?=
-			$this->render('_pf', [
-				'model' => $model,
-			]);
-			?>
-			<?php Pjax::end(); ?>
-	<?php endif; ?>
-	</div>
+            <?php Pjax::end(); ?>
+        </div>
+	
 		<?php Pjax::begin(['id' => 'course-endDate']); ?>
 	<div class="col-md-6">
 		<?=
@@ -39,6 +32,20 @@ DateTimePickerAsset::register($this);
 	</div>
 <?php Pjax::end(); ?>
 </div>
+
+<?php if ($model->course->program->isPrivate()) : ?>
+<?php Pjax::begin(['id' => 'enrolment-pfi']); ?>
+                <div class="row">
+			<div class="col-md-6">
+			<?=
+			$this->render('_pf', [
+				'model' => $model,
+			]);
+			?>
+                        </div>
+                </div>
+<?php Pjax::end(); ?>
+	<?php endif; ?>
 <?php
 Modal::begin([
 	'header' => '<h4 class="m-0">Edit</h4>',
@@ -196,6 +203,7 @@ Modal::begin([
 			var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"
 			$.pjax.reload({url: url, container: "#payment-cycle-listing", replace: false, async: false, timeout: 4000});
 			$.pjax.reload({url: url, container: "#enrolment-view", replace: false, async: false, timeout: 4000});
+                        $.pjax.reload({url: url, container: "#enrolment-pfi", replace: false, async: false, timeout: 4000});
                         $.pjax.reload({url: url, container: "#lesson-index", replace: false, async: false, timeout: 4000});
                         $.pjax.reload({url: url, container: "#course-endDate", replace: false, async: false, timeout: 4000});
 			$.pjax.reload({url: url, container: "#lesson-schedule", replace: false, async: false, timeout: 4000});

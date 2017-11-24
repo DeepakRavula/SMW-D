@@ -53,7 +53,7 @@ $bundle = BackendAsset::register($this);
                         <?php
                             $userLocationId = Yii::$app->session->get('location_id');
                             $location = Location::findOne(['id' => $userLocationId]);
-                            echo '<div class="p-t-15 pull-left" data-toggle="tooltip" data-original-title="Your location" data-placement="bottom"><i class="fa fa-map-marker m-r-10"></i>'.$location->name.'</div>';
+                            echo '<div class="p-t-15 pull-left location-header" data-toggle="tooltip" data-original-title="Your location" data-placement="bottom"><i class="fa fa-map-marker m-r-10"></i>'.$location->name.'</div>';
                         ?>
                         <?php endif; ?>
                 <div class="navbar-custom-menu">
