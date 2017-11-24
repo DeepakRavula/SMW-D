@@ -240,6 +240,11 @@ class User extends ActiveRecord implements IdentityInterface
 		return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
 			->via('primaryContact');
     }
+	public function getPrimaryEmail()
+    {
+		return $this->hasOne(UserEmail::className(), ['userContactId' => 'id'])
+			->via('primaryContact');
+    }
 	public function getBillingAddress()
     {
 		return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
@@ -586,6 +591,12 @@ class User extends ActiveRecord implements IdentityInterface
         $roles = Yii::$app->authManager->getRolesByUser($this->id);
         $role  = end($roles);
         return $role->name === self::ROLE_CUSTOMER;
+    }
+	public function isGuest()
+    {
+        $roles = Yii::$app->authManager->getRolesByUser($this->id);
+        $role  = end($roles);
+        return $role->name === self::ROLE_GUEST;
     }
 	public function getRoleById($id)
     {
