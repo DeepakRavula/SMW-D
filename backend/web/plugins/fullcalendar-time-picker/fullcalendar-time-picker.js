@@ -93,6 +93,7 @@ var calendar = {
             header: {
                 left: 'prev,next today',
                 center: 'title',
+                right: '',
             },
             allDaySlot: false,
             height: 450,
