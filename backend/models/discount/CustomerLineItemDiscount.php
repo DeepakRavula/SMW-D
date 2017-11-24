@@ -14,10 +14,13 @@ class CustomerLineItemDiscount extends InvoiceDiscount
      *
      * @return mixed
      */
-    public function setModel($model)
+    public function setModel($model, $value = null)
     {
         $this->invoiceLineItemId = $model->invoiceLineItemId;
         $this->value = $model->value;
+        if ($value) {
+            $this->value = null;
+        }
         $this->model = $this->getModel();
         return $this;
     }
@@ -38,5 +41,6 @@ class CustomerLineItemDiscount extends InvoiceDiscount
     {
         $this->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
         $this->type = InvoiceLineItemDiscount::TYPE_CUSTOMER;
+        $this->clearValue = false;
     }
 }

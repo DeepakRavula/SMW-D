@@ -17,6 +17,7 @@ class InvoiceDiscount extends Model
     public $type;
     public $valueType;
     public $value;
+    public $clearValue;
 
     /**
      * {@inheritdoc}
@@ -26,6 +27,7 @@ class InvoiceDiscount extends Model
         return [
             [['invoiceLineItemId', 'valueType', 'type'], 'integer'],
             [['value'], 'number', 'min' => 0, 'max' => 100],
+            [['clearValue'], 'safe']
         ];
     }
     

@@ -67,7 +67,10 @@ $(document).ready(function() {
             dataType: "json",
             success: function(response)
             {
-                $('#apply-discount-modal').modal('show');
+                if (response.status) {
+                    $('#apply-discount-modal').modal('show');
+                    $('#apply-discount-content').html(response.data);
+                }
             }
         });
         return false;

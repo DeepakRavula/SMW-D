@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
-use common\models\Invoice;
+use kartik\switchinput\SwitchInput;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
@@ -13,13 +13,64 @@ use common\models\Invoice;
 <div id="apply-discount-modal" class="apply-discount-form">
     <?php $form = ActiveForm::begin([
         'id' => 'apply-discount-form',
-        'action' => Url::to(['invoice-line-item/apply-discount', 'id' => $invoiceModel->id]),
+        'action' => Url::to(['invoice-line-item/apply-discount', 'InvoiceLineItem[ids]' => $lineItemIds]),
     ]); ?>
- 	<div class="row">
-        <div class="col-xs-3">
-    		<?php $invoiceModel->setScenario(Invoice::SCENARIO_DISCOUNT);
-            echo $form->field($invoiceModel, 'discountApplied')->textInput()->label('Apply Discount (%)'); ?>
+    <div class="row">
+        <?php if (!$model->isOpeningBalance()) : ?>
+        <?php if ($model->isLessonItem()) : ?>
+        <div class="col-xs-6 pull-left">
+            <label>Payment Frequency Discount</label>
         </div>
+        <div class="col-xs-4">
+            <?= $form->field($paymentFrequencyDiscount, 'value', ['inputTemplate' => '<div class="input-group">'
+		. '{input}<span class="input-group-addon">%</span></div>'])->textInput(['placeholder' => 'nochange'])->label(false); ?>
+        </div>
+        <div class="col-xs-2">
+            <?= $form->field($paymentFrequencyDiscount, 'clearValue')->checkbox()->label('clear'); ?>
+        </div>
+        <?php endif; ?>
+        <div class="col-xs-6 pull-left">
+            <label>Customer Discount</label>
+        </div>
+        <div class="col-xs-4">
+            <?= $form->field($customerDiscount, 'value', ['inputTemplate' => '<div class="input-group">'
+		. '{input}<span class="input-group-addon">%</span></div>'])->textInput(['placeholder' => 'nochange'])->label(false); ?>
+        </div>
+        <div class="col-xs-2">
+            <?= $form->field($customerDiscount, 'clearValue')->checkbox()->label('clear'); ?>
+        </div>
+        <?php if ($model->isLessonItem()) : ?>
+        <div class="col-xs-6 pull-left">
+            <label>Multiple Enrollment Discount</label>
+        </div>
+        <div class="col-xs-4">
+            <?= $form->field($multiEnrolmentDiscount, 'value', ['inputTemplate' => '<div class="input-group">'
+		. '<span class="input-group-addon">$</span>{input}</div>'])->textInput(['placeholder' => 'nochange'])->label(false); ?>
+        </div>
+        <div class="col-xs-2">
+            <?= $form->field($multiEnrolmentDiscount, 'clearValue')->checkbox()->label('clear'); ?>
+        </div>
+        <?php endif; ?>
+        <div class="col-xs-5 pull-left">
+            <label>Line Item Discount</label>
+        </div>
+        <div class="col-xs-2">
+            <?= $form->field($lineItemDiscount, 'valueType')->widget(SwitchInput::classname(),
+		[
+		'pluginOptions' => [
+			'handleWidth' => 10, 
+			'onText' => '%',
+			'offText' => '$',
+		],
+            ])->label(false); ?>
+        </div>
+        <div class="col-xs-3">
+            <?= $form->field($lineItemDiscount, 'value')->textInput(['placeholder' => 'nochange'])->label(false); ?>
+        </div>
+        <div class="col-xs-2">
+            <?= $form->field($lineItemDiscount, 'clearValue')->checkbox()->label('clear'); ?>
+        </div>
+        <?php endif; ?> 
     </div>
 
     <div class="row">
