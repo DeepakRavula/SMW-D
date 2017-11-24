@@ -13,9 +13,11 @@ use common\models\Course;
 /* @var $model common\models\Enrolment */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
+<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <div id="bulk-reschedule" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="enrolment-form">
-	<?php $form			 = ActiveForm::begin([
+	<?php $form = ActiveForm::begin([
 		'id' => 'enrolment-update'
 	]); ?>
     <div class="row">
@@ -35,7 +37,7 @@ use common\models\Course;
                 'data' => $teachers,
                 'type' => DepDrop::TYPE_SELECT2,
                 'options' => [
-                    'id' => 'course-teacher',
+                    'id' => 'course-teacherid',
                     'placeholder' => 'Select teacher',
                 ],
                 'pluginOptions' => [
@@ -45,10 +47,13 @@ use common\models\Course;
             ]);
         ?>
 		</div>
-		<div class="col-md-3">
-			<?php echo $form->field($courseSchedule, 'day')->dropdownList(Course::getWeekdaysList(), ['prompt' => 'select day']) ?>
+		<div class="col-md-2">
+	<?= $form->field($courseSchedule, 'day', ['horizontalCssClasses' => [
+		'label' => '',
+		'wrapper' => '',
+]])->textInput(['readOnly' => true])->label('Day');?>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-4">
 			<?php
 			echo $form->field($course, 'startDate')->widget(DatePicker::classname(),
 				[
@@ -81,20 +86,17 @@ use common\models\Course;
         <?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false);?>
         <?= $form->field($courseSchedule, 'duration')->hiddenInput()->label(false);?>
 		<div class="col-md-12">
-            <div id="enrolment-calendar"></div>
-        </div>
-	</div>
-    <div class="row">
-        <div class="col-md-12">
-	<div class="form-group"></div>
-    <div class="pull-right">
+                    <div id="enrolment-calendar">
+                        <?= $this->render('_calendar');?>
+                    </div>
+                    <div class="pull-right">
 		<?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-edit-cancel']); ?>
         <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
 	['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'preview-button']) ?>
 
     </div>
         </div>
-    </div>
+	</div>
 
 <?php ActiveForm::end(); ?>
 

@@ -6,7 +6,6 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 
 ?>
 <?= $this->render('/lesson/_color-code');?>
-<div id="enrolment-calendar"></div>
 <?php
     $locationId = Yii::$app->session->get('location_id');
     $minLocationAvailability = LocationAvailability::find()
@@ -105,5 +104,28 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
  		calendar.refresh();
  		return false;
  	});
+        $(document).on('click', '.enrolment-edit', function (e) {
+		var enrolmentId = $(this).parent().parent().data('key');
+		var param = $.param({id: enrolmentId });
+		$.ajax({
+			url    : '<?= Url::to(['enrolment/update']); ?>?' + param,
+			type   : 'get',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$('#enrolment-edit-content').html(response.data);
+					$('#enrolment-edit-modal').modal('show');
+                    var teacher = $('#course-teacherid').val();
+					if (!$.isEmptyObject(teacher)) {
+						calendar.refresh();
+					}
+				}
+			}
+		});
+		return false;
+	});
  });
  </script>
