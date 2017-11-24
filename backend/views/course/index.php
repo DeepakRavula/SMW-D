@@ -11,7 +11,7 @@ use common\components\gridView\AdminLteGridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Group Lessons';
-$this->params['action-button'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Add', ['course/create'], ['class' => 'btn btn-primary btn-sm']);
+$this->params['action-button'] = Html::a('<i class="fa fa-plus f-s-18" aria-hidden="true"></i>', ['course/create']);
 $this->params['show-all'] = $this->render('_button', [
 	'searchModel' => $searchModel
 ]);
