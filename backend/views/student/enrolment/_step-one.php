@@ -96,16 +96,3 @@ $form->field($multipleEnrolmentDiscount, 'discount', [
 	<?= Html::a('Cancel', '#', ['class' => 'm-r-10 pull-right btn btn-default private-enrol-cancel']); ?>
 </div>
 </div>
-<?php
-$locationId = Yii::$app->session->get('location_id');
-$minLocationAvailability = LocationAvailability::find()
-    ->where(['locationId' => $locationId])
-    ->orderBy(['fromTime' => SORT_ASC])
-    ->one();
-$maxLocationAvailability = LocationAvailability::find()
-    ->where(['locationId' => $locationId])
-    ->orderBy(['toTime' => SORT_DESC])
-    ->one();
-$from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-$to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-?>
