@@ -1,18 +1,12 @@
 <?php
 
 use yii\bootstrap\Modal;
-use yii\helpers\Html;
-use yii\helpers\Url;
 
 Modal::begin([
-    'header' => '<h4 class="m-0">Add Invoice Line Items</h4>',
+    'header' => $this->render('_add-item-header', ['invoiceModel' => $invoiceModel]),
     'id' => 'invoice-line-item-modal',
+    'closeButton' => false, 
 ]); ?>
-<div class="pull-right invoice-customer">
-    <?= Html::label('Search'); ?>
-    <?= Html::textInput('search', '', ['id' => 'item-search', 
-        'url' => Url::to(['item/filter', 'invoiceId' => $invoiceModel->id])]); ?>
-</div>
 <div id="item-spinner" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>
