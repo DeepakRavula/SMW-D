@@ -23,7 +23,7 @@ use kartik\switchinput\SwitchInput;
         </div>
         <div class="col-xs-4">
             <?= $form->field($paymentFrequencyDiscount, 'value', ['inputTemplate' => '<div class="input-group">'
-		. '{input}<span class="input-group-addon">%</span></div>'])->textInput(['placeholder' => 'nochange'])->label(false); ?>
+		. '{input}<span class="input-group-addon" style="background-color:lightgrey;">%</span></div>'])->textInput(['placeholder' => 'nochange'])->label(false); ?>
         </div>
         <div class="col-xs-2">
             <?= $form->field($paymentFrequencyDiscount, 'clearValue')->checkbox()->label('clear'); ?>
@@ -34,7 +34,7 @@ use kartik\switchinput\SwitchInput;
         </div>
         <div class="col-xs-4">
             <?= $form->field($customerDiscount, 'value', ['inputTemplate' => '<div class="input-group">'
-		. '{input}<span class="input-group-addon">%</span></div>'])->textInput(['placeholder' => 'nochange'])->label(false); ?>
+		. '{input}<span class="input-group-addon" style="background-color: lightgrey;">%</span></div>'])->textInput(['placeholder' => 'nochange'])->label(false); ?>
         </div>
         <div class="col-xs-2">
             <?= $form->field($customerDiscount, 'clearValue')->checkbox()->label('clear'); ?>
@@ -45,7 +45,7 @@ use kartik\switchinput\SwitchInput;
         </div>
         <div class="col-xs-4">
             <?= $form->field($multiEnrolmentDiscount, 'value', ['inputTemplate' => '<div class="input-group">'
-		. '<span class="input-group-addon">$</span>{input}</div>'])->textInput(['placeholder' => 'nochange'])->label(false); ?>
+		. '<span class="input-group-addon" style="background-color: lightgrey;">$</span>{input}</div>'])->textInput(['placeholder' => 'nochange'])->label(false); ?>
         </div>
         <div class="col-xs-2">
             <?= $form->field($multiEnrolmentDiscount, 'clearValue')->checkbox()->label('clear'); ?>
