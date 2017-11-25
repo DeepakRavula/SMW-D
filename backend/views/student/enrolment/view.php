@@ -82,13 +82,11 @@ Modal::begin([
 <?php Modal::end(); ?>
 <?= $this->render('_calendar', []);?>
 <?php Modal::begin([
-    'header' => '<h4 class="m-0">Add Group Enrolment</h4>',
+    'header' => $this->render('_group-modal-header'),
     'id' => 'group-enrol-modal',
 ]); ?>
-<?= $this->render('_form-group', [
-	'groupCourseDataProvider' => $groupCourseDataProvider,
-	'student' => $model
-	]);?>
+<div id="group-course-content"></div>
+
 <?php Modal::end(); ?>
 <script type="text/javascript">
 $(document).ready(function() {

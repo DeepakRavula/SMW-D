@@ -21,6 +21,7 @@ use yii\base\Model;
 use common\models\CourseSchedule;
 use yii\web\Response;
 use common\models\TeacherAvailability;
+use common\models\Enrolment;
 /**
  * CourseController implements the CRUD actions for Course model.
  */
@@ -37,7 +38,7 @@ class CourseController extends Controller
             ],
 			[
 				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['fetch-teacher-availability', 'fetch-lessons'],
+				'only' => ['fetch-teacher-availability', 'fetch-lessons', 'fetch-group'],
 				'formats' => [
 					'application/json' => Response::FORMAT_JSON,
 				],
@@ -285,4 +286,38 @@ class CourseController extends Controller
 
         return $result;
     }
+	public function actionFetchGroup($studentId, $courseName = null)
+	{
+		$locationId = Yii::$app->session->get('location_id');
+		$groupEnrolments = Enrolment::find()
+			->select(['courseId'])
+			->joinWith(['course' => function ($query) use ($locationId) {
+				$query->groupProgram($locationId);
+			}])
+			->where(['enrolment.studentId' => $studentId])
+			->isConfirmed();
+        $groupCourses = Course::find()
+			->joinWith(['program' => function ($query) {
+				$query->group();
+			}])
+			->where(['NOT IN', 'course.id', $groupEnrolments])
+			->andWhere(['locationId' => $locationId])
+		   ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])  
+			->confirmed();
+			if(!empty($courseName)) {
+				$groupCourses->andWhere(['LIKE', 'program.name', $courseName]);
+			}
+        $groupDataProvider = new ActiveDataProvider([
+            'query' => $groupCourses,
+        ]);
+	
+		$data = $this->renderAjax('/student/enrolment/_form-group', [
+			'groupDataProvider' => $groupDataProvider,
+			'student' => Student::findOne(['id' => $studentId])
+		]);
+		return [
+			'status' => true,
+			'data' => $data
+		];
+	}
 }
