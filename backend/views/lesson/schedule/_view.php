@@ -71,6 +71,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                     header: {
                         left: 'prev,next today',
                         center: 'title',
+                        right:'',
                     },
                     allDaySlot: false,
                     slotDuration: '00:15:00',
