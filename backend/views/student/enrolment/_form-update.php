@@ -37,7 +37,7 @@ use common\models\Course;
                 'data' => $teachers,
                 'type' => DepDrop::TYPE_SELECT2,
                 'options' => [
-                    'id' => 'course-teacher',
+                    'id' => 'course-teacherid',
                     'placeholder' => 'Select teacher',
                 ],
                 'pluginOptions' => [

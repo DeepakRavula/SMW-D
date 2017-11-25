@@ -119,7 +119,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 			   {
 					$('#enrolment-edit-content').html(response.data);
 					$('#enrolment-edit-modal').modal('show');
-                    var teacher = $('#course-teacher').val();
+                                        var teacher = $('#course-teacherid').val();
 					if (!$.isEmptyObject(teacher)) {
 						calendar.refresh();
 					}
