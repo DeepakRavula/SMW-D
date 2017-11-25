@@ -592,7 +592,7 @@ class User extends ActiveRecord implements IdentityInterface
         $role  = end($roles);
         return $role->name === self::ROLE_CUSTOMER;
     }
-	public function isGuest()
+	public function isWalkin()
     {
         $roles = Yii::$app->authManager->getRolesByUser($this->id);
         $role  = end($roles);
