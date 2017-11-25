@@ -100,7 +100,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
  	$(document).on('change', '#course-startdate', function () {
  		calendar.refresh();
  	});
- 	$(document).on('change', '#course-teacher', function() {
+ 	$(document).on('change', '#course-teacherid', function() {
  		$('#courseschedule-day').val('');
  		calendar.refresh();
  		return false;
