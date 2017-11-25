@@ -104,7 +104,9 @@ $(document).ready(function(){
  });
  $(document).on('click', '.group-course-create', function () {
  $('#group-course-create-modal').modal('show');
-  $('#group-course-create-modal .modal-dialog').css({'width': '600px'});
+ $('#group-course-create-modal .modal-dialog').css({'width': '400px'});
+ $('#step-2').hide();
+ $('#step-1').show();
 			return false;
     });
     

@@ -22,7 +22,7 @@ use yii\helpers\Html;
 			]);?>
                 <div class="form-group pull-right">
 		<?= Html::a('Cancel', '#', ['class' => 'btn btn-default group-course-cancel']); ?>
-		<button class="nextBtn btn btn-info m-r-20 step1-next" type="button" >Next</button>
+		<button class="nextBtn btn btn-info m-l-20 step1-next" type="button" >Next</button>
                 </div>
       	    </div>
 	    <div id="step-2">
@@ -51,13 +51,16 @@ use yii\helpers\Html;
 <script>
 $(document).ready(function () {
     $('#step-2').hide();
+    $('#group-course-create-modal .modal-dialog').css({'width': '400px'});
  $(document).on('click', '.step1-next', function() {
 		$('#step-1').hide();
+                $('#group-course-create-modal .modal-dialog').css({'width': '600px'});
 		$('#step-2').show();
 		return false;
 	});
 	$(document).on('click', '.step2-back', function() {
 		$('#step-2').hide();
+                $('#group-course-create-modal .modal-dialog').css({'width': '400px'});
 		$('#step-1').show();
 		return false;
 	});
