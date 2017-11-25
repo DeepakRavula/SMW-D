@@ -489,7 +489,7 @@ class Lesson extends \yii\db\ActiveRecord
             $model = $this->rootLesson;
         }
         $lessonId = $model->id;
-        $paymentCycleLessonId = $model->paymentCycleLesson->id;
+        
         if ($this->hasProFormaInvoice()) {
             if ($this->isExtra()) {
                 return InvoiceLineItem::find()
@@ -501,6 +501,7 @@ class Lesson extends \yii\db\ActiveRecord
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON])
                     ->one();
             } else {
+                $paymentCycleLessonId = $model->paymentCycleLesson->id;
                 return InvoiceLineItem::find()
                         ->notDeleted()
                     ->andWhere(['invoice_id' => $model->proFormaInvoice->id])
