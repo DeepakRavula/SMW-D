@@ -9,6 +9,7 @@ use yii\helpers\Html;
 
 $this->title = 'New Enrolment';
 ?>
+<h4><strong>Student</strong></h4>
 <div class="row user-create-form">
 			<div class="col-md-5">
 				<?php
@@ -26,6 +27,9 @@ $this->title = 'New Enrolment';
 		<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
 		 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'new-enrol-save-btn']) ?>
 	</div>
+	<div class="form-group pull-left">
+		<button class="step3-back btn btn-info" type="button" >Back</button>
+    </div>
 </div> <!-- ./container -->
 <script>
 $(document).ready(function() {

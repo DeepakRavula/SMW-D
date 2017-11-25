@@ -14,7 +14,7 @@ use yii\helpers\Url;
 
 <div class="user-create-index"> 
     <?php echo GridView::widget([
-        'dataProvider' => $groupCourseDataProvider,
+        'dataProvider' => $groupDataProvider,
         'tableOptions' => ['class' => 'table table-condensed'],
 		'summary' => '',
         'headerRowOptions' => ['class' => 'bg-light-gray'],

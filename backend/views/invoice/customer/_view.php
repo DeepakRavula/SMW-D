@@ -16,21 +16,12 @@ Select2Asset::register($this);
 /* @var $model common\models\Invoice */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<?php $form = ActiveForm::begin([
-	'method' => 'post',
-	'id' => 'customer-form',
-	'layout' => 'horizontal'
-]); ?>
-<div class="pull-right invoice-customer">
-	<?=	 $form->field($model, 'userName')->textInput(['class' => 'invoice-customer'])->label('Search');?>
+<div id="user-list-content">
+	<?= $this->render('_list', [
+		'userDataProvider' => $userDataProvider,
+		'model' => $model
+	]);?>
 </div>
-    <?php ActiveForm::end(); ?>
-	<div id="user-list-content">
-   		<?= $this->render('_list', [
-			'userDataProvider' => $userDataProvider,
-			'model' => $model
-		]);?>
-	</div>
 <script>
 $(document).ready(function() {
 	$(document).on('change keyup paste', '#invoice-username', function (e) {

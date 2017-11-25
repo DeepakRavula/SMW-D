@@ -125,6 +125,7 @@ use yii\bootstrap\Modal;
                 header: {
                     left: 'prev,next today',
                     center: 'title',
+                    right:'',
                        },
                 allDaySlot: false,
                 slotDuration: '00:15:00',

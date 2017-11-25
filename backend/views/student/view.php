@@ -10,6 +10,7 @@ use common\models\Note;
 use kartik\select2\Select2Asset;
 use kartik\daterange\DateRangePickerAsset;
 use yii\widgets\Pjax;
+use common\models\LocationAvailability;
 
 Select2Asset::register($this);
 DateRangePickerAsset::register($this);              
@@ -43,8 +44,6 @@ $this->params['label'] = $this->render('_title', [
 	echo $this->render('enrolment/view', [
 		'model' => $model,
 		'enrolmentDataProvider' => $enrolmentDataProvider,
-		'groupCourseDataProvider' => $groupCourseDataProvider
-		
 	]);
 	?>
 <?php Pjax::end();?>
@@ -153,18 +152,99 @@ $this->params['label'] = $this->render('_title', [
 ]); ?>
 <div id="student-merge-content"></div>
 <?php Modal::end(); ?>
-
+<?php
+    $locationId = Yii::$app->session->get('location_id');
+    $minLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['fromTime' => SORT_ASC])
+        ->one();
+    $maxLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['toTime' => SORT_DESC])
+        ->one();
+    $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+    $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+?>
 <script>
     $(document).ready(function () {
+	function loadCalendar() {
+ 		var date = $('#course-startdate').val();
+        $('#enrolment-calendar').fullCalendar({
+     		defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+             header: {
+                 left: 'prev,next today',
+                 center: 'title',
+                 right: ''
+             },
+             allDaySlot: false,
+             slotDuration: '00:15:00',
+             titleFormat: 'DD-MMM-YYYY, dddd',
+             defaultView: 'agendaWeek',
+             minTime: "<?php echo $from_time; ?>",
+             maxTime: "<?php echo $to_time; ?>",
+             selectConstraint: 'businessHours',
+             eventConstraint: 'businessHours',
+             businessHours: [],
+             allowCalEventOverlap: true,
+             overlapEventsSeparate: true,
+             events: [],
+     	});
+	}
+		$('#step-2, #step-1').hide();
         $(document).on('click', '#add-private-enrol', function () {
+			$('#step-1').show();
+			$('#step-2').hide();
             $('#private-enrol-modal').modal('show');
-            $('#private-enrol-modal .modal-dialog').css({'width': '1000px'});
+ 			$('#private-enrol-modal .modal-dialog').css({'width': '600px'});
+            return false;
+		});
+		$(document).on('click', '.step1-next', function () {
+			$('#step-1').hide();
+			$('#step-2').show();
+			loadCalendar();
+ 			$('#private-enrol-modal .modal-dialog').css({'width': '1000px'});
+            return false;
+		});
+		$(document).on('click', '.step2-back', function () {
+			$('#step-1').show();
+			$('#step-2').hide();
+ 			$('#private-enrol-modal .modal-dialog').css({'width': '600px'});
             return false;
 		});
 		$(document).on('click', '#add-group-enrol', function () {
-            $('#group-enrol-modal').modal('show');
-        	$('#group-enrol-modal .modal-dialog').css({'width': '800px'});
+			$.ajax({
+                url    : $(this).attr('href'),
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#group-enrol-modal .modal-body').html(response.data);
+                        $('#group-enrol-modal').modal('show');
+        				$('#group-enrol-modal .modal-dialog').css({'width': '800px'});
+                    } 
+                }
+            });
             return false;
+		});
+		$(document).on('change keyup paste', '#course-name', function (e) {
+			var courseName = $(this).val();
+			var id = '<?= $model->id;?>';
+			var params = $.param({'studentId' : id, 'courseName' : courseName});
+			$.ajax({
+				url    : '<?= Url::to(['course/fetch-group']); ?>?' + params,
+				type   : 'get',
+				dataType: 'json',
+				success: function(response)
+				{
+				   if(response.status) {
+					    $('#group-enrol-modal .modal-body').html(response.data);
+				   }
+				}
+			});
+			return false;
 		});
 		$(document).on('click', '.private-enrol-cancel', function() {
 			$('#private-enrol-modal').modal('hide');
