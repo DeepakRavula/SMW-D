@@ -281,6 +281,7 @@ class InvoiceController extends Controller
 		}
         $userDataProvider = new ActiveDataProvider([
             'query' => $userData,
+			'pagination' => false
         ]);	
 		$data = $this->renderAjax('customer/_list', [
 			'userDataProvider' => $userDataProvider,
