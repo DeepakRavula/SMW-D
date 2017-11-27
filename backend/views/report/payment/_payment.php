@@ -71,7 +71,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 						$amount += $payment->amount;
 					}
 
-					return $amount;
+					return Yii::$app->formatter->asDecimal($amount, 2);
 				},
 				'contentOptions' => ['class' => 'text-right'],
 				'hAlign' => 'right',
@@ -170,7 +170,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 				[
 				'label' => 'Amount',
 				'value' => function ($data) {
-					return $data->amount;
+					return Yii::$app->formatter->asDecimal($data->amount, 2);
 				},
 				'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
 				'hAlign' => 'right',

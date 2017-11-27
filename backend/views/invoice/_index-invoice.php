@@ -77,9 +77,9 @@ $this->params['action-button'] = $actionButton; ?>
                 [
                     'value' => function ($data) {
 						if ($data->isPaid()) {
-							return $data->total;
+							return Yii::$app->formatter->asDecimal($data->total, 2);
 						} else {
-							return $data->invoiceBalance;
+							return Yii::$app->formatter->asDecimal($data->invoiceBalance, 2);
 						}
                     },
                     'headerOptions' => ['class' => 'text-right'],
@@ -95,7 +95,7 @@ $this->params['action-button'] = $actionButton; ?>
                 [
                     'label' => 'Total',
                     'value' => function ($data) {
-                        return $data->total;
+						return Yii::$app->formatter->asDecimal($data->total, 2);
                     },
                     'headerOptions' => ['class' => 'text-right'],
                     'contentOptions' => ['class' => 'text-right'],
@@ -147,9 +147,9 @@ $this->params['action-button'] = $actionButton; ?>
                     'value' => function ($data) {
                         if ((int) $data->type === Invoice::TYPE_INVOICE) {
                             if ($data->isPaid()) {
-                                return $data->total;
+								return Yii::$app->formatter->asDecimal($data->total, 2);
                             } else {
-                                return $data->invoiceBalance;
+								return Yii::$app->formatter->asDecimal($data->invoiceBalance, 2);
                             }
                         }
                     },
@@ -167,7 +167,7 @@ $this->params['action-button'] = $actionButton; ?>
 				[
                     'label' => 'Total',
                     'value' => function ($data) {
-                        return $data->total;
+						return Yii::$app->formatter->asDecimal($data->total, 2);
                     },
                     'headerOptions' => ['class' => 'text-right'],
                     'contentOptions' => ['class' => 'text-right'],

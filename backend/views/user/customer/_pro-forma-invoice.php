@@ -62,6 +62,9 @@ use common\models\Invoice;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'enableSorting' => false,
+			'value' => function ($data) {
+                return Yii::$app->formatter->asDecimal($data->total, 2);
+            },	
         ],
     ],
 ]); ?>

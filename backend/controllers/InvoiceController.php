@@ -622,7 +622,7 @@ class InvoiceController extends Controller
         $model = Invoice::findOne($id);
         return [
             'status' => true,
-            'amount' => $model->balance,
+            'amount' => Yii::$app->formatter->asDecimal($model->balance, 2),
         ];
     }
 }
