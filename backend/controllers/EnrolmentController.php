@@ -371,7 +371,6 @@ class EnrolmentController extends Controller
 				->isConfirmed()
 				->between($startDate, $endDate)
 				->all();
-			//$dayList = Course::getWeekdaysList();
 			$courseDay = $courseSchedule->day;
 			$day = $startDate->format('l');
 			if ($day !== $courseDay) {
