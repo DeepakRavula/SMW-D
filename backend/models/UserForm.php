@@ -24,6 +24,8 @@ class UserForm extends Model
     public $firstname;
     public $locations;
     private $model;
+	private $password;
+	private $confirmPassword;
 	
     /**
      * {@inheritdoc}
@@ -41,6 +43,8 @@ class UserForm extends Model
             [['status'], 'integer'],
             ['roles', 'required'],
             [['locations'], 'safe'],
+			[['password', 'confirmPassword'], 'string', 'min' => 6],
+            ['confirmPassword', 'compare', 'compareAttribute' => 'password', 'message' => "Confirm Password doesn't match with the password"],
         ];
     }
 
@@ -57,9 +61,29 @@ class UserForm extends Model
             'roles' => Yii::t('common', 'Roles'),
             'lastname' => Yii::t('common', 'Last Name'),
             'firstname' => Yii::t('common', 'First Name'),
+			'password' => Yii::t('common', 'Password'), 
+			'confirmPassword' => Yii::t('common', 'Confirm Password'), 
         ];
     }
 
+	public function getPassword()
+    {
+        return $this->password;
+    }
+
+    public function setPassword($value)
+    {
+        $this->password = trim($value);
+    }
+	public function getConfirmPassword()
+    {
+        return $this->confirmPassword;
+    }
+
+    public function setConfirmPassword($value)
+    {
+        $this->confirmPassword = trim($value);
+    }
     /**
      * @param User $model
      *
@@ -81,7 +105,7 @@ class UserForm extends Model
             $this->firstname = $userFirstName->firstname;
             $this->lastname = $userFirstName->lastname;
         }
-
+		
         return $this->model;
     }
 
