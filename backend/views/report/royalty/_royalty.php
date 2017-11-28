@@ -20,20 +20,20 @@ if ($total < 0) {
 
 <dl class="dl-horizontal royalty">
     <dt>Payments Received</dt>
-    <dd><?= !empty($payments) ? Yii::$app->formatter->asDecimal($payments,2) : Yii::$app->formatter->asDecimal(0, 2); ?></dd>
+    <dd><?= !empty($payments) ? Yii::$app->formatter->asDecimal($payments) : Yii::$app->formatter->asDecimal(0); ?></dd>
     <dt>Tax Collected</dt>
-    <dd><?= !empty($invoiceTaxTotal) ? Yii::$app->formatter->asDecimal($invoiceTaxTotal, 2) : Yii::$app->formatter->asDecimal(0, 2); ?></dd>
+    <dd><?= !empty($invoiceTaxTotal) ? Yii::$app->formatter->asDecimal($invoiceTaxTotal) : Yii::$app->formatter->asDecimal(0); ?></dd>
     <dt>Royalty Free Items</dt>
-    <dd><?= !empty($royaltyPayment) ? Yii::$app->formatter->asDecimal($royaltyPayment, 2) : Yii::$app->formatter->asDecimal(0, 2); ?></dd>
+    <dd><?= !empty($royaltyPayment) ? Yii::$app->formatter->asDecimal($royaltyPayment) : Yii::$app->formatter->asDecimal(0); ?></dd>
     <dt>Revenue</dt>
-    <dd><?= !empty($total) ? Yii::$app->formatter->asDecimal($total, 2) : Yii::$app->formatter->asDecimal(0, 2); ?></dd>
+    <dd><?= !empty($total) ? Yii::$app->formatter->asDecimal($total) : Yii::$app->formatter->asDecimal(0); ?></dd>
     <dt>Advertisement <?= !empty($location->advertisement->value) ? ' (' . $location->advertisement->value . '%)' : ' - '; ?></dt>
-    <dd><?= Yii::$app->formatter->asDecimal($advertisementAmount, 2); ?></dd>
+    <dd><?= Yii::$app->formatter->asDecimal($advertisementAmount); ?></dd>
     <dt>Royalty <?= !empty($location->royalty->value) ? ' (' . $location->royalty->value . '%)' : ' - '; ?></dt>
-    <dd><?= Yii::$app->formatter->asDecimal($royaltyAmount, 2); ?></dd>
+    <dd><?= Yii::$app->formatter->asDecimal($royaltyAmount); ?></dd>
     <dt>Subtotal</dt>
     <?php $subtotal = $royaltyAmount + $advertisementAmount; ?> 
-    <dd><?= Yii::$app->formatter->asDecimal($subtotal, 2); ?></dd>
+    <dd><?= Yii::$app->formatter->asDecimal($subtotal); ?></dd>
     <dt>Tax</dt>
     <?php
     $taxCode = TaxCode::find()
@@ -46,7 +46,7 @@ if ($total < 0) {
     $tax = $subtotal * ($taxPercentage / 100);
 
     ?>
-    <dd><?= Yii::$app->formatter->asDecimal($tax, 2); ?></dd>
+    <dd><?= Yii::$app->formatter->asDecimal($tax); ?></dd>
     <dt>Total</dt>
-    <dd><?= Yii::$app->formatter->asDecimal(($subtotal + $tax), 2); ?></dd>
+    <dd><?= Yii::$app->formatter->asDecimal(($subtotal + $tax)); ?></dd>
 </dl>
