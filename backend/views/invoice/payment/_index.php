@@ -54,7 +54,9 @@ $columns = [
         ],
         [
             'attribute' => 'amount',
-			
+			'value' => function ($data) {
+           		return Yii::$app->formatter->asDecimal($data->amount);
+        	},	
         ],
     ]; ?>
 
