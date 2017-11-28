@@ -21,8 +21,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
     $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 <script type="text/javascript">
- $(document).ready(function() {
-     var calendar = {
+    var calendar = {
          refresh : function(){
              var events, availableHours;
              var teacherId = $('#course-teacherid').val();
@@ -100,6 +99,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
              });
          }
      };
+ $(document).ready(function() {
  	$(document).on('change', '#course-startdate', function () {
  		calendar.refresh();
  	});
