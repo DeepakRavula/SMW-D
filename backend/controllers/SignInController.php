@@ -19,6 +19,7 @@ use Yii;
 use yii\filters\VerbFilter;
 use yii\base\InvalidParamException;
 use yii\web\Controller;
+use common\models\User;
 
 class SignInController extends Controller
 {
@@ -129,14 +130,22 @@ class SignInController extends Controller
         $this->layout = 'base';
         $model = new PasswordResetRequestForm();
         $isEmailSent = false;
+        $userName=$model->email;
+        $primaryEmail = User::find()
+                ->joinWith(['userContact' => function($query) use($userName) {
+					$query->joinWith(['email' => function($query) use($userName){
+						$query->andWhere(['email' => $userName]);
+					}])
+					->primary();
+				}])
+                ->notDeleted()
+                ->one();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if ($model->sendEmail()) {
+            
+            if ($model->sendEmail() && !empty($primaryEmail)) {
                 $isEmailSent = true;
             } else {
-                Yii::$app->session->setFlash('alert', [
-                    'body' => Yii::t('backend', 'Sorry, we are unable to reset password for email provided.'),
-                    'options' => ['class' => 'alert-danger'],
-                ]);
+                 $model->addError('email', Yii::t('backend', 'Mail cannot be sent to this Email-id.'));
             }
         }
 
