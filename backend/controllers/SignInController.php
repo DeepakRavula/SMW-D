@@ -145,7 +145,7 @@ class SignInController extends Controller
             if ($model->sendEmail() && !empty($primaryEmail)) {
                 $isEmailSent = true;
             } else {
-                 $model->addError('email', Yii::t('backend', 'Mail cannot be sent to this Email-id.'));
+                 $model->addError('email', Yii::t('backend', 'Sorry, we are unable to reset password for email provided'));
             }
         }
 
