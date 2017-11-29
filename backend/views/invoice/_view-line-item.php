@@ -1,11 +1,14 @@
 <?php
-use common\models\InvoiceLineItem;
-use common\models\Qualification;
+
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 ?>
 <?php if ($searchModel->toggleAdditionalColumns) {
     $columns = [
+        [
+            'class' => 'yii\grid\CheckboxColumn',
+            // you may configure additional properties here
+        ],
         [
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:120px;'],
@@ -68,6 +71,10 @@ use yii\widgets\Pjax;
 } else {
     $columns = [
         [
+            'class' => 'yii\grid\CheckboxColumn',
+            'contentOptions' => ['style' => 'width:30px;'],
+        ],
+        [
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:120px;'],
             'label' => 'Code',
@@ -110,3 +117,17 @@ use yii\widgets\Pjax;
     ]);
     ?>
  <?php Pjax::end(); ?>
+
+<script>
+    $(document).on("click", "input[type='checkbox']", function(event) {
+        event.stopPropagation();
+    });
+    $(document).on("change", "input[type='checkbox']", function() {
+        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
+        if (selectedRows.length >= 2) {
+            $('.apply-discount').text('Edit Discounts');
+        } else {
+            $('.apply-discount').text('Edit Discount');
+        }
+    });
+</script>

@@ -6,7 +6,7 @@
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a class="add-new-misc" href="#">Add Item...</a></li>
 			<?php if(!empty($model->lineItem) && ($model->lineItem->isOtherLineItems())) :?>
-				<li><a class = "apply-discount" href="#">Add Discount</a></li>
+				<li><a class = "apply-discount" href="#">Edit Discount</a></li>
 <?php endif; ?>
         </ul>
 	

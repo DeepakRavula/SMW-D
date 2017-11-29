@@ -17,6 +17,7 @@ class InvoiceDiscount extends Model
     public $type;
     public $valueType;
     public $value;
+    public $clearValue;
 
     /**
      * {@inheritdoc}
@@ -26,6 +27,7 @@ class InvoiceDiscount extends Model
         return [
             [['invoiceLineItemId', 'valueType', 'type'], 'integer'],
             [['value'], 'number', 'min' => 0, 'max' => 100],
+            [['clearValue'], 'safe']
         ];
     }
     
@@ -53,7 +55,11 @@ class InvoiceDiscount extends Model
         if ($this->validate()) {
             $lineItemDiscount = $this->getDiscountModel();
             $lineItemDiscount->invoiceLineItemId = $this->invoiceLineItemId;
-            $lineItemDiscount->value = $this->value;
+            if ($this->clearValue) {
+                $lineItemDiscount->value = null;
+            } else {
+                $lineItemDiscount->value = $this->value;
+            }
             $lineItemDiscount->valueType = $this->valueType;
             $lineItemDiscount->type = $this->type;
             if (!$lineItemDiscount->save()) {
@@ -63,5 +69,34 @@ class InvoiceDiscount extends Model
         }
 
         return null;
+    }
+    
+    public function load($data, $formName = null)
+    {
+        $scope = $formName === null ? $this->formName() : $formName;
+        if ($scope === '' && !empty($data)) {
+            $this->setAttributesCustom($data);
+
+            return true;
+        } elseif (isset($data[$scope])) {
+            $this->setAttributesCustom($data[$scope]);
+
+            return true;
+        }
+        return false;
+    }
+
+    public function setAttributesCustom($values, $safeOnly = true)
+    {
+        if (is_array($values)) {
+            $attributes = array_flip($safeOnly ? $this->safeAttributes() : $this->attributes());
+            foreach ($values as $name => $value) {
+                if (isset($attributes[$name]) && !empty($values[$name])) {
+                    $this->$name = $value;
+                } elseif ($safeOnly) {
+                    $this->onUnsafeAttribute($name, $value);
+                }
+            }
+        }
     }
 }

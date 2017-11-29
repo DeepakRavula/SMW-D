@@ -14,11 +14,15 @@ class LineItemDiscount extends InvoiceDiscount
      *
      * @return mixed
      */
-    public function setModel($model)
+    public function setModel($model, $value = null)
     {
         $this->invoiceLineItemId = $model->invoiceLineItemId;
         $this->value = $model->value;
         $this->valueType = $model->valueType;
+        if ($value) {
+            $this->value = null;
+            $this->valueType = $value;
+        }
         $this->model = $this->getModel();
         return $this;
     }
