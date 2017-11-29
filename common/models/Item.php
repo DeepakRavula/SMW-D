@@ -254,7 +254,8 @@ class Item extends \yii\db\ActiveRecord
         foreach ($invoice->lineItems as $lineItem) {
             if ($lineItem->item_id === $this->id) {
                 $lineItem->unit += 1; 
-                return $lineItem->save();
+                $lineItem->save();
+                return $lineItem;
             }
         }
         $invoiceLineItemModel = new InvoiceLineItem();
@@ -271,7 +272,7 @@ class Item extends \yii\db\ActiveRecord
         if (!$invoiceLineItemModel->save()) {
             Yii::error('Line item create error: '.VarDumper::dumpAsString($invoiceLineItemModel->getErrors()));
         }
-        $invoice->save();
-        return $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
+        $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
+        return $invoiceLineItemModel;
     }
 }

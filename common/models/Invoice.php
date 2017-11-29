@@ -623,10 +623,8 @@ class Invoice extends \yii\db\ActiveRecord
     public function getNetSubtotal()
     {
         $subtotal = 0.0;
-        if (!empty($this->lineItems)) {
-            foreach ($this->lineItems as $lineItem) {
-                $subtotal += $lineItem->netPrice;
-            }
+        foreach ($this->lineItems as $lineItem) {
+            $subtotal += $lineItem->netPrice;
         }
 
         return $subtotal;

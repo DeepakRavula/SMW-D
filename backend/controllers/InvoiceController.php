@@ -296,7 +296,8 @@ class InvoiceController extends Controller
     {
         $invoiceModel = $this->findModel($id);
         $itemModel = Item::findOne($itemId);
-        $itemModel->addToInvoice($invoiceModel);
+        $lineItem = $itemModel->addToInvoice($invoiceModel);
+        $lineItem->invoice->save();
 
         return [
             'status' => true,
