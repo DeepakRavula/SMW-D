@@ -253,28 +253,32 @@ class Item extends \yii\db\ActiveRecord
     
     public function addToInvoice($invoice)
     {
+        $invoiceLineItemModel = null;
         foreach ($invoice->lineItems as $lineItem) {
             if ($lineItem->item_id === $this->id) {
                 $lineItem->unit += 1; 
                 $lineItem->save();
-                return $lineItem;
+                $invoiceLineItemModel = $lineItem;
+                break;
             }
         }
-        $invoiceLineItemModel = new InvoiceLineItem();
-        $userModel = User::findOne(['id' => Yii::$app->user->id]);
-        $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
-        $invoiceLineItemModel->userName = $userModel->publicIdentity;
-        $invoiceLineItemModel->invoice_id = $invoice->id;
-        $invoiceLineItemModel->item_id = $this->id;
-        $invoiceLineItemModel->unit = true;
-        $invoiceLineItemModel->description = $this->description;
-        $invoiceLineItemModel->amount = $this->price;
-        $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
-        $invoiceLineItemModel->cost        = 0.0;
-        if (!$invoiceLineItemModel->save()) {
-            Yii::error('Line item create error: '.VarDumper::dumpAsString($invoiceLineItemModel->getErrors()));
+        if (!$invoiceLineItemModel) {
+            $invoiceLineItemModel = new InvoiceLineItem();
+            $userModel = User::findOne(['id' => Yii::$app->user->id]);
+            $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
+            $invoiceLineItemModel->userName = $userModel->publicIdentity;
+            $invoiceLineItemModel->invoice_id = $invoice->id;
+            $invoiceLineItemModel->item_id = $this->id;
+            $invoiceLineItemModel->unit = true;
+            $invoiceLineItemModel->description = $this->description;
+            $invoiceLineItemModel->amount = $this->price;
+            $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
+            $invoiceLineItemModel->cost        = 0.0;
+            if (!$invoiceLineItemModel->save()) {
+                Yii::error('Line item create error: '.VarDumper::dumpAsString($invoiceLineItemModel->getErrors()));
+            }
+            $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
         }
-        $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
         return $invoiceLineItemModel;
     }
 }
