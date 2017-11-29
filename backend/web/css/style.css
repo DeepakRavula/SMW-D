@@ -239,3 +239,6 @@ dl {
     overflow-y: auto;
     overflow-x:hidden;
 }
+.sortable .handle .fa-arrows{
+   opacity:0 !important;
+}
