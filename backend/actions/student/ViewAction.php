@@ -46,32 +46,10 @@ class ViewAction extends Action
 				'unscheduledLessonDataProvider' => $this->getUnscheduledLessons($id, $locationId),
 				'examResultDataProvider' => $this->getExamResults($id),
 				'noteDataProvider' => $this->getNotes($id),
-				'groupCourseDataProvider' => $this->getGroupCourses($id, $locationId)
 				]);
 		} else {
 			$this->controller->redirect(['index', 'StudentSearch[showAllStudents]' => false]);
 		} 
-	}
-	protected function getGroupCourses($id, $locationId)
-	{
-		$groupEnrolments = Enrolment::find()
-			->select(['courseId'])
-			->joinWith(['course' => function ($query) use ($locationId) {
-				$query->groupProgram($locationId);
-			}])
-			->where(['enrolment.studentId' => $id])
-			->isConfirmed();
-        $groupCourses = Course::find()
-			->joinWith(['program' => function ($query) {
-				$query->group();
-			}])
-			->where(['NOT IN', 'course.id', $groupEnrolments])
-			->andWhere(['locationId' => $locationId])
-		   ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])  
-			->confirmed();
-        return new ActiveDataProvider([
-            'query' => $groupCourses,
-        ]);
 	}
 
 	protected function getUnscheduledLessons($id, $locationId)

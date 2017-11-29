@@ -44,8 +44,6 @@ $this->params['label'] = $this->render('_title', [
 	echo $this->render('enrolment/view', [
 		'model' => $model,
 		'enrolmentDataProvider' => $enrolmentDataProvider,
-		'groupCourseDataProvider' => $groupCourseDataProvider
-		
 	]);
 	?>
 <?php Pjax::end();?>
@@ -215,9 +213,38 @@ $this->params['label'] = $this->render('_title', [
             return false;
 		});
 		$(document).on('click', '#add-group-enrol', function () {
-            $('#group-enrol-modal').modal('show');
-        	$('#group-enrol-modal .modal-dialog').css({'width': '800px'});
+			$.ajax({
+                url    : $(this).attr('href'),
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#group-enrol-modal .modal-body').html(response.data);
+                        $('#group-enrol-modal').modal('show');
+        				$('#group-enrol-modal .modal-dialog').css({'width': '800px'});
+                    } 
+                }
+            });
             return false;
+		});
+		$(document).on('change keyup paste', '#course-name', function (e) {
+			var courseName = $(this).val();
+			var id = '<?= $model->id;?>';
+			var params = $.param({'studentId' : id, 'courseName' : courseName});
+			$.ajax({
+				url    : '<?= Url::to(['course/fetch-group']); ?>?' + params,
+				type   : 'get',
+				dataType: 'json',
+				success: function(response)
+				{
+				   if(response.status) {
+					    $('#group-enrol-modal .modal-body').html(response.data);
+				   }
+				}
+			});
+			return false;
 		});
 		$(document).on('click', '.private-enrol-cancel', function() {
 			$('#private-enrol-modal').modal('hide');

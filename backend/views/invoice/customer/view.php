@@ -22,6 +22,7 @@ LteBox::begin([
 		<?php $roles = Yii::$app->authManager->getRolesByUser($model->user_id);
 		$role = end($roles); ?>
 	<?php endif; ?>
+	<?php if(!empty($model->user)) : ?>
 	<dt>Name</dt>
 	<dd><?php if(!empty($role) && $role->name === User::ROLE_CUSTOMER) : ?>
 		<a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id]) ?>">
@@ -46,6 +47,7 @@ LteBox::begin([
 	<?php if (!empty($customer->email)): ?>
 		<dt>Email</dt>
 		<dd><?= $customer->email?></dd>	
+	<?php endif; ?>
 	<?php endif; ?>
 </dl>
 <?php LteBox::end()?>

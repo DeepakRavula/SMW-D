@@ -29,17 +29,23 @@ foreach ($Roles as $name => $description) {
 	</div>
 </div>
 <div class="row">
-	<?php if ($role_name === User::ROLE_ADMINISTRATOR) : ?>
+	<?php if (!$model->getModel()->getIsNewRecord()) : ?>
 		<div class="col-xs-6">
-			<?php if (!$model->getModel()->getIsNewRecord()) : ?>
-				<?php echo $form->field($model, 'roles')->dropDownList(ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name')) ?>
-			<?php endif; ?>
+			<?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
 		</div>
 	<?php endif; ?>
-	<?php if (!$model->getModel()->getIsNewRecord()) : ?>
-	<div class="col-xs-6">
-		<?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
-	</div>
+	<?php if ($role_name === User::ROLE_ADMINISTRATOR) : ?>
+			<?php if (!$model->getModel()->getIsNewRecord()) : ?>
+			<div class="col-xs-6">
+				<?php echo $form->field($model, 'roles')->dropDownList(ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name')) ?>
+		</div>
+			<div class="col-xs-6">
+				<?php echo $form->field($model, 'password')->passwordInput() ?>
+		</div>
+			<div class="col-xs-6">
+				<?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
+			<?php endif; ?>
+		</div>
 	<?php endif; ?>
 	<div class="col-xs-6">
     <?= $form->field($userProfile, 'picture')->widget(Upload::classname(),

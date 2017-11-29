@@ -43,13 +43,13 @@ use common\models\Lesson;
         <div class="pull-right">
 		<?= Html::submitButton(Yii::t('backend', 'Apply'), [
 			'id' => 'lesson-review-apply',
-			'class' => 'btn btn-info m-t-10',
+			'class' => 'btn btn-info',
 			'name' => 'button',
 			'value' => Lesson::APPLY_SINGLE_LESSON
 		]) ?>
 		<?= Html::submitButton(Yii::t('backend', 'Apply All'), [
 			'id' => 'lesson-review-apply-all',
-			'class' => 'btn btn-info m-t-10',
+			'class' => 'btn btn-info',
 			'name' => 'button',
 			'value' => Lesson::APPLY_ALL_FUTURE_LESSONS
 		]) ?>

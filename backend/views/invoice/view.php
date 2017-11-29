@@ -49,7 +49,6 @@ $this->params['action-button'] = $this->render('_buttons', [
 			'model' => $model,
 			'customer' => $customer,
 			'searchModel' => $searchModel,
-            'userDataProvider' => $userDataProvider,
 		]);
 		?>	
 	</div>
@@ -176,16 +175,10 @@ Modal::end();
 <div id="payment-edit-content"></div>
 <?php Modal::end();?>
 <?php Modal::begin([
-    'header' => '<h4 class="m-0">Add Customer</h4>',
+    'header' => $this->render('customer/_modal-header', ['model' => $model]),
     'id' => 'invoice-customer-modal',
+	'footer' => Html::a('Cancel', '#', ['class' => 'btn btn-default pull-right customer-cancel'])
 ]); ?>
-<?= $this->render('customer/_view', [
-    'model' => $model,
-    'customer' => $customer,
-    'userModel' => $userModel,
-    'userEmail'=>$userEmail,
-    'userDataProvider'=>$userDataProvider,
-]);?>
 <?php Modal::end();?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Add Walk-in</h4>',
@@ -193,8 +186,8 @@ Modal::end();
 ]); ?>
 <?= $this->render('customer/_walkin', [
     'model' => $model,
-    'userModel' => new UserProfile(),
-    'userEmail'=>new UserEmail(),
+    'userModel' => empty($model->user) ? new UserProfile() : $model->user->userProfile,
+    'userEmail' => empty($model->user->primaryEmail->email) ? new UserEmail() : $model->user->primaryEmail,
 ]);?>
 <?php Modal::end();?>
 <script>
@@ -206,8 +199,42 @@ Modal::end();
   	});
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$(document).on('click', '.add-customer', function (e) {
-		$('#invoice-username').val('');
-		$('#invoice-customer-modal').modal('show');
+		$.ajax({
+			url    : $(this).attr('href'),
+			type: 'get',
+			dataType: "json",
+			success: function (response)
+			{
+				if (response.status)
+				{
+					$('#invoice-customer-modal .modal-body').html(response.data);
+					$('#invoice-username').val('');
+					$('#invoice-customer-modal').modal('show');
+					$('#invoice-customer-modal .modal-dialog').css({'width': '800px'});
+				} 
+			}
+		});
+		return false;
+  	});
+	$(document).on('change keyup paste', '#invoice-username', function (e) {
+		var userName = $(this).val();
+		var id = '<?= $model->id;?>';
+		var params = $.param({'id' : id, 'userName' : userName});
+		$.ajax({
+            url    : '<?= Url::to(['invoice/fetch-user']); ?>?' + params,
+            type   : 'get',
+            dataType: 'json',
+            success: function(response)
+            {
+               if(response.status) {
+				   $('#invoice-customer-modal .modal-body').html(response.data);
+			   }
+            }
+        });
+		return false;
+	});
+	$(document).on('click', '.customer-cancel', function (e) {
+		$('#invoice-customer-modal').modal('hide');
 		return false;
   	});
     $(document).on('click', '.add-walkin', function (e) {

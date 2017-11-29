@@ -43,7 +43,7 @@ use yii\widgets\Pjax;
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
             'attribute' => 'discount',
             'value' => function ($model) {
-                return $model->discount;
+                return Yii::$app->formatter->asDecimal($model->discount);
             },
         ],
         [
@@ -56,16 +56,15 @@ use yii\widgets\Pjax;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
             'value' => function ($data) {
-                return $data->cost;
+                return Yii::$app->formatter->asDecimal($data->cost);
             },
         ],
         [
-            'format' => ['decimal', 4], 
             'label' => 'Price',
 			'headerOptions' => ['class' => 'text-right'],
 			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
 			'value' => function($data) {
-				return $data->itemTotal;	
+				return Yii::$app->formatter->asDecimal($data->itemTotal);	
 			},
         ],
     ];
@@ -96,10 +95,9 @@ use yii\widgets\Pjax;
 			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
 		],
         [
-            'format' => ['decimal', 4], 
             'label' => 'Price',
 			'value' => function($data) {
-				return $data->itemTotal;	
+				return Yii::$app->formatter->asDecimal($data->itemTotal);	
 			},
 			'headerOptions' => ['class' => 'text-right'],
 			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
