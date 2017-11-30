@@ -66,7 +66,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            ['taxStatus', 'required', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_NEGATIVE_VALUE_EDIT]],
+            ['tax_status', 'required'],
             [['unit', 'amount', 'item_id', 'description'],
                 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
