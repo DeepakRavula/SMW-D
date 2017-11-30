@@ -77,6 +77,7 @@ $(document).ready(function() {
                 }
             });
         }
+        return false;
     });
     $(document).on('click', '.invoice-discount-cancel', function () {
         $('#apply-discount-modal').modal('hide');

@@ -8,7 +8,7 @@
             	<li><a class="add-new-misc" href="#">Add Item...</a></li>
 			<?php endif; ?>
 			<?php if(!empty($model->lineItem) && $model->lineItem->isOtherLineItems() && !$model->lineItem->isLessonItem()) :?>
-				<li><a class="edit-tax" href="#">Edit Taxes...</a></li>
+				<li><a class="edit-tax" href="#">Edit Tax...</a></li>
 			<?php endif; ?>
 			<?php if(!empty($model->lineItem) && $model->lineItem->isOtherLineItems()) :?>
 				<li><a class = "apply-discount" href="#">Edit Discount...</a></li>

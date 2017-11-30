@@ -194,17 +194,32 @@ Modal::end();
      'header' => '<h4 class="m-0">Edit Tax</h4>',
      'id' => 'edit-tax-modal',
  ]); ?>
- <?= $this->render('line-item/_form-tax', [
-     'model' => new InvoiceLineItem(),
- ]);?>
+<div id="edit-tax-modal-content"></div>
  <?php Modal::end();?>
 <script>
  $(document).ready(function() {
-	$(document).on('click', '.edit-tax', function (e) {
- 		$('#edit-tax-modal .modal-dialog').css({'width': '400px'});
- 		$('#edit-tax-modal').modal('show');
- 		return false;
-   	});
+    $(document).on('click', '.edit-tax', function () {
+        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
+        var params = $.param({ 'InvoiceLineItem[ids]' : selectedRows });
+        if ($.isEmptyObject(selectedRows)) {
+            $('#invoice-error-notification').html('Please select atleast a item to edit tax!').fadeIn().delay(5000).fadeOut();
+        } else {
+            $.ajax({
+                url    : '<?= Url::to(['tax-status/edit-line-item-tax']) ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#edit-tax-modal .modal-dialog').css({'width': '400px'});
+                        $('#edit-tax-modal').modal('show');
+                        $('#edit-tax-modal-content').html(response.data);
+                    }
+                }
+            });
+        }
+    });
  	$(document).on('click', '.edit-tax-cancel', function (e) {
  		$('#edit-tax-modal').modal('hide');
  		return false;

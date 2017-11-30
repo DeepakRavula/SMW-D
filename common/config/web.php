@@ -57,6 +57,7 @@ $config = [
             'city/*',
             'province/*',
             'tax-code/*',
+            'tax-status/*',
             'country/*',
             'system-information/*',
             'gii/*',

@@ -4,7 +4,6 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
-use kartik\switchinput\SwitchInput;
 use common\models\TaxStatus;
 
 /* @var $this yii\web\View */
@@ -24,7 +23,7 @@ use common\models\TaxStatus;
 		), ['prompt' => 'Select', 'id' => 'lineitem-tax_status']);?>
             <?php echo $form->field($model, 'tax_rate', [
 					'inputTemplate' => '<div class="input-group">'
-					. '{input}<span class="input-group-addon">%</span></div>',])->textInput(['readonly' => true, 'class' => 'right-align form-control'])->label('Tax Rate') ?>
+					. '{input}<span class="input-group-addon">%</span></div>'])->textInput(['readonly' => true, 'class' => 'right-align form-control'])->label('Tax Rate') ?>
            <div class="col-md-12">
     <div class="form-group pull-right">
         <?= Html::a('Cancel', '#', ['class' => 'btn btn-default edit-tax-cancel']);?>
