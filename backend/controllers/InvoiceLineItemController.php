@@ -5,6 +5,10 @@ namespace backend\controllers;
 use Yii;
 use common\models\Payment;
 use common\models\PaymentMethod;
+use backend\models\discount\LineItemDiscount;
+use backend\models\discount\CustomerLineItemDiscount;
+use backend\models\discount\EnrolmentLineItemDiscount;
+use backend\models\discount\PaymentFrequencyLineItemDiscount;
 use common\models\InvoiceLineItem;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
@@ -179,10 +183,11 @@ class InvoiceLineItemController extends Controller
     {
         $lineItemIds = Yii::$app->request->get('InvoiceLineItem')['ids'];
         $lineItemId = end($lineItemIds);
-        $lineItemDiscount = 
-        $paymentFrequencyDiscount = $model->item->loadPaymentFrequencyDiscount($lineItemId, $isPaymentFrequencyDiscountValueDiff);
-        $customerDiscount = $model->item->loadCustomerDiscount($lineItemId, $isCustomerDiscountValueDiff);
-        $multiEnrolmentDiscount = $model->item->loadMultiEnrolmentDiscount($lineItemId, $isMultiEnrolmentDiscountValueDiff);
+        $model = $this->findModel($lineItemId);
+        $lineItemDiscount = LineItemDiscount::loadLineItemDiscount($lineItemIds);
+        $paymentFrequencyDiscount = PaymentFrequencyLineItemDiscount::loadPaymentFrequencyDiscount($lineItemIds);
+        $customerDiscount = CustomerLineItemDiscount::loadCustomerDiscount($lineItemIds);
+        $multiEnrolmentDiscount = EnrolmentLineItemDiscount::loadMultiEnrolmentDiscount($lineItemIds);
         $data = $this->renderAjax('/invoice/_form-apply-discount', [
             'lineItemIds' => $lineItemIds,
             'model' => $model,
@@ -195,16 +200,16 @@ class InvoiceLineItemController extends Controller
         if ($post) {
             foreach ($lineItemIds as $lineItemId) {
                 $model = $this->findModel($lineItemId);
-                $lineItemDiscount = $model->item->loadLineItemDiscount($lineItemId);
+                $lineItemDiscount = LineItemDiscount::loadLineItemDiscount([$lineItemId]);
+                $customerDiscount = CustomerLineItemDiscount::loadCustomerDiscount([$lineItemId]);
                 $lineItemDiscount->load($post);
-                $customerDiscount = $model->item->loadCustomerDiscount($lineItemId);
                 $customerDiscount->load($post);
                 $lineItemDiscount->save();
                 $customerDiscount->save();
                 if ($model->isLessonItem()) {
-                    $paymentFrequencyDiscount = $model->item->loadPaymentFrequencyDiscount($lineItemId);
+                    $paymentFrequencyDiscount = PaymentFrequencyLineItemDiscount::loadPaymentFrequencyDiscount([$lineItemId]);
+                    $multiEnrolmentDiscount = EnrolmentLineItemDiscount::loadMultiEnrolmentDiscount([$lineItemId]);
                     $paymentFrequencyDiscount->load($post);
-                    $multiEnrolmentDiscount = $model->item->loadMultiEnrolmentDiscount($lineItemId);
                     $multiEnrolmentDiscount->load($post);
                     $paymentFrequencyDiscount->save();
                     $multiEnrolmentDiscount->save();

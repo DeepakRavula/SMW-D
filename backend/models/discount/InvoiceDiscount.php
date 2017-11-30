@@ -91,7 +91,7 @@ class InvoiceDiscount extends Model
         if (is_array($values)) {
             $attributes = array_flip($safeOnly ? $this->safeAttributes() : $this->attributes());
             foreach ($values as $name => $value) {
-                if (isset($attributes[$name]) && !empty($values[$name])) {
+                if (isset($attributes[$name]) && (!empty($values[$name]) || $values[$name] == 0)) {
                     $this->$name = $value;
                 } elseif ($safeOnly) {
                     $this->onUnsafeAttribute($name, $value);

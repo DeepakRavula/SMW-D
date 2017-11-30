@@ -407,10 +407,10 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
         if ($this->hasLineItemDiscount()) {
             if ((int) $this->lineItemDiscount->valueType) {
-                $discount += $lineItemPrice < 0 ? - ($this->lineItemDiscount->value) : 
-                    $this->lineItemDiscount->value;
-            } else {
                 $discount += ($this->lineItemDiscount->value / 100) * $lineItemPrice;
+            } else {
+                $discount += $lineItemPrice < 0 ? - ($this->lineItemDiscount->value) :
+                    $this->lineItemDiscount->value;
             }
             $lineItemPrice = $this->grossPrice - $discount;
         }

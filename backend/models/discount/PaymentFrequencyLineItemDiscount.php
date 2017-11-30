@@ -3,6 +3,7 @@
 namespace backend\models\discount;
 
 use common\models\User;
+use common\models\InvoiceLineItem;
 use common\models\discount\InvoiceLineItemDiscount;
 /**
  * Create user form.
@@ -48,7 +49,7 @@ class PaymentFrequencyLineItemDiscount extends InvoiceDiscount
     {
         $isPaymentFrequencyDiscountValueDiff = false;
         foreach ($lineItemIds as $key => $lineItemId) {
-            $model = $this->findModel($lineItemId);
+            $model = InvoiceLineItem::findOne($lineItemId);
             $paymentFrequencyDiscount = $model->item->loadPaymentFrequencyDiscount($lineItemId);
             if ($key === 0) {
                 $paymentFrequencyDiscountValue = $paymentFrequencyDiscount ? $paymentFrequencyDiscount->value : null;
@@ -58,5 +59,6 @@ class PaymentFrequencyLineItemDiscount extends InvoiceDiscount
                 }
             }
         }
+        return $model->item->loadPaymentFrequencyDiscount($lineItemId, $isPaymentFrequencyDiscountValueDiff);
     }
 }

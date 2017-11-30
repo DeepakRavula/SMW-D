@@ -3,6 +3,7 @@
 namespace backend\models\discount;
 
 use common\models\User;
+use common\models\InvoiceLineItem;
 use common\models\discount\InvoiceLineItemDiscount;
 /**
  * Create user form.
@@ -48,7 +49,7 @@ class CustomerLineItemDiscount extends InvoiceDiscount
     {
         $isCustomerDiscountValueDiff = false;
         foreach ($lineItemIds as $key => $lineItemId) {
-            $model = $this->findModel($lineItemId);
+            $model = InvoiceLineItem::findOne($lineItemId);
             $customerDiscount = $model->item->loadCustomerDiscount($lineItemId);
             if ($key === 0) {
                 $customerDiscountValue = $customerDiscount ? $customerDiscount->value : null;
@@ -58,5 +59,6 @@ class CustomerLineItemDiscount extends InvoiceDiscount
                 }
             }
         }
+        return $model->item->loadCustomerDiscount($lineItemId, $isCustomerDiscountValueDiff);
     }
 }

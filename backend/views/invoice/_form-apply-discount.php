@@ -63,8 +63,8 @@ use kartik\switchinput\SwitchInput;
                 'name' => 'valueType',
                 'pluginOptions' => [
                     'handleWidth' => 20,
-                    'onText' => '$',
-                    'offText' => '%',
+                    'onText' => '%',
+                    'offText' => '$',
                 ],
             ])->label(false); ?>
         </div>

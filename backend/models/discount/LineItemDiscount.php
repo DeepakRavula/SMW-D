@@ -22,7 +22,6 @@ class LineItemDiscount extends InvoiceDiscount
         $this->valueType = $model->valueType;
         if ($value) {
             $this->value = null;
-            $this->valueType = $value;
         }
         $this->model = $this->getModel();
         return $this;
@@ -49,7 +48,7 @@ class LineItemDiscount extends InvoiceDiscount
     {
         $isLineItemDiscountValueDiff = false;
         foreach ($lineItemIds as $key => $lineItemId) {
-            $model = $this->findModel($lineItemId);
+            $model = InvoiceLineItem::findOne($lineItemId);
             $lineItemDiscount = $model->item->loadLineItemDiscount($lineItemId);
             if ($key === 0) {
                 $lineItemDiscountValue = $lineItemDiscount ? $lineItemDiscount->value : null;
@@ -60,7 +59,6 @@ class LineItemDiscount extends InvoiceDiscount
             }
         }
         $lineItemId = end($lineItemIds);
-        $model = InvoiceLineItem::findOne($lineItemId);
         return $model->item->loadLineItemDiscount($lineItemId, $isLineItemDiscountValueDiff);
     }
 }
