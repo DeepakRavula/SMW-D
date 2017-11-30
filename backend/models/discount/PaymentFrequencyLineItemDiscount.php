@@ -43,4 +43,20 @@ class PaymentFrequencyLineItemDiscount extends InvoiceDiscount
         $this->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
         $this->type = InvoiceLineItemDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
     }
+
+    public static function loadPaymentFrequencyDiscount($lineItemIds)
+    {
+        $isPaymentFrequencyDiscountValueDiff = false;
+        foreach ($lineItemIds as $key => $lineItemId) {
+            $model = $this->findModel($lineItemId);
+            $paymentFrequencyDiscount = $model->item->loadPaymentFrequencyDiscount($lineItemId);
+            if ($key === 0) {
+                $paymentFrequencyDiscountValue = $paymentFrequencyDiscount ? $paymentFrequencyDiscount->value : null;
+            } else {
+                if ((float) $paymentFrequencyDiscountValue !== (float) ($paymentFrequencyDiscount ? $paymentFrequencyDiscount->value : null)) {
+                    $isPaymentFrequencyDiscountValueDiff = true;
+                }
+            }
+        }
+    }
 }

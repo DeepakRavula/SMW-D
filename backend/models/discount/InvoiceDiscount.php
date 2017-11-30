@@ -63,6 +63,7 @@ class InvoiceDiscount extends Model
             $lineItemDiscount->valueType = $this->valueType;
             $lineItemDiscount->type = $this->type;
             if (!$lineItemDiscount->save()) {
+                print_r($lineItemDiscount->getErrors());die;
                 throw new Exception('Model not saved');
             }
             return !$lineItemDiscount->hasErrors();

@@ -43,4 +43,20 @@ class CustomerLineItemDiscount extends InvoiceDiscount
         $this->type = InvoiceLineItemDiscount::TYPE_CUSTOMER;
         $this->clearValue = false;
     }
+
+    public static function loadCustomerDiscount($lineItemIds)
+    {
+        $isCustomerDiscountValueDiff = false;
+        foreach ($lineItemIds as $key => $lineItemId) {
+            $model = $this->findModel($lineItemId);
+            $customerDiscount = $model->item->loadCustomerDiscount($lineItemId);
+            if ($key === 0) {
+                $customerDiscountValue = $customerDiscount ? $customerDiscount->value : null;
+            } else {
+                if ((float) $customerDiscountValue !== (float) ($customerDiscount ? $customerDiscount->value : null)) {
+                    $isCustomerDiscountValueDiff = true;
+                }
+            }
+        }
+    }
 }

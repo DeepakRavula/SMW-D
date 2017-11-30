@@ -178,38 +178,8 @@ class InvoiceLineItemController extends Controller
     public function actionApplyDiscount()
     {
         $lineItemIds = Yii::$app->request->get('InvoiceLineItem')['ids'];
-        $isLineItemDiscountValueDiff = false;
-        $isPaymentFrequencyDiscountValueDiff = false;
-        $isCustomerDiscountValueDiff = false;
-        $isMultiEnrolmentDiscountValueDiff = false;
-        foreach ($lineItemIds as $key => $lineItemId) {
-            $model = $this->findModel($lineItemId);
-            $lineItemDiscount = $model->item->loadLineItemDiscount($lineItemId);
-            $paymentFrequencyDiscount = $model->item->loadPaymentFrequencyDiscount($lineItemId);
-            $customerDiscount = $model->item->loadCustomerDiscount($lineItemId);
-            $multiEnrolmentDiscount = $model->item->loadMultiEnrolmentDiscount($lineItemId);
-            if ($key === 0) {
-                $lineItemDiscountValue = $lineItemDiscount ? $lineItemDiscount->value : null;
-                $paymentFrequencyDiscountValue = $paymentFrequencyDiscount ? $paymentFrequencyDiscount->value : null;
-                $customerDiscountValue = $customerDiscount ? $customerDiscount->value : null;
-                $multiEnrolmentDiscountValue = $multiEnrolmentDiscount ? $multiEnrolmentDiscount->value : null;
-            } else {
-                if ((float) $lineItemDiscountValue !== (float) ($lineItemDiscount ? $lineItemDiscount->value : null)) {
-                    $isLineItemDiscountValueDiff = true;
-                }
-                if ((float) $paymentFrequencyDiscountValue !== (float) ($paymentFrequencyDiscount ? $paymentFrequencyDiscount->value : null)) {
-                    $isPaymentFrequencyDiscountValueDiff = true;
-                }
-                if ((float) $customerDiscountValue !== (float) ($customerDiscount ? $customerDiscount->value : null)) {
-                    $isCustomerDiscountValueDiff = true;
-                }
-                if ((float) $multiEnrolmentDiscountValue !== (float) ($multiEnrolmentDiscount ? $multiEnrolmentDiscount->value : null)) {
-                    $isMultiEnrolmentDiscountValueDiff = true;
-                }
-            }
-        }
         $lineItemId = end($lineItemIds);
-        $lineItemDiscount = $model->item->loadLineItemDiscount($lineItemId, $isLineItemDiscountValueDiff);
+        $lineItemDiscount = 
         $paymentFrequencyDiscount = $model->item->loadPaymentFrequencyDiscount($lineItemId, $isPaymentFrequencyDiscountValueDiff);
         $customerDiscount = $model->item->loadCustomerDiscount($lineItemId, $isCustomerDiscountValueDiff);
         $multiEnrolmentDiscount = $model->item->loadMultiEnrolmentDiscount($lineItemId, $isMultiEnrolmentDiscountValueDiff);
