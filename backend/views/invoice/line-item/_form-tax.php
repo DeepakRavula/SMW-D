@@ -17,11 +17,15 @@ use common\models\TaxStatus;
     'id' => 'edit-tax-form',
 	'enableClientValidation' => true
 ]); ?>
+    <div id="tax-spinner" class="spinner" style="display:none">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+    </div>
    <div class="row">
 		<?= $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
-			TaxStatus::find()->all(), 'id', 'name'
+			TaxStatus::find()->all(), 'name', 'name'
 		), ['prompt' => 'Select', 'id' => 'lineitem-tax_status']);?>
-            <?php echo $form->field($model, 'tax_rate', [
+            <?php echo $form->field($model, 'taxPercentage', [
 					'inputTemplate' => '<div class="input-group">'
 					. '{input}<span class="input-group-addon">%</span></div>'])->textInput(['readonly' => true, 'class' => 'right-align form-control'])->label('Tax Rate') ?>
            <div class="col-md-12">
@@ -43,7 +47,7 @@ use common\models\TaxStatus;
                 contentType: 'application/json',
                 dataType: "json",
                 success: function(response) {
-                    $('#invoicelineitem-tax_rate').val(response);
+                    $('#invoicelineitem-taxpercentage').val(response);
                 }
             });		
 		},
@@ -64,5 +68,29 @@ use common\models\TaxStatus;
         lineItem.fetchTaxPercentage();
         return false;
     });
+});
+$(document).off('beforeSubmit', '#edit-tax-form').on('beforeSubmit', '#edit-tax-form', function () {
+    $('#tax-spinner').show();
+    var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
+    var params = $.param({ 'InvoiceLineItem[ids]' : selectedRows });
+    $.ajax({
+        url    : '<?= Url::to(['tax-status/edit-line-item-tax']) ?>?' + params,
+        type   : 'post',
+        dataType: "json",
+        data   : $(this).serialize(),
+        success: function(response)
+        {
+            if(response.status)
+            {
+                $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
+                $('#tax-spinner').hide();
+                $('#edit-tax-modal').modal('hide');
+                $('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+            }
+        }
+    });
+    return false;
 });
 </script> 

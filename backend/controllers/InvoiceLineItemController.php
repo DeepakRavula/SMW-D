@@ -58,7 +58,7 @@ class InvoiceLineItemController extends Controller
         $locationModel = Location::findOne(['id' => $locationId]);
         $taxCode = TaxCode::find()
             ->joinWith(['taxStatus' => function ($query) use ($taxStatusId) {
-                $query->where(['tax_status.id' => $taxStatusId]);
+                $query->where(['tax_status.name' => $taxStatusId]);
             }])
             ->where(['<=', 'start_date', $today])
             ->andWhere(['province_id' => $locationModel->province_id])

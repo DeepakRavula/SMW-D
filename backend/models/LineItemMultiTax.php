@@ -24,7 +24,7 @@ class LineItemMultiTax extends Model
                 }
             }
         }
-        $lineItem->tax_status = $lineItem->taxStatus;
+
         return $lineItem;
     }
 }

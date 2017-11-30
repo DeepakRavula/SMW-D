@@ -7,6 +7,7 @@ use common\models\TaxStatus;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
 use backend\models\LineItemMultiTax;
+use common\models\InvoiceLineItem;
 use backend\models\search\TaxStatusSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -152,9 +153,16 @@ class TaxStatusController extends Controller
         ]);
         $post = Yii::$app->request->post();
         if ($post) {
-            
+            foreach ($lineItemIds as $lineItemId) {
+                $lineItem = InvoiceLineItem::findOne($lineItemId);
+                $lineItem->load($post);
+                if (!$lineItem->save()) {
+                    print_r($lineItem->getErrors());die;
+                }
+            }
             return [
-                'status' => true
+                'status' => true,
+                'message' => 'Tax successfully updated!'
             ];
         } else {
             return [
