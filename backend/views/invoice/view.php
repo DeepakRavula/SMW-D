@@ -190,9 +190,25 @@ Modal::end();
     'userEmail' => empty($model->user->primaryEmail->email) ? new UserEmail() : $model->user->primaryEmail,
 ]);?>
 <?php Modal::end();?>
+<?php Modal::begin([
+     'header' => '<h4 class="m-0">Edit Tax</h4>',
+     'id' => 'edit-tax-modal',
+ ]); ?>
+ <?= $this->render('line-item/_form-tax', [
+     'model' => new InvoiceLineItem(),
+ ]);?>
+ <?php Modal::end();?>
 <script>
  $(document).ready(function() {
- 
+	$(document).on('click', '.edit-tax', function (e) {
+ 		$('#edit-tax-modal .modal-dialog').css({'width': '400px'});
+ 		$('#edit-tax-modal').modal('show');
+ 		return false;
+   	});
+ 	$(document).on('click', '.edit-tax-cancel', function (e) {
+ 		$('#edit-tax-modal').modal('hide');
+ 		return false;
+   	}); 
 	$(document).on('click', '.add-invoice-note', function (e) {
 		$('#message-modal').modal('show');
 		return false;

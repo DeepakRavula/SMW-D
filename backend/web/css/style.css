@@ -239,3 +239,6 @@ dl {
     overflow-y: auto;
     overflow-x:hidden;
 }
+.right-align {
+	text-align:right;
+}

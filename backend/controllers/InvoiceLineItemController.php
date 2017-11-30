@@ -15,7 +15,8 @@ use yii\web\NotFoundHttpException;
 use common\models\User;
 use common\models\InvoiceLog;
 use yii\helpers\Json;
-
+use common\models\Location;
+use common\models\TaxCode;
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
@@ -49,7 +50,21 @@ class InvoiceLineItemController extends Controller
 
         return $rate;
     }
-    
+   	public function actionFetchTaxPercentage($taxStatusId)
+	{
+		$today         = (new \DateTime())->format('Y-m-d H:i:s');
+        $locationId    = Yii::$app->session->get('location_id');
+        $locationModel = Location::findOne(['id' => $locationId]);
+        $taxCode = TaxCode::find()
+            ->joinWith(['taxStatus' => function ($query) use ($taxStatusId) {
+                $query->where(['tax_status.id' => $taxStatusId]);
+            }])
+            ->where(['<=', 'start_date', $today])
+            ->andWhere(['province_id' => $locationModel->province_id])
+            ->orderBy('start_date DESC')
+            ->one();
+		return $taxCode->rate;
+	} 
     public function actionUpdate($id) 
     {
         $model = $this->findModel($id);
