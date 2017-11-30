@@ -7,7 +7,7 @@ use yii\widgets\Pjax;
     $columns = [
         [
             'class' => 'yii\grid\CheckboxColumn',
-            // you may configure additional properties here
+            'contentOptions' => ['style' => 'width:30px;'],
         ],
         [
             'headerOptions' => ['class' => 'text-left'],
