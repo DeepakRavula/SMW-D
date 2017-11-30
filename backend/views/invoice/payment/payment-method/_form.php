@@ -11,14 +11,12 @@ use common\models\PaymentMethod;
 /* @var $model common\models\Student */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<div class=" p-10">
+<div class="row user-create-form">
 <?php $form = ActiveForm::begin([
     'id' => 'payment-form',
 	'action' => Url::to(['payment/invoice-payment', 'id' => $invoice->id]),
 ]); ?>
-   <div class="row">
-	   <div class="col-md-5">
-            <?php echo $form->field($model, 'payment_method_id')->dropDownList(
+    <?php echo $form->field($model, 'payment_method_id')->dropDownList(
  ArrayHelper::map(PaymentMethod::find()
         		->where([
                 	'active' => PaymentMethod::STATUS_ACTIVE,
@@ -26,19 +24,15 @@ use common\models\PaymentMethod;
             	])
       			->orderBy(['sortOrder' => SORT_ASC])->all(), 'id', 'name') );
             ?>
-        </div>
-        <div class="clearfix"></div>
-        <div class="col-md-4 amount">
-            <?= $form->field($model, 'amount')->textInput(['class' => 'payment-amount form-control']);?>
-        </div>
-           <div class="col-md-3 reference">
+            <?= $form->field($model, 'amount')->textInput(['class' => 'right-align payment-amount form-control']);?>
+	   <div class="reference">
        <?php if ($model->payment_method_id === PaymentMethod::TYPE_CHEQUE) : ?>
                <?= $form->field($model, 'reference')->textInput()->label('Cheque Number'); ?>
        <?php elseif ($model->payment_method_id !== PaymentMethod::TYPE_CASH) : ?>
                <?= $form->field($model, 'reference')->textInput(); ?>
        <?php endif; ?>
-           </div>
-		<div class="col-md-5 cheque-date">
+		  </div>
+	   	<div class="cheque-date">
    			<?php
             $currentDate = (new \DateTime())->format('d-m-Y');
             echo $form->field($model, 'date')->widget(DatePicker::classname(), [
@@ -52,15 +46,11 @@ use common\models\PaymentMethod;
                     'autoclose' => true,
                 ],
             ])->label('Cheque Date'); ?>
-        </div>
    </div>   
     <div class="row">
-        <div class="col-md-12">
-        <div class="clearfix"></div>
 	   <div class="form-group pull-right">
            <?= Html::a('Cancel', '', ['class' => 'btn btn-default payment-cancel-btn']);?>
         <?= Html::submitButton(Yii::t('backend', 'Pay'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
-	</div>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>

@@ -268,6 +268,7 @@ Modal::end();
 		return false;
   	});
 	$(document).on('click', '.add-payment', function (e) {
+        $('#payment-modal .modal-dialog').css({'width': '400px'});
 		$('#payment-modal').modal('show');
 		$.ajax({
             url    : '<?= Url::to(['invoice/get-payment-amount', 'id' => $model->id]); ?>',

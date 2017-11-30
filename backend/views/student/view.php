@@ -517,6 +517,7 @@ $(document).on('click', '.evaluation-delete', function () {
             return false;
         });
 		$(document).on('click', '.student-profile-edit-button', function () {
+        	$('#student-profile-modal .modal-dialog').css({'width': '400px'});
 			$('#student-profile-modal').modal('show');
 			return false;
 		});

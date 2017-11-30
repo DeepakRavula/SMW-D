@@ -41,7 +41,7 @@ use common\models\Qualification;
 			]); ?>
         </div>
         <div class="col-md-6">
-            <?= $form->field($model, 'rate')->textInput();?>
+            <?= $form->field($model, 'rate')->textInput(['class' => 'right-align form-control']);?>
         </div>
    </div>
 <div class="row">

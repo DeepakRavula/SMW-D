@@ -231,11 +231,14 @@ dl {
 .modal-content {
 	border-radius:6px;
 }
-#courseschedule-duration, #rate-per-month, #payment-frequency-discount,
+#courseschedule-duration, #lesson-duration, #rate-per-month, #payment-frequency-discount,
 #enrolment-discount, #discounted-rate-per-month,#courseschedule-programrate,#course-duration,#course-weekscount{
 	text-align:right;
 }
 #group-course-create-modal .modal-dialog .modal-content .modal-body {
     overflow-y: auto;
     overflow-x:hidden;
+}
+.right-align {
+	text-align:right;
 }
