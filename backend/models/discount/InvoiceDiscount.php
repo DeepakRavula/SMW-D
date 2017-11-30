@@ -2,7 +2,7 @@
 
 namespace backend\models\discount;
 
-use common\models\InvoiceLineItem;
+use yii\helpers\VarDumper;
 use common\models\User;
 use yii\base\Exception;
 use yii\base\Model;
@@ -60,10 +60,10 @@ class InvoiceDiscount extends Model
             } else {
                 $lineItemDiscount->value = $this->value;
             }
-            $lineItemDiscount->valueType = $this->valueType;
+            $lineItemDiscount->valueType = (int) $this->valueType;
             $lineItemDiscount->type = $this->type;
             if (!$lineItemDiscount->save()) {
-                throw new Exception('Model not saved');
+                Yii::error('Line item discount error: '.VarDumper::dumpAsString($lineItemDiscount->getErrors()));
             }
             return !$lineItemDiscount->hasErrors();
         }
