@@ -71,22 +71,7 @@ class InvoiceDiscount extends Model
         return null;
     }
     
-    public function load($data, $formName = null)
-    {
-        $scope = $formName === null ? $this->formName() : $formName;
-        if ($scope === '' && !empty($data)) {
-            $this->setAttributesCustom($data);
-
-            return true;
-        } elseif (isset($data[$scope])) {
-            $this->setAttributesCustom($data[$scope]);
-
-            return true;
-        }
-        return false;
-    }
-
-    public function setAttributesCustom($values, $safeOnly = true)
+    public function setAttributes($values, $safeOnly = true)
     {
         if (is_array($values)) {
             $attributes = array_flip($safeOnly ? $this->safeAttributes() : $this->attributes());
