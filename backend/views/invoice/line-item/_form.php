@@ -31,6 +31,10 @@ use yii\helpers\Url;
 	'action' => Url::to(['invoice-line-item/update', 'id' => $model->id]),
 	'enableClientValidation' => true
 ]); ?>
+    <div id="item-edit-spinner" class="spinner" style="display:none">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+    </div>
     <dl class="dl-horizontal">
         <div class="row">
             <div class="col-md-12">

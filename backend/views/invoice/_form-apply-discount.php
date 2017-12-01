@@ -15,6 +15,10 @@ use kartik\switchinput\SwitchInput;
         'id' => 'apply-discount-form',
         'action' => Url::to(['invoice-line-item/apply-discount', 'InvoiceLineItem[ids]' => $lineItemIds]),
     ]); ?>
+    <div id="discount-spinner" class="spinner" style="display:none">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+    </div>
     <div class="row">
         <?php if (!$model->isOpeningBalance()) : ?>
         <?php if ($model->isLessonItem()) : ?>
@@ -91,6 +95,7 @@ use kartik\switchinput\SwitchInput;
 <?php $message = 'Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.'; ?>
 <script>
 $(document).off('beforeSubmit', '#apply-discount-form').on('beforeSubmit', '#apply-discount-form', function () {
+    $('#discount-spinner').show();
     var message = '<?= $message;?>';
     $.ajax({
         url    : $(this).attr('action'),
@@ -105,7 +110,9 @@ $(document).off('beforeSubmit', '#apply-discount-form').on('beforeSubmit', '#app
                 $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                 $('#invoice-discount-warning').html(message).fadeIn().delay(8000).fadeOut();
                 $('#apply-discount-modal').modal('hide');
+                $('#discount-spinner').hide();
             } else {
+                $('#discount-spinner').hide();
                 $(this).yiiActiveForm('updateMessages', response.errors , true);
             }
         }

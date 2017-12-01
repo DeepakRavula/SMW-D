@@ -444,6 +444,7 @@ Modal::end();
 		return false;
 	});
 	$(document).on('beforeSubmit', '#line-item-edit-form', function (e) {
+        $('#item-edit-spinner').show();
             $.ajax({
                     url    : $(this).attr('action'),
                     type   : 'post',
@@ -460,8 +461,10 @@ Modal::end();
                                             $('#success-notification').html(response.message).fadeIn().delay(8000).fadeOut();
                                     }
                                     $('#line-item-edit-modal').modal('hide');
+                                    $('#item-edit-spinner').hide();
                             } else {
                                     $('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
+                                    $('#item-edit-spinner').hide();
                             }
                     }
             });
