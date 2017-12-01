@@ -39,18 +39,22 @@ use common\models\TaxStatus;
 
 <script>
     var lineItem = {
-		fetchTaxPercentage : function() {
-			var taxStatusId = $('#lineitem-tax_status').val();
-			  $.ajax({
-                url: "<?php echo Url::to(['invoice-line-item/fetch-tax-percentage']); ?>?taxStatusId=" + taxStatusId,
-                type: 'GET',
-                contentType: 'application/json',
-                dataType: "json",
-                success: function(response) {
-                    $('#invoicelineitem-taxpercentage').val(response);
-                }
-            });		
-		},
+        fetchTaxPercentage : function() {
+            var taxStatusId = $('#lineitem-tax_status').val();
+            if ($.isEmptyObject(taxStatusId)) {
+                $('#invoicelineitem-taxpercentage').val(0);
+            } else {
+                $.ajax({
+                    url: "<?php echo Url::to(['invoice-line-item/fetch-tax-percentage']); ?>?taxStatusId=" + taxStatusId,
+                    type: 'GET',
+                    contentType: 'application/json',
+                    dataType: "json",
+                    success: function(response) {
+                        $('#invoicelineitem-taxpercentage').val(response);
+                    }
+                });
+            }
+        },
     };
  $(document).ready(function() { 
  	$('#line-item-grid').on('change', '.lineItemId', function(){

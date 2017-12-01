@@ -24,7 +24,7 @@ use kartik\switchinput\SwitchInput;
         <div class="col-xs-4">
             <?= $form->field($paymentFrequencyDiscount, 'value', ['inputTemplate' => '<div class="input-group">'
 		. '{input}<span class="input-group-addon" style="background-color:lightgrey;">%</span></div>'])
-                ->textInput(['placeholder' => 'nochange', 'class' => 'form-control text-right'])->label(false); ?>
+                ->textInput(['value' => Yii::$app->formatter->asDecimal($paymentFrequencyDiscount->value, 2), 'placeholder' => 'nochange', 'class' => 'form-control text-right'])->label(false); ?>
         </div>
         <div class="col-xs-2">
             <?= $form->field($paymentFrequencyDiscount, 'clearValue')->checkbox(['class' => 'clear-value'])->label('clear'); ?>
@@ -36,7 +36,7 @@ use kartik\switchinput\SwitchInput;
         <div class="col-xs-4">
             <?= $form->field($customerDiscount, 'value', ['inputTemplate' => '<div class="input-group">'
 		. '{input}<span class="input-group-addon" style="background-color: lightgrey;">%</span></div>'])
-                ->textInput(['placeholder' => 'nochange', 'class' => 'form-control text-right'])->label(false); ?>
+                ->textInput(['value' => Yii::$app->formatter->asDecimal($customerDiscount->value, 2), 'placeholder' => 'nochange', 'class' => 'form-control text-right'])->label(false); ?>
         </div>
         <div class="col-xs-2">
             <?= $form->field($customerDiscount, 'clearValue')->checkbox(['class' => 'clear-value'])->label('clear'); ?>
@@ -48,7 +48,7 @@ use kartik\switchinput\SwitchInput;
         <div class="col-xs-4">
             <?= $form->field($multiEnrolmentDiscount, 'value', ['inputTemplate' => '<div class="input-group">'
 		. '<span class="input-group-addon" style="background-color: lightgrey;">$</span>{input}</div>'])
-                ->textInput(['placeholder' => 'nochange', 'class' => 'form-control text-right'])->label(false); ?>
+                ->textInput(['value' => Yii::$app->formatter->asDecimal($multiEnrolmentDiscount->value, 2), 'placeholder' => 'nochange', 'class' => 'form-control text-right'])->label(false); ?>
         </div>
         <div class="col-xs-2">
             <?= $form->field($multiEnrolmentDiscount, 'clearValue')->checkbox(['class' => 'clear-value'])->label('clear'); ?>
@@ -69,7 +69,7 @@ use kartik\switchinput\SwitchInput;
             ])->label(false); ?>
         </div>
         <div class="col-xs-3">
-            <?= $form->field($lineItemDiscount, 'value')->textInput([
+            <?= $form->field($lineItemDiscount, 'value')->textInput(['value' => Yii::$app->formatter->asDecimal($lineItemDiscount->value, 2),
                 'placeholder' => 'nochange', 'class' => 'form-control text-right'])->label(false); ?>
         </div>
         <div class="col-xs-2">
