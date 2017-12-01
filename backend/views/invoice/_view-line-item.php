@@ -119,9 +119,6 @@ use yii\widgets\Pjax;
  <?php Pjax::end(); ?>
 
 <script>
-    $(document).on("click", "input[type='checkbox']", function(event) {
-        event.stopPropagation();
-    });
     $(document).on("change", "input[type='checkbox']", function() {
         var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
         if (selectedRows.length >= 2) {
