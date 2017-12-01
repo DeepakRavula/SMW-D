@@ -3,14 +3,27 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
-use yii\helpers\ArrayHelper;
-use kartik\switchinput\SwitchInput;
-use common\models\TaxStatus;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<style>
+@media (min-width: 768px) {
+  .item-view dt {
+    float: left;
+    width: 110px;
+    overflow: hidden;
+    clear: left;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .item-view dd {
+    margin-left: 130px;
+  }
+}
+</style>
 <div class="lesson-qualify p-10">
 
 <?php $form = ActiveForm::begin([
@@ -18,93 +31,65 @@ use common\models\TaxStatus;
 	'action' => Url::to(['invoice-line-item/update', 'id' => $model->id]),
 	'enableClientValidation' => true
 ]); ?>
-   <div class="row">
-        <div class="col-md-5">
-            <?= $form->field($model, 'code')->textInput();?>
+    <dl class="dl-horizontal">
+        <div class="row">
+            <div class="col-md-12">
+                <dt>Code</dt>
+                <dd><?= $model->code ?></dd>
+            </div>
         </div>
-        <div class="col-md-3">
-            <?= $form->field($model, 'royaltyFree')->widget(SwitchInput::classname(),
-                [
-                'name' => 'royaltyFree',
-                'pluginOptions' => [
-                    'handleWidth' => 30,
-                    'onText' => 'Yes',
-                    'offText' => 'No',
-                ],
-            ]);?>
+        <div class="row">
+            <div class="col-md-12">
+                <dt>Description</dt>
+                <dd><?= $form->field($model, 'description')->textarea()->label(false);?></dd>
+            </div>
         </div>
-        <div class="col-md-2">
-            <?= $form->field($model, 'cost')->textInput();?>
+        <div class="row">
+            <div class="col-md-7">
+            <dt>Price</dt>
+            <dd><?= $form->field($model, 'amount')->textInput(['id' => 'amount-line'])->label(false);?></dd>
+            </div>
+            <div class="col-md-5">
+                <dl class="item-view">
+                    <dt>Cost</label></dt>
+                    <dd><?= $form->field($model, 'cost')->textInput()->label(false);?></dd>
+                </dl>
+            </div>
         </div>
-        
-        <div class="col-md-2">
-            <?= $form->field($model, 'unit')->textInput(['id' => 'unit-line']);?>
+        <div class="row">
+            <div class="col-md-6">
+                <dt>Quantity</dt>
+                <dd><?= $form->field($model, 'unit')->textInput(['id' => 'unit-line'])->label(false);?></dd>
+            </div>
         </div>
-        
-        <div class="col-md-3">
-            <?= $form->field($model, 'amount')->textInput(['id' => 'amount-line'])->label('Base Price');?>
+        <div class="row">
+            <div class="col-md-12">
+                <dt></dt>
+                <dd><?= $form->field($model, 'royaltyFree')->checkbox();?></dd>
+            </div>
         </div>
-        <div class="col-md-3">
-            <?= $form->field($model, 'grossPrice')->textInput(['readOnly' => true, 
-                'value' => Yii::$app->formatter->asDecimal($model->grossPrice, 4)])->label('Gross Price');?>
+    </dl>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group pull-right">
+                <?= Html::a('Cancel', '', ['class' => 'btn btn-default line-item-cancel']);?>
+                <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
+            </div>
+            <div class="form-group pull-left">       
+             <?= Html::a('Delete', [
+                        'delete', 'id' => $model->id
+                    ],
+                    [
+                        'class' => 'btn btn-danger',
+                        'data' => [
+                            'confirm' => 'Are you sure you want to delete this item?',
+                            'method' => 'post',
+                        ]
+                    ]); ?>
+            </div>
         </div>
-        <div class="col-md-3">
-            <?= $form->field($model, 'netPrice')->textInput(['readOnly' => true, 
-                'value' => Yii::$app->formatter->asDecimal($model->netPrice, 4)])->label('Net Price');?>
-        </div>
-        <div class="col-md-3">
-            <?= $form->field($model, 'itemTotal')->textInput(['readOnly' => true,
-                'value' => Yii::$app->formatter->asDecimal($model->itemTotal, 4)])->label('Total');?>
-        </div>
-	<div class="col-md-12">
-            <?= $form->field($model, 'description')->textarea();?>
-        </div>
-        
-           <div class="col-md-12">
-    <div class="form-group pull-right">
-        <?= Html::a('Cancel', '', ['class' => 'btn btn-default line-item-cancel']);?>
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
     </div>
-<div class="form-group pull-left">       
- <?= Html::a('Delete', [
-            'delete', 'id' => $model->id
-        ],
-        [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ]
-        ]); ?>
+    <?php ActiveForm::end(); ?>
 </div>
-        <div class="clearfix"></div>
-	</div>
-	</div>
-	<?php ActiveForm::end(); ?>
+	
 
-<script>
-    var lineItem = {
-        computeNetPrice : function() {
-            $.ajax({
-                url: "<?php echo Url::to(['invoice-line-item/compute-net-price', 'id' => $model->id]); ?>",
-                type: "POST",
-                contentType: 'application/json',
-                dataType: "json",
-                data: JSON.stringify({
-                    'unit' : $('#unit-line').val(),
-                    'amount' : $('#amount-line').val()
-                }),
-                success: function(response) {
-                    $('#invoicelineitem-netprice').val(response.netPrice);
-                    $('#invoicelineitem-grossprice').val(response.grossPrice);
-                    $('#invoicelineitem-itemtotal').val(response.itemTotal);
-                }
-            });
-        }
-    };
-
-    $(document).on("change", '#amount-line, #unit-line', function() {
-        lineItem.computeNetPrice();
-        return false;
-    });
-</script>
