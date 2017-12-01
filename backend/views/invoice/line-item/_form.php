@@ -19,7 +19,7 @@ use common\models\TaxStatus;
 	'enableClientValidation' => true
 ]); ?>
    <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-5">
             <?= $form->field($model, 'code')->textInput();?>
         </div>
         <div class="col-md-3">
@@ -33,32 +33,18 @@ use common\models\TaxStatus;
                 ],
             ]);?>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <?= $form->field($model, 'cost')->textInput();?>
         </div>
-        <div class="col-md-4">
-            <?php if (!$model->isLessonItem() && !$model->isOpeningBalance()) : ?>
-                <?= $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
-                                TaxStatus::find()->all(), 'id', 'name'
-                ), ['prompt' => 'Select', 'id' => 'lineitem-tax_status']);?>
-            <?php else : ?> 
-                <?= $form->field($model, 'tax_status')->textInput(['readOnly' => true]); ?>
-            <?php endif; ?>
-        </div>
-        <div class="col-xs-4">
-            <?php echo $form->field($model, 'taxPercentage')->textInput(['readonly' => true])->label('Tax (%)') ?>
-        </div>
-        <div class="col-xs-4">
-            <?php echo $form->field($model, 'tax_rate')->textInput(['readonly' => true, 'id' => 'lineitem-tax_rate'])?>
-        </div>
+        
         <div class="col-md-2">
             <?= $form->field($model, 'unit')->textInput(['id' => 'unit-line']);?>
         </div>
         
-        <div class="col-md-2">
+        <div class="col-md-3">
             <?= $form->field($model, 'amount')->textInput(['id' => 'amount-line'])->label('Base Price');?>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <?= $form->field($model, 'grossPrice')->textInput(['readOnly' => true, 
                 'value' => Yii::$app->formatter->asDecimal($model->grossPrice, 4)])->label('Gross Price');?>
         </div>
@@ -73,39 +59,7 @@ use common\models\TaxStatus;
 	<div class="col-md-12">
             <?= $form->field($model, 'description')->textarea();?>
         </div>
-        <?php if (!$model->isOpeningBalance()) : ?>
-        <?php if ($model->isLessonItem()) : ?>
-        <div class="col-md-6">
-            <?= $form->field($paymentFrequencyDiscount, 'value')->textInput()
-                    ->label('Payment Frequency Discount(%)'); ?>
-        </div>
-        <?php endif; ?>
-        <div class="col-md-5">
-            <?= $form->field($customerDiscount, 'value')->textInput()
-                            ->label('Customer Discount(%)'); ?>
-        </div>
-        <div class="col-md-3">
-            <?= $form->field($lineItemDiscount, 'value')->textInput()
-                                    ->label('Line Item Discount'); ?>
-        </div>
-        <div class="col-md-3">
-            <?= $form->field($lineItemDiscount, 'valueType')->widget(SwitchInput::classname(),
-                [
-                'name' => 'valueType',
-                'pluginOptions' => [
-                    'handleWidth' => 30,
-                    'onText' => '$',
-                    'offText' => '%',
-                ],
-            ])->label('Discount Type');?>
-        </div>
-        <?php if ($model->isLessonItem()) : ?>
-        <div class="col-md-5">
-            <?= $form->field($multiEnrolmentDiscount, 'value')->textInput()
-                    ->label('Multi Enrolment Discount($)'); ?>
-        </div>
-        <?php endif; ?>
-        <?php endif; ?>
+        
            <div class="col-md-12">
     <div class="form-group pull-right">
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default line-item-cancel']);?>
@@ -138,33 +92,18 @@ use common\models\TaxStatus;
                 dataType: "json",
                 data: JSON.stringify({
                     'unit' : $('#unit-line').val(),
-                    'amount' : $('#amount-line').val(),
-                    'taxStatus' : $('#lineitem-tax_status').val(),
-                    'customerDiscount' : $('#customerlineitemdiscount-value').val(),
-                    'paymentFrequencyDiscount' : $('#paymentfrequencylineitemdiscount-value').val(),
-                    'multiEnrolmentDiscount' : $('#enrolmentlineitemdiscount-value').val(),
-                    'lineItemDiscount' : $('#lineitemdiscount-value').val(),
-                    'lineItemDiscountType' : $('input[name="LineItemDiscount[valueType]"]').is(":checked")
+                    'amount' : $('#amount-line').val()
                 }),
                 success: function(response) {
                     $('#invoicelineitem-netprice').val(response.netPrice);
                     $('#invoicelineitem-grossprice').val(response.grossPrice);
-                    $('#invoicelineitem-taxpercentage').val(response.taxPercentage);
-                    $('#lineitem-tax_rate').val(response.taxRate);
                     $('#invoicelineitem-itemtotal').val(response.itemTotal);
                 }
-            });	
+            });
         }
     };
-    
-    $(document).on("change", '#amount-line, #invoicelineitem-discount, #unit-line, \n\
-        #lineitem-tax_status, #customerlineitemdiscount-value, #paymentfrequencylineitemdiscount-value, \n\
-        #enrolmentlineitemdiscount-value, #lineitemdiscount-value', function() {
-        lineItem.computeNetPrice();
-        return false;
-    });
 
-    $('input[name="LineItemDiscount[valueType]"]').on('switchChange.bootstrapSwitch', function() {
+    $(document).on("change", '#amount-line, #unit-line', function() {
         lineItem.computeNetPrice();
         return false;
     });
