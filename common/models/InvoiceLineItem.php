@@ -22,6 +22,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
+    const SCENARIO_EDIT = 'edit';
     const SCENARIO_NEGATIVE_VALUE_EDIT = 'negative-value-edit';
     const DISCOUNT_FLAT            = 0;
     const DISCOUNT_PERCENTAGE      = 1;
@@ -65,7 +66,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            ['tax_status', 'required'],
+            ['tax_status', 'required', 'on' => self::SCENARIO_EDIT],
             [['unit', 'amount', 'item_id', 'description'],
                 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;

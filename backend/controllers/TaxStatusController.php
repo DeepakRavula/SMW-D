@@ -147,6 +147,7 @@ class TaxStatusController extends Controller
         $lineItemIds = Yii::$app->request->get('InvoiceLineItem')['ids'];
         $multiLineItemTax = new LineItemMultiTax(); 
         $lineItem = $multiLineItemTax->setModel($lineItemIds);
+        $lineItem->setScenario(InvoiceLineItem::SCENARIO_EDIT);
         $data = $this->renderAjax('/invoice/line-item/_form-tax', [
             'lineItemIds' => $lineItemIds,
             'model' => $lineItem
@@ -157,7 +158,7 @@ class TaxStatusController extends Controller
                 $lineItem = InvoiceLineItem::findOne($lineItemId);
                 $lineItem->load($post);
                 if (!$lineItem->save()) {
-                    print_r($lineItem->getErrors());die;
+                    Yii::error('Line item discount error: '.VarDumper::dumpAsString($lineItem->getErrors()));
                 }
             }
             return [
