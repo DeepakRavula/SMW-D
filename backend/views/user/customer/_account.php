@@ -58,26 +58,27 @@ use kartik\switchinput\SwitchInput;
                 [
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
+				'format' => 'currency',
                 'label' => 'Debit',
                 'value' => function ($data) {
-                    return !empty($data->debit) ? Yii::$app->formatter->asCurrency($data->debit) : null;
+                    return !empty($data->debit) ? Yii::$app->formatter->asDecimal($data->debit) : null;
                 }
             ],
                 [
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
                 'label' => 'Credit',
+				'format' => 'currency',
                 'value' => function ($data) {
-                    return !empty($data->credit) ? Yii::$app->formatter->asCurrency(abs($data->credit)) : null;
+                    return !empty($data->credit) ? abs($data->credit) : null;
                 }
             ],
                 [
-                'format' => ['decimal', 2],
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
                 'label' => 'Balance',
                 'value' => function ($data) {
-                    return $data->balance;
+                    return Yii::$app->formatter->asDecimal($data->balance);
                 }
             ]
         ],

@@ -75,6 +75,7 @@ $this->params['action-button'] = $actionButton; ?>
                     },
                 ],
                 [
+					'format' => 'currency',
                     'value' => function ($data) {
 						if ($data->isPaid()) {
 							return Yii::$app->formatter->asDecimal($data->total);
@@ -94,6 +95,7 @@ $this->params['action-button'] = $actionButton; ?>
                 ],
                 [
                     'label' => 'Total',
+					'format' => 'currency',
                     'value' => function ($data) {
 						return Yii::$app->formatter->asDecimal($data->total);
                     },
@@ -144,6 +146,7 @@ $this->params['action-button'] = $actionButton; ?>
                     },
                 ],
                 [
+					'format' => 'currency',
                     'value' => function ($data) {
                         if ((int) $data->type === Invoice::TYPE_INVOICE) {
                             if ($data->isPaid()) {
@@ -165,6 +168,7 @@ $this->params['action-button'] = $actionButton; ?>
                     'enableSorting' => false,
                 ],
 				[
+					'format' => 'currency',
                     'label' => 'Total',
                     'value' => function ($data) {
 						return Yii::$app->formatter->asDecimal($data->total);

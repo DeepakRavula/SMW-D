@@ -13,17 +13,35 @@ use insolita\wgadminlte\LteConst;
 	?>
 <dl class="dl-invoice-summary">
 	<dt id="invoice-discount">Discounts</dt>
-	<dd><?= Yii::$app->formatter->asDecimal($model->totalDiscount); ?></dd>
+	<dd><?= Yii::$app->formatter->format($model->totalDiscount, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?>
 	<dt>SubTotal</dt>
-	<dd><?= Yii::$app->formatter->asDecimal($model->subTotal); ?></dd>
+	<dd><?= Yii::$app->formatter->format($model->subTotal, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?></dd>
 	<dt>Tax</dt>
-	<dd><?= Yii::$app->formatter->asDecimal($model->tax); ?></dd>
+	<dd><?= Yii::$app->formatter->format($model->tax, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?></dd>
 	<dt>Total</dt>
-	<dd><?= Yii::$app->formatter->asDecimal($model->total); ?></dd>
+	<dd><?= Yii::$app->formatter->format($model->total, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?></dd>
 	<dt>Paid</dt>
-	<dd> <?= !empty($model->invoicePaymentTotal)? Yii::$app->formatter->asDecimal($model->invoicePaymentTotal) : 
-            Yii::$app->formatter->asDecimal(0) ?></dd>
+	<dd> <?php $paymentTotal = !empty($model->invoicePaymentTotal)? $model->invoicePaymentTotal : 0; ?> 
+		<?= Yii::$app->formatter->format($paymentTotal, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?>
 	<dt>Balance</dt>
-	<dd> <?= Yii::$app->formatter->asDecimal($model->balance); ?></dd>
+	<dd> <?= Yii::$app->formatter->format($model->balance, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?></dd>
 </dl>
 <?php LteBox::end() ?>

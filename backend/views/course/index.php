@@ -57,13 +57,18 @@ $this->params['show-all'] = $this->render('_button', [
             ],
             [
                 'attribute' => 'rate',
-                'label' => 'Rate($)',
+				'contentOptions' => ['style' => 'text-align:right'],
+				'headerOptions' => ['style' => 'text-align:right'],
+                'label' => 'Rate',
+				'format' => 'currency',
                 'value' => function ($data) {
                     return !empty($data->program->rate) ? $data->program->rate : null;
                 },
             ],
             [
                 'label' => 'Duration',
+				'headerOptions' => ['style' => 'text-align:right'],
+				'contentOptions' => ['style' => 'text-align:right'],
                 'value' => function ($data) {
                     $length = \DateTime::createFromFormat('H:i:s', $data->courseSchedule->duration);
 
