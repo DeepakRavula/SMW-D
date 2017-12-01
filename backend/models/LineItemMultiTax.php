@@ -11,7 +11,6 @@ class LineItemMultiTax extends Model
 {
     public function setModel($lineItemIds)
     {
-        $lineItemId = end($lineItemIds);
         foreach ($lineItemIds as $key => $lineItemId) {
             $lineItem = InvoiceLineItem::findOne($lineItemId);
             if ($key === 0) {
