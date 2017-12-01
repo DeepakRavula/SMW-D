@@ -111,6 +111,7 @@ use common\models\Student;
         [
             'attribute' => 'total',
             'label' => 'Total',
+			'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'enableSorting' => false,

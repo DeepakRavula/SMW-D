@@ -125,11 +125,11 @@ $columns = [
 		[
 			'label' => 'Rate/hr',
 			'value' => function ($data) {
-				return !empty($data->rate) ? $data->rate : 0;
+				return !empty($data->rate) ? Yii::$app->formatter->asDecimal($data->rate) : Yii::$app->formatter->asDecimal(0);
 			},
 			'contentOptions' => ['class' => 'text-right'],
 			'hAlign' => 'right',
-			'format'=>['decimal',2],
+			'format'=> 'currency',
 		],
 			[
 		'label' => 'Cost',
