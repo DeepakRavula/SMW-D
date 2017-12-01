@@ -21,13 +21,9 @@ use yii\helpers\Html;
     ]); ?>
 	
     <div class="row">
-        <div class="col-xs-4">
-			<?php echo $form->field($model, 'dayOfMonth')->textInput()->label('Day of Month'); ?>
-        </div>
-        <div class="col-xs-8">
+			<?php echo $form->field($model, 'dayOfMonth')->textInput(['class' => 'form-control right-align'])->label('Day of Month'); ?>
 			<?php echo $form->field($model, 'paymentMethodId')->dropdownList
                 (ArrayHelper::map(PaymentMethod::find()->active()->paymentPreference()->all(), 'id', 'name'), ['prompt' => 'Select payment method'])->label('Payment Method'); ?>
-        </div>
 	</div>
     <div class="row">
         <div class="col-md-12">

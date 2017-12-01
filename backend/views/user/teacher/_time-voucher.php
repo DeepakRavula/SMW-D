@@ -47,7 +47,7 @@ use kartik\daterange\DateRangePicker;
 <?= Html::a('<i class="fa fa-print"></i> Print', ['print/time-voucher', 'id' => $model->id], ['id' => 'time-voucher-print-btn', 'class' => 'btn btn-default m-r-10', 'target' => '_blank']) ?>
 
         </div>
-        <div class="pull-right">
+        <div class="pull-right checkbox">
 <?= $form->field($searchModel, 'summariseReport')->checkbox(['data-pjax' => true]); ?>
         </div>
         <div class="clearfix"></div>
