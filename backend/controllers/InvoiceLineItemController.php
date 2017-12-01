@@ -5,7 +5,6 @@ namespace backend\controllers;
 use Yii;
 use common\models\Payment;
 use common\models\PaymentMethod;
-use backend\models\MultiLineItem;
 use backend\models\discount\LineItemMultiDiscount;
 use common\models\InvoiceLineItem;
 use yii\web\Response;
@@ -67,11 +66,9 @@ class InvoiceLineItemController extends Controller
             ->one();
 		return $taxCode->rate;
 	} 
-    public function actionUpdate() 
+    public function actionUpdate($id) 
     {
-        $lineItemIds = Yii::$app->request->get('InvoiceLineItem')['ids'];
-        $multiLineItem = new MultiLineItem();
-        $lineItem = $multiLineItem->setModel($lineItemIds);
+        $lineItem = $this->findModel($id);
         if ($lineItem->invoice->isReversedInvoice()) {
             $lineItem->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
         }
@@ -83,6 +80,7 @@ class InvoiceLineItemController extends Controller
             if($lineItem->save()) {
                 $response = [
                     'status' => true,
+                    'message' => 'Item successfully updated!',
 		];	
             } else {
                 $response = [
@@ -244,21 +242,5 @@ class InvoiceLineItemController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-    }
-    
-    public function actionComputeNetPrice($id)
-    {
-        $rawData = Yii::$app->request->rawBody;
-        $data = Json::decode($rawData, true);
-        $invoiceLineItem = InvoiceLineItem::findOne($id);
-        $invoiceLineItem->load($data, '');
-        $lineItemPrice = $invoiceLineItem->grossPrice;
-        $netPrice = $invoiceLineItem->grossPrice - $invoiceLineItem->discount;
-        $itemTotal = $netPrice + $invoiceLineItem->tax_rate;
-        return [
-            'grossPrice' => Yii::$app->formatter->asDecimal($invoiceLineItem->grossPrice, 4),
-            'itemTotal' => Yii::$app->formatter->asDecimal($itemTotal, 4),
-            'netPrice' => Yii::$app->formatter->asDecimal($netPrice, 4)
-        ];
     }
 }

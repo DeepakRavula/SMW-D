@@ -223,7 +223,7 @@ Modal::end();
 
     $(document).on('click', '.edit-item', function () {
         var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
-        var params = $.param({ 'InvoiceLineItem[ids]' : selectedRows });
+        var params = $.param({ id : selectedRows[0] });
         if ($.isEmptyObject(selectedRows)) {
             $('#invoice-error-notification').html('Please select atleast a item to edit!').fadeIn().delay(5000).fadeOut();
         } else {
@@ -235,7 +235,7 @@ Modal::end();
                 {
                     if (response.status)
                     {
-                        $('#line-item-edit-modal .modal-dialog').css({'width': '800px'});
+                        $('#line-item-edit-modal .modal-dialog').css({'width': '600px'});
                         $('#line-item-edit-modal').modal('show');
                         $('#line-item-edit-content').html(response.data);
                     }
@@ -443,28 +443,28 @@ Modal::end();
 		return false;
 	});
 	$(document).on('beforeSubmit', '#line-item-edit-form', function (e) {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-				{
-					$.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
-                   $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000}); 
-					if(response.message) {
-						$('#invoice-discount-warning').html(response.message).fadeIn().delay(8000).fadeOut();
-					}
-					$('#line-item-edit-modal').modal('hide');
-				} else {
-					$('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
-				}
-			}
-		});
-		return false;
+            $.ajax({
+                    url    : $(this).attr('action'),
+                    type   : 'post',
+                    dataType: "json",
+                    data   : $(this).serialize(),
+                    success: function(response)
+                    {
+                       if(response.status)
+                            {
+                                    $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+               $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000}); 
+                                    if(response.message) {
+                                            $('#success-notification').html(response.message).fadeIn().delay(8000).fadeOut();
+                                    }
+                                    $('#line-item-edit-modal').modal('hide');
+                            } else {
+                                    $('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
+                            }
+                    }
+            });
+            return false;
 	});
 	$(document).on('beforeSubmit', '#payment-edit-form', function (e) {
 		$.ajax({
