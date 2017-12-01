@@ -68,23 +68,24 @@ class InvoiceLineItemController extends Controller
 	} 
     public function actionUpdate($id) 
     {
-        $model = $this->findModel($id);
-        if ($model->invoice->isReversedInvoice()) {
-            $model->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
+        $lineItem = $this->findModel($id);
+        if ($lineItem->invoice->isReversedInvoice()) {
+            $lineItem->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
         }
         $data = $this->renderAjax('/invoice/line-item/_form', [
-            'model' => $model
+            'model' => $lineItem
         ]);
         $post = Yii::$app->request->post();
-        if ($model->load($post)) {
-            if($model->save()) {
+        if ($lineItem->load($post)) {
+            if($lineItem->save()) {
                 $response = [
                     'status' => true,
+                    'message' => 'Item successfully updated!',
 		];	
             } else {
                 $response = [
                     'status' => false,
-                    'errors' => ActiveForm::validate($model),
+                    'errors' => ActiveForm::validate($lineItem),
                 ];	
             }
             return $response;
@@ -241,21 +242,5 @@ class InvoiceLineItemController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-    }
-    
-    public function actionComputeNetPrice($id)
-    {
-        $rawData = Yii::$app->request->rawBody;
-        $data = Json::decode($rawData, true);
-        $invoiceLineItem = InvoiceLineItem::findOne($id);
-        $invoiceLineItem->load($data, '');
-        $lineItemPrice = $invoiceLineItem->grossPrice;
-        $netPrice = $invoiceLineItem->grossPrice - $invoiceLineItem->discount;
-        $itemTotal = $netPrice + $invoiceLineItem->tax_rate;
-        return [
-            'grossPrice' => Yii::$app->formatter->asDecimal($invoiceLineItem->grossPrice, 4),
-            'itemTotal' => Yii::$app->formatter->asDecimal($itemTotal, 4),
-            'netPrice' => Yii::$app->formatter->asDecimal($netPrice, 4)
-        ];
     }
 }
