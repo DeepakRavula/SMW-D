@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\Payment;
 use common\models\PaymentMethod;
+use backend\models\MultiLineItem;
 use backend\models\discount\LineItemMultiDiscount;
 use common\models\InvoiceLineItem;
 use yii\web\Response;
@@ -66,25 +67,27 @@ class InvoiceLineItemController extends Controller
             ->one();
 		return $taxCode->rate;
 	} 
-    public function actionUpdate($id) 
+    public function actionUpdate() 
     {
-        $model = $this->findModel($id);
-        if ($model->invoice->isReversedInvoice()) {
-            $model->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
+        $lineItemIds = Yii::$app->request->get('InvoiceLineItem')['ids'];
+        $multiLineItem = new MultiLineItem();
+        $lineItem = $multiLineItem->setModel($lineItemIds);
+        if ($lineItem->invoice->isReversedInvoice()) {
+            $lineItem->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
         }
         $data = $this->renderAjax('/invoice/line-item/_form', [
-            'model' => $model
+            'model' => $lineItem
         ]);
         $post = Yii::$app->request->post();
-        if ($model->load($post)) {
-            if($model->save()) {
+        if ($lineItem->load($post)) {
+            if($lineItem->save()) {
                 $response = [
                     'status' => true,
 		];	
             } else {
                 $response = [
                     'status' => false,
-                    'errors' => ActiveForm::validate($model),
+                    'errors' => ActiveForm::validate($lineItem),
                 ];	
             }
             return $response;

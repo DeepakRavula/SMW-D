@@ -220,6 +220,29 @@ Modal::end();
             });
         }
     });
+
+    $(document).on('click', '.edit-item', function () {
+        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
+        var params = $.param({ 'InvoiceLineItem[ids]' : selectedRows });
+        if ($.isEmptyObject(selectedRows)) {
+            $('#invoice-error-notification').html('Please select atleast a item to edit!').fadeIn().delay(5000).fadeOut();
+        } else {
+            $.ajax({
+                url    : '<?= Url::to(['invoice-line-item/update']) ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#line-item-edit-modal .modal-dialog').css({'width': '800px'});
+                        $('#line-item-edit-modal').modal('show');
+                        $('#line-item-edit-content').html(response.data);
+                    }
+                }
+            });
+        }
+    });
  	$(document).on('click', '.edit-tax-cancel', function (e) {
  		$('#edit-tax-modal').modal('hide');
  		return false;
@@ -396,24 +419,6 @@ Modal::end();
 				 $('#payment-form').yiiActiveForm('updateMessages',
 					   response.errors
 					, true);
-				}
-			}
-		});
-		return false;
-	});
-	$(document).on("click", "#line-item-grid tbody > tr", function() {
-		var lineItemId = $(this).data('key');	
-		$.ajax({
-			url    : '<?= Url::to(['invoice-line-item/update']); ?>?id=' + lineItemId,
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-					$('#line-item-edit-content').html(response.data);
-					$('#line-item-edit-modal').modal('show');
 				}
 			}
 		});

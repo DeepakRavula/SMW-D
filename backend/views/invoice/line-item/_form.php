@@ -18,9 +18,21 @@ use common\models\TaxStatus;
 	'action' => Url::to(['invoice-line-item/update', 'id' => $model->id]),
 	'enableClientValidation' => true
 ]); ?>
-   <div class="row">
-        <div class="col-md-5">
-            <?= $form->field($model, 'code')->textInput();?>
+    <dl class="dl-horizontal">
+        <dt>Payment Frequency Discount</dt>
+        <dd><?= $form->field($model, 'code')->textInput()->label(false);?></dd>
+        <div class="col-md-12">
+            <?= $form->field($model, 'description')->textarea();?>
+        </div>
+       <div class="col-md-6">
+            <?= $form->field($model, 'amount')->textInput(['id' => 'amount-line'])->label('Base Price');?>
+        </div>
+        <div class="col-md-6">
+            <?= $form->field($model, 'cost')->textInput();?>
+        </div>
+        
+        <div class="col-md-12">
+            <?= $form->field($model, 'unit')->textInput(['id' => 'unit-line']);?>
         </div>
         <div class="col-md-3">
             <?= $form->field($model, 'royaltyFree')->widget(SwitchInput::classname(),
@@ -33,33 +45,6 @@ use common\models\TaxStatus;
                 ],
             ]);?>
         </div>
-        <div class="col-md-2">
-            <?= $form->field($model, 'cost')->textInput();?>
-        </div>
-        
-        <div class="col-md-2">
-            <?= $form->field($model, 'unit')->textInput(['id' => 'unit-line']);?>
-        </div>
-        
-        <div class="col-md-3">
-            <?= $form->field($model, 'amount')->textInput(['id' => 'amount-line'])->label('Base Price');?>
-        </div>
-        <div class="col-md-3">
-            <?= $form->field($model, 'grossPrice')->textInput(['readOnly' => true, 
-                'value' => Yii::$app->formatter->asDecimal($model->grossPrice, 4)])->label('Gross Price');?>
-        </div>
-        <div class="col-md-3">
-            <?= $form->field($model, 'netPrice')->textInput(['readOnly' => true, 
-                'value' => Yii::$app->formatter->asDecimal($model->netPrice, 4)])->label('Net Price');?>
-        </div>
-        <div class="col-md-3">
-            <?= $form->field($model, 'itemTotal')->textInput(['readOnly' => true,
-                'value' => Yii::$app->formatter->asDecimal($model->itemTotal, 4)])->label('Total');?>
-        </div>
-	<div class="col-md-12">
-            <?= $form->field($model, 'description')->textarea();?>
-        </div>
-        
            <div class="col-md-12">
     <div class="form-group pull-right">
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default line-item-cancel']);?>
@@ -79,6 +64,7 @@ use common\models\TaxStatus;
 </div>
         <div class="clearfix"></div>
 	</div>
+        </dl>
 	</div>
 	<?php ActiveForm::end(); ?>
 

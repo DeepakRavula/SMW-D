@@ -127,9 +127,11 @@ use yii\widgets\Pjax;
         if (selectedRows.length >= 2) {
             $('.apply-discount').text('Edit Discounts...');
             $('.edit-tax').text('Edit Taxes...');
+            $('.edit-item').text('Edit Items...');
         } else {
             $('.apply-discount').text('Edit Discount...');
             $('.edit-tax').text('Edit Tax...');
+            $('.edit-item').text('Edit Item...');
         }
     });
 </script>
