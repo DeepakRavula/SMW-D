@@ -60,11 +60,12 @@ use kartik\switchinput\SwitchInput;
         <div class="col-xs-2">
             <?= $form->field($lineItemDiscount, 'valueType')->widget(SwitchInput::classname(),
 		[
-		'pluginOptions' => [
-			'handleWidth' => 20, 
-			'onText' => '%',
-			'offText' => '$',
-		],
+                'name' => 'valueType',
+                'pluginOptions' => [
+                    'handleWidth' => 20,
+                    'onText' => '%',
+                    'offText' => '$',
+                ],
             ])->label(false); ?>
         </div>
         <div class="col-xs-3">

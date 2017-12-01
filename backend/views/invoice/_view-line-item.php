@@ -7,7 +7,7 @@ use yii\widgets\Pjax;
     $columns = [
         [
             'class' => 'yii\grid\CheckboxColumn',
-            // you may configure additional properties here
+            'contentOptions' => ['style' => 'width:30px;'],
         ],
         [
             'headerOptions' => ['class' => 'text-left'],
@@ -125,9 +125,11 @@ use yii\widgets\Pjax;
     $(document).on("change", "input[type='checkbox']", function() {
         var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
         if (selectedRows.length >= 2) {
-            $('.apply-discount').text('Edit Discounts');
+            $('.apply-discount').text('Edit Discounts...');
+            $('.edit-tax').text('Edit Taxes...');
         } else {
-            $('.apply-discount').text('Edit Discount');
+            $('.apply-discount').text('Edit Discount...');
+            $('.edit-tax').text('Edit Tax...');
         }
     });
 </script>

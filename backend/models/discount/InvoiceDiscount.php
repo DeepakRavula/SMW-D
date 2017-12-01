@@ -2,7 +2,7 @@
 
 namespace backend\models\discount;
 
-use common\models\InvoiceLineItem;
+use yii\helpers\VarDumper;
 use common\models\User;
 use yii\base\Exception;
 use yii\base\Model;
@@ -60,10 +60,10 @@ class InvoiceDiscount extends Model
             } else {
                 $lineItemDiscount->value = $this->value;
             }
-            $lineItemDiscount->valueType = $this->valueType;
+            $lineItemDiscount->valueType = (int) $this->valueType;
             $lineItemDiscount->type = $this->type;
             if (!$lineItemDiscount->save()) {
-                throw new Exception('Model not saved');
+                Yii::error('Line item discount error: '.VarDumper::dumpAsString($lineItemDiscount->getErrors()));
             }
             return !$lineItemDiscount->hasErrors();
         }
@@ -71,27 +71,12 @@ class InvoiceDiscount extends Model
         return null;
     }
     
-    public function load($data, $formName = null)
-    {
-        $scope = $formName === null ? $this->formName() : $formName;
-        if ($scope === '' && !empty($data)) {
-            $this->setAttributesCustom($data);
-
-            return true;
-        } elseif (isset($data[$scope])) {
-            $this->setAttributesCustom($data[$scope]);
-
-            return true;
-        }
-        return false;
-    }
-
-    public function setAttributesCustom($values, $safeOnly = true)
+    public function setAttributes($values, $safeOnly = true)
     {
         if (is_array($values)) {
             $attributes = array_flip($safeOnly ? $this->safeAttributes() : $this->attributes());
             foreach ($values as $name => $value) {
-                if (isset($attributes[$name]) && !empty($values[$name])) {
+                if (isset($attributes[$name]) && (!empty($values[$name]) || $values[$name] == 0)) {
                     $this->$name = $value;
                 } elseif ($safeOnly) {
                     $this->onUnsafeAttribute($name, $value);

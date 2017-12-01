@@ -21,7 +21,6 @@ class LineItemDiscount extends InvoiceDiscount
         $this->valueType = $model->valueType;
         if ($value) {
             $this->value = null;
-            $this->valueType = $value;
         }
         $this->model = $this->getModel();
         return $this;
