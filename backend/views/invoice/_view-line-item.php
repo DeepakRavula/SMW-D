@@ -133,7 +133,6 @@ use yii\widgets\Pjax;
             $('.apply-discount').text('Edit Discount...');
             $('.edit-tax').text('Edit Tax...');
             $('.edit-item').attr('class','edit-item');
-            
         }
     });
 </script>
