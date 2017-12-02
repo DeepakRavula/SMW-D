@@ -52,7 +52,14 @@ Pjax::Begin([
                     return $data->province->name;
                 },
             ],
-            'rate',
+			[
+                'label' => 'Rate (%)',
+				'headerOptions' => ['class' => 'text-right'],
+				'contentOptions' => ['class' => 'text-right'],
+                'value' => function ($data) {
+                    return $data->rate;
+                },
+            ],
             'start_date:date',
             'code',        
         ],

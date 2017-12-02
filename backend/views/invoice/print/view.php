@@ -71,36 +71,64 @@
               <table class="table-invoice-childtable" style="float:right; width:auto;">
                   <tr>
                       <td id="invoice-discount">Discounts</td>
-                      <td><?= Yii::$app->formatter->asDecimal($model->totalDiscount); ?>
+                      <td>
+		 		 <?= Yii::$app->formatter->format($model->totalDiscount,
+						   ['currency', 'USD', [
+						\NumberFormatter::MIN_FRACTION_DIGITS => 2,
+						\NumberFormatter::MAX_FRACTION_DIGITS => 2,
+					]]); ?> 
                       </td>
                   </tr>
                   <tr>
                       <td>SubTotal</td>
                       <td>
-                            <?= Yii::$app->formatter->asDecimal($model->subTotal); ?>
+                       <?= Yii::$app->formatter->format($model->subTotal,
+						   ['currency', 'USD', [
+						\NumberFormatter::MIN_FRACTION_DIGITS => 2,
+						\NumberFormatter::MAX_FRACTION_DIGITS => 2,
+					]]); ?>
                       </td>
                   </tr>
                   <tr>
                       <td>Tax</td>
                       <td>
-                            <?= Yii::$app->formatter->asDecimal($model->tax); ?>
+						<?= Yii::$app->formatter->format($model->tax,
+						   ['currency', 'USD', [
+						\NumberFormatter::MIN_FRACTION_DIGITS => 2,
+						\NumberFormatter::MAX_FRACTION_DIGITS => 2,
+					]]); ?>
                       </td>
                   </tr>
                   <tr>
                       <td><strong>Total</strong></td>
-                      <td><strong><?= Yii::$app->formatter->asDecimal($model->total); ?>
+                      <td><strong>
+					<?= Yii::$app->formatter->format($model->total,
+						   ['currency', 'USD', [
+						\NumberFormatter::MIN_FRACTION_DIGITS => 2,
+						\NumberFormatter::MAX_FRACTION_DIGITS => 2,
+					]]); ?>
                           </strong>
                       </td>
                   </tr>
                   <tr>
                       <td>Paid</td>
                       <td>
-                            <?= Yii::$app->formatter->asDecimal($model->invoicePaymentTotal); ?>
+						<?= Yii::$app->formatter->format($model->invoicePaymentTotal,
+						   ['currency', 'USD', [
+						\NumberFormatter::MIN_FRACTION_DIGITS => 2,
+						\NumberFormatter::MAX_FRACTION_DIGITS => 2,
+					]]); ?>
                       </td>
                   </tr>
                   <tr class="last-balance">
                       <td class="p-t-0"><strong>Balance</strong></td>
-                      <td class="p-t-0"><strong><?= Yii::$app->formatter->asDecimal($model->balance); ?></strong></td>
+                      <td class="p-t-0"><strong>
+					<?= Yii::$app->formatter->format($model->balance,
+						   ['currency', 'USD', [
+						\NumberFormatter::MIN_FRACTION_DIGITS => 2,
+						\NumberFormatter::MAX_FRACTION_DIGITS => 2,
+					]]); ?>
+				</strong></td>
                   </tr>
               </table>
           </div>

@@ -57,6 +57,30 @@ $this->params['action-button'] = $this->render('_action-button', [
 			'role' => $roleName,
 		]);
 		?>
+        <?php if($searchModel->role_name === User::ROLE_TEACHER):?>
+			<?php Pjax::Begin([
+			'id' => 'private-quali-list'
+		]) ?> 
+		<?= $this->render('teacher/_private-qualification', [
+			'privateQualificationDataProvider' => $privateQualificationDataProvider,
+			'groupQualificationDataProvider' => $groupQualificationDataProvider,
+            'model' => $model,
+            'searchModel' => $searchModel,
+		]);
+		?>
+		<?php Pjax::end() ?> 	
+			<?php Pjax::Begin([
+			'id' => 'group-quali-list'
+		]) ?> 
+		<?= $this->render('teacher/_group-qualification', [
+			'privateQualificationDataProvider' => $privateQualificationDataProvider,
+			'groupQualificationDataProvider' => $groupQualificationDataProvider,
+            'model' => $model,
+            'searchModel' => $searchModel,
+		]);
+		?>
+		<?php Pjax::end() ?> 
+		<?php endif;?>
         <?php if($searchModel->role_name == 'customer'):?>
 		<?php Pjax::Begin([
 			'id' => 'discount-customer'
@@ -133,13 +157,6 @@ $this->params['action-button'] = $this->render('_action-button', [
             'searchModel' => $searchModel,
         ]);
 
-        $qualificationContent = $this->render('teacher/_view-qualification', [
-			'privateQualificationDataProvider' => $privateQualificationDataProvider,
-			'groupQualificationDataProvider' => $groupQualificationDataProvider,
-            'model' => $model,
-            'searchModel' => $searchModel,
-        ]);
-
         $teacherAvailabilityContent = $this->render('teacher/_availability-calendar', [
             'model' => $model,
             'minTime' => $minTime,
@@ -198,13 +215,6 @@ $this->params['action-button'] = $this->render('_action-button', [
         	],
         ];
         $teacherItems = [
-            [
-                'label' => 'Qualifications',
-                'content' => $qualificationContent,
-                'options' => [
-                    'id' => 'qualification',
-                ],
-            ],
 			[
                 'label' => 'Availability',
                 'content' => $teacherAvailabilityContent,
@@ -420,6 +430,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 $(document).ready(function(){
 	$.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$(document).on('click', '.add-new-student', function () {
+        $('#student-create-modal .modal-dialog').css({'width': '400px'});
 		$('#student-create-modal').modal('show');
         return false;
 	});
@@ -814,5 +825,98 @@ $(document).ready(function(){
  		});
  		return false;
   	});
+	$(document).on("click", '.qualification-cancel', function() {
+		$('#qualification-edit-modal').modal('hide');
+		$('#group-qualification-modal').modal('hide');
+		$('#private-qualification-modal').modal('hide');
+		return false;
+	});
+	$(document).on('click', '.add-new-qualification', function (e) {
+		$('#private-qualification-modal').modal('show');
+		return false;
+	});
+	$(document).on('click', '.add-new-group-qualification', function (e) {
+		$('#group-qualification-modal').modal('show');
+		return false;
+	});
+	$(document).on("click", "#qualification-grid tbody > tr", function() {
+		var qualificationId = $(this).data('key');	
+		$.ajax({
+			url    : '<?= Url::to(['qualification/update']); ?>?id=' + qualificationId,
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$('#qualification-edit-content').html(response.data);
+					$('#qualification-edit-modal').modal('show');
+				}
+			}
+		});
+		return false;
+	});
+	$(document).on('beforeSubmit', '#qualification-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+                    $.pjax.reload({container: '#private-grid', timeout: 6000, async:false});
+                    $.pjax.reload({container: '#group-grid', timeout: 6000, async:false});
+					$('#qualification-edit-modal').modal('hide');
+				} else
+				{
+				 $('#qualification-form').yiiActiveForm('updateMessages', response.errors, true);
+				}
+			}
+		});
+		return false;
+	});
+	$(document).on('beforeSubmit', '#qualification-form-create', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+                    $.pjax.reload({container: '#private-grid', timeout: 6000});
+					$('#private-qualification-modal').modal('hide');
+				}else
+				{
+				 $('#qualification-form-create').yiiActiveForm('updateMessages', response.errors, true);
+				}
+			}
+		});
+		return false;
+	});
+	$(document).on('beforeSubmit', '#group-qualification-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+                    $.pjax.reload({container: '#group-grid', timeout: 6000});
+					$('#group-qualification-modal').modal('hide');
+				}else
+				{
+				 $('#qualification-form-create').yiiActiveForm('updateMessages', response.errors, true);
+				}
+			}
+		});
+		return false;
+	});
 });
 </script>

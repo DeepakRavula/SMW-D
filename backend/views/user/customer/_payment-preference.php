@@ -119,6 +119,7 @@ Modal::end();
                 if (response.status)
                 {
                     $('#payment-preference-content').html(response.data);
+                	$('#payment-preference-modal .modal-dialog').css({'width': '400px'});
                     $('#payment-preference-modal').modal('show');
                 }
             }

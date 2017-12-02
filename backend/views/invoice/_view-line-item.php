@@ -41,6 +41,7 @@ use yii\widgets\Pjax;
         [
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
+			'format' => 'currency',
             'attribute' => 'discount',
             'value' => function ($model) {
                 return Yii::$app->formatter->asDecimal($model->discount);
@@ -53,6 +54,7 @@ use yii\widgets\Pjax;
         ],
         [
             'label' => 'Cost',
+			'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
             'value' => function ($data) {
@@ -61,6 +63,7 @@ use yii\widgets\Pjax;
         ],
         [
             'label' => 'Price',
+			'format' => 'currency',
 			'headerOptions' => ['class' => 'text-right'],
 			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
 			'value' => function($data) {
@@ -96,6 +99,7 @@ use yii\widgets\Pjax;
 		],
         [
             'label' => 'Price',
+			'format' => 'currency',
 			'value' => function($data) {
 				return Yii::$app->formatter->asDecimal($data->itemTotal);	
 			},
@@ -119,15 +123,16 @@ use yii\widgets\Pjax;
  <?php Pjax::end(); ?>
 
 <script>
-    $(document).on("click", "input[type='checkbox']", function(event) {
-        event.stopPropagation();
-    });
     $(document).on("change", "input[type='checkbox']", function() {
         var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
         if (selectedRows.length >= 2) {
-            $('.apply-discount').text('Edit Discounts');
+            $('.apply-discount').text('Edit Discounts...');
+            $('.edit-tax').text('Edit Taxes...');
+            $('.edit-item').hide();
         } else {
-            $('.apply-discount').text('Edit Discount');
+            $('.apply-discount').text('Edit Discount...');
+            $('.edit-tax').text('Edit Tax...');
+            $('.edit-item').show();
         }
     });
 </script>

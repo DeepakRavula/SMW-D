@@ -66,7 +66,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            ['taxStatus', 'required', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_NEGATIVE_VALUE_EDIT]],
+            ['tax_status', 'required', 'on' => self::SCENARIO_EDIT],
             [['unit', 'amount', 'item_id', 'description'],
                 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
@@ -139,6 +139,20 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
 
         return $code;
+    }
+
+    public function setAttributes($values, $safeOnly = true)
+    {
+        if (is_array($values)) {
+            $attributes = array_flip($safeOnly ? $this->safeAttributes() : $this->attributes());
+            foreach ($values as $name => $value) {
+                if (isset($attributes[$name]) && (!empty($values[$name]) || $values[$name] == 0)) {
+                    $this->$name = $value;
+                } elseif ($safeOnly) {
+                    $this->onUnsafeAttribute($name, $value);
+                }
+            }
+        }
     }
     
     public function getItemCode()
@@ -282,8 +296,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
 
         if (!$insert) {
-            $taxType = TaxType::findOne(['name' => $this->tax_type]);
-            $this->tax_rate = $this->netPrice * $taxType->taxCode->rate / 100.0;
+            $taxStatus = TaxStatus::findOne(['name' => $this->tax_status]);
+            $this->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
+            $this->tax_rate = $this->netPrice * $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate / 100.0;
         }
         return parent::beforeSave($insert);
     }

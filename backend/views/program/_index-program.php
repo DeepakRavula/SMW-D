@@ -37,6 +37,7 @@ $this->params['show-all'] = $this->render('_button', [
                 [
 					'label' => $rateLabel,
 					'attribute' => 'rate', 
+					'format' => 'currency',
 					'headerOptions' => ['class' => 'text-right'],
 					'contentOptions' => ['class' => 'text-right', 'style' => 'width:100px;'],
 					'value' => function ($data) {

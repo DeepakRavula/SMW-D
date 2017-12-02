@@ -2,13 +2,13 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\grid\GridView;
+use common\components\gridView\AdminLteGridView;
 
-$this->title =  'Pro-forma Invoice';
+$this->title =  'Proforma Invoice';
 ?>
 <?php
 
-echo GridView::widget([
+echo AdminLteGridView::widget([
 	'dataProvider' => $paymentCycleDataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
