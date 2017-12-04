@@ -15,17 +15,22 @@ $this->params['body-class'] = 'login-page';
     <div class="login-logo">
         <a href="<?php echo Yii::getAlias('@frontendUrl') ?>" class="logo">
                 <!-- Add the class icon to your logo image or logo icon to add the margining -->                
-                <img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png"  />        
+               <img class="login-logo-img" src="<?= env('SITE_URL') ?>/img/logo.png"  />      
             </a>
         <?php //echo Html::encode($this->title)?>
     </div><!-- /.login-logo -->
-    <div class="header"></div>
+<img src="<?php echo Yii::$app->request->baseUrl ?>/img/admin.png" class="img-circle admin-img" />	
     <div class="login-box-body">
         <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
         <div class="body">
-            <?php echo $form->field($model, 'username') ?>
+			<div id="admin-login">
+				Administrator / Owner / Staff Member<br>
+			</div>
+			<div id="admin-login-form">
+            <?php echo $form->field($model, 'username')->label('Email') ?>
             <?php echo $form->field($model, 'password')->passwordInput() ?>
             <?php echo $form->field($model, 'rememberMe')->checkbox(['class' => 'simple']) ?>
+			</div>	
         </div>
         <div class="footer">
             <?php echo Html::submitButton(Yii::t('backend', 'Sign me in'), [
