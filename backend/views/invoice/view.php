@@ -288,6 +288,9 @@ Modal::end();
 	});
 	$(document).on('click', '.customer-cancel', function (e) {
 		$('#invoice-customer-modal').modal('hide');
+        var id = '<?= $model->id; ?>';		
+        var params = $.param({'id' : id});
+        window.location="<?= Url::to(['invoice/view']); ?>?" + params;  
 		return false;
   	});
     $(document).on('click', '.add-walkin', function (e) {
@@ -554,7 +557,7 @@ Modal::end();
 			   {
 					$.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                                        $('#walkin-modal').modal('hide');
+                    $('#walkin-modal').modal('hide');
 				}else
 				{
 				 $('#walkin-customer-form').yiiActiveForm('updateMessages',

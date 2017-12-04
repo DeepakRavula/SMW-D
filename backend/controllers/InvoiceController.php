@@ -259,11 +259,12 @@ class InvoiceController extends Controller
             'itemDataProvider' => $itemDataProvider
         ]);
     }
-	public function actionFetchUser($id, $userName = null)
+	public function actionFetchUser($id, $firstName = null)
 	{
 		$model = $this->findModel($id);
         $searchModel = new UserSearch();
         $userDataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $userDataProvider->pagination=false;
 		$data = $this->renderAjax('customer/_list', [
 			'userDataProvider' => $userDataProvider,
 			'model' => $model,

@@ -242,3 +242,7 @@ dl {
 .right-align {
 	text-align:right;
 }
+.invisible
+{
+  display:none  
+}
