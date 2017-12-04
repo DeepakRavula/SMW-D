@@ -242,3 +242,8 @@ dl {
 .sortable .handle .fa-arrows{
    opacity:0 !important;
 }
+.user-contact-list
+{
+  margin-top: -20px; 
+  margin-left: -50px; 
+}
