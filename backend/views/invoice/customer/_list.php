@@ -9,6 +9,7 @@ use yii\widgets\Pjax;
  <?= GridView::widget([
             'dataProvider' => $userDataProvider,
             'summary' =>false,
+            'filterModel' => $searchModel,
             'id'=>'invoice-view-user-gridview',
             'tableOptions' => ['class' => 'table table-condensed'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
