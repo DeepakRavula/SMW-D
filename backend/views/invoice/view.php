@@ -288,9 +288,6 @@ Modal::end();
 	});
 	$(document).on('click', '.customer-cancel', function (e) {
 		$('#invoice-customer-modal').modal('hide');
-        var id = '<?= $model->id; ?>';		
-        var params = $.param({'id' : id});
-        window.location="<?= Url::to(['invoice/view']); ?>?" + params;  
 		return false;
   	});
     $(document).on('click', '.add-walkin', function (e) {
