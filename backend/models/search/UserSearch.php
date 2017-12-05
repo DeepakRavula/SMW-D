@@ -120,6 +120,7 @@ class UserSearch extends User
         }
 
         if ($this->role_name === USER::ROLE_CUSTOMER) {
+           
             if (!$this->showAllCustomers) {
                 $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
                 $query->joinWith(['student' => function ($query) use ($currentDate) {

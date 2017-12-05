@@ -262,7 +262,10 @@ class InvoiceController extends Controller
 	public function actionFetchUser($id, $firstName = null)
 	{
 		$model = $this->findModel($id);
+         $request = Yii::$app->request;
         $searchModel = new UserSearch();
+        $searchModel->load($request->get());
+        $searchModel->role_name = $request->get('role_name');
         $userDataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $userDataProvider->pagination=false;
 		$data = $this->renderAjax('customer/_list', [

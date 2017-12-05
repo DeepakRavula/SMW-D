@@ -10,6 +10,7 @@ use yii\widgets\Pjax;
             'dataProvider' => $userDataProvider,
             'summary' =>false,
             'tableOptions' => ['class' => 'table table-condensed'],
+            'rowOptions' =>['class' => 'add-customer-invoice'],
             'headerRowOptions' => ['class' => 'bg-light-gray invisible'],
             'filterModel'=>$searchModel,
             'columns' => [
@@ -34,17 +35,7 @@ use yii\widgets\Pjax;
                     return !empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
                 },
             ],
-            	[
-			'class' => 'yii\grid\ActionColumn',
-			'contentOptions' => ['style' => 'width:50px'],
-			'template' => '{view}',
-			'buttons' => [
-				'view' => function ($url, $userModel) use($model) {
-					$url = Url::to(['invoice/update-customer', 'id' => $model->id]);
-					return Html::a('Add', $url, ['class' => 'add-customer-invoice','id' => $userModel->id ]);
-				},
-			]
-        ],        
+            	
         ],
     ]); ?>
 <?php Pjax::end(); ?>
