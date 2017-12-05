@@ -259,25 +259,26 @@ class InvoiceController extends Controller
             'itemDataProvider' => $itemDataProvider
         ]);
     }
-	public function actionFetchUser($id, $firstName = null)
-	{
-		$model = $this->findModel($id);
-         $request = Yii::$app->request;
+	public function actionFetchUser($id)
+    {
+        $model = $this->findModel($id);
+        $request = Yii::$app->request;
         $searchModel = new UserSearch();
         $searchModel->load($request->get());
         $searchModel->role_name = $request->get('role_name');
         $userDataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $userDataProvider->pagination=false;
-		$data = $this->renderAjax('customer/_list', [
-			'userDataProvider' => $userDataProvider,
-			'model' => $model,
-            'searchModel'=>$searchModel,
-		]);
-		return [
-			'status' => true,
-			'data' => $data
-		];
-	}
+        $userDataProvider->pagination = false;
+        $data = $this->renderAjax('customer/_list', [
+            'userDataProvider' => $userDataProvider,
+            'model' => $model,
+            'searchModel' => $searchModel,
+        ]);
+        return [
+            'status' => true,
+            'data' => $data
+        ];
+    }
+
     public function actionAddMisc($id, $itemId)
     {
         $invoiceModel = $this->findModel($id);

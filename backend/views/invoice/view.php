@@ -269,23 +269,6 @@ Modal::end();
 		});
 		return false;
   	});
-	$(document).on('change keyup paste', '#invoice-username', function (e) {
-		var userName = $(this).val();
-		var id = '<?= $model->id;?>';
-		var params = $.param({'id' : id, 'userName' : userName});
-		$.ajax({
-            url    : '<?= Url::to(['invoice/fetch-user']); ?>?' + params,
-            type   : 'get',
-            dataType: 'json',
-            success: function(response)
-            {
-               if(response.status) {
-				   $('#invoice-customer-modal .modal-body').html(response.data);
-			   }
-            }
-        });
-		return false;
-	});
 	$(document).on('click', '.customer-cancel', function (e) {
 		$('#invoice-customer-modal').modal('hide');
            var url = "<?php echo Url::to(['invoice/view']); ?>?id=" + <?php echo $model->id; ?>;
@@ -298,7 +281,7 @@ Modal::end();
 		return false;
   	});
         
-        $(document).on('click', '.invoice-customer-update-cancel-button', function (e) {
+    $(document).on('click', '.invoice-customer-update-cancel-button', function (e) {
 		$('#invoice-customer-modal').modal('hide');
 		return false;
   	});
