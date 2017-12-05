@@ -11,7 +11,7 @@ use yii\widgets\Pjax;
             'summary' =>false,
             'tableOptions' => ['class' => 'table table-condensed'],
             'rowOptions' =>['class' => 'add-customer-invoice'],
-            'headerRowOptions' => ['class' => 'bg-light-gray invisible'],
+            'headerRowOptions' => ['class' => 'bg-light-gray'],
             'filterModel'=>$searchModel,
             'columns' => [
             [
