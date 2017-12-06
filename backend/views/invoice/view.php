@@ -271,7 +271,7 @@ Modal::end();
   	});
 	$(document).on('click', '.customer-cancel', function (e) {
 		$('#invoice-customer-modal').modal('hide');
-           var url = "<?php echo Url::to(['invoice/view']); ?>?id=" + <?php echo $model->id; ?>;
+           var url = "<?php echo Url::to(['invoice/view', 'id' => $model->id]) ?>";
             window.location=url;
 		return false;
   	});
@@ -561,7 +561,7 @@ Modal::end();
 			{
 			   if(response.status)
 			   {
-                    var url = "<?php echo Url::to(['invoice/view']); ?>?id=" + <?php echo $model->id; ?>;
+                    var url = "<?php echo Url::to(['invoice/view','id' => $model->id])?>";
                     $.pjax.reload({url:url,container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
                     $('#invoice-customer-modal').modal('hide');
