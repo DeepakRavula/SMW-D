@@ -2,9 +2,9 @@
 
 use yii\helpers\Url;
 use common\models\LocationAvailability;
-require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 ?>
+
 <?= $this->render('/lesson/_color-code');?>
 <div id="reverse-enrolment-calendar"></div>
 <?php
@@ -32,7 +32,6 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
  			if (! moment(date).isValid()) {
                  var date = moment($('#course-startdate').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
              }
- 			$('#enrolment-edit-modal .modal-dialog').css({'width': '1000px'});
  			$.ajax({
  				url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
  				type: 'get',
@@ -74,7 +73,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                  select: function (start, end, allDay) {
                      $('#course-startdate').val(moment(start).format('DD-MM-YYYY hh:mm A'));
                      $('#courseschedule-fromtime').val(moment(start).format('hh:mm A'));
-                     $('#enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
+                     $('#reverse-enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
  					$('#courseschedule-day').val(moment(start).format('dddd'));
  					var endtime = start.clone();
                  	var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();

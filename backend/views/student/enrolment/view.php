@@ -80,7 +80,6 @@ Modal::begin([
 		'student' => $model
 	]);?>
 <?php Modal::end(); ?>
-<?= $this->render('_calendar', []);?>
 <?php Modal::begin([
     'header' => $this->render('_group-modal-header'),
     'id' => 'group-enrol-modal',
