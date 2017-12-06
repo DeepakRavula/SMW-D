@@ -272,22 +272,7 @@ $this->params['label'] = $this->render('_title', [
             });
             return false;
         });
-		$(document).on('click', '.group-enrol-btn', function () {
-            $.ajax({
-                url    : $(this).attr('href'),
-                type   : 'get',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-					if(response) {
-						$.pjax.reload({container: '#enrolment-list', timeout: 6000});
-						$('#group-enrol-modal').modal('hide');
-					}
-				}
-            });
-            return false;
-        });
+		
         $(document).on('beforeSubmit', '#student-merge-form', function () {
             $.ajax({
                 url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',
