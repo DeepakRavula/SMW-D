@@ -74,23 +74,3 @@ use yii\helpers\Url;
         ],
     ]); ?>
 </div>
-<script>
-    $(document).on('click', '.group-enrol-btn', function() {
-        $('#course-spinner').show();
-        var courseId=$(this).attr('data-key');
-             var params = $.param({'courseId': courseId });
-        $.ajax({
-            url    : '<?= Url::to(['enrolment/group' ,'studentId' => $student->id]); ?>&' + params,
-            type: 'post',
-            success: function(response) {
-                if (response.status) {
-                    $('#course-spinner').hide();
-                     $.pjax.reload({container: "#enrolment-grid", replace: false, async: false, timeout: 6000});
-                     $('#group-enrol-modal').modal('hide');
-                }
-            }
-        });
-        return false;
-    });
-
-</script>

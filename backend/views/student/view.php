@@ -272,8 +272,25 @@ $this->params['label'] = $this->render('_title', [
             });
             return false;
         });
-		
-        $(document).on('beforeSubmit', '#student-merge-form', function () {
+     $(document).on('click', '.group-enrol-btn', function() {
+         $('#course-spinner').show();
+         var courseId=$(this).attr('data-key');
+              var params = $.param({'courseId': courseId });
+         $.ajax({
+             url    : '<?= Url::to(['enrolment/group' ,'studentId' => $model->id]); ?>&' + params,
+             type: 'post',
+             success: function(response) {
+                 if (response.status) {
+                     $('#course-spinner').hide();
+                      $.pjax.reload({container: "#enrolment-grid", replace: false, async: false, timeout: 6000});
+                      $('#group-enrol-modal').modal('hide');
+                 }
+             }
+         });
+         return false;
+     });
+ 
+    $(document).on('beforeSubmit', '#student-merge-form', function () {
             $.ajax({
                 url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',
                 type   : 'post',
