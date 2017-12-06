@@ -21,6 +21,12 @@ $this->params['show-all'] = $this->render('_button', [
 	'searchModel' => $searchModel
 ]);
 ?>
+<script src="/plugins/bootbox/bootbox.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
+<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
+<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
+<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 	<?php $columns = [
@@ -151,8 +157,9 @@ $this->params['show-all'] = $this->render('_button', [
 <script>
 $(document).ready(function(){
 	$(document).on('click', '.new-enrol-btn', function() {
-		$('#step-2,#step-3').hide();
+		$('#step-2,#step-3, #step-4').hide();
 		$('#step-1').show();
+ 		$('#reverse-enrol-modal .modal-dialog').css({'width': '600px'});
 		$('#reverse-enrol-modal').modal('show');
         return false;	
 	});
