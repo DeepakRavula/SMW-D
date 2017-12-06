@@ -18,6 +18,7 @@ use yii\widgets\Pjax;
             'summary' => false,
             'id'=>'invoice-view-user-gridview',
             'tableOptions' => ['class' => 'table table-condensed'],
+            'rowOptions' => ['class' => 'add-item-invoice'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'columns' => [
             [
@@ -40,17 +41,7 @@ use yii\widgets\Pjax;
                     return Yii::$app->formatter->asDecimal($data->price);
                 },
             ],
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'contentOptions' => ['style' => 'width:50px'],
-                'template' => '{add}',
-                'buttons' => [
-                    'add' => function ($url, $model) use($invoiceModel) {
-                        $url = Url::to(['invoice/add-misc', 'id' => $invoiceModel->id, 'itemId' => $model->id]);
-                        return Html::a('Add', null, ['class' => 'add-item-invoice', 'url' => $url]);
-                    },
-                ]
-            ],        
+                  
         ],
     ]); ?>
     </div>
@@ -67,8 +58,10 @@ use yii\widgets\Pjax;
 <script type="text/javascript">
     $(document).on('click', '.add-item-invoice', function() {
         $('#item-spinner').show();
+        var itemId=$(this).attr('data-key');
+             var params = $.param({'itemId': itemId });
         $.ajax({
-            url: $(this).attr('url'),
+            url    : '<?= Url::to(['invoice/add-misc' ,'id' => $invoiceModel->id]); ?>&' + params,
             type: 'post',
             success: function(response) {
                 if (response.status) {
