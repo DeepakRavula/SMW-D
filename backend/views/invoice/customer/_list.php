@@ -5,7 +5,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 ?>
-<?php Pjax::Begin(['id' => 'customer-add-listing', 'timeout' => 6000]); ?>
+<?php Pjax::Begin(['id' => 'customer-add-listing', 'timeout' => 6000,'enablePushState' =>false]); ?>
  <?= GridView::widget([
             'dataProvider' => $userDataProvider,
             'summary' =>false,
