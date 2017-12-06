@@ -69,7 +69,7 @@ Modal::begin([
 	<div class="vacation-content"></div>
    <?php Modal::end();?>
 <?php Modal::begin([
-    'header' => '<h4 class="m-0">Add Private Enrolment</h4>',
+    'header' => '<h4 class="m-0">New Enrolment</h4>',
     'id' => 'private-enrol-modal',
 ]); ?>
 <?= $this->render('_form-private', [
