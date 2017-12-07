@@ -22,18 +22,21 @@ use yii\widgets\Pjax;
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'columns' => [
             [
+                'attribute' => 'code',
                 'label' => 'Code',
                 'value' => function ($data) {
                     return $data->code;
                 },
             ],
             [
+                'attribute' => 'description',
                 'label' => 'Description',
                 'value' => function ($data) {
                     return $data->description;
                 },
             ],
             [
+                'attribute' => 'price',
                 'label' => 'Price',
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
