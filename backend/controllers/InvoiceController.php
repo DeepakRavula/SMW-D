@@ -173,7 +173,6 @@ class InvoiceController extends Controller
         $model = $this->findModel($id);
         $request = Yii::$app->request;
         $itemSearchModel=new ItemSearch();
-        $itemSearchModel->load($request->get());
         $itemDataProvider = $itemSearchModel->search(Yii::$app->request->queryParams);
         $searchModel = new InvoiceSearch();
         $searchModel->load($request->get());

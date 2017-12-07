@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
 <div id="line-item-update" style="display:none;" class="alert-success alert fade in"></div>
 <div id="invoice-line-item-modal" class="invoice-line-item-form">
     <div>
-    <?php Pjax::Begin(['id' => 'item-add-listing', 'timeout' => 6000]); ?>
+    <?php Pjax::Begin(['id' => 'item-add-listing', 'timeout' => 6000 ,'enablePushState' => false]); ?>
     <?= GridView::widget([
             'dataProvider' => $itemDataProvider,
             'summary' => false,
