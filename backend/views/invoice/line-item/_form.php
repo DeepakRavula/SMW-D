@@ -75,8 +75,3 @@ use yii\helpers\Url;
     </dl>
     <?php ActiveForm::end(); ?>
 </div>
-	
-
-<script>
-    
-</script>
