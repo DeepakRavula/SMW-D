@@ -31,6 +31,7 @@ use common\models\InvoiceLog;
 use common\models\UserEmail;
 use common\models\UserContact;
 use common\models\Label;
+use backend\models\search\UserSearch;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -258,40 +259,26 @@ class InvoiceController extends Controller
             'itemDataProvider' => $itemDataProvider
         ]);
     }
-	public function actionFetchUser($id, $userName = null)
-	{
-		$model = $this->findModel($id);
-        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-		$userData = User::find()
-			->joinWith(['userLocation ul' => function($userData){
-				$userData->joinWith('userProfile');
-			}])
-			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-			->andWhere(['raa.item_name' => 'customer'])
-			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
-			->notDeleted()
-			->joinWith(['student' => function ($query) use ($currentDate) {
-				$query->enrolled($currentDate);
-			}])
-			->active()
-            ->groupBy('user.id');
-		if(!empty($userName)) {
-			$userData->andWhere(['LIKE', 'user_profile.firstname', $userName])
-				->orWhere(['LIKE', 'user_profile.lastname', $userName]);
-		}
-        $userDataProvider = new ActiveDataProvider([
-            'query' => $userData,
-			'pagination' => false
-        ]);	
-		$data = $this->renderAjax('customer/_list', [
-			'userDataProvider' => $userDataProvider,
-			'model' => $model
-		]);
-		return [
-			'status' => true,
-			'data' => $data
-		];
-	}
+	public function actionFetchUser($id)
+    {
+        $model = $this->findModel($id);
+        $request = Yii::$app->request;
+        $searchModel = new UserSearch();
+        $searchModel->load($request->get());
+        $searchModel->role_name = $request->get('role_name');
+        $userDataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $userDataProvider->pagination = false;
+        $data = $this->renderAjax('customer/_list', [
+            'userDataProvider' => $userDataProvider,
+            'model' => $model,
+            'searchModel' => $searchModel,
+        ]);
+        return [
+            'status' => true,
+            'data' => $data
+        ];
+    }
+
     public function actionAddMisc($id, $itemId)
     {
         $invoiceModel = $this->findModel($id);
