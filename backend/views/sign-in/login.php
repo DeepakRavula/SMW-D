@@ -24,7 +24,7 @@ $this->params['body-class'] = 'login-page';
         <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
         <div class="body">
 			<div id="admin-login">
-				Administrator / Owner / Staff Member<br>
+				Office Login
 			</div>
 			<div id="admin-login-form">
             <?php echo $form->field($model, 'username')->label('Email') ?>
