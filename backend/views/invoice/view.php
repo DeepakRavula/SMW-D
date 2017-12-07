@@ -566,10 +566,11 @@ Modal::end();
 		return false;
 	});
         $(document).on("click", '.add-customer-invoice', function() {
-             var customerId=$(this).attr('id');
+           $('#customer-spinner').show();
+             var customerId=$(this).attr('data-key');
              var params = $.param({'customerId': customerId });
 	$.ajax({
-                	url    : $(this).attr('href') + '&' +params,
+            url    : '<?= Url::to(['invoice/update-customer' ,'id' => $model->id]); ?>&' + params,
 			type   : 'post',
 			dataType: "json",
 			data   : $(this).serialize(),
@@ -577,9 +578,10 @@ Modal::end();
 			{
 			   if(response.status)
 			   {
-                                        $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
+                   $('#customer-spinner').hide();
+                    $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                                        $('#invoice-customer-modal').modal('hide');
+                    $('#invoice-customer-modal').modal('hide');
                                
 				}else
 				{

@@ -85,6 +85,7 @@ Modal::begin([
     'header' => $this->render('_group-modal-header'),
     'id' => 'group-enrol-modal',
 ]); ?>
+
 <div id="group-course-content"></div>
 
 <?php Modal::end(); ?>

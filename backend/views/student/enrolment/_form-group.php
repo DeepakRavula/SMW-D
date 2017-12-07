@@ -11,11 +11,15 @@ use yii\helpers\Url;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 ?>
-
+<div id="course-spinner" class="spinner" style="display:none">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+</div>    
 <div class="user-create-index"> 
     <?php echo GridView::widget([
         'dataProvider' => $groupDataProvider,
         'tableOptions' => ['class' => 'table table-condensed'],
+        'rowOptions' => ['class' => 'group-enrol-btn'],
 		'summary' => '',
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
@@ -66,18 +70,7 @@ use yii\helpers\Url;
                 'value' => function ($data) {
                     return !empty($data->endDate) ? Yii::$app->formatter->asDate($data->endDate) : null;
                 },
-            ],
-			[
-				'class' => 'yii\grid\ActionColumn',
-				'contentOptions' => ['style' => 'width:50px'],
-				'template' => '{enrol}',
-				'buttons' => [
-					'enrol' => function ($url, $model) use($student) {
-						$url = Url::to(['enrolment/group', 'courseId' => $model->id, 'studentId' => $student->id]);
-						return Html::a('Enrol', $url, ['class' => 'group-enrol-btn']);
-					},
-				]
-			],       
+            ],      
         ],
     ]); ?>
 </div>
