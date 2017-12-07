@@ -173,7 +173,7 @@ Modal::end();
 <div id="payment-edit-content"></div>
 <?php Modal::end();?>
 <?php Modal::begin([
-    'header' => $this->render('customer/_modal-header', ['model' => $model]),
+    'header' => "<h4>Add Customer</h4>",
     'id' => 'invoice-customer-modal',
 	'footer' => Html::a('Cancel', '#', ['class' => 'btn btn-default pull-right customer-cancel'])
 ]); ?>
