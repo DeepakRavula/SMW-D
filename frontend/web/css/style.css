@@ -95,20 +95,6 @@ a.desc:after {
 .login-box > .login-logo > .logo > img {
     width: 300px;
 }
-#user-login {
-	text-align:center;
-	font-weight :bold;
-	font-size : 18px;
-}
-#user-login-form {
-	margin-top:10px;
-}
-.user-img {
-	width:70px;
-	margin-left: 150px;
-	position: absolute;
-	margin-top: -50px;
-}
 .login-box-body,
 .register-box-body {
     box-shadow: 0 0 27px rgba(6, 6, 6, 0.06);

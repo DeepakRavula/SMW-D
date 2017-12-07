@@ -21,15 +21,6 @@ body .user-panel > .info {
 	font-weight :bold;
 	font-size : 18px;
 }
-#admin-login-form {
-	margin-top:20px;
-}
-.admin-img {
-	width:60px;
-	margin-left: 160px;
-	position: absolute;
-	margin-top: -35px;
-}
 /*# sourceMappingURL=style.map *//*# sourceMappingURL=style.map */
 .alert {
 	padding:6px;

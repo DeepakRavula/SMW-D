@@ -19,12 +19,11 @@ $this->params['body-class'] = 'login-page';
             </a>
         <?php //echo Html::encode($this->title)?>
     </div><!-- /.login-logo -->
-<img src="<?php echo Yii::$app->request->baseUrl ?>/img/admin.png" class="img-circle admin-img" />	
     <div class="login-box-body">
         <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
         <div class="body">
 			<div id="admin-login">
-				Administrator / Owner / Staff Member<br>
+				Office Login
 			</div>
 			<div id="admin-login-form">
             <?php echo $form->field($model, 'username')->label('Email') ?>
