@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 
@@ -19,14 +18,14 @@ use yii\helpers\Url;
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
         <span class="sr-only">Loading...</span>
     </div>
-    <div class="row">
+    <div class="row" style="height: 34px;">
         <div class="col-md-6">
-            <div class="pull-left">
+            <div class="pull-left" style="padding-top:7px;">
                 <label>Tax Calculated</label>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="text-right">
+            <div class="text-right" style="padding-right:13px;padding-top:7px;">
                 <?= Yii::$app->formatter->asDecimal($model->tax, 2); ?>
             </div>
         </div>
@@ -37,14 +36,14 @@ use yii\helpers\Url;
             <input type="text" id="invoice-tax-adj" style="width:80px;" class="pull-right text-right form-control" name="Invoice[taxAdjusted]" value="0.00">
         </div>
     </div>
-    <div class="row">
+    <div class="row" style="height: 34px;">
         <div class="col-md-6">
-            <div class="pull-left">
+            <div class="pull-left" style="padding-top:7px;">
                 <label>Adjusted Tax</label>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="final-tax pull-right">
+            <div class="final-tax pull-right" style="padding-right:13px;padding-top:7px;">
                 <?= Yii::$app->formatter->asDecimal(0, 2); ?>
             </div>
         </div>
