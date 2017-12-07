@@ -2,13 +2,11 @@
 
 use yii\helpers\Html;
 use backend\models\search\InvoiceSearch;
-use yii\bootstrap\Tabs;
 use common\models\InvoiceLineItem;
 use common\models\Note;
 use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
-use common\models\Payment;
 use common\models\UserProfile;
 use common\models\UserEmail;
 use yii\data\ActiveDataProvider;
@@ -175,6 +173,7 @@ Modal::end();
 <div id="payment-edit-content"></div>
 <?php Modal::end();?>
 <?php Modal::begin([
+    'header' => $this->render('customer/_modal-header', ['model' => $model]),
     'id' => 'invoice-customer-modal',
 	'footer' => Html::a('Cancel', '#', ['class' => 'btn btn-default pull-right customer-cancel'])
 ]); ?>
@@ -194,6 +193,13 @@ Modal::end();
      'id' => 'edit-tax-modal',
  ]); ?>
 <div id="edit-tax-modal-content"></div>
+ <?php Modal::end();?>
+<?php Modal::begin([
+     'header' => '<h4 class="m-0">Adjust Tax</h4>',
+     'id' => 'adjust-tax-modal',
+    'footer' => $this->render('_submit-button')
+ ]); ?>
+<div id="adjust-tax-modal-content"></div>
  <?php Modal::end();?>
 <script>
  $(document).ready(function() {
@@ -269,6 +275,23 @@ Modal::end();
 		});
 		return false;
   	});
+	$(document).on('change keyup paste', '#invoice-username', function (e) {
+		var userName = $(this).val();
+		var id = '<?= $model->id;?>';
+		var params = $.param({'id' : id, 'userName' : userName});
+		$.ajax({
+            url    : '<?= Url::to(['invoice/fetch-user']); ?>?' + params,
+            type   : 'get',
+            dataType: 'json',
+            success: function(response)
+            {
+               if(response.status) {
+				   $('#invoice-customer-modal .modal-body').html(response.data);
+			   }
+            }
+        });
+		return false;
+	});
 	$(document).on('click', '.customer-cancel', function (e) {
 		$('#invoice-customer-modal').modal('hide');
 		return false;
@@ -279,7 +302,7 @@ Modal::end();
 		return false;
   	});
         
-    $(document).on('click', '.invoice-customer-update-cancel-button', function (e) {
+        $(document).on('click', '.invoice-customer-update-cancel-button', function (e) {
 		$('#invoice-customer-modal').modal('hide');
 		return false;
   	});
@@ -515,7 +538,7 @@ Modal::end();
 			   {
 					$.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                    $('#invoice-customer-modal').modal('hide');
+                                        $('#invoice-customer-modal').modal('hide');
 				}else
 				{
 				 $('#customer-form').yiiActiveForm('updateMessages',
@@ -537,7 +560,7 @@ Modal::end();
 			   {
 					$.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                    $('#walkin-modal').modal('hide');
+                                        $('#walkin-modal').modal('hide');
 				}else
 				{
 				 $('#walkin-customer-form').yiiActiveForm('updateMessages',
@@ -548,10 +571,11 @@ Modal::end();
 		return false;
 	});
         $(document).on("click", '.add-customer-invoice', function() {
+           $('#customer-spinner').show();
              var customerId=$(this).attr('data-key');
              var params = $.param({'customerId': customerId });
-             $.ajax({
-            url    : '<?= Url::to(['invoice/update-customer', 'id' => $model->id,]); ?>&' + params,
+	$.ajax({
+            url    : '<?= Url::to(['invoice/update-customer' ,'id' => $model->id]); ?>&' + params,
 			type   : 'post',
 			dataType: "json",
 			data   : $(this).serialize(),
@@ -559,18 +583,34 @@ Modal::end();
 			{
 			   if(response.status)
 			   {
-                    var url = "<?php echo Url::to(['invoice/view','id' => $model->id])?>";
-                    $.pjax.reload({url:url,container : '#invoice-view', async : false, timeout : 6000});
+                   $('#customer-spinner').hide();
+                    $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
                     $('#invoice-customer-modal').modal('hide');
                                
-				}else
-				{
-				 
 				}
 			}
 		});
 		return false;
 	});
+});
+
+$(document).on("click", '.adjust-invoice-tax', function() {
+    $('#customer-spinner').show();
+    $.ajax({
+        url: '<?= Url::to(['invoice/adjust-tax' ,'id' => $model->id]); ?>',
+        type   : 'get',
+        success: function(response)
+        {
+            if(response.status)
+            {
+                $('#customer-spinner').hide();
+                $('#adjust-tax-modal').modal('show');
+                $('#adjust-tax-modal .modal-dialog').css({'width': '400px'});
+                $('#adjust-tax-modal-content').html(response.data);
+            }
+        }
+    });
+    return false;
 });
 </script>

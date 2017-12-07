@@ -41,6 +41,7 @@ class Invoice extends \yii\db\ActiveRecord
 	
     public $customer_id;
     public $credit;
+    public $taxAdjusted;
     public $discountApplied;
     public $toEmailAddress;
     public $subject;
@@ -92,7 +93,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
             [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 
-                'transactionId', 'balance'], 'safe']
+                'transactionId', 'balance', 'taxAdjusted'], 'safe']
         ];
     }
 

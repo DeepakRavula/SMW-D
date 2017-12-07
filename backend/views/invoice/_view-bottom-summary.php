@@ -6,7 +6,7 @@ use insolita\wgadminlte\LteConst;
 <?php
 	LteBox::begin([
 		'type' => LteConst::TYPE_DEFAULT,
-		'boxTools' => '',
+		'boxTools' => $this->render('_summary-button'),
 		'title' => 'Totals',
 		'withBorder' => true,
 	])
