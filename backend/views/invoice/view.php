@@ -196,6 +196,12 @@ Modal::end();
  ]); ?>
 <div id="edit-tax-modal-content"></div>
  <?php Modal::end();?>
+<?php Modal::begin([
+     'header' => '<h4 class="m-0">Adjust Tax</h4>',
+     'id' => 'adjust-tax-modal',
+ ]); ?>
+<div id="adjust-tax-modal-content"></div>
+ <?php Modal::end();?>
 <script>
  $(document).ready(function() {
     $(document).on('click', '.edit-tax', function () {
@@ -591,5 +597,24 @@ Modal::end();
 		});
 		return false;
 	});
+});
+
+$(document).on("click", '.adjust-invoice-tax', function() {
+    $('#customer-spinner').show();
+    $.ajax({
+        url: '<?= Url::to(['invoice/adjust-tax' ,'id' => $model->id]); ?>',
+        type   : 'get',
+        success: function(response)
+        {
+            if(response.status)
+            {
+                $('#customer-spinner').hide();
+                $('#adjust-tax-modal').modal('show');
+                $('#adjust-tax-modal .modal-dialog').css({'width': '400px'});
+                $('#adjust-tax-modal-content').html(response.data);
+            }
+        }
+    });
+    return false;
 });
 </script>

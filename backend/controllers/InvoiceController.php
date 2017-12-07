@@ -49,7 +49,7 @@ class InvoiceController extends Controller
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => ['delete', 'note', 'get-payment-amount', 'update-customer', 
-                    'create-walkin', 'fetch-user', 'add-misc'],
+                    'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -626,5 +626,35 @@ class InvoiceController extends Controller
             'status' => true,
             'amount' => Yii::$app->formatter->asDecimal($model->balance),
         ];
+    }
+    
+    public function actionAdjustTax($id)
+    {
+        $model = Invoice::findOne($id);
+        $data = $this->renderAjax('_form-adjust-tax', [
+            'model' => $model
+        ]);
+        $post = Yii::$app->request->post();
+        if ($model->load($post)) {
+            if($model->updateAttributes(['tax' => $model->tax += $model->taxAdjusted, 
+                'total' => $model->total += $model->taxAdjusted, 'balance' => $model->balance += $model->taxAdjusted])) {
+                $response = [
+                    'status' => true,
+                    'message' => 'Tax successfully updated!',
+		];	
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model),
+                ];	
+            }
+            return $response;
+        } else {
+
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
     }
 }
