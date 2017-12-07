@@ -63,8 +63,7 @@ class ItemSearch extends Item
         else
         {
         $query->andFilterWhere(['like', 'code', $this->code])
-			->andFilterWhere(['like', 'description', $this->description])
-              ->andFilterWhere(['like', 'price', $this->price]);
+			->andFilterWhere(['like', 'description', $this->description]);
         }   
     return $dataProvider;
 }

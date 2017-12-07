@@ -36,8 +36,8 @@ use yii\widgets\Pjax;
                 },
             ],
             [
-                'attribute' => 'price',
                 'label' => 'Price',
+				'format' => 'currency',
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
