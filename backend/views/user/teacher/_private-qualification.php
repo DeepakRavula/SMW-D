@@ -25,7 +25,14 @@ use insolita\wgadminlte\LteConst;
 			'headerRowOptions' => ['class' => 'bg-light-gray'],
 			'columns' => [
 				'program.name',
-				'rate:currency',
+				[
+					'label' => 'Rate ($/hr)',
+					'format' => 'currency',
+					'value' => function($data) {
+			 			return $data->rate;
+					},
+					'visible' => Yii::$app->user->can('administrator') || Yii::$app->user->can('owner') 
+				]
 		],
 	]); ?>	
 	<?php LteBox::end() ?>
