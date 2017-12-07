@@ -17,14 +17,10 @@ $this->params['breadcrumbs'][] = $this->title;
             </a>
         <?php //echo Html::encode($this->title)?>
     </div><!-- /.login-logo -->
-	<img src="<?php echo Yii::$app->request->baseUrl ?>/img/teacher.png" class="img-circle user-img" />	
     <div class="header"></div>
 	<div class="login-box-body">
         <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
         <div class="body">
-			<div id="user-login">
-				Teacher / Customer
-			</div>
 			<div id="user-login-form">
             <?php echo $form->field($model, 'identity')->label('Email') ?>
             <?php echo $form->field($model, 'password')->passwordInput() ?>
