@@ -16,6 +16,7 @@ Modal::begin([
         'invoiceModel' => $invoiceModel,
         'itemDataProvider' => $itemDataProvider,
         'searchModel' => $searchModel,
+        'itemSearchModel' =>$itemSearchModel,
 ]); ?>
 </div>
 <?php 

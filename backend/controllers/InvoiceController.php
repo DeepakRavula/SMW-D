@@ -174,6 +174,7 @@ class InvoiceController extends Controller
         $request = Yii::$app->request;
         $itemSearchModel=new ItemSearch();
         $itemSearchModel->load($request->get());
+        $itemDataProvider = $itemSearchModel->search(Yii::$app->request->queryParams);
         $searchModel = new InvoiceSearch();
         $searchModel->load($request->get());
         $invoiceLineItems = InvoiceLineItem::find()
@@ -209,9 +210,6 @@ class InvoiceController extends Controller
          $session = Yii::$app->session;
         $locationId = $session->get('location_id');
         $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-       
-       
-        $itemDataProvider = $itemSearchModel->search(Yii::$app->request->queryParams);
         $invoicePayments = Payment::find()
 			->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                 $query->where(['ip.invoice_id' => $model->id]);
@@ -252,7 +250,8 @@ class InvoiceController extends Controller
             'userEmail' =>$userEmail,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'noteDataProvider' => $noteDataProvider,
-            'itemDataProvider' => $itemDataProvider
+            'itemDataProvider' => $itemDataProvider,
+            'itemSearchModel' => $itemSearchModel,
         ]);
     }
 	public function actionFetchUser($id, $userName = null)
