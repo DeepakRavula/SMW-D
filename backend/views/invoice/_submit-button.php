@@ -11,13 +11,7 @@ use yii\helpers\Html;
         </div>
     <?php if ($deletable) : ?>
     <div class="form-group pull-left">
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-                    'class' => 'btn btn-danger item-delete',
-                    'data' => [
-                       'confirm' => 'Are you sure you want to delete this item?',
-                       'method' => 'post',
-                    ]
-        ]); ?>
+        <?= Html::a('Delete', '', ['class' => 'btn btn-danger ' . $deleteClass]); ?>
     </div>
     <?php endif; ?>
     </div>

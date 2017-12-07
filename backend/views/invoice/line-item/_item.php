@@ -141,7 +141,7 @@ $(document).ready(function() {
 });
 </script>
 <script>
-$('#delete-button').click(function(){
+$('#invoice-delete-button').click(function(){
     $.ajax({
         url    : '<?= Url::to(['invoice/delete', 'id' => $model->id]) ?>',
         type   : 'post',
@@ -158,5 +158,28 @@ $('#delete-button').click(function(){
         }
     });
     return false;
+});
+$(document).on('click', '.item-delete', function () {
+    var status = confirm("Are you sure you want to delete this item?");
+    if (status) {
+        var itemId = $('#line-item-grid tbody > tr').data('key'); 
+        $.ajax({
+            url    : '<?= Url::to(['invoice-line-item/delete']) ?>?id=' + itemId,
+            type   : 'post',
+            dataType: 'json',
+            success: function(response)
+            {
+               if(response.status)
+               {
+                    window.location.href = response.url;
+                    $('#invoice-success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+                    }else
+                    {
+                        $('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                    }
+            }
+        });
+        return false;
+    }
 });
 </script>    

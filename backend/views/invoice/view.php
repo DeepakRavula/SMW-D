@@ -157,7 +157,6 @@ Modal::end();
     'footer' => $this->render('_submit-button', [
         'deletable' => true,
         'deleteClass' => 'item-delete',
-        'model' => $model,
         'saveClass' => 'line-item-save',
         'cancelClass' => 'line-item-cancel'
     ])
