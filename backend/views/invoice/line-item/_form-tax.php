@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
@@ -11,7 +10,7 @@ use common\models\TaxStatus;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <div class="lesson-qualify p-10">
-
+<div id="edit-tax-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <?php $form = ActiveForm::begin([
 	'layout' => 'horizontal',
     'id' => 'edit-tax-form',
@@ -69,6 +68,11 @@ use common\models\TaxStatus;
     });
 });
 $(document).off('click', '.edit-tax-save').on('click', '.edit-tax-save', function () {
+    var tax = $('#lineitem-tax_status').val();
+    if ($.isEmptyObject(tax)) {
+        $('#edit-tax-error-notification').html('Please fix the error!').fadeIn().delay(5000).fadeOut();
+        return false;
+    }
     $('#tax-spinner').show();
     var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
     var params = $.param({ 'InvoiceLineItem[ids]' : selectedRows });
