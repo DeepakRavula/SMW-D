@@ -14,31 +14,44 @@ use yii\helpers\Html;
 
 $this->title = 'New Enrolment';
 ?>
-<h4><strong>Customer</strong></h4>
 <div class="row user-create-form">
-	<div class="col-md-6">
-		<?php echo $form->field($userProfile, 'firstname')->textInput(); ?>
+	<div class="col-xs-3 pull-left">
+        <label>Name</label>
+    </div>
+	<div class="col-xs-4">
+		<?php echo $form->field($userProfile, 'firstname')->textInput(['placeholder' => 'First Name'])->label(false); ?>
 	</div>
-	<div class="col-md-6">
-		<?php echo $form->field($userProfile, 'lastname')->textInput(); ?>
+	<div class="col-xs-5">
+		<?php echo $form->field($userProfile, 'lastname')->textInput(['placeholder' => 'Last Name'])->label(false); ?>
 	</div>
-	
-	<div class="col-md-6">
-<?=
-$form->field($userEmail, "labelId")->widget(Select2::classname(), [
-	'data' => ArrayHelper::map(Label::find()
-			->andWhere(['userAdded' => false])
-			->all(), 'id', 'name'),
-	'pluginOptions' => [
-		'tags' => true,
-	],
-])->label('Label');
-?>
+	<div class="col-xs-3 pull-left">
+        <label>Email</label>
+    </div>	
+	<div class="col-xs-4">
+		<?= $form->field($userEmail, "email")->textInput(['placeholder' => 'Email', 'maxlength' => true])->label(false) ?>	
 	</div>
-	<div class="col-md-6">
-<?= $form->field($userEmail, "email")->textInput(['maxlength' => true]) ?>
+	<div class="col-xs-5">
+		<?=
+			$form->field($userEmail, "labelId")->widget(Select2::classname(), [
+				'data' => ArrayHelper::map(Label::find()
+						->andWhere(['userAdded' => false])
+						->all(), 'id', 'name'),
+				'pluginOptions' => [
+					'tags' => true,
+				],
+			])->label(false);
+			?>
 	</div>
-	<div class="col-md-4">
+	<div class="col-xs-3 pull-left">
+        <label>Phone Number</label>
+    </div>	
+	<div class="col-xs-4">
+		<?= $form->field($phoneModel, 'number')->textInput(['placeholder' => 'Number'])->label(false); ?>	
+	</div>
+	<div class="col-xs-2">
+		<?= $form->field($phoneModel, 'extension')->textInput(['placeholder' => 'Ext'])->label(false); ?>
+	</div>
+	<div class="col-xs-3">
 <?=
 $form->field($phoneModel, "labelId")->widget(Select2::classname(), [
 	'data' => ArrayHelper::map(Label::find()
@@ -50,17 +63,13 @@ $form->field($phoneModel, "labelId")->widget(Select2::classname(), [
 	'pluginOptions' => [
 		'tags' => true,
 	],
-])->label('Label');
+])->label(false);
 ?>
 	</div>
-	<div class="col-md-6">
-<?= $form->field($phoneModel, 'number')->textInput(); ?>
-	</div>
-	<div class="col-md-2">
-<?= $form->field($phoneModel, 'extension')->textInput(); ?>
-	</div>
-	
-	<div class="col-md-4">
+	<div class="col-xs-3 pull-left">
+        <label>Address</label>
+    </div>	
+	<div class="col-xs-4">
 <?=
 $form->field($addressModel, "labelId")->widget(Select2::classname(), [
 	'data' => ArrayHelper::map(Label::find()
@@ -72,35 +81,39 @@ $form->field($addressModel, "labelId")->widget(Select2::classname(), [
 	'pluginOptions' => [
 		'tags' => true,
 	],
-])->label('Label');
+])->label(false);
 ?>
 	</div>
-	<div class="col-md-4">
-<?= $form->field($addressModel, 'address')->textInput(['placeholder' => 'Street Address']); ?>
+	<div class="clearfix"></div>
+	<div class="col-xs-3"></div>
+	<div class="col-xs-9">
+<?= $form->field($addressModel, 'address')->textInput(['placeholder' => 'Street Address'])->label(false); ?>
 	</div>
-	<div class="col-md-4">
+	<div class="col-xs-3"></div>
+	<div class="col-xs-4">
 <?= $form->field($addressModel, 'cityId')->dropDownList(
-	ArrayHelper::map(City::find()->all(), 'id', 'name'));
+	ArrayHelper::map(City::find()->all(), 'id', 'name'))->label(false);
 ?>
 	</div>
-	<div class="col-md-4">
+	<div class="col-xs-5">
 		<?= $form->field($addressModel, 'provinceId')->dropDownList(
-			ArrayHelper::map(Province::find()->all(), 'id', 'name'));
+			ArrayHelper::map(Province::find()->all(), 'id', 'name'))->label(false);
 		?>
 	</div>
-	<div class="col-md-4">
+	<div class="col-xs-3"></div>
+	<div class="col-xs-4">
 		<?= $form->field($addressModel, 'countryId')->dropDownList(
-			ArrayHelper::map(Country::find()->all(), 'id', 'name'));
+			ArrayHelper::map(Country::find()->all(), 'id', 'name'))->label(false);
 		?>
 	</div>
-	<div class="col-md-4">
-<?= $form->field($addressModel, 'postalCode')->textInput(['placeholder' => 'Postal Code']); ?>
+	<div class="col-xs-5">
+<?= $form->field($addressModel, 'postalCode')->textInput(['placeholder' => 'Postal Code'])->label(false); ?>
 	</div>
 	<div class="form-group pull-right">
 		<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
-		<button class="step2-next btn btn-info pull-right" type="button" >Next</button>
+		<button class="step3-next btn btn-info pull-right" type="button" >Next</button>
 	</div>
 	<div class="form-group pull-left">
-		<button class="step2-back btn btn-info" type="button" >Back</button>
+		<button class="step3-back btn btn-info" type="button" >Back</button>
     </div>
 </div>    
