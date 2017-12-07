@@ -8,7 +8,9 @@ use yii\widgets\Pjax;
 ?>
 <?php echo $this->render('/invoice/_line-item', [
         'invoiceModel' => $model,
-    'itemDataProvider' => $itemDataProvider
+    'itemDataProvider' => $itemDataProvider,
+    'searchModel'=>'$searchModel',
+    'itemSearchModel'=>$itemSearchModel,
     ]) ?>
 <?php Pjax::Begin(['id' => 'invoice-view-tab-item', 'timeout' => 6000]); ?>
 <?php $boxTools = $this->render('_button', [

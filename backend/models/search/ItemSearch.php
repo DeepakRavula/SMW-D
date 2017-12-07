@@ -20,7 +20,7 @@ class ItemSearch extends Item
     public function rules()
     {
         return [
-            [['showAllItems'], 'safe'],
+            [['code','description','price','showAllItems'], 'safe'],
         ];
     }
 
@@ -56,7 +56,15 @@ class ItemSearch extends Item
         if (!$this->showAllItems) {
             $query->active();
         }
-
-        return $dataProvider;
-    }
+        if(empty($this->code)&&empty($this->description)&& empty($this->price))
+        {
+            return $dataProvider;
+        }
+        else
+        {
+        $query->andFilterWhere(['like', 'code', $this->code])
+			->andFilterWhere(['like', 'description', $this->description]);
+        }   
+    return $dataProvider;
+}
 }
