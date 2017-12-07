@@ -636,8 +636,12 @@ class InvoiceController extends Controller
         ]);
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
-            if($model->updateAttributes(['tax' => $model->tax += $model->taxAdjusted, 
-                'total' => $model->total += $model->taxAdjusted, 'balance' => $model->balance += $model->taxAdjusted])) {
+            $taxAdjusted = $model->updateAttributes([
+                'tax' => $model->tax += $model->taxAdjusted, 
+                'total' => $model->total += $model->taxAdjusted, 
+                'balance' => $model->balance += $model->taxAdjusted
+            ]);
+            if ($taxAdjusted) {
                 $response = [
                     'status' => true,
                     'message' => 'Tax successfully updated!',

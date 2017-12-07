@@ -199,6 +199,7 @@ Modal::end();
 <?php Modal::begin([
      'header' => '<h4 class="m-0">Adjust Tax</h4>',
      'id' => 'adjust-tax-modal',
+    'footer' => $this->render('_submit-button')
  ]); ?>
 <div id="adjust-tax-modal-content"></div>
  <?php Modal::end();?>
