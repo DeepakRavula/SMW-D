@@ -3,7 +3,7 @@
 use yii\bootstrap\Modal;
 
 Modal::begin([
-    'header' => $this->render('_add-item-header', ['invoiceModel' => $invoiceModel]),
+    'header' =>  '<h4 class="m-0 pull-left">Add Line Items</h4>',
     'id' => 'invoice-line-item-modal',
     'closeButton' => false, 
 ]); ?>
@@ -14,7 +14,8 @@ Modal::begin([
 <div id="item-list-content">
 <?= $this->render('_form-invoice-line-item', [
         'invoiceModel' => $invoiceModel,
-        'itemDataProvider' => $itemDataProvider
+        'itemDataProvider' => $itemDataProvider,
+        'searchModel' => $searchModel,
 ]); ?>
 </div>
 <?php 

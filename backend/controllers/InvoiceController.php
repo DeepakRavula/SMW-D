@@ -31,7 +31,7 @@ use common\models\InvoiceLog;
 use common\models\UserEmail;
 use common\models\UserContact;
 use common\models\Label;
-
+use backend\models\search\ItemSearch;
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
@@ -172,6 +172,8 @@ class InvoiceController extends Controller
     {
         $model = $this->findModel($id);
         $request = Yii::$app->request;
+        $itemSearchModel=new ItemSearch();
+        $searchModel->load($request->get());
         $searchModel = new InvoiceSearch();
         $searchModel->load($request->get());
         $invoiceLineItems = InvoiceLineItem::find()
@@ -208,13 +210,8 @@ class InvoiceController extends Controller
         $locationId = $session->get('location_id');
         $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
        
-        $itemData = Item::find()
-                ->notDeleted()
-                ->location($locationId)
-                ->active();
-        $itemDataProvider = new ActiveDataProvider([
-            'query' => $itemData,
-        ]);
+       
+        $itemDataProvider = $itemSearchModel->search(Yii::$app->request->queryParams);
         $invoicePayments = Payment::find()
 			->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                 $query->where(['ip.invoice_id' => $model->id]);
