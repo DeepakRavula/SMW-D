@@ -128,11 +128,9 @@ use yii\widgets\Pjax;
         if (selectedRows.length >= 2) {
             $('.apply-discount').text('Edit Discounts...');
             $('.edit-tax').text('Edit Taxes...');
-            $('.edit-item').attr('class','edit-item multiselect-disable');
         } else {
             $('.apply-discount').text('Edit Discount...');
             $('.edit-tax').text('Edit Tax...');
-            $('.edit-item').attr('class','edit-item');
         }
     });
 </script>
