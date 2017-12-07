@@ -12,22 +12,24 @@ use yii\widgets\Pjax;
 <div id="line-item-update" style="display:none;" class="alert-success alert fade in"></div>
 <div id="invoice-line-item-modal" class="invoice-line-item-form">
     <div>
-    <?php Pjax::Begin(['id' => 'item-add-listing', 'timeout' => 6000]); ?>
+    <?php Pjax::Begin(['id' => 'item-add-listing', 'timeout' => 6000 ,'enablePushState' => false]); ?>
     <?= GridView::widget([
             'dataProvider' => $itemDataProvider,
             'summary' => false,
-            'id'=>'invoice-view-user-gridview',
+            'filterModel' => $itemSearchModel,
             'tableOptions' => ['class' => 'table table-condensed'],
             'rowOptions' => ['class' => 'add-item-invoice'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'columns' => [
             [
+                'attribute' => 'code',
                 'label' => 'Code',
                 'value' => function ($data) {
                     return $data->code;
                 },
             ],
             [
+                'attribute' => 'description',
                 'label' => 'Description',
                 'value' => function ($data) {
                     return $data->description;
@@ -35,6 +37,7 @@ use yii\widgets\Pjax;
             ],
             [
                 'label' => 'Price',
+				'format' => 'currency',
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
