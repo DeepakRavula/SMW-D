@@ -197,6 +197,11 @@ Modal::end();
 <?php Modal::begin([
      'header' => '<h4 class="m-0">Edit Tax</h4>',
      'id' => 'edit-tax-modal',
+    'footer' => $this->render('_submit-button', [
+        'deletable' => false,
+        'saveClass' => 'edit-tax-save', 
+        'cancelClass' => 'edit-tax-cancel'
+    ])
  ]); ?>
 <div id="edit-tax-modal-content"></div>
  <?php Modal::end();?>

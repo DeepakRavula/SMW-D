@@ -28,12 +28,7 @@ use common\models\TaxStatus;
             <?php echo $form->field($model, 'taxPercentage', [
 					'inputTemplate' => '<div class="input-group">'
 					. '{input}<span class="input-group-addon">%</span></div>'])->textInput(['readonly' => true, 'class' => 'right-align form-control'])->label('Tax Rate') ?>
-           <div class="col-md-12">
-    <div class="form-group pull-right">
-        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default edit-tax-cancel']);?>
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
-    </div>
-	</div>
+           
 	</div>
 	<?php ActiveForm::end(); ?>
 
@@ -73,7 +68,7 @@ use common\models\TaxStatus;
         return false;
     });
 });
-$(document).off('beforeSubmit', '#edit-tax-form').on('beforeSubmit', '#edit-tax-form', function () {
+$(document).off('click', '.edit-tax-save').on('click', '.edit-tax-save', function () {
     $('#tax-spinner').show();
     var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
     var params = $.param({ 'InvoiceLineItem[ids]' : selectedRows });
@@ -81,7 +76,7 @@ $(document).off('beforeSubmit', '#edit-tax-form').on('beforeSubmit', '#edit-tax-
         url    : '<?= Url::to(['tax-status/edit-line-item-tax']) ?>?' + params,
         type   : 'post',
         dataType: "json",
-        data   : $(this).serialize(),
+        data   : $('#edit-tax-form').serialize(),
         success: function(response)
         {
             if(response.status)
