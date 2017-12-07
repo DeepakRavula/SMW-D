@@ -56,10 +56,16 @@ class ItemSearch extends Item
         if (!$this->showAllItems) {
             $query->active();
         }
+        if(empty($this->code)&&empty($this->description)&& empty($this->price))
+        {
+            return $dataProvider;
+        }
+        else
+        {
         $query->andFilterWhere(['like', 'code', $this->code])
 			->andFilterWhere(['like', 'description', $this->description])
               ->andFilterWhere(['like', 'price', $this->price]);
-
-        return $dataProvider;
-    }
+        }   
+    return $dataProvider;
+}
 }
