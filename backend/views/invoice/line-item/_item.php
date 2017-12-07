@@ -72,6 +72,7 @@ $(document).ready(function() {
                 {
                     if (response.status) {
                         $('#apply-discount-modal').modal('show');
+                        $('#apply-discount-modal .modal-dialog').css({'width': '600px'});
                         $('#apply-discount-content').html(response.data);
                     }
                 }

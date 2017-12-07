@@ -154,6 +154,13 @@ Modal::end();
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Edit Line Item</h4>',
     'id' => 'line-item-edit-modal',
+    'footer' => $this->render('_submit-button', [
+        'deletable' => true,
+        'deleteClass' => 'item-delete',
+        'model' => $model,
+        'saveClass' => 'line-item-save',
+        'cancelClass' => 'line-item-cancel'
+    ])
 ]); ?>
 
 <div id="line-item-edit-content"></div>
@@ -197,7 +204,11 @@ Modal::end();
 <?php Modal::begin([
      'header' => '<h4 class="m-0">Adjust Tax</h4>',
      'id' => 'adjust-tax-modal',
-    'footer' => $this->render('_submit-button')
+    'footer' => $this->render('_submit-button', [
+        'deletable' => false,
+        'saveClass' => 'adjust-tax-form-save', 
+        'cancelClass' => 'tax-adj-cancel'
+    ])
  ]); ?>
 <div id="adjust-tax-modal-content"></div>
  <?php Modal::end();?>
@@ -448,13 +459,13 @@ Modal::end();
 		});
 		return false;
 	});
-	$(document).on('beforeSubmit', '#line-item-edit-form', function (e) {
+	$(document).on('click', '.line-item-save', function () {
         $('#item-edit-spinner').show();
             $.ajax({
-                    url    : $(this).attr('action'),
+                    url    : $('#line-item-edit-form').attr('action'),
                     type   : 'post',
                     dataType: "json",
-                    data   : $(this).serialize(),
+                    data   : $('#line-item-edit-form').serialize(),
                     success: function(response)
                     {
                        if(response.status)
