@@ -179,7 +179,7 @@ Modal::end();
 <div id="payment-edit-content"></div>
 <?php Modal::end();?>
 <?php Modal::begin([
-    'header' => $this->render('customer/_modal-header', ['model' => $model]),
+    'header' => "<h4>Add Customer</h4>",
     'id' => 'invoice-customer-modal',
 	'footer' => Html::a('Cancel', '#', ['class' => 'btn btn-default pull-right customer-cancel'])
 ]); ?>
@@ -236,27 +236,24 @@ Modal::end();
         }
     });
 
-    $(document).on('click', '.edit-item', function () {
-        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
-        var params = $.param({ id : selectedRows[0] });
-        if ($.isEmptyObject(selectedRows)) {
-            $('#invoice-error-notification').html('Please select atleast a item to edit!').fadeIn().delay(5000).fadeOut();
-        } else {
-            $.ajax({
-                url    : '<?= Url::to(['invoice-line-item/update']) ?>?' + params,
-                type: 'get',
-                dataType: "json",
-                success: function (response)
-                {
-                    if (response.status)
-                    {
-                        $('#line-item-edit-modal .modal-dialog').css({'width': '600px'});
-                        $('#line-item-edit-modal').modal('show');
-                        $('#line-item-edit-content').html(response.data);
-                    }
-                }
-            });
-        }
+    $(document).on('click', '#line-item-grid table tr', function () {
+		var id = $(this).data('key');
+        var params = $.param({ id : id });
+		$.ajax({
+			url    : '<?= Url::to(['invoice-line-item/update']) ?>?' + params,
+			type: 'get',
+			dataType: "json",
+			success: function (response)
+			{
+				if (response.status)
+				{
+					$('#line-item-edit-modal .modal-dialog').css({'width': '600px'});
+					$('#line-item-edit-modal').modal('show');
+					$('#line-item-edit-content').html(response.data);
+				}
+			}
+		});
+		return false;
     });
  	$(document).on('click', '.edit-tax-cancel', function (e) {
  		$('#edit-tax-modal').modal('hide');

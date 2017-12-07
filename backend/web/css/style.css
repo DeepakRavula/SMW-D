@@ -254,3 +254,8 @@ dl {
   margin-top: -20px; 
   margin-left: -50px; 
 }
+.multiselect-disable
+{
+    pointer-events : none;
+    opacity: 0.5;
+}

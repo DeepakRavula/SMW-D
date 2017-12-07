@@ -17,6 +17,7 @@ $this->params['body-class'] = array_key_exists('body-class', $this->params) ?
 <!DOCTYPE html>
 <html lang="<?php echo Yii::$app->language ?>">
 <head>
+	<link rel='shortcut icon' type='image/x-icon' href="/frontend/web/img/arcadia-fav.ico" /> 
     <meta charset="<?php echo Yii::$app->charset ?>">
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
