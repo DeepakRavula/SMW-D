@@ -5,8 +5,11 @@ use insolita\wgadminlte\LteConst;
 
 ?>
 
-<?php
-$boxTools = $this->render('_details-box-tools');
+<?php $boxTools = '';?>
+<?php if($model->course->program->isPrivate()) : ?>
+	<?php $boxTools = $this->render('_details-box-tools');?>
+<?php endif;?>
+<?php 
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
 	'title' => 'Details',
