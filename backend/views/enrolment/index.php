@@ -196,8 +196,8 @@ $(document).ready(function(){
 	$(document).on('click', '.step1-next', function() {
 		$('#step-1, #step-3, #step-4').hide();
  		$('#reverse-enrol-modal .modal-dialog').css({'width': '1000px'});
-		loadCalendar();
 		$('#step-2').show();
+        loadCalendar();
 		return false;
 	});
 	$(document).on('click', '.step2-next', function() {
