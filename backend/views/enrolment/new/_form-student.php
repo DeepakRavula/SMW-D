@@ -9,18 +9,26 @@ use yii\helpers\Html;
 
 $this->title = 'New Enrolment';
 ?>
-<h4><strong>Student</strong></h4>
 <div class="row user-create-form">
-			<div class="col-md-5">
+	<div class="col-xs-5 pull-left">
+        <label>First Name</label>
+    </div>
+			<div class="col-xs-7">
 				<?php
-            echo $form->field($model, 'first_name')->textInput(['placeholder' => 'First Name']); ?>
+            echo $form->field($model, 'first_name')->textInput(['placeholder' => 'First Name'])->label(false); ?>
 			</div>
-			<div class="col-md-5">
+	<div class="col-xs-5 pull-left">
+        <label>Last Name</label>
+    </div>
+			<div class="col-xs-7">
 				<?php
-            echo $form->field($model, 'last_name')->textInput(['placeholder' => 'Last Name']); ?>
+            echo $form->field($model, 'last_name')->textInput(['placeholder' => 'Last Name'])->label(false); ?>
 			</div>
-		<div class="col-md-5">
-		 <?php echo $form->field($model, 'birth_date')->textInput()?>
+	<div class="col-xs-5 pull-left">
+        <label>Birth Date</label>
+    </div>
+		<div class="col-xs-7">
+		 <?php echo $form->field($model, 'birth_date')->textInput()->label(false)?>
         </div>
 	<div class="clearfix"></div>
 	<div class="pull-right">
@@ -28,7 +36,7 @@ $this->title = 'New Enrolment';
 		 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'new-enrol-save-btn']) ?>
 	</div>
 	<div class="form-group pull-left">
-		<button class="step3-back btn btn-info" type="button" >Back</button>
+		<button class="step4-back btn btn-info" type="button" >Back</button>
     </div>
 </div> <!-- ./container -->
 <script>
