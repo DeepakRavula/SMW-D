@@ -24,6 +24,10 @@ $this->title = 'New Enrolment';
 				<?php
             echo $form->field($model, 'last_name')->textInput(['placeholder' => 'Last Name'])->label(false); ?>
 			</div>
+   <div id="enrolment-student-spinner" class="spinner" style="display:none">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+</div> 
 	<div class="col-xs-5 pull-left">
         <label>Birth Date</label>
     </div>
@@ -53,5 +57,9 @@ $.fn.datepicker.noConflict();
 		   $(this).datepicker('setDate', new Date(y, m-1, d));
 	   }
 	});
+    $(document).on('click', '#new-enrol-save-btn', function() {
+        $('#enrolment-student-spinner').show();
+    });
+        
 });
 </script>
