@@ -17,116 +17,126 @@ use kartik\depdrop\DepDrop;
 		->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM])
 		->all(), 'id', 'name')
 	?>
-	<div class="col-xs-6 pull-left">
-        <label>Program</label>
-    </div>
-	<div class="col-xs-6">
-		<?=
+	<div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Program</label>
+        </div>
+        <div class="col-xs-5 text-right">
+            <?=
 		$form->field($model, 'programId')->widget(Select2::classname(), [
 			'data' => $privatePrograms,
 			'options' => ['placeholder' => 'Program']
 		])->label(false)
 		?>
-	</div>
-	<?php if (Yii::$app->user->identity->isAdmin()) : ?>
-	<div class="col-xs-6 pull-left">
-        <label>Rate (per hour)</label>
+        </div>
     </div>
-	<div class="col-xs-2"></div>
-	<div class="col-xs-4">
-			<?php
-			echo $form->field($courseSchedule, 'programRate', [
-					'inputTemplate' => '<div class="input-group">'
-					. '<span class="input-group-addon">$</span>{input}<span class="input-group-addon">/hr</span></div>',]
-				)->textInput(['class' => 'col-md-2 form-control	'])
-				->label(false);
-			?>
+	<?php if (Yii::$app->user->identity->isAdmin()) : ?>
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Rate (per hour)</label>
+		</div>
+		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+		<div class="col-xs-3 enrolment-field">
+				<?php
+				echo $form->field($courseSchedule, 'programRate')->textInput(['class' => 'form-control	'])
+					->label(false);
+				?>
+		</div>
+		<div class="col-xs-1 enrolment-text"><label class="text-muted">/hr</label></div>
 	</div>
 	<?php endif; ?>
-	<div class="col-xs-6 pull-left">
-        <label>Duration</label>
-    </div>
-	<div class="col-xs-2"></div>
-	<div class="col-xs-4">
-		<?php
-		echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(), [
-			'pluginOptions' => [
-				'showMeridian' => false,
-				'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
-			],
-		])->label(false);
-		?>
-	</div>
-	<div class="col-xs-6 pull-left">
-        <label>Rate (per month)</label>
-    </div>
-	<div class="col-xs-2"></div>
-	<div class="col-xs-4">
-		<div class="form-group">
-		<div class="input-group">
-			<span class="input-group-addon">$</span>
-			<input type="text" readonly="true" id="rate-per-month" class="col-md-2 form-control	" autocomplete="off" >
-			<span class="input-group-addon">/mn</span>
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Duration</label>
 		</div>
+		<div class="col-xs-2"></div>
+		<div class="col-xs-3">
+			<?php
+			echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(), [
+				'pluginOptions' => [
+					'showMeridian' => false,
+					'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
+				],
+			])->label(false);
+			?>
+		</div>
+		<div class="col-xs-1 enrolment-text"><label class="text-muted">mins.</label></div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Rate (per month)</label>
+		</div>
+		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+		<div class="col-xs-3">
+			<div class="form-group">
+			<div class="input-group">
+				<input type="text" readonly="true" id="rate-per-month" class="col-md-2 form-control	" autocomplete="off" >
+			</div>
+			</div>
+		</div>
+		<div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Payment Frequency</label>
+		</div>
+		<div class="col-xs-5 text-right">
+			<?=
+			$form->field($courseSchedule, 'paymentFrequency')->widget(Select2::classname(), [
+				'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')
+			])->label(false)
+			?>
 		</div>
 	</div>
-	<div class="col-xs-6 pull-left">
-        <label>Payment Frequency</label>
-    </div>
-	<div class="col-xs-6">
-		<?=
-		$form->field($courseSchedule, 'paymentFrequency')->widget(Select2::classname(), [
-			'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')
-		])->label(false)
-		?>
-	</div>
-	<div class="col-xs-6 pull-left">
-        <label>Payment Frequency Discount</label>
-    </div>
-	<div class="col-xs-2"></div>
-	<div class="col-xs-4">
-		<?=
-		$form->field($paymentFrequencyDiscount, 'discount', [
-			'inputTemplate' => '<div class="input-group">'
-			. '{input}<span class="input-group-addon">%</span></div>'])->textInput([
-			'id' => 'payment-frequency-discount',
-			'name' => 'PaymentFrequencyDiscount[discount]'
-		])->label(false);
-		?>
-	</div>
-	<div class="col-xs-7 pull-left">
-        <label>Multiple Enrol. Discount (per month)</label>
-    </div>
-	<div class="col-xs-1"></div>
-	<div class="col-xs-4">
-		<?=
-		$form->field($multipleEnrolmentDiscount, 'discount', [
-			'inputTemplate' => '<div class="input-group">'
-			. '<span class="input-group-addon">$</span>{input}<span class="input-group-addon">/mn</span></div>'])->textInput([
-			'id' => 'enrolment-discount',
-			'name' => 'MultipleEnrolmentDiscount[discount]'
-		])->label(false);
-		?>
-	</div>
-	<div class="col-xs-7 pull-left">
-        <label>Discounted Rate (per month)</label>
-    </div>
-	<div class="col-xs-1"></div>
-	<div class="col-xs-4">
-		<div class="form-group">
-		<div class="input-group">
-			<span class="input-group-addon">$</span>
-			<input type="text" readonly="true" id="discounted-rate-per-month" class="col-md-2 form-control	" autocomplete="off" >
-			<span class="input-group-addon">/mn</span>
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Payment Frequency Discount</label>
 		</div>
+		<div class="col-xs-2"></div>
+		<div class="col-xs-3">
+			<?=
+			$form->field($paymentFrequencyDiscount, 'discount')->textInput([
+				'id' => 'payment-frequency-discount',
+				'name' => 'PaymentFrequencyDiscount[discount]'
+			])->label(false);
+			?>
 		</div>
+		<div class="col-xs-1 enrolment-text"><label class="text-muted">%</label></div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Multiple Enrol. Discount (per month)</label>
+		</div>
+		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+		<div class="col-xs-3">
+			<?=
+			$form->field($multipleEnrolmentDiscount, 'discount')->textInput([
+				'id' => 'enrolment-discount',
+				'name' => 'MultipleEnrolmentDiscount[discount]'
+			])->label(false);
+			?>
+		</div>
+		<div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Discounted Rate (per month)</label>
+		</div>
+		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+		<div class="col-xs-3">
+			<div class="form-group">
+			<div class="input-group">
+				<input type="text" readonly="true" id="discounted-rate-per-month" class="col-md-2 form-control	" autocomplete="off" >
+			</div>
+			</div>
+		</div>
+		<div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
 	</div>
 	<div class="clearfix"></div>
 	<div class="form-group pull-right">
 		<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
 		<button class="step1-next btn btn-info pull-right" type="button" >Next</button>
     </div>
-	
 </div>
 <?php
 $locationId = Yii::$app->session->get('location_id');

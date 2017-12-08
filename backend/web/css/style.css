@@ -98,6 +98,9 @@ body .user-panel > .info {
 .m-t-25 {
     margin-top: 25px !important;
 }
+.p-t-10 {
+    padding-top: 10px;
+}
 .f-s-18 {
 	font-size:18px;
 }
@@ -106,6 +109,14 @@ body .user-panel > .info {
 }
 .p-10 {
 	padding:10px;
+}
+.enrolment-dollar {
+	left: 80px;
+    margin-top: 6px;
+}
+.enrolment-text {
+    right: 25px;
+    margin-top: 6px;
 }
 .fa-pencil, .fa-chain, .fa-angle-down, .fa-plus, .fa-calendar {
 	cursor:pointer;
@@ -258,4 +269,7 @@ dl {
 {
     pointer-events : none;
     opacity: 0.5;
+}
+.modal-form-label {
+	margin-left:-10px;
 }
