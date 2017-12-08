@@ -10,22 +10,22 @@ use yii\helpers\Html;
 $this->title = 'New Enrolment';
 ?>
 <div class="row user-create-form">
-	<div class="col-xs-5 pull-left">
-        <label>First Name</label>
+	<div class="col-xs-5">
+        <label class="modal-customer-label">First Name</label>
     </div>
 			<div class="col-xs-7">
 				<?php
             echo $form->field($model, 'first_name')->textInput(['placeholder' => 'First Name'])->label(false); ?>
 			</div>
-	<div class="col-xs-5 pull-left">
-        <label>Last Name</label>
+	<div class="col-xs-5">
+        <label class="modal-customer-label">Last Name</label>
     </div>
 			<div class="col-xs-7">
 				<?php
             echo $form->field($model, 'last_name')->textInput(['placeholder' => 'Last Name'])->label(false); ?>
 			</div>
-	<div class="col-xs-5 pull-left">
-        <label>Birth Date</label>
+	<div class="col-xs-5">
+        <label class="modal-customer-label">Birth Date</label>
     </div>
 		<div class="col-xs-7">
 		 <?php echo $form->field($model, 'birth_date')->textInput()->label(false)?>
@@ -35,8 +35,8 @@ $this->title = 'New Enrolment';
 		<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
 		 <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'new-enrol-save-btn']) ?>
 	</div>
-	<div class="form-group pull-left">
-		<button class="step4-back btn btn-info" type="button" >Back</button>
+	<div class="form-group">
+		<button class=" modal-form-label step4-back btn btn-info" type="button" >Back</button>
     </div>
 </div> <!-- ./container -->
 <script>
