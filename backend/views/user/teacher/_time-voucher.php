@@ -130,6 +130,7 @@ $columns = [
 			'contentOptions' => ['class' => 'text-right'],
 			'hAlign' => 'right',
 			'format'=> 'currency',
+			'visible' => Yii::$app->user->can('administrator') || Yii::$app->user->can('owner') 
 		],
 			[
 		'label' => 'Cost',
@@ -140,7 +141,8 @@ $columns = [
 		'contentOptions' => ['class' => 'text-right'],
 			'hAlign'=>'right',
 			'pageSummary'=>true,
-            'pageSummaryFunc'=>GridView::F_SUM
+            'pageSummaryFunc'=>GridView::F_SUM,
+			'visible' => Yii::$app->user->can('administrator') || Yii::$app->user->can('owner') 
 	],
 ];
 } else {
@@ -175,7 +177,8 @@ $columns = [
 		'contentOptions' => ['class' => 'text-right'],
 			'hAlign'=>'right',
 			'pageSummary'=>true,
-            'pageSummaryFunc'=>GridView::F_SUM
+            'pageSummaryFunc'=>GridView::F_SUM,
+			'visible' => Yii::$app->user->can('administrator') || Yii::$app->user->can('owner') 
 	],
 	];
 }
