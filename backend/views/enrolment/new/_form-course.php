@@ -28,12 +28,12 @@ use kartik\depdrop\DepDrop;
 		])->label(false)
 		?>
 	</div>
+	<?php if (Yii::$app->user->identity->isAdmin()) : ?>
 	<div class="col-xs-6 pull-left">
         <label>Rate (per hour)</label>
     </div>
 	<div class="col-xs-2"></div>
 	<div class="col-xs-4">
-		<?php if (Yii::$app->user->identity->isAdmin()) : ?>
 			<?php
 			echo $form->field($courseSchedule, 'programRate', [
 					'inputTemplate' => '<div class="input-group">'
@@ -41,8 +41,8 @@ use kartik\depdrop\DepDrop;
 				)->textInput(['class' => 'col-md-2 form-control	'])
 				->label(false);
 			?>
-<?php endif; ?>
 	</div>
+	<?php endif; ?>
 	<div class="col-xs-6 pull-left">
         <label>Duration</label>
     </div>
