@@ -13,6 +13,7 @@ use common\models\Item;
 class ItemSearch extends Item
 {
     public $showAllItems;
+    public $avoidDefaultItems;
 
     /**
      * {@inheritdoc}
@@ -20,7 +21,7 @@ class ItemSearch extends Item
     public function rules()
     {
         return [
-            [['code','description','price','showAllItems'], 'safe'],
+            [['avoidDefaultItems','code','description','price','showAllItems'], 'safe'],
         ];
     }
 
@@ -44,13 +45,18 @@ class ItemSearch extends Item
        $query = Item::find()
                  ->notDeleted()
                 ->defaultItems($locationId);
+       if($this->avoidDefaultItems)
+       {
+           $query = Item::find()
+                 ->notDeleted()
+                ->location($locationId);
+       }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
         if (!($this->load($params) && $this->validate())) {
-            print_r($dataProvider);die;
             return $dataProvider;
         }
     $query->location($locationId);
