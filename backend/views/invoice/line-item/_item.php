@@ -123,10 +123,8 @@ $(document).ready(function() {
 		   if(response.status)
 		   {			
 				$('input[name="Payment[amount]"]').val(response.amount);
-                //invoice.updateSummarySectionAndStatus();
 				$('#invoice-line-item-modal').modal('hide');
-                //$.pjax.reload({container: "#invoice-lineitem-view", replace: false, async: false, timeout: 6000});
-               // $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});

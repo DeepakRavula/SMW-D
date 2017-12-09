@@ -65,6 +65,7 @@ $(document).off('click', '.adjust-tax-form-save').on('click', '.adjust-tax-form-
             if(response.status)
             {
                 $.pjax.reload({container: "#invoice-view", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
                 $('#adjust-tax-modal').modal('hide');
@@ -80,6 +81,7 @@ $(document).off('click', '.adjust-tax-form-save').on('click', '.adjust-tax-form-
 
 $(document).on('click', '.tax-adj-cancel', function () {
     $('#adjust-tax-modal').modal('hide');
+        $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
     return false;
 });

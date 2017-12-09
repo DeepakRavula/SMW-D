@@ -273,23 +273,6 @@ Modal::end();
 		});
 		return false;
   	});
-	$(document).on('change keyup paste', '#invoice-username', function (e) {
-		var userName = $(this).val();
-		var id = '<?= $model->id;?>';
-		var params = $.param({'id' : id, 'userName' : userName});
-		$.ajax({
-            url    : '<?= Url::to(['invoice/fetch-user']); ?>?' + params,
-            type   : 'get',
-            dataType: 'json',
-            success: function(response)
-            {
-               if(response.status) {
-				   $('#invoice-customer-modal .modal-body').html(response.data);
-			   }
-            }
-        });
-		return false;
-	});
 	$(document).on('click', '.customer-cancel', function (e) {
 		$('#invoice-customer-modal').modal('hide');
 		return false;
@@ -417,6 +400,7 @@ Modal::end();
 					$('#payment-modal').modal('hide');
 					$.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
 				}else
 				{
@@ -457,8 +441,9 @@ Modal::end();
                     {
                        if(response.status)
                             {
-                                    $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                                $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000}); 
                                     if(response.message) {
                                             $('#success-notification').html(response.message).fadeIn().delay(8000).fadeOut();
@@ -485,6 +470,7 @@ Modal::end();
 			   {
 					$.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
 					$('input[name="Payment[amount]"]').val(response.amount);
                     $('#payment-edit-modal').modal('hide');

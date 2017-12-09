@@ -1,11 +1,11 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
-use kartik\switchinput\SwitchInput;
 use backend\models\search\InvoiceSearch;
+use yii\widgets\Pjax;
 ?>
 
+<?php Pjax::Begin(['id' => 'invoice-header-summary']) ?>
 <?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
     <?php if ((bool) !$model->isDeleted()): ?>
 	<?=	Html::a('<i title="Delete" class="fa fa-trash"></i>', ['delete', 'id' => $model->id],
@@ -43,3 +43,4 @@ use backend\models\search\InvoiceSearch;
     \NumberFormatter::MIN_FRACTION_DIGITS => 2,
     \NumberFormatter::MAX_FRACTION_DIGITS => 2,
 ]]); ?>
+<?php Pjax::end();?>
