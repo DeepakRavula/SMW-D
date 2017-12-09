@@ -49,16 +49,18 @@ use yii\helpers\Url;
             </div>
         </div>
         <div class="row">
-            <div class="col-md-7">
+            <div class="col-md-7 text-right">
             <dt>Price</dt>
             <dd><?= $form->field($model, 'amount')->textInput(['id' => 'amount-line'])->label(false);?></dd>
             </div>
-            <div class="col-md-5">
+			<?php if(Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')) :?>
+            <div class="col-md-5 text-right">
                 <dl class="item-view">
                     <dt>Cost</label></dt>
                     <dd><?= $form->field($model, 'cost')->textInput()->label(false);?></dd>
                 </dl>
             </div>
+			<?php endif;?>
         </div>
         <div class="row">
             <div class="col-md-6">
