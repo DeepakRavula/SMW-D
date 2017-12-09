@@ -74,3 +74,17 @@
     padding-top:6px;
     padding-left:60px;
 }
+.percen {
+    position: absolute;
+    left: 610px;
+}
+.dolar-symbol {
+    padding-top:7px;
+}
+.on-off-symbol {
+    display: none;
+}
+.switch-button {
+    position: absolute;
+    left: 250px;
+}
