@@ -17,7 +17,6 @@ class InvoiceDiscount extends Model
     public $type;
     public $valueType;
     public $value;
-    public $clearValue;
 
     /**
      * {@inheritdoc}
@@ -26,8 +25,7 @@ class InvoiceDiscount extends Model
     {
         return [
             [['invoiceLineItemId', 'valueType', 'type'], 'integer'],
-            [['value'], 'number', 'min' => 0, 'max' => 100],
-            [['clearValue'], 'safe']
+            [['value'], 'number', 'min' => 0, 'max' => 100]
         ];
     }
     
@@ -55,11 +53,7 @@ class InvoiceDiscount extends Model
         if ($this->validate()) {
             $lineItemDiscount = $this->getDiscountModel();
             $lineItemDiscount->invoiceLineItemId = $this->invoiceLineItemId;
-            if ($this->clearValue) {
-                $lineItemDiscount->value = null;
-            } else {
-                $lineItemDiscount->value = $this->value;
-            }
+            $lineItemDiscount->value = $this->value;
             $lineItemDiscount->valueType = (int) $this->valueType;
             $lineItemDiscount->type = $this->type;
             if (!$lineItemDiscount->save()) {
@@ -76,7 +70,7 @@ class InvoiceDiscount extends Model
         if (is_array($values)) {
             $attributes = array_flip($safeOnly ? $this->safeAttributes() : $this->attributes());
             foreach ($values as $name => $value) {
-                if (isset($attributes[$name]) && (!empty($values[$name]) || $values[$name] == 0)) {
+                if (isset($attributes[$name]) && $values[$name] != null && (!empty($values[$name]) || $values[$name] == 0)) {
                     $this->$name = $value;
                 } elseif ($safeOnly) {
                     $this->onUnsafeAttribute($name, $value);

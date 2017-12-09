@@ -15,3 +15,62 @@
     font-weight: 300;
     color: #000;
 }
+
+@media (min-width: 768px) {
+  .item-view dt {
+    float: left;
+    width: 110px;
+    overflow: hidden;
+    clear: left;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .item-view dd {
+    margin-left: 130px;
+  }
+}
+@media (min-width: 768px) {
+  .item-main-view dt {
+    float: left;
+    width: 90px;
+    overflow: hidden;
+    clear: left;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-top:6px;
+  }
+  .item-main-view dd {
+    margin-left: 110px;
+    margin-right: 20px;
+  }
+}
+.item-main-view .item-code dd {
+    padding-top: 6px;
+}
+.item-code {
+    height: 40px;
+}
+@media (min-width: 768px) {
+  .item-tax dt {
+    float: left;
+    width: 90px;
+    overflow: hidden;
+    clear: left;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-top:6px;
+  }
+  .item-tax dd {
+    margin-left: 20px;
+    padding-top:6px;
+    width: 300px;
+    height: 40px;
+  }
+}
+.item-tax-edit {
+    padding-top:6px;
+    padding-left:60px;
+}

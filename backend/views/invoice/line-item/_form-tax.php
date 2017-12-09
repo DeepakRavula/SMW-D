@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
@@ -11,7 +10,7 @@ use common\models\TaxStatus;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <div class="lesson-qualify p-10">
-
+<div id="edit-tax-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <?php $form = ActiveForm::begin([
 	'layout' => 'horizontal',
     'id' => 'edit-tax-form',
@@ -28,12 +27,7 @@ use common\models\TaxStatus;
             <?php echo $form->field($model, 'taxPercentage', [
 					'inputTemplate' => '<div class="input-group">'
 					. '{input}<span class="input-group-addon">%</span></div>'])->textInput(['readonly' => true, 'class' => 'right-align form-control'])->label('Tax Rate') ?>
-           <div class="col-md-12">
-    <div class="form-group pull-right">
-        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default edit-tax-cancel']);?>
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
-    </div>
-	</div>
+           
 	</div>
 	<?php ActiveForm::end(); ?>
 
@@ -73,7 +67,12 @@ use common\models\TaxStatus;
         return false;
     });
 });
-$(document).off('beforeSubmit', '#edit-tax-form').on('beforeSubmit', '#edit-tax-form', function () {
+$(document).off('click', '.edit-tax-save').on('click', '.edit-tax-save', function () {
+    var tax = $('#lineitem-tax_status').val();
+    if ($.isEmptyObject(tax)) {
+        $('#edit-tax-error-notification').html('Please fix the error!').fadeIn().delay(5000).fadeOut();
+        return false;
+    }
     $('#tax-spinner').show();
     var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
     var params = $.param({ 'InvoiceLineItem[ids]' : selectedRows });
@@ -81,7 +80,7 @@ $(document).off('beforeSubmit', '#edit-tax-form').on('beforeSubmit', '#edit-tax-
         url    : '<?= Url::to(['tax-status/edit-line-item-tax']) ?>?' + params,
         type   : 'post',
         dataType: "json",
-        data   : $(this).serialize(),
+        data   : $('#edit-tax-form').serialize(),
         success: function(response)
         {
             if(response.status)
