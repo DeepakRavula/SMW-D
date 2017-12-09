@@ -43,13 +43,14 @@ class ItemSearch extends Item
     {
         $locationId = Yii::$app->session->get('location_id');
        $query = Item::find()
-                 ->notDeleted()
-                ->defaultItems($locationId);
+                 ->notDeleted();
        if($this->avoidDefaultItems)
        {
-           $query = Item::find()
-                 ->notDeleted()
-                ->location($locationId);
+               $query->location($locationId);
+       }
+       else
+       {
+         $query->defaultItems($locationId);  
        }
 
         $dataProvider = new ActiveDataProvider([
