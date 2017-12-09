@@ -66,15 +66,19 @@ use common\models\Qualification;
 			]); ?>
         </div>
 	   <?php endif; ?>
+	   <?php if(Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')) : ?>
         <div class="col-md-6">
             <?= $form->field($model, 'rate')->textInput(['class' => 'right-align form-control']);?>
         </div>
+	   <?php endif; ?>
     </div>
 <div class="row">
     <div class="col-md-12">
         <div class="pull-right">
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default qualification-cancel']);?>
+	   		<?php if(Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')) : ?>
            <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
+			<?php endif; ?>
         <div class="clearfix"></div>
 	</div>
         <div class="pull-left">

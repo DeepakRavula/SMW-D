@@ -87,8 +87,9 @@ $(document).ready(function() {
     });
     
     $('input[name="Invoice[isSent]"]').on('switchChange.bootstrapSwitch', function(event, state) {
+		var params = $.param({'state' : state | 0});
 	$.ajax({
-            url    : '<?= Url::to(['invoice/update-mail-status', 'id' => $model->id]) ?>',
+            url    : '<?= Url::to(['invoice/update-mail-status', 'id' => $model->id]) ?>&' + params,
             type   : 'POST',
             dataType: "json",
 			data   : $('#mail-flag').serialize(),
@@ -124,10 +125,8 @@ $(document).ready(function() {
 		   if(response.status)
 		   {			
 				$('input[name="Payment[amount]"]').val(response.amount);
-                //invoice.updateSummarySectionAndStatus();
 				$('#invoice-line-item-modal').modal('hide');
-                //$.pjax.reload({container: "#invoice-lineitem-view", replace: false, async: false, timeout: 6000});
-               // $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});

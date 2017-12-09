@@ -32,7 +32,7 @@ class Qualification extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['program_id', 'rate'], 'required'],
+            [['program_id'], 'required'],
             [['teacher_id', 'program_id', 'type',], 'integer'],
 			[['rate'], 'number', 'min' => 1.00, 'max' => 2000.00, 'message' => 'Invalid rate'],
 			[['isDeleted'], 'safe']

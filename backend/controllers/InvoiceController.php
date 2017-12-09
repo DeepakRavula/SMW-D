@@ -446,11 +446,11 @@ class InvoiceController extends Controller
         }
     }
 
-    public function actionUpdateMailStatus($id)
+    public function actionUpdateMailStatus($id, $state)
     {
         $request = Yii::$app->request;
         $model = $this->findModel($id);
-        $model->load($request->post());
+        $model->isSent = $state;
         $model->save();
     }
 

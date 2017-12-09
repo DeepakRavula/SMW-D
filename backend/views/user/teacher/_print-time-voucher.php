@@ -88,6 +88,8 @@ $columns = [
 			'contentOptions' => ['class' => 'text-right'],
 			'hAlign' => 'right',
 			'format'=>['decimal',2],
+			'visible' => Yii::$app->user->can('administrator') || Yii::$app->user->can('owner') 
+			
 		],
 		[
 		'label' => 'Cost',
@@ -130,6 +132,7 @@ $columns = [
 		'value' => function ($data) {
 			return $data->getLessonCost($data->invoice->date, $data->lesson->teacherId);
 		},
+		'visible' => Yii::$app->user->can('administrator') || Yii::$app->user->can('owner'),
 		'contentOptions' => ['class' => 'text-right'],
 			'hAlign'=>'right',
 			'pageSummary'=>true,

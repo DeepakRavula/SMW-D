@@ -87,6 +87,7 @@ $(document).off('click', '.edit-tax-save').on('click', '.edit-tax-save', functio
             {
                 $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
                 $('#tax-spinner').hide();
                 $('#edit-tax-modal').modal('hide');
