@@ -46,7 +46,7 @@ DatePickerAsset::register($this);
 <div class="clearfix"></div>
 <div class="pull-right m-t-10">
 	<?= Html::a('Cancel', '#', ['class' => 'btn btn-default private-enrol-cancel']); ?>
-	<button class="btn btn-info" type="submit" >Preview Lessons</button>
+	<button class="btn btn-info enrolment-save-btn" type="submit" >Preview Lessons</button>
 </div>
 <div class="pull-left m-t-10">
 	<button class="btn btn-info step2-back" type="submit" >Back</button>

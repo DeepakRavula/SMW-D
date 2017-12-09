@@ -8,6 +8,7 @@ use common\models\Course;
 use common\models\CourseSchedule;
 use backend\models\discount\EnrolmentDiscount;
 ?>
+<div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="user-create-form">
 
 <?php
@@ -55,6 +56,26 @@ var enrolment = {
 	}
 };
 $(document).ready(function () {
+	$('#enrolment-form').on('afterValidate', function (event, messages) {
+		if(messages["course-programid"].length) {
+			$('#notification').remove();
+			$('.field-courseschedule-fromtime p').text('');
+			$('#error-notification').html('Form has error. Please fix and try again.').fadeIn().delay(3000).fadeOut();
+		}  else{
+		}
+    });
+	 $(document).on('beforeSubmit', '#enrolment-form', function(){
+        $.ajax({
+            url    : $(this).attr('action'),
+            type   : 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function(response)
+            {
+            }
+        });
+        return false;
+    });
 	$(document).on('change', '#course-programid, #courseschedule-duration, #courseschedule-programrate, #payment-frequency-discount, #enrolment-discount', function(){
 		if ($(this).attr('id') != "course-programid") {
 			var programRate = $('#courseschedule-programrate').val();

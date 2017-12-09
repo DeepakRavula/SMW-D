@@ -236,6 +236,7 @@ $(document).ready(function(){
 	$('#new-enrolment-form').on('afterValidate', function (event, messages) {
 		if(messages["course-programid"].length || messages["userprofile-lastname"].length || messages["userprofile-firstname"].length || messages["userphone-number"].length || messages["useraddress-address"].length) {
 			$('#notification').remove();
+			$('.field-courseschedule-fromtime p').text('');
 			$('#error-notification').html('Form has error. Please fix and try again.').fadeIn().delay(3000).fadeOut();
 		}  else{
 		}
