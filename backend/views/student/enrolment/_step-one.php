@@ -33,11 +33,11 @@ $privatePrograms = ArrayHelper::map(Program::find()
 			<label class="modal-form-label">Rate (per hour)</label>
 		</div>
 		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
-		<div class="col-xs-3">
-			<?php
-			echo $form->field($courseSchedule, 'programRate')->textInput(['class' => 'col-md-2 form-control	'])
-				->label(false);
-			?>
+		<div class="col-xs-3 enrolment-field">
+				<?php
+				echo $form->field($courseSchedule, 'programRate')->textInput(['class' => 'form-control	'])
+					->label(false);
+				?>
 		</div>
 		<div class="col-xs-1 enrolment-text"><label class="text-muted">/hr</label></div>
 	</div>

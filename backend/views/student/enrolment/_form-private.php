@@ -57,23 +57,25 @@ var enrolment = {
 };
 $(document).ready(function () {
 	$('#enrolment-form').on('afterValidate', function (event, messages) {
-		if(messages["course-programid"].length) {
-			$('#notification').remove();
-			$('.field-courseschedule-fromtime p').text('');
-			$('#error-notification').html('Form has error. Please fix and try again.').fadeIn().delay(3000).fadeOut();
-		}  else{
+		if($('#course-teacherid').val() == "") {
+			$('#enrolment-form').yiiActiveForm('updateAttribute', 'course-teacherid', ["Teacher cannot be blank"]);
+			
+		}else if($('#courseschedule-day').val() == "") {
+			$('#error-notification').html('Please choose the date/time in the calendar').fadeIn().delay(3000).fadeOut();
 		}
+		$('#notification').remove();
+		$('.field-courseschedule-fromtime p').text('');
     });
 	 $(document).on('beforeSubmit', '#enrolment-form', function(){
-        $.ajax({
-            url    : $(this).attr('action'),
-            type   : 'post',
-            dataType: "json",
-            data: $(this).serialize(),
-            success: function(response)
-            {
-            }
-        });
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data: $(this).serialize(),
+			success: function(response)
+			{
+			}
+		});
         return false;
     });
 	$(document).on('change', '#course-programid, #courseschedule-duration, #courseschedule-programrate, #payment-frequency-discount, #enrolment-discount', function(){

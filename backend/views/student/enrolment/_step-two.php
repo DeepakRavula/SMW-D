@@ -8,7 +8,6 @@ use kartik\date\DatePickerAsset;
 
 DatePickerAsset::register($this);
 ?>
-<h4><strong>Teacher</strong></h4>
 <div class="row user-create-form">
 <div class="col-md-4">
 <?php

@@ -194,16 +194,27 @@ $(document).ready(function(){
      	});
 	}
 	$(document).on('click', '.step1-next', function() {
-		$('#step-1, #step-3, #step-4').hide();
- 		$('#reverse-enrol-modal .modal-dialog').css({'width': '1000px'});
-		$('#step-2').show();
-        loadCalendar();
+		if($('#course-programid').val() == "") {
+			$('#new-enrolment-form').yiiActiveForm('updateAttribute', 'course-programid', ["Program cannot be blank"]);
+		} else {
+			$('#step-1, #step-3, #step-4').hide();
+			$('#reverse-enrol-modal .modal-dialog').css({'width': '1000px'});
+			$('#step-2').show();
+			loadCalendar();
+		}
 		return false;
 	});
 	$(document).on('click', '.step2-next', function() {
-		$('#step-1, #step-2, #step-4').hide();
-		$('#step-3').show();
- 		$('#reverse-enrol-modal .modal-dialog').css({'width': '600px'});
+		if($('#course-teacherid').val() == "") {
+			$('#new-enrolment-form').yiiActiveForm('updateAttribute', 'course-teacherid', ["Teacher cannot be blank"]);
+			
+		}else if($('#courseschedule-day').val() == "") {
+			$('#error-notification').html('Please choose the date/time in the calendar').fadeIn().delay(3000).fadeOut();
+		} else {
+			$('#step-1, #step-2, #step-4').hide();
+			$('#step-3').show();
+			$('#reverse-enrol-modal .modal-dialog').css({'width': '600px'});
+		}
 		return false;
 	});
 	$(document).on('click', '.step2-back', function() {
@@ -213,11 +224,21 @@ $(document).ready(function(){
 		return false;
 	});
 	$(document).on('click', '.step3-next', function() {
-		$('#step-1, #step-2, #step-3').hide();
-		$('#step-4').show();
- 		$('#reverse-enrol-modal .modal-dialog').css({'width': '400px'});
-		var lastName = $('#userprofile-lastname').val();
-		$('#student-last_name').val(lastName);
+		if($('#userprofile-firstname').val() == "") {
+			$('#new-enrolment-form').yiiActiveForm('updateAttribute', 'userprofile-firstname', ["Firstname cannot be blank"]);
+		} else if($('#userprofile-lastname').val() == "") {
+			$('#new-enrolment-form').yiiActiveForm('updateAttribute', 'userprofile-lastname', ["Lastname cannot be blank"]);
+		} else if($('#userphone-number').val() == "") {
+			$('#new-enrolment-form').yiiActiveForm('updateAttribute', 'userphone-number', ["Number cannot be blank"]);
+		} else if($('#useraddress-address').val() == "") {
+			$('#new-enrolment-form').yiiActiveForm('updateAttribute', 'useraddress-address', ["Address cannot be blank"]);
+		} else {
+			$('#step-1, #step-2, #step-3').hide();
+			$('#step-4').show();
+			$('#reverse-enrol-modal .modal-dialog').css({'width': '400px'});
+			var lastName = $('#userprofile-lastname').val();
+			$('#student-last_name').val(lastName);
+		}
 		return false;
 	});
 	$(document).on('click', '.step3-back', function() {
@@ -233,14 +254,6 @@ $(document).ready(function(){
  		$('#reverse-enrol-modal .modal-dialog').css({'width': '600px'});
 		return false;
 	});
-	$('#new-enrolment-form').on('afterValidate', function (event, messages) {
-		if(messages["course-programid"].length || messages["userprofile-lastname"].length || messages["userprofile-firstname"].length || messages["userphone-number"].length || messages["useraddress-address"].length) {
-			$('#notification').remove();
-			$('.field-courseschedule-fromtime p').text('');
-			$('#error-notification').html('Form has error. Please fix and try again.').fadeIn().delay(3000).fadeOut();
-		}  else{
-		}
-    });
 	$(document).on('click', '.new-enrol-btn', function() {
 		$('#step-2,#step-3, #step-4').hide();
 		$('#step-1').show();

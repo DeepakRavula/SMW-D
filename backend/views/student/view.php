@@ -200,11 +200,15 @@ $this->params['label'] = $this->render('_title', [
             return false;
 		});
 		$(document).on('click', '.step1-next', function () {
-			$('#step-1').hide();
-			$('#step-2').show();
-			loadCalendar();
- 			$('#private-enrol-modal .modal-dialog').css({'width': '1000px'});
-            return false;
+			if($('#course-programid').val() == "") {
+				$('#enrolment-form').yiiActiveForm('updateAttribute', 'course-programid', ["Program cannot be blank"]);
+			} else {
+				$('#step-1').hide();
+				$('#step-2').show();
+				loadCalendar();
+				$('#private-enrol-modal .modal-dialog').css({'width': '1000px'});
+				return false;
+			}
 		});
 		$(document).on('click', '.step2-back', function () {
 			$('#step-1').show();
