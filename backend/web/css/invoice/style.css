@@ -84,7 +84,15 @@
 .on-off-symbol {
     display: none;
 }
-.switch-button {
+.tax-status {
     position: absolute;
-    left: 250px;
+    left: 5px;
+}
+.tax-rate {
+    position: absolute;
+    right: 5px;
+    font-size: 15px;
+}
+#lineitem-tax_status {
+    margin-left: 20px;
 }
