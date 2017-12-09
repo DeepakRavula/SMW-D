@@ -41,8 +41,8 @@ class ItemSearch extends Item
     public function search($params)
     {
         $locationId = Yii::$app->session->get('location_id');
-        $query = Item::find()
-                ->notDeleted()
+       $query = Item::find()
+                 ->notDeleted()
                 ->defaultItems($locationId);
 
         $dataProvider = new ActiveDataProvider([
@@ -50,20 +50,24 @@ class ItemSearch extends Item
         ]);
 
         if (!($this->load($params) && $this->validate())) {
+            print_r($dataProvider);die;
             return $dataProvider;
         }
-
+    $query->location($locationId);
         if (!$this->showAllItems) {
             $query->active();
         }
         if(empty($this->code)&&empty($this->description)&& empty($this->price))
         {
-            return $dataProvider;
+          
         }
         else
         {
         $query->andFilterWhere(['like', 'code', $this->code])
-			->andFilterWhere(['like', 'description', $this->description]);
+              ->andFilterWhere(['like', 'description', $this->description])
+              ->location($locationId);  
+                
+        
         }   
     return $dataProvider;
 }
