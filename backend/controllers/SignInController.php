@@ -64,10 +64,8 @@ class SignInController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            $user = $model->getUser();
-           $roles = Yii::$app->authManager->getRolesByUser($user->id);
-			$role = end($roles);            
-           if($role->name === USER::ROLE_STAFFMEMBER)
+            $user = $model->getUser();           
+           if($user->isStaff())
            {
                return $this->redirect(['schedule/index']);
            }
