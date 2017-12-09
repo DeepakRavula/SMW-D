@@ -141,20 +141,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $code;
     }
 
-    public function setAttributes($values, $safeOnly = true)
-    {
-        if (is_array($values)) {
-            $attributes = array_flip($safeOnly ? $this->safeAttributes() : $this->attributes());
-            foreach ($values as $name => $value) {
-                if (isset($attributes[$name]) && (!empty($values[$name]) || $values[$name] == 0)) {
-                    $this->$name = $value;
-                } elseif ($safeOnly) {
-                    $this->onUnsafeAttribute($name, $value);
-                }
-            }
-        }
-    }
-    
     public function getItemCode()
     {
         return $this->itemType->getItemCode();

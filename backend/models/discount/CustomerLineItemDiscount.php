@@ -41,6 +41,5 @@ class CustomerLineItemDiscount extends InvoiceDiscount
     {
         $this->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
         $this->type = InvoiceLineItemDiscount::TYPE_CUSTOMER;
-        $this->clearValue = false;
     }
 }
