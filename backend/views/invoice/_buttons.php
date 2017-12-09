@@ -15,7 +15,7 @@ use yii\widgets\Pjax;
             	'confirm' => 'Are you sure you want to delete this invoice?',
             	'method' => 'post',
             ],
-			'id' => 'delete-button',
+			'id' => 'invoice-delete-button',
 		])?>
     <?php endif; ?>
 	<?php else : ?>
