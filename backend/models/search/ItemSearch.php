@@ -66,7 +66,7 @@ class ItemSearch extends Item
         }
         if(empty($this->code)&&empty($this->description)&& empty($this->price))
         {
-          return dataProvider;
+          return $dataProvider;
         }
         else
         {
