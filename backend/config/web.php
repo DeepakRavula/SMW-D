@@ -135,7 +135,7 @@ $config = [
 					'release-notes', 'lesson', 'invoice', 'timeline-event',
 					'enrolment','teacher-room', 'program', 'customer', 'email',
 					'teacher-availability', 'group-course', 'group-lesson',
-					'group-enrolment', 'payment', 'course', 'dashboard', 'log',
+					'group-enrolment', 'payment', 'course', 'log',
 					'invoice-line-item', 'holiday', 'qualification',
 					'customer-payment-preference','tax-code', 'vacation', 
 					'customer-discount', 'classroom', 'report', 'teacher-rate',
@@ -144,6 +144,12 @@ $config = [
 				],
                 'allow' => true,
                 'roles' => ['staffmember'],
+            ],
+			[
+                'controllers' => ['dashboard'],
+                'allow' => true,
+                'roles' => ['owner'],
+                'actions' => ['index'],
             ],
             [
                 'controllers' => ['program', 'city', 'location', 'province', 'country', 'discount'],
