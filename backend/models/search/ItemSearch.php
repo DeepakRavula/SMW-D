@@ -59,13 +59,13 @@ class ItemSearch extends Item
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-    $query->location($locationId);
+
         if (!$this->showAllItems) {
             $query->active();
         }
         if(empty($this->code)&&empty($this->description)&& empty($this->price))
         {
-          
+          return dataProvider;
         }
         else
         {
