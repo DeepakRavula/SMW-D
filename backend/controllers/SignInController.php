@@ -64,8 +64,7 @@ class SignInController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            $user = $model->getUser();
-            if ($user->isStaff()) {
+            if(Yii::$app->user->can('staffmember')) {
                 return $this->redirect(['schedule/index']);
             }
             return $this->goBack();
