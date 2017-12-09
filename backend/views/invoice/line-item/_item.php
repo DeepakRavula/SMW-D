@@ -86,8 +86,9 @@ $(document).ready(function() {
     });
     
     $('input[name="Invoice[isSent]"]').on('switchChange.bootstrapSwitch', function(event, state) {
+		var params = $.param({'state' : state | 0});
 	$.ajax({
-            url    : '<?= Url::to(['invoice/update-mail-status', 'id' => $model->id]) ?>',
+            url    : '<?= Url::to(['invoice/update-mail-status', 'id' => $model->id]) ?>&' + params,
             type   : 'POST',
             dataType: "json",
 			data   : $('#mail-flag').serialize(),
