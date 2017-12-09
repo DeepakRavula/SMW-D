@@ -13,6 +13,7 @@ use common\models\Item;
 class ItemSearch extends Item
 {
     public $showAllItems;
+    public $avoidDefaultItems;
 
     /**
      * {@inheritdoc}
@@ -20,7 +21,7 @@ class ItemSearch extends Item
     public function rules()
     {
         return [
-            [['code','description','price','showAllItems'], 'safe'],
+            [['avoidDefaultItems','code','description','price','showAllItems'], 'safe'],
         ];
     }
 
@@ -41,9 +42,16 @@ class ItemSearch extends Item
     public function search($params)
     {
         $locationId = Yii::$app->session->get('location_id');
-        $query = Item::find()
-                ->notDeleted()
-                ->defaultItems($locationId);
+       $query = Item::find()
+                 ->notDeleted();
+       if($this->avoidDefaultItems)
+       {
+               $query->location($locationId);
+       }
+       else
+       {
+         $query->defaultItems($locationId);  
+       }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -58,12 +66,15 @@ class ItemSearch extends Item
         }
         if(empty($this->code)&&empty($this->description)&& empty($this->price))
         {
-            return $dataProvider;
+          return dataProvider;
         }
         else
         {
         $query->andFilterWhere(['like', 'code', $this->code])
-			->andFilterWhere(['like', 'description', $this->description]);
+              ->andFilterWhere(['like', 'description', $this->description])
+              ->location($locationId);  
+                
+        
         }   
     return $dataProvider;
 }
