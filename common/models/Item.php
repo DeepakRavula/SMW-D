@@ -193,13 +193,13 @@ class Item extends \yii\db\ActiveRecord
         return $amount;
     }
     
-    public function loadCustomerDiscount($id)
+    public function loadCustomerDiscount($id, $value = null)
     {
         if (!$this->isOpeningBalance()) {
             $lineItem = InvoiceLineItem::findOne($id);
             $customerDiscount = new CustomerLineItemDiscount();
             if ($lineItem->hasCustomerDiscount()) {
-                $customerDiscount = $customerDiscount->setModel($lineItem->customerDiscount);
+                $customerDiscount = $customerDiscount->setModel($lineItem->customerDiscount, $value);
             }
             $customerDiscount->invoiceLineItemId = $id;
             return $customerDiscount;
@@ -207,13 +207,14 @@ class Item extends \yii\db\ActiveRecord
         return null;
     }
     
-    public function loadPaymentFrequencyDiscount($id)
+    public function loadPaymentFrequencyDiscount($id, $value = null)
     {
         if ($this->isLesson()) {
             $lineItem = InvoiceLineItem::findOne($id);
             $paymentFrequencyDiscount = new PaymentFrequencyLineItemDiscount();
             if ($lineItem->hasEnrolmentPaymentFrequencyDiscount()) {
-                $paymentFrequencyDiscount = $paymentFrequencyDiscount->setModel($lineItem->enrolmentPaymentFrequencyDiscount);
+                $paymentFrequencyDiscount = $paymentFrequencyDiscount->setModel(
+                        $lineItem->enrolmentPaymentFrequencyDiscount, $value);
             }
             $paymentFrequencyDiscount->invoiceLineItemId = $id;
             return $paymentFrequencyDiscount;
@@ -221,13 +222,13 @@ class Item extends \yii\db\ActiveRecord
         return null;
     }
     
-    public function loadLineItemDiscount($id)
+    public function loadLineItemDiscount($id, $value = null)
     {
         if (!$this->isOpeningBalance()) {
             $lineItem = InvoiceLineItem::findOne($id);
             $lineItemDiscount = new LineItemDiscount();
             if ($lineItem->hasLineItemDiscount()) {
-                $lineItemDiscount = $lineItemDiscount->setModel($lineItem->lineItemDiscount);
+                $lineItemDiscount = $lineItemDiscount->setModel($lineItem->lineItemDiscount, $value);
             }
             $lineItemDiscount->invoiceLineItemId = $id;
             return $lineItemDiscount;
@@ -235,13 +236,14 @@ class Item extends \yii\db\ActiveRecord
         return null;
     }
     
-    public function loadMultiEnrolmentDiscount($id)
+    public function loadMultiEnrolmentDiscount($id, $value = null)
     {
         if ($this->isLesson()) {
             $lineItem = InvoiceLineItem::findOne($id);
             $multiEnrolmentDiscount = new EnrolmentLineItemDiscount();
             if ($lineItem->hasMultiEnrolmentDiscount()) {
-                $multiEnrolmentDiscount = $multiEnrolmentDiscount->setModel($lineItem->multiEnrolmentDiscount);
+                $multiEnrolmentDiscount = $multiEnrolmentDiscount->setModel(
+                        $lineItem->multiEnrolmentDiscount, $value);
             }
             $multiEnrolmentDiscount->invoiceLineItemId = $id;
             return $multiEnrolmentDiscount;
@@ -251,27 +253,32 @@ class Item extends \yii\db\ActiveRecord
     
     public function addToInvoice($invoice)
     {
+        $invoiceLineItemModel = null;
         foreach ($invoice->lineItems as $lineItem) {
             if ($lineItem->item_id === $this->id) {
                 $lineItem->unit += 1; 
-                return $lineItem->save();
+                $lineItem->save();
+                $invoiceLineItemModel = $lineItem;
+                break;
             }
         }
-        $invoiceLineItemModel = new InvoiceLineItem();
-        $userModel = User::findOne(['id' => Yii::$app->user->id]);
-        $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
-        $invoiceLineItemModel->userName = $userModel->publicIdentity;
-        $invoiceLineItemModel->invoice_id = $invoice->id;
-        $invoiceLineItemModel->item_id = $this->id;
-        $invoiceLineItemModel->unit = true;
-        $invoiceLineItemModel->description = $this->description;
-        $invoiceLineItemModel->amount = $this->price;
-        $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
-        $invoiceLineItemModel->cost        = 0.0;
-        if (!$invoiceLineItemModel->save()) {
-            Yii::error('Line item create error: '.VarDumper::dumpAsString($invoiceLineItemModel->getErrors()));
+        if (!$invoiceLineItemModel) {
+            $invoiceLineItemModel = new InvoiceLineItem();
+            $userModel = User::findOne(['id' => Yii::$app->user->id]);
+            $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
+            $invoiceLineItemModel->userName = $userModel->publicIdentity;
+            $invoiceLineItemModel->invoice_id = $invoice->id;
+            $invoiceLineItemModel->item_id = $this->id;
+            $invoiceLineItemModel->unit = true;
+            $invoiceLineItemModel->description = $this->description;
+            $invoiceLineItemModel->amount = $this->price;
+            $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
+            $invoiceLineItemModel->cost        = 0.0;
+            if (!$invoiceLineItemModel->save()) {
+                Yii::error('Line item create error: '.VarDumper::dumpAsString($invoiceLineItemModel->getErrors()));
+            }
+            $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
         }
-        $invoice->save();
-        return $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
+        return $invoiceLineItemModel;
     }
 }

@@ -75,11 +75,12 @@ $this->params['action-button'] = $actionButton; ?>
                     },
                 ],
                 [
+					'format' => 'currency',
                     'value' => function ($data) {
 						if ($data->isPaid()) {
-							return $data->total;
+							return Yii::$app->formatter->asDecimal($data->total);
 						} else {
-							return $data->invoiceBalance;
+							return Yii::$app->formatter->asDecimal($data->invoiceBalance);
 						}
                     },
                     'headerOptions' => ['class' => 'text-right'],
@@ -94,8 +95,9 @@ $this->params['action-button'] = $actionButton; ?>
                 ],
                 [
                     'label' => 'Total',
+					'format' => 'currency',
                     'value' => function ($data) {
-                        return $data->total;
+						return Yii::$app->formatter->asDecimal($data->total);
                     },
                     'headerOptions' => ['class' => 'text-right'],
                     'contentOptions' => ['class' => 'text-right'],
@@ -144,12 +146,13 @@ $this->params['action-button'] = $actionButton; ?>
                     },
                 ],
                 [
+					'format' => 'currency',
                     'value' => function ($data) {
                         if ((int) $data->type === Invoice::TYPE_INVOICE) {
                             if ($data->isPaid()) {
-                                return $data->total;
+								return Yii::$app->formatter->asDecimal($data->total);
                             } else {
-                                return $data->invoiceBalance;
+								return Yii::$app->formatter->asDecimal($data->invoiceBalance);
                             }
                         }
                     },
@@ -165,9 +168,10 @@ $this->params['action-button'] = $actionButton; ?>
                     'enableSorting' => false,
                 ],
 				[
+					'format' => 'currency',
                     'label' => 'Total',
                     'value' => function ($data) {
-                        return $data->total;
+						return Yii::$app->formatter->asDecimal($data->total);
                     },
                     'headerOptions' => ['class' => 'text-right'],
                     'contentOptions' => ['class' => 'text-right'],

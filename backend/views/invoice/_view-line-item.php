@@ -1,11 +1,14 @@
 <?php
-use common\models\InvoiceLineItem;
-use common\models\Qualification;
+
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 ?>
 <?php if ($searchModel->toggleAdditionalColumns) {
     $columns = [
+        [
+            'class' => 'yii\grid\CheckboxColumn',
+            'contentOptions' => ['style' => 'width:30px;'],
+        ],
         [
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:120px;'],
@@ -38,9 +41,10 @@ use yii\widgets\Pjax;
         [
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
+			'format' => 'currency',
             'attribute' => 'discount',
             'value' => function ($model) {
-                return $model->discount;
+                return Yii::$app->formatter->asDecimal($model->discount);
             },
         ],
         [
@@ -50,24 +54,29 @@ use yii\widgets\Pjax;
         ],
         [
             'label' => 'Cost',
+			'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
             'value' => function ($data) {
-                return $data->cost;
+                return Yii::$app->formatter->asDecimal($data->cost);
             },
         ],
         [
-            'format' => ['decimal', 4], 
             'label' => 'Price',
+			'format' => 'currency',
 			'headerOptions' => ['class' => 'text-right'],
 			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
 			'value' => function($data) {
-				return $data->itemTotal;	
+				return Yii::$app->formatter->asDecimal($data->itemTotal);	
 			},
         ],
     ];
 } else {
     $columns = [
+        [
+            'class' => 'yii\grid\CheckboxColumn',
+            'contentOptions' => ['style' => 'width:30px;'],
+        ],
         [
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:120px;'],
@@ -89,10 +98,10 @@ use yii\widgets\Pjax;
 			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
 		],
         [
-            'format' => ['decimal', 4], 
             'label' => 'Price',
+			'format' => 'currency',
 			'value' => function($data) {
-				return $data->itemTotal;	
+				return Yii::$app->formatter->asDecimal($data->itemTotal);	
 			},
 			'headerOptions' => ['class' => 'text-right'],
 			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
@@ -112,3 +121,19 @@ use yii\widgets\Pjax;
     ]);
     ?>
  <?php Pjax::end(); ?>
+
+<script>
+    $(document).on("click", "input[type='checkbox']", function(event) {
+        event.stopPropagation();
+    });
+    $(document).on("change", "input[type='checkbox']", function() {
+        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
+        if (selectedRows.length >= 2) {
+            $('.apply-discount').text('Edit Discounts...');
+            $('.edit-tax').text('Edit Taxes...');
+        } else {
+            $('.apply-discount').text('Edit Discount...');
+            $('.edit-tax').text('Edit Tax...');
+        }
+    });
+</script>

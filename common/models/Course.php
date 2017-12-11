@@ -184,7 +184,8 @@ class Course extends \yii\db\ActiveRecord
         if ((int) $this->program->isGroup()) {
 			$startDate = new \DateTime($this->startDate);
 			$this->startDate = (new \DateTime($this->startDate))->format('Y-m-d H:i:s');
-			$endDate = $startDate->add(new \DateInterval('P' . $this->weeksCount .'W'));	
+			$weeks = $this->weeksCount - 1;
+			$endDate = $startDate->add(new \DateInterval('P' . $weeks .'W'));	
 			$this->endDate = $endDate->format('Y-m-d H:i:s');
         } else {
             $endDate = (new Carbon($this->startDate))->addMonths(11);

@@ -16,7 +16,8 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['i
 <div class="col-xs-12 col-md-6 form-group form-inline">
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 </div>
-<div class="col-md-12">	
+<div class="clearfix"></div>
+<div class="col-md-4">	
     <?php
     LteBox::begin([
         'type' => LteConst::TYPE_DEFAULT,

@@ -41,6 +41,7 @@ class Invoice extends \yii\db\ActiveRecord
 	
     public $customer_id;
     public $credit;
+    public $taxAdjusted;
     public $discountApplied;
     public $toEmailAddress;
     public $subject;
@@ -92,7 +93,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
             [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 
-                'transactionId', 'balance'], 'safe']
+                'transactionId', 'balance', 'taxAdjusted'], 'safe']
         ];
     }
 
@@ -623,10 +624,8 @@ class Invoice extends \yii\db\ActiveRecord
     public function getNetSubtotal()
     {
         $subtotal = 0.0;
-        if (!empty($this->lineItems)) {
-            foreach ($this->lineItems as $lineItem) {
-                $subtotal += $lineItem->netPrice;
-            }
+        foreach ($this->lineItems as $lineItem) {
+            $subtotal += $lineItem->netPrice;
         }
 
         return $subtotal;

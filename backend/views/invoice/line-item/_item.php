@@ -8,7 +8,9 @@ use yii\widgets\Pjax;
 ?>
 <?php echo $this->render('/invoice/_line-item', [
         'invoiceModel' => $model,
-    'itemDataProvider' => $itemDataProvider
+    'itemDataProvider' => $itemDataProvider,
+    'searchModel'=>'$searchModel',
+    'itemSearchModel'=>$itemSearchModel,
     ]) ?>
 <?php Pjax::Begin(['id' => 'invoice-view-tab-item', 'timeout' => 6000]); ?>
 <?php $boxTools = $this->render('_button', [
@@ -59,8 +61,25 @@ $(document).ready(function() {
 	});
 
     $(document).on('click', '.apply-discount', function () {
-        $('#apply-discount-modal').modal('show');
-  		return false;
+        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(selectedRows)) {
+            $('#invoice-error-notification').html('Please select atleast a item to edit discount!').fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ 'InvoiceLineItem[ids]': selectedRows });
+            $.ajax({
+                url    : '<?= Url::to(['invoice-line-item/apply-discount']) ?>?' + params,
+                type   : 'get',
+                dataType: "json",
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#apply-discount-modal').modal('show');
+                        $('#apply-discount-modal .modal-dialog').css({'width': '700px'});
+                        $('#apply-discount-content').html(response.data);
+                    }
+                }
+            });
+        }
     });
     $(document).on('click', '.invoice-discount-cancel', function () {
         $('#apply-discount-modal').modal('hide');
@@ -68,8 +87,9 @@ $(document).ready(function() {
     });
     
     $('input[name="Invoice[isSent]"]').on('switchChange.bootstrapSwitch', function(event, state) {
+		var params = $.param({'state' : state | 0});
 	$.ajax({
-            url    : '<?= Url::to(['invoice/update-mail-status', 'id' => $model->id]) ?>',
+            url    : '<?= Url::to(['invoice/update-mail-status', 'id' => $model->id]) ?>&' + params,
             type   : 'POST',
             dataType: "json",
 			data   : $('#mail-flag').serialize(),
@@ -105,10 +125,8 @@ $(document).ready(function() {
 		   if(response.status)
 		   {			
 				$('input[name="Payment[amount]"]').val(response.amount);
-                //invoice.updateSummarySectionAndStatus();
 				$('#invoice-line-item-modal').modal('hide');
-                //$.pjax.reload({container: "#invoice-lineitem-view", replace: false, async: false, timeout: 6000});
-               // $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
@@ -124,7 +142,7 @@ $(document).ready(function() {
 });
 </script>
 <script>
-$('#delete-button').click(function(){
+$('#invoice-delete-button').click(function(){
     $.ajax({
         url    : '<?= Url::to(['invoice/delete', 'id' => $model->id]) ?>',
         type   : 'post',
@@ -141,5 +159,28 @@ $('#delete-button').click(function(){
         }
     });
     return false;
+});
+$(document).on('click', '.item-delete', function () {
+    var status = confirm("Are you sure you want to delete this item?");
+    if (status) {
+        var itemId = $('#line-item-grid tbody > tr').data('key'); 
+        $.ajax({
+            url    : '<?= Url::to(['invoice-line-item/delete']) ?>?id=' + itemId,
+            type   : 'post',
+            dataType: 'json',
+            success: function(response)
+            {
+               if(response.status)
+               {
+                    window.location.href = response.url;
+                    $('#invoice-success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+                    }else
+                    {
+                        $('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                    }
+            }
+        });
+        return false;
+    }
 });
 </script>    

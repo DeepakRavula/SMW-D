@@ -505,6 +505,9 @@ class UserController extends Controller
         $model->setModel($this->findModel($id));	
 		$userProfile  = $model->getModel()->userProfile;
 		if ($model->load($request->post()) && $userProfile->load($request->post())) {
+			if(!empty($model->password)) {
+        		$model->getModel()->setPassword($model->password);
+			}
 			if($model->save()) {
 				$userProfile->save();
 				return [

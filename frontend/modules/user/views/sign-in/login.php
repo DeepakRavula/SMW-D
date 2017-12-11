@@ -21,9 +21,11 @@ $this->params['breadcrumbs'][] = $this->title;
 	<div class="login-box-body">
         <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
         <div class="body">
-            <?php echo $form->field($model, 'identity') ?>
+			<div id="user-login-form">
+            <?php echo $form->field($model, 'identity')->label('Email') ?>
             <?php echo $form->field($model, 'password')->passwordInput() ?>
             <?php echo $form->field($model, 'rememberMe')->checkbox(['class' => 'simple']) ?>
+        </div>
         </div>
         <div class="footer">
             <?php echo Html::submitButton(Yii::t('backend', 'Sign me in'), [

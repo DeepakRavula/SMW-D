@@ -14,93 +14,121 @@ use yii\helpers\Html;
 
 $this->title = 'New Enrolment';
 ?>
-<h4><strong>Customer</strong></h4>
-<div class="row user-create-form">
-	<div class="col-md-6">
-		<?php echo $form->field($userProfile, 'firstname')->textInput(); ?>
+<div class="user-create-form">
+	<div class="row">
+		<div class="col-xs-3">
+			<label class="modal-form-label">Name</label>
+		</div>
+		<div class="col-xs-4">
+			<?php echo $form->field($userProfile, 'firstname')->textInput(['placeholder' => 'First Name'])->label(false); ?>
+		</div>
+		<div class="col-xs-5">
+			<?php echo $form->field($userProfile, 'lastname')->textInput(['placeholder' => 'Last Name'])->label(false); ?>
+		</div>
 	</div>
-	<div class="col-md-6">
-		<?php echo $form->field($userProfile, 'lastname')->textInput(); ?>
+	<div class="row">
+		<div class="col-xs-3">
+			<label class="modal-form-label">Email</label>
+		</div>	
+		<div class="col-xs-4">
+			<?= $form->field($userEmail, "email")->textInput(['placeholder' => 'Email', 'maxlength' => true])->label(false) ?>	
+		</div>
+		<div class="col-xs-5">
+			<?=
+				$form->field($userEmail, "labelId")->widget(Select2::classname(), [
+					'data' => ArrayHelper::map(Label::find()
+							->andWhere(['userAdded' => false])
+							->all(), 'id', 'name'),
+					'pluginOptions' => [
+						'tags' => true,
+					],
+				])->label(false);
+				?>
+		</div>
 	</div>
-	
-	<div class="col-md-6">
-<?=
-$form->field($userEmail, "labelId")->widget(Select2::classname(), [
-	'data' => ArrayHelper::map(Label::find()
-			->andWhere(['userAdded' => false])
-			->all(), 'id', 'name'),
-	'pluginOptions' => [
-		'tags' => true,
-	],
-])->label('Label');
-?>
+	<div class="row">
+		<div class="col-xs-3">
+			<label class="modal-form-label">Phone Number</label>
+		</div>	
+		<div class="col-xs-4">
+			<?= $form->field($phoneModel, 'number')->textInput(['placeholder' => 'Number'])->label(false); ?>	
+		</div>
+		<div class="col-xs-2">
+			<?= $form->field($phoneModel, 'extension')->textInput(['placeholder' => 'Ext'])->label(false); ?>
+		</div>
+		<div class="col-xs-3">
+	<?=
+	$form->field($phoneModel, "labelId")->widget(Select2::classname(), [
+		'data' => ArrayHelper::map(Label::find()
+				->andWhere(['userAdded' => false])
+				->all(), 'id', 'name'),
+		'options' => [
+			'id' => 'phone-label',
+		],
+		'pluginOptions' => [
+			'tags' => true,
+		],
+	])->label(false);
+	?>
+		</div>
 	</div>
-	<div class="col-md-6">
-<?= $form->field($userEmail, "email")->textInput(['maxlength' => true]) ?>
+	<div class="row">
+		<div class="col-xs-3">
+        	<label class="modal-form-label">Address</label>
+		</div>	
+		<div class="col-xs-4">
+	<?=
+	$form->field($addressModel, "labelId")->widget(Select2::classname(), [
+		'data' => ArrayHelper::map(Label::find()
+				->andWhere(['userAdded' => false])
+				->all(), 'id', 'name'),
+		'options' => [
+			'id' => 'address-label',
+		],
+		'pluginOptions' => [
+			'tags' => true,
+		],
+	])->label(false);
+	?>
+		</div>
 	</div>
-	<div class="col-md-4">
-<?=
-$form->field($phoneModel, "labelId")->widget(Select2::classname(), [
-	'data' => ArrayHelper::map(Label::find()
-			->andWhere(['userAdded' => false])
-			->all(), 'id', 'name'),
-	'options' => [
-		'id' => 'phone-label',
-	],
-	'pluginOptions' => [
-		'tags' => true,
-	],
-])->label('Label');
-?>
+	<div class="row">
+		<div class="col-xs-3"></div>
+		<div class="col-xs-9">
+	<?= $form->field($addressModel, 'address')->textInput(['placeholder' => 'Street Address'])->label(false); ?>
+		</div>
 	</div>
-	<div class="col-md-6">
-<?= $form->field($phoneModel, 'number')->textInput(); ?>
+	<div class="row">
+		<div class="col-xs-3"></div>
+		<div class="col-xs-4">
+	<?= $form->field($addressModel, 'cityId')->dropDownList(
+		ArrayHelper::map(City::find()->all(), 'id', 'name'))->label(false);
+	?>
+		</div>
+		<div class="col-xs-5">
+			<?= $form->field($addressModel, 'provinceId')->dropDownList(
+				ArrayHelper::map(Province::find()->all(), 'id', 'name'))->label(false);
+			?>
+		</div>
 	</div>
-	<div class="col-md-2">
-<?= $form->field($phoneModel, 'extension')->textInput(); ?>
+	<div class="row">
+		<div class="col-xs-3"></div>
+		<div class="col-xs-4">
+			<?= $form->field($addressModel, 'countryId')->dropDownList(
+				ArrayHelper::map(Country::find()->all(), 'id', 'name'))->label(false);
+			?>
+		</div>
+		<div class="col-xs-5">
+	<?= $form->field($addressModel, 'postalCode')->textInput(['placeholder' => 'Postal Code'])->label(false); ?>
+		</div>
 	</div>
-	
-	<div class="col-md-4">
-<?=
-$form->field($addressModel, "labelId")->widget(Select2::classname(), [
-	'data' => ArrayHelper::map(Label::find()
-			->andWhere(['userAdded' => false])
-			->all(), 'id', 'name'),
-	'options' => [
-		'id' => 'address-label',
-	],
-	'pluginOptions' => [
-		'tags' => true,
-	],
-])->label('Label');
-?>
+	<div class="row">
+		<div class="form-group pull-right">
+			<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
+			<button class="step3-next btn btn-info pull-right" type="button" >Next</button>
+		</div>
+		<div class="form-group pull-left">
+			<button class="step3-back btn btn-info" type="button" >Back</button>
+		</div>
 	</div>
-	<div class="col-md-4">
-<?= $form->field($addressModel, 'address')->textInput(['placeholder' => 'Street Address']); ?>
-	</div>
-	<div class="col-md-4">
-<?= $form->field($addressModel, 'cityId')->dropDownList(
-	ArrayHelper::map(City::find()->all(), 'id', 'name'));
-?>
-	</div>
-	<div class="col-md-4">
-		<?= $form->field($addressModel, 'provinceId')->dropDownList(
-			ArrayHelper::map(Province::find()->all(), 'id', 'name'));
-		?>
-	</div>
-	<div class="col-md-4">
-		<?= $form->field($addressModel, 'countryId')->dropDownList(
-			ArrayHelper::map(Country::find()->all(), 'id', 'name'));
-		?>
-	</div>
-	<div class="col-md-4">
-<?= $form->field($addressModel, 'postalCode')->textInput(['placeholder' => 'Postal Code']); ?>
-	</div>
-	<div class="form-group pull-right">
-		<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
-		<button class="step2-next btn btn-info pull-right" type="button" >Next</button>
-	</div>
-	<div class="form-group pull-left">
-		<button class="step2-back btn btn-info" type="button" >Back</button>
-    </div>
 </div>    

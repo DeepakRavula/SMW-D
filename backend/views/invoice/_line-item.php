@@ -3,7 +3,7 @@
 use yii\bootstrap\Modal;
 
 Modal::begin([
-    'header' => $this->render('_add-item-header', ['invoiceModel' => $invoiceModel]),
+    'header' =>  '<h4 class="m-0 pull-left">Add Line Items</h4>',
     'id' => 'invoice-line-item-modal',
     'closeButton' => false, 
 ]); ?>
@@ -14,17 +14,22 @@ Modal::begin([
 <div id="item-list-content">
 <?= $this->render('_form-invoice-line-item', [
         'invoiceModel' => $invoiceModel,
-        'itemDataProvider' => $itemDataProvider
+        'itemDataProvider' => $itemDataProvider,
+        'searchModel' => $searchModel,
+        'itemSearchModel' =>$itemSearchModel,
 ]); ?>
 </div>
 <?php 
 Modal::end();
 
 Modal::begin([
-    'header' => '<h4 class="m-0">Apply Discounts</h4>',
+    'header' => '<h4 class="m-0">Edit Discounts</h4>',
     'id' => 'apply-discount-modal',
-]);
-echo $this->render('_form-apply-discount', [
-        'invoiceModel' => $invoiceModel,
-]);
-Modal::end();
+    'footer' => $this->render('_submit-button', [
+        'deletable' => false,
+        'saveClass' => 'apply-discount-form-save', 
+        'cancelClass' => 'invoice-apply-discount-cancel'
+    ])
+]); ?>
+<div id="apply-discount-content"></div>
+<?php Modal::end(); ?>

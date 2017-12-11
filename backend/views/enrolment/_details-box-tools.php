@@ -1,1 +1,1 @@
-<i title="Edit" class="m-r-10 fa fa-pencil edit-enrolment-rate"></i>
+	<i title="Edit" class="m-r-10 fa fa-pencil edit-enrolment-rate"></i>

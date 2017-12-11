@@ -720,4 +720,10 @@ class User extends ActiveRecord implements IdentityInterface
         $role = end($roles);
         return $role === self::ROLE_ADMINISTRATOR;
     }
+     public function isStaff()
+    {
+        $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($this->id), 'name');
+        $role = end($roles);
+        return $role === self::ROLE_STAFFMEMBER;
+    }
 }

@@ -3,25 +3,21 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\discount\InvoiceLineItemDiscount;
-use backend\models\discount\CustomerLineItemDiscount;
-use backend\models\discount\EnrolmentLineItemDiscount;
-use backend\models\discount\PaymentFrequencyLineItemDiscount;
-use backend\models\discount\LineItemDiscount;
 use common\models\Payment;
 use common\models\PaymentMethod;
+use backend\models\discount\LineItemMultiDiscount;
 use common\models\InvoiceLineItem;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
 use yii\bootstrap\ActiveForm;
-use common\models\Invoice;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 use common\models\User;
 use common\models\InvoiceLog;
 use yii\helpers\Json;
-
+use common\models\Location;
+use common\models\TaxCode;
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
@@ -47,7 +43,7 @@ class InvoiceLineItemController extends Controller
         ];
     }
 
-	public function actionComputeTax()
+    public function actionComputeTax()
     {
         $data = Yii::$app->request->rawBody;
         $data = Json::decode($data, true);
@@ -55,55 +51,41 @@ class InvoiceLineItemController extends Controller
 
         return $rate;
     }
-    
+   	public function actionFetchTaxPercentage($taxStatusId)
+	{
+		$today         = (new \DateTime())->format('Y-m-d H:i:s');
+        $locationId    = Yii::$app->session->get('location_id');
+        $locationModel = Location::findOne(['id' => $locationId]);
+        $taxCode = TaxCode::find()
+            ->joinWith(['taxStatus' => function ($query) use ($taxStatusId) {
+                $query->where(['tax_status.name' => $taxStatusId]);
+            }])
+            ->where(['<=', 'start_date', $today])
+            ->andWhere(['province_id' => $locationModel->province_id])
+            ->orderBy('start_date DESC')
+            ->one();
+		return $taxCode->rate;
+	} 
     public function actionUpdate($id) 
     {
-        $model = $this->findModel($id);
-        $lineItemDiscount = $model->item->loadLineItemDiscount($id);
-        $paymentFrequencyDiscount = $model->item->loadPaymentFrequencyDiscount($id);
-        $customerDiscount = $model->item->loadCustomerDiscount($id);
-        $multiEnrolmentDiscount = $model->item->loadMultiEnrolmentDiscount($id);
-        if (!$model->isLessonItem() && !$model->isOpeningBalance()) {
-            $model->tax_status = $model->taxStatus;
-        }
-        $model->setScenario(InvoiceLineItem::SCENARIO_EDIT);
-        if ($model->invoice->isReversedInvoice()) {
-            $model->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
+        $lineItem = $this->findModel($id);
+        if ($lineItem->invoice->isReversedInvoice()) {
+            $lineItem->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
         }
         $data = $this->renderAjax('/invoice/line-item/_form', [
-            'model' => $model,
-            'customerDiscount' => $customerDiscount,
-            'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
-            'lineItemDiscount' => $lineItemDiscount,
-            'multiEnrolmentDiscount' => $multiEnrolmentDiscount
+            'model' => $lineItem
         ]);
         $post = Yii::$app->request->post();
-        if ($model->load($post)) {
-            if (!$model->isOpeningBalance()) {
-                $customerDiscount->load($post);
-                $lineItemDiscount->load($post);
-                $customerDiscount->save();
-                $lineItemDiscount->save();
-                if (!$model->isLessonItem()) {
-                    $taxStatus         = $post['InvoiceLineItem']['tax_status'];
-                    $taxCode           = $model->computeTaxCode($taxStatus);
-                    $model->tax_status = $taxCode->taxStatus->name;
-                    $model->tax_type   = $taxCode->taxType->name;
-                } else {
-                    $paymentFrequencyDiscount->load($post);
-                    $multiEnrolmentDiscount->load($post);
-                    $paymentFrequencyDiscount->save();
-                    $multiEnrolmentDiscount->save();
-                }
-            }
-            if($model->save()) {
+        if ($lineItem->load($post)) {
+            if($lineItem->save()) {
                 $response = [
                     'status' => true,
+                    'message' => 'Item successfully updated!',
 		];	
             } else {
                 $response = [
                     'status' => false,
-                    'errors' => ActiveForm::validate($model),
+                    'errors' => ActiveForm::validate($lineItem),
                 ];	
             }
             return $response;
@@ -111,10 +93,6 @@ class InvoiceLineItemController extends Controller
 
             return [
                 'status' => true,
-                'message' => 'Warning: You have entered a non-approved Arcadia '
-                    . 'discount.All non-approved discounts must be submitted in '
-                    . 'writing and approved by Head Office prior to entering a discount, '
-                    . 'otherwise you are in breach of your agreement.',
                 'data' => $data,
             ];
         }
@@ -181,45 +159,51 @@ class InvoiceLineItemController extends Controller
         return $result;
     }
 
-    public function actionApplyDiscount($id)
+    public function actionApplyDiscount()
     {
-        $invoiceModel = Invoice::findOne($id);
-        $invoiceModel->setScenario(Invoice::SCENARIO_DISCOUNT);
-        if ($invoiceModel->load(Yii::$app->request->post())) {
-            if ($invoiceModel->validate()) {
-                $invoiceLineItems = $invoiceModel->lineItems;
-                foreach ($invoiceLineItems as $invoiceLineItem) {
-                    if ($invoiceLineItem->hasLineItemDiscount()) {
-                        $invoiceLineItem->lineItemDiscount->value = $invoiceModel->discountApplied;
-                        $invoiceLineItem->lineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
-                        $invoiceLineItem->lineItemDiscount->save();
-                    } else {
-                        $invoiceLineItemDiscount = new InvoiceLineItemDiscount();
-                        $invoiceLineItemDiscount->invoiceLineItemId = $invoiceLineItem->id;
-                        $invoiceLineItemDiscount->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
-                        $invoiceLineItemDiscount->value = $invoiceModel->discountApplied;
-                        $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
-                        $invoiceLineItemDiscount->save();
-                    }
+        $lineItemIds = Yii::$app->request->get('InvoiceLineItem')['ids'];
+        $lineItemId = end($lineItemIds);
+        $model = $this->findModel($lineItemId);
+        $lineItemDiscount = LineItemMultiDiscount::loadLineItemDiscount($lineItemIds);
+        $paymentFrequencyDiscount = LineItemMultiDiscount::loadPaymentFrequencyDiscount($lineItemIds);
+        $customerDiscount = LineItemMultiDiscount::loadCustomerDiscount($lineItemIds);
+        $multiEnrolmentDiscount = LineItemMultiDiscount::loadEnrolmentDiscount($lineItemIds);
+        $data = $this->renderAjax('/invoice/_form-apply-discount', [
+            'lineItemIds' => $lineItemIds,
+            'model' => $model,
+            'customerDiscount' => $customerDiscount,
+            'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
+            'lineItemDiscount' => $lineItemDiscount,
+            'multiEnrolmentDiscount' => $multiEnrolmentDiscount
+        ]);
+        $post = Yii::$app->request->post();
+        if ($post) {
+            foreach ($lineItemIds as $lineItemId) {
+                $model = $this->findModel($lineItemId);
+                $lineItemDiscount = LineItemMultiDiscount::loadLineItemDiscount([$lineItemId]);
+                $customerDiscount = LineItemMultiDiscount::loadCustomerDiscount([$lineItemId]);
+                $lineItemDiscount->load($post);
+                $customerDiscount->load($post);
+                $lineItemDiscount->save();
+                $customerDiscount->save();
+                if ($model->isLessonItem()) {
+                    $paymentFrequencyDiscount = LineItemMultiDiscount::loadPaymentFrequencyDiscount([$lineItemId]);
+                    $multiEnrolmentDiscount = LineItemMultiDiscount::loadEnrolmentDiscount([$lineItemId]);
+                    $paymentFrequencyDiscount->load($post);
+                    $multiEnrolmentDiscount->load($post);
+                    $paymentFrequencyDiscount->save();
+                    $multiEnrolmentDiscount->save();
                 }
-                $invoiceModel->save();
-                $invoiceModel->updateInvoiceAttributes();
-                $response = [
-                    'status' => true,
-                    'invoiceStatus' => $invoiceModel->getStatus(),
-					'amount' => round($invoiceModel->invoiceBalance,4)
-                ];
-            } else {
-                $errors = ActiveForm::validate($invoiceModel);
-                $response = [
-                    'status' => false,
-                    'errors' => $errors,
-                ];
             }
-
-            return $response;
+            return [
+                'status' => true
+            ];
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
         }
-
     }
 
     public function actionDelete($id)
@@ -258,50 +242,5 @@ class InvoiceLineItemController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-    }
-    
-    public function actionComputeNetPrice($id)
-    {
-        $rawData = Yii::$app->request->rawBody;
-        $data = Json::decode($rawData, true);
-        $invoiceLineItem = InvoiceLineItem::findOne($id);
-        $invoiceLineItem->load($data, '');
-        if (!$invoiceLineItem->isLessonItem()) {
-            $taxCode           = $invoiceLineItem->computeTaxCode($data['taxStatus']);
-            $invoiceLineItem->tax_status = $taxCode->taxStatus->name;
-            $invoiceLineItem->tax_type   = $taxCode->taxType->name;
-        }
-        $discount = 0.0;
-        $lineItemPrice = $invoiceLineItem->grossPrice;
-        if (!empty($data['multiEnrolmentDiscount'])) {
-            $discount += $lineItemPrice < 0 ? - ($data['multiEnrolmentDiscount']) : $data['multiEnrolmentDiscount'];
-            $lineItemPrice = $invoiceLineItem->grossPrice - $discount;
-        }
-        if (!empty($data['lineItemDiscount'])) {
-            if ($data['lineItemDiscountType']) {
-                $discount += $lineItemPrice < 0 ? - ($data['lineItemDiscount']) : $data['lineItemDiscount'];
-            } else {
-                $discount += $lineItemPrice * $data['lineItemDiscount'] / 100;
-            }
-            $lineItemPrice = $invoiceLineItem->grossPrice - $discount;
-        }
-        if (!empty($data['customerDiscount'])) {
-            $discount += $lineItemPrice * $data['customerDiscount'] / 100;
-            $lineItemPrice = $invoiceLineItem->grossPrice - $discount;
-        }
-        if (!empty($data['paymentFrequencyDiscount'])) {
-            $discount += $lineItemPrice * $data['paymentFrequencyDiscount'] / 100;
-        }
-        
-        $netPrice = $invoiceLineItem->grossPrice - $discount;
-        $invoiceLineItem->tax_rate   = $netPrice * $invoiceLineItem->taxType->taxCode->rate / 100;
-        $itemTotal = $netPrice + $invoiceLineItem->tax_rate;
-        return [
-            'grossPrice' => Yii::$app->formatter->asDecimal($invoiceLineItem->grossPrice, 4),
-            'itemTotal' => Yii::$app->formatter->asDecimal($itemTotal, 4),
-            'netPrice' => Yii::$app->formatter->asDecimal($netPrice, 4),
-            'taxRate' => Yii::$app->formatter->asDecimal($invoiceLineItem->tax_rate, 4),
-            'taxPercentage' => $invoiceLineItem->taxType->taxCode->rate
-        ];
     }
 }

@@ -54,7 +54,12 @@ $columns = [
         ],
         [
             'attribute' => 'amount',
-			
+			'format' => 'currency',
+			'headerOptions' => ['class' => 'text-right'],
+			'contentOptions' => ['class' => 'text-right'],
+			'value' => function ($data) {
+           		return Yii::$app->formatter->asDecimal($data->amount);
+        	},	
         ],
     ]; ?>
 
@@ -115,6 +120,7 @@ $(document).ready(function(){
 			   {
 					$.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                	$.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
 					$('#credit-modal').modal('hide');
 				}else

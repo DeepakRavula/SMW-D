@@ -36,12 +36,18 @@ $this->title = 'All Locations';
         ],
             [
             'label' => 'Revenue',
+			'format' => 'currency',
+			'headerOptions' => ['class' => 'text-right'],
+			'contentOptions' => ['class' => 'text-right'],
             'value' => function ($data) use ($searchModel) {
                 return !empty($data->getRevenue($searchModel->fromDate, $searchModel->toDate)) ? $data->getRevenue($searchModel->fromDate, $searchModel->toDate) : 0;
             },
         ],
             [
             'label' => 'Royalty',
+			'format' => 'currency',
+			'headerOptions' => ['class' => 'text-right'],
+			'contentOptions' => ['class' => 'text-right'],
             'value' => function ($data) use ($searchModel) {
                 $royaltyValue=$data->getLocationDebt(LocationDebt::TYPE_ROYALTY,$searchModel->fromDate,$searchModel->toDate);
                 return round($royaltyValue, 2);
@@ -49,6 +55,9 @@ $this->title = 'All Locations';
         ],
             [
             'label' => 'Advertisement',
+			'format' => 'currency',
+			'headerOptions' => ['class' => 'text-right'],
+			'contentOptions' => ['class' => 'text-right'],
             'value' => function ($data) use ($searchModel) {
                 $advertisementValue=$data->getLocationDebt(LocationDebt::TYPE_ADVERTISEMENT,$searchModel->fromDate,$searchModel->toDate);
                 return round($advertisementValue, 2);
@@ -56,6 +65,9 @@ $this->title = 'All Locations';
         ],
             [
             'label' => 'HST',
+			'format' => 'currency',
+			'headerOptions' => ['class' => 'text-right'],
+			'contentOptions' => ['class' => 'text-right'],
             'value' => function ($data) use ($searchModel) {
                 $taxAmount=$data->getTaxAmount($searchModel->fromDate,$searchModel->toDate);
                 return round($taxAmount, 2);
@@ -63,6 +75,9 @@ $this->title = 'All Locations';
         ],
             [
             'label' => 'Total',
+			'headerOptions' => ['class' => 'text-right'],
+			'contentOptions' => ['class' => 'text-right'],
+			'format' => 'currency',
             'value' => function ($data) use ($searchModel) {
                 $subTotal=$data->SubTotal($searchModel->fromDate,$searchModel->toDate);
                 $taxAmount=$data->getTaxAmount($searchModel->fromDate,$searchModel->toDate);

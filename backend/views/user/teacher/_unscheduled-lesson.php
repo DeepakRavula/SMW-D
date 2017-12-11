@@ -44,6 +44,8 @@ use common\models\LocationAvailability;
             ],
 			[
                 'label' => 'Duration',
+				'headerOptions' => ['style' => 'text-align:right'],
+				'contentOptions' => ['style' => 'text-align:right'],
                 'value' => function ($data) {
                     return !empty($data->duration) ? (new \DateTime($data->duration))->format('H:i') : null;
                 },

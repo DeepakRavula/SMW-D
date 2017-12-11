@@ -12,21 +12,24 @@ use yii\widgets\Pjax;
 <div id="line-item-update" style="display:none;" class="alert-success alert fade in"></div>
 <div id="invoice-line-item-modal" class="invoice-line-item-form">
     <div>
-    <?php Pjax::Begin(['id' => 'item-add-listing', 'timeout' => 6000]); ?>
+    <?php Pjax::Begin(['id' => 'item-add-listing', 'timeout' => 6000 ,'enablePushState' => false]); ?>
     <?= GridView::widget([
             'dataProvider' => $itemDataProvider,
             'summary' => false,
-            'id'=>'invoice-view-user-gridview',
+            'filterModel' => $itemSearchModel,
             'tableOptions' => ['class' => 'table table-condensed'],
+            'rowOptions' => ['class' => 'add-item-invoice'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'columns' => [
             [
+                'attribute' => 'code',
                 'label' => 'Code',
                 'value' => function ($data) {
                     return $data->code;
                 },
             ],
             [
+                'attribute' => 'description',
                 'label' => 'Description',
                 'value' => function ($data) {
                     return $data->description;
@@ -34,23 +37,14 @@ use yii\widgets\Pjax;
             ],
             [
                 'label' => 'Price',
+				'format' => 'currency',
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
-                    return $data->price;
+                    return Yii::$app->formatter->asDecimal($data->price);
                 },
             ],
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'contentOptions' => ['style' => 'width:50px'],
-                'template' => '{add}',
-                'buttons' => [
-                    'add' => function ($url, $model) use($invoiceModel) {
-                        $url = Url::to(['invoice/add-misc', 'id' => $invoiceModel->id, 'itemId' => $model->id]);
-                        return Html::a('Add', null, ['class' => 'add-item-invoice', 'url' => $url]);
-                    },
-                ]
-            ],        
+                  
         ],
     ]); ?>
     </div>
@@ -67,13 +61,16 @@ use yii\widgets\Pjax;
 <script type="text/javascript">
     $(document).on('click', '.add-item-invoice', function() {
         $('#item-spinner').show();
+        var itemId=$(this).attr('data-key');
+             var params = $.param({'itemId': itemId });
         $.ajax({
-            url: $(this).attr('url'),
+            url    : '<?= Url::to(['invoice/add-misc' ,'id' => $invoiceModel->id]); ?>&' + params,
             type: 'post',
             success: function(response) {
                 if (response.status) {
                     $('#item-spinner').hide();
                     $('#line-item-update').html(response.message).fadeIn().delay(8000).fadeOut();
+                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000}); 

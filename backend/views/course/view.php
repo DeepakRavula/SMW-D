@@ -27,7 +27,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i> Print', ['
 			<dt>Teacher</dt>
 			<dd><?= $model->teacher->publicIdentity; ?></dd>
 			<dt>Rate</dt>
-			<dd><?= $model->program->rate; ?></dd>
+			<dd><?= Yii::$app->formatter->asCurrency($model->program->rate); ?></dd>
 		</dl>
 		<?php LteBox::end() ?>
 		</div> 

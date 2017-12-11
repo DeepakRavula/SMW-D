@@ -34,7 +34,14 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
         'filterModel' => $searchModel,
         'columns' => [
             'name',
-            'tax_rate',
+			[
+                'label' => 'Tax Rate (%)',
+				'headerOptions' => ['class' => 'text-right'],
+				'contentOptions' => ['class' => 'text-right'],
+                'value' => function ($data) {
+                    return $data->tax_rate;
+                },
+            ],
             [
                 'label' => 'Country',
                 'value' => function ($data) {

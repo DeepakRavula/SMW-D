@@ -14,7 +14,7 @@ use yii\helpers\Url;
     ]); ?>
 	<div class="row">
         <div class="col-xs-4">
-			<?php echo $form->field($model, 'amount')->textInput(['placeholder' => 'Amount'])->label(false); ?>
+			<?php echo $form->field($model, 'amount')->textInput(['class' => 'right-align form-control']); ?>
         </div>
 	</div>
     <div class="row">

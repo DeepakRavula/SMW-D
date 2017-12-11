@@ -200,11 +200,15 @@ $this->params['label'] = $this->render('_title', [
             return false;
 		});
 		$(document).on('click', '.step1-next', function () {
-			$('#step-1').hide();
-			$('#step-2').show();
-			loadCalendar();
- 			$('#private-enrol-modal .modal-dialog').css({'width': '1000px'});
-            return false;
+			if($('#course-programid').val() == "") {
+				$('#enrolment-form').yiiActiveForm('updateAttribute', 'course-programid', ["Program cannot be blank"]);
+			} else {
+				$('#step-1').hide();
+				$('#step-2').show();
+				loadCalendar();
+				$('#private-enrol-modal .modal-dialog').css({'width': '1000px'});
+				return false;
+			}
 		});
 		$(document).on('click', '.step2-back', function () {
 			$('#step-1').show();
@@ -272,23 +276,25 @@ $this->params['label'] = $this->render('_title', [
             });
             return false;
         });
-		$(document).on('click', '.group-enrol-btn', function () {
-            $.ajax({
-                url    : $(this).attr('href'),
-                type   : 'get',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-					if(response) {
-						$.pjax.reload({container: '#enrolment-list', timeout: 6000});
-						$('#group-enrol-modal').modal('hide');
-					}
-				}
-            });
-            return false;
-        });
-        $(document).on('beforeSubmit', '#student-merge-form', function () {
+     $(document).on('click', '.group-enrol-btn', function() {
+         $('#course-spinner').show();
+         var courseId=$(this).attr('data-key');
+              var params = $.param({'courseId': courseId });
+         $.ajax({
+             url    : '<?= Url::to(['enrolment/group' ,'studentId' => $model->id]); ?>&' + params,
+             type: 'post',
+             success: function(response) {
+                 if (response.status) {
+                     $('#course-spinner').hide();
+                      $.pjax.reload({container: "#enrolment-grid", replace: false, async: false, timeout: 6000});
+                      $('#group-enrol-modal').modal('hide');
+                 }
+             }
+         });
+         return false;
+     });
+ 
+    $(document).on('beforeSubmit', '#student-merge-form', function () {
             $.ajax({
                 url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',
                 type   : 'post',
@@ -517,6 +523,7 @@ $(document).on('click', '.evaluation-delete', function () {
             return false;
         });
 		$(document).on('click', '.student-profile-edit-button', function () {
+        	$('#student-profile-modal .modal-dialog').css({'width': '400px'});
 			$('#student-profile-modal').modal('show');
 			return false;
 		});
