@@ -203,7 +203,7 @@ echo Menu::widget([
 					'badge' => User::adminCount(),
 					'badgeBgClass' => 'label-default'
 				],
-					[
+				[
 					'label' => Yii::t('backend', 'Programs'),
 					'icon' => '<i class="fa fa-table"></i>',
 					'url' => ['/program/index', 'ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
@@ -211,6 +211,13 @@ echo Menu::widget([
 					'active' => (Yii::$app->controller->id === 'program') ? true : false,
 					'badge' => Program::find()->active()->count(),
 					'badgeBgClass' => 'label-default'
+				],
+					[
+					'label' => Yii::t('backend', 'Privileges'),
+					'icon' => '<i class="fa fa-users"></i>',
+					'url' => ['/permission'],
+					'visible' => Yii::$app->user->can('administrator'),
+					'active' => Yii::$app->controller->id === 'permission',
 				],
 				[
 					'label' => Yii::t('backend', 'Cities'),

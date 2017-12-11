@@ -151,6 +151,11 @@ $config = [
                 'roles' => ['owner'],
                 'actions' => ['index'],
             ],
+			[
+                'controllers' => ['permission'],
+                'allow' => true,
+                'roles' => ['administrator'],
+            ],
             [
                 'controllers' => ['program', 'city', 'location', 'province', 'country', 'discount'],
                 'allow' => true,
