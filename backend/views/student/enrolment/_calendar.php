@@ -7,7 +7,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 ?>
 <?= $this->render('/lesson/_color-code');?>
 <div id="enrolment-calendar"></div>
-    <?php
+<?php
     $locationId = Yii::$app->session->get('location_id');
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
@@ -21,7 +21,8 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
     $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 <script type="text/javascript">
-    var calendar = {
+ $(document).ready(function() {
+     var calendar = {
          refresh : function(){
              var events, availableHours;
              var teacherId = $('#course-teacherid').val();
@@ -99,7 +100,6 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
              });
          }
      };
- $(document).ready(function() {
  	$(document).on('change', '#course-startdate', function () {
  		calendar.refresh();
  	});
@@ -128,8 +128,8 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 					}
 				}
 			}
-		});
+ });
 		return false;
-	});
+ });
  });
  </script>
