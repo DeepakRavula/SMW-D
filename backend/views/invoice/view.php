@@ -245,7 +245,7 @@ Modal::end();
     $(document).on('click', '#line-item-grid table tr', function () {
         var id = $(this).data('key');
         var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
-        if (selectedRows.length >= 2) {
+        if (!$.isEmptyObject(selectedRows)) {
             $('#invoice-error-notification').html('You are not allowed to perform this action!').fadeIn().delay(5000).fadeOut();
         } else {
             var params = $.param({ id : id });
