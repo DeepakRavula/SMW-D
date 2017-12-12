@@ -74,11 +74,11 @@
     padding-top:6px;
     padding-left:60px;
 }
-.percen {
+.percent {
     position: absolute;
     left: 610px;
 }
-.dolar-symbol {
+.dollar-symbol {
     padding-top:7px;
 }
 .on-off-symbol {
@@ -86,13 +86,29 @@
 }
 .tax-status {
     position: absolute;
-    left: 5px;
+    left: 9px;
 }
 .tax-rate {
     position: absolute;
-    right: 5px;
+    right: 25px;
     font-size: 15px;
 }
 #lineitem-tax_status {
     margin-left: 20px;
+}
+#apply-discount-modal .modal-dialog {
+    width: 650px;
+}
+#adjust-tax-modal .modal-dialog {
+    width: 400px;
+}
+.tax-dollar-symbol {
+    position: absolute;
+    right: 10px;
+}
+.on-off {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    left: 30px;
 }

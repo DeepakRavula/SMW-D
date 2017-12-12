@@ -27,7 +27,7 @@ use common\models\TaxStatus;
     </div>
     <div class="row">
         <div class="col-xs-4">
-            <label class="dolar-symbol tax-status">Tax Status</label>
+            <label class="dollar-symbol tax-status">Tax Status</label>
         </div>
         <div class="col-xs-8 pull-right">
             <?= $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
@@ -40,7 +40,7 @@ use common\models\TaxStatus;
             <label class="tax-status">Tax Rate</label>
         </div>
         <div class="col-xs-8 pull-right">
-            <label class="tax-rate"><?= $model->taxPercentage . ' %'; ?></label>
+            <label class="tax-rate"><?= $model->taxPercentage; ?></label><label class="tax-dollar-symbol">%</label>
         </div>
     </div>
 <?php ActiveForm::end(); ?>
@@ -50,7 +50,7 @@ use common\models\TaxStatus;
         fetchTaxPercentage : function() {
             var taxStatusId = $('#lineitem-tax_status').val();
             if ($.isEmptyObject(taxStatusId)) {
-                $('.tax-rate').text('0 %');
+                $('.tax-rate').text('0');
             } else {
                 $.ajax({
                     url: "<?php echo Url::to(['invoice-line-item/fetch-tax-percentage']); ?>?taxStatusId=" + taxStatusId,
@@ -58,7 +58,7 @@ use common\models\TaxStatus;
                     contentType: 'application/json',
                     dataType: "json",
                     success: function(response) {
-                        $('.tax-rate').text(response+ ' %');
+                        $('.tax-rate').text(response);
                     }
                 });
             }
@@ -85,7 +85,7 @@ use common\models\TaxStatus;
 $(document).off('click', '.edit-tax-save').on('click', '.edit-tax-save', function () {
     var tax = $('#lineitem-tax_status').val();
     if ($.isEmptyObject(tax)) {
-        $('#edit-tax-error-notification').html('Please select tax-status!').fadeIn().delay(5000).fadeOut();
+        $('#edit-tax-error-notification').html('Please select the tax-status!').fadeIn().delay(5000).fadeOut();
         return false;
     }
     $('#tax-spinner').show();

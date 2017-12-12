@@ -605,7 +605,6 @@ $(document).on("click", '.adjust-invoice-tax', function() {
             {
                 $('#customer-spinner').hide();
                 $('#adjust-tax-modal').modal('show');
-                $('#adjust-tax-modal .modal-dialog').css({'width': '400px'});
                 $('#adjust-tax-modal-content').html(response.data);
             }
         }

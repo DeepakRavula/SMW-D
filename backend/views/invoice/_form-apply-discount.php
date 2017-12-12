@@ -12,12 +12,6 @@ use kartik\touchspin\TouchSpin;
     .col-xs-6 {
         width: 45%;
     }
-    .btn-group {
-        position: relative;
-        display: inline-block;
-        vertical-align: middle;
-        left: 30px;
-    }
 </style>
 <div id="apply-discount-modal" class="apply-discount-form">
     <?php $form = ActiveForm::begin([
@@ -33,7 +27,7 @@ use kartik\touchspin\TouchSpin;
         <?php if ($model->isLessonItem()) : ?>
     <div class="row">
         <div class="col-xs-4 pull-left">
-            <label class="dolar-symbol">Payment Frequency Discount</label>
+            <label class="dollar-symbol">Payment Frequency Discount</label>
         </div>
         <div class="col-xs-2">
         </div>
@@ -56,12 +50,12 @@ use kartik\touchspin\TouchSpin;
                 ],
             ])->label(false); ?>
         </div>
-        <label class="percen dolar-symbol">%</label>
+        <label class="percent dollar-symbol">%</label>
     </div>
         <?php endif; ?>
     <div class="row">
         <div class="col-xs-4 pull-left">
-            <label class="dolar-symbol">Customer Discount</label>
+            <label class="dollar-symbol">Customer Discount</label>
         </div>
         <div class="col-xs-2">
         </div>
@@ -84,18 +78,18 @@ use kartik\touchspin\TouchSpin;
                 ],
             ])->label(false); ?>
         </div>
-        <label class="percen dolar-symbol">%</label>
+        <label class="percent dollar-symbol">%</label>
     </div>
         <?php if ($model->isLessonItem()) : ?>
     <div class="row">
         <div class="col-xs-4 pull-left">
-            <label class="dolar-symbol">Multiple Enrollment Discount</label>
+            <label class="dollar-symbol">Multiple Enrollment Discount</label>
         </div>
         <div class="col-xs-2">
         </div>
         <div class="col-xs-6">
             <div class="col-xs-1">
-                <label class="dolar-symbol">$</label>
+                <label class="dollar-symbol">$</label>
             </div>
             <?= $form->field($multiEnrolmentDiscount, 'value')->widget(TouchSpin::classname(), [
                 'options' => [
@@ -117,15 +111,15 @@ use kartik\touchspin\TouchSpin;
         <?php endif; ?>
     <div class="row">
         <div class="col-xs-4 pull-left">
-            <label class="dolar-symbol">Line Item Discount</label>
+            <label class="dollar-symbol">Line Item Discount</label>
         </div>
-        <div class="col-xs-2 btn-group">
+        <div class="col-xs-2 btn-group on-off">
             <button class="btn btn-default" data-size="mini" id="off">$</button>
             <button class="btn btn-default" data-size="mini" id="on">%</button>
         </div>
         <div class="col-xs-6">
             <div class="col-xs-1 discount-edit-label">
-                <label class="off dolar-symbol on-off-symbol">$</label>
+                <label class="off dollar-symbol on-off-symbol">$</label>
             </div>
             <?= $form->field($lineItemDiscount, 'value')->widget(TouchSpin::classname(), [
                 'options' => [
@@ -143,7 +137,7 @@ use kartik\touchspin\TouchSpin;
                 ],
             ])->label(false); ?>
         </div>
-        <label class="on percen dolar-symbol on-off-symbol">%</label>
+        <label class="on percent dollar-symbol on-off-symbol">%</label>
         <?php endif; ?> 
     </div>
     <?= $form->field($lineItemDiscount, 'valueType')->hiddenInput()->label(false); ?>
