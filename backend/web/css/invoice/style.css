@@ -76,7 +76,7 @@
 }
 .percent {
     position: absolute;
-    left: 610px;
+    right: 12px;
 }
 .dollar-symbol {
     padding-top:7px;
@@ -106,9 +106,8 @@
     position: absolute;
     right: 10px;
 }
-.on-off {
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-    left: 30px;
+.discount-dollar-symbol {
+    position: absolute;
+    padding-top: 7px;
+    right: 35px;
 }

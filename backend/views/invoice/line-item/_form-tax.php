@@ -106,6 +106,7 @@ $(document).off('click', '.edit-tax-save').on('click', '.edit-tax-save', functio
                 $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
                 $('#tax-spinner').hide();
                 $('#edit-tax-modal').modal('hide');
+                $('input[type="checkbox"]').trigger('change');
                 $('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
             }
         }
