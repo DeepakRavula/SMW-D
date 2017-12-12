@@ -243,24 +243,29 @@ Modal::end();
     });
 
     $(document).on('click', '#line-item-grid table tr', function () {
-		var id = $(this).data('key');
-        var params = $.param({ id : id });
-		$.ajax({
-			url    : '<?= Url::to(['invoice-line-item/update']) ?>?' + params,
-			type: 'get',
-			dataType: "json",
-			success: function (response)
-			{
-				if (response.status)
-				{
-					$('#line-item-edit-modal .modal-dialog').css({'width': '600px'});
-					$('#line-item-edit-modal').modal('show');
-                                        $('.item-delete').attr('data-id', id);
-					$('#line-item-edit-content').html(response.data);
-				}
-			}
-		});
-		return false;
+        var id = $(this).data('key');
+        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
+        if (selectedRows.length >= 2) {
+            $('#invoice-error-notification').html('You are not allowed to perform this action!').fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ id : id });
+            $.ajax({
+                url    : '<?= Url::to(['invoice-line-item/update']) ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#line-item-edit-modal .modal-dialog').css({'width': '600px'});
+                        $('#line-item-edit-modal').modal('show');
+                        $('.item-delete').attr('data-id', id);
+                        $('#line-item-edit-content').html(response.data);
+                    }
+                }
+            });
+        }
+        return false;
     });
  	$(document).on('click', '.edit-tax-cancel', function (e) {
  		$('#edit-tax-modal').modal('hide');
