@@ -23,6 +23,10 @@ class DashboardController extends \yii\web\Controller
 				'name'
 			);
 		$role = end($roles);
+                if($role !== User::ROLE_ADMINISTRATOR && $role !== User::ROLE_OWNER)
+                {
+                   return $this->redirect(['schedule/index']);
+                }
 		if ($role !== User::ROLE_ADMINISTRATOR) {
 			$userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
 			Yii::$app->session->set('location_id', $userLocation->location_id);

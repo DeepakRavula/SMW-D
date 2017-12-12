@@ -148,7 +148,7 @@ $config = [
 			[
                 'controllers' => ['dashboard'],
                 'allow' => true,
-                'roles' => ['owner'],
+                'roles' => ['staffmember'],
                 'actions' => ['index'],
             ],
             [
