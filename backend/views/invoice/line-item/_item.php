@@ -172,7 +172,8 @@ $(document).on('click', '.item-delete', function () {
             {
                if(response.status)
                {
-                    window.location.href = response.url;
+                    $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
+                    $('#line-item-edit-modal').modal('hide');
                     $('#invoice-success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                     }else
                     {

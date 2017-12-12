@@ -34,7 +34,7 @@ class InvoiceLineItemController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['edit', 'apply-discount', 'update', 'compute-net-price'],
+                'only' => ['edit', 'apply-discount', 'update', 'compute-net-price','delete'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -221,8 +221,11 @@ class InvoiceLineItemController extends Controller
                 'options' => ['class' => 'alert-success'],
                 'body' => 'Line Item has been deleted successfully',
             ]);
+        return [
+                'status' => true
+            ];
 
-        return $this->redirect(['invoice/view', 'id' => $model->invoice->id]);
+        
     }
 
     protected function findModel($id)
