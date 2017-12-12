@@ -255,6 +255,7 @@ Modal::end();
 				{
 					$('#line-item-edit-modal .modal-dialog').css({'width': '600px'});
 					$('#line-item-edit-modal').modal('show');
+                                        $('.item-delete').attr('data-id', id);
 					$('#line-item-edit-content').html(response.data);
 				}
 			}

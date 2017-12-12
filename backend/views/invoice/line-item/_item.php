@@ -163,7 +163,7 @@ $('#invoice-delete-button').click(function(){
 $(document).on('click', '.item-delete', function () {
     var status = confirm("Are you sure you want to delete this item?");
     if (status) {
-        var itemId = $('#line-item-grid tbody > tr').data('key'); 
+        var itemId = $(this).attr('data-id'); 
         $.ajax({
             url    : '<?= Url::to(['invoice-line-item/delete']) ?>?id=' + itemId,
             type   : 'post',
