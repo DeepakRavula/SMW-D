@@ -3,7 +3,7 @@ namespace common\components\validators\vacation;
 
 use yii\validators\Validator;
 use Yii;
-use common\models\Lesson;
+use common\models\Vacation;
 
 class EnrolmentDateValidator extends Validator
 {
@@ -18,10 +18,19 @@ class EnrolmentDateValidator extends Validator
         $enrolmentToDate=$model->enrolment->course->endDate;
         $enrolmentFromDate = (new \DateTime($enrolmentFromDate))->format('Y-m-d');
         $enrolmentToDate = (new \DateTime($enrolmentToDate))->format('Y-m-d');
-        if(($fromDate<$enrolmentFromDate && $toDate<$enrolmentFromDate)|| $fromDate>$enrolmentFromDate && $toDate>$enrolmentFromDate )
+        if(($fromDate<$enrolmentFromDate && $toDate<$enrolmentToDate)|| ($fromDate>$enrolmentFromDate && $toDate>$enrolmentToDate))
         {
-                return $this->addError($model,$attribute, $dateRange);
-        }       
-                
+                return $this->addError($model,$attribute,'Vacation Can Only be created between Enrolment');
+        }   
+        
+        $vacation=Vacation::find()
+                ->andWhere(['enrolmentId' => $model->enrolment->id])
+                ->andWhere(['between', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
+            ->all();
+
+        if(!empty($vacation))
+        {
+            return $this->addError($model,$attribute, 'Avoid vacation Replication');
+        }
     } 
 }

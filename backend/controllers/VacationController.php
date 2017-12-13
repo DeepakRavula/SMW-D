@@ -152,7 +152,7 @@ class VacationController extends Controller
             } else {
                 return [
                     'status' => false,
-                    'errors'=>$model->getErrors(),
+                    'errors'=>$model->getErrors($attribute='dateRange'),
                 ]; 
                
             }
