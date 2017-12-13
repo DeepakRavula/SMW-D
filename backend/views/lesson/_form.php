@@ -1,5 +1,4 @@
 <?php
-
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
@@ -30,7 +29,8 @@ use yii\bootstrap\Modal;
             ]
         ]); ?>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-10">
+        <div class="col-md-2">
             <?php
             echo $form->field($model, 'duration')->widget(TimePicker::classname(),
                 [
@@ -41,18 +41,18 @@ use yii\bootstrap\Modal;
             ]);
             ?>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <?php
             // Dependent Dropdown
-            echo $form->field($model, 'teacherId')->dropDownList(
-                ArrayHelper::map(User::find()
+            echo $form->field($model, 'teacherId')->widget(Select2::classname(), [
+                'data' => ArrayHelper::map(User::find()
                         ->teachers($model->course->program->id, Yii::$app->session->get('location_id'))
                 ->join('LEFT JOIN', 'user_profile','user_profile.user_id = ul.user_id')
                         ->notDeleted()
                         ->orderBy(['user_profile.firstname' => SORT_ASC])
 				->all(),
-			'id', 'userProfile.fullName'
-            ))->label();
+			'id', 'userProfile.fullName'),
+		])->label('Label');
             ?>  
         </div>
         <div class="col-md-4">
@@ -66,6 +66,14 @@ use yii\bootstrap\Modal;
                     </span>
                 </div>
             </div>       
+        </div>
+        </div>
+        <div class="col-md-2">
+          <div class="pull-right m-t-25">
+            <?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-schedule-cancel']);?> 
+            <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
+        <div class="clearfix"></div>
+    </div>  
         </div>
     </div>
     <div class="row">
@@ -112,7 +120,7 @@ use yii\bootstrap\Modal;
     <?php endif; ?>
     <div class="row">
     <div class="col-md-12">
-        <div class="pull-right">
+        <div class="pull-right m-t-10">
             <?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-schedule-cancel']);?> 
             <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
         <div class="clearfix"></div>
