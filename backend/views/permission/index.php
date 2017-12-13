@@ -3,6 +3,7 @@
 use yii\widgets\Pjax;
 use common\models\User;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 
 $this->registerJsFile('/backend/web/js/permission/index.js', ['depends'=>\yii\web\JqueryAsset::className()]);
 $this->title = 'Permissions';
@@ -15,9 +16,9 @@ $this->title = 'Permissions';
 	$statusTd = function($role, $roles, $permission) {
 		$parentPermissions = ArrayHelper::getColumn(Yii::$app->authManager->getChildren($role), 'name');
 		if(in_array($role, $roles) && in_array($permission->name,$parentPermissions)) {
-			return '<td class="remove-permission" data-role="'.$role.'" data-permission="'.$permission->name.'><i class="fa fa-check"></i></td>';
+			return '<td class="remove-permission" data-role="'.$role.'" data-permission="'.$permission->name.'"><i class="fa fa-check"></i></td>';
 		} else {
-			return '<td class="add-permission" data-role="'.$role.'" data-permission="'.$permission->name.'><i class="fa fa-close"></i></td>';
+			return '<td class="add-permission" data-role="'.$role.'" data-permission="'.$permission->name.'"><i class="fa fa-close"></i></td>';
 		}
 	};?>
 <div class="row">
@@ -47,25 +48,3 @@ $this->title = 'Permissions';
     </div>
 </div>
 <?php Pjax::end(); ?>
-<script>
-// $(document).ready(function() {
-// 	$(document).on('click', '.add-permission', function () {
-//		$.ajax({
-//			url    : $(this).attr('url'),
-//			type   : 'get',
-//			success: function(response)
-//			{
-//				if(response.status)
-//					{
-//						$('#lesson-payment-modal').modal('show');
-//						$('#lesson-payment-content').html(response.data);
-//					}
-//			}
-//		});
-//		return false;	
-//	});
-//	$(document).on('click', '.remove-permission', function () {
-//			
-//	});
-// });
- </script>

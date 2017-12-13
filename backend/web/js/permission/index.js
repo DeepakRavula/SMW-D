@@ -4,9 +4,9 @@ $(function() {
     };
     ['add', 'remove'].forEach(function(action) {
         $(document).on('click', '.'+action+'-permission', function() {
-            var roleId = $(this).data('role');
-            var permissionId = $(this).data('permission');
-            $.post('permission/'+action+'?roleId='+roleId+'&permissionId='+permissionId, function(data) {
+            var role = $(this).data('role');
+            var permission = $(this).data('permission');
+            $.post('permission/'+action+'?role='+role+'&permission='+permission, function(data) {
                 if(data.success) {
                     $.pjax.reload({container: '#permission-table-pjax'});
                 }

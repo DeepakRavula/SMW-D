@@ -24,7 +24,7 @@ class PermissionController extends Controller
             ],
 			[
 				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['create', 'update'],
+				'only' => ['add', 'remove'],
 				'formats' => [
 					'application/json' => Response::FORMAT_JSON,
 				],
@@ -45,12 +45,20 @@ class PermissionController extends Controller
 			'roles' => $roles
         ]);
     }
-	public function actionAdd()
+	public function actionAdd($role, $permission)
     {
-       
+		$auth = Yii::$app->authManager;
+        $role = $auth->getRole($role);
+		$permission = $auth->getPermission($permission);
+		$auth->addChild($role, $permission);
+        return ['success'=>true];
     }
-	public function actionRemove()
+	public function actionRemove($role, $permission)
     {
-       
+      	$auth = Yii::$app->authManager;
+        $role = $auth->getRole($role);
+		$permission = $auth->getPermission($permission);
+		$auth->removeChild($role, $permission);
+        return ['success'=>true]; 
     }
 }
