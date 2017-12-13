@@ -126,7 +126,7 @@ use yii\widgets\Pjax;
     $(document).on("click", "input[type='checkbox']", function(event) {
         event.stopPropagation();
     });
-    $(document).on("change", "input[type='checkbox']", function() {
+    $(document).off("change", "input[type='checkbox']").on("change", "input[type='checkbox']", function() {
         var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
         if (selectedRows.length >= 2) {
             $('.apply-discount').text('Edit Discounts...');
