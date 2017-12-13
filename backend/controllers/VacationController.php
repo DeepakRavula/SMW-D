@@ -150,7 +150,11 @@ class VacationController extends Controller
                     'status' => true
                 ]; 
             } else {
-                Yii::error('Vacation Create: ' . \yii\helpers\VarDumper::dumpAsString($model->getErrors()));
+                return [
+                    'status' => false,
+                    'errors'=>$model->getErrors(),
+                ]; 
+               
             }
         } else {
             return [

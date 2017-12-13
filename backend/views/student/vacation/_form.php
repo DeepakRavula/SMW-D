@@ -11,6 +11,7 @@ use yii\grid\GridView;
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>
 </div>
+    <div id="vacation-conflict" style="display: none;" class="alert-danger alert fade in"></div>
     <?php $form = ActiveForm::begin([
         'id' => 'vacation-create-form',
         'action' => Url::to(['vacation/create', 'enrolmentId' => $enrolmentId])
@@ -145,6 +146,10 @@ use yii\grid\GridView;
                     $('#enrolment-delete-success').html('Vacation has been created successfully').fadeIn().delay(3000).fadeOut();
                     $.pjax.reload({url: url, container: "#student-lesson-listing", replace: false, async: false, timeout: 4000});
                     $.pjax.reload({url: url, container: "#student-vacation", replace: false, async: false, timeout: 4000});
+                }
+                else
+                {
+                  $('#vacation-conflict').html('Vacation is not created').fadeIn().delay(3000).fadeOut();
                 }
             }
         });
