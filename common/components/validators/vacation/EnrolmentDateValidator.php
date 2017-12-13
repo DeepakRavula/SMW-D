@@ -18,7 +18,7 @@ class EnrolmentDateValidator extends Validator
         $enrolmentToDate=$model->enrolment->course->endDate;
         $enrolmentFromDate = (new \DateTime($enrolmentFromDate))->format('Y-m-d');
         $enrolmentToDate = (new \DateTime($enrolmentToDate))->format('Y-m-d');
-        if($fromDate<=$enrolmentFromDate && $toDate<=$enrolmentFromDate )
+        if(($fromDate<$enrolmentFromDate && $toDate<$enrolmentFromDate)|| $fromDate>$enrolmentFromDate && $toDate>$enrolmentFromDate )
         {
                 return $this->addError($model,$attribute, $dateRange);
         }       

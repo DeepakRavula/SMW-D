@@ -149,7 +149,7 @@ use yii\grid\GridView;
                 }
                 else
                 {
-                  $('#vacation-conflict').html('Vacation is not created').fadeIn().delay(3000).fadeOut();
+                  $('#vacation-conflict').html('Vacation can only be created between Enrolment').fadeIn().delay(3000).fadeOut();
                 }
             }
         });
