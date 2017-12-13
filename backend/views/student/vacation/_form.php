@@ -17,12 +17,13 @@ use yii\grid\GridView;
     ]); ?>
 <div class="row">
     <div class="form-group">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <?php echo DateRangePicker::widget([
                 'model' => $model,
                 'attribute' => 'dateRange',
                 'convertFormat' => true,
                 'initRangeExpr' => true,
+                'options' =>['placeholder' => 'Select DateRange', 'class' =>'form-control'],
                 'pluginOptions' => [
                     'autoApply' => true,
                     'locale' => [
