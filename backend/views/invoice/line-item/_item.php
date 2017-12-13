@@ -74,7 +74,6 @@ $(document).ready(function() {
                 {
                     if (response.status) {
                         $('#apply-discount-modal').modal('show');
-                        $('#apply-discount-modal .modal-dialog').css({'width': '700px'});
                         $('#apply-discount-content').html(response.data);
                     }
                 }
@@ -92,11 +91,7 @@ $(document).ready(function() {
             url    : '<?= Url::to(['invoice/update-mail-status', 'id' => $model->id]) ?>&' + params,
             type   : 'POST',
             dataType: "json",
-			data   : $('#mail-flag').serialize(),
-			
-            success: function(response)
-            {
-            }
+            data   : $('#mail-flag').serialize()
         });
         return false;
     });
@@ -163,7 +158,7 @@ $('#invoice-delete-button').click(function(){
 $(document).on('click', '.item-delete', function () {
     var status = confirm("Are you sure you want to delete this item?");
     if (status) {
-        var itemId = $('#line-item-grid tbody > tr').data('key'); 
+        var itemId = $(this).attr('data-id'); 
         $.ajax({
             url    : '<?= Url::to(['invoice-line-item/delete']) ?>?id=' + itemId,
             type   : 'post',

@@ -74,3 +74,40 @@
     padding-top:6px;
     padding-left:60px;
 }
+.percent {
+    position: absolute;
+    right: 12px;
+}
+.dollar-symbol {
+    padding-top:7px;
+}
+.on-off-symbol {
+    display: none;
+}
+.tax-status {
+    position: absolute;
+    left: 9px;
+}
+.tax-rate {
+    position: absolute;
+    right: 25px;
+    font-size: 15px;
+}
+#lineitem-tax_status {
+    margin-left: 20px;
+}
+#apply-discount-modal .modal-dialog {
+    width: 650px;
+}
+#adjust-tax-modal .modal-dialog {
+    width: 400px;
+}
+.tax-dollar-symbol {
+    position: absolute;
+    right: 10px;
+}
+.discount-dollar-symbol {
+    position: absolute;
+    padding-top: 7px;
+    right: 35px;
+}
