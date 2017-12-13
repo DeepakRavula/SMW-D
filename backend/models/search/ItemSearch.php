@@ -44,13 +44,14 @@ class ItemSearch extends Item
         $locationId = Yii::$app->session->get('location_id');
        $query = Item::find()
                  ->notDeleted();
-       if($this->avoidDefaultItems)
+       if($this->avoidDefaultItems && !($this->showAllItems))
        {
-               $query->location($locationId);
+               $query->location($locationId)
+                        ->active();
        }
        else
        {
-         $query->defaultItems($locationId);  
+         $query->defaultItems($locationId);
        }
 
         $dataProvider = new ActiveDataProvider([
@@ -72,7 +73,8 @@ class ItemSearch extends Item
         {
         $query->andFilterWhere(['like', 'code', $this->code])
               ->andFilterWhere(['like', 'description', $this->description])
-              ->location($locationId);  
+              ->location($locationId)
+              ->active();  
                 
         
         }   
