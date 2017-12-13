@@ -15,7 +15,7 @@ use common\models\Lesson;
 ]);
 ?>
 <div class="row">
-			   <div class="col-md-8">
+			   <div class="col-md-9">
                                <div class="col-md-4">
             <div class="form-group field-calendar-date-time-picker-date">
                 <label class="control-label" for="calendar-date-time-picker-date">Reschedule Date</label>
@@ -39,7 +39,7 @@ use common\models\Lesson;
 		?>
 	</div>
                                 </div>
-    <div class="col-md-4 form-group m-t-25">
+    <div class="col-md-3 form-group m-t-25">
         <div class="pull-right">
 		<?= Html::submitButton(Yii::t('backend', 'Apply'), [
 			'id' => 'lesson-review-apply',
