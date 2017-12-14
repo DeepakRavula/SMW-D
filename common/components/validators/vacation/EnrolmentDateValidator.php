@@ -24,9 +24,11 @@ class EnrolmentDateValidator extends Validator
         }   
         
         $vacation=Vacation::find()
-                ->andWhere(['enrolmentId' => $model->enrolment->id])
-                ->andWhere(['between', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
-            ->all();
+               ->where(['AND',['<=','fromDate',$fromDate],['>=','toDate',$fromDate]])
+               ->orWhere(['AND',['<=','fromDate',$toDate],['>=','toDate',$toDate]])
+               ->orWhere(['AND',['>','fromDate', $fromDate],['<','toDate', $toDate]])
+               ->andWhere(['enrolmentId' => $model->enrolmentId])
+               ->count();
 
         if(!empty($vacation))
         {

@@ -156,12 +156,5 @@ use yii\grid\GridView;
         return false;
     });
     
-    $(document).off('change', '#vacation-daterange').on('change', '#vacation-daterange', function () {
-        var dateRange = $(this).val();
-        var url = "<?= Url::to(['vacation/create', 'enrolmentId' => $enrolmentId]); ?>&dateRange=" + dateRange;
-        $('#loader').show();
-        $.pjax.reload({url: url, container: "#review-listing", replace: false, async: false, timeout: 4000});
-        $('#loader').hide();
-        return false;
-    });
+    
 </script>
