@@ -92,7 +92,7 @@ $(document).off('click', '.edit-tax-save').on('click', '.edit-tax-save', functio
     var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
     var params = $.param({ 'InvoiceLineItem[ids]' : selectedRows });
     $.ajax({
-        url    : '<?= Url::to(['tax-status/edit-line-item-tax']) ?>?' + params,
+        url    : '<?= Url::to(['invoice-line-item/edit-tax']) ?>?' + params,
         type   : 'post',
         dataType: "json",
         data   : $('#edit-tax-form').serialize(),

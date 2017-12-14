@@ -158,6 +158,7 @@ $('#invoice-delete-button').click(function(){
 $(document).on('click', '.item-delete', function () {
     var status = confirm("Are you sure you want to delete this item?");
     if (status) {
+        $('#item-edit-spinner').show();
         var itemId = $(this).attr('data-id'); 
         $.ajax({
             url    : '<?= Url::to(['invoice-line-item/delete']) ?>?id=' + itemId,
@@ -165,18 +166,21 @@ $(document).on('click', '.item-delete', function () {
             dataType: 'json',
             success: function(response)
             {
-               if(response.status)
-               {
+                if(response.status)
+                {
+                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
                     $('#line-item-edit-modal').modal('hide');
-                    $('#invoice-success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
-                    }else
-                    {
-                        $('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
-                    }
+                    $('#customer-update').html(response.message).fadeIn().delay(5000).fadeOut();
+                    $('#item-edit-spinner').hide();
+                } else {
+                    $('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                }
             }
         });
-        return false;
     }
+    return false;
 });
 </script>    

@@ -12,6 +12,10 @@ use yii\helpers\Url;
         width: 23%;
     }
 </style>
+<?php   $placeholder = '[multiple]'; 
+        if (count($lineItemIds) < 2) 
+            $placeholder = '';
+?>
 <div id="apply-discount-modal" class="apply-discount-form">
     <?php $form = ActiveForm::begin([
         'id' => 'apply-discount-form',
@@ -33,7 +37,7 @@ use yii\helpers\Url;
         <div class="col-xs-3">
             <div class="col-xs-1">
             </div>
-            <?= $form->field($paymentFrequencyDiscount, 'value')->textInput(['placeholder' => '[multiple]',
+            <?= $form->field($paymentFrequencyDiscount, 'value')->textInput(['placeholder' => $placeholder,
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
         <label class="percent dollar-symbol">%</label>
@@ -48,7 +52,7 @@ use yii\helpers\Url;
         <div class="col-xs-3">
             <div class="col-xs-1">
             </div>
-            <?= $form->field($customerDiscount, 'value')->textInput(['placeholder' => '[multiple]',
+            <?= $form->field($customerDiscount, 'value')->textInput(['placeholder' => $placeholder,
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
         <label class="percent dollar-symbol">%</label>
@@ -64,7 +68,7 @@ use yii\helpers\Url;
             <div class="col-xs-1">
                 <label class="discount-dollar-symbol">$</label>
             </div>
-            <?= $form->field($multiEnrolmentDiscount, 'value')->textInput(['placeholder' => '[multiple]',
+            <?= $form->field($multiEnrolmentDiscount, 'value')->textInput(['placeholder' => $placeholder,
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
     </div>
@@ -81,7 +85,7 @@ use yii\helpers\Url;
             <div class="col-xs-1 discount-edit-label">
                 <label class="off discount-dollar-symbol on-off-symbol">$</label>
             </div>
-            <?= $form->field($lineItemDiscount, 'value')->textInput(['placeholder' => '[multiple]',
+            <?= $form->field($lineItemDiscount, 'value')->textInput(['placeholder' => $placeholder,
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
         <label class="on percent dollar-symbol on-off-symbol">%</label>
