@@ -14,18 +14,13 @@ use insolita\wgadminlte\LteConst;
 
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
-$this->params['action-button'] = Html::a('<i class="fa fa-plus"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm', 'id' => 'add-program']);
-$this->params['show-all'] = $this->render('_button', [
-	'searchModel' => $searchModel
-]);
 ?>
 <div>
     <?php
 		LteBox::begin([
 			'type' => LteConst::TYPE_DEFAULT,
 			'boxTools' => [
-				'<i title="Edit" class="fa fa-pencil student-profile-edit-button m-r-10"></i>',
-				'<i title="Merge" id="student-merge" class="fa fa-chain"></i>'
+				'<i title="Add" class="fa fa-plus" id = "add-program"></i>',
 			],
 			'title' => 'Private Programs',
 			'withBorder' => true,

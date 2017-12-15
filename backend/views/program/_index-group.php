@@ -14,18 +14,19 @@ use insolita\wgadminlte\LteConst;
 
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
-$this->params['action-button'] = Html::a('<i class="fa fa-plus"></i> Add', ['create'], ['class' => 'btn btn-primary btn-sm', 'id' => 'add-program']);
-$this->params['show-all'] = $this->render('_button', [
+?>
+<?php $boxTools = $this->render('_button', [
 	'searchModel' => $searchModel
 ]);
 ?>
+
 <div>
     <?php
 		LteBox::begin([
 			'type' => LteConst::TYPE_DEFAULT,
 			'boxTools' => [
-				'<i title="Edit" class="fa fa-pencil student-profile-edit-button m-r-10"></i>',
-				'<i title="Merge" id="student-merge" class="fa fa-chain"></i>'
+				'<i title="Add" class="fa fa-plus" id = "add-program"></i>',
+                                $boxTools,
 			],
 			'title' => 'Group Programs',
 			'withBorder' => true,
@@ -64,10 +65,11 @@ $this->params['show-all'] = $this->render('_button', [
 </div>
   <script>
 $(document).ready(function(){
-  $("#programsearch-showallprograms").on("change", function() {
+  $("#programsearch-showallprograms").on("click", function() {
       var showAllPrograms = $(this).is(":checked");
-      var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[query]=" + "<?= $searchModel->query; ?>&ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[type]=' + "<?php echo $searchModel->type; ?>";
-      $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  //Reload GridView
+      var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[programType]=' + "<?php echo Program::TYPE_GROUP_PROGRAM; ?>";
+    alert(url);
+    $.pjax.reload({url:url,container:"#group-program-listing",replace:false,  timeout: 4000});  //Reload GridView
   });
 });
   </script>
