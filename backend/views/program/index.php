@@ -10,35 +10,32 @@ $this->title = 'Programs';
 ?>
 
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
-<div class="nav-tabs-custom">
-<?php 
-
-$indexProgram = $this->render('_index-program', [
+<div class="row">
+    <div class="col-md-12">
+	 <?php 
+echo $this->render('_index-private', [
     'model' => $model,
     'searchModel' => $searchModel,
-    'dataProvider' => $dataProvider,
+    'privateDataProvider' => $privateDataProvider,
 ]);
 
 ?>
-
-<?php echo Tabs::widget([
-    'items' => [
-        [
-            'label' => 'Private Programs',
-            'content' => (int) $searchModel->type === Program::TYPE_PRIVATE_PROGRAM ? $indexProgram : null,
-            'url' => ['/program/index', 'ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
-            'active' => (int) $searchModel->type === Program::TYPE_PRIVATE_PROGRAM,
-        ],
-        [
-            'label' => 'Group Programs',
-            'content' => (int) $searchModel->type === Program::TYPE_GROUP_PROGRAM ? $indexProgram : null,
-            'url' => ['/program/index', 'ProgramSearch[type]' => Program::TYPE_GROUP_PROGRAM],
-            'active' => (int) $searchModel->type === Program::TYPE_GROUP_PROGRAM,
-        ],
-    ],
-]); ?>
-<div class="clearfix"></div>
+    </div>
 </div>
+<div class="row">
+    <div class="col-md-12">
+	 <?php 
+echo $this->render('_index-group', [
+    'model' => $model,
+    'searchModel' => $searchModel,
+    'privateDataProvider' => $groupDataProvider,
+]);
+
+?>
+    </div>
+</div>   
+
+<div class="clearfix"></div>
  <?php Modal::begin([
         'header' => '<h4 class="m-0">Program</h4>',
         'id' => 'program-modal',

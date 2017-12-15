@@ -46,7 +46,10 @@ class ProgramController extends Controller
     public function actionIndex()
     {
         $searchModel = new ProgramSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel->type=Program::TYPE_PRIVATE_PROGRAM;
+        $privateDataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel->type=Program::TYPE_GROUP_PROGRAM;
+        $groupDataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $model = new Program();
         $model->type = $searchModel->type;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -61,7 +64,8 @@ class ProgramController extends Controller
         return $this->render('index', [
             'model' => $model,
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'privateDataProvider' => $privateDataProvider,
+            'groupDataProvider' => $groupDataProvider,
         ]);
     }
 	public function actionFetchRate($id)

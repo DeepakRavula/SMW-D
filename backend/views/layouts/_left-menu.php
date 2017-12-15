@@ -206,7 +206,7 @@ echo Menu::widget([
 					[
 					'label' => Yii::t('backend', 'Programs'),
 					'icon' => '<i class="fa fa-table"></i>',
-					'url' => ['/program/index', 'ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
+					'url' => ['/program/index'],
 					'visible' => Yii::$app->user->can('staffmember'),
 					'active' => (Yii::$app->controller->id === 'program') ? true : false,
 					'badge' => Program::find()->active()->count(),

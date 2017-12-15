@@ -4,8 +4,10 @@ use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\bootstrap\ActiveForm;
 use common\models\Program;
-use common\components\gridView\AdminLteGridView;
+use yii\grid\GridView;
 use yii\helpers\Html;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -18,14 +20,24 @@ $this->params['show-all'] = $this->render('_button', [
 ]);
 ?>
 <div>
-	<?php $rateLabel = (int) $model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour' : 'Rate Per Course'; ?>
-	<?php Pjax::begin(['id' => 'program-listing']) ?>
-        <?php echo AdminLteGridView::widget([
-			'id' => 'program-grid',
-            'dataProvider' => $dataProvider,
+    <?php
+		LteBox::begin([
+			'type' => LteConst::TYPE_DEFAULT,
+			'boxTools' => [
+				'<i title="Edit" class="fa fa-pencil student-profile-edit-button m-r-10"></i>',
+				'<i title="Merge" id="student-merge" class="fa fa-chain"></i>'
+			],
+			'title' => 'Group Programs',
+			'withBorder' => true,
+		])
+		?>
+	<?php Pjax::begin(['id' => 'group-program-listing']) ?>
+        <?php echo GridView::widget([
+			'id' => 'group-program-grid',
+            'dataProvider' => $privateDataProvider,
     		'filterModel' => $searchModel,
-			'condensed' => true,
-        	'hover' => true,
+			//'condensed' => true,
+        	//'hover' => true,
             'columns' => [
                 [
 					'attribute' => 'name', 
@@ -35,7 +47,7 @@ $this->params['show-all'] = $this->render('_button', [
 					},
 				],
                 [
-					'label' => $rateLabel,
+					'label' => 'Rate Per Course',
 					'attribute' => 'rate', 
 					'format' => 'currency',
 					'headerOptions' => ['class' => 'text-right'],
@@ -47,6 +59,7 @@ $this->params['show-all'] = $this->render('_button', [
             ],
         ]); ?>
     <?php Pjax::end(); ?>
+    <?php LteBox::end() ?>
     <div class="clearfix"></div>
 </div>
   <script>
