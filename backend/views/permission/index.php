@@ -35,7 +35,7 @@ $this->title = 'Permissions';
                     </tr>
 					 <?php foreach($permissions as $permission): ?>
                         <tr>
-                            <td><?= $permission->name ?></td>
+                            <td><?= $permission->description ?></td>
 							<?=$statusTd(User::ROLE_STAFFMEMBER, $roles, $permission) ?>
                             <?=$statusTd(User::ROLE_OWNER, $roles, $permission) ?>
                             <?=$statusTd(User::ROLE_ADMINISTRATOR, $roles, $permission) ?>
