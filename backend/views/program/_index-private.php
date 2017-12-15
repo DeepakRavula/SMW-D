@@ -20,7 +20,9 @@ $lastRole = end($roles);
 		LteBox::begin([
 			'type' => LteConst::TYPE_DEFAULT,
 			'boxTools' => [
-				'<i title="Add" class="fa fa-plus" id = "add-program"></i>',
+                            '<i title="Add" class="fa fa-plus" id = "add-program"></i>',   
+                            Html::checkbox('show-all', false, ['id' => 'show-all-programs','class' => 'show-all-private-programs']),
+                            Html::label('Show All', '', ['id' => 'show-all-programs-label'])
 			],
 			'title' => 'Private Programs',
 			'withBorder' => true,
@@ -60,10 +62,10 @@ $lastRole = end($roles);
 </div>
   <script>
 $(document).ready(function(){
-  $("#programsearch-showallprograms").on("change", function() {
+  $(".show-all-private-programs").on("click", function() {
       var showAllPrograms = $(this).is(":checked");
-      var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[query]=" + "<?= $searchModel->query; ?>&ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[type]=' + "<?php echo $searchModel->type; ?>";
-      $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  //Reload GridView
+      var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[programType]=' + "<?php echo Program::TYPE_PRIVATE_PROGRAM; ?>";
+      $.pjax.reload({url:url,container:"#private-program-listing",replace:false,  timeout: 4000});  //Reload GridView
   });
 });
   </script>

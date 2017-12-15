@@ -15,24 +15,22 @@ use insolita\wgadminlte\LteConst;
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 ?>
-<?php $boxTools = $this->render('_button', [
-	'searchModel' => $searchModel
-]);
-?>
+
 
 <div>
     <?php
 		LteBox::begin([
 			'type' => LteConst::TYPE_DEFAULT,
 			'boxTools' => [
-				'<i title="Add" class="fa fa-plus" id = "add-program"></i>',
-                                $boxTools,
+				'<i title="Add" class="fa fa-plus" id = "add-program"></i>',   
+                            Html::checkbox('show-all', false, ['id' => 'show-all-programs','class' => 'show-all-group-programs']),
+                            Html::label('Show All', '', ['id' => 'show-all-programs-label'])
 			],
 			'title' => 'Group Programs',
 			'withBorder' => true,
 		])
 		?>
-	<?php Pjax::begin(['id' => 'group-program-listing']) ?>
+	<?php Pjax::begin(['id' => 'group-program-listing', 'enablePushState' => false]) ?>
         <?php echo GridView::widget([
 			'id' => 'group-program-grid',
             'dataProvider' => $privateDataProvider,
@@ -65,7 +63,7 @@ $lastRole = end($roles);
 </div>
   <script>
 $(document).ready(function(){
-  $("#programsearch-showallprograms").on("click", function() {
+  $(".show-all-group-programs").on("click", function() {
       var showAllPrograms = $(this).is(":checked");
       var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[programType]=' + "<?php echo Program::TYPE_GROUP_PROGRAM; ?>";
     alert(url);
