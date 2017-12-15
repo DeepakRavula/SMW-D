@@ -44,7 +44,7 @@ echo $this->render('_index-group', [
  <?php  Modal::end(); ?>
 <script>
     $(document).ready(function() {
-        $(document).on('click', '#add-program, #program-listing  tbody > tr', function () {
+        $(document).on('click', '#add-program, #group-program-listing tbody > tr,#private-program-listing tbody > tr', function () {
             var programId = $(this).data('key');
             if (programId === undefined) {
                 var customUrl = '<?= Url::to(['program/create']); ?>';

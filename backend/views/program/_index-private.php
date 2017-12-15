@@ -28,8 +28,7 @@ $lastRole = end($roles);
 			'withBorder' => true,
 		])
 		?>
-	<?php $rateLabel = (int) $model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour' : 'Rate Per Course'; ?>
-	<?php Pjax::begin(['id' => 'private-program-listing']) ?>
+	<?php Pjax::begin(['id' => 'private-program-listing','enablePushState' => false]) ?>
         <?php echo GridView::widget([
 			'id' => 'private-program-grid',
             'dataProvider' => $privateDataProvider,
