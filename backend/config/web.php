@@ -1,5 +1,9 @@
 <?php
+use yii\helpers\ArrayHelper;
+use common\models\Location;
 
+//$locationsQuery = Location::find()->all();
+//$locations = ArrayHelper::getColumn($locationsQuery, 'slug');
 $config = [
     'homeUrl' => Yii::getAlias('@backendUrl'),
     'controllerNamespace' => 'backend\controllers',
@@ -30,10 +34,21 @@ $config = [
             'cookieValidationKey' => env('BACKEND_COOKIE_VALIDATION_KEY'),
 			'baseUrl' => '/admin',
         ],
-		'urlManager' => [
-			'enablePrettyUrl' => true,
-			'showScriptName' => false,
-		],
+        'urlManager' => [
+            'class' => 'codemix\localeurls\UrlManager',
+            'languages' => ['arcadia-corporate', 'newmarket', 'south-brampton',
+ 				'bolton', 'north-brampton', 'west-brampton', 'maple', 'richmond-hill',
+ 				'woodbridge', 'burlington'],
+            //'languages' => $locations,
+            'on languageChanged' => 'common\models\Location::onLanguageChanged',
+            'enableDefaultLanguageUrlCode' => true,
+            'enableLanguagePersistence' => false,
+            'ignoreLanguageUrlPatterns' => [
+                '#^sign-in/(login|logout)#' => '#^(sign-in|login)#',
+            ],
+            'enablePrettyUrl' => true,
+            'showScriptName' => false
+        ],
         'user' => [
             'class' => 'yii\web\User',
             'identityClass' => 'common\models\User',

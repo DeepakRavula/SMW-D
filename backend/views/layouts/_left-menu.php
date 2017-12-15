@@ -10,6 +10,7 @@ use common\models\Course;
 use common\models\timelineEvent\TimelineEvent;
 ?>
 <?php
+$userLocation = \common\models\UserLocation::findOne(['user_id' => Yii::$app->user->identity->id]);
 echo Menu::widget([
 	'options' => ['class' => 'sidebar-menu'],
 	'linkTemplate' => '<a href="{url}">{icon}<span>{label}</span>{right-icon}{badge}</a>',
@@ -40,7 +41,7 @@ echo Menu::widget([
 			[
 			'label' => Yii::t('backend', 'Students'),
 			'icon' => '<i class="fa fa-lg fa-fw fa-child"></i>',
-			'url' => ['/student/index', 'StudentSearch[showAllStudents]' => false],
+			'url' => ['/student/index', 'language' => $userLocation->location->slug, 'StudentSearch[showAllStudents]' => false],
 			'visible' => Yii::$app->user->can('staffmember'),
 			'active' => (Yii::$app->controller->id === 'student') ? true : false,
 			'badge' => Student::count(),

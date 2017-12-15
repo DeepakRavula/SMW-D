@@ -79,6 +79,11 @@ class Location extends \yii\db\ActiveRecord
             'advertisementValue' => 'Advertisement (%)',
         ];
     }
+    
+    public static function find()
+    {
+        return new \common\models\query\LocationQuery(get_called_class());
+    }
 
     public function getCountry()
     {
@@ -244,4 +249,16 @@ class Location extends \yii\db\ActiveRecord
     return $taxAmount;
     }
 
+    public static function onLanguageChanged($event)
+    {
+        // $event->language: new language
+        // $event->oldLanguage: old language
+
+        // Save the current language to user record
+        $user = Yii::$app->user;
+        if (!$user->isGuest) {
+            $user->identity->language = $event->language;
+            $user->identity->save();
+        }
+    }
 }

@@ -9,8 +9,7 @@ use yii\helpers\Url;
 use common\models\User;
 use common\models\Location;
 use common\models\UserLocation;
-use yii\widgets\Pjax;
-use yii\bootstrap\Dropdown;
+use common\widgets\LocationDropdown;
 
 $bundle = BackendAsset::register($this);
 ?>
@@ -46,8 +45,10 @@ $bundle = BackendAsset::register($this);
                     <?php if ($role === User::ROLE_ADMINISTRATOR):?>
                         <div class="pull-left">
                             <?php $form = Html::beginForm(); ?>                        
-                                 <?= Html::dropDownList('location_id', null,
-                                  ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control location', 'options' => [Yii::$app->session->get('location_id') => ['Selected' => 'selected']]]); ?>
+                                <div class="dropdown">
+                                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">Label <b class="caret"></b></a>
+                                    <?= LocationDropdown::widget(); ?>
+                                </div>
                             <?php Html::endForm() ?>
                             </div>
 				
