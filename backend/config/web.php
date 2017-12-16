@@ -1,9 +1,5 @@
 <?php
-use yii\helpers\ArrayHelper;
-use common\models\Location;
 
-//$locationsQuery = Location::find()->all();
-//$locations = ArrayHelper::getColumn($locationsQuery, 'slug');
 $config = [
     'homeUrl' => Yii::getAlias('@backendUrl'),
     'controllerNamespace' => 'backend\controllers',
@@ -38,9 +34,10 @@ $config = [
             'class' => 'codemix\localeurls\UrlManager',
             'languages' => ['arcadia-corporate', 'newmarket', 'south-brampton',
  				'bolton', 'north-brampton', 'west-brampton', 'maple', 'richmond-hill',
- 				'woodbridge', 'burlington'],
-            //'languages' => $locations,
-            'on languageChanged' => 'common\models\Location::onLanguageChanged',
+ 				'woodbridge'],
+            'on languageChanged' => function ($event) {
+                
+            },
             'enableDefaultLanguageUrlCode' => true,
             'enableLanguagePersistence' => false,
             'ignoreLanguageUrlPatterns' => [
