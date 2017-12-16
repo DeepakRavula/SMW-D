@@ -42,6 +42,7 @@ class UserEmail extends \yii\db\ActiveRecord
         return [
 			[['userContactId'], 'integer'],
             [['email'], 'string', 'max' => 255],
+			[['email'], 'email'],
 			[['labelId'], 'safe']
         ];
     }
