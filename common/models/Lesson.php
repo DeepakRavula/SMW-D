@@ -246,7 +246,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function canExplode()
     {
         return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded
-            && !$this->isExpired();
+            && !$this->isExpired() && !$this->isExtra();
     }
 
     public function getEnrolment()
@@ -764,7 +764,7 @@ class Lesson extends \yii\db\ActiveRecord
         $enrolmentFirstLesson = self::find()
                         ->notDeleted()
 			->where(['courseId' => $courseId])
-			->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_COMPLETED]])
+			->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_COMPLETED, self::STATUS_UNSCHEDULED]])
 			->orderBy(['date' => SORT_ASC])
 			->one();
         return $enrolmentFirstLesson->date === $this->date;
