@@ -26,13 +26,13 @@ class VacationController extends Controller
                     'delete' => ['post'],
                 ],
             ],
-			[
-				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['create', 'delete'],
-				'formats' => [
-					'application/json' => Response::FORMAT_JSON,
-				],
-        	],
+            [
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['create', 'delete'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
         ];
     }
 
@@ -46,8 +46,9 @@ class VacationController extends Controller
             'query' => Vacation::find(),
         ]);
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
+        return $this->render('index',
+                [
+                'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -58,8 +59,9 @@ class VacationController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+        return $this->render('view',
+                [
+                'model' => $this->findModel($id),
         ]);
     }
 
@@ -70,27 +72,28 @@ class VacationController extends Controller
      */
     public function actionCreate($enrolmentId)
     {
-        $enrolment = Enrolment::findOne(['id' => $enrolmentId]);
-        $dateRange = Yii::$app->request->get('dateRange');
-        $creditAmount = 0;
-        $lessonDataProvider = null;
+        $enrolment                = Enrolment::findOne(['id' => $enrolmentId]);
+        $dateRange                = Yii::$app->request->get('dateRange');
+        $creditAmount             = 0;
+        $lessonDataProvider       = null;
         $paymentCycleDataProvider = null;
         if ($dateRange) {
             list($fromDate, $toDate) = explode(' - ', $dateRange);
 
-            $startDate = \DateTime::createFromFormat('M d,Y', $fromDate)->format('Y-m-d');
-            $endDate = \DateTime::createFromFormat('M d,Y', $toDate)->format('Y-m-d');
-            $lessonsQuery   = Lesson::find()
-                            ->notDeleted()
-                            ->isConfirmed()
-                            ->andWhere(['courseId' => $enrolment->courseId])
-                            ->andWhere(['AND', ['>=', 'DATE(date)', $startDate], ['<=', 'DATE(date)', $endDate]]);
+            $startDate          = \DateTime::createFromFormat('M d,Y', $fromDate)->format('Y-m-d');
+            $endDate            = \DateTime::createFromFormat('M d,Y', $toDate)->format('Y-m-d');
+            $lessonsQuery       = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->andWhere(['courseId' => $enrolment->courseId])
+                ->andWhere(['AND', ['>=', 'DATE(date)', $startDate], ['<=', 'DATE(date)',
+                    $endDate]]);
             $paymentCyclesQuery = PaymentCycle::find()
-                    ->where(['enrolmentId' => $enrolmentId])
-                    ->andWhere(['OR', ['between', "DATE(endDate)", $startDate, $endDate],
-                                ['between', "DATE(startDate)", $startDate, $endDate]]);
-            
-            $affectedLessons = $lessonsQuery->all();
+                ->where(['enrolmentId' => $enrolmentId])
+                ->andWhere(['OR', ['between', "DATE(endDate)", $startDate, $endDate],
+                ['between', "DATE(startDate)", $startDate, $endDate]]);
+
+            $affectedLessons   = $lessonsQuery->all();
             $affectedLessonIds = [];
             foreach ($affectedLessons as $lesson) {
                 if ($lesson->hasLessonCredit($enrolmentId)) {
@@ -98,13 +101,14 @@ class VacationController extends Controller
                 }
                 $affectedLessonIds[] = $lesson->id;
             }
-            $paymentCycles = $paymentCyclesQuery->all();
+            $paymentCycles           = $paymentCyclesQuery->all();
             $affectedPaymentCycleIds = [];
             foreach ($paymentCycles as $paymentCycle) {
                 foreach ($paymentCycle->lessons as $lesson) {
-                    $lessonId = $lesson->id;
+                    $lessonId   = $lesson->id;
                     $isAffected = true;
-                    if (!$lesson->isDeleted && !in_array($lessonId, $affectedLessonIds)) {
+                    if (!$lesson->isDeleted && !in_array($lessonId,
+                            $affectedLessonIds)) {
                         $isAffected = false;
                     }
                     if ($isAffected) {
@@ -113,7 +117,7 @@ class VacationController extends Controller
                 }
             }
             $affectedPaymentCycles = PaymentCycle::find()
-                    ->where(['id' => $affectedPaymentCycleIds]);
+                ->where(['id' => $affectedPaymentCycleIds]);
             if ($affectedLessons) {
                 $lessonDataProvider = new ActiveDataProvider([
                     'query' => $lessonsQuery
@@ -125,42 +129,42 @@ class VacationController extends Controller
                 ]);
             }
         }
-        $data = $this->renderAjax('/student/vacation/_form', [
-                'model' => new Vacation(),
-                'enrolmentId' => $enrolmentId,
-                'studentId' => $enrolment->studentId,
-                'creditAmount' => $creditAmount,
-                'lessonDataProvider' => $lessonDataProvider,
-                'paymentCycleDataProvider' => $paymentCycleDataProvider
+        $data = $this->renderAjax('/student/vacation/_form',
+            [
+            'model' => new Vacation(),
+            'enrolmentId' => $enrolmentId,
+            'studentId' => $enrolment->studentId,
+            'creditAmount' => $creditAmount,
+            'lessonDataProvider' => $lessonDataProvider,
+            'paymentCycleDataProvider' => $paymentCycleDataProvider
         ]);
-		
+
         $request = Yii::$app->request;
-        $model = new Vacation();
+        $model   = new Vacation();
         if ($model->load($request->post())) {
-            $db = Yii::$app->db;
-            $transaction = $db->beginTransaction();
+            $db                 = Yii::$app->db;
+            $transaction        = $db->beginTransaction();
             Lesson::deleteAll([
-                    'courseId' => $enrolment->course->id,
-                    'isConfirmed' => false
+                'courseId' => $enrolment->course->id,
+                'isConfirmed' => false
             ]);
             $transaction->commit();
             $model->enrolmentId = $enrolmentId;
-            if($model->save()) {
+            if ($model->save()) {
                 return [
                     'status' => true
-                ]; 
+                ];
             } else {
                 return [
                     'status' => false,
-                    'errors'=>$model->getErrors($attribute='dateRange'),
-                ]; 
-               
+                    'errors' => $model->getErrors($attribute = 'dateRange'),
+                ];
             }
         } else {
             return [
                 'status' => true,
                 'data' => $data,
-            ]; 
+            ];
         }
     }
 
@@ -177,8 +181,9 @@ class VacationController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('update', [
-                'model' => $model,
+            return $this->render('update',
+                    [
+                    'model' => $model,
             ]);
         }
     }
@@ -191,11 +196,11 @@ class VacationController extends Controller
      */
     public function actionDelete($id)
     {
-		$model = $this->findModel($id);
-		$model->delete();
-		return [
-			'status' => true,
-		];
+        $model = $this->findModel($id);
+        $model->delete();
+        return [
+            'status' => true,
+        ];
     }
 
     /**
