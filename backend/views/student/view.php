@@ -9,6 +9,8 @@ use yii\bootstrap\Modal;
 use common\models\Note;
 use kartik\select2\Select2Asset;
 use kartik\daterange\DateRangePickerAsset;
+use yii\widgets\Pjax;
+use common\models\LocationAvailability;
 
 Select2Asset::register($this);
 DateRangePickerAsset::register($this);              
@@ -19,6 +21,8 @@ $this->title = $model->fullName;
 $this->params['label'] = $this->render('_title', [
 	'model' => $model,
 ]);?>
+<div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
+<div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
@@ -35,6 +39,16 @@ $this->params['label'] = $this->render('_title', [
 	?>
 </div>
 <div class="row">
+<?php Pjax::begin(['id' => 'enrolment-list']);?>
+	<?php
+	echo $this->render('enrolment/view', [
+		'model' => $model,
+		'enrolmentDataProvider' => $enrolmentDataProvider,
+	]);
+	?>
+<?php Pjax::end();?>
+</div>
+<div class="row">
 	<?php
 	echo $this->render('exam-result/view', [
 		'model' => new ExamResult(),
@@ -43,15 +57,9 @@ $this->params['label'] = $this->render('_title', [
 	]);
 	?>
 </div>
-<div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
-<div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
+
 <div class="nav-tabs-custom">
 		<?php
-		$enrolmentContent = $this->render('enrolment/_view', [
-			'model' => $model,
-			'enrolmentDataProvider' => $enrolmentDataProvider,
-		]);
-
 		$lessonContent = $this->render('_lesson', [
 			'lessonDataProvider' => $lessonDataProvider,
 			'model' => $model,
@@ -84,13 +92,6 @@ $this->params['label'] = $this->render('_title', [
 			]);
 		}
 		$items = [
-				[
-				'label' => 'Enrolments',
-				'content' => $enrolmentContent,
-				'options' => [
-					'id' => 'enroment',
-				],
-			],
 				[
 				'label' => 'Lessons',
 				'content' => $lessonContent,
@@ -151,9 +152,108 @@ $this->params['label'] = $this->render('_title', [
 ]); ?>
 <div id="student-merge-content"></div>
 <?php Modal::end(); ?>
-
+<?php
+    $locationId = Yii::$app->session->get('location_id');
+    $minLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['fromTime' => SORT_ASC])
+        ->one();
+    $maxLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['toTime' => SORT_DESC])
+        ->one();
+    $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+    $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+?>
 <script>
     $(document).ready(function () {
+	function loadCalendar() {
+ 		var date = $('#course-startdate').val();
+        $('#enrolment-calendar').fullCalendar({
+     		defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+             header: {
+                 left: 'prev,next today',
+                 center: 'title',
+                 right: ''
+             },
+             allDaySlot: false,
+             slotDuration: '00:15:00',
+             titleFormat: 'DD-MMM-YYYY, dddd',
+             defaultView: 'agendaWeek',
+             minTime: "<?php echo $from_time; ?>",
+             maxTime: "<?php echo $to_time; ?>",
+             selectConstraint: 'businessHours',
+             eventConstraint: 'businessHours',
+             businessHours: [],
+             allowCalEventOverlap: true,
+             overlapEventsSeparate: true,
+             events: [],
+     	});
+	}
+		$('#step-2, #step-1').hide();
+        $(document).on('click', '#add-private-enrol', function () {
+			$('#step-1').show();
+			$('#step-2').hide();
+            $('#private-enrol-modal').modal('show');
+ 			$('#private-enrol-modal .modal-dialog').css({'width': '600px'});
+            return false;
+		});
+		$(document).on('click', '.step1-next', function () {
+			if($('#course-programid').val() == "") {
+				$('#enrolment-form').yiiActiveForm('updateAttribute', 'course-programid', ["Program cannot be blank"]);
+			} else {
+				$('#step-1').hide();
+				$('#step-2').show();
+				loadCalendar();
+				$('#private-enrol-modal .modal-dialog').css({'width': '1000px'});
+				return false;
+			}
+		});
+		$(document).on('click', '.step2-back', function () {
+			$('#step-1').show();
+			$('#step-2').hide();
+ 			$('#private-enrol-modal .modal-dialog').css({'width': '600px'});
+            return false;
+		});
+		$(document).on('click', '#add-group-enrol', function () {
+			$.ajax({
+                url    : $(this).attr('href'),
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#group-enrol-modal .modal-body').html(response.data);
+                        $('#group-enrol-modal').modal('show');
+        				$('#group-enrol-modal .modal-dialog').css({'width': '800px'});
+                    } 
+                }
+            });
+            return false;
+		});
+		$(document).on('change keyup paste', '#course-name', function (e) {
+			var courseName = $(this).val();
+			var id = '<?= $model->id;?>';
+			var params = $.param({'studentId' : id, 'courseName' : courseName});
+			$.ajax({
+				url    : '<?= Url::to(['course/fetch-group']); ?>?' + params,
+				type   : 'get',
+				dataType: 'json',
+				success: function(response)
+				{
+				   if(response.status) {
+					    $('#group-enrol-modal .modal-body').html(response.data);
+				   }
+				}
+			});
+			return false;
+		});
+		$(document).on('click', '.private-enrol-cancel', function() {
+			$('#private-enrol-modal').modal('hide');
+			return false;
+		});
         $(document).on('click', '.merge-cancel', function () {
             $('#student-merge-modal').modal('hide');
             return false;
@@ -176,7 +276,25 @@ $this->params['label'] = $this->render('_title', [
             });
             return false;
         });
-        $(document).on('beforeSubmit', '#student-merge-form', function () {
+     $(document).on('click', '.group-enrol-btn', function() {
+         $('#course-spinner').show();
+         var courseId=$(this).attr('data-key');
+              var params = $.param({'courseId': courseId });
+         $.ajax({
+             url    : '<?= Url::to(['enrolment/group' ,'studentId' => $model->id]); ?>&' + params,
+             type: 'post',
+             success: function(response) {
+                 if (response.status) {
+                     $('#course-spinner').hide();
+                      $.pjax.reload({container: "#enrolment-grid", replace: false, async: false, timeout: 6000});
+                      $('#group-enrol-modal').modal('hide');
+                 }
+             }
+         });
+         return false;
+     });
+ 
+    $(document).on('beforeSubmit', '#student-merge-form', function () {
             $.ajax({
                 url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',
                 type   : 'post',
@@ -405,6 +523,7 @@ $(document).on('click', '.evaluation-delete', function () {
             return false;
         });
 		$(document).on('click', '.student-profile-edit-button', function () {
+        	$('#student-profile-modal .modal-dialog').css({'width': '400px'});
 			$('#student-profile-modal').modal('show');
 			return false;
 		});

@@ -1,176 +1,186 @@
 <?php
 
-use common\models\Program;
-use yii\helpers\ArrayHelper;
-use kartik\time\TimePicker;
-use common\models\PaymentFrequency;
 use yii\helpers\Url;
 use kartik\select2\Select2;
-use common\models\User;
+use common\models\Program;
+use common\models\PaymentFrequency;
+use yii\helpers\ArrayHelper;
+use kartik\time\TimePicker;
+use yii\helpers\Html;
+use common\models\LocationAvailability;
 use kartik\depdrop\DepDrop;
-
-/* @var $this yii\web\View */
-/* @var $model common\models\Program */
-/* @var $form yii\bootstrap\ActiveForm */
-
-$this->title = 'New Enrolment';
 ?>
-<div class="row">
-		 <div class="form-group">
-			<label class="col-sm-2 control-label">Program</label>
-			<div class="col-sm-4">
+<div class="row user-create-form">
+	<?php
+	$privatePrograms = ArrayHelper::map(Program::find()
+		->active()
+		->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM])
+		->all(), 'id', 'name')
+	?>
+	<div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Program</label>
+        </div>
+        <div class="col-xs-5 text-right">
+            <?=
+		$form->field($model, 'programId')->widget(Select2::classname(), [
+			'data' => $privatePrograms,
+			'options' => ['placeholder' => 'Program']
+		])->label(false)
+		?>
+        </div>
+    </div>
+	<?php if (Yii::$app->user->identity->isAdmin()) : ?>
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Rate (per hour)</label>
+		</div>
+		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+		<div class="col-xs-3 enrolment-field">
 				<?php
-            echo $form->field($model, 'programId')->widget(Select2::classname(), [
-                'data' => ArrayHelper::map(Program::find()
-					->active()
-					->privateProgram()
-					->all(), 'id', 'name'),
-                'options' => ['placeholder' => 'Program']
-            ])->label(false);
-            ?>
-			</div>
-            <?php $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'name');
-		$role = end($roles);
-            ?>
-            <?php if ($role === User::ROLE_ADMINISTRATOR) : ?>
-                        <label class="col-sm-2 control-label">Program Rate</label>
-			<div class="col-sm-3">
-                            <?php echo $form->field($courseSchedule, 'programRate')->textInput()->label(false); ?>
-			</div>
-            <?php endif; ?>
+				echo $form->field($courseSchedule, 'programRate')->textInput(['class' => 'form-control	'])
+					->label(false);
+				?>
 		</div>
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label p-10">Teacher</label>
-		<?php $locationId = Yii::$app->session->get('location_id');
-        $teachers = ArrayHelper::map(
-			User::find()
-				->notDeleted()
-				->teachers($model->programId, $locationId)
-				->all(), 'id', 'publicIdentity');
-        ?>
-		<div class="col-sm-4">
-        <?php
-        // Dependent Dropdown
-        echo $form->field($model, 'teacherId')->widget(DepDrop::classname(), [
-                'data' => $teachers,
-                'type' => DepDrop::TYPE_SELECT2,
-                'options' => [
-                    'placeholder' => 'Teacher',
-                ],
-                'pluginOptions' => [
-                    'depends' => ['course-programid'],
-                    'url' => Url::to(['/course/teachers'])
-                ]
-            ])->label(false);
-        ?>
-		</div>
+		<div class="col-xs-1 enrolment-text"><label class="text-muted">/hr</label></div>
 	</div>
-	<div class="clearfix"></div>
-	 <div class="form-group">
-		<label  class="col-sm-2 control-label">Length of Lessons</label>
-		<div class="col-sm-3">
+	<?php endif; ?>
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Duration</label>
+		</div>
+		<div class="col-xs-2"></div>
+		<div class="col-xs-3">
 			<?php
-            echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(),
-                [
-                'pluginOptions' => [
-                    'showMeridian' => false,
-                    'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
-                ],
-            ])->label(false);
-            ?>
+			echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(), [
+				'pluginOptions' => [
+					'showMeridian' => false,
+					'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
+				],
+			])->label(false);
+			?>
 		</div>
-		<label  class="col-sm-2 control-label">Check The Schedule</label>
-		<div class="col-sm-1  hand enrolment-calendar-icon">
-            <span class="fa fa-calendar" style="font-size:30px; margin:-12px 32px;"></span>
-		</div>
+		<div class="col-xs-1 enrolment-text"><label class="text-muted">mins.</label></div>
 	</div>
-	<div class="clearfix"></div>
-	
-	<div class="form-group">
-		<label  class="col-sm-2 control-label p-10">Day, Time & Duration</label>
-    	<?php echo $form->field($model, 'startDate')->hiddenInput()->label(false) ?>
-    	<?php echo $form->field($courseSchedule, 'day')->hiddenInput()->label(false) ?>
-    	<?php echo $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false) ?>
-		<div class="col-sm-5 new-enrolment-time">
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Rate (per month)</label>
 		</div>
-	</div>
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-3 control-label">Payment Frequency</label>
-		<div class="col-sm-2">
-			<?= $form->field($courseSchedule, 'paymentFrequency')->dropDownList(ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'))->label(false) ?>	
+		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+		<div class="col-xs-3">
+			<div class="form-group">
+			<div class="input-group">
+				<input type="text" readonly="true" id="rate-per-month" class="col-md-2 form-control	" autocomplete="off" >
+			</div>
+			</div>
 		</div>
+		<div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
 	</div>
-	<div class="form-group">
-		<label  class="col-sm-4 control-label">Payment Frequency Discount (%)</label>
-		<div class="col-sm-2">
-			<?= $form->field($paymentFrequencyDiscount, 'discount')->textInput([
-                'id' => 'payment-frequency-discount',
-                'name' => 'PaymentFrequencyDiscount[discount]'
-            ])->label(false); ?>
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Payment Frequency</label>
+		</div>
+		<div class="col-xs-5 text-right">
+			<?=
+			$form->field($courseSchedule, 'paymentFrequency')->widget(Select2::classname(), [
+				'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')
+			])->label(false)
+			?>
 		</div>
 	</div>
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label">Multiple Enrolment Discount - Per Month($)</label>
-		<div class="col-sm-3">
-			<?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput([
-                'id' => 'enrolment-discount',
-                'name' => 'MultipleEnrolmentDiscount[discount]'
-            ])->label(false); ?>	
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Payment Frequency Discount</label>
 		</div>
+		<div class="col-xs-2"></div>
+		<div class="col-xs-3">
+			<?=
+			$form->field($paymentFrequencyDiscount, 'discount')->textInput([
+				'id' => 'payment-frequency-discount',
+				'name' => 'PaymentFrequencyDiscount[discount]'
+			])->label(false);
+			?>
+		</div>
+		<div class="col-xs-1 enrolment-text"><label class="text-muted">%</label></div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Multiple Enrol. Discount (per month)</label>
+		</div>
+		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+		<div class="col-xs-3">
+			<?=
+			$form->field($multipleEnrolmentDiscount, 'discount')->textInput([
+				'id' => 'enrolment-discount',
+				'name' => 'MultipleEnrolmentDiscount[discount]'
+			])->label(false);
+			?>
+		</div>
+		<div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Discounted Rate (per month)</label>
+		</div>
+		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+		<div class="col-xs-3">
+			<div class="form-group">
+			<div class="input-group">
+				<input type="text" readonly="true" id="discounted-rate-per-month" class="col-md-2 form-control	" autocomplete="off" >
+			</div>
+			</div>
+		</div>
+		<div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
 	</div>
 	<div class="clearfix"></div>
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label p-10">Rate Per Lesson</label>
-		<div class="col-sm-5" id="rate"></div>
-	</div>
-	<div class="clearfix"></div>
-	<div class="form-group">
-		<label  class="col-sm-2 control-label p-10">Rate Per Month</label>
-		<div class="col-sm-5" id="monthly-rate"></div>
-	</div>
-	<div class="clearfix"></div>
-</div> <!-- ./container -->
+	<div class="form-group pull-right">
+		<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
+		<button class="step1-next btn btn-info pull-right" type="button" >Next</button>
+    </div>
+</div>
+<?php
+$locationId = Yii::$app->session->get('location_id');
+$minLocationAvailability = LocationAvailability::find()
+	->where(['locationId' => $locationId])
+	->orderBy(['fromTime' => SORT_ASC])
+	->one();
+$maxLocationAvailability = LocationAvailability::find()
+	->where(['locationId' => $locationId])
+	->orderBy(['toTime' => SORT_DESC])
+	->one();
+$from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+$to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+?>
 <script>
-	function fetchProgram(duration, programId, pfDiscount, enrolmentDiscount, programRate) {
-            var params = $.param({duration: duration, id: programId, paymentFrequencyDiscount: pfDiscount,
-                multiEnrolmentDiscount: enrolmentDiscount, rate: programRate });
-            $.ajax({
-                url: '<?= Url::to(['student/fetch-program-rate']); ?>?' + params,
-                type: 'get',
-                dataType: "json",
-                success: function (response)
-                {
-                    $('#rate').text('$' + response.ratePerLesson);
-                    $('#monthly-rate').text('$' + response.ratePerMonth);
-                    $('#courseschedule-programrate').val(response.rate);
-                }
-            });
-	}
-    $(document).ready(function () {
-		$('#rate').text('$0.00');
-		$('#monthly-rate').text('$0.00');
-		$(document).on('change', '#courseschedule-duration, #courseschedule-programrate, #enrolment-discount, #course-programid, #payment-frequency-discount', function(){
-			var duration = $('#courseschedule-duration').val();
-                        if ($(this).attr('id') != "course-programid") {
-                            var programRate = $('#courseschedule-programrate').val();
-                        } else {
-                            var programRate = null;
-                        }
-			var programId = $('#course-programid').val();
-			var pfDiscount = $('#payment-frequency-discount').val();
-			var enrolmentDiscount = $('#enrolment-discount').val();
-                        if (!duration) {
-                            $('#rate').text('$0.00');
-                            $('#monthly-rate').text('$0.00');
-                            return false;
-                        }
-			if (programId) {
-				fetchProgram(duration, programId, pfDiscount, enrolmentDiscount, programRate);
+	var enrolment = {
+		fetchProgram: function (duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate) {
+			var params = $.param({duration: duration, id: programId, paymentFrequencyDiscount: paymentFrequencyDiscount,
+				multiEnrolmentDiscount: multiEnrolmentDiscount, rate: programRate});
+			$.ajax({
+				url: '<?= Url::to(['student/fetch-program-rate']); ?>?' + params,
+				type: 'get',
+				dataType: "json",
+				success: function (response)
+				{
+					$('#courseschedule-programrate').val(response.rate);
+					$('#rate-per-month').val(response.ratePerMonth);
+					$('#discounted-rate-per-month').val(response.ratePerMonthWithDiscount);
+				}
+			});
+		}
+	};
+	$(document).ready(function () {
+		$(document).on('change', '#course-programid, #courseschedule-duration, #courseschedule-programrate, #payment-frequency-discount, #enrolment-discount', function () {
+			if ($(this).attr('id') != "course-programid") {
+				var programRate = $('#courseschedule-programrate').val();
+			} else {
+				var programRate = null;
 			}
+			var duration = $('#courseschedule-duration').val();
+			var programId = $('#course-programid').val();
+			var paymentFrequencyDiscount = $('#payment-frequency-discount').val();
+			var multiEnrolmentDiscount = $('#enrolment-discount').val();
+			enrolment.fetchProgram(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate);
 		});
 	});
 </script>

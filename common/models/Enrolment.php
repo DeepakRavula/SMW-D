@@ -28,6 +28,7 @@ class Enrolment extends \yii\db\ActiveRecord
 	public $enrolmentCount;
     public $userName;
 	
+    const AUTO_RENEWAL_DAYS_FROM_END_DATE = 90;
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA   = 2;
 	const TYPE_REVERSE = 'reverse';
@@ -65,7 +66,7 @@ class Enrolment extends \yii\db\ActiveRecord
             [['courseId'], 'required'],
             [['courseId', 'studentId'], 'integer'],
             [['paymentFrequencyId', 'type',  'isDeleted', 'isConfirmed',
-                'hasEditable'], 'safe'],
+                'hasEditable', 'isAutoRenew'], 'safe'],
         ];
     }
 
@@ -82,7 +83,8 @@ class Enrolment extends \yii\db\ActiveRecord
             'isDeleted' => 'Is Deleted',
             'paymentFrequencyId' => 'Payment Frequency',
 			'toEmailAddress' => 'To',
-			'showAllEnrolments' => 'Show All'
+			'showAllEnrolments' => 'Show All',
+			'isAutoRenew' => 'Auto Renew'
         ];
     }
 
@@ -139,14 +141,21 @@ class Enrolment extends \yii\db\ActiveRecord
             ->orderBy(['payment_cycle.startDate' => SORT_ASC]);
     }
 
-	public function getVacation()
+    public function getVacation()
     {
         return $this->hasOne(Vacation::className(), ['studentId' => 'studentId']);
     }
-     public function getEnrolmentProgramRate()
+    
+    public function getEnrolmentProgramRate()
     {
       return $this->hasOne(EnrolmentProgramRate::className(), ['enrolmentId' => 'id']);  
     }
+    
+    public function getEnrolmentProgramRates()
+    {
+      return $this->hasMany(EnrolmentProgramRate::className(), ['enrolmentId' => 'id']);  
+    }
+    
     public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'programId'])
@@ -389,34 +398,38 @@ class Enrolment extends \yii\db\ActiveRecord
             if (empty($this->type)) {
                 $this->type = self::TYPE_REGULAR;
             }
+            $this->isAutoRenew = true;
         }
         return parent::beforeSave($insert);
     }
     public function afterSave($insert, $changedAttributes)
     {
+        if ($insert) {
+            $enrolmentProgramRate = new EnrolmentProgramRate();
+            $enrolmentProgramRate->enrolmentId = $this->id;
+            $enrolmentProgramRate->startDate  = (new Carbon($this->course->startDate))->format('Y-m-d');
+            $enrolmentProgramRate->endDate = (new Carbon($this->course->endDate))->format('Y-m-d');
+            $enrolmentProgramRate->programRate = $this->course->program->rate;
+            $enrolmentProgramRate->save();
+        }
         if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate))
 			|| (!$insert) || $this->isExtra()) {
-            return true;
+            return parent::afterSave($insert, $changedAttributes);
         }
-        $enrolmentProgramRate = new EnrolmentProgramRate();
-        $enrolmentProgramRate->enrolmentId = $this->id;
-        $enrolmentProgramRate->startDate  = (new Carbon($this->course->startDate))->format('Y-m-d');
-        $enrolmentProgramRate->endDate = (new Carbon($this->course->endDate))->format('Y-m-d');
-        $enrolmentProgramRate->programRate = $this->course->program->rate;
-        $enrolmentProgramRate->save();  
         $interval = new \DateInterval('P1D');
         $start = new \DateTime($this->course->startDate);
         $end = new \DateTime($this->course->endDate);
         $period = new \DatePeriod($start, $interval, $end);
-		foreach ($period as $day) {
-			$checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
-			if ($checkDay) {
-				if ($this->course->isProfessionalDevelopmentDay($day)) {
-					continue;
-				}
-				$this->course->createLesson($day);
-			}
-		}
+        foreach ($period as $day) {
+            $checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
+            if ($checkDay) {
+                if ($this->course->isProfessionalDevelopmentDay($day)) {
+                    continue;
+                }
+                $this->course->createLesson($day);
+            }
+        }
+        return parent::afterSave($insert, $changedAttributes);
     }
 
 	public static function getPaymentFrequencies()
@@ -520,9 +533,9 @@ class Enrolment extends \yii\db\ActiveRecord
         }
     }
 
-    public function setPaymentCycle()
+    public function setPaymentCycle($startDate)
     {
-        $enrolmentStartDate      = \DateTime::createFromFormat('Y-m-d H:i:s', $this->firstLesson->date);
+        $enrolmentStartDate      = new \DateTime($startDate);
         $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
         for ($i = 0; $i <= (int) 12 / $this->paymentsFrequency->frequencyLength; $i++) {
             if ($i !== 0) {

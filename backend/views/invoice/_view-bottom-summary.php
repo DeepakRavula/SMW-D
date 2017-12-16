@@ -6,24 +6,42 @@ use insolita\wgadminlte\LteConst;
 <?php
 	LteBox::begin([
 		'type' => LteConst::TYPE_DEFAULT,
-		'boxTools' => '',
+		'boxTools' => $this->render('_summary-button'),
 		'title' => 'Totals',
 		'withBorder' => true,
 	])
 	?>
 <dl class="dl-invoice-summary">
 	<dt id="invoice-discount">Discounts</dt>
-	<dd><?= Yii::$app->formatter->asDecimal($model->totalDiscount, 4); ?></dd>
+	<dd><?= Yii::$app->formatter->format($model->totalDiscount, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?>
 	<dt>SubTotal</dt>
-	<dd><?= $model->subTotal; ?></dd>
+	<dd><?= Yii::$app->formatter->format($model->subTotal, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?></dd>
 	<dt>Tax</dt>
-	<dd><?= $model->tax; ?></dd>
+	<dd><?= Yii::$app->formatter->format($model->tax, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?></dd>
 	<dt>Total</dt>
-	<dd><?= $model->total; ?></dd>
+	<dd><?= Yii::$app->formatter->format($model->total, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?></dd>
 	<dt>Paid</dt>
-	<dd> <?= !empty($model->invoicePaymentTotal)? Yii::$app->formatter->asDecimal($model->invoicePaymentTotal, 4) : 
-            Yii::$app->formatter->asDecimal(0, 4) ?></dd>
+	<dd> <?php $paymentTotal = !empty($model->invoicePaymentTotal)? $model->invoicePaymentTotal : 0; ?> 
+		<?= Yii::$app->formatter->format($paymentTotal, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?>
 	<dt>Balance</dt>
-	<dd> <?= $model->balance; ?></dd>
+	<dd> <?= Yii::$app->formatter->format($model->balance, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?></dd>
 </dl>
 <?php LteBox::end() ?>

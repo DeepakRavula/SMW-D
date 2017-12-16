@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\TaxStatus;
+use yii\web\Response;
+use yii\filters\ContentNegotiator;
 use backend\models\search\TaxStatusSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -21,6 +23,14 @@ class TaxStatusController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['edit-line-item-tax'],
+                'formatParam' => '_format',
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];

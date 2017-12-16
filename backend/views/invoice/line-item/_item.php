@@ -1,19 +1,16 @@
 <?php
-use yii\helpers\Html;
-use backend\models\search\InvoiceSearch;
 use yii\helpers\Url;
 use common\models\User;
-use yii\widgets\ActiveForm;
-use kartik\editable\Editable;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
-use yii\bootstrap\Modal;
-use common\models\InvoiceLineItem;
 use yii\widgets\Pjax;
 
 ?>
 <?php echo $this->render('/invoice/_line-item', [
         'invoiceModel' => $model,
+    'itemDataProvider' => $itemDataProvider,
+    'searchModel'=>'$searchModel',
+    'itemSearchModel'=>$itemSearchModel,
     ]) ?>
 <?php Pjax::Begin(['id' => 'invoice-view-tab-item', 'timeout' => 6000]); ?>
 <?php $boxTools = $this->render('_button', [
@@ -49,17 +46,14 @@ use yii\widgets\Pjax;
  <?php Pjax::end(); ?>
 <script>
 $(document).ready(function() {
-    $('.add-new-misc').click(function(){
-        $('input[type="text"]').val('');
-        $('.tax-compute').hide();
-        $('#invoicelineitem-tax_status').val('');
-        $('.misc-tax-status').show();
+    $(document).on('click', '.add-new-misc', function () {
         $('#invoice-line-item-modal').modal('show');
         return false;
     });
-    $('.add-misc-cancel').click(function(){
+    $(document).on('click', '.add-misc-cancel', function () {
     	$('#invoice-line-item-modal').modal('hide');
-   		return false;
+        $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
+        return false;
     });
     $(document).on("click", '.invoice-apply-discount-cancel', function() {
 		$('#apply-discount-modal').modal('hide');
@@ -67,8 +61,24 @@ $(document).ready(function() {
 	});
 
     $(document).on('click', '.apply-discount', function () {
-        $('#apply-discount-modal').modal('show');
-  		return false;
+        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(selectedRows)) {
+            $('#invoice-error-notification').html('Please select atleast a item to edit discount!').fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ 'InvoiceLineItem[ids]': selectedRows });
+            $.ajax({
+                url    : '<?= Url::to(['invoice-line-item/apply-discount']) ?>?' + params,
+                type   : 'get',
+                dataType: "json",
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#apply-discount-modal').modal('show');
+                        $('#apply-discount-content').html(response.data);
+                    }
+                }
+            });
+        }
     });
     $(document).on('click', '.invoice-discount-cancel', function () {
         $('#apply-discount-modal').modal('hide');
@@ -76,15 +86,12 @@ $(document).ready(function() {
     });
     
     $('input[name="Invoice[isSent]"]').on('switchChange.bootstrapSwitch', function(event, state) {
+		var params = $.param({'state' : state | 0});
 	$.ajax({
-            url    : '<?= Url::to(['invoice/update-mail-status', 'id' => $model->id]) ?>',
+            url    : '<?= Url::to(['invoice/update-mail-status', 'id' => $model->id]) ?>&' + params,
             type   : 'POST',
             dataType: "json",
-			data   : $('#mail-flag').serialize(),
-			
-            success: function(response)
-            {
-            }
+            data   : $('#mail-flag').serialize()
         });
         return false;
     });
@@ -113,10 +120,8 @@ $(document).ready(function() {
 		   if(response.status)
 		   {			
 				$('input[name="Payment[amount]"]').val(response.amount);
-                //invoice.updateSummarySectionAndStatus();
 				$('#invoice-line-item-modal').modal('hide');
-                //$.pjax.reload({container: "#invoice-lineitem-view", replace: false, async: false, timeout: 6000});
-               // $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
@@ -132,7 +137,7 @@ $(document).ready(function() {
 });
 </script>
 <script>
-$('#delete-button').click(function(){
+$('#invoice-delete-button').click(function(){
     $.ajax({
         url    : '<?= Url::to(['invoice/delete', 'id' => $model->id]) ?>',
         type   : 'post',
@@ -148,6 +153,34 @@ $('#delete-button').click(function(){
                 }
         }
     });
+    return false;
+});
+$(document).on('click', '.item-delete', function () {
+    var status = confirm("Are you sure you want to delete this item?");
+    if (status) {
+        $('#item-edit-spinner').show();
+        var itemId = $(this).attr('data-id'); 
+        $.ajax({
+            url    : '<?= Url::to(['invoice-line-item/delete']) ?>?id=' + itemId,
+            type   : 'post',
+            dataType: 'json',
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+                    $('#line-item-edit-modal').modal('hide');
+                    $('#customer-update').html(response.message).fadeIn().delay(5000).fadeOut();
+                    $('#item-edit-spinner').hide();
+                } else {
+                    $('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                }
+            }
+        });
+    }
     return false;
 });
 </script>    

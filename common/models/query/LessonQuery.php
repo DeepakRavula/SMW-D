@@ -343,4 +343,20 @@ class LessonQuery extends \yii\db\ActiveQuery
                     ]
             ]);
     }
+    
+    public function regular()
+    {
+        return $this->andWhere(['lesson.type' => Lesson::TYPE_REGULAR]);
+    }
+   	public function present()
+    {
+        return $this->andWhere(['lesson.isPresent' => true]);
+    }
+     
+    public function paymentCycleLessonExcluded()
+    {
+        return $this->joinWith(['paymentCycleLesson' => function($query) {
+            $query->andWhere(['payment_cycle_lesson.id' => null]);
+        }]);
+    }
 }

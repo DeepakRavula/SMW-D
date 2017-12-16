@@ -240,6 +240,11 @@ class User extends ActiveRecord implements IdentityInterface
 		return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
 			->via('primaryContact');
     }
+	public function getPrimaryEmail()
+    {
+		return $this->hasOne(UserEmail::className(), ['userContactId' => 'id'])
+			->via('primaryContact');
+    }
 	public function getBillingAddress()
     {
 		return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
@@ -587,6 +592,12 @@ class User extends ActiveRecord implements IdentityInterface
         $role  = end($roles);
         return $role->name === self::ROLE_CUSTOMER;
     }
+	public function isWalkin()
+    {
+        $roles = Yii::$app->authManager->getRolesByUser($this->id);
+        $role  = end($roles);
+        return $role->name === self::ROLE_GUEST;
+    }
 	public function getRoleById($id)
     {
 		$roles = Yii::$app->authManager->getRolesByUser($id);
@@ -701,5 +712,18 @@ class User extends ActiveRecord implements IdentityInterface
     public function hasInvoice()
     {
         return !empty($this->invoice);
+    }
+    
+    public function isAdmin()
+    {
+        $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($this->id), 'name');
+        $role = end($roles);
+        return $role === self::ROLE_ADMINISTRATOR;
+    }
+     public function isStaff()
+    {
+        $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($this->id), 'name');
+        $role = end($roles);
+        return $role === self::ROLE_STAFFMEMBER;
     }
 }

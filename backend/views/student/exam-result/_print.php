@@ -3,8 +3,10 @@
 use yii\grid\GridView;
 ?>
 <div class="invoice-view">
-<?= $this->render('_print-header', [
+			<?= $this->render("/print/_header.php", [
 	'studentModel' => $studentModel,
+        'locationModel'=>$studentModel->customer->userLocation->location,
+        'userModel' => $studentModel->customer,
 ]); ?>
 </div>
 <div class="clearfix"></div><hr>

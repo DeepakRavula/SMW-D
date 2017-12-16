@@ -102,7 +102,9 @@
     "valentinek/yii2-closure-table-behavior": "*",
     "yiister/yii2-adminlte": "~1.0",
     "demi/backup": "*",
-    "kartik-v/yii2-sortable-input": "*"
+    "kartik-v/yii2-sortable-input": "*",
+    "omnilight/yii2-scheduling": "*",
+    "kartik-v/yii2-widget-touchspin": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",

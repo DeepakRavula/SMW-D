@@ -47,7 +47,7 @@ use kartik\daterange\DateRangePicker;
 <?= Html::a('<i class="fa fa-print"></i> Print', ['print/time-voucher', 'id' => $model->id], ['id' => 'time-voucher-print-btn', 'class' => 'btn btn-default m-r-10', 'target' => '_blank']) ?>
 
         </div>
-        <div class="pull-right">
+        <div class="pull-right checkbox">
 <?= $form->field($searchModel, 'summariseReport')->checkbox(['data-pjax' => true]); ?>
         </div>
         <div class="clearfix"></div>
@@ -125,11 +125,12 @@ $columns = [
 		[
 			'label' => 'Rate/hr',
 			'value' => function ($data) {
-				return !empty($data->rate) ? $data->rate : 0;
+				return !empty($data->rate) ? Yii::$app->formatter->asDecimal($data->rate) : Yii::$app->formatter->asDecimal(0);
 			},
 			'contentOptions' => ['class' => 'text-right'],
 			'hAlign' => 'right',
-			'format'=>['decimal',2],
+			'format'=> 'currency',
+			'visible' => Yii::$app->user->can('administrator') || Yii::$app->user->can('owner') 
 		],
 			[
 		'label' => 'Cost',
@@ -140,7 +141,8 @@ $columns = [
 		'contentOptions' => ['class' => 'text-right'],
 			'hAlign'=>'right',
 			'pageSummary'=>true,
-            'pageSummaryFunc'=>GridView::F_SUM
+            'pageSummaryFunc'=>GridView::F_SUM,
+			'visible' => Yii::$app->user->can('administrator') || Yii::$app->user->can('owner') 
 	],
 ];
 } else {
@@ -175,7 +177,8 @@ $columns = [
 		'contentOptions' => ['class' => 'text-right'],
 			'hAlign'=>'right',
 			'pageSummary'=>true,
-            'pageSummaryFunc'=>GridView::F_SUM
+            'pageSummaryFunc'=>GridView::F_SUM,
+			'visible' => Yii::$app->user->can('administrator') || Yii::$app->user->can('owner') 
 	],
 	];
 }

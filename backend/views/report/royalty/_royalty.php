@@ -18,22 +18,54 @@ if ($total < 0) {
 
 ?>
 
-<dl class="dl-horizontal">
+<dl class="dl-horizontal royalty">
     <dt>Payments Received</dt>
-    <dd><?= !empty($payments) ? $payments : 0; ?></dd>
+    <dd><?php $payments = !empty($payments) ? $payments : 0; ?>
+	<?= Yii::$app->formatter->format($payments, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?>
+	</dd>
     <dt>Tax Collected</dt>
-    <dd><?= !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0; ?></dd>
+    <dd><?php $invoiceTaxTotal = !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0; ?>
+	<?= Yii::$app->formatter->format($invoiceTaxTotal, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?>
+	</dd>
     <dt>Royalty Free Items</dt>
-    <dd><?= !empty($royaltyPayment) ? $royaltyPayment : 0; ?></dd>
+    <dd><?php $royaltyPayment = !empty($royaltyPayment) ? $royaltyPayment : 0; ?>
+		<?= Yii::$app->formatter->format($royaltyPayment, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?>	
+	</dd>
     <dt>Revenue</dt>
-    <dd><?= !empty($total) ? $total : 0; ?></dd>
+    <dd><?php $total = !empty($total) ? $total : 0; ?>
+		<?= Yii::$app->formatter->format($total, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?>	
+	</dd>
     <dt>Advertisement <?= !empty($location->advertisement->value) ? ' (' . $location->advertisement->value . '%)' : ' - '; ?></dt>
-    <dd><?= round($advertisementAmount, 2); ?></dd>
+    <dd>
+	<?= Yii::$app->formatter->format($advertisementAmount, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?>		
     <dt>Royalty <?= !empty($location->royalty->value) ? ' (' . $location->royalty->value . '%)' : ' - '; ?></dt>
-    <dd><?= round($royaltyAmount, 2); ?></dd>
+    <dd>
+	<?= Yii::$app->formatter->format($royaltyAmount, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?>			
     <dt>Subtotal</dt>
     <?php $subtotal = $royaltyAmount + $advertisementAmount; ?> 
-    <dd><?= round($subtotal, 2); ?></dd>
+    <dd>
+	<?= Yii::$app->formatter->format($subtotal, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?>			
     <dt>Tax</dt>
     <?php
     $taxCode = TaxCode::find()
@@ -46,7 +78,15 @@ if ($total < 0) {
     $tax = $subtotal * ($taxPercentage / 100);
 
     ?>
-    <dd><?= round($tax, 2); ?></dd>
+    <dd>
+	<?= Yii::$app->formatter->format($tax, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?>		
     <dt>Total</dt>
-    <dd><?= round(($subtotal + $tax), 2); ?></dd>
+    <dd>
+	<?= Yii::$app->formatter->format($subtotal + $tax, ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?>			
 </dl>

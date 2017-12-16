@@ -9,6 +9,7 @@ use yii\data\ActiveDataProvider;
 use common\models\Lesson;
 use common\models\ExamResult;
 use common\models\Note;
+use common\models\Course;
 
 
 /**
@@ -50,6 +51,7 @@ class ViewAction extends Action
 			$this->controller->redirect(['index', 'StudentSearch[showAllStudents]' => false]);
 		} 
 	}
+
 	protected function getUnscheduledLessons($id, $locationId)
 	{
 		$unscheduledLessons = Lesson::find()
@@ -119,6 +121,9 @@ class ViewAction extends Action
 		
 		return new ActiveDataProvider([
 			'query' => $query,
+			'pagination' => [
+				'pageSize' => 5
+			]
 		]);
 	}
 	protected function findModel($id)

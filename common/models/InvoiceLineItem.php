@@ -22,7 +22,6 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
-    const SCENARIO_LINE_ITEM_CREATE = 'line-item-create';
     const SCENARIO_EDIT = 'edit';
     const SCENARIO_NEGATIVE_VALUE_EDIT = 'negative-value-edit';
     const DISCOUNT_FLAT            = 0;
@@ -39,9 +38,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public $userName;
     public $price;
     public $tax;
-    public $itemCategoryId;
-    public $itemId;
-
+    
     /**
      * {@inheritdoc}
      */
@@ -69,15 +66,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            ['taxStatus', 'required', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_NEGATIVE_VALUE_EDIT]],
-            ['code', 'required'],
-            [['unit', 'amount', 'item_id', 'description', 'tax_status'],
+            ['tax_status', 'required', 'on' => self::SCENARIO_EDIT],
+            [['unit', 'amount', 'item_id', 'description'],
                 'required', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             }],
-            ['itemCategoryId', 'required', 'when' => function ($model, $attribute) {
-                return (int) $model->item_type_id === ItemType::TYPE_MISC;
-            }, 'on' => self::SCENARIO_LINE_ITEM_CREATE],
             [['amount'], 'number', 'when' => function ($model, $attribute) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
@@ -147,7 +140,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
         return $code;
     }
-    
+
     public function getItemCode()
     {
         return $this->itemType->getItemCode();
@@ -277,6 +270,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $this->rate         = 0;
             }
             $taxStatus         = TaxStatus::findOne(['id' => $this->item->taxStatusId]);
+            $this->code        = $this->item->code;
             $this->tax_type    = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
             $this->tax_rate    = $this->netPrice * $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate / 100.0;
             $this->tax_code    = $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->code;
@@ -288,8 +282,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
 
         if (!$insert) {
-            $taxType = TaxType::findOne(['name' => $this->tax_type]);
-            $this->tax_rate = $this->netPrice * $taxType->taxCode->rate / 100.0;
+            $taxStatus = TaxStatus::findOne(['name' => $this->tax_status]);
+            $this->tax_type = $taxStatus->taxTypeTaxStatusAssoc->taxType->name;
+            $this->tax_rate = $this->netPrice * $taxStatus->taxTypeTaxStatusAssoc->taxType->taxCode->rate / 100.0;
         }
         return parent::beforeSave($insert);
     }
@@ -413,10 +408,10 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         }
         if ($this->hasLineItemDiscount()) {
             if ((int) $this->lineItemDiscount->valueType) {
-                $discount += $lineItemPrice < 0 ? - ($this->lineItemDiscount->value) : 
-                    $this->lineItemDiscount->value;
-            } else {
                 $discount += ($this->lineItemDiscount->value / 100) * $lineItemPrice;
+            } else {
+                $discount += $lineItemPrice < 0 ? - ($this->lineItemDiscount->value) :
+                    $this->lineItemDiscount->value;
             }
             $lineItemPrice = $this->grossPrice - $discount;
         }

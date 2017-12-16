@@ -2,13 +2,11 @@
 
 use yii\helpers\Html;
 use backend\models\search\InvoiceSearch;
-use yii\bootstrap\Tabs;
 use common\models\InvoiceLineItem;
 use common\models\Note;
 use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
-use common\models\Payment;
 use common\models\UserProfile;
 use common\models\UserEmail;
 use yii\data\ActiveDataProvider;
@@ -49,7 +47,6 @@ $this->params['action-button'] = $this->render('_buttons', [
 			'model' => $model,
 			'customer' => $customer,
 			'searchModel' => $searchModel,
-            'userDataProvider' => $userDataProvider,
 		]);
 		?>	
 	</div>
@@ -103,6 +100,8 @@ Modal::end();
 			'customer' => $customer,
 			'searchModel' => $searchModel,
 			'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+            'itemDataProvider' => $itemDataProvider,
+            'itemSearchModel'=>$itemSearchModel,
 		]);
 		?>   
 	</div>
@@ -156,6 +155,12 @@ Modal::end();
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Edit Line Item</h4>',
     'id' => 'line-item-edit-modal',
+    'footer' => $this->render('_submit-button', [
+        'deletable' => true,
+        'deleteClass' => 'item-delete',
+        'saveClass' => 'line-item-save',
+        'cancelClass' => 'line-item-cancel'
+    ])
 ]); ?>
 
 <div id="line-item-edit-content"></div>
@@ -175,16 +180,10 @@ Modal::end();
 <div id="payment-edit-content"></div>
 <?php Modal::end();?>
 <?php Modal::begin([
-    'header' => '<h4 class="m-0">Add Customer</h4>',
+    'header' => "<h4>Add Customer</h4>",
     'id' => 'invoice-customer-modal',
+	'footer' => Html::a('Cancel', '#', ['class' => 'btn btn-default pull-right customer-cancel'])
 ]); ?>
-<?= $this->render('customer/_view', [
-    'model' => $model,
-    'customer' => $customer,
-    'userModel' => $userModel,
-    'userEmail'=>$userEmail,
-    'userDataProvider'=>$userDataProvider,
-]);?>
 <?php Modal::end();?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Add Walk-in</h4>',
@@ -192,21 +191,111 @@ Modal::end();
 ]); ?>
 <?= $this->render('customer/_walkin', [
     'model' => $model,
-    'userModel' => new UserProfile(),
-    'userEmail'=>new UserEmail(),
+    'userModel' => empty($model->user) ? new UserProfile() : $model->user->userProfile,
+    'userEmail' => empty($model->user->primaryEmail->email) ? new UserEmail() : $model->user->primaryEmail,
 ]);?>
 <?php Modal::end();?>
+<?php Modal::begin([
+     'header' => '<h4 class="m-0">Edit Tax</h4>',
+     'id' => 'edit-tax-modal',
+    'footer' => $this->render('_submit-button', [
+        'deletable' => false,
+        'saveClass' => 'edit-tax-save', 
+        'cancelClass' => 'edit-tax-cancel'
+    ])
+ ]); ?>
+<div id="edit-tax-modal-content"></div>
+ <?php Modal::end();?>
+<?php Modal::begin([
+     'header' => '<h4 class="m-0">Adjust Tax</h4>',
+     'id' => 'adjust-tax-modal',
+    'footer' => $this->render('_submit-button', [
+        'deletable' => false,
+        'saveClass' => 'adjust-tax-form-save', 
+        'cancelClass' => 'tax-adj-cancel'
+    ])
+ ]); ?>
+<div id="adjust-tax-modal-content"></div>
+ <?php Modal::end();?>
 <script>
  $(document).ready(function() {
- 
+    $(document).on('click', '.edit-tax', function () {
+        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
+        var params = $.param({ 'InvoiceLineItem[ids]' : selectedRows });
+        if ($.isEmptyObject(selectedRows)) {
+            $('#invoice-error-notification').html('Please select atleast a item to edit tax!').fadeIn().delay(5000).fadeOut();
+        } else {
+            $.ajax({
+                url    : '<?= Url::to(['invoice-line-item/edit-tax']) ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#edit-tax-modal .modal-dialog').css({'width': '400px'});
+                        $('#edit-tax-modal').modal('show');
+                        $('#edit-tax-modal-content').html(response.data);
+                    }
+                }
+            });
+        }
+    });
+
+    $(document).on('click', '#line-item-grid table tr', function () {
+        var id = $(this).data('key');
+        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
+        if (!$.isEmptyObject(selectedRows)) {
+            $('#invoice-error-notification').html('You are not allowed to perform this action!').fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ id : id });
+            $.ajax({
+                url    : '<?= Url::to(['invoice-line-item/update']) ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#line-item-edit-modal .modal-dialog').css({'width': '600px'});
+                        $('#line-item-edit-modal').modal('show');
+                        $('.item-delete').attr('data-id', id);
+                        $('#line-item-edit-content').html(response.data);
+                    }
+                }
+            });
+        }
+        return false;
+    });
+ 	$(document).on('click', '.edit-tax-cancel', function (e) {
+ 		$('#edit-tax-modal').modal('hide');
+ 		return false;
+   	}); 
 	$(document).on('click', '.add-invoice-note', function (e) {
 		$('#message-modal').modal('show');
 		return false;
   	});
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$(document).on('click', '.add-customer', function (e) {
-		$('#invoice-username').val('');
-		$('#invoice-customer-modal').modal('show');
+		$.ajax({
+			url    : $(this).attr('href'),
+			type: 'get',
+			dataType: "json",
+			success: function (response)
+			{
+				if (response.status)
+				{
+					$('#invoice-customer-modal .modal-body').html(response.data);
+					$('#invoice-username').val('');
+					$('#invoice-customer-modal').modal('show');
+					$('#invoice-customer-modal .modal-dialog').css({'width': '800px'});
+				} 
+			}
+		});
+		return false;
+  	});
+	$(document).on('click', '.customer-cancel', function (e) {
+		$('#invoice-customer-modal').modal('hide');
 		return false;
   	});
     $(document).on('click', '.add-walkin', function (e) {
@@ -235,7 +324,12 @@ Modal::end();
 		$('#credit-modal').modal('show');
 		return false;
   	});
+	$(document).on('click', '.apply-credit-cancel', function (e) {
+		$('#credit-modal').modal('hide');
+		return false;
+  	});
 	$(document).on('click', '.add-payment', function (e) {
+        $('#payment-modal .modal-dialog').css({'width': '400px'});
 		$('#payment-modal').modal('show');
 		$.ajax({
             url    : '<?= Url::to(['invoice/get-payment-amount', 'id' => $model->id]); ?>',
@@ -326,31 +420,14 @@ Modal::end();
 			   {
 					$('#payment-modal').modal('hide');
 					$.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
-                                        $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
-                                        $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
 				}else
 				{
 				 $('#payment-form').yiiActiveForm('updateMessages',
 					   response.errors
 					, true);
-				}
-			}
-		});
-		return false;
-	});
-	$(document).on("click", "#line-item-grid tbody > tr", function() {
-		var lineItemId = $(this).data('key');	
-		$.ajax({
-			url    : '<?= Url::to(['invoice-line-item/update']); ?>?id=' + lineItemId,
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-					$('#line-item-edit-content').html(response.data);
-					$('#line-item-edit-modal').modal('show');
 				}
 			}
 		});
@@ -374,29 +451,33 @@ Modal::end();
 		});
 		return false;
 	});
-	$(document).on('beforeSubmit', '#line-item-edit-form', function (e) {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-				{
-					$.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
-                   $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000}); 
-					if(response.message) {
-						$('#invoice-discount-warning').html(response.message).fadeIn().delay(8000).fadeOut();
-					}
-					$('#line-item-edit-modal').modal('hide');
-				} else {
-					$('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
-				}
-			}
-		});
-		return false;
+	$(document).on('click', '.line-item-save', function () {
+        $('#item-edit-spinner').show();
+            $.ajax({
+                    url    : $('#line-item-edit-form').attr('action'),
+                    type   : 'post',
+                    dataType: "json",
+                    data   : $('#line-item-edit-form').serialize(),
+                    success: function(response)
+                    {
+                       if(response.status)
+                            {
+                                $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
+               $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000}); 
+                                    if(response.message) {
+                                            $('#success-notification').html(response.message).fadeIn().delay(8000).fadeOut();
+                                    }
+                                    $('#line-item-edit-modal').modal('hide');
+                                    $('#item-edit-spinner').hide();
+                            } else {
+                                    $('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
+                                    $('#item-edit-spinner').hide();
+                            }
+                    }
+            });
+            return false;
 	});
 	$(document).on('beforeSubmit', '#payment-edit-form', function (e) {
 		$.ajax({
@@ -410,6 +491,7 @@ Modal::end();
 			   {
 					$.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
 					$('input[name="Payment[amount]"]').val(response.amount);
                     $('#payment-edit-modal').modal('hide');
@@ -494,10 +576,11 @@ Modal::end();
 		return false;
 	});
         $(document).on("click", '.add-customer-invoice', function() {
-             var customerId=$(this).attr('id');
+           $('#customer-spinner').show();
+             var customerId=$(this).attr('data-key');
              var params = $.param({'customerId': customerId });
 	$.ajax({
-                	url    : $(this).attr('href') + '&' +params,
+            url    : '<?= Url::to(['invoice/update-customer' ,'id' => $model->id]); ?>&' + params,
 			type   : 'post',
 			dataType: "json",
 			data   : $(this).serialize(),
@@ -505,17 +588,33 @@ Modal::end();
 			{
 			   if(response.status)
 			   {
-                                        $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
+                   $('#customer-spinner').hide();
+                    $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                                        $('#invoice-customer-modal').modal('hide');
+                    $('#invoice-customer-modal').modal('hide');
                                
-				}else
-				{
-				 
 				}
 			}
 		});
 		return false;
 	});
+});
+
+$(document).on("click", '.adjust-invoice-tax', function() {
+    $('#customer-spinner').show();
+    $.ajax({
+        url: '<?= Url::to(['invoice/adjust-tax' ,'id' => $model->id]); ?>',
+        type   : 'get',
+        success: function(response)
+        {
+            if(response.status)
+            {
+                $('#customer-spinner').hide();
+                $('#adjust-tax-modal').modal('show');
+                $('#adjust-tax-modal-content').html(response.data);
+            }
+        }
+    });
+    return false;
 });
 </script>

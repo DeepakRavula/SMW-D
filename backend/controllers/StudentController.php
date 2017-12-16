@@ -4,23 +4,17 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Student;
-use common\models\Enrolment;
-use common\models\Lesson;
 use common\models\Program;
 use common\models\Course;
 use backend\models\search\StudentSearch;
-use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use common\models\CourseSchedule;
-use common\models\ExamResult;
-use common\models\Note;
 use common\models\StudentLog;
 use common\models\User;
 use common\models\discount\EnrolmentDiscount;
-use common\models\PaymentFrequency;
 use common\models\TeacherAvailability;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
@@ -145,12 +139,12 @@ class StudentController extends Controller
         $post = $request->post();
         $courseModel = new Course();
 		$courseSchedule = new CourseSchedule();
-                $multipleEnrolmentDiscount = new EnrolmentDiscount();
-                $paymentFrequencyDiscount = new EnrolmentDiscount();
+		$multipleEnrolmentDiscount = new EnrolmentDiscount();
+		$paymentFrequencyDiscount = new EnrolmentDiscount();
 		$courseModel->load($post);
 		$courseSchedule->load($post);
 		
-        if (Yii::$app->request->isPost && empty($post['courseId'])) {
+        if (Yii::$app->request->isPost) {
             $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
             $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
             $courseModel->locationId = $locationId;
@@ -177,39 +171,6 @@ class StudentController extends Controller
 			}
             return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
         }
-        if (!empty($post['courseId'])) {
-            $enrolmentModel = new Enrolment();
-            $enrolmentModel->courseId = current($post['courseId']);
-            $enrolmentModel->studentId = $model->id;
-            $enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
-            $enrolmentModel->save();
-
-            return $this->redirect(['enrolment/review', 'id' => $enrolmentModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
-        }
-
-        $groupEnrolments = Enrolment::find()
-                ->select(['courseId'])
-                ->joinWith(['course' => function ($query) use ($locationId) {
-                    $query->groupProgram($locationId);
-                }])
-                ->where(['enrolment.studentId' => $model->id])
-				->isConfirmed();
-        $groupCourses = Course::find()
-                ->joinWith(['program' => function ($query) {
-                    $query->group();
-                }])
-                ->where(['NOT IN', 'course.id', $groupEnrolments])
-                ->andWhere(['locationId' => $locationId])
-               ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])  
-				->confirmed();
-        $groupCourseDataProvider = new ActiveDataProvider([
-            'query' => $groupCourses,
-        ]);
-
-        return $this->render('/student/enrolment/view', [
-            'model' => $model,
-            'groupCourseDataProvider' => $groupCourseDataProvider,
-        ]);
     }
 
     /**
@@ -242,13 +203,13 @@ class StudentController extends Controller
 			$minutes     = $getDuration->format('i');
 			$unit        = (($hours * 60) + $minutes) / 60;
 			$lessonDuration = $hours != 00 ? $hours . 'hr' . $minutes . 'mins' : $minutes . 'mins';
-                        if ($rate) {
-                            $ratePerLesson = $unit * $rate;
-                        } else {
-                            $rate = $program->rate;
-                            $ratePerLesson = $unit * $program->rate;
-                        }
-                        $ratePerMonth = $ratePerLesson * 4;
+			if ($rate) {
+				$ratePerLesson = $unit * $rate;
+			} else {
+				$rate = $program->rate;
+				$ratePerLesson = $unit * $program->rate;
+			}
+			$ratePerMonth = $ratePerLesson * 4;
 			$discount = 0.0;
 			if ($multiEnrolmentDiscount) {
 				$discount += $multiEnrolmentDiscount / 4;
@@ -260,14 +221,12 @@ class StudentController extends Controller
 			}
 			$ratePerLessonWithDiscount = $ratePerLesson - $discount;
 			$ratePerMonthWithDiscount = $ratePerLessonWithDiscount * 4;
-			$beforeDiscount = 'Four ' . $lessonDuration . ' Lessons @ $'. $ratePerLesson . ' each = $' . $ratePerMonth . '/mn';
-			$afterDiscount = 'Four ' . $lessonDuration . ' Lessons @ $'. $ratePerLessonWithDiscount . ' each = $' . $ratePerMonthWithDiscount . '/mn';
 			return [
-				'beforeDiscount' => $beforeDiscount,
-				'afterDiscount' => $afterDiscount,
-                                'ratePerLesson' => $ratePerLessonWithDiscount,
-                                'ratePerMonth' => $ratePerMonthWithDiscount,
-                                'rate' => $rate
+				'ratePerLessonWithDiscount' => $ratePerLessonWithDiscount,
+				'ratePerMonthWithDiscount' => $ratePerMonthWithDiscount,
+				'ratePerLesson' => $ratePerLesson,
+				'ratePerMonth' => $ratePerMonth,
+				'rate' => $rate
 			];
 		}
     }

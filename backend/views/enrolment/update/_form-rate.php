@@ -2,6 +2,7 @@
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use common\models\User;
 
 /* 
  * To change this license header, choose License Headers in Project Properties.
@@ -16,19 +17,40 @@ use yii\helpers\Url;
         'id' => 'enrolment-rate-form',
         'action' => Url::to(['enrolment/edit', 'id' => $model->id]),
     ]); ?>
-    <div class="row">
-        <div class="col-md-8">
-            <?= $form->field($model, 'programRate')->textInput(); ?>
+<div class="row">
+    <?php $user = User::findOne(Yii::$app->user->id); ?>
+    <?php foreach ($enrolmentProgramRates as $key => $enrolmentProgramRate) : ?>
+    <?php if ($user->isAdmin()) : ?>
+        <div class="col-md-6">
+            <label>Rate From <?= (new \DateTime($enrolmentProgramRate->startDate))->format('d-m-Y') 
+                . ' To ' . (new \DateTime($enrolmentProgramRate->endDate))->format('d-m-Y') ?></label>
+            <?= $form->field($enrolmentProgramRate, 'programRate')->textInput([
+                    'id' => 'program-rate' . $key, 'name' => 'EnrolmentProgramRate['. $key . '][programRate]'
+                ])->label(false); 
+            ?>
         </div>
-		<div class="clearfix"></div>
-		 <div id="spinner" class="spinner" style="display:none">
-    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-    <span class="sr-only">Loading...</span>
-</div>
-            <div class="form-group col-md-12">
-<div class="pull-right">
+    <?php else : ?>
+        <div class="col-md-6">
+            <?= $form->field($enrolmentProgramRate, 'programRate')->hiddenInput([
+                'id' => 'program-rate' . $key, 'name' => 'EnrolmentProgramRate['. $key . '][programRate]'
+                ])->label(false); 
+            ?>
+        </div>
+    <?php endif; ?>   
+    <?php endforeach; ?>   
+    <div class="col-md-12">
+        <?= $form->field($model, 'isAutoRenew')->checkbox(); 
+        ?>
+    </div>
+    <div id="spinner" class="spinner" style="display:none">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+    </div>
+    <div class="form-group col-md-12">
+        <div class="pull-right">
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-rate-cancel']);?>
             <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'enrolment-edit-save-btn']) ?>
-</div>        
+        </div>        
+    </div>
 </div>
     <?php ActiveForm::end(); ?>

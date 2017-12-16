@@ -174,6 +174,7 @@ class Lesson extends \yii\db\ActiveRecord
 			'summariseReport' => 'Summarize Results',
 			'toEmailAddress' => 'To',
 			'showAllReviewLessons' => 'Show All',
+			'isPresent' => 'Present'
         ];
     }
 
@@ -245,7 +246,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function canExplode()
     {
         return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded
-            && !$this->isExpired();
+            && !$this->isExpired() && !$this->isExtra();
     }
 
     public function getEnrolment()
@@ -488,7 +489,7 @@ class Lesson extends \yii\db\ActiveRecord
             $model = $this->rootLesson;
         }
         $lessonId = $model->id;
-        $paymentCycleLessonId = $model->paymentCycleLesson->id;
+        
         if ($this->hasProFormaInvoice()) {
             if ($this->isExtra()) {
                 return InvoiceLineItem::find()
@@ -500,6 +501,7 @@ class Lesson extends \yii\db\ActiveRecord
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON])
                     ->one();
             } else {
+                $paymentCycleLessonId = $model->paymentCycleLesson->id;
                 return InvoiceLineItem::find()
                         ->notDeleted()
                     ->andWhere(['invoice_id' => $model->proFormaInvoice->id])
@@ -762,7 +764,7 @@ class Lesson extends \yii\db\ActiveRecord
         $enrolmentFirstLesson = self::find()
                         ->notDeleted()
 			->where(['courseId' => $courseId])
-			->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_COMPLETED]])
+			->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_COMPLETED, self::STATUS_UNSCHEDULED]])
 			->orderBy(['date' => SORT_ASC])
 			->one();
         return $enrolmentFirstLesson->date === $this->date;

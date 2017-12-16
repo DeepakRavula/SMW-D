@@ -5,8 +5,11 @@ use insolita\wgadminlte\LteConst;
 
 ?>
 
-<?php
-$boxTools = $this->render('_details-box-tools');
+<?php $boxTools = '';?>
+<?php if($model->course->program->isPrivate()) : ?>
+	<?php $boxTools = $this->render('_details-box-tools');?>
+<?php endif;?>
+<?php 
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
 	'title' => 'Details',
@@ -14,15 +17,35 @@ LteBox::begin([
 	'withBorder' => true,
 ])
 ?>
-<dl class="dl-horizontal">
+<style>
+@media (min-width: 768px) {
+  .enrolment-view dt {
+    float: left;
+    width: 250px;
+    overflow: hidden;
+    clear: left;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .enrolment-view dd {
+    margin-left: 270px;
+  }
+}
+</style>
+<dl class="enrolment-view">
 	<dt>Program</dt>
 	<dd>
 	<?= $model->course->program->name; ?>
 	</dd>
 	<dt>Teacher</dt>
 	<dd><?= $model->course->teacher->publicIdentity; ?></dd>
-	<dt>Rate</dt>
-	<dd><?= $model->enrolmentProgramRate->programRate; ?></dd>
+        <?php foreach ($model->enrolmentProgramRates as $enrolmentProgramRate) : ?>
+	<dt>Rate From <?= Yii::$app->formatter->asDate($enrolmentProgramRate->startDate) . ' To ' . Yii::$app->formatter->asDate($enrolmentProgramRate->endDate) ?></dt>
+	<dd><?= $enrolmentProgramRate->programRate; ?></dd>
+        <?php endforeach; ?>
+        <dt>Auto Renewal</dt>
+	<dd><?= $model->isAutoRenew ? "Enabled" : 'Disabled' ; ?></dd>
 	<dt>Duration</dt>
 	<dd><?= (new \DateTime($model->courseSchedule->duration))->format('H:i'); ?></dd>
 </dl>

@@ -10,6 +10,7 @@ use common\models\User;
 use common\models\Location;
 use common\models\UserLocation;
 use yii\widgets\Pjax;
+use yii\bootstrap\Dropdown;
 
 $bundle = BackendAsset::register($this);
 ?>
@@ -31,7 +32,7 @@ $bundle = BackendAsset::register($this);
                     <span class="icon-bar"></span>
                 </a>
 
-				<?php 
+    <?php
                 $roles = ArrayHelper::getColumn(
                     Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
                         'name'
@@ -49,11 +50,12 @@ $bundle = BackendAsset::register($this);
                                   ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control location', 'options' => [Yii::$app->session->get('location_id') => ['Selected' => 'selected']]]); ?>
                             <?php Html::endForm() ?>
                             </div>
+				
                         <?php else:?>
                         <?php
                             $userLocationId = Yii::$app->session->get('location_id');
                             $location = Location::findOne(['id' => $userLocationId]);
-                            echo '<div class="p-t-15 pull-left" data-toggle="tooltip" data-original-title="Your location" data-placement="bottom"><i class="fa fa-map-marker m-r-10"></i>'.$location->name.'</div>';
+                            echo '<div class="p-t-15 pull-left location-header" data-toggle="tooltip" data-original-title="Your location" data-placement="bottom"><i class="fa fa-map-marker m-r-10"></i>'.$location->name.'</div>';
                         ?>
                         <?php endif; ?>
                 <div class="navbar-custom-menu">

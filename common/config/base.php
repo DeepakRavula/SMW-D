@@ -41,8 +41,13 @@ $config = [
             'timeFormat' => 'php:h:i a',
             'currencyCode' => 'USD',
             'nullDisplay' => '',
+            'thousandSeparator' => '',
             'timeZone' => 'US/Eastern',
             'defaultTimeZone' => 'US/Eastern',
+			'numberFormatterOptions' => [
+ 			   NumberFormatter::MIN_FRACTION_DIGITS => 2,
+			   NumberFormatter::MAX_FRACTION_DIGITS => 2,
+			]
         ],
 
         'glide' => [

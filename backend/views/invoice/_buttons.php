@@ -1,11 +1,11 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
-use kartik\switchinput\SwitchInput;
 use backend\models\search\InvoiceSearch;
+use yii\widgets\Pjax;
 ?>
 
+<?php Pjax::Begin(['id' => 'invoice-header-summary']) ?>
 <?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
     <?php if ((bool) !$model->isDeleted()): ?>
 	<?=	Html::a('<i title="Delete" class="fa fa-trash"></i>', ['delete', 'id' => $model->id],
@@ -15,7 +15,7 @@ use backend\models\search\InvoiceSearch;
             	'confirm' => 'Are you sure you want to delete this invoice?',
             	'method' => 'post',
             ],
-			'id' => 'delete-button',
+			'id' => 'invoice-delete-button',
 		])?>
     <?php endif; ?>
 	<?php else : ?>
@@ -38,3 +38,9 @@ use backend\models\search\InvoiceSearch;
 	'id' => 'invoice-mail-button',
 	'class' => 'm-r-10 btn btn-box-tool']) ?>
 <?= Html::a('<i title="Print" class="fa fa-print m-r-10"></i>', ['print/invoice', 'id' => $model->id], ['class' => 'm-r-10 btn btn-box-tool', 'target' => '_blank']) ?>
+<?= strtoupper($model->getStatus()) . ' '?>
+<?= Yii::$app->formatter->format($model->total, ['currency', 'USD', [
+    \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+    \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+]]); ?>
+<?php Pjax::end();?>

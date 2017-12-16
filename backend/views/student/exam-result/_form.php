@@ -53,7 +53,7 @@ if ($model->isNewRecord) {
 		?>
     </div>
 	<div class="col-md-6">
-		<?=  $form->field($model, 'mark')->textInput();?>
+		<?=  $form->field($model, 'mark')->textInput(['class' => 'right-align form-control']);?>
     </div>
 	<div class="col-md-6">
 		<?=  $form->field($model, 'level')->textInput();?>

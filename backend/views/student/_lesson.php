@@ -32,7 +32,7 @@ use yii\bootstrap\Modal;
 
             return ['data-url' => $url];
         },
-        'options' => ['class' => 'col-md-12'],
+        'options' => ['class' => 'col-md-12', 'id' => 'student-lesson-grid'],
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
@@ -125,8 +125,8 @@ use yii\bootstrap\Modal;
                 header: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'agendaWeek'
-                },
+                    right:'',
+                       },
                 allDaySlot: false,
                 slotDuration: '00:15:00',
                 titleFormat: 'DD-MMM-YYYY, dddd',

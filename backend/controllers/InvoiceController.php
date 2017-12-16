@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Invoice;
-use common\models\InvoiceDiscount;
+use common\models\Item;
 use common\models\InvoiceLineItem;
 use backend\models\search\InvoiceSearch;
 use common\models\Enrolment;
@@ -31,7 +31,9 @@ use common\models\InvoiceLog;
 use common\models\UserEmail;
 use common\models\UserContact;
 use common\models\Label;
+use backend\models\search\UserSearch;
 
+use backend\models\search\ItemSearch;
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
@@ -48,7 +50,8 @@ class InvoiceController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['delete', 'note', 'get-payment-amount','update-customer', 'create-walkin', 'fetch-user'],
+                'only' => ['delete', 'note', 'get-payment-amount', 'update-customer', 
+                    'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -171,6 +174,9 @@ class InvoiceController extends Controller
     {
         $model = $this->findModel($id);
         $request = Yii::$app->request;
+        $itemSearchModel=new ItemSearch();
+         $itemSearchModel->avoidDefaultItems=true;
+        $itemDataProvider = $itemSearchModel->search(Yii::$app->request->queryParams);
         $searchModel = new InvoiceSearch();
         $searchModel->load($request->get());
         $invoiceLineItems = InvoiceLineItem::find()
@@ -206,21 +212,6 @@ class InvoiceController extends Controller
          $session = Yii::$app->session;
         $locationId = $session->get('location_id');
         $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-                
-        $userData=User::find()
-			->joinWith('userLocation ul')
-			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-			->where(['raa.item_name' => 'customer'])
-			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
-			->notDeleted()
-			->joinWith(['student' => function ($query) use ($currentDate) {
-				$query->enrolled($currentDate);
-			}])
-			->active()
-            ->groupBy('user.id');
-        $userDataProvider = new ActiveDataProvider([
-            'query' => $userData,
-        ]);
         $invoicePayments = Payment::find()
 			->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                 $query->where(['ip.invoice_id' => $model->id]);
@@ -261,80 +252,41 @@ class InvoiceController extends Controller
             'userEmail' =>$userEmail,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'noteDataProvider' => $noteDataProvider,
-            'userDataProvider'=>$userDataProvider,
+            'itemDataProvider' => $itemDataProvider,
+            'itemSearchModel' => $itemSearchModel,
         ]);
     }
-	public function actionFetchUser($id, $userName)
-	{
-		$model = $this->findModel($id);
-        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-		$userData = User::find()
-			->joinWith(['userLocation ul' => function($userData) use($userName){
-				$userData->joinWith(['userProfile' => function($userData) use($userName){ 
-					$userData->andWhere(['LIKE', 'user_profile.firstname', $userName])
-					->orWhere(['LIKE', 'user_profile.lastname', $userName]);
-				}]);
-			}])
-			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-			->andWhere(['raa.item_name' => 'customer'])
-			->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
-			
-			->notDeleted()
-			->joinWith(['student' => function ($query) use ($currentDate) {
-				$query->enrolled($currentDate);
-			}])
-			->active()
-            ->groupBy('user.id');
-        $userDataProvider = new ActiveDataProvider([
-            'query' => $userData,
-        ]);	
-		$data = $this->renderAjax('customer/_list', [
-			'userDataProvider' => $userDataProvider,
-			'model' => $model
-		]);
-		return [
-			'status' => true,
-			'data' => $data
-		];
-	}
-    public function actionAddMisc($id)
+	public function actionFetchUser($id)
     {
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
-        $invoiceLineItemModel = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_LINE_ITEM_CREATE]);
-        $userModel = User::findOne(['id' => Yii::$app->user->id]);
-        $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
-        $invoiceLineItemModel->userName = $userModel->publicIdentity;
-        if ($invoiceLineItemModel->load(Yii::$app->request->post())) {
-            $invoiceLineItemModel->invoice_id = $model->id;
-            $invoiceLineItemModel->item_type_id = ItemType::TYPE_MISC;
-            $invoiceLineItemModel->cost        = 0.0;
-            if ($invoiceLineItemModel->validate()) {
-                $invoiceLineItemModel->save();
-                $model->save();
-                if ($model->user) {
-                    if ($model->user->hasDiscount()) {
-                        $invoiceLineItemModel->addCustomerDiscount($model->user);
-                    }
-                }
-                $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
+        $request = Yii::$app->request;
+        $searchModel = new UserSearch();
+        $searchModel->load($request->get());
+        $searchModel->role_name = $request->get('role_name');
+        $userDataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $userDataProvider->pagination = false;
+        $data = $this->renderAjax('customer/_list', [
+            'userDataProvider' => $userDataProvider,
+            'model' => $model,
+            'searchModel' => $searchModel,
+        ]);
+        return [
+            'status' => true,
+            'data' => $data
+        ];
+    }
 
-                $response = [
-                    'invoiceStatus' => $model->getStatus(),
-                    'status' => true,
-					'amount' => round($model->invoiceBalance, 4)
-                ];
-            } else {
-                $invoiceLineItemModel = ActiveForm::validate($invoiceLineItemModel);
-                $response = [
-                    'status' => false,
-                    'errors' => $invoiceLineItemModel,
-                ];
-            }
+    public function actionAddMisc($id, $itemId)
+    {
+        $invoiceModel = $this->findModel($id);
+        $itemModel = Item::findOne($itemId);
+        $lineItem = $itemModel->addToInvoice($invoiceModel);
+        $lineItem->invoice->save();
 
-            return $response;
-        }
+        return [
+            'status' => true,
+            'message' => 'Line item added successfully!'
+        ];
     }
 
     public function actionFetchSummaryAndStatus($id)
@@ -495,11 +447,11 @@ class InvoiceController extends Controller
         }
     }
 
-    public function actionUpdateMailStatus($id)
+    public function actionUpdateMailStatus($id, $state)
     {
         $request = Yii::$app->request;
         $model = $this->findModel($id);
-        $model->load($request->post());
+        $model->isSent = $state;
         $model->save();
     }
 
@@ -656,7 +608,41 @@ class InvoiceController extends Controller
         $model = Invoice::findOne($id);
         return [
             'status' => true,
-            'amount' => $model->balance,
+            'amount' => Yii::$app->formatter->asDecimal($model->balance),
         ];
+    }
+    
+    public function actionAdjustTax($id)
+    {
+        $model = Invoice::findOne($id);
+        $data = $this->renderAjax('_form-adjust-tax', [
+            'model' => $model
+        ]);
+        $post = Yii::$app->request->post();
+        if ($model->load($post)) {
+            $taxAdjusted = $model->updateAttributes([
+                'tax' => $model->tax += $model->taxAdjusted, 
+                'total' => $model->total += $model->taxAdjusted, 
+                'balance' => $model->balance += $model->taxAdjusted
+            ]);
+            if ($taxAdjusted) {
+                $response = [
+                    'status' => true,
+                    'message' => 'Tax successfully updated!',
+		];	
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model),
+                ];	
+            }
+            return $response;
+        } else {
+
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
     }
 }

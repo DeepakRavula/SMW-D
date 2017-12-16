@@ -15,7 +15,7 @@ $form = ActiveForm::begin([
 	]);
 ?>
 <?php yii\widgets\Pjax::begin() ?>
-<div id="show-all" class="checkbox-btn">
+<div id="show-all">
 <?= $form->field($searchModel, 'showAllEnrolments')->checkbox(['data-pjax' => true]); ?>
 </div>
 <?php \yii\widgets\Pjax::end(); ?>

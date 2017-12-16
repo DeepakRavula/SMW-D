@@ -35,7 +35,15 @@ $this->params['show-all'] = $this->render('_button', [
                 },
             ],
             'description',
-            'price',
+			[
+                'label' => 'Price',
+				'contentOptions' => ['class' => 'text-right'],
+				'headerOptions' => ['class' => 'text-right'],
+				'format' => 'currency',
+				'value' => function ($data) {
+					return $data->price;
+				},
+            ],
             [
                 'label' => 'Royalty Free',
 		'value' => function ($data) {
