@@ -41,23 +41,25 @@ class ProgramSearch extends Program
     public function search($params)
     {
         $query = Program::find();
-        
-       
+
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-        'pageSize' => 10,
-    ],
+                'pageSize' => 10,
+            ],
         ]);
-        $query->andWhere(['type' => $this->type]);
+        if (!empty($this->type)) {
+            $query->andWhere(['type' => $this->type]);
+        }
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-       
+
         if (!$this->showAllPrograms) {
             $query->active();
         }
-        
+
         $query->andFilterWhere(['like', 'name', $this->name]);
         $query->andFilterWhere(['like', 'rate', $this->rate]);
 
