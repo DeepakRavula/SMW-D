@@ -1,5 +1,6 @@
 <?php
-
+use yii\helpers\ArrayHelper;
+use common\models\Location;
 $config = [
     'homeUrl' => Yii::getAlias('@backendUrl'),
     'controllerNamespace' => 'backend\controllers',
@@ -31,18 +32,10 @@ $config = [
 			'baseUrl' => '/admin',
         ],
         'urlManager' => [
-            'class' => 'codemix\localeurls\UrlManager',
-            'languages' => [
-                'arcadia-corporate' => 'arcadia-corporate',
-                'newmarket' => 'newmarket',
-                'south-brampton' => 'south-brampton',
-                'bolton' => 'bolton',
-                'north-brampton' => 'north-brampton',
-                'west-brampton' => 'west-brampton',
-                'maple' => 'maple',
-                'richmond-hill' => 'richmond-hill',
-                'woodbridge' => 'woodbridge'
-            ],
+            'class' => 'common\components\codemix\UrlManager',
+            'languages2' => function () {
+                return ArrayHelper::map(Location::find()->all(), 'slug', 'slug');
+            },
             'enableDefaultLanguageUrlCode' => true,
             'enableLanguagePersistence' => false,
             'ignoreLanguageUrlPatterns' => [
