@@ -47,7 +47,12 @@ $this->params['show-all'] = $this->render('_button', [
 					}])
 					->asArray()->all(), 'id', 'name'), 
 				'filterInputOptions'=>['placeholder'=>'Program'],
-				'format'=>'raw'
+				'format'=>'raw',
+                'filterWidgetOptions'=>[
+					'pluginOptions'=>[
+						'allowClear'=>true,
+                        ]
+                    ],
 			],
 			[
             'attribute' => 'student',
@@ -68,6 +73,9 @@ $this->params['show-all'] = $this->render('_button', [
 					'options' => [
 						'id' => 'student',
 					],
+                    'pluginOptions'=>[
+						'allowClear'=>true,
+                        ],
 				],
 				'filterInputOptions'=>['placeholder'=>'Student'],
 				'format'=>'raw'
@@ -90,6 +98,9 @@ $this->params['show-all'] = $this->render('_button', [
 					'options' => [
 						'id' => 'teacher',
 					],
+                    'pluginOptions'=>[
+						'allowClear'=>true,
+                        ],
 					
 				],
 				'filterInputOptions'=>['placeholder'=>'Teacher'],
@@ -106,7 +117,7 @@ $this->params['show-all'] = $this->render('_button', [
 				'filterType'=>KartikGridView::FILTER_DATE,
 				'filterWidgetOptions'=>[
 					'pluginOptions'=>[
-						'allowClear'=>false,
+						'allowClear'=>true,
 						'autoclose' => true,
 						'format' => 'dd-mm-yyyy',
 					],
