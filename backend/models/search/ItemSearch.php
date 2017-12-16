@@ -21,7 +21,8 @@ class ItemSearch extends Item
     public function rules()
     {
         return [
-            [['avoidDefaultItems','code','description','price','showAllItems'], 'safe'],
+            [['avoidDefaultItems', 'code', 'description', 'price', 'showAllItems'],
+                'safe'],
         ];
     }
 
@@ -42,17 +43,14 @@ class ItemSearch extends Item
     public function search($params)
     {
         $locationId = Yii::$app->session->get('location_id');
-       $query = Item::find()
-                 ->notDeleted();
-       if($this->avoidDefaultItems && !($this->showAllItems))
-       {
-               $query->location($locationId)
-                        ->active();
-       }
-       else
-       {
-         $query->defaultItems($locationId);
-       }
+        $query      = Item::find()
+            ->notDeleted();
+        if ($this->avoidDefaultItems && !($this->showAllItems)) {
+            $query->location($locationId)
+                ->active();
+        } else {
+            $query->defaultItems($locationId);
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -65,19 +63,14 @@ class ItemSearch extends Item
         if (!$this->showAllItems) {
             $query->active();
         }
-        if(empty($this->code)&&empty($this->description)&& empty($this->price))
-        {
-          return $dataProvider;
+        if (empty($this->code) && empty($this->description) && empty($this->price)) {
+            return $dataProvider;
+        } else {
+            $query->andFilterWhere(['like', 'code', $this->code])
+                ->andFilterWhere(['like', 'description', $this->description])
+                ->location($locationId)
+                ->active();
         }
-        else
-        {
-        $query->andFilterWhere(['like', 'code', $this->code])
-              ->andFilterWhere(['like', 'description', $this->description])
-              ->location($locationId)
-              ->active();  
-                
-        
-        }   
-    return $dataProvider;
-}
+        return $dataProvider;
+    }
 }

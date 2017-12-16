@@ -172,23 +172,23 @@ class InvoiceController extends Controller
 
 	public function actionView($id)
     {
-        $model = $this->findModel($id);
-        $request = Yii::$app->request;
-        $itemSearchModel=new ItemSearch();
-        $itemSearchModel->avoidDefaultItems=true;
-        $itemSearchModel->showAllItems=false;
-        $itemDataProvider = $itemSearchModel->search(Yii::$app->request->queryParams);
-        $searchModel = new InvoiceSearch();
+        $model                              = $this->findModel($id);
+        $request                            = Yii::$app->request;
+        $itemSearchModel                    = new ItemSearch();
+        $itemSearchModel->avoidDefaultItems = true;
+        $itemSearchModel->showAllItems      = false;
+        $itemDataProvider                   = $itemSearchModel->search(Yii::$app->request->queryParams);
+        $searchModel                        = new InvoiceSearch();
         $searchModel->load($request->get());
-        $invoiceLineItems = InvoiceLineItem::find()
-                ->notDeleted()
-                ->andWhere(['invoice_id' => $id]);
-        $invoiceLineItemsDataProvider = new ActiveDataProvider([
+        $invoiceLineItems                   = InvoiceLineItem::find()
+            ->notDeleted()
+            ->andWhere(['invoice_id' => $id]);
+        $invoiceLineItemsDataProvider       = new ActiveDataProvider([
             'query' => $invoiceLineItems,
             'pagination' => false,
         ]);
-        $invoiceRequest = $request->post('Invoice');
-        $customerId = $invoiceRequest['customer_id'];
+        $invoiceRequest                     = $request->post('Invoice');
+        $customerId                         = $invoiceRequest['customer_id'];
 
         if (isset($customerId)) {
             $customer = User::findOne(['id' => $customerId]);
@@ -202,26 +202,26 @@ class InvoiceController extends Controller
         }
 
         $customerInvoicePayments = Payment::find()
-			->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-				$query->where(['ip.invoice_id' => $model->id]);
-			}])
-			->where(['user_id' => $model->user_id]);
+            ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
+                    $query->where(['ip.invoice_id' => $model->id]);
+                }])
+            ->where(['user_id' => $model->user_id]);
 
         $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $customerInvoicePayments,
         ]);
-         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
-        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-        $invoicePayments = Payment::find()
-			->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                $query->where(['ip.invoice_id' => $model->id]);
-			}])
+        $session                             = Yii::$app->session;
+        $locationId                          = $session->get('location_id');
+        $currentDate                         = (new \DateTime())->format('Y-m-d H:i:s');
+        $invoicePayments                     = Payment::find()
+            ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
+                    $query->where(['ip.invoice_id' => $model->id]);
+                }])
             ->orderBy(['date' => SORT_DESC]);
         $invoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $invoicePayments,
         ]);
-		
+
         $notes = Note::find()
             ->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_INVOICE])
             ->orderBy(['createdOn' => SORT_DESC]);
@@ -230,34 +230,36 @@ class InvoiceController extends Controller
             'query' => $notes,
         ]);
 
-		$customer = new User();
+        $customer  = new User();
         $userModel = new UserProfile();
-         $userEmail=new UserEmail();
-		if (!empty($model->user_id)) {
-            $customer = User::findOne(['id' => $model->user_id]);
+        $userEmail = new UserEmail();
+        if (!empty($model->user_id)) {
+            $customer  = User::findOne(['id' => $model->user_id]);
             $userModel = UserProfile::findOne(['user_id' => $customer->id]);
-            $userEmail=UserEmail::find()
-                        ->joinWith(['userContact uc' => function ($query) use ($model) {
-                $query->where(['uc.userId' => $model->user_id]);
-			}])
-                    ->one();
+            $userEmail = UserEmail::find()
+                ->joinWith(['userContact uc' => function ($query) use ($model) {
+                        $query->where(['uc.userId' => $model->user_id]);
+                    }])
+                ->one();
         }
-		
-        return $this->render('view', [
-            'model' => $model,
-            'searchModel' => $searchModel,
-            'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-            'invoicePayments' => $customerInvoicePaymentsDataProvider,
-            'customer' => empty($customer) ? new User() : $customer,
-            'userModel' => $userModel,
-            'userEmail' =>$userEmail,
-            'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
-            'noteDataProvider' => $noteDataProvider,
-            'itemDataProvider' => $itemDataProvider,
-            'itemSearchModel' => $itemSearchModel,
+
+        return $this->render('view',
+                [
+                'model' => $model,
+                'searchModel' => $searchModel,
+                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                'invoicePayments' => $customerInvoicePaymentsDataProvider,
+                'customer' => empty($customer) ? new User() : $customer,
+                'userModel' => $userModel,
+                'userEmail' => $userEmail,
+                'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
+                'noteDataProvider' => $noteDataProvider,
+                'itemDataProvider' => $itemDataProvider,
+                'itemSearchModel' => $itemSearchModel,
         ]);
     }
-	public function actionFetchUser($id)
+
+    public function actionFetchUser($id)
     {
         $model = $this->findModel($id);
         $request = Yii::$app->request;
