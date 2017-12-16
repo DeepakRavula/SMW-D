@@ -48,7 +48,6 @@ bootstrap_alert.success = function(message) {
 			var student = $("<div/>").html(studentMessage);	
 			$('#import-log').append(student);
 			$('#import-log').append(customerMessage);
-			console.log(data);
 			bootstrap_alert.success('User data imported successfully');
 		}
 	}

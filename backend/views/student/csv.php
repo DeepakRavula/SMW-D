@@ -36,7 +36,7 @@ use yii\widgets\DetailView;
 			'billingWorkTel',
 			'billingWorkTelExt',
 			'openingBalance',
-			'notes'
+			'notes:raw'
 		],
     ])
     ?>
