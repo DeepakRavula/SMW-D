@@ -32,12 +32,17 @@ $config = [
         ],
         'urlManager' => [
             'class' => 'codemix\localeurls\UrlManager',
-            'languages' => ['arcadia-corporate', 'newmarket', 'south-brampton',
- 				'bolton', 'north-brampton', 'west-brampton', 'maple', 'richmond-hill',
- 				'woodbridge'],
-            'on languageChanged' => function ($event) {
-                
-            },
+            'languages' => [
+                'arcadia-corporate' => 'arcadia-corporate',
+                'newmarket' => 'newmarket',
+                'south-brampton' => 'south-brampton',
+                'bolton' => 'bolton',
+                'north-brampton' => 'north-brampton',
+                'west-brampton' => 'west-brampton',
+                'maple' => 'maple',
+                'richmond-hill' => 'richmond-hill',
+                'woodbridge' => 'woodbridge'
+            ],
             'enableDefaultLanguageUrlCode' => true,
             'enableLanguagePersistence' => false,
             'ignoreLanguageUrlPatterns' => [
