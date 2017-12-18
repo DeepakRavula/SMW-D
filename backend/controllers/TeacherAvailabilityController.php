@@ -23,7 +23,7 @@ use common\models\TeacherAvailabilityLog;
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
-class TeacherAvailabilityController extends Controller
+class TeacherAvailabilityController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

@@ -21,7 +21,7 @@ use common\models\Location;
 /**
  * PaymentsController implements the CRUD actions for Payments model.
  */
-class ReportController extends Controller {
+class ReportController extends \common\components\backend\BackendController {
 
 	public function behaviors() {
 		return [

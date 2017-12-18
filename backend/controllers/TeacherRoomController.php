@@ -15,7 +15,7 @@ use common\models\TeacherAvailability;
 /**
  * TeacherRoomController implements the CRUD actions for TeacherRoom model.
  */
-class TeacherRoomController extends Controller
+class TeacherRoomController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

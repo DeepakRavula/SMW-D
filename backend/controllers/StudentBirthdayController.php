@@ -13,7 +13,7 @@ use common\models\Location;
 /**
  * StudentController implements the CRUD actions for Student model.
  */
-class StudentBirthdayController extends Controller
+class StudentBirthdayController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

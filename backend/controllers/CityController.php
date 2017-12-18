@@ -14,7 +14,7 @@ use yii\web\Response;
 /**
  * CityController implements the CRUD actions for City model.
  */
-class CityController extends Controller
+class CityController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

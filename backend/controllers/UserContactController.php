@@ -16,7 +16,7 @@ use common\models\UserAddress;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
-class UserContactController extends Controller
+class UserContactController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

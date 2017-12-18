@@ -17,7 +17,7 @@ use backend\models\search\InvoiceLineItemSearch;
 /**
  * ItemCategoryController implements the CRUD actions for ItemCategory model.
  */
-class ItemCategoryController extends Controller
+class ItemCategoryController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

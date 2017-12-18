@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 /**
  * ClassroomUnavailabilityController implements the CRUD actions for ClassroomUnavailability model.
  */
-class ClassroomUnavailabilityController extends Controller
+class ClassroomUnavailabilityController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

@@ -1,4 +1,5 @@
 <?php
+use yii\web\ForbiddenHttpException;
 
 $config = [
     'homeUrl' => Yii::getAlias('@backendUrl'),

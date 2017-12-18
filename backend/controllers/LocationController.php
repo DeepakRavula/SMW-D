@@ -16,7 +16,7 @@ use yii\filters\VerbFilter;
 /**
  * LocationController implements the CRUD actions for Location model.
  */
-class LocationController extends Controller
+class LocationController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

@@ -22,7 +22,7 @@ use yii\helpers\Url;
 /**
  * StudentController implements the CRUD actions for Student model.
  */
-class StudentController extends Controller
+class StudentController extends \common\components\backend\BackendController
 {
 	public function actions()
     {

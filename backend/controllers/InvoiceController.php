@@ -37,7 +37,7 @@ use backend\models\search\ItemSearch;
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
-class InvoiceController extends Controller
+class InvoiceController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

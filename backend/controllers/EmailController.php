@@ -13,7 +13,7 @@ use common\models\Invoice;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
-class EmailController extends Controller
+class EmailController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

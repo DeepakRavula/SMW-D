@@ -10,7 +10,7 @@ use yii\web\Controller;
 use yii\web\Response;
 use Yii;
 
-class SystemInformationController extends Controller
+class SystemInformationController extends \common\components\backend\BackendController
 {
     public $layout = 'common';
 

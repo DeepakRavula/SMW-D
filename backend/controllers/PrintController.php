@@ -25,7 +25,7 @@ use backend\models\search\InvoiceLineItemSearch;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
-class PrintController extends Controller
+class PrintController extends \common\components\backend\BackendController
 {
 	public function actionInvoice($id)
     {

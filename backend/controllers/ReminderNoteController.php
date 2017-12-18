@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * ReminderNoteController implements the CRUD actions for ReminderNote model.
  */
-class ReminderNoteController extends Controller
+class ReminderNoteController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

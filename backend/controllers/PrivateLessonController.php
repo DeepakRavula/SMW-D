@@ -17,7 +17,7 @@ use common\models\LessonSplitUsage;
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
-class PrivateLessonController extends Controller
+class PrivateLessonController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

@@ -16,7 +16,7 @@ use common\models\User;
 /**
  * HolidayController implements the CRUD actions for Holiday model.
  */
-class TeacherUnavailabilityController extends Controller
+class TeacherUnavailabilityController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

@@ -45,7 +45,7 @@ use trntv\filekit\actions\UploadAction;
 /**
  * UserController implements the CRUD actions for User model.
  */
-class UserController extends Controller
+class UserController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

@@ -12,7 +12,7 @@ use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\UserLocation;
 
-class DashboardController extends \yii\web\Controller
+class DashboardController extends \common\components\backend\BackendController
 {
     public function actionIndex()
     {

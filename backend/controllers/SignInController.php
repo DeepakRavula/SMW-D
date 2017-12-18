@@ -21,7 +21,7 @@ use yii\base\InvalidParamException;
 use yii\web\Controller;
 use common\models\User;
 
-class SignInController extends Controller
+class SignInController extends \common\components\backend\BackendController
 {
     public $defaultAction = 'login';
 
