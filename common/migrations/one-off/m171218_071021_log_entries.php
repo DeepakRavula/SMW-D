@@ -34,6 +34,21 @@ class m171218_071021_log_entries extends Migration
           {
              print_r($log->getErrors());
           }
+          else
+          {
+              if($timeLineEvent->links)
+          {
+              $timeLineEventLink=$timeLineEvent->links;
+              $logLink=new LogLink();
+              $logLink->logId=$log->id;
+              $logLink->index=$timeLineEventLink->index;
+              $logLink->baseUrl=$timeLineEventLink->baseUrl;
+              $logLink->path=$timeLineEventLink->path;
+              $logLink->save();
+              
+          }
+              
+          }
 
         }
         }
