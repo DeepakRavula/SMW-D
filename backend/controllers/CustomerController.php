@@ -102,7 +102,7 @@ class CustomerController extends UserController
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model = User::find()->location($locationId)
                 ->where(['user.id' => $id])
                 ->notDeleted()

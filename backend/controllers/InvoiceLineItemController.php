@@ -230,7 +230,7 @@ class InvoiceLineItemController extends Controller
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model = InvoiceLineItem::find()
                 ->joinWith(['invoice' => function ($query) use ($locationId) {
                     $query->where(['location_id' => $locationId]);

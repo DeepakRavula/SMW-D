@@ -134,7 +134,7 @@ class StudentController extends Controller
     {
         $model = $this->findModel($id);
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $request = Yii::$app->request;
         $post = $request->post();
         $courseModel = new Course();
@@ -186,7 +186,7 @@ class StudentController extends Controller
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model = Student::find()
 			->notDeleted()
 			->location($locationId)

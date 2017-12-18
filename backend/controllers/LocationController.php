@@ -224,18 +224,4 @@ class LocationController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
-    public function actionChangeLocation()
-    {
-        $oldLocationId=\common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
-        if (Yii::$app->request->isAjax) {
-            $location_id = Yii::$app->request->post('location_id');
-            Yii::$app->session->set('location_id', $location_id);
-            $newLocationId=\common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
-            if($oldLocationId!==$newLocationId)
-            {
-                return $this->redirect('/admin/dashboard/index');
-            }
-        }
-    }
 }

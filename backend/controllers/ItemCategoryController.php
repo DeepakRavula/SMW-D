@@ -175,7 +175,7 @@ class ItemCategoryController extends Controller
     public function actionItems()
     {
         $session        = Yii::$app->session;
-        $locationId     = $session->get('location_id');
+        $locationId     = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $itemCategoryId = $_POST['depdrop_parents'][0];
         $items          = Item::find()
                             ->notDeleted()

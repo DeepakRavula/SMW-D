@@ -133,7 +133,7 @@ class ScheduleController extends Controller
     {
         $lessons = Lesson::find()
 			->joinWith(['course' => function ($query) use($programId, $teacherId) {
-				$query->andWhere(['course.locationId' => Yii::$app->session->get('location_id')]);
+				$query->andWhere(['course.locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id]);
 				if(!empty($programId) && $programId != 'undefined') {
 					$query->andWhere(['course.programId' => $programId]);
 				}
@@ -154,7 +154,7 @@ class ScheduleController extends Controller
     {
         $date      = \DateTime::createFromFormat('Y-m-d', $date);
 		$classrooms = Classroom::find()
-			->andWhere(['locationId' => Yii::$app->session->get('location_id')])
+			->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id])
 			->all();
 		foreach ($classrooms as $classroom) {
 			$resources[] = [
@@ -452,7 +452,7 @@ class ScheduleController extends Controller
 			->all();
 		$locationAvailability = LocationAvailability::find()
 			->andWhere([
-				'locationId' => Yii::$app->session->get('location_id'),
+				'locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id,
 				'day' => $date->format('N')
 			])
 			->one();

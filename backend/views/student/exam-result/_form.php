@@ -22,7 +22,7 @@ use kartik\select2\Select2;
 		}])
 		->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 		->where(['raa.item_name' => 'teacher'])
-		->andWhere(['ul.location_id' => Yii::$app->session->get('location_id')])
+		->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id])
                 ->notDeleted()
 		->all(),
 	'id', 'userProfile.fullName'

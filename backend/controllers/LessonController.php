@@ -364,7 +364,7 @@ class LessonController extends Controller
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model = Lesson::find()->location($locationId)
             ->where(['lesson.id' => $id, 'isDeleted' => false])->one();
         if ($model !== null) {

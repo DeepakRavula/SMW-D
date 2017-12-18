@@ -167,7 +167,7 @@ class TeacherAvailabilityController extends Controller
         $session = Yii::$app->session;
         $response = Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $teacherAvailabilities = TeacherAvailability::find()
         ->joinWith(['userLocation' => function ($query) use ($id) {
             $query->joinWith(['userProfile' => function ($query) use ($id) {
@@ -189,7 +189,7 @@ class TeacherAvailabilityController extends Controller
         $lessons = [];
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
+                $query->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id]);
             }])
             ->where(['lesson.teacherId' => $id])
         	->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
@@ -296,7 +296,7 @@ class TeacherAvailabilityController extends Controller
     public function actionEvents($id)
     {
         $session    = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $location   = Location::findOne($locationId);
         $events     = [];
         foreach ($location->locationAvailabilities as $availability) {
@@ -337,7 +337,7 @@ class TeacherAvailabilityController extends Controller
     {
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => Yii::$app->session->get('location_id')]);
+                $query->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id]);
             }])
             ->where(['lesson.teacherId' => $teacherId])
             ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])

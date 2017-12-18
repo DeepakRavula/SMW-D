@@ -94,7 +94,7 @@ class PrintController extends Controller
     {
         $model = User::findOne(['id' => $id]);
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 		$request = Yii::$app->request;
 		$lessonSearch = new LessonSearch();
 		$lessonSearch->fromDate = new \DateTime();
@@ -180,7 +180,7 @@ class PrintController extends Controller
     {
         $model = User::findOne(['id' => $id]);
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 		$request = Yii::$app->request;
         $currentDate = new \DateTime();
         $model->fromDate = $currentDate->format('1-m-Y');

@@ -211,7 +211,7 @@ class InvoiceController extends Controller
             'query' => $customerInvoicePayments,
         ]);
         $session                             = Yii::$app->session;
-        $locationId                          = $session->get('location_id');
+        $locationId                          = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $currentDate                         = (new \DateTime())->format('Y-m-d H:i:s');
         $invoicePayments                     = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
@@ -436,7 +436,7 @@ class InvoiceController extends Controller
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model = Invoice::find()
                 ->where([
                     'invoice.id' => $id,
