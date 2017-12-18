@@ -68,7 +68,7 @@ class SignInController extends Controller
             if($user->isStaff()) {
                 return $this->redirect(['schedule/index']);
             }
-            return $this->goBack();
+            return $this->redirect(['dashboard/index']);
         } else {
             return $this->render('login', [
                 'model' => $model,

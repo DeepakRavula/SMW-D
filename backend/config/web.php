@@ -1,5 +1,4 @@
 <?php
-use common\models\UserLocation;
 
 $config = [
     'homeUrl' => Yii::getAlias('@backendUrl'),
@@ -75,10 +74,6 @@ $config = [
         ],
     ],
     'on beforeAction' => function ($event) {
-        $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
-        if ($userLocation) {
-            Yii::$app->language = $userLocation->location->slug;
-        }
         $unReadNotes = [];
         $latestNotes = common\models\ReleaseNotes::latestNotes();
         if (!empty($latestNotes)) {
