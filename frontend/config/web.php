@@ -1,5 +1,5 @@
 <?php
-use common\models\UserLocation;
+
 $config = [
     'homeUrl' => Yii::getAlias('@frontendUrl'),
     'controllerNamespace' => 'frontend\controllers',
@@ -74,12 +74,6 @@ $config = [
             'as afterLogin' => 'common\behaviors\LoginTimestampBehavior',
         ],
     ],
-    'on beforeAction' => function ($event) {
-        $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
-        if ($userLocation) {
-            Yii::$app->language = $userLocation->location->slug;
-        }
-    },
 		'as globalAccess' => [
         'class' => '\common\behaviors\GlobalAccessBehavior',
         'rules' => [
