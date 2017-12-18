@@ -8,7 +8,7 @@ use common\models\LocationAvailability;
 <?= $this->render('/lesson/_color-code');?>
 <div id="reverse-enrolment-calendar"></div>
 <?php
-    $locationId = Yii::$app->session->get('location_id');
+    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])

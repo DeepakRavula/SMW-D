@@ -261,7 +261,7 @@ class PrintController extends Controller
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $royaltyFreeItems = InvoiceLineItem::find()
                 ->notDeleted()
             ->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
@@ -299,7 +299,7 @@ class PrintController extends Controller
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $invoiceTaxes = InvoiceLineItem::find()
                 ->notDeleted()
             ->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
@@ -342,7 +342,7 @@ class PrintController extends Controller
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 
         $invoiceTaxTotal = Invoice::find()
             ->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])

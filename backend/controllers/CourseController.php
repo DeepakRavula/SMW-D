@@ -136,7 +136,7 @@ class CourseController extends Controller
         $courseSchedule = [new CourseSchedule()];
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
 		
-        $model->locationId = Yii::$app->session->get('location_id');
+        $model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $userModel = User::findOne(['id' => Yii::$app->user->id]);
         $model->on(Course::EVENT_CREATE, [new CourseLog(), 'create']);
         $model->userName = $userModel->publicIdentity;
@@ -288,7 +288,7 @@ class CourseController extends Controller
     }
 	public function actionFetchGroup($studentId, $courseName = null)
 	{
-		$locationId = Yii::$app->session->get('location_id');
+		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 		$groupEnrolments = Enrolment::find()
 			->select(['courseId'])
 			->joinWith(['course' => function ($query) use ($locationId) {

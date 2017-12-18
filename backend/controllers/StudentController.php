@@ -233,7 +233,7 @@ class StudentController extends Controller
 
     public function actionMerge($id)
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model      = Student::findOne($id);
         $model->setScenario(Student::SCENARIO_MERGE);
         $students   = Student::find()

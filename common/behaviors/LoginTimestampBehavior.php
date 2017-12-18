@@ -2,6 +2,8 @@
 
 namespace common\behaviors;
 
+use Yii;
+use common\models\UserLocation;
 use yii\base\Behavior;
 use yii\web\User;
 
@@ -30,6 +32,8 @@ class LoginTimestampBehavior extends Behavior
      */
     public function afterLogin($event)
     {
+        $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
+        Yii::$app->language = $userLocation->location->slug;
         $user = $event->identity;
         $user->touch($this->attribute);
         $user->save(false);

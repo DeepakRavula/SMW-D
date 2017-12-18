@@ -62,7 +62,7 @@ class ItemCategoryController extends Controller
      */
     public function actionView($id)
     {
-        $locationId   = Yii::$app->session->get('location_id');
+        $locationId   = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $dataProvider = new ActiveDataProvider([
             'query'   => Item::find()
                             ->where(['itemCategoryId' => $id])

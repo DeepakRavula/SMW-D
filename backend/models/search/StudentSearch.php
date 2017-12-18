@@ -40,7 +40,7 @@ class StudentSearch extends Student
      */
     public function search($params)
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $query = Student::find()->notDeleted()
                 ->location($locationId);
 

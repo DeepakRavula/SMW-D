@@ -57,7 +57,7 @@ use common\models\User;
 			<div id="teacher-lesson"></div>
         </div>
 	   <div class="clearfix"></div>
-		<?php $locationId = Yii::$app->session->get('location_id'); ?>
+		<?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id; ?>
    <div class="row">
        <div class="col-md-12">
            <div class="pull-right">

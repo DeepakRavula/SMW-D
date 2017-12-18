@@ -3,11 +3,9 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Invoice;
-use common\models\InvoiceLineItem;
+use common\models\Location;
 use common\models\Lesson;
 use common\models\Enrolment;
-use common\models\Payment;
 use common\models\Student;
 use backend\models\search\DashboardSearch;
 use yii\helpers\ArrayHelper;
@@ -45,7 +43,7 @@ class DashboardController extends \yii\web\Controller
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = Location::findOne(['slug' => Yii::$app->language])->id;
         
         $enrolments = Enrolment::find()
 			->joinWith(['course' => function($query) use($locationId, $searchModel) {

@@ -64,7 +64,7 @@ class ScheduleController extends Controller
      */
     public function actionIndex()
     {
-        $locationId             = Yii::$app->session->get('location_id');
+        $locationId             = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $teachersAvailabilities = TeacherAvailability::find()
             ->joinWith(['userLocation' => function ($query) use ($locationId) {
                 $query->joinWith(['userProfile'])
@@ -167,7 +167,7 @@ class ScheduleController extends Controller
 
     public function actionRenderResources($date, $programId, $teacherId)
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
 		if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')
 			&& ($programId == 'undefined')) {
@@ -322,7 +322,7 @@ class ScheduleController extends Controller
 	}
     public function actionRenderDayEvents($date, $programId, $teacherId)
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 		$date = Carbon::parse($date);
 		$events = [];
 		if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')

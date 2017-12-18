@@ -85,7 +85,7 @@ class TeacherAvailabilityController extends Controller
     public function actionCreate()
     {
         $model = new TeacherAvailability();
-        $model->location_id = Yii::$app->session->get('location_id');
+        $model->location_id = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);

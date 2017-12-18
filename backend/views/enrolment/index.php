@@ -166,7 +166,7 @@ $this->params['show-all'] = $this->render('_button', [
 <?= $this->render('_index');?>
 <?php Modal::end(); ?>
 <?php
-    $locationId = Yii::$app->session->get('location_id');
+    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])

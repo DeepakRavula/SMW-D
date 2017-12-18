@@ -9,7 +9,7 @@ use common\models\User;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 ?> 
-<?php $locationId = Yii::$app->session->get('location_id'); ?>
+<?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id; ?>
 <?php if (Yii::$app->authManager->checkAccess($model->id, User::ROLE_TEACHER)) : ?>
     <?php
     $logs = TimelineEvent::find()

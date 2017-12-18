@@ -42,7 +42,7 @@ class ItemSearch extends Item
      */
     public function search($params)
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $query      = Item::find()
             ->notDeleted();
         if ($this->avoidDefaultItems && !($this->showAllItems)) {

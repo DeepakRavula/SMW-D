@@ -39,7 +39,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
             [['from_time', 'to_time'], 'validateAvailabilityOverlap', 'on' => self::SCENARIO_AVAILABIITY_EDIT ],
             [['classroomId'], 'validateClassroomAvailability', 'on' => self::SCENARIO_AVAILABIITY_EDIT ],
             [['from_time'], function ($attribute, $params) {
-                $locationId = Yii::$app->session->get('location_id');
+                $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
                 $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId, 'day' => $this->day]);
                 $fromTime = (new \DateTime($this->from_time))->format('H:i:s');
                 if(empty($locationAvailability)) {
@@ -50,7 +50,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
             },
             ],
             [['to_time'], function ($attribute, $params) {
-                $locationId = Yii::$app->session->get('location_id');
+                $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
                 $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId, 'day' => $this->day]);
                 $toTime = (new \DateTime($this->to_time))->format('H:i:s');
                 if(empty($locationAvailability)) {
@@ -120,7 +120,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
     public function validateClassroomAvailability($attribute)
     {
         if (! empty ($this->classroomId)) {
-            $locationId = Yii::$app->session->get('location_id');
+            $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
             $teacherRooms        = TeacherRoom::find()
                 ->location($locationId)
                 ->andWhere(['NOT', ['teacher_room.id' => $this->id]])

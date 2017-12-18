@@ -127,7 +127,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public static function invoiceCount()
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
          $fromDate = (new \DateTime('first day of this month'))->format('M d,Y');
          $toDate   = (new \DateTime('last day of this month'))->format('M d,Y');
         return self::find()
@@ -143,7 +143,7 @@ class Invoice extends \yii\db\ActiveRecord
     
     public static function pfiCount()
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
          return self::find()
                 ->notDeleted()
                 ->notCanceled() 

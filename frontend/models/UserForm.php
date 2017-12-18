@@ -135,7 +135,7 @@ class UserForm extends Model
             if (empty($userLocationModel) && $this->roles !== User::ROLE_ADMINISTRATOR) {
                 $userLocationModel = new UserLocation();
                 $userLocationModel->user_id = $model->getId();
-                $userLocationModel->location_id = Yii::$app->session->get('location_id');
+                $userLocationModel->location_id = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
                 $userLocationModel->save();
             }
 

@@ -1,5 +1,5 @@
 <?php
-
+use common\models\UserLocation;
 $config = [
     'homeUrl' => Yii::getAlias('@frontendUrl'),
     'controllerNamespace' => 'frontend\controllers',
@@ -56,10 +56,16 @@ $config = [
             'cookieValidationKey' => env('FRONTEND_COOKIE_VALIDATION_KEY'),
 			'baseUrl' => '',
         ],
-		'urlManager' => [
-			'enablePrettyUrl' => true,
-			'showScriptName' => false,
-		],
+        'urlManager' => [
+            'class' => 'common\components\codemix\UrlManager',
+            'enableDefaultLanguageUrlCode' => true,
+            'enableLanguagePersistence' => false,
+            'ignoreLanguageUrlPatterns' => [
+                '#^user/sign-in/(login|logout)#' => '#^user/(sign-in|login)#',
+            ],
+            'enablePrettyUrl' => true,
+            'showScriptName' => false
+        ],
         'user' => [
             'class' => 'yii\web\User',
             'identityClass' => 'common\models\User',
@@ -68,6 +74,12 @@ $config = [
             'as afterLogin' => 'common\behaviors\LoginTimestampBehavior',
         ],
     ],
+    'on beforeAction' => function ($event) {
+        $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
+        if ($userLocation) {
+            Yii::$app->language = $userLocation->location->slug;
+        }
+    },
 		'as globalAccess' => [
         'class' => '\common\behaviors\GlobalAccessBehavior',
         'rules' => [

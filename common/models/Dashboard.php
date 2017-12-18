@@ -55,7 +55,7 @@ class Dashboard extends \yii\db\ActiveRecord
         foreach ($datePeriod as $dates) {
             $fromDate = $dates->format('Y-m-d');
             $toDate = $dates->format('Y-m-t');
-            $locationId = Yii::$app->session->get('location_id');
+            $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
             $revenue = Payment::find()
                    ->joinWith(['invoice i' => function ($query) use ($locationId) {
                        $query->where(['i.location_id' => $locationId]);

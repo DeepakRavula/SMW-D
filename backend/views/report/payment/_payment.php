@@ -58,7 +58,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 				[
 				'label' => 'Amount',
 				'value' => function ($data) use($searchModel) {
-					$locationId = Yii::$app->session->get('location_id');
+					$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 					$amount = 0;
 					$payments = Payment::find()
 						->location($locationId)

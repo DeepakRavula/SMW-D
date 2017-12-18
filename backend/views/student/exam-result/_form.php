@@ -15,7 +15,7 @@ use kartik\select2\Select2;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
  <?php
- $locationId = Yii::$app->session->get('location_id');
+ $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
  $teachers = ArrayHelper::map(User::find()
 		->joinWith(['userLocation ul' => function ($query) {
 			$query->joinWith('teacherAvailability');

@@ -14,7 +14,7 @@ LteBox::begin([
 ])
 ?>
      <?php
-    $locationId = Yii::$app->session->get('location_id');
+    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
     $query = TeacherAvailability::find()
     ->joinWith('userLocation')
     ->where(['user_id' => $courseModel->teacherId, 'location_id' => $locationId]);

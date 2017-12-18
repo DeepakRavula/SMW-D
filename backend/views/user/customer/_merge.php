@@ -8,7 +8,7 @@ use yii\helpers\Html;
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="warning-notification" style="display:none;" class="alert-warning alert fade in"></div>
 
-<?php $locationId = \Yii::$app->session->get('location_id'); ?>
+<?php $locationId = \\common\models\Location::findOne(['slug' => \Yii::$app->language])->id; ?>
 <div>
     
     <?php $form = ActiveForm::begin([

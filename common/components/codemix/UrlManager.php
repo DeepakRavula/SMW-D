@@ -1,7 +1,8 @@
 <?php
 namespace common\components\codemix;
 
-
+use yii\helpers\ArrayHelper;
+use common\models\Location;
 /**
  * This class extends Yii's UrlManager and adds features to detect the language
  * from the URL or from browser settings transparently. It also can persist the
@@ -10,12 +11,9 @@ namespace common\components\codemix;
  */
 class UrlManager extends \codemix\localeurls\UrlManager
 {
-    public $languages2;
-    
     public function init()
     {
-        
-    $this->languages = ($this->languages2)();
+        $this->languages = ArrayHelper::map(Location::find()->all(), 'slug', 'slug');
         
         parent::init();
     }

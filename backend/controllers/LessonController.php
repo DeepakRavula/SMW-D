@@ -90,7 +90,7 @@ class LessonController extends Controller
      */
     public function actionView($id)
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model = $this->findModel($id);
         $model->duration = $model->fullDuration;
         $notes = Note::find()
@@ -146,7 +146,7 @@ class LessonController extends Controller
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $model = new Lesson();
-        $model->locationId = Yii::$app->session->get('location_id');
+        $model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model->setScenario(Lesson::SCENARIO_CREATE);
         $request = Yii::$app->request;
         $studentModel = Student::findOne($studentId);

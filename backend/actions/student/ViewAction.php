@@ -21,7 +21,7 @@ class ViewAction extends Action
     {
        	if(!empty($this->findModel($id))) {
         	$model = $this->findModel($id);
-			$locationId = Yii::$app->session->get('location_id');
+			$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 			$enrolments = Enrolment::find()
 				->joinWith(['course' => function($query) {
 					$query->isConfirmed();

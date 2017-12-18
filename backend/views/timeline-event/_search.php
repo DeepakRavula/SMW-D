@@ -43,7 +43,7 @@ use common\models\Student;
         ])->label(false); ?>
     </div>  
 	<div class="form-group col-md-3">
-        <?php $locationId = Yii::$app->session->get('location_id');
+        <?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 		echo $form->field($model, 'student')->widget(Select2::classname(), [
 	    'data' => ArrayHelper::map(Student::find()
                         ->notDeleted()

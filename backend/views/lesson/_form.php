@@ -84,7 +84,7 @@ use yii\bootstrap\Modal;
         </div>
     </div>
     <div class="clearfix"></div>
-            <?php $locationId = Yii::$app->session->get('location_id'); ?>
+            <?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id; ?>
 		<?php if($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
         <div class="row">
             <div class="col-md-4">
