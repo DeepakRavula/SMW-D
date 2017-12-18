@@ -43,14 +43,14 @@ $bundle = BackendAsset::register($this);
                 }
                 ?>
                     <?php if ($role === User::ROLE_ADMINISTRATOR):?>
-                        <div class="pull-left">
-                            <?php $form = Html::beginForm(); ?>                        
-                                <div class="dropdown">
-                                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">Label <b class="caret"></b></a>
-                                    <?= LocationDropdown::widget(); ?>
-                                </div>
-                            <?php Html::endForm() ?>
+                        <div class="m-t-10 pull-left">
+                            <?php $form = Html::beginForm(); ?>    
+                            <div class="btn-group">
+                                <button class="btn dropdown-toggle" data-toggle="dropdown"><?= Location::findOne(['slug' => Yii::$app->language])->name; ?> &nbsp;&nbsp;<span class="caret"></span></button>
+                                <?= LocationDropdown::widget(); ?>
                             </div>
+                            <?php Html::endForm() ?>
+                        </div>
 				
                         <?php else:?>
                         <?php
