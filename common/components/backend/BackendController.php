@@ -16,7 +16,8 @@ class BackendController extends Controller
         $role = end($roles);
         if ($role && $role !== User::ROLE_ADMINISTRATOR) {
             $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
-            if ($userLocation->location->slug !== Yii::$app->language) {
+            if ($userLocation->location->slug !== Yii::$app->language && ($this->module->requestedRoute 
+                    !== 'sign-in/logout' && $this->module->requestedRoute !== 'sign-in/login')) { 
                 throw new ForbiddenHttpException();
             }
         }
