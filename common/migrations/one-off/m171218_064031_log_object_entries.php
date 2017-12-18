@@ -5,13 +5,14 @@ use common\models\log\LogObject;
 
 class m171218_064031_log_object_entries extends Migration
 {
+
     public function up()
     {
-        $logObjectNames=['Course','Enrolment','Lesson','Invoice','Payment','Student','User','Vacation'];
+        $logObjectNames = ['course', 'enrolment', 'lesson', 'invoice', 'payment', 'student', 'user'];
         foreach ($logObjectNames as $logObjectName) {
-           $logObject=new LogObject();
-           $logObject->name=$logObjectName;
-           $logObject->save();
+            $logObject = new LogObject();
+            $logObject->name = $logObjectName;
+            $logObject->save();
         }
     }
 
@@ -21,15 +22,14 @@ class m171218_064031_log_object_entries extends Migration
 
         return false;
     }
-
     /*
-    // Use safeUp/safeDown to run migration code within a transaction
-    public function safeUp()
-    {
-    }
+      // Use safeUp/safeDown to run migration code within a transaction
+      public function safeUp()
+      {
+      }
 
-    public function safeDown()
-    {
-    }
-    */
+      public function safeDown()
+      {
+      }
+     */
 }

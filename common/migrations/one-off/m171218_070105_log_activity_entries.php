@@ -5,13 +5,14 @@ use common\models\log\LogActivity;
 
 class m171218_070105_log_activity_entries extends Migration
 {
-     public function up()
+
+    public function up()
     {
-        $logActivityNames=['create','edit','update','delete'];
+        $logActivityNames = ['create', 'edit', 'update', 'delete'];
         foreach ($logActivityNames as $logActivityName) {
-           $logActivity=new LogActivity();
-           $logActivity->name=$logActivityName;
-           $logActivity->save();
+            $logActivity = new LogActivity();
+            $logActivity->name = $logActivityName;
+            $logActivity->save();
         }
     }
 
@@ -21,15 +22,14 @@ class m171218_070105_log_activity_entries extends Migration
 
         return false;
     }
-
     /*
-    // Use safeUp/safeDown to run migration code within a transaction
-    public function safeUp()
-    {
-    }
+      // Use safeUp/safeDown to run migration code within a transaction
+      public function safeUp()
+      {
+      }
 
-    public function safeDown()
-    {
-    }
-    */
+      public function safeDown()
+      {
+      }
+     */
 }

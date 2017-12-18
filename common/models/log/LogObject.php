@@ -1,5 +1,4 @@
 <?php
-
 namespace common\models\log;
 
 use Yii;
@@ -12,6 +11,7 @@ use Yii;
  */
 class LogObject extends \yii\db\ActiveRecord
 {
+
     /**
      * @inheritdoc
      */
@@ -26,8 +26,8 @@ class LogObject extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'required'],
-            [['name'], 'string', 'max' => 255],
+                [['name'], 'required'],
+                [['name'], 'string', 'max' => 255],
         ];
     }
 
