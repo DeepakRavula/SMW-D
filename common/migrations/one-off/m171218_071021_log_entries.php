@@ -18,9 +18,9 @@ class m171218_071021_log_entries extends Migration
             $log          = new Log();
             $relationName = $this->getRelationName($timeLineEvent);
             if (!empty($relationName)) {
-                $logActivity        = LogActivity::findOne(['name' => $relationName['name']->action]);
+                $logActivity        = LogActivity::findOne(['name' => $relationName['object']->action]);
                 $log->logActivityId = $logActivity->id;
-                $logObject          = LogObject::findOne(['name' => $relationName['message']]);
+                $logObject          = LogObject::findOne(['name' => $relationName['instanceType']]);
                 $log->logObjectId   = $logObject->id;
                 $log->data          = yii\helpers\Json::encode($timeLineEvent['data']);
                 $log->message       = $timeLineEvent->message;
@@ -35,8 +35,8 @@ class m171218_071021_log_entries extends Migration
                 $logHistory               = new LogHistory();
                 $logHistory->logId        = $log->id;
                 $logHistory->instanceType = $logObject->name;
-                $instanceName             = $relationName['message'].'Id';
-                $logHistory->instanceId   = $relationName['name']->$instanceName;
+                $instanceName             = $relationName['instanceType'].'Id';
+                $logHistory->instanceId   = $relationName['object']->$instanceName;
                 $logHistory->save();
                 if(!empty($timeLineEvent->links))
                 {
@@ -77,35 +77,35 @@ public function down()
 
     function getRelationName($timeLineEvent)
     {
-        $relationName['name']    = '';
-        $relationName['message'] = '';
+        $relationName['object']    = '';
+        $relationName['instanceType'] = '';
         if ($timeLineEvent->timelineEventCourse) {
-            $relationName['name']    = $timeLineEvent->timelineEventCourse;
-            $relationName['message'] = 'course';
+            $relationName['object']    = $timeLineEvent->timelineEventCourse;
+            $relationName['instanceType'] = 'course';
         }
         if ($timeLineEvent->timelineEventEnrolment) {
-            $relationName['name']    = $timeLineEvent->timelineEventEnrolment;
-            $relationName['message'] = 'enrolment';
+            $relationName['object']    = $timeLineEvent->timelineEventEnrolment;
+            $relationName['instanceType'] = 'enrolment';
         }
         if ($timeLineEvent->timelineEventInvoice) {
-            $relationName['name']    = $timeLineEvent->timelineEventInvoice;
-            $relationName['message'] = 'invoice';
+            $relationName['object']    = $timeLineEvent->timelineEventInvoice;
+            $relationName['instanceType'] = 'invoice';
         }
         if ($timeLineEvent->timelineEventLesson) {
-            $relationName['name']    = $timeLineEvent->timelineEventLesson;
-            $relationName['message'] = 'lesson';
+            $relationName['object']    = $timeLineEvent->timelineEventLesson;
+            $relationName['instanceType'] = 'lesson';
         }
         if ($timeLineEvent->timelineEventPayment) {
-            $relationName['name']    = $timeLineEvent->timelineEventPayment;
-            $relationName['message'] = 'payment';
+            $relationName['object']    = $timeLineEvent->timelineEventPayment;
+            $relationName['instanceType'] = 'payment';
         }
         if ($timeLineEvent->timelineEventStudent) {
-            $relationName['name']    = $timeLineEvent->timelineEventStudent;
-            $relationName['message'] = 'student';
+            $relationName['object']    = $timeLineEvent->timelineEventStudent;
+            $relationName['instanceType'] = 'student';
         }
         if ($timeLineEvent->timelineEventUser) {
-            $relationName['name']    = $timeLineEvent->timelineEventUser;
-            $relationName['message'] = 'user';
+            $relationName['object']    = $timeLineEvent->timelineEventUser;
+            $relationName['instanceType'] = 'user';
         }
         return $relationName;
     }
