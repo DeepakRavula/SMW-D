@@ -93,7 +93,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
             [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 
-                'transactionId', 'balance', 'taxAdjusted'], 'safe']
+                'transactionId', 'balance', 'taxAdjusted', 'isTaxAdjusted'], 'safe']
         ];
     }
 
@@ -589,7 +589,9 @@ class Invoice extends \yii\db\ActiveRecord
             $existingSubtotal = $this->subTotal;
             if(!$this->isOpeningBalance() && !$this->isLessonCredit()) {
                 $this->subTotal = $this->netSubtotal;
-                $this->tax      = $this->lineItemTax;
+                if (!$this->isTaxAdjusted) {
+                    $this->tax      = $this->lineItemTax;
+                }
                 $this->total    = $this->subTotal + $this->tax;
             }
             if ((float) $existingSubtotal === 0.0) {

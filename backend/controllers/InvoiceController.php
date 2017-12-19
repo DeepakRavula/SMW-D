@@ -623,12 +623,13 @@ class InvoiceController extends \common\components\backend\BackendController
         ]);
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
-            $taxAdjusted = $model->updateAttributes([
-                'tax' => $model->tax += $model->taxAdjusted, 
-                'total' => $model->total += $model->taxAdjusted, 
-                'balance' => $model->balance += $model->taxAdjusted
-            ]);
-            if ($taxAdjusted) {
+            $model->isTaxAdjusted = false;
+            $model->tax += $model->taxAdjusted;
+            if ($model->tax !== $model->lineItemTax) {
+                $model->isTaxAdjusted = true;
+            }
+            
+            if ($model->save()) {
                 $response = [
                     'status' => true,
                     'message' => 'Tax successfully updated!',
