@@ -8,9 +8,10 @@ class m171218_064031_log_object_entries extends Migration
 
     public function up()
     {
-        $logObjectNames = ['course', 'enrolment', 'lesson', 'invoice', 'payment', 'student', 'user'];
+        $logObjectNames = ['course', 'enrolment', 'lesson', 'invoice', 'payment',
+            'student', 'user'];
         foreach ($logObjectNames as $logObjectName) {
-            $logObject = new LogObject();
+            $logObject       = new LogObject();
             $logObject->name = $logObjectName;
             $logObject->save();
         }

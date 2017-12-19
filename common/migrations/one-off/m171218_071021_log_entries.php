@@ -38,29 +38,27 @@ class m171218_071021_log_entries extends Migration
                 $instanceName             = $relationName['instanceType'].'Id';
                 $logHistory->instanceId   = $relationName['object']->$instanceName;
                 $logHistory->save();
-                if(!empty($timeLineEvent->links))
-                {
-                    $timeLineEventLinks=$timeLineEvent->links;
-                    
-               foreach($timeLineEventLinks as $timeLineEventLink)
-               {
-                    $logLink           = new LogLink();
-                    $logLink->logId    = $log->id;
-                    $logLink->index    = $timeLineEventLink->index;
-                    $logLink->baseUrl  = $timeLineEventLink->baseUrl;
-                    $logLink->path     = $timeLineEventLink->path;
-                    $logLink->save();
-               }
+                if (!empty($timeLineEvent->links)) {
+                    $timeLineEventLinks = $timeLineEvent->links;
+
+                    foreach ($timeLineEventLinks as $timeLineEventLink) {
+                        $logLink          = new LogLink();
+                        $logLink->logId   = $log->id;
+                        $logLink->index   = $timeLineEventLink->index;
+                        $logLink->baseUrl = $timeLineEventLink->baseUrl;
+                        $logLink->path    = $timeLineEventLink->path;
+                        $logLink->save();
+                    }
                 }
-                
+            }
         }
     }
-    }
-public function down()
-{
-    echo "m171218_071021_log_entries cannot be reverted.\n";
 
-    return false;
+    public function down()
+    {
+        echo "m171218_071021_log_entries cannot be reverted.\n";
+
+        return false;
     }
     /*
       // Use safeUp/safeDown to run migration code within a transaction
@@ -74,37 +72,36 @@ public function down()
      */
 
     public
-
-    function getRelationName($timeLineEvent)
+        function getRelationName($timeLineEvent)
     {
-        $relationName['object']    = '';
+        $relationName['object']       = '';
         $relationName['instanceType'] = '';
         if ($timeLineEvent->timelineEventCourse) {
-            $relationName['object']    = $timeLineEvent->timelineEventCourse;
+            $relationName['object']       = $timeLineEvent->timelineEventCourse;
             $relationName['instanceType'] = 'course';
         }
         if ($timeLineEvent->timelineEventEnrolment) {
-            $relationName['object']    = $timeLineEvent->timelineEventEnrolment;
+            $relationName['object']       = $timeLineEvent->timelineEventEnrolment;
             $relationName['instanceType'] = 'enrolment';
         }
         if ($timeLineEvent->timelineEventInvoice) {
-            $relationName['object']    = $timeLineEvent->timelineEventInvoice;
+            $relationName['object']       = $timeLineEvent->timelineEventInvoice;
             $relationName['instanceType'] = 'invoice';
         }
         if ($timeLineEvent->timelineEventLesson) {
-            $relationName['object']    = $timeLineEvent->timelineEventLesson;
+            $relationName['object']       = $timeLineEvent->timelineEventLesson;
             $relationName['instanceType'] = 'lesson';
         }
         if ($timeLineEvent->timelineEventPayment) {
-            $relationName['object']    = $timeLineEvent->timelineEventPayment;
+            $relationName['object']       = $timeLineEvent->timelineEventPayment;
             $relationName['instanceType'] = 'payment';
         }
         if ($timeLineEvent->timelineEventStudent) {
-            $relationName['object']    = $timeLineEvent->timelineEventStudent;
+            $relationName['object']       = $timeLineEvent->timelineEventStudent;
             $relationName['instanceType'] = 'student';
         }
         if ($timeLineEvent->timelineEventUser) {
-            $relationName['object']    = $timeLineEvent->timelineEventUser;
+            $relationName['object']       = $timeLineEvent->timelineEventUser;
             $relationName['instanceType'] = 'user';
         }
         return $relationName;

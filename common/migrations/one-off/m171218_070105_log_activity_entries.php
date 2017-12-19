@@ -10,7 +10,7 @@ class m171218_070105_log_activity_entries extends Migration
     {
         $logActivityNames = ['create', 'edit', 'update', 'delete'];
         foreach ($logActivityNames as $logActivityName) {
-            $logActivity = new LogActivity();
+            $logActivity       = new LogActivity();
             $logActivity->name = $logActivityName;
             $logActivity->save();
         }
