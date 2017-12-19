@@ -13,7 +13,11 @@ class BackendController extends Controller
     public function init()
     {
         $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser(Yii::$app->user->id), 'name');
+        $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
         $role = end($roles);
+        if (Yii::$app->language === 'en-US' && !empty(Yii::$app->user->id)) {
+            Yii::$app->language = $userLocation->location->slug;
+        }
         if ($role && $role !== User::ROLE_ADMINISTRATOR) {
             $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
             if ($userLocation->location->slug !== Yii::$app->language && ($this->module->requestedRoute 
