@@ -11,6 +11,7 @@ class m171216_073013_log_link extends Migration
             $this->createTable('log_link', [
                 'id' => $this->primaryKey(),
                 'logId'=> $this->integer()->notNull(),
+                'index' => $this->string()->notNull(),
                 'baseUrl'=> $this->text(),
                 'path' => $this->text(),
             ]);
