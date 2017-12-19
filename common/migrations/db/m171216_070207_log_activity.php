@@ -9,9 +9,9 @@ class m171216_070207_log_activity extends Migration
         $tableSchema = Yii::$app->db->schema->getTableSchema('log_activity');
         if($tableSchema === null) {
             $this->createTable('log_activity', [
-                'id' => $this->primaryKey()
+                'id' => $this->primaryKey(),
+                'name' => $this->string()->notNull()
             ]);
-            $this->addColumn('log_activity', 'name', $this->string()->notNull()->after('id'));
         }
 
     }

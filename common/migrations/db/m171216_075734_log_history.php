@@ -9,12 +9,11 @@ class m171216_075734_log_history extends Migration
         $tableSchema = Yii::$app->db->schema->getTableSchema('log_history');
         if($tableSchema === null) {
             $this->createTable('log_history', [
-                'id' => $this->primaryKey()
+                'id' => $this->primaryKey(),
+                'logId' =>  $this->integer(),
+                'instanceId' =>  $this->integer(),
+                'instanceType' =>  $this->string(),
             ]);
-        $this->addColumn('log_history', 'logId', $this->integer()->notNull()->after('id'));
-            $this->addColumn('log_history', 'instanceId', $this->integer()->after('logId'));
-            $this->addColumn('log_history', 'instanceType', $this->string()->after('instanceId'));
-
     }
     }
 

@@ -9,12 +9,11 @@ class m171216_073013_log_link extends Migration
         $tableSchema = Yii::$app->db->schema->getTableSchema('log_link');
         if($tableSchema === null) {
             $this->createTable('log_link', [
-                'id' => $this->primaryKey()
+                'id' => $this->primaryKey(),
+                'logId'=> $this->integer()->notNull(),
+                'baseUrl'=> $this->text(),
+                'path' => $this->text(),
             ]);
-            $this->addColumn('log_link', 'logId', $this->integer()->notNull()->after('id'));
-            $this->addColumn('log_link', 'index', $this->string()->notNull()->after('logId'));
-            $this->addColumn('log_link', 'baseUrl', $this->text()->after('index'));
-             $this->addColumn('log_link', 'path', $this->text()->after('baseUrl'));
         }
     }
 

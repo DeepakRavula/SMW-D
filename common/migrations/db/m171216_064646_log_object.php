@@ -9,9 +9,9 @@ class m171216_064646_log_object extends Migration
         $tableSchema = Yii::$app->db->schema->getTableSchema('log_object');
         if($tableSchema === null) {
             $this->createTable('log_object', [
-                'id' => $this->primaryKey()
+                'id' => $this->primaryKey(),
+                'name' => $this->string()->notNull()
             ]);
-            $this->addColumn('log_object', 'name', $this->string()->notNull()->after('id'));
         }
     }
 
