@@ -404,29 +404,32 @@ class Enrolment extends \yii\db\ActiveRecord
     }
     public function afterSave($insert, $changedAttributes)
     {
+        if ($insert) {
+            $enrolmentProgramRate = new EnrolmentProgramRate();
+            $enrolmentProgramRate->enrolmentId = $this->id;
+            $enrolmentProgramRate->startDate  = (new Carbon($this->course->startDate))->format('Y-m-d');
+            $enrolmentProgramRate->endDate = (new Carbon($this->course->endDate))->format('Y-m-d');
+            $enrolmentProgramRate->programRate = $this->course->program->rate;
+            $enrolmentProgramRate->save();
+        }
         if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate))
 			|| (!$insert) || $this->isExtra()) {
-            return true;
+            return parent::afterSave($insert, $changedAttributes);
         }
-        $enrolmentProgramRate = new EnrolmentProgramRate();
-        $enrolmentProgramRate->enrolmentId = $this->id;
-        $enrolmentProgramRate->startDate  = (new Carbon($this->course->startDate))->format('Y-m-d');
-        $enrolmentProgramRate->endDate = (new Carbon($this->course->endDate))->format('Y-m-d');
-        $enrolmentProgramRate->programRate = $this->course->program->rate;
-        $enrolmentProgramRate->save();  
         $interval = new \DateInterval('P1D');
         $start = new \DateTime($this->course->startDate);
         $end = new \DateTime($this->course->endDate);
         $period = new \DatePeriod($start, $interval, $end);
-		foreach ($period as $day) {
-			$checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
-			if ($checkDay) {
-				if ($this->course->isProfessionalDevelopmentDay($day)) {
-					continue;
-				}
-				$this->course->createLesson($day);
-			}
-		}
+        foreach ($period as $day) {
+            $checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
+            if ($checkDay) {
+                if ($this->course->isProfessionalDevelopmentDay($day)) {
+                    continue;
+                }
+                $this->course->createLesson($day);
+            }
+        }
+        return parent::afterSave($insert, $changedAttributes);
     }
 
 	public static function getPaymentFrequencies()

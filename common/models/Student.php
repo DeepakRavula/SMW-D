@@ -48,7 +48,7 @@ class Student extends \yii\db\ActiveRecord
         return [
             [['first_name', 'last_name'], 'required', 'except' => self::SCENARIO_MERGE],
             ['studentId', 'required', 'on' => self::SCENARIO_MERGE],
-            [['first_name', 'last_name'], 'string', 'min' => 2, 'max' => 30],
+            [['first_name', 'last_name'], 'string', 'min' => 1, 'max' => 30],
             [[ 'status'], 'integer'],
             [['birth_date'], 'date', 'format' => 'php:d-m-Y', 'message' => 'Date format shoule be in d-m-Y format', 
 				'except' => [self::SCENARIO_MERGE, self::SCENARIO_CUSTOMER_MERGE]],

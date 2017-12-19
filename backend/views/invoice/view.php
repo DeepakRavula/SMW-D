@@ -226,7 +226,7 @@ Modal::end();
             $('#invoice-error-notification').html('Please select atleast a item to edit tax!').fadeIn().delay(5000).fadeOut();
         } else {
             $.ajax({
-                url    : '<?= Url::to(['tax-status/edit-line-item-tax']) ?>?' + params,
+                url    : '<?= Url::to(['invoice-line-item/edit-tax']) ?>?' + params,
                 type: 'get',
                 dataType: "json",
                 success: function (response)

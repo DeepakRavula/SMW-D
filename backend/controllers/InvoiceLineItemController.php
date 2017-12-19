@@ -15,6 +15,7 @@ use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
 use common\models\User;
 use common\models\InvoiceLog;
+use backend\models\LineItemMultiTax;
 use yii\helpers\Json;
 use common\models\Location;
 use common\models\TaxCode;
@@ -34,7 +35,8 @@ class InvoiceLineItemController extends Controller
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['edit', 'apply-discount', 'update', 'compute-net-price','delete'],
+                'only' => ['edit', 'apply-discount', 'update', 'compute-net-price', 
+                    'delete', 'edit-tax'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -209,21 +211,18 @@ class InvoiceLineItemController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-		$model->on(InvoiceLineItem::EVENT_DELETE, [new InvoiceLog(), 'deleteLineItem']);
-		$user = User::findOne(['id' => Yii::$app->user->id]);
-		$model->userName = $user->publicIdentity;
+        $model->on(InvoiceLineItem::EVENT_DELETE, [new InvoiceLog(), 'deleteLineItem']);
+        $user = User::findOne(['id' => Yii::$app->user->id]);
+        $model->userName = $user->publicIdentity;
         $invoiceModel = $model->invoice;
         if($model->delete()) {
-        	$invoiceModel->save();
-			$model->trigger(InvoiceLineItem::EVENT_DELETE);
-		}
-        Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Line Item has been deleted successfully',
-            ]);
+            $invoiceModel->save();
+            $model->trigger(InvoiceLineItem::EVENT_DELETE);
+        }
         return [
-                'status' => true
-            ];
+            'status' => true,
+            'message' => 'Line Item has been deleted successfully'
+        ];
 
         
     }
@@ -244,6 +243,37 @@ class InvoiceLineItemController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+    
+    public function actionEditTax()
+    {
+        $lineItemIds = Yii::$app->request->get('InvoiceLineItem')['ids'];
+        $multiLineItemTax = new LineItemMultiTax(); 
+        $lineItem = $multiLineItemTax->setModel($lineItemIds);
+        $lineItem->setScenario(InvoiceLineItem::SCENARIO_EDIT);
+        $data = $this->renderAjax('/invoice/line-item/_form-tax', [
+            'lineItemIds' => $lineItemIds,
+            'model' => $lineItem
+        ]);
+        $post = Yii::$app->request->post();
+        if ($post) {
+            foreach ($lineItemIds as $lineItemId) {
+                $lineItem = InvoiceLineItem::findOne($lineItemId);
+                $lineItem->load($post);
+                if (!$lineItem->save()) {
+                    Yii::error('Line item discount error: '.VarDumper::dumpAsString($lineItem->getErrors()));
+                }
+            }
+            return [
+                'status' => true,
+                'message' => 'Tax successfully updated!'
+            ];
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
         }
     }
 }
