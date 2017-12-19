@@ -4,11 +4,13 @@ use yii\db\Migration;
 
 class m171216_064646_log_object extends Migration
 {
+
     public function up()
     {
         $tableSchema = Yii::$app->db->schema->getTableSchema('log_object');
-        if($tableSchema === null) {
-            $this->createTable('log_object', [
+        if ($tableSchema === null) {
+            $this->createTable('log_object',
+                [
                 'id' => $this->primaryKey(),
                 'name' => $this->string()->notNull()
             ]);
@@ -21,15 +23,14 @@ class m171216_064646_log_object extends Migration
 
         return false;
     }
-
     /*
-    // Use safeUp/safeDown to run migration code within a transaction
-    public function safeUp()
-    {
-    }
+      // Use safeUp/safeDown to run migration code within a transaction
+      public function safeUp()
+      {
+      }
 
-    public function safeDown()
-    {
-    }
-    */
+      public function safeDown()
+      {
+      }
+     */
 }

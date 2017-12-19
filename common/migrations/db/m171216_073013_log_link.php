@@ -4,15 +4,17 @@ use yii\db\Migration;
 
 class m171216_073013_log_link extends Migration
 {
+
     public function up()
     {
         $tableSchema = Yii::$app->db->schema->getTableSchema('log_link');
-        if($tableSchema === null) {
-            $this->createTable('log_link', [
+        if ($tableSchema === null) {
+            $this->createTable('log_link',
+                [
                 'id' => $this->primaryKey(),
-                'logId'=> $this->integer()->notNull(),
+                'logId' => $this->integer()->notNull(),
                 'index' => $this->string()->notNull(),
-                'baseUrl'=> $this->text(),
+                'baseUrl' => $this->text(),
                 'path' => $this->text(),
             ]);
         }
@@ -24,15 +26,14 @@ class m171216_073013_log_link extends Migration
 
         return false;
     }
-
     /*
-    // Use safeUp/safeDown to run migration code within a transaction
-    public function safeUp()
-    {
-    }
+      // Use safeUp/safeDown to run migration code within a transaction
+      public function safeUp()
+      {
+      }
 
-    public function safeDown()
-    {
-    }
-    */
+      public function safeDown()
+      {
+      }
+     */
 }
