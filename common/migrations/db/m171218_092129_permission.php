@@ -16,6 +16,11 @@ class m171218_092129_permission extends Migration
 		$auth->removeChildren($owner);
 		$auth->removeChildren($staff);
 		
+		$loginToBackend = $auth->createPermission('loginToBackend');
+		$loginToBackend->description = 'Can login to backend';
+        $auth->add($loginToBackend);
+		$auth->addChild($admin, $loginToBackend);
+		
 		$listCustomer = $auth->createPermission('listCustomer');
         $listCustomer->description = 'Can view the list of customer';
         $auth->add($listCustomer);
