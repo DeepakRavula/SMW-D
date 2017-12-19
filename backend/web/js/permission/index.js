@@ -8,7 +8,7 @@ $(function() {
             var permission = $(this).data('permission');
             $.post('permission/'+action+'?role='+role+'&permission='+permission, function(data) {
                 if(data.success) {
-                    $.pjax.reload({container: '#permission-table-pjax'});
+                    $.pjax.reload({container: '#permission-table-pjax', timeout : 6000});
                 }
                 else {
                     failCallback();
