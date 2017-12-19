@@ -1,5 +1,8 @@
 <?php
-
+use yii\helpers\ArrayHelper;
+use common\models\User;
+use common\models\UserLocation;
+use yii\web\ForbiddenHttpException;
 $config = [
     'homeUrl' => Yii::getAlias('@backendUrl'),
     'controllerNamespace' => 'backend\controllers',
@@ -73,15 +76,7 @@ $config = [
             'class' => '\kartik\datecontrol\Module',
         ],
     ],
-    'on beforeAction' => function ($event) {
-        $unReadNotes = [];
-        $latestNotes = common\models\ReleaseNotes::latestNotes();
-        if (!empty($latestNotes)) {
-            $unReadNotes = common\models\ReleaseNotesRead::findOne(['release_note_id' => $latestNotes->id, 'user_id' => Yii::$app->user->id]);
-        }
-        Yii::$app->view->params['latestNotes'] = $latestNotes;
-        Yii::$app->view->params['unReadNotes'] = $unReadNotes;
-    },
+    'as beforeAction' => 'common\behaviors\GlobalBeforeAction',
     'as globalAccess' => [
         'class' => '\common\behaviors\GlobalAccessBehavior',
         'rules' => [

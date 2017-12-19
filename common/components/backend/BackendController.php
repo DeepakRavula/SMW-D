@@ -21,6 +21,6 @@ class BackendController extends Controller
                 throw new ForbiddenHttpException();
             }
         }
-        parent::init();
+        return parent::init();
     }
 }
