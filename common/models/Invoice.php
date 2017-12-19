@@ -346,19 +346,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if (!$insert) {
-            if ($this->isProformaPaymentFrequencyApplicable()) {
-                $this->createProformaPaymentFrequency();
-            }
-            $oldTotal = clone $this;
-            if(empty($this->lineItems)) {
-                return parent::afterSave($insert, $changedAttributes);
-            }
-            $existingSubtotal = $this->subTotal;
-            if ($this->updateInvoiceAttributes() && (float) $existingSubtotal === 0.0) {
-                $this->trigger(self::EVENT_GENERATE);
-            }
-        } else {
+        if ($insert) {
             $this->trigger(self::EVENT_CREATE);
         }
         return parent::afterSave($insert, $changedAttributes);
@@ -370,26 +358,6 @@ class Invoice extends \yii\db\ActiveRecord
         $model->invoiceId = $this->id;
         $model->paymentFrequencyId = $this->proformaEnrolment->paymentFrequencyId;
         $model->save();
-    }
-
-    public function updateInvoiceAttributes()
-    {
-        if(!$this->isOpeningBalance() && !$this->isLessonCredit()) {
-            $subTotal    = $this->netSubtotal;
-            $tax         = $this->lineItemTax;
-            $totalAmount = $subTotal + $tax;
-            $this->updateAttributes([
-                'subTotal' => $subTotal,
-                'tax' => $tax,
-                'total' => $totalAmount,
-            ]);
-        }
-        $status  = $this->getInvoiceStatus();
-        $balance = $this->invoiceBalance;
-        return $this->updateAttributes([
-            'status'    => $status,
-            'balance'   => $balance,
-        ]);
     }
 
     public function getPaymentTotal()
@@ -611,6 +579,24 @@ class Invoice extends \yii\db\ActiveRecord
                 $this->reminderNotes = $reminderNotes->notes;
             }
             $this->isDeleted = false;
+        } else {
+            if ($this->isProformaPaymentFrequencyApplicable()) {
+                $this->createProformaPaymentFrequency();
+            }
+            if(empty($this->lineItems)) {
+                return parent::beforeSave($insert);
+            }
+            $existingSubtotal = $this->subTotal;
+            if(!$this->isOpeningBalance() && !$this->isLessonCredit()) {
+                $this->subTotal = $this->netSubtotal;
+                $this->tax      = $this->lineItemTax;
+                $this->total    = $this->subTotal + $this->tax;
+            }
+            if ((float) $existingSubtotal === 0.0) {
+                $this->trigger(self::EVENT_GENERATE);
+            }
+            $this->status  = $this->getInvoiceStatus();
+            $this->balance = $this->invoiceBalance;
         }
         
      	return parent::beforeSave($insert);
