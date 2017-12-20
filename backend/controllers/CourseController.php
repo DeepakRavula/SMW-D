@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Course;
-use common\models\timelineEvent\CourseLog;
+use common\models\log\CourseLog;
 use common\models\Lesson;
 use common\models\Qualification;
 use backend\models\search\CourseSearch;
@@ -135,7 +135,7 @@ class CourseController extends \common\components\backend\BackendController
         $model = new Course();
         $courseSchedule = [new CourseSchedule()];
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
-		
+
         $model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $userModel = User::findOne(['id' => Yii::$app->user->id]);
         $model->on(Course::EVENT_CREATE, [new CourseLog(), 'create']);
