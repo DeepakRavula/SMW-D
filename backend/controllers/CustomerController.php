@@ -49,7 +49,7 @@ class CustomerController extends UserController
     public function actionAddOpeningBalance($id)
     {
         $model = $this->findModel($id);
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $paymentModel = new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]);
         if ($paymentModel->load(Yii::$app->request->post())) {
             $invoice = new Invoice();
@@ -102,7 +102,7 @@ class CustomerController extends UserController
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model = User::find()->location($locationId)
                 ->where(['user.id' => $id])
                 ->notDeleted()

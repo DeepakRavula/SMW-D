@@ -13,7 +13,7 @@ use common\models\Location;
 /**
  * StudentController implements the CRUD actions for Student model.
  */
-class StudentBirthdayController extends Controller
+class StudentBirthdayController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {
@@ -69,7 +69,7 @@ class StudentBirthdayController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 		$dataProvider->pagination = false;
         $session = Yii::$app->session; 
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model = Location::findOne(['id' => $locationId]);
         $this->layout = '/print';
 

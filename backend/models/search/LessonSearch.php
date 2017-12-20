@@ -66,7 +66,7 @@ class LessonSearch extends Lesson
         $this->toDate = (new \DateTime())->format('M d,Y');
         $this->dateRange = $this->fromDate.' - '.$this->toDate;
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $query = Lesson::find()
 			->isConfirmed()
 			->notDeleted()

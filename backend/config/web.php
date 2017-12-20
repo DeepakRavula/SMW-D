@@ -1,5 +1,8 @@
 <?php
-
+use yii\helpers\ArrayHelper;
+use common\models\User;
+use common\models\UserLocation;
+use yii\web\ForbiddenHttpException;
 $config = [
     'homeUrl' => Yii::getAlias('@backendUrl'),
     'controllerNamespace' => 'backend\controllers',
@@ -30,10 +33,16 @@ $config = [
             'cookieValidationKey' => env('BACKEND_COOKIE_VALIDATION_KEY'),
 			'baseUrl' => '/admin',
         ],
-		'urlManager' => [
-			'enablePrettyUrl' => true,
-			'showScriptName' => false,
-		],
+        'urlManager' => [
+            'class' => 'common\components\codemix\UrlManager',
+            'enableDefaultLanguageUrlCode' => true,
+            'enableLanguagePersistence' => false,
+            'ignoreLanguageUrlPatterns' => [
+                '#^sign-in/(login|logout)#' => '#^(sign-in|login)#',
+            ],
+            'enablePrettyUrl' => true,
+            'showScriptName' => false
+        ],
         'user' => [
             'class' => 'yii\web\User',
             'identityClass' => 'common\models\User',
@@ -67,29 +76,7 @@ $config = [
             'class' => '\kartik\datecontrol\Module',
         ],
     ],
-    'on beforeAction' => function ($event) {
-        $location_id = Yii::$app->session->get('location_id');
-        if (empty($location_id)) {
-		$roles = yii\helpers\ArrayHelper::getColumn(
-			Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
-			'name'
-		);
-		$role = end($roles);
-		if ($role && $role !== common\models\User::ROLE_ADMINISTRATOR) {
-			$userLocation = common\models\UserLocation::findOne(['user_id' => Yii::$app->user->id]);
-			Yii::$app->session->set('location_id', $userLocation->location_id);
-		} else {
-			Yii::$app->session->set('location_id', '1');
-		}
-        }
-        $unReadNotes = [];
-        $latestNotes = common\models\ReleaseNotes::latestNotes();
-        if (!empty($latestNotes)) {
-            $unReadNotes = common\models\ReleaseNotesRead::findOne(['release_note_id' => $latestNotes->id, 'user_id' => Yii::$app->user->id]);
-        }
-        Yii::$app->view->params['latestNotes'] = $latestNotes;
-        Yii::$app->view->params['unReadNotes'] = $unReadNotes;
-    },
+    'as beforeAction' => 'common\behaviors\GlobalBeforeAction',
     'as globalAccess' => [
         'class' => '\common\behaviors\GlobalAccessBehavior',
         'rules' => [
@@ -140,7 +127,7 @@ $config = [
 					'customer-payment-preference','tax-code', 'vacation', 
 					'customer-discount', 'classroom', 'report', 'teacher-rate',
 					'private-lesson','student-birthday', 'teacher-unavailability',
-					'print', 'user-contact'
+					'print', 'user-contact','teacher-substitute',
 				],
                 'allow' => true,
                 'roles' => ['staffmember'],

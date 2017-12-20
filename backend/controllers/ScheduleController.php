@@ -24,7 +24,7 @@ use Carbon\CarbonInterval;
 /**
  * QualificationController implements the CRUD actions for Qualification model.
  */
-class ScheduleController extends Controller
+class ScheduleController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {
@@ -64,7 +64,7 @@ class ScheduleController extends Controller
      */
     public function actionIndex()
     {
-        $locationId             = Yii::$app->session->get('location_id');
+        $locationId             = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $teachersAvailabilities = TeacherAvailability::find()
             ->joinWith(['userLocation' => function ($query) use ($locationId) {
                 $query->joinWith(['userProfile'])
@@ -133,7 +133,7 @@ class ScheduleController extends Controller
     {
         $lessons = Lesson::find()
 			->joinWith(['course' => function ($query) use($programId, $teacherId) {
-				$query->andWhere(['course.locationId' => Yii::$app->session->get('location_id')]);
+				$query->andWhere(['course.locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id]);
 				if(!empty($programId) && $programId != 'undefined') {
 					$query->andWhere(['course.programId' => $programId]);
 				}
@@ -154,7 +154,7 @@ class ScheduleController extends Controller
     {
         $date      = \DateTime::createFromFormat('Y-m-d', $date);
 		$classrooms = Classroom::find()
-			->andWhere(['locationId' => Yii::$app->session->get('location_id')])
+			->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id])
 			->all();
 		foreach ($classrooms as $classroom) {
 			$resources[] = [
@@ -167,7 +167,7 @@ class ScheduleController extends Controller
 
     public function actionRenderResources($date, $programId, $teacherId)
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
 		if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')
 			&& ($programId == 'undefined')) {
@@ -322,7 +322,7 @@ class ScheduleController extends Controller
 	}
     public function actionRenderDayEvents($date, $programId, $teacherId)
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 		$date = Carbon::parse($date);
 		$events = [];
 		if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')
@@ -452,7 +452,7 @@ class ScheduleController extends Controller
 			->all();
 		$locationAvailability = LocationAvailability::find()
 			->andWhere([
-				'locationId' => Yii::$app->session->get('location_id'),
+				'locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id,
 				'day' => $date->format('N')
 			])
 			->one();

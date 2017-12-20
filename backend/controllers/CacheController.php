@@ -15,7 +15,7 @@ use yii\web\HttpException;
 /**
  * Class CacheController.
  */
-class CacheController extends Controller
+class CacheController extends \common\components\backend\BackendController
 {
     /**
      * @return string

@@ -149,7 +149,7 @@ echo $this->render('/mail/_form', [
 	'subject' => $model->course->program->name . ' lesson reschedule',
 	'content' => $content,
 	'id' => null,
-        'userModel'=>$model->enrolment->student->customer,
+        'userModel'=>!empty($model->enrolment->student->customer) ? $model->enrolment->student->customer : null,
 ]);
 Modal::end();
 ?>

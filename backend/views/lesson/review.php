@@ -77,7 +77,7 @@ Modal::begin([
 <div id="review-lesson-content"></div>
 <?php Modal::end(); ?>		
 <?php
-$locationId = Yii::$app->session->get('location_id');
+$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])
@@ -183,7 +183,7 @@ $teacherId = $courseModel->teacher->id;
                     $('.lesson-date').removeClass('col-md-4');
                 } else {
                     $('.lesson-date').addClass('col-md-6');
-                    $('#review-lesson-modal .modal-dialog').css({'width': '1300px'});
+                    $('#review-lesson-modal .modal-dialog').css({'width': '1100px'});
                     $.ajax({
                         url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
                         type: 'get',

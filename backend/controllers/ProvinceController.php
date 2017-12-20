@@ -14,7 +14,7 @@ use yii\web\Response;
 /**
  * ProvinceController implements the CRUD actions for Province model.
  */
-class ProvinceController extends Controller
+class ProvinceController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

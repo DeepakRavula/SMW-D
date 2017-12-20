@@ -17,7 +17,7 @@ use backend\models\search\InvoiceLineItemSearch;
 /**
  * ItemCategoryController implements the CRUD actions for ItemCategory model.
  */
-class ItemCategoryController extends Controller
+class ItemCategoryController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {
@@ -62,7 +62,7 @@ class ItemCategoryController extends Controller
      */
     public function actionView($id)
     {
-        $locationId   = Yii::$app->session->get('location_id');
+        $locationId   = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $dataProvider = new ActiveDataProvider([
             'query'   => Item::find()
                             ->where(['itemCategoryId' => $id])
@@ -175,7 +175,7 @@ class ItemCategoryController extends Controller
     public function actionItems()
     {
         $session        = Yii::$app->session;
-        $locationId     = $session->get('location_id');
+        $locationId     = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $itemCategoryId = $_POST['depdrop_parents'][0];
         $items          = Item::find()
                             ->notDeleted()

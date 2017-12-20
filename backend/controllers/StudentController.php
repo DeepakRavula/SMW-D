@@ -22,7 +22,7 @@ use yii\helpers\Url;
 /**
  * StudentController implements the CRUD actions for Student model.
  */
-class StudentController extends Controller
+class StudentController extends \common\components\backend\BackendController
 {
 	public function actions()
     {
@@ -134,7 +134,7 @@ class StudentController extends Controller
     {
         $model = $this->findModel($id);
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $request = Yii::$app->request;
         $post = $request->post();
         $courseModel = new Course();
@@ -186,7 +186,7 @@ class StudentController extends Controller
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model = Student::find()
 			->notDeleted()
 			->location($locationId)
@@ -233,7 +233,7 @@ class StudentController extends Controller
 
     public function actionMerge($id)
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model      = Student::findOne($id);
         $model->setScenario(Student::SCENARIO_MERGE);
         $students   = Student::find()

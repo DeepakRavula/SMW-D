@@ -1,11 +1,9 @@
 <?php
-
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\datetime\DateTimePicker;
 use kartik\time\TimePicker;
 use common\models\Lesson;
-
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -17,7 +15,8 @@ use common\models\Lesson;
 ]);
 ?>
 <div class="row">
-			   <div class="col-md-3">
+			   <div class="col-md-9">
+                               <div class="col-md-4">
             <div class="form-group field-calendar-date-time-picker-date">
                 <label class="control-label" for="calendar-date-time-picker-date">Reschedule Date</label>
                 <div id="calendar-date-time-picker-date-datetime" class="input-group date">
@@ -28,8 +27,8 @@ use common\models\Lesson;
                     </span>
                 </div>
             </div>       
-        </div>
-	<div class="col-md-3">
+                               </div>
+	<div class="col-md-2">
 		<?php
 		echo $form->field($model, 'duration')->widget(TimePicker::classname(), [
 			'options' => ['id' => 'course-duration'],
@@ -39,7 +38,8 @@ use common\models\Lesson;
 		]);
 		?>
 	</div>
-    <div class="col-md-6 form-group m-t-25">
+                                </div>
+    <div class="col-md-3 form-group m-t-25">
         <div class="pull-right">
 		<?= Html::submitButton(Yii::t('backend', 'Apply'), [
 			'id' => 'lesson-review-apply',

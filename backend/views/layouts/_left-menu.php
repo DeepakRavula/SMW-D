@@ -10,6 +10,7 @@ use common\models\Course;
 use common\models\timelineEvent\TimelineEvent;
 ?>
 <?php
+$userLocation = \common\models\UserLocation::findOne(['user_id' => Yii::$app->user->identity->id]);
 echo Menu::widget([
 	'options' => ['class' => 'sidebar-menu'],
 	'linkTemplate' => '<a href="{url}">{icon}<span>{label}</span>{right-icon}{badge}</a>',
@@ -321,7 +322,7 @@ echo Menu::widget([
 					'icon' => '<i class="fa fa-bell"></i>',
 					'url' => ['/timeline-event/index'],
 					'badge' => TimelineEvent::find()
-						->andWhere(['locationId' => Yii::$app->session->get('location_id')])
+						->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id])
 						->today()->count(),
 					'badgeBgClass' => 'label-default'
 				],

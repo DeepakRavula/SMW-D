@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
 /**
  * QualificationController implements the CRUD actions for Qualification model.
  */
-class QualificationController extends Controller
+class QualificationController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

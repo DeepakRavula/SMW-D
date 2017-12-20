@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
 /**
  * CustomerDiscountController implements the CRUD actions for CustomerDiscount model.
  */
-class CustomerDiscountController extends Controller
+class CustomerDiscountController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {
