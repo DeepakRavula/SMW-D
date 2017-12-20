@@ -183,7 +183,7 @@ $teacherId = $courseModel->teacher->id;
                     $('.lesson-date').removeClass('col-md-4');
                 } else {
                     $('.lesson-date').addClass('col-md-6');
-                    $('#review-lesson-modal .modal-dialog').css({'width': '1300px'});
+                    $('#review-lesson-modal .modal-dialog').css({'width': '1100px'});
                     $.ajax({
                         url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
                         type: 'get',
