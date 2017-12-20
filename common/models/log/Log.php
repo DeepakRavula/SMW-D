@@ -3,7 +3,6 @@
 namespace common\models\log;
 
 use Yii;
-
 /**
  * This is the model class for table "log".
  *
@@ -56,4 +55,14 @@ class Log extends \yii\db\ActiveRecord
             'createdUserId' => 'Created User ID',
         ];
     }
+	public function beforeSave($insert) {
+		if($insert) {
+			$this->createdOn = (new \DateTime())->format('Y-m-d H:i:s');
+		}
+		return parent::beforeSave($insert);
+	}
+	public function getLogLink($index) {
+		return $this->hasMany(LogLink::className(), ['logId' => 'id'])
+			->onCondition(['log_link.index' => $index]);
+	}
 }

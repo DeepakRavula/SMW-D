@@ -12,7 +12,7 @@ use Yii;
  */
 class LogActivity extends \yii\db\ActiveRecord
 {
-
+	const CREATE = 'create';
     /**
      * @inheritdoc
      */

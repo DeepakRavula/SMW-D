@@ -10,6 +10,7 @@ use common\models\Lesson;
 use common\models\ExamResult;
 use common\models\Note;
 use common\models\Course;
+use common\models\log\LogHistory;
 
 
 /**
@@ -46,10 +47,16 @@ class ViewAction extends Action
 				'unscheduledLessonDataProvider' => $this->getUnscheduledLessons($id, $locationId),
 				'examResultDataProvider' => $this->getExamResults($id),
 				'noteDataProvider' => $this->getNotes($id),
+				'logs' => $this->getLogs($id)
 				]);
 		} else {
 			$this->controller->redirect(['index', 'StudentSearch[showAllStudents]' => false]);
 		} 
+	}
+	public function getLogs($id) {
+		return new ActiveDataProvider([
+			'query' => LogHistory::find()
+			->student($id) ]);
 	}
 
 	protected function getUnscheduledLessons($id, $locationId)

@@ -77,6 +77,7 @@ $this->params['label'] = $this->render('_title', [
 
 		$logContent = $this->render('log/index', [
 			'model' => $model,
+			'logs' => $logs
 		]);
 
 		$noteContent = $this->render('note/view', [
