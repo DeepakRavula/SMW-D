@@ -52,6 +52,8 @@ $this->params['show-all'] = $this->render('_button', [
 	]); ?>
         <?= AdminLteGridView::widget([
             'dataProvider' => $dataProvider,
+            'summary' => false,
+            'emptyText' => false,
             'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel, $roleName, $originalInvoice) {
                 $url = Url::to(['user/view', 'UserSearch[role_name]' => $roleName, 'id' => $model->id]);
             	$data = ['data-url' => $url];

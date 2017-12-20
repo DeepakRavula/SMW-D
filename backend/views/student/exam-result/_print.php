@@ -16,7 +16,8 @@ use yii\grid\GridView;
 echo GridView::widget([
 	'dataProvider' => $examResultDataProvider,
 	'options' => ['class' => 'col-md-12 p-0'],
-    'summary' =>'',
+        'summary' => false,
+        'emptyText' => false,
 	'tableOptions' => ['class' => 'table table-condensed'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => [

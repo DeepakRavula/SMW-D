@@ -18,6 +18,8 @@ DateTimePickerAsset::register($this);
 echo GridView::widget([
 'id' => 'unavailability-grid',
 'dataProvider' => $unavailabilityDataProvider,
+'summary' => false,
+'emptyText' => false,
 'options' => ['class' => 'col-md-12'],
 'tableOptions' => ['class' => 'table table-bordered m-t-15'],
 'headerRowOptions' => ['class' => 'bg-light-gray'],

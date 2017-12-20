@@ -22,7 +22,8 @@ use insolita\wgadminlte\LteConst;
 				'dataProvider' => $groupQualificationDataProvider,
 				'tableOptions' => ['class' => 'table table-condensed'],
 				'headerRowOptions' => ['class' => 'bg-light-gray'],
-			 	'summary' => '',
+			 	'summary' => false,
+                                'emptyText' => false,
 				'columns' => [
 					'program.name',
 					[

@@ -10,7 +10,8 @@ echo GridView::widget([
 	'dataProvider' => $paymentsDataProvider,
 	'tableOptions' => ['class' => 'table  m-0 table-more-condensed inner-payment-table'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
-	'summary' => '',
+	'summary' => false,
+        'emptyText' => false,
 	'columns' => [
 		[
 			'value' => function ($data) {

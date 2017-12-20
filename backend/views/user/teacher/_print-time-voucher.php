@@ -144,7 +144,8 @@ $columns = [
 <?=
 GridView::widget([
 	'dataProvider' => $timeVoucherDataProvider,
-    'summary' => '',
+        'summary' => false,
+        'emptyText' => false,
 	'options' => ['class' => 'col-md-12'],
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],

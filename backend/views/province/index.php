@@ -32,6 +32,8 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
     <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'summary' => false,
+        'emptyText' => false,
         'columns' => [
             'name',
 			[

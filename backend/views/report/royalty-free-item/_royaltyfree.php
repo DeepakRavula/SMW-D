@@ -40,7 +40,8 @@ $columns = [
     <?php
     echo GridView::widget([
         'dataProvider' => $royaltyFreeDataProvider,
-        'summary' => '',
+        'summary' => false,
+        'emptyText' => false,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'rowOptions' => function ($model, $key, $index, $grid) {

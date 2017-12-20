@@ -15,6 +15,8 @@ use common\models\User;
         'dataProvider' => $studentDataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'summary' => false,
+        'emptyText' => false,
         'columns' => [
             [
                 'label' => 'Student Name',

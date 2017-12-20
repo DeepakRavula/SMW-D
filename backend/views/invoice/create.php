@@ -12,7 +12,8 @@ echo AdminLteGridView::widget([
 	'dataProvider' => $paymentCycleDataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
-	'summary' => '',
+	'summary' => false,
+        'emptyText' => false,
 	'columns' => [
 		[
 			'label' => 'Student',

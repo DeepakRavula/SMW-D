@@ -20,7 +20,8 @@ use insolita\wgadminlte\LteConst;
 		 <?php echo GridView::widget([
 			 'id' => 'qualification-grid',
 			'dataProvider' => $privateQualificationDataProvider,
-			 'summary' => '',
+			'summary' => false,
+                        'emptyText' => false,
 			'tableOptions' => ['class' => 'table table-condensed'],
 			'headerRowOptions' => ['class' => 'bg-light-gray'],
 			'columns' => [

@@ -91,7 +91,8 @@ $columns = [
 <?=
 GridView::widget([
 	'dataProvider' => $teacherLessonDataProvider,
-    'summary' => '',
+        'summary' => false,
+        'emptyText' => false,
 	'options' => ['class' => 'col-md-12'],
 	'tableOptions' => ['class' => 'table table-responsive table-more-condensed'],
 	'headerRowOptions' => ['class' => 'bg-light-gray-1'],

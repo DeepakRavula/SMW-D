@@ -105,6 +105,7 @@ $columns = [
 GridView::widget([
 	'dataProvider' => $lessonDataProvider,
 	'columns' => $columns,
+        'summary' => false,
 	'emptyText' => 'No conflicts here! You are ready to confirm!',
 ]);
 ?>

@@ -14,6 +14,8 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="tax-index">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $u = \yii\helpers\StringHelper::basename(get_class($model));
             $u = yii\helpers\Url::toRoute(['/'.strtolower($u).'/view']);

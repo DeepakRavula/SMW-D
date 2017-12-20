@@ -22,6 +22,8 @@ $this->params['show-all'] = $this->render('_button', [
 	<?php Pjax::begin(['id' => 'program-listing']) ?>
         <?php echo AdminLteGridView::widget([
 			'id' => 'program-grid',
+            'summary' => false,
+        'emptyText' => false,
             'dataProvider' => $dataProvider,
     		'filterModel' => $searchModel,
 			'condensed' => true,

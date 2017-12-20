@@ -65,7 +65,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         <?=
         GridView::widget([
             'dataProvider' => $dataProvider,
-            'summary' =>'',
+            'summary' => false,
+            'emptyText' => false,
             'options' => ['class' => ''],
             'showPageSummary' => true,
             'headerRowOptions' => ['class' => 'bg-light-gray'],

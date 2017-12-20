@@ -97,7 +97,8 @@ use yii\grid\GridView;
                     GridView::widget([
                         'dataProvider' => $lessonDataProvider,
                         'columns' => $columns,
-                        'summary' => false
+                        'summary' => false,
+                        'emptyText' => false,
                     ]);
                     ?>
                 </div>
@@ -129,7 +130,8 @@ use yii\grid\GridView;
     GridView::widget([
         'dataProvider' => $paymentCycleDataProvider,
         'columns' => $paymentCyclecolumns,
-        'summary' => false
+        'summary' => false,
+        'emptyText' => false,
     ]);
     ?>
                 </div>

@@ -57,7 +57,8 @@ $columns = [
 	GridView::widget([
 		'dataProvider' => $lessonDataProvider,
 		'columns' => $columns,
-		'emptyText' => 'No conflicts here! You are ready to confirm!',
+                'summary' => false,
+                'emptyText' => 'No conflicts here! You are ready to confirm!',
 	]);
 	?>
 <?php \yii\widgets\Pjax::end(); ?>

@@ -67,9 +67,10 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 	GridView::widget([
 		'dataProvider' => $dataProvider,
 		'options' => ['class' => ''],
-        'summary' =>'',
+                'summary' => false,
+                'emptyText' => false,
 		'showPageSummary' => true,
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
+                'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
 		'pjax' => true,
 		'pjaxSettings' => [

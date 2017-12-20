@@ -20,6 +20,8 @@ $this->title = 'Student Birthdays';
     <?php
     echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['student/view', 'id' => $model->id]);
             $data = ['data-url' => $url];

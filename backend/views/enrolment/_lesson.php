@@ -22,6 +22,8 @@ use backend\models\EmailForm;
     <?php Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
                 'dataProvider' => $lessonDataProvider,
+                'summary' => false,
+                'emptyText' => false,
                 'tableOptions' => ['class' => 'table table-bordered'],
 				'showHeader' => false,
                 'columns' => [

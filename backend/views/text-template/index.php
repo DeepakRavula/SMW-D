@@ -17,6 +17,8 @@ $this->params['breadcrumbs'][] = $this->title;
 echo AdminLteGridView::widget([
 	'id' => 'template-grid',
 	'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => [
