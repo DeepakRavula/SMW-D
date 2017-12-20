@@ -625,7 +625,7 @@ class InvoiceController extends \common\components\backend\BackendController
         if ($model->load($post)) {
             $model->isTaxAdjusted = false;
             $model->tax += $model->taxAdjusted;
-            if ($model->tax !== $model->lineItemTax) {
+            if ((float) $model->tax !== (float) $model->lineItemTax) {
                 $model->isTaxAdjusted = true;
             }
             

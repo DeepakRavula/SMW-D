@@ -8,8 +8,7 @@ class m171219_182643_add_isTaxAdjust_field extends Migration
     public function up()
     {
         foreach (Invoice::find()->all() as $invoice) {
-            $invoice->isTaxAdjusted = false;
-            $invoice->save();
+            $invoice->updateAttributes(['isTaxAdjusted' => false]);
         }
     }
 
