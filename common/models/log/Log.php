@@ -56,4 +56,17 @@ class Log extends \yii\db\ActiveRecord
             'createdUserId' => 'Created User ID',
         ];
     }
+    public function addLog($data, $message, $createdUserId, $objectName, $activityName,$locationId)
+  {
+      $object = LogObject::findOne(['name' => $objectName]);
+      $activity = LogActivity::findOne(['name' => $activityName]);
+      $log = new Log();
+      $log->data = $data;
+      $log->message = $message;
+      $log->createdUserId = $createdUserId;
+      $log->objectId = $object->id;
+      $log->activityId = $activity->id;
+      $log->locationId=$locationId;
+      $log->save(false);
+  }
 }
