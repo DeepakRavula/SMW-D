@@ -127,7 +127,7 @@ $config = [
 					'customer-payment-preference','tax-code', 'vacation', 
 					'customer-discount', 'classroom', 'report', 'teacher-rate',
 					'private-lesson','student-birthday', 'teacher-unavailability',
-					'print', 'user-contact'
+					'print', 'user-contact','teacher-substitute',
 				],
                 'allow' => true,
                 'roles' => ['staffmember'],
