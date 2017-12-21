@@ -69,7 +69,7 @@ class StudentBirthdayController extends \common\components\backend\BackendContro
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 		$dataProvider->pagination = false;
         $session = Yii::$app->session; 
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $model = Location::findOne(['id' => $locationId]);
         $this->layout = '/print';
 

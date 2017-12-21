@@ -51,7 +51,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
         // Dependent Dropdown
         echo $form->field($model, 'teacherId')->dropDownList(
             ArrayHelper::map(User::find()
-				->teachers($model->course->program->id, \common\models\Location::findOne(['slug' => \Yii::$app->language])->id)
+				->teachers($model->course->program->id, \Yii::$app->session->get('location_id'))
                 ->join('LEFT JOIN', 'user_profile','user_profile.user_id = ul.user_id')
                 ->notDeleted()
                 ->orderBy(['user_profile.firstname' => SORT_ASC])
@@ -86,7 +86,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             </div>
         </div>
 	   <div class="clearfix"></div>
-		   <?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id; ?>
+		   <?php $locationId = \Yii::$app->session->get('location_id'); ?>
 		<?php if($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
 		<div class="col-md-3">
 			<?php

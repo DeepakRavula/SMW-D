@@ -322,7 +322,7 @@ echo Menu::widget([
 					'icon' => '<i class="fa fa-bell"></i>',
 					'url' => ['/timeline-event/index'],
 					'badge' => TimelineEvent::find()
-						->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id])
+						->andWhere(['locationId' => \Yii::$app->session->get('location_id')])
 						->today()->count(),
 					'badgeBgClass' => 'label-default'
 				],

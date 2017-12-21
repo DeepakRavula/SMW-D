@@ -301,7 +301,7 @@ class UserContactController extends Controller
    protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $model = UserContact::find()->location($locationId)
                 ->where(['user_contact.id' => $id])
                 ->one();

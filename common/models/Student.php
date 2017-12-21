@@ -212,7 +212,7 @@ class Student extends \yii\db\ActiveRecord
 	public static function count()
     {
           $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-          $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+          $locationId = \Yii::$app->session->get('location_id');
             return self::find()
 			->location($locationId)
 			->notDeleted()

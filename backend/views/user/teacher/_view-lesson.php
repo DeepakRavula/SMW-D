@@ -145,7 +145,7 @@ GridView::widget([
 <div id="lesson-content"></div>
  <?php  Modal::end(); ?>
 <?php
-$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+$locationId = \Yii::$app->session->get('location_id');
 $minLocationAvailability = LocationAvailability::find()
     ->where(['locationId' => $locationId])
     ->orderBy(['fromTime' => SORT_ASC])
