@@ -4,10 +4,8 @@ namespace common\models\log;
 use Yii;
 use common\models\log\Log;
 use common\models\Course;
-use common\commands\AddToTimelineCommand;
+use yii\helpers\Json;
 use yii\helpers\Url;
-use common\models\timelineEvent\TimelineEventLink;
-use common\models\timelineEvent\TimelineEventCourse;
 
 /**
  * This is the model class for table "courseLog".
@@ -25,43 +23,45 @@ class CourseLog extends Log
     {
 
         $groupCourseModel = $event->sender;
-        $groupCourse = Course::find(['id' => $groupCourseModel->id])->asArray()->one();
-            $data = $groupCourse;
-            $message = $groupCourseModel->userName . ' created new    {{' .$groupCourseModel->program->name. '}}   classes   with  '.$groupCourseModel->teacher->publicIdentity. ' at ' . Yii::$app->formatter->asTime($groupCourseModel->startDate);
-            $locationId  =  $groupCourseModel->teacher->userLocation->location_id;
-            $objectName='course';
-            $activityName='create';
-            $createdUserId =Yii::$app->user->id;
-            $this->addLog($data,$message,$createdUserId,$objectName,$activityName,$locationId,$groupCourseModel);
+        $loggedUser = end($event->data);
+        $data = Course::find(['id' => $groupCourseModel->id])->asArray()->one();
+        $message = $loggedUser->publicIdentity . ' created new   {{' . $groupCourseModel->program->name . ' }} classes   with {{' . $groupCourseModel->teacher->publicIdentity . ' }} at ' . Yii::$app->formatter->asTime($groupCourseModel->startDate);
 
-     }
-     public function addLog($data, $message, $createdUserId, $objectName, $activityName,$locationId,$model)
-  {
-         
-      $object = LogObject::findOne(['name' => $objectName]);
-      $activity = LogActivity::findOne(['name' => $activityName]);
-      $log = new Log();
-      $log->data = \yii\helpers\Json::encode($data);
-      $log->message = $message;
-      $log->createdUserId = $createdUserId;
-      $log->logObjectId = $object->id;
-      $log->logActivityId = $activity->id;
-      $log->locationId=$locationId;
-      $log->save();
-         if ($log) {
-            $logLink                  = new LogLink();
-            $logLink->logId           = $log->id;
-            $logLink->index           = $model->teacher->publicIdentity;
-            $logLink->baseUrl         = Yii::$app->request->hostInfo;
-            $logLink->path            = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher',
-                    'id' => $model->teacher->id]);
-            $logLink->save();
+       $object = LogObject::findOne(['name' => LogObject::COURSE]);
+        $activity = LogActivity::findOne(['name' => LogActivity::CREATE]);
+        	$log = new Log();
+ 		$log->logObjectId = $object->id;
+ 	$log->logActivityId = $activity->id;
+ 		$log->message = $message;
+ 		$log->data = Json::encode($data);
+ 		$log->createdUserId = $loggedUser->id;
+        $log->locationId = $groupCourseModel->teacher->userLocation->location_id;
+        if($log->save()) {
+ 			$this->addHistory($log, $groupCourseModel, $object);
+ 	 		$this->addLink($log, $groupCourseModel);
+ 		}
+    }
+    public function addLink($log, $model) {
+                $logLink                  = new LogLink();
+ 		$logLink->logId           = $log->id;
+ 		$logLink->index           = $model->program->name;
+ 		$logLink->baseUrl         = Yii::$app->request->hostInfo;
+ 		$logLink->path            = Url::to(['/course/view', 'id' => $model->id]);
+ 		$logLink->save();
 
-            $logHistory= new LogHistory();
-            $logHistory->logId=$log->id;
-            $logHistory->instanceId=$model->id;
-            $logHistory->instanceType=$objectName;
-            $logHistory->save();
-        }
-  }
-}
+                $logLink                  = new LogLink();
+ 		$logLink->logId           = $log->id;
+ 		$logLink->index           = $model->teacher->publicIdentity;
+ 		$logLink->baseUrl         = Yii::$app->request->hostInfo;
+ 		$logLink->path            = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $model->teacher->id]);
+ 		$logLink->save();
+ 	}
+ public function addHistory($log, $model, $object) {
+ 		$logHistory= new LogHistory();
+ 		$logHistory->logId = $log->id;
+ 		$logHistory->instanceId = $model->id;
+ 		$logHistory->instanceType = $object->name;
+ 		$logHistory->save();
+ 	}
+
+    }

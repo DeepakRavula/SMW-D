@@ -22,6 +22,7 @@ use common\models\CourseSchedule;
 use yii\web\Response;
 use common\models\TeacherAvailability;
 use common\models\Enrolment;
+use common\models\log\LogHistory;
 /**
  * CourseController implements the CRUD actions for Course model.
  */
@@ -86,12 +87,16 @@ class CourseController extends \common\components\backend\BackendController
 				->notDeleted()
 				->orderBy(['lesson.date' => SORT_ASC]),
         ]);
+        $logDataProvider = new ActiveDataProvider([
+			'query' => LogHistory::find()
+			->course($id) ]);
 
         return $this->render('view', [
             'model' => $this->findModel($id),
             'courseId' => $id,
             'studentDataProvider' => $studentDataProvider,
             'lessonDataProvider' => $lessonDataProvider,
+            'logDataProvider' => $logDataProvider,
         ]);
     }
 
@@ -136,11 +141,8 @@ class CourseController extends \common\components\backend\BackendController
         $courseSchedule = [new CourseSchedule()];
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
 
-        $model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
-        $userModel = User::findOne(['id' => Yii::$app->user->id]);
-        $model->on(Course::EVENT_CREATE, [new CourseLog(), 'create']);
-        $model->userName = $userModel->publicIdentity;
-
+        $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+         $model->on(Course::EVENT_AFTER_INSERT, [new CourseLog(), 'create'], ['loggedUser' => $loggedUser]);
         if ($model->load($request->post())) {
 			$courseScheduleModels = UserForm::createMultiple(CourseSchedule::classname());
 			Model::loadMultiple($courseScheduleModels, $request->post());
@@ -158,7 +160,8 @@ class CourseController extends \common\components\backend\BackendController
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
 					$model->startDate = $this->getCourseDate($courseScheduleModels);
-					$model->lessonsPerWeekCount = count($courseScheduleModels);	
+					$model->lessonsPerWeekCount = count($courseScheduleModels);
+                                        $model->locationId          = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
                     if ($flag = $model->save(false)) {
                         foreach ($courseScheduleModels as $courseScheduleModel) {
                             $courseScheduleModel->courseId = $model->id;
@@ -173,7 +176,7 @@ class CourseController extends \common\components\backend\BackendController
                     }
                     if ($flag) {
                         $transaction->commit();
-						$model->createLessons();	
+						$model->createLessons();
             			$model->trigger(Course::EVENT_CREATE);
             			return $this->redirect(['lesson/review', 'courseId' => $model->id]);
                     }
@@ -302,7 +305,7 @@ class CourseController extends \common\components\backend\BackendController
 			}])
 			->where(['NOT IN', 'course.id', $groupEnrolments])
 			->andWhere(['locationId' => $locationId])
-		   ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])  
+		   ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
 			->confirmed();
 			if(!empty($courseName)) {
 				$groupCourses->andWhere(['LIKE', 'program.name', $courseName]);
@@ -310,7 +313,7 @@ class CourseController extends \common\components\backend\BackendController
         $groupDataProvider = new ActiveDataProvider([
             'query' => $groupCourses,
         ]);
-	
+
 		$data = $this->renderAjax('/student/enrolment/_form-group', [
 			'groupDataProvider' => $groupDataProvider,
 			'student' => Student::findOne(['id' => $studentId])
