@@ -573,6 +573,7 @@ class Invoice extends \yii\db\ActiveRecord
             $this->subTotal       = 0.00;
             $this->total          = 0.00;
             $this->tax            = 0.00;
+            $this->isTaxAdjusted  = false;
             $this->isCanceled     = false;
             $reminderNotes = ReminderNote::find()->one();
             if (!empty($reminderNotes)) {
