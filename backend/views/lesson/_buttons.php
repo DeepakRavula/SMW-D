@@ -5,33 +5,19 @@ use yii\bootstrap\ActiveForm;
 use kartik\switchinput\SwitchInput;
 ?>
 <?php if ($model->isPrivate()) : ?>
-    <?php if ($model->invoice) : ?>
-		<?= Html::a('<span class="btn btn-info">View Invoice</span>', ['invoice/view', 'id' => $model->invoice->id], ['class' => 'm-r-10']) ?>
-		<?php else : ?>
-			<?php echo Html::a('<i title="Invoice" class="fa fa-usd"></i>', ['invoice', 'id' => $model->id], ['class' => 'btn btn-box-tool m-r-10']) ?>
-		<?php endif; ?>
-		<?php if ($model->isScheduled() && (!$model->proFormaInvoice || !$model->proFormaInvoice->isPaid())): ?>
-			<?php echo Html::a('<i title="PFI" class="fa fa-money"></i>', ['lesson/take-payment', 'id' => $model->id], ['class' => 'm-r-20 btn btn-box-tool']) ?>
-		<?php endif; ?>
-		<?php if ($model->canExplode()) : ?>
-                <?php
-        echo Html::a('<i title="Explode" class="fa fa-code-fork fa-lg"></i>',
-            ['private-lesson/split', 'id' => $model->id],
-            [
-            'id' => 'split-lesson',
-            'class' => 'm-r-20 del-ce btn btn-box-tool',
-        ])
-        ?>
-		<?php endif; ?>
-                <?php if ($model->canMerge()) : ?>
-                <?php
-                    echo Html::a('<i title="Merge" class="fa fa-chain"></i>', '#', [
-                            'id' => 'merge-lesson',
-                            'class' => 'm-r-20 btn btn-box-tool',
-                    ])
-                ?>
-		<?php endif; ?>
-                <?php endif; ?>
+    <?php if ($model->canExplode()) : ?>
+        <?php echo Html::a('<i title="Explode" class="fa fa-code-fork fa-lg"></i>', 
+            ['private-lesson/split', 'id' => $model->id], ['id' => 'split-lesson',
+                'class' => 'm-r-20 del-ce btn btn-box-tool',
+        ]) ?>
+    <?php endif; ?>
+    <?php if ($model->canMerge()) : ?>
+        <?php echo Html::a('<i title="Merge" class="fa fa-chain"></i>', '#', [
+            'id' => 'merge-lesson',
+            'class' => 'm-r-20 btn btn-box-tool',
+        ])?>
+    <?php endif; ?>
+<?php endif; ?>
 <?= Html::a('<i title="Mail" class="fa fa-envelope"></i>', '#', [
 	'id' => 'lesson-mail-button',
 	'class' => ' btn btn-box-tool m-r-10'])
