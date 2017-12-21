@@ -10,8 +10,8 @@ use kartik\switchinput\SwitchInput;
 		<?php else : ?>
 			<?php echo Html::a('<i title="Invoice" class="fa fa-usd"></i>', ['invoice', 'id' => $model->id], ['class' => 'btn btn-box-tool m-r-10']) ?>
 		<?php endif; ?>
-		<?php if ($model->isScheduled() && (! empty($model->proFormaInvoice->id) && ! $model->proFormaInvoice->isPaid())): ?>
-			<?php echo Html::a('<i title="Take Payment" class="fa fa-money"></i>', ['lesson/take-payment', 'id' => $model->id], ['class' => 'm-r-20 btn btn-box-tool']) ?>
+		<?php if ($model->isScheduled() && (!$model->proFormaInvoice || !$model->proFormaInvoice->isPaid())): ?>
+			<?php echo Html::a('<i title="PFI" class="fa fa-money"></i>', ['lesson/take-payment', 'id' => $model->id], ['class' => 'm-r-20 btn btn-box-tool']) ?>
 		<?php endif; ?>
 		<?php if ($model->canExplode()) : ?>
                 <?php
