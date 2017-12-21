@@ -69,7 +69,6 @@ $lastRole = end($roles);
         $(".show-all-group-programs").on("click", function () {
             var showAllPrograms = $(this).is(":checked");
             var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[programType]=' + "<?php echo Program::TYPE_GROUP_PROGRAM; ?>";
-            alert(url);
             $.pjax.reload({url: url, container: "#group-program-listing", replace: false, timeout: 4000});  //Reload GridView
         });
     });
