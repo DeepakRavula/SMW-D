@@ -76,31 +76,33 @@ class CourseController extends \common\components\backend\BackendController
             'query' => Student::find()
                 ->notDeleted()
                 ->groupCourseEnrolled($id)
-				->active(),
+                ->active(),
         ]);
 
-		$lessonDataProvider = new ActiveDataProvider([
+        $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-				->andWhere(['courseId' => $id])
-				->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED]])
-				->isConfirmed()
-				->notDeleted()
-				->orderBy(['lesson.date' => SORT_ASC]),
+                ->andWhere(['courseId' => $id])
+                ->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED,
+                        Lesson::STATUS_UNSCHEDULED]])
+                ->isConfirmed()
+                ->notDeleted()
+                ->orderBy(['lesson.date' => SORT_ASC]),
         ]);
-        $logDataProvider = new ActiveDataProvider([
-			'query' => LogHistory::find()
-			->course($id) ]);
+        $logDataProvider    = new ActiveDataProvider([
+            'query' => LogHistory::find()
+                ->course($id)]);
 
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-            'courseId' => $id,
-            'studentDataProvider' => $studentDataProvider,
-            'lessonDataProvider' => $lessonDataProvider,
-            'logDataProvider' => $logDataProvider,
+        return $this->render('view',
+                [
+                'model' => $this->findModel($id),
+                'courseId' => $id,
+                'studentDataProvider' => $studentDataProvider,
+                'lessonDataProvider' => $lessonDataProvider,
+                'logDataProvider' => $logDataProvider,
         ]);
     }
 
-	public function actionFetchTeacherAvailability($teacherId)
+    public function actionFetchTeacherAvailability($teacherId)
     {
 		$query = TeacherAvailability::find()
                 ->joinWith('userLocation')
@@ -151,24 +153,26 @@ class CourseController extends \common\components\backend\BackendController
                 $response->format = Response::FORMAT_JSON;
                 return ArrayHelper::merge(
                     ActiveForm::validate($model),
-					ActiveForm::validateMultiple($courseScheduleModels)
-				);
+                        ActiveForm::validateMultiple($courseScheduleModels)
+                );
             }
-			$valid = $model->validate();
+            $valid = $model->validate();
             $valid = (Model::validateMultiple($courseScheduleModels)) && $valid;
-			if ($valid) {
+            if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
-					$model->startDate = $this->getCourseDate($courseScheduleModels);
-					$model->lessonsPerWeekCount = count($courseScheduleModels);
-                                        $model->locationId          = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
-                    if ($flag = $model->save(false)) {
+                    $model->startDate           = $this->getCourseDate($courseScheduleModels);
+                    $model->lessonsPerWeekCount = count($courseScheduleModels);
+                    $model->locationId          = \common\models\Location::findOne([
+                            'slug' => \Yii::$app->language])->id;
+                    if ($flag                       = $model->save(false)) {
                         foreach ($courseScheduleModels as $courseScheduleModel) {
                             $courseScheduleModel->courseId = $model->id;
                             $courseScheduleModel->duration = $model->duration;
-							$dayList = Course::getWeekdaysList();
-							$courseScheduleModel->day = array_search($courseScheduleModel->day, $dayList);
-                            if (! ($flag = $courseScheduleModel->save(false))) {
+                            $dayList                       = Course::getWeekdaysList();
+                            $courseScheduleModel->day      = array_search($courseScheduleModel->day,
+                                $dayList);
+                            if (!($flag                          = $courseScheduleModel->save(false))) {
                                 $transaction->rollBack();
                                 break;
                             }
