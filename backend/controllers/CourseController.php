@@ -23,11 +23,13 @@ use yii\web\Response;
 use common\models\TeacherAvailability;
 use common\models\Enrolment;
 use common\models\log\LogHistory;
+
 /**
  * CourseController implements the CRUD actions for Course model.
  */
 class CourseController extends \common\components\backend\BackendController
 {
+
     public function behaviors()
     {
         return [
@@ -37,13 +39,13 @@ class CourseController extends \common\components\backend\BackendController
                     'delete' => ['post'],
                 ],
             ],
-			[
-				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['fetch-teacher-availability', 'fetch-lessons', 'fetch-group'],
-				'formats' => [
-					'application/json' => Response::FORMAT_JSON,
-				],
-        	],
+            [
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['fetch-teacher-availability', 'fetch-lessons', 'fetch-group'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
         ];
     }
 
@@ -54,12 +56,13 @@ class CourseController extends \common\components\backend\BackendController
      */
     public function actionIndex()
     {
-        $searchModel = new CourseSearch();
+        $searchModel  = new CourseSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        return $this->render('index',
+                [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -76,99 +79,106 @@ class CourseController extends \common\components\backend\BackendController
             'query' => Student::find()
                 ->notDeleted()
                 ->groupCourseEnrolled($id)
-				->active(),
+                ->active(),
         ]);
 
-		$lessonDataProvider = new ActiveDataProvider([
+        $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-				->andWhere(['courseId' => $id])
-				->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED, Lesson::STATUS_UNSCHEDULED]])
-				->isConfirmed()
-				->notDeleted()
-				->orderBy(['lesson.date' => SORT_ASC]),
+                ->andWhere(['courseId' => $id])
+                ->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED,
+                        Lesson::STATUS_UNSCHEDULED]])
+                ->isConfirmed()
+                ->notDeleted()
+                ->orderBy(['lesson.date' => SORT_ASC]),
         ]);
-        $logDataProvider = new ActiveDataProvider([
-			'query' => LogHistory::find()
-			->course($id) ]);
+        $logDataProvider    = new ActiveDataProvider([
+            'query' => LogHistory::find()
+                ->course($id)]);
 
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-            'courseId' => $id,
-            'studentDataProvider' => $studentDataProvider,
-            'lessonDataProvider' => $lessonDataProvider,
-            'logDataProvider' => $logDataProvider,
+        return $this->render('view',
+                [
+                'model' => $this->findModel($id),
+                'courseId' => $id,
+                'studentDataProvider' => $studentDataProvider,
+                'lessonDataProvider' => $lessonDataProvider,
+                'logDataProvider' => $logDataProvider,
         ]);
     }
 
-	public function actionFetchTeacherAvailability($teacherId)
+    public function actionFetchTeacherAvailability($teacherId)
     {
-		$query = TeacherAvailability::find()
-                ->joinWith('userLocation')
-                ->where(['user_id' => $teacherId]);
+        $query               = TeacherAvailability::find()
+            ->joinWith('userLocation')
+            ->where(['user_id' => $teacherId]);
         $teacherDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-		$data = $this->renderAjax('_teacher-availability', [
-        	'teacherDataProvider' => $teacherDataProvider,
-    	]);
+        $data                = $this->renderAjax('_teacher-availability',
+            [
+            'teacherDataProvider' => $teacherDataProvider,
+        ]);
 
         return $data;
     }
+
     /**
      * Creates a new Course model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
      */
-	public function getCourseDate($courseScheduleModels)
-	{
+    public function getCourseDate($courseScheduleModels)
+    {
 		$courseDates = ArrayHelper::getColumn($courseScheduleModels, function ($courseSchedule) {
-    		return $courseSchedule['fromTime'];
-		});
+                return $courseSchedule['fromTime'];
+            });
 		usort($courseDates, function($a, $b) {
-			$date1 = new \DateTime($a);
-			$date2 = new \DateTime($b);
+            $date1 = new \DateTime($a);
+            $date2 = new \DateTime($b);
 
 			return $date1 < $date2 ? -1: 1;
-		});
-		return $courseDates[0];
-	}
+        });
+        return $courseDates[0];
+    }
     public function actionCreate()
     {
-		$request = Yii::$app->request;
-        $response = Yii::$app->response;
-        $model = new Course();
+        $request        = Yii::$app->request;
+        $response       = Yii::$app->response;
+        $model          = new Course();
         $courseSchedule = [new CourseSchedule()];
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
 
         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-         $model->on(Course::EVENT_AFTER_INSERT, [new CourseLog(), 'create'], ['loggedUser' => $loggedUser]);
+        $model->on(Course::EVENT_AFTER_INSERT, [new CourseLog(), 'create'],
+            ['loggedUser' => $loggedUser]);
         if ($model->load($request->post())) {
-			$courseScheduleModels = UserForm::createMultiple(CourseSchedule::classname());
-			Model::loadMultiple($courseScheduleModels, $request->post());
+            $courseScheduleModels = UserForm::createMultiple(CourseSchedule::classname());
+            Model::loadMultiple($courseScheduleModels, $request->post());
 
-			if ($request->isAjax) {
+            if ($request->isAjax) {
                 $response->format = Response::FORMAT_JSON;
                 return ArrayHelper::merge(
-                    ActiveForm::validate($model),
-					ActiveForm::validateMultiple($courseScheduleModels)
-				);
+                        ActiveForm::validate($model),
+                        ActiveForm::validateMultiple($courseScheduleModels)
+                );
             }
-			$valid = $model->validate();
+            $valid = $model->validate();
             $valid = (Model::validateMultiple($courseScheduleModels)) && $valid;
-			if ($valid) {
+            if ($valid) {
                 $transaction = \Yii::$app->db->beginTransaction();
                 try {
-					$model->startDate = $this->getCourseDate($courseScheduleModels);
-					$model->lessonsPerWeekCount = count($courseScheduleModels);
-                                        $model->locationId          = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
-                    if ($flag = $model->save(false)) {
+                    $model->startDate           = $this->getCourseDate($courseScheduleModels);
+                    $model->lessonsPerWeekCount = count($courseScheduleModels);
+                    $model->locationId          = \common\models\Location::findOne([
+                            'slug' => \Yii::$app->language])->id;
+                    if ($flag                       = $model->save(false)) {
                         foreach ($courseScheduleModels as $courseScheduleModel) {
                             $courseScheduleModel->courseId = $model->id;
                             $courseScheduleModel->duration = $model->duration;
-							$dayList = Course::getWeekdaysList();
-							$courseScheduleModel->day = array_search($courseScheduleModel->day, $dayList);
-                            if (! ($flag = $courseScheduleModel->save(false))) {
+                            $dayList                       = Course::getWeekdaysList();
+                            $courseScheduleModel->day      = array_search($courseScheduleModel->day,
+                                $dayList);
+                            if (!($flag                          = $courseScheduleModel->save(false))) {
                                 $transaction->rollBack();
                                 break;
                             }
@@ -176,21 +186,24 @@ class CourseController extends \common\components\backend\BackendController
                     }
                     if ($flag) {
                         $transaction->commit();
-						$model->createLessons();
-            			$model->trigger(Course::EVENT_CREATE);
-            			return $this->redirect(['lesson/review', 'courseId' => $model->id]);
+                        $model->createLessons();
+                        $model->trigger(Course::EVENT_CREATE);
+                        return $this->redirect(['lesson/review', 'courseId' => $model->id]);
                     }
                 } catch (Exception $e) {
                     $transaction->rollBack();
                 }
             }
         } else {
-            return $this->render('create', [
-                'model' => $model,
-				'courseSchedule' => (empty($courseSchedule)) ? [new CourseSchedule] : $courseSchedule
+            return $this->render('create',
+                    [
+                    'model' => $model,
+                    'courseSchedule' => (empty($courseSchedule)) ? [new CourseSchedule]
+                        : $courseSchedule
             ]);
         }
     }
+
     /**
      * Updates an existing Course model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -210,13 +223,13 @@ class CourseController extends \common\components\backend\BackendController
                     ->notDeleted()
                     ->all(),
                 'id', 'userProfile.fullName'
-            );
+        );
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
-                'model' => $model,
-                'teacher' => $teacherModel,
+                    'model' => $model,
+                    'teacher' => $teacherModel,
             ]);
         }
     }
@@ -255,7 +268,7 @@ class CourseController extends \common\components\backend\BackendController
         }
     }
 
-  public function actionTeachers()
+    public function actionTeachers()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
@@ -263,17 +276,17 @@ class CourseController extends \common\components\backend\BackendController
         $location_id = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $programId = $_POST['depdrop_parents'][0];
         $qualifications = Qualification::find()
-			->joinWith(['teacher' => function ($query) use ($location_id) {
-				$query->joinWith(['userLocation' => function ($query) use ($location_id) {
+            ->joinWith(['teacher' => function ($query) use ($location_id) {
+                    $query->joinWith(['userLocation' => function ($query) use ($location_id) {
                      $query->join('LEFT JOIN', 'user_profile','user_profile.user_id = user_location.user_id')
-					->joinWith('teacherAvailability')
-				->where(['location_id' => $location_id]);
-				}]);
-			}])
-			->where(['program_id' => $programId])
-                        ->notDeleted()
-			->orderBy(['user_profile.firstname' => SORT_ASC])
-                ->all();
+                            ->joinWith('teacherAvailability')
+                            ->where(['location_id' => $location_id]);
+                        }]);
+                }])
+            ->where(['program_id' => $programId])
+            ->notDeleted()
+            ->orderBy(['user_profile.firstname' => SORT_ASC])
+            ->all();
         $result = [];
         $output = [];
         foreach ($qualifications as  $qualification) {
@@ -289,38 +302,38 @@ class CourseController extends \common\components\backend\BackendController
 
         return $result;
     }
-	public function actionFetchGroup($studentId, $courseName = null)
-	{
+    public function actionFetchGroup($studentId, $courseName = null)
+    {
 		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
-		$groupEnrolments = Enrolment::find()
-			->select(['courseId'])
-			->joinWith(['course' => function ($query) use ($locationId) {
-				$query->groupProgram($locationId);
-			}])
-			->where(['enrolment.studentId' => $studentId])
-			->isConfirmed();
+        $groupEnrolments = Enrolment::find()
+            ->select(['courseId'])
+            ->joinWith(['course' => function ($query) use ($locationId) {
+                    $query->groupProgram($locationId);
+                }])
+            ->where(['enrolment.studentId' => $studentId])
+            ->isConfirmed();
         $groupCourses = Course::find()
-			->joinWith(['program' => function ($query) {
-				$query->group();
-			}])
-			->where(['NOT IN', 'course.id', $groupEnrolments])
-			->andWhere(['locationId' => $locationId])
-		   ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
-			->confirmed();
+            ->joinWith(['program' => function ($query) {
+                    $query->group();
+                }])
+            ->where(['NOT IN', 'course.id', $groupEnrolments])
+            ->andWhere(['locationId' => $locationId])
+            ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
+            ->confirmed();
 			if(!empty($courseName)) {
-				$groupCourses->andWhere(['LIKE', 'program.name', $courseName]);
-			}
+            $groupCourses->andWhere(['LIKE', 'program.name', $courseName]);
+        }
         $groupDataProvider = new ActiveDataProvider([
             'query' => $groupCourses,
         ]);
 
 		$data = $this->renderAjax('/student/enrolment/_form-group', [
-			'groupDataProvider' => $groupDataProvider,
-			'student' => Student::findOne(['id' => $studentId])
-		]);
-		return [
-			'status' => true,
-			'data' => $data
-		];
-	}
+            'groupDataProvider' => $groupDataProvider,
+            'student' => Student::findOne(['id' => $studentId])
+        ]);
+        return [
+            'status' => true,
+            'data' => $data
+        ];
+    }
 }
