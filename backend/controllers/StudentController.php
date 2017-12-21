@@ -10,10 +10,10 @@ use backend\models\search\StudentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\models\User;
 use yii\web\Response;
 use common\models\CourseSchedule;
-use common\models\StudentLog;
-use common\models\User;
+use common\models\log\StudentLog;
 use common\models\discount\EnrolmentDiscount;
 use common\models\TeacherAvailability;
 use yii\widgets\ActiveForm;
@@ -76,9 +76,8 @@ class StudentController extends \common\components\backend\BackendController
     public function actionCreate()
     {
         $model = new Student();
-		$userModel = User::findOne(['id' => Yii::$app->user->id]);
-        $model->on(Student::EVENT_CREATE, [new StudentLog(), 'create']);
-		$model->userName = $userModel->publicIdentity;
+		$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+        $model->on(Student::EVENT_AFTER_INSERT, [new StudentLog(), 'create'], ['loggedUser' => $loggedUser]);
         $request = Yii::$app->request;
         $user = $request->post('User');
         if ($model->load($request->post())) {
@@ -110,10 +109,9 @@ class StudentController extends \common\components\backend\BackendController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		$model->on(Student::EVENT_UPDATE, [new StudentLog(), 'edit']);
-		$userModel = User::findOne(['id' => Yii::$app->user->id]);
-		$model->userName = $userModel->publicIdentity;	
-		
+		$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+		$oldAttributes = $model->getOldAttributes();
+		$model->on(Student::EVENT_UPDATE, [new StudentLog(), 'edit'], ['loggedUser' => $loggedUser, 'oldAttributes' => $oldAttributes]);
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			if((int)$model->status === Student::STATUS_INACTIVE) {
 				return $this->redirect(['/student/index', 'StudentSearch[showAllStudents]' => false]);

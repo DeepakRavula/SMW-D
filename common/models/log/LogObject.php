@@ -12,7 +12,7 @@ use Yii;
  */
 class LogObject extends \yii\db\ActiveRecord
 {
-
+	const STUDENT = 'student';
     /**
      * @inheritdoc
      */

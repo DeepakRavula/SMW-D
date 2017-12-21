@@ -50,4 +50,7 @@ class LogLink extends \yii\db\ActiveRecord
             'path' => 'Path',
         ];
     }
+	public function getLog() {
+		return $this->hasOne(Log::className(), ['id' => 'logId']);
+	}
 }

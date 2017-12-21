@@ -77,6 +77,7 @@ $this->params['label'] = $this->render('_title', [
 
 		$logContent = $this->render('log/index', [
 			'model' => $model,
+			'logs' => $logs
 		]);
 
 		$noteContent = $this->render('note/view', [
@@ -543,7 +544,8 @@ $(document).on('click', '.evaluation-delete', function () {
                 {
                     if (response.status)
                     {
-                        $.pjax.reload({container: '#student-profile', timeout: 6000});
+                        $.pjax.reload({container: '#student-profile', timeout: 6000, async:false});
+                        $.pjax.reload({container: '#student-log', timeout: 6000, async:false});
                         $('#student-profile-modal').modal('hide');
                     } else {
 						$('#student-form').yiiActiveForm('updateMessages',
