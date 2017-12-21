@@ -140,10 +140,12 @@ $this->params['show-all'] = $this->render('_button', [
 	]; ?>
 	<?php
 	echo KartikGridView::widget([
-		'dataProvider' => $dataProvider,
-        'filterModel'=>$searchModel,
-		'tableOptions' => ['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
+            'dataProvider' => $dataProvider,
+            'summary' => false,
+            'emptyText' => false,
+            'filterModel'=>$searchModel,
+            'tableOptions' => ['class' => 'table table-bordered'],
+            'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
 			if ($model->isExpiring(Enrolment::ENROLMENT_EXPIRY)) {
 				return ['class' => 'danger inactive'];

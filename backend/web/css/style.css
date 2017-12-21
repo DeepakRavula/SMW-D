@@ -276,3 +276,6 @@ dl {
 .modal-customer-label {
 	margin-left:-25px;
 }
+.summary, .empty {
+    display: none;
+}
