@@ -16,6 +16,8 @@ use yii\data\ActiveDataProvider;
     ]) ?>
 <?php echo GridView::widget([
 	'dataProvider' => $logs,
+	'summary' => false,
+    'emptyText' => false,
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => [
