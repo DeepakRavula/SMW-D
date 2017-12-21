@@ -10,44 +10,43 @@ $this->title = 'Programs';
 ?>
 
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
-<div class="nav-tabs-custom">
-<?php 
-
-$indexProgram = $this->render('_index-program', [
-    'model' => $model,
-    'searchModel' => $searchModel,
-    'dataProvider' => $dataProvider,
-]);
-
-?>
-
-<?php echo Tabs::widget([
-    'items' => [
-        [
-            'label' => 'Private Programs',
-            'content' => (int) $searchModel->type === Program::TYPE_PRIVATE_PROGRAM ? $indexProgram : null,
-            'url' => ['/program/index', 'ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
-            'active' => (int) $searchModel->type === Program::TYPE_PRIVATE_PROGRAM,
-        ],
-        [
-            'label' => 'Group Programs',
-            'content' => (int) $searchModel->type === Program::TYPE_GROUP_PROGRAM ? $indexProgram : null,
-            'url' => ['/program/index', 'ProgramSearch[type]' => Program::TYPE_GROUP_PROGRAM],
-            'active' => (int) $searchModel->type === Program::TYPE_GROUP_PROGRAM,
-        ],
-    ],
-]); ?>
-<div class="clearfix"></div>
+<div class="row">
+    <div class="col-md-12">
+        <?php
+        echo $this->render('_index-private',
+            [
+            'model' => $model,
+            'searchModel' => $searchModel,
+            'privateDataProvider' => $privateDataProvider,
+        ]);
+        ?>
+    </div>
 </div>
- <?php Modal::begin([
-        'header' => '<h4 class="m-0">Program</h4>',
-        'id' => 'program-modal',
-    ]); ?>
+<div class="row">
+    <div class="col-md-12">
+        <?php
+        echo $this->render('_index-group',
+            [
+            'model' => $model,
+            'searchModel' => $searchModel,
+            'privateDataProvider' => $groupDataProvider,
+        ]);
+        ?>
+    </div>
+</div>   
+
+<div class="clearfix"></div>
+<?php
+Modal::begin([
+    'header' => '<h4 class="m-0">Program</h4>',
+    'id' => 'program-modal',
+]);
+?>
 <div id="program-content"></div>
- <?php  Modal::end(); ?>
+<?php Modal::end(); ?>
 <script>
-    $(document).ready(function() {
-        $(document).on('click', '#add-program, #program-listing  tbody > tr', function () {
+    $(document).ready(function () {
+        $(document).on('click', '#add-program, #group-program-listing tbody > tr,#private-program-listing tbody > tr', function () {
             var programId = $(this).data('key');
             if (programId === undefined) {
                 var customUrl = '<?= Url::to(['program/create']); ?>';
@@ -55,13 +54,13 @@ $indexProgram = $this->render('_index-program', [
                 var customUrl = '<?= Url::to(['program/update']); ?>?id=' + programId;
             }
             $.ajax({
-                url    : customUrl,
-                type   : 'post',
+                url: customUrl,
+                type: 'post',
                 dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
+                data: $(this).serialize(),
+                success: function (response)
                 {
-                    if(response.status)
+                    if (response.status)
                     {
                         $('#program-content').html(response.data);
                         $('#program-modal').modal('show');
@@ -72,19 +71,19 @@ $indexProgram = $this->render('_index-program', [
         });
         $(document).on('beforeSubmit', '#program-form', function () {
             $.ajax({
-                url    : $(this).attr('action'),
-                type   : 'post',
+                url: $(this).attr('action'),
+                type: 'post',
                 dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
+                data: $(this).serialize(),
+                success: function (response)
                 {
-                    if(response.status) {
+                    if (response.status) {
                         $.pjax.reload({container: '#program-listing', timeout: 6000});
                         $('#program-modal').modal('hide');
                     } else {
-						$('#error-notification').html(response.message).fadeIn().delay(8000).fadeOut();
+                        $('#error-notification').html(response.message).fadeIn().delay(8000).fadeOut();
                         $('#program-modal').modal('hide');
-					}
+                    }
 
                 }
             });
