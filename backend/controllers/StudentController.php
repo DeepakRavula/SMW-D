@@ -109,8 +109,9 @@ class StudentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		$model->on(Student::EVENT_UPDATE, [new StudentLog(), 'edit']);
-		
+		$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+		$oldAttributes = $model->getOldAttributes();
+		$model->on(Student::EVENT_UPDATE, [new StudentLog(), 'edit'], ['loggedUser' => $loggedUser, 'oldAttributes' => $oldAttributes]);
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			if((int)$model->status === Student::STATUS_INACTIVE) {
 				return $this->redirect(['/student/index', 'StudentSearch[showAllStudents]' => false]);

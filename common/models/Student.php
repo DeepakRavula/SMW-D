@@ -22,6 +22,7 @@ class Student extends \yii\db\ActiveRecord
     const STATUS_INACTIVE = 2;
     const STATUS_DRAFT = 3;
 
+	const EVENT_UPDATE = 'update';
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_CUSTOMER_MERGE = 'customer-merge';
 
@@ -180,10 +181,8 @@ class Student extends \yii\db\ActiveRecord
 	}
 	
 	public function afterSave($insert, $changedAttributes) {
-		if(!$insert) {
-			if($this->isChangeBirthDate($changedAttributes)) {
-				$this->trigger(self::EVENT_UPDATE);
-			}
+		if(!$insert && $this->isChangeBirthDate($changedAttributes)) {
+			$this->trigger(self::EVENT_UPDATE);
 		}
 		return parent::afterSave($insert, $changedAttributes);
 	}
