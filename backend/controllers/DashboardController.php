@@ -43,7 +43,7 @@ class DashboardController extends \common\components\backend\BackendController
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-        $locationId = Location::findOne(['slug' => Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         
         $enrolments = Enrolment::find()
 			->joinWith(['course' => function($query) use($locationId, $searchModel) {
