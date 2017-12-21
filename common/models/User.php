@@ -547,7 +547,7 @@ class User extends ActiveRecord implements IdentityInterface
         $lessons = [];
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id]);
+                $query->andWhere(['locationId' => \Yii::$app->session->get('location_id')]);
             }])
             ->where(['lesson.teacherId' => $id])
             ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
@@ -623,7 +623,7 @@ class User extends ActiveRecord implements IdentityInterface
 			->joinWith('userLocation ul')
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'customer'])
-			->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id])
+			->andWhere(['ul.location_id' => \Yii::$app->session->get('location_id')])
                         ->notDeleted()
                         ->joinWith(['student' => function ($query) use ($currentDate) {
                             $query->enrolled($currentDate);
@@ -639,7 +639,7 @@ class User extends ActiveRecord implements IdentityInterface
 			->joinWith('userLocation ul')
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'teacher'])
-			->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id])
+			->andWhere(['ul.location_id' => \Yii::$app->session->get('location_id')])
                         ->joinWith(['userLocation' => function ($query) {
                             $query->joinWith('teacherAvailability');
                         }])
@@ -654,7 +654,7 @@ class User extends ActiveRecord implements IdentityInterface
 			->joinWith('userLocation ul')
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'staffmember'])
-			->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id])
+			->andWhere(['ul.location_id' => \Yii::$app->session->get('location_id')])
                         ->notDeleted()
 			->active()
 			->count();
@@ -665,7 +665,7 @@ class User extends ActiveRecord implements IdentityInterface
 			->joinWith('userLocation ul')
 			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 			->where(['raa.item_name' => 'owner'])
-			->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id])
+			->andWhere(['ul.location_id' => \Yii::$app->session->get('location_id')])
                         ->notDeleted()
 			->active()
 			->count();

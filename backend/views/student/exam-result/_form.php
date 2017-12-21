@@ -15,14 +15,14 @@ use kartik\select2\Select2;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
  <?php
- $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+ $locationId = \Yii::$app->session->get('location_id');
  $teachers = ArrayHelper::map(User::find()
 		->joinWith(['userLocation ul' => function ($query) {
 			$query->joinWith('teacherAvailability');
 		}])
 		->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
 		->where(['raa.item_name' => 'teacher'])
-		->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id])
+		->andWhere(['ul.location_id' => \Yii::$app->session->get('location_id')])
                 ->notDeleted()
 		->all(),
 	'id', 'userProfile.fullName'

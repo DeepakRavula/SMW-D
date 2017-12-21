@@ -43,18 +43,16 @@ $bundle = BackendAsset::register($this);
                 }
                 ?>
                     <?php if ($role === User::ROLE_ADMINISTRATOR):?>
-                        <div class="m-t-10 pull-left">
+                        <div class="m-b-10 pull-left">
                             <?php $form = Html::beginForm(); ?>    
-                            <div class="btn-group">
-                                <button class="btn dropdown-toggle" data-toggle="dropdown"><?= Location::findOne(['slug' => Yii::$app->language])->name; ?> &nbsp;&nbsp;<span class="caret"></span></button>
-                                <?= LocationDropdown::widget(); ?>
-                            </div>
+                            <?= Html::dropDownList('location_id', null,
+                                  ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control location', 'options' => [Yii::$app->session->get('location_id') => ['Selected' => 'selected']]]); ?>
                             <?php Html::endForm() ?>
                         </div>
 				
                         <?php else:?>
                         <?php
-                            $userLocationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+                            $userLocationId = \Yii::$app->session->get('location_id');
                             $location = Location::findOne(['id' => $userLocationId]);
                             echo '<div class="p-t-15 pull-left location-header" data-toggle="tooltip" data-original-title="Your location" data-placement="bottom"><i class="fa fa-map-marker m-r-10"></i>'.$location->name.'</div>';
                         ?>

@@ -136,7 +136,7 @@ class CourseController extends \common\components\backend\BackendController
         $courseSchedule = [new CourseSchedule()];
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
 		
-        $model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $model->locationId = \Yii::$app->session->get('location_id');
         $userModel = User::findOne(['id' => Yii::$app->user->id]);
         $model->on(Course::EVENT_CREATE, [new CourseLog(), 'create']);
         $model->userName = $userModel->publicIdentity;
@@ -203,7 +203,7 @@ class CourseController extends \common\components\backend\BackendController
                     ->joinWith('userLocation ul')
                     ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
                     ->where(['raa.item_name' => 'teacher'])
-                    ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id])
+                    ->andWhere(['ul.location_id' => \Yii::$app->session->get('location_id')])
                     ->notDeleted()
                     ->all(),
                 'id', 'userProfile.fullName'
@@ -257,7 +257,7 @@ class CourseController extends \common\components\backend\BackendController
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         $session = Yii::$app->session;
-        $location_id = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $location_id = \Yii::$app->session->get('location_id');
         $programId = $_POST['depdrop_parents'][0];
         $qualifications = Qualification::find()
 			->joinWith(['teacher' => function ($query) use ($location_id) {
@@ -288,7 +288,7 @@ class CourseController extends \common\components\backend\BackendController
     }
 	public function actionFetchGroup($studentId, $courseName = null)
 	{
-		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+		$locationId = \Yii::$app->session->get('location_id');
 		$groupEnrolments = Enrolment::find()
 			->select(['courseId'])
 			->joinWith(['course' => function ($query) use ($locationId) {
