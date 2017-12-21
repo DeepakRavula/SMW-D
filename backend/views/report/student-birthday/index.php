@@ -20,6 +20,8 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['i
     <?php
     echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['student/view', 'id' => $model->id]);
             $data = ['data-url' => $url];

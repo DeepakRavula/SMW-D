@@ -19,6 +19,8 @@ use common\models\LessonPayment;
     <?php echo GridView::widget([
         'dataProvider' => $studentDataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
+        'summary' => false,
+        'emptyText' => false,
         'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'rowOptions' => function ($model, $key, $index, $grid) {
         	$url = Url::to(['student/view', 'id' => $model->id]);

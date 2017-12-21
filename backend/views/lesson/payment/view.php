@@ -28,6 +28,8 @@ $columns = [
 	<?= GridView::widget([
 		'id' => 'payment-grid',
         'dataProvider' => $paymentsDataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'columns' => $columns,
     ]);
     ?>

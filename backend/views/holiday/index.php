@@ -26,6 +26,8 @@ $this->title = 'Holidays';
     <?php echo AdminLteGridView::widget([
 		'id' => 'holiday-grid',
         'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [

@@ -21,7 +21,8 @@ $this->title = $model->id;
     <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
         'dataProvider' => $lessonDataProvider,
-        'summary' => '',    
+        'summary' => false,
+        'emptyText' => false, 
         'rowOptions' => function ($model, $key, $index, $grid) {
             return ['data-id' => $model->id];
         },

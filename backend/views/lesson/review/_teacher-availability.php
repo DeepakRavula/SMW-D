@@ -27,7 +27,8 @@ LteBox::begin([
       'dataProvider' => $teacherAvailabilityDataProvider,
       'tableOptions' => ['class' => 'table table-bordered table-more-condensed'],
       'headerRowOptions' => ['class' => 'bg-light-gray'],
-	'summary' => '',
+	'summary' => false,
+        'emptyText' => false,
       'columns' => [
           [
             'label' => 'Day',

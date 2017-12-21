@@ -23,6 +23,8 @@ $dataProvider = new ActiveDataProvider([
 <?php echo GridView::widget([
 	'dataProvider' => $dataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],
+        'summary' => false,
+        'emptyText' => false,
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => [
 		'created_at:datetime', 

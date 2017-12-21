@@ -37,7 +37,8 @@ $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
 <?=
 GridView::widget([
 	'dataProvider' => $dataProvider,
-	'summary' => '',
+	'summary' => false,
+        'emptyText' => false,
 	'rowOptions' => function ($model, $key, $index, $grid) {
 		return ['class' => $model->getClass()];
 	},

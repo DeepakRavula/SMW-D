@@ -34,6 +34,8 @@ $splitLessonDataProvider = new ActiveDataProvider([
     echo GridView::widget([
         'dataProvider' => $splitLessonDataProvider,
         'options' => ['class' => 'col-md-12'],
+        'summary' => false,
+        'emptyText' => false,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [

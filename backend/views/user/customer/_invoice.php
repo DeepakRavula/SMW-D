@@ -76,6 +76,8 @@ use common\models\Student;
 <?php echo  GridView::widget([
     'dataProvider' => $invoiceDataProvider,
     'options' => ['class' => 'col-md-12'],
+    'summary' => false,
+    'emptyText' => false,
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'rowOptions' => function ($model, $key, $index, $grid) {

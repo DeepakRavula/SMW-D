@@ -27,6 +27,8 @@ $this->params['breadcrumbs'][] = $this->title;
 	]); ?>
     <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'tableOptions' => ['class' => 'table table-bordered m-0'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [

@@ -38,7 +38,8 @@ echo GridView::widget([
 	'dataProvider' => $lessonDataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
-	'summary' => '',
+	'summary' => false,
+        'emptyText' => false,
 	'columns' => [
 			[
 			'value' => function ($data) {

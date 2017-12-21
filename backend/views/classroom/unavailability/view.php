@@ -42,7 +42,8 @@ Modal::end();
     <?php
     echo GridView::widget([
         'dataProvider' => $unavailabilityDataProvider,
-        'summary' => '',
+        'summary' => false,
+        'emptyText' => false,
         'options' => ['class' => 'col-md-5'],
         'tableOptions' => ['class' => 'table'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],

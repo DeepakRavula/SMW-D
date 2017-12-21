@@ -12,6 +12,8 @@ use yii\helpers\Url;
     echo GridView::widget([
         'dataProvider' => $enrolmentDataProvider,
         'options' => ['class' => 'col-md-12'],
+        'summary' => false,
+        'emptyText' => false,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'rowOptions' => function ($model, $key, $index, $grid) {

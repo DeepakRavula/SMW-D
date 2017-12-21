@@ -12,7 +12,8 @@ use yii\widgets\Pjax;
 <?php Pjax::Begin(['id' => 'customer-add-listing', 'timeout' => 6000, 'enablePushState' =>false]); ?>
  <?= GridView::widget([
             'dataProvider' => $userDataProvider,
-            'summary' =>false,
+            'summary' => false,
+            'emptyText' => false,
             'rowOptions'=>['class' => 'add-customer-invoice'],
             'tableOptions' => ['class' => 'table table-condensed'],
             'rowOptions' =>['class' => 'add-customer-invoice'],

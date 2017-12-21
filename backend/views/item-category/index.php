@@ -23,6 +23,8 @@ $this->params['action-button'] = $addButton;
 ]) ?>
     <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'columns' => [
             'name',
         ],

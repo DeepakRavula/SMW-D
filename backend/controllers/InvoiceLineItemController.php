@@ -265,6 +265,8 @@ class InvoiceLineItemController extends \common\components\backend\BackendContro
                     Yii::error('Line item discount error: '.VarDumper::dumpAsString($lineItem->getErrors()));
                 }
             }
+            $lineItem->invoice->isTaxAdjusted = false;
+            $lineItem->invoice->save();
             return [
                 'status' => true,
                 'message' => 'Tax successfully updated!'

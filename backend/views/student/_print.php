@@ -19,7 +19,8 @@ $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => 
 echo GridView::widget([
 	'id' => 'student-grid',
 	'dataProvider' => $dataProvider,
-    'summary'=>'',
+        'summary' => false,
+        'emptyText' => false,
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => [

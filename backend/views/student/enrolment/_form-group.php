@@ -20,7 +20,8 @@ use yii\helpers\Url;
         'dataProvider' => $groupDataProvider,
         'tableOptions' => ['class' => 'table table-condensed'],
         'rowOptions' => ['class' => 'group-enrol-btn'],
-		'summary' => '',
+        'summary' => false,
+        'emptyText' => false,
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
             [

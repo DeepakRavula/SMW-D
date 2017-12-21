@@ -27,6 +27,8 @@ use yii\bootstrap\Modal;
     <?php
     echo GridView::widget([
         'dataProvider' => $lessonDataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['lesson/view', 'id' => $model->id]);
 

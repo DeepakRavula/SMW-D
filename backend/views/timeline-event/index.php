@@ -30,6 +30,8 @@ $this->title = Yii::t('backend', 'Timeline');
 ]) ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => $columns,

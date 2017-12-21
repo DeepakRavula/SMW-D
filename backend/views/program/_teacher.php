@@ -14,6 +14,8 @@ echo GridView::widget([
 'dataProvider' => $teacherDataProvider,
 'tableOptions' => ['class' => 'table table-bordered'],
 'headerRowOptions' => ['class' => 'bg-light-gray'],
+'summary' => false,
+'emptyText' => false,
 'rowOptions' => function ($model, $key, $index, $grid) {
     $url = Url::to(['user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $model->id]);
 

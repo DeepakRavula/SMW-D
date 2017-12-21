@@ -97,7 +97,8 @@ use yii\grid\GridView;
                     GridView::widget([
                         'dataProvider' => $lessonDataProvider,
                         'columns' => $columns,
-                        'summary' => false
+                        'summary' => false,
+                        'emptyText' => false,
                     ]);
                     ?>
                 </div>
@@ -129,12 +130,13 @@ use yii\grid\GridView;
     GridView::widget([
         'dataProvider' => $paymentCycleDataProvider,
         'columns' => $paymentCyclecolumns,
-        'summary' => false
+        'summary' => false,
+        'emptyText' => false,
     ]);
     ?>
                 </div>
 <?php endif; ?>
-<?php if ($creditAmount) : ?>  
+<?php if ($creditAmount) : ?>
                 <div class="col-lg-12">
     <?= '<label class="control-label">Estimated credits to be transferred to customer\'s account: </label>' ?> <?= $creditAmount; ?>
                 </div>

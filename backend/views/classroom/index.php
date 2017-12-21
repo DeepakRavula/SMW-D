@@ -17,6 +17,8 @@ $this->params['action-button'] = $addButton;
         'dataProvider' => $dataProvider,
 		'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'summary' => false,
+        'emptyText' => false,
         'columns' => [
             'name',
             ['class' => 'yii\grid\ActionColumn'],

@@ -33,7 +33,8 @@ $this->params['breadcrumbs'][] = $this->title;
      echo GridView::widget([
          'dataProvider' => $invoiceDataProvider,
          'options' => ['class' => 'col-md-12'],
-         'summary' =>'',
+         'summary' => false,
+        'emptyText' => false,
          'tableOptions' => ['class' => 'table table-striped table-more-condensed'],
          'headerRowOptions' => ['class' => 'bg-light-gray'],
          'columns' => [

@@ -66,7 +66,8 @@ echo GridView::widget([
     'dataProvider' => $creditDataProvider,
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
-	'summary' => '',
+    'summary' => false,
+    'emptyText' => false,
     'rowOptions' => function ($model, $key, $index, $grid) {
         return [
             'data-amount' => $model['amount'],

@@ -123,7 +123,8 @@ use yii\helpers\Html;
     <?php
     echo GridView::widget([
         'dataProvider' => $taxDataProvider,
-        'summary' => '',
+        'summary' => false,
+        'emptyText' => false,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'pjax' => true,

@@ -14,7 +14,8 @@ $message = !empty($textTemplate->message) ? $textTemplate->message : 'Please fin
             'dataProvider' => $invoiceLineItemsDataProvider,
             'tableOptions' => ['class' => 'table table-bordered m-0', 'style'=>'width:100%; text-align:left'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
-            'summary' => '',
+            'summary' => false,
+            'emptyText' => false,
             'columns' => [
                 [
                     'label' => 'Description',

@@ -37,7 +37,8 @@ use kartik\switchinput\SwitchInput;
     <?php
     echo GridView::widget([
         'dataProvider' => $accountDataProvider,
-        'summary' =>'',
+        'summary' => false,
+        'emptyText' => false,
         'tableOptions' => ['class' => 'table table-bordered m-0'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
