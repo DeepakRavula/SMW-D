@@ -23,7 +23,9 @@ $config = [
         ],
     ],
     'components' => [
-        'location' => 'common\components\codemix\LocationUrlManager',
+        'location' => [
+            'class' => 'common\components\codemix\LocationUrlManager'
+        ],
         'session' => [
             'name' => 'PHPBACKSESSID',
         ],

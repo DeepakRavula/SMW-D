@@ -15,9 +15,10 @@ class LocationUrlManager extends Component
 {
     public $location;
 	
-    public function init(){
+    public function init()
+    {
+        $this->location = 'arcadia-corporate';
         parent::init();
-        $this->location= 'arcadia-corporate';
     }
 }
 
