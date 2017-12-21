@@ -322,7 +322,7 @@ $this->params['label'] = $this->render('_title', [
 				   {
                                         $('.vacation-content').html(response.data);
                                         $('#vacation-modal').modal('show');
-                                        $('#vacation-modal .modal-dialog').css({'width': '800px'});
+                                        $('#vacation-modal .modal-dialog').css({'width': '650px'});
                                     }
 				}
 			});

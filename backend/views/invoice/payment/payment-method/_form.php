@@ -16,6 +16,8 @@ use common\models\PaymentMethod;
     'id' => 'payment-form',
 	'action' => Url::to(['payment/invoice-payment', 'id' => $invoice->id]),
 ]); ?>
+    <div class="row">
+        <div class="col-md-6">
     <?php echo $form->field($model, 'payment_method_id')->dropDownList(
  ArrayHelper::map(PaymentMethod::find()
         		->where([
@@ -24,7 +26,11 @@ use common\models\PaymentMethod;
             	])
       			->orderBy(['sortOrder' => SORT_ASC])->all(), 'id', 'name') );
             ?>
+        </div>
+        <div class="col-md-6">
             <?= $form->field($model, 'amount')->textInput(['class' => 'right-align payment-amount form-control']);?>
+        </div>
+    </div>
 	   <div class="reference">
        <?php if ($model->payment_method_id === PaymentMethod::TYPE_CHEQUE) : ?>
                <?= $form->field($model, 'reference')->textInput()->label('Cheque Number'); ?>

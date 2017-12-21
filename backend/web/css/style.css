@@ -61,8 +61,14 @@ body .user-panel > .info {
 }
 #show-all label{
 	font-weight: normal;
-	font-size: 18px;
-	margin-right: 20px;	
+	font-size: 18px;	
+}
+#show-all-programs-label{
+	font-weight: normal;
+	font-size: 18px;	
+}
+#show-all-programs{
+        margin-left:25px;
 }
 .table {
 	cursor:pointer; 
