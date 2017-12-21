@@ -59,7 +59,7 @@ class InvoiceSearch extends Invoice
     public function search($params)
     {
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $query = Invoice::find()
                 ->where([
                     'invoice.location_id' => $locationId,

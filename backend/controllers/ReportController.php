@@ -21,7 +21,7 @@ use common\models\Location;
 /**
  * PaymentsController implements the CRUD actions for Payments model.
  */
-class ReportController extends Controller {
+class ReportController extends \common\components\backend\BackendController {
 
 	public function behaviors() {
 		return [
@@ -91,7 +91,7 @@ class ReportController extends Controller {
 		if ($toDate > $currentDate) {
 			$toDate = $currentDate;
 		}
-		$locationId = Yii::$app->session->get('location_id');
+		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 		
 		$invoiceTaxTotal = Invoice::find()
 			->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
@@ -140,7 +140,7 @@ class ReportController extends Controller {
 		if ($toDate > $currentDate) {
 			$toDate = $currentDate;
 		}
-		$locationId = Yii::$app->session->get('location_id');
+		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 		$invoiceTaxes = InvoiceLineItem::find()
                         ->notDeleted()
 			->joinWith(['invoice' => function($query) use($locationId, $searchModel) {
@@ -183,7 +183,7 @@ class ReportController extends Controller {
 		if ($toDate > $currentDate) {
 			$toDate = $currentDate;
 		}
-		$locationId = Yii::$app->session->get('location_id');
+		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 		$royaltyFreeItems = InvoiceLineItem::find()
                         ->notDeleted()
 			->joinWith(['invoice' => function($query) use($locationId, $searchModel) {

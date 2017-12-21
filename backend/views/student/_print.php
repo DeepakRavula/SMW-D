@@ -7,7 +7,7 @@ use yii\grid\GridView;
 
 ?>
 <?php
-$model = Location::findOne(['id' => Yii::$app->session->get('location_id')]);
+$model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id]);
    echo $this->render('/print/_header', [
        'locationModel'=>$model,
 ]);
@@ -19,7 +19,8 @@ $model = Location::findOne(['id' => Yii::$app->session->get('location_id')]);
 echo GridView::widget([
 	'id' => 'student-grid',
 	'dataProvider' => $dataProvider,
-    'summary'=>'',
+        'summary' => false,
+        'emptyText' => false,
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => [

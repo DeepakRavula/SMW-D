@@ -27,6 +27,8 @@ use yii\bootstrap\Modal;
     <?php
     echo GridView::widget([
         'dataProvider' => $lessonDataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['lesson/view', 'id' => $model->id]);
 
@@ -97,7 +99,7 @@ use yii\bootstrap\Modal;
 </div>
 
 <?php
-    $locationId = Yii::$app->session->get('location_id');
+    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])

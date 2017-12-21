@@ -16,6 +16,7 @@ use yii\widgets\Pjax;
     <?= GridView::widget([
             'dataProvider' => $itemDataProvider,
             'summary' => false,
+            'emptyText' => false,
             'filterModel' => $itemSearchModel,
             'tableOptions' => ['class' => 'table table-condensed'],
             'rowOptions' => ['class' => 'add-item-invoice'],

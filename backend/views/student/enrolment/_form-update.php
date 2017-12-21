@@ -22,7 +22,7 @@ use common\models\Course;
 	]); ?>
     <div class="row">
         <div class="col-md-3">
-			<?php $locationId = Yii::$app->session->get('location_id');
+			<?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 			$teachers = ArrayHelper::map(
 				User::find()
 					->notDeleted()
@@ -89,7 +89,7 @@ use common\models\Course;
                     <div id="enrolment-calendar">
                         <?= $this->render('_calendar');?>
                     </div>
-                    <div class="pull-right">
+                    <div class="pull-right m-t-10">
 		<?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-edit-cancel']); ?>
         <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
 	['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'preview-button']) ?>

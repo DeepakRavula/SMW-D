@@ -17,8 +17,9 @@ use backend\models\search\ProgramSearch;
 /**
  * ProgramController implements the CRUD actions for Program model.
  */
-class ProgramController extends Controller
+class ProgramController extends \common\components\backend\BackendController
 {
+
     public function behaviors()
     {
         return [
@@ -30,7 +31,7 @@ class ProgramController extends Controller
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['update', 'create' ,'delete', 'teachers'],
+                'only' => ['update', 'create', 'delete', 'teachers'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -45,33 +46,41 @@ class ProgramController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new ProgramSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $model = new Program();
-        $model->type = $searchModel->type;
+        $searchModel         = new ProgramSearch();
+        $searchModel->type   = Program::TYPE_PRIVATE_PROGRAM;
+        $privateDataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel->type   = Program::TYPE_GROUP_PROGRAM;
+        $groupDataProvider   = $searchModel->search(Yii::$app->request->queryParams);
+        $model               = new Program();
+        $model->type         = $searchModel->type;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('alert', [
+            Yii::$app->session->setFlash('alert',
+                [
                 'options' => ['class' => 'alert-success'],
                 'body' => 'Program has been created successfully',
-        ]);
+            ]);
 
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        return $this->render('index', [
-            'model' => $model,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        return $this->render('index',
+                [
+                'model' => $model,
+                'searchModel' => $searchModel,
+                'privateDataProvider' => $privateDataProvider,
+                'groupDataProvider' => $groupDataProvider,
         ]);
     }
-	public function actionFetchRate($id)
+
+    public function actionFetchRate($id)
     {
-        $response = Yii::$app->response;
+        $response         = Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
-        $program = Program::findOne(['id' => $id]);
+        $program          = Program::findOne(['id' => $id]);
 
         return $program->rate;
     }
+
     /**
      * Displays a single Program model.
      *
@@ -81,35 +90,36 @@ class ProgramController extends Controller
      */
     public function actionView($id)
     {
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $query = Student::find()
                 ->notDeleted()
                 ->joinWith(['enrolment' => function ($query) use ($locationId, $id) {
                     $query->location($locationId)
-                        ->where(['course.programId' => $id])
-						->isConfirmed();
+                    ->where(['course.programId' => $id])
+                    ->isConfirmed();
                 }])
-				->active();
+            ->active();
 
         $studentDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
         $query = User::find()
-                ->joinWith(['userLocation ul' => function ($query) use ($locationId) {
+            ->joinWith(['userLocation ul' => function ($query) use ($locationId) {
                     $query->where(['ul.location_id' => $locationId]);
                 }])
-                ->joinWith('qualification')
-                ->where(['program_id' => $id])
-                ->notDeleted();
+            ->joinWith('qualification')
+            ->where(['program_id' => $id])
+            ->notDeleted();
         $teacherDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-            'studentDataProvider' => $studentDataProvider,
-            'teacherDataProvider' => $teacherDataProvider,
+        return $this->render('view',
+                [
+                'model' => $this->findModel($id),
+                'studentDataProvider' => $studentDataProvider,
+                'teacherDataProvider' => $teacherDataProvider,
         ]);
     }
 
@@ -119,23 +129,23 @@ class ProgramController extends Controller
      *
      * @return mixed
      */
-
-	public function actionCreate()
+    public function actionCreate()
     {
         $model = new Program();
-        $data  = $this->renderAjax('_form', [
+        $data  = $this->renderAjax('_form',
+            [
             'model' => $model,
-        ]); 
+        ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,
                 'data' => $data
             ];
-        } 
+        }
     }
 
     /**
@@ -146,15 +156,15 @@ class ProgramController extends Controller
      *
      * @return mixed
      */
-
-	 public function actionUpdate($id)
+    public function actionUpdate($id)
     {
-		$model = $this->findModel($id);
-        $data = $this->renderAjax('_form', [
+        $model = $this->findModel($id);
+        $data  = $this->renderAjax('_form',
+            [
             'model' => $model,
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			if ($model->status == Program::STATUS_INACTIVE) {
+            if ($model->status == Program::STATUS_INACTIVE) {
                 return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
             } else {
                 return [
@@ -168,6 +178,7 @@ class ProgramController extends Controller
             ];
         }
     }
+
     /**
      * Deletes an existing Program model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -179,16 +190,15 @@ class ProgramController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-		if($model->deletable()) {
-			$model->delete();
-        	return['status' =>true];	
-			
-		} else {
-			return [
-				'status' => false,
-				'message' => 'Unable to delete. There are courses associated with this program.'
-			];	
-		}
+        if ($model->deletable()) {
+            $model->delete();
+            return['status' => true];
+        } else {
+            return [
+                'status' => false,
+                'message' => 'Unable to delete. There are courses associated with this program.'
+            ];
+        }
     }
 
     /**
@@ -209,15 +219,15 @@ class ProgramController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
+
     public function actionTeachers($id, $teacherId)
     {
         $teacherQualification = Qualification::findOne([
-            'program_id' => $id, 
-            'teacher_id' => $teacherId,
-            'isDeleted' => false
+                'program_id' => $id,
+                'teacher_id' => $teacherId,
+                'isDeleted' => false
         ]);
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $qualifications = Qualification::find()
 			->joinWith(['teacher' => function ($query) use ($locationId) {
 				$query->joinWith(['userLocation' => function ($query) use ($locationId) {
@@ -232,10 +242,11 @@ class ProgramController extends Controller
                 ->all();
         $result = [];
         $output = [];
-        foreach ($qualifications as  $i => $qualification) {
+        foreach ($qualifications as $i => $qualification) {
             $selectd = false;
             if ($teacherQualification) {
-                if ($qualification->teacher->id === $teacherQualification->teacher_id && $teacherQualification) {
+                if ($qualification->teacher->id === $teacherQualification->teacher_id
+                    && $teacherQualification) {
                     $selectd = true;
                 }
             } else if ($i === 0) {
@@ -248,8 +259,8 @@ class ProgramController extends Controller
             ];
         }
         if (!$teacherQualification) {
-            $selectd = !empty(current($qualifications)->teacher->id) ? 
-                    current($qualifications)->teacher->id : null;
+            $selectd = !empty(current($qualifications)->teacher->id) ?
+                current($qualifications)->teacher->id : null;
         } else {
             $selectd = $teacherQualification->teacher_id;
         }

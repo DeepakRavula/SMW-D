@@ -56,10 +56,16 @@ $config = [
             'cookieValidationKey' => env('FRONTEND_COOKIE_VALIDATION_KEY'),
 			'baseUrl' => '',
         ],
-		'urlManager' => [
-			'enablePrettyUrl' => true,
-			'showScriptName' => false,
-		],
+        'urlManager' => [
+            'class' => 'common\components\codemix\UrlManager',
+            'enableDefaultLanguageUrlCode' => true,
+            'enableLanguagePersistence' => false,
+            'ignoreLanguageUrlPatterns' => [
+                '#^user/sign-in/(login|logout)#' => '#^user/(sign-in|login)#',
+            ],
+            'enablePrettyUrl' => true,
+            'showScriptName' => false
+        ],
         'user' => [
             'class' => 'yii\web\User',
             'identityClass' => 'common\models\User',

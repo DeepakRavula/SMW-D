@@ -13,7 +13,7 @@ class TeacherAvailabilityValidator extends Validator
     public function validateAttribute($model, $attribute)
     {
 		$teacherLocationId   = $model->teacher->userLocation->id;
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $day                 = (new \DateTime($model->date))->format('N');
         $start               = new \DateTime($model->date);
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');

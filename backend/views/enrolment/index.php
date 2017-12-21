@@ -43,7 +43,7 @@ $this->params['show-all'] = $this->render('_button', [
 					->joinWith(['course' => function($query) {
 						$query->joinWith(['enrolment'])
 						->confirmed()
-						->location(Yii::$app->session->get('location_id'));
+						->location(\common\models\Location::findOne(['slug' => \Yii::$app->language])->id);
 					}])
 					->asArray()->all(), 'id', 'name'), 
 				'filterInputOptions'=>['placeholder'=>'Program'],
@@ -65,7 +65,7 @@ $this->params['show-all'] = $this->render('_button', [
 					->joinWith(['enrolment' => function($query) {
 						$query->joinWith(['course' => function($query) {
 							$query->confirmed()
-								->location(Yii::$app->session->get('location_id'));
+								->location(\common\models\Location::findOne(['slug' => \Yii::$app->language])->id);
 						}]);
 					}])
 					->asArray()->all(), 'id', 'first_name'), 
@@ -91,7 +91,7 @@ $this->params['show-all'] = $this->render('_button', [
 					->joinWith(['courses' => function($query) {
 						$query->joinWith('enrolment')
 							->confirmed()
-							->location(Yii::$app->session->get('location_id'));
+							->location(\common\models\Location::findOne(['slug' => \Yii::$app->language])->id);
 					}])
 					->asArray()->all(), 'user_id', 'firstname'), 
 				'filterWidgetOptions'=>[
@@ -140,10 +140,12 @@ $this->params['show-all'] = $this->render('_button', [
 	]; ?>
 	<?php
 	echo KartikGridView::widget([
-		'dataProvider' => $dataProvider,
-        'filterModel'=>$searchModel,
-		'tableOptions' => ['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
+            'dataProvider' => $dataProvider,
+            'summary' => false,
+            'emptyText' => false,
+            'filterModel'=>$searchModel,
+            'tableOptions' => ['class' => 'table table-bordered'],
+            'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
 			if ($model->isExpiring(Enrolment::ENROLMENT_EXPIRY)) {
 				return ['class' => 'danger inactive'];
@@ -166,7 +168,7 @@ $this->params['show-all'] = $this->render('_button', [
 <?= $this->render('_index');?>
 <?php Modal::end(); ?>
 <?php
-    $locationId = Yii::$app->session->get('location_id');
+    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])

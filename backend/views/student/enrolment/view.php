@@ -34,7 +34,7 @@ use common\models\discount\EnrolmentDiscount;
     </div>
     <?php \yii\widgets\Pjax::end(); ?>
 <?php
-    $locationId = Yii::$app->session->get('location_id');
+    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])

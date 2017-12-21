@@ -29,6 +29,8 @@ $vacationDataProvider = new ActiveDataProvider([
     <?php
     echo GridView::widget([
         'dataProvider' => $vacationDataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'options' => ['class' => 'col-md-12', 'id' => 'student-vacation-list',],
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],

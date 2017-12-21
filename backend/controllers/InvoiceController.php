@@ -37,7 +37,7 @@ use backend\models\search\ItemSearch;
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
-class InvoiceController extends Controller
+class InvoiceController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {
@@ -109,7 +109,7 @@ class InvoiceController extends Controller
             $invoice->user_id = $invoiceRequest['customer_id'];
             $invoice->type = $invoiceRequest['type'];
         }
-        $location_id = Yii::$app->session->get('location_id');
+        $location_id = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $invoice->location_id = $location_id;
 		$invoice->createdUserId = Yii::$app->user->id;
 		$invoice->updatedUserId = Yii::$app->user->id;
@@ -211,7 +211,7 @@ class InvoiceController extends Controller
             'query' => $customerInvoicePayments,
         ]);
         $session                             = Yii::$app->session;
-        $locationId                          = $session->get('location_id');
+        $locationId                          = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $currentDate                         = (new \DateTime())->format('Y-m-d H:i:s');
         $invoicePayments                     = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
@@ -316,7 +316,7 @@ class InvoiceController extends Controller
     {
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
-        $locationId = Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $locationModel = Location::findOne(['id' => $locationId]);
         $today = (new \DateTime())->format('Y-m-d H:i:s');
         $data = Yii::$app->request->rawBody;
@@ -436,7 +436,7 @@ class InvoiceController extends Controller
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model = Invoice::find()
                 ->where([
                     'invoice.id' => $id,
@@ -460,7 +460,7 @@ class InvoiceController extends Controller
 
 	public function actionAllCompletedLessons()
 	{
-            $locationId = Yii::$app->session->get('location_id');
+            $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
             $query = Lesson::find()
 				->isConfirmed()
                 ->notDeleted()
@@ -623,12 +623,13 @@ class InvoiceController extends Controller
         ]);
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
-            $taxAdjusted = $model->updateAttributes([
-                'tax' => $model->tax += $model->taxAdjusted, 
-                'total' => $model->total += $model->taxAdjusted, 
-                'balance' => $model->balance += $model->taxAdjusted
-            ]);
-            if ($taxAdjusted) {
+            $model->isTaxAdjusted = false;
+            $model->tax += $model->taxAdjusted;
+            if ((float) $model->tax !== (float) $model->lineItemTax) {
+                $model->isTaxAdjusted = true;
+            }
+            
+            if ($model->save()) {
                 $response = [
                     'status' => true,
                     'message' => 'Tax successfully updated!',

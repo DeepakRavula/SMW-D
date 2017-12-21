@@ -13,7 +13,7 @@ use yii\web\Response;
 /**
  * NoteController implements the CRUD actions for Note model.
  */
-class NoteController extends Controller
+class NoteController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

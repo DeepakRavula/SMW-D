@@ -42,7 +42,8 @@ use insolita\wgadminlte\LteConst;
 	<?php
 	echo GridView::widget([
 	    'dataProvider' => $examResultDataProvider,
-		'summary' => '',
+            'summary' => false,
+            'emptyText' => false,
 	    'options' => ['class' => 'col-md-12'],
 	    'tableOptions' => ['class' => 'table table-condensed'],
 	    'headerRowOptions' => ['class' => 'bg-light-gray'],

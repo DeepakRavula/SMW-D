@@ -15,6 +15,8 @@ use common\models\LocationAvailability;
 ]) ?>
 <?php echo GridView::widget([
 	'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => [
@@ -95,7 +97,7 @@ use common\models\LocationAvailability;
 </div>
 
 <?php
-$locationId = Yii::$app->session->get('location_id');
+$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 $minLocationAvailability = LocationAvailability::find()
     ->where(['locationId' => $locationId])
     ->orderBy(['fromTime' => SORT_ASC])

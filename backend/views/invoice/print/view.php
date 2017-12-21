@@ -20,7 +20,8 @@
          'dataProvider' => $invoiceLineItemsDataProvider,
          'tableOptions' => ['class' => 'table table-bordered m-0 table-more-condensed'],
          'headerRowOptions' => ['class' => 'bg-light-gray'],
-         'summary' => '',
+         'summary' => false,
+        'emptyText' => false,
          'columns' => [
             [
          		'label' => 'Description',

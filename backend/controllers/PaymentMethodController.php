@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * PaymentMethodsController implements the CRUD actions for PaymentMethods model.
  */
-class PaymentMethodController extends Controller
+class PaymentMethodController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

@@ -20,6 +20,8 @@ echo GridView::widget([
 'tableOptions' => ['class' => 'table table-bordered'],
 'headerRowOptions' => ['class' => 'bg-light-gray'],
 'options' => ['class' => 'col-md-4'],
+'summary' => false,
+'emptyText' => false,
 'columns' => [
     [
         'label' => 'Student Name',

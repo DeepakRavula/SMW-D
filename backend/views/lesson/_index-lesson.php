@@ -127,6 +127,8 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
     <div class="box">
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'options' => ['id' => 'lesson-index-1'],
 		'filterModel' => $searchModel,
         'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true]),

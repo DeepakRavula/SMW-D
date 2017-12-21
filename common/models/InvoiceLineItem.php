@@ -292,7 +292,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function computeTaxCode($taxStatus)
     {
         $today         = (new \DateTime())->format('Y-m-d H:i:s');
-        $locationId    = Yii::$app->session->get('location_id');
+        $locationId    = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $locationModel = Location::findOne(['id' => $locationId]);
         $taxCode = TaxCode::find()
             ->joinWith(['taxStatus' => function ($query) use ($taxStatus) {

@@ -61,7 +61,8 @@ use yii\helpers\Html;
     },
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
-		'summary' => '',
+        'summary' => false,
+        'emptyText' => false,
         'columns' => $columns,
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>

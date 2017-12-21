@@ -26,6 +26,8 @@ $this->params['show-all'] = $this->render('_button', [
     ]) ?>
     <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'columns' => [
             'code',
             [

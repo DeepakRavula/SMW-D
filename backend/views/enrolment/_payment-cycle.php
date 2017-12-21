@@ -9,6 +9,8 @@ use yii\grid\GridView;
     <?php echo GridView::widget([
         'dataProvider' => $paymentCycleDataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
+        'summary' => false,
+        'emptyText' => false,
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'options' => ['id' => 'enrolment-payment-cycle-grid'],
         'columns' => [

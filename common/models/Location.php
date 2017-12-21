@@ -79,6 +79,11 @@ class Location extends \yii\db\ActiveRecord
             'advertisementValue' => 'Advertisement (%)',
         ];
     }
+    
+    public static function find()
+    {
+        return new \common\models\query\LocationQuery(get_called_class());
+    }
 
     public function getCountry()
     {
@@ -243,5 +248,4 @@ class Location extends \yii\db\ActiveRecord
     $taxAmount=$subTotal * ($taxPercentage / 100);
     return $taxAmount;
     }
-
 }

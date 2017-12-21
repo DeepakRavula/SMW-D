@@ -16,6 +16,8 @@ use common\models\Location;
         <?php
         echo GridView::widget([
             'dataProvider' => $accountDataProvider,
+            'summary' => false,
+            'emptyText' => false,
             'tableOptions' => ['class' => 'table table-bordered m-0'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'columns' => [

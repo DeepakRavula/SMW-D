@@ -22,7 +22,7 @@ use common\models\TaxCode;
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
-class InvoiceLineItemController extends Controller
+class InvoiceLineItemController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {
@@ -56,7 +56,7 @@ class InvoiceLineItemController extends Controller
    	public function actionFetchTaxPercentage($taxStatusId)
 	{
 		$today         = (new \DateTime())->format('Y-m-d H:i:s');
-        $locationId    = Yii::$app->session->get('location_id');
+        $locationId    = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $locationModel = Location::findOne(['id' => $locationId]);
         $taxCode = TaxCode::find()
             ->joinWith(['taxStatus' => function ($query) use ($taxStatusId) {
@@ -230,7 +230,7 @@ class InvoiceLineItemController extends Controller
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = $session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $model = InvoiceLineItem::find()
                 ->joinWith(['invoice' => function ($query) use ($locationId) {
                     $query->where(['location_id' => $locationId]);
@@ -265,6 +265,8 @@ class InvoiceLineItemController extends Controller
                     Yii::error('Line item discount error: '.VarDumper::dumpAsString($lineItem->getErrors()));
                 }
             }
+            $lineItem->invoice->isTaxAdjusted = false;
+            $lineItem->invoice->save();
             return [
                 'status' => true,
                 'message' => 'Tax successfully updated!'

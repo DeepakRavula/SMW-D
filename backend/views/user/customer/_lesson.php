@@ -14,6 +14,8 @@ use yii\grid\GridView;
 echo GridView::widget([
     'dataProvider' => $lessonDataProvider,
     'options' => ['class' => 'col-md-12'],
+    'summary' => false,
+    'emptyText' => false,
     'rowOptions' => function ($model, $key, $index, $grid) {
         $url = Url::to(['lesson/view', 'id' => $model->id]);
 

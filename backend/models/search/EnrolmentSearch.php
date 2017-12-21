@@ -46,7 +46,7 @@ class EnrolmentSearch extends Enrolment
      */
     public function search($params)
     {
-		$locationId = Yii::$app->session->get('location_id');
+		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
         $query = Enrolment::find()
 			->joinWith(['course' => function($query) use($locationId) {
 				$query->location($locationId);

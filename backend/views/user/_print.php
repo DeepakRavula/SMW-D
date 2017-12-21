@@ -10,7 +10,7 @@ use yii\grid\GridView;
 use common\models\Location;
 
 ?>
-<?php $model = Location::findOne(['id' => Yii::$app->session->get('location_id')]); 
+<?php $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id]); 
 echo $this->render('/print/_header', [
        'locationModel'=>$model,
 ]);
@@ -24,7 +24,8 @@ echo $this->render('/print/_header', [
 <div class="grid-row-open">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
-            'summary' =>'',
+            'summary' => false,
+            'emptyText' => false,
             'tableOptions' => ['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'columns' => [

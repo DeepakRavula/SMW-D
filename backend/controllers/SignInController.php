@@ -21,7 +21,7 @@ use yii\base\InvalidParamException;
 use yii\web\Controller;
 use common\models\User;
 
-class SignInController extends Controller
+class SignInController extends \common\components\backend\BackendController
 {
     public $defaultAction = 'login';
 
@@ -68,7 +68,7 @@ class SignInController extends Controller
             if($user->isStaff()) {
                 return $this->redirect(['schedule/index']);
             }
-            return $this->goBack();
+            return $this->redirect(['dashboard/index']);
         } else {
             return $this->render('login', [
                 'model' => $model,

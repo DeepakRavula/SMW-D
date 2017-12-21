@@ -50,7 +50,7 @@ use common\models\Student;
     </div>
 	<div class="col-xs-3">
 		<?php
-		$locationId = Yii::$app->session->get('location_id');
+		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 		$students = ArrayHelper::map(Student::find()
                         ->notDeleted()->orderBy(['first_name' => SORT_ASC])
 			->joinWith(['customer' => function($query) use($userModel) {
@@ -76,6 +76,8 @@ use common\models\Student;
 <?php echo  GridView::widget([
     'dataProvider' => $invoiceDataProvider,
     'options' => ['class' => 'col-md-12'],
+    'summary' => false,
+    'emptyText' => false,
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'rowOptions' => function ($model, $key, $index, $grid) {

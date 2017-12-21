@@ -19,6 +19,8 @@ LteBox::begin([
 <?php echo ListView::widget([
 	'dataProvider' =>  $noteDataProvider,
 	'itemView' => '_list',
+        'summary' => false,
+        'emptyText' => false,
 ]); ?>
 <?php $form = ActiveForm::begin([
 	'id' => 'invoice-note-form',

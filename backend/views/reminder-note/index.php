@@ -13,6 +13,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
         'columns' => [
             'notes:raw',
 

@@ -52,7 +52,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 				[
 				'label' => 'Amount',
 				'value' => function ($data) {
-                                    $locationId = Yii::$app->session->get('location_id');
+                                    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
                                     return $data->item->getItemTotal($locationId, $data->invoice->date);
 				},
 				'contentOptions' => ['class' => 'text-right'],
@@ -65,7 +65,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         <?=
         GridView::widget([
             'dataProvider' => $dataProvider,
-            'summary' =>'',
+            'summary' => false,
+            'emptyText' => false,
             'options' => ['class' => ''],
             'showPageSummary' => true,
             'headerRowOptions' => ['class' => 'bg-light-gray'],

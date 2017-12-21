@@ -35,7 +35,7 @@ use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
-class EnrolmentController extends Controller
+class EnrolmentController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {
@@ -224,7 +224,7 @@ class EnrolmentController extends Controller
 	}
 	public function actionAdd()
     {
-		$locationId = Yii::$app->session->get('location_id');
+		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
 		$request = Yii::$app->request;
 		$course = new Course();
 		$courseSchedule = new CourseSchedule();

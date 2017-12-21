@@ -14,7 +14,7 @@ use yii\web\Response;
 /**
  * HolidayController implements the CRUD actions for Holiday model.
  */
-class HolidayController extends Controller
+class HolidayController extends \common\components\backend\BackendController
 {
     public function behaviors()
     {

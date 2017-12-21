@@ -17,7 +17,8 @@ echo AdminLteGridView::widget([
 	'id' => 'student-grid',
 	'dataProvider' => $dataProvider,
 	'filterModel' => $searchModel,
-    'summary'=>'',
+        'summary' => false,
+        'emptyText' => false,
 	'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
 		$url = Url::to(['student/view', 'id' => $model->id]);
 		$data = ['data-url' => $url];

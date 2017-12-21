@@ -153,7 +153,7 @@ $this->params['label'] = $this->render('_title', [
 <div id="student-merge-content"></div>
 <?php Modal::end(); ?>
 <?php
-    $locationId = Yii::$app->session->get('location_id');
+    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])
@@ -322,7 +322,7 @@ $this->params['label'] = $this->render('_title', [
 				   {
                                         $('.vacation-content').html(response.data);
                                         $('#vacation-modal').modal('show');
-                                        $('#vacation-modal .modal-dialog').css({'width': '800px'});
+                                        $('#vacation-modal .modal-dialog').css({'width': '650px'});
                                     }
 				}
 			});
