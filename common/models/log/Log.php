@@ -56,18 +56,14 @@ class Log extends \yii\db\ActiveRecord
             'createdUserId' => 'Created User ID',
         ];
     }
-    public function addLog($data, $message, $createdUserId, $objectName, $activityName,$locationId,$model)
-  {
-      $object = LogObject::findOne(['name' => $objectName]);
-      $activity = LogActivity::findOne(['name' => $activityName]);
-      $log = new Log();
-      $log->data = yii\helpers\Json::encode($data);
-      $log->message = $message;
-      $log->createdUserId = $createdUserId;
-      $log->logObjectId = $object->id;
-      $log->logActivityId = $activity->id;
-      $log->locationId=$locationId;
-      $log->save();
-      
-  }
+   public function beforeSave($insert) {
+		if($insert) {
+			$this->createdOn = (new \DateTime())->format('Y-m-d H:i:s');
+		}
+		return parent::beforeSave($insert);
+	}
+	public function getLogLink($index) {
+		return $this->hasMany(LogLink::className(), ['logId' => 'id'])
+			->onCondition(['log_link.index' => $index]);
+	}
 }
