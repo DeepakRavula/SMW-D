@@ -721,7 +721,7 @@ class LessonController extends \common\components\backend\BackendController
         } else {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
-                'body' => 'Generate invoice against completed scheduled lesson only.',
+                'body' => 'Invoice can be generated against completed scheduled lessons only.',
             ]);
 
             return $this->redirect(['lesson/view', 'id' => $id]);
