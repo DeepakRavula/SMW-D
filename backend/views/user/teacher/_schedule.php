@@ -11,7 +11,7 @@ use common\models\Invoice;
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
     <?php
-    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+    $locationId = \Yii::$app->session->get('location_id');
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])

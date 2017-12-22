@@ -34,14 +34,8 @@ $config = [
 			'baseUrl' => '/admin',
         ],
         'urlManager' => [
-            'class' => 'common\components\codemix\UrlManager',
-            'enableDefaultLanguageUrlCode' => true,
-            'enableLanguagePersistence' => false,
-            'ignoreLanguageUrlPatterns' => [
-                '#^sign-in/(login|logout)#' => '#^(sign-in|login)#',
-            ],
             'enablePrettyUrl' => true,
-            'showScriptName' => false
+            'showScriptName' => false,
         ],
         'user' => [
             'class' => 'yii\web\User',

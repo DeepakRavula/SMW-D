@@ -6,6 +6,8 @@ $config = [
     'extensions' => require(__DIR__.'/../../vendor/yiisoft/extensions.php'),
     'bootstrap' => ['log', 'rollbar'],
     'timeZone' => 'US/Eastern',
+    'sourceLanguage' => 'en-US',
+    'language' => 'en-US',
     'components' => [
 		
         'authManager' => [

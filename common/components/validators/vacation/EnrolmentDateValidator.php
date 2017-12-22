@@ -11,7 +11,7 @@ class EnrolmentDateValidator extends Validator
 
     public function validateAttribute($model, $attribute)
     {
-        $locationId        = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId        = \Yii::$app->session->get('location_id');
         $dateRange         = $model->dateRange;
         list($fromDate, $toDate) = explode(' - ', $dateRange);
         $fromDate          = \DateTime::createFromFormat('M d,Y', $fromDate)->format('Y-m-d');

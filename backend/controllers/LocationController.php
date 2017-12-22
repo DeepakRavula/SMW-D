@@ -224,4 +224,18 @@ class LocationController extends \common\components\backend\BackendController
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    
+    public function actionChangeLocation()
+    {
+        $oldLocationId=Yii::$app->session->get('location_id');
+        if (Yii::$app->request->isAjax) {
+            $location_id = Yii::$app->request->post('location_id');
+            Yii::$app->session->set('location_id', $location_id);
+            $newLocationId=Yii::$app->session->get('location_id');
+            if($oldLocationId!==$newLocationId)
+            {
+                return $this->redirect('/admin/dashboard/index');
+            }
+        }
+    }
 }

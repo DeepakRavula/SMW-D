@@ -14,7 +14,7 @@ use yii\helpers\Url;
 ?>
 <div class="calendar-event-color-form">
         <?php        
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         if (empty ($teacherAvailabilityModel->id)) {
             $id = false;
         } else {

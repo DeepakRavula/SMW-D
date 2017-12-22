@@ -6,7 +6,7 @@ use common\models\Location;
 ?>
 <div>
 <?php $reportText = 'Summary'; ?>
-<?php $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->language])->id]); ?>
+<?php $model = Location::findOne(['id' => \Yii::$app->session->get('location_id')]); ?>
 <?php
    echo $this->render('/print/_header', [
        'locationModel'=>$model,
