@@ -58,7 +58,7 @@ class DiscountSearch extends Invoice
     {
         $fromDate = $this->fromDate->format('Y-m-d');
         $toDate = $this->toDate->format('Y-m-d');
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $query = InvoiceLineItem::find()
                 ->notDeleted()
 			->joinWith(['invoice' => function($query) use($locationId) {

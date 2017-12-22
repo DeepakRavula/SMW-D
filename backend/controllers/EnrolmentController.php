@@ -224,7 +224,7 @@ class EnrolmentController extends \common\components\backend\BackendController
 	}
 	public function actionAdd()
     {
-		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+		$locationId = \Yii::$app->session->get('location_id');
 		$request = Yii::$app->request;
 		$course = new Course();
 		$courseSchedule = new CourseSchedule();

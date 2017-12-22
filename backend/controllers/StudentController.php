@@ -134,7 +134,7 @@ class StudentController extends \common\components\backend\BackendController
     {
         $model = $this->findModel($id);
         $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $request = Yii::$app->request;
         $post = $request->post();
         $courseModel = new Course();
@@ -186,7 +186,7 @@ class StudentController extends \common\components\backend\BackendController
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $model = Student::find()
 			->notDeleted()
 			->location($locationId)
@@ -233,7 +233,7 @@ class StudentController extends \common\components\backend\BackendController
 
     public function actionMerge($id)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $model      = Student::findOne($id);
         $model->setScenario(Student::SCENARIO_MERGE);
         $students   = Student::find()

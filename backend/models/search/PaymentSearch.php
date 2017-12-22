@@ -43,7 +43,7 @@ class PaymentSearch extends Payment
      */
     public function search($params)
     {
-        $locationId          = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId          = \Yii::$app->session->get('location_id');
         $query               = Payment::find()
             ->location($locationId)
 			->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY,PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])

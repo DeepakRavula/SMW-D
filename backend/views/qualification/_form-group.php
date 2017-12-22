@@ -43,7 +43,7 @@ use common\models\Qualification;
 				],
 			]); ?>
         </div>
-	   <?php if(Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')) : ?>
+	   <?php if(Yii::$app->user->can('viewQualificationRate')) : ?>
         <div class="col-md-6">
             <?= $form->field($model, 'rate')->textInput(['class' => 'right-align form-control']);?>
         </div>
