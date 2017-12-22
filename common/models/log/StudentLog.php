@@ -87,6 +87,34 @@ class StudentLog extends Log
             $this->addLink($log, $teacherIndex, $teacherPath);
         }
     }
+    public function addGroupEnrolment($event)
+    {
+        $enrolmentModel     = $event->sender;
+        $loggedUser         = end($event->data);
+        $data               = Enrolment::find(['id' => $enrolmentModel->id])->asArray()->one();
+        $dayList            = Course::getWeekdaysList();
+        $day                = $dayList[$enrolmentModel->courseSchedule->day];
+        $studentIndex       = $enrolmentModel->student->fullName;
+        $teacherIndex       = $enrolmentModel->course->teacher->publicIdentity;
+        $message            = $loggedUser->publicIdentity.' enrolled  {{'.$studentIndex.'}} in '.$enrolmentModel->course->program->name.'  lessons with {{'.$teacherIndex.'}} on '.$day.'s at '.Yii::$app->formatter->asTime($enrolmentModel->course->startDate);
+        $object             = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
+        $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
+        $log                = new Log();
+        $log->logObjectId   = $object->id;
+        $log->logActivityId = $activity->id;
+        $log->message       = $message;
+        $log->data          = Json::encode($data);
+        $log->createdUserId = $loggedUser->id;
+        $log->locationId    = $enrolmentModel->student->customer->userLocation->location_id;
+        $studentPath        = Url::to(['/student/view', 'id' => $enrolmentModel->student->id]);
+        $teacherPath        = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher',
+                'id' => $enrolmentModel->course->teacher->id]);
+        if ($log->save()) {
+            $this->addHistory($log, $enrolmentModel->student, $object);
+            $this->addLink($log, $studentIndex, $studentPath);
+            $this->addLink($log, $teacherIndex, $teacherPath);
+        }
+    }
 
     public function addLink($log, $index, $path)
     {
