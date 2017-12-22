@@ -90,7 +90,7 @@ class ProgramController extends \common\components\backend\BackendController
      */
     public function actionView($id)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $query = Student::find()
                 ->notDeleted()
                 ->joinWith(['enrolment' => function ($query) use ($locationId, $id) {
@@ -227,7 +227,7 @@ class ProgramController extends \common\components\backend\BackendController
                 'teacher_id' => $teacherId,
                 'isDeleted' => false
         ]);
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $qualifications = Qualification::find()
 			->joinWith(['teacher' => function ($query) use ($locationId) {
 				$query->joinWith(['userLocation' => function ($query) use ($locationId) {

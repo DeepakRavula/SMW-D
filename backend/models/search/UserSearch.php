@@ -70,7 +70,7 @@ class UserSearch extends User
     public function search($params)
     {
         $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $query = User::find()
             ->notDeleted()
 			->notDraft();

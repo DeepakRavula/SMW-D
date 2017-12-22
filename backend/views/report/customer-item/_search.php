@@ -11,7 +11,7 @@ use common\models\User;
 /* @var $model backend\models\search\UserSearch */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id; ?>
+<?php $locationId = \Yii::$app->session->get('location_id'); ?>
 
     <?php $form = ActiveForm::begin([
         'action' => ['report/customer-items'],

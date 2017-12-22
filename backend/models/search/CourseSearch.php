@@ -44,7 +44,7 @@ class CourseSearch extends Course
      */
     public function search($params)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $query = Course::find()
                 ->groupProgram($locationId)
 				->confirmed();

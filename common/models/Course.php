@@ -253,7 +253,7 @@ class Course extends \yii\db\ActiveRecord
 
 	public static function groupCourseCount()
 	{
-		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+		$locationId = \Yii::$app->session->get('location_id');
 		return self::find()
 			->joinWith(['program' => function($query) {
 				$query->group()

@@ -50,7 +50,7 @@ use common\models\Student;
     </div>
 	<div class="col-xs-3">
 		<?php
-		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+		$locationId = \Yii::$app->session->get('location_id');
 		$students = ArrayHelper::map(Student::find()
                         ->notDeleted()->orderBy(['first_name' => SORT_ASC])
 			->joinWith(['customer' => function($query) use($userModel) {
