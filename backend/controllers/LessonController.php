@@ -806,7 +806,7 @@ class LessonController extends \common\components\backend\BackendController
     public function actionModifyLesson($id, $start, $end, $teacherId)
     {
         $model = Lesson::findOne($id);
-        $model->setScenario(Lesson::SCENARIO_EDIT);
+        $model->setScenario(Lesson::SCENARIO_LESSON_EDIT_ON_SCHEDULE);
         $model->teacherId = $teacherId;
         $startDate = new \DateTime($start);
         $endDate = new \DateTime($end);
