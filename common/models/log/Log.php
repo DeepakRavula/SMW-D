@@ -55,6 +55,7 @@ class Log extends \yii\db\ActiveRecord
             'createdUserId' => 'Created User ID',
         ];
     }
+<<<<<<< HEAD
     public function addLog($data, $message, $createdUserId, $objectName, $activityName,$locationId,$model)
   {
       $object = LogObject::findOne(['name' => $objectName]);
@@ -70,6 +71,9 @@ class Log extends \yii\db\ActiveRecord
       
   }
 	public function beforeSave($insert) {
+=======
+   public function beforeSave($insert) {
+>>>>>>> common-log-restructuring-code
 		if($insert) {
 			$this->createdOn = (new \DateTime())->format('Y-m-d H:i:s');
 		}

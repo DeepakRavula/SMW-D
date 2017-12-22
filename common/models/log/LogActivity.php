@@ -12,8 +12,10 @@ use Yii;
  */
 class LogActivity extends \yii\db\ActiveRecord
 {
-	const CREATE = 'create';
-	const UPDATE = 'update';
+     const TYPE_CREATE = 'create';
+     const TYPE_EDIT   = 'edit';
+     const TYPE_UPDATE = 'update';
+     const TYPE_DELETE = 'delete';
     /**
      * @inheritdoc
      */

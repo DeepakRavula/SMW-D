@@ -12,7 +12,14 @@ use Yii;
  */
 class LogObject extends \yii\db\ActiveRecord
 {
-	const STUDENT = 'student';
+    const TYPE_COURSE    = 'course';
+    const TYPE_ENROLMENT = 'enrolment';
+    const TYPE_STUDENT   = 'student';
+    const TYPE_INVOICE   = 'invoice';
+    const TYPE_PAYMENT   = 'payment';
+    const TYPE_USER      = 'user';
+    const TYPE_LESSON    = 'lesson';
+
     /**
      * @inheritdoc
      */
