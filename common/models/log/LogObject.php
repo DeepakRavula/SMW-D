@@ -12,7 +12,8 @@ use Yii;
  */
 class LogObject extends \yii\db\ActiveRecord
 {
-	const STUDENT = 'student';
+	const TYPE_STUDENT = 'student';
+        const TYPE_ENROLMENT='enrolment';
     /**
      * @inheritdoc
      */

@@ -13,6 +13,6 @@ use common\models\log\LogObject;
 class LogHistoryQuery extends ActiveQuery
 {
 	public function student($id) {
-		return	$this->andWhere(['instanceType' => LogObject::STUDENT, 'instanceId' => $id]);
+		return	$this->andWhere(['instanceType' => LogObject::TYPE_STUDENT, 'instanceId' => $id]);
 	}
 }
