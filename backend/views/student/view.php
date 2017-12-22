@@ -288,6 +288,7 @@ $this->params['label'] = $this->render('_title', [
                  if (response.status) {
                      $('#course-spinner').hide();
                       $.pjax.reload({container: "#enrolment-grid", replace: false, async: false, timeout: 6000});
+                      $.pjax.reload({container: "#student-log", replace: false, async: false, timeout: 6000});
                       $('#group-enrol-modal').modal('hide');
                  }
              }
