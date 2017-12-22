@@ -1,7 +1,5 @@
 <?php
-
 namespace common\models\log;
-
 use Yii;
 /**
  * This is the model class for table "log".
@@ -17,7 +15,6 @@ use Yii;
  */
 class Log extends \yii\db\ActiveRecord
 {
-
     /**
      * @inheritdoc
      */
@@ -25,7 +22,6 @@ class Log extends \yii\db\ActiveRecord
     {
         return 'log';
     }
-
     /**
      * @inheritdoc
      */
@@ -38,7 +34,6 @@ class Log extends \yii\db\ActiveRecord
             [['createdOn'], 'safe'],
         ];
     }
-
     /**
      * @inheritdoc
      */
@@ -55,25 +50,7 @@ class Log extends \yii\db\ActiveRecord
             'createdUserId' => 'Created User ID',
         ];
     }
-<<<<<<< HEAD
-    public function addLog($data, $message, $createdUserId, $objectName, $activityName,$locationId,$model)
-  {
-      $object = LogObject::findOne(['name' => $objectName]);
-      $activity = LogActivity::findOne(['name' => $activityName]);
-      $log = new Log();
-      $log->data = yii\helpers\Json::encode($data);
-      $log->message = $message;
-      $log->createdUserId = $createdUserId;
-      $log->logObjectId = $object->id;
-      $log->logActivityId = $activity->id;
-      $log->locationId=$locationId;
-      $log->save();
-      
-  }
-	public function beforeSave($insert) {
-=======
    public function beforeSave($insert) {
->>>>>>> common-log-restructuring-code
 		if($insert) {
 			$this->createdOn = (new \DateTime())->format('Y-m-d H:i:s');
 		}
