@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap\Tabs;
+use common\models\LocationAvailability;
 
 $this->title = $model->course->program->name;
 $this->params['label'] = $this->render('_title', [
@@ -57,8 +58,46 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
 	]);
 ?>
 </div>
+<?php
+    $locationId = \Yii::$app->session->get('location_id');
+    $minLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['fromTime' => SORT_ASC])
+        ->one();
+    $maxLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['toTime' => SORT_DESC])
+        ->one();
+    $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+    $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+?>
 <script>
 $(document).ready(function () {
+    function loadCalendar() {
+ 		var date = $('#course-startdate').val();
+        $('#enrolment-calendar').fullCalendar({
+     		defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+             header: {
+                 left: 'prev,next today',
+                 center: 'title',
+                 right: ''
+             },
+             allDaySlot: false,
+             slotDuration: '00:15:00',
+             titleFormat: 'DD-MMM-YYYY, dddd',
+             defaultView: 'agendaWeek',
+             minTime: "<?php echo $from_time; ?>",
+             maxTime: "<?php echo $to_time; ?>",
+             selectConstraint: 'businessHours',
+             eventConstraint: 'businessHours',
+             businessHours: [],
+             allowCalEventOverlap: true,
+             overlapEventsSeparate: true,
+             events: [],
+     	});
+	}
+    loadCalendar();
 	$(document).on('click', '.enrolment-delete', function () {
 		var enrolmentId = '<?= $model->id;?>';
 		 bootbox.confirm({ 
