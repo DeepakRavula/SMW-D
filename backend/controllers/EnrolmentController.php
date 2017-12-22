@@ -341,7 +341,7 @@ class EnrolmentController extends \common\components\backend\BackendController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		$data = $this->renderAjax('/student/enrolment/_form-update', [
+		$data = $this->renderAjax('/enrolment/schedule/_form-update', [
 			'course' => $model->course,	
 			'courseSchedule' => $model->course->courseSchedule,
 			'model' => $model,
@@ -400,9 +400,7 @@ class EnrolmentController extends \common\components\backend\BackendController
                 $lesson->delete();
             }
 			$model->delete();
-			return [
-				'status' => true,
-			];
+				return $this->redirect(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);
         } else {
 			return [
 				'status' => false,

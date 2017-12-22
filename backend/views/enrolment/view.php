@@ -7,7 +7,16 @@ use yii\bootstrap\Tabs;
 $this->title = $model->course->program->name;
 $this->params['label'] = $this->render('_title', [
 	'model' => $model,
-]);?>
+]);
+$this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
+	'enrolment/delete', 'id' => $model->id
+], [
+		'id' => 'enrolment-delete-' . $model->id,
+		'title' => Yii::t('yii', 'Delete'),
+		'class' => 'enrolment-delete btn btn-box-tool',
+	])?>
+<div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
+<div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div id="enrolment-enddate-alert" style="display: none;" class="alert-info alert fade in"></div>
 <?= $this->render('_view-enrolment', [
     'model' => $model,
@@ -47,3 +56,32 @@ $this->params['label'] = $this->render('_title', [
 	]);
 ?>
 </div>
+<script>
+$(document).ready(function () {
+	$(document).on('click', '.enrolment-delete', function () {
+		var enrolmentId = '<?= $model->id;?>';
+		 bootbox.confirm({ 
+		message: "Are you sure you want to delete this enrolment?", 
+		callback: function(result){
+			if(result) {
+				$('.bootbox').modal('hide');
+			$.ajax({
+				url: '<?= Url::to(['enrolment/delete']); ?>?id=' + enrolmentId,
+				type: 'post',
+				success: function (response)
+				{
+					if (response.status)
+					{
+					} else {
+						$('#enrolment-delete').html('You are not allowed to delete this enrolment.').fadeIn().delay(3000).fadeOut();
+					}
+				}
+			});
+			return false;	
+		}
+		}
+	});	
+	return false;
+	});
+});
+</script>
