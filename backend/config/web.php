@@ -75,12 +75,6 @@ $config = [
         'class' => '\common\behaviors\GlobalAccessBehavior',
         'rules' => [
             [
-                'controllers' => ['calendar'],
-                'allow' => true,
-                'roles' => ['?'],
-                'actions' => ['view'],
-            ],
-            [
                 'controllers' => ['sign-in'],
                 'allow' => true,
                 'roles' => ['?'],
@@ -108,11 +102,16 @@ $config = [
                 'allow' => true,
                 'roles' => ['administrator', 'staffmember'],
             ],
+			[
+                'controllers' => ['student-birthday'],
+                'allow' => true,
+                'roles' => ['viewReport'],
+            ],
             [
                 'controllers' => [
 					'schedule', 'student', 'exam-result','note',
 					'classroom-unavailability', 'calendar','item', 
-					'item-category', 'daily-schedule',
+					'item-category', 'daily-schedule','user',
 					'release-notes', 'lesson', 'invoice', 'timeline-event',
 					'enrolment','teacher-room', 'program', 'customer', 'email',
 					'teacher-availability', 'group-course', 'group-lesson',
@@ -124,19 +123,23 @@ $config = [
 					'print', 'user-contact','teacher-substitute',
 				],
                 'allow' => true,
-                'roles' => ['staffmember'],
+                'roles' => ['listCustomer', 'listEnrolment', 'listGroupLesson', 'listInvoice', 'listItem', 'listOwner'],
             ],
 			[
                 'controllers' => ['dashboard'],
                 'allow' => true,
-                'roles' => ['staffmember'],
+                'roles' => ['viewDashboard'],
                 'actions' => ['index'],
+            ],
+			[
+                'controllers' => ['permission', 'release-notes', 'reminder-note'],
+                'allow' => true,
+                'roles' => ['administrator'],
             ],
             [
                 'controllers' => ['program', 'city', 'location', 'province', 'country', 'discount'],
                 'allow' => true,
-                'roles' => ['staffmember'],
-                'actions' => ['index', 'view'],
+                'roles' => ['administrator'],
             ],
             [
                 'controllers' => ['blog'],
@@ -149,11 +152,6 @@ $config = [
                 'allow' => false,
             ],
             [
-                'allow' => true,
-                'roles' => ['administrator'],
-            ],
-            [
-                'controllers' => ['release-notes', 'reminder-note'],
                 'allow' => true,
                 'roles' => ['administrator'],
             ],

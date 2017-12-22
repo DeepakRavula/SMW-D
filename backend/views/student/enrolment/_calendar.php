@@ -8,7 +8,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 <?= $this->render('/lesson/_color-code');?>
 <div id="enrolment-calendar"></div>
 <?php
-    $locationId = \Yii::$app->session->get('location_id');
+    $locationId = Yii::$app->session->get('location_id');
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])
