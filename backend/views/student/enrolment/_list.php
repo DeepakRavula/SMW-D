@@ -4,6 +4,7 @@ use common\models\Course;
 use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
+<div class="grid-row-open"> 
 <?php
 echo GridView::widget([
 	'id' => 'enrolment-grid',
@@ -70,20 +71,7 @@ echo GridView::widget([
 				return !empty($data->course->endDate) ? Yii::$app->formatter->asDate($data->course->endDate) : null;
 			},
 		],
-			[
-			'class' => 'yii\grid\ActionColumn',
-			'template' => '{view}',
-			'buttons' => [
-				'view' => function ($url, $model) {
-					$url = Url::to(['enrolment/view', 'id' => $model->id]);
-					return Html::a('<i class="fa fa-eye"></i>', $url, [
-							'title' => Yii::t('yii', 'View'),
-							'class' => ['btn-primary btn-xs m-r-10']
-					]);
-				},
-				
-			],
-		],
 	],
 ]);
 ?>
+</div>

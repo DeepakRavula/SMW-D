@@ -10,7 +10,6 @@ use kartik\daterange\DateRangePickerAsset;
 
 DateRangePickerAsset::register($this);
 ?>
-<script src="/plugins/bootbox/bootbox.min.js"></script>
 <?php $boxTools = $this->render('_box-tool', [
 	'model' => $model,
 ]);?>

@@ -15,6 +15,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
 		'title' => Yii::t('yii', 'Delete'),
 		'class' => 'enrolment-delete btn btn-box-tool',
 	])?>
+<script src="/plugins/bootbox/bootbox.min.js"></script>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div id="enrolment-enddate-alert" style="display: none;" class="alert-info alert fade in"></div>
