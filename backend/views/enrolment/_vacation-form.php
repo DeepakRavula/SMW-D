@@ -148,7 +148,6 @@ use yii\grid\GridView;
 
 <script>
     $(document).on('beforeSubmit', '#vacation-create-form', function () {
-        var url = "<?= Url::to(['student/view', 'id' => $studentId]); ?>";
         $('#loader').show();
         $.ajax({
             url: "<?= Url::to(['vacation/create', 'enrolmentId' => $enrolmentId]); ?>",
@@ -161,10 +160,8 @@ use yii\grid\GridView;
                 if (response.status) {
                     $('#vacation-modal').modal('hide');
                     $('#enrolment-delete-success').html('Vacation has been created successfully').fadeIn().delay(3000).fadeOut();
-                    $.pjax.reload({url: url, container: "#student-lesson-listing", replace: false, async: false, timeout: 4000});
-                    $.pjax.reload({url: url, container: "#student-vacation", replace: false, async: false, timeout: 4000});
-                } else
-                {
+                    $.pjax.reload({container: "#enrolment-vacation", replace: false, async: false, timeout: 4000});
+                } else{
                     $('#vacation-conflict').html(response.errors).fadeIn().delay(3000).fadeOut();
                 }
             }
