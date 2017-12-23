@@ -10,7 +10,7 @@ use yii\helpers\Html;
 
 $this->registerCssFile("@web/css/student/style.css");
 $this->title = 'Students';
-$this->params['action-button'] = Html::a('<i class="fa fa-print f-s-18"></i>', '#', ['id' => 'print']);
+$this->params['action-button'] = Html::a('<i class="fa fa-print f-s-18 m-l-10"></i>', '#', ['id' => 'print']);
 $this->params['show-all'] = $this->render('_button', [
 	'searchModel' => $searchModel
 ]);
