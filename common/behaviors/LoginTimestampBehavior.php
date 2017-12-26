@@ -6,6 +6,7 @@ use Yii;
 use common\models\Location;
 use yii\base\Behavior;
 use common\models\User;
+use common\models\UserLocation;
 
 /**
  * @author Eugene Terentev <eugene@terentev.net>
@@ -36,7 +37,8 @@ class LoginTimestampBehavior extends Behavior
         if ($userLogged->isAdmin()) {
             Yii::$app->location = Location::findOne(1)->slug;
         } else {
-            Yii::$app->location = $userLogged->location->slug;
+            $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
+            Yii::$app->location = $userLocation->location->slug;
         }
         $user = $event->identity;
         $user->touch($this->attribute);
