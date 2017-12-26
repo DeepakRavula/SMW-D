@@ -21,17 +21,13 @@ DateTimePickerAsset::register($this);
 		?>
             <?php Pjax::end(); ?>
         </div>
-	
-		<?php Pjax::begin(['id' => 'course-endDate']); ?>
 	<div class="col-md-6">
 		<?=
 		$this->render('schedule/view', [
 			'model' => $model,
 		]);
 		?>
-	</div>
-<?php Pjax::end(); ?>
-	
+	</div>	
 </div>
 
 <?php if ($model->course->program->isPrivate()) : ?>
@@ -215,7 +211,7 @@ Modal::begin([
 			$.pjax.reload({url: url, container: "#enrolment-view", replace: false, async: false, timeout: 4000});
                         $.pjax.reload({url: url, container: "#enrolment-pfi", replace: false, async: false, timeout: 4000});
                         $.pjax.reload({url: url, container: "#lesson-index", replace: false, async: false, timeout: 4000});
-                        $.pjax.reload({url: url, container: "#course-endDate", replace: false, async: false, timeout: 4000});
+                        //$.pjax.reload({url: url, container: "#course-endDate", replace: false, async: false, timeout: 4000});
 			$.pjax.reload({url: url, container: "#lesson-schedule", replace: false, async: false, timeout: 4000});
 		}
 	}

@@ -97,7 +97,6 @@ $(document).ready(function () {
              events: [],
      	});
 	}
-    loadCalendar();
 	$(document).on('click', '.enrolment-delete', function () {
 		var enrolmentId = '<?= $model->id;?>';
 		 bootbox.confirm({ 
@@ -107,11 +106,13 @@ $(document).ready(function () {
 				$('.bootbox').modal('hide');
 			$.ajax({
 				url: '<?= Url::to(['enrolment/delete']); ?>?id=' + enrolmentId,
-				type: 'post',
+				dataType: "json",
+                data   : $(this).serialize(),
 				success: function (response)
 				{
 					if (response.status)
 					{
+                        window.location.href = response.url;
 					} else {
 						$('#enrolment-delete').html('You are not allowed to delete this enrolment.').fadeIn().delay(3000).fadeOut();
 					}

@@ -43,7 +43,7 @@ class EnrolmentController extends \common\components\backend\BackendController
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['post'],
+                    
                 ],
             ],
 			'contentNegotiator' => [
@@ -400,12 +400,17 @@ class EnrolmentController extends \common\components\backend\BackendController
                 $lesson->delete();
             }
 			$model->delete();
-				return $this->redirect(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]);
-        } else {
-			return [
+		$response = [
+				'status' => true,
+				'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
+			];
+		} else {
+			
+			$response		 = [
 				'status' => false,
 			];
 		}
+		return $response;
     }
 
     /**
