@@ -10,6 +10,7 @@ use yii\behaviors\BlameableBehavior;
 use valentinek\behaviors\ClosureTable;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\components\validators\lesson\conflict\HolidayValidator;
+use common\components\validators\lesson\conflict\PastDateValidator;
 use common\components\validators\lesson\conflict\ClassroomValidator;
 use common\components\validators\lesson\conflict\TeacherEligibleValidator;
 use common\components\validators\lesson\conflict\TeacherLessonOverlapValidator;
@@ -154,6 +155,7 @@ class Lesson extends \yii\db\ActiveRecord
 				self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function($model, $attribute) {
                 return $model->course->program->isPrivate();
             }],
+            [['date'], PastDateValidator::className(), 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREATE]],
             [['date'], TeacherSubstituteValidator::className(), 'on' => self::SCENARIO_SUBSTITUTE_TEACHER],
             [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],
             ['duration', TeacherAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],

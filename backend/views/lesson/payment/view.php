@@ -12,14 +12,17 @@ $columns = [
         'value' => function ($data) {
             return $data->reference;
         },
-        ],
-        [
-            'attribute' => 'amount',
-			
-			'headerOptions' => ['class' => 'text-right'],
-			'contentOptions' => ['class' => 'text-right']
-        ],
-    ]; ?>
+    ],
+    [
+        'attribute' => 'amount',
+        'format' => 'currency',
+        'value' => function ($data) {
+            return Yii::$app->formatter->asDecimal($data->amount);
+        },
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right']
+    ],
+]; ?>
 <div>
 	<?php yii\widgets\Pjax::begin([
 		'id' => 'invoice-payment-listing',
