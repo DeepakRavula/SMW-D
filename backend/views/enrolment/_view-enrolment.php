@@ -69,7 +69,13 @@ Modal::begin([
 	'id' => 'enrolment-edit-modal',
 ]);
 ?>
-<div id="enrolment-edit-content"></div>
+<div id="enrolment-edit-content">
+  <?php echo $this->render('/enrolment/schedule/_form-update', [
+			'course' => $model->course,
+			'courseSchedule' => $model->course->courseSchedule,
+			'model' => $model,
+		]);?>
+</div>
 <?php Modal::end(); ?>
 <?php
 Modal::begin([

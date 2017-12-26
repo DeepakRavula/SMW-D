@@ -109,7 +109,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
  		return false;
  	});
         $(document).on('click', '.enrolment-edit', function (e) {
-		var enrolmentId = '<?php $model->id;?>';
+		var enrolmentId = '<?php echo $model->id;?>';
 		var param = $.param({id: enrolmentId });
 		$.ajax({
 			url    : '<?= Url::to(['enrolment/update']); ?>?' + param,
