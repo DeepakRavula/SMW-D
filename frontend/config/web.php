@@ -57,7 +57,7 @@ $config = [
 			'baseUrl' => '',
         ],
         'urlManager' => [
-            'class' => 'common\components\codemix\UrlManager',
+            'class' => 'common\components\location\UrlManager',
             'enableDefaultLanguageUrlCode' => true,
             'enableLanguagePersistence' => false,
             'ignoreLanguageUrlPatterns' => [
