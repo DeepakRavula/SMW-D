@@ -213,8 +213,12 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getProFormaLesson()
     {
-        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
-                    ->via('paymentCycleLesson');
+        if (!$this->isExtraLesson()) {
+            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+                        ->via('paymentCycleLesson');
+        } else {
+            return $this->lesson;
+        }
     }
 
     public function getOriginalInvoice()
