@@ -62,7 +62,7 @@ class TimelineEventSearch extends TimelineEvent
      */
     public function search($params)
     {
-		$locationId = \Yii::$app->session->get('location_id');
+		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = TimelineEvent::find()
 			->location($locationId);
 

@@ -74,7 +74,7 @@ class ItemController extends \common\components\backend\BackendController
     public function actionCreate()
     {
         $model             = new Item();
-        $model->locationId = \Yii::$app->session->get('location_id');
+        $model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $data              = $this->renderAjax('_form', [
             'model' => $model,
         ]);
@@ -190,7 +190,7 @@ class ItemController extends \common\components\backend\BackendController
     public function actionFilter($invoiceId, $string)
     {
         $invoiceModel = Invoice::findOne($invoiceId);
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $itemData = Item::find()
                 ->notDeleted()
                 ->andWhere(['LIKE', 'item.code', $string])

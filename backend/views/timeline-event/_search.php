@@ -31,7 +31,7 @@ use common\models\Student;
                     ->join('LEFT JOIN', 'user_profile up','up.user_id = ul.user_id')
                     ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
                     ->where(['raa.item_name' => [User::ROLE_OWNER, User::ROLE_STAFFMEMBER]])
-                    ->andWhere(['ul.location_id' => \Yii::$app->session->get('location_id')])
+                    ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
                     ->orderBy('up.firstname')
                     ->notDeleted()
                      ->all(),
@@ -43,7 +43,7 @@ use common\models\Student;
         ])->label(false); ?>
     </div>  
 	<div class="form-group col-md-3">
-        <?php $locationId = \Yii::$app->session->get('location_id');
+        <?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
 		echo $form->field($model, 'student')->widget(Select2::classname(), [
 	    'data' => ArrayHelper::map(Student::find()
                         ->notDeleted()

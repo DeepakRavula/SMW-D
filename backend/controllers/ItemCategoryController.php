@@ -62,7 +62,7 @@ class ItemCategoryController extends \common\components\backend\BackendControlle
      */
     public function actionView($id)
     {
-        $locationId   = \Yii::$app->session->get('location_id');
+        $locationId   = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $dataProvider = new ActiveDataProvider([
             'query'   => Item::find()
                             ->where(['itemCategoryId' => $id])
@@ -175,7 +175,7 @@ class ItemCategoryController extends \common\components\backend\BackendControlle
     public function actionItems()
     {
         $session        = Yii::$app->session;
-        $locationId     = \Yii::$app->session->get('location_id');
+        $locationId     = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $itemCategoryId = $_POST['depdrop_parents'][0];
         $items          = Item::find()
                             ->notDeleted()

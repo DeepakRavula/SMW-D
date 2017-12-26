@@ -41,7 +41,7 @@ class LocationScheduleSearch extends Lesson
     public function search($params)
     {
 		$userId = Yii::$app->user->id;
-                $locationId= \Yii::$app->session->get('location_id');
+                $locationId= \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
 		$roles = Yii::$app->authManager->getRolesByUser($userId);
 		$role = end($roles);
 		$user = User::findOne(['id' => $userId]);

@@ -13,7 +13,7 @@ use yii\helpers\Url;
 <div class="row user-create-form">
 	<?php
     $session = Yii::$app->session;
-    $locationId = \Yii::$app->session->get('location_id');
+    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
     ?>
     <?php $form = ActiveForm::begin([
 		'action' => Url::to(['/student/update', 'id' => $model->id]),

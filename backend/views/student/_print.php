@@ -7,7 +7,7 @@ use yii\grid\GridView;
 
 ?>
 <?php
-$model = Location::findOne(['id' => \Yii::$app->session->get('location_id')]);
+$model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
    echo $this->render('/print/_header', [
        'locationModel'=>$model,
 ]);

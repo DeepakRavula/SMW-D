@@ -21,7 +21,7 @@ class ViewAction extends Action
     {
        	if(!empty($this->findModel($id))) {
         	$model = $this->findModel($id);
-			$locationId = \Yii::$app->session->get('location_id');
+			$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
 			$enrolments = Enrolment::find()
 				->joinWith(['course' => function($query) {
 					$query->isConfirmed();
@@ -129,7 +129,7 @@ class ViewAction extends Action
 	protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Student::find()
 			->notDeleted()
 			->location($locationId)

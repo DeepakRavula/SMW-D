@@ -108,7 +108,7 @@ class InvoiceController extends \common\components\backend\BackendController
             $invoice->user_id = $invoiceRequest['customer_id'];
             $invoice->type = $invoiceRequest['type'];
         }
-        $location_id = \Yii::$app->session->get('location_id');
+        $location_id = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $invoice->location_id = $location_id;
 		$invoice->createdUserId = Yii::$app->user->id;
 		$invoice->updatedUserId = Yii::$app->user->id;
@@ -210,7 +210,7 @@ class InvoiceController extends \common\components\backend\BackendController
             'query' => $customerInvoicePayments,
         ]);
         $session                             = Yii::$app->session;
-        $locationId                          = \Yii::$app->session->get('location_id');
+        $locationId                          = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $currentDate                         = (new \DateTime())->format('Y-m-d H:i:s');
         $invoicePayments                     = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
@@ -315,7 +315,7 @@ class InvoiceController extends \common\components\backend\BackendController
     {
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $locationModel = Location::findOne(['id' => $locationId]);
         $today = (new \DateTime())->format('Y-m-d H:i:s');
         $data = Yii::$app->request->rawBody;
@@ -435,7 +435,7 @@ class InvoiceController extends \common\components\backend\BackendController
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Invoice::find()
                 ->where([
                     'invoice.id' => $id,
@@ -459,7 +459,7 @@ class InvoiceController extends \common\components\backend\BackendController
 
 	public function actionAllCompletedLessons()
 	{
-            $locationId = \Yii::$app->session->get('location_id');
+            $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
             $query = Lesson::find()
 				->isConfirmed()
                 ->notDeleted()

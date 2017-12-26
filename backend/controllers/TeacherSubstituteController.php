@@ -111,7 +111,7 @@ class TeacherSubstituteController extends \common\components\backend\BackendCont
                     ->notConfirmed()
                     ->andWhere(['createdByUserId' => Yii::$app->user->id]);
         $teachers = User::find()
-                ->teachers($programIds, \Yii::$app->session->get('location_id'))
+                ->teachers($programIds, \common\models\Location::findOne(['slug' => \Yii::$app->location])->id)
                 ->join('LEFT JOIN', 'user_profile','user_profile.user_id = ul.user_id')
                 ->notDeleted()
                 ->andWhere(['NOT', ['user.id' => end($lessons)->teacherId]])

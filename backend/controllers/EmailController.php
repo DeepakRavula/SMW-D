@@ -31,7 +31,7 @@ class EmailController extends \common\components\backend\BackendController
     }
 	public function actionSend()
 	{
-		$locationId = \Yii::$app->session->get('location_id');
+		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
 		$location = Location::findOne(['id' => $locationId]);
 		$model = new EmailForm();
         if($model->load(Yii::$app->request->post())) {

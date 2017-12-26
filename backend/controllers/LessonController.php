@@ -90,7 +90,7 @@ class LessonController extends \common\components\backend\BackendController
      */
     public function actionView($id)
     {
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = $this->findModel($id);
         $model->duration = $model->fullDuration;
         $notes = Note::find()
@@ -146,7 +146,7 @@ class LessonController extends \common\components\backend\BackendController
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $model = new Lesson();
-        $model->locationId = \Yii::$app->session->get('location_id');
+        $model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $model->setScenario(Lesson::SCENARIO_CREATE);
         $request = Yii::$app->request;
         $studentModel = Student::findOne($studentId);
@@ -364,7 +364,7 @@ class LessonController extends \common\components\backend\BackendController
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Lesson::find()->location($locationId)
             ->where(['lesson.id' => $id, 'isDeleted' => false])->one();
         if ($model !== null) {

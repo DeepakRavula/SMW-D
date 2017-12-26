@@ -4,7 +4,7 @@
 /* @var $model common\models\Invoice */
 use common\models\Location;
 ?>
-<?php $model = Location::findOne(['id' => \Yii::$app->session->get('location_id')]); ?>
+<?php $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]); ?>
 <?php
    echo $this->render('/print/_header', [
        'locationModel'=>$model,

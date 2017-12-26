@@ -9,7 +9,7 @@ class StudentAvailabilityValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
-		$locationId = \Yii::$app->session->get('location_id');
+		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
 		$studentId = $model->course->enrolment->student->id; 
         $start               = new \DateTime($model->date);
 		$lessonDate = (new \DateTime($model->date))->format('Y-m-d');

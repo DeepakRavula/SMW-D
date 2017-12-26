@@ -54,7 +54,7 @@ $bundle = BackendAsset::register($this);
 				
                         <?php else:?>
                         <?php
-                            $userLocationId = \Yii::$app->session->get('location_id');
+                            $userLocationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
                             $location = Location::findOne(['id' => $userLocationId]);
                             echo '<div class="p-t-15 pull-left location-header" data-toggle="tooltip" data-original-title="Your location" data-placement="bottom"><i class="fa fa-map-marker m-r-10"></i>'.$location->name.'</div>';
                         ?>

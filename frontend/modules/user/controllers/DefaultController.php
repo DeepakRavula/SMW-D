@@ -126,7 +126,7 @@ class DefaultController extends Controller
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
         $lastRole = end($roles);
         $adminModel = User::findOne(['id' => $id]);
