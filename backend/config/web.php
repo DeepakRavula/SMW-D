@@ -1,8 +1,5 @@
 <?php
-use yii\helpers\ArrayHelper;
-use common\models\User;
-use common\models\UserLocation;
-use yii\web\ForbiddenHttpException;
+
 $config = [
     'homeUrl' => Yii::getAlias('@backendUrl'),
     'controllerNamespace' => 'backend\controllers',
@@ -23,9 +20,6 @@ $config = [
         ],
     ],
     'components' => [
-        'location' => [
-            'class' => 'common\components\codemix\LocationUrlManager'
-        ],
         'session' => [
             'name' => 'PHPBACKSESSID',
         ],
@@ -33,10 +27,17 @@ $config = [
             'errorAction' => 'site/error',
         ],
         'request' => [
+            'class' => '\common\components\location\Request',
             'cookieValidationKey' => env('BACKEND_COOKIE_VALIDATION_KEY'),
-			'baseUrl' => '/admin',
+            'baseUrl' => '/admin',
         ],
         'urlManager' => [
+            'class' => '\common\components\location\UrlManager',
+            'enableDefaultLocationUrlCode' => true,
+            'enableLocationPersistence' => false,
+            'ignoreLocationUrlPatterns' => [
+                '#^sign-in/(login|logout)#' => '#^(sign-in|login)#',
+            ],
             'enablePrettyUrl' => true,
             'showScriptName' => false,
         ],

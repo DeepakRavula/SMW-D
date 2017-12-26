@@ -43,10 +43,12 @@ $bundle = BackendAsset::register($this);
                 }
                 ?>
                     <?php if ($role === User::ROLE_ADMINISTRATOR):?>
-                        <div class="m-b-10 pull-left">
+                        <div class="m-t-10 pull-left">
                             <?php $form = Html::beginForm(); ?>    
-                            <?= Html::dropDownList('location_id', null,
-                                  ArrayHelper::map(Location::find()->all(), 'id', 'name'), ['class' => 'form-control location', 'options' => [Yii::$app->session->get('location_id') => ['Selected' => 'selected']]]); ?>
+                            <div class="btn-group">
+                                <button class="btn dropdown-toggle" data-toggle="dropdown"><?= Location::findOne(['slug' => Yii::$app->location])->name; ?> &nbsp;&nbsp;<span class="caret"></span></button>
+                                <?= LocationDropdown::widget(); ?>
+                            </div>
                             <?php Html::endForm() ?>
                         </div>
 				
