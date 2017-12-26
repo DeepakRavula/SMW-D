@@ -36,7 +36,7 @@ class LoginTimestampBehavior extends Behavior
         if ($userLogged->isAdmin()) {
             Yii::$app->location = Location::findOne(1)->slug;
         } else {
-            Yii::$app->location = $userLogged->location->location->slug;
+            Yii::$app->location = $userLogged->location->slug;
         }
         $user = $event->identity;
         $user->touch($this->attribute);
