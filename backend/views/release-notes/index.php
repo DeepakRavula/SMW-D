@@ -9,7 +9,7 @@ use yii\widgets\Pjax;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Release Notes';
-$this->params['action-button'] = Html::a('<i class="fa fa-plus" aria-hidden="true"></i> Create', ['#'], ['class' => 'btn btn-primary btn-sm add-release-notes']);
+$this->params['action-button'] = Html::a('<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i> Create', ['#'], ['class' => 'add-release-notes']);
 $this->params['breadcrumbs'][] = $this->title;
 ?> 
 <?php
