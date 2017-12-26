@@ -17,6 +17,7 @@ use common\models\Label;
 use common\models\CourseSchedule;
 use common\models\Student;
 use yii\filters\ContentNegotiator;
+use common\models\log\LogHistory;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
 use common\models\timelineEvent\TimelineEventEnrolment;
@@ -96,7 +97,10 @@ class EnrolmentController extends \common\components\backend\BackendController
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' => false,
         ]);
-        
+        $logDataProvider = new ActiveDataProvider([
+            'query' => LogHistory::find()
+			->enrolment($id) ]);
+       
         $paymentCycleDataProvider = new ActiveDataProvider([
             'query' => PaymentCycle::find()
 				->andWhere([
@@ -109,6 +113,7 @@ class EnrolmentController extends \common\components\backend\BackendController
             'model' => $model,
             'lessonDataProvider' => $lessonDataProvider,
             'paymentCycleDataProvider' => $paymentCycleDataProvider,
+            'logDataProvider' => $logDataProvider,
         ]);
     }
 

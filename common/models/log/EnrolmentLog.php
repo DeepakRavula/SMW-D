@@ -19,7 +19,7 @@ class EnrolmentLog extends Log {
             $autoRenewFeatureState = Enrolment::AUTO_RENEWAL_STATE_DISABLED;
         }
         $data               = Enrolment::find(['id' => $enrolmentModel->id])->asArray()->one();
-        $message            = $loggedUser->publicIdentity.' '.$autoRenewFeatureState.'  Auto Renewal Feature of {{'.$enrolmentModel->course->program->name.'}}\'s Lessons of  '.$enrolmentModel->student->fullName;
+        $message            = $loggedUser->publicIdentity.' '.$autoRenewFeatureState.'  Auto Renewal for {{'.$enrolmentModel->student->fullName .'}}\'s '.$enrolmentModel->course->program->name.'   enrolment';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_ENROLMENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_UPDATE]);
         $log                = new Log();
@@ -29,18 +29,20 @@ class EnrolmentLog extends Log {
         $log->data          = Json::encode($data);
         $log->createdUserId = $loggedUser->id;
         $log->locationId    = $enrolmentModel->student->customer->userLocation->location_id;
+        $studentIndex=$enrolmentModel->student->fullName;
+        $studentPath=Url::to(['/student/view', 'id' => $enrolmentModel->student->id]);
         if ($log->save()) {
             $this->addHistory($log, $enrolmentModel, $object);
-            $this->addLink($log, $enrolmentModel);
+             $this->addLink($log,$studentIndex,$studentPath);
         }
     }
 
-    public function addLink($log, $model) {
+    public function addLink($log, $index,$path) {
 		$logLink                  = new LogLink();
 		$logLink->logId           = $log->id;
-		$logLink->index           = $model->course->program->name;
+		$logLink->index           = $index;
 		$logLink->baseUrl         = Yii::$app->request->hostInfo;
-		$logLink->path            = Url::to(['/enrolment/view', 'id' => $model->id]);
+		$logLink->path            = $path;
 		$logLink->save();
 	}
 	public function addHistory($log, $model, $object) {

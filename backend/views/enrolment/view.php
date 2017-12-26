@@ -24,7 +24,9 @@ $this->params['label'] = $this->render('_title', [
         'model' => $model,
         'paymentCycleDataProvider' => $paymentCycleDataProvider,
     ]);
-
+    $logContent=$this->render('log/index', [
+        'logDataProvider' => $logDataProvider,
+    ]);
     $items = [
         [
             'label' => 'Lesson',
@@ -38,6 +40,13 @@ $this->params['label'] = $this->render('_title', [
             'content' => $noteContent,
             'options' => [
                 'id' => 'payment-cycle',
+            ],
+        ],
+        [
+            'label' => 'History',
+            'content' => $logContent,
+            'options' => [
+                'id' => 'history',
             ],
         ]
     ];
