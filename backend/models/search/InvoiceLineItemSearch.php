@@ -82,7 +82,7 @@ class InvoiceLineItemSearch extends InvoiceLineItem
         if(!empty($this->dateRange)) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
         }
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $customerId = $this->customerId;
         if (!$customerId) {
             $customerId = null;

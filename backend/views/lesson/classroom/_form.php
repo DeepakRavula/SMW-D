@@ -30,7 +30,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 		]
 	]); ?>
 	   <div class=" col-md-5">
-		   <?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id; ?>
+		   <?php $locationId = \Yii::$app->session->get('location_id'); ?>
 		   <?=
 		   $form->field($model, 'classroomId')->widget(Select2::classname(), [
 			   'data' => ArrayHelper::map(Classroom::find()->orderBy(['name' => SORT_ASC])

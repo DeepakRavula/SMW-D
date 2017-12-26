@@ -186,6 +186,7 @@ class PaymentController extends \common\components\backend\BackendController
 
     public function actionInvoicePayment($id)
     {
+        $invoice = Invoice::findOne($id);
         $paymentModel = new Payment();
 		$userModel = User::findOne(['id' => Yii::$app->user->id]);
         $paymentModel->on(Payment::EVENT_CREATE, [new TimelineEventPayment(), 'create']);
@@ -195,6 +196,9 @@ class PaymentController extends \common\components\backend\BackendController
         $request = Yii::$app->request;
         if ($paymentModel->load($request->post())) {
             $paymentModel->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
+            if (round($invoice->total, 2) === round($paymentModel->amount, 2)) {
+                $paymentModel->amount = $invoice->total;
+            }
             $paymentModel->invoiceId = $id;
             if($paymentModel->save()) {
             	$transaction->commit();

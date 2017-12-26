@@ -11,7 +11,8 @@ use valentinek\behaviors\ClosureTable;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\components\validators\lesson\conflict\HolidayValidator;
 use common\components\validators\lesson\conflict\ClassroomValidator;
-use common\components\validators\lesson\conflict\TeacherValidator;
+use common\components\validators\lesson\conflict\TeacherEligibleValidator;
+use common\components\validators\lesson\conflict\TeacherLessonOverlapValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
 use common\components\validators\lesson\conflict\IntraEnrolledLessonValidator;
 use common\components\validators\lesson\conflict\TeacherAvailabilityValidator;
@@ -50,6 +51,7 @@ class Lesson extends \yii\db\ActiveRecord
     const TYPE_EXTRA = 2;
 
     const SCENARIO_SUBSTITUTE_TEACHER = 'substitute-teacher';
+    const SCENARIO_LESSON_EDIT_ON_SCHEDULE = 'lesson-edit-schedule';
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_REVIEW = 'review';
     const SCENARIO_EDIT = 'edit';
@@ -138,9 +140,15 @@ class Lesson extends \yii\db\ActiveRecord
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT, self::SCENARIO_EDIT_REVIEW_LESSON]],
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,self::SCENARIO_GROUP_ENROLMENT_REVIEW]],
             [['programId','date', 'duration'], 'required', 'on' => self::SCENARIO_CREATE],
-            ['date', TeacherValidator::className(), 'on' => [
+            ['date', TeacherEligibleValidator::className(), 'on' => [
+				self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
+                self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_LESSON_EDIT_ON_SCHEDULE]],
+            ['date', TeacherAvailabilityValidator::className(), 'on' => [
 				self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
                 self::SCENARIO_MERGE, self::SCENARIO_REVIEW]],
+            ['date', TeacherLessonOverlapValidator::className(), 'on' => [
+				self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
+                self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_LESSON_EDIT_ON_SCHEDULE]],
             [['date'], StudentValidator::className(), 'on' => [
 				self::SCENARIO_EDIT_REVIEW_LESSON,
 				self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function($model, $attribute) {
@@ -150,7 +158,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],
             ['duration', TeacherAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
             ['duration', StudentAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
-
+            ['duration', TeacherLessonOverlapValidator::className(), 'on' => self::SCENARIO_SPLIT],
         ];
     }
 

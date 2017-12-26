@@ -139,7 +139,7 @@ use kartik\depdrop\DepDrop;
     </div>
 </div>
 <?php
-$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+$locationId = \Yii::$app->session->get('location_id');
 $minLocationAvailability = LocationAvailability::find()
 	->where(['locationId' => $locationId])
 	->orderBy(['fromTime' => SORT_ASC])
