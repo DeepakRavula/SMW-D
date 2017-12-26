@@ -20,6 +20,7 @@ use yii\filters\ContentNegotiator;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
 use common\models\timelineEvent\TimelineEventEnrolment;
+use common\models\log\EnrolmentLog;
 use common\models\PaymentFrequency;
 use common\models\UserPhone;
 use common\models\UserAddress;
@@ -177,7 +178,13 @@ class EnrolmentController extends \common\components\backend\BackendController
             foreach ($model->enrolmentProgramRates as $key => $enrolmentProgramRate) {
                 $enrolmentProgramRate->load($post['EnrolmentProgramRate'][$key], '');
                 $enrolmentProgramRate->save();
-            } 
+            }
+            $oldAttributes = $model->getOldAttributes();
+       if($oldAttributes['isAutoRenew']!=$model->isAutoRenew)
+       {
+         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+         $model->on(Enrolment::EVENT_AFTER_UPDATE, [new EnrolmentLog(), 'editAutoRenewFeature'], ['loggedUser' => $loggedUser, 'autoRenewFeature' => $model->isAutoRenew]);
+       }
             $model->save();
             $message = 'Details successfully updated!';
             return [
