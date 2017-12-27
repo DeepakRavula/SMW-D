@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * TaxController implements the CRUD actions for Tax model.
  */
-class TaxTypeController extends \common\components\backend\BackendController
+class TaxTypeController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

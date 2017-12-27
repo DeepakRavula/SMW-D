@@ -25,7 +25,7 @@ use common\models\Enrolment;
 /**
  * CourseController implements the CRUD actions for Course model.
  */
-class CourseController extends \common\components\backend\BackendController
+class CourseController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

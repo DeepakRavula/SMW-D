@@ -24,7 +24,7 @@ use Carbon\CarbonInterval;
 /**
  * QualificationController implements the CRUD actions for Qualification model.
  */
-class ScheduleController extends \common\components\backend\BackendController
+class ScheduleController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

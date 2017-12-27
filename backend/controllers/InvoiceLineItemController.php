@@ -22,7 +22,7 @@ use common\models\TaxCode;
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
-class InvoiceLineItemController extends \common\components\backend\BackendController
+class InvoiceLineItemController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

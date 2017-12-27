@@ -62,7 +62,7 @@ $config = [
             'enableDefaultLocationUrlCode' => true,
             'enableLocationPersistence' => false,
             'ignoreLocationUrlPatterns' => [
-                '#^sign-in/(login|logout)#' => '#^(sign-in|login)#',
+                '#^user/sign-in/(login|logout)#' => '#^user/(sign-in|login)#',
             ],
             'enablePrettyUrl' => true,
             'showScriptName' => false,

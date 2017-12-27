@@ -17,7 +17,7 @@ use yii\widgets\ActiveForm;
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
-class TeacherSubstituteController extends \common\components\backend\BackendController
+class TeacherSubstituteController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

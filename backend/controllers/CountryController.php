@@ -13,7 +13,7 @@ use yii\web\Response;
 /**
  * CountryController implements the CRUD actions for Country model.
  */
-class CountryController extends \common\components\backend\BackendController
+class CountryController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

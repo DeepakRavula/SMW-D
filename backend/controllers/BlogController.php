@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
-class BlogController extends \common\components\backend\BackendController
+class BlogController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

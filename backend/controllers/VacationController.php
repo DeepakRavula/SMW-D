@@ -15,7 +15,7 @@ use yii\web\Response;
 /**
  * VacationController implements the CRUD actions for Vacation model.
  */
-class VacationController extends \common\components\backend\BackendController
+class VacationController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

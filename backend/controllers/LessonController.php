@@ -36,7 +36,7 @@ use common\models\lesson\BulkRescheduleLesson;
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
-class LessonController extends \common\components\backend\BackendController
+class LessonController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

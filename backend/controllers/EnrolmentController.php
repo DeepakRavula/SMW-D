@@ -35,7 +35,7 @@ use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
-class EnrolmentController extends \common\components\backend\BackendController
+class EnrolmentController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

@@ -17,7 +17,7 @@ use backend\models\search\ProgramSearch;
 /**
  * ProgramController implements the CRUD actions for Program model.
  */
-class ProgramController extends \common\components\backend\BackendController
+class ProgramController extends \common\components\controllers\BaseController
 {
 
     public function behaviors()

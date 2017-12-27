@@ -9,7 +9,7 @@ use yii\web\Controller;
 /**
  * Application timeline controller.
  */
-class TimelineEventController extends \common\components\backend\BackendController
+class TimelineEventController extends \common\components\controllers\BaseController
 {
     public $layout = 'common';
     /**

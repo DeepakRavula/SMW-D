@@ -18,7 +18,7 @@ use yii\filters\ContentNegotiator;
 /**
  * ExamResultController implements the CRUD actions for ExamResult model.
  */
-class ExamResultController extends \common\components\backend\BackendController
+class ExamResultController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

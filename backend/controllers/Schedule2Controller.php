@@ -20,7 +20,7 @@ use common\models\Classroom;
 /**
  * QualificationController implements the CRUD actions for Qualification model.
  */
-class Schedule2Controller extends \common\components\backend\BackendController
+class Schedule2Controller extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

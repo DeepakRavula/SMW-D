@@ -7,7 +7,7 @@ use Yii;
 use backend\models\search\LocationScheduleSearch;
 use yii\web\Controller;
 
-class DailyScheduleController extends \common\components\backend\BackendController
+class DailyScheduleController extends \common\components\controllers\BaseController
 {
     public function actionIndex($date)
     {

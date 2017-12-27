@@ -13,7 +13,7 @@ use common\models\ClassroomUnavailability;
 /**
  * ClassRoomController implements the CRUD actions for Classroom model.
  */
-class ClassroomController extends \common\components\backend\BackendController
+class ClassroomController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
