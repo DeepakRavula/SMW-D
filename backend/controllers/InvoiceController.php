@@ -45,7 +45,6 @@ class InvoiceController extends \common\components\backend\BackendController
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['post'],
                 ],
             ],
             [

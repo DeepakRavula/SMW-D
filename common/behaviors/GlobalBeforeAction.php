@@ -8,6 +8,7 @@ use common\models\User;
 use yii\base\Controller;
 use common\models\ReleaseNotesRead;
 use common\models\ReleaseNotes;
+use common\models\UserLocation;
 
 /**
  * Class GlobalAccessBehavior.
@@ -31,7 +32,7 @@ class GlobalBeforeAction extends Behavior
             );
             $role = end($roles);
             if ($role && $role !== User::ROLE_ADMINISTRATOR) {
-                $userLocation = common\models\UserLocation::findOne(['user_id' => Yii::$app->user->id]);
+                $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
                 Yii::$app->session->set('location_id', $userLocation->location_id);
             } else {
                 Yii::$app->session->set('location_id', '1');

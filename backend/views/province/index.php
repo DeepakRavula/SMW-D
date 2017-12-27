@@ -16,7 +16,7 @@ $this->title = 'Provinces';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 
-$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), '#', ['class' => 'add-province btn btn-primary btn-sm']);
+$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i> Add'), '#', ['class' => 'add-province']);
 $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
 <?php Modal::begin([
