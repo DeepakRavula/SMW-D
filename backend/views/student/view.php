@@ -285,9 +285,9 @@ $this->params['label'] = $this->render('_title', [
              type: 'post',
              success: function(response) {
                  if (response.status) {
-                     $('#course-spinner').hide();
-                      $.pjax.reload({container: "#enrolment-grid", replace: false, async: false, timeout: 6000});
-                      $('#group-enrol-modal').modal('hide');
+                        $('#course-spinner').hide();
+                        $('#group-enrol-modal').modal('hide');
+                        window.location.href = response.url;
                  }
              }
          });

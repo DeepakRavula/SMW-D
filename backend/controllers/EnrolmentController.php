@@ -9,7 +9,7 @@ use common\models\Lesson;
 use common\models\Course;
 use yii\data\ActiveDataProvider;
 use backend\models\search\EnrolmentSearch;
-use yii\web\Controller;
+use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -119,8 +119,10 @@ class EnrolmentController extends \common\components\controllers\BaseController
 		$enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
 		$enrolmentModel->isConfirmed = true;
 		if($enrolmentModel->save()) {
+                    $invoice = $enrolmentModel->createProFormaInvoice();
 			return [
 				'status' => true,
+                                'url' => Url::to(['/invoice/view', 'id' => $invoice->id])
 			];
 		}
 	}
