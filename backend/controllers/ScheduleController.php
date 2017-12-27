@@ -129,19 +129,16 @@ class ScheduleController extends \common\components\controllers\BaseController
 		return $data;
 	}
 
-    public function getLessons($date, $programId, $teacherId)
+    public function getLessons($date, $teacherId)
     {
-        $lessons = Lesson::find()
-			->joinWith(['course' => function ($query) use($programId, $teacherId) {
-				$query->andWhere(['course.locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
-				if(!empty($programId) && $programId != 'undefined') {
-					$query->andWhere(['course.programId' => $programId]);
-				}
-				if(!empty($teacherId) && $teacherId != 'undefined') {
-					$query->andWhere(['course.teacherId' => $teacherId]);
-				}
-			}])
-			->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+        $query = Lesson::find()
+			->joinWith(['course' => function ($query) {
+                            $query->andWhere(['course.locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
+			}]);
+                        if(!empty($teacherId) && $teacherId != 'undefined') {
+                            $query->andWhere(['lesson.teacherId' => $teacherId]);
+                        }
+        $lessons = $query->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
 			->isConfirmed()
 			->present()
 			->andWhere(['DATE(lesson.date)' => $date->format('Y-m-d')])
@@ -404,7 +401,7 @@ class ScheduleController extends \common\components\controllers\BaseController
 				}
 			}
 		}
-		$lessons = $this->getLessons($date, $programId, $teacherId);
+		$lessons = $this->getLessons($date, $teacherId);
 		foreach ($lessons as &$lesson) {
 			$toTime = new \DateTime($lesson->date);
 			$length = explode(':', $lesson->fullDuration);
@@ -471,9 +468,8 @@ class ScheduleController extends \common\components\controllers\BaseController
 				'rendering'  => 'background',
 			];
 		}
-		$programId = null;
 		$teacherId = null;
-		$lessons = $this->getLessons($date, $programId, $teacherId);
+		$lessons = $this->getLessons($date, $teacherId);
 		foreach ($lessons as &$lesson) {
 			if(! empty($lesson->classroomId)) {
 				$toTime = new \DateTime($lesson->date);
