@@ -22,4 +22,8 @@ class LogHistoryQuery extends ActiveQuery
     {
         return $this->andWhere(['instanceType' => LogObject::TYPE_COURSE, 'instanceId' => $id]);
     }
+    public function lesson($id)
+    {
+        return $this->andWhere(['instanceType' => LogObject::TYPE_LESSON, 'instanceId' => $id]);
+    }
 }

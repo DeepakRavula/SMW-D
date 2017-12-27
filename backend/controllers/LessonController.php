@@ -12,6 +12,7 @@ use yii\data\ActiveDataProvider;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
 use yii\web\Controller;
+use common\models\log\LogHistory;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Note;
@@ -22,7 +23,7 @@ use common\models\Payment;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\timelineEvent\TimelineEventEnrolment;
-use common\models\LessonLog;
+use common\models\log\LessonLog;
 use yii\base\ErrorException;
 use common\models\User;
 use common\models\timelineEvent\TimelineEventLesson;
@@ -128,11 +129,15 @@ class LessonController extends \common\components\backend\BackendController
         $paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments,
         ]);
+        $logDataProvider =new ActiveDataProvider([
+			'query' => LogHistory::find()
+			->lesson($id) ]);
         return $this->render('view', [
             'model' => $model,
             'noteDataProvider' => $noteDataProvider,
             'studentDataProvider' => $studentDataProvider,
-            'paymentsDataProvider' => $paymentsDataProvider
+            'paymentsDataProvider' => $paymentsDataProvider,
+            'logDataProvider' => $logDataProvider,
         ]);
     }
 
@@ -189,7 +194,13 @@ class LessonController extends \common\components\backend\BackendController
             $lessonDate = \DateTime::createFromFormat('Y-m-d g:i A', $model->date);
             $model->date = $lessonDate->format('Y-m-d H:i:s');
             if ($model->save()) {
-                $response = [
+
+                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                $model->on(Lesson::EVENT_AFTER_INSERT,
+                    [new LessonLog(), 'extraLessonCreate'],
+                    ['loggedUser' => $loggedUser]);
+                $model->trigger(Lesson::EVENT_AFTER_INSERT);
+                $response   = [
                     'status' => true,
                     'url' => Url::to(['lesson/view', 'id' => $model->id])
                 ];

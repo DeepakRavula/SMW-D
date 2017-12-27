@@ -8,27 +8,26 @@ use yii\data\ActiveDataProvider;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-?> 
-<?php
-$lessonLog = TimelineEvent::find()
-	->joinWith(['timelineEventLesson' => function($query) use($model) {
-		$query->joinWith(['lesson' => function($query) use($model) {
-			$query->andWhere(['lesson.id' => $model->id]);
-		}]);
-	}]);
-
-$dataProvider = new ActiveDataProvider([
-	'query' => $lessonLog,
-]);?>
-<div class="student-index">  
+?>
+<div class="lesson-index">
+    <?php yii\widgets\Pjax::begin([
+        'id' => 'lesson-log',
+        'timeout' => 6000,
+    ]) ?>
 <?php echo GridView::widget([
-	'dataProvider' => $dataProvider,
-        'summary' => false,
-        'emptyText' => false,
+	'dataProvider' => $logDataProvider,
+	'summary' => false,
+    'emptyText' => false,
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => [
-		'created_at:datetime', 
+		[
+			'label' => 'Createdon',
+			'value' => function($data) {
+				return $data->log->createdOn;
+			},
+			'format' => 'datetime',
+		],
 		[
 			'label' => 'Message',
 			'format' => 'raw',
@@ -38,4 +37,5 @@ $dataProvider = new ActiveDataProvider([
 		],
 	],
 ]); ?>
+    <?php \yii\widgets\Pjax::end(); ?>
 </div>
