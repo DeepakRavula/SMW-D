@@ -12,6 +12,7 @@ use yii\data\ActiveDataProvider;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
 use yii\web\Controller;
+use common\models\log\LogHistory;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Note;
@@ -127,11 +128,15 @@ class LessonController extends \common\components\backend\BackendController
         $paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments,
         ]);
+        $logDataProvider =new ActiveDataProvider([
+			'query' => LogHistory::find()
+			->lesson($id) ]);
         return $this->render('view', [
             'model' => $model,
             'noteDataProvider' => $noteDataProvider,
             'studentDataProvider' => $studentDataProvider,
-            'paymentsDataProvider' => $paymentsDataProvider
+            'paymentsDataProvider' => $paymentsDataProvider,
+            'logDataProvider' => $logDataProvider,
         ]);
     }
 
