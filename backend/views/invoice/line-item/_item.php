@@ -6,6 +6,7 @@ use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
 
 ?>
+<script src="/plugins/bootbox/bootbox.min.js"></script>
 <?php echo $this->render('/invoice/_line-item', [
         'invoiceModel' => $model,
     'itemDataProvider' => $itemDataProvider,
@@ -137,24 +138,31 @@ $(document).ready(function() {
 });
 </script>
 <script>
-$('#invoice-delete-button').click(function(){
-    $.ajax({
-        url    : '<?= Url::to(['invoice/delete', 'id' => $model->id]) ?>',
-        type   : 'post',
-        dataType: 'json',
-        success: function(response)
-        {
-           if(response.status)
-           {
-                window.location.href = response.url;
-                }else
-                {
-                    $('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
-                }
-        }
-    });
-    return false;
-});
+$(document).on('click', '#invoice-delete-button', function () {
+		 bootbox.confirm({
+                    message: "Are you sure you want to delete this invoice?",
+  			callback: function(result){
+				if(result) {
+					$('.bootbox').modal('hide');
+				$.ajax({
+				url: '<?= Url::to(['invoice/delete', 'id' => $model->id]) ?>',
+					type: 'post',
+					success: function (response)
+					{
+						if (response.status)
+						{
+						 window.location.href = response.url;
+						} else {
+						$('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+						}
+					}
+				});
+				return false;
+			}
+			}
+		});
+		return false;
+        });
 $(document).on('click', '.item-delete', function () {
     var status = confirm("Are you sure you want to delete this item?");
     if (status) {

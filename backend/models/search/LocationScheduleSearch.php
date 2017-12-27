@@ -40,7 +40,7 @@ class LocationScheduleSearch extends Lesson
      */
     public function search($params)
     {
-        $locationId= \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId= \Yii::$app->session->get('location_id');
 		
         $query = Lesson::find()
 				->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])

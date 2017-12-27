@@ -12,7 +12,7 @@ use yii\bootstrap\Modal;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Group Lessons';
-$this->params['action-button'] = Html::a('<i class="fa fa-plus f-s-18" aria-hidden="true"></i>', ['course/create'], ['class' => 'group-course-create']);
+$this->params['action-button'] = Html::a('<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>', ['course/create'], ['class' => 'group-course-create']);
 $this->params['show-all'] = $this->render('_button', [
 	'searchModel' => $searchModel
 ]);

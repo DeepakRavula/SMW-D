@@ -154,7 +154,7 @@ $this->params['label'] = $this->render('_title', [
 <div id="student-merge-content"></div>
 <?php Modal::end(); ?>
 <?php
-    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+    $locationId = \Yii::$app->session->get('location_id');
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])
@@ -288,6 +288,7 @@ $this->params['label'] = $this->render('_title', [
                  if (response.status) {
                      $('#course-spinner').hide();
                       $.pjax.reload({container: "#enrolment-grid", replace: false, async: false, timeout: 6000});
+                      $.pjax.reload({container: "#student-log", replace: false, async: false, timeout: 6000});
                       $('#group-enrol-modal').modal('hide');
                  }
              }

@@ -57,7 +57,7 @@ class StudentBirthdaySearch extends Student
      */
     public function search($params)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $query = Student::find()->notDeleted()
             ->location($locationId)
 			->orderBy(['DATE_FORMAT(birth_date,"%m-%d")' => SORT_DESC]);

@@ -22,7 +22,7 @@ use common\models\Course;
 	]); ?>
     <div class="row">
         <div class="col-md-3">
-			<?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->language])->id;
+			<?php $locationId = \Yii::$app->session->get('location_id');
 			$teachers = ArrayHelper::map(
 				User::find()
 					->notDeleted()

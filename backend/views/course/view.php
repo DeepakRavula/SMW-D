@@ -1,3 +1,4 @@
+
 <?php
 
 use yii\helpers\Html;
@@ -13,7 +14,7 @@ $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['in
 $this->params['action-button'] = Html::a('<i title="Print" class="fa fa-print f-s-18"></i>', ['print/course', 'id' => $model->id], ['class' => 'pull-left', 'target' => '_blank']);
 ?>
 <div class="row">
-	<div class="col-md-6">	
+	<div class="col-md-6">
 		<?php
 		LteBox::begin([
 			'type' => LteConst::TYPE_DEFAULT,
@@ -30,8 +31,8 @@ $this->params['action-button'] = Html::a('<i title="Print" class="fa fa-print f-
 			<dd><?= Yii::$app->formatter->asCurrency($model->program->rate); ?></dd>
 		</dl>
 		<?php LteBox::end() ?>
-		</div> 
-	<div class="col-md-6">	
+		</div>
+	<div class="col-md-6">
 		<?php
 		LteBox::begin([
 			'type' => LteConst::TYPE_DEFAULT,
@@ -52,7 +53,7 @@ $this->params['action-button'] = Html::a('<i title="Print" class="fa fa-print f-
 	</div>
 </div>
 <div class="nav-tabs-custom">
-<?php 
+<?php
 
 $studentContent = $this->render('_student', [
     'studentDataProvider' => $studentDataProvider,
@@ -64,6 +65,7 @@ $lessonContent = $this->render('_lesson', [
 ]);
 $logContent = $this->render('log', [
     'model' => $model,
+    'logDataProvider'=>$logDataProvider,
     ]);
 
 ?>

@@ -77,9 +77,6 @@ class ExamResultController extends \common\components\backend\BackendController
     {   
         
                 $model = new ExamResult();
-                $userModel = User::findOne(['id' => Yii::$app->user->id]);
-                $model->on(ExamResult::EVENT_CREATE, [new ExamResultLog(), 'create']);      
-        $model->userName = $userModel->publicIdentity;
 			$model->studentId = $studentId;
 			 $data  = $this->renderAjax('/student/exam-result/_form', [
             'model' => $model,
@@ -111,9 +108,6 @@ class ExamResultController extends \common\components\backend\BackendController
 		$response = Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
- $userModel = User::findOne(['id' => Yii::$app->user->id]);
-                $model->on(ExamResult::EVENT_UPDATE, [new ExamResultLog(), 'edit']);      
-        $model->userName = $userModel->publicIdentity;
 		$data =  $this->renderAjax('//student/exam-result/_form', [
 			'model' => $model,
 		]);
@@ -142,9 +136,6 @@ class ExamResultController extends \common\components\backend\BackendController
         $response->format = Response::FORMAT_JSON;
 		
 		$model = $this->findModel($id);
-               	$model->on(ExamResult::EVENT_DELETE, [new ExamResultLog(), 'deleteEvaluation']);
-		$user = User::findOne(['id' => Yii::$app->user->id]);
-		$model->userName = $user->publicIdentity;
         if($model->delete()) {
             $model->trigger(ExamResult::EVENT_DELETE);
 			$url = Url::to(['student/view', 'id' => $model->studentId, '#' => 'exam-result']);
