@@ -211,13 +211,9 @@ class InvoiceLineItemController extends \common\components\backend\BackendContro
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $model->on(InvoiceLineItem::EVENT_DELETE, [new InvoiceLog(), 'deleteLineItem']);
-        $user = User::findOne(['id' => Yii::$app->user->id]);
-        $model->userName = $user->publicIdentity;
         $invoiceModel = $model->invoice;
         if($model->delete()) {
             $invoiceModel->save();
-            $model->trigger(InvoiceLineItem::EVENT_DELETE);
         }
         return [
             'status' => true,

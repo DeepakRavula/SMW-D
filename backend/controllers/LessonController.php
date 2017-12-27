@@ -269,11 +269,7 @@ class LessonController extends \common\components\backend\BackendController
 	{
 		$request = Yii::$app->request;
         $model = $this->findModel($id);
-		$model->setScenario(Lesson::SCENARIO_EDIT);
-		$model->on(Lesson::EVENT_RESCHEDULE_ATTEMPTED,
-            [new LessonReschedule(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
-	 $model->on(Lesson::EVENT_RESCHEDULED,
-       [new LessonLog(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);	
+		$model->setScenario(Lesson::SCENARIO_EDIT);	
 		if ($model->load($request->post())) {
 			if($model->save()) {
 				return [
@@ -297,12 +293,6 @@ class LessonController extends \common\components\backend\BackendController
         $oldTeacherId = $model->teacherId;
         $user = User::findOne(['id'=>Yii::$app->user->id]);
         $model->userName = $user->publicIdentity;
-        $model->on(Lesson::EVENT_RESCHEDULE_ATTEMPTED,
-                [new LessonReschedule(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
-        $model->on(Lesson::EVENT_RESCHEDULED,
-                [new LessonLog(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-		
 		$request = Yii::$app->request;
 		$userModel = $request->post('User');
 		if ($model->hasExpiryDate()) {
@@ -774,15 +764,6 @@ class LessonController extends \common\components\backend\BackendController
             if (!$model->hasProFormaInvoice()) {
                 $locationId = $model->enrolment->student->customer->userLocation->location_id;
                 $invoice = new Invoice();
-                if (is_a(Yii::$app, 'yii\console\Application')) {
-                    $roleUser = User::findByRole(User::ROLE_BOT);
-                    $botUser = end($roleUser);
-                    $loggedUser = User::findOne(['id' => $botUser->id]);
-                } else {
-                    $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-                }
-                $invoice->userName = $loggedUser->userProfile->fullName;
-                $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
                 $invoice->user_id = $model->enrolment->student->customer->id;
                 $invoice->location_id = $locationId;
                 $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;

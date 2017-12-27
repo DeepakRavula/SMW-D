@@ -402,9 +402,6 @@ class InvoiceController extends \common\components\backend\BackendController
     public function actionDelete($id)
 	{
 		$model = $this->findModel($id);
-		$userModel = User::findOne(['id' => Yii::$app->user->id]);
-        $model->on(Invoice::EVENT_DELETE, [new InvoiceLog(), 'deleteInvoice']);
-		$model->userName = $userModel->publicIdentity;
 		$model->setScenario(Invoice::SCENARIO_DELETE);
 		if ($model->validate()) {
 			$model->delete();

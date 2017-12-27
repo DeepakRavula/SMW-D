@@ -19,7 +19,6 @@ use common\models\Student;
 use yii\filters\ContentNegotiator;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
-use common\models\timelineEvent\TimelineEventEnrolment;
 use common\models\PaymentFrequency;
 use common\models\UserPhone;
 use common\models\UserAddress;
