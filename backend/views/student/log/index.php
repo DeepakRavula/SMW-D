@@ -1,8 +1,6 @@
 <?php
 
 use yii\grid\GridView;
-use common\models\timelineEvent\TimelineEvent;
-use yii\data\ActiveDataProvider;
 
 
 /* @var $this yii\web\View */

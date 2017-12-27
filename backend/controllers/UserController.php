@@ -30,7 +30,6 @@ use common\models\Program;
 use common\models\UserContact;
 use common\models\LocationAvailability;
 use common\models\InvoiceLineItem;
-use common\models\timelineEvent\TimelineEventLink;
 use yii\helpers\Url;
 use common\models\UserEmail;
 use common\models\Label;
@@ -605,13 +604,7 @@ class UserController extends \common\components\backend\BackendController
 				$address->delete();
 			}
 		}
-		if(!empty($model->logs)) {
-			foreach($model->logs as $log) {
-				TimelineEventLink::deleteAll(['timelineEventId' => $log->timelineEvent->id]);
-				$log->timelineEvent->delete();
-				$log->delete();
-			}
-		}		
+		
 	}
 	public function actionDelete($id)
     {

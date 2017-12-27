@@ -19,7 +19,7 @@ use yii\filters\ContentNegotiator;
 use common\models\TeacherRoom;
 use yii\bootstrap\ActiveForm;
 use common\models\Location;
-use common\models\TeacherAvailabilityLog;
+
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
