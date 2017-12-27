@@ -21,14 +21,20 @@ $dataProvider = new ActiveDataProvider([
 ]);?>
 <div class="student-index">  
 <?php echo GridView::widget([
-	'dataProvider' => $dataProvider,
+	'dataProvider' => $logDataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],
         'summary' => false,
         'emptyText' => false,
 	'headerRowOptions' => ['class' => 'bg-light-gray'],
 	'columns' => [
-		'created_at:datetime', 
-		[
+        [
+            'label' => 'Createdon',
+            'value' => function($data) {
+                return $data->log->createdOn;
+            },
+            'format' => 'datetime',
+        ],
+        [
 			'label' => 'Message',
 			'format' => 'raw',
 			'value' => function ($data) {

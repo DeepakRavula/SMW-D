@@ -50,7 +50,7 @@ class Log extends \yii\db\ActiveRecord
             'createdUserId' => 'Created User ID',
         ];
     }
-   public function beforeSave($insert) {
+	public function beforeSave($insert) {
 		if($insert) {
 			$this->createdOn = (new \DateTime())->format('Y-m-d H:i:s');
 		}
