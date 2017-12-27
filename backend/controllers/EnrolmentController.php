@@ -32,6 +32,7 @@ use Carbon\Carbon;
 use common\models\discount\EnrolmentDiscount;
 use backend\models\discount\MultiEnrolmentDiscount;
 use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
+use common\models\log\StudentLog;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
@@ -118,12 +119,17 @@ class EnrolmentController extends \common\components\backend\BackendController
 		$enrolmentModel->studentId = $studentId;
 		$enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
 		$enrolmentModel->isConfirmed = true;
-		if($enrolmentModel->save()) {
-			return [
-				'status' => true,
-			];
-		}
-	}
+		if ($enrolmentModel->save()) {
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+            $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
+                [new StudentLog(), 'addGroupEnrolment'],
+                ['loggedUser' => $loggedUser]);
+            $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
+            return [
+                'status' => true,
+            ];
+        }
+    }
 
 	public function actionEdit($id)
     {
