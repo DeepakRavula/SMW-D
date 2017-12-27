@@ -27,35 +27,34 @@ class CourseLog extends Log
         $data = Course::find(['id' => $groupCourseModel->id])->asArray()->one();
         $message = $loggedUser->publicIdentity . ' created new   {{' . $groupCourseModel->program->name . ' }} classes   with {{' . $groupCourseModel->teacher->publicIdentity . ' }} at ' . Yii::$app->formatter->asTime($groupCourseModel->startDate);
 
-       $object = LogObject::findOne(['name' => LogObject::COURSE]);
-        $activity = LogActivity::findOne(['name' => LogActivity::CREATE]);
+       $object = LogObject::findOne(['name' => LogObject::TYPE_COURSE]);
+        $activity = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
         	$log = new Log();
  		$log->logObjectId = $object->id;
- 	$log->logActivityId = $activity->id;
+                $log->logActivityId = $activity->id;
  		$log->message = $message;
  		$log->data = Json::encode($data);
  		$log->createdUserId = $loggedUser->id;
-        $log->locationId = $groupCourseModel->teacher->userLocation->location_id;
+                $log->locationId = $groupCourseModel->teacher->userLocation->location_id;
+                $groupCourseIndex=$groupCourseModel->program->name;
+                $groupCoursePath= Url::to(['/course/view', 'id' => $groupCourseModel->id]);
+                $teacherIndex=$groupCourseModel->teacher->publicIdentity;
+                $teacherPath= Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $groupCourseModel->teacher->id]);
         if($log->save()) {
  			$this->addHistory($log, $groupCourseModel, $object);
- 	 		$this->addLink($log, $groupCourseModel);
+ 	 		$this->addLink($log, $groupCourseIndex,$groupCoursePath);
+                        $this->addLink($log, $teacherIndex,$teacherPath);
  		}
     }
-    public function addLink($log, $model) {
-                $logLink                  = new LogLink();
- 		$logLink->logId           = $log->id;
- 		$logLink->index           = $model->program->name;
- 		$logLink->baseUrl         = Yii::$app->request->hostInfo;
- 		$logLink->path            = Url::to(['/course/view', 'id' => $model->id]);
- 		$logLink->save();
-
-                $logLink                  = new LogLink();
- 		$logLink->logId           = $log->id;
- 		$logLink->index           = $model->teacher->publicIdentity;
- 		$logLink->baseUrl         = Yii::$app->request->hostInfo;
- 		$logLink->path            = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $model->teacher->id]);
- 		$logLink->save();
- 	}
+    public function addLink($log, $index, $path)
+    {
+        $logLink          = new LogLink();
+        $logLink->logId   = $log->id;
+        $logLink->index   = $index;
+        $logLink->baseUrl = Yii::$app->request->hostInfo;
+        $logLink->path    = $path;
+        $logLink->save();
+    }
  public function addHistory($log, $model, $object) {
  		$logHistory= new LogHistory();
  		$logHistory->logId = $log->id;

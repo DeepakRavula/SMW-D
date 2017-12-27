@@ -158,6 +158,7 @@ class CourseController extends \common\components\backend\BackendController
                 try {
                     $model->startDate           = $this->getCourseDate($courseScheduleModels);
                     $model->lessonsPerWeekCount = count($courseScheduleModels);
+                    $model->locationId = \Yii::$app->session->get('location_id');
                     if ($flag = $model->save(false)) {
                         foreach ($courseScheduleModels as $courseScheduleModel) {
                             $courseScheduleModel->courseId = $model->id;
