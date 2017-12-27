@@ -111,7 +111,7 @@ class StudentController extends \common\components\backend\BackendController
         $model = $this->findModel($id);
 		$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
 		$oldAttributes = $model->getOldAttributes();
-		$model->on(Student::EVENT_UPDATE, [new StudentLog(), 'edit'], ['loggedUser' => $loggedUser, 'oldAttributes' => $oldAttributes]);
+		$model->on(Student::EVENT_AFTER_UPDATE, [new StudentLog(), 'edit'], ['loggedUser' => $loggedUser, 'oldAttributes' => $oldAttributes]);
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			if((int)$model->status === Student::STATUS_INACTIVE) {
 				return $this->redirect(['/student/index', 'StudentSearch[showAllStudents]' => false]);
