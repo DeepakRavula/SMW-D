@@ -108,7 +108,8 @@ trait Invoiceable
     {
         $invoiceLineItem = $this->addLessonLineItem($invoice);
         $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-        $invoiceLineItem->unit       = 1;
+        $courseCount = $this->courseCount;
+        $invoiceLineItem->unit       = $this->firstLesson->unit * $courseCount;
         $qualification = Qualification::findOne(['teacher_id' => $this->firstLesson->teacherId,
             'program_id' => $this->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
