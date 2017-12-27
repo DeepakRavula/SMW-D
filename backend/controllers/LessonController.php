@@ -32,6 +32,7 @@ use common\models\Invoice;
 use common\models\InvoiceLog;
 use common\models\lesson\BulkReschedule;
 use common\models\lesson\BulkRescheduleLesson;
+use common\models\log\StudentLog;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -672,20 +673,24 @@ class LessonController extends \common\components\backend\BackendController
 			$lesson->markAsRoot();
 		}
         if (!empty($courseModel->enrolment) && empty($courseRequest)) {
-            $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
+            $enrolmentModel              = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
             $enrolmentModel->setPaymentCycle($enrolmentModel->firstLesson->date);
-            $user = User::findOne(['id' => Yii::$app->user->id]);
-			$enrolmentModel->on(Enrolment::EVENT_CREATE,[new TimelineEventEnrolment(), 'create'], ['userName' => $user->publicIdentity]);
-			$enrolmentModel->trigger(Enrolment::EVENT_CREATE);
+
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+            $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
+                [new StudentLog(), 'addEnrolment'],
+                ['loggedUser' => $loggedUser]);
+            
         }
-		if ($courseModel->program->isPrivate()) {
+        if ($courseModel->program->isPrivate()) {
 			if(! empty($rescheduleBeginDate)) {
 				$message = 'Future lessons have been changed successfully';
 				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} else {
 				$invoice = $courseModel->enrolment->firstPaymentCycle->createProFormaInvoice();
+                                $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
 				return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
 			}
 		} else {

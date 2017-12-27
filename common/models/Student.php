@@ -22,7 +22,8 @@ class Student extends \yii\db\ActiveRecord
     const STATUS_INACTIVE = 2;
     const STATUS_DRAFT = 3;
 
-	const EVENT_UPDATE = 'update';
+    const TYPE_UPDATE = 'update';
+    const TYPE_CREATE='create';
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_CUSTOMER_MERGE = 'customer-merge';
 
