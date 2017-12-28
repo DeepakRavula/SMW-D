@@ -6,6 +6,8 @@ use Yii;
 use common\models\Vacation;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
+use common\models\User;
+use common\models\log\EnrolmentLog;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Lesson;
@@ -151,6 +153,9 @@ class VacationController extends \common\components\controllers\BaseController
             $transaction->commit();
             $model->enrolmentId = $enrolmentId;
             if ($model->save()) {
+                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                $model->on(Vacation::EVENT_AFTER_INSERT, [new EnrolmentLog(), 'vacationCreate'], ['loggedUser' => $loggedUser]);
+                $model->trigger(Vacation::EVENT_AFTER_INSERT);
                 return [
                     'status' => true
                 ];
@@ -198,6 +203,9 @@ class VacationController extends \common\components\controllers\BaseController
     {
         $model = $this->findModel($id);
         $model->delete();
+        $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+        $model->on(Vacation::EVENT_AFTER_DELETE, [new EnrolmentLog(), 'vacationDelete'], ['loggedUser' => $loggedUser]);
+        $model->trigger(Vacation::EVENT_AFTER_DELETE);
         return [
             'status' => true,
         ];

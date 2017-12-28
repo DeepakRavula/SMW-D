@@ -32,6 +32,7 @@ use common\models\discount\EnrolmentDiscount;
 use backend\models\discount\MultiEnrolmentDiscount;
 use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\log\StudentLog;
+use common\models\log\LogHistory;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
@@ -102,12 +103,16 @@ class EnrolmentController extends \common\components\controllers\BaseController
 					'enrolmentId' => $id,
 				]),
             'pagination' => false,
-        ]);
+        ]); 
+        $logDataProvider= new ActiveDataProvider([
+			'query' => LogHistory::find()
+			->enrolment($id) ]);
 		
         return $this->render('view', [
             'model' => $model,
             'lessonDataProvider' => $lessonDataProvider,
             'paymentCycleDataProvider' => $paymentCycleDataProvider,
+            'logDataProvider' => $logDataProvider,
         ]);
     }
 
