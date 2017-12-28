@@ -9,14 +9,13 @@ use yii\widgets\Pjax;
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>
 </div>  
-<?php Pjax::Begin(['id' => 'customer-add-listing', 'timeout' => 6000, 'enablePushState' =>false]); ?>
+<?php Pjax::Begin(['id' => 'customer-add-listing', 'timeout' => 6000, 'enablePushState' => false]); ?>
  <?= GridView::widget([
             'dataProvider' => $userDataProvider,
             'summary' => false,
             'emptyText' => false,
             'rowOptions'=>['class' => 'add-customer-invoice'],
             'tableOptions' => ['class' => 'table table-condensed'],
-            'rowOptions' =>['class' => 'add-customer-invoice'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'filterModel'=>$searchModel,
             'columns' => [
