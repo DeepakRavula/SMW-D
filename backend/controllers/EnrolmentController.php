@@ -43,7 +43,7 @@ class EnrolmentController extends \common\components\controllers\BaseController
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['post'],
+                    
                 ],
             ],
 			'contentNegotiator' => [
@@ -346,7 +346,7 @@ class EnrolmentController extends \common\components\controllers\BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		$data = $this->renderAjax('/student/enrolment/_form-update', [
+		$data = $this->renderAjax('/enrolment/schedule/_form-update', [
 			'course' => $model->course,	
 			'courseSchedule' => $model->course->courseSchedule,
 			'model' => $model,
@@ -405,14 +405,17 @@ class EnrolmentController extends \common\components\controllers\BaseController
                 $lesson->delete();
             }
 			$model->delete();
-			return [
+		$response = [
 				'status' => true,
+				'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
 			];
-        } else {
-			return [
+		} else {
+			
+			$response		 = [
 				'status' => false,
 			];
 		}
+		return $response;
     }
 
     /**

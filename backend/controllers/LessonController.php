@@ -49,7 +49,7 @@ class LessonController extends \common\components\backend\BackendController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['modify-classroom', 'merge', 'update-field',
-                    'validate-on-update', 'modify-lesson', 'edit-classroom', 
+                    'validate-on-update', 'modify-lesson', 'edit-classroom',
                     'payment', 'substitute','update'],
                 'formatParam' => '_format',
                 'formats' => [
@@ -58,7 +58,7 @@ class LessonController extends \common\components\backend\BackendController
             ],
         ];
     }
-		
+
     /**
      * Lists all Lesson models.
      *
@@ -79,7 +79,7 @@ class LessonController extends \common\components\backend\BackendController
             'dataProvider' => $dataProvider,
         ]);
     }
-    
+
     /**
      * Displays a single Lesson model.
      *
@@ -121,7 +121,7 @@ class LessonController extends \common\components\backend\BackendController
         ]);
         $payments = Payment::find()
 			->joinWith(['lessonCredit' => function($query) use($id){
-				$query->andWhere(['lesson_payment.lessonId' => $id]);	
+				$query->andWhere(['lesson_payment.lessonId' => $id]);
 			}]);
         $paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments,
@@ -252,7 +252,7 @@ class LessonController extends \common\components\backend\BackendController
 	public function actionFetchDuration($id)
 	{
         $model = $this->findModel($id);
-		return $model->duration;	
+		return $model->duration;
 	}
     /**
      * Updates an existing Lesson model.
@@ -266,7 +266,7 @@ class LessonController extends \common\components\backend\BackendController
 	{
 		$request = Yii::$app->request;
         $model = $this->findModel($id);
-		$model->setScenario(Lesson::SCENARIO_EDIT);	
+		$model->setScenario(Lesson::SCENARIO_EDIT);
 		if ($model->load($request->post())) {
 			if($model->save()) {
 				return [
@@ -278,7 +278,7 @@ class LessonController extends \common\components\backend\BackendController
 					'errors' => ActiveForm::validate($model)
 				];
 			}
-		}		
+		}
 	}
     public function actionUpdate($id)
     {
@@ -297,7 +297,7 @@ class LessonController extends \common\components\backend\BackendController
 			$privateLessonModel->load(Yii::$app->getRequest()->getBodyParams(), 'PrivateLesson');
 			$privateLessonModel->expiryDate = (new \DateTime($privateLessonModel->expiryDate))->format('Y-m-d H:i:s');
 			$privateLessonModel->save();
-		} 	
+		}
         if ($model->load($request->post()) || !empty($userModel)) {
 			if(empty($model->date)) {
 				$model->date =  $oldDate;
@@ -393,7 +393,7 @@ class LessonController extends \common\components\backend\BackendController
 		}
 
 		$holidayConflictedLessonIds = $course->getHolidayLessons();
-		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);	
+		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
 		return [
 			'conflicts' => $conflicts,
 			'lessonIds' => $conflictedLessonIds
@@ -411,7 +411,7 @@ class LessonController extends \common\components\backend\BackendController
 			$lessons = Lesson::find()
 				->orderBy(['lesson.date' => SORT_ASC])
 				->andWhere(['IN', 'lesson.id', $conflictedLessons['lessonIds']])
-				->all();	
+				->all();
 		}
 		return $lessons;
 	}
@@ -433,7 +433,7 @@ class LessonController extends \common\components\backend\BackendController
 				'status' => false,
 				'errors' => ActiveForm::validate($lesson),
 			];
-		}	
+		}
 		return $response;
 	}
 	public function resolveAllLesson($conflictedLessons, $lesson)
@@ -443,19 +443,19 @@ class LessonController extends \common\components\backend\BackendController
 			if(! empty($lesson->date)) {
 				$day = (new \DateTime($lesson->date))->format('N');
 				$lessonDay = (new \DateTime($conflictedLesson->date))->format('N');
-				$time = (new \DateTime($lesson->date))->format('H:i:s'); 
+				$time = (new \DateTime($lesson->date))->format('H:i:s');
 				list($hour, $minute, $second) = explode(':', $time);
 				$dayList = Course::getWeekdaysList();
 				$dayName = $dayList[$day];
 				if($day === $lessonDay) {
-					$lessonDate = new \DateTime($conflictedLesson->date); 
+					$lessonDate = new \DateTime($conflictedLesson->date);
 					$lessonDate->setTime($hour, $minute, $second);
 					$conflictedLesson->date = $lessonDate->format('Y-m-d H:i:s');
 				} else {
-					$lessonDate = new \DateTime($conflictedLesson->date); 
+					$lessonDate = new \DateTime($conflictedLesson->date);
 					$lessonDate->modify('next ' . $dayName);
 					$lessonDate->setTime($hour, $minute, $second);
-					$conflictedLesson->date = $lessonDate->format('Y-m-d H:i:s');	
+					$conflictedLesson->date = $lessonDate->format('Y-m-d H:i:s');
 				}
 			} else {
 				$conflictedLesson->status = Lesson::STATUS_UNSCHEDULED;
@@ -487,7 +487,7 @@ class LessonController extends \common\components\backend\BackendController
 				$conflictedLessons = $this->fetchConflictedLesson($model->course);
 				$response = $this->resolveAllLesson($conflictedLessons, $model);
 			}
-		} 
+		}
 		return $response;
     }
 
@@ -512,7 +512,7 @@ class LessonController extends \common\components\backend\BackendController
 		$conflictedLessonIdsCount = count($conflictedLessons['lessonIds']);
 		$unscheduledLessonCount = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED, 'isConfirmed' => false])
-			->count();	
+			->count();
 		$query = Lesson::find()
 			->orderBy(['lesson.date' => SORT_ASC]);
 		if(! $showAllReviewLessons) {
@@ -625,7 +625,7 @@ class LessonController extends \common\components\backend\BackendController
 				$oldLesson->status = Lesson::STATUS_CANCELED;
 				$oldLesson->save();
 			}
-			$courseDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');	
+			$courseDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
 			if($endDate->format('d-m-Y') == $courseDate && !empty($lesson)) {
 				$courseModel->updateAttributes([
 					'teacherId' => $lesson->teacherId,
@@ -652,7 +652,7 @@ class LessonController extends \common\components\backend\BackendController
 				} catch(ErrorException $exception) {
 					Yii::$app->errorHandler->logException($exception);
 				}
-				
+
 				$bulkRescheduleLesson = new BulkRescheduleLesson();
 				$bulkRescheduleLesson->bulkRescheduleId = $bulkReschedule->id;
 				$bulkRescheduleLesson->lessonId = $lesson->id;
@@ -680,7 +680,7 @@ class LessonController extends \common\components\backend\BackendController
             $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
                 [new StudentLog(), 'addEnrolment'],
                 ['loggedUser' => $loggedUser]);
-            
+
         }
         if ($courseModel->program->isPrivate()) {
 			if(! empty($rescheduleBeginDate)) {
@@ -703,12 +703,12 @@ class LessonController extends \common\components\backend\BackendController
 	}
 	public function getRescheduleLessonType($courseModel, $endDate) {
 		$courseEndDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
-		$type = BulkReschedule::TYPE_RESCHEDULE_FUTURE_LESSONS;	
+		$type = BulkReschedule::TYPE_RESCHEDULE_FUTURE_LESSONS;
 		if($courseEndDate !== $endDate) {
-			$type = BulkReschedule::TYPE_RESCHEDULE_BULK_LESSONS;	
-		} 
+			$type = BulkReschedule::TYPE_RESCHEDULE_BULK_LESSONS;
+		}
 		return $type;
-	} 
+	}
     public function actionInvoice($id)
     {
         $model = Lesson::findOne(['id' => $id]);
@@ -747,7 +747,6 @@ class LessonController extends \common\components\backend\BackendController
             if(!$model->hasProFormaInvoice()) {
                 if (!$model->paymentCycle->hasProFormaInvoice()) {
                     $invoice = $model->paymentCycle->createProFormaInvoice();
-
                     return $this->redirect(['invoice/view', 'id' => $invoice->id]);
                 } else {
                     $model->addPrivateLessonLineItem($model->paymentCycle->proFormaInvoice);
@@ -823,26 +822,26 @@ class LessonController extends \common\components\backend\BackendController
 
         return $response;
     }
-    
+
     public function actionPayment($lessonId, $enrolmentId)
     {
         $payments = Payment::find()
                 ->joinWith(['lessonCredit' => function($query) use($lessonId, $enrolmentId){
-                        $query->andWhere(['lesson_payment.lessonId' => $lessonId, 
-                            'lesson_payment.enrolmentId' => $enrolmentId]);	
+                        $query->andWhere(['lesson_payment.lessonId' => $lessonId,
+                            'lesson_payment.enrolmentId' => $enrolmentId]);
                 }]);
         $paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments,
         ]);
         $data = $this->renderAjax('payment/view', [
             'paymentsDataProvider' => $paymentsDataProvider
-        ]); 
+        ]);
         return [
             'status' => true,
             'data' => $data
         ];
     }
-    
+
     public function actionSubstitute($id)
     {
         $model = $this->findModel($id);
@@ -864,7 +863,7 @@ class LessonController extends \common\components\backend\BackendController
             ];
         }
     }
-    
+
     public function actionUnschedule($id)
     {
         $model = $this->findModel($id);
@@ -879,6 +878,6 @@ class LessonController extends \common\components\backend\BackendController
                 'body' => 'Lesson cannot be unscheduled',
             ]);
         }
-        return $this->redirect(['lesson/view', 'id' => $model->id]); 
+        return $this->redirect(['lesson/view', 'id' => $model->id]);
     }
 }

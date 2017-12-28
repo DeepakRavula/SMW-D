@@ -129,7 +129,7 @@ class VacationController extends \common\components\controllers\BaseController
                 ]);
             }
         }
-        $data = $this->renderAjax('/student/vacation/_form',
+        $data = $this->renderAjax('/enrolment/_vacation-form',
             [
             'model' => new Vacation(),
             'enrolmentId' => $enrolmentId,
