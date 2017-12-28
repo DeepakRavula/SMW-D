@@ -14,7 +14,7 @@ use common\models\PaymentMethod;
 <?php $form = ActiveForm::begin([
     'id' => 'payment-edit-form',
 	'action' => Url::to(['payment/edit', 'id' => $model->id]),
-	'enableAjaxValidation' => true,
+	'enableAjaxValidation' => false,
 	'enableClientValidation' => false
 ]); ?>
    <div class="row">

@@ -27,7 +27,7 @@ class Payment extends ActiveRecord
     public $paymentMethodName;
     public $invoiceNumber;
     public $lastAmount;
-    public $differnce;
+    public $difference;
     public $userName;
 	
     const TYPE_OPENING_BALANCE_CREDIT = 1;
@@ -65,7 +65,7 @@ class Payment extends ActiveRecord
                     self::SCENARIO_CREDIT_USED, ]],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => self::SCENARIO_CREDIT_USED],
            [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType', 
-               'sourceId', 'credit', 'isDeleted', 'transactionId'], 'safe'],
+               'sourceId', 'credit', 'isDeleted', 'transactionId', 'difference'], 'safe'],
         ];
     }
 
@@ -90,7 +90,7 @@ class Payment extends ActiveRecord
     {
         if ($this->amount > $this->lastAmount) {
             if ($this->creditAppliedInvoice->balance >= 0 || abs($this->creditAppliedInvoice->balance)
-                < abs($this->differnce)) {
+                < abs($this->difference)) {
                 return $this->addError($attributes, 'Insufficient Credit');
             }
         }
@@ -99,7 +99,7 @@ class Payment extends ActiveRecord
     public function validateCreditUsed($attributes)
     {
         if (abs($this->amount) > abs($this->lastAmount)) {
-            if ($this->invoice->balance >= 0 || abs($this->invoice->balance) < abs($this->differnce)) {
+            if ($this->invoice->balance >= 0 || abs($this->invoice->balance) < abs($this->difference)) {
                 return $this->addError($attributes, 'Insufficient Credit');
             }
         }
@@ -275,7 +275,7 @@ class Payment extends ActiveRecord
             'amount' => abs($this->amount),
         ]);
 
-        return $creditAppliedPaymentModel->invoice->save();
+        return $creditAppliedPaymentModel->invoice ? $creditAppliedPaymentModel->invoice->save() : true;
     }
 
     public function isOtherPayments()
