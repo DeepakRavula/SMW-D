@@ -35,7 +35,7 @@ use common\models\log\StudentLog;
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
-class LessonController extends \common\components\backend\BackendController
+class LessonController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
