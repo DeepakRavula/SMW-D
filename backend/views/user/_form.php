@@ -16,6 +16,8 @@ Select2Asset::register($this);
 <div class="row user-create-form">
  <?php $form = ActiveForm::begin([
 		'action' => Url::to(['user/create', 'role_name' => $searchModel->role_name]),
+	 	'enableAjaxValidation' => true,
+	 	'enableClientValidation' => false,
 		'id' => 'user-form',
 		]); ?>
 		<div class="row">

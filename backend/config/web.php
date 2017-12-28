@@ -101,7 +101,7 @@ $config = [
                 'allow' => true,
                 'roles' => ['?'],
             ],
-            [
+			[
                 'controllers' => ['user','student-birthday'],
                 'allow' => true,
                 'roles' => ['administrator', 'staffmember'],
