@@ -19,7 +19,7 @@ use common\models\User;
 /**
  * PaymentsController implements the CRUD actions for Payments model.
  */
-class PaymentController extends \common\components\backend\BackendController
+class PaymentController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

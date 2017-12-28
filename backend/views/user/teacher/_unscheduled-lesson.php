@@ -97,7 +97,7 @@ use common\models\LocationAvailability;
 </div>
 
 <?php
-$locationId = \Yii::$app->session->get('location_id');
+$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
 $minLocationAvailability = LocationAvailability::find()
     ->where(['locationId' => $locationId])
     ->orderBy(['fromTime' => SORT_ASC])

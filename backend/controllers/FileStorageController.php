@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * FileStorageController implements the CRUD actions for FileStorageItem model.
  */
-class FileStorageController extends \common\components\backend\BackendController
+class FileStorageController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

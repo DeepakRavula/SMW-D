@@ -132,131 +132,34 @@ $this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class
 var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
 $(document).ready(function() {
-    var params = $.param({ date: moment(new Date()).format('YYYY-MM-DD'),
-        programId: '',
-        teacherId: '' });
-    $('#calendar').fullCalendar({
-        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-        header: false,
-		height:'auto',
-        titleFormat: 'DD-MMM-YYYY, dddd',
-        defaultView: 'agendaDay',
-        minTime: "<?php echo $from_time; ?>",
-        maxTime: "<?php echo $to_time; ?>",
-        slotDuration: "00:15:00",
-        droppable: false,
-        resources: {
-            url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
-            type: 'GET',
-            error: function() {
-                $("#calendar").fullCalendar("refetchResources");
-            }
-        },
-		resourceRender: function(resourceObj, labelTds, bodyTds) {
-            var resourceCount = $('#teacher-view #calendar .fc-view .fc-row tr th').length;
-            if(resourceCount <= 8) {
-                $('#teacher-view #calendar .fc-view .fc-row tr th.fc-resource-cell').css({'width': 'auto'});
-            } else {
-               $('#teacher-view #calendar .fc-view .fc-row tr th.fc-resource-cell').css({'width': '150px'});
-            }
-			var theadWidth = $('#teacher-view #calendar .fc-widget-header table thead').width();
-		    $('#teacher-view #calendar table').width(theadWidth);
-        },
-        events: {
-            url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
-            type: 'GET',
-            error: function() {
-                $("#calendar").fullCalendar("refetchEvents");
-            }
-        },
-        allDaySlot:false,
-        editable: true,
-        eventClick: function(event) {
-            $(location).attr('href', event.url);
-        },
-        eventDrop: function(event) {
-			$('.tip-yellowsimple').hide();
-            var params = $.param({
-                id: event.lessonId,
-                start: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
-                end: moment(event.end).format('YYYY-MM-DD HH:mm:ss'),
-                teacherId: event.resourceId
-            });
-            $.ajax({
-                url: '<?= Url::to(['lesson/modify-lesson']); ?>?' + params,
-                type: 'post',
-                dataType: "json",
-                success: function (response)
-                {
-                    if (response.status) {
-                        $("#calendar").fullCalendar("refetchEvents");
-                    } else {
-                        $('#notification').html(response.errors[0]).fadeIn().delay(5000).fadeOut();
-                        $("#calendar").fullCalendar("refetchEvents");
-                        $(window).scrollTop(0);
-                    }
-                }
-            });
-        },
-        eventResize: function(event) {
-            var params = $.param({
-                id: event.lessonId,
-                start: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
-                end: moment(event.end).format('YYYY-MM-DD HH:mm:ss'),
-                teacherId: event.resourceId
-            });
-            $.ajax({
-                url: '<?= Url::to(['lesson/modify-lesson']); ?>?' + params,
-                type: 'post',
-                dataType: "json",
-                success: function (response)
-                {
-                    if (response.status) {
-                        $("#calendar").fullCalendar("refetchEvents");
-                    } else {
-                        $('#notification').html(response.errors[0]).fadeIn().delay(5000).fadeOut();
-                        $("#calendar").fullCalendar("refetchEvents");
-                        $(window).scrollTop(0);
-                    }
-                }
-            });
-        },
-        eventRender: function(event, element) {
-            element.poshytip({
-                className: 'tip-yellowsimple',
-                alignTo: 'cursor',
-                alignX: 'center',
-                alignY : 'top',
-                offsetY: 5,
-                followCursor: false,
-                slide: false,
-                content : function(updateCallback) {
-                    return event.description;
-                }
-            });
-        }
+    $('#datepicker').datepicker ({
+        format: 'dd-mm-yyyy',
+        autoclose: true,
+        todayHighlight: true
     });
+    var date = Date();
+    refreshCalendar(moment(date), true);
 });
-$(document).ready(function () {
-	$(document).on('click', '.tv-icon', function(e){ 
+
+$(document).on('click', '.tv-icon', function(e){ 
     e.preventDefault(); 
-	var date = moment($('#datepicker').datepicker("getDate")).format('DD-MM-YYYY');
+    var date = moment($('#datepicker').datepicker("getDate")).format('DD-MM-YYYY');
     var url = "<?= Url::to(['daily-schedule/index']);?>?date=" + date; 
     window.open(url, '_blank');
 });
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        var tab  = e.target.text;
-        var date = $('#datepicker').datepicker("getDate");
-        if (tab === "Classroom View") {
-            showclassroomCalendar(moment(date));
-            $('.calendar-filter').hide();
-        } else {
-            refreshCalendar(moment(date));
-            $('.calendar-filter').show();
-        }
-    });
-});
 
+$(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
+    var tab  = e.target.text;
+    var date = $('#datepicker').datepicker("getDate");
+    if (tab === "Classroom View") {
+        showclassroomCalendar(moment(date));
+        $('.calendar-filter').hide();
+    } else {
+        refreshCalendar(moment(date));
+        $('.calendar-filter').show();
+    }
+});
+    
 function loadTeachers(program) {
     var teachers = [];
     if((program == 'undefined') || (program == null)) {
@@ -282,52 +185,44 @@ function setTeachers(teachers){
         value: null,
         placeholder: 'Select Teacher',
     });
- }
+}
 
-$(document).ready(function () {
-    $('#datepicker').datepicker ({
-        format: 'dd-mm-yyyy',
-        autoclose: true,
-        todayHighlight: true
-    });
-    
-    setTimeout(function(){
-	$('#program-selector').on('change', function(e){
-        var date = $('#calendar').fullCalendar('getDate');
-        refreshCalendar(moment(date));
-        loadTeachers(e.value);
-	}); }, 3000);
-
-    setTimeout(function(){
-	$('#teacher-selector').on('change', function(){
-        var date = $('#calendar').fullCalendar('getDate');
-        refreshCalendar(moment(date));
-	}); }, 3000);
-
-    $('#datepicker').on('change', function(){
-        var date = $('#datepicker').datepicker("getDate");
-		fetchHolidayName(moment(date));
-		if ($('.nav-tabs .active').text() === 'Classroom View') {
-            showclassroomCalendar(moment(date));
-        } else {
-            refreshCalendar(moment(date));
-        }
-	});
+$(document).on('change', '#program-selector', function(e){
+    var date = $('#calendar').fullCalendar('getDate');
+    refreshCalendar(moment(date));
+    loadTeachers(e.value);
 });
+
+$(document).on('change', '#teacher-selector', function(){
+    var date = $('#calendar').fullCalendar('getDate');
+    refreshCalendar(moment(date));
+});
+
+$(document).on('change', '#datepicker', function(){
+    var date = $('#datepicker').datepicker("getDate");
+    fetchHolidayName(moment(date));
+    if ($('.nav-tabs .active').text() === 'Classroom View') {
+        showclassroomCalendar(moment(date));
+    } else {
+        refreshCalendar(moment(date));
+    }
+});
+
 
 function fetchHolidayName(date)
 {
     var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
-$.ajax({
+    $.ajax({
 	url: '<?= Url::to(['schedule/fetch-holiday-name']); ?>?' + params,
 	type: 'get',
 	dataType: "json",
 	success: function (response)
 	{
-		$(".content-header").html(response);
+            $(".content-header").html(response);
 	}
-});	
+    });	
 }
+
 function showclassroomCalendar(date) {
     var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
     var fromTime = "09:00:00";
@@ -363,15 +258,8 @@ function showclassroomCalendar(date) {
                 $("#classroom-calendar").fullCalendar("refetchResources");
             }
         },
-		resourceRender: function(resourceObj, labelTds, bodyTds) {
-            var resourceCount = $('#classroom-view #classroom-calendar .fc-view .fc-row tr th').length;
-            if(resourceCount <= 8) {
-                $('#classroom-view #classroom-calendar .fc-view .fc-row tr th.fc-resource-cell').css({'width': 'auto'});
-            } else {
-               $('#classroom-view #classroom-calendar .fc-view .fc-row tr th.fc-resource-cell').css({'width': '150px'});
-            }
-			var theadWidth = $('#classroom-view #classroom-calendar .fc-widget-header table thead').width();
-		    $('#classroom-view #classroom-calendar table').width(theadWidth);
+        resourceRender: function() {
+            schedule.modifyResourceRender();
         },
         events: {
             url: '<?= Url::to(['schedule/render-classroom-events']) ?>?' + params,
@@ -381,49 +269,26 @@ function showclassroomCalendar(date) {
             }
         },
         eventRender: function(event, element) {
-            element.poshytip({
-                className: 'tip-yellowsimple',
-                alignTo: 'cursor',
-                alignX: 'center',
-                alignY : 'top',
-                offsetY: 5,
-                followCursor: false,
-                slide: false,
-                content : function(updateCallback) {
-                        return event.description;
-                }
-            });
+            schedule.modifyEventRender(event, element);
         },
         eventDrop: function(event) {
-			$('.tip-yellowsimple').hide();
-            var params = $.param({
-                id: event.id,
-                classroomId: event.resourceId,
-            });
-            $.ajax({
-                url: '<?= Url::to(['lesson/modify-classroom']); ?>?' + params,
-                type: 'get',
-                dataType: "json",
-                success: function (response)
-                {
-                    if (response.status) {
-                        $("#classroom-calendar").fullCalendar("refetchEvents");
-                    } else {
-                        $('#notification').html(response.errors).fadeIn().delay(5000).fadeOut();
-                        $("#classroom-calendar").fullCalendar("refetchEvents");
-                        $(window).scrollTop(0);
-						
-                    }
-                }
-            });
+            $('.tip-yellowsimple').hide();
+            schedule.modifyClassroom(event);
         }
     });
 }
 
-function refreshCalendar(date) {
+function refreshCalendar(date, clearFilter) {
+    if (clearFilter) {
+        var programId = '';
+        var teacherId = '';
+    } else {
+        var programId = $('#program-selector').selectivity('value');
+        var teacherId = $('#teacher-selector').selectivity('value');
+    }
     var params = $.param({ date: moment(date).format('YYYY-MM-DD'),
-        programId: $('#program-selector').selectivity('value'),
-        teacherId: $('#teacher-selector').selectivity('value') });
+        programId: programId,
+        teacherId: teacherId });
     var minTime = "09:00:00";
     var maxTime = "17:00:00";
     var day     = moment(date).day();
@@ -457,15 +322,8 @@ function refreshCalendar(date) {
                 $("#calendar").fullCalendar("refetchResources");
             }
         },
-		resourceRender: function(resourceObj, labelTds, bodyTds) {
-           var resourceCount = $('#teacher-view #calendar .fc-view .fc-row tr th').length;
-            if(resourceCount <= 8) {
-                $('#teacher-view #calendar .fc-view .fc-row tr th.fc-resource-cell').css({'width': 'auto'});
-            } else {
-               $('#teacher-view #calendar .fc-view .fc-row tr th.fc-resource-cell').css({'width': '150px'});
-            }
-			var theadWidth = $('#teacher-view #calendar .fc-widget-header table thead').width();
-		    $('#teacher-view #calendar table').width(theadWidth);
+        resourceRender: function() {
+            schedule.modifyResourceRender();
         },
         events: {
             url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
@@ -475,66 +333,93 @@ function refreshCalendar(date) {
             }
         },
         eventRender: function(event, element) {
-            element.poshytip({
-                className: 'tip-yellowsimple',
-                alignTo: 'cursor',
-                alignX: 'center',
-                alignY : 'top',
-                offsetY: 5,
-                followCursor: false,
-                slide: false,
-                content : function(updateCallback) {
-                    return event.description;
-                }
-            });
+            schedule.modifyEventRender(event, element);
         },
         eventDrop: function(event) {
-			$('.tip-yellowsimple').hide();
-            var params = $.param({
-                id: event.lessonId,
-                start: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
-                end: moment(event.end).format('YYYY-MM-DD HH:mm:ss'),
-                teacherId: event.resourceId
-            });
-            $.ajax({
-                url: '<?= Url::to(['lesson/modify-lesson']); ?>?' + params,
-                type: 'post',
-                dataType: "json",
-                success: function (response)
-                {
-                    if (response.status) {
-                        $("#calendar").fullCalendar("refetchEvents");
-                    } else {
-                        $('#notification').html(response.errors[0]).fadeIn().delay(5000).fadeOut();
-                        $("#calendar").fullCalendar("refetchEvents");
-                        $(window).scrollTop(0);
-                    }
-                }
-            });
+            schedule.eventDrop(event);
         },
         eventResize: function(event) {
-            var params = $.param({
-                id: event.lessonId,
-                start: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
-                end: moment(event.end).format('YYYY-MM-DD HH:mm:ss'),
-                teacherId: event.resourceId
-            });
-            $.ajax({
-                url: '<?= Url::to(['lesson/modify-lesson']); ?>?' + params,
-                type: 'post',
-                dataType: "json",
-                success: function (response)
-                {
-                    if (response.status) {
-                        $("#calendar").fullCalendar("refetchEvents");
-                    } else {
-                        $('#notification').html(response.errors[0]).fadeIn().delay(5000).fadeOut();
-                        $("#calendar").fullCalendar("refetchEvents");
-                        $(window).scrollTop(0);
-                    }
-                }
-            });
+            schedule.eventResize(event);
         }
     });
+}
+
+var schedule = {
+    eventDrop : function(event) {
+        $('.tip-yellowsimple').hide();
+        schedule.modifyLesson(event);
+    },
+    eventResize : function(event) {
+        schedule.modifyLesson(event);
+    },
+    modifyLesson : function(event) {
+        var params = $.param({
+            id: event.lessonId,
+            start: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
+            end: moment(event.end).format('YYYY-MM-DD HH:mm:ss'),
+            teacherId: event.resourceId
+        });
+        $.ajax({
+            url: '<?= Url::to(['lesson/modify-lesson']); ?>?' + params,
+            type: 'post',
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.status) {
+                    $("#calendar").fullCalendar("refetchEvents");
+                    $('#success-notification').html('Lesson successfully modified!').fadeIn().delay(5000).fadeOut();
+                } else {
+                    $('#notification').html(response.errors[0]).fadeIn().delay(5000).fadeOut();
+                    $("#calendar").fullCalendar("refetchEvents");
+                    $(window).scrollTop(0);
+                }
+            }
+        });
+    }, 
+    modifyClassroom : function(event) {
+        var params = $.param({
+            id: event.id,
+            classroomId: event.resourceId,
+        });
+        $.ajax({
+            url: '<?= Url::to(['lesson/modify-classroom']); ?>?' + params,
+            type: 'get',
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.status) {
+                    $("#classroom-calendar").fullCalendar("refetchEvents");
+                } else {
+                    $('#notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                    $("#classroom-calendar").fullCalendar("refetchEvents");
+                    $(window).scrollTop(0);
+                }
+            }
+        });
+    }, 
+    modifyEventRender : function (event, element) {
+        element.poshytip({
+            className: 'tip-yellowsimple',
+            alignTo: 'cursor',
+            alignX: 'center',
+            alignY : 'top',
+            offsetY: 5,
+            followCursor: false,
+            slide: false,
+            content : function() {
+                return event.description;
+            }
+        });
+    }, 
+    modifyResourceRender : function () {
+        var resourceCount = $('#teacher-view #calendar .fc-view .fc-row tr th').length;
+        if(resourceCount <= 8) {
+            $('#teacher-view #calendar .fc-view .fc-row tr th.fc-resource-cell').css({'width': 'auto'});
+        } else {
+           $('#teacher-view #calendar .fc-view .fc-row tr th.fc-resource-cell').css({'width': '150px'});
+        }
+        var theadWidth = $('#teacher-view #calendar .fc-widget-header table thead').width();
+        $('#teacher-view #calendar table').width(theadWidth);
+    }
 }
 </script>

@@ -37,7 +37,8 @@ trait Invoiceable
             $invoiceLineItem->amount = $this->proFormaLineItem->amount;
             $invoiceLineItem->unit   = $this->proFormaLineItem->unit;
         } else {
-            $invoiceLineItem->amount = $this->enrolmentProgramRate->programRate;
+            $invoiceLineItem->amount = $this->enrolmentProgramRate ? $this->enrolmentProgramRate->programRate 
+                    : $this->enrolment->program->rate;
             $invoiceLineItem->unit   = $this->unit;
         }
         if ($invoice->isProFormaInvoice()) {

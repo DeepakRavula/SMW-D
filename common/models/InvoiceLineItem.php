@@ -213,8 +213,12 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getProFormaLesson()
     {
-        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
-                    ->via('paymentCycleLesson');
+        if (!$this->isExtraLesson()) {
+            return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+                        ->via('paymentCycleLesson');
+        } else {
+            return $this->lesson;
+        }
     }
 
     public function getOriginalInvoice()
@@ -292,7 +296,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function computeTaxCode($taxStatus)
     {
         $today         = (new \DateTime())->format('Y-m-d H:i:s');
-        $locationId    = \Yii::$app->session->get('location_id');
+        $locationId    = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $locationModel = Location::findOne(['id' => $locationId]);
         $taxCode = TaxCode::find()
             ->joinWith(['taxStatus' => function ($query) use ($taxStatus) {

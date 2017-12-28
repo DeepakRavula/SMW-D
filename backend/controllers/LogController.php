@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * LogController implements the CRUD actions for SystemLog model.
  */
-class LogController extends \common\components\backend\BackendController
+class LogController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

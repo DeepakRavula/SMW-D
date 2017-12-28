@@ -13,7 +13,7 @@ use yii\base\Model;
 /**
  * CalendarEventColorController implements the CRUD actions for CalendarEventColor model.
  */
-class CalendarEventColorController extends \common\components\backend\BackendController
+class CalendarEventColorController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

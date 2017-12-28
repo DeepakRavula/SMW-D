@@ -35,7 +35,7 @@ use common\models\log\StudentLog;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
-class EnrolmentController extends \common\components\backend\BackendController
+class EnrolmentController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
@@ -229,7 +229,7 @@ class EnrolmentController extends \common\components\backend\BackendController
 	}
 	public function actionAdd()
     {
-		$locationId = \Yii::$app->session->get('location_id');
+		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
 		$request = Yii::$app->request;
 		$course = new Course();
 		$courseSchedule = new CourseSchedule();

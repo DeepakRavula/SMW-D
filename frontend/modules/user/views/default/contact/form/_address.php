@@ -30,7 +30,7 @@ use yii\helpers\Url;
 	<div class="row">
             <div class="col-md-12">
 		<?php
-		$locationModel = Location::findOne(['id' => \Yii::$app->session->get('location_id')]);
+		$locationModel = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
 		?>
 		<?=
 		$form->field($model, "labelId")->widget(Select2::classname(), [

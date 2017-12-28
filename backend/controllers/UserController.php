@@ -44,7 +44,7 @@ use trntv\filekit\actions\UploadAction;
 /**
  * UserController implements the CRUD actions for User model.
  */
-class UserController extends \common\components\backend\BackendController
+class UserController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
@@ -411,7 +411,7 @@ class UserController extends \common\components\backend\BackendController
         $model = $this->findModel($id);
         $session = Yii::$app->session;
         $request = Yii::$app->request;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $locationAvailabilityMinTime = LocationAvailability::find()
             ->where(['locationId' => $locationId])
             ->orderBy(['fromTime' => SORT_ASC])
@@ -554,7 +554,7 @@ class UserController extends \common\components\backend\BackendController
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
         $lastRole = end($roles);
         $adminModel = User::findOne(['id' => $id]);

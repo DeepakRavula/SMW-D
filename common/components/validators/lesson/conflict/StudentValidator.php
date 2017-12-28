@@ -20,7 +20,7 @@ class StudentValidator extends Validator
         } else {
             $studentId = !empty($model->studentId) ? $model->studentId : null;
         }
-       	$locationId = \Yii::$app->session->get('location_id');
+       	$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
         $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
         $lessonDuration = explode(':', $model->fullDuration);

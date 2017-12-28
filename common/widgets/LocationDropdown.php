@@ -15,27 +15,27 @@ class LocationDropdown extends Dropdown
     public function init()
     {
         $route = Yii::$app->controller->route;
-        $appLanguage = Yii::$app->language;
+        $appLocation = Yii::$app->location;
         $params = $_GET;
         $this->_isError = $route === Yii::$app->errorHandler->errorAction;
 
         array_unshift($params, '/' . $route);
 
-        foreach (Yii::$app->urlManager->languages as $language) {
-            $isWildcard = substr($language, -2) === '-*';
+        foreach (Yii::$app->urlManager->locations as $location) {
+            $isWildcard = substr($location, -2) === '-*';
             if (
-                $language === $appLanguage ||
-                // Also check for wildcard language
-                $isWildcard && substr($appLanguage, 0, 2) === substr($language, 0, 2)
+                $location === $appLocation ||
+                // Also check for wildcard location
+                $isWildcard && substr($appLocation, 0, 2) === substr($location, 0, 2)
             ) {
-                continue;   // Exclude the current language
+                continue;   // Exclude the current location
             }
             if ($isWildcard) {
-                $language = substr($language, 0, 2);
+                $location = substr($location, 0, 2);
             }
-            $params['language'] = $language;
+            $params['location'] = $location;
             $this->items[] = [
-                'label' => self::label($language),
+                'label' => self::label($location),
                 'url' => $params,
             ];
         }

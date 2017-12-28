@@ -48,7 +48,7 @@ use kartik\time\TimePicker;
             ])->label('Program - <a id="show-all">Click to show all</a>'); ?>
         </div>
     	<div class="col-md-6 lesson-teacher">
-        <?php $locationId = \Yii::$app->session->get('location_id');
+        <?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $teachers = ArrayHelper::map(
                     User::find()
                         ->notDeleted()

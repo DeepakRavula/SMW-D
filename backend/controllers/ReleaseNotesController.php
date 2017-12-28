@@ -16,7 +16,7 @@ use yii\web\Response;
 /**
  * Release_notesController implements the CRUD actions for ReleaseNotes model.
  */
-class ReleaseNotesController extends \common\components\backend\BackendController
+class ReleaseNotesController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
