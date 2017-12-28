@@ -13,7 +13,7 @@ DateTimePickerAsset::register($this);
 ?>
 <div class="row">
 	<div class="col-md-6">
-            <?php Pjax::begin(['id' => 'enrolment-view']); ?>
+        <?php Pjax::begin(['id' => 'enrolment-view']); ?>
 		<?=
 		$this->render('_details', [
 			'model' => $model,
@@ -21,21 +21,18 @@ DateTimePickerAsset::register($this);
 		?>
             <?php Pjax::end(); ?>
         </div>
-	
-		<?php Pjax::begin(['id' => 'course-endDate']); ?>
 	<div class="col-md-6">
 		<?=
-		$this->render('_schedule', [
+		$this->render('schedule/view', [
 			'model' => $model,
 		]);
 		?>
-	</div>
-<?php Pjax::end(); ?>
+	</div>	
 </div>
 
 <?php if ($model->course->program->isPrivate()) : ?>
+   <div class="row">
 <?php Pjax::begin(['id' => 'enrolment-pfi']); ?>
-                <div class="row">
 			<div class="col-md-6">
 			<?=
 			$this->render('_pf', [
@@ -43,8 +40,17 @@ DateTimePickerAsset::register($this);
 			]);
 			?>
                         </div>
-                </div>
 <?php Pjax::end(); ?>
+<?php Pjax::begin(['id' => 'enrolment-vacation']); ?>
+	<div class="col-md-6">
+		<?=
+		$this->render('_vacation', [
+			'model' => $model,
+		]);
+		?>
+	</div>
+<?php Pjax::end(); ?>
+                </div>
 	<?php endif; ?>
 <?php
 Modal::begin([
@@ -63,7 +69,13 @@ Modal::begin([
 	'id' => 'enrolment-edit-modal',
 ]);
 ?>
-<div id="enrolment-edit-content"></div>
+<div id="enrolment-edit-content">
+  <?php echo $this->render('/enrolment/schedule/_form-update', [
+			'course' => $model->course,
+			'courseSchedule' => $model->course->courseSchedule,
+			'model' => $model,
+		]);?>
+</div>
 <?php Modal::end(); ?>
 <?php
 Modal::begin([
@@ -205,7 +217,7 @@ Modal::begin([
 			$.pjax.reload({url: url, container: "#enrolment-view", replace: false, async: false, timeout: 4000});
                         $.pjax.reload({url: url, container: "#enrolment-pfi", replace: false, async: false, timeout: 4000});
                         $.pjax.reload({url: url, container: "#lesson-index", replace: false, async: false, timeout: 4000});
-                        $.pjax.reload({url: url, container: "#course-endDate", replace: false, async: false, timeout: 4000});
+                        //$.pjax.reload({url: url, container: "#course-endDate", replace: false, async: false, timeout: 4000});
 			$.pjax.reload({url: url, container: "#lesson-schedule", replace: false, async: false, timeout: 4000});
 		}
 	}

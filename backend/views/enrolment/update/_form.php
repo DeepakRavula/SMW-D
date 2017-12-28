@@ -46,4 +46,5 @@ use kartik\datetime\DateTimePicker;
             <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'enrolment-edit-save-btn']) ?>
 </div>        
 </div>
+    </div>
     <?php ActiveForm::end(); ?>
