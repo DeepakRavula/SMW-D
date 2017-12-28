@@ -158,7 +158,7 @@ class CourseController extends \common\components\controllers\BaseController
                 try {
                     $model->startDate           = $this->getCourseDate($courseScheduleModels);
                     $model->lessonsPerWeekCount = count($courseScheduleModels);
-                    $model->locationId = \Yii::$app->session->get('location_id');
+                    $model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
                     if ($flag = $model->save(false)) {
                         foreach ($courseScheduleModels as $courseScheduleModel) {
                             $courseScheduleModel->courseId = $model->id;
