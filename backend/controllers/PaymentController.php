@@ -16,7 +16,6 @@ use yii\web\Response;
 use common\models\CreditUsage;
 use yii\filters\ContentNegotiator;
 use common\models\User;
-use common\models\timelineEvent\TimelineEventPayment;
 /**
  * PaymentsController implements the CRUD actions for Payments model.
  */
@@ -124,9 +123,6 @@ class PaymentController extends \common\components\controllers\BaseController
     public function actionDelete($id)
     {
         $model        = $this->findModel($id);
-        $userModel = User::findOne(['id' => Yii::$app->user->id]);
-        $model->on(Payment::EVENT_DELETE, [new TimelineEventPayment(), 'deletePayment']);
-        $model->userName = $userModel->publicIdentity;
         $modelInvoice = $model->invoice;
         if ($model->isCreditApplied()) {
             $creditUsedPaymentModel        = $model->creditUsage->debitUsagePayment;
@@ -143,9 +139,8 @@ class PaymentController extends \common\components\controllers\BaseController
         } elseif ($model->isAccountEntry()) {
             $modelInvoice->lineItem->delete();
         }
-        $model->delete();
-        $modelInvoice->save();
-        $model->trigger(Payment::EVENT_DELETE);
+            $model->delete();
+        	$modelInvoice->save();
 		
         return [
             'status' => true,
@@ -188,10 +183,7 @@ class PaymentController extends \common\components\controllers\BaseController
     {
         $invoice = Invoice::findOne($id);
         $paymentModel = new Payment();
-		$userModel = User::findOne(['id' => Yii::$app->user->id]);
-        $paymentModel->on(Payment::EVENT_CREATE, [new TimelineEventPayment(), 'create']);
-		$paymentModel->userName = $userModel->publicIdentity;
-        $db = \Yii::$app->db;
+	$db = \Yii::$app->db;
         $transaction = $db->beginTransaction();
         $request = Yii::$app->request;
         if ($paymentModel->load($request->post())) {
@@ -219,9 +211,6 @@ class PaymentController extends \common\components\controllers\BaseController
     {
         $model = Invoice::findOne(['id' => $id]);
         $paymentModel = new Payment();
-		$userModel = User::findOne(['id' => Yii::$app->user->id]);
-        $paymentModel->on(Payment::EVENT_CREATE, [new TimelineEventPayment(), 'create']);
-		$paymentModel->userName = $userModel->publicIdentity;
         $paymentModel->setScenario('apply-credit');
         $request = Yii::$app->request;
         if ($paymentModel->load($request->post())) {
@@ -266,10 +255,6 @@ class PaymentController extends \common\components\controllers\BaseController
     public function actionEdit($id)
     {
         $model = Payment::findOne(['id' => $id]);
-        $userModel = User::findOne(['id' => Yii::$app->user->id]);
-        $model->on(Payment::EVENT_EDIT, [new TimelineEventPayment(), 'editPayment'], ['oldAttributes' => $model->getOldAttributes()]);
-        $model->userName = $userModel->publicIdentity;
-        $lastAmount = $model->amount;
         $request = Yii::$app->request;
         if ($model->load($request->post())) {
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');

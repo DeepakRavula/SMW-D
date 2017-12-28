@@ -4,6 +4,7 @@ use common\models\Course;
 use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
+<div class="grid-row-open"> 
 <?php
 echo GridView::widget([
 	'id' => 'enrolment-grid',
@@ -70,52 +71,7 @@ echo GridView::widget([
 				return !empty($data->course->endDate) ? Yii::$app->formatter->asDate($data->course->endDate) : null;
 			},
 		],
-			[
-			'class' => 'yii\grid\ActionColumn',
-			'template' => '{view}{reschedule}{add-vacation}{delete}',
-			'buttons' => [
-				'view' => function ($url, $model) {
-					$url = Url::to(['enrolment/view', 'id' => $model->id]);
-					return Html::a('<i class="fa fa-eye"></i>', $url, [
-							'title' => Yii::t('yii', 'View'),
-							'class' => ['btn-primary btn-xs m-r-10']
-					]);
-				},
-				'reschedule' => function ($url, $model, $key) {
-					return Html::a('<i class="fa fa-book"></i>', '#', [
-							'id' => 'enrolment-edit-' . $model->id,
-							'title' => Yii::t('yii', 'Reschedule Lessons'),
-							'class' => 'enrolment-edit m-r-10 btn-info btn-xs'
-					]);
-				},
-				'add-vacation' => function ($url, $model) {
-					return Html::a('<i class="fa fa-plane"></i>', '#', [
-							'title' => Yii::t('yii', 'Add Vacation'),
-							'class' => ['btn-success btn-xs m-r-10 add-new-vacation']
-					]);
-				},
-				'delete' => function ($url, $model, $key) {
-					return Html::a('<i class="fa fa-trash-o"></i>', [
-            'enrolment/delete', 'id' => $model->id
-        ], [
-							'id' => 'enrolment-delete-' . $model->id,
-							'title' => Yii::t('yii', 'Delete'),
-							'class' => 'enrolment-delete m-r-10 btn-danger btn-xs',
-					]);
-				},
-			],
-			'visibleButtons' => [
-				'add-vacation' => function ($model, $key, $index) {
-					return $model->course->program->isPrivate();
-				},
-				'reschedule' => function ($model, $key, $index) {
-					return $model->course->program->isPrivate();
-				},
-				'delete' => function ($model, $key, $index) {
-					return $model->course->program->isPrivate();
-				},
-			]
-		],
 	],
 ]);
 ?>
+</div>

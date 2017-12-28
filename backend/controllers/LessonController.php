@@ -12,6 +12,7 @@ use yii\data\ActiveDataProvider;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
 use yii\web\Controller;
+use common\models\log\LogHistory;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Note;
@@ -21,17 +22,15 @@ use yii\web\Response;
 use common\models\Payment;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
-use common\models\timelineEvent\TimelineEventEnrolment;
-use common\models\LessonLog;
+use common\models\log\LessonLog;
 use yii\base\ErrorException;
 use common\models\User;
-use common\models\timelineEvent\TimelineEventLesson;
 use yii\filters\ContentNegotiator;
 use common\models\PaymentCycle;
 use common\models\Invoice;
-use common\models\InvoiceLog;
 use common\models\lesson\BulkReschedule;
 use common\models\lesson\BulkRescheduleLesson;
+use common\models\log\StudentLog;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -50,7 +49,7 @@ class LessonController extends \common\components\controllers\BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['modify-classroom', 'merge', 'update-field',
-                    'validate-on-update', 'modify-lesson', 'edit-classroom', 
+                    'validate-on-update', 'modify-lesson', 'edit-classroom',
                     'payment', 'substitute','update'],
                 'formatParam' => '_format',
                 'formats' => [
@@ -59,7 +58,7 @@ class LessonController extends \common\components\controllers\BaseController
             ],
         ];
     }
-		
+
     /**
      * Lists all Lesson models.
      *
@@ -80,7 +79,7 @@ class LessonController extends \common\components\controllers\BaseController
             'dataProvider' => $dataProvider,
         ]);
     }
-    
+
     /**
      * Displays a single Lesson model.
      *
@@ -90,7 +89,7 @@ class LessonController extends \common\components\controllers\BaseController
      */
     public function actionView($id)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $model = $this->findModel($id);
         $model->duration = $model->fullDuration;
         $notes = Note::find()
@@ -122,16 +121,20 @@ class LessonController extends \common\components\controllers\BaseController
         ]);
         $payments = Payment::find()
 			->joinWith(['lessonCredit' => function($query) use($id){
-				$query->andWhere(['lesson_payment.lessonId' => $id]);	
+				$query->andWhere(['lesson_payment.lessonId' => $id]);
 			}]);
         $paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments,
         ]);
+        $logDataProvider =new ActiveDataProvider([
+			'query' => LogHistory::find()
+			->lesson($id) ]);
         return $this->render('view', [
             'model' => $model,
             'noteDataProvider' => $noteDataProvider,
             'studentDataProvider' => $studentDataProvider,
-            'paymentsDataProvider' => $paymentsDataProvider
+            'paymentsDataProvider' => $paymentsDataProvider,
+            'logDataProvider' => $logDataProvider,
         ]);
     }
 
@@ -146,7 +149,7 @@ class LessonController extends \common\components\controllers\BaseController
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $model = new Lesson();
-        $model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $model->locationId = \Yii::$app->session->get('location_id');
         $model->setScenario(Lesson::SCENARIO_CREATE);
         $request = Yii::$app->request;
         $studentModel = Student::findOne($studentId);
@@ -188,7 +191,13 @@ class LessonController extends \common\components\controllers\BaseController
             $lessonDate = \DateTime::createFromFormat('Y-m-d g:i A', $model->date);
             $model->date = $lessonDate->format('Y-m-d H:i:s');
             if ($model->save()) {
-                $response = [
+
+                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                $model->on(Lesson::EVENT_AFTER_INSERT,
+                    [new LessonLog(), 'extraLessonCreate'],
+                    ['loggedUser' => $loggedUser]);
+                $model->trigger(Lesson::EVENT_AFTER_INSERT);
+                $response   = [
                     'status' => true,
                     'url' => Url::to(['lesson/view', 'id' => $model->id])
                 ];
@@ -243,7 +252,7 @@ class LessonController extends \common\components\controllers\BaseController
 	public function actionFetchDuration($id)
 	{
         $model = $this->findModel($id);
-		return $model->duration;	
+		return $model->duration;
 	}
     /**
      * Updates an existing Lesson model.
@@ -258,10 +267,6 @@ class LessonController extends \common\components\controllers\BaseController
 		$request = Yii::$app->request;
         $model = $this->findModel($id);
 		$model->setScenario(Lesson::SCENARIO_EDIT);
-		$model->on(Lesson::EVENT_RESCHEDULE_ATTEMPTED,
-            [new LessonReschedule(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
-	 $model->on(Lesson::EVENT_RESCHEDULED,
-       [new LessonLog(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);	
 		if ($model->load($request->post())) {
 			if($model->save()) {
 				return [
@@ -273,7 +278,7 @@ class LessonController extends \common\components\controllers\BaseController
 					'errors' => ActiveForm::validate($model)
 				];
 			}
-		}		
+		}
 	}
     public function actionUpdate($id)
     {
@@ -285,12 +290,6 @@ class LessonController extends \common\components\controllers\BaseController
         $oldTeacherId = $model->teacherId;
         $user = User::findOne(['id'=>Yii::$app->user->id]);
         $model->userName = $user->publicIdentity;
-        $model->on(Lesson::EVENT_RESCHEDULE_ATTEMPTED,
-                [new LessonReschedule(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
-        $model->on(Lesson::EVENT_RESCHEDULED,
-                [new LessonLog(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
-        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-		
 		$request = Yii::$app->request;
 		$userModel = $request->post('User');
 		if ($model->hasExpiryDate()) {
@@ -298,7 +297,7 @@ class LessonController extends \common\components\controllers\BaseController
 			$privateLessonModel->load(Yii::$app->getRequest()->getBodyParams(), 'PrivateLesson');
 			$privateLessonModel->expiryDate = (new \DateTime($privateLessonModel->expiryDate))->format('Y-m-d H:i:s');
 			$privateLessonModel->save();
-		} 	
+		}
         if ($model->load($request->post()) || !empty($userModel)) {
 			if(empty($model->date)) {
 				$model->date =  $oldDate;
@@ -364,7 +363,7 @@ class LessonController extends \common\components\controllers\BaseController
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = \Yii::$app->session->get('location_id');
         $model = Lesson::find()->location($locationId)
             ->where(['lesson.id' => $id, 'isDeleted' => false])->one();
         if ($model !== null) {
@@ -394,7 +393,7 @@ class LessonController extends \common\components\controllers\BaseController
 		}
 
 		$holidayConflictedLessonIds = $course->getHolidayLessons();
-		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);	
+		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
 		return [
 			'conflicts' => $conflicts,
 			'lessonIds' => $conflictedLessonIds
@@ -412,7 +411,7 @@ class LessonController extends \common\components\controllers\BaseController
 			$lessons = Lesson::find()
 				->orderBy(['lesson.date' => SORT_ASC])
 				->andWhere(['IN', 'lesson.id', $conflictedLessons['lessonIds']])
-				->all();	
+				->all();
 		}
 		return $lessons;
 	}
@@ -434,7 +433,7 @@ class LessonController extends \common\components\controllers\BaseController
 				'status' => false,
 				'errors' => ActiveForm::validate($lesson),
 			];
-		}	
+		}
 		return $response;
 	}
 	public function resolveAllLesson($conflictedLessons, $lesson)
@@ -444,19 +443,19 @@ class LessonController extends \common\components\controllers\BaseController
 			if(! empty($lesson->date)) {
 				$day = (new \DateTime($lesson->date))->format('N');
 				$lessonDay = (new \DateTime($conflictedLesson->date))->format('N');
-				$time = (new \DateTime($lesson->date))->format('H:i:s'); 
+				$time = (new \DateTime($lesson->date))->format('H:i:s');
 				list($hour, $minute, $second) = explode(':', $time);
 				$dayList = Course::getWeekdaysList();
 				$dayName = $dayList[$day];
 				if($day === $lessonDay) {
-					$lessonDate = new \DateTime($conflictedLesson->date); 
+					$lessonDate = new \DateTime($conflictedLesson->date);
 					$lessonDate->setTime($hour, $minute, $second);
 					$conflictedLesson->date = $lessonDate->format('Y-m-d H:i:s');
 				} else {
-					$lessonDate = new \DateTime($conflictedLesson->date); 
+					$lessonDate = new \DateTime($conflictedLesson->date);
 					$lessonDate->modify('next ' . $dayName);
 					$lessonDate->setTime($hour, $minute, $second);
-					$conflictedLesson->date = $lessonDate->format('Y-m-d H:i:s');	
+					$conflictedLesson->date = $lessonDate->format('Y-m-d H:i:s');
 				}
 			} else {
 				$conflictedLesson->status = Lesson::STATUS_UNSCHEDULED;
@@ -488,7 +487,7 @@ class LessonController extends \common\components\controllers\BaseController
 				$conflictedLessons = $this->fetchConflictedLesson($model->course);
 				$response = $this->resolveAllLesson($conflictedLessons, $model);
 			}
-		} 
+		}
 		return $response;
     }
 
@@ -513,7 +512,7 @@ class LessonController extends \common\components\controllers\BaseController
 		$conflictedLessonIdsCount = count($conflictedLessons['lessonIds']);
 		$unscheduledLessonCount = Lesson::find()
 			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED, 'isConfirmed' => false])
-			->count();	
+			->count();
 		$query = Lesson::find()
 			->orderBy(['lesson.date' => SORT_ASC]);
 		if(! $showAllReviewLessons) {
@@ -626,7 +625,7 @@ class LessonController extends \common\components\controllers\BaseController
 				$oldLesson->status = Lesson::STATUS_CANCELED;
 				$oldLesson->save();
 			}
-			$courseDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');	
+			$courseDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
 			if($endDate->format('d-m-Y') == $courseDate && !empty($lesson)) {
 				$courseModel->updateAttributes([
 					'teacherId' => $lesson->teacherId,
@@ -653,7 +652,7 @@ class LessonController extends \common\components\controllers\BaseController
 				} catch(ErrorException $exception) {
 					Yii::$app->errorHandler->logException($exception);
 				}
-				
+
 				$bulkRescheduleLesson = new BulkRescheduleLesson();
 				$bulkRescheduleLesson->bulkRescheduleId = $bulkReschedule->id;
 				$bulkRescheduleLesson->lessonId = $lesson->id;
@@ -676,9 +675,12 @@ class LessonController extends \common\components\controllers\BaseController
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
             $enrolmentModel->setPaymentCycle($enrolmentModel->firstLesson->date);
-            $user = User::findOne(['id' => Yii::$app->user->id]);
-			$enrolmentModel->on(Enrolment::EVENT_CREATE,[new TimelineEventEnrolment(), 'create'], ['userName' => $user->publicIdentity]);
-			$enrolmentModel->trigger(Enrolment::EVENT_CREATE);
+
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+            $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
+                [new StudentLog(), 'addEnrolment'],
+                ['loggedUser' => $loggedUser]);
+
         }
 		if ($courseModel->program->isPrivate()) {
 			if(! empty($rescheduleBeginDate)) {
@@ -686,6 +688,7 @@ class LessonController extends \common\components\controllers\BaseController
 				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
 			} else {
 				$invoice = $courseModel->enrolment->firstPaymentCycle->createProFormaInvoice();
+                                $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
 				return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
 			}
 		} else {
@@ -700,12 +703,12 @@ class LessonController extends \common\components\controllers\BaseController
 	}
 	public function getRescheduleLessonType($courseModel, $endDate) {
 		$courseEndDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
-		$type = BulkReschedule::TYPE_RESCHEDULE_FUTURE_LESSONS;	
+		$type = BulkReschedule::TYPE_RESCHEDULE_FUTURE_LESSONS;
 		if($courseEndDate !== $endDate) {
-			$type = BulkReschedule::TYPE_RESCHEDULE_BULK_LESSONS;	
-		} 
+			$type = BulkReschedule::TYPE_RESCHEDULE_BULK_LESSONS;
+		}
 		return $type;
-	} 
+	}
     public function actionInvoice($id)
     {
         $model = Lesson::findOne(['id' => $id]);
@@ -744,7 +747,6 @@ class LessonController extends \common\components\controllers\BaseController
             if(!$model->hasProFormaInvoice()) {
                 if (!$model->paymentCycle->hasProFormaInvoice()) {
                     $invoice = $model->paymentCycle->createProFormaInvoice();
-
                     return $this->redirect(['invoice/view', 'id' => $invoice->id]);
                 } else {
                     $model->addPrivateLessonLineItem($model->paymentCycle->proFormaInvoice);
@@ -758,15 +760,6 @@ class LessonController extends \common\components\controllers\BaseController
             if (!$model->hasProFormaInvoice()) {
                 $locationId = $model->enrolment->student->customer->userLocation->location_id;
                 $invoice = new Invoice();
-                if (is_a(Yii::$app, 'yii\console\Application')) {
-                    $roleUser = User::findByRole(User::ROLE_BOT);
-                    $botUser = end($roleUser);
-                    $loggedUser = User::findOne(['id' => $botUser->id]);
-                } else {
-                    $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-                }
-                $invoice->userName = $loggedUser->userProfile->fullName;
-                $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
                 $invoice->user_id = $model->enrolment->student->customer->id;
                 $invoice->location_id = $locationId;
                 $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
@@ -829,26 +822,26 @@ class LessonController extends \common\components\controllers\BaseController
 
         return $response;
     }
-    
+
     public function actionPayment($lessonId, $enrolmentId)
     {
         $payments = Payment::find()
                 ->joinWith(['lessonCredit' => function($query) use($lessonId, $enrolmentId){
-                        $query->andWhere(['lesson_payment.lessonId' => $lessonId, 
-                            'lesson_payment.enrolmentId' => $enrolmentId]);	
+                        $query->andWhere(['lesson_payment.lessonId' => $lessonId,
+                            'lesson_payment.enrolmentId' => $enrolmentId]);
                 }]);
         $paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments,
         ]);
         $data = $this->renderAjax('payment/view', [
             'paymentsDataProvider' => $paymentsDataProvider
-        ]); 
+        ]);
         return [
             'status' => true,
             'data' => $data
         ];
     }
-    
+
     public function actionSubstitute($id)
     {
         $model = $this->findModel($id);
@@ -870,7 +863,7 @@ class LessonController extends \common\components\controllers\BaseController
             ];
         }
     }
-    
+
     public function actionUnschedule($id)
     {
         $model = $this->findModel($id);
@@ -885,6 +878,6 @@ class LessonController extends \common\components\controllers\BaseController
                 'body' => 'Lesson cannot be unscheduled',
             ]);
         }
-        return $this->redirect(['lesson/view', 'id' => $model->id]); 
+        return $this->redirect(['lesson/view', 'id' => $model->id]);
     }
 }

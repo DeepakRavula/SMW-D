@@ -264,9 +264,6 @@ class Item extends \yii\db\ActiveRecord
         }
         if (!$invoiceLineItemModel) {
             $invoiceLineItemModel = new InvoiceLineItem();
-            $userModel = User::findOne(['id' => Yii::$app->user->id]);
-            $invoiceLineItemModel->on(InvoiceLineItem::EVENT_CREATE, [new InvoiceLog(), 'newLineItem']);
-            $invoiceLineItemModel->userName = $userModel->publicIdentity;
             $invoiceLineItemModel->invoice_id = $invoice->id;
             $invoiceLineItemModel->item_id = $this->id;
             $invoiceLineItemModel->unit = true;
@@ -277,7 +274,6 @@ class Item extends \yii\db\ActiveRecord
             if (!$invoiceLineItemModel->save()) {
                 Yii::error('Line item create error: '.VarDumper::dumpAsString($invoiceLineItemModel->getErrors()));
             }
-            $invoiceLineItemModel->trigger(InvoiceLineItem::EVENT_CREATE);
         }
         return $invoiceLineItemModel;
     }
