@@ -233,14 +233,16 @@ class StudentController extends \common\components\controllers\BaseController
     {
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $model      = Student::findOne($id);
+		$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+        $model->on(Student::EVENT_MERGE, [new StudentLog(), 'merge'], ['loggedUser' => $loggedUser]);
         $model->setScenario(Student::SCENARIO_MERGE);
         $students   = Student::find()
-                        ->active()
-                        ->notDeleted()
-                        ->customer($model->customer_id)
-                        ->location($locationId)
-                        ->andWhere(['NOT', ['student.id' => $id]])
-                        ->all();
+			->active()
+			->notDeleted()
+			->customer($model->customer_id)
+			->location($locationId)
+			->andWhere(['NOT', ['student.id' => $id]])
+			->all();
         $data       = $this->renderAjax('_merge', [
             'students' => $students,
             'model' => $model,
@@ -266,6 +268,7 @@ class StudentController extends \common\components\controllers\BaseController
                     $examResult->save(false);
                 }
                 $studentModel->delete();
+				$model->trigger(Student::EVENT_MERGE);
                 return [
                     'status' => true,
                     'message' => 'Student successfully merged!'

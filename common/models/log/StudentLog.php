@@ -11,7 +11,6 @@ use common\models\Course;
 
 class StudentLog extends Log
 {
-
     public function create($event)
     {
         $studentModel       = $event->sender;
@@ -115,7 +114,29 @@ class StudentLog extends Log
             $this->addLink($log, $teacherIndex, $teacherPath);
         }
     }
-
+    public function merge($event)
+    {
+        $studentModel       = $event->sender;
+        $loggedUser         = end($event->data);
+        $data               = Student::find(['id' => $studentModel->id])->asArray()->one();
+        $mergedStudent      = Student::findOne(['id' => $studentModel->studentId]);
+        $studentIndex       = $studentModel->fullName;
+        $studentPath        = Url::to(['/student/view', 'id' => $studentModel->id]);
+        $message            = $loggedUser->publicIdentity . ' merged '. $mergedStudent->fullName . ' with {{' . $studentIndex.'}}';
+        $object             = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
+        $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_MERGE]);
+        $log                = new Log();
+        $log->logObjectId   = $object->id;
+        $log->logActivityId = $activity->id;
+        $log->message       = $message;
+        $log->data          = Json::encode($data);
+        $log->createdUserId = $loggedUser->id;
+        $log->locationId    = $studentModel->customer->userLocation->location_id;
+        if ($log->save()) {
+            $this->addHistory($log, $studentModel, $object);
+            $this->addLink($log, $studentIndex, $studentPath);
+        }
+    }
     public function addLink($log, $index, $path)
     {
         $logLink          = new LogLink();
