@@ -3,16 +3,14 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Student;
 use common\models\ExamResult;
+use common\models\log\StudentLog;
 use common\models\User;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Url;
-use common\models\ExamResultLog;
 use yii\filters\ContentNegotiator;
 
 /**
@@ -75,13 +73,14 @@ class ExamResultController extends \common\components\controllers\BaseController
      */
     public function actionCreate($studentId)
     {   
-        
-                $model = new ExamResult();
-			$model->studentId = $studentId;
-			 $data  = $this->renderAjax('/student/exam-result/_form', [
-            'model' => $model,
-        ]); 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $model = new ExamResult();
+		$model->studentId = $studentId;
+		$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+		$model->on(ExamResult::EVENT_AFTER_INSERT, [new StudentLog(), 'addExamResult'], ['loggedUser' => $loggedUser]);
+		$data = $this->renderAjax('/student/exam-result/_form', [
+			'model' => $model,
+		]);
+		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			return [
 				'status' => true
 			];
