@@ -10,15 +10,12 @@ use common\models\Invoice;
 ?>
 
 <?php
-if($model->type===Invoice::TYPE_INVOICE)
-{
-$boxTools = $this->render('_button', [
-	'model' => $model,
-]);
-}
-else
-{
- $boxTools = "";
+if ($model->type === Invoice::TYPE_INVOICE) {
+    $boxTools = $this->render('_button', [
+        'model' => $model,
+    ]);
+} else {
+    $boxTools = "";
 }
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
