@@ -8,6 +8,7 @@ use yii\base\InvalidConfigException;
 use yii\web\Cookie;
 use common\models\Location;
 use yii\helpers\ArrayHelper;
+use common\components\location\LocationChangedEvent;
 use yii\web\UrlNormalizerRedirectException;
 
 /**
@@ -18,7 +19,7 @@ use yii\web\UrlNormalizerRedirectException;
  */
 class UrlManager extends \codemix\localeurls\UrlManager
 {
-    const EVENT_LANGUAGE_CHANGED = 'locationChanged';
+    const EVENT_LOCATION_CHANGED = 'locationChanged';
 
     /**
      * @var array list of available location codes. More specific patterns
@@ -410,11 +411,11 @@ class UrlManager extends \codemix\localeurls\UrlManager
      */
     protected function persistLocation($location)
     {
-        if ($this->hasEventHandlers(self::EVENT_LANGUAGE_CHANGED)) {
+        if ($this->hasEventHandlers(self::EVENT_LOCATION_CHANGED)) {
             $oldLocation = $this->loadPersistedLocation();
             if ($oldLocation !== $location) {
                 Yii::trace("Triggering locationChanged event: $oldLocation -> $location", __METHOD__);
-                $this->trigger(self::EVENT_LANGUAGE_CHANGED, new LocationChangedEvent([
+                $this->trigger(self::EVENT_LOCATION_CHANGED, new LocationChangedEvent([
                     'oldLocation' => $oldLocation,
                     'location' => $location,
                 ]));
