@@ -290,7 +290,10 @@ $this->params['label'] = $this->render('_title', [
                       $.pjax.reload({container: "#enrolment-grid", replace: false, async: false, timeout: 6000});
                       $.pjax.reload({container: "#student-log", replace: false, async: false, timeout: 6000});
                       $('#group-enrol-modal').modal('hide');
-                 }
+                        $('#course-spinner').hide();
+                        $('#group-enrol-modal').modal('hide');
+                        window.location.href = response.url;
+                }
              }
          });
          return false;
