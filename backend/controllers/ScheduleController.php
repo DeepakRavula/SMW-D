@@ -7,7 +7,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
 use common\models\Lesson;
-use yii\web\Controller;
+use common\models\Location;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\Program;
@@ -64,7 +64,7 @@ class ScheduleController extends \common\components\controllers\BaseController
      */
     public function actionIndex()
     {
-        $locationId             = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId             = Location::findOne(['slug' => Yii::$app->location])->id;
         $teachersAvailabilities = TeacherAvailability::find()
             ->joinWith(['userLocation' => function ($query) use ($locationId) {
                 $query->joinWith(['userProfile'])
@@ -129,19 +129,16 @@ class ScheduleController extends \common\components\controllers\BaseController
 		return $data;
 	}
 
-    public function getLessons($date, $programId, $teacherId)
+    public function getLessons($date, $teacherId)
     {
         $lessons = Lesson::find()
-			->joinWith(['course' => function ($query) use($programId, $teacherId) {
-				$query->andWhere(['course.locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
-				if(!empty($programId) && $programId != 'undefined') {
-					$query->andWhere(['course.programId' => $programId]);
-				}
+			->joinWith(['course' => function ($query) use($teacherId) {
+				$query->andWhere(['course.locationId' => Location::findOne(['slug' => Yii::$app->location])->id]);
 				if(!empty($teacherId) && $teacherId != 'undefined') {
 					$query->andWhere(['course.teacherId' => $teacherId]);
 				}
 			}])
-			->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+			->scheduledOrCompleted()
 			->isConfirmed()
 			->present()
 			->andWhere(['DATE(lesson.date)' => $date->format('Y-m-d')])
@@ -154,7 +151,7 @@ class ScheduleController extends \common\components\controllers\BaseController
     {
         $date      = \DateTime::createFromFormat('Y-m-d', $date);
 		$classrooms = Classroom::find()
-			->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
+			->andWhere(['locationId' => Location::findOne(['slug' => Yii::$app->location])->id])
 			->all();
 		foreach ($classrooms as $classroom) {
 			$resources[] = [
@@ -167,7 +164,7 @@ class ScheduleController extends \common\components\controllers\BaseController
 
     public function actionRenderResources($date, $programId, $teacherId)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
 		if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')
 			&& ($programId == 'undefined')) {
@@ -322,7 +319,7 @@ class ScheduleController extends \common\components\controllers\BaseController
 	}
     public function actionRenderDayEvents($date, $programId, $teacherId)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
 		$date = Carbon::parse($date);
 		$events = [];
 		if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')
@@ -404,7 +401,7 @@ class ScheduleController extends \common\components\controllers\BaseController
 				}
 			}
 		}
-		$lessons = $this->getLessons($date, $programId, $teacherId);
+		$lessons = $this->getLessons($date, $teacherId);
 		foreach ($lessons as &$lesson) {
 			$toTime = new \DateTime($lesson->date);
 			$length = explode(':', $lesson->fullDuration);
@@ -452,7 +449,7 @@ class ScheduleController extends \common\components\controllers\BaseController
 			->all();
 		$locationAvailability = LocationAvailability::find()
 			->andWhere([
-				'locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id,
+				'locationId' => Location::findOne(['slug' => Yii::$app->location])->id,
 				'day' => $date->format('N')
 			])
 			->one();
@@ -471,9 +468,8 @@ class ScheduleController extends \common\components\controllers\BaseController
 				'rendering'  => 'background',
 			];
 		}
-		$programId = null;
 		$teacherId = null;
-		$lessons = $this->getLessons($date, $programId, $teacherId);
+		$lessons = $this->getLessons($date, $teacherId);
 		foreach ($lessons as &$lesson) {
 			if(! empty($lesson->classroomId)) {
 				$toTime = new \DateTime($lesson->date);

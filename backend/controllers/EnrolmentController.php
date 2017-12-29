@@ -9,7 +9,7 @@ use common\models\Lesson;
 use common\models\Course;
 use yii\data\ActiveDataProvider;
 use backend\models\search\EnrolmentSearch;
-use yii\web\Controller;
+use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -124,8 +124,10 @@ class EnrolmentController extends \common\components\controllers\BaseController
                 [new StudentLog(), 'addGroupEnrolment'],
                 ['loggedUser' => $loggedUser]);
             $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
+            $invoice = $enrolmentModel->createProFormaInvoice();
             return [
                 'status' => true,
+                'url' => Url::to(['/invoice/view', 'id' => $invoice->id])
             ];
         }
     }
