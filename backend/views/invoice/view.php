@@ -495,9 +495,6 @@ Modal::end();
                     $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
 					$('input[name="Payment[amount]"]').val(response.amount);
                     $('#payment-edit-modal').modal('hide');
-				}else
-				{
-				 $('#payment-edit-form').yiiActiveForm('updateMessages', response.errors, true);
 				}
 			}
 			});

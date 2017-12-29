@@ -82,7 +82,7 @@ $columns = [
 <?php \yii\widgets\Pjax::end(); ?>	
 </div>
 <?php
-	$amount = 0.0;
+	$amount = 0;
 	if ($model->total > $model->invoicePaymentTotal) {
 		$amount = $model->balance;
 	}
@@ -98,14 +98,14 @@ $(document).ready(function(){
         var amount = $(this).closest('tr').data('amount');
         var id = $(this).closest('tr').data('id');
         var type = $(this).closest('tr').data('source');    
-        var amountNeeded = '<?= $amount; ?>';  
+        var amountNeeded = <?= $amount; ?>; 
         if(amount > amountNeeded) {
-            $('input[name="Payment[amount]"]').val(amountNeeded);          
+            $('input[name="Payment[amount]"]').val((amountNeeded).toFixed(2));          
         } else {
-            $('input[name="Payment[amount]"]').val(amount);          
+            $('input[name="Payment[amount]"]').val((amount).toFixed(2));          
         }
-        $('input[name="Payment[amountNeeded]"]').val(amountNeeded);          
-        $('#payment-credit').val(amount);
+        $('input[name="Payment[amountNeeded]"]').val((amountNeeded).toFixed(2));          
+        $('#payment-credit').val((amount).toFixed(2));
 		$('#payment-sourceid').val(id);
 		$('#payment-sourcetype').val(type);
     });

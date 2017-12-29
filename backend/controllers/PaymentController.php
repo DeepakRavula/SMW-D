@@ -32,7 +32,8 @@ class PaymentController extends \common\components\controllers\BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['edit', 'invoice-payment', 'credit-payment', 'update', 'delete'],
+                'only' => ['edit', 'invoice-payment', 'credit-payment', 'update', 'delete',
+                    'validate-on-edit'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -134,13 +135,13 @@ class PaymentController extends \common\components\controllers\BaseController
             $creditAppliedPaymentInvoiceModel = $model->debitUsage->creditUsagePayment->invoice;
             $creditAppliedPaymentModel = $model->debitUsage->creditUsagePayment;
             $creditAppliedPaymentModel->delete();
-                $creditAppliedPaymentInvoiceModel->save();
+            $creditAppliedPaymentInvoiceModel->save();
             $model->debitUsage->delete();
         } elseif ($model->isAccountEntry()) {
             $modelInvoice->lineItem->delete();
         }
-            $model->delete();
-        	$modelInvoice->save();
+        $model->delete();
+        $modelInvoice->save();
 		
         return [
             'status' => true,
@@ -251,6 +252,31 @@ class PaymentController extends \common\components\controllers\BaseController
             return $response;
         }
     }
+    
+    public function actionValidateOnEdit($id)
+    {
+        $errors = [];
+        $model = Payment::findOne(['id' => $id]);
+        $request = Yii::$app->request;
+        $lastAmount = $model->amount;
+        if ($model->load($request->post())) {
+            $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+            $model->lastAmount = $lastAmount;
+            if ($model->isCreditApplied()) {
+                $model->setScenario(Payment::SCENARIO_CREDIT_APPLIED);
+                if (!$model->validate()) {
+                    $errors = ActiveForm::validate($model);
+                }
+            }
+            if ($model->isCreditUsed()) {
+                $model->setScenario(Payment::SCENARIO_CREDIT_USED);
+                if (!$model->validate()) {
+                    $errors = ActiveForm::validate($model);
+                }
+            }
+            return $errors;
+        }
+    }
 
     public function actionEdit($id)
     {
@@ -260,109 +286,19 @@ class PaymentController extends \common\components\controllers\BaseController
         if ($model->load($request->post())) {
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $model->lastAmount = $lastAmount;
-                if ($model->isAccountEntry()) {
-                        $model->setScenario(Payment::SCENARIO_OPENING_BALANCE);
-                        $response = Yii::$app->runAction('payment/edit-account-entry',
-                                ['model' => $model]);
-                } 
-                if ($model->isOtherPayments()) {
-                        $response = Yii::$app->runAction('payment/edit-other-payments',
-                                ['model' => $model]);
-                }
-                if ($model->isCreditApplied()) {
-                        $response = Yii::$app->runAction('payment/edit-credit-applied',
-                                ['model' => $model]);
-                }
-                if ($model->isCreditUsed()) {
-                        $model->setScenario(Payment::SCENARIO_CREDIT_USED);
-                        $response = Yii::$app->runAction('payment/edit-credit-used',
-                                ['model' => $model]);
-                }
-                return $response;
+            if ($model->isAccountEntry()) {
+                    $response = $model->editAccountEntry();
+            } 
+            if ($model->isOtherPayments()) {
+                    $response = $model->editOtherPayments();
+            }
+            if ($model->isCreditApplied()) {
+                    $response = $model->editCreditApplied();
+            }
+            if ($model->isCreditUsed()) {
+                    $response = $model->editCreditUsed();
+            }
+            return $response;
         }
-    }
-
-    public function actionEditOtherPayments($model)
-    {
-        $invoiceModel = $model->invoice;
-        $invoiceModel->balance = $invoiceModel->total - abs($model->amount);
-        $invoiceModel->save();
-        $model->save();
-        $result = [
-            'status' => true,
-            'amount' => $model->invoiceBalance,
-        ];
-
-        return $result;
-    }
-    
-    public function actionEditAccountEntry($model)
-    {
-        $invoiceModel          = $model->invoice;
-        $lineItemModel         = $model->invoice->lineItem;
-        $lineItemModel->amount = -($model->amount);
-        $model->save();
-        if ($model->amount < 0) {
-            $model->delete();
-            $lineItemModel->amount = abs($model->amount);
-            $invoiceModel->subTotal = $lineItemModel->amount;
-            $invoiceModel->total    = $invoiceModel->subTotal + $invoiceModel->tax;
-            $invoiceTotal = $invoiceModel->subTotal + $invoiceModel->tax;
-            $invoiceModel->balance = $invoiceTotal - abs($model->amount);
-
-        }
-        $lineItemModel->save();
-        $invoiceModel->save();
-
-        $result = [
-            'status' => true,
-            'amount' => $model->invoiceBalance,
-        ];
-
-        return $result;
-    }
-
-    public function actionEditCreditApplied($model)
-    {
-        $model->setScenario(Payment::SCENARIO_CREDIT_APPLIED);
-        $model->difference = $model->amount - $model->lastAmount;
-        if ($model->validate()) {
-            $model->save();
-
-            $result = [
-            	'status' => true,
-		'amount' => $model->invoiceBalance + $model->difference,
-            ];
-        } else {
-            $errors = ActiveForm::validate($model);
-            $result = [
-                'status' => false,
-                'errors' => $errors['payment-amount'],
-            ];
-        }
-
-        return $result;
-    }
-
-    public function actionEditCreditUsed($model)
-    {
-        $model->setScenario(Payment::SCENARIO_CREDIT_USED);
-        $model->difference = $model->amount - $model->lastAmount;
-        if ($model->validate()) {
-            $model->save();
-
-            $result = [
-                'status' => true,
-                'amount' => $model->invoiceBalance + $model->difference,
-            ];
-        } else {
-            $errors = ActiveForm::validate($model);
-            $result = [
-                'status' => false,
-                'errors' => $errors,
-            ];
-        }
-
-        return $result;
     }
 }

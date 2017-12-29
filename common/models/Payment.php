@@ -62,16 +62,16 @@ class Payment extends ActiveRecord
             [['amount'], 'validateCreditApplied', 'on' => self::SCENARIO_CREDIT_APPLIED],
             [['amount'], 'validateCreditUsed', 'on' => self::SCENARIO_CREDIT_USED],
             ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
-                    self::SCENARIO_CREDIT_USED, ]],
+                    self::SCENARIO_CREDIT_USED]],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => self::SCENARIO_CREDIT_USED],
-           [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType', 
+            [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType', 
                'sourceId', 'credit', 'isDeleted', 'transactionId', 'difference'], 'safe'],
         ];
     }
 
     public function validateLessThanCredit($attributes)
     {
-        if ((float) $this->credit < (float) $this->amount) {
+        if (round($this->credit, 2) < round($this->amount, 2)) {
             return $this->addError($attributes, 'Insufficient Credit');
         }
     }
@@ -88,9 +88,10 @@ class Payment extends ActiveRecord
 
     public function validateCreditApplied($attributes)
     {
-        if ($this->amount > $this->lastAmount) {
-            if ($this->creditAppliedInvoice->balance >= 0 || abs($this->creditAppliedInvoice->balance)
-                < abs($this->difference)) {
+        $this->difference = $this->amount - $this->lastAmount;
+        if (round($this->amount, 2) > round($this->lastAmount, 2)) {
+            if ($this->creditAppliedInvoice->balance >= 0 || round(abs($this->creditAppliedInvoice->balance), 2)
+                < round(abs($this->difference), 2)) {
                 return $this->addError($attributes, 'Insufficient Credit');
             }
         }
@@ -98,8 +99,10 @@ class Payment extends ActiveRecord
 
     public function validateCreditUsed($attributes)
     {
-        if (abs($this->amount) > abs($this->lastAmount)) {
-            if ($this->invoice->balance >= 0 || abs($this->invoice->balance) < abs($this->difference)) {
+        $this->difference = $this->amount - $this->lastAmount;
+        if (round(abs($this->amount), 2) > round(abs($this->lastAmount), 2)) {
+            if ($this->invoice->balance >= 0 || round(abs($this->invoice->balance), 2) < 
+                    round(abs($this->difference), 2)) {
                 return $this->addError($attributes, 'Insufficient Credit');
             }
         }
@@ -237,9 +240,7 @@ class Payment extends ActiveRecord
             if ($this->isCreditUsed()) {
                 $this->updateCreditUsed();
             }
-            if(!empty($this->invoiceId)) {
-                $this->invoice->save();
-            }
+            $this->invoice->save();
             return parent::afterSave($insert, $changedAttributes);
         }
         if(!empty($this->invoiceId)) {
@@ -265,7 +266,7 @@ class Payment extends ActiveRecord
             'amount' => -abs($this->amount),
         ]);
 
-        return $creditUsedPaymentModel->invoice->save();
+        return $creditUsedPaymentModel->invoice ? $creditUsedPaymentModel->invoice->save() : true;
     }
 
     private function updateCreditUsed()
@@ -312,5 +313,54 @@ class Payment extends ActiveRecord
     public function afterSoftDelete()
     {
         return $this->invoice->save();
+    }
+    
+    public function editAccountEntry()
+    {
+        $this->setScenario(Payment::SCENARIO_OPENING_BALANCE);
+        $invoiceModel          = $this->invoice;
+        $lineItemModel         = $this->invoice->lineItem;
+        $lineItemModel->amount = -($this->amount);
+        $this->save();
+        if ($this->amount < 0) {
+            $this->delete();
+            $lineItemModel->amount = abs($this->amount);
+            $invoiceModel->subTotal = $lineItemModel->amount;
+            $invoiceModel->total    = $invoiceModel->subTotal + $invoiceModel->tax;
+            $invoiceTotal = $invoiceModel->subTotal + $invoiceModel->tax;
+            $invoiceModel->balance = $invoiceTotal - abs($this->amount);
+        }
+        $lineItemModel->save();
+        $invoiceModel->save();
+        return [
+            'status' => true
+        ];
+    }
+    
+    public function editOtherPayments()
+    {
+        $this->save();
+        $this->invoice->save();
+        return [
+            'status' => true
+        ];
+    }
+    
+    public function editCreditApplied()
+    {
+        $this->setScenario(Payment::SCENARIO_CREDIT_APPLIED);
+        $this->save();
+        return [
+            'status' => true
+        ];
+    }
+    
+    public function editCreditUsed()
+    {
+        $this->setScenario(Payment::SCENARIO_CREDIT_USED);
+        $this->save();
+        return [
+            'status' => true
+        ];
     }
 }

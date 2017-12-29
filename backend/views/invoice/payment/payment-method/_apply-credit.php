@@ -89,6 +89,7 @@ echo GridView::widget([
         'value' => 'date',
         ],
         [
+        'format' => 'decimal',
         'label' => 'Credit',
         'value' => 'amount',
         ],

@@ -13,9 +13,10 @@ use common\models\PaymentMethod;
 <div class=" p-10">
 <?php $form = ActiveForm::begin([
     'id' => 'payment-edit-form',
+        'validationUrl' => Url::to(['payment/validate-on-edit', 'id' => $model->id]),
 	'action' => Url::to(['payment/edit', 'id' => $model->id]),
-	'enableAjaxValidation' => false,
-	'enableClientValidation' => false
+	'enableAjaxValidation' => true,
+	'enableClientValidation' => true
 ]); ?>
    <div class="row">
 	   <div class="col-md-5">
@@ -33,7 +34,9 @@ use common\models\PaymentMethod;
             ?>
         </div>
         <div class="col-md-4">
-            <?= $form->field($model, 'amount')->textInput();?>
+            <?= $form->field($model, 'amount')->textInput([
+                'value' => \Yii::$app->formatter->asDecimal($model->amount, 2)
+            ]);?>
         </div>
        <?php if ($model->payment_method_id === PaymentMethod::TYPE_CHEQUE) : ?>
            <div class="col-md-3">
