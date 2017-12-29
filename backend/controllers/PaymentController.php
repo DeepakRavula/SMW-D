@@ -256,6 +256,7 @@ class PaymentController extends \common\components\controllers\BaseController
     {
         $model = Payment::findOne(['id' => $id]);
         $request = Yii::$app->request;
+        $lastAmount = $model->amount;
         if ($model->load($request->post())) {
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $model->lastAmount = $lastAmount;
@@ -358,7 +359,7 @@ class PaymentController extends \common\components\controllers\BaseController
             $errors = ActiveForm::validate($model);
             $result = [
                 'status' => false,
-                'errors' => $errors['payment-amount'],
+                'errors' => $errors,
             ];
         }
 

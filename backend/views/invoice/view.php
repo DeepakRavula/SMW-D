@@ -497,7 +497,7 @@ Modal::end();
                     $('#payment-edit-modal').modal('hide');
 				}else
 				{
-				 $(this).yiiActiveForm('updateMessages', response.errors, true);
+				 $('#payment-edit-form').yiiActiveForm('updateMessages', response.errors, true);
 				}
 			}
 			});
