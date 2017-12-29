@@ -184,6 +184,7 @@ function setTeachers(teachers){
         items: teachers,
         value: null,
         placeholder: 'Select Teacher',
+        allowClear: true
     });
 }
 
