@@ -13,7 +13,7 @@ use common\models\ClassroomUnavailability;
 /**
  * ClassRoomController implements the CRUD actions for Classroom model.
  */
-class ClassroomController extends \common\components\backend\BackendController
+class ClassroomController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
@@ -33,7 +33,7 @@ class ClassroomController extends \common\components\backend\BackendController
      */
     public function actionIndex()
     {
-		$locationId = \Yii::$app->session->get('location_id');
+		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $dataProvider = new ActiveDataProvider([
             'query' => Classroom::find()
 				->andWhere(['locationId' => $locationId]),
@@ -75,7 +75,7 @@ class ClassroomController extends \common\components\backend\BackendController
         $model = new Classroom();
 
         if ($model->load(Yii::$app->request->post())) {
-			$model->locationId = \Yii::$app->session->get('location_id');
+			$model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
 			$model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {

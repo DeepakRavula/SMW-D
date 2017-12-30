@@ -17,7 +17,7 @@ use common\models\discount\CustomerDiscount;
 /**
  * CustomerDiscountController implements the CRUD actions for CustomerDiscount model.
  */
-class CustomerPaymentPreferenceController extends \common\components\backend\BackendController
+class CustomerPaymentPreferenceController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

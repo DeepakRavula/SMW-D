@@ -11,11 +11,7 @@ use yii\widgets\Pjax;
 	<?=	Html::a('<i title="Delete" class="fa fa-trash"></i>', ['delete', 'id' => $model->id],
 		[ 
 			'class' => 'm-r-10 btn btn-box-tool',
-            'data' => [
-            	'confirm' => 'Are you sure you want to delete this invoice?',
-            	'method' => 'post',
-            ],
-			'id' => 'invoice-delete-button',
+           		'id' => 'invoice-delete-button',
 		])?>
     <?php endif; ?>
 	<?php else : ?>

@@ -11,7 +11,7 @@ use yii\filters\VerbFilter;
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
-class CronController extends \common\components\backend\BackendController
+class CronController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

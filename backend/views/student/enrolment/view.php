@@ -34,7 +34,7 @@ use common\models\discount\EnrolmentDiscount;
     </div>
     <?php \yii\widgets\Pjax::end(); ?>
 <?php
-    $locationId = \Yii::$app->session->get('location_id');
+    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])
@@ -47,27 +47,12 @@ use common\models\discount\EnrolmentDiscount;
     $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 <?php
-Modal::begin([
-	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
-	'id' => 'enrolment-edit-modal',
-]);
-?>
-<div id="enrolment-edit-content"></div>
-<?php Modal::end(); ?>
-<?php
     Modal::begin([
         'header' => '<h4 class="m-0">Delete Enrolment Preview</h4>',
         'id' => 'enrolment-preview-modal',
     ]);
     Modal::end();
 ?>
-<?php
-    Modal::begin([
-        'header' => '<h4 class="m-0">Add Vacation</h4>',
-        'id' => 'vacation-modal',
-    ]);?>
-	<div class="vacation-content"></div>
-   <?php Modal::end();?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">New Enrolment</h4>',
     'id' => 'private-enrol-modal',
@@ -88,11 +73,3 @@ Modal::begin([
 <div id="group-course-content"></div>
 
 <?php Modal::end(); ?>
-<script type="text/javascript">
-$(document).ready(function() {
-	$(document).on('click', '.enrolment-edit-cancel', function() {
-		$('#enrolment-edit-modal').modal('hide');
-		return false;
-	});
-});
-</script>

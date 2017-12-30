@@ -11,7 +11,6 @@ use yii\base\Model;
 use Yii;
 use yii\helpers\ArrayHelper;
 use common\models\Qualification;
-use common\models\timelineEvent\UserLog;
 /**
  * Create user form.
  */
@@ -157,11 +156,11 @@ class UserForm extends Model
                 $auth->assign($auth->getRole($this->roles), $model->getId());
             }
 
-            $userLocationModel = UserLocation::findOne(['user_id' => $model->getId(), 'location_id' => \Yii::$app->session->get('location_id')]);
+            $userLocationModel = UserLocation::findOne(['user_id' => $model->getId(), 'location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
             if (empty($userLocationModel) && $this->roles !== User::ROLE_ADMINISTRATOR) {
                 $userLocationModel = new UserLocation();
                 $userLocationModel->user_id = $model->getId();
-                $userLocationModel->location_id = \Yii::$app->session->get('location_id');
+                $userLocationModel->location_id = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
                 $userLocationModel->save();
             }
 
@@ -172,12 +171,7 @@ class UserForm extends Model
             $userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;
             $userProfileModel->save();
-			$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-            $userProfileModel->loggedUser = $loggedUser->publicIdentity;
-            $roles = Yii::$app->authManager->getRolesByUser($userProfileModel->user_id);
-            $role=end($roles);
-            $userProfileModel->on(UserProfile::EVENT_USER_CREATE, [new UserLog(), 'userCreate'], ['role' => $role->name]);
-            $userProfileModel->trigger(UserProfile::EVENT_USER_CREATE);
+			
             return !$model->hasErrors();
         }
 

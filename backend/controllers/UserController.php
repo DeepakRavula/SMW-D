@@ -30,7 +30,6 @@ use common\models\Program;
 use common\models\UserContact;
 use common\models\LocationAvailability;
 use common\models\InvoiceLineItem;
-use common\models\timelineEvent\TimelineEventLink;
 use yii\helpers\Url;
 use common\models\UserEmail;
 use common\models\Label;
@@ -45,7 +44,7 @@ use trntv\filekit\actions\UploadAction;
 /**
  * UserController implements the CRUD actions for User model.
  */
-class UserController extends \common\components\backend\BackendController
+class UserController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
@@ -58,7 +57,7 @@ class UserController extends \common\components\backend\BackendController
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson', 'update-primary-email', 'delete'],
+                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson', 'update-primary-email', 'delete', 'create'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -412,7 +411,7 @@ class UserController extends \common\components\backend\BackendController
         $model = $this->findModel($id);
         $session = Yii::$app->session;
         $request = Yii::$app->request;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $locationAvailabilityMinTime = LocationAvailability::find()
             ->where(['locationId' => $locationId])
             ->orderBy(['fromTime' => SORT_ASC])
@@ -476,11 +475,7 @@ class UserController extends \common\components\backend\BackendController
         $emailModels = new UserEmail();
         $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['role_name'];
-        if ($model->roles === User::ROLE_STAFFMEMBER) {
-            if (!Yii::$app->user->can('createStaff')) {
-                throw new ForbiddenHttpException();
-            }
-        }
+       
         $request = Yii::$app->request;
         if ($model->load($request->post()) && $model->save() && $emailModels->load($request->post())) {
 			if(!empty($emailModels->email))
@@ -495,7 +490,12 @@ class UserController extends \common\components\backend\BackendController
 			$emailModels->save();
                         }
 			return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
-        }
+        } else {
+			return [
+				'status' => false,
+				'errors' => ActiveForm::validate($model),
+			];
+		}
     }
 
 	public function actionEditProfile($id)
@@ -555,7 +555,7 @@ class UserController extends \common\components\backend\BackendController
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
         $lastRole = end($roles);
         $adminModel = User::findOne(['id' => $id]);
@@ -605,13 +605,7 @@ class UserController extends \common\components\backend\BackendController
 				$address->delete();
 			}
 		}
-		if(!empty($model->logs)) {
-			foreach($model->logs as $log) {
-				TimelineEventLink::deleteAll(['timelineEventId' => $log->timelineEvent->id]);
-				$log->timelineEvent->delete();
-				$log->delete();
-			}
-		}		
+		
 	}
 	public function actionDelete($id)
     {

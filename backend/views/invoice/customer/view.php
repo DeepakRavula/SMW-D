@@ -6,10 +6,17 @@ use yii\widgets\Pjax;
 use yii\helpers\Html;
 use common\models\User;
 use yii\helpers\Url;
+use common\models\Invoice;
 ?>
-<?php $boxTools = $this->render('_button', [
-	'model' => $model,
-]);
+
+<?php
+if ($model->type === Invoice::TYPE_INVOICE) {
+    $boxTools = $this->render('_button', [
+        'model' => $model,
+    ]);
+} else {
+    $boxTools = "";
+}
 LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
 	'boxTools' => $boxTools,

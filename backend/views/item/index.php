@@ -13,7 +13,7 @@ Select2Asset::register($this);
 /* @var $model common\models\ItemCategory */
 
 $this->title = 'Items';
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), ['#'], ['class' => 'btn btn-primary btn-sm', 'id' => 'create-item']);
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), ['#'], ['id' => 'create-item']);
 $this->params['show-all'] = $this->render('_button', [
 	'searchModel' => $searchModel
 ]);

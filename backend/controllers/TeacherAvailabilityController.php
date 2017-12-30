@@ -19,11 +19,11 @@ use yii\filters\ContentNegotiator;
 use common\models\TeacherRoom;
 use yii\bootstrap\ActiveForm;
 use common\models\Location;
-use common\models\TeacherAvailabilityLog;
+
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
-class TeacherAvailabilityController extends \common\components\backend\BackendController
+class TeacherAvailabilityController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
@@ -85,7 +85,7 @@ class TeacherAvailabilityController extends \common\components\backend\BackendCo
     public function actionCreate()
     {
         $model = new TeacherAvailability();
-        $model->location_id = \Yii::$app->session->get('location_id');
+        $model->location_id = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -130,13 +130,10 @@ class TeacherAvailabilityController extends \common\components\backend\BackendCo
     {
         $status=false;
         $availabilityModel = $this->findModel($id);
-        $user = User::findOne(['id' => Yii::$app->user->id]);
-        $availabilityModel->userName = $user->publicIdentity;
-        $availabilityModel->on(TeacherAvailability::EVENT_DELETE, [new TeacherAvailabilityLog(), 'deleteAvailability']);
-
+      
         if ($availabilityModel->delete()) {
             $status=true;
-            $availabilityModel->trigger(TeacherAvailability::EVENT_DELETE);
+            
         }
 
         return [
@@ -167,7 +164,7 @@ class TeacherAvailabilityController extends \common\components\backend\BackendCo
         $session = Yii::$app->session;
         $response = Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $teacherAvailabilities = TeacherAvailability::find()
         ->joinWith(['userLocation' => function ($query) use ($id) {
             $query->joinWith(['userProfile' => function ($query) use ($id) {
@@ -189,7 +186,7 @@ class TeacherAvailabilityController extends \common\components\backend\BackendCo
         $lessons = [];
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => \Yii::$app->session->get('location_id')]);
+                $query->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
             }])
             ->where(['lesson.teacherId' => $id])
         	->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
@@ -227,9 +224,6 @@ class TeacherAvailabilityController extends \common\components\backend\BackendCo
         $teacherAvailabilityModel = TeacherAvailability::findOne($id);
         if (empty ($teacherAvailabilityModel)) {
             $teacherAvailabilityModel = new TeacherAvailability();
-            $userModel = User::findOne(['id' => Yii::$app->user->id]);
-            $teacherAvailabilityModel->userName = $userModel->publicIdentity;
-            $teacherAvailabilityModel->on(TeacherAvailability::EVENT_CREATE, [new TeacherAvailabilityLog(), 'create']);
             $teacherAvailabilityModel->teacher_location_id = $teacherModel->userLocation->id;
             $roomModel = new TeacherRoom();
         } else if (empty ($teacherAvailabilityModel->teacherRoom)) {
@@ -239,8 +233,6 @@ class TeacherAvailabilityController extends \common\components\backend\BackendCo
         }
         if (!empty($teacherAvailabilityModel)) {
             $userModel = User::findOne(['id' => Yii::$app->user->id]);
-            $teacherAvailabilityModel->userName = $userModel->publicIdentity;
-            $teacherAvailabilityModel->on(TeacherAvailability::EVENT_UPDATE, [new TeacherAvailabilityLog(), 'edit'], ['oldAttributes' => $teacherAvailabilityModel->getOldAttributes()]);
             $roomModel->availabilityId = $teacherAvailabilityModel->id;
         }
         $roomModel->teacher_location_id = $teacherModel->userLocation->id;
@@ -296,7 +288,7 @@ class TeacherAvailabilityController extends \common\components\backend\BackendCo
     public function actionEvents($id)
     {
         $session    = Yii::$app->session;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $location   = Location::findOne($locationId);
         $events     = [];
         foreach ($location->locationAvailabilities as $availability) {
@@ -337,7 +329,7 @@ class TeacherAvailabilityController extends \common\components\backend\BackendCo
     {
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => \Yii::$app->session->get('location_id')]);
+                $query->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
             }])
             ->where(['lesson.teacherId' => $teacherId])
             ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])

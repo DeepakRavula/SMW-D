@@ -53,18 +53,19 @@ $config = [
             },
         ],
         'request' => [
+            'class' => '\common\components\location\Request',
             'cookieValidationKey' => env('FRONTEND_COOKIE_VALIDATION_KEY'),
-			'baseUrl' => '',
+            'baseUrl' => '',
         ],
         'urlManager' => [
-            'class' => 'common\components\codemix\UrlManager',
-            'enableDefaultLanguageUrlCode' => true,
-            'enableLanguagePersistence' => false,
-            'ignoreLanguageUrlPatterns' => [
+            'class' => '\common\components\location\UrlManager',
+            'enableDefaultLocationUrlCode' => true,
+            'enableLocationPersistence' => false,
+            'ignoreLocationUrlPatterns' => [
                 '#^user/sign-in/(login|logout)#' => '#^user/(sign-in|login)#',
             ],
             'enablePrettyUrl' => true,
-            'showScriptName' => false
+            'showScriptName' => false,
         ],
         'user' => [
             'class' => 'yii\web\User',

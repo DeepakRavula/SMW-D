@@ -9,7 +9,7 @@ use common\models\Lesson;
 use common\models\Course;
 use yii\data\ActiveDataProvider;
 use backend\models\search\EnrolmentSearch;
-use yii\web\Controller;
+use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -34,10 +34,11 @@ use Carbon\Carbon;
 use common\models\discount\EnrolmentDiscount;
 use backend\models\discount\MultiEnrolmentDiscount;
 use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
+use common\models\log\StudentLog;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
-class EnrolmentController extends \common\components\backend\BackendController
+class EnrolmentController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
@@ -45,7 +46,7 @@ class EnrolmentController extends \common\components\backend\BackendController
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['post'],
+                    
                 ],
             ],
 			'contentNegotiator' => [
@@ -124,12 +125,19 @@ class EnrolmentController extends \common\components\backend\BackendController
 		$enrolmentModel->studentId = $studentId;
 		$enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
 		$enrolmentModel->isConfirmed = true;
-		if($enrolmentModel->save()) {
-			return [
-				'status' => true,
-			];
-		}
-	}
+		if ($enrolmentModel->save()) {
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+            $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
+                [new StudentLog(), 'addGroupEnrolment'],
+                ['loggedUser' => $loggedUser]);
+            $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
+            $invoice = $enrolmentModel->createProFormaInvoice();
+            return [
+                'status' => true,
+                'url' => Url::to(['/invoice/view', 'id' => $invoice->id])
+            ];
+        }
+    }
 
 	public function actionEdit($id)
     {
@@ -236,7 +244,7 @@ class EnrolmentController extends \common\components\backend\BackendController
 	}
 	public function actionAdd()
     {
-		$locationId = \Yii::$app->session->get('location_id');
+		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
 		$request = Yii::$app->request;
 		$course = new Course();
 		$courseSchedule = new CourseSchedule();
@@ -353,7 +361,7 @@ class EnrolmentController extends \common\components\backend\BackendController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		$data = $this->renderAjax('/student/enrolment/_form-update', [
+		$data = $this->renderAjax('/enrolment/schedule/_form-update', [
 			'course' => $model->course,	
 			'courseSchedule' => $model->course->courseSchedule,
 			'model' => $model,
@@ -412,14 +420,17 @@ class EnrolmentController extends \common\components\backend\BackendController
                 $lesson->delete();
             }
 			$model->delete();
-			return [
+		$response = [
 				'status' => true,
+				'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
 			];
-        } else {
-			return [
+		} else {
+			
+			$response		 = [
 				'status' => false,
 			];
 		}
+		return $response;
     }
 
     /**

@@ -22,7 +22,7 @@ use common\models\TaxCode;
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
-class InvoiceLineItemController extends \common\components\backend\BackendController
+class InvoiceLineItemController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
@@ -56,7 +56,7 @@ class InvoiceLineItemController extends \common\components\backend\BackendContro
    	public function actionFetchTaxPercentage($taxStatusId)
 	{
 		$today         = (new \DateTime())->format('Y-m-d H:i:s');
-        $locationId    = \Yii::$app->session->get('location_id');
+        $locationId    = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $locationModel = Location::findOne(['id' => $locationId]);
         $taxCode = TaxCode::find()
             ->joinWith(['taxStatus' => function ($query) use ($taxStatusId) {
@@ -211,13 +211,9 @@ class InvoiceLineItemController extends \common\components\backend\BackendContro
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $model->on(InvoiceLineItem::EVENT_DELETE, [new InvoiceLog(), 'deleteLineItem']);
-        $user = User::findOne(['id' => Yii::$app->user->id]);
-        $model->userName = $user->publicIdentity;
         $invoiceModel = $model->invoice;
         if($model->delete()) {
             $invoiceModel->save();
-            $model->trigger(InvoiceLineItem::EVENT_DELETE);
         }
         return [
             'status' => true,
@@ -230,7 +226,7 @@ class InvoiceLineItemController extends \common\components\backend\BackendContro
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = InvoiceLineItem::find()
                 ->joinWith(['invoice' => function ($query) use ($locationId) {
                     $query->where(['location_id' => $locationId]);

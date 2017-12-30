@@ -13,7 +13,7 @@ use yii\web\Response;
 /**
  * TaxCodeController implements the CRUD actions for TaxCode model.
  */
-class TaxCodeController extends \common\components\backend\BackendController
+class TaxCodeController extends \common\components\controllers\BaseController
 {
 
     public function behaviors()

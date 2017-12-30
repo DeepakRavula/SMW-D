@@ -22,7 +22,8 @@ class Student extends \yii\db\ActiveRecord
     const STATUS_INACTIVE = 2;
     const STATUS_DRAFT = 3;
 
-	const EVENT_UPDATE = 'update';
+    const TYPE_UPDATE = 'update';
+    const TYPE_CREATE='create';
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_CUSTOMER_MERGE = 'customer-merge';
 
@@ -205,7 +206,7 @@ class Student extends \yii\db\ActiveRecord
 	public static function count()
     {
           $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-          $locationId = \Yii::$app->session->get('location_id');
+          $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
             return self::find()
 			->location($locationId)
 			->notDeleted()

@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * LocationDebtController implements the CRUD actions for LocationDebt model.
  */
-class LocationDebtController extends \common\components\backend\BackendController
+class LocationDebtController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {

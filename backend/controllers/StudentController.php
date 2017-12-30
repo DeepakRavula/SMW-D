@@ -22,7 +22,7 @@ use yii\helpers\Url;
 /**
  * StudentController implements the CRUD actions for Student model.
  */
-class StudentController extends \common\components\backend\BackendController
+class StudentController extends \common\components\controllers\BaseController
 {
 	public function actions()
     {
@@ -111,7 +111,7 @@ class StudentController extends \common\components\backend\BackendController
         $model = $this->findModel($id);
 		$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
 		$oldAttributes = $model->getOldAttributes();
-		$model->on(Student::EVENT_UPDATE, [new StudentLog(), 'edit'], ['loggedUser' => $loggedUser, 'oldAttributes' => $oldAttributes]);
+		$model->on(Student::EVENT_AFTER_UPDATE, [new StudentLog(), 'edit'], ['loggedUser' => $loggedUser, 'oldAttributes' => $oldAttributes]);
 		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			if((int)$model->status === Student::STATUS_INACTIVE) {
 				return $this->redirect(['/student/index', 'StudentSearch[showAllStudents]' => false]);
@@ -132,7 +132,7 @@ class StudentController extends \common\components\backend\BackendController
     {
         $model = $this->findModel($id);
         $session = Yii::$app->session;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $request = Yii::$app->request;
         $post = $request->post();
         $courseModel = new Course();
@@ -184,7 +184,7 @@ class StudentController extends \common\components\backend\BackendController
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Student::find()
 			->notDeleted()
 			->location($locationId)
@@ -231,7 +231,7 @@ class StudentController extends \common\components\backend\BackendController
 
     public function actionMerge($id)
     {
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $model      = Student::findOne($id);
         $model->setScenario(Student::SCENARIO_MERGE);
         $students   = Student::find()

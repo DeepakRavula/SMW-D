@@ -15,7 +15,7 @@ use yii\web\Response;
 /**
  * VacationController implements the CRUD actions for Vacation model.
  */
-class VacationController extends \common\components\backend\BackendController
+class VacationController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
@@ -129,7 +129,7 @@ class VacationController extends \common\components\backend\BackendController
                 ]);
             }
         }
-        $data = $this->renderAjax('/student/vacation/_form',
+        $data = $this->renderAjax('/enrolment/_vacation-form',
             [
             'model' => new Vacation(),
             'enrolmentId' => $enrolmentId,

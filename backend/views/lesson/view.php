@@ -81,6 +81,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 
 				$logContent = $this->render('log', [
 					'model' => $model,
+                                        'logDataProvider' => $logDataProvider,
 				]);
 
 				$privateItem = [

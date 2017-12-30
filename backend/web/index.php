@@ -25,4 +25,4 @@ $config = \yii\helpers\ArrayHelper::merge(
     require(__DIR__.'/../config/web.php')
 );
 
-(new yii\web\Application($config))->run();
+(new \common\components\location\Application($config))->run();

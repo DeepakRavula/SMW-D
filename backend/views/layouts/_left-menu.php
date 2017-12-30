@@ -7,7 +7,6 @@ use common\models\Lesson;
 use common\models\Invoice;
 use common\models\Student;
 use common\models\Course;
-use common\models\timelineEvent\TimelineEvent;
 ?>
 <?php
 $userLocation = \common\models\UserLocation::findOne(['user_id' => Yii::$app->user->identity->id]);
@@ -299,15 +298,7 @@ echo Menu::widget([
 					'icon' => '<i class="fa  fa-upload"></i>',
 					'url' => ['/user/import'],
 				],
-				[
-					'label' => Yii::t('backend', 'Timeline'),
-					'icon' => '<i class="fa fa-bell"></i>',
-					'url' => ['/timeline-event/index'],
-					'badge' => TimelineEvent::find()
-						->andWhere(['locationId' => \Yii::$app->session->get('location_id')])
-						->today()->count(),
-					'badgeBgClass' => 'label-default'
-				],
+				
 			],
 		],
 			[

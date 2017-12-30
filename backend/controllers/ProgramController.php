@@ -17,7 +17,7 @@ use backend\models\search\ProgramSearch;
 /**
  * ProgramController implements the CRUD actions for Program model.
  */
-class ProgramController extends \common\components\backend\BackendController
+class ProgramController extends \common\components\controllers\BaseController
 {
 
     public function behaviors()
@@ -90,7 +90,7 @@ class ProgramController extends \common\components\backend\BackendController
      */
     public function actionView($id)
     {
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Student::find()
                 ->notDeleted()
                 ->joinWith(['enrolment' => function ($query) use ($locationId, $id) {
@@ -227,7 +227,7 @@ class ProgramController extends \common\components\backend\BackendController
                 'teacher_id' => $teacherId,
                 'isDeleted' => false
         ]);
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $qualifications = Qualification::find()
 			->joinWith(['teacher' => function ($query) use ($locationId) {
 				$query->joinWith(['userLocation' => function ($query) use ($locationId) {

@@ -154,7 +154,7 @@ $this->params['label'] = $this->render('_title', [
 <div id="student-merge-content"></div>
 <?php Modal::end(); ?>
 <?php
-    $locationId = \Yii::$app->session->get('location_id');
+    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])
@@ -288,8 +288,12 @@ $this->params['label'] = $this->render('_title', [
                  if (response.status) {
                      $('#course-spinner').hide();
                       $.pjax.reload({container: "#enrolment-grid", replace: false, async: false, timeout: 6000});
+                      $.pjax.reload({container: "#student-log", replace: false, async: false, timeout: 6000});
                       $('#group-enrol-modal').modal('hide');
-                 }
+                        $('#course-spinner').hide();
+                        $('#group-enrol-modal').modal('hide');
+                        window.location.href = response.url;
+                }
              }
          });
          return false;
@@ -310,25 +314,7 @@ $this->params['label'] = $this->render('_title', [
             });
             return false;
         });
-        $(document).on('click', '.add-new-vacation', function (e) {
-            var enrolmentId = $(this).parent().parent().data('key');	
-			$.ajax({
-				url    : '<?= Url::to(['vacation/create']); ?>?enrolmentId=' + enrolmentId,
-				type   : 'post',
-				dataType: "json",
-				data   : $(this).serialize(),
-				success: function(response)
-				{
-				   if(response.status)
-				   {
-                                        $('.vacation-content').html(response.data);
-                                        $('#vacation-modal').modal('show');
-                                        $('#vacation-modal .modal-dialog').css({'width': '650px'});
-                                    }
-				}
-			});
-			return false;
-        });
+   
         $(document).on('click', '.note-cancel-button', function (e) {
             $('#student-note-modal').modal('hide');
             return false;
@@ -428,31 +414,6 @@ $(document).on('click', '.evaluation-delete', function () {
 		});	
 		return false;
         });
-		$(document).on('click', '.vacation-delete', function () {
-		var vacationId = $(this).parent().parent().data('key');
-		bootbox.confirm({ 
-  			message: "Are you sure you want to delete this vacation?", 
-  			callback: function(result){
-				if(result) {
-				$('.bootbox').modal('hide');
-				$.ajax({
-					url: '<?= Url::to(['vacation/delete']); ?>?id=' + vacationId,
-					type: 'post',
-					success: function (response)
-					{
-						if (response.status)
-						{
-							$.pjax.reload({container: '#student-vacation', skipOuterContainers:true, timeout:6000});
-							$('#enrolment-delete-success').html('Vacation has been deleted successfully').fadeIn().delay(3000).fadeOut();
-						}
-					}
-				});
-				return false;	
-			}
-			}
-		});	
-		return false;
-        });
         $(document).on('beforeSubmit', '#lesson-form', function (e) {
             $.ajax({
                 url: $(this).attr('action'),
@@ -531,9 +492,7 @@ $(document).on('click', '.evaluation-delete', function () {
 		$(document).on('click', '.student-profile-cancel-button', function () {
 			$('#student-profile-modal').modal('hide');
 		});
-		$(document).on('click', '.vacation-cancel-button', function () {
-			$('#vacation-modal').modal('hide');
-		});
+		
 		$(document).on('beforeSubmit', '#student-form', function (e) {
             $.ajax({
                 url: $(this).attr('action'),

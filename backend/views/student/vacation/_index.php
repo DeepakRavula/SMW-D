@@ -53,20 +53,6 @@ $vacationDataProvider = new ActiveDataProvider([
                     return Yii::$app->formatter->asDate($data->toDate);
                 },
             ],
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'template' => '{delete}',
-                'buttons' => [
-                    'delete' => function ($url, $model, $key) {
-                        return Html::a('<i class="fa fa-trash-o"></i>', ['#'],
-                                [
-                                'id' => 'vacation-delete-'.$model->id,
-                                'title' => Yii::t('yii', 'Delete'),
-                                'class' => 'vacation-delete m-l-10 btn-danger btn-xs',
-                        ]);
-                    },
-                ],
-            ],
         ],
     ]);
     ?>

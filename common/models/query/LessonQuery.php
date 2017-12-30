@@ -359,4 +359,9 @@ class LessonQuery extends \yii\db\ActiveQuery
             $query->andWhere(['payment_cycle_lesson.id' => null]);
         }]);
     }
+    
+    public function scheduledOrCompleted()
+    {
+        return $this->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]]);
+    }
 }
