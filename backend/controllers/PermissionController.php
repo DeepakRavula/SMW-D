@@ -7,6 +7,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
+use common\models\Location;
 
 /**
  * NoteController implements the CRUD actions for Note model.
@@ -47,18 +48,20 @@ class PermissionController extends Controller
     }
 	public function actionAdd($role, $permission)
     {
+		$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 		$auth = Yii::$app->authManager;
         $role = $auth->getRole($role);
 		$permission = $auth->getPermission($permission);
-		$auth->addChild($role, $permission);
+		$auth->addChild($role, $permission, $locationId);
         return ['success'=>true];
     }
 	public function actionRemove($role, $permission)
     {
+		$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
       	$auth = Yii::$app->authManager;
         $role = $auth->getRole($role);
 		$permission = $auth->getPermission($permission);
-		$auth->removeChild($role, $permission);
+		$auth->removeChild($role, $permission, $locationId);
         return ['success'=>true]; 
     }
 }

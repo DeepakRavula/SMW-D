@@ -4,6 +4,7 @@ use yii\widgets\Pjax;
 use common\models\User;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use common\models\Location;
 
 $this->registerJsFile('/backend/web/js/permission/index.js', ['depends'=>\yii\web\JqueryAsset::className()]);
 $this->title = 'Permissions';
@@ -12,15 +13,24 @@ $this->title = 'Permissions';
     'id' => 'permission-table-pjax',
     'enablePushState' => false,
 ]) ?>
-<?php  
-	$statusTd = function($role, $roles, $permission) {
-		$parentPermissions = ArrayHelper::getColumn(Yii::$app->authManager->getChildren($role), 'name');
-		if(in_array($role, $roles) && in_array($permission->name,$parentPermissions)) {
-			return '<td class="remove-permission" data-role="'.$role.'" data-permission="'.$permission->name.'"><i class="fa fa-check"></i></td>';
+<?php
+$statusTd = function($role, $roles, $permission) {
+	$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+	$parentPermissionNames = ArrayHelper::getColumn(Yii::$app->authManager->getChildren($role), 'name');
+	$parentPermissions = ArrayHelper::toArray(Yii::$app->authManager->getChildren($role), 'name', 'location_id', 'name');
+	$addPermission = '<td class="add-permission"  data-role="' . $role . '" data-permission="' . $permission->name . '"><i class="fa fa-close"></i></td>';
+	if (in_array($permission->name, $parentPermissionNames)) {
+		$permissionLocation = $parentPermissions[$permission->name]['location_id'];
+		if ($locationId == $permissionLocation && in_array($role, $roles)) {
+			return '<td class="remove-permission" data-role="' . $role . '" data-permission="' . $permission->name . '"><i class="fa fa-check"></i></td>';
 		} else {
-			return '<td class="add-permission" data-role="'.$role.'" data-permission="'.$permission->name.'"><i class="fa fa-close"></i></td>';
+			return $addPermission;
 		}
-	};?>
+	} else {
+		return $addPermission;
+	}
+}
+?>
 <div class="row">
     <div class="col-md-12">
         <div class="box">

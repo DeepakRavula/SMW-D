@@ -20,7 +20,8 @@ echo Menu::widget([
 			'label' => Yii::t('backend', 'Dashboard'),
 			'icon' => '<i class="fa fa-tachometer"></i>',
 			'url' => ['/dashboard/index'],
-			'visible' => Yii::$app->user->can('viewDashboard'),
+			'visible' => Yii::$app->authManager->checkAccess(Yii::$app->user->id, 'viewDashboard', $userLocation->id),
+			//'visible' => Yii::$app->user->can('viewDashboard'),
 			'active' => (Yii::$app->controller->id === 'dashboard') ? true : false,
 		],
 			[
