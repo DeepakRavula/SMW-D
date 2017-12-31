@@ -376,7 +376,8 @@ $(document).on('click', '.evaluation-delete', function () {
 						if (response.status)
 						{
                             $('#new-exam-result-modal').modal('hide');
-							$.pjax.reload({container: '#student-exam-result-listing', timeout: 6000});
+							$.pjax.reload({container: '#student-exam-result-listing', timeout: 6000, async:false});
+							$.pjax.reload({container: '#student-log', timeout: 6000, async:false});
 						} else {
 							$('#evaluation-delete').html('You are not allowed to delete this evaluation.').fadeIn().delay(3000).fadeOut();
 						}
@@ -441,7 +442,8 @@ $(document).on('click', '.evaluation-delete', function () {
                 {
                     if (response.status)
                     {
-                        $.pjax.reload({container: '#student-exam-result-listing', timeout: 6000});
+                        $.pjax.reload({container: '#student-exam-result-listing', timeout: 6000, async:false});
+                        $.pjax.reload({container: '#student-log', timeout: 6000, async:false});
                         $('#new-exam-result-modal').modal('hide');
                     } else
                     {

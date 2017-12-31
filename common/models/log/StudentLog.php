@@ -7,6 +7,7 @@ use common\models\log\Log;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use common\models\Enrolment;
+use common\models\ExamResult;
 use common\models\Course;
 
 class StudentLog extends Log
@@ -16,46 +17,28 @@ class StudentLog extends Log
         $studentModel       = $event->sender;
         $loggedUser         = end($event->data);
         $data               = Student::find(['id' => $studentModel->id])->asArray()->one();
-        $studentIndex       = $studentModel->fullName;
-        $studentPath        = Url::to(['/student/view', 'id' => $studentModel->id]);
-        $message            = $loggedUser->publicIdentity.' created new student {{'.$studentIndex.'}}';
+        $index       = $studentModel->fullName;
+        $path        = Url::to(['/student/view', 'id' => $studentModel->id]);
+        $message            = $loggedUser->publicIdentity.' created new student {{'.$index.'}}';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
-        $log                = new Log();
-        $log->logObjectId   = $object->id;
-        $log->logActivityId = $activity->id;
-        $log->message       = $message;
-        $log->data          = Json::encode($data);
-        $log->createdUserId = $loggedUser->id;
-        $log->locationId    = $studentModel->customer->userLocation->location_id;
-        if ($log->save()) {
-            $this->addHistory($log, $studentModel, $object);
-            $this->addLink($log, $studentIndex, $studentPath);
-        }
+		$locationId = $studentModel->customer->userLocation->location->id;
+        $this->addLog($object, $activity, $message, $data, $loggedUser, $studentModel, $locationId, $index, $path);
     }
 
     public function edit($event)
     {
         $studentModel       = $event->sender;
         $loggedUser         = $event->data['loggedUser'];
-        $oldBirthDate       = $event->data['oldAttributes']['birth_date'];
+        $oldBirthDate       = !empty($event->data['oldAttributes']['birth_date']) ? Yii::$app->formatter->asDate($event->data['oldAttributes']['birth_date']) : 'Nil';
         $data               = Student::find(['id' => $studentModel->id])->asArray()->one();
-        $studentIndex       = $studentModel->fullName;
-        $studentPath        = Url::to(['/student/view', 'id' => $studentModel->id]);
-        $message            = $loggedUser->publicIdentity.' changed {{'.$studentIndex.'}}\'s date of birth from '.Yii::$app->formatter->asDate($oldBirthDate).' to '.Yii::$app->formatter->asDate($studentModel->birth_date);
+        $index       = $studentModel->fullName;
+        $path        = Url::to(['/student/view', 'id' => $studentModel->id]);
+        $message            = $loggedUser->publicIdentity.' changed {{'.$index.'}}\'s date of birth from '.$oldBirthDate.' to '.Yii::$app->formatter->asDate($studentModel->birth_date);
         $object             = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_UPDATE]);
-        $log                = new Log();
-        $log->logObjectId   = $object->id;
-        $log->logActivityId = $activity->id;
-        $log->message       = $message;
-        $log->data          = Json::encode($data);
-        $log->createdUserId = $loggedUser->id;
-        $log->locationId    = $studentModel->customer->userLocation->location_id;
-        if ($log->save()) {
-            $this->addHistory($log, $studentModel, $object);
-            $this->addLink($log, $studentIndex, $studentPath);
-        }
+		$locationId = $studentModel->customer->userLocation->location->id;
+        $this->addLog($object, $activity, $message, $data, $loggedUser, $studentModel, $locationId, $index, $path);
     }
 
     public function addEnrolment($event)
@@ -120,21 +103,52 @@ class StudentLog extends Log
         $loggedUser         = end($event->data);
         $data               = Student::find(['id' => $studentModel->id])->asArray()->one();
         $mergedStudent      = Student::findOne(['id' => $studentModel->studentId]);
-        $studentIndex       = $studentModel->fullName;
-        $studentPath        = Url::to(['/student/view', 'id' => $studentModel->id]);
-        $message            = $loggedUser->publicIdentity . ' merged '. $mergedStudent->fullName . ' with {{' . $studentIndex.'}}';
+        $index       = $studentModel->fullName;
+        $path        = Url::to(['/student/view', 'id' => $studentModel->id]);
+        $message            = $loggedUser->publicIdentity . ' merged '. $mergedStudent->fullName . ' with {{' . $index.'}}';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_MERGE]);
+		$locationId = $studentModel->customer->userLocation->location->id;
+        $this->addLog($object, $activity, $message, $data, $loggedUser, $studentModel, $locationId, $index, $path);
+    }
+	public function addExamResult($event)
+    {
+        $examResult       = $event->sender;
+        $loggedUser         = end($event->data);
+        $data               = ExamResult::find(['id' => $examResult->id])->asArray()->one();
+        $index       = $examResult->student->fullName;
+        $path        = Url::to(['/student/view', 'id' => $examResult->student->id]);
+        $message            = $loggedUser->publicIdentity . ' created a ' . $examResult->program->name . ' program examresult for {{'. $index . '}}';
+        $object             = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
+        $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
+		$locationId = $examResult->student->customer->userLocation->location->id;
+        $this->addLog($object, $activity, $message, $data, $loggedUser, $examResult->student, $locationId, $index, $path);
+    }
+	public function deleteExamResult($event)
+    {
+        $examResult       = $event->sender;
+        $loggedUser         = end($event->data);
+        $data               = ExamResult::find(['id' => $examResult->id])->asArray()->one();
+        $index       = $examResult->student->fullName;
+        $path        = Url::to(['/student/view', 'id' => $examResult->student->id]);
+        $message            = $loggedUser->publicIdentity . ' deleted ' . $examResult->program->name . ' program examresult for {{'. $index . '}}';
+        $object             = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
+        $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_DELETE]);
+		$locationId = $examResult->student->customer->userLocation->location->id;
+        $this->addLog($object, $activity, $message, $data, $loggedUser, $examResult->student, $locationId, $index, $path);
+    }
+	public function addLog($object, $activity, $message, $data, $loggedUser, $model, $locationId, $index, $path)
+    {
         $log                = new Log();
         $log->logObjectId   = $object->id;
         $log->logActivityId = $activity->id;
         $log->message       = $message;
         $log->data          = Json::encode($data);
         $log->createdUserId = $loggedUser->id;
-        $log->locationId    = $studentModel->customer->userLocation->location_id;
+        $log->locationId    = $locationId;
         if ($log->save()) {
-            $this->addHistory($log, $studentModel, $object);
-            $this->addLink($log, $studentIndex, $studentPath);
+            $this->addHistory($log, $model, $object);
+            $this->addLink($log, $index, $path);
         }
     }
     public function addLink($log, $index, $path)
