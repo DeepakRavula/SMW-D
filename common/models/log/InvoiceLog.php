@@ -4,11 +4,13 @@ namespace common\models\log;
 use Yii;
 use common\models\Invoice;
 use common\models\log\Log;
+use yii\helpers\Url;
+use yii\helpers\Json;
 
 class InvoiceLog extends Log
 {
 
-    public function addInvoice($event)
+    public function addProformaInvoice($event)
     {
         if(is_a(Yii::$app,'yii\console\Application')) {
 			$baseUrl = Yii::$app->getUrlManager()->baseUrl;
@@ -18,11 +20,10 @@ class InvoiceLog extends Log
 		$invoiceModel = $event->sender;	
 		$invoice = Invoice::find()->andWhere(['id' => $invoiceModel->id])->asArray()->one();
         $loggedUser     =   end($event->data);
-        $data           =   Invoice::find(['id' => $invoiceModel->id])->asArray()->one();
-        $object         =   LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
-        $activity       =   LogActivity::findOne(['name' => LogActivity::TYPE_DELETE]);
+        $object         =   LogObject::findOne(['name' => LogObject::TYPE_INVOICE]);
+        $activity       =   LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
         $locationId     =   $invoiceModel->location_id;
-        $this->addLog($object, $activity,$data,$locationId,$invoiceModel,$loggedUser);
+        $this->addLog($object, $activity,$invoice,$locationId,$invoiceModel,$loggedUser);
     }
 
     public function addLog($object, $activity, $data,$locationId,$model,$loggedUser)
