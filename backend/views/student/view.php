@@ -309,11 +309,11 @@ $this->params['label'] = $this->render('_title', [
                 {
                     if(response.status) {
                       $.pjax.reload({container: "#enrolment-grid",timeout: 6000, async:false});
+                      $.pjax.reload({container: "#student-lesson-listing",timeout: 6000, async:false});
                       $.pjax.reload({container: "#student-log",timeout: 6000, async:false});
                       $.pjax.reload({container: "#student-exam-result-listing",timeout: 6000, async:false});
                       $.pjax.reload({container: "#student-note",timeout: 6000, async:false});
                       $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
-                      $.pjax.reload({container: "#student-note",timeout: 6000, async:false}); 
                       $('#student-merge-modal').modal('hide');  
                     }
                 }

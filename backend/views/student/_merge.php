@@ -15,7 +15,7 @@ use yii\helpers\Html;
     <div class="row">
         <div class="col-md-6">
             <?= $form->field($model, 'studentId')->widget(Select2::classname(), [
-	    		'data' => ArrayHelper::map($students, 'id', 'first_name'),
+	    		'data' => ArrayHelper::map($students, 'id', 'fullName'),
 				'options' => [
                                     'id' => 'student'
 				],
