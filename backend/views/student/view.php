@@ -178,6 +178,7 @@ $this->params['label'] = $this->render('_title', [
                  center: 'title',
                  right: ''
              },
+			firstDay :1,
              allDaySlot: false,
              slotDuration: '00:15:00',
              titleFormat: 'DD-MMM-YYYY, dddd',

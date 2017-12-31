@@ -61,6 +61,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                      center: 'title',
                      right:'',
                      },
+					 firstDay :1,
                  allDaySlot: false,
  				height:450,
                  slotDuration: '00:15:00',
