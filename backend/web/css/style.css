@@ -285,3 +285,6 @@ dl {
 .summary {
     display: none;
 }
+.classroom-dialog {
+	width : 400px;
+}

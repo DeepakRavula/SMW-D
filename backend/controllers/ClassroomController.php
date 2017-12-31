@@ -9,6 +9,10 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\ClassroomUnavailability;
+use yii\filters\ContentNegotiator;
+use yii\widgets\ActiveForm;
+use yii\web\Response;
+
 
 /**
  * ClassRoomController implements the CRUD actions for Classroom model.
@@ -22,6 +26,14 @@ class ClassroomController extends \common\components\controllers\BaseController
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+			'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['create', 'update'],
+                'formatParam' => '_format',
+                'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
                 ],
             ],
         ];
@@ -73,16 +85,16 @@ class ClassroomController extends \common\components\controllers\BaseController
     public function actionCreate()
     {
         $model = new Classroom();
-
-        if ($model->load(Yii::$app->request->post())) {
+		if ($model->load(Yii::$app->request->post())) {
 			$model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
 			$model->save();
-            return $this->redirect(['view', 'id' => $model->id]);
+			return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
+            return [
+                'status' => false,
+                'errors' => ActiveForm::validate($model)
+            ];
+        } 
     }
 
     /**
@@ -96,11 +108,14 @@ class ClassroomController extends \common\components\controllers\BaseController
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return [
+				'status' => true,	
+			];
         } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+             return [
+                'status' => false,
+                'errors' => ActiveForm::validate($model)
+            ];
         }
     }
 
