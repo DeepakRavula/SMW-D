@@ -18,6 +18,9 @@ use yii\helpers\Url;
     <?php $form = ActiveForm::begin([
 		'action' => Url::to(['/student/update', 'id' => $model->id]),
 		'id' => 'student-form',
+        'enableAjaxValidation' => true,
+		'enableClientValidation' => false,
+        'validationUrl' => Url::to(['student/validate', 'id' => $model->id]),
 		]); ?>
 
     <div class="row">
