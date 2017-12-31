@@ -1,10 +1,13 @@
 <?php
+
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use common\models\Student;
 use yii\helpers\Html;
+
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+
 $this->registerCssFile("@web/css/student/style.css");
 $this->title = 'Students';
 $this->params['action-button'] = Html::a('<i class="fa fa-print f-s-18 m-l-10"></i>', '#', ['id' => 'print']);
