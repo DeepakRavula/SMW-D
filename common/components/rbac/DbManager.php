@@ -362,7 +362,6 @@ class DbManager extends \yii\rbac\DbManager
         if (!isset($row['data']) || ($data = @unserialize($row['data'])) === false) {
             $data = null;
         }
-
         return new $class([
             'name' => $row['name'],
             'type' => $row['type'],
@@ -371,6 +370,7 @@ class DbManager extends \yii\rbac\DbManager
             'data' => $data,
             'createdAt' => $row['created_at'],
             'updatedAt' => $row['updated_at'],
+			'location_id' => !empty($row['location_id']) ? $row['location_id'] : null 
         ]);
     }
 
@@ -395,97 +395,6 @@ class DbManager extends \yii\rbac\DbManager
         });
 
         return $roles;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getPermissionsByRole($roleName)
-    {
-        $childrenList = $this->getChildrenList();
-        $result = [];
-        $this->getChildrenRecursive($roleName, $childrenList, $result);
-        if (empty($result)) {
-            return [];
-        }
-        $query = (new Query)->from($this->itemTable)->where([
-            'type' => Item::TYPE_PERMISSION,
-            'name' => array_keys($result),
-        ]);
-        $permissions = [];
-        foreach ($query->all($this->db) as $row) {
-            $permissions[$row['name']] = $this->populateItem($row);
-        }
-        return $permissions;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getPermissionsByUser($userId)
-    {
-        if (empty($userId)) {
-            return [];
-        }
-
-        $directPermission = $this->getDirectPermissionsByUser($userId);
-        $inheritedPermission = $this->getInheritedPermissionsByUser($userId);
-
-        return array_merge($directPermission, $inheritedPermission);
-    }
-
-    /**
-     * Returns all permissions that are directly assigned to user.
-     * @param string|int $userId the user ID (see [[\yii\web\User::id]])
-     * @return Permission[] all direct permissions that the user has. The array is indexed by the permission names.
-     * @since 2.0.7
-     */
-    protected function getDirectPermissionsByUser($userId)
-    {
-        $query = (new Query)->select('b.*')
-            ->from(['a' => $this->assignmentTable, 'b' => $this->itemTable])
-            ->where('{{a}}.[[item_name]]={{b}}.[[name]]')
-            ->andWhere(['a.user_id' => (string) $userId])
-            ->andWhere(['b.type' => Item::TYPE_PERMISSION]);
-
-        $permissions = [];
-        foreach ($query->all($this->db) as $row) {
-            $permissions[$row['name']] = $this->populateItem($row);
-        }
-        return $permissions;
-    }
-
-    /**
-     * Returns all permissions that the user inherits from the roles assigned to him.
-     * @param string|int $userId the user ID (see [[\yii\web\User::id]])
-     * @return Permission[] all inherited permissions that the user has. The array is indexed by the permission names.
-     * @since 2.0.7
-     */
-    protected function getInheritedPermissionsByUser($userId)
-    {
-        $query = (new Query)->select('item_name')
-            ->from($this->assignmentTable)
-            ->where(['user_id' => (string) $userId]);
-
-        $childrenList = $this->getChildrenList();
-        $result = [];
-        foreach ($query->column($this->db) as $roleName) {
-            $this->getChildrenRecursive($roleName, $childrenList, $result);
-        }
-
-        if (empty($result)) {
-            return [];
-        }
-
-        $query = (new Query)->from($this->itemTable)->where([
-            'type' => Item::TYPE_PERMISSION,
-            'name' => array_keys($result),
-        ]);
-        $permissions = [];
-        foreach ($query->all($this->db) as $row) {
-            $permissions[$row['name']] = $this->populateItem($row);
-        }
-        return $permissions;
     }
 
     /**
@@ -617,15 +526,6 @@ class DbManager extends \yii\rbac\DbManager
 
     /**
      * @inheritdoc
-     * @since 2.0.8
-     */
-    public function canAddChild($parent, $child)
-    {
-        return !$this->detectLoop($parent, $child);
-    }
-
-    /**
-     * @inheritdoc
      */
     public function addChild($parent, $child)
     {
@@ -653,10 +553,10 @@ class DbManager extends \yii\rbac\DbManager
     /**
      * @inheritdoc
      */
-    public function removeChild($parent, $child)
+    public function removeChild($parent, $child, $locationId = null)
     {
         $result = $this->db->createCommand()
-            ->delete($this->itemChildTable, ['parent' => $parent->name, 'child' => $child->name])
+            ->delete($this->itemChildTable, ['parent' => $parent->name, 'child' => $child->name, 'location_id' => $locationId])
             ->execute() > 0;
 
         $this->invalidateCache();
@@ -667,10 +567,10 @@ class DbManager extends \yii\rbac\DbManager
     /**
      * @inheritdoc
      */
-    public function getChildren($name)
+     public function getChildren($name)
     {
         $query = (new Query)
-            ->select(['name', 'type', 'description', 'rule_name', 'data', 'created_at', 'updated_at'])
+            ->select(['name', 'type', 'description', 'rule_name', 'data', 'created_at', 'updated_at', 'location_id'])
             ->from([$this->itemTable, $this->itemChildTable])
             ->where(['parent' => $name, 'name' => new Expression('[[child]]')]);
 
@@ -678,7 +578,6 @@ class DbManager extends \yii\rbac\DbManager
         foreach ($query->all($this->db) as $row) {
             $children[$row['name']] = $this->populateItem($row);
         }
-
         return $children;
     }
 
