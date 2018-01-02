@@ -3,16 +3,14 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Student;
 use common\models\ExamResult;
+use common\models\log\StudentLog;
 use common\models\User;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Url;
-use common\models\ExamResultLog;
 use yii\filters\ContentNegotiator;
 
 /**
@@ -31,7 +29,7 @@ class ExamResultController extends \common\components\controllers\BaseController
             ],
            'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['create'],
+                'only' => ['create', 'delete', 'update'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -75,13 +73,14 @@ class ExamResultController extends \common\components\controllers\BaseController
      */
     public function actionCreate($studentId)
     {   
-        
-                $model = new ExamResult();
-			$model->studentId = $studentId;
-			 $data  = $this->renderAjax('/student/exam-result/_form', [
-            'model' => $model,
-        ]); 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $model = new ExamResult();
+		$model->studentId = $studentId;
+		$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+		$model->on(ExamResult::EVENT_AFTER_INSERT, [new StudentLog(), 'addExamResult'], ['loggedUser' => $loggedUser]);
+		$data = $this->renderAjax('/student/exam-result/_form', [
+			'model' => $model,
+		]);
+		if ($model->load(Yii::$app->request->post()) && $model->save()) {
 			return [
 				'status' => true
 			];
@@ -105,8 +104,6 @@ class ExamResultController extends \common\components\controllers\BaseController
      */
     public function actionUpdate($id)
     {
-		$response = Yii::$app->response;
-		$response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
 		$data =  $this->renderAjax('//student/exam-result/_form', [
 			'model' => $model,
@@ -132,12 +129,10 @@ class ExamResultController extends \common\components\controllers\BaseController
      */
     public function actionDelete($id)
     {
-		$response = Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
-		
 		$model = $this->findModel($id);
+		$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+		$model->on(ExamResult::EVENT_AFTER_DELETE, [new StudentLog(), 'deleteExamResult'], ['loggedUser' => $loggedUser]);
         if($model->delete()) {
-            $model->trigger(ExamResult::EVENT_DELETE);
 			$url = Url::to(['student/view', 'id' => $model->studentId, '#' => 'exam-result']);
         	return [
 				'status' => true,

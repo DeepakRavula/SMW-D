@@ -671,7 +671,7 @@ class LessonController extends \common\components\controllers\BaseController
 			$lesson->markAsRoot();
 		}
         if (!empty($courseModel->enrolment) && empty($courseRequest)) {
-            $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
+            $enrolmentModel              = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
             $enrolmentModel->setPaymentCycle($enrolmentModel->firstLesson->date);
@@ -682,7 +682,7 @@ class LessonController extends \common\components\controllers\BaseController
                 ['loggedUser' => $loggedUser]);
 
         }
-		if ($courseModel->program->isPrivate()) {
+        if ($courseModel->program->isPrivate()) {
 			if(! empty($rescheduleBeginDate)) {
 				$message = 'Future lessons have been changed successfully';
 				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
@@ -799,7 +799,7 @@ class LessonController extends \common\components\controllers\BaseController
     public function actionModifyLesson($id, $start, $end, $teacherId)
     {
         $model = Lesson::findOne($id);
-        $model->setScenario(Lesson::SCENARIO_LESSON_EDIT_ON_SCHEDULE);
+        $model->setScenario(Lesson::SCENARIO_EDIT);
         $model->teacherId = $teacherId;
         $startDate = new \DateTime($start);
         $endDate = new \DateTime($end);
