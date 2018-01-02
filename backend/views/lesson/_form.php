@@ -29,7 +29,6 @@ use yii\bootstrap\Modal;
             ]
         ]); ?>
     <div class="row">
-        <div class="col-md-10">
         <div class="col-md-2">
             <?php
             echo $form->field($model, 'duration')->widget(TimePicker::classname(),
@@ -41,21 +40,23 @@ use yii\bootstrap\Modal;
             ]);
             ?>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <?php
             // Dependent Dropdown
-            echo $form->field($model, 'teacherId')->widget(Select2::classname(), [
+            echo $form->field($model, 'teacherId')->widget(Select2::classname(),
+                [
                 'data' => ArrayHelper::map(User::find()
-                        ->teachers($model->course->program->id, \common\models\Location::findOne(['slug' => \Yii::$app->location])->id)
-                ->join('LEFT JOIN', 'user_profile','user_profile.user_id = ul.user_id')
+                        ->teachers($model->course->program->id,
+                            \common\models\Location::findOne(['slug' => \Yii::$app->location])->id)
+                        ->join('LEFT JOIN', 'user_profile',
+                            'user_profile.user_id = ul.user_id')
                         ->notDeleted()
                         ->orderBy(['user_profile.firstname' => SORT_ASC])
-				->all(),
-			'id', 'userProfile.fullName'),
-		])->label('Label');
+                        ->all(), 'id', 'userProfile.fullName'),
+            ])->label('Label');
             ?>  
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="form-group field-calendar-date-time-picker-date">
                 <label class="control-label" for="calendar-date-time-picker-date">Reschedule Date</label>
                 <div id="calendar-date-time-picker-date-datetime" class="input-group date">
@@ -67,9 +68,36 @@ use yii\bootstrap\Modal;
                 </div>
             </div>       
         </div>
+        <div class="col-md-3">
+            <?php $locationId = \common\models\Location::findOne([
+                    'slug' => \Yii::$app->location])->id; ?>
+            <?php if ($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
+
+                <?php
+                if ($privateLessonModel->isNewRecord) {
+                    $date                           = new \DateTime($model->date);
+                    $date->modify('90 days');
+                    $privateLessonModel->expiryDate = $date->format('d-m-Y');
+                }
+                ?>
+                <?=
+                $form->field($privateLessonModel, 'expiryDate')->widget(DatePicker::classname(),
+                    [
+                    'options' => [
+                        'value' => Yii::$app->formatter->asDate($privateLessonModel->expiryDate),
+                    ],
+                    'layout' => '{input}{picker}',
+                    'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                    'pluginOptions' => [
+                        'autoclose' => true,
+                        'format' => 'dd-mm-yyyy',
+                    ],
+                ]);
+                ?>
+<?php endif; ?>
         </div>
         <div class="col-md-2">
-          <div class="pull-right m-t-25">
+            <div class="pull-right m-t-25 m-r-10">
             <?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-schedule-cancel']);?> 
             <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
         <div class="clearfix"></div>
@@ -92,32 +120,6 @@ use yii\bootstrap\Modal;
         </div>
     </div>
     <div class="clearfix"></div>
-            <?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id; ?>
-		<?php if($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
-        <div class="row">
-            <div class="col-md-4">
-                <?php
-                if ($privateLessonModel->isNewRecord) {
-                    $date = new \DateTime($model->date);
-                    $date->modify('90 days');
-                    $privateLessonModel->expiryDate = $date->format('d-m-Y');
-                }
-                ?>
-			<?= $form->field($privateLessonModel, 'expiryDate')->widget(DatePicker::classname(), [
-                    'options' => [
-                        'value' => Yii::$app->formatter->asDate($privateLessonModel->expiryDate),
-                    ],
-                    'layout' => '{input}{picker}',
-                    'type' => DatePicker::TYPE_COMPONENT_APPEND,
-                    'pluginOptions' => [
-                        'autoclose' => true,
-                        'format' => 'dd-mm-yyyy',
-                    ],
-                ]);
-                ?>
-            </div>
-        </div>
-    <?php endif; ?>
     <div class="row">
     <div class="col-md-12">
         <div class="pull-right m-t-10">
