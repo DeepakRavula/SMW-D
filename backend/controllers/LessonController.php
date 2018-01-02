@@ -31,6 +31,7 @@ use common\models\Invoice;
 use common\models\lesson\BulkReschedule;
 use common\models\lesson\BulkRescheduleLesson;
 use common\models\log\StudentLog;
+use common\models\log\EnrolmentLog;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -578,6 +579,7 @@ class LessonController extends \common\components\controllers\BaseController
     public function actionConfirm($courseId)
     {
         $courseModel = Course::findOne(['id' => $courseId]);
+        $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
 		$courseModel->updateAttributes([
 			'isConfirmed' => true
 		]);
@@ -663,6 +665,11 @@ class LessonController extends \common\components\controllers\BaseController
 				}
 			}
 			}
+            $bulkRescheduleEnrolment=$courseModel->enrolment;
+            $bulkRescheduleEnrolment->on(Enrolment::EVENT_AFTER_UPDATE,
+                [new EnrolmentLog(), 'bulkReschedule'],
+                ['loggedUser' => $loggedUser,'rescheduleBeginDate' => $rescheduleBeginDate,'courseModel' => $courseModel]);
+            $bulkRescheduleEnrolment->trigger(ENROLMENT::EVENT_AFTER_UPDATE);
 		}
 		foreach ($lessons as $lesson) {
 			$lesson->updateAttributes([
@@ -676,7 +683,6 @@ class LessonController extends \common\components\controllers\BaseController
             $enrolmentModel->save();
             $enrolmentModel->setPaymentCycle($enrolmentModel->firstLesson->date);
 
-            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
             $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
                 [new StudentLog(), 'addEnrolment'],
                 ['loggedUser' => $loggedUser]);
