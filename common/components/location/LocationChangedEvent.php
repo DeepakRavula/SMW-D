@@ -26,9 +26,11 @@ class LocationChangedEvent extends Event
     
     public static function onLocationChanged()
     {
-        $userLogged = User::findOne(Yii::$app->user->id);
-        if ($userLogged->isAdmin()) {
-            return Yii::$app->getResponse()->redirect('/admin/dashboard/index');
+        if (Yii::$app->user->id) {
+            $userLogged = User::findOne(Yii::$app->user->id);
+            if ($userLogged->isAdmin()) {
+                return Yii::$app->getResponse()->redirect('/admin/dashboard/index');
+            }
         }
         return true;
     }
