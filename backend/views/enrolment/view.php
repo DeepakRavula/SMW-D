@@ -38,7 +38,6 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
     $logContent=$this->render('log/index', [
         'logDataProvider' => $logDataProvider,
     ]);
-
     $items = [
         [
             'label' => 'Lesson',
