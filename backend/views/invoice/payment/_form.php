@@ -13,9 +13,7 @@ use common\models\PaymentMethod;
 <div class=" p-10">
 <?php $form = ActiveForm::begin([
     'id' => 'payment-edit-form',
-        'validationUrl' => Url::to(['payment/validate-on-edit', 'id' => $model->id]),
-	'action' => Url::to(['payment/edit', 'id' => $model->id]),
-	'enableAjaxValidation' => true,
+        'action' => Url::to(['payment/edit', 'id' => $model->id]),
 	'enableClientValidation' => true
 ]); ?>
    <div class="row">
@@ -34,7 +32,8 @@ use common\models\PaymentMethod;
             ?>
         </div>
         <div class="col-md-4">
-            <?= $form->field($model, 'amount')->textInput([
+            <?= $form->field($model, 'amount')->textInput(['readOnly' => $model->isCreditUsed() || 
+                    $model->isCreditApplied(),
                 'value' => \Yii::$app->formatter->asDecimal($model->amount, 2)
             ]);?>
         </div>
@@ -55,6 +54,7 @@ use common\models\PaymentMethod;
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default payment-cancel']);?>       
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
            </div>
+    <?php if(!$model->isCreditUsed() && !$model->isCreditApplied()) : ?>
            <div class="pull-left">
 		<?= Html::a('Delete', [
             'delete', 'id' => $model->id
@@ -68,6 +68,7 @@ use common\models\PaymentMethod;
             ]
         ]); ?>
            </div>
+    <?php endif; ?> 
 	</div>
 	</div>
 	<?php ActiveForm::end(); ?>

@@ -4,7 +4,6 @@ use yii\grid\GridView;
 use common\models\Payment;
 use common\models\ItemType;
 use yii\data\ArrayDataProvider;
-use yii\bootstrap\Modal;
 
 ?>
 <?php
@@ -54,17 +53,12 @@ $creditDataProvider = new ArrayDataProvider([
     ],
 ]);
 ?>
-<?php if ($creditDataProvider->totalCount > 0):?>
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Apply Credit</h4>',
-    'id' => 'credit-modal',
-    'toggleButton' => ['label' => 'click me', 'class' => 'hide'],
-]);
+<?php if ($creditDataProvider->totalCount > 0):
 
 echo GridView::widget([
     'dataProvider' => $creditDataProvider,
     'tableOptions' => ['class' => 'table table-bordered'],
+    'id' => 'apply-credit-grid',
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'summary' => false,
     'emptyText' => false,
@@ -99,6 +93,5 @@ echo GridView::widget([
         'model' => new Payment(),
         'invoice' => $invoice,
 ]);
-Modal::end();
 ?>
 <?php endif; ?>

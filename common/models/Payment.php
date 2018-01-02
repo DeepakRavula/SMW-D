@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use common\models\query\PaymentQuery;
+use common\models\PaymentMethod;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
@@ -26,8 +27,6 @@ class Payment extends ActiveRecord
     public $sourceId;
     public $paymentMethodName;
     public $invoiceNumber;
-    public $lastAmount;
-    public $difference;
     public $userName;
 	
     const TYPE_OPENING_BALANCE_CREDIT = 1;
@@ -37,7 +36,7 @@ class Payment extends ActiveRecord
     const SCENARIO_CREDIT_USED = 'credit-used';
     const SCENARIO_ACCOUNT_ENTRY = 'account-entry';
     const SCENARIO_LESSON_CREDIT = 'lesson-credit';
-	
+    
     const EVENT_CREATE = 'create';
     const EVENT_EDIT = 'edit';
     const EVENT_DELETE = 'delete';
@@ -58,52 +57,20 @@ class Payment extends ActiveRecord
         return [
             [['amount'], 'required'],
             [['amount'], 'validateNegativeBalance'],
-            [['amount'], 'validateLessThanCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
-            [['amount'], 'validateCreditApplied', 'on' => self::SCENARIO_CREDIT_APPLIED],
-            [['amount'], 'validateCreditUsed', 'on' => self::SCENARIO_CREDIT_USED],
-            ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
-                    self::SCENARIO_CREDIT_USED]],
-            ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => self::SCENARIO_CREDIT_USED],
+            [['amount'], 'number'],
             [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType', 
-               'sourceId', 'credit', 'isDeleted', 'transactionId', 'difference'], 'safe'],
+               'sourceId', 'credit', 'isDeleted', 'transactionId'], 'safe'],
+            ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_CREDIT_USED]],
+            ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => self::SCENARIO_CREDIT_USED],
         ];
     }
 
-    public function validateLessThanCredit($attributes)
-    {
-        if (round($this->credit, 2) < round($this->amount, 2)) {
-            return $this->addError($attributes, 'Insufficient Credit');
-        }
-    }
-    
     public function validateNegativeBalance($attributes)
     {   
         if (!empty($this->invoiceId) && !$this->isCreditUsed()) {
             $invoice = Invoice::findOne($this->invoiceId);
             if ((float) $this->amount > (float) $invoice->balance && !$invoice->isInvoice()) {
                 return $this->addError($attributes, "Can't over pay");
-            }
-        }
-    }
-
-    public function validateCreditApplied($attributes)
-    {
-        $this->difference = $this->amount - $this->lastAmount;
-        if (round($this->amount, 2) > round($this->lastAmount, 2)) {
-            if ($this->creditAppliedInvoice->balance >= 0 || round(abs($this->creditAppliedInvoice->balance), 2)
-                < round(abs($this->difference), 2)) {
-                return $this->addError($attributes, 'Insufficient Credit');
-            }
-        }
-    }
-
-    public function validateCreditUsed($attributes)
-    {
-        $this->difference = $this->amount - $this->lastAmount;
-        if (round(abs($this->amount), 2) > round(abs($this->lastAmount), 2)) {
-            if ($this->invoice->balance >= 0 || round(abs($this->invoice->balance), 2) < 
-                    round(abs($this->difference), 2)) {
-                return $this->addError($attributes, 'Insufficient Credit');
             }
         }
     }
@@ -160,8 +127,7 @@ class Payment extends ActiveRecord
 
     public function getPaymentMethod()
     {
-        return $this->hasOne(PaymentMethod::className(),
-                ['id' => 'payment_method_id']);
+        return $this->hasOne(PaymentMethod::className(), ['id' => 'payment_method_id']);
     }
 
     public function getCreditAppliedInvoice()
@@ -171,14 +137,12 @@ class Payment extends ActiveRecord
 
     public function getCreditUsage()
     {
-        return $this->hasOne(CreditUsage::className(),
-                ['credit_payment_id' => 'id']);
+        return $this->hasOne(CreditUsage::className(), ['credit_payment_id' => 'id']);
     }
     
     public function getDebitUsage()
     {
-        return $this->hasOne(CreditUsage::className(),
-                ['debit_payment_id' => 'id']);
+        return $this->hasOne(CreditUsage::className(), ['debit_payment_id' => 'id']);
     }
 
     public function getInvoicePayment()
@@ -209,11 +173,10 @@ class Payment extends ActiveRecord
     {
         if (!$insert) {
             return parent::beforeSave($insert);
-        } else {
-            $transaction = new Transaction();
-            $transaction->save();
-            $this->transactionId = $transaction->id;
         }
+        $transaction = new Transaction();
+        $transaction->save();
+        $this->transactionId = $transaction->id;
         if(!empty($this->invoiceId)) {
             $model = Invoice::findOne(['id' => $this->invoiceId]);
             $this->user_id = $model->user_id;
@@ -234,12 +197,6 @@ class Payment extends ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
-            if ($this->isCreditApplied()) {
-                $this->updateCreditApplied();
-            }
-            if ($this->isCreditUsed()) {
-                $this->updateCreditUsed();
-            }
             $this->invoice->save();
             return parent::afterSave($insert, $changedAttributes);
         }
@@ -258,27 +215,7 @@ class Payment extends ActiveRecord
 		
         return parent::afterSave($insert, $changedAttributes);
     }
-
-    private function updateCreditApplied()
-    {
-        $creditUsedPaymentModel = self::findOne(['id' => $this->creditUsage->debit_payment_id]);
-        $creditUsedPaymentModel->updateAttributes([
-            'amount' => -abs($this->amount),
-        ]);
-
-        return $creditUsedPaymentModel->invoice ? $creditUsedPaymentModel->invoice->save() : true;
-    }
-
-    private function updateCreditUsed()
-    {
-        $creditAppliedPaymentModel = self::findOne(['id' => $this->debitUsage->credit_payment_id]);
-        $creditAppliedPaymentModel->updateAttributes([
-            'amount' => abs($this->amount),
-        ]);
-
-        return $creditAppliedPaymentModel->invoice ? $creditAppliedPaymentModel->invoice->save() : true;
-    }
-
+    
     public function isOtherPayments()
     {
         $isOtherPayments = ((int) $this->payment_method_id !== (int) PaymentMethod::TYPE_ACCOUNT_ENTRY)
@@ -299,7 +236,7 @@ class Payment extends ActiveRecord
     {
         return (int) $this->payment_method_id === (int) PaymentMethod::TYPE_CREDIT_USED;
     }
-
+    
     public function isAccountEntry()
     {
         return (int) $this->payment_method_id === (int) PaymentMethod::TYPE_ACCOUNT_ENTRY;
@@ -313,54 +250,5 @@ class Payment extends ActiveRecord
     public function afterSoftDelete()
     {
         return $this->invoice->save();
-    }
-    
-    public function editAccountEntry()
-    {
-        $this->setScenario(Payment::SCENARIO_OPENING_BALANCE);
-        $invoiceModel          = $this->invoice;
-        $lineItemModel         = $this->invoice->lineItem;
-        $lineItemModel->amount = -($this->amount);
-        $this->save();
-        if ($this->amount < 0) {
-            $this->delete();
-            $lineItemModel->amount = abs($this->amount);
-            $invoiceModel->subTotal = $lineItemModel->amount;
-            $invoiceModel->total    = $invoiceModel->subTotal + $invoiceModel->tax;
-            $invoiceTotal = $invoiceModel->subTotal + $invoiceModel->tax;
-            $invoiceModel->balance = $invoiceTotal - abs($this->amount);
-        }
-        $lineItemModel->save();
-        $invoiceModel->save();
-        return [
-            'status' => true
-        ];
-    }
-    
-    public function editOtherPayments()
-    {
-        $this->save();
-        $this->invoice->save();
-        return [
-            'status' => true
-        ];
-    }
-    
-    public function editCreditApplied()
-    {
-        $this->setScenario(Payment::SCENARIO_CREDIT_APPLIED);
-        $this->save();
-        return [
-            'status' => true
-        ];
-    }
-    
-    public function editCreditUsed()
-    {
-        $this->setScenario(Payment::SCENARIO_CREDIT_USED);
-        $this->save();
-        return [
-            'status' => true
-        ];
     }
 }
