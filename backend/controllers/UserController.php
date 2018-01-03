@@ -470,32 +470,24 @@ class UserController extends \common\components\controllers\BaseController
 
     public function actionCreate()
     {
-        $session = Yii::$app->session;
         $model = new UserForm();
         $emailModels = new UserEmail();
-        $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['role_name'];
        
         $request = Yii::$app->request;
         if ($model->load($request->post()) && $model->save() && $emailModels->load($request->post())) {
-			if(!empty($emailModels->email))
-                        {
-                        $userContact = new UserContact();
-			$userContact->userId = $model->getModel()->id;
-			$userContact->labelId = Label::LABEL_WORK;
-			$userContact->isPrimary = true;
-			$userContact->save();
+            if(!empty($emailModels->email)) {
+                $userContact = new UserContact();
+                $userContact->userId = $model->getModel()->id;
+                $userContact->labelId = Label::LABEL_WORK;
+                $userContact->isPrimary = true;
+                $userContact->save();
 
-			$emailModels->userContactId = $userContact->id;
-			$emailModels->save();
-                        }
-			return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
-        } else {
-			return [
-				'status' => false,
-				'errors' => ActiveForm::validate($model),
-			];
-		}
+                $emailModels->userContactId = $userContact->id;
+                $emailModels->save();
+            }
+            return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
+        }
     }
 
 	public function actionEditProfile($id)
@@ -613,20 +605,7 @@ class UserController extends \common\components\controllers\BaseController
         $model->setModel($this->findModel($id));
 
         $role = $model->roles;
-        if (($role === User::ROLE_TEACHER) && (!Yii::$app->user->can('deleteTeacherProfile'))) {
-            throw new ForbiddenHttpException();
-        }
-        if (($role === User::ROLE_CUSTOMER) && (!Yii::$app->user->can('deleteCustomerProfile'))) {
-            throw new ForbiddenHttpException();
-        }
-        if (($role === User::ROLE_OWNER) && (!Yii::$app->user->can('deleteOwnerProfile'))) {
-            throw new ForbiddenHttpException();
-        }
-        if (($role === User::ROLE_STAFFMEMBER) && (!Yii::$app->user->can('deleteStaffProfile'))) {
-            throw new ForbiddenHttpException();
-        }
-		
-		if(in_array($role, [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER, User::ROLE_STAFFMEMBER])) {
+        if(in_array($role, [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER, User::ROLE_STAFFMEMBER])) {
 			$this->deleteContact($id);
 			$model->getModel()->delete();
 			$response = [
