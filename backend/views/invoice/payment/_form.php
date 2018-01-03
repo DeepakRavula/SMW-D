@@ -13,9 +13,13 @@ use common\models\PaymentMethod;
 <div class=" p-10">
 <?php $form = ActiveForm::begin([
     'id' => 'payment-edit-form',
-        'action' => Url::to(['payment/edit', 'id' => $model->id]),
+        'action' => Url::to(['payment/update', 'id' => $model->id]),
 	'enableClientValidation' => true
 ]); ?>
+    <div id="payment-edit-spinner" class="spinner" style="display:none">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+    </div>
    <div class="row">
 	   <div class="col-md-5">
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [

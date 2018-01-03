@@ -500,6 +500,7 @@ Modal::begin([
             return false;
 	});
 	$(document).on('beforeSubmit', '#payment-edit-form', function (e) {
+            $('#payment-edit-spinner').show();
 		$.ajax({
 			url    : $(this).attr('action'),
 			type   : 'post',
@@ -509,6 +510,7 @@ Modal::begin([
 			{
 			   if(response.status)
 			   {
+                               $('#payment-edit-spinner').hide();
 					$.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});

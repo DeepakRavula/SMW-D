@@ -29,8 +29,7 @@ class PaymentController extends \common\components\controllers\BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['edit', 'invoice-payment', 'credit-payment', 'update', 'delete',
-                    'validate-on-edit'],
+                'only' => ['invoice-payment', 'credit-payment', 'update', 'delete'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -106,11 +105,22 @@ class PaymentController extends \common\components\controllers\BaseController
         $data = $this->renderAjax('/invoice/payment/_form', [
             'model' => $model,
         ]);
+        $request = Yii::$app->request;
+        if ($model->load($request->post())) {
+            $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+            $model->save();
+            $model->invoice->save();
+            $response = [
+                'status' => true
+            ];
+            return $response;
+        } else {
       	
-		return [
-			'status' => true,
-			'data' => $data,
-		];
+            return [
+                    'status' => true,
+                    'data' => $data,
+            ];
+        }
     }
 
     /**
@@ -242,20 +252,5 @@ class PaymentController extends \common\components\controllers\BaseController
             ];
         }
         return $response;
-    }
-    
-    public function actionEdit($id)
-    {
-        $model = Payment::findOne(['id' => $id]);
-        $request = Yii::$app->request;
-        if ($model->load($request->post())) {
-            $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
-            $model->save();
-            $model->invoice->save();
-            $response = [
-                'status' => true
-            ];
-            return $response;
-        }
     }
 }
