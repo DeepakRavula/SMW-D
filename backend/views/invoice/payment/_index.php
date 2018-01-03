@@ -1,10 +1,6 @@
 <?php
 use common\models\Payment;
-use common\models\Lesson;
 use common\models\Invoice;
-use common\models\PaymentMethod;
-use yii\bootstrap\ButtonGroup;
-use yii\helpers\Url;
 use yii\grid\GridView;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
@@ -22,9 +18,7 @@ echo $this->render('payment-method/_form', [
 	'invoice' => $model,
 ]);
 Modal::end(); ?>
-<?= $this->render('payment-method/_apply-credit', [
-	'invoice' => $model,
-]);?>
+
  <?php Pjax::Begin(['id' => 'invoice-view-payment-tab', 'timeout' => 6000]); ?> 
 <?php $boxTools = null;?>
 <?php $boxTools = '<i title="Add" class="fa fa-plus add-payment m-r-10"></i>' ?>
@@ -82,7 +76,7 @@ $columns = [
 <?php \yii\widgets\Pjax::end(); ?>	
 </div>
 <?php
-	$amount = 0.0;
+	$amount = 0;
 	if ($model->total > $model->invoicePaymentTotal) {
 		$amount = $model->balance;
 	}
@@ -93,46 +87,43 @@ $columns = [
 <?php LteBox::end() ?>
 <?php Pjax::end(); ?>
 <script type="text/javascript">
-$(document).ready(function(){
-  	$('td').click(function () {
+    $(document).on('click', '#apply-credit-grid td', function () {
         var amount = $(this).closest('tr').data('amount');
         var id = $(this).closest('tr').data('id');
         var type = $(this).closest('tr').data('source');    
-        var amountNeeded = '<?= $amount; ?>';  
+        var amountNeeded = <?= $amount; ?>; 
         if(amount > amountNeeded) {
-            $('input[name="Payment[amount]"]').val(amountNeeded);          
+            $('input[name="Payment[amount]"]').val((amountNeeded).toFixed(2));          
         } else {
-            $('input[name="Payment[amount]"]').val(amount);          
+            $('input[name="Payment[amount]"]').val((amount).toFixed(2));          
         }
-        $('input[name="Payment[amountNeeded]"]').val(amountNeeded);          
-        $('#payment-credit').val(amount);
-		$('#payment-sourceid').val(id);
-		$('#payment-sourcetype').val(type);
+        $('input[name="Payment[amountNeeded]"]').val((amountNeeded).toFixed(2));          
+        $('#payment-credit').val((amount).toFixed(2));
+        $('#payment-sourceid').val(id);
+        $('#payment-sourcetype').val(type);
+        return false;
     });
-	$(document).on('beforeSubmit', '#apply-credit-form', function (e) {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: 'json',
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-					$.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
+    
+    $(document).on('beforeSubmit', '#apply-credit-form', function (e) {
+        $.ajax({
+            url    : $(this).attr('action'),
+            type   : 'post',
+            dataType: 'json',
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
-                	$.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
-					$('#credit-modal').modal('hide');
-				}else
-				{
-				 $('#apply-credit-form').yiiActiveForm('updateMessages',
-					   response.errors
-					, true);
-				}
-			}
-			});
-			return false;
-	});
-});
+                    $('#credit-modal').modal('hide');
+                } else {
+                    $('#apply-credit-form').yiiActiveForm('updateMessages', response.errors , true);
+                }
+            }
+        });
+        return false;
+    });
 </script>

@@ -217,6 +217,14 @@ Modal::end();
  ]); ?>
 <div id="adjust-tax-modal-content"></div>
  <?php Modal::end();?>
+<?php
+Modal::begin([
+    'header' => '<h4 class="m-0">Apply Credit</h4>',
+    'id' => 'credit-modal',
+    'toggleButton' => ['label' => 'click me', 'class' => 'hide'],
+]); ?>
+<div id="credit-modal-content"></div>
+<?php Modal::end();?>
 <script>
  $(document).ready(function() {
     $(document).on('click', '.edit-tax', function () {
@@ -321,8 +329,20 @@ Modal::end();
 		return false;
   	});
 	$(document).on('click', '.apply-credit', function (e) {
-		$('#credit-modal').modal('show');
-		return false;
+            $.ajax({
+                url    : '<?= Url::to(['payment/credit-payment', 'id' => $model->id]); ?>',
+                type   : 'get',
+                dataType: 'json',
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#credit-modal').modal('show');
+                        $('#credit-modal-content').html(response.data);
+                    }
+                }
+            });
+            
+            return false;
   	});
 	$(document).on('click', '.apply-credit-cancel', function (e) {
 		$('#credit-modal').modal('hide');
@@ -480,6 +500,7 @@ Modal::end();
             return false;
 	});
 	$(document).on('beforeSubmit', '#payment-edit-form', function (e) {
+            $('#payment-edit-spinner').show();
 		$.ajax({
 			url    : $(this).attr('action'),
 			type   : 'post',
@@ -489,15 +510,13 @@ Modal::end();
 			{
 			   if(response.status)
 			   {
+                               $('#payment-edit-spinner').hide();
 					$.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
 					$('input[name="Payment[amount]"]').val(response.amount);
                     $('#payment-edit-modal').modal('hide');
-				}else
-				{
-				 $(this).yiiActiveForm('updateMessages', response.errors, true);
 				}
 			}
 			});

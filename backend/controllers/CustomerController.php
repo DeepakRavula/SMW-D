@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\Payment;
 use Yii;
+use common\models\Location;
 use common\models\User;
 use common\models\Item;
 use common\models\Invoice;
@@ -49,7 +50,7 @@ class CustomerController extends UserController
     public function actionAddOpeningBalance($id)
     {
         $model = $this->findModel($id);
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $paymentModel = new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]);
         if ($paymentModel->load(Yii::$app->request->post())) {
             $invoice = new Invoice();
@@ -65,22 +66,22 @@ class CustomerController extends UserController
             $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
             $invoiceLineItem->description = $item->description;
             $invoiceLineItem->unit = 1;
-            $invoiceLineItem->amount = $paymentModel->amount;
+            $invoiceLineItem->amount = 0;
             $invoiceLineItem->code = $invoiceLineItem->getItemCode();
             $invoiceLineItem->cost = 0;
-            $invoiceLineItem->save();
-
             if ($paymentModel->amount > 0) {
+                $invoiceLineItem->amount = $paymentModel->amount;
                 $invoice->subTotal = $invoiceLineItem->amount;
             } else {
                 $invoice->subTotal = 0.00;
             }
+            $invoiceLineItem->save();
             $invoice->tax = $invoiceLineItem->tax_rate;
             $invoice->total = $invoice->subTotal + $invoice->tax;
-			if(!empty($invoice->location->conversionDate)) {
-				$date = Carbon::parse($invoice->location->conversionDate);
+            if(!empty($invoice->location->conversionDate)) {
+                $date = Carbon::parse($invoice->location->conversionDate);
             	$invoice->date = $date->subDay(1);
-			}
+            }
             $invoice->save();
 
             if ($paymentModel->amount < 0) {
@@ -102,7 +103,7 @@ class CustomerController extends UserController
     protected function findModel($id)
     {
         $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $model = User::find()->location($locationId)
                 ->where(['user.id' => $id])
                 ->notDeleted()
