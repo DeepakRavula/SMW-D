@@ -13,7 +13,7 @@ use yii\helpers\Html;
             'id' => 'student-merge-form',
     ]); ?>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <?= $form->field($model, 'studentId')->widget(Select2::classname(), [
 	    		'data' => ArrayHelper::map($students, 'id', 'fullName'),
 				'options' => [

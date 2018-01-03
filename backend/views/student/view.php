@@ -272,6 +272,7 @@ $this->params['label'] = $this->render('_title', [
                     if(response.status)
                     {
                         $('#student-merge-content').html(response.data);
+                        $('#student-merge-modal .modal-dialog').addClass('classroom-dialog');
                         $('#student-merge-modal').modal('show');
                     }
                 }

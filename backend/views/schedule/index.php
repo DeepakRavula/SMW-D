@@ -260,7 +260,8 @@ function showclassroomCalendar(date) {
             }
         },
         resourceRender: function() {
-            schedule.modifyResourceRender();
+			var selector = '#classroom-calendar';
+            schedule.modifyResourceRender(selector);
         },
         events: {
             url: '<?= Url::to(['schedule/render-classroom-events']) ?>?' + params,
@@ -324,7 +325,8 @@ function refreshCalendar(date, clearFilter) {
             }
         },
         resourceRender: function() {
-            schedule.modifyResourceRender();
+			var selector = '#calendar';
+            schedule.modifyResourceRender(selector);
         },
         events: {
             url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
@@ -412,15 +414,15 @@ var schedule = {
             }
         });
     }, 
-    modifyResourceRender : function () {
-        var resourceCount = $('#teacher-view #calendar .fc-view .fc-row tr th').length;
+    modifyResourceRender : function (selector) {
+        var resourceCount = $(selector).find('.fc-view .fc-row tr th').length;
         if(resourceCount <= 8) {
-            $('#teacher-view #calendar .fc-view .fc-row tr th.fc-resource-cell').css({'width': 'auto'});
+            $(selector).find('.fc-view .fc-row tr th.fc-resource-cell').css({'width': 'auto'});
         } else {
-           $('#teacher-view #calendar .fc-view .fc-row tr th.fc-resource-cell').css({'width': '150px'});
+           $(selector).find('.fc-view .fc-row tr th.fc-resource-cell').css({'width': '150px'});
         }
-        var theadWidth = $('#teacher-view #calendar .fc-widget-header table thead').width();
-        $('#teacher-view #calendar table').width(theadWidth);
+        var theadWidth = $(selector).find('.fc-widget-header table thead').width();
+        $(selector).find('table').width(theadWidth);
     }
 }
 </script>
