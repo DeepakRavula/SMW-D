@@ -38,7 +38,6 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
     $logContent=$this->render('log/index', [
         'logDataProvider' => $logDataProvider,
     ]);
-
     $items = [
         [
             'label' => 'Lesson',
@@ -93,7 +92,6 @@ $(document).ready(function () {
                  center: 'title',
                  right: ''
              },
-			 firstDay :1,
              allDaySlot: false,
              slotDuration: '00:15:00',
              titleFormat: 'DD-MMM-YYYY, dddd',
