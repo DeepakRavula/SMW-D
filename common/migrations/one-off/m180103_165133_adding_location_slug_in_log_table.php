@@ -16,10 +16,10 @@ class m180103_165133_adding_location_slug_in_log_table extends Migration
         foreach ($logLinks as $logLink) {
             $path       = $logLink->path;
             $pathArray  = explode("/", $path);
-            $addLocationSlug = false;
+            $addLocationSlug = true;
             foreach ($locations as $location) {
                 if (array_search($location, $pathArray)) {
-                    $addLocationSlug = true;
+                    $addLocationSlug = false;
                 }
             }
             if ($addLocationSlug) {
