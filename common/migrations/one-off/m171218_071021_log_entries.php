@@ -22,7 +22,7 @@ class m171218_071021_log_entries extends Migration
                 $log->logActivityId = $logActivity->id;
                 $logObject          = LogObject::findOne(['name' => $relationName['instanceType']]);
                 $log->logObjectId   = $logObject->id;
-                $log->data          = $timeLineEvent['data'];
+                $log->data          = json_encode($timeLineEvent->data);
                 $log->message       = $timeLineEvent->message;
                 $log->locationId    = $timeLineEvent->locationId;
                 $log->createdOn     = $timeLineEvent->created_at;

@@ -8,7 +8,8 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 <?= $this->render('/lesson/_color-code');?>
 <div id="enrolment-calendar"></div>
 <?php
-    $locationId = Yii::$app->session->get('location_id');
+   $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+    
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])
@@ -60,6 +61,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                      center: 'title',
                      right:'',
                      },
+					 firstDay :1,
                  allDaySlot: false,
  				height:450,
                  slotDuration: '00:15:00',

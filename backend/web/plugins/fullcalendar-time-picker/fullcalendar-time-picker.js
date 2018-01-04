@@ -95,6 +95,7 @@ var calendar = {
                 center: 'title',
                 right: '',
             },
+			firstDay :1,
             allDaySlot: false,
             height: 450,
             slotDuration: '00:15:00',

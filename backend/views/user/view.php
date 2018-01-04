@@ -9,11 +9,7 @@ use common\models\TeacherRoom;
 use yii\bootstrap\Modal;
 use backend\models\UserForm;
 use common\models\discount\CustomerDiscount;
-use common\models\UserEmail;
-use common\models\UserContact;
 use yii\widgets\Pjax;
-use common\models\UserPhone;
-use common\models\UserAddress;
 use common\models\User;
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 

@@ -178,6 +178,7 @@ $this->params['label'] = $this->render('_title', [
                  center: 'title',
                  right: ''
              },
+			firstDay :1,
              allDaySlot: false,
              slotDuration: '00:15:00',
              titleFormat: 'DD-MMM-YYYY, dddd',
@@ -271,6 +272,7 @@ $this->params['label'] = $this->render('_title', [
                     if(response.status)
                     {
                         $('#student-merge-content').html(response.data);
+                        $('#student-merge-modal .modal-dialog').addClass('classroom-dialog');
                         $('#student-merge-modal').modal('show');
                     }
                 }
@@ -308,7 +310,13 @@ $this->params['label'] = $this->render('_title', [
                 success: function(response)
                 {
                     if(response.status) {
-                        location.reload();
+                      $.pjax.reload({container: "#enrolment-grid",timeout: 6000, async:false});
+                      $.pjax.reload({container: "#student-lesson-listing",timeout: 6000, async:false});
+                      $.pjax.reload({container: "#student-log",timeout: 6000, async:false});
+                      $.pjax.reload({container: "#student-exam-result-listing",timeout: 6000, async:false});
+                      $.pjax.reload({container: "#student-note",timeout: 6000, async:false});
+                      $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
+                      $('#student-merge-modal').modal('hide');  
                     }
                 }
             });
@@ -376,7 +384,8 @@ $(document).on('click', '.evaluation-delete', function () {
 						if (response.status)
 						{
                             $('#new-exam-result-modal').modal('hide');
-							$.pjax.reload({container: '#student-exam-result-listing', timeout: 6000});
+							$.pjax.reload({container: '#student-exam-result-listing', timeout: 6000, async:false});
+							$.pjax.reload({container: '#student-log', timeout: 6000, async:false});
 						} else {
 							$('#evaluation-delete').html('You are not allowed to delete this evaluation.').fadeIn().delay(3000).fadeOut();
 						}
@@ -441,7 +450,8 @@ $(document).on('click', '.evaluation-delete', function () {
                 {
                     if (response.status)
                     {
-                        $.pjax.reload({container: '#student-exam-result-listing', timeout: 6000});
+                        $.pjax.reload({container: '#student-exam-result-listing', timeout: 6000, async:false});
+                        $.pjax.reload({container: '#student-log', timeout: 6000, async:false});
                         $('#new-exam-result-modal').modal('hide');
                     } else
                     {

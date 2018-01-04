@@ -2,30 +2,31 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Classroom */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="class-room-form">
+<div class=" row user-create-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php 
+	$url = Url::to(['classroom/update', 'id' => $model->id]);
+	if ($model->isNewRecord) {
+	   $url = Url::to(['classroom/create']);
+	}
+	$form = ActiveForm::begin([
+		'id' => 'classroom-form',
+		'action' => $url,
+	]); ?>
 
-	<div class="row p-10">
-	<div class="col-md-4">
+	<div class="row">
     	<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 	</div>
-	</div>
-    <div class="pull-right">
-        <?php if (!$model->isNewRecord) : ?>
-         <?= Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn btn-default']);?>
-		<?php endif; ?>   
-        <?php echo Html::submitButton($model->isNewRecord ? 'Save' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-info' : 'btn btn-info']) ?>
-		         
+    <div class="row pull-right">
+         <?= Html::a('Cancel', '#', ['class' => 'btn btn-default' , 'id' => 'classroom-cancel']);?>
+        <?php echo Html::submitButton('Save', ['class' => 'btn btn-info']) ?>
     </div>
-    
-
     <?php ActiveForm::end(); ?>
-
 </div>

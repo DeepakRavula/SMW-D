@@ -35,7 +35,9 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
         'model' => $model,
         'paymentCycleDataProvider' => $paymentCycleDataProvider,
     ]);
-
+    $logContent=$this->render('log/index', [
+        'logDataProvider' => $logDataProvider,
+    ]);
     $items = [
         [
             'label' => 'Lesson',
@@ -50,6 +52,13 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
             'options' => [
                 'id' => 'payment-cycle',
             ],
+        ],
+        [
+            'label' => 'History',
+            'content' => $logContent,
+            'options' => [
+                'id' => 'history',
+            ],
         ]
     ];
 
@@ -59,7 +68,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
 ?>
 </div>
 <?php
-    $locationId = \Yii::$app->session->get('location_id');
+    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])
