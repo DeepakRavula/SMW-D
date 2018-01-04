@@ -13,12 +13,13 @@ class DiscountLog extends Log
     {
         $enrolmentModel     = $event->sender;
         $loggedUser         = $event->data['loggedUser'];
-        $discount           = $event->data['discount'];
+        $oldDiscount        = $event->data['oldDiscount'];
+        $newDiscount        = $event->data['newDiscount'];
         $data               = Enrolment::find(['id' => $enrolmentModel->id])->asArray()->one();
         $index              = $enrolmentModel->customer->publicIdentity;
         $path               =  Url::to(['/user/view', 'UserSearch[role_name]' => 'customer',
                                'id' => $enrolmentModel->customer->id]);
-        $message            = $loggedUser->publicIdentity.' changed the Multiple Enrolment Discount from  $'.$enrolmentModel->multipleEnrolmentDiscount->discount.'to   $'.$discount.'  for {{'.$index.'}}';
+        $message            = $loggedUser->publicIdentity.' changed the Multiple Enrolment Discount from  '.$oldDiscount.'to    $'.$newDiscount.'  for {{'.$index.'}}';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_ENROLMENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_UPDATE]);
         $locationId         = $enrolmentModel->customer->userLocation->location->id;
@@ -28,12 +29,13 @@ class DiscountLog extends Log
     {
         $enrolmentModel     = $event->sender;
         $loggedUser         = $event->data['loggedUser'];
-        $discount           = $event->data['discount'];
+        $oldDiscount        = $event->data['oldDiscount'];
+        $newDiscount        = $event->data['newDiscount'];
         $data               = Enrolment::find(['id' => $enrolmentModel->id])->asArray()->one();
         $index              = $enrolmentModel->customer->publicIdentity;
         $path               =  Url::to(['/user/view', 'UserSearch[role_name]' => 'customer',
                                'id' => $enrolmentModel->customer->id]);
-        $message            = $loggedUser->publicIdentity.' changed the Payment Frequency Discount from  '.$enrolmentModel->paymentFrequencyDiscount.'% to   $'.$discount.'  for {{'.$index.'}}';
+        $message            = $loggedUser->publicIdentity.' changed the Payment Frequency Discount from  '.$oldDiscount.' to   '.$newDiscount.'%    for {{'.$index.'}}';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_ENROLMENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_UPDATE]);
         $locationId         = $enrolmentModel->customer->userLocation->location->id;

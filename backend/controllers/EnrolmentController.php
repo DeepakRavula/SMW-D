@@ -145,6 +145,8 @@ class EnrolmentController extends \common\components\controllers\BaseController
         $model = $this->findModel($id);
         $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
         $multipleEnrolmentDiscount = new MultiEnrolmentDiscount();
+        $oldMultipleEnrolmentDiscount = $model->getMultipleEnrolmentDiscountValue();
+
         if ($model->hasMultiEnrolmentDiscount()) {
             $multipleEnrolmentDiscount = $multipleEnrolmentDiscount->setModel($model->multipleEnrolmentDiscount);
         }
@@ -159,20 +161,32 @@ class EnrolmentController extends \common\components\controllers\BaseController
             'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
         ]);
         $oldPaymentFrequency = $model->paymentFrequencyId;
+        $oldPaymentFrequencyDiscount  = $model->getPaymentFrequencyDiscountValue();
         $post = Yii::$app->request->post();
         if ($post) {
             $paymentFrequencyDiscount->load($post);
             $multipleEnrolmentDiscount->load($post);
             $multipleEnrolmentDiscount->save();
-            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-            $model->on(EnrolmentDiscount::EVENT_AFTER_UPDATE, [new DiscountLog(), 'enrolmentMultipleDiscountEdit'], ['loggedUser' => $loggedUser,'discount' => $multipleEnrolmentDiscount->discount,]);
+            $loggedUser                   = User::findOne(['id' => Yii::$app->user->id]);
             $paymentFrequencyDiscount->save();
-            $model->on(EnrolmentDiscount::EVENT_AFTER_UPDATE, [new DiscountLog(), 'enrolmentPaymentFrequencyDiscountEdit'], ['loggedUser' => $loggedUser,'discount' => $paymentFrequencyDiscount->discount,]);
+             if ((int) $oldMultipleEnrolmentDiscount != (int) $multipleEnrolmentDiscount->discount) {
+                $model->on(Enrolment::EVENT_AFTER_UPDATE,
+                    [new DiscountLog(), 'enrolmentMultipleDiscountEdit'],
+                    ['loggedUser' => $loggedUser, 'oldDiscount' => $oldMultipleEnrolmentDiscount,'newDiscount' => $multipleEnrolmentDiscount->discount]);
+            }
+            if ((int) $oldPaymentFrequencyDiscount != (int) $paymentFrequencyDiscount->discount) {
+               $model->on(Enrolment::EVENT_AFTER_UPDATE,
+                    [new DiscountLog(), 'enrolmentPaymentFrequencyDiscountEdit'],
+                    ['loggedUser' => $loggedUser, 'oldDiscount' => $oldPaymentFrequencyDiscount,'newDiscount'=>$paymentFrequencyDiscount->discount]);
+            }
             if ($model->load($post) && $model->save()) {
                 if ((int) $oldPaymentFrequency !== (int) $model->paymentFrequencyId) {
                     $model->resetPaymentCycle();
                 }
+               
             }
+           
+            
             $message = '';
             return [
                 'status' => true,
