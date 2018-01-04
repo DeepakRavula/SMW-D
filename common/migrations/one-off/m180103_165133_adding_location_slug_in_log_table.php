@@ -29,16 +29,11 @@ class m180103_165133_adding_location_slug_in_log_table extends Migration
             }
             if(!$locationSlugPresent)
             {
-                
-                list($pathExplode) = explode('-', $path); 
-                print_r($pathExplode[1]."////");
-                $path="";
+                $pathExplode = explode(' / ', $path);
+                var_dump($pathExplode);
                 die('coming');
             }
-            else
-                {
-                $path="";
-            }
+            
          }
     }
 

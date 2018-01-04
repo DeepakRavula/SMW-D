@@ -42,7 +42,7 @@ use common\models\Qualification;
         </div>
 	   <?php if(Yii::$app->user->can('viewQualificationRate')) : ?>
         <div class="col-md-6">
-            <?= $form->field($model, 'rate')->textInput(['class' => 'right-align form-control']);?>
+            <?= $form->field($model, 'rate')->textInput(['class' => 'right-align form-control', 'id' =>'private-qualification-rate']);?>
         </div>
 	   <?php endif; ?>
    </div>
