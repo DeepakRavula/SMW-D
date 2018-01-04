@@ -16,6 +16,8 @@ use common\models\Qualification;
  */
 class UserForm extends Model
 {
+    const SCENARIO_CREATE = 'create';
+
     public $username;
     public $status;
     public $roles;
@@ -33,11 +35,11 @@ class UserForm extends Model
     {
         return [
             ['firstname', 'filter', 'filter' => 'trim'],
-            ['firstname', 'required', 'on' => 'create'],
+            ['firstname', 'required', 'on' => self::SCENARIO_CREATE],
             ['firstname', 'string', 'min' => 2, 'max' => 255],
 
             ['lastname', 'filter', 'filter' => 'trim'],
-            ['lastname', 'required', 'on' => 'create'],
+            ['lastname', 'required', 'on' => self::SCENARIO_CREATE],
             ['lastname', 'string', 'min' => 2, 'max' => 255], 
             [['status'], 'integer'],
             ['roles', 'required'],
