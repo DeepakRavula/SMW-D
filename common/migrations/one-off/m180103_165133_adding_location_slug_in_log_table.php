@@ -1,40 +1,40 @@
 <?php
 
 use yii\db\Migration;
-use common\models\log\Log;
 use common\models\log\LogLink;
-use yii\helpers\StringHelper;
+use common\models\Location;
+use yii\helpers\ArrayHelper;
 
 class m180103_165133_adding_location_slug_in_log_table extends Migration
 {
-   
+
     public function up()
     {
-        $locations=['arcad','newma','south','bolto','north','west-','maple','richm','woodb','burli'];
-        $pathExplode=[];
-        $logLinks = LogLink::find()->all();
-         foreach ($logLinks as $logLink) {
-            $path=""; 
-            $path= $logLink->path;
-            $start=7;
-            $length=5;
-            print_r($logLink->path);
-            $slug= StringHelper::byteSubstr($path, $start, $length);
-           
-            $locationSlugPresent=false;
-            foreach($locations as $location)
-            {
-                if($location===$slug)
-                    $locationSlugPresent=true;
+        $locations = ArrayHelper::map(Location::find()
+                    ->all(), 'id', 'slug');
+        $logLinks  = LogLink::find()->all();
+        foreach ($logLinks as $logLink) {
+            $path       = $logLink->path;
+            $pathArray  = explode("/", $path);
+            $tobeEdited = false;
+            foreach ($locations as $location) {
+                if (array_search($location, $pathArray)) {
+                    $tobeEdited = true;
+                }
             }
-            if(!$locationSlugPresent)
-            {
-                $pathExplode = explode(' / ', $path);
-                var_dump($pathExplode);
-                die('coming');
+            if (!$tobeEdited) {
+                
+            } else {
+                $firstWord  = array_shift($pathArray);
+                $secondWord = array_shift($pathArray);
+                $thirdWord  = $locations[$logLink->log->locationId];
+                array_unshift($pathArray, $firstWord, $secondWord, $thirdWord);
+                $path       = implode("/", $pathArray);
+                $logLink->path=$path;
+                $logLink->save();
+                
             }
-            
-         }
+        }
     }
 
     public function down()
@@ -43,15 +43,14 @@ class m180103_165133_adding_location_slug_in_log_table extends Migration
 
         return false;
     }
-
     /*
-    // Use safeUp/safeDown to run migration code within a transaction
-    public function safeUp()
-    {
-    }
+      // Use safeUp/safeDown to run migration code within a transaction
+      public function safeUp()
+      {
+      }
 
-    public function safeDown()
-    {
-    }
-    */
+      public function safeDown()
+      {
+      }
+     */
 }
