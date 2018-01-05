@@ -19,7 +19,7 @@ yii\widgets\Pjax::begin([
         'emptyText' => false,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'options' => ['id' => 'log-listing-student'],
+        'options' => ['id' => 'log-listing-user'],
         'columns' => [
             [
                 'label' => 'Createdon',
