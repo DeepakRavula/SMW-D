@@ -8,6 +8,7 @@ use common\models\Vacation;
 use common\models\log\Log;
 use yii\helpers\Json;
 use yii\helpers\Url;
+use common\models\Course;
 
 class EnrolmentLog extends Log
 {
@@ -80,6 +81,36 @@ class EnrolmentLog extends Log
         if ($log->save()) {
             $this->addHistory($log, $vacationModel->enrolment, $object);
             $this->addLink($log, $studentIndex, $studentPath);
+        }
+    }
+        public function bulkReschedule($event)
+    {
+        $enrolmentModel     = $event->sender;
+        $rescheduleBeginDate=$event->data['rescheduleBeginDate'];
+        $loggedUser         = $event->data['loggedUser'];
+        $courseModel        = $event->data['courseModel'];
+        $data               = Enrolment::find(['id' => $enrolmentModel->id])->asArray()->one();
+        $dayList            = Course::getWeekdaysList();
+        $day                = $dayList[$enrolmentModel->courseSchedule->day];
+        $message            = $loggedUser->publicIdentity.' scheduled the Lessons of  {{'.$enrolmentModel->student->fullName.'}}  to  '.(new \DateTime($courseModel->courseSchedule->fromTime))->format('h:i:A').'  for  '.(new \DateTime($courseModel->courseSchedule->duration))->format('H:i') .'  hours with {{'.$courseModel->teacher->publicIdentity  .'}} on  '.$day.'s   from   '.(new \DateTime($rescheduleBeginDate))->format('d-m-Y').' onwards';
+        $object             = LogObject::findOne(['name' => LogObject::TYPE_ENROLMENT]);
+        $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_UPDATE]);
+        $log                = new Log();
+        $log->logObjectId   = $object->id;
+        $log->logActivityId = $activity->id;
+        $log->message       = $message;
+        $log->data          = Json::encode($data);
+        $log->createdUserId = $loggedUser->id;
+        $log->locationId    = $enrolmentModel->student->customer->userLocation->location_id;
+        $studentIndex       = $enrolmentModel->student->fullName;
+        $studentPath        = Url::to(['/student/view', 'id' => $enrolmentModel->student->id]);
+        $teacherIndex       = $enrolmentModel->course->teacher->publicIdentity;
+        $teacherPath        = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher',
+                'id' => $enrolmentModel->course->teacher->id]);
+        if ($log->save()) {
+            $this->addHistory($log, $enrolmentModel, $object);
+            $this->addLink($log, $studentIndex, $studentPath);
+            $this->addLink($log,$teacherIndex,$teacherPath);
         }
     }
 
