@@ -4,6 +4,7 @@ namespace backend\models;
 
 use common\models\User;
 use common\models\UserProfile;
+use common\models\log\UserLog;
 use common\models\UserEmail;
 use common\models\UserLocation;
 use yii\base\Exception;
@@ -173,7 +174,8 @@ class UserForm extends Model
             $userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;
             $userProfileModel->save();
-			
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+            $model->on(USER::EVENT_AFTER_INSERT, [new UserLog(), 'create'], ['loggedUser' => $loggedUser]);
             return !$model->hasErrors();
         }
 

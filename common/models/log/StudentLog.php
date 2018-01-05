@@ -134,7 +134,7 @@ class StudentLog extends Log
         $message            = $loggedUser->publicIdentity . ' deleted ' . $examResult->program->name . ' program examresult for {{'. $index . '}}';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_DELETE]);
-		$locationId = $examResult->student->customer->userLocation->location->id;
+        $locationId = $examResult->student->customer->userLocation->location->id;
         $this->addLog($object, $activity, $message, $data, $loggedUser, $examResult->student, $locationId, $index, $path);
     }
 	public function addLog($object, $activity, $message, $data, $loggedUser, $model, $locationId, $index, $path)
