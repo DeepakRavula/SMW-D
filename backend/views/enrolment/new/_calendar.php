@@ -50,6 +50,7 @@ use common\models\LocationAvailability;
          refreshCalendar : function(availableHours, events, date){
              $('#reverse-enrolment-calendar').fullCalendar('destroy');
              $('#reverse-enrolment-calendar').fullCalendar({
+                 nowIndicator: true,
              	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                  defaultDate: date,
                  header: {

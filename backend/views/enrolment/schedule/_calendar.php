@@ -54,6 +54,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
          refreshCalendar : function(availableHours, events, date){
              $('#enrolment-calendar').fullCalendar('destroy');
              $('#enrolment-calendar').fullCalendar({
+                 nowIndicator: true,
              	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                  defaultDate: date,
                  header: {

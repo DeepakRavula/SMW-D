@@ -122,6 +122,7 @@ use yii\bootstrap\Modal;
         refreshCalendar : function(availableHours, events, date){
             $('#lesson-calendar').fullCalendar('destroy');
             $('#lesson-calendar').fullCalendar({
+                nowIndicator: true,
             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                 defaultDate: date,
                 header: {

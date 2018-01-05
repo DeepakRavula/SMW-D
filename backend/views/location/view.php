@@ -139,6 +139,7 @@ $lastRole = end($roles);
 		return false;
 	});
 	$('#calendar').fullCalendar({
+            nowIndicator: true,
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
         defaultView: 'agendaDay',
