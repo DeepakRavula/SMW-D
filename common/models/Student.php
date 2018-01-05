@@ -185,7 +185,7 @@ class Student extends \yii\db\ActiveRecord
 	
 	public function afterSave($insert, $changedAttributes) {
 		if(!$insert && $this->isChangeBirthDate($changedAttributes)) {
-			$this->trigger(self::EVENT_UPDATE);
+			$this->trigger(self::EVENT_AFTER_UPDATE);
 		}
 		return parent::afterSave($insert, $changedAttributes);
 	}
