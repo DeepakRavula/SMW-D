@@ -20,7 +20,8 @@ class DiscountLog extends Log
         $index          = $enrolmentModel->customer->publicIdentity;
         $path           = Url::to(['/user/view', 'UserSearch[role_name]' => 'customer',
                           'id' => $enrolmentModel->customer->id]);
-        $message        = $loggedUser->publicIdentity.' changed the Multiple Enrolment Discount from  '.$oldDiscount.'  to    $'.$newDiscount.'  for {{'.$index.'}}';
+        if(empty($oldDiscount)){$oldDiscount=0;}
+        $message        = $loggedUser->publicIdentity.' changed the Multiple Enrolment Discount from  '.$oldDiscount.'  to    $ '.$newDiscount.'  for {{'.$index.'}}';
         $object         = LogObject::findOne(['name' => LogObject::TYPE_ENROLMENT]);
         $activity       = LogActivity::findOne(['name' => LogActivity::TYPE_UPDATE]);
         $locationId     = $enrolmentModel->customer->userLocation->location->id;
