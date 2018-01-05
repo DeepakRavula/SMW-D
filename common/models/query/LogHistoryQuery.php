@@ -30,4 +30,8 @@ class LogHistoryQuery extends ActiveQuery
     {
         return $this->andWhere(['instanceType' => LogObject::TYPE_ENROLMENT, 'instanceId' => $id]);
     }
+    public function user($id)
+    {
+        return $this->andWhere(['instanceType' => LogObject::TYPE_USER, 'instanceId' => $id]);
+    }
 }

@@ -13,18 +13,19 @@ class UserLog extends Log
 
     public function create($event)
     {
-        $userModel = $event->sender;
-        $loggedUser   = end($event->data);
-        $data         = User::find(['id' => $userModel->id])->asArray()->one();
-        $index        = $userModel->publicIdentity;
-        $path         = Url::to(['/user/view', 'UserSearch[role_name]' => 'teacher',
-                'id' => $userModel->id]);
-        $message      = $loggedUser->publicIdentity.' created new user {{'.$index.'}}';
-        $object       = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
+        $userModel    = $event->sender;
+        $loggedUser   = $event->data['loggedUser'];
+        $roleName     = $event->data['role'];
+        $data         = User::find(['id' => $userModel->user->id])->asArray()->one();
+        $index        = $userModel->fullName;
+        $path         = Url::to(['/user/view', 'UserSearch[role_name]' => $roleName,
+                        'id' => $userModel->user->id]);
+        $message      = $loggedUser->publicIdentity.' created new  '.$roleName.' {{'.$index.'}}';
+        $object       = LogObject::findOne(['name' => LogObject::TYPE_USER]);
         $activity     = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
-        $locationId   = $studentModel->customer->userLocation->location->id;
+        $locationId   = $userModel->user->userLocation->location->id;
         $this->addLog($object, $activity, $message, $data, $loggedUser,
-            $studentModel, $locationId, $index, $path);
+            $userModel, $locationId, $index, $path);
     }
 
     public function addLog($object, $activity, $message, $data, $loggedUser,
@@ -38,7 +39,7 @@ class UserLog extends Log
         $log->createdUserId = $loggedUser->id;
         $log->locationId    = $locationId;
         if ($log->save()) {
-            $this->addHistory($log, $model, $object);
+            $this->addHistory($log, $model->user, $object);
             $this->addLink($log, $index, $path);
         }
     }
