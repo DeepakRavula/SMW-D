@@ -94,6 +94,7 @@ $bundle = BackendAsset::register($this);
                                         <?php echo Html::a(Yii::t('backend', 'Profile'), Url::to(['user/view', 'UserSearch[role_name]' => $role, 'id' => Yii::$app->user->id]), ['class' => 'btn btn-default btn-flat', 'data-method' => 'post']) ?>
                                     </div>
                                     <div class="pull-right">
+                                        <?php echo Html::a(Yii::t('backend', 'Lock'), ['sign-in/lock'], ['class' => 'btn btn-default btn-flat', 'data-method' => 'post']) ?>
                                         <?php echo Html::a(Yii::t('backend', 'Logout'), ['sign-in/logout'], ['class' => 'btn btn-default btn-flat', 'data-method' => 'post']) ?>
                                     </div>
                                 </li>

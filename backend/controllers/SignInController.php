@@ -82,7 +82,15 @@ class SignInController extends \common\components\controllers\BaseController
 
         return $this->goHome();
     }
-
+    
+    public function actionLock()
+    {
+        return $this->redirect(['unlock']);
+    }
+    public function actionUnlock()
+    {
+         return $this->render('unlock');
+    }
     public function actionProfile()
     {
         $model = Yii::$app->user->identity->userProfile;
