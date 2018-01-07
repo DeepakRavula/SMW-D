@@ -164,14 +164,12 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 		load : function(events,availableHours) {
 		    $('#teacher-lesson').fullCalendar('destroy');
             $('#teacher-lesson').fullCalendar({
-                nowIndicator: true,
             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                 header: {
                     left: 'prev,next today',
                     center: 'title',
                     right:'',
                 },
-				firstDay :1,
                 allDaySlot: false,
                 slotDuration: '00:15:00',
                 titleFormat: 'DD-MMM-YYYY, dddd',

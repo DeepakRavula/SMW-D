@@ -185,7 +185,6 @@ $(document).ready(function(){
 	function loadCalendar() {
  		var date = $('#course-startdate').val();
         $('#reverse-enrolment-calendar').fullCalendar({
-            nowIndicator: true,
      		defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
              header: {
@@ -193,7 +192,6 @@ $(document).ready(function(){
                  center: 'title',
                  right: ''
              },
-			 firstDay : 1,
              allDaySlot: false,
              slotDuration: '00:15:00',
              titleFormat: 'DD-MMM-YYYY, dddd',

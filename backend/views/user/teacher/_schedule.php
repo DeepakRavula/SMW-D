@@ -75,13 +75,11 @@ use common\models\Invoice;
 <div id="calendar" class="p-10"></div>
 <script type="text/javascript">
   $('#calendar').fullCalendar({
-      nowIndicator: true,
     header: {
       left: 'prev,next today',
       center: 'title',
       right:'',
         },
-	firstDay : 1,
 	allDaySlot : false,
 	slotDuration: '00:15:00',
 	titleFormat: 'DD-MMM-YYYY, dddd',

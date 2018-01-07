@@ -122,7 +122,6 @@ use yii\bootstrap\Modal;
         refreshCalendar : function(availableHours, events, date){
             $('#lesson-calendar').fullCalendar('destroy');
             $('#lesson-calendar').fullCalendar({
-                nowIndicator: true,
             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                 defaultDate: date,
                 header: {
@@ -130,7 +129,6 @@ use yii\bootstrap\Modal;
                     center: 'title',
                     right:'',
                        },
-				firstDay :1,
                 allDaySlot: false,
                 slotDuration: '00:15:00',
                 titleFormat: 'DD-MMM-YYYY, dddd',

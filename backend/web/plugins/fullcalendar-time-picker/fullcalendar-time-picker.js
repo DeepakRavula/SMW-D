@@ -88,7 +88,6 @@ var calendar = {
         }
         $('#calendar-date-time-picker').fullCalendar('destroy');
         $('#calendar-date-time-picker').fullCalendar({
-            nowIndicator: true,
             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
             defaultDate: moment(calendarOptions.date).format('YYYY-MM-DD'),
             header: {
@@ -96,7 +95,6 @@ var calendar = {
                 center: 'title',
                 right: '',
             },
-			firstDay :1,
             allDaySlot: false,
             height: 450,
             slotDuration: '00:15:00',

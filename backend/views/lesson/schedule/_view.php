@@ -66,7 +66,6 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 //var params = $.param({teacherId: teacherId});
                 $('#lesson-edit-calendar').fullCalendar('destroy');
                 $('#lesson-edit-calendar').fullCalendar({
-                    nowIndicator: true,
                     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                     defaultDate: date,
                     header: {
@@ -74,7 +73,6 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                         center: 'title',
                         right:'',
                     },
-					firstDay :1,
                     allDaySlot: false,
                     slotDuration: '00:15:00',
                     titleFormat: 'DD-MMM-YYYY, dddd',

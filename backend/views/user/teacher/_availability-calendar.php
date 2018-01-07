@@ -31,7 +31,6 @@ use common\models\TeacherAvailability;
 <script type="text/javascript">
     
     $('#availability-calendar').fullCalendar({
-        nowIndicator: true,
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
         defaultView: 'agendaDay',
