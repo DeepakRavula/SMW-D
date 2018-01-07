@@ -45,8 +45,8 @@ $config = [
             'timeZone' => 'US/Eastern',
             'defaultTimeZone' => 'US/Eastern',
 			'numberFormatterOptions' => [
-// 			   NumberFormatter::MIN_FRACTION_DIGITS => 2,
-//			   NumberFormatter::MAX_FRACTION_DIGITS => 2,
+ 			   NumberFormatter::MIN_FRACTION_DIGITS => 2,
+			   NumberFormatter::MAX_FRACTION_DIGITS => 2,
 			]
         ],
 

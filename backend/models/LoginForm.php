@@ -83,7 +83,7 @@ class LoginForm extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUserLocked();
             if (!$user) {
-                $this->addError('password', Yii::t('backend', 'Incorrect pin.'));
+                $this->addError('pin', Yii::t('backend', 'Incorrect pin.'));
             }
         }
     }
@@ -113,7 +113,7 @@ class LoginForm extends Model
         return false;
     }
     
-    public function unLock()
+    public function unlock()
     {
         if (!$this->validate()) {
             return false;
@@ -163,7 +163,7 @@ class LoginForm extends Model
                     ->location($locationId)
                     ->staffs()
                     ->joinWith(['lockedUser' => function($query) use ($pin) {
-                        $query->andWhere(['staff_detail.pin' => $pin]);
+                        $query->andWhere(['user_pin.pin' => $pin]);
                     }])
                     ->notDeleted()
                     ->one();

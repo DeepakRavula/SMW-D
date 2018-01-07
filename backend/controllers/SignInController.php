@@ -88,7 +88,7 @@ class SignInController extends \common\components\controllers\BaseController
         $this->layout = 'base';
         $model = new LoginForm(['scenario' => LoginForm::SCENARIO_UNLOCK]);
         $model->rememberMe = true;
-        if ($model->load(Yii::$app->request->post()) && $model->unLock()) {
+        if ($model->load(Yii::$app->request->post()) && $model->unlock()) {
             Yii::$app->session->set('lock', false);
             return $this->redirect(['schedule/index']);
         } else {

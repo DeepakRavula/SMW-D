@@ -711,7 +711,7 @@ class User extends ActiveRecord implements IdentityInterface
     
     public function getLockedUser()
     {
-        return $this->hasOne(StaffDetail::className(), ['userId' => 'id']);
+        return $this->hasOne(UserPin::className(), ['userId' => 'id']);
     }
 
     public function hasInvoice()
