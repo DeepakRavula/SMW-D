@@ -90,10 +90,7 @@ class SignInController extends \common\components\controllers\BaseController
         $model->rememberMe = true;
         if ($model->load(Yii::$app->request->post()) && $model->unLock()) {
             Yii::$app->session->set('lock', false);
-            $user = $model->getUserLocaked();
-            if($user->isStaff()) {
-                return $this->redirect(['schedule/index']);
-            }
+            return $this->redirect(['schedule/index']);
         } else {
             return $this->render('unlock', [ 
                 'model' => $model

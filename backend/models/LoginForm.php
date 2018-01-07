@@ -30,12 +30,12 @@ class LoginForm extends Model
     {
         return [
             // username and password are both required
-            [['username', 'password'], 'required'],
+            [['username', 'password'], 'required', 'except' => self::SCENARIO_UNLOCK],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
-            ['password', 'validatePassword'],
-            ['username', 'validateUser'],
+            ['password', 'validatePassword', 'except' => self::SCENARIO_UNLOCK],
+            ['username', 'validateUser', 'except' => self::SCENARIO_UNLOCK],
             [['pin'], 'required', 'on' => self::SCENARIO_UNLOCK],
             [['pin'], 'validatePin', 'on' => self::SCENARIO_UNLOCK],
         ];
