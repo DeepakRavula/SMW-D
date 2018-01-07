@@ -708,6 +708,11 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(Enrolment::className(), ['studentId' => 'id'])
             ->via('students');
     }
+    
+    public function getLockedUser()
+    {
+        return $this->hasOne(StaffDetail::className(), ['userId' => 'id']);
+    }
 
     public function hasInvoice()
     {

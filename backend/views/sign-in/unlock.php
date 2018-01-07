@@ -26,7 +26,7 @@ $this->params['body-class'] = 'login-page';
 				Office Login
 			</div>
 			<div id="admin-login-form">
-            <?php echo $form->field($model, 'username')->label('Email') ?>
+            <?php echo $form->field($model, 'pin')->label('Pin') ?>
            
 			</div>	
         </div>
@@ -34,12 +34,6 @@ $this->params['body-class'] = 'login-page';
             <?php echo Html::submitButton(Yii::t('backend', 'Sign me in'), [
                 'class' => 'btn btn-primary btn-flat btn-block',
                 'name' => 'login-button',
-            ]) ?>
-        </div>
-
-        <div class="m-t-10 text-right">
-            <?php echo Yii::t('frontend', '<a href="{link}">Forgot your password?</a>', [
-                'link' => yii\helpers\Url::to(['sign-in/request-password-reset']),
             ]) ?>
         </div>
         <?php ActiveForm::end(); ?>

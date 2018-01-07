@@ -18,7 +18,6 @@ use trntv\filekit\actions\UploadAction;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\base\InvalidParamException;
-use yii\web\Controller;
 use common\models\User;
 
 class SignInController extends \common\components\controllers\BaseController
@@ -64,10 +63,6 @@ class SignInController extends \common\components\controllers\BaseController
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            $user=$model->getUser();
-            if($user->isStaff()) {
-                return $this->redirect(['schedule/index']);
-            }
             return $this->redirect(['dashboard/index']);
         } else {
             return $this->render('login', [
@@ -85,11 +80,23 @@ class SignInController extends \common\components\controllers\BaseController
     
     public function actionLock()
     {
+        Yii::$app->session->set('lock', true);
         return $this->redirect(['unlock']);
     }
     public function actionUnlock()
     {
-         return $this->render('unlock');
+        $this->layout = 'base';
+        $model = new LoginForm(['scenario' => LoginForm::SCENARIO_UNLOCK]);
+        if ($model->load(Yii::$app->request->post()) && $model->unLock()) {
+            $user = $model->getUserLocaked();
+            if($user->isStaff()) {
+                return $this->redirect(['schedule/index']);
+            }
+        } else {
+            return $this->render('unlock', [ 
+                'model' => $model
+            ]);
+        }
     }
     public function actionProfile()
     {
