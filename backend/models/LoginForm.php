@@ -118,7 +118,7 @@ class LoginForm extends Model
         if (!$this->validate()) {
             return false;
         }
-        $duration = $this->rememberMe ? Time::SECONDS_IN_A_WORKING_DAY : 0;
+        $duration = $this->rememberMe ? 28800 : 0;
         if (Yii::$app->user->login($this->getUserLocked(), $duration)) {
             if (!Yii::$app->user->can('loginToBackend')) {
                 Yii::$app->user->logout();
