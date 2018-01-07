@@ -35,6 +35,7 @@ use common\models\discount\EnrolmentDiscount;
 use backend\models\discount\MultiEnrolmentDiscount;
 use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\log\StudentLog;
+use common\models\log\DiscountLog;
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
@@ -144,6 +145,8 @@ class EnrolmentController extends \common\components\controllers\BaseController
         $model = $this->findModel($id);
         $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
         $multipleEnrolmentDiscount = new MultiEnrolmentDiscount();
+        $oldMultipleEnrolmentDiscount = $model->getMultipleEnrolmentDiscountValue();
+
         if ($model->hasMultiEnrolmentDiscount()) {
             $multipleEnrolmentDiscount = $multipleEnrolmentDiscount->setModel($model->multipleEnrolmentDiscount);
         }
@@ -158,17 +161,32 @@ class EnrolmentController extends \common\components\controllers\BaseController
             'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
         ]);
         $oldPaymentFrequency = $model->paymentFrequencyId;
+        $oldPaymentFrequencyDiscount  = $model->getPaymentFrequencyDiscountValue();
         $post = Yii::$app->request->post();
         if ($post) {
             $paymentFrequencyDiscount->load($post);
             $multipleEnrolmentDiscount->load($post);
             $multipleEnrolmentDiscount->save();
+            $loggedUser                   = User::findOne(['id' => Yii::$app->user->id]);
             $paymentFrequencyDiscount->save();
+             if ((int) $oldMultipleEnrolmentDiscount != (int) $multipleEnrolmentDiscount->discount) {
+                $model->on(Enrolment::EVENT_AFTER_UPDATE,
+                    [new DiscountLog(), 'enrolmentMultipleDiscountEdit'],
+                    ['loggedUser' => $loggedUser, 'oldDiscount' => $oldMultipleEnrolmentDiscount,'newDiscount' => $multipleEnrolmentDiscount->discount]);
+            }
+            if ((int) $oldPaymentFrequencyDiscount != (int) $paymentFrequencyDiscount->discount) {
+               $model->on(Enrolment::EVENT_AFTER_UPDATE,
+                    [new DiscountLog(), 'enrolmentPaymentFrequencyDiscountEdit'],
+                    ['loggedUser' => $loggedUser, 'oldDiscount' => $oldPaymentFrequencyDiscount,'newDiscount'=>$paymentFrequencyDiscount->discount]);
+            }
             if ($model->load($post) && $model->save()) {
                 if ((int) $oldPaymentFrequency !== (int) $model->paymentFrequencyId) {
                     $model->resetPaymentCycle();
                 }
+               
             }
+           
+            
             $message = '';
             return [
                 'status' => true,
@@ -256,9 +274,9 @@ class EnrolmentController extends \common\components\controllers\BaseController
 		$userLocation = new UserLocation();
 		$student = new Student();
 		$multipleEnrolmentDiscount = new EnrolmentDiscount();
-        $paymentFrequencyDiscount = new EnrolmentDiscount();
+                $paymentFrequencyDiscount = new EnrolmentDiscount();
 			
-        $post = $request->post();
+                $post = $request->post();
 		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
 		$user->load(Yii::$app->getRequest()->getBodyParams(), 'User');
 		$userProfile->load(Yii::$app->getRequest()->getBodyParams(), 'UserProfile');
