@@ -48,20 +48,18 @@ class PermissionController extends Controller
     }
 	public function actionAdd($role, $permission)
     {
-		$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 		$auth = Yii::$app->authManager;
         $role = $auth->getRole($role);
 		$permission = $auth->getPermission($permission);
-		$auth->addChild($role, $permission, $locationId);
+		$auth->addChild($role, $permission);
         return ['success'=>true];
     }
 	public function actionRemove($role, $permission)
     {
-		$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
       	$auth = Yii::$app->authManager;
         $role = $auth->getRole($role);
 		$permission = $auth->getPermission($permission);
-		$auth->removeChild($role, $permission, $locationId);
+		$auth->removeChild($role, $permission);
         return ['success'=>true]; 
     }
 }
