@@ -287,13 +287,6 @@ echo Menu::widget([
 					'badge' => User::ownerCount(),
 					'badgeBgClass' => 'label-default'
 				],
-                                [
-					'label' => Yii::t('backend', 'User Pin'),
-					'icon' => '<i class="fa fa-key"></i>',
-					'url' => ['/user-pin/index'],
-					'visible' => Yii::$app->user->can('listStaffPin'),
-                                        'badgeBgClass' => 'label-default'
-				],
 				
 					[
 					'label' => Yii::t('backend', 'Classrooms'),
