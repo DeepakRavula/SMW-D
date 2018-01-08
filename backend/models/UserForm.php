@@ -4,7 +4,7 @@ namespace backend\models;
 
 use common\models\User;
 use common\models\UserProfile;
-use common\models\UserEmail;
+use common\models\Location;
 use common\models\UserLocation;
 use yii\base\Exception;
 use yii\base\Model;
@@ -18,6 +18,7 @@ class UserForm extends Model
 {
     const SCENARIO_CREATE = 'create';
 
+    public $pin;
     public $username;
     public $status;
     public $roles;
@@ -41,10 +42,12 @@ class UserForm extends Model
             ['lastname', 'filter', 'filter' => 'trim'],
             ['lastname', 'required', 'on' => self::SCENARIO_CREATE],
             ['lastname', 'string', 'min' => 2, 'max' => 255], 
+            ['pin', 'integer', 'min' => 1111, 'max' => 9999],
+            ['pin', 'validatePin'],
             [['status'], 'integer'],
             ['roles', 'required'],
-            [['locations'], 'safe'],
-			[['password', 'confirmPassword'], 'string', 'min' => 6],
+            [['locations', 'pin'], 'safe'],
+            [['password', 'confirmPassword'], 'string', 'min' => 6],
             ['confirmPassword', 'compare', 'compareAttribute' => 'password', 'message' => "Confirm Password doesn't match with the password"],
         ];
     }
@@ -108,6 +111,20 @@ class UserForm extends Model
         }
 		
         return $this->model;
+    }
+    
+    public function validatePin()
+    {
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $pin = md5($this->pin);
+        $user = User::find()
+                    ->location($locationId)
+                    ->andWhere(['pin_hash' => $pin])
+                    ->notDeleted()
+                    ->one();
+        if ($user) {
+            $this->addError('pin', Yii::t('backend', 'Try different pin.'));
+        }
     }
 
     /**

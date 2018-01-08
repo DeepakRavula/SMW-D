@@ -91,12 +91,6 @@ $this->params['show-all'] = $this->render('_button', [
                 'value' => function ($data) {
                     return !empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
                 },
-            ],
-            [
-                'label' => 'Pin',
-                'value' => function ($data) {
-                    return !empty($data->lockedUser->pin) ? $data->lockedUser->pin : null;
-                },
             ]
         ],
     ]); ?>
