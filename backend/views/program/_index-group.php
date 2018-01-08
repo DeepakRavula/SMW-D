@@ -32,7 +32,7 @@ $lastRole = end($roles);
     ])
     ?>
     <?php Pjax::begin(['id' => 'group-program-listing', 'enablePushState' => false]) ?>
-    <?php
+     <?php
     echo GridView::widget([
         'id' => 'group-program-grid',
         'dataProvider' => $privateDataProvider,
@@ -68,7 +68,7 @@ $lastRole = end($roles);
     $(document).ready(function () {
         $(".show-all-group-programs").on("click", function () {
             var showAllPrograms = $(this).is(":checked");
-            var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[programType]=' + "<?php echo Program::TYPE_GROUP_PROGRAM; ?>";
+            var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[programType]=' + "<?php echo Program::GROUP_PROGRAM; ?>";
             $.pjax.reload({url: url, container: "#group-program-listing", replace: false, timeout: 4000});  //Reload GridView
         });
     });

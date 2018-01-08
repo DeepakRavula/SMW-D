@@ -95,8 +95,8 @@ class Program extends \yii\db\ActiveRecord
 	public static function types()
     {
         return [
-            self::TYPE_PRIVATE_PROGRAM => Yii::t('common', 'Private'),
-            self::TYPE_GROUP_PROGRAM => Yii::t('common', 'Group'),
+            self::PRIVATE_PROGRAM => Yii::t('common', 'Private'),
+            self::GROUP_PROGRAM => Yii::t('common', 'Group'),
         ];
     }
 

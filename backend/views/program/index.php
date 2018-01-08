@@ -5,37 +5,27 @@ use backend\models\search\ProgramSearch;
 use yii\bootstrap\Tabs;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
-
+use yii\helpers\Html;
+use yii\grid\GridView;
+use yii\widgets\Pjax;
 $this->title = 'Programs';
 ?>
+<div class="m-b-10">
 
+</div>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="row">
     <div class="col-md-12">
         <?php
         echo $this->render('_index-private',
             [
-            'model' => $model,
+           
             'searchModel' => $searchModel,
-            'privateDataProvider' => $privateDataProvider,
+            'dataProvider' => $dataProvider,
         ]);
         ?>
     </div>
 </div>
-<div class="row">
-    <div class="col-md-12">
-        <?php
-        echo $this->render('_index-group',
-            [
-            'model' => $model,
-            'searchModel' => $searchModel,
-            'privateDataProvider' => $groupDataProvider,
-        ]);
-        ?>
-    </div>
-</div>   
-
-<div class="clearfix"></div>
 <?php
 Modal::begin([
     'header' => '<h4 class="m-0">Program</h4>',

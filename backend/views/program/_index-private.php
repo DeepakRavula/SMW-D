@@ -2,6 +2,7 @@
 
 use yii\helpers\Url;
 use yii\widgets\Pjax;
+use yii\bootstrap\ButtonGroup;
 use yii\bootstrap\ActiveForm;
 use common\models\Program;
 use yii\grid\GridView;
@@ -15,28 +16,24 @@ use insolita\wgadminlte\LteConst;
 $roles    = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 ?>
+ <div class="box">
+           <div class="box-body">
+<?= ButtonGroup::widget([
+	'buttons' => [
+		Html::a('Private', '', ['class' => ['btn btn-default active', 'private'],
+			'value' => 1]),
+		Html::a('Group', '', ['class' => ['btn btn-default', 'group'],
+			'value' => 2]),
+	]
+]); ?>
 <div>
-    <?php
-    LteBox::begin([
-        'type' => LteConst::TYPE_DEFAULT,
-        'boxTools' => [
-            '<i title="Add" class="fa fa-plus" id = "add-program"></i>',
-            Html::checkbox('show-all', false,
-                ['id' => 'show-all-programs', 'class' => 'show-all-private-programs']),
-            Html::label('Show All', '', ['id' => 'show-all-programs-label'])
-        ],
-        'title' => 'Private Programs',
-        'withBorder' => true,
-    ])
-    ?>
-    <?php Pjax::begin(['id' => 'private-program-listing', 'enablePushState' => false]) ?>
+   
+    <?php Pjax::begin(['id' => 'program-listing', 'enablePushState' => false]) ?>
     <?php
     echo GridView::widget([
         'id' => 'private-program-grid',
-        'dataProvider' => $privateDataProvider,
-        'filterModel' => $searchModel,
-        //'condensed' => true,
-        //'hover' => true,
+        'dataProvider' => $dataProvider,
+        
         'columns' => [
             [
                 'attribute' => 'name',
@@ -59,10 +56,27 @@ $lastRole = end($roles);
     ]);
     ?>
 <?php Pjax::end(); ?>
-<?php LteBox::end() ?>
+</div>
+</div>
     <div class="clearfix"></div>
 </div>
 <script>
+     $(document).ready(function() {
+	$(document).on('click', '.private', function() {
+		$(".group").removeClass('active');		
+		$(".private").addClass('active');	
+	});
+	$(document).on('click', '.group', function() {
+		$(".private").removeClass('active');	
+		$(".group").addClass('active');	
+	});
+	$(document).on('click', '.group, .private', function() {
+		var type = $(this).attr('value');
+		var url = "<?php echo Url::to(['/program/index']); ?>?ProgramSearch[type]=" + type;
+		$.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  
+		return false;
+	});
+});
     $(document).ready(function () {
         $(".show-all-private-programs").on("click", function () {
             var showAllPrograms = $(this).is(":checked");

@@ -13,7 +13,9 @@ class ProgramSearch extends Program
 {
     public $showAllPrograms = false;
     public $query;
-
+    const PRIVATE_PROGRAM=1;
+    const GROUP_PROGRAM=2;
+    public $type;
     /**
      * {@inheritdoc}
      */
@@ -42,12 +44,8 @@ class ProgramSearch extends Program
     {
         $query = Program::find();
 
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'pageSize' => 10,
-            ],
         ]);
         if (!empty($this->type)) {
             $query->andWhere(['type' => $this->type]);
@@ -55,11 +53,15 @@ class ProgramSearch extends Program
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-
         if (!$this->showAllPrograms) {
             $query->active();
         }
-
+         if((int)$this->type === self::PRIVATE_PROGRAM) {
+            $query->andWhere(['type' => $this->type]);
+         } 
+	if((int)$this->type === self::GROUP_PROGRAM) {
+            $query->andWhere(['type' => $this->type]); 
+	} 
         $query->andFilterWhere(['like', 'name', $this->name]);
         $query->andFilterWhere(['like', 'rate', $this->rate]);
 

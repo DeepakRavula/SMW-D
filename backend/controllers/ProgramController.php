@@ -44,31 +44,21 @@ class ProgramController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-    public function actionIndex()
+        public function actionIndex()
     {
+        $request = Yii::$app->request;
         $searchModel         = new ProgramSearch();
-        $searchModel->type   = Program::TYPE_PRIVATE_PROGRAM;
-        $privateDataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $searchModel->type   = Program::TYPE_GROUP_PROGRAM;
-        $groupDataProvider   = $searchModel->search(Yii::$app->request->queryParams);
-        $model               = new Program();
-        $model->type         = $searchModel->type;
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('alert',
-                [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Program has been created successfully',
-            ]);
-
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
+        $searchModel->type   = ProgramSearch::PRIVATE_PROGRAM;
+        $programSearchModel = $request->get('ProgramSearch');
+            if(!empty($programSearchModel)) {
+                $searchModel->type = $programSearchModel['type'];
+            }
+        $dataProvider   = $searchModel->search(Yii::$app->request->queryParams);
+        
         return $this->render('index',
                 [
-                'model' => $model,
                 'searchModel' => $searchModel,
-                'privateDataProvider' => $privateDataProvider,
-                'groupDataProvider' => $groupDataProvider,
+                'dataProvider' => $dataProvider,
         ]);
     }
 
