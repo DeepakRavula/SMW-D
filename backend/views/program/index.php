@@ -9,6 +9,11 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 $this->title = 'Programs';
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'new-enrol-btn']);
+
+$this->params['show-all'] = $this->render('_button', [
+	'searchModel' => $searchModel
+ ]);
 ?>
 <div class="m-b-10">
 
