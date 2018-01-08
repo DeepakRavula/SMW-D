@@ -12,6 +12,9 @@ class BaseController extends Controller
 {
     public function init()
     {
+        if (Yii::$app->session->get('lock') && $this->module->requestedRoute !== 'sign-in/unlock') {
+            return $this->redirect(['/sign-in/unlock']);
+        }
         $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
         if (!empty(Yii::$app->user->id) && empty(Yii::$app->location)) {
             $userLogged = User::findOne(Yii::$app->user->id);

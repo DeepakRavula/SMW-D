@@ -56,6 +56,7 @@ var userId = '<?php echo $userId; ?>';
 $(document).ready(function() {
     var params = $.param({ userId: userId });
     $('#calendar').fullCalendar({
+        nowIndicator: true,
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: {
 			left: 'prev,next today',

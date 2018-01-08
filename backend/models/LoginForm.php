@@ -5,6 +5,7 @@ namespace backend\models;
 use cheatsheet\Time;
 use common\models\User;
 use Yii;
+use common\models\Location;
 use yii\base\Model;
 use yii\web\ForbiddenHttpException;
 
@@ -13,6 +14,9 @@ use yii\web\ForbiddenHttpException;
  */
 class LoginForm extends Model
 {
+    const SCENARIO_UNLOCK = 'unlock';
+
+    public $pin;
     public $username;
     public $password;
     public $rememberMe = true;
@@ -26,12 +30,14 @@ class LoginForm extends Model
     {
         return [
             // username and password are both required
-            [['username', 'password'], 'required'],
+            [['username', 'password'], 'required', 'except' => self::SCENARIO_UNLOCK],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
-            ['password', 'validatePassword'],
-            ['username', 'validateUser'],
+            ['password', 'validatePassword', 'except' => self::SCENARIO_UNLOCK],
+            ['username', 'validateUser', 'except' => self::SCENARIO_UNLOCK],
+            [['pin'], 'required', 'on' => self::SCENARIO_UNLOCK],
+            [['pin'], 'validatePin', 'on' => self::SCENARIO_UNLOCK],
         ];
     }
 
@@ -71,6 +77,16 @@ class LoginForm extends Model
             }
         }
     }
+    
+    public function validatePin()
+    {
+        if (!$this->hasErrors()) {
+            $user = $this->getUserLocked();
+            if (!$user) {
+                $this->addError('pin', Yii::t('backend', 'Incorrect pin.'));
+            }
+        }
+    }
 
     /**
      * Logs in a user using the provided username and password.
@@ -96,6 +112,24 @@ class LoginForm extends Model
 
         return false;
     }
+    
+    public function unlock()
+    {
+        if (!$this->validate()) {
+            return false;
+        }
+        $duration = $this->rememberMe ? 28800 : 0;
+        if (Yii::$app->user->login($this->getUserLocked(), $duration)) {
+            if (!Yii::$app->user->can('loginToBackend')) {
+                Yii::$app->user->logout();
+                throw new ForbiddenHttpException();
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Finds user by [[username]].
@@ -107,6 +141,7 @@ class LoginForm extends Model
         if ($this->user === false) {
             $userName = $this->username;
             $this->user = User::find()
+                    ->adminOrOwner()
                 ->joinWith(['userContact' => function($query) use($userName) {
 					$query->joinWith(['email' => function($query) use($userName){
 						$query->andWhere(['email' => $userName]);
@@ -116,6 +151,22 @@ class LoginForm extends Model
                 ->notDeleted()
                 ->one();
         }
+
+        return $this->user;
+    }
+    
+    public function getUserLocked()
+    {
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $pin = $this->pin;
+        $this->user = User::find()
+                    ->location($locationId)
+                    ->staffs()
+                    ->joinWith(['lockedUser' => function($query) use ($pin) {
+                        $query->andWhere(['user_pin.pin' => $pin]);
+                    }])
+                    ->notDeleted()
+                    ->one();
 
         return $this->user;
     }

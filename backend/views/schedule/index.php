@@ -307,7 +307,7 @@ function refreshCalendar(date, clearFilter) {
     $('#calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
-		height: "auto",
+        height: "auto",
         defaultDate: date,
         titleFormat: 'DD-MMM-YYYY, dddd',
         defaultView: 'agendaDay',
