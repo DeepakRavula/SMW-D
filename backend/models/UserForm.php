@@ -10,7 +10,6 @@ use yii\base\Exception;
 use yii\base\Model;
 use Yii;
 use yii\helpers\ArrayHelper;
-use common\models\Qualification;
 /**
  * Create user form.
  */
@@ -175,11 +174,11 @@ class UserForm extends Model
                 $auth->assign($auth->getRole($this->roles), $model->getId());
             }
 
-            $userLocationModel = UserLocation::findOne(['user_id' => $model->getId(), 'location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
+            $userLocationModel = UserLocation::findOne(['user_id' => $model->getId(), 'location_id' => Location::findOne(['slug' => Yii::$app->location])->id]);
             if (empty($userLocationModel) && $this->roles !== User::ROLE_ADMINISTRATOR) {
                 $userLocationModel = new UserLocation();
                 $userLocationModel->user_id = $model->getId();
-                $userLocationModel->location_id = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+                $userLocationModel->location_id = Location::findOne(['slug' => Yii::$app->location])->id;
                 $userLocationModel->save();
             }
 

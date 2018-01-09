@@ -6,7 +6,7 @@ class m180108_164038_create_pin_hash extends Migration
 {
     public function up()
     {
-        $this->addColumn('user', 'pin_hash', $this->string()->null()->after('password_hash'));
+        $this->addColumn('user', 'pin_hash', $this->char()->null()->after('password_hash'));
     }
 
     public function down()

@@ -12,7 +12,6 @@ $loggedUser = User::findOne(Yii::$app->user->id);
 <?php
     $form = ActiveForm::begin([
 		'id' => 'user-update-form',
-		'enableClientValidation' => true,
 		'action' => Url::to(['user/edit-profile', 'id' => $model->getModel()->id])
 	]);
     ?>
@@ -36,12 +35,14 @@ $loggedUser = User::findOne(Yii::$app->user->id);
                     <div class="col-xs-6">
                         <?php echo $form->field($model, 'roles')->dropDownList(ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name')) ?>
                     </div>
-			<div class="col-xs-6">
-                        <?php echo $form->field($model, 'password')->passwordInput() ?>
-                    </div>
-			<div class="col-xs-6">
-                        <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
-                    </div>
+                    <?php if (!$model->getModel()->isStaff()) : ?>
+                        <div class="col-xs-6">
+                            <?php echo $form->field($model, 'password')->passwordInput() ?>
+                        </div>
+                            <div class="col-xs-6">
+                            <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
+                        </div>
+                    <?php endif; ?>
                     <?php if ($model->getModel()->isBackendUsers()) : ?> 
                         <div class="col-xs-6">
                             <?php echo $form->field($model, 'pin')->passwordInput() ?>
