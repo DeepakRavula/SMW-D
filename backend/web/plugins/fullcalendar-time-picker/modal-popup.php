@@ -53,7 +53,7 @@ use yii\widgets\ActiveForm;
     </div>
     <div id="calendar-date-time-picker" ></div>
     <div class="col-lg-12">
-    <div class="form-group pull-right">
+    <div class="form-group pull-right m-t-10">
         <?= Html::a('Cancel', '#', ['class' => 'btn btn-default calendar-date-time-picker-cancel']); ?>
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info calendar-date-time-picker-save', 'name' => 'button']) ?>
     </div>
