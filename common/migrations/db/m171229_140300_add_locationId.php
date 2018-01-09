@@ -15,7 +15,9 @@ class m171229_140300_add_locationId extends Migration
 	
     public function up()
     {
-		$this->dropPrimaryKey('parent', 'rbac_auth_item_child');
+	        $this->dropForeignKey('rbac_auth_item_child_ibfk_1', 'rbac_auth_item_child');
+                $this->dropForeignKey('rbac_auth_item_child_ibfk_2', 'rbac_auth_item_child');
+                $this->dropPrimaryKey('parent', 'rbac_auth_item_child');
 		$this->addColumn('rbac_auth_item_child', 'location_id', $this->integer());
 		$this->update('rbac_auth_item_child', [
 			'location_id' => 1
