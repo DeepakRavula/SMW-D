@@ -135,10 +135,13 @@ class DbManager extends \yii\rbac\DbManager
      */
      public function getChildren($name)
     {
+		$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = (new Query)
             ->select(['name', 'type', 'description', 'rule_name', 'data', 'created_at', 'updated_at', 'location_id'])
             ->from([$this->itemTable, $this->itemChildTable])
-            ->where(['parent' => $name, 'name' => new Expression('[[child]]')]);
+            ->where(['parent' => $name, 
+				'name' => new Expression('[[child]]'),
+				'location_id' => $locationId]);
 
         $children = [];
         foreach ($query->all($this->db) as $row) {
