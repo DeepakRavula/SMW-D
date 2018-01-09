@@ -9,6 +9,7 @@ use yii\helpers\ArrayHelper;
 use kartik\date\DatePicker;
 use Carbon\Carbon;
 use yii\helpers\Url;
+use yii\widgets\MaskedInput;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
@@ -34,7 +35,9 @@ $this->title = 'Edit Location';
 		</div>
                 <div class="clearfix"></div>
 		<div class="col-md-6">
-			<?php echo $form->field($model, 'phone_number')->textInput() ?>
+			<?= $form->field($model, 'phone_number')->widget(MaskedInput::className(), [
+    'mask' => '(999) 999-9999',
+]) ?>
 		</div>
                 <div class="col-md-6">
 			<?php echo $form->field($model, 'email')->textInput() ?>
