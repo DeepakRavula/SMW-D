@@ -74,19 +74,16 @@ class ClassroomUnavailabilityController extends \common\components\controllers\B
         ]);
          
         if ($model->load(Yii::$app->request->post())) {
-            if(!empty($model->dateRange))
-            {
+            if(!empty($model->dateRange)){
             list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
             $model->fromDate = \DateTime::createFromFormat('M d,Y', $model->fromDate)->format('Y-m-d h:i:s');
             $model->toDate = \DateTime::createFromFormat('M d,Y', $model->toDate)->format('Y-m-d h:i:s');
             $model->save();
-
             return [
                 'status' => true
             ];
             }
-            else
-            {
+            else{
               return [
                 'status' => false,
                 'errors' => $model->getErrors(),
