@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
+use kartik\daterange\DateRangePicker;
 /* @var $this yii\web\View */
 /* @var $model common\models\ClassroomUnavailability */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -17,36 +18,33 @@ use kartik\date\DatePicker;
 
     ?>
     <div class="row">
-        <div class="col-lg-6">
-            <?php
-            echo $form->field($model, 'fromDate')->widget(DatePicker::classname(), [
-                'options' => [
-                    'value' => !empty($model->fromDate) ? Yii::$app->formatter->asDate($model->fromDate) : Yii::$app->formatter->asDate(new \DateTime()),
+      <div class="col-md-6">
+         <div class="form-group">
+			 <label>Date Range</label>
+            <?php echo DateRangePicker::widget([
+            'model' => $model,
+            'attribute' => 'dateRange',
+            'convertFormat' => true,
+            'initRangeExpr' => true,
+            'pluginOptions' => [
+                'autoApply' => true,
+                'ranges' => [
+                    Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
+                    Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
+					Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+                    Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
                 ],
-                'type' => DatePicker::TYPE_COMPONENT_APPEND,
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'dd-mm-yyyy',
+                'locale' => [
+                    'format' => 'M d,Y',
                 ],
-            ]);
+                'opens' => 'right',
+                ],
 
-            ?>
-        </div>
-        <div class="col-lg-6">
-            <?php
-            echo $form->field($model, 'toDate')->widget(DatePicker::classname(), [
-                'options' => [
-                    'value' => !empty($model->toDate) ? Yii::$app->formatter->asDate($model->toDate) : Yii::$app->formatter->asDate(new \DateTime()),
-                ],
-                'type' => DatePicker::TYPE_COMPONENT_APPEND,
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'dd-mm-yyyy',
-                ],
             ]);
-
-            ?>
+           ?>
         </div>
+    </div>
+
         <div class="col-lg-10">
         <?php echo $form->field($model, 'reason')->textarea(['rows' => 6]) ?>
         </div>
