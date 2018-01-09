@@ -6,6 +6,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
+use yii\widgets\MaskedInput;
 
 /* @var $model backend\models\UserForm */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -24,7 +25,9 @@ $form = ActiveForm::begin([
 	]);
 ?>
 <div class="row">
-	<?= $form->field($phoneModel, "number")->textInput(['maxlength' => true]) ?>
+	<?= $form->field($phoneModel, 'number')->widget(MaskedInput::className(), [
+    'mask' => '(999) 999-9999',
+]) ?>
 	<?=
 	$form->field($model, "labelId")->widget(Select2::classname(), [
 		'data' => ArrayHelper::map(Label::find()

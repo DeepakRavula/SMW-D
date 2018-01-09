@@ -23,7 +23,7 @@ $vacationDataProvider = new ActiveDataProvider([
     <?php
     yii\widgets\Pjax::begin([
         'timeout' => 6000,
-        'id' => 'student-vacation'
+        'id' => 'student-vacation',
     ])
     ?>
     <?php
@@ -34,6 +34,7 @@ $vacationDataProvider = new ActiveDataProvider([
         'options' => ['class' => 'col-md-12', 'id' => 'student-vacation-list',],
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'emptyText'=>'This student has no vacations to list. Vacations must be entered for each enrolment. To add a vacation for this student, go into their enrolment and add one there.',
         'columns' => [
             [
                 'label' => 'Program',

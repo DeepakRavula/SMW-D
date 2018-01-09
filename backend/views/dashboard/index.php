@@ -56,7 +56,6 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
 		?>
 	</div>
 </div>
-</div>
 <div class="row">
 	<div class="col-md-12">
 		<div class="box box-success">

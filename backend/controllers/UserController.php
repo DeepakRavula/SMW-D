@@ -38,6 +38,7 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use common\models\Payment;
 use common\models\UserAddress;
+use common\models\log\LogHistory;
 use Intervention\Image\ImageManagerStatic;
 use trntv\filekit\actions\DeleteAction;
 use trntv\filekit\actions\UploadAction;
@@ -389,7 +390,14 @@ class UserController extends \common\components\controllers\BaseController
 			'pagination' => false,
 		]);	
 	}
-	protected function getTeacherAvailabilities($id, $locationId)
+        protected function getLogDataProvider($id)
+    {
+        return new ActiveDataProvider([
+            'query' => LogHistory::find()
+                ->user($id)]);
+    }
+
+    protected function getTeacherAvailabilities($id, $locationId)
 	{
 		return TeacherAvailability::find()
             ->joinWith(['userLocation' => function ($query) use ($locationId, $id) {
@@ -398,7 +406,7 @@ class UserController extends \common\components\controllers\BaseController
             ->groupBy('day')
             ->all();
 	}
-
+        
 	/**
      * Displays a single User model.
      *
@@ -464,7 +472,8 @@ class UserController extends \common\components\controllers\BaseController
 			'privateQualificationDataProvider' => $this->getPrivateQualificationDataProvider($id),
 			'groupQualificationDataProvider' => $this->getGroupQualificationDataProvider($id),
 			'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id,$invoiceSearchModel->fromDate,$invoiceSearchModel->toDate,$invoiceSearchModel->summariseReport),
-			'unavailability' => $this->getUnavailabilityDataProvider($id)
+			'unavailability' => $this->getUnavailabilityDataProvider($id),
+            'logDataProvider' => $this->getLogDataProvider($id),
         ]);
     }
 

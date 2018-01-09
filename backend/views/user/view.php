@@ -192,6 +192,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 
 		$logContent = $this->render('log', [
 			'model' => $model,
+                        'logDataProvider'=>$logDataProvider,
 		]);
 		$timeVoucherContent = $this->render('teacher/_time-voucher', [
 			'timeVoucherDataProvider' => $timeVoucherDataProvider,
