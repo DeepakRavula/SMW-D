@@ -9,14 +9,13 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 $this->title = 'Programs';
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'new-enrol-btn']);
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'new-program']);
 
 $this->params['show-all'] = $this->render('_button', [
 	'searchModel' => $searchModel
  ]);
 ?>
 <div class="m-b-10">
-
 </div>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="row">
@@ -24,13 +23,14 @@ $this->params['show-all'] = $this->render('_button', [
         <?php
         echo $this->render('_index-private',
             [
-           
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
         ?>
     </div>
 </div>
+<div>
+<div>
 <?php
 Modal::begin([
     'header' => '<h4 class="m-0">Program</h4>',
@@ -39,9 +39,10 @@ Modal::begin([
 ?>
 <div id="program-content"></div>
 <?php Modal::end(); ?>
+</div>
 <script>
     $(document).ready(function () {
-        $(document).on('click', '#add-program, #group-program-listing tbody > tr,#private-program-listing tbody > tr', function () {
+        $(document).on('click', '.action-button,#private-program-grid tbody > tr',function () {
             var programId = $(this).data('key');
             if (programId === undefined) {
                 var customUrl = '<?= Url::to(['program/create']); ?>';

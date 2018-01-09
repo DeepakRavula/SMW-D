@@ -27,9 +27,6 @@ if (!$model->isNewRecord) {
 					<?php echo $form->field($model, 'rate')->textInput()->label($rateLabel); ?>
 				</div>
 				<div class="col-md-12">
-					<?php echo $form->field($model, 'type')->dropDownList(Program::types()) ?>
-				</div>
-				<div class="col-md-12">
 					<?php if (!$model->getIsNewRecord()) : ?>
 					<?php echo $form->field($model, 'status')->dropDownList(Program::statuses()) ?>
 					<?php endif; ?>

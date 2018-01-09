@@ -77,11 +77,4 @@ $lastRole = end($roles);
 		return false;
 	});
 });
-    $(document).ready(function () {
-        $(".show-all-private-programs").on("click", function () {
-            var showAllPrograms = $(this).is(":checked");
-            var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[programType]=' + "<?php echo Program::TYPE_PRIVATE_PROGRAM; ?>";
-            $.pjax.reload({url: url, container: "#private-program-listing", replace: false, timeout: 4000});  //Reload GridView
-        });
-    });
 </script>
