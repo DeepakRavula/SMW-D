@@ -138,6 +138,7 @@ Modal::end();
 		<?=
 		$this->render('log', [
 			'model' => $model,
+            'logDataProvider' =>$logDataProvider,
 		]);
 		?>	
 	</div>

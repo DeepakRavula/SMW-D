@@ -44,7 +44,7 @@ use kartik\daterange\DateRangePicker;
             ?>
         </div>
         <div class="col-md-1 form-group">
-            <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'search', 'class' => 'btn btn-primary']) ?>
+            <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['id' => 'lesson-search', 'class' => 'btn btn-primary']) ?>
         </div>
         <div class="col-md-1 form-group">
             <?= Html::a('<i class="fa fa-print"></i> Print', ['print/teacher-lessons', 'id' => $model->id], ['id' => 'print-btn', 'class' => 'btn btn-default m-r-10', 'target' => '_blank']) ?>

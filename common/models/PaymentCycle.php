@@ -1,7 +1,7 @@
 <?php
 
 namespace common\models;
-
+use common\models\log\InvoiceLog;
 use Yii;
 
 /**
@@ -166,6 +166,15 @@ class PaymentCycle extends \yii\db\ActiveRecord
         $invoice->createdUserId = Yii::$app->user->id;
         $invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
+        if (is_a(Yii::$app, 'yii\console\Application')) {
+            $roleUser = User::findByRole(User::ROLE_BOT);
+            $botUser = end($roleUser);
+            $loggedUser = User::findOne(['id' => $botUser->id]);
+        } else {
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+        }
+        $invoice->on(Invoice::EVENT_AFTER_INSERT, [new InvoiceLog(), 'addProformaInvoice'], ['loggedUser' => $loggedUser]);	
+        $invoice->trigger(Invoice::EVENT_AFTER_INSERT);
         $lessons = Lesson::find()
             ->isConfirmed()
             ->notDeleted()
