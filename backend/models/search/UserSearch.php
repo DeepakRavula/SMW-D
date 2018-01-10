@@ -116,7 +116,7 @@ class UserSearch extends User
         $query->andFilterWhere(['ai.name' => $this->role_name]);
 
         if ($this->role_name !== USER::ROLE_ADMINISTRATOR) {
-            $query->andFilterWhere(['like', 'ul.location_id', $locationId]);
+            $query->andFilterWhere([ 'ul.location_id' =>  $locationId]);
         }
 
         if ($this->role_name === USER::ROLE_CUSTOMER) {
