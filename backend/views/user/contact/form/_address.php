@@ -52,8 +52,7 @@ use yii\helpers\Url;
 			'class' => 'city',
 		],
 		'pluginOptions' => [
-			'tags' => true,
-                    'tokenSeparators' => [',', ' '],
+			'tags' => true
 		],
 	])->label('city');
 		?>
