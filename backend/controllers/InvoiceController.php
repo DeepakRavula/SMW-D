@@ -108,8 +108,6 @@ class InvoiceController extends \common\components\controllers\BaseController
             $invoice->user_id = $invoiceRequest['customer_id'];
             $invoice->type = $invoiceRequest['type'];
         }
-        $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-        $invoice->on(Invoice::EVENT_AFTER_INSERT, [new InvoiceLog(), 'addInvoice'], ['loggedUser' => $loggedUser]);
         $location_id = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $invoice->location_id = $location_id;
 		$invoice->createdUserId = Yii::$app->user->id;
