@@ -72,10 +72,23 @@ class ClassroomUnavailabilityController extends \common\components\controllers\B
         $data = $this->renderAjax('/classroom/unavailability/_form', [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+         
+        if ($model->load(Yii::$app->request->post())) {
+            if(!empty($model->dateRange)){
+            list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
+            $model->fromDate = \DateTime::createFromFormat('M d,Y', $model->fromDate)->format('Y-m-d h:i:s');
+            $model->toDate = \DateTime::createFromFormat('M d,Y', $model->toDate)->format('Y-m-d h:i:s');
+            $model->save();
             return [
                 'status' => true
             ];
+            }
+            else{
+              return [
+                'status' => false,
+                'errors' => $model->getErrors(),
+            ];
+            }
         } else {
             return [
                 'status' => true,
