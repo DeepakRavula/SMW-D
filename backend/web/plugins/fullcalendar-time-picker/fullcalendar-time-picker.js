@@ -90,6 +90,8 @@ var calendar = {
         $('#calendar-date-time-picker').fullCalendar({
             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
             defaultDate: moment(calendarOptions.date).format('YYYY-MM-DD'),
+			firstDay : 1,
+            nowIndicator: true,
             header: {
                 left: 'prev,next today',
                 center: 'title',

@@ -34,6 +34,8 @@ use common\models\TeacherAvailability;
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
         defaultView: 'agendaDay',
+		firstDay : 1,
+        nowIndicator: true,
         minTime: "<?php echo $minTime; ?>",
         maxTime: "<?php echo $maxTime; ?>",
         slotDuration: "00:15:00",
