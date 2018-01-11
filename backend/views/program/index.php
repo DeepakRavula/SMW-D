@@ -40,15 +40,12 @@ Modal::begin([
 <div id="program-content"></div>
 <?php Modal::end(); ?>
 </div>
+    <?php echo Html::hiddenInput('name','1',array('id'=>'program-type')); ?>
 <script>
     $(document).ready(function () {
-        $(document).on('click', '.action-button,#private-program-grid tbody > tr',function () {
-            var programId = $(this).data('key');
-            if (programId === undefined) {
-                var customUrl = '<?= Url::to(['program/create']); ?>';
-            } else {
-                var customUrl = '<?= Url::to(['program/update']); ?>?id=' + programId;
-            }
+        $(document).on('click', '.action-button',function () {
+            var type=$('#program-type').val();
+                var customUrl = '<?= Url::to(['program/create']); ?>?type=' + type;
             $.ajax({
                 url: customUrl,
                 type: 'post',
@@ -63,8 +60,26 @@ Modal::begin([
                     }
                 }
             });
-            return false;
         });
+        $(document).on('click', '#private-program-grid tbody > tr',function () {
+                var programId = $(this).data('key');
+                var customUrl = '<?= Url::to(['program/update']); ?>?id=' + programId;
+            $.ajax({
+                url: customUrl,
+                type: 'post',
+                dataType: "json",
+                data: $(this).serialize(),
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#program-content').html(response.data);
+                        $('#program-modal').modal('show');
+                    }
+                }
+            });
+        });
+        
         $(document).on('beforeSubmit', '#program-form', function () {
             $.ajax({
                 url: $(this).attr('action'),
@@ -74,7 +89,11 @@ Modal::begin([
                 success: function (response)
                 {
                     if (response.status) {
-                        $.pjax.reload({container: '#program-listing', timeout: 6000});
+                        var showAllPrograms = $(this).is(":checked");
+                        var type=$('#program-type').val();
+                        var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[type]=' + type;
+                        $.pjax.reload({url: url, container: "#program-listing", replace: false, timeout: 4000});
+                        //$.pjax.reload({container: '#program-listing', timeout: 6000});
                         $('#program-modal').modal('hide');
                     } else {
                         $('#error-notification').html(response.message).fadeIn().delay(8000).fadeOut();
@@ -89,5 +108,35 @@ Modal::begin([
             $('#program-modal').modal('hide');
             return false;
         });
+         //$("#program-type").val(1);
+	$(document).on('click', '.private', function() {
+                var type=$('#program-type').val('1');
+		$(".group").removeClass('active');		
+		$(".private").addClass('active');	
+	});
+	$(document).on('click', '.group', function() {
+                var type=$('#program-type').val('2');
+		$(".private").removeClass('active');	
+		$(".group").addClass('active');	
+	});
+	$(document).on('click', '.group, .private', function() {
+		var type = $(this).attr('value');
+		var url = "<?php echo Url::to(['/program/index']); ?>?ProgramSearch[type]=" + type;
+		$.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  
+		return false;
+	});
+        $("#programsearch-showallprograms").on("change", function() {
+      var type=$('#program-type').val();
+      var showAllPrograms = $(this).is(":checked");
+      var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms);
+      $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
+         $("#programsearch-showallprograms").on("change", function () {
+            var showAllPrograms = $(this).is(":checked");
+            var type=$('#program-type').val();
+            var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[type]=' + type;
+            $.pjax.reload({url: url, container: "#program-listing", replace: false, timeout: 4000});  //Reload GridView
+        });
+ });
+
 </script>

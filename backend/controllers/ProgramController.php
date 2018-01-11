@@ -119,14 +119,16 @@ class ProgramController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($type)
     {
         $model = new Program();
         $data  = $this->renderAjax('_form',
             [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $model->type=$type;
+            $model->save();
             return [
                 'status' => true
             ];

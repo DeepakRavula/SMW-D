@@ -17,7 +17,7 @@ $roles    = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 ?>
  <div class="box">
-           <div class="box-body">
+    <div class="box-body">
 <?= ButtonGroup::widget([
 	'buttons' => [
 		Html::a('Private', '', ['class' => ['btn btn-default active', 'private'],
@@ -26,12 +26,10 @@ $lastRole = end($roles);
 			'value' => 2]),
 	]
 ]); ?>
-<div>
-   
+    <div>
     <?php Pjax::begin(['id' => 'program-listing', 'enablePushState' => false]) ?>
     <?php
     echo GridView::widget([
-        'id' => 'private-program-grid',
         'dataProvider' => $dataProvider,
         
         'columns' => [
@@ -58,23 +56,4 @@ $lastRole = end($roles);
 <?php Pjax::end(); ?>
 </div>
 </div>
-    <div class="clearfix"></div>
 </div>
-<script>
-     $(document).ready(function() {
-	$(document).on('click', '.private', function() {
-		$(".group").removeClass('active');		
-		$(".private").addClass('active');	
-	});
-	$(document).on('click', '.group', function() {
-		$(".private").removeClass('active');	
-		$(".group").addClass('active');	
-	});
-	$(document).on('click', '.group, .private', function() {
-		var type = $(this).attr('value');
-		var url = "<?php echo Url::to(['/program/index']); ?>?ProgramSearch[type]=" + type;
-		$.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  
-		return false;
-	});
-});
-</script>
