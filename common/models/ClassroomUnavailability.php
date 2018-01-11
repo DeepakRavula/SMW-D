@@ -18,6 +18,7 @@ class ClassroomUnavailability extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    public $dateRange;
     public static function tableName()
     {
         return 'classroom_unavailability';
@@ -33,6 +34,7 @@ class ClassroomUnavailability extends \yii\db\ActiveRecord
             [['classroomId'], 'integer'],
             [['fromDate', 'toDate'], 'required'],
             [['reason'], 'string'],
+            [['dateRange'], 'required'],
         ];
     }
 

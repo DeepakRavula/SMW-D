@@ -124,6 +124,8 @@ use yii\bootstrap\Modal;
             $('#lesson-calendar').fullCalendar({
             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                 defaultDate: date,
+				firstDay : 1,
+            	nowIndicator: true,
                 header: {
                     left: 'prev,next today',
                     center: 'title',

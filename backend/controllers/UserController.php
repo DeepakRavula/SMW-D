@@ -509,6 +509,9 @@ class UserController extends \common\components\controllers\BaseController
 			if(!empty($model->password)) {
         		$model->getModel()->setPassword($model->password);
 			}
+                        if(!empty($model->pin)) {
+        		$model->getModel()->setPin($model->pin);
+			}
 			if($model->save()) {
 				$userProfile->save();
 				return [

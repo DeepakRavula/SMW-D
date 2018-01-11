@@ -158,13 +158,10 @@ class LoginForm extends Model
     public function getUserLocked()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $pin = $this->pin;
+        $pin = md5($this->pin);
         $this->user = User::find()
                     ->location($locationId)
-                    ->staffs()
-                    ->joinWith(['lockedUser' => function($query) use ($pin) {
-                        $query->andWhere(['user_pin.pin' => $pin]);
-                    }])
+                    ->andWhere(['pin_hash' => $pin])
                     ->notDeleted()
                     ->one();
 

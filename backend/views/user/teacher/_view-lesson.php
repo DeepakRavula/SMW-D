@@ -165,6 +165,8 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 		    $('#teacher-lesson').fullCalendar('destroy');
             $('#teacher-lesson').fullCalendar({
             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+				firstDay : 1,
+	            nowIndicator: true,
                 header: {
                     left: 'prev,next today',
                     center: 'title',

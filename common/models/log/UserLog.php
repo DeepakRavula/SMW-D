@@ -4,6 +4,7 @@ namespace common\models\log;
 
 use Yii;
 use common\models\User;
+use common\models\Location;
 use common\models\log\Log;
 use yii\helpers\Json;
 use yii\helpers\Url;
@@ -23,7 +24,7 @@ class UserLog extends Log
         $message      = $loggedUser->publicIdentity.' created new  '.$roleName.' {{'.$index.'}}';
         $object       = LogObject::findOne(['name' => LogObject::TYPE_USER]);
         $activity     = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
-        $locationId   = $userModel->user->userLocation->location->id;
+        $locationId   = Location::findOne(['slug' => \Yii::$app->location])->id;
         $this->addLog($object, $activity, $message, $data, $loggedUser,
             $userModel, $locationId, $index, $path);
     }

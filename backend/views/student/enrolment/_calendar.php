@@ -55,6 +55,8 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
              $('#enrolment-calendar').fullCalendar({
              	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                  defaultDate: date,
+				firstDay : 1,
+	            nowIndicator: true,
                  header: {
                      left: 'prev,next today',
                      center: 'title',

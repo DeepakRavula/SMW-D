@@ -242,6 +242,8 @@ function showclassroomCalendar(date) {
     $('#classroom-calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
+		firstDay : 1,
+        nowIndicator: true,
         height: "auto",
         defaultDate: date,
         titleFormat: 'DD-MMM-YYYY, dddd',
@@ -306,6 +308,8 @@ function refreshCalendar(date, clearFilter) {
     $('#calendar').html('');
     $('#calendar').unbind().removeData().fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+		firstDay : 1,
+        nowIndicator: true,
         header: false,
         height: "auto",
         defaultDate: date,

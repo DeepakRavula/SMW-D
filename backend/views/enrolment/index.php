@@ -185,6 +185,8 @@ $(document).ready(function(){
 	function loadCalendar() {
  		var date = $('#course-startdate').val();
         $('#reverse-enrolment-calendar').fullCalendar({
+			firstDay : 1,
+            nowIndicator: true,
      		defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
              header: {

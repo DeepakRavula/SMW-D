@@ -150,7 +150,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['customerIds'], 'required', 'on' => self::SCENARIO_MERGE],
             ['customerIds', 'canMerge', 'on' => self::SCENARIO_MERGE],
             [['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate',
-                'customerId', 'isDeleted'], 'safe']
+                'customerId', 'isDeleted', 'pin_hash'], 'safe']
         ];
     }
 
@@ -461,6 +461,11 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_hash = Yii::$app->getSecurity()->generatePasswordHash($password);
     }
+    
+    public function setPin($pin)
+    {
+        $this->pin_hash = md5($pin);
+    }
 
     /**
      * Returns user statuses list.
@@ -709,14 +714,23 @@ class User extends ActiveRecord implements IdentityInterface
             ->via('students');
     }
     
-    public function getLockedUser()
-    {
-        return $this->hasOne(UserPin::className(), ['userId' => 'id']);
-    }
-
     public function hasInvoice()
     {
         return !empty($this->invoice);
+    }
+    
+    public function isOwner()
+    {
+        $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($this->id), 'name');
+        $role = end($roles);
+        return $role === self::ROLE_OWNER;
+    }
+    
+    public function isBackendUsers()
+    {
+        $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($this->id), 'name');
+        $role = end($roles);
+        return $role === self::ROLE_OWNER || $role === self::ROLE_ADMINISTRATOR || $role === self::ROLE_STAFFMEMBER;
     }
     
     public function isAdmin()

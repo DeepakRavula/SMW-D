@@ -46,8 +46,15 @@ use yii\helpers\Url;
 		?>
 		<?= $form->field($addressModel, "address")->textInput(['maxlength' => true])->label('Address') ?>
 		<?=
-		$form->field($addressModel, "cityId")->dropDownList(
-			ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'), ['class' => 'city form-control'])->label('City')
+		$form->field($addressModel, "cityId")->widget(Select2::classname(), [
+		'data' => ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
+		'options' => [
+			'class' => 'city',
+		],
+		'pluginOptions' => [
+			'tags' => true
+		],
+	])->label('city');
 		?>
 		<?=
 		$form->field($addressModel, "countryId")->dropDownList(
