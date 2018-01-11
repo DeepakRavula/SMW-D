@@ -3,7 +3,7 @@
 namespace backend\controllers;
 
 use yii\web\Controller;
-use backend\models\EmailForm;
+use common\models\City;
 use Yii;
 use common\models\UserEmail;
 use common\models\UserContact;
@@ -122,6 +122,13 @@ class UserContactController extends \common\components\controllers\BaseControlle
  				$label->userAdded = $id;
  				$label->save();
  				$contact->labelId = $label->id;
+ 			}
+                        if (!is_numeric($address->cityId)) {
+ 				$city = new City();
+ 				$city->name = $address->cityId;
+ 				$city->province_id = $address->provinceId;
+ 				$city->save();
+ 				$address->cityId = $city->id;
  			}
  			if($contact->save()) {
  				$address->userContactId = $contact->id;
@@ -255,8 +262,6 @@ class UserContactController extends \common\components\controllers\BaseControlle
             'userModel' => $model->user,
         ]);
         if ($addressModel->load(Yii::$app->request->post()) && $model->load(Yii::$app->request->post())) {
-            $addressModel->save();
-
             if (!is_numeric($model->labelId)) {
                 $label = new Label();
                 $label->name = $model->labelId;
@@ -264,6 +269,14 @@ class UserContactController extends \common\components\controllers\BaseControlle
                 $label->save();
                 $model->labelId = $label->id;
             }
+            if (!is_numeric($addressModel->cityId)) {
+                $city = new City();
+                $city->name = $addressModel->cityId;
+                $city->province_id = $addressModel->provinceId;
+                $city->save();
+                $addressModel->cityId = $city->id;
+            }
+            $addressModel->save();
             $model->save();
             return [
                 'status' => true,
