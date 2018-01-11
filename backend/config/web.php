@@ -136,11 +136,6 @@ $config = [
                 'actions' => ['index'],
             ],
             [
-                'controllers' => ['user-pin'],
-                'allow' => true,
-                'roles' => ['listStaffPin']
-            ],
-            [
                 'controllers' => ['sign-in'],
                 'allow' => true,
                 'roles' => ['listStaffPin'],

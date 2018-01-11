@@ -5,11 +5,10 @@ use yii\bootstrap\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $model \backend\models\LoginForm */
-
-$this->title = Yii::t('backend', 'Sign In');
-$this->params['breadcrumbs'][] = $this->title;
-$this->params['body-class'] = 'login-page';
 ?>
+<div class="pull-right">
+<?= Html::a('Logout', ['sign-in/logout', 'id' => Yii::$app->user->id], ['class' => 'm-r-10 btn btn-box-tool']) ?>
+</div>
 <div class="login-box">
     
     <div class="login-logo">
@@ -26,7 +25,7 @@ $this->params['body-class'] = 'login-page';
 				Office Login
 			</div>
 			<div id="admin-login-form">
-            <?php echo $form->field($model, 'pin')->label('Pin') ?>
+            <?php echo $form->field($model, 'pin')->passwordInput()->label('Pin') ?>
            
 			</div>	
         </div>

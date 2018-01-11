@@ -91,7 +91,7 @@ $this->params['show-all'] = $this->render('_button', [
                 'value' => function ($data) {
                     return !empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
                 },
-            ],
+            ]
         ],
     ]); ?>
 <?php Pjax::end(); ?>
