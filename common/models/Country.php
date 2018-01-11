@@ -25,6 +25,7 @@ class Country extends \yii\db\ActiveRecord
     {
         return [
             [['name'], 'required'],
+            [['name'], 'trim'],
             [['name'], 'string', 'max' => 32],
         ];
     }

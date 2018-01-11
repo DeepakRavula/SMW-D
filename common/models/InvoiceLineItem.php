@@ -75,6 +75,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
             },
             ],
+            [['description'], 'trim'],
             ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
                 self::SCENARIO_NEGATIVE_VALUE_EDIT]],
             [['unit'], 'number', 'when' => function ($model, $attribute) {

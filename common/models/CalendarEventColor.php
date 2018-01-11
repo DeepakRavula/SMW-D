@@ -29,6 +29,7 @@ class CalendarEventColor extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'code', 'cssClass'], 'required'],
+            [['name', 'code', 'cssClass'], 'trim'],
             [['name'], 'string', 'max' => 50],
             [['code'], 'string', 'max' => 8],
             [['cssClass'], 'string', 'max' => 30],

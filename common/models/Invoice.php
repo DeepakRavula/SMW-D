@@ -88,6 +88,7 @@ class Invoice extends \yii\db\ActiveRecord
         return [
             ['user_id', 'required'],
             [['reminderNotes'], 'string'],
+            [['reminderNotes'], 'trim'],
             [['isSent'], 'boolean'],
             [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
