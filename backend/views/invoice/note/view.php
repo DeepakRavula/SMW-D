@@ -1,4 +1,4 @@
-<div class="invoice-note-content p-10">
+<div class="invoice-note-content">
 <?=
 	$this->render('_view', [
 		'noteDataProvider' =>  $noteDataProvider,
