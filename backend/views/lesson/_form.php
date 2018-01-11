@@ -40,7 +40,7 @@ use yii\bootstrap\Modal;
             ]);
             ?>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <?php
             // Dependent Dropdown
             echo $form->field($model, 'teacherId')->widget(Select2::classname(),
@@ -53,7 +53,7 @@ use yii\bootstrap\Modal;
                         ->notDeleted()
                         ->orderBy(['user_profile.firstname' => SORT_ASC])
                         ->all(), 'id', 'userProfile.fullName'),
-            ])->label('Label');
+            ])->label('Teacher');
             ?>  
         </div>
         <div class="col-md-3">
@@ -96,13 +96,11 @@ use yii\bootstrap\Modal;
                 ?>
 <?php endif; ?>
         </div>
-        <div class="col-md-2">
             <div class="pull-right m-t-25 m-r-10">
             <?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-schedule-cancel']);?> 
             <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
         <div class="clearfix"></div>
     </div>  
-        </div>
     </div>
     <div class="row">
         <div class="col-md-12">
