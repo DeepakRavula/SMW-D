@@ -55,9 +55,14 @@ class PasswordResetRequestForm extends Model
 			->one();
 
         if ($user) {
+			$location = Location::findOne(['id' => $user->userLocation->location_id]);
+			if(Yii::$app->authManager->checkAccess($user->id, User::ROLE_ADMINISTRATOR)) {
+				$location = Location::findOne(['id' => Location::DEFAULT_LOCATION]);
+			}
             $token = UserToken::create($user->id, UserToken::TYPE_PASSWORD_RESET, Time::SECONDS_IN_A_DAY);
             if ($user->save()) {
                 return Yii::$app->commandBus->handle(new SendEmailCommand([
+					'from' => $location->email, 
                     'to' => $this->email,
                     'subject' => Yii::t('frontend', 'Password reset for {name}', ['name' => Yii::$app->name]),
                     'view' => 'passwordResetToken',
