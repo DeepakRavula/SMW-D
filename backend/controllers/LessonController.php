@@ -51,7 +51,7 @@ class LessonController extends \common\components\controllers\BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => ['modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom',
-                    'payment', 'substitute','update'],
+                    'payment', 'substitute','update','unschedule'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -876,16 +876,15 @@ class LessonController extends \common\components\controllers\BaseController
     {
         $model = $this->findModel($id);
         if ($model->unschedule()) {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Lesson unscheduled successfully!',
-            ]);
+          return [
+                'status' => true
+            ];
         } else {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-danger'],
-                'body' => 'Lesson cannot be unscheduled',
-            ]);
+            return [
+                'status' => false,
+                'message' => 'Lesson Cannot Be Unscheduled'
+            ];
         }
-        return $this->redirect(['lesson/view', 'id' => $model->id]);
+        
     }
 }
