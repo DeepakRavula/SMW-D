@@ -57,6 +57,7 @@ class Location extends \yii\db\ActiveRecord
             [['name'], 'string', 'max' => 32],
             [['address'], 'string', 'max' => 64],
             [['postal_code'], 'string', 'max' => 16],
+			[['name', 'address', 'postal_code', 'slug', 'email'], 'trim']
         ];
     }
 

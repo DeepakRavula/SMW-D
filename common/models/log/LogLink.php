@@ -34,6 +34,7 @@ class LogLink extends \yii\db\ActiveRecord
             [['logId'], 'integer'],
             [['baseUrl', 'path'], 'string'],
             [['index'], 'string', 'max' => 255],
+            [['index','baseUrl', 'path'], 'trim'],
         ];
     }
 

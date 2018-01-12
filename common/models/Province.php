@@ -30,6 +30,7 @@ class Province extends \yii\db\ActiveRecord
             [['tax_rate'], 'number'],
             [['country_id'], 'integer'],
             [['name'], 'string', 'max' => 16],
+            [['name'], 'trim'],
         ];
     }
 
