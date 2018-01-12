@@ -371,6 +371,7 @@ Modal::end();
                         $.pjax.reload({container: '#lesson-detail', timeout: 6000});
                     } else
                     {
+                        $('#menu-shown').hide();
                         $('#error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                     }
                 }
