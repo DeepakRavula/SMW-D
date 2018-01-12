@@ -129,13 +129,19 @@ $config = [
                 'allow' => true,
                 'roles' => ['listCustomer', 'listEnrolment', 'listGroupLesson', 'listInvoice', 'listItem', 'listOwner'],
             ],
-			[
+            [
                 'controllers' => ['dashboard'],
                 'allow' => true,
                 'roles' => ['viewDashboard'],
                 'actions' => ['index'],
             ],
-			[
+            [
+                'controllers' => ['sign-in'],
+                'allow' => true,
+                'roles' => ['listStaffPin'],
+                'actions' => ['lock', 'unlock']
+            ],
+            [
                 'controllers' => ['permission', 'release-notes', 'reminder-note'],
                 'allow' => true,
                 'roles' => ['administrator'],

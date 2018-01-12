@@ -16,8 +16,7 @@ Select2Asset::register($this);
 <div class="row user-create-form">
  <?php $form = ActiveForm::begin([
 		'action' => Url::to(['user/create', 'role_name' => $searchModel->role_name]),
-	 	'enableAjaxValidation' => true,
-	 	'enableClientValidation' => false,
+	 	'enableClientValidation' => true,
 		'id' => 'user-form',
 		]); ?>
 		<div class="row">
@@ -36,27 +35,7 @@ Select2Asset::register($this);
 
 <script>
     $(document).ready(function() {
-     $(document).on('beforeSubmit', '#user-form', function (e) {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-						}else
-				{
-				 $('#user-form').yiiActiveForm('updateMessages',
-					   response.errors
-					, true);
-				}
-			}
-		});
-		return false;
-	});
-	$('.add-address').bind('click', function () {
+     $('.add-address').bind('click', function () {
 		$('.address-fields').show();
 		$('.hr-ad').hide();
 		setTimeout(function () {

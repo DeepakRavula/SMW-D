@@ -68,6 +68,8 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 $('#lesson-edit-calendar').fullCalendar({
                     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                     defaultDate: date,
+					firstDay : 1,
+		            nowIndicator: true,
                     header: {
                         left: 'prev,next today',
                         center: 'title',

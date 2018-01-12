@@ -38,7 +38,6 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
     $logContent=$this->render('log/index', [
         'logDataProvider' => $logDataProvider,
     ]);
-
     $items = [
         [
             'label' => 'Lesson',
@@ -88,6 +87,8 @@ $(document).ready(function () {
         $('#enrolment-calendar').fullCalendar({
      		defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+			firstDay : 1,
+            nowIndicator: true,
              header: {
                  left: 'prev,next today',
                  center: 'title',

@@ -39,7 +39,7 @@ $this->params['show-all'] = $this->render('_button', [
         'id'=>'add-user-modal',
     ]);?>
 <?= $this->render('_form', [
-	'model' => new UserForm(),
+	'model' => new UserForm(['scenario' => UserForm::SCENARIO_CREATE]),
 	'emailModels' => new UserEmail(),
     'searchModel' => $searchModel,
 ]);?>
@@ -91,7 +91,7 @@ $this->params['show-all'] = $this->render('_button', [
                 'value' => function ($data) {
                     return !empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
                 },
-            ],
+            ]
         ],
     ]); ?>
 <?php Pjax::end(); ?>

@@ -204,6 +204,7 @@ Modal::begin([
                     $('#enrolment-edit-modal').modal('hide');
                     paymentFrequency.onEditableSuccess();
                     $('#enrolment-enddate-alert').html(response.message).fadeIn().delay(5000).fadeOut();
+
                 }
             }
         });
@@ -218,7 +219,8 @@ Modal::begin([
                         $.pjax.reload({url: url, container: "#enrolment-pfi", replace: false, async: false, timeout: 4000});
                         $.pjax.reload({url: url, container: "#lesson-index", replace: false, async: false, timeout: 4000});
                         //$.pjax.reload({url: url, container: "#course-endDate", replace: false, async: false, timeout: 4000});
-			$.pjax.reload({url: url, container: "#lesson-schedule", replace: false, async: false, timeout: 4000});
+			$.pjax.reload({url: url, container: "#enrolment-log", replace: false, async: false, timeout: 4000});
+                        $.pjax.reload({url: url, container: "#lesson-schedule", replace: false, async: false, timeout: 4000});
 		}
 	}
 </script>
