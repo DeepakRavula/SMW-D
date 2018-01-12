@@ -39,19 +39,14 @@ DynamicFormWidget::begin([
 ]);
 ?>
 
-		<i class="fa fa-book"></i> Lesson Schedule
-		<button type="button" class="pull-right add-item btn btn-primary btn-xs"><i class="fa fa-plus"></i> Add Lesson</button>
+		
+		
 		<div class="clearfix"></div> 
 	<div class="container-items"><!-- widgetContainer -->
 		<?php foreach ($courseSchedule as $index => $schedule): ?>
 			<div class="item"><!-- widgetBody -->
+				
 				<div class="">
-					<span class="panel-title-lesson">Lesson: <?= ($index + 1) ?></span>
-					
-					<div class="clearfix"></div>
-				</div>
-				<div class="">
-                      <div class="col-md-12">
 					<?php
 					// necessary for update action.
 					if (!$schedule->isNewRecord) {
@@ -71,19 +66,19 @@ DynamicFormWidget::begin([
 							]) ?>
 
 						</div>
-						<div class="col-md-5 lesson-time">
+						<div class="col-md-4 lesson-time">
 							<?= $form->field($schedule, "[{$index}]fromTime")
 							->textInput(['maxlength' => true,
 							'class' => 'time form-control',
 							'readOnly' => true,
 							])->label('Time') ?>
 						</div>
-                                            <div class="col-md-2 m-t-5">
-                                            <button type="button" class="pull-right remove-item btn btn-danger m-t-25"><i class="fa fa-minus"></i></button>
+                                            <div class="col-md-3 m-t-25">
+                                            <button type="button" class="add-item btn btn-info btn-social-icon btn-sm"><i class="fa fa-plus"></i></button>
+                                            <button type="button" class="remove-item btn btn-danger btn-social-icon m-r-10 btn-sm"><i class="fa fa-minus"></i></button>
                                             </div>
                                             </div><!-- end:row -->
                       </div>
-				</div>
 			</div>
 		<?php endforeach; ?>
 	</div>
