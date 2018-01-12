@@ -142,6 +142,8 @@ $lastRole = end($roles);
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
         defaultView: 'agendaDay',
+		firstDay : 1,
+        nowIndicator: true,
         minTime: "00:00:00",
         maxTime: "23:59:59",
         slotDuration: "00:30:00",

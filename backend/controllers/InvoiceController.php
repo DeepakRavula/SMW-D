@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use Yii;
+use common\models\log\InvoiceLog;
 use common\models\Invoice;
 use common\models\Item;
 use common\models\InvoiceLineItem;
@@ -27,12 +28,11 @@ use yii\widgets\ActiveForm;
 use common\models\Note;
 use common\models\PaymentCycle;
 use common\models\InvoiceReverse;
-use common\models\InvoiceLog;
 use common\models\UserEmail;
 use common\models\UserContact;
 use common\models\Label;
 use backend\models\search\UserSearch;
-
+use common\models\log\LogHistory;
 use backend\models\search\ItemSearch;
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
@@ -241,7 +241,9 @@ class InvoiceController extends \common\components\controllers\BaseController
                     }])
                 ->one();
         }
-
+        $logDataProvider= new ActiveDataProvider([
+			'query' => LogHistory::find()
+			->invoice($id) ]);
         return $this->render('view',
                 [
                 'model' => $model,
@@ -255,6 +257,7 @@ class InvoiceController extends \common\components\controllers\BaseController
                 'noteDataProvider' => $noteDataProvider,
                 'itemDataProvider' => $itemDataProvider,
                 'itemSearchModel' => $itemSearchModel,
+                'logDataProvider' => $logDataProvider,   
         ]);
     }
 

@@ -7,16 +7,11 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use trntv\filekit\widget\Upload;
 
-$Roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-foreach ($Roles as $name => $description) {
-    $role_name = $name;
-}
+$loggedUser = User::findOne(Yii::$app->user->id);
 ?>
 <?php
     $form = ActiveForm::begin([
 		'id' => 'user-update-form',
-        'enableAjaxValidation' => true,
-		'enableClientValidation' => false,
 		'action' => Url::to(['user/edit-profile', 'id' => $model->getModel()->id])
 	]);
     ?>
@@ -34,18 +29,31 @@ foreach ($Roles as $name => $description) {
 			<?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
 		</div>
 	<?php endif; ?>
-	<?php if ($role_name === User::ROLE_ADMINISTRATOR) : ?>
-			<?php if (!$model->getModel()->getIsNewRecord()) : ?>
-			<div class="col-xs-6">
-				<?php echo $form->field($model, 'roles')->dropDownList(ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name')) ?>
-		</div>
-			<div class="col-xs-6">
-				<?php echo $form->field($model, 'password')->passwordInput() ?>
-		</div>
-			<div class="col-xs-6">
-				<?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
-			<?php endif; ?>
-		</div>
+	<?php if ($loggedUser->isOwner() || $loggedUser->isAdmin()) : ?>
+            <?php if (!$model->getModel()->getIsNewRecord()) : ?>
+                <?php if ($loggedUser->isAdmin()) : ?>
+                    <div class="col-xs-6">
+                        <?php echo $form->field($model, 'roles')->dropDownList(ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name')) ?>
+                    </div>
+                    <?php if (!$model->getModel()->isStaff()) : ?>
+                        <div class="col-xs-6">
+                            <?php echo $form->field($model, 'password')->passwordInput() ?>
+                        </div>
+                            <div class="col-xs-6">
+                            <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($model->getModel()->isBackendUsers()) : ?> 
+                        <div class="col-xs-6">
+                            <?php echo $form->field($model, 'pin')->passwordInput() ?>
+                        </div>
+                    <?php endif; ?>
+                <?php else : ?>
+                    <div class="col-xs-6">
+                        <?php echo $form->field($model, 'pin')->passwordInput() ?>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
 	<?php endif; ?>
 	<div class="col-xs-6">
     <?= $form->field($userProfile, 'picture')->widget(Upload::classname(),

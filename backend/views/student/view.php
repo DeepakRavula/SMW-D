@@ -173,6 +173,8 @@ $this->params['label'] = $this->render('_title', [
         $('#enrolment-calendar').fullCalendar({
      		defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+			firstDay : 1,
+            nowIndicator: true,
              header: {
                  left: 'prev,next today',
                  center: 'title',
@@ -271,6 +273,7 @@ $this->params['label'] = $this->render('_title', [
                     if(response.status)
                     {
                         $('#student-merge-content').html(response.data);
+                        $('#student-merge-modal .modal-dialog').addClass('classroom-dialog');
                         $('#student-merge-modal').modal('show');
                     }
                 }
@@ -308,7 +311,13 @@ $this->params['label'] = $this->render('_title', [
                 success: function(response)
                 {
                     if(response.status) {
-                        location.reload();
+                      $.pjax.reload({container: "#enrolment-grid",timeout: 6000, async:false});
+                      $.pjax.reload({container: "#student-lesson-listing",timeout: 6000, async:false});
+                      $.pjax.reload({container: "#student-log",timeout: 6000, async:false});
+                      $.pjax.reload({container: "#student-exam-result-listing",timeout: 6000, async:false});
+                      $.pjax.reload({container: "#student-note",timeout: 6000, async:false});
+                      $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
+                      $('#student-merge-modal').modal('hide');  
                     }
                 }
             });

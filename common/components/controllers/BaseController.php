@@ -12,20 +12,30 @@ class BaseController extends Controller
 {
     public function init()
     {
-        $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
-        if (!empty(Yii::$app->user->id) && empty(Yii::$app->location)) {
+        if (!empty(Yii::$app->user->id)) {
             $userLogged = User::findOne(Yii::$app->user->id);
             if ($userLogged->isAdmin()) {
-                Yii::$app->location = Location::findOne(1)->slug;
+                $userLocation = Location::findOne(1);
             } else {
-                Yii::$app->location = $userLocation->location->slug;
+                $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id])->location;
             }
-        }
-        if ($this->module->requestedRoute !== 'sign-in/logout' && $this->module->requestedRoute !== 'sign-in/login') {
-            if ($userLocation && $userLocation->location->slug !== Yii::$app->location) { 
-                throw new ForbiddenHttpException();
+            if (!Yii::$app->session->get('lock') && !$this->isLogoutkRoute() && !$this->isLoginkRoute()) {
+                if (!$userLogged->isAdmin() && $userLocation->slug !== Yii::$app->location) {
+                    Yii::$app->location = $userLocation->slug;
+                    throw new ForbiddenHttpException();
+                }
             }
         }
         return parent::init();
+    }
+    
+    public function isLoginkRoute()
+    {
+        return Yii::$app->request->pathInfo === 'sign-in/login';
+    }
+    
+    public function isLogoutkRoute()
+    {
+        return Yii::$app->request->pathInfo === 'sign-in/logout';
     }
 }

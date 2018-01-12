@@ -95,7 +95,7 @@ $this->params['show-all'] = $this->render('_button', [
 </div>
 <?php
 	Modal::begin([
-		'header' => '<h4 class="m-0">Group Course Create</h4>',
+		'header' => '<h4 class="m-0">Create Group Course</h4>',
 		'id'=>'group-course-create-modal',
 	]);
 	 echo $this->render('_index', []);

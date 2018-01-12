@@ -23,7 +23,6 @@ echo $this->render('_form', [
 ]);
 Modal::end();
 ?>
-<div class="col-md-12">	
     <?php
     LteBox::begin([
         'type' => LteConst::TYPE_DEFAULT,
@@ -44,7 +43,6 @@ Modal::end();
         'dataProvider' => $unavailabilityDataProvider,
         'summary' => false,
         'emptyText' => false,
-        'options' => ['class' => 'col-md-5'],
         'tableOptions' => ['class' => 'table'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [

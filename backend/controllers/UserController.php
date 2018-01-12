@@ -38,6 +38,7 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use common\models\Payment;
 use common\models\UserAddress;
+use common\models\log\LogHistory;
 use Intervention\Image\ImageManagerStatic;
 use trntv\filekit\actions\DeleteAction;
 use trntv\filekit\actions\UploadAction;
@@ -389,7 +390,14 @@ class UserController extends \common\components\controllers\BaseController
 			'pagination' => false,
 		]);	
 	}
-	protected function getTeacherAvailabilities($id, $locationId)
+        protected function getLogDataProvider($id)
+    {
+        return new ActiveDataProvider([
+            'query' => LogHistory::find()
+                ->user($id)]);
+    }
+
+    protected function getTeacherAvailabilities($id, $locationId)
 	{
 		return TeacherAvailability::find()
             ->joinWith(['userLocation' => function ($query) use ($locationId, $id) {
@@ -398,7 +406,7 @@ class UserController extends \common\components\controllers\BaseController
             ->groupBy('day')
             ->all();
 	}
-
+        
 	/**
      * Displays a single User model.
      *
@@ -464,38 +472,31 @@ class UserController extends \common\components\controllers\BaseController
 			'privateQualificationDataProvider' => $this->getPrivateQualificationDataProvider($id),
 			'groupQualificationDataProvider' => $this->getGroupQualificationDataProvider($id),
 			'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id,$invoiceSearchModel->fromDate,$invoiceSearchModel->toDate,$invoiceSearchModel->summariseReport),
-			'unavailability' => $this->getUnavailabilityDataProvider($id)
+			'unavailability' => $this->getUnavailabilityDataProvider($id),
+            'logDataProvider' => $this->getLogDataProvider($id),
         ]);
     }
 
     public function actionCreate()
     {
-        $session = Yii::$app->session;
         $model = new UserForm();
         $emailModels = new UserEmail();
-        $model->setScenario('create');
         $model->roles = Yii::$app->request->queryParams['role_name'];
        
         $request = Yii::$app->request;
         if ($model->load($request->post()) && $model->save() && $emailModels->load($request->post())) {
-			if(!empty($emailModels->email))
-                        {
-                        $userContact = new UserContact();
-			$userContact->userId = $model->getModel()->id;
-			$userContact->labelId = Label::LABEL_WORK;
-			$userContact->isPrimary = true;
-			$userContact->save();
+            if(!empty($emailModels->email)) {
+                $userContact = new UserContact();
+                $userContact->userId = $model->getModel()->id;
+                $userContact->labelId = Label::LABEL_WORK;
+                $userContact->isPrimary = true;
+                $userContact->save();
 
-			$emailModels->userContactId = $userContact->id;
-			$emailModels->save();
-                        }
-			return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
-        } else {
-			return [
-				'status' => false,
-				'errors' => ActiveForm::validate($model),
-			];
-		}
+                $emailModels->userContactId = $userContact->id;
+                $emailModels->save();
+            }
+            return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
+        }
     }
 
 	public function actionEditProfile($id)
@@ -507,6 +508,9 @@ class UserController extends \common\components\controllers\BaseController
 		if ($model->load($request->post()) && $userProfile->load($request->post())) {
 			if(!empty($model->password)) {
         		$model->getModel()->setPassword($model->password);
+			}
+                        if(!empty($model->pin)) {
+        		$model->getModel()->setPin($model->pin);
 			}
 			if($model->save()) {
 				$userProfile->save();
@@ -613,20 +617,7 @@ class UserController extends \common\components\controllers\BaseController
         $model->setModel($this->findModel($id));
 
         $role = $model->roles;
-        if (($role === User::ROLE_TEACHER) && (!Yii::$app->user->can('deleteTeacherProfile'))) {
-            throw new ForbiddenHttpException();
-        }
-        if (($role === User::ROLE_CUSTOMER) && (!Yii::$app->user->can('deleteCustomerProfile'))) {
-            throw new ForbiddenHttpException();
-        }
-        if (($role === User::ROLE_OWNER) && (!Yii::$app->user->can('deleteOwnerProfile'))) {
-            throw new ForbiddenHttpException();
-        }
-        if (($role === User::ROLE_STAFFMEMBER) && (!Yii::$app->user->can('deleteStaffProfile'))) {
-            throw new ForbiddenHttpException();
-        }
-		
-		if(in_array($role, [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER, User::ROLE_STAFFMEMBER])) {
+        if(in_array($role, [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER, User::ROLE_STAFFMEMBER])) {
 			$this->deleteContact($id);
 			$model->getModel()->delete();
 			$response = [
