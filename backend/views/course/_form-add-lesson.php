@@ -38,23 +38,19 @@ DynamicFormWidget::begin([
 	],
 ]);
 ?>
-<div class="panel panel-default">
-    
-	<div class="panel-heading">
+
 		<i class="fa fa-book"></i> Lesson Schedule
 		<button type="button" class="pull-right add-item btn btn-primary btn-xs"><i class="fa fa-plus"></i> Add Lesson</button>
-		<div class="clearfix"></div>
-	</div>
-  
-	<div class="panel-body container-items"><!-- widgetContainer -->
+		<div class="clearfix"></div> 
+	<div class="container-items"><!-- widgetContainer -->
 		<?php foreach ($courseSchedule as $index => $schedule): ?>
-			<div class="item panel panel-default"><!-- widgetBody -->
-				<div class="panel-heading">
+			<div class="item"><!-- widgetBody -->
+				<div class="">
 					<span class="panel-title-lesson">Lesson: <?= ($index + 1) ?></span>
-					<button type="button" class="pull-right remove-item btn btn-danger btn-xs"><i class="fa fa-minus"></i></button>
+					
 					<div class="clearfix"></div>
 				</div>
-				<div class="panel-body">
+				<div class="">
                       <div class="col-md-12">
 					<?php
 					// necessary for update action.
@@ -67,7 +63,7 @@ DynamicFormWidget::begin([
 							<label class="control-label">Schedule</label>
 							<span class="fa fa-calendar" style="font-size:25px; margin:5px 12px;"></span>
 						</div>
-						<div class="col-md-4 lesson-day">
+						<div class="col-md-3 lesson-day">
 							<?= $form->field($schedule, "[{$index}]day")
 							->textInput(['maxlength' => true,
 							'class' => 'day form-control',
@@ -75,18 +71,20 @@ DynamicFormWidget::begin([
 							]) ?>
 
 						</div>
-						<div class="col-md-6 lesson-time">
+						<div class="col-md-5 lesson-time">
 							<?= $form->field($schedule, "[{$index}]fromTime")
 							->textInput(['maxlength' => true,
 							'class' => 'time form-control',
 							'readOnly' => true,
 							])->label('Time') ?>
 						</div>
-					</div><!-- end:row -->
+                                            <div class="col-md-2 m-t-5">
+                                            <button type="button" class="pull-right remove-item btn btn-danger m-t-25"><i class="fa fa-minus"></i></button>
+                                            </div>
+                                            </div><!-- end:row -->
                       </div>
 				</div>
 			</div>
 		<?php endforeach; ?>
 	</div>
-</div>
 <?php DynamicFormWidget::end(); ?>
