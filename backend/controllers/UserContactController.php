@@ -13,6 +13,7 @@ use common\models\UserPhone;
 use common\models\User;
 use common\models\Label;
 use common\models\UserAddress;
+use yii\widgets\ActiveForm;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -23,7 +24,7 @@ class UserContactController extends \common\components\controllers\BaseControlle
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['create-email', 'create-phone', 'update-primary', 'create-address','edit-email','edit-phone','edit-address', 'delete'],
+                'only' => ['create-email', 'create-phone', 'update-primary', 'create-address','edit-email','edit-phone','edit-address', 'delete','validate'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -54,10 +55,17 @@ class UserContactController extends \common\components\controllers\BaseControlle
 			}
 			if ($contact->save()) {
 				$email->userContactId = $contact->id;
-				$email->save();
+				if($email->save()) {
 				return [
 					'status' => true,
 				];
+                                }
+                        else {
+                            return [
+                                'status' => false,
+                                'errors' => $email->getErrors(),
+                            ];
+                        }
 			}
 		} else {
 			return [
@@ -323,6 +331,13 @@ class UserContactController extends \common\components\controllers\BaseControlle
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-
+     public function actionValidate()
+    {
+        $email = new UserEmail();
+	$request = Yii::$app->request;
+        if ($email->load($request->post())) {
+            return  ActiveForm::validate($email);
+        }
+        }
 
 }
