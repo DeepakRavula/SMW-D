@@ -7,7 +7,6 @@ use yii\helpers\Html;
 /* @var $model common\models\Program */
 /* @var $form yii\bootstrap\ActiveForm */
 
-$this->title = 'New Enrolment';
 ?>
 <div class="row user-create-form">
 	<div class="col-xs-5">
