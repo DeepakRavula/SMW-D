@@ -16,6 +16,7 @@ use Intervention\Image\ImageManagerStatic;
 use trntv\filekit\actions\DeleteAction;
 use trntv\filekit\actions\UploadAction;
 use Yii;
+use yii\web\ForbiddenHttpException;
 use yii\filters\VerbFilter;
 use yii\base\InvalidParamException;
 use common\models\User;
@@ -80,11 +81,17 @@ class SignInController extends \common\components\controllers\BaseController
     
     public function actionLock()
     {
+        if (!Yii::$app->user->can('owner')) {
+            throw new ForbiddenHttpException();
+        }
         Yii::$app->session->set('lock', true);
         return $this->redirect(['unlock']);
     }
     public function actionUnlock()
     {
+        if (!Yii::$app->user->can('owner')) {
+            throw new ForbiddenHttpException();
+        }
         $this->layout = 'base';
         $model = new LoginForm(['scenario' => LoginForm::SCENARIO_UNLOCK]);
         $model->rememberMe = true;
