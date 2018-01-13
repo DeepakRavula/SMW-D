@@ -59,15 +59,6 @@ $(document).ready(function(){
         $('.nav-tabs a[href="#'+url.split('#')[1]+'"]').tab('show') ;
     } 
 
-    // With HTML5 history API, we can easily prevent scrolling!
-    $('.nav-tabs a').on('shown.bs.tab', function (e) {
-        if(history.pushState) {
-            history.pushState(null, null, e.target.hash); 
-        } else {
-            window.location.hash = e.target.hash; //Polyfill for old browsers
-        }
-    });
-	
     $('.grid-row-open').on('click','td',function (e) {        
         var url = $(this).closest('tr').data('url');
         if (e.target === this)
