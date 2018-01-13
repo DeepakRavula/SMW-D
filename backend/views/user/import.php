@@ -21,7 +21,6 @@ $this->params['breadcrumbs'][] = $this->title;
     'maxFileSize' => 10 * 1024 * 1024, // 10Mb
     //'minFileSize' => 1 * 1024 * 1024, // 1Mb
     'maxNumberOfFiles' => 3, // default 1,
-    'acceptFileTypes' => new JsExpression('/(\.|\/)(csv|CSV)$/i'),
     'clientOptions' => ['done' => new JsExpression('UserImport.onDone')],
 ]); ?>
 </div>
