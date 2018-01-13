@@ -42,7 +42,22 @@ DynamicFormWidget::begin([
 		
 		
 		<div class="clearfix"></div> 
-	<div class="container-items"><!-- widgetContainer -->
+	<div class="container-items">
+                                                <div class="row">
+						<div class="col-md-2 hand course-calendar-icon">
+							<label class="control-label">Schedule</label>
+						</div>
+						<div class="col-md-3 lesson-day">
+							<label class="control-label">Day</label>
+
+						</div>
+						<div class="col-md-4 lesson-time">
+							<label class="control-label">Time</label>
+						</div>
+                                            <div class="col-md-3">
+                                            <button type="button" class="add-item btn btn-info btn-social-icon btn-sm"><i class="fa fa-plus"></i></button>
+                                            </div>
+                                            </div><!-- widgetContainer -->
 		<?php foreach ($courseSchedule as $index => $schedule): ?>
 			<div class="item"><!-- widgetBody -->
 				
@@ -53,9 +68,9 @@ DynamicFormWidget::begin([
 						echo Html::activeHiddenInput($schedule, "[{$index}]id");
 					}
 					?>
-					<div class="row">
+
+					<div class="row m-t-10">
 						<div class="col-md-2 hand course-calendar-icon">
-							<label class="control-label">Schedule</label>
 							<span class="fa fa-calendar" style="font-size:25px; margin:5px 12px;"></span>
 						</div>
 						<div class="col-md-3 lesson-day">
@@ -63,7 +78,7 @@ DynamicFormWidget::begin([
 							->textInput(['maxlength' => true,
 							'class' => 'day form-control',
 							'readOnly' => true,
-							]) ?>
+							])->label(false)  ?>
 
 						</div>
 						<div class="col-md-4 lesson-time">
@@ -71,10 +86,9 @@ DynamicFormWidget::begin([
 							->textInput(['maxlength' => true,
 							'class' => 'time form-control',
 							'readOnly' => true,
-							])->label('Time') ?>
+							])->label(false) ?>
 						</div>
-                                            <div class="col-md-3 m-t-25">
-                                            <button type="button" class="add-item btn btn-info btn-social-icon btn-sm"><i class="fa fa-plus"></i></button>
+                                            <div class="col-md-3">
                                             <button type="button" class="remove-item btn btn-danger btn-social-icon m-r-10 btn-sm"><i class="fa fa-minus"></i></button>
                                             </div>
                                             </div><!-- end:row -->
