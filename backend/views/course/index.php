@@ -49,15 +49,6 @@ $this->params['show-all'] = $this->render('_button', [
                 },
             ],
             [
-                'label' => 'Day',
-                'value' => function ($data) {
-                    $dayList = Course::getWeekdaysList();
-                    $day = $dayList[$data->courseSchedule->day];
-
-                    return !empty($day) ? $day : null;
-                },
-            ],
-            [
                 'attribute' => 'rate',
 				'contentOptions' => ['style' => 'text-align:right'],
 				'headerOptions' => ['style' => 'text-align:right'],
