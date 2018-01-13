@@ -877,12 +877,13 @@ class LessonController extends \common\components\controllers\BaseController
         $model = $this->findModel($id);
         if ($model->unschedule()) {
           return [
-                'status' => true
+                'status' => true,
+                'message'=>'Lesson unscheduled successfully',
             ];
         } else {
             return [
                 'status' => false,
-                'message' => 'Lesson Cannot Be Unscheduled'
+                'message' => 'Lesson cannot be unscheduled',
             ];
         }
         
