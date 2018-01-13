@@ -9,8 +9,11 @@ class m180112_111816_remove_admin_lock_permission extends Migration
     {
         $auth = Yii::$app->authManager;
         $admin = $auth->getRole(User::ROLE_ADMINISTRATOR);
-        $loginToBackend = $auth->createPermission('listStaffPin');
+        $owner = $auth->getRole(User::ROLE_OWNER);
+        $loginToBackend = $auth->getPermission('listStaffPin');
         $auth->removeChild($admin, $loginToBackend);
+        $auth->removeChild($owner, $loginToBackend);
+        $auth->remove($loginToBackend);
     }
 
     public function down()
