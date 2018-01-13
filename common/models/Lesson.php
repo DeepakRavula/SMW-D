@@ -648,14 +648,14 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-		//if (!$insert) {
-			//if ($this->isRescheduledLesson($changedAttributes)) {
-			//	$this->trigger(self::EVENT_RESCHEDULE_ATTEMPTED);
-			//}
-			//if($this->isRescheduledByClassroom($changedAttributes)) {
-				//$this->trigger(self::EVENT_RESCHEDULED);
-			//}
-		//}
+		if (!$insert) {
+			if ($this->isRescheduledLesson($changedAttributes)) {
+				$this->trigger(self::EVENT_RESCHEDULE_ATTEMPTED);
+			}
+			if($this->isRescheduledByClassroom($changedAttributes)) {
+				$this->trigger(self::EVENT_RESCHEDULED);
+			}
+		}
 		if($this->isUnscheduled()) {
                     $privateLessonModel = new PrivateLesson();
                     $privateLessonModel->lessonId = $this->id;
