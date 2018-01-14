@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                     <div class="m-t-10 text-left">
                         <?php echo Yii::t('frontend', '<a href="{link}"><i class="fa fa-angle-left"></i> Back</a>', [
-                            'link' => yii\helpers\Url::to(['/sign-in']),
+                            'link' => yii\helpers\Url::to(['sign-in/login']),
                         ]) ?>
                     </div>
                 <?php ActiveForm::end(); ?>

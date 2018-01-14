@@ -36,7 +36,7 @@ $config = [
             'on locationChanged' => '\common\components\location\LocationChangedEvent::onLocationChanged',
             'enableDefaultLocationUrlCode' => true,
             'ignoreLocationUrlPatterns' => [
-                '#^sign-in/(login|logout)#' => '#^(sign-in|login)#',
+                '#^sign-in/(login|logout|request-password-reset)#' => '#^(sign-in|login)#',
             ],
             'enablePrettyUrl' => true,
             'showScriptName' => false,
