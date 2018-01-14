@@ -20,6 +20,7 @@ use Carbon\Carbon;
  */
 class Location extends \yii\db\ActiveRecord
 {
+	const DEFAULT_LOCATION = 1;
 	public $royaltyValue;
 	public $advertisementValue;
 	

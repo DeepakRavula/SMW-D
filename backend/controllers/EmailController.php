@@ -40,7 +40,7 @@ class EmailController extends \common\components\controllers\BaseController
                 $content[] = Yii::$app->mailer->compose('content', [
                     'content' => $model->content,
                 ])
-				->setFrom(Yii::$app->params['robotEmail'])
+				->setFrom($location->email)
 				->setReplyTo($location->email)
 				->setTo($email)
 				->setSubject($model->subject);
