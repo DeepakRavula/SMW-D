@@ -12,6 +12,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\widgets\ActiveForm;
 
 /**
  * LocationController implements the CRUD actions for Location model.
@@ -28,7 +29,7 @@ class LocationController extends \common\components\controllers\BaseController
             ],
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
-               'only' => ['create', 'update', 'edit-availability', 'add-availability', 'render-events', 'check-availability',
+               'only' => ['create', 'update', 'edit-availability', 'add-availability', 'render-events', 'check-availability', 'validate',
                    'delete-availability'],
                'formatParam' => '_format',
                'formats' => [
@@ -81,13 +82,22 @@ class LocationController extends \common\components\controllers\BaseController
             'model' => $model,
         ]); 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return $this->redirect(Url::to(['location/view', 'id' => $model->id]));
+				return $this->redirect(Url::to(['location/view', 'id' => $model->id]));
         } else {
             return [
                 'status' => true,
                 'data' => $data
             ];
         } 
+    }
+	public function actionValidate()
+    {
+        $model = new Location();
+        
+		$request = Yii::$app->request;
+        if ($model->load($request->post())) {
+            return  ActiveForm::validate($model);
+        }
     }
 
     /**
