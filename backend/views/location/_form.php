@@ -24,7 +24,10 @@ $this->title = 'Edit Location';
 		}
         $form = ActiveForm::begin([
         'id' => 'location-form',
+		'enableAjaxValidation' => true,
+		'enableClientValidation' => false,
         'action' => $url,
+        'validationUrl' => Url::to(['location/validate']),
     ]); ?>
 		<div class="row p-10">
 		<div class="col-md-6">

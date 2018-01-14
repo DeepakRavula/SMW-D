@@ -70,10 +70,28 @@ $(document).ready(function() {
 				{
 					$('#location-content').html(response.data);
 					$('#location-modal').modal('show');
-				}
+				} 
 			}
 		});
 		return false;
 	});
+		$(document).on('beforeSubmit', '#location-form', function () {
+        $.ajax({
+            url    : $(this).attr('action'),
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status) {
+        			
+                } else {
+					$('#location-form').yiiActiveForm('updateMessages',
+					response.errors, true);
+				}
+            }
+        });
+        return false;
+    });
 });
 </script>
