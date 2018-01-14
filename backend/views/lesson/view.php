@@ -33,6 +33,8 @@ $this->params['action-button'] = $this->render('_buttons', [
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <div id="view-danger-notification" style="display:none;" class="alert-danger alert fade in"></div>
+<div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
+<div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
 <div class="row">
 	<div class="col-md-6">
 		<?=
@@ -356,5 +358,27 @@ Modal::end();
 		});	
 		return false;
     });
+         $(document).on('click', '#lesson-unschedule', function () {
+        $.ajax({
+                url: '<?= Url::to(['lesson/unschedule', 'id' => $model->id]); ?>',
+                type: 'post',
+                dataType: "json",
+                data: $(this).serialize(),
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#menu-shown').hide();
+                         $('#success-notification').html(response.message).fadeIn().delay(3000).fadeOut();
+                        $.pjax.reload({container: '#lesson-detail', timeout: 6000});
+                    } else
+                    {
+                        $('#menu-shown').hide();
+                        $('#error-notification').html(response.message).fadeIn().delay(3000).fadeOut();
+                    }
+                }
+            });
+            return false;
+        });
 });
 </script>

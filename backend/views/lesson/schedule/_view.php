@@ -172,12 +172,6 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
             });
             return false;
         });
-    });
-    
-    $(document).on('click', '#lesson-unschedule', function () {
-        $.ajax({
-            url: '<?= Url::to(['lesson/unschedule', 'id' => $model->id]); ?>'
-        });
-        return false;
+
     });
 </script>
