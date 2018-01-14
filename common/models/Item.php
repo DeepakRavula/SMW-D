@@ -55,6 +55,7 @@ class Item extends \yii\db\ActiveRecord
             [['itemCategoryId', 'locationId', 'code', 'royaltyFree', 'taxStatusId', 'status'], 'required'],
             [['itemCategoryId', 'locationId', 'royaltyFree', 'taxStatusId', 'status'], 'integer'],
             [['price'], 'number'],
+            [['description', 'code'], 'trim'],
             ['isDeleted', 'safe'],
             [['code'], 'string', 'max' => 150],
             [['description'], 'string', 'max' => 500],

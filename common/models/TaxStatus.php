@@ -30,6 +30,7 @@ class TaxStatus extends \yii\db\ActiveRecord
         return [
             [['name'], 'required'],
             [['name'], 'string', 'max' => 60],
+            [['name'], 'trim'],
         ];
     }
 

@@ -40,6 +40,7 @@ class Note extends \yii\db\ActiveRecord
             [['content'], 'required'],
             [['instanceId', 'instanceType', 'createdUserId'], 'integer'],
             [['content'], 'string'],
+            [['content'], 'trim'],
             [['createdOn', 'updatedOn', 'hasEditable'], 'safe'],
         ];
     }

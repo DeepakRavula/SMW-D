@@ -40,6 +40,7 @@ class PaymentMethod extends \yii\db\ActiveRecord
             [['id', 'name'], 'required'],
             [['id'], 'integer'],
             [['name'], 'string', 'max' => 30],
+            [['name'], 'trim'],
         ];
     }
 

@@ -34,6 +34,7 @@ class ClassroomUnavailability extends \yii\db\ActiveRecord
             [['classroomId'], 'integer'],
             [['fromDate', 'toDate'], 'required'],
             [['reason'], 'string'],
+            [['reason'], 'trim'],
             [['dateRange'], 'required'],
         ];
     }

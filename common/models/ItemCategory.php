@@ -33,6 +33,7 @@ class ItemCategory extends \yii\db\ActiveRecord
         return [
             [['name'], 'required'],
             ['isDeleted', 'safe'],
+            [['name'], 'trim'],
             [['name'], 'string', 'max' => 150],
         ];
     }

@@ -51,7 +51,7 @@ class LessonController extends \common\components\controllers\BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => ['modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom',
-                    'payment', 'substitute','update'],
+                    'payment', 'substitute','update','unschedule'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -291,13 +291,15 @@ class LessonController extends \common\components\controllers\BaseController
         $oldTeacherId = $model->teacherId;
         $user = User::findOne(['id'=>Yii::$app->user->id]);
         $model->userName = $user->publicIdentity;
+        $model->on(Lesson::EVENT_RESCHEDULE_ATTEMPTED,
+                [new LessonReschedule(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
 		$request = Yii::$app->request;
 		$userModel = $request->post('User');
 		if ($model->hasExpiryDate()) {
 			$privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
 			$privateLessonModel->load(Yii::$app->getRequest()->getBodyParams(), 'PrivateLesson');
 			$privateLessonModel->expiryDate = (new \DateTime($privateLessonModel->expiryDate))->format('Y-m-d H:i:s');
-			$privateLessonModel->save();
+                        $privateLessonModel->save();
 		}
         if ($model->load($request->post()) || !empty($userModel)) {
 			if(empty($model->date)) {
@@ -309,12 +311,14 @@ class LessonController extends \common\components\controllers\BaseController
                     'url' => Url::to(['lesson/view', 'id' => $model->id])
                 ];
             } else {
+                
 				if(!empty($userModel)) {
 					$model->date = $userModel['fromDate'];
 					$model->duration = (new \DateTime($model->duration))->format('H:i');
 				}
 				if (new \DateTime($oldDate) != new \DateTime($model->date) || $oldTeacherId != $model->teacherId) {
-					$model->setScenario(Lesson::SCENARIO_EDIT);
+				
+                                    $model->setScenario(Lesson::SCENARIO_EDIT);
 					$validate = $model->validate();
 				}
 				$lessonConflict = $model->getErrors('date');
@@ -876,16 +880,16 @@ class LessonController extends \common\components\controllers\BaseController
     {
         $model = $this->findModel($id);
         if ($model->unschedule()) {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Lesson unscheduled successfully!',
-            ]);
+          return [
+                'status' => true,
+                'message'=>'Lesson unscheduled successfully',
+            ];
         } else {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-danger'],
-                'body' => 'Lesson cannot be unscheduled',
-            ]);
+            return [
+                'status' => false,
+                'message' => 'Lesson cannot be unscheduled',
+            ];
         }
-        return $this->redirect(['lesson/view', 'id' => $model->id]);
+        
     }
 }

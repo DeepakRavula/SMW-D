@@ -8,6 +8,7 @@ use common\models\UserToken;
 use Yii;
 use common\models\User;
 use yii\base\Model;
+use common\models\Location;
 
 /**
  * Password reset request form.
@@ -55,9 +56,15 @@ class PasswordResetRequestForm extends Model
 			->one();
 
         if ($user) {
+			if(Yii::$app->authManager->checkAccess($user->id, User::ROLE_ADMINISTRATOR)) {
+				$location = Location::findOne(['id' => Location::DEFAULT_LOCATION]);
+			} else {
+				$location = Location::findOne(['id' => $user->userLocation->location_id]);
+			}
             $token = UserToken::create($user->id, UserToken::TYPE_PASSWORD_RESET, Time::SECONDS_IN_A_DAY);
             if ($user->save()) {
                 return Yii::$app->commandBus->handle(new SendEmailCommand([
+					'from' => $location->email, 
                         'to' => $this->email,
                         'subject' => Yii::t('backend', 'Password reset for {name}', ['name' => Yii::$app->name]),
                         'view' => 'passwordResetToken',

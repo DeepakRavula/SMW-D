@@ -32,6 +32,7 @@ class Log extends \yii\db\ActiveRecord
             [['logObjectId', 'logActivityId', 'locationId', 'createdUserId'], 'integer'],
             [['message', 'data'], 'string'],
             [['createdOn'], 'safe'],
+			[['message'], 'trim']
         ];
     }
     /**

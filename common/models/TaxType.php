@@ -29,6 +29,7 @@ class TaxType extends \yii\db\ActiveRecord
         return [
             [['name', 'compounded', 'sort_order'], 'required'],
             [['status'], 'safe'],
+            [['name'], 'trim'],
         ];
     }
 

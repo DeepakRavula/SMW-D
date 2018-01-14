@@ -32,6 +32,7 @@ class Label extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'userAdded'], 'required'],
+            [['name'], 'trim'],
             [['userAdded'], 'integer'],
             [['name'], 'string', 'max' => 255],
         ];

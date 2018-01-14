@@ -30,6 +30,7 @@ class TextTemplate extends \yii\db\ActiveRecord
     {
         return [
             [['message', 'type'], 'required'],
+            [['message'], 'trim'],
         ];
     }
 
