@@ -26,6 +26,7 @@ class City extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'province_id'], 'required'],
+            [['name'], 'trim'],
             [['province_id'], 'integer'],
             [['name'], 'string', 'max' => 32],
         ];

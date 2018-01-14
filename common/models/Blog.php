@@ -30,6 +30,7 @@ class Blog extends \yii\db\ActiveRecord
             [['user_id', 'title', 'content'], 'required'],
             [['user_id'], 'integer'],
             [['title', 'content'], 'string'],
+            [['title', 'content'], 'trim'],
             [['date'], 'safe'],
         ];
     }

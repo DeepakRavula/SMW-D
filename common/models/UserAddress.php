@@ -40,7 +40,8 @@ class UserAddress extends \yii\db\ActiveRecord
             [['userContactId', 'provinceId', 'countryId'], 'integer'],
             [['address'], 'string', 'max' => 64],
             [['postalCode'], 'string', 'max' => 16],
-			[['labelId', 'cityId'], 'safe']
+			[['labelId', 'cityId'], 'safe'],
+            [['address','postalCode'], 'trim'],
         ];
     }
 

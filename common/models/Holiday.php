@@ -25,6 +25,7 @@ class Holiday extends \yii\db\ActiveRecord
     {
         return [
             [['date', 'description'], 'safe'],
+            [['description'], 'trim'],
         ];
     }
 

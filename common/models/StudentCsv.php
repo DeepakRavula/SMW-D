@@ -57,6 +57,7 @@ class StudentCsv extends \yii\db\ActiveRecord
             [['address', 'billingAddress'], 'string', 'max' => 60],
             [['city', 'province', 'postalCode', 'country', 'billingFirstName', 'billingLastName', 'billingEmail', 'billingCity', 'billingProvince', 'billingPostalCode', 'billingCountry'], 'string', 'max' => 40],
             [['homeTel', 'otherTel', 'billingHomeTel', 'billingOtherTel', 'billingWorkTel'], 'string', 'max' => 12],
+            [['city', 'province', 'postalCode', 'country', 'billingFirstName', 'billingLastName', 'billingEmail', 'billingCity', 'billingProvince', 'billingPostalCode', 'billingCountry','homeTel', 'otherTel', 'billingHomeTel', 'billingOtherTel', 'billingWorkTel','firstName', 'lastName','address', 'billingAddress',], 'trim'],
         ];
     }
 

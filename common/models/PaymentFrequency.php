@@ -42,6 +42,7 @@ class PaymentFrequency extends \yii\db\ActiveRecord
         return [
             [['name', 'frequencyLength'], 'required'],
             [['name'], 'string', 'max' => 20],
+            [['name'], 'name'],
             ['frequencyLength', 'integer'],
         ];
     }

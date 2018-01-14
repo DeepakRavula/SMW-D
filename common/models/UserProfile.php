@@ -62,6 +62,7 @@ class UserProfile extends ActiveRecord
             [['user_id', 'firstname', 'lastname'], 'required'],
             [['user_id'], 'integer'],
             [['firstname', 'lastname', 'avatar_path', 'avatar_base_url'], 'string', 'max' => 255],
+            [['firstname', 'lastname'], 'trim'],
             ['picture', 'safe'],
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'email'],

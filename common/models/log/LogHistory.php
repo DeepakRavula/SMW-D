@@ -34,6 +34,7 @@ class LogHistory extends \yii\db\ActiveRecord
             [['logId'], 'required'],
             [['logId', 'instanceId'], 'integer'],
             [['instanceType'], 'string', 'max' => 255],
+            [['instanceType'], 'trim'],
         ];
     }
 
