@@ -11,6 +11,7 @@ use common\components\gridView\KartikGridView;
 use common\models\Enrolment;
 use yii\bootstrap\Modal;
 use common\models\LocationAvailability;
+use kartik\daterange\DateRangePicker;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
@@ -107,22 +108,35 @@ $this->params['show-all'] = $this->render('_button', [
 				'format'=>'raw'
 			],
 			[
-            'attribute' => 'expirydate',
-                'label' => 'Expiry Date',
+            'attribute' => 'startdate',
+                'label' => 'Start Date',
 				'format' => 'date',
 				'value' => function($data) {
-					return Yii::$app->formatter->asDate($data->course->endDate);
+					return Yii::$app->formatter->asDate($data->course->startDate);
 				},
 				'contentOptions' => ['style' => 'width:200px'],
-				'filterType'=>KartikGridView::FILTER_DATE,
-				'filterWidgetOptions'=>[
-					'pluginOptions'=>[
-						'allowClear'=>true,
-						'autoclose' => true,
-						'format' => 'dd-mm-yyyy',
-					],
-				],
-			],	
+				'filterType'=>KartikGridView::FILTER_DATE_RANGE,
+                                    'filterWidgetOptions'=>[
+					'id'=>'enrolment-startdate-search' ,
+                            'convertFormat' => true,
+                            'initRangeExpr' => true,
+                            'pluginOptions' => [
+                            'autoApply' => true,
+                            'allowClear'=>true,
+                             'ranges' => [
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')", 'moment()'],
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')", 'moment()'],
+                    Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
+                    Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
+                ],
+                'locale' => [
+                    'format' => 'd-m-Y',
+                ],
+                'opens' => 'left',
+                ],
+
+                                    ],
+                                    ],
 			[
 			'class' => 'yii\grid\ActionColumn',
 			'contentOptions' => ['style' => 'width:50px'],
