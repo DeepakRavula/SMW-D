@@ -43,7 +43,8 @@ $loggedUser = User::findOne(Yii::$app->user->id);
                             <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
                         </div>
                     <?php endif; ?>
-                <?php else : ?>
+                <?php endif; ?>
+                <?php if (!$model->getModel()->isAdmin()) : ?>
                     <div class="col-xs-6">
                         <?php echo $form->field($model, 'pin')->passwordInput() ?>
                     </div>
