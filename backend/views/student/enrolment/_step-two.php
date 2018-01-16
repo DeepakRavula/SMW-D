@@ -51,3 +51,10 @@ DatePickerAsset::register($this);
 	<button class="btn btn-info step2-back" type="submit" >Back</button>
 </div>
 </div>
+<script>
+$(document).ready(function() {
+$(document).on('click', '.enrolment-save-btn', function () {
+    $('#private-enrolment-spinner').show();
+});
+});
+</script>
