@@ -17,14 +17,18 @@ class EnrolmentSearch extends Enrolment
     public $student;
     public $user_profile;
     public $teacher;
-    public $expirydate;/**
+    public $startdate;
+    public $startBeginDate;
+    public $startEndDate;
+    /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['id', 'courseId', 'studentId', 'isDeleted'], 'integer'],
-			[['showAllEnrolments','program','course','student','expirydate','teacher'], 'safe']
+			[['showAllEnrolments','program','course','student','startdate','teacher','startBeginDate',
+                            'startEndDate'], 'safe']
         ];
     }
 
@@ -67,9 +71,9 @@ class EnrolmentSearch extends Enrolment
         $query->leftJoin(['user_profile up'], 'course.teacherId=up.user_id');
          $dataProvider->setSort([
             'attributes' => [
-                'expirydate' => [
-                    'asc' => ['course.endDate' => SORT_ASC],
-                    'desc' => ['course.endDate' => SORT_DESC],
+                'startdate' => [
+                    'asc' => ['course.startDate' => SORT_ASC],
+                    'desc' => ['course.startDate' => SORT_DESC],
                 ],
                 'program' => [
                     'asc' => ['p.name' => SORT_ASC],
@@ -89,9 +93,13 @@ class EnrolmentSearch extends Enrolment
 $query->andFilterWhere(['p.id' => $this->program]);
  $query->andFilterWhere(['student.id' => $this->student]);
  $query->andFilterWhere(['up.user_id' => $this->teacher]);
- if($this->expirydate)
+ if($this->startdate)
  {
- $query->andFilterWhere(['DATE(course.endDate)' =>(new \DateTime($this->expirydate))->format('Y-m-d')]);
+     
+      list($this->startBeginDate, $this->startEndDate) = explode(' - ', $this->startdate);
+ $query->andWhere(['between', 'DATE(course.startDate)',
+                    (new \DateTime($this->startBeginDate))->format('Y-m-d'),
+                    (new \DateTime($this->startEndDate))->format('Y-m-d')]);
  }      if (! $this->showAllEnrolments) {
 				$query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
 				->isConfirmed()
