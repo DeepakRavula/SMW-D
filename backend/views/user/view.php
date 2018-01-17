@@ -262,10 +262,10 @@ $this->params['action-button'] = $this->render('_action-button', [
                 ],
             ],	
 			[
-        	    'label' => 'Notes',
+        	    'label' => 'Comments',
     	        'content' => $noteContent,
 	            'options' => [
-                	'id' => 'note',
+                	'id' => 'comment',
             	],
         	],
         ];
