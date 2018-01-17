@@ -138,7 +138,7 @@ class Invoice extends \yii\db\ActiveRecord
                 ->invoice()
                 ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($fromDate))->format('Y-m-d'),
                     (new \DateTime($toDate))->format('Y-m-d')])
-                ->groupBy('invoice.invoice_number')        
+                ->groupBy(['invoice.id','invoice.invoice_number'])
                 ->count();
     }
     
@@ -151,7 +151,7 @@ class Invoice extends \yii\db\ActiveRecord
                  ->andWhere(['location_id' => $locationId])
                  ->unpaid()
                 ->proFormaInvoice()
-                ->groupBy('invoice.invoice_number')
+                ->groupBy(['invoice.id','invoice.invoice_number'])
                 ->count();
     }
     

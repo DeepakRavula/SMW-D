@@ -249,7 +249,7 @@ class UserController extends \common\components\controllers\BaseController
 			->andWhere(['lesson.teacherId' => $id])
 			->unscheduled()
 			->notDeleted()
-            ->groupBy('id');
+            ->groupBy(['lesson.id','private_lesson.id']);
 
         return new ActiveDataProvider([
             'query' => $unscheduledLessons,
@@ -380,7 +380,7 @@ class UserController extends \common\components\controllers\BaseController
 				$query->andWhere(['lesson.teacherId' => $id]);
 			}]);
 			if($summariseReport) {
-				$timeVoucher->groupBy('DATE(invoice.date)');	
+				$timeVoucher->groupBy(['invoice.id','invoice.invoice_number']);
 			} else {
 				$timeVoucher->orderBy(['invoice.date' => SORT_ASC]);
 			}
@@ -403,7 +403,7 @@ class UserController extends \common\components\controllers\BaseController
             ->joinWith(['userLocation' => function ($query) use ($locationId, $id) {
                 $query->andWhere(['user_location.location_id' => $locationId, 'user_id' => $id]);
             }])
-            ->groupBy('day')
+            ->groupBy(['teacher_availability_day.id','day'])
             ->all();
 	}
         

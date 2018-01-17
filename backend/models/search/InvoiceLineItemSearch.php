@@ -110,11 +110,11 @@ class InvoiceLineItemSearch extends InvoiceLineItem
             }]);
         }
         if ($this->groupByItem && !$this->isCustomerReport) {
-            $query->groupBy('item_id, DATE(invoice.date)');
+            $query->groupBy(['invoice_line_item.id,item_id, DATE(invoice.date)']);
         }
         if ($this->groupByItemCategory && !$this->isCustomerReport) {
             $query->joinWith('itemCategory')
-                ->groupBy('item_category.id, DATE(invoice.date)');
+                ->groupBy(['invoice_line_item.id,item_category.id, DATE(invoice.date)']);
         }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
