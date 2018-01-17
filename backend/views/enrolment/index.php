@@ -164,11 +164,6 @@ echo KartikGridView::widget([
             'filterModel'=>$searchModel,
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
-    'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
-        if ($model->isExpiring(Enrolment::ENROLMENT_EXPIRY)) {
-            return ['class' => 'danger inactive'];
-        }
-    },
     'columns' => $columns,
 		'pjax'=>true,
     'pjaxSettings' => [
