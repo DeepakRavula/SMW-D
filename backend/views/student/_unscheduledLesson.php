@@ -5,11 +5,22 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 
 ?>
+<div class="m-b-10 pull-right">
+    <div class="btn-group">
+        <i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li><a id="change-program-teacher" href="#">Change Program/Teacher...</a></li>
+        </ul>
+    </div>
+</div>
 <div class="private-lesson-index">
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index',
     'timeout' => 6000,]); ?>
     <?php $columns = [
-           
+            [
+                'class' => '\kartik\grid\CheckboxColumn',
+                'mergeHeader' => false
+            ],
             [
                 'label' => 'Program',
                 'value' => function ($data) {
@@ -53,12 +64,13 @@ use yii\helpers\Html;
     ?>
     <div class="grid-row-open">
     <?php echo GridView::widget([
-    'dataProvider' => $dataProvider,
-    'rowOptions' => function ($model, $key, $index, $grid) {
-        $url = Url::to(['lesson/view', 'id' => $model->id]);
+        'dataProvider' => $dataProvider,
+        'options' => ['id' => 'unschedule-lesson-index'],
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $url = Url::to(['lesson/view', 'id' => $model->id]);
 
-        return ['data-url' => $url];
-    },
+            return ['data-url' => $url];
+        },
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
@@ -68,3 +80,34 @@ use yii\helpers\Html;
 	<?php yii\widgets\Pjax::end(); ?>
     </div>
 </div>
+
+<?php Modal::begin([
+        'header' => '<h4 class="m-0">Change Program Teacher</h4>',
+        'id'=>'change-program-teacher-modal',
+]);?>
+<div id="change-program-teacher-content"></div>
+<?php Modal::end(); ?>
+
+<script>
+    $(document).on('click', '#change-program-teacher', function(){
+        var lessonIds = $('#unschedule-lesson-index').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(lessonIds)) {
+            $('#index-error-notification').html("Choose any lessons").fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ ids: lessonIds });
+            $.ajax({
+                url    : '<?= Url::to(['teacher-substitute/index']) ?>?' +params,
+                type   : 'get',
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#teacher-substitute-modal').modal('show');
+                        $('#teacher-substitute-modal .modal-dialog').css({'width': '1000px'});
+                        $('#teacher-substitute-content').html(response.data);
+                    }
+                }
+            });
+            return false;
+        }
+    });
+</script>

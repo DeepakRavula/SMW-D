@@ -11,7 +11,7 @@ use common\models\LessonReschedule;
 use yii\data\ActiveDataProvider;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
-use yii\web\Controller;
+use common\models\Location;
 use common\models\log\LogHistory;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -90,7 +90,7 @@ class LessonController extends \common\components\controllers\BaseController
      */
     public function actionView($id)
     {
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = $this->findModel($id);
         $model->duration = $model->fullDuration;
         $notes = Note::find()
@@ -150,7 +150,7 @@ class LessonController extends \common\components\controllers\BaseController
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $model = new Lesson();
-        $model->locationId = \Yii::$app->session->get('location_id');
+        $model->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model->setScenario(Lesson::SCENARIO_CREATE);
         $request = Yii::$app->request;
         $studentModel = Student::findOne($studentId);
@@ -367,8 +367,7 @@ class LessonController extends \common\components\controllers\BaseController
      */
     protected function findModel($id)
     {
-        $session = Yii::$app->session;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Lesson::find()->location($locationId)
             ->where(['lesson.id' => $id, 'isDeleted' => false])->one();
         if ($model !== null) {

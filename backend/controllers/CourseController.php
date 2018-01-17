@@ -321,4 +321,22 @@ class CourseController extends \common\components\controllers\BaseController
 			'data' => $data
 		];
 	}
+        
+    public function actionChange()
+    {
+        $lessonIds = Yii::$app->request->get('ids');
+        $lessons = Lesson::findAll($lessonIds);
+        if ($model->load($request->post())) {
+            foreach ($lessons as $lesson) {
+                $studentEnrolment = Enrolment::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->joinWith(['course' => function($query) use($model){
+                    $query->where(['course.programId' => $model->programId]);
+                }])
+                ->where(['studentId' => $studentId])
+                ->one();
+            }
+        }
+    }
 }
