@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use League\Csv\Reader;
 use yii\base\Model;
 use Yii;
 /**
@@ -10,6 +11,7 @@ use Yii;
 class UserImport extends Model
 {
     public $file;
+    public $path;
     /**
      * {@inheritdoc}
      */
@@ -23,26 +25,13 @@ class UserImport extends Model
     private function parseCSV()
     {
         $rows = $fields = [];
-        $i = 0;
         ini_set('auto_detect_line_endings', '1');
-        $handle = $this->file->readStream();
-        if ($handle) {
-            while (($row = fgetcsv($handle, 4096)) !== false) {
-                if (empty($fields)) {
-                    $fields = $row;
-                    continue;
-                }
-                foreach ($row as $k => $value) {
-                    $rows[$i][$fields[$k]] = $value;
-                }
-                ++$i;
-            }
-            if (!feof($handle)) {
-                echo "Error: unexpected fgets() fail\n";
-            }
-            fclose($handle);
+        $csv = Reader::createFromPath(Yii::getAlias('@storage') . '/web/source/' . $this->path, 'r');
+        $csv->setHeaderOffset(0);
+        $records = $csv->getRecords(); //returns all the CSV records as an Iterator object
+        foreach ($records as $record) {
+            $rows[] = $record;
         }
-
         return $rows;
     }
 

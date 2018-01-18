@@ -105,7 +105,8 @@
     "kartik-v/yii2-sortable-input": "*",
     "omnilight/yii2-scheduling": "*",
     "kartik-v/yii2-widget-touchspin": "*",
-    "codemix/yii2-localeurls": "^1.5"
+    "codemix/yii2-localeurls": "^1.5",
+    "league/csv": "^9.1"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",
