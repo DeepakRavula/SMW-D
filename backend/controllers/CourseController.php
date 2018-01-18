@@ -39,7 +39,7 @@ class CourseController extends \common\components\controllers\BaseController
             ],
 			[
 				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['fetch-teacher-availability', 'fetch-lessons', 'fetch-group'],
+				'only' => ['fetch-teacher-availability', 'fetch-lessons', 'fetch-group', 'change'],
 				'formats' => [
 					'application/json' => Response::FORMAT_JSON,
 				],
@@ -326,17 +326,30 @@ class CourseController extends \common\components\controllers\BaseController
     {
         $lessonIds = Yii::$app->request->get('ids');
         $lessons = Lesson::findAll($lessonIds);
-        if ($model->load($request->post())) {
+        $model = Course::findOne(end($lessons)->courseId);
+        if ($model->load(Yii::$app->request->post())) {
             foreach ($lessons as $lesson) {
                 $studentEnrolment = Enrolment::find()
-                ->notDeleted()
-                ->isConfirmed()
-                ->joinWith(['course' => function($query) use($model){
-                    $query->where(['course.programId' => $model->programId]);
-                }])
-                ->where(['studentId' => $studentId])
-                ->one();
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->joinWith(['course' => function($query) use($lesson){
+                        $query->where(['course.programId' => $lesson->course->programId]);
+                    }])
+                    ->where(['studentId' => $lesson->student->id])
+                    ->one();
             }
+            $response = [
+                'status' => true,
+                'message' => ''
+            ];
         }
+        $data = $this->renderAjax('_change-form', [
+            'model' => $model
+        ]);
+        $response = [
+            'status' => true,
+            'data' => $data
+        ];
+        return $response;
     }
 }

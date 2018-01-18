@@ -1,5 +1,6 @@
 <?php
 
+use yii\bootstrap\Modal;
 use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\helpers\Html;
@@ -18,8 +19,8 @@ use yii\helpers\Html;
     'timeout' => 6000,]); ?>
     <?php $columns = [
             [
-                'class' => '\kartik\grid\CheckboxColumn',
-                'mergeHeader' => false
+                'class' => '\yii\grid\CheckboxColumn',
+                'contentOptions' => ['style' => 'width: 30px;'],
             ],
             [
                 'label' => 'Program',
@@ -84,6 +85,11 @@ use yii\helpers\Html;
 <?php Modal::begin([
         'header' => '<h4 class="m-0">Change Program Teacher</h4>',
         'id'=>'change-program-teacher-modal',
+        'footer' => $this->render('/invoice/_submit-button', [
+            'deletable' => false,
+            'saveClass' => 'change-program-teacher-save', 
+            'cancelClass' => 'change-program-teacher-cancel'
+        ])
 ]);?>
 <div id="change-program-teacher-content"></div>
 <?php Modal::end(); ?>
@@ -96,14 +102,13 @@ use yii\helpers\Html;
         } else {
             var params = $.param({ ids: lessonIds });
             $.ajax({
-                url    : '<?= Url::to(['teacher-substitute/index']) ?>?' +params,
+                url    : '<?= Url::to(['course/change']) ?>?' +params,
                 type   : 'get',
                 success: function(response)
                 {
                     if (response.status) {
-                        $('#teacher-substitute-modal').modal('show');
-                        $('#teacher-substitute-modal .modal-dialog').css({'width': '1000px'});
-                        $('#teacher-substitute-content').html(response.data);
+                        $('#change-program-teacher-modal').modal('show');
+                        $('#change-program-teacher-content').html(response.data);
                     }
                 }
             });
