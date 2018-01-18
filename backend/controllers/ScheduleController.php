@@ -72,7 +72,7 @@ class ScheduleController extends \common\components\controllers\BaseController
             }])
             ->orderBy(['teacher_availability_day.id' => SORT_DESC])
            ->orderBy (['user_profile.firstname' => SORT_ASC])
-            ->groupBy('teacher_location_id')
+             ->groupBy(['teacher_availability_day.id','teacher_location_id'])
             ->all();
         $availableTeachersDetails = ArrayHelper::toArray($teachersAvailabilities, [
             'common\models\TeacherAvailability' => [
@@ -194,7 +194,7 @@ class ScheduleController extends \common\components\controllers\BaseController
 						$query->where(['user_location.user_id' => $teacherId]);
 					}])
 					->andWhere(['day' => $date->format('N')])
-					->groupBy(['teacher_location_id'])
+					 ->groupBy(['teacher_availability_day.id','teacher_location_id'])
 					->all();
 			if (!empty($teachersAvailabilities)) {
 				foreach ($teachersAvailabilities as $teachersAvailability) {
@@ -218,7 +218,7 @@ class ScheduleController extends \common\components\controllers\BaseController
 						}]);
 					}])
 					->andWhere(['day' => $date->format('N')])
-					->groupBy(['teacher_location_id'])
+					 ->groupBy(['teacher_availability_day.id','teacher_location_id'])
 					->all();
 			if (!empty($teachersAvailabilities)) {
 				foreach ($teachersAvailabilities as $teachersAvailability) {
