@@ -153,7 +153,7 @@ class ReportController extends \common\components\controllers\BaseController {
 			}])
 			->andWhere(['>', 'tax_rate', 0]);
 			if($searchModel->summarizeResults) {
-				$invoiceTaxes->groupBy('DATE(invoice.date)');	
+				$invoiceTaxes ->groupBy(['invoice.id','DATE(invoice.date)']);
 			} else {
 				$invoiceTaxes->orderBy(['invoice.date' => SORT_ASC]);
 			}

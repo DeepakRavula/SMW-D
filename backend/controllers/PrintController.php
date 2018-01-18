@@ -37,7 +37,7 @@ class PrintController extends \common\components\controllers\BaseController
             ->joinWith(['invoicePayments' => function ($query) use ($id) {
                 $query->where(['invoice_id' => $id]);
             }])
-            ->groupBy('payment.payment_method_id');
+             ->groupBy(['payment.id','payment.payment_method_id']);
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoiceLineItems,
 			'pagination' => false,
@@ -156,7 +156,7 @@ class PrintController extends \common\components\controllers\BaseController
 				$query->andWhere(['lesson.teacherId' => $model->id]);
 			}]);
 			if($invoiceSearchModel->summariseReport) {
-				$timeVoucher->groupBy('DATE(invoice.date)');	
+				$timeVoucher->groupBy(['invoice.id','DATE(invoice.date)']);
 			} else {
 				$timeVoucher->orderBy(['invoice.date' => SORT_ASC]);
 			}
@@ -312,7 +312,7 @@ class PrintController extends \common\components\controllers\BaseController
                 }])
             ->andWhere(['>', 'tax_rate', 0]);
         if ($searchModel->summarizeResults) {
-            $invoiceTaxes->groupBy('DATE(invoice.date)');
+            $invoiceTaxes ->groupBy(['invoice.id','DATE(invoice.date)']);
         } else {
             $invoiceTaxes->orderBy(['invoice.date' => SORT_ASC]);
         }
