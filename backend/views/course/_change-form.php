@@ -24,7 +24,10 @@ use yii\helpers\Url;
         <div class="form-group col-lg-6">
             <?php echo $form->field($model, 'programId')->widget(Select2::classname(), [
                 'data' => $privatePrograms,
-                'options' => ['placeholder' => 'program'],
+                'options' => [
+                    'placeholder' => 'program',
+                    'id' => 'change-course-program'
+                ],
                 'pluginOptions' => [
                     'allowClear' => true
                 ]
@@ -33,16 +36,49 @@ use yii\helpers\Url;
         <div class="col-lg-6">
             <?php
                 // Dependent Dropdown
-        //        echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
-        //            [
-        //            'type' => DepDrop::TYPE_SELECT2,
-        //            'pluginOptions' => [
-        //                'depends' => ['course-programid'],
-        //                'url' => Url::to(['course/teachers'])
-        //            ],
-        //        ]);
+                echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
+                    [
+                    'type' => DepDrop::TYPE_SELECT2,
+                    'options' => [
+                        'placeholder' => 'teacher',
+                        'id' => 'change-course-teacher'
+                    ],
+                    'pluginOptions' => [
+                        'depends' => ['change-course-program'],
+                        'url' => Url::to(['course/teachers'])
+                    ],
+                ]);
             ?>
         </div>
     </div>
     <?php ActiveForm::end(); ?>
 </div>
+
+<script>
+    $(document).off('click', '.change-program-teacher-save').on('click', '.change-program-teacher-save', function () {
+        var lessonIds = $('#unschedule-lesson-index').yiiGridView('getSelectedRows');
+        var params = $.param({ ids: lessonIds });
+        $.ajax({
+            url    : '<?= Url::to(['course/change']) ?>?' + params,
+            type   : 'post',
+            dataType: "json",
+            data   : $('#course-change').serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#change-program-teacher-modal').modal('hide');
+                    $.pjax.reload({container: '#lesson-index', timeout: 6000, async:false});
+                    $('#enrolment-delete-success').html("Lessons are changed to different course").
+                                fadeIn().delay(5000).fadeOut();
+                }
+            }
+        });
+        return false;
+    });
+    
+    $(document).off('click', '.change-program-teacher-cancel').on('click', '.change-program-teacher-cancel', function () {
+        $('#change-program-teacher-modal').modal('hide');
+        return false;
+    });
+</script>

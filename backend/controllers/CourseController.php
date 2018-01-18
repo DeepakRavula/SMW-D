@@ -327,7 +327,7 @@ class CourseController extends \common\components\controllers\BaseController
         $lessonIds = Yii::$app->request->get('ids');
         $lessons = Lesson::findAll($lessonIds);
         $model = Course::findOne(end($lessons)->courseId);
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             foreach ($lessons as $lesson) {
                 $studentEnrolment = Enrolment::find()
                     ->notDeleted()

@@ -23,8 +23,8 @@ use common\models\CourseGroup;
  */
 class Course extends \yii\db\ActiveRecord
 {
-	const SCENARIO_GROUP_COURSE = 'group-course';
-	const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
+    const SCENARIO_GROUP_COURSE = 'group-course';
+    const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
     const EVENT_CREATE = 'event-create';
 	
     public $lessonStatus;
@@ -49,10 +49,10 @@ class Course extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['programId'], 'required'],
-			[['weeksCount'], 'required', 'when' => function($model, $attribute) {
-				return (int)$model->program->type === Program::TYPE_GROUP_PROGRAM;
-			}],
+            [['programId', 'teacherId'], 'required'],
+            [['weeksCount'], 'required', 'when' => function($model, $attribute) {
+                return (int)$model->program->type === Program::TYPE_GROUP_PROGRAM;
+            }],
             [['startDate'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
             [['startDate', 'endDate'], 'safe'],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
