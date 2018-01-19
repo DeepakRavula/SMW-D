@@ -25,13 +25,47 @@ class UserImport extends Model
     private function parseCSV()
     {
         $rows = $fields = [];
+        $i = 0;
         ini_set('auto_detect_line_endings', '1');
-        $csv = Reader::createFromPath(Yii::getAlias('@storage') . '/web/source/' . $this->path, 'r');
-        $csv->setHeaderOffset(0);
-        $records = $csv->getRecords(); //returns all the CSV records as an Iterator object
-        foreach ($records as $record) {
-            $rows[] = $record;
+        $file_handle = fopen(Yii::getAlias('@storage') . '/web/source/' . $this->path, "r");
+        $csvFixed = [];
+        microtime();
+        while (!feof($file_handle)) {
+            $line = fgets($file_handle);
+            if (preg_match_all('/(?<!,)"(?!,)/', $line, $matches, PREG_OFFSET_CAPTURE)) {
+                $newLine = $line;
+                foreach ($matches[0] as $match) {
+                    if ($match !== current($matches[0]) && $match !== end($matches[0])) {
+                        $newLine = substr_replace($line, '"', $match[1], 0);
+                    }
+                }
+                $csvFixed[] = $newLine;
+            }
         }
+        fclose($file_handle);
+        unlink(Yii::getAlias('@storage') . '/web/source/' . $this->path);
+        $fp = fopen(Yii::getAlias('@storage') . '/web/source/' . $this->path, 'w');
+        foreach($csvFixed as $line){
+            fputs($fp, $line);
+        }
+        $handle = $this->file->readStream();
+        if ($handle) {
+            while (($row = fgetcsv($handle, 4096)) !== false) {
+                if (empty($fields)) {
+                    $fields = $row;
+                    continue;
+                }
+                foreach ($row as $k => $value) {
+                    $rows[$i][$fields[$k]] = $value;
+                }
+                ++$i;
+            }
+            if (!feof($handle)) {
+                echo "Error: unexpected fgets() fail\n";
+            }
+            fclose($handle);
+        }
+        
         return $rows;
     }
 
@@ -223,13 +257,15 @@ class UserImport extends Model
             }
         }
 
-        return [
+
+        $res = [
             'successCount' => $successCount,
             'studentCount' => $studentCount,
             'customerCount' => $customerCount,
             'errors' => $errors,
             'totalRows' => count($rows),
         ];
+        print_r($res);die;
     }
 	
 	public function StudentCsv($row, $student) 
