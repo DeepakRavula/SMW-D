@@ -55,6 +55,9 @@ use yii\helpers\Url;
 </div>
 
 <script>
+    $(document).ready(function () {
+        $('#change-course-program').trigger('change');
+    });
     $(document).off('click', '.change-program-teacher-save').on('click', '.change-program-teacher-save', function () {
         var lessonIds = $('#unschedule-lesson-index').yiiGridView('getSelectedRows');
         var params = $.param({ ids: lessonIds });

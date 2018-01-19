@@ -327,6 +327,8 @@ class CourseController extends \common\components\controllers\BaseController
         $lessonIds = Yii::$app->request->get('ids');
         $lessons = Lesson::findAll($lessonIds);
         $model = Course::findOne(end($lessons)->courseId);
+        $model->setScenario(Course::SCENARIO_CHANGE);
+        $model->programId = null;
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             foreach ($lessons as $lesson) {
                 $studentEnrolment = Enrolment::find()
