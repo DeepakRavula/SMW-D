@@ -40,8 +40,8 @@ class Classroom extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'description' => 'Description',
+            'name' => 'Shortname',
+            'description' => 'Longname',
         ];
     }
 	public function getLessons()
