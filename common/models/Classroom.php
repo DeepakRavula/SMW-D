@@ -26,7 +26,7 @@ class Classroom extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'required'],
+            [['name','description'], 'required'],
             [['name'], 'trim'],
             [['locationId'], 'integer'],
             [['name'], 'string', 'max' => 30],
@@ -41,6 +41,7 @@ class Classroom extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
+            'description' => 'Description',
         ];
     }
 	public function getLessons()
