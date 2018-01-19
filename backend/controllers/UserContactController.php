@@ -334,10 +334,9 @@ class UserContactController extends \common\components\controllers\BaseControlle
      public function actionValidate()
     {
         $email = new UserEmail();
-	$request = Yii::$app->request;
+    	$request = Yii::$app->request;
         if ($email->load($request->post())) {
             return  ActiveForm::validate($email);
         }
-        }
-
+    }
 }
