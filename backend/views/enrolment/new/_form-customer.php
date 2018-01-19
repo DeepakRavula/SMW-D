@@ -7,6 +7,7 @@ use yii\helpers\ArrayHelper;
 use common\models\Label;
 use kartik\select2\Select2;
 use yii\helpers\Html;
+use yii\widgets\MaskedInput;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
@@ -50,7 +51,9 @@ use yii\helpers\Html;
 			<label class="modal-form-label">Phone Number</label>
 		</div>	
 		<div class="col-xs-4">
-			<?= $form->field($phoneModel, 'number')->textInput(['placeholder' => 'Number'])->label(false); ?>	
+		 <?= $form->field($phoneModel, 'number')->widget(MaskedInput::className(), [
+         'mask' => '(999) 999-9999',
+        ])->label(false); ?>
 		</div>
 		<div class="col-xs-2">
 			<?= $form->field($phoneModel, 'extension')->textInput(['placeholder' => 'Ext'])->label(false); ?>
