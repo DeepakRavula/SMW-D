@@ -7,6 +7,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
+use common\models\Location;
 
 /**
  * NoteController implements the CRUD actions for Note model.
