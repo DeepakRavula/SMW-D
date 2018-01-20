@@ -105,8 +105,7 @@
     "kartik-v/yii2-sortable-input": "*",
     "omnilight/yii2-scheduling": "*",
     "kartik-v/yii2-widget-touchspin": "*",
-    "codemix/yii2-localeurls": "^1.5",
-    "parsecsv/php-parsecsv": "0.4.5"
+    "codemix/yii2-localeurls": "^1.5"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "^2.0.0",
