@@ -21,6 +21,9 @@ use yii\helpers\ArrayHelper;
 $form = ActiveForm::begin([
 		'id' => 'email-form',
 		'action' => $url,
+                'enableAjaxValidation' => true,
+	 	'enableClientValidation' => true,
+                'validationUrl' => Url::to(['user-contact/validate', 'id' => $userModel->id]),
 	]);
 ?>
 <div class="row">
