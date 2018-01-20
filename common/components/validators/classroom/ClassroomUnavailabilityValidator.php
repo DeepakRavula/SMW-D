@@ -21,7 +21,7 @@ class ClassroomUnavailabilityValidator extends Validator
         $currentDate       = (new \DateTime())->format('Y-m-d');
         if (($fromDate < $currentDate || $toDate < $currentDate)) {
             return $this->addError($model, $attribute,
-                    'Unavailability cannot create for past dates');
+                    'Unavailability cannot be set for past dates');
         }
 
     }
