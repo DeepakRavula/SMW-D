@@ -14,23 +14,33 @@ $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
         " 
         .private-lesson {
 			font-weight:bold;
-            color: " . $privateLesson->code . " !important;
+			color:white;
+			font-size: 16px;
+            background-color: " . $privateLesson->code . " !important;
 		}
         .first-lesson {
 			font-weight:bold;
-            color: " . $firstLesson->code . " !important;
+			color:white;
+			font-size: 16px;
+            background-color: " . $firstLesson->code . " !important;
 		}
         .group-lesson {
 			font-weight:bold;
-           	color: " . $groupLesson->code . " !important; 
+			color:white;
+			font-size: 16px;
+           	background-color: " . $groupLesson->code . " !important; 
 		}
         .teacher-substituted {
 			font-weight:bold;
-            color: " . $teacherSubstitutedLesson->code . " !important;
+			color:white;
+			font-size: 16px;
+            background-color: " . $teacherSubstitutedLesson->code . " !important;
 		}
         .lesson-rescheduled {
 			font-weight:bold;
-            color: " . $rescheduledLesson->code . " !important; }"
+			color:white;
+			font-size: 16px;
+            background-color: " . $rescheduledLesson->code . " !important; }"
     );
 ?>
  <?php yii\widgets\Pjax::begin(['id' => 'schedule-listing']); ?>
@@ -42,6 +52,7 @@ GridView::widget([
 	'rowOptions' => function ($model, $key, $index, $grid) {
 		return ['class' => $model->getClass()];
 	},
+	'tableOptions' => ['class' => 'table table-condensed'],
 	'options' => [
         'class' => 'daily-schedule',
     ],
