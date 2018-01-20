@@ -78,18 +78,22 @@ class ClassroomUnavailabilityController extends \common\components\controllers\B
             list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
             $model->fromDate = \DateTime::createFromFormat('M d,Y', $model->fromDate)->format('Y-m-d h:i:s');
             $model->toDate = \DateTime::createFromFormat('M d,Y', $model->toDate)->format('Y-m-d h:i:s');
-            $model->save();
+            if($model->save())
+            {
             return [
                 'status' => true
             ];
             }
+
             else{
               return [
                 'status' => false,
-                'errors' => $model->getErrors(),
+                'errors' => $model->getErrors($attribute = 'dateRange'),
             ];
             }
-        } else {
+            }
+        }
+         else {
             return [
                 'status' => true,
                 'data' => $data

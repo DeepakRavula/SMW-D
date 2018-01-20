@@ -101,12 +101,12 @@ use yii\bootstrap\Modal;
 					{
 						$.pjax.reload({container: '#classroom-unavailability-grid', timeout: 4000});
 						$('#classroom-unavailability-modal').modal('hide');
-					} else
-					{
-						$('#classroom-unavailability-form').yiiActiveForm('updateMessages',
-								response.errors
-								, true);
 					}
+
+        else{
+                    $('#classroom-unavailability-validation').html(response.errors).fadeIn().delay(3000).fadeOut();
+                }
+					
 				}
 			});
 			return false;

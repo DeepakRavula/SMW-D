@@ -1,7 +1,7 @@
 <?php
 
 namespace common\models;
-
+use common\components\validators\classroom\ClassroomUnavailabilityValidator;
 use Yii;
 
 /**
@@ -36,6 +36,9 @@ class ClassroomUnavailability extends \yii\db\ActiveRecord
             [['reason'], 'string'],
             [['reason'], 'trim'],
             [['dateRange'], 'required'],
+            ['fromDate', ClassroomUnavailabilityValidator::className()],
+            ['toDate', ClassroomUnavailabilityValidator::className()],
+            ['dateRange', ClassroomUnavailabilityValidator::className()],
         ];
     }
 
