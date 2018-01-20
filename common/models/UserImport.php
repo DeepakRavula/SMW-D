@@ -265,7 +265,6 @@ class UserImport extends Model
             'errors' => $errors,
             'totalRows' => count($rows),
         ];
-        //print_r($res);die;
         return $response;
     }
 	
@@ -299,7 +298,7 @@ class UserImport extends Model
 		$studentCsv->billingOtherTel = $row['Billing Other Tel'];
 		$studentCsv->billingWorkTel = $row['Billing Work Tel'];
 		$studentCsv->billingWorkTelExt = $row['Billing Work Tel Ext.'];
-		$studentCsv->notes = $row['Comments'];
+		$studentCsv->notes = json_encode($row['Comments']);
 		$studentCsv->save();
 	}
 }
