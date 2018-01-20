@@ -258,14 +258,15 @@ class UserImport extends Model
         }
 
 
-        $res = [
+        $response = [
             'successCount' => $successCount,
             'studentCount' => $studentCount,
             'customerCount' => $customerCount,
             'errors' => $errors,
             'totalRows' => count($rows),
         ];
-        print_r($res);die;
+        //print_r($res);die;
+        return $response;
     }
 	
 	public function StudentCsv($row, $student) 
