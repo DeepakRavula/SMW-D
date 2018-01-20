@@ -10,7 +10,6 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 $this->title = 'Programs';
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'new-program']);
-
 $this->params['show-all'] = $this->render('_button', [
 	'searchModel' => $searchModel
  ]);
@@ -40,7 +39,7 @@ Modal::begin([
 <div id="program-content"></div>
 <?php Modal::end(); ?>
 </div>
-    <?php echo Html::hiddenInput('name','1',array('id'=>'program-type')); ?>
+<?php echo Html::hiddenInput('name','1',array('id'=>'program-type')); ?>
 <script>
     $(document).ready(function () {
         $(document).on('click', '.action-button',function () {
@@ -93,7 +92,6 @@ Modal::begin([
                         var type=$('#program-type').val();
                         var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[type]=' + type;
                         $.pjax.reload({url: url, container: "#program-listing", replace: false, timeout: 4000});
-                        //$.pjax.reload({container: '#program-listing', timeout: 6000});
                         $('#program-modal').modal('hide');
                     } else {
                         $('#error-notification').html(response.message).fadeIn().delay(8000).fadeOut();
@@ -108,35 +106,33 @@ Modal::begin([
             $('#program-modal').modal('hide');
             return false;
         });
-         //$("#program-type").val(1);
-	$(document).on('click', '.private', function() {
-                var type=$('#program-type').val('1');
-		$(".group").removeClass('active');		
-		$(".private").addClass('active');	
-	});
-	$(document).on('click', '.group', function() {
-                var type=$('#program-type').val('2');
-		$(".private").removeClass('active');	
-		$(".group").addClass('active');	
-	});
-	$(document).on('click', '.group, .private', function() {
-		var type = $(this).attr('value');
-		var url = "<?php echo Url::to(['/program/index']); ?>?ProgramSearch[type]=" + type;
-		$.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  
-		return false;
-	});
+	    $(document).on('click', '.private', function() {
+            var type=$('#program-type').val('1');
+		    $(".group").removeClass('active');		
+		    $(".private").addClass('active');	
+    	});
+	    $(document).on('click', '.group', function() {
+            var type=$('#program-type').val('2');
+		    $(".private").removeClass('active');	
+		    $(".group").addClass('active');	
+	    });
+	    $(document).on('click', '.group, .private', function() {
+		    var type = $(this).attr('value');
+		    var url = "<?php echo Url::to(['/program/index']); ?>?ProgramSearch[type]=" + type;
+		    $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  
+		    return false;
+    	});
         $("#programsearch-showallprograms").on("change", function() {
-      var type=$('#program-type').val();
-      var showAllPrograms = $(this).is(":checked");
-      var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms);
-      $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  //Reload GridView
-    });
-         $("#programsearch-showallprograms").on("change", function () {
+            var type=$('#program-type').val();
+            var showAllPrograms = $(this).is(":checked");
+            var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms);
+            $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  //Reload GridView
+        });
+        $("#programsearch-showallprograms").on("change", function () {
             var showAllPrograms = $(this).is(":checked");
             var type=$('#program-type').val();
             var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[type]=' + type;
             $.pjax.reload({url: url, container: "#program-listing", replace: false, timeout: 4000});  //Reload GridView
         });
- });
-
+    });
 </script>
