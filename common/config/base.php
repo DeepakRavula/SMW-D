@@ -76,11 +76,8 @@ $config = [
             'username' => env('DB_USERNAME'),
             'password' => env('DB_PASSWORD'),
             'tablePrefix' => env('DB_TABLE_PREFIX'),
-            'charset' => 'utf8mb4',
+            'charset' => 'utf8',
             'enableSchemaCache' => YII_ENV_PROD,
-            'on afterOpen' => function($event) {
-                $event->sender->createCommand("SET NAMES utf8mb4")->execute();
-            }
         ],
 
         'log' => [
