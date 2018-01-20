@@ -39,6 +39,7 @@ $this->params['action-button'] = $addButton;
         'emptyText' => false,
         'columns' => [
             'name',
+            'description',
         ],
     ]); ?>
 </div>
