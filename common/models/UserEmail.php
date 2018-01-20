@@ -40,11 +40,12 @@ class UserEmail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-			[['userContactId'], 'integer'],
+            [['userContactId'], 'integer'],
             [['email'], 'string', 'max' => 255],
-			[['email'], 'email'],
-			[['labelId'], 'safe'],
+            [['email'], 'email'],
+            [['labelId'], 'safe'],
             [['email'], 'trim'],
+            [['email'], 'unique', 'message' => 'Email already exits'],
         ];
     }
 
