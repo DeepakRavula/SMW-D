@@ -84,7 +84,13 @@ use yii\helpers\Html;
 
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Change Program Teacher</h4>',
-    'id'=>'change-program-teacher-modal'
+        'id'=>'change-program-teacher-modal',
+        'footer' => $this->render('/invoice/_submit-button', [
+            'formId' => 'course-change',
+            'deletable' => false,
+            'saveClass' => 'change-program-teacher-save', 
+            'cancelClass' => 'change-program-teacher-cancel'
+        ])
 ]);?>
 <div id="change-program-teacher-content"></div>
 <?php Modal::end(); ?>

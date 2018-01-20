@@ -1,8 +1,10 @@
 <?php
 
+use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 ?>
 
+<?php $form = ActiveForm::begin(['id' => $formId]);?>
 <div class="row">
     <div class="col-md-12">
         <div class="pull-right">
@@ -16,4 +18,5 @@ use yii\helpers\Html;
     <?php endif; ?>
     </div>
 </div>
+<?php ActiveForm::end(); ?>
 
