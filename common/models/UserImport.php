@@ -65,7 +65,6 @@ class UserImport extends Model
             }
             fclose($handle);
         }
-        
         return $rows;
     }
 
@@ -256,8 +255,6 @@ class UserImport extends Model
                 $errors[] = 'Error on Line '.($i + 2).': '.$e->getMessage();
             }
         }
-
-
         $response = [
             'successCount' => $successCount,
             'studentCount' => $studentCount,
