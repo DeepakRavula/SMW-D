@@ -4,8 +4,10 @@ use yii\bootstrap\Modal;
 use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\helpers\Html;
-
+require_once Yii::$app->basePath . '/views/layouts/modal-popup.php';
 ?>
+
+<?php yii\widgets\Pjax::begin(['id' => 'lesson-index', 'timeout' => 6000,]); ?>
 <div class="m-b-10 pull-right">
     <div class="btn-group">
         <i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i>
@@ -15,8 +17,7 @@ use yii\helpers\Html;
     </div>
 </div>
 <div class="private-lesson-index">
-<?php yii\widgets\Pjax::begin(['id' => 'lesson-index',
-    'timeout' => 6000,]); ?>
+
     <?php $columns = [
             [
                 'class' => '\yii\grid\CheckboxColumn',
@@ -108,8 +109,8 @@ use yii\helpers\Html;
                 success: function(response)
                 {
                     if (response.status) {
-                        $('#change-program-teacher-modal').modal('show');
-                        $('#change-program-teacher-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                        $('#modal-content').html(response.data);
                     }
                 }
             });

@@ -72,6 +72,12 @@ class UserQuery extends ActiveQuery
         return $this;
     }
     
+    public function allTeachers()
+    {
+        return $this->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+            ->andWhere(['raa.item_name' => 'teacher']);
+    }
+    
     public function adminOrOwner()
     {
         $this->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')

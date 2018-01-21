@@ -8,7 +8,6 @@ use common\models\log\CourseLog;
 use common\models\Lesson;
 use common\models\Qualification;
 use backend\models\search\CourseSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -328,25 +327,35 @@ class CourseController extends \common\components\controllers\BaseController
         $lessons = Lesson::findAll($lessonIds);
         $model = Course::findOne(end($lessons)->courseId);
         $model->setScenario(Course::SCENARIO_CHANGE);
-        $model->programId = null;
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            foreach ($lessons as $lesson) {
-                $studentEnrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->joinWith(['course' => function($query) use($lesson){
-                        $query->where(['course.programId' => $lesson->course->programId]);
-                    }])
-                    ->where(['studentId' => $lesson->student->id])
-                    ->one();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                foreach ($lessons as $lesson) {
+                    $studentEnrolment = Enrolment::find()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->joinWith(['course' => function($query) use($lesson){
+                            $query->andWhere(['course.programId' => $lesson->course->programId]);
+                        }])
+                        ->andWhere(['studentId' => $lesson->enrolment->student->id])
+                        ->one();
+                    $newLesson = new Lesson();
+                    $newLesson->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+                    $newLesson->setScenario(Lesson::SCENARIO_CREATE);
+                }
+                $response = [
+                    'status' => true,
+                    'message' => ''
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model)
+                ];
             }
-            $response = [
-                'status' => true,
-                'message' => ''
-            ];
         }
         $data = $this->renderAjax('_change-form', [
-            'model' => $model
+            'model' => $model,
+            'lessonIds' => $lessonIds
         ]);
         $response = [
             'status' => true,
