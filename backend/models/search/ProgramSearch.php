@@ -13,8 +13,8 @@ class ProgramSearch extends Program
 {
     public $showAllPrograms = false;
     public $query;
-    const PRIVATE_PROGRAM=1;
-    const GROUP_PROGRAM=2;
+    const PROGRAM_TYPE_PRIVATE=1;
+    const PROGRAM_TYPE_GROUP=2;
     public $type;
     /**
      * {@inheritdoc}
@@ -56,10 +56,10 @@ class ProgramSearch extends Program
         if (!$this->showAllPrograms) {
             $query->active();
         }
-         if((int)$this->type === self::PRIVATE_PROGRAM) {
+         if((int)$this->type === self::PROGRAM_TYPE_PRIVATE) {
             $query->andWhere(['type' => $this->type]);
          } 
-	if((int)$this->type === self::GROUP_PROGRAM) {
+	if((int)$this->type === self::PROGRAM_TYPE_GROUP) {
             $query->andWhere(['type' => $this->type]); 
 	} 
         $query->andFilterWhere(['like', 'name', $this->name]);

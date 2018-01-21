@@ -48,7 +48,7 @@ class ProgramController extends \common\components\controllers\BaseController
     {
         $request = Yii::$app->request;
         $searchModel         = new ProgramSearch();
-        $searchModel->type   = ProgramSearch::PRIVATE_PROGRAM;
+        $searchModel->type   = ProgramSearch::PROGRAM_TYPE_PRIVATE;
         $programSearchModel = $request->get('ProgramSearch');
             if(!empty($programSearchModel)) {
                 $searchModel->type = $programSearchModel['type'];
