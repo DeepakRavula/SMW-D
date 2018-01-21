@@ -60,7 +60,7 @@ Modal::begin([
                 }
             });
         });
-        $(document).on('click', '#private-program-grid tbody > tr',function () {
+        $(document).on('click', '#program-listing tbody > tr',function () {
                 var programId = $(this).data('key');
                 var customUrl = '<?= Url::to(['program/update']); ?>?id=' + programId;
             $.ajax({
@@ -122,12 +122,6 @@ Modal::begin([
 		    $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  
 		    return false;
     	});
-        $("#programsearch-showallprograms").on("change", function() {
-            var type=$('#program-type').val();
-            var showAllPrograms = $(this).is(":checked");
-            var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms);
-            $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  //Reload GridView
-        });
         $("#programsearch-showallprograms").on("change", function () {
             var showAllPrograms = $(this).is(":checked");
             var type=$('#program-type').val();
