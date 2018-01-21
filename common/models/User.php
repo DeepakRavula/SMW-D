@@ -20,7 +20,6 @@ use common\models\Label;
  * @property int $id
  * @property string $username
  * @property string $password_hash
- * @property string $email
  * @property string $auth_key
  * @property string $access_token
  * @property string $oauth_client
