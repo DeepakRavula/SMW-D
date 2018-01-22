@@ -334,6 +334,7 @@ class CourseController extends \common\components\controllers\BaseController
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
                 foreach ($lessons as $lesson) {
+                    $enrolmentId = $lesson->enrolment->id;
                     $newLesson = new Lesson();
                     $newLesson->programId = $model->programId;
                     $newLesson->duration = $lesson->duration;
@@ -344,6 +345,19 @@ class CourseController extends \common\components\controllers\BaseController
                     $newLesson->setScenario(Lesson::SCENARIO_CREATE);
                     $newLesson->addExtra(Lesson::STATUS_UNSCHEDULED);
                     if ($newLesson->save()) {
+                        $newLesson->markAsRoot();
+                        $invoice = $newLesson->extraLessonTakePayment();
+                        if ($lesson->hasLessonCredit($enrolmentId)) {
+                            if ($invoice->balance < $lesson->getLessonCreditAmount($enrolmentId)) {
+                                $amount = $invoice->balance;
+                                $creditInvoice = $lesson->addLessonCreditInvoice();
+                                $creditInvoice->save();
+                                $creditInvoice->addPayment($lesson, $lesson->getLessonCreditAmount($enrolmentId)) - $amount;
+                            } else {
+                                $amount = $lesson->getLessonCreditAmount($enrolmentId);
+                            }
+                            $invoice->addPayment($lesson, $amount);
+                        }
                         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                         $newLesson->on(Lesson::EVENT_AFTER_INSERT,
                             [new LessonLog(), 'extraLessonCreate'],

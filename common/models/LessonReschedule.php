@@ -50,6 +50,9 @@ class LessonReschedule extends Model
         $oldLesson = Lesson::findOne($this->lessonId);
         $rescheduledLesson = Lesson::findOne($this->rescheduledLessonId);
         $oldLesson->append($rescheduledLesson);
+        if ($oldLesson->hasLessonCredit($oldLesson->enrolment->id)) {
+            $rescheduledLesson->addPayment($oldLesson, $oldLesson->getLessonCreditAmount($oldLesson->enrolment->id));
+        }
 		if($oldLesson->isPrivate()) {
 			$paymentCycleLesson = new PaymentCycleLesson();
 			$oldPaymentCycleLesson = PaymentCycleLesson::findOne(['lessonId' => $this->lessonId]);
@@ -110,6 +113,9 @@ class LessonReschedule extends Model
         }
 
         $lessonModel->status = Lesson::STATUS_SCHEDULED;
+        if ($oldLesson->isExtra()) {
+            $lessonModel->type = $oldLesson->type;
+        }
         if($lessonModel->save()) {
             $lessonModel->updateAttributes([
                 'classroomId' => $classroomId,

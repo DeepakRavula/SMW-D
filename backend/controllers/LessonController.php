@@ -164,6 +164,7 @@ class LessonController extends \common\components\controllers\BaseController
         if ($model->load($request->post())) {
             $model->addExtra(Lesson::STATUS_SCHEDULED);
             if ($model->save()) {
+                $model->markAsRoot();
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $model->on(Lesson::EVENT_AFTER_INSERT,
                     [new LessonLog(), 'extraLessonCreate'],
@@ -316,8 +317,8 @@ class LessonController extends \common\components\controllers\BaseController
                         'status' => true,
                         'url' => Url::to(['lesson/view', 'id' => $model->id])
                     ];
+                    }
                 }
-			}
             return $response;
         }
         return $this->render('_form-private-lesson', [
@@ -739,20 +740,7 @@ class LessonController extends \common\components\controllers\BaseController
             }
             return $this->redirect(['invoice/view', 'id' => $model->paymentCycle->proFormaInvoice->id]);
         } else if ($model->isExtra()) {
-            if (!$model->hasProFormaInvoice()) {
-                $locationId = $model->enrolment->student->customer->userLocation->location_id;
-                $invoice = new Invoice();
-                $invoice->user_id = $model->enrolment->student->customer->id;
-                $invoice->location_id = $locationId;
-                $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
-                $invoice->createdUserId = Yii::$app->user->id;
-                $invoice->updatedUserId = Yii::$app->user->id;
-                $invoice->save();
-                $invoiceLineItem = $model->addPrivateLessonLineItem($invoice);
-                $invoice->save();
-            } else {
-                $invoice = $model->proFormaInvoice;
-            }
+            $invoice = $model->extraLessonTakePayment();
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         }
     }

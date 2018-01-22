@@ -64,4 +64,23 @@ trait ExtraLesson
         $course->save();
         return $course;
     }
+    
+    public function extraLessonTakePayment()
+    {
+        if (!$this->hasProFormaInvoice()) {
+            $locationId = $this->enrolment->student->customer->userLocation->location_id;
+            $invoice = new Invoice();
+            $invoice->user_id = $this->enrolment->student->customer->id;
+            $invoice->location_id = $locationId;
+            $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
+            $invoice->createdUserId = Yii::$app->user->id;
+            $invoice->updatedUserId = Yii::$app->user->id;
+            $invoice->save();
+            $invoiceLineItem = $this->addPrivateLessonLineItem($invoice);
+            $invoice->save();
+        } else {
+            $invoice = $this->proFormaInvoice;
+        }
+        return $invoice;
+    }
 }
