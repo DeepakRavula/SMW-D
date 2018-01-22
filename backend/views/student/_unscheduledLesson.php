@@ -88,7 +88,7 @@ use yii\helpers\Html;
         if ($.isEmptyObject(lessonIds)) {
             $('#enrolment-delete').html("Choose any lessons").fadeIn().delay(5000).fadeOut();
         } else {
-            var params = $.param({ ids: lessonIds });
+            var params = $.param({ 'LessonSearch[ids]': lessonIds });
             $.ajax({
                 url    : '<?= Url::to(['course/change']) ?>?' +params,
                 type   : 'get',

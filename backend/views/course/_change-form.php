@@ -30,7 +30,7 @@ use common\models\Location;
     
     $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['course/change', 'ids' => $lessonIds]),
+        'action' => Url::to(['course/change', 'LessonSearch[ids]' => $lessonIds]),
     ]);?>
     <div class="row">
         <div class="form-group col-lg-6">
