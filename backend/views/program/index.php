@@ -116,17 +116,22 @@ Modal::begin([
 		    $(".private").removeClass('active');	
 		    $(".group").addClass('active');	
 	    });
-	    $(document).on('click', '.group, .private', function() {
-		    var type = $(this).attr('value');
-		    var url = "<?php echo Url::to(['/program/index']); ?>?ProgramSearch[type]=" + type;
-		    $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  
-		    return false;
-    	});
-        $("#programsearch-showallprograms").on("change", function () {
-            var showAllPrograms = $(this).is(":checked");
-            var type=$('#program-type').val();
-            var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[type]=' + type;
-            $.pjax.reload({url: url, container: "#program-listing", replace: false, timeout: 4000});  //Reload GridView
-        });
+	   $(document).on('click', '.group, .private', function() {
+            var type = $(this).attr('value');
+            var showAllPrograms = $("#programsearch-showallprograms").is(":checked");
+            var params = $.param({'ProgramSearch[type]': type, 'ProgramSearch[showAllPrograms]': showAllPrograms | 0});
+            var url = "<?php echo Url::to(['program/index']); ?>?" + params;
+            $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  
+            return false;
+
+       });
+       $("#programsearch-showallprograms").on("change", function () {
+           var showAllPrograms = $(this).is(":checked");
+           var type=$('#program-type').val();
+           var params = $.param({'ProgramSearch[type]': type, 'ProgramSearch[showAllPrograms]': showAllPrograms | 0});
+           var url = "<?php echo Url::to(['program/index']); ?>?" + params;
+           $.pjax.reload({url: url, container: "#program-listing", replace: false, timeout: 4000});  //Reload GridView
+            return false;
+       });
     });
 </script>
