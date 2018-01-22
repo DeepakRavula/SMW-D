@@ -138,7 +138,7 @@ $config = [
             [
                 'controllers' => ['sign-in'],
                 'allow' => true,
-                'roles' => ['owner'],
+                'roles' => ['owner', 'staffmember'],
                 'actions' => ['lock', 'unlock']
             ],
             [
