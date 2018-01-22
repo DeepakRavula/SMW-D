@@ -33,6 +33,7 @@ class Lesson extends \yii\db\ActiveRecord
 {
     use Payable;
     use Invoiceable;
+    use ExtraLesson;
     
     const TYPE_PRIVATE_LESSON = 1;
     const TYPE_GROUP_LESSON = 2;
@@ -893,17 +894,6 @@ class Lesson extends \yii\db\ActiveRecord
         return ($this->isCompleted() && $this->isScheduled()) || $this->isExpired() ||(!$this->isPresent);
     }
 
-    public function createExtraLessonCourse()
-    {
-        $course = new Course();
-        $course->programId   = $this->programId;
-        $course->teacherId   = $this->teacherId;
-        $course->startDate   = $this->date;
-        $course->isConfirmed = true;
-        $course->locationId  = $this->locationId;
-        $course->save();
-        return $course;
-    }
     public function isBulkRescheduled()
     {
        return $this->bulkRescheduleLesson;

@@ -6,6 +6,8 @@ use Yii;
 use common\models\Course;
 use common\models\log\CourseLog;
 use common\models\Lesson;
+use common\models\log\LessonLog;
+use common\models\Location;
 use common\models\Qualification;
 use backend\models\search\CourseSearch;
 use yii\web\NotFoundHttpException;
@@ -327,24 +329,31 @@ class CourseController extends \common\components\controllers\BaseController
         $lessons = Lesson::findAll($lessonIds);
         $model = Course::findOne(end($lessons)->courseId);
         $model->setScenario(Course::SCENARIO_CHANGE);
+        $model->studentId = $model->enrolment->studentId;
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
                 foreach ($lessons as $lesson) {
-                    $studentEnrolment = Enrolment::find()
-                        ->notDeleted()
-                        ->isConfirmed()
-                        ->joinWith(['course' => function($query) use($lesson){
-                            $query->andWhere(['course.programId' => $lesson->course->programId]);
-                        }])
-                        ->andWhere(['studentId' => $lesson->enrolment->student->id])
-                        ->one();
                     $newLesson = new Lesson();
+                    $newLesson->programId = $model->programId;
+                    $newLesson->duration = $lesson->duration;
+                    $newLesson->date = (new \DateTime($lesson->date))->format('Y-m-d g:i A');
+                    $newLesson->teacherId = $model->teacherId;
+                    $newLesson->studentId = $model->studentId;
                     $newLesson->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
                     $newLesson->setScenario(Lesson::SCENARIO_CREATE);
+                    $newLesson->addExtra(Lesson::STATUS_UNSCHEDULED);
+                    if ($newLesson->save()) {
+                        $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                        $newLesson->on(Lesson::EVENT_AFTER_INSERT,
+                            [new LessonLog(), 'extraLessonCreate'],
+                            ['loggedUser' => $loggedUser]);
+                        $newLesson->trigger(Lesson::EVENT_AFTER_INSERT);
+                        $lesson->Cancel();
+                    }
                 }
                 $response = [
                     'status' => true,
-                    'message' => ''
+                    'message' => 'Lessons successfuly changed'
                 ];
             } else {
                 $response = [
@@ -352,15 +361,16 @@ class CourseController extends \common\components\controllers\BaseController
                     'errors' => ActiveForm::validate($model)
                 ];
             }
+        } else {
+            $data = $this->renderAjax('_change-form', [
+                'model' => $model,
+                'lessonIds' => $lessonIds
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
         }
-        $data = $this->renderAjax('_change-form', [
-            'model' => $model,
-            'lessonIds' => $lessonIds
-        ]);
-        $response = [
-            'status' => true,
-            'data' => $data
-        ];
         return $response;
     }
 }

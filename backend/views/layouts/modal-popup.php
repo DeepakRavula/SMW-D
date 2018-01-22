@@ -9,7 +9,10 @@ use yii\bootstrap\Modal;
     'id' => 'popup-modal',
     'footer' => $this->render('/layouts/_submit-button')
 ]); ?>
-
+<div id="modal-spinner" class="spinner" style="display:none">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+</div>
 <div id="modal-popup-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="modal-popup-success-notification" style="display: none;" class="alert-success alert fade in"></div>
 
@@ -25,6 +28,7 @@ use yii\bootstrap\Modal;
     });
     
     $(document).off('beforeSubmit', '#modal-form').on('beforeSubmit', '#modal-form', function () {
+        $('#modal-spinner').show();
         $.ajax({
             url    : $('#modal-form').attr('action'),
             type   : 'post',
@@ -34,21 +38,27 @@ use yii\bootstrap\Modal;
             {
                 if(response.status)
                 {
+                    $('#modal-spinner').hide();
                     $('#popup-modal').modal('hide');
-                    $.pjax.reload({container: '#lesson-index', timeout: 6000, async:false});
-                    $('#enrolment-delete-success').html("Lessons are changed to different course").
-                                fadeIn().delay(5000).fadeOut();
+                    $(document).trigger( "modal-success", response);
                 } else {
+                    $('#modal-spinner').hide();
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
+                    $(document).trigger( "modal-error", response);
                 }
             }
         });
         return false;
     });
     
+    $('#popup-modal').on('shown.bs.modal', function () {
+        $('#modal-spinner').hide();
+    });
+    
     $(document).off('click', '.modal-cancel').on('click', '.modal-cancel', function () {
+        $('#modal-spinner').show();
         $('#popup-modal').modal('hide');
-        $.pjax.reload({container: '#lesson-index', timeout: 6000, async:false});
+        $(document).trigger( "modal-cancel");
         return false;
     });
 </script>

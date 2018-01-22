@@ -53,7 +53,11 @@ class Course extends \yii\db\ActiveRecord
             [['programId', 'teacherId'], 'required'],
             [['weeksCount'], 'required', 'when' => function($model, $attribute) {
                 return (int)$model->program->type === Program::TYPE_GROUP_PROGRAM;
-            }, 'except' => self::SCENARIO_CHANGE],
+            }],
+            [['programId'], 'in', 'range' => ArrayHelper::getColumn(self::find()
+                    ->confirmed()
+                    ->student($this->studentId)
+                    ->all(), 'programId'), 'on' => self::SCENARIO_CHANGE],
             [['startDate'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
             [['startDate', 'endDate'], 'safe'],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],

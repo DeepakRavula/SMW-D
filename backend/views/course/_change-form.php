@@ -19,7 +19,8 @@ use common\models\Location;
 <div class="user-create-form">
     <?php $privatePrograms = ArrayHelper::map(Program::find()
             ->active()
-            ->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM])
+            ->privateProgram()
+            ->studentEnrolled($model->studentId)
             ->all(), 'id', 'name');
     
     $defaultTeacher = ArrayHelper::map(User::find()
@@ -66,3 +67,16 @@ use common\models\Location;
     <?php ActiveForm::end(); ?>
 </div>
 
+<script>
+    $(document).on('modal-success', function(event, params) {
+        $.pjax.reload({container: '#lesson-index', timeout: 6000, async:false});
+        $('#enrolment-delete-success').html(params.message).
+                    fadeIn().delay(5000).fadeOut();
+        return false;
+    });
+    
+    $(document).on('modal-cancel', function() {
+        $.pjax.reload({container: '#lesson-index', timeout: 6000, async:false});
+        return false;
+    });
+</script>

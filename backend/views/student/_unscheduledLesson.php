@@ -4,7 +4,6 @@ use yii\bootstrap\Modal;
 use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\helpers\Html;
-require_once Yii::$app->basePath . '/views/layouts/modal-popup.php';
 ?>
 
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index', 'timeout' => 6000,]); ?>
@@ -83,24 +82,11 @@ require_once Yii::$app->basePath . '/views/layouts/modal-popup.php';
     </div>
 </div>
 
-<?php Modal::begin([
-    'header' => '<h4 class="m-0">Change Program Teacher</h4>',
-        'id'=>'change-program-teacher-modal',
-        'footer' => $this->render('/invoice/_submit-button', [
-            'formId' => 'course-change',
-            'deletable' => false,
-            'saveClass' => 'change-program-teacher-save', 
-            'cancelClass' => 'change-program-teacher-cancel'
-        ])
-]);?>
-<div id="change-program-teacher-content"></div>
-<?php Modal::end(); ?>
-
 <script>
     $(document).on('click', '#change-program-teacher', function(){
         var lessonIds = $('#unschedule-lesson-index').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(lessonIds)) {
-            $('#index-error-notification').html("Choose any lessons").fadeIn().delay(5000).fadeOut();
+            $('#enrolment-delete').html("Choose any lessons").fadeIn().delay(5000).fadeOut();
         } else {
             var params = $.param({ ids: lessonIds });
             $.ajax({
@@ -110,6 +96,7 @@ require_once Yii::$app->basePath . '/views/layouts/modal-popup.php';
                 {
                     if (response.status) {
                         $('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Change Program Teacher</h4>');
                         $('#modal-content').html(response.data);
                     }
                 }
