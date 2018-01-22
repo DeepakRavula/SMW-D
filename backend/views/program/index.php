@@ -39,7 +39,7 @@ Modal::begin([
 <div id="program-content"></div>
 <?php Modal::end(); ?>
 </div>
-<?php echo Html::hiddenInput('name','1',array('id'=>'program-type')); ?>
+<?php echo Html::hiddenInput('name',Program::TYPE_PRIVATE_PROGRAM,array('id'=>'program-type')); ?>
 <script>
     $(document).ready(function () {
         $(document).on('click', '.action-button',function () {
