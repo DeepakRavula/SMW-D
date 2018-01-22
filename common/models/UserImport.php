@@ -4,7 +4,6 @@ namespace common\models;
 
 use League\Csv\Reader;
 use yii\base\Model;
-use yii\helpers\Json;
 use Yii;
 /**
  * Create user form.
@@ -295,7 +294,7 @@ class UserImport extends Model
 		$studentCsv->billingOtherTel = $row['Billing Other Tel'];
 		$studentCsv->billingWorkTel = $row['Billing Work Tel'];
 		$studentCsv->billingWorkTelExt = $row['Billing Work Tel Ext.'];
-		$studentCsv->notes = Json::encode($row['Comments']);
+		$studentCsv->notes = json_encode($row['Comments']);
 		$studentCsv->save();
 	}
 }
