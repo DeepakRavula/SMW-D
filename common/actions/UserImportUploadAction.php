@@ -35,6 +35,7 @@ class UserImportUploadAction extends UploadAction
         }
         $userImport = new UserImport();
         $userImport->file = $file;
+        $userImport->path = $path;
         $output = $userImport->import();
 
         return $output;
