@@ -23,6 +23,7 @@ use yii\helpers\Url;
 
 	<div class="row">
     	<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    	<?php echo $form->field($model, 'description')->textArea(['maxlength' => true]) ?>
 	</div>
     <div class="row pull-right">
          <?= Html::a('Cancel', '#', ['class' => 'btn btn-default' , 'id' => 'classroom-cancel']);?>

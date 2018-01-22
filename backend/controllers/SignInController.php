@@ -81,7 +81,7 @@ class SignInController extends \common\components\controllers\BaseController
     
     public function actionLock()
     {
-        if (!Yii::$app->user->can('owner')) {
+        if (!Yii::$app->user->can('owner') && !Yii::$app->user->can('staffmember')) {
             throw new ForbiddenHttpException();
         }
         Yii::$app->session->set('lock', true);
@@ -89,7 +89,7 @@ class SignInController extends \common\components\controllers\BaseController
     }
     public function actionUnlock()
     {
-        if (!Yii::$app->user->can('owner')) {
+        if (!Yii::$app->user->can('owner') && !Yii::$app->user->can('staffmember')) {
             throw new ForbiddenHttpException();
         }
         $this->layout = 'base';

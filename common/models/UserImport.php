@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use League\Csv\Reader;
 use yii\base\Model;
 use Yii;
 /**
@@ -10,6 +11,7 @@ use Yii;
 class UserImport extends Model
 {
     public $file;
+    public $path;
     /**
      * {@inheritdoc}
      */
@@ -25,6 +27,26 @@ class UserImport extends Model
         $rows = $fields = [];
         $i = 0;
         ini_set('auto_detect_line_endings', '1');
+        $fileHandle = fopen(Yii::getAlias('@storage') . '/web/source/' . $this->path, "r");
+        $csvFixed = [];
+        while (!feof($fileHandle)) {
+            $line = fgets($fileHandle);
+            if (preg_match_all('/(?<!,)"(?!,)/', $line, $matches, PREG_OFFSET_CAPTURE)) {
+                $newLine = $line;
+                foreach ($matches[0] as $match) {
+                    if ($match !== current($matches[0]) && $match !== end($matches[0])) {
+                        $newLine = substr_replace($line, '"', $match[1], 0);
+                    }
+                }
+                $csvFixed[] = $newLine;
+            }
+        }
+        fclose($fileHandle);
+        unlink(Yii::getAlias('@storage') . '/web/source/' . $this->path);
+        $fp = fopen(Yii::getAlias('@storage') . '/web/source/' . $this->path, 'w');
+        foreach($csvFixed as $line){
+            fputs($fp, $line);
+        }
         $handle = $this->file->readStream();
         if ($handle) {
             while (($row = fgetcsv($handle, 4096)) !== false) {
@@ -42,7 +64,6 @@ class UserImport extends Model
             }
             fclose($handle);
         }
-
         return $rows;
     }
 
@@ -233,14 +254,14 @@ class UserImport extends Model
                 $errors[] = 'Error on Line '.($i + 2).': '.$e->getMessage();
             }
         }
-
-        return [
+        $response = [
             'successCount' => $successCount,
             'studentCount' => $studentCount,
             'customerCount' => $customerCount,
             'errors' => $errors,
             'totalRows' => count($rows),
         ];
+        return $response;
     }
 	
 	public function StudentCsv($row, $student) 
@@ -273,7 +294,7 @@ class UserImport extends Model
 		$studentCsv->billingOtherTel = $row['Billing Other Tel'];
 		$studentCsv->billingWorkTel = $row['Billing Work Tel'];
 		$studentCsv->billingWorkTelExt = $row['Billing Work Tel Ext.'];
-		$studentCsv->notes = $row['Comments'];
+		$studentCsv->notes = json_encode($row['Comments']);
 		$studentCsv->save();
 	}
 }

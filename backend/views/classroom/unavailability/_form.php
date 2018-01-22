@@ -9,7 +9,7 @@ use kartik\daterange\DateRangePicker;
 /* @var $model common\models\ClassroomUnavailability */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-
+<div id="classroom-unavailability-validation" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="classroom-unavailability-form">
 
     <?php
