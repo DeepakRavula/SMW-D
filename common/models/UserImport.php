@@ -4,6 +4,7 @@ namespace common\models;
 
 use League\Csv\Reader;
 use yii\base\Model;
+use yii\helpers\Json;
 use Yii;
 /**
  * Create user form.
@@ -27,11 +28,10 @@ class UserImport extends Model
         $rows = $fields = [];
         $i = 0;
         ini_set('auto_detect_line_endings', '1');
-        $file_handle = fopen(Yii::getAlias('@storage') . '/web/source/' . $this->path, "r");
+        $fileHandle = fopen(Yii::getAlias('@storage') . '/web/source/' . $this->path, "r");
         $csvFixed = [];
-        microtime();
-        while (!feof($file_handle)) {
-            $line = fgets($file_handle);
+        while (!feof($fileHandle)) {
+            $line = fgets($fileHandle);
             if (preg_match_all('/(?<!,)"(?!,)/', $line, $matches, PREG_OFFSET_CAPTURE)) {
                 $newLine = $line;
                 foreach ($matches[0] as $match) {
@@ -42,7 +42,7 @@ class UserImport extends Model
                 $csvFixed[] = $newLine;
             }
         }
-        fclose($file_handle);
+        fclose($fileHandle);
         unlink(Yii::getAlias('@storage') . '/web/source/' . $this->path);
         $fp = fopen(Yii::getAlias('@storage') . '/web/source/' . $this->path, 'w');
         foreach($csvFixed as $line){
@@ -295,7 +295,7 @@ class UserImport extends Model
 		$studentCsv->billingOtherTel = $row['Billing Other Tel'];
 		$studentCsv->billingWorkTel = $row['Billing Work Tel'];
 		$studentCsv->billingWorkTelExt = $row['Billing Work Tel Ext.'];
-		$studentCsv->notes = json_encode($row['Comments']);
+		$studentCsv->notes = Json::encode($row['Comments']);
 		$studentCsv->save();
 	}
 }
