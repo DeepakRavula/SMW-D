@@ -149,7 +149,7 @@ class LessonController extends \common\components\controllers\BaseController
     {
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
-        $model = new Lesson();
+        $model = new ExtraLesson();
         $model->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model->setScenario(Lesson::SCENARIO_CREATE);
         $request = Yii::$app->request;
@@ -162,7 +162,7 @@ class LessonController extends \common\components\controllers\BaseController
             'studentModel' => $studentModel
         ]);
         if ($model->load($request->post())) {
-            $model->addExtra(Lesson::STATUS_SCHEDULED);
+            $model->add(Lesson::STATUS_SCHEDULED);
             if ($model->save()) {
                 $model->markAsRoot();
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
@@ -205,7 +205,7 @@ class LessonController extends \common\components\controllers\BaseController
     {
 		$response = \Yii::$app->response;
 		$response->format = Response::FORMAT_JSON;
-        $model = new Lesson();
+        $model = new ExtraLesson();
         $model->type = Lesson::TYPE_EXTRA;
 		$model->setScenario(Lesson::SCENARIO_CREATE);
 		$request = Yii::$app->request;
@@ -727,22 +727,9 @@ class LessonController extends \common\components\controllers\BaseController
                 ]);
                 return $this->redirect(['lesson/view', 'id' => $id]);
             }
-            if(!$model->hasProFormaInvoice()) {
-                if (!$model->paymentCycle->hasProFormaInvoice()) {
-                    $invoice = $model->paymentCycle->createProFormaInvoice();
-                    return $this->redirect(['invoice/view', 'id' => $invoice->id]);
-                } else {
-                    $model->addPrivateLessonLineItem($model->paymentCycle->proFormaInvoice);
-                    $model->paymentCycle->proFormaInvoice->save();
-                }
-            } else {
-                $model->proFormaInvoice->makeInvoicePayment($model);
-            }
-            return $this->redirect(['invoice/view', 'id' => $model->paymentCycle->proFormaInvoice->id]);
-        } else if ($model->isExtra()) {
-            $invoice = $model->extraLessonTakePayment();
-            return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         }
+        $invoice = $model->takePayment();
+        return $this->redirect(['invoice/view', 'id' => $invoice->id]);
     }
 
     public function actionModifyClassroom($id, $classroomId)

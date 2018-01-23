@@ -6,6 +6,7 @@ use Yii;
 use common\models\Course;
 use common\models\log\CourseLog;
 use common\models\Lesson;
+use common\models\ExtraLesson;
 use common\models\log\LessonLog;
 use common\models\Location;
 use common\models\Qualification;
@@ -335,7 +336,7 @@ class CourseController extends \common\components\controllers\BaseController
             if ($model->validate()) {
                 foreach ($lessons as $lesson) {
                     $enrolmentId = $lesson->enrolment->id;
-                    $newLesson = new Lesson();
+                    $newLesson = new ExtraLesson();
                     $newLesson->programId = $model->programId;
                     $newLesson->duration = $lesson->duration;
                     $newLesson->date = (new \DateTime($lesson->date))->format('Y-m-d g:i A');
@@ -343,11 +344,11 @@ class CourseController extends \common\components\controllers\BaseController
                     $newLesson->studentId = $model->studentId;
                     $newLesson->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
                     $newLesson->setScenario(Lesson::SCENARIO_CREATE);
-                    $newLesson->addExtra(Lesson::STATUS_UNSCHEDULED);
+                    $newLesson->add(Lesson::STATUS_UNSCHEDULED);
                     $hasCreditInvoice = false;
                     if ($newLesson->save()) {
                         $newLesson->markAsRoot();
-                        $invoice = $newLesson->extraLessonTakePayment();
+                        $invoice = $newLesson->takePayment();
                         if ($lesson->hasLessonCredit($enrolmentId)) {
                             if ($invoice->balance < $lesson->getLessonCreditAmount($enrolmentId)) {
                                 $amount = $invoice->balance;

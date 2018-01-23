@@ -146,7 +146,7 @@ use yii\bootstrap\Modal;
                 select: function (start, end, allDay) {
                     $('#extra-lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A'));
                     $('#lesson-calendar').fullCalendar('removeEvents', 'newEnrolment');
-					var duration = $('#lesson-duration').val();
+					var duration = $('#extralesson-duration').val();
 					var endtime = start.clone();
 					var durationMinutes = moment.duration(duration).asMinutes();
 					moment(endtime.add(durationMinutes, 'minutes'));

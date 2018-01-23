@@ -4,19 +4,24 @@ namespace common\models;
 
 use Yii;
 use common\models\Lesson;
+use common\models\query\LessonQuery;
 
-/**
- * This is the model class for table "lesson".
- *
- * @property string $id
- * @property string $teacherId
- * @property string $date
- * @property int $status
- * @property int $isDeleted
- */
-trait ExtraLesson
+class ExtraLesson extends Lesson
 {
-    public function addExtra($status)
+    const TYPE = 2;
+
+    public static function find()
+    {
+        return new LessonQuery(get_called_class(), ['type' => self::TYPE]);
+    }
+
+    public function beforeSave($insert)
+    {
+        $this->type = self::TYPE;
+        return parent::beforeSave($insert);
+    }
+    
+    public function add($status)
     {
         $programId = $this->programId;
         $studentId = $this->studentId;
@@ -31,7 +36,7 @@ trait ExtraLesson
         if ($studentEnrolment) {
             $this->courseId = $studentEnrolment->courseId;
         } else {
-            $course                   = $this->createExtraLessonCourse();
+            $course                   = $this->createCourse();
             $course->studentId        = $this->studentId;
             $course->createExtraLessonEnrolment();
             $courseSchedule           = new CourseSchedule();
@@ -53,7 +58,7 @@ trait ExtraLesson
         return $this;
     }
     
-    public function createExtraLessonCourse()
+    public function createCourse()
     {
         $course = new Course();
         $course->programId   = $this->programId;
@@ -65,7 +70,7 @@ trait ExtraLesson
         return $course;
     }
     
-    public function extraLessonTakePayment()
+    public function takePayment()
     {
         if (!$this->hasProFormaInvoice()) {
             $locationId = $this->enrolment->student->customer->userLocation->location_id;
@@ -76,11 +81,41 @@ trait ExtraLesson
             $invoice->createdUserId = Yii::$app->user->id;
             $invoice->updatedUserId = Yii::$app->user->id;
             $invoice->save();
-            $invoiceLineItem = $this->addPrivateLessonLineItem($invoice);
+            $this->addPrivateLessonLineItem($invoice);
             $invoice->save();
         } else {
             $invoice = $this->proFormaInvoice;
         }
         return $invoice;
+    }
+    
+    public function getProFormaLineItem()
+    {
+        $model = $this;
+        if ($this->rootLesson) {
+            $model = $this->rootLesson;
+        }
+        $lessonId = $model->id;
+        
+        if ($this->hasProFormaInvoice()) {
+            return InvoiceLineItem::find()
+                    ->notDeleted()
+                ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
+                ->joinWith(['lineItemLesson' => function ($query) use ($lessonId) {
+                    $query->where(['lessonId' => $lessonId]);
+                }])
+                ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON])
+                ->one();
+        } else {
+            return null;
+        }
+    }
+    
+    public function getProFormaLineItems()
+    {
+        return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+                ->via('invoiceItemLessons')
+                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON,
+                        'invoice_line_item.isDeleted' => false]);
     }
 }

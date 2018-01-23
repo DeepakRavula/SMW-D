@@ -15,6 +15,8 @@ use common\models\InvoiceItemPaymentCycleLesson;
  */
 class LessonQuery extends \yii\db\ActiveQuery
 {
+    public $type;
+    
     public function behaviors()
     {
         return [
