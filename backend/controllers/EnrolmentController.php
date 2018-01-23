@@ -18,9 +18,6 @@ use common\models\CourseSchedule;
 use common\models\Student;
 use yii\filters\ContentNegotiator;
 use common\models\log\LogHistory;
-use backend\models\search\LessonSearch;
-use yii\base\Model;
-use common\models\timelineEvent\TimelineEventEnrolment;
 use common\models\log\EnrolmentLog;
 use common\models\PaymentFrequency;
 use common\models\UserPhone;
@@ -482,6 +479,7 @@ class EnrolmentController extends \common\components\controllers\BaseController
         $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
         $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
         if ($post) {
+            $message = '';
             if ($endDate !== $course->endDate) {
                 $courseEndDate = Carbon::parse($course->endDate)->format('Y-m-d');
                 $course->updateAttributes([

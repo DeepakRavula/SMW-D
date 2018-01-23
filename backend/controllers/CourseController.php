@@ -6,9 +6,10 @@ use Yii;
 use common\models\Course;
 use common\models\log\CourseLog;
 use common\models\Lesson;
+use common\models\log\LessonLog;
+use common\models\Location;
 use common\models\Qualification;
 use backend\models\search\CourseSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -39,7 +40,7 @@ class CourseController extends \common\components\controllers\BaseController
             ],
 			[
 				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['fetch-teacher-availability', 'fetch-lessons', 'fetch-group'],
+				'only' => ['fetch-teacher-availability', 'fetch-lessons', 'fetch-group', 'change'],
 				'formats' => [
 					'application/json' => Response::FORMAT_JSON,
 				],
@@ -321,4 +322,74 @@ class CourseController extends \common\components\controllers\BaseController
 			'data' => $data
 		];
 	}
+        
+    public function actionChange()
+    {
+        $lessonSearchRequest = Yii::$app->request->get('LessonSearch');
+        $lessonIds = $lessonSearchRequest['ids'];
+        $lessons = Lesson::findAll($lessonIds);
+        $model = Course::findOne(end($lessons)->courseId);
+        $model->setScenario(Course::SCENARIO_CHANGE);
+        $model->studentId = $model->enrolment->studentId;
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                foreach ($lessons as $lesson) {
+                    $enrolmentId = $lesson->enrolment->id;
+                    $newLesson = new Lesson();
+                    $newLesson->programId = $model->programId;
+                    $newLesson->duration = $lesson->duration;
+                    $newLesson->date = (new \DateTime($lesson->date))->format('Y-m-d g:i A');
+                    $newLesson->teacherId = $model->teacherId;
+                    $newLesson->studentId = $model->studentId;
+                    $newLesson->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+                    $newLesson->setScenario(Lesson::SCENARIO_CREATE);
+                    $newLesson->addExtra(Lesson::STATUS_UNSCHEDULED);
+                    $hasCreditInvoice = false;
+                    if ($newLesson->save()) {
+                        $newLesson->markAsRoot();
+                        $invoice = $newLesson->extraLessonTakePayment();
+                        if ($lesson->hasLessonCredit($enrolmentId)) {
+                            if ($invoice->balance < $lesson->getLessonCreditAmount($enrolmentId)) {
+                                $amount = $invoice->balance;
+                                if (!$hasCreditInvoice) {
+                                    $creditInvoice = $lesson->addLessonCreditInvoice();
+                                    $creditInvoice->save();
+                                }
+                                $creditInvoice->addPayment($lesson, $lesson->getLessonCreditAmount($enrolmentId) - $amount);
+                                $hasCreditInvoice = true;
+                            } else {
+                                $amount = $lesson->getLessonCreditAmount($enrolmentId);
+                            }
+                            $invoice->addPayment($lesson, $amount);
+                        }
+                        $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                        $newLesson->on(Lesson::EVENT_AFTER_INSERT,
+                            [new LessonLog(), 'extraLessonCreate'],
+                            ['loggedUser' => $loggedUser]);
+                        $newLesson->trigger(Lesson::EVENT_AFTER_INSERT);
+                        $lesson->Cancel();
+                    }
+                }
+                $response = [
+                    'status' => true,
+                    'message' => 'Lessons successfuly changed'
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model)
+                ];
+            }
+        } else {
+            $data = $this->renderAjax('_change-form', [
+                'model' => $model,
+                'lessonIds' => $lessonIds
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
+    }
 }

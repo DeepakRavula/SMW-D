@@ -11,13 +11,13 @@ use common\models\LessonReschedule;
 use yii\data\ActiveDataProvider;
 use backend\models\search\LessonSearch;
 use yii\base\Model;
-use yii\web\Controller;
+use common\models\Location;
 use common\models\log\LogHistory;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Note;
 use common\models\Student;
-use common\models\CourseSchedule;
+use common\models\ExtraLesson;
 use yii\web\Response;
 use common\models\Payment;
 use yii\helpers\Url;
@@ -90,7 +90,7 @@ class LessonController extends \common\components\controllers\BaseController
      */
     public function actionView($id)
     {
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = $this->findModel($id);
         $model->duration = $model->fullDuration;
         $notes = Note::find()
@@ -150,10 +150,11 @@ class LessonController extends \common\components\controllers\BaseController
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $model = new Lesson();
-        $model->locationId = \Yii::$app->session->get('location_id');
+        $model->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model->setScenario(Lesson::SCENARIO_CREATE);
         $request = Yii::$app->request;
         $studentModel = Student::findOne($studentId);
+        $model->studentId = $studentModel->id;
         $model->programId = !empty($studentModel->firstPrivateCourse) ? $studentModel->firstPrivateCourse->programId : null;
         $model->teacherId = !empty($studentModel->firstPrivateCourse) ? $studentModel->firstPrivateCourse->teacherId : null;
         $data = $this->renderAjax('/student/_form-lesson', [
@@ -161,38 +162,9 @@ class LessonController extends \common\components\controllers\BaseController
             'studentModel' => $studentModel
         ]);
         if ($model->load($request->post())) {
-            $studentEnrolment = Enrolment::find()
-                ->notDeleted()
-                ->isConfirmed()
-                ->joinWith(['course' => function($query) use($model){
-                    $query->where(['course.programId' => $model->programId]);
-                }])
-                ->where(['studentId' => $studentId])
-                ->one();
-            if ($studentEnrolment) {
-                $model->courseId = $studentEnrolment->courseId;
-            } else {
-                $course                   = $model->createExtraLessonCourse();
-                $course->studentId        = $studentId;
-                $course->createExtraLessonEnrolment();
-                $courseSchedule           = new CourseSchedule();
-                $courseSchedule->courseId = $course->id;
-                $courseSchedule->day      = (new \DateTime($model->date))->format('N');
-                $courseSchedule->duration = (new \DateTime($model->duration))->format('H:i:s');
-                $courseSchedule->fromTime = (new \DateTime($model->date))->format('H:i:s');
-                if (!$courseSchedule->save()){
-                    Yii::error('Course Schedule: ' . \yii\helpers\VarDumper::dumpAsString($courseSchedule->getErrors()));
-                }
-                $model->courseId          = $course->id;
-            }
-            $model->status = Lesson::STATUS_SCHEDULED;
-            $model->isConfirmed = true;
-            $model->isDeleted = false;
-            $model->type = Lesson::TYPE_EXTRA;
-            $lessonDate = \DateTime::createFromFormat('Y-m-d g:i A', $model->date);
-            $model->date = $lessonDate->format('Y-m-d H:i:s');
+            $model->addExtra(Lesson::STATUS_SCHEDULED);
             if ($model->save()) {
-
+                $model->markAsRoot();
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $model->on(Lesson::EVENT_AFTER_INSERT,
                     [new LessonLog(), 'extraLessonCreate'],
@@ -345,8 +317,8 @@ class LessonController extends \common\components\controllers\BaseController
                         'status' => true,
                         'url' => Url::to(['lesson/view', 'id' => $model->id])
                     ];
+                    }
                 }
-			}
             return $response;
         }
         return $this->render('_form-private-lesson', [
@@ -367,8 +339,7 @@ class LessonController extends \common\components\controllers\BaseController
      */
     protected function findModel($id)
     {
-        $session = Yii::$app->session;
-        $locationId = \Yii::$app->session->get('location_id');
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Lesson::find()->location($locationId)
             ->where(['lesson.id' => $id, 'isDeleted' => false])->one();
         if ($model !== null) {
@@ -769,20 +740,7 @@ class LessonController extends \common\components\controllers\BaseController
             }
             return $this->redirect(['invoice/view', 'id' => $model->paymentCycle->proFormaInvoice->id]);
         } else if ($model->isExtra()) {
-            if (!$model->hasProFormaInvoice()) {
-                $locationId = $model->enrolment->student->customer->userLocation->location_id;
-                $invoice = new Invoice();
-                $invoice->user_id = $model->enrolment->student->customer->id;
-                $invoice->location_id = $locationId;
-                $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
-                $invoice->createdUserId = Yii::$app->user->id;
-                $invoice->updatedUserId = Yii::$app->user->id;
-                $invoice->save();
-                $invoiceLineItem = $model->addPrivateLessonLineItem($invoice);
-                $invoice->save();
-            } else {
-                $invoice = $model->proFormaInvoice;
-            }
+            $invoice = $model->extraLessonTakePayment();
             return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         }
     }

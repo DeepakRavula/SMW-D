@@ -1,15 +1,27 @@
 <?php
 
+use yii\bootstrap\Modal;
 use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\helpers\Html;
-
 ?>
+
+<?php yii\widgets\Pjax::begin(['id' => 'lesson-index', 'timeout' => 6000,]); ?>
+<div class="m-b-10 pull-right">
+    <div class="btn-group">
+        <i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li><a id="change-program-teacher" href="#">Change Program/Teacher...</a></li>
+        </ul>
+    </div>
+</div>
 <div class="private-lesson-index">
-<?php yii\widgets\Pjax::begin(['id' => 'lesson-index',
-    'timeout' => 6000,]); ?>
+
     <?php $columns = [
-           
+            [
+                'class' => '\yii\grid\CheckboxColumn',
+                'contentOptions' => ['style' => 'width: 30px;'],
+            ],
             [
                 'label' => 'Program',
                 'value' => function ($data) {
@@ -53,12 +65,13 @@ use yii\helpers\Html;
     ?>
     <div class="grid-row-open">
     <?php echo GridView::widget([
-    'dataProvider' => $dataProvider,
-    'rowOptions' => function ($model, $key, $index, $grid) {
-        $url = Url::to(['lesson/view', 'id' => $model->id]);
+        'dataProvider' => $dataProvider,
+        'options' => ['id' => 'unschedule-lesson-index'],
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $url = Url::to(['lesson/view', 'id' => $model->id]);
 
-        return ['data-url' => $url];
-    },
+            return ['data-url' => $url];
+        },
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
@@ -68,3 +81,27 @@ use yii\helpers\Html;
 	<?php yii\widgets\Pjax::end(); ?>
     </div>
 </div>
+
+<script>
+    $(document).on('click', '#change-program-teacher', function(){
+        var lessonIds = $('#unschedule-lesson-index').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(lessonIds)) {
+            $('#enrolment-delete').html("Choose any lessons").fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ 'LessonSearch[ids]': lessonIds });
+            $.ajax({
+                url    : '<?= Url::to(['course/change']) ?>?' +params,
+                type   : 'get',
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Change Program Teacher</h4>');
+                        $('#modal-content').html(response.data);
+                    }
+                }
+            });
+            return false;
+        }
+    });
+</script>

@@ -1,6 +1,6 @@
 <?php
 
-use yii\helpers\Html;
+use common\models\Location;
 use yii\bootstrap\Tabs;
 use common\models\Vacation;
 use common\models\ExamResult;
@@ -103,6 +103,7 @@ $this->params['label'] = $this->render('_title', [
 				[
 				'label' => 'Unscheduled Lessons',
 				'content' => $unscheduledLessonContent,
+                                //'headerOptions' => $this->render('_header'),
 				'options' => [
 					'id' => 'unscheduledLesson',
 				],
@@ -154,7 +155,7 @@ $this->params['label'] = $this->render('_title', [
 <div id="student-merge-content"></div>
 <?php Modal::end(); ?>
 <?php
-    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])

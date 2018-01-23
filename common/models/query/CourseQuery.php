@@ -50,6 +50,13 @@ class CourseQuery extends \yii\db\ActiveQuery
 
         return $this;
     }
+    
+    public function student($studentId)
+    {
+        return $this->joinWith(['enrolment' => function ($query) use ($studentId) {
+            $query->andWhere(['enrolment.studentId' => $studentId]);
+        }]);
+    }
 
     public function privateProgram()
     {
