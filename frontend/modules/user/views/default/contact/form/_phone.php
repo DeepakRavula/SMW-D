@@ -21,9 +21,9 @@ use yii\helpers\ArrayHelper;
         $url = Url::to(['user-contact/create-phone','id' => $userModel->id]);
     }
 $form = ActiveForm::begin([
-		'id' => 'phone-form',
-		'action' => $url,
-	]);
+        'id' => 'phone-form',
+        'action' => $url,
+    ]);
 ?>
 <div class="row">
     <div class="col-md-12">
@@ -33,18 +33,18 @@ $form = ActiveForm::begin([
     </div>
 <div class="col-md-12">	
         <?=
-	$form->field($model, "labelId")->widget(Select2::classname(), [
-		'data' => ArrayHelper::map(Label::find()
-				->user($userModel->id)
-				->all(), 'id', 'name'),
-		'options' => [
-			'id' => 'phone-label',
-		],
-		'pluginOptions' => [
-			'tags' => true,
-		],
-	])->label('Label');
-	?>
+    $form->field($model, "labelId")->widget(Select2::classname(), [
+        'data' => ArrayHelper::map(Label::find()
+                ->user($userModel->id)
+                ->all(), 'id', 'name'),
+        'options' => [
+            'id' => 'phone-label',
+        ],
+        'pluginOptions' => [
+            'tags' => true,
+        ],
+    ])->label('Label');
+    ?>
 </div>
     <div class="col-md-12">
 	<?= $form->field($phoneModel, "extension")->textInput(['maxlength' => true]) ?>
@@ -59,13 +59,13 @@ $form = ActiveForm::begin([
                      <div class="pull-left">       
  <?php
                 if (!$model->isNewRecord) {
-            echo Html::a('Delete', [
+                    echo Html::a('Delete', [
                 '#', 'id' => $model->id
                 ], [
                 'id' => $model->id,
                 'class' => 'user-contact-delete btn btn-danger',
             ]);
-        }
+                }
 
         ?>
          </div>

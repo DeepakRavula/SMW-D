@@ -11,9 +11,9 @@ $loggedUser = User::findOne(Yii::$app->user->id);
 ?>
 <?php
     $form = ActiveForm::begin([
-		'id' => 'user-update-form',
-		'action' => Url::to(['user/edit-profile', 'id' => $model->getModel()->id])
-	]);
+        'id' => 'user-update-form',
+        'action' => Url::to(['user/edit-profile', 'id' => $model->getModel()->id])
+    ]);
     ?>
 <div class="row">
 	<div class="col-xs-6">
@@ -52,10 +52,12 @@ $loggedUser = User::findOne(Yii::$app->user->id);
             <?php endif; ?>
 	<?php endif; ?>
 	<div class="col-xs-6">
-    <?= $form->field($userProfile, 'picture')->widget(Upload::classname(),
+    <?= $form->field($userProfile, 'picture')->widget(
+        Upload::classname(),
         [
         'url' => ['avatar-upload']
-    ])
+    ]
+    )
     ?>
     </div>
 </div>

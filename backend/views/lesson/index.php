@@ -13,7 +13,7 @@ DateTimePickerAsset::register($this);
 <div id="index-success-notification" style="display:none;" class="alert-success alert fade in"></div>
 <div id="index-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <?php 
-if((int)$searchModel->type === Lesson::TYPE_PRIVATE_LESSON) : ?>
+if ((int)$searchModel->type === Lesson::TYPE_PRIVATE_LESSON) : ?>
 <?= $this->render('_index-lesson', [
     'searchModel' => $searchModel,
     'dataProvider' => $dataProvider,
@@ -24,8 +24,8 @@ $courseSearchModel = new CourseSearch();
 $dataProvider = $courseSearchModel->search(Yii::$app->request->queryParams);
 ?>
 <?= $this->render('/course/index', [
-	'searchModel' => $courseSearchModel,
-	'dataProvider' => $dataProvider,
+    'searchModel' => $courseSearchModel,
+    'dataProvider' => $dataProvider,
 ]);
 ?>
 <?php endif;?>

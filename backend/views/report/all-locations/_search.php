@@ -13,7 +13,7 @@ use kartik\grid\GridView;
 
 ?>
     <?php $form = ActiveForm::begin([
-		'id' => 'all-locations-search-form',
+        'id' => 'all-locations-search-form',
         'method' => 'get'
     ]); ?>
    	
@@ -22,7 +22,7 @@ use kartik\grid\GridView;
            echo DateRangePicker::widget([
             'model' => $model,
             'attribute' => 'dateRange',
-            'id'=>'birthday-search' , 
+            'id'=>'birthday-search' ,
             'convertFormat' => true,
             'initRangeExpr' => true,
             'pluginOptions' => [

@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 use common\models\Location;
+
 ?>
 <?php
 $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);

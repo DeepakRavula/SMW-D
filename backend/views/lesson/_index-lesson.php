@@ -9,12 +9,13 @@ use kartik\daterange\DateRangePicker;
 use yii\bootstrap\Modal;
 use kartik\switchinput\SwitchInput;
 use common\components\gridView\KartikGridView;
+
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Private Lessons';
 $this->params['action-button'] = $this->render('_action-menu', [
-	'searchModel' => $searchModel
+    'searchModel' => $searchModel
 ]);
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup-with-teacher.php';
 ?>
@@ -24,52 +25,52 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
     <?php $columns = [
             [
                 'class' => '\kartik\grid\CheckboxColumn',
-				'mergeHeader' => false
+                'mergeHeader' => false
             ],
             [
                 'label' => 'Student',
-				'attribute' => 'student',
+                'attribute' => 'student',
                 'value' => function ($data) {
                     return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
                 },
             ],
             [
                 'label' => 'Program',
-				'attribute' => 'program',
+                'attribute' => 'program',
                 'value' => function ($data) {
                     return !empty($data->course->program->name) ? $data->course->program->name : null;
                 },
             ],
             [
                 'label' => 'Teacher',
-		'attribute' => 'teacher',
+        'attribute' => 'teacher',
                 'value' => function ($data) {
                     return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
                 },
             ],
             [
                 'label' => 'Date',
-				'attribute' => 'dateRange',
-				'filter' => DateRangePicker::widget([
-					'model' => $searchModel,
-					'convertFormat' => true,
-            		'initRangeExpr' => true,
-					'attribute' => 'dateRange',
-					'convertFormat' => true,
-					'pluginOptions'=>[
-						'autoApply' => true,
-						'ranges' => [
-							Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
-							Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
-							Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
-							Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
-						],
-						'locale' => [
-							'format' => 'M d,Y',
-						],
-						'opens' => 'left'
-					],
-				]),
+                'attribute' => 'dateRange',
+                'filter' => DateRangePicker::widget([
+                    'model' => $searchModel,
+                    'convertFormat' => true,
+                    'initRangeExpr' => true,
+                    'attribute' => 'dateRange',
+                    'convertFormat' => true,
+                    'pluginOptions'=>[
+                        'autoApply' => true,
+                        'ranges' => [
+                            Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
+                            Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
+                            Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+                            Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
+                        ],
+                        'locale' => [
+                            'format' => 'M d,Y',
+                        ],
+                        'opens' => 'left'
+                    ],
+                ]),
                 'value' => function ($data) {
                     $date = Yii::$app->formatter->asDate($data->date);
                     $lessonTime = (new \DateTime($data->date))->format('H:i:s');
@@ -79,8 +80,8 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             ],
             [
                 'label' => 'Status',
-				'attribute' => 'lessonStatus',
-				'filter' => LessonSearch::lessonStatuses(),
+                'attribute' => 'lessonStatus',
+                'filter' => LessonSearch::lessonStatuses(),
                 'value' => function ($data) {
                     $status = null;
                     if (!empty($data->status)) {
@@ -107,7 +108,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             ],
               [
                 'label' => 'Present',
-				'attribute' => 'attendanceStatus',
+                'attribute' => 'attendanceStatus',
                 'filter' => LessonSearch::attendanceStatuses(),
                 'value' => function ($data) {
                     $status = null;
@@ -117,7 +118,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 
                     return $status;
                 },
-            ], 
+            ],
         ];
 
         if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
@@ -130,13 +131,13 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
         'summary' => false,
         'emptyText' => false,
         'options' => ['id' => 'lesson-index-1'],
-		'filterModel' => $searchModel,
+        'filterModel' => $searchModel,
         'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true]),
-		'rowOptions' => function ($model, $key, $index, $grid) {
-			$url = Url::to(['lesson/view', 'id' => $model->id]);
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $url = Url::to(['lesson/view', 'id' => $model->id]);
 
-			return ['data-url' => $url];
-		},
+            return ['data-url' => $url];
+        },
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => $columns,

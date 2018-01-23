@@ -4,6 +4,7 @@ use kartik\grid\GridView;
 use yii\helpers\Url;
 use common\models\InvoiceLineItem;
 use backend\assets\CustomGridAsset;
+
 CustomGridAsset::register($this);
 Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  /*
@@ -15,70 +16,70 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 ?>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 	<?php $columns = [
-				[
-				'value' => function ($data) {
-					if (!empty($data->invoice->date)) {
-						$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->invoice->date);
-						return $lessonDate->format('l, F jS, Y');
-					}
+                [
+                'value' => function ($data) {
+                    if (!empty($data->invoice->date)) {
+                        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->invoice->date);
+                        return $lessonDate->format('l, F jS, Y');
+                    }
 
-					return null;
-				},
-				'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
-				'group' => true,
-				'groupedRow' => true,
-				'groupFooter' => function ($model, $key, $index, $widget) {
-					return [
-						'mergeColumns' => [[1]],
-						'content' => [
-							2 => GridView::F_SUM,
-						],
-						'contentFormats' => [
-							2 => ['format' => 'number', 'decimals' => 2],
-						],
-						'contentOptions' => [
-							2 => ['style' => 'text-align:right'],
-						],
-						'options' => ['style' => 'font-weight:bold;']
-					];
-				}
-			],
-				[
-				'label' => 'Item Category',
-				'value' => function ($data) {
-					return $data->itemCategory->name;
-				},
-			],
-				[
-				'label' => 'Amount',
+                    return null;
+                },
+                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
+                'group' => true,
+                'groupedRow' => true,
+                'groupFooter' => function ($model, $key, $index, $widget) {
+                    return [
+                        'mergeColumns' => [[1]],
+                        'content' => [
+                            2 => GridView::F_SUM,
+                        ],
+                        'contentFormats' => [
+                            2 => ['format' => 'number', 'decimals' => 2],
+                        ],
+                        'contentOptions' => [
+                            2 => ['style' => 'text-align:right'],
+                        ],
+                        'options' => ['style' => 'font-weight:bold;']
+                    ];
+                }
+            ],
+                [
+                'label' => 'Item Category',
+                'value' => function ($data) {
+                    return $data->itemCategory->name;
+                },
+            ],
+                [
+                'label' => 'Amount',
                 'format' => ['decimal', 2],
-				'value' => function ($data) {
-					$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-					return $data->itemCategory->getItemTotal($locationId, $data->invoice->date);
-				},
-				'contentOptions' => ['class' => 'text-right'],
-				'hAlign' => 'right',
-				'pageSummary' => true,
-				'pageSummaryFunc' => GridView::F_SUM
-			],
-		];
-		?>
+                'value' => function ($data) {
+                    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+                    return $data->itemCategory->getItemTotal($locationId, $data->invoice->date);
+                },
+                'contentOptions' => ['class' => 'text-right'],
+                'hAlign' => 'right',
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_SUM
+            ],
+        ];
+        ?>
 	<?=
-	GridView::widget([
-		'dataProvider' => $dataProvider,
-		'options' => ['class' => ''],
+    GridView::widget([
+        'dataProvider' => $dataProvider,
+        'options' => ['class' => ''],
                 'summary' => false,
                 'emptyText' => false,
-		'showPageSummary' => true,
+        'showPageSummary' => true,
                 'headerRowOptions' => ['class' => 'bg-light-gray'],
-		'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
-		'pjax' => true,
-		'pjaxSettings' => [
-			'neverTimeout' => true,
-			'options' => [
-				'id' => 'item-listing',
-			],
-		],
-		'columns' => $columns,
-	]);
-	?>
+        'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
+        'pjax' => true,
+        'pjaxSettings' => [
+            'neverTimeout' => true,
+            'options' => [
+                'id' => 'item-listing',
+            ],
+        ],
+        'columns' => $columns,
+    ]);
+    ?>

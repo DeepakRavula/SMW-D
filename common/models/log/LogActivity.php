@@ -12,11 +12,11 @@ use Yii;
  */
 class LogActivity extends \yii\db\ActiveRecord
 {
-     const TYPE_CREATE = 'create';
-     const TYPE_EDIT   = 'edit';
-     const TYPE_UPDATE = 'update';
-     const TYPE_DELETE = 'delete';
-     const TYPE_MERGE = 'merge';
+    const TYPE_CREATE = 'create';
+    const TYPE_EDIT   = 'edit';
+    const TYPE_UPDATE = 'update';
+    const TYPE_DELETE = 'delete';
+    const TYPE_MERGE = 'merge';
     /**
      * @inheritdoc
      */
@@ -33,7 +33,7 @@ class LogActivity extends \yii\db\ActiveRecord
         return [
             [['name'], 'required'],
             [['name'], 'string', 'max' => 255],
-			[['name'], 'trim']
+            [['name'], 'trim']
         ];
     }
 

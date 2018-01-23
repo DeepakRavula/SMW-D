@@ -34,7 +34,7 @@ class ReleaseNotesController extends \common\components\controllers\BaseControll
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
                 ],
-            ], 
+            ],
         ];
     }
 
@@ -76,24 +76,23 @@ class ReleaseNotesController extends \common\components\controllers\BaseControll
      */
     public function actionCreate()
     {
-        
         $model = new ReleaseNotes();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('Y-m-d H:i:s');
         $model->user_id = Yii::$app->user->id;
-         $data  = $this->renderAjax('_form', [
+        $data  = $this->renderAjax('_form', [
             'model' => $model,
-        ]); 
+        ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true,
-			];
+            return [
+                'status' => true,
+            ];
         } else {
             return [
                 'status' => true,
                 'data' => $data
             ];
-        } 
+        }
     }
 
     /**

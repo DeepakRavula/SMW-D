@@ -25,7 +25,7 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
 <div id="city-content"></div>
  <?php  Modal::end(); ?>
 <?php Pjax::begin([
-	'id' => 'city-listing',
+    'id' => 'city-listing',
 ]);?>
 <div>
     <?php echo AdminLteGridView::widget([

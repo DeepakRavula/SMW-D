@@ -7,7 +7,7 @@ use kartik\select2\Select2;
 use yii\helpers\Url;
 use kartik\datetime\DateTimePicker;
 
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -24,7 +24,7 @@ use kartik\datetime\DateTimePicker;
         <div class="col-md-8">
             <?= $form->field($model, 'paymentFrequencyId')->widget(Select2::classname(), [
                                 'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'),
-				
+                
             ]); ?>
         </div>
         <div class="col-md-6">

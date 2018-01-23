@@ -13,7 +13,7 @@ use kartik\switchinput\SwitchInput;
         <div class="pull-right">
             <div class="col-md-9 p-b-20">
                 <?= SwitchInput::widget([
-                    'name'=>'account', 
+                    'name'=>'account',
                     'pluginOptions' => [
                         'onText' => 'Customer View',
                         'offText' => 'Company View',
@@ -59,7 +59,7 @@ use kartik\switchinput\SwitchInput;
                 [
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
-				'format' => 'currency',
+                'format' => 'currency',
                 'label' => 'Debit',
                 'value' => function ($data) {
                     return !empty($data->debit) ? Yii::$app->formatter->asDecimal($data->debit) : null;
@@ -69,7 +69,7 @@ use kartik\switchinput\SwitchInput;
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
                 'label' => 'Credit',
-				'format' => 'currency',
+                'format' => 'currency',
                 'value' => function ($data) {
                     return !empty($data->credit) ? abs($data->credit) : null;
                 }

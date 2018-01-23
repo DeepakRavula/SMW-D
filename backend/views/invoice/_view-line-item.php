@@ -2,6 +2,7 @@
 
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+
 ?>
 <?php if ($searchModel->toggleAdditionalColumns) {
     $columns = [
@@ -30,18 +31,18 @@ use yii\widgets\Pjax;
             'headerOptions' => ['class' => 'text-left'],
             'attribute' => 'description',
         ],
-		[
-			'label' => 'Qty',
-			'value' => function ($data) {
-				return $data->unit;
-			},
-			'headerOptions' => ['class' => 'text-right'],
-			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
-		],
+        [
+            'label' => 'Qty',
+            'value' => function ($data) {
+                return $data->unit;
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+        ],
         [
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
-			'format' => 'currency',
+            'format' => 'currency',
             'attribute' => 'discount',
             'value' => function ($model) {
                 return Yii::$app->formatter->asDecimal($model->discount);
@@ -54,7 +55,7 @@ use yii\widgets\Pjax;
         ],
         [
             'label' => 'Cost',
-			'format' => 'currency',
+            'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
             'value' => function ($data) {
@@ -63,12 +64,12 @@ use yii\widgets\Pjax;
         ],
         [
             'label' => 'Price',
-			'format' => 'currency',
-			'headerOptions' => ['class' => 'text-right'],
-			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
-			'value' => function($data) {
-				return Yii::$app->formatter->asDecimal($data->itemTotal);	
-			},
+            'format' => 'currency',
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+            'value' => function ($data) {
+                return Yii::$app->formatter->asDecimal($data->itemTotal);
+            },
         ],
     ];
 } else {
@@ -89,35 +90,35 @@ use yii\widgets\Pjax;
             'headerOptions' => ['class' => 'text-left'],
             'attribute' => 'description',
         ],
-		 [
-			'label' => 'Qty',
-			'value' => function ($data) {
-				return $data->unit;
-			},
-			'headerOptions' => ['class' => 'text-right'],
-			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
-		],
+         [
+            'label' => 'Qty',
+            'value' => function ($data) {
+                return $data->unit;
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+        ],
         [
             'label' => 'Price',
-			'format' => 'currency',
-			'value' => function($data) {
-				return Yii::$app->formatter->asDecimal($data->itemTotal);	
-			},
-			'headerOptions' => ['class' => 'text-right'],
-			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+            'format' => 'currency',
+            'value' => function ($data) {
+                return Yii::$app->formatter->asDecimal($data->itemTotal);
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
         ],
     ];
 }?>
 <?php Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
 	<?= GridView::widget([
-	'id' => 'line-item-grid',
+    'id' => 'line-item-grid',
         'dataProvider' => $invoiceLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,
         'emptyText' => false,
         'options' => ['class' => 'col-md-12'],
-	'tableOptions' => ['class' => 'table table-condensed'],
-	'headerRowOptions' => ['class' => 'bg-light-gray'],
+    'tableOptions' => ['class' => 'table table-condensed'],
+    'headerRowOptions' => ['class' => 'bg-light-gray'],
     
     ]);
     ?>

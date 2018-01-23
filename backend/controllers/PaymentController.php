@@ -13,6 +13,7 @@ use yii\widgets\ActiveForm;
 use yii\web\Response;
 use common\models\CreditUsage;
 use yii\filters\ContentNegotiator;
+
 /**
  * PaymentsController implements the CRUD actions for Payments model.
  */
@@ -115,7 +116,6 @@ class PaymentController extends \common\components\controllers\BaseController
             ];
             return $response;
         } else {
-      	
             return [
                     'status' => true,
                     'data' => $data,
@@ -137,7 +137,7 @@ class PaymentController extends \common\components\controllers\BaseController
         $modelInvoice = $model->invoice;
         $model->delete();
         $modelInvoice->save();
-		
+        
         return [
             'status' => true,
         ];
@@ -179,7 +179,7 @@ class PaymentController extends \common\components\controllers\BaseController
     {
         $invoice = Invoice::findOne($id);
         $paymentModel = new Payment();
-	$db = \Yii::$app->db;
+        $db = \Yii::$app->db;
         $transaction = $db->beginTransaction();
         $request = Yii::$app->request;
         if ($paymentModel->load($request->post())) {
@@ -188,19 +188,19 @@ class PaymentController extends \common\components\controllers\BaseController
                 $paymentModel->amount = $invoice->total;
             }
             $paymentModel->invoiceId = $id;
-            if($paymentModel->save()) {
-            	$transaction->commit();
-				return [
-					'status' => true,
-				];	
-			} else {
-				$errors = ActiveForm::validate($paymentModel); 
-			return [
-				'status' => false,
-				'errors' => $errors,
-			];
-		}
-        } 
+            if ($paymentModel->save()) {
+                $transaction->commit();
+                return [
+                    'status' => true,
+                ];
+            } else {
+                $errors = ActiveForm::validate($paymentModel);
+                return [
+                'status' => false,
+                'errors' => $errors,
+            ];
+            }
+        }
     }
 
     public function actionCreditPayment($id)

@@ -71,7 +71,7 @@ use yii\helpers\Url;
                 'value' => function ($data) {
                     return !empty($data->endDate) ? Yii::$app->formatter->asDate($data->endDate) : null;
                 },
-            ],      
+            ],
         ],
     ]); ?>
 </div>

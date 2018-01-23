@@ -24,13 +24,13 @@ class NoteController extends \common\components\controllers\BaseController
                     'delete' => ['post'],
                 ],
             ],
-			[
-				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['create', 'update'],
-				'formats' => [
-					'application/json' => Response::FORMAT_JSON,
-				],
-        	],
+            [
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['create', 'update'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
         ];
     }
 
@@ -66,39 +66,39 @@ class NoteController extends \common\components\controllers\BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-	public function actionCreate($instanceId, $instanceType)
+    public function actionCreate($instanceId, $instanceType)
     {
-		$userId = Yii::$app->user->id;
+        $userId = Yii::$app->user->id;
         $model = new Note();
-		$request = Yii::$app->request;
+        $request = Yii::$app->request;
         if ($model->load($request->post())) {
-			$model->instanceId = $instanceId;
-			$model->instanceType = $instanceType;
+            $model->instanceId = $instanceId;
+            $model->instanceType = $instanceType;
             $model->createdUserId = $userId;
-			if ($model->save()) {
-					$notes = Note::find()
-						->where(['instanceId' => $model->instanceId, 'instanceType' => $model->instanceType]);
-					$noteDataProvider = new ActiveDataProvider([
-						'query' => $notes,
-					]);
-					$view = '/' . $model->getInstanceTypeName() . '/note/_view';
-					$data = $this->renderAjax($view, [
-						'noteDataProvider' => $noteDataProvider,
-						'model' => new Note()
-					]);
-					$response = [
-						'status' => true,
-						'data' => $data,
-					];
-			} else {
-				$errors = ActiveForm::validate($model);
-				$response = [
-					'status' => false,
-					'errors' =>  $errors
-				];
-			}
-			return $response;
-		}
+            if ($model->save()) {
+                $notes = Note::find()
+                        ->where(['instanceId' => $model->instanceId, 'instanceType' => $model->instanceType]);
+                $noteDataProvider = new ActiveDataProvider([
+                        'query' => $notes,
+                    ]);
+                $view = '/' . $model->getInstanceTypeName() . '/note/_view';
+                $data = $this->renderAjax($view, [
+                        'noteDataProvider' => $noteDataProvider,
+                        'model' => new Note()
+                    ]);
+                $response = [
+                        'status' => true,
+                        'data' => $data,
+                    ];
+            } else {
+                $errors = ActiveForm::validate($model);
+                $response = [
+                    'status' => false,
+                    'errors' =>  $errors
+                ];
+            }
+            return $response;
+        }
     }
     
     /**
@@ -110,7 +110,7 @@ class NoteController extends \common\components\controllers\BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		if ($model->load(\Yii::$app->getRequest()->getBodyParams(), '') && $model->hasEditable && $model->save()) {
+        if ($model->load(\Yii::$app->getRequest()->getBodyParams(), '') && $model->hasEditable && $model->save()) {
             return ['output' => $model->content, 'message' => ''];
         }
     }

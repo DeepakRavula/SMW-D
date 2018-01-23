@@ -12,17 +12,17 @@ use common\models\discount\CustomerDiscount;
 <div class="p-l-20">
     <div id="warning-notification" style="display:none;" class="alert-warning alert fade in"></div>
 	<?php $form = ActiveForm::begin([
-		'id' => 'customer-discount',
+        'id' => 'customer-discount',
         'action' => Url::to(['customer-discount/create', 'id' => $userModel->id]),
     ]); ?>
 	<?php
-	$customerDiscount = CustomerDiscount::findOne(['customerId' => $userModel->id]);
-	$discount = !empty($customerDiscount) ? $customerDiscount->value : null; ?>
+    $customerDiscount = CustomerDiscount::findOne(['customerId' => $userModel->id]);
+    $discount = !empty($customerDiscount) ? $customerDiscount->value : null; ?>
 	<div class="row">
         <div class="col-xs-4">
 			<?php echo $form->field($model, 'value', [
-	'inputTemplate' => '<div class="input-group">'
-	. '{input}<span class="input-group-addon">%</span></div>'])->textInput(['class' => 'right-align form-control', 'value' => $discount])->label('Discount'); ?>
+    'inputTemplate' => '<div class="input-group">'
+    . '{input}<span class="input-group-addon">%</span></div>'])->textInput(['class' => 'right-align form-control', 'value' => $discount])->label('Discount'); ?>
         </div>
 	</div>
     <div class="row">
@@ -32,18 +32,21 @@ use common\models\discount\CustomerDiscount;
 		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
     </div>
      <div class="pull-left">       
-		<?php if(! empty($customerDiscount)) : ?>
-			<?= Html::a('Delete', [
+		<?php if (! empty($customerDiscount)) : ?>
+			<?= Html::a(
+        'Delete',
+        [
             'customer-discount/delete', 'id' => $userModel->id
         ],
         [
-			'id' => 'customer-discount-delete',
+            'id' => 'customer-discount-delete',
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this payment?',
                 'method' => 'post',
             ]
-        ]); ?>
+        ]
+    ); ?>
 			
 		<?php endif; ?>
 	</div>

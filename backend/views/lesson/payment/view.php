@@ -25,11 +25,11 @@ $columns = [
 ]; ?>
 <div>
 	<?php yii\widgets\Pjax::begin([
-		'id' => 'invoice-payment-listing',
-		'timeout' => 6000,
-	]) ?>
+        'id' => 'invoice-payment-listing',
+        'timeout' => 6000,
+    ]) ?>
 	<?= GridView::widget([
-		'id' => 'payment-grid',
+        'id' => 'payment-grid',
         'dataProvider' => $paymentsDataProvider,
         'summary' => false,
         'emptyText' => false,

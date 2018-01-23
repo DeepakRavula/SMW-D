@@ -54,13 +54,13 @@ class StudentSearch extends Student
 
         $query->joinWith('customerProfile cp');
         $query->andFilterWhere(['like', 'first_name', $this->first_name])
-			->andFilterWhere(['like', 'last_name', $this->last_name])
-			->groupBy('student.id');
+            ->andFilterWhere(['like', 'last_name', $this->last_name])
+            ->groupBy('student.id');
 
         if (!$this->showAllStudents) {
             $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
             $query->enrolled($currentDate)
-				->active();
+                ->active();
         }
 
         return $dataProvider;

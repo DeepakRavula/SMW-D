@@ -11,7 +11,7 @@ use kartik\daterange\DateRangePickerAsset;
 DateRangePickerAsset::register($this);
 ?>
 <?php $boxTools = $this->render('_box-tool', [
-	'model' => $model,
+    'model' => $model,
 ]);?>
 <?php
 Pjax::begin([
@@ -48,8 +48,8 @@ LteBox::begin([
 <?php Modal::end();?>
 <?php
 Modal::begin([
-	'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
-	'id' => 'enrolment-edit-modal',
+    'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
+    'id' => 'enrolment-edit-modal',
 ]);
 ?>
 <div id="enrolment-edit-content"></div>

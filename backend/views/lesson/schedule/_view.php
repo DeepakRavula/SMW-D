@@ -5,14 +5,15 @@ use insolita\wgadminlte\LteConst;
 use yii\helpers\Url;
 use common\models\User;
 use common\models\LocationAvailability;
+
 ?>
 <?php
 $toolBoxHtml = $this->render('_button', [
-	'model' => $model,
+    'model' => $model,
 ]);
 LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => $toolBoxHtml,
+    'boxTools' => $toolBoxHtml,
     'title' => 'Schedule',
     'withBorder' => true,
 ])
@@ -29,7 +30,7 @@ LteBox::begin([
     <dd><?= Yii::$app->formatter->asTime($model->date); ?></dd>
     <dt>Duration</dt>
     <dd><?= (new \DateTime($model->duration))->format('H:i'); ?></dd>
-	<?php if($model->isUnscheduled()) : ?>
+	<?php if ($model->isUnscheduled()) : ?>
         <dt>Expiry Date</dt>
         <dd><?= Yii::$app->formatter->asDate($model->privateLesson->expiryDate); ?></dd>
 <?php endif; ?>

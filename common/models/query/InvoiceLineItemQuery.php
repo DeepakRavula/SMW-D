@@ -4,6 +4,7 @@ namespace common\models\query;
 
 use common\models\InvoiceLineItem;
 use common\models\Invoice;
+
 /**
  * This is the ActiveQuery class for [[InvoiceLineItem]].
  *
@@ -42,42 +43,42 @@ class InvoiceLineItemQuery extends \yii\db\ActiveQuery
     }
 
     public function taxRate($date, $locationId)
-	{
-		$this->joinWith(['invoice' => function($query) use($date, $locationId) {
-			$query->andWhere([
-				'location_id' => $locationId,
-				'type' => Invoice::TYPE_INVOICE,
-				'status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT],
-			])	
-			->andWhere(['between', 'date', (new \DateTime($date))->format('Y-m-d'), (new \DateTime($date))->format('Y-m-d')])
-			->notDeleted();
-		}])
-		->andWhere(['>', 'tax_rate', 0]);
+    {
+        $this->joinWith(['invoice' => function ($query) use ($date, $locationId) {
+            $query->andWhere([
+                'location_id' => $locationId,
+                'type' => Invoice::TYPE_INVOICE,
+                'status' => [Invoice::STATUS_PAID, Invoice::STATUS_CREDIT],
+            ])
+            ->andWhere(['between', 'date', (new \DateTime($date))->format('Y-m-d'), (new \DateTime($date))->format('Y-m-d')])
+            ->notDeleted();
+        }])
+        ->andWhere(['>', 'tax_rate', 0]);
 
-		return $this;
-	}
+        return $this;
+    }
     public function taxRateSummary($date, $locationId)
-	{
-		$this->joinWith(['invoice' => function($query) use($date, $locationId) {
-			$query->andWhere([
-				'location_id' => $locationId,
-				'type' => Invoice::TYPE_INVOICE,
-				])	
-			->andWhere(['between', 'invoice.date', (new \DateTime($date))->format('Y-m-d'), (new \DateTime($date))->format('Y-m-d')])
-			->notDeleted();
-		}])
-		->andWhere(['>', 'tax_rate', 0]);
+    {
+        $this->joinWith(['invoice' => function ($query) use ($date, $locationId) {
+            $query->andWhere([
+                'location_id' => $locationId,
+                'type' => Invoice::TYPE_INVOICE,
+                ])
+            ->andWhere(['between', 'invoice.date', (new \DateTime($date))->format('Y-m-d'), (new \DateTime($date))->format('Y-m-d')])
+            ->notDeleted();
+        }])
+        ->andWhere(['>', 'tax_rate', 0]);
 
-		return $this;
-	}
-	public function royaltyFree()
-	{
+        return $this;
+    }
+    public function royaltyFree()
+    {
         $this->andWhere(['invoice_line_item.royaltyFree' => true]);
-		return $this;
-	}
-	public function royalty()
-	{
+        return $this;
+    }
+    public function royalty()
+    {
         $this->andWhere(['invoice_line_item.royaltyFree' => false]);
-		return $this;
-	}
-	}
+        return $this;
+    }
+}

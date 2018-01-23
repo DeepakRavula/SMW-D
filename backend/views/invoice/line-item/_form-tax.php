@@ -17,9 +17,9 @@ use common\models\TaxStatus;
 <div class="lesson-qualify p-10">
 <div id="edit-tax-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <?php $form = ActiveForm::begin([
-	'layout' => 'horizontal',
+    'layout' => 'horizontal',
         'id' => 'edit-tax-form',
-	'enableClientValidation' => false
+    'enableClientValidation' => false
 ]); ?>
     <div id="tax-spinner" class="spinner" style="display:none">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -31,7 +31,9 @@ use common\models\TaxStatus;
         </div>
         <div class="col-xs-8 pull-right">
             <?= $form->field($model, 'tax_status')->dropDownList(ArrayHelper::map(
-                    TaxStatus::find()->all(), 'name', 'name'
+                    TaxStatus::find()->all(),
+    'name',
+    'name'
             ), ['prompt' => 'Select', 'id' => 'lineitem-tax_status'])->label(false);?>
         </div>
     </div>

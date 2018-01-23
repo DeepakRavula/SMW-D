@@ -26,7 +26,7 @@ class QualificationController extends \common\components\controllers\BaseControl
                     'delete' => ['post'],
                 ],
             ],
-			'contentNegotiator' => [
+            'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['update', 'delete', 'create', 'add-group'],
                 'formatParam' => '_format',
@@ -78,42 +78,42 @@ class QualificationController extends \common\components\controllers\BaseControl
         $model = new Qualification();
 
         if ($model->load(Yii::$app->request->post())) {
-			$model->teacher_id = $id;
-			$model->type = Qualification::TYPE_HOURLY;
-			$model->isDeleted = false;
-			if($model->save()) {
-				$response = [
-					'status' => true,
-				];
-			} else {
-				$response = [
-					'status' => false,
-					'errors' => ActiveForm::validate($model)
-				];	
-			}
-			return $response;
+            $model->teacher_id = $id;
+            $model->type = Qualification::TYPE_HOURLY;
+            $model->isDeleted = false;
+            if ($model->save()) {
+                $response = [
+                    'status' => true,
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model)
+                ];
+            }
+            return $response;
         }
     }
 
-	public function actionAddGroup($id)
+    public function actionAddGroup($id)
     {
         $model = new Qualification();
 
         if ($model->load(Yii::$app->request->post())) {
-			$model->teacher_id = $id;
-			$model->type = Qualification::TYPE_FIXED;
-			$model->isDeleted = false;
-			if($model->save()) {
-				$response = [
-					'status' => true,
-				];
-			} else {
-				$response = [
-					'status' => false,
-					'errors' => ActiveForm::validate($model)
-				];	
-			}
-			return $response;
+            $model->teacher_id = $id;
+            $model->type = Qualification::TYPE_FIXED;
+            $model->isDeleted = false;
+            if ($model->save()) {
+                $response = [
+                    'status' => true,
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model)
+                ];
+            }
+            return $response;
         }
     }
 
@@ -128,27 +128,27 @@ class QualificationController extends \common\components\controllers\BaseControl
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		$data = $this->renderAjax('update', [
-			'model' => $model,
-		]);
+        $data = $this->renderAjax('update', [
+            'model' => $model,
+        ]);
         if ($model->load(Yii::$app->request->post())) {
-			if($model->save()) {
-				$response = [
-					'status' => true,
-				];
-			} else {
-				$response = [
-					'status' => false,
-					'errors' => ActiveForm::validate($model)
-				];	
-			} 
-			return $response;
-        } else { 
-			return [
-				'status' => true,
-				'data' => $data
-			];
-		}
+            if ($model->save()) {
+                $response = [
+                    'status' => true,
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model)
+                ];
+            }
+            return $response;
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
     }
 
     /**
@@ -162,9 +162,9 @@ class QualificationController extends \common\components\controllers\BaseControl
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-		return [
-			'status' => true,
-		];
+        return [
+            'status' => true,
+        ];
     }
 
     /**

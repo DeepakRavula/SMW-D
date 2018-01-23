@@ -66,12 +66,12 @@ echo GridView::widget([
                 return !empty($data->date) ? Yii::$app->formatter->asDate($data->date) : null;
             },
         ],
-		[
-			'label' => 'Present?',
-			'value' => function ($data) {
-				return $data->getPresent();
-			},
-		],
+        [
+            'label' => 'Present?',
+            'value' => function ($data) {
+                return $data->getPresent();
+            },
+        ],
     ],
 ]);
 ?>

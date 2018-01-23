@@ -89,7 +89,7 @@ DynamicFormWidget::begin([
                             ->textInput(['maxlength' => true,
                                 'class' => 'time form-control',
                                 'readOnly' => true,
-							])->label(false) ?>
+                            ])->label(false) ?>
                     </div>
                                             <div class="col-md-3">
                         <button type="button" class="remove-item btn btn-danger btn-social-icon m-r-10 btn-sm"><i class="fa fa-minus"></i></button>

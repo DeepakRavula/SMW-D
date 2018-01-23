@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\User;
 use common\models\Invoice;
+
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
  */
@@ -21,7 +22,7 @@ class UserSearch extends User
     public $query;
     public $showAllCustomers;
     public $showAllTeachers;
-	private $email;
+    private $email;
     
     public function getAccountView()
     {
@@ -32,7 +33,7 @@ class UserSearch extends User
     {
         $this->accountView = trim($value);
     }
-	public function getEmail()
+    public function getEmail()
     {
         return $this->email;
     }
@@ -48,7 +49,7 @@ class UserSearch extends User
     {
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at', 'accountView'], 'integer'],
-            [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname', 
+            [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname',
                 'lastname', 'query', 'showAllCustomers', 'showAllTeachers', 'accountView'], 'safe'],
         ];
     }
@@ -73,7 +74,7 @@ class UserSearch extends User
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = User::find()
             ->notDeleted()
-			->notDraft();
+            ->notDraft();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -82,7 +83,7 @@ class UserSearch extends User
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-		
+        
         $query->andFilterWhere([
             'id' => $this->id,
             'status' => $this->status,
@@ -95,7 +96,7 @@ class UserSearch extends User
         $query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
         $query->leftJoin(['user_location ul'], 'ul.user_id = user.id');
         $query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
-		$dataProvider->setSort([
+        $dataProvider->setSort([
             'attributes' => [
                 'firstname' => [
                     'asc' => ['uf.firstname' => SORT_ASC],
@@ -107,9 +108,9 @@ class UserSearch extends User
                 ],
             ]
         ]);
-		$query->joinWith(['emails' => function($query) {
-			$query->andFilterWhere(['like', 'email', $this->email]);	
-		}]);
+        $query->joinWith(['emails' => function ($query) {
+            $query->andFilterWhere(['like', 'email', $this->email]);
+        }]);
         $query->andFilterWhere(['like', 'uf.lastname', $this->lastname])
             ->andFilterWhere(['like', 'uf.firstname', $this->firstname]);
 
@@ -125,16 +126,16 @@ class UserSearch extends User
                 $query->joinWith(['student' => function ($query) use ($currentDate) {
                     $query->enrolled($currentDate);
                 }]);
-				$query->active();
+                $query->active();
             }
             $query->groupBy('user.id');
         }
-		 if ($this->role_name === USER::ROLE_TEACHER) {
+        if ($this->role_name === USER::ROLE_TEACHER) {
             if (!$this->showAllTeachers) {
                 $query->joinWith(['userLocation' => function ($query) {
                     $query->joinWith('teacherAvailability');
                 }]);
-				$query->active();
+                $query->active();
             }
             $query->groupBy('user.id');
         }

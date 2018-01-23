@@ -8,7 +8,6 @@ use common\models\Vacation;
 
 class EnrolmentDateValidator extends Validator
 {
-
     public function validateAttribute($model, $attribute)
     {
         $locationId        = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -22,8 +21,11 @@ class EnrolmentDateValidator extends Validator
         $enrolmentToDate   = (new \DateTime($enrolmentToDate))->format('Y-m-d');
         if (($fromDate < $enrolmentFromDate && $toDate < $enrolmentToDate) || ($fromDate
             > $enrolmentFromDate && $toDate > $enrolmentToDate)) {
-            return $this->addError($model, $attribute,
-                    'Vacation Can Only be created between Enrolment');
+            return $this->addError(
+                $model,
+                $attribute,
+                    'Vacation Can Only be created between Enrolment'
+            );
         }
 
         $vacation = Vacation::find()
@@ -34,8 +36,11 @@ class EnrolmentDateValidator extends Validator
             ->count();
 
         if (!empty($vacation)) {
-            return $this->addError($model, $attribute,
-                    'Avoid vacation Replication');
+            return $this->addError(
+                $model,
+                $attribute,
+                    'Avoid vacation Replication'
+            );
         }
     }
 }

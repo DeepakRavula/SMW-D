@@ -7,12 +7,12 @@ use yii\data\ActiveDataProvider;
 use common\models\Lesson;
 use common\models\User;
 use Yii;
+
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
  */
 class LocationScheduleSearch extends Lesson
 {
-
     public $locationId;
     /**
      * {@inheritdoc}
@@ -40,26 +40,26 @@ class LocationScheduleSearch extends Lesson
      */
     public function search($params)
     {
-		$userId = Yii::$app->user->id;
-                $locationId= \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-		$roles = Yii::$app->authManager->getRolesByUser($userId);
-		$role = end($roles);
-		$user = User::findOne(['id' => $userId]);
-		if ($role->name !== User::ROLE_ADMINISTRATOR) {
+        $userId = Yii::$app->user->id;
+        $locationId= \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $roles = Yii::$app->authManager->getRolesByUser($userId);
+        $role = end($roles);
+        $user = User::findOne(['id' => $userId]);
+        if ($role->name !== User::ROLE_ADMINISTRATOR) {
             $this->locationId = $user->userLocation->location_id;
         } else {
             $this->locationId = $locationId;
         }
         $query = Lesson::find()
-			->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED,
-				'DATE(date)' => (new \DateTime())->format('Y-m-d')	
-			])
-			->isConfirmed()
-			->notDeleted();
-			if(!empty($this->locationId)) {
-				$query->location($this->locationId);
-			}
-			$query->orderBy(['TIME(date)' => SORT_ASC]);
+            ->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED,
+                'DATE(date)' => (new \DateTime())->format('Y-m-d')
+            ])
+            ->isConfirmed()
+            ->notDeleted();
+        if (!empty($this->locationId)) {
+            $query->location($this->locationId);
+        }
+        $query->orderBy(['TIME(date)' => SORT_ASC]);
         $dataProvider= new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,

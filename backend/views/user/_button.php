@@ -3,17 +3,18 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use common\models\User;
+
 ?>
 <?php
 $form = ActiveForm::begin([
-		'action' => ['index'],
-		'method' => 'get',
-	'fieldConfig' => [
+        'action' => ['index'],
+        'method' => 'get',
+    'fieldConfig' => [
         'options' => [
             'tag' => false,
         ],
     ],
-	]);
+    ]);
 ?>
 <?php yii\widgets\Pjax::begin() ?>
 <div id="show-all" class="checkbox-btn">

@@ -28,18 +28,18 @@ $this->params['breadcrumbs'][] = $this->title;
 					<?php echo $form->field($model, 'email') ?>
 				<div class="form-group">
 					<?php
-					echo Html::submitButton('Send', [
-						'class' => 'btn btn-primary btn-flat btn-block',
-						'name' => 'login-button',
-					])
-					?>
+                    echo Html::submitButton('Send', [
+                        'class' => 'btn btn-primary btn-flat btn-block',
+                        'name' => 'login-button',
+                    ])
+                    ?>
 				</div>
 				<div class="m-t-10 text-left">
 				<?php
-				echo Yii::t('frontend', '<a href="{link}"><i class="fa fa-angle-left"></i> Back</a>', [
-					'link' => yii\helpers\Url::to(['sign-in/login']),
-				])
-				?>
+                echo Yii::t('frontend', '<a href="{link}"><i class="fa fa-angle-left"></i> Back</a>', [
+                    'link' => yii\helpers\Url::to(['sign-in/login']),
+                ])
+                ?>
 				</div>
 			<?php ActiveForm::end(); ?>
 	        </div>

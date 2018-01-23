@@ -19,16 +19,14 @@ use common\models\timelineEvent\TimelineEventCourse;
  */
 class CourseLog extends Course
 {
-
     public function create($event)
     {
-
         $groupCourseModel = $event->sender;
         $groupCourse = Course::find(['id' => $groupCourseModel->id])->asArray()->one();
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $groupCourse,
             'message' => $groupCourseModel->userName . ' created new    {{' .$groupCourseModel->program->name. '}}   classes   with  '.$groupCourseModel->teacher->publicIdentity. ' at ' . Yii::$app->formatter->asTime($groupCourseModel->startDate),
-			'locationId' => $groupCourseModel->teacher->userLocation->location_id,
+            'locationId' => $groupCourseModel->teacher->userLocation->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();

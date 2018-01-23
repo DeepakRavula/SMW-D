@@ -19,13 +19,13 @@ $this->title = 'Edit Location';
 
 <div class="location-form">
 	<?php   $url = Url::to(['location/update', 'id' => $model->id]);
-		if ($model->isNewRecord) {
-		   $url = Url::to(['location/create']);
-		}
+        if ($model->isNewRecord) {
+            $url = Url::to(['location/create']);
+        }
         $form = ActiveForm::begin([
         'id' => 'location-form',
-		'enableAjaxValidation' => true,
-		'enableClientValidation' => false,
+        'enableAjaxValidation' => true,
+        'enableClientValidation' => false,
         'action' => $url,
         'validationUrl' => Url::to(['location/validate']),
     ]); ?>
@@ -51,21 +51,27 @@ $this->title = 'Edit Location';
 		<div class="col-md-4">
 			<?php
             echo $form->field($model, 'city_id')->dropDownList(ArrayHelper::map(
-                            City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'
+                            City::find()->orderBy(['name' => SORT_ASC])->all(),
+    'id',
+    'name'
             ))
             ?>
 		</div>
 		<div class="col-md-4">
 			<?php
             echo $form->field($model, 'province_id')->dropDownList(ArrayHelper::map(
-                            Province::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'
+                            Province::find()->orderBy(['name' => SORT_ASC])->all(),
+                'id',
+                'name'
             ))
             ?>
 		</div>
 		<div class="col-md-4">
 			<?php
             echo $form->field($model, 'country_id')->dropDownList(ArrayHelper::map(
-                            Country::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'
+                            Country::find()->orderBy(['name' => SORT_ASC])->all(),
+                'id',
+                'name'
             ))
             ?>
 		</div>
@@ -85,10 +91,10 @@ $this->title = 'Edit Location';
 	<div class="row p-10">
 		<div class="col-md-4">
 			<?php echo $form->field($model, 'conversionDate')->widget(DatePicker::classname(), [
-				'options' => [
-					'value' => !empty($model->conversionDate) ? Carbon::parse($model->conversionDate)->format('d-m-Y') : ''
-				],
-				'layout' => '{input}{picker}',
+                'options' => [
+                    'value' => !empty($model->conversionDate) ? Carbon::parse($model->conversionDate)->format('d-m-Y') : ''
+                ],
+                'layout' => '{input}{picker}',
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
@@ -107,13 +113,13 @@ $this->title = 'Edit Location';
             </div>
         <div class="pull-left">
         <?php if (!$model->isNewRecord) {
-            echo Html::a('Delete', ['delete', 'id' => $model->id], ['class' => 'btn btn-danger'], [
+                echo Html::a('Delete', ['delete', 'id' => $model->id], ['class' => 'btn btn-danger'], [
                 'data' => [
                     'confirm' => 'Are you sure you want to delete this item?',
                     'method' => 'post',
                 ],
             ]);
-        }
+            }
 
         ?>
     </div>

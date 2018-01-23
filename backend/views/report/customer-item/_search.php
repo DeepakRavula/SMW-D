@@ -43,12 +43,15 @@ use common\models\User;
         <div class="col-md-5"> 
             <?=
                 $form->field($model, 'customerId')->widget(Select2::classname(), [
-                    'data' => ArrayHelper::map(User::find()
+                    'data' => ArrayHelper::map(
+                        User::find()
                             ->customers($locationId)
                             ->notDeleted()
                             ->active()
                             ->all(),
-                            'id', 'publicIdentity'),
+                            'id',
+                        'publicIdentity'
+                    ),
                     'options' => ['placeholder' => 'Select Customer', 'class' => 'form-control'],
                          ])->label(false);
             ?>

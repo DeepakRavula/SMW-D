@@ -4,6 +4,7 @@ use yii\bootstrap\Modal;
 use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\helpers\Html;
+
 ?>
 
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index', 'timeout' => 6000,]); ?>
@@ -28,7 +29,7 @@ use yii\helpers\Html;
                     return !empty($data->course->program->name) ? $data->course->program->name : null;
                 },
             ],
-			[
+            [
                 'label' => 'Phone',
                 'value' => function ($data) {
                     return !empty($data->course->enrolment->student->customer->phoneNumber->number) ? $data->course->enrolment->student->customer->phoneNumber->number : null;
@@ -52,7 +53,7 @@ use yii\helpers\Html;
                     return !empty($date) ? $date : null;
                 },
             ],
-			[
+            [
                 'label' => 'Status',
                 'format' => 'raw',
                 'contentOptions' => ['style' => 'width: 80px;'],

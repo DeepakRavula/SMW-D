@@ -5,6 +5,7 @@ namespace common\models;
 use League\Csv\Reader;
 use yii\base\Model;
 use Yii;
+
 /**
  * Create user form.
  */
@@ -44,7 +45,7 @@ class UserImport extends Model
         fclose($fileHandle);
         unlink(Yii::getAlias('@storage') . '/web/source/' . $this->path);
         $fp = fopen(Yii::getAlias('@storage') . '/web/source/' . $this->path, 'w');
-        foreach($csvFixed as $line){
+        foreach ($csvFixed as $line) {
             fputs($fp, $line);
         }
         $handle = $this->file->readStream();
@@ -83,8 +84,8 @@ class UserImport extends Model
             $user = User::find()
                 ->joinWith(['userContact' => function ($query) use ($row) {
                     $query->joinWith(['phone' => function ($query) use ($row) {
-						$query->andWhere(['number' => $row['Billing Home Tel']]);	
-					}]);
+                        $query->andWhere(['number' => $row['Billing Home Tel']]);
+                    }]);
                 }])
                 ->notDeleted()
                 ->one();
@@ -93,10 +94,10 @@ class UserImport extends Model
                 $student = new Student();
                 $student->first_name = $row['First Name'];
                 $student->last_name = $row['Last Name'];
-				if(!empty($row['Date of Birth'])) {
-	                $birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
-    	            $student->birth_date = $birthDate->format('d-m-Y');
-				}
+                if (!empty($row['Date of Birth'])) {
+                    $birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
+                    $student->birth_date = $birthDate->format('d-m-Y');
+                }
                 $student->customer_id = $user->id;
                 $student->status = Student::STATUS_ACTIVE;
 
@@ -106,8 +107,8 @@ class UserImport extends Model
                 }
 
                 if ($student->save()) {
-					$this->StudentCsv($row, $student);
-					
+                    $this->StudentCsv($row, $student);
+                    
                     ++$studentCount;
                     continue;
                 }
@@ -139,10 +140,10 @@ class UserImport extends Model
                 $student = new Student();
                 $student->first_name = $row['First Name'];
                 $student->last_name = $row['Last Name'];
-				if(!empty($row['Date of Birth'])) {
-                	$birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
-	                $student->birth_date = $birthDate->format('d-m-Y');
-				}
+                if (!empty($row['Date of Birth'])) {
+                    $birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
+                    $student->birth_date = $birthDate->format('d-m-Y');
+                }
                 $student->customer_id = $user->id;
                 $student->status = Student::STATUS_ACTIVE;
 
@@ -152,78 +153,78 @@ class UserImport extends Model
                 }
 
                 if ($student->save()) {
-					$this->StudentCsv($row, $student);
-					
+                    $this->StudentCsv($row, $student);
+                    
                     ++$studentCount;
-                } 
-				if(!empty($row['Email Address'])) {
-					$userEmail = new UserEmail();
-					if (!$userEmail->validate(['email'])) {
-						$errors[] = 'Error on Line '.($i + 2).': Invalid Email address. Skipping email address for customer named, "'.$row['Billing First Name'].'"';
-                	} else {
-						$userContact = new UserContact();
-						$userContact->userId = $user->id;
-						$userContact->isPrimary = true;
-						$userContact->labelId = Label::LABEL_HOME;
-						$userContact->save();
+                }
+                if (!empty($row['Email Address'])) {
+                    $userEmail = new UserEmail();
+                    if (!$userEmail->validate(['email'])) {
+                        $errors[] = 'Error on Line '.($i + 2).': Invalid Email address. Skipping email address for customer named, "'.$row['Billing First Name'].'"';
+                    } else {
+                        $userContact = new UserContact();
+                        $userContact->userId = $user->id;
+                        $userContact->isPrimary = true;
+                        $userContact->labelId = Label::LABEL_HOME;
+                        $userContact->save();
 
-						$userEmail->userContactId = $userContact->id;
-						$userEmail->email = $row['Email Address'];
-						$userEmail->save();
-					}	
-				}
+                        $userEmail->userContactId = $userContact->id;
+                        $userEmail->email = $row['Email Address'];
+                        $userEmail->save();
+                    }
+                }
                 
                 $cityName = $row['Billing City'];
                 $addressName = $row['Billing Address'];
                 $pincodeName = $row['Billing Postal Code'];
-				
-				if (empty($addressName)) {
+                
+                if (empty($addressName)) {
                     $errors[] = 'Error on Line '.($i + 2).': Address is missing. Skipping  address for customer named, "'.$row['Billing First Name'].'"';
                 } else {
-					$city = City::findOne(['name' => $cityName]);
+                    $city = City::findOne(['name' => $cityName]);
 
-					if (empty($city)) {
-						$city = new City();
-						$city->name = $row['City'];
-						$city->province_id = 1;
-						$city->save();
-					}
-					$userContact = new UserContact();
-					$userContact->userId = $user->id;
-					$userContact->isPrimary = true;
-					$userContact->labelId = Label::LABEL_HOME;
-					$userContact->save();
+                    if (empty($city)) {
+                        $city = new City();
+                        $city->name = $row['City'];
+                        $city->province_id = 1;
+                        $city->save();
+                    }
+                    $userContact = new UserContact();
+                    $userContact->userId = $user->id;
+                    $userContact->isPrimary = true;
+                    $userContact->labelId = Label::LABEL_HOME;
+                    $userContact->save();
 
-					$address = new UserAddress();
-					$address->userContactId = $userContact->id;
-					$address->address = $addressName;
-					$address->cityId = $city->id;
-					$address->provinceId = 1;
-					$address->countryId = 1;
-					$address->postalCode = $pincodeName;
-					$address->save();
-				}
+                    $address = new UserAddress();
+                    $address->userContactId = $userContact->id;
+                    $address->address = $addressName;
+                    $address->cityId = $city->id;
+                    $address->provinceId = 1;
+                    $address->countryId = 1;
+                    $address->postalCode = $pincodeName;
+                    $address->save();
+                }
                 if (!empty($row['Billing Home Tel'])) {
                     $phoneNumber = $row['Billing Home Tel'];
-					$userContact = new UserContact();
-					$userContact->userId = $user->id;
-					$userContact->isPrimary = true;
-					$userContact->labelId = Label::LABEL_HOME;
-					$userContact->save();
+                    $userContact = new UserContact();
+                    $userContact->userId = $user->id;
+                    $userContact->isPrimary = true;
+                    $userContact->labelId = Label::LABEL_HOME;
+                    $userContact->save();
                     $phone = new UserPhone();
                     $phone->number = $phoneNumber;
-					$phone->userContactId = $userContact->id;
+                    $phone->userContactId = $userContact->id;
                     $phone->save();
                 }
                 if (!empty($row['Billing Work Tel'])) {
                     $phoneNumber = $row['Billing Work Tel'];
-                   	$userContact = new UserContact();
-					$userContact->userId = $user->id;
-					$userContact->isPrimary = false;
-					$userContact->labelId = Label::LABEL_WORK;
-					$userContact->save();
+                    $userContact = new UserContact();
+                    $userContact->userId = $user->id;
+                    $userContact->isPrimary = false;
+                    $userContact->labelId = Label::LABEL_WORK;
+                    $userContact->save();
                     $phone = new UserPhone();
-					$phone->userContactId = $userContact->id;
+                    $phone->userContactId = $userContact->id;
                     $phone->number = $phoneNumber;
                     if (!empty($row['Billing Work Tel Ext.'])) {
                         $phone->extension = $row['Billing Work Tel Ext.'];
@@ -234,12 +235,12 @@ class UserImport extends Model
                 if (!empty($row['Billing Other Tel'])) {
                     $phoneNumber = $row['Billing Other Tel'];
                     $userContact = new UserContact();
-					$userContact->userId = $user->id;
-					$userContact->isPrimary = false;
-					$userContact->labelId = Label::LABEL_WORK;
-					$userContact->save();
+                    $userContact->userId = $user->id;
+                    $userContact->isPrimary = false;
+                    $userContact->labelId = Label::LABEL_WORK;
+                    $userContact->save();
                     $phone = new UserPhone();
-					$phone->userContactId = $userContact->id;
+                    $phone->userContactId = $userContact->id;
                     $phone->number = $phoneNumber;
                     if (!empty($row['Billing Other Tel Ext.'])) {
                         $phone->extension = $row['Billing Other Tel Ext.'];
@@ -263,38 +264,38 @@ class UserImport extends Model
         ];
         return $response;
     }
-	
-	public function StudentCsv($row, $student) 
-	{
-		$studentCsv = new StudentCsv();
-		$studentCsv->studentId = $student->id;
-		$studentCsv->firstName = $row['First Name']; 
-		$studentCsv->lastName = $row['Last Name'];
-		$studentCsv->email = $row['Email Address'];
-		$studentCsv->address = $row['Address'];
-		$studentCsv->city = $row['City'];
-		$studentCsv->province = $row['Province'];
-		$studentCsv->postalCode = $row['Postal Code'];
-		$studentCsv->country = $row['Country'];
-		$studentCsv->homeTel = $row['Home Tel'];
-		$studentCsv->otherTel = $row['Other Tel'];
-		if(!empty($row['Date of Birth'])) {
-			$birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
-			$studentCsv->birthDate = $birthDate->format('Y-m-d');
-		}
-		$studentCsv->billingFirstName = $row['Billing First Name'];
-		$studentCsv->billingLastName = $row['Billing Last Name'];
-		$studentCsv->billingEmail = $row['Billing Email Address'];
-		$studentCsv->billingAddress = $row['Billing Address'];
-		$studentCsv->billingCity = $row['Billing City'];
-		$studentCsv->billingProvince = $row['Billing Province'];
-		$studentCsv->billingPostalCode = $row['Billing Postal Code'];
-		$studentCsv->billingCountry = $row['Billing Country'];
-		$studentCsv->billingHomeTel = $row['Billing Home Tel'];
-		$studentCsv->billingOtherTel = $row['Billing Other Tel'];
-		$studentCsv->billingWorkTel = $row['Billing Work Tel'];
-		$studentCsv->billingWorkTelExt = $row['Billing Work Tel Ext.'];
-		$studentCsv->notes = json_encode($row['Comments']);
-		$studentCsv->save();
-	}
+    
+    public function StudentCsv($row, $student)
+    {
+        $studentCsv = new StudentCsv();
+        $studentCsv->studentId = $student->id;
+        $studentCsv->firstName = $row['First Name'];
+        $studentCsv->lastName = $row['Last Name'];
+        $studentCsv->email = $row['Email Address'];
+        $studentCsv->address = $row['Address'];
+        $studentCsv->city = $row['City'];
+        $studentCsv->province = $row['Province'];
+        $studentCsv->postalCode = $row['Postal Code'];
+        $studentCsv->country = $row['Country'];
+        $studentCsv->homeTel = $row['Home Tel'];
+        $studentCsv->otherTel = $row['Other Tel'];
+        if (!empty($row['Date of Birth'])) {
+            $birthDate = \DateTime::createFromFormat('n/j/Y', $row['Date of Birth']);
+            $studentCsv->birthDate = $birthDate->format('Y-m-d');
+        }
+        $studentCsv->billingFirstName = $row['Billing First Name'];
+        $studentCsv->billingLastName = $row['Billing Last Name'];
+        $studentCsv->billingEmail = $row['Billing Email Address'];
+        $studentCsv->billingAddress = $row['Billing Address'];
+        $studentCsv->billingCity = $row['Billing City'];
+        $studentCsv->billingProvince = $row['Billing Province'];
+        $studentCsv->billingPostalCode = $row['Billing Postal Code'];
+        $studentCsv->billingCountry = $row['Billing Country'];
+        $studentCsv->billingHomeTel = $row['Billing Home Tel'];
+        $studentCsv->billingOtherTel = $row['Billing Other Tel'];
+        $studentCsv->billingWorkTel = $row['Billing Work Tel'];
+        $studentCsv->billingWorkTelExt = $row['Billing Work Tel Ext.'];
+        $studentCsv->notes = json_encode($row['Comments']);
+        $studentCsv->save();
+    }
 }

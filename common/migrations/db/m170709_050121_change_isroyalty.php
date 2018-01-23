@@ -6,7 +6,7 @@ class m170709_050121_change_isroyalty extends Migration
 {
     public function up()
     {
-		$this->renameColumn('invoice_line_item', 'isRoyalty', 'royaltyFree');
+        $this->renameColumn('invoice_line_item', 'isRoyalty', 'royaltyFree');
     }
 
     public function down()

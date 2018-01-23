@@ -3,6 +3,7 @@
 use yii\widgets\Pjax;
 use common\components\gridView\AdminLteGridView;
 use yii\bootstrap\Modal;
+
 ?>
 
 <div class="clearfix"></div>

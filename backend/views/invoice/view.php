@@ -11,44 +11,45 @@ use common\models\UserProfile;
 use common\models\UserEmail;
 use yii\data\ActiveDataProvider;
 use backend\models\EmailForm;
+
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 
 $this->title = $model->getInvoiceNumber();
 $this->params['label'] = $this->render('_title', [
-	'model' => $model,
+    'model' => $model,
 ]);
 $this->params['action-button'] = $this->render('_buttons', [
-	'model' => $model,
+    'model' => $model,
 ]); ?>
 <?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
 <?php $this->params['show-all'] = $this->render('_show-all', [
-	'model' => $model,
+    'model' => $model,
 ]); ?>
 <?php endif; ?>
 <div id="customer-update" style="display:none;" class="alert-success alert fade in"></div>
 <div id="invoice-discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <?php Pjax::begin([
-	'id' => 'invoice-view',
+    'id' => 'invoice-view',
 ]);?>
 <div class="row">
 	<div class="col-md-6">
 		<?=
-		$this->render('_details', [
-			'model' => $model,
-		]);
-		?>
+        $this->render('_details', [
+            'model' => $model,
+        ]);
+        ?>
 	</div>
     <?php if (!empty($customer)):?>
 	<div class="col-md-6">
 		<?=
-		$this->render('customer/view', [
-			'model' => $model,
-			'customer' => $customer,
-			'searchModel' => $searchModel,
-		]);
-		?>	
+        $this->render('customer/view', [
+            'model' => $model,
+            'customer' => $customer,
+            'searchModel' => $searchModel,
+        ]);
+        ?>	
 	</div>
 	
 	<?php endif; ?>
@@ -68,12 +69,12 @@ $invoiceLineItemsDataProvider = new ActiveDataProvider([
     'query' => InvoiceLineItem::find()
         ->notDeleted()
         ->andWhere(['invoice_id' => $model->id]),
-	'pagination' => false,
+    'pagination' => false,
 ]);
 $content = $this->render('mail/content', [
-		'model' => $model,
-		'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-	]);
+        'model' => $model,
+        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+    ]);
 ?>
 <?php
 Modal::begin([
@@ -81,11 +82,11 @@ Modal::begin([
     'id'=>'invoice-mail-modal'
 ]);
  echo $this->render('/mail/_form', [
-	'model' => new EmailForm(),
-	'emails' => !empty($model->user->email) ?$model->user->email : null,
-	'subject' => 'Invoice from Arcadia Academy of Music',
-	'content' => $content,
-	'id' => $model->id,
+    'model' => new EmailForm(),
+    'emails' => !empty($model->user->email) ?$model->user->email : null,
+    'subject' => 'Invoice from Arcadia Academy of Music',
+    'content' => $content,
+    'id' => $model->id,
         'userModel'=>$model->user,
 ]);
 Modal::end();
@@ -95,62 +96,62 @@ Modal::end();
 <div class="row">
 	<div class="col-md-12">  
 		<?=
-		$this->render('line-item/_item', [
-			'model' => $model,
-			'customer' => $customer,
-			'searchModel' => $searchModel,
-			'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+        $this->render('line-item/_item', [
+            'model' => $model,
+            'customer' => $customer,
+            'searchModel' => $searchModel,
+            'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
             'itemDataProvider' => $itemDataProvider,
             'itemSearchModel'=>$itemSearchModel,
-		]);
-		?>   
+        ]);
+        ?>   
 	</div>
 </div>
 <div class="row">
 	<div class="col-md-8">     
 		<?= $this->render('payment/_index', [
-			'model' => $model,
-			'invoicePayments' => $invoicePayments,
-			'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
-		]);?>
+            'model' => $model,
+            'invoicePayments' => $invoicePayments,
+            'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
+        ]);?>
 	</div>
 	<?php Pjax::Begin(['id' => 'invoice-bottom-summary', 'timeout' => 6000]); ?>
 	<div class="col-md-4">
 		<?=
-		$this->render('_view-bottom-summary', [
-			'model' => $model,
-		]);
-		?>	
+        $this->render('_view-bottom-summary', [
+            'model' => $model,
+        ]);
+        ?>	
 	</div>
     <?php Pjax::end(); ?>
 </div>
 <div class="row">
 	<div class="col-md-6">
 		<?=
-		 $this->render('note/view', [
-			'model' => new Note(),
-			'noteDataProvider' => $noteDataProvider
-		]);
-		?>
+         $this->render('note/view', [
+            'model' => new Note(),
+            'noteDataProvider' => $noteDataProvider
+        ]);
+        ?>
 	</div>
 	<?php Pjax::Begin(['id' => 'invoice-user-history', 'timeout' => 6000]); ?>
 	<div class="col-md-6">
 		<?=
-		$this->render('log', [
-			'model' => $model,
+        $this->render('log', [
+            'model' => $model,
             'logDataProvider' =>$logDataProvider,
-		]);
-		?>	
+        ]);
+        ?>	
 	</div>
 	<?php Pjax::end(); ?>
 </div>
 <div class="row">
 	<div class="col-md-12">
 		<?=
-		$this->render('note/_reminder', [
-			'model' => $model,
-		]);
-		?>
+        $this->render('note/_reminder', [
+            'model' => $model,
+        ]);
+        ?>
 	</div>
 </div>
 <?php Modal::begin([
@@ -171,7 +172,7 @@ Modal::end();
     'id' => 'message-modal',
 ]); ?>
 <?= $this->render('note/_form', [
-	'model' => $model,
+    'model' => $model,
 ]); ?>
 <?php Modal::end();?>
 <?php Modal::begin([
@@ -183,7 +184,7 @@ Modal::end();
 <?php Modal::begin([
     'header' => "<h4>Add Customer</h4>",
     'id' => 'invoice-customer-modal',
-	'footer' => Html::a('Cancel', '#', ['class' => 'btn btn-default pull-right customer-cancel'])
+    'footer' => Html::a('Cancel', '#', ['class' => 'btn btn-default pull-right customer-cancel'])
 ]); ?>
 <?php Modal::end();?>
 <?php Modal::begin([
@@ -201,7 +202,7 @@ Modal::end();
      'id' => 'edit-tax-modal',
     'footer' => $this->render('_submit-button', [
         'deletable' => false,
-        'saveClass' => 'edit-tax-save', 
+        'saveClass' => 'edit-tax-save',
         'cancelClass' => 'edit-tax-cancel'
     ])
  ]); ?>
@@ -212,7 +213,7 @@ Modal::end();
      'id' => 'adjust-tax-modal',
     'footer' => $this->render('_submit-button', [
         'deletable' => false,
-        'saveClass' => 'adjust-tax-form-save', 
+        'saveClass' => 'adjust-tax-form-save',
         'cancelClass' => 'tax-adj-cancel'
     ])
  ]); ?>

@@ -4,6 +4,7 @@ namespace backend\models\discount;
 
 use common\models\User;
 use backend\models\discount\EnrolmentDiscount;
+
 /**
  * Create user form.
  */

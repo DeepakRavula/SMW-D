@@ -59,6 +59,6 @@ class Schedule2Controller extends \common\components\controllers\BaseController
      */
     public function actionIndex()
     {
-		return $this->render('index');
+        return $this->render('index');
     }
 }

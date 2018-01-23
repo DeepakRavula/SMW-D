@@ -5,16 +5,17 @@ use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
 use yii\helpers\Html;
 use kartik\color\ColorInput;
+
 ?>
 <?php Pjax::begin([
-	'id' => 'lesson-detail'
+    'id' => 'lesson-detail'
 ]);?>
 <?php
 LteBox::begin([
-	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => '<i title="Edit" class="fa fa-pencil edit-lesson-detail"></i>',
-	'title' => 'Details',
-	'withBorder' => true,
+    'type' => LteConst::TYPE_DEFAULT,
+    'boxTools' => '<i title="Edit" class="fa fa-pencil edit-lesson-detail"></i>',
+    'title' => 'Details',
+    'withBorder' => true,
 ])
 ?>
 <dl class="dl-horizontal">
@@ -25,7 +26,7 @@ LteBox::begin([
 	<dt>Status</dt>
 	<dd><?= $model->getStatus(); ?></dd>
          <dt> Color Code</dt>
-         <dd>  <?=  Html::input('text', 'colorcode','', ['class' => $model->getClass().' lesson-colorcode','style'=>'background:'.$model->getColorCode().';']); ?></dd>
+         <dd>  <?=  Html::input('text', 'colorcode', '', ['class' => $model->getClass().' lesson-colorcode','style'=>'background:'.$model->getColorCode().';']); ?></dd>
 </dl>
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>

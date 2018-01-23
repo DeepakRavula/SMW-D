@@ -14,7 +14,7 @@ use yii\bootstrap\Modal;
 $this->title = 'Group Lessons';
 $this->params['action-button'] = Html::a('<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>', ['course/create'], ['class' => 'group-course-create']);
 $this->params['show-all'] = $this->render('_button', [
-	'searchModel' => $searchModel
+    'searchModel' => $searchModel
 ]);
 ?>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
@@ -50,18 +50,18 @@ $this->params['show-all'] = $this->render('_button', [
             ],
             [
                 'attribute' => 'rate',
-				'contentOptions' => ['style' => 'text-align:right'],
-				'headerOptions' => ['style' => 'text-align:right'],
+                'contentOptions' => ['style' => 'text-align:right'],
+                'headerOptions' => ['style' => 'text-align:right'],
                 'label' => 'Rate',
-				'format' => 'currency',
+                'format' => 'currency',
                 'value' => function ($data) {
                     return !empty($data->program->rate) ? $data->program->rate : null;
                 },
             ],
             [
                 'label' => 'Duration',
-				'headerOptions' => ['style' => 'text-align:right'],
-				'contentOptions' => ['style' => 'text-align:right'],
+                'headerOptions' => ['style' => 'text-align:right'],
+                'contentOptions' => ['style' => 'text-align:right'],
                 'value' => function ($data) {
                     $length = \DateTime::createFromFormat('H:i:s', $data->courseSchedule->duration);
 
@@ -85,13 +85,13 @@ $this->params['show-all'] = $this->render('_button', [
     <?php \yii\widgets\Pjax::end(); ?>
 </div>
 <?php
-	Modal::begin([
-		'header' => '<h4 class="m-0">Create Group Course</h4>',
-		'id'=>'group-course-create-modal',
-	]);
-	 echo $this->render('_index', []);
-	Modal::end();
-	?>
+    Modal::begin([
+        'header' => '<h4 class="m-0">Create Group Course</h4>',
+        'id'=>'group-course-create-modal',
+    ]);
+     echo $this->render('_index', []);
+    Modal::end();
+    ?>
 <?= $this->render('_calendar'); ?>
 <script>
 $(document).ready(function(){

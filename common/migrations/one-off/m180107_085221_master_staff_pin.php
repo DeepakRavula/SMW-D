@@ -18,7 +18,7 @@ class m180107_085221_master_staff_pin extends Migration
             do {
                 $uniqueNumber     = rand(1111, 9999);
                 $exists = UserPin::findOne(['pin' => $uniqueNumber]);
-            } while(!empty($exists));
+            } while (!empty($exists));
             $staffDetails->pin = $uniqueNumber;
             $staffDetails->save();
         }

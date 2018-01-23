@@ -19,21 +19,21 @@ $this->params['action-button'] = $addButton;
         'id' => 'classroom-modal',
     ]); ?>
 <?= $this->render('_form', [
-	'model' => new Classroom(),
+    'model' => new Classroom(),
 ]);?>
  <?php  Modal::end(); ?>
 <?php yii\widgets\Pjax::begin([
-	'id' => 'classroom-listing'
+    'id' => 'classroom-listing'
 ]); ?>
 <div class="grid-row-open">
     <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
-		'rowOptions' => function ($model, $key, $index, $grid){
+        'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['classroom/view', 'id' => $model->id]);
             $data = ['data-url' => $url];
             return $data;
         },
-		'tableOptions' => ['class' => 'table table-bordered'],
+        'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'emptyText' => false,

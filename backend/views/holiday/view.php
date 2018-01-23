@@ -19,14 +19,14 @@ $this->params['breadcrumbs'][] = $this->title;
 		<div class="col-md-12 m-t-20">
 			<?php echo Html::a(Yii::t('backend', '<i class="fa fa-pencil"></i> Edit'), ['update', 'id' => $model->id], ['class' => 'm-r-20']) ?>
 			<?php
-			echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
-				'class' => '',
-				'data' => [
-					'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
-					'method' => 'post',
-				],
-			])
-			?>
+            echo Html::a(Yii::t('backend', '<i class="fa fa-remove"></i> Delete'), ['delete', 'id' => $model->id], [
+                'class' => '',
+                'data' => [
+                    'confirm' => Yii::t('backend', 'Are you sure you want to delete this item?'),
+                    'method' => 'post',
+                ],
+            ])
+            ?>
 			<div class="clearfix"></div>
 		</div>
     <div class="clearfix"></div>

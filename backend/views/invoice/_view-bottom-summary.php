@@ -2,15 +2,16 @@
 
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+
 ?>
 <?php
-	LteBox::begin([
-		'type' => LteConst::TYPE_DEFAULT,
-		'boxTools' => $this->render('_summary-button'),
-		'title' => 'Totals',
-		'withBorder' => true,
-	])
-	?>
+    LteBox::begin([
+        'type' => LteConst::TYPE_DEFAULT,
+        'boxTools' => $this->render('_summary-button'),
+        'title' => 'Totals',
+        'withBorder' => true,
+    ])
+    ?>
 <dl class="dl-invoice-summary">
 	<dt id="invoice-discount">Discounts</dt>
 	<dd><?= Yii::$app->formatter->format($model->totalDiscount, ['currency', 'USD', [

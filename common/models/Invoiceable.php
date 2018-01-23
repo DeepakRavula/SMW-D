@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+
 /**
  * This is the model class for table "invoice".
  *
@@ -31,20 +32,22 @@ trait Invoiceable
         $qualification = Qualification::findOne(['teacher_id' => $this->teacherId,
             'program_id' => $this->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
-        $actualLessonDate            = \DateTime::createFromFormat('Y-m-d H:i:s',
-                $this->date);
+        $actualLessonDate            = \DateTime::createFromFormat(
+            'Y-m-d H:i:s',
+                $this->date
+        );
         if ($this->proFormaLineItem) {
             $invoiceLineItem->amount = $this->proFormaLineItem->amount;
             $invoiceLineItem->unit   = $this->proFormaLineItem->unit;
         } else {
-            $invoiceLineItem->amount = $this->enrolmentProgramRate ? $this->enrolmentProgramRate->programRate 
+            $invoiceLineItem->amount = $this->enrolmentProgramRate ? $this->enrolmentProgramRate->programRate
                     : $this->enrolment->program->rate;
             $invoiceLineItem->unit   = $this->unit;
         }
         if ($invoice->isProFormaInvoice()) {
             if ($this->isExtra()) {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_EXTRA_LESSON;
-            } else if ($this->isPrivate()) {
+            } elseif ($this->isPrivate()) {
                 $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
             }
             $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
@@ -55,7 +58,7 @@ trait Invoiceable
                 $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
             }
             $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
-			$invoiceLineItem->rate = $rate;
+            $invoiceLineItem->rate = $rate;
         }
         $studentFullName               = $this->enrolment->student->fullName;
         $description                  = $this->enrolment->program->name.' for '.$studentFullName.' with '
@@ -75,8 +78,10 @@ trait Invoiceable
         $invoiceLineItem               = $this->addLessonLineItem($invoice);
         $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
         $invoiceLineItem->unit         = $this->unit;
-        $actualLessonDate              = \DateTime::createFromFormat('Y-m-d H:i:s',
-                $this->date);
+        $actualLessonDate              = \DateTime::createFromFormat(
+            'Y-m-d H:i:s',
+                $this->date
+        );
         $enrolment                     = Enrolment::findOne($this->enrolmentId);
         $courseCount                   = $enrolment->courseCount;
         $lessonAmount                  = $enrolment->course->program->rate / $courseCount;
@@ -84,7 +89,7 @@ trait Invoiceable
             'program_id' => $enrolment->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
         $invoiceLineItem->cost       = $rate;
-		$invoiceLineItem->rate = $rate;
+        $invoiceLineItem->rate = $rate;
         $invoiceLineItem->amount       = $lessonAmount;
         $studentFullName               = $enrolment->student->fullName;
         $description                   = $enrolment->program->name . ' for '. $studentFullName . ' with '
@@ -135,7 +140,7 @@ trait Invoiceable
         $invoice->type = INVOICE::TYPE_INVOICE;
         return $invoice;
     }
-	
+    
     public function createPrivateLessonInvoice()
     {
         $invoice = $this->createInvoice();
@@ -163,7 +168,7 @@ trait Invoiceable
                 if ($extendedLesson->lesson->hasLessonCredit($this->enrolment->id)) {
                     $amount = $extendedLesson->lesson->getSplitedAmount();
                     if ($amount > $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id)) {
-                       $amount = $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id);
+                        $amount = $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id);
                     }
                     $invoice->addPayment($extendedLesson->lesson, $amount, $this->enrolment);
                 }
@@ -233,12 +238,12 @@ trait Invoiceable
             $paymentCycleQuery->andWhere(['OR', ['between', "DATE(endDate)", $startDate, $endDate],
                                 ['between', "DATE(startDate)", $startDate, $endDate]]);
         } else {
-            $paymentCycleQuery->andWhere(['OR', 
+            $paymentCycleQuery->andWhere(['OR',
                 ['AND', ['<', 'DATE(startDate)', $endDate], ['>', 'DATE(endDate)', $endDate]],
                 ['>', 'DATE(startDate)', $endDate]]);
         }
         $paymentCycles = $paymentCycleQuery->all();
-        foreach($paymentCycles as $paymentCycle) {
+        foreach ($paymentCycles as $paymentCycle) {
             if (!$paymentCycle->hasLessons()) {
                 $paymentCycle->delete();
             }

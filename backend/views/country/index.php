@@ -7,6 +7,7 @@ use common\models\User;
 use common\components\gridView\AdminLteGridView;
 use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\CountrySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -25,7 +26,7 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
 <div id="country-content"></div>
  <?php  Modal::end(); ?>
 <?php Pjax::Begin([
-	'id' => 'country-listing'
+    'id' => 'country-listing'
 ]);?>
 <div>
     <?php echo AdminLteGridView::widget([

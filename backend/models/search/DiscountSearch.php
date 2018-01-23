@@ -23,7 +23,7 @@ class DiscountSearch extends Invoice
     {
         return [
             [['dateRange', 'fromDate', 'toDate'], 'safe'],
-        ];	
+        ];
     }
 
     /**
@@ -34,7 +34,7 @@ class DiscountSearch extends Invoice
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
-	public function setDateRange($dateRange)
+    public function setDateRange($dateRange)
     {
         list($fromDate, $toDate) = explode(' - ', $dateRange);
         $this->fromDate = \DateTime::createFromFormat('M d,Y', $fromDate);
@@ -61,19 +61,19 @@ class DiscountSearch extends Invoice
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = InvoiceLineItem::find()
                 ->notDeleted()
-			->joinWith(['invoice' => function($query) use($locationId) {
-				$query->andWhere([
+            ->joinWith(['invoice' => function ($query) use ($locationId) {
+                $query->andWhere([
                                     'location_id' => $locationId,
                                     'invoice.type' => Invoice::TYPE_INVOICE,
-				])	
-				->notDeleted()
+                ])
+                ->notDeleted()
                                 ->notCanceled();
-			}])
-                        ->joinWith(['itemDiscounts' => function($query) {
+            }])
+                        ->joinWith(['itemDiscounts' => function ($query) {
                             $query->andWhere(['NOT', ['invoice_line_item_discount.id' => null]])
                                 ->andWhere(['NOT', ['invoice_line_item_discount.value' => 0.00]]);
                         }]);
-		
+        
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,

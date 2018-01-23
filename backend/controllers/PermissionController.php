@@ -23,13 +23,13 @@ class PermissionController extends Controller
                     'delete' => ['post'],
                 ],
             ],
-			[
-				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['add', 'remove'],
-				'formats' => [
-					'application/json' => Response::FORMAT_JSON,
-				],
-        	],
+            [
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['add', 'remove'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
         ];
     }
 
@@ -39,27 +39,27 @@ class PermissionController extends Controller
      */
     public function actionIndex()
     {
-		$permissions = Yii::$app->authManager->getPermissions();
-		$roles = ArrayHelper::getColumn(Yii::$app->authManager->getRoles(), 'name');
+        $permissions = Yii::$app->authManager->getPermissions();
+        $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRoles(), 'name');
         return $this->render('index', [
-			'permissions' => $permissions,
-			'roles' => $roles
+            'permissions' => $permissions,
+            'roles' => $roles
         ]);
     }
-	public function actionAdd($role, $permission)
+    public function actionAdd($role, $permission)
     {
-		$auth = Yii::$app->authManager;
+        $auth = Yii::$app->authManager;
         $role = $auth->getRole($role);
-		$permission = $auth->getPermission($permission);
-		$auth->addChild($role, $permission);
+        $permission = $auth->getPermission($permission);
+        $auth->addChild($role, $permission);
         return ['success'=>true];
     }
-	public function actionRemove($role, $permission)
+    public function actionRemove($role, $permission)
     {
-      	$auth = Yii::$app->authManager;
+        $auth = Yii::$app->authManager;
         $role = $auth->getRole($role);
-		$permission = $auth->getPermission($permission);
-		$auth->removeChild($role, $permission);
-        return ['success'=>true]; 
+        $permission = $auth->getPermission($permission);
+        $auth->removeChild($role, $permission);
+        return ['success'=>true];
     }
 }

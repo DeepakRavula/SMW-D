@@ -6,8 +6,11 @@ class m170809_100218_vacation_add_isDeleted extends Migration
 {
     public function up()
     {
-		$this->addColumn('vacation', 'isDeleted', 
-			$this->boolean()->after('isConfirmed'));
+        $this->addColumn(
+            'vacation',
+            'isDeleted',
+            $this->boolean()->after('isConfirmed')
+        );
     }
 
     public function down()

@@ -25,7 +25,7 @@ class CityController extends \common\components\controllers\BaseController
                     'delete' => ['post'],
                 ],
             ],
-			'contentNegotiator' => [
+            'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['update', 'create','delete'],
                 'formatParam' => '_format',
@@ -72,22 +72,22 @@ class CityController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-	public function actionCreate()
+    public function actionCreate()
     {
         $model = new City();
         $data  = $this->renderAjax('_form', [
             'model' => $model,
-        ]); 
+        ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,
                 'data' => $data
             ];
-        } 
+        }
     }
 
     /**
@@ -98,16 +98,16 @@ class CityController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-	public function actionUpdate($id)
+    public function actionUpdate($id)
     {
-		$model = $this->findModel($id);
+        $model = $this->findModel($id);
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,

@@ -39,7 +39,7 @@ class PaymentMethodQuery extends \yii\db\ActiveQuery
 
     public function paymentPreference()
     {
-        return $this->andWhere(['NOT', ['payment_method.name' => ['Cash', 
+        return $this->andWhere(['NOT', ['payment_method.name' => ['Cash',
             'Credit Applied', 'Credit Used', 'Account Entry', 'Apply Credit']]]);
     }
 }

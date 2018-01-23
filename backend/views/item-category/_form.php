@@ -13,7 +13,7 @@ use yii\helpers\Url;
 
     <?php   $url = Url::to(['item-category/update', 'id' => $model->id]);
             if ($model->isNewRecord) {
-               $url = Url::to(['item-category/create']);
+                $url = Url::to(['item-category/create']);
             }
         $form = ActiveForm::begin([
         'id' => 'update-item-category-form',
@@ -31,15 +31,15 @@ use yii\helpers\Url;
             </div>
             <div class="pull-left">
         <?php if (!$model->isNewRecord) {
-                echo Html::a('Delete', ['delete', 'id' => $model->id], [
-			'id' => 'item-delete-button',
+        echo Html::a('Delete', ['delete', 'id' => $model->id], [
+            'id' => 'item-delete-button',
                         'class' => 'btn btn-danger',
                         'data' => [
                             'confirm' => 'Are you sure you want to delete this item?',
                             'method' => 'post',
                         ]
                 ]);
-            }
+    }
         ?>
     </div>
         </div>

@@ -4,19 +4,20 @@ use yii\db\Migration;
 
 class m171216_073013_log_link extends Migration
 {
-
     public function up()
     {
         $tableSchema = Yii::$app->db->schema->getTableSchema('log_link');
         if ($tableSchema === null) {
-            $this->createTable('log_link',
+            $this->createTable(
+                'log_link',
                 [
                 'id' => $this->primaryKey(),
                 'logId' => $this->integer()->notNull(),
                 'index' => $this->string()->notNull(),
                 'baseUrl' => $this->text(),
                 'path' => $this->text(),
-            ]);
+            ]
+            );
         }
     }
 

@@ -14,6 +14,7 @@ use common\models\User;
 use common\models\Label;
 use common\models\UserAddress;
 use yii\widgets\ActiveForm;
+
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -33,136 +34,136 @@ class UserContactController extends \common\components\controllers\BaseControlle
             
         ];
     }
-	public function actionCreateEmail($id) {
-		$user = User::findOne(['id' => $id]);
-		$email = new UserEmail();
-		$contact = new UserContact();
-		$data = $this->renderAjax('/user/contact/form/_email', [
-			'emailModel' => $email,
-			'model' => $contact,
-			'userModel' => $user,
-		]);
-		if ($email->load(Yii::$app->request->post()) &&
-			$contact->load(Yii::$app->request->post())) {
-			$contact->userId = $id;
-			$contact->isPrimary = false;
-			if (!is_numeric($contact->labelId)) {
-				$label = new Label();
-				$label->name = $contact->labelId;
-				$label->userAdded = $id;
-				$label->save();
-				$contact->labelId = $label->id;
-			}
-			if ($contact->save()) {
-				$email->userContactId = $contact->id;
-				if($email->save()) {
-				return [
-					'status' => true,
-				];
-                                }
-                        else {
-                            return [
+    public function actionCreateEmail($id)
+    {
+        $user = User::findOne(['id' => $id]);
+        $email = new UserEmail();
+        $contact = new UserContact();
+        $data = $this->renderAjax('/user/contact/form/_email', [
+            'emailModel' => $email,
+            'model' => $contact,
+            'userModel' => $user,
+        ]);
+        if ($email->load(Yii::$app->request->post()) &&
+            $contact->load(Yii::$app->request->post())) {
+            $contact->userId = $id;
+            $contact->isPrimary = false;
+            if (!is_numeric($contact->labelId)) {
+                $label = new Label();
+                $label->name = $contact->labelId;
+                $label->userAdded = $id;
+                $label->save();
+                $contact->labelId = $label->id;
+            }
+            if ($contact->save()) {
+                $email->userContactId = $contact->id;
+                if ($email->save()) {
+                    return [
+                    'status' => true,
+                ];
+                } else {
+                    return [
                                 'status' => false,
                                 'errors' => $email->getErrors(),
                             ];
-                        }
-			}
-		} else {
-			return [
-				'status' => true,
-				'data' => $data
-			];
-		}
-	}
-
-	public function actionCreatePhone($id)
-  	{
- 		$user = User::findOne(['id' => $id]);
-          $contact = new UserContact();
-         $phone = new UserPhone();
-         $data  = $this->renderAjax('/user/contact/form/_phone', [
- 			'phoneModel' => $phone,
- 			'model' => $contact,
- 			'userModel' => $user,
- 		]);
-         if ($phone->load(Yii::$app->request->post()) &&
-         	$contact->load(Yii::$app->request->post())) {
- 			$contact->userId = $id;
- 			$contact->isPrimary = false;
- 			if (!is_numeric($contact->labelId)) {
- 				$label = new Label();
- 				$label->name = $contact->labelId;
- 				$label->userAdded = $id;
- 				$label->save();
- 				$contact->labelId = $label->id;
- 			}
- 			if($contact->save()) {
- 				$phone->userContactId = $contact->id;
- 				$phone->save();
- 				return [
- 					'status' => true,
- 				];
- 			} 
- 		} else {
- 			return [
- 				'status' => true,
- 				'data' => $data
- 			];
- 		}
-      }
-  	public function actionCreateAddress($id)
-  	{
- 		$user = User::findOne(['id' => $id]);
-          $address = new UserAddress();
-          $contact = new UserContact();
- 		$data  = $this->renderAjax('/user/contact/form/_address', [
- 			'addressModel' => new UserAddress(),
- 			'model' => new UserContact(),
- 			'userModel' => $user,
- 		]);
-         if($address->load(Yii::$app->request->post()) &&
-         	$contact->load(Yii::$app->request->post())) {
- 			$contact->userId = $id;
- 			$contact->isPrimary = false;
- 			if (!is_numeric($contact->labelId)) {
- 				$label = new Label();
- 				$label->name = $contact->labelId;
- 				$label->userAdded = $id;
- 				$label->save();
- 				$contact->labelId = $label->id;
- 			}
-                        if (!is_numeric($address->cityId)) {
- 				$city = new City();
- 				$city->name = $address->cityId;
- 				$city->province_id = $address->provinceId;
- 				$city->save();
- 				$address->cityId = $city->id;
- 			}
- 			if($contact->save()) {
- 				$address->userContactId = $contact->id;
- 				$address->save();
- 				return [
- 					'status' => true,
- 				];
- 			}
- 		} else {
- 			return [
- 				'status' => true,
- 				'data' => $data
- 			];
- 		} 
+                }
+            }
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
     }
-	public function actionUpdatePrimary($id, $contactId, $contactType)
-	{
+
+    public function actionCreatePhone($id)
+    {
+        $user = User::findOne(['id' => $id]);
+        $contact = new UserContact();
+        $phone = new UserPhone();
+        $data  = $this->renderAjax('/user/contact/form/_phone', [
+            'phoneModel' => $phone,
+            'model' => $contact,
+            'userModel' => $user,
+        ]);
+        if ($phone->load(Yii::$app->request->post()) &&
+             $contact->load(Yii::$app->request->post())) {
+            $contact->userId = $id;
+            $contact->isPrimary = false;
+            if (!is_numeric($contact->labelId)) {
+                $label = new Label();
+                $label->name = $contact->labelId;
+                $label->userAdded = $id;
+                $label->save();
+                $contact->labelId = $label->id;
+            }
+            if ($contact->save()) {
+                $phone->userContactId = $contact->id;
+                $phone->save();
+                return [
+                    'status' => true,
+                ];
+            }
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+    }
+    public function actionCreateAddress($id)
+    {
+        $user = User::findOne(['id' => $id]);
+        $address = new UserAddress();
+        $contact = new UserContact();
+        $data  = $this->renderAjax('/user/contact/form/_address', [
+            'addressModel' => new UserAddress(),
+            'model' => new UserContact(),
+            'userModel' => $user,
+        ]);
+        if ($address->load(Yii::$app->request->post()) &&
+             $contact->load(Yii::$app->request->post())) {
+            $contact->userId = $id;
+            $contact->isPrimary = false;
+            if (!is_numeric($contact->labelId)) {
+                $label = new Label();
+                $label->name = $contact->labelId;
+                $label->userAdded = $id;
+                $label->save();
+                $contact->labelId = $label->id;
+            }
+            if (!is_numeric($address->cityId)) {
+                $city = new City();
+                $city->name = $address->cityId;
+                $city->province_id = $address->provinceId;
+                $city->save();
+                $address->cityId = $city->id;
+            }
+            if ($contact->save()) {
+                $address->userContactId = $contact->id;
+                $address->save();
+                return [
+                    'status' => true,
+                ];
+            }
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+    }
+    public function actionUpdatePrimary($id, $contactId, $contactType)
+    {
         $model = User::findOne(['id' => $id]);
-		if((int)$contactType === UserContact::TYPE_EMAIL) {
+        if ((int)$contactType === UserContact::TYPE_EMAIL) {
             $primaryEmail = UserEmail::find()
-                    ->joinWith(['userContact' => function($query) {
-                            $query->primary();
-                        }])
+                    ->joinWith(['userContact' => function ($query) {
+                        $query->primary();
+                    }])
                     ->andWhere(['userId' => $model->id])
                     ->one();
-            if(!empty($primaryEmail)) {
+            if (!empty($primaryEmail)) {
                 $primaryEmail->userContact->updateAttributes([
                     'isPrimary' => false,
                 ]);
@@ -170,14 +171,14 @@ class UserContactController extends \common\components\controllers\BaseControlle
             $response = [
                 'status' => true
             ];
-		} elseif ((int)$contactType === UserContact::TYPE_PHONE) {
+        } elseif ((int)$contactType === UserContact::TYPE_PHONE) {
             $primaryPhone = UserPhone::find()
-                    ->joinWith(['userContact' => function($query) {
-                            $query->primary();
-                        }])
+                    ->joinWith(['userContact' => function ($query) {
+                        $query->primary();
+                    }])
                     ->andWhere(['userId' => $model->id])
                     ->one();
-			if(!empty($primaryPhone)) {
+            if (!empty($primaryPhone)) {
                 $primaryPhone->userContact->updateAttributes([
                     'isPrimary' => false,
                 ]);
@@ -185,14 +186,14 @@ class UserContactController extends \common\components\controllers\BaseControlle
             $response = [
                 'status' => true
             ];
-		} elseif ((int)$contactType === UserContact::TYPE_ADDRESS) {
+        } elseif ((int)$contactType === UserContact::TYPE_ADDRESS) {
             $primaryAddress = UserAddress::find()
-                    ->joinWith(['userContact' => function($query) {
-                            $query->primary();
-                        }])
+                    ->joinWith(['userContact' => function ($query) {
+                        $query->primary();
+                    }])
                     ->andWhere(['userId' => $model->id])
                     ->one();
-			if(!empty($primaryAddress)) {
+            if (!empty($primaryAddress)) {
                 $primaryAddress->userContact->updateAttributes([
                     'isPrimary' => false,
                 ]);
@@ -205,7 +206,8 @@ class UserContactController extends \common\components\controllers\BaseControlle
         $contact->updateAttributes(['isPrimary' => true]);
         return $response;
     }
-    public function actionEditEmail($id) {
+    public function actionEditEmail($id)
+    {
         $model = $this->findModel($id);
         $emailModel = $model->email;
         $data = $this->renderAjax('/user/contact/form/_email', [
@@ -233,7 +235,8 @@ class UserContactController extends \common\components\controllers\BaseControlle
             'data' => $data
         ];
     }
-    public function actionEditPhone($id) {
+    public function actionEditPhone($id)
+    {
         $model = $this->findModel($id);
         $phoneModel = $model->phone;
         $data = $this->renderAjax('/user/contact/form/_phone', [
@@ -261,7 +264,8 @@ class UserContactController extends \common\components\controllers\BaseControlle
             'data' => $data
         ];
     }
-        public function actionEditAddress($id) {
+    public function actionEditAddress($id)
+    {
         $model = $this->findModel($id);
         $addressModel = $model->address;
         $data = $this->renderAjax('/user/contact/form/_address', [
@@ -296,29 +300,29 @@ class UserContactController extends \common\components\controllers\BaseControlle
         ];
     }
      
-		 public function actionDelete($id)
+    public function actionDelete($id)
     {
-		$model = $this->findModel($id);
-		if(!empty($model->email)) {
-			$contactModel = $model->email;
-			$type = UserContact::TYPE_EMAIL;
-		} elseif(!empty($model->phone)) {
-			$contactModel = $model->phone;
-			$type = UserContact::TYPE_PHONE;
-		} elseif(!empty($model->address)) {
-			$contactModel = $model->address;
-			$type = UserContact::TYPE_ADDRESS;
-		}
-        if($model->delete()) {
+        $model = $this->findModel($id);
+        if (!empty($model->email)) {
+            $contactModel = $model->email;
+            $type = UserContact::TYPE_EMAIL;
+        } elseif (!empty($model->phone)) {
+            $contactModel = $model->phone;
+            $type = UserContact::TYPE_PHONE;
+        } elseif (!empty($model->address)) {
+            $contactModel = $model->address;
+            $type = UserContact::TYPE_ADDRESS;
+        }
+        if ($model->delete()) {
             $contactModel->delete();
-        	return [
-				'status' => true,
+            return [
+                'status' => true,
                 'type' => $type,
-			];
-		}
+            ];
+        }
     }
 
-   protected function findModel($id)
+    protected function findModel($id)
     {
         $session = Yii::$app->session;
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -327,14 +331,14 @@ class UserContactController extends \common\components\controllers\BaseControlle
                 ->one();
         if ($model !== null) {
             return $model;
-        }else {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-     public function actionValidate()
+    public function actionValidate()
     {
         $email = new UserEmail();
-    	$request = Yii::$app->request;
+        $request = Yii::$app->request;
         if ($email->load($request->post())) {
             return  ActiveForm::validate($email);
         }

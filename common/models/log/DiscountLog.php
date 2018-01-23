@@ -9,7 +9,6 @@ use yii\helpers\Url;
 
 class DiscountLog extends Log
 {
-
     public function enrolmentMultipleDiscountEdit($event)
     {
         $enrolmentModel = $event->sender;
@@ -20,13 +19,24 @@ class DiscountLog extends Log
         $index          = $enrolmentModel->customer->publicIdentity;
         $path           = Url::to(['/user/view', 'UserSearch[role_name]' => 'customer',
                           'id' => $enrolmentModel->customer->id]);
-        if(empty($oldDiscount)){$oldDiscount=0;}
+        if (empty($oldDiscount)) {
+            $oldDiscount=0;
+        }
         $message        = $loggedUser->publicIdentity.' changed the Multiple Enrolment Discount from  '.$oldDiscount.'  to    $ '.$newDiscount.'  for {{'.$index.'}}';
         $object         = LogObject::findOne(['name' => LogObject::TYPE_ENROLMENT]);
         $activity       = LogActivity::findOne(['name' => LogActivity::TYPE_UPDATE]);
         $locationId     = $enrolmentModel->customer->userLocation->location->id;
-        $this->addLog($object, $activity, $message, $data, $loggedUser,
-            $enrolmentModel, $locationId, $index, $path);
+        $this->addLog(
+            $object,
+            $activity,
+            $message,
+            $data,
+            $loggedUser,
+            $enrolmentModel,
+            $locationId,
+            $index,
+            $path
+        );
     }
 
     public function enrolmentPaymentFrequencyDiscountEdit($event)
@@ -43,13 +53,30 @@ class DiscountLog extends Log
         $object         = LogObject::findOne(['name' => LogObject::TYPE_ENROLMENT]);
         $activity       = LogActivity::findOne(['name' => LogActivity::TYPE_UPDATE]);
         $locationId     = $enrolmentModel->customer->userLocation->location->id;
-        $this->addLog($object, $activity, $message, $data, $loggedUser,
-            $enrolmentModel, $locationId, $index, $path);
+        $this->addLog(
+            $object,
+            $activity,
+            $message,
+            $data,
+            $loggedUser,
+            $enrolmentModel,
+            $locationId,
+            $index,
+            $path
+        );
     }
 
-    public function addLog($object, $activity, $message, $data, $loggedUser,
-                           $model, $locationId, $index, $path)
-    {
+    public function addLog(
+        $object,
+        $activity,
+        $message,
+        $data,
+        $loggedUser,
+                           $model,
+        $locationId,
+        $index,
+        $path
+    ) {
         $log                = new Log();
         $log->logObjectId   = $object->id;
         $log->logActivityId = $activity->id;

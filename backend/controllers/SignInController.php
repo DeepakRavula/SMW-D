@@ -99,7 +99,7 @@ class SignInController extends \common\components\controllers\BaseController
             Yii::$app->session->set('lock', false);
             return $this->redirect(['schedule/index']);
         } else {
-            return $this->render('unlock', [ 
+            return $this->render('unlock', [
                 'model' => $model
             ]);
         }
@@ -157,20 +157,19 @@ class SignInController extends \common\components\controllers\BaseController
         $isEmailSent = false;
         $userName=$model->email;
         $primaryEmail = User::find()
-                ->joinWith(['userContact' => function($query) use($userName) {
-					$query->joinWith(['email' => function($query) use($userName){
-						$query->andWhere(['email' => $userName]);
-					}])
-					->primary();
-				}])
+                ->joinWith(['userContact' => function ($query) use ($userName) {
+                    $query->joinWith(['email' => function ($query) use ($userName) {
+                        $query->andWhere(['email' => $userName]);
+                    }])
+                    ->primary();
+                }])
                 ->notDeleted()
                 ->one();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            
             if ($model->sendEmail() && !empty($primaryEmail)) {
                 $isEmailSent = true;
             } else {
-                 $model->addError('email', Yii::t('backend', 'Sorry, we are unable to reset password for email provided'));
+                $model->addError('email', Yii::t('backend', 'Sorry, we are unable to reset password for email provided'));
             }
         }
 

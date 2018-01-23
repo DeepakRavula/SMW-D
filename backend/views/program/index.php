@@ -13,24 +13,28 @@ $this->title = 'Programs';
 <div class="row">
     <div class="col-md-12">
         <?php
-        echo $this->render('_index-private',
+        echo $this->render(
+    '_index-private',
             [
             'model' => $model,
             'searchModel' => $searchModel,
             'privateDataProvider' => $privateDataProvider,
-        ]);
+        ]
+);
         ?>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
         <?php
-        echo $this->render('_index-group',
+        echo $this->render(
+            '_index-group',
             [
             'model' => $model,
             'searchModel' => $searchModel,
             'privateDataProvider' => $groupDataProvider,
-        ]);
+        ]
+        );
         ?>
     </div>
 </div>   

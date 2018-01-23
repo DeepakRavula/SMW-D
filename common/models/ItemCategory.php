@@ -92,7 +92,7 @@ class ItemCategory extends \yii\db\ActiveRecord
             $this->isDeleted = false;
         }
 
-     	return parent::beforeSave($insert);
+        return parent::beforeSave($insert);
     }
 
     public function getItemTotal($locationId, $date)
@@ -100,15 +100,15 @@ class ItemCategory extends \yii\db\ActiveRecord
         $amount = 0;
         $items = InvoiceLineItem::find()
                 ->notDeleted()
-                ->joinWith(['invoice' => function($query) use ($locationId, $date) {
+                ->joinWith(['invoice' => function ($query) use ($locationId, $date) {
                     $query->notDeleted()
                         ->location($locationId)
                         ->andWhere([
                             'DATE(invoice.date)' => (new \DateTime($date))->format('Y-m-d')
                         ]);
                 }])
-                ->joinWith(['item' => function($query) {
-                    $query->joinWith(['itemCategory' => function($query) {
+                ->joinWith(['item' => function ($query) {
+                    $query->joinWith(['itemCategory' => function ($query) {
                         $query->andWhere([
                             'item_category.id' => $this->id,
                         ]);

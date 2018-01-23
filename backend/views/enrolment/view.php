@@ -7,15 +7,15 @@ use common\models\LocationAvailability;
 
 $this->title = $model->course->program->name;
 $this->params['label'] = $this->render('_title', [
-	'model' => $model,
+    'model' => $model,
 ]);
 $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
-	'enrolment/delete', 'id' => $model->id
+    'enrolment/delete', 'id' => $model->id
 ], [
-		'id' => 'enrolment-delete-' . $model->id,
-		'title' => Yii::t('yii', 'Delete'),
-		'class' => 'enrolment-delete btn btn-box-tool',
-	])?>
+        'id' => 'enrolment-delete-' . $model->id,
+        'title' => Yii::t('yii', 'Delete'),
+        'class' => 'enrolment-delete btn btn-box-tool',
+    ])?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
@@ -63,8 +63,8 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
     ];
 
     echo Tabs::widget([
-		'items' => $items,
-	]);
+        'items' => $items,
+    ]);
 ?>
 </div>
 <?php

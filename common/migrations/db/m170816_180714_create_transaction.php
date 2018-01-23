@@ -7,7 +7,7 @@ class m170816_180714_create_transaction extends Migration
     public function up()
     {
         $tableSchema = Yii::$app->db->schema->getTableSchema('transaction');
-        if($tableSchema == null) {	
+        if ($tableSchema == null) {
             $this->createTable('transaction', [
                 'id' => $this->primaryKey()
             ]);

@@ -167,7 +167,7 @@ class ItemController extends \common\components\controllers\BaseController
     public function actionPrint()
     {
         $searchModel              = new InvoiceLineItemSearch();
-         $currentDate = new \DateTime();
+        $currentDate = new \DateTime();
         $searchModel->fromDate = $currentDate->format('M d,Y');
         $searchModel->toDate = $currentDate->format('M d,Y');
         $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;

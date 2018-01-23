@@ -17,7 +17,9 @@ use common\models\Province;
 		<div class="col-md-4">
 			<?php
             echo $form->field($model, 'province_id')->dropDownList(\yii\helpers\ArrayHelper::map(
-                            Province::find()->all(), 'id', 'name'
+                            Province::find()->all(),
+    'id',
+    'name'
                     ), ['prompt' => 'Select Province...'])
             ?>
 		</div>

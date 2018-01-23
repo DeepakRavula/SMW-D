@@ -66,10 +66,10 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function studentEnrolment($locationId, $studentId)
     {
         $this ->joinWith(['course' => function ($query) use ($locationId, $studentId) {
-                $query->joinWith(['enrolment' => function ($query) use ($studentId) {
-                        $query->where(['enrolment.studentId' => $studentId])
+            $query->joinWith(['enrolment' => function ($query) use ($studentId) {
+                $query->where(['enrolment.studentId' => $studentId])
                                 ->isConfirmed();
-                }])
+            }])
         ->where(['course.locationId' => $locationId]);
         }]);
         return $this;
@@ -94,21 +94,21 @@ class LessonQuery extends \yii\db\ActiveQuery
         $this->andWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
         return $this;
     }
-	public function expired()
+    public function expired()
     {
-         $this->joinWith(['privateLesson' => function($query) {
+        $this->joinWith(['privateLesson' => function ($query) {
             $query->andWhere(['<', 'DATE(expiryDate)', (new \DateTime())->format('Y-m-d')]);
         }]);
         return $this;
     }
     public function notRescheduled()
     {
-        $this->joinWith(['lessonReschedule' => function($query) {
+        $this->joinWith(['lessonReschedule' => function ($query) {
             $query->andWhere(['lesson_hierarchy.lessonId' => null]);
         }]);
         return $this;
     }
-	
+    
     public function student($id)
     {
         $this->joinWith(['enrolment' => function ($query) use ($id) {
@@ -129,9 +129,9 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function unInvoiced()
     {
-        return $this->joinWith(['invoiceItemLessons' => function($query) {
-            $query->joinWith(['invoiceLineItem' => function($query) {
-                $query->joinWith(['invoice' => function($query) {
+        return $this->joinWith(['invoiceItemLessons' => function ($query) {
+            $query->joinWith(['invoiceLineItem' => function ($query) {
+                $query->joinWith(['invoice' => function ($query) {
                     $query->where(['invoice.id' => null]);
                 }]);
             }]);
@@ -141,12 +141,12 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function completedUnInvoicedPrivate()
     {
         $completedLessons = Lesson::find()
-			->isConfirmed()
+            ->isConfirmed()
             ->notDeleted()
             ->privateLessons()
             ->completed();
         $invoicedLessons = Lesson::find()
-			->isConfirmed()
+            ->isConfirmed()
             ->notDeleted()
             ->privateLessons()
             ->invoiced();
@@ -160,9 +160,9 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function invoiced()
     {
-        return $this->joinWith(['invoiceItemLessons' => function($query) {
-            $query->joinWith(['invoiceLineItem' => function($query) {
-                $query->joinWith(['invoice' => function($query) {
+        return $this->joinWith(['invoiceItemLessons' => function ($query) {
+            $query->joinWith(['invoiceLineItem' => function ($query) {
+                $query->joinWith(['invoice' => function ($query) {
                     $query->where(['not', ['invoice.id' => null]])
                         ->andWhere(['invoice.isDeleted' => false,
                             'invoice.type' => Invoice::TYPE_INVOICE]);
@@ -175,9 +175,12 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         $iipcl = InvoiceItemPaymentCycleLesson::find()
             ->alias('iipcl1')
-            ->join('LEFT JOIN', 'invoice_item_payment_cycle_lesson iipcl2',
-                'iipcl1.paymentCycleLessonId = iipcl2.paymentCycleLessonId AND iipcl1.id < iipcl2.id')
-            ->andWhere(['iipcl2.paymentCycleLessonId' => NULL]);
+            ->join(
+                'LEFT JOIN',
+                'invoice_item_payment_cycle_lesson iipcl2',
+                'iipcl1.paymentCycleLessonId = iipcl2.paymentCycleLessonId AND iipcl1.id < iipcl2.id'
+            )
+            ->andWhere(['iipcl2.paymentCycleLessonId' => null]);
 
         $this->joinWith('paymentCycleLesson')
             ->leftJoin(['iipcl' => $iipcl], 'iipcl.paymentCycleLessonId = payment_cycle_lesson.id')
@@ -261,7 +264,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         $this->studentEnrolment($locationId, $studentId)
             ->where(['lesson.status' => Lesson::STATUS_SCHEDULED])
-			->notDeleted();
+            ->notDeleted();
         return $this;
     }
 
@@ -271,27 +274,28 @@ class LessonQuery extends \yii\db\ActiveQuery
                 'lesson.status' => Lesson::STATUS_SCHEDULED,
                 'lesson.teacherId' => $teacherId,
             ])
-			->location($locationId)
-			->notDeleted();
+            ->location($locationId)
+            ->notDeleted();
         return $this;
     }
-	public function isConfirmed()
-	{
-		return $this->andWhere(['lesson.isConfirmed' => true]);
-	}
-    public function enrolled() {
-            $this->joinWith(['course' => function($query){
-                    $query->joinWith(['enrolment' => function($query){
-                            $query->isConfirmed();
-                    }]);
+    public function isConfirmed()
+    {
+        return $this->andWhere(['lesson.isConfirmed' => true]);
+    }
+    public function enrolled()
+    {
+        $this->joinWith(['course' => function ($query) {
+            $query->joinWith(['enrolment' => function ($query) {
+                $query->isConfirmed();
             }]);
-            return $this;
+        }]);
+        return $this;
     }
 
     public function enrolment($enrolmentId)
     {
-        return $this->joinWith(['course' => function($query) use ($enrolmentId) {
-            $query->joinWith(['enrolments' => function($query) use ($enrolmentId) {
+        return $this->joinWith(['course' => function ($query) use ($enrolmentId) {
+            $query->joinWith(['enrolments' => function ($query) use ($enrolmentId) {
                 $query->andWhere(['enrolment.id' => $enrolmentId]);
             }]);
         }]);
@@ -299,7 +303,7 @@ class LessonQuery extends \yii\db\ActiveQuery
 
     public function overlap($date, $fromTime, $toTime)
     {
-            $this->andWhere(['DATE(date)' => $date])
+        $this->andWhere(['DATE(date)' => $date])
         ->andWhere(['OR',
                     [
                             'between', 'TIME(lesson.date)', $fromTime, $toTime
@@ -318,7 +322,7 @@ class LessonQuery extends \yii\db\ActiveQuery
 
                     ]
             ]);
-            return $this;
+        return $this;
     }
 
     public function backToBackOverlap($date, $fromTime, $toTime)
@@ -348,14 +352,14 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['lesson.type' => Lesson::TYPE_REGULAR]);
     }
-   	public function present()
+    public function present()
     {
         return $this->andWhere(['lesson.isPresent' => true]);
     }
      
     public function paymentCycleLessonExcluded()
     {
-        return $this->joinWith(['paymentCycleLesson' => function($query) {
+        return $this->joinWith(['paymentCycleLesson' => function ($query) {
             $query->andWhere(['payment_cycle_lesson.id' => null]);
         }]);
     }

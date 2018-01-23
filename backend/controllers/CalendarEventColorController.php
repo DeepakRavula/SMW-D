@@ -34,14 +34,14 @@ class CalendarEventColorController extends \common\components\controllers\BaseCo
      */
     public function actionEdit()
     {
-		$eventModels = CalendarEventColor::find()->all();
-		$request = Yii::$app->request;
+        $eventModels = CalendarEventColor::find()->all();
+        $request = Yii::$app->request;
         Model::loadMultiple($eventModels, $request->post());
-		foreach ($eventModels as $eventModel) {
-			$eventModel->save();
-		}
-		return $this->render('create', [
-			'eventModels' => $eventModels,
-		]);
+        foreach ($eventModels as $eventModel) {
+            $eventModel->save();
+        }
+        return $this->render('create', [
+            'eventModels' => $eventModels,
+        ]);
     }
 }

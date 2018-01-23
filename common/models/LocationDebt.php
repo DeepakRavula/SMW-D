@@ -15,9 +15,9 @@ use Yii;
  */
 class LocationDebt extends \yii\db\ActiveRecord
 {
-	const TYPE_ROYALTY = 1;
-	const TYPE_ADVERTISEMENT = 2;
-	
+    const TYPE_ROYALTY = 1;
+    const TYPE_ADVERTISEMENT = 2;
+    
     /**
      * @inheritdoc
      */

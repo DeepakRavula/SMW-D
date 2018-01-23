@@ -11,8 +11,11 @@ class m170831_124738_lesson_payment extends Migration
 {
     public function up()
     {
-        $this->addColumn('credit_usage', 'credit_payment_id1', 
-			$this->integer()->after('debit_payment_id'));
+        $this->addColumn(
+            'credit_usage',
+            'credit_payment_id1',
+            $this->integer()->after('debit_payment_id')
+        );
         $creditUsages = CreditUsage::find()->all();
         foreach ($creditUsages as $creditUsage) {
             $creditUsage->updateAttributes(['credit_payment_id1' => $creditUsage->credit_payment_id]);
@@ -34,7 +37,7 @@ class m170831_124738_lesson_payment extends Migration
                 $invoice = Invoice::findOne($payment->reference);
                 $payment->updateAttributes(['reference' => $invoice->lineItem->lesson->id]);
                 $paymentModel = new Payment();
-                $paymentModel->amount = abs ($payment->amount);
+                $paymentModel->amount = abs($payment->amount);
                 $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
                 $paymentModel->reference = $payment->invoice->id;
                 $paymentModel->lessonId = $invoice->lineItem->lesson->id;

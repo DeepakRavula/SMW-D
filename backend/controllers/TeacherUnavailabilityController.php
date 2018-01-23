@@ -27,7 +27,7 @@ class TeacherUnavailabilityController extends \common\components\controllers\Bas
                     'delete' => ['post'],
                 ],
             ],
-			'contentNegotiator' => [
+            'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['update', 'create', 'delete'],
                 'formatParam' => '_format',
@@ -77,22 +77,22 @@ class TeacherUnavailabilityController extends \common\components\controllers\Bas
     public function actionCreate($id)
     {
         $model = new TeacherUnavailability();
-		$teacher = User::findOne(['id' => $id]);
+        $teacher = User::findOne(['id' => $id]);
         $data  = $this->renderAjax('_form', [
             'model' => $model,
-			'teacher' => $teacher 
-        ]); 
-		$model->teacherId = $teacher->id;
+            'teacher' => $teacher
+        ]);
+        $model->teacherId = $teacher->id;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,
                 'data' => $data
             ];
-        } 
+        }
     }
 
     /**
@@ -105,14 +105,14 @@ class TeacherUnavailabilityController extends \common\components\controllers\Bas
      */
     public function actionUpdate($id)
     {
-		$model = $this->findModel($id);
+        $model = $this->findModel($id);
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,
@@ -132,9 +132,9 @@ class TeacherUnavailabilityController extends \common\components\controllers\Bas
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-		return [
-			'status' => true,
-		];
+        return [
+            'status' => true,
+        ];
     }
 
     /**

@@ -14,7 +14,7 @@ use common\models\PaymentMethod;
 <?php $form = ActiveForm::begin([
     'id' => 'payment-edit-form',
         'action' => Url::to(['payment/update', 'id' => $model->id]),
-	'enableClientValidation' => true
+    'enableClientValidation' => true
 ]); ?>
     <div id="payment-edit-spinner" class="spinner" style="display:none">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -36,7 +36,7 @@ use common\models\PaymentMethod;
             ?>
         </div>
         <div class="col-md-4">
-            <?= $form->field($model, 'amount')->textInput(['readOnly' => $model->isCreditUsed() || 
+            <?= $form->field($model, 'amount')->textInput(['readOnly' => $model->isCreditUsed() ||
                     $model->isCreditApplied(),
                 'value' => \Yii::$app->formatter->asDecimal($model->amount, 2)
             ]);?>
@@ -58,19 +58,22 @@ use common\models\PaymentMethod;
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default payment-cancel']);?>       
         <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
            </div>
-    <?php if(!$model->isCreditUsed() && !$model->isCreditApplied()) : ?>
+    <?php if (!$model->isCreditUsed() && !$model->isCreditApplied()) : ?>
            <div class="pull-left">
-		<?= Html::a('Delete', [
+		<?= Html::a(
+                'Delete',
+                [
             'delete', 'id' => $model->id
         ],
         [
-			'id' => 'payment-delete-button',
+            'id' => 'payment-delete-button',
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this payment?',
                 'method' => 'post',
             ]
-        ]); ?>
+        ]
+            ); ?>
            </div>
     <?php endif; ?> 
 	</div>

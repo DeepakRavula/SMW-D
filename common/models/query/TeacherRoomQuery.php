@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models\query;
+
 use common\models\TeacherRoom;
 
 /**
@@ -56,7 +57,7 @@ class TeacherRoomQuery extends \yii\db\ActiveQuery
     public function between($fromTime, $toTime)
     {
         $this->joinWith(['teacherAvailability' => function ($query) use ($fromTime, $toTime) {
-            $query->andWhere(['OR', 
+            $query->andWhere(['OR',
                 [
                     'between', 'from_time', (new \DateTime($fromTime))->format('H:i:s'),
                     (new \DateTime($toTime))->format('H:i:s')

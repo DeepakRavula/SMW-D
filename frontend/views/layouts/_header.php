@@ -19,10 +19,10 @@ $bundle = FrontendAsset::register($this);
 			  <span class="logo-lg"><b>Arcadia</b>SMW</span>      
 		</a>
 		<?php 
-			$userId = Yii::$app->user->id;
-			$roles = Yii::$app->authManager->getRolesByUser($userId);
-			$role = end($roles);
-		?>
+            $userId = Yii::$app->user->id;
+            $roles = Yii::$app->authManager->getRolesByUser($userId);
+            $role = end($roles);
+        ?>
 		<!-- Header Navbar: style can be found in header.less -->
 	<?php if (in_array($role->name, [User::ROLE_TEACHER, User::ROLE_CUSTOMER])) : ?>
 		<nav class="navbar navbar-static-top" role="navigation">

@@ -41,8 +41,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'layout' => 'inline',
             ]) ?>
                 <?php echo Html::dropDownList(
-                    'id', null, \yii\helpers\ArrayHelper::map($dataProvider->allModels, 'name', 'name'),
-                    ['class' => 'form-control', 'prompt' => Yii::t('backend', 'Select cache')])
+                    'id',
+                null,
+                \yii\helpers\ArrayHelper::map($dataProvider->allModels, 'name', 'name'),
+                    ['class' => 'form-control', 'prompt' => Yii::t('backend', 'Select cache')]
+            )
                 ?>
                 <?php echo Html::input('string', 'key', null, ['class' => 'form-control', 'placeholder' => Yii::t('backend', 'Key')]) ?>
                 <?php echo Html::submitButton(Yii::t('backend', 'Flush'), ['class' => 'btn btn-danger']) ?>
@@ -56,8 +59,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'layout' => 'inline',
             ]) ?>
                 <?php echo Html::dropDownList(
-                    'id', null, \yii\helpers\ArrayHelper::map($dataProvider->allModels, 'name', 'name'),
-                    ['class' => 'form-control', 'prompt' => Yii::t('backend', 'Select cache')]) ?>
+                    'id',
+                null,
+                \yii\helpers\ArrayHelper::map($dataProvider->allModels, 'name', 'name'),
+                    ['class' => 'form-control', 'prompt' => Yii::t('backend', 'Select cache')]
+            ) ?>
                 <?php echo Html::input('string', 'tag', null, ['class' => 'form-control', 'placeholder' => Yii::t('backend', 'Tag')]) ?>
                 <?php echo Html::submitButton(Yii::t('backend', 'Flush'), ['class' => 'btn btn-danger']) ?>
             <?php \yii\bootstrap\ActiveForm::end() ?>

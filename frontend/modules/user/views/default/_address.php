@@ -17,46 +17,46 @@ use kartik\sortinput\SortableInput;
 }
 </style>
 <?php Pjax::begin([
-	'id' => 'user-address'
+    'id' => 'user-address'
 ]); ?>
 <?php
 LteBox::begin([
-	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => '<i class="fa fa-plus add-address-btn"></i>',
-	'title' => 'Addresses',
-	'withBorder' => true,
+    'type' => LteConst::TYPE_DEFAULT,
+    'boxTools' => '<i class="fa fa-plus add-address-btn"></i>',
+    'title' => 'Addresses',
+    'withBorder' => true,
 ])
 ?>
-<?php if(!empty($model->addresses)) : ?>
+<?php if (!empty($model->addresses)) : ?>
 	<?php $addresses = [];?>
-		<?php foreach($model->addresses as $key => $userAddress) : ?>		
+		<?php foreach ($model->addresses as $key => $userAddress) : ?>		
 		<?php 
             $address = [
-				'content' => $this->render('contact/view/_address', [
-				'address' => $userAddress,
-			])];
+                'content' => $this->render('contact/view/_address', [
+                'address' => $userAddress,
+            ])];
             array_push($addresses, $address);
-			if($userAddress->userContact->isPrimary) {
-				$value = $addresses[$key];
-				unset($addresses[$key]);
-				array_unshift($addresses, $value);	
-			}
+            if ($userAddress->userContact->isPrimary) {
+                $value = $addresses[$key];
+                unset($addresses[$key]);
+                array_unshift($addresses, $value);
+            }
         ?>
 	<?php endforeach; ?>
 	<?= SortableInput::widget([
-		'sortableOptions' => [
+        'sortableOptions' => [
             'showHandle' => true,
             'handleLabel' =>'<i class="fa fa-arrows"></i>',
-			'type' => 'list',
-			'pluginEvents' => [
-				'sortupdate' => 'contact.updatePrimary',
-			],
-		],
-		'name'=> 'user_address',
-		'items' => $addresses,
-		'options' => [
-			'class'=>'form-control', 'readonly'=>true]
-	]);?>	
+            'type' => 'list',
+            'pluginEvents' => [
+                'sortupdate' => 'contact.updatePrimary',
+            ],
+        ],
+        'name'=> 'user_address',
+        'items' => $addresses,
+        'options' => [
+            'class'=>'form-control', 'readonly'=>true]
+    ]);?>	
 	<?php endif; ?>
 	<?php LteBox::end() ?>
 <?php Pjax::end(); ?>

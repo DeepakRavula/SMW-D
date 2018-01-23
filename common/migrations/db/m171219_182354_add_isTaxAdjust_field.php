@@ -6,7 +6,7 @@ class m171219_182354_add_isTaxAdjust_field extends Migration
 {
     public function up()
     {
-        $this->addColumn ('invoice', 'isTaxAdjusted', $this->integer()->notNull()->after('isDeleted'));
+        $this->addColumn('invoice', 'isTaxAdjusted', $this->integer()->notNull()->after('isDeleted'));
     }
 
     public function down()

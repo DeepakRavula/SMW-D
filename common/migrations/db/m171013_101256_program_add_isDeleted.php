@@ -4,7 +4,6 @@ use yii\db\Migration;
 
 class m171013_101256_program_add_isDeleted extends Migration
 {
-
     public function up()
     {
         $this->addColumn('program', 'isDeleted', $this->boolean()->after('type'));

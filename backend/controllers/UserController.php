@@ -42,6 +42,7 @@ use common\models\log\LogHistory;
 use Intervention\Image\ImageManagerStatic;
 use trntv\filekit\actions\DeleteAction;
 use trntv\filekit\actions\UploadAction;
+
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -93,7 +94,7 @@ class UserController extends \common\components\controllers\BaseController
                     // do something (resize, add watermark etc)
                 },
             ],
-			'avatar-upload' => [
+            'avatar-upload' => [
                 'class' => UploadAction::className(),
                 'deleteRoute' => 'avatar-delete',
                 'on afterSave' => function ($event) {
@@ -124,61 +125,60 @@ class UserController extends \common\components\controllers\BaseController
                     'dataProvider' => $dataProvider,
         ]);
     }
- 	protected function getStudentDataProvider($id)
+    protected function getStudentDataProvider($id)
     {
-		$query = Student::find()
+        $query = Student::find()
             ->notDeleted()
             ->andWhere(['customer_id' => $id])
-			->active();
+            ->active();
         return new ActiveDataProvider([
             'query' => $query,
         ]);
     }
-	protected function  getTeacherDataProvider($id)
-	{
-		$query = TeacherAvailability::find()
+    protected function getTeacherDataProvider($id)
+    {
+        $query = TeacherAvailability::find()
                 ->joinWith('userLocation')
                 ->where(['user_id' => $id]);
         return new ActiveDataProvider([
             'query' => $query,
         ]);
-	}
-	protected function  getLessonDataProvider($id, $locationId)
-	{
-		
-		$lessonQuery = Lesson::find()
+    }
+    protected function getLessonDataProvider($id, $locationId)
+    {
+        $lessonQuery = Lesson::find()
                 ->location($locationId)
                 ->student($id)
                 ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
-				->isConfirmed()
+                ->isConfirmed()
                 ->notDeleted();
 
         return new ActiveDataProvider([
             'query' => $lessonQuery,
         ]);
-	}
-	protected function  getEnrolledStudentDataProvider($id, $locationId)
-	{
-		$query = Student::find()->notDeleted()
+    }
+    protected function getEnrolledStudentDataProvider($id, $locationId)
+    {
+        $query = Student::find()->notDeleted()
                 ->teacherStudents($locationId, $id)
-				->active();
+                ->active();
 
         return new ActiveDataProvider([
             'query' => $query,
         ]);
-	}
-	protected function getLocationDataProvider($id)
-	{
-		$query = Location::find()
+    }
+    protected function getLocationDataProvider($id)
+    {
+        $query = Location::find()
                 ->joinWith('userLocations')
                 ->where(['user_id' => $id]);
         return new ActiveDataProvider([
             'query' => $query,
         ]);
-	}
-	protected function getEnrolmentDataProvider($id, $locationId)
-	{
-		$enrolmentQuery = Enrolment::find()
+    }
+    protected function getEnrolmentDataProvider($id, $locationId)
+    {
+        $enrolmentQuery = Enrolment::find()
             ->location($locationId)
             ->joinWith(['student' => function ($query) use ($id) {
                 $query->where(['customer_id' => $id])
@@ -191,206 +191,205 @@ class UserController extends \common\components\controllers\BaseController
         return new ActiveDataProvider([
             'query' => $enrolmentQuery,
         ]);
-	}
-	protected function getInvoiceDataProvider($model, $locationId)
-	{
-		$request = Yii::$app->request;
-		$currentDate = new \DateTime();
+    }
+    protected function getInvoiceDataProvider($model, $locationId)
+    {
+        $request = Yii::$app->request;
+        $currentDate = new \DateTime();
         $model->fromDate = $currentDate->format('M d,Y');
         $model->toDate = $currentDate->format('M d,Y');
         $model->dateRange = $model->fromDate.' - '.$model->toDate;
         $userRequest = $request->get('User');
-		if(!empty($userRequest)) {
-			list($model->fromDate, $model->toDate) = explode(' - ', $userRequest['dateRange']);
-			$invoiceStatus = $userRequest['invoiceStatus'];
-			$studentId = $userRequest['studentId'];
-		} 
-		$fromDate =  (new \DateTime($model->fromDate))->format('Y-m-d');
+        if (!empty($userRequest)) {
+            list($model->fromDate, $model->toDate) = explode(' - ', $userRequest['dateRange']);
+            $invoiceStatus = $userRequest['invoiceStatus'];
+            $studentId = $userRequest['studentId'];
+        }
+        $fromDate =  (new \DateTime($model->fromDate))->format('Y-m-d');
         $toDate =(new \DateTime($model->toDate))->format('Y-m-d');
         $invoiceQuery = Invoice::find()
                 ->andWhere([
-					'invoice.user_id' => $model->id,
+                    'invoice.user_id' => $model->id,
                     'invoice.type' => Invoice::TYPE_INVOICE,
                     'invoice.location_id' => $locationId,
                 ])
-				->notDeleted()
-				->between($fromDate,$toDate);
-		if(!empty($invoiceStatus) && (int)$invoiceStatus !== UserSearch::STATUS_ALL) {
-			$invoiceQuery->andWhere(['invoice.status' => $invoiceStatus]);
-		}
-		if(!empty($studentId)) {
-			$invoiceQuery->student($studentId);
-		}
+                ->notDeleted()
+                ->between($fromDate, $toDate);
+        if (!empty($invoiceStatus) && (int)$invoiceStatus !== UserSearch::STATUS_ALL) {
+            $invoiceQuery->andWhere(['invoice.status' => $invoiceStatus]);
+        }
+        if (!empty($studentId)) {
+            $invoiceQuery->student($studentId);
+        }
 
         return new ActiveDataProvider([
             'query' => $invoiceQuery,
         ]);
-	}
-	protected function getPfiDataProvider($id, $locationId)
-	{
-		$proFormaInvoiceQuery = Invoice::find()
-			->where([
-				'invoice.user_id' => $id,
-				'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
-				'invoice.location_id' => $locationId,
-			])
-			->notDeleted();
-		return new ActiveDataProvider([
+    }
+    protected function getPfiDataProvider($id, $locationId)
+    {
+        $proFormaInvoiceQuery = Invoice::find()
+            ->where([
+                'invoice.user_id' => $id,
+                'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
+                'invoice.location_id' => $locationId,
+            ])
+            ->notDeleted();
+        return new ActiveDataProvider([
             'query' => $proFormaInvoiceQuery,
         ]);
-	}
-	protected function getUnscheduleLessonDataProvider($id)
-	{
-		$unscheduledLessons = Lesson::find()
-			->enrolled()
-			->isConfirmed()
+    }
+    protected function getUnscheduleLessonDataProvider($id)
+    {
+        $unscheduledLessons = Lesson::find()
+            ->enrolled()
+            ->isConfirmed()
             ->joinWith(['privateLesson'])
             ->orderBy(['private_lesson.expiryDate' => SORT_DESC])
-			->andWhere(['lesson.teacherId' => $id])
-			->unscheduled()
-			->notDeleted()
+            ->andWhere(['lesson.teacherId' => $id])
+            ->unscheduled()
+            ->notDeleted()
             ->groupBy(['lesson.id','private_lesson.id']);
 
         return new ActiveDataProvider([
             'query' => $unscheduledLessons,
         ]);
-	}
-	protected function getPaymentDataProvider($id)
-	{
-		return new ActiveDataProvider([
+    }
+    protected function getPaymentDataProvider($id)
+    {
+        return new ActiveDataProvider([
             'query' => payment::find()
                 ->where(['user_id' => $id]),
         ]);
-	}
-	protected function getUnavailabilityDataProvider($id)
-	{
-		$unavailabilities = TeacherUnavailability::find()
-			->andWhere(['teacherId' => $id]);
+    }
+    protected function getUnavailabilityDataProvider($id)
+    {
+        $unavailabilities = TeacherUnavailability::find()
+            ->andWhere(['teacherId' => $id]);
 
-		return new ActiveDataProvider([
+        return new ActiveDataProvider([
             'query' => $unavailabilities,
         ]);
-	}
-	protected function getTeacherLessonDataProvider($id, $locationId)
-	{
-		$request = Yii::$app->request;
-		$lessonSearch = new LessonSearch();
-		$lessonSearch->fromDate = new \DateTime();
-		$lessonSearch->toDate = new \DateTime();
-		$lessonSearchModel = $request->get('LessonSearch');
-		
-		if(!empty($lessonSearchModel)) {
+    }
+    protected function getTeacherLessonDataProvider($id, $locationId)
+    {
+        $request = Yii::$app->request;
+        $lessonSearch = new LessonSearch();
+        $lessonSearch->fromDate = new \DateTime();
+        $lessonSearch->toDate = new \DateTime();
+        $lessonSearchModel = $request->get('LessonSearch');
+        
+        if (!empty($lessonSearchModel)) {
             $lessonSearch->dateRange = $lessonSearchModel['dateRange'];
             list($lessonSearch->fromDate, $lessonSearch->toDate) = explode(' - ', $lessonSearch->dateRange);
-			$lessonSearch->fromDate = new \DateTime($lessonSearch['fromDate']);
-			$lessonSearch->toDate = new \DateTime($lessonSearch['toDate']);
-		}
-		$teacherLessons = Lesson::find()
-			->innerJoinWith('enrolment')
-			->location($locationId)
-			->where(['lesson.teacherId' => $id])
-			->notDeleted()
-			->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED]])
-			->isConfirmed()
-			->between($lessonSearch->fromDate, $lessonSearch->toDate)
-			->orderBy(['date' => SORT_ASC]);
-			
-		return new ActiveDataProvider([
-			'query' => $teacherLessons,
-			'pagination' => false,
-		]);
-	}
-	protected function getOpeningBalanceCredit($id)
-	{
-		return Invoice::find()
-			->openingBalance()
-			->customer($id)
-			->andWhere(['<', 'invoice.balance', 0])
-			->notDeleted()
-			->one();	
-	}
-	protected function getPositiveOpeningBalance($id)
-	{
-		return Invoice::find()
-			->openingBalance()
-			->customer($id)
-			->andWhere(['>', 'invoice.balance', 0])
-			->notDeleted()
-			->one();
-	
-	}
-	protected function getNoteDataProvider($id)
-	{
-		$notes = Note::find()
-			->where(['instanceId' => $id, 'instanceType' => Note::INSTANCE_TYPE_USER])
-			->orderBy(['createdOn' => SORT_DESC]);
+            $lessonSearch->fromDate = new \DateTime($lessonSearch['fromDate']);
+            $lessonSearch->toDate = new \DateTime($lessonSearch['toDate']);
+        }
+        $teacherLessons = Lesson::find()
+            ->innerJoinWith('enrolment')
+            ->location($locationId)
+            ->where(['lesson.teacherId' => $id])
+            ->notDeleted()
+            ->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED]])
+            ->isConfirmed()
+            ->between($lessonSearch->fromDate, $lessonSearch->toDate)
+            ->orderBy(['date' => SORT_ASC]);
+            
+        return new ActiveDataProvider([
+            'query' => $teacherLessons,
+            'pagination' => false,
+        ]);
+    }
+    protected function getOpeningBalanceCredit($id)
+    {
+        return Invoice::find()
+            ->openingBalance()
+            ->customer($id)
+            ->andWhere(['<', 'invoice.balance', 0])
+            ->notDeleted()
+            ->one();
+    }
+    protected function getPositiveOpeningBalance($id)
+    {
+        return Invoice::find()
+            ->openingBalance()
+            ->customer($id)
+            ->andWhere(['>', 'invoice.balance', 0])
+            ->notDeleted()
+            ->one();
+    }
+    protected function getNoteDataProvider($id)
+    {
+        $notes = Note::find()
+            ->where(['instanceId' => $id, 'instanceType' => Note::INSTANCE_TYPE_USER])
+            ->orderBy(['createdOn' => SORT_DESC]);
 
         return new ActiveDataProvider([
             'query' => $notes,
         ]);
-	}
-	protected function getAccountDataProvider($id, $accountView)
-	{
-            if (!$accountView) {
-                $accountQuery = CompanyAccount::find()
+    }
+    protected function getAccountDataProvider($id, $accountView)
+    {
+        if (!$accountView) {
+            $accountQuery = CompanyAccount::find()
                         ->where(['userId' => $id])
                         ->orderBy(['transactionId' => SORT_DESC]);
-            } else {
-                $accountQuery = CustomerAccount::find()
+        } else {
+            $accountQuery = CustomerAccount::find()
                         ->where(['userId' => $id])
                         ->orderBy(['transactionId' => SORT_DESC]);
-            }
-            return new ActiveDataProvider([
+        }
+        return new ActiveDataProvider([
                 'query' => $accountQuery
             ]);
-	}
-	protected function getPrivateQualificationDataProvider($id)
-	{
-		$privatePrograms = Qualification::find()
-			->joinWith(['program' => function($query) {
-				$query->privateProgram();
-			}])
-			->andWhere(['teacher_id' => $id]);
+    }
+    protected function getPrivateQualificationDataProvider($id)
+    {
+        $privatePrograms = Qualification::find()
+            ->joinWith(['program' => function ($query) {
+                $query->privateProgram();
+            }])
+            ->andWhere(['teacher_id' => $id]);
 
-		return new ActiveDataProvider([
+        return new ActiveDataProvider([
             'query' => $privatePrograms,
-        ]);	
-	}
-	protected function getGroupQualificationDataProvider($id)
-	{
-		$groupPrograms = Qualification::find()
-			->joinWith(['program' => function($query) {
-				$query->group();
-			}])
-			->andWhere(['teacher_id' => $id]);
+        ]);
+    }
+    protected function getGroupQualificationDataProvider($id)
+    {
+        $groupPrograms = Qualification::find()
+            ->joinWith(['program' => function ($query) {
+                $query->group();
+            }])
+            ->andWhere(['teacher_id' => $id]);
 
-		return new ActiveDataProvider([
+        return new ActiveDataProvider([
             'query' => $groupPrograms,
-        ]);	
-	}
-	protected function getTimeVoucherDataProvider($id,$fromDate,$toDate,$summariseReport)
-	{
-				$timeVoucher = InvoiceLineItem::find()
+        ]);
+    }
+    protected function getTimeVoucherDataProvider($id, $fromDate, $toDate, $summariseReport)
+    {
+        $timeVoucher = InvoiceLineItem::find()
                                         ->notDeleted()
-			->joinWith(['invoice' => function($query)use($fromDate,$toDate){
-				$query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
-					->between((new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d'));
-			}])
-			->joinWith(['lesson' => function($query) use($id){
-				$query->andWhere(['lesson.teacherId' => $id]);
-			}]);
-			if($summariseReport) {
-				$timeVoucher->groupBy(['invoice.id','invoice.invoice_number']);
-			} else {
-				$timeVoucher->orderBy(['invoice.date' => SORT_ASC]);
-			}
-			
-		return new ActiveDataProvider([
-			'query' => $timeVoucher,
-			'pagination' => false,
-		]);	
-	}
-        protected function getLogDataProvider($id)
+            ->joinWith(['invoice' => function ($query) use ($fromDate,$toDate) {
+                $query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
+                    ->between((new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d'));
+            }])
+            ->joinWith(['lesson' => function ($query) use ($id) {
+                $query->andWhere(['lesson.teacherId' => $id]);
+            }]);
+        if ($summariseReport) {
+            $timeVoucher->groupBy(['invoice.id','invoice.invoice_number']);
+        } else {
+            $timeVoucher->orderBy(['invoice.date' => SORT_ASC]);
+        }
+            
+        return new ActiveDataProvider([
+            'query' => $timeVoucher,
+            'pagination' => false,
+        ]);
+    }
+    protected function getLogDataProvider($id)
     {
         return new ActiveDataProvider([
             'query' => LogHistory::find()
@@ -398,16 +397,16 @@ class UserController extends \common\components\controllers\BaseController
     }
 
     protected function getTeacherAvailabilities($id, $locationId)
-	{
-		return TeacherAvailability::find()
+    {
+        return TeacherAvailability::find()
             ->joinWith(['userLocation' => function ($query) use ($locationId, $id) {
                 $query->andWhere(['user_location.location_id' => $locationId, 'user_id' => $id]);
             }])
             ->groupBy(['teacher_availability_day.id','day'])
             ->all();
-	}
+    }
         
-	/**
+    /**
      * Displays a single User model.
      *
      * @param int $id
@@ -437,9 +436,9 @@ class UserController extends \common\components\controllers\BaseController
         $lessonSearchModel->dateRange=(new\DateTime())->format('M d,Y').' - '.(new\DateTime())->format('M d,Y');
         $invoiceSearchModel = new InvoiceSearch();
         $invoiceSearchModel->dateRange = (new\DateTime())->format('M d,Y') . ' - ' . (new\DateTime())->format('M d,Y');
-		$invoiceSearch = $request->get('InvoiceSearch');
-		
-		if(!empty($invoiceSearch)) {
+        $invoiceSearch = $request->get('InvoiceSearch');
+        
+        if (!empty($invoiceSearch)) {
             $invoiceSearchModel->dateRange = $invoiceSearch['dateRange'];
             list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
             $invoiceSearchModel->summariseReport = $invoiceSearch['summariseReport'];
@@ -452,8 +451,8 @@ class UserController extends \common\components\controllers\BaseController
             'student' => new Student(),
             'searchModel' => $searchModel,
             'lessonSearchModel' => $lessonSearchModel,
-			'invoiceSearchModel' => $invoiceSearchModel,
-			'dataProvider' => $this->getStudentDataProvider($id),
+            'invoiceSearchModel' => $invoiceSearchModel,
+            'dataProvider' => $this->getStudentDataProvider($id),
             'teacherDataProvider' => $this->getTeacherDataProvider($id),
             'lessonDataProvider' => $this->getLessonDataProvider($id, $locationId),
             'locationDataProvider' => $this->getLocationDataProvider($id),
@@ -469,10 +468,10 @@ class UserController extends \common\components\controllers\BaseController
             'noteDataProvider' => $this->getNoteDataProvider($id),
             'accountDataProvider' => $this->getAccountDataProvider($id, $searchModel->accountView),
             'teachersAvailabilities' => $this->getTeacherAvailabilities($id, $locationId),
-			'privateQualificationDataProvider' => $this->getPrivateQualificationDataProvider($id),
-			'groupQualificationDataProvider' => $this->getGroupQualificationDataProvider($id),
-			'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id,$invoiceSearchModel->fromDate,$invoiceSearchModel->toDate,$invoiceSearchModel->summariseReport),
-			'unavailability' => $this->getUnavailabilityDataProvider($id),
+            'privateQualificationDataProvider' => $this->getPrivateQualificationDataProvider($id),
+            'groupQualificationDataProvider' => $this->getGroupQualificationDataProvider($id),
+            'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate, $invoiceSearchModel->summariseReport),
+            'unavailability' => $this->getUnavailabilityDataProvider($id),
             'logDataProvider' => $this->getLogDataProvider($id),
         ]);
     }
@@ -485,7 +484,7 @@ class UserController extends \common\components\controllers\BaseController
        
         $request = Yii::$app->request;
         if ($model->load($request->post()) && $model->save() && $emailModels->load($request->post())) {
-            if(!empty($emailModels->email)) {
+            if (!empty($emailModels->email)) {
                 $userContact = new UserContact();
                 $userContact->userId = $model->getModel()->id;
                 $userContact->labelId = Label::LABEL_WORK;
@@ -499,33 +498,33 @@ class UserController extends \common\components\controllers\BaseController
         }
     }
 
-	public function actionEditProfile($id)
-	{
-		$request = Yii::$app->request;
-		$model = new UserForm();
-        $model->setModel($this->findModel($id));	
-		$userProfile  = $model->getModel()->userProfile;
-		if ($model->load($request->post()) && $userProfile->load($request->post())) {
-			if(!empty($model->password)) {
-        		$model->getModel()->setPassword($model->password);
-			}
-                        if(!empty($model->pin)) {
-        		$model->getModel()->setPin($model->pin);
-			}
-			if($model->save()) {
-				$userProfile->save();
-				return [
-				   'status' => true,
-				];	
-			} else {
-				$errors = ActiveForm::validate($model);
+    public function actionEditProfile($id)
+    {
+        $request = Yii::$app->request;
+        $model = new UserForm();
+        $model->setModel($this->findModel($id));
+        $userProfile  = $model->getModel()->userProfile;
+        if ($model->load($request->post()) && $userProfile->load($request->post())) {
+            if (!empty($model->password)) {
+                $model->getModel()->setPassword($model->password);
+            }
+            if (!empty($model->pin)) {
+                $model->getModel()->setPin($model->pin);
+            }
+            if ($model->save()) {
+                $userProfile->save();
+                return [
+                   'status' => true,
+                ];
+            } else {
+                $errors = ActiveForm::validate($model);
                 return [
                     'status' => false,
                     'errors' => $errors
                 ];
-			}
-		}
-	}
+            }
+        }
+    }
         
     /**
      * Updates an existing User model.
@@ -545,7 +544,7 @@ class UserController extends \common\components\controllers\BaseController
                     'model' => $model,
         ]);
     }
-	
+    
     /**
      * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -583,76 +582,76 @@ class UserController extends \common\components\controllers\BaseController
         $data  = $this->renderAjax('teacher/_form-lesson', [
             'model' => $model,
             'userModel' => $teacher
-        ]); 
+        ]);
         return [
             'status' => true,
             'data' => $data
         ];
     }
-	public function deleteContact($id) {
-		$model = $this->findModel($id);
-		if(!empty($model->emails)) {
-			foreach($model->emails as $email) {
-				$email->userContact->delete();
-				$email->delete();
-			}
-		}
-		if(!empty($model->phoneNumbers)) {
-			foreach($model->phoneNumbers as $phone) {
-				$phone->userContact->delete();
-				$phone->delete();
-			}
-		}
-		if(!empty($model->addresses)) {
-			foreach($model->addresses as $address) {
-				$address->userContact->delete();
-				$address->delete();
-			}
-		}
-		
-	}
-	public function actionDelete($id)
+    public function deleteContact($id)
+    {
+        $model = $this->findModel($id);
+        if (!empty($model->emails)) {
+            foreach ($model->emails as $email) {
+                $email->userContact->delete();
+                $email->delete();
+            }
+        }
+        if (!empty($model->phoneNumbers)) {
+            foreach ($model->phoneNumbers as $phone) {
+                $phone->userContact->delete();
+                $phone->delete();
+            }
+        }
+        if (!empty($model->addresses)) {
+            foreach ($model->addresses as $address) {
+                $address->userContact->delete();
+                $address->delete();
+            }
+        }
+    }
+    public function actionDelete($id)
     {
         $model = new UserForm();
         $model->setModel($this->findModel($id));
 
         $role = $model->roles;
-        if(in_array($role, [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER, User::ROLE_STAFFMEMBER])) {
-			$this->deleteContact($id);
-			$model->getModel()->delete();
-			$response = [
-				'status' => true,
-				'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
-			];	
-		}else if($role === User::ROLE_CUSTOMER) {
-                    if(empty($model->getModel()->student)) {
-				$this->deleteContact($id);
-				$model->getModel()->delete();
-				$response = [
-					'status' => true,
-					'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
-				];
-			} else {
-				$response = [
-					'status' => false,
-					'message' => 'Unable to delete. There are student(s) associated with this ' . $role
-				];
-			}
-		}else if($role === User::ROLE_TEACHER) {
-                   if(empty($model->getModel()->qualifications) && empty($model->getModel()->courses)) {
-				$this->deleteContact($id);
-				$model->getModel()->delete();
-				$response = [
-					'status' => true,
-					'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles]) 
-				];
-			} else {
-				$response = [
-					'status' => false,
-					'message' => 'Unable to delete. There are qualification/course(s) associated with this ' . $role
-				];
-			}
-		}
-		return $response;
+        if (in_array($role, [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER, User::ROLE_STAFFMEMBER])) {
+            $this->deleteContact($id);
+            $model->getModel()->delete();
+            $response = [
+                'status' => true,
+                'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles])
+            ];
+        } elseif ($role === User::ROLE_CUSTOMER) {
+            if (empty($model->getModel()->student)) {
+                $this->deleteContact($id);
+                $model->getModel()->delete();
+                $response = [
+                    'status' => true,
+                    'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles])
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'message' => 'Unable to delete. There are student(s) associated with this ' . $role
+                ];
+            }
+        } elseif ($role === User::ROLE_TEACHER) {
+            if (empty($model->getModel()->qualifications) && empty($model->getModel()->courses)) {
+                $this->deleteContact($id);
+                $model->getModel()->delete();
+                $response = [
+                    'status' => true,
+                    'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles])
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'message' => 'Unable to delete. There are qualification/course(s) associated with this ' . $role
+                ];
+            }
+        }
+        return $response;
     }
 }

@@ -23,8 +23,11 @@ $lastRole = end($roles);
         'type' => LteConst::TYPE_DEFAULT,
         'boxTools' => [
             '<i title="Add" class="fa fa-plus" id = "add-program"></i>',
-            Html::checkbox('show-all', false,
-                ['id' => 'show-all-programs', 'class' => 'show-all-group-programs']),
+            Html::checkbox(
+                'show-all',
+                false,
+                ['id' => 'show-all-programs', 'class' => 'show-all-group-programs']
+            ),
             Html::label('Show All', '', ['id' => 'show-all-programs-label'])
         ],
         'title' => 'Group Programs',

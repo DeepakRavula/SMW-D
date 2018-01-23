@@ -9,7 +9,7 @@ use insolita\wgadminlte\LteConst;
 
 $this->title = $model->name;
 $this->params['label'] = $this->render('_title', [
-	'model' => $model,
+    'model' => $model,
 ]);
 ?>
 <?php

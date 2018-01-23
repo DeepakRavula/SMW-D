@@ -75,26 +75,26 @@ class LocationController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-	public function actionCreate()
+    public function actionCreate()
     {
         $model = new Location();
         $data  = $this->renderAjax('_form', [
             'model' => $model,
-        ]); 
+        ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-				return $this->redirect(Url::to(['location/view', 'id' => $model->id]));
+            return $this->redirect(Url::to(['location/view', 'id' => $model->id]));
         } else {
             return [
                 'status' => true,
                 'data' => $data
             ];
-        } 
+        }
     }
-	public function actionValidate()
+    public function actionValidate()
     {
         $model = new Location();
         
-		$request = Yii::$app->request;
+        $request = Yii::$app->request;
         if ($model->load($request->post())) {
             return  ActiveForm::validate($model);
         }
@@ -108,23 +108,23 @@ class LocationController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-	public function actionUpdate($id)
+    public function actionUpdate($id)
     {
-		$model = $this->findModel($id);
-		$model->royaltyValue = $model->royalty->value;
-		$model->advertisementValue = $model->advertisement->value;
+        $model = $this->findModel($id);
+        $model->royaltyValue = $model->royalty->value;
+        $model->advertisementValue = $model->advertisement->value;
         $data = $this->renderAjax('_form-update', [
             'model' => $model,
         ]);
         if ($model->load(Yii::$app->request->post())) {
-			$model->royalty->value = $model->royaltyValue;
-			$model->advertisement->value = $model->advertisementValue;	
-			$model->save();
-			$model->royalty->save();
-			$model->advertisement->save();
-			return [
-				'status' => true
-			];
+            $model->royalty->value = $model->royaltyValue;
+            $model->advertisement->value = $model->advertisementValue;
+            $model->save();
+            $model->royalty->save();
+            $model->advertisement->save();
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,
@@ -132,7 +132,7 @@ class LocationController extends \common\components\controllers\BaseController
             ];
         }
     }
-	
+    
     public function actionEditAvailability($id, $resourceId, $startTime, $endTime)
     {
         $availabilityModel = LocationAvailability::find()
@@ -188,7 +188,7 @@ class LocationController extends \common\components\controllers\BaseController
         $response = [
             'status' => true,
         ];
-        if(!empty($availabilityModel)) {
+        if (!empty($availabilityModel)) {
             $response = [
                 'status' => false,
             ];

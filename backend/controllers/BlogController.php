@@ -51,11 +51,11 @@ class BlogController extends \common\components\controllers\BaseController
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Blog::find(),
-			'sort' => [
-				'defaultOrder' => [
-					'id' => SORT_DESC,
-				],
-			]
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ],
+            ]
         ]);
 
         return $this->render('list', [

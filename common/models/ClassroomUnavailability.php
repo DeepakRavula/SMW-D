@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+
 use common\components\validators\classroom\ClassroomUnavailabilityValidator;
 use Yii;
 
@@ -56,15 +57,16 @@ class ClassroomUnavailability extends \yii\db\ActiveRecord
         ];
     }
 
-	public function getClassroom()
+    public function getClassroom()
     {
         return $this->hasOne(Classroom::className(), ['id' => 'classroomId']);
     }
-	
-	public function beforeSave($insert) {
-		$this->fromDate = (new \DateTime($this->fromDate))->format('Y-m-d H:i:s');
-		$this->toDate = (new \DateTime($this->toDate))->format('Y-m-d H:i:s');
-		
-		return parent::beforeSave($insert);
-	}
+    
+    public function beforeSave($insert)
+    {
+        $this->fromDate = (new \DateTime($this->fromDate))->format('Y-m-d H:i:s');
+        $this->toDate = (new \DateTime($this->toDate))->format('Y-m-d H:i:s');
+        
+        return parent::beforeSave($insert);
+    }
 }

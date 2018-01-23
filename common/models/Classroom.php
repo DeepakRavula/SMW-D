@@ -44,7 +44,7 @@ class Classroom extends \yii\db\ActiveRecord
             'description' => 'Longname',
         ];
     }
-	public function getLessons()
+    public function getLessons()
     {
         return $this->hasMany(Lesson::className(), ['classroomId' => 'id']);
     }

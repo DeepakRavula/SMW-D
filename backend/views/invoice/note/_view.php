@@ -5,25 +5,26 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <?php
 LteBox::begin([
-	'type' => LteConst::TYPE_DEFAULT,
-	'title' => 'Comments',
-	'withBorder' => true,
+    'type' => LteConst::TYPE_DEFAULT,
+    'title' => 'Comments',
+    'withBorder' => true,
 ])
 ?>
 <?php echo ListView::widget([
-	'dataProvider' =>  $noteDataProvider,
-	'itemView' => '_list',
+    'dataProvider' =>  $noteDataProvider,
+    'itemView' => '_list',
         'summary' => false,
         'emptyText' => false,
 ]); ?>
 <?php $form = ActiveForm::begin([
-	'id' => 'invoice-note-form',
+    'id' => 'invoice-note-form',
 ]); ?>
 <div class="box-footer">
 	<div class="input-group">

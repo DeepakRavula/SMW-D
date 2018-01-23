@@ -18,10 +18,10 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 
 $this->title = $model->course->program->name;
 $this->params['label'] = $this->render('_title', [
-	'model' => $model,
+    'model' => $model,
 ]);
 $this->params['action-button'] = $this->render('_buttons', [
-	'model' => $model,
+    'model' => $model,
 ]);
 ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
@@ -38,30 +38,30 @@ $this->params['action-button'] = $this->render('_buttons', [
 <div class="row">
 	<div class="col-md-6">
 		<?=
-		$this->render('_details', [
-			'model' => $model,
-		]);
-		?>
+        $this->render('_details', [
+            'model' => $model,
+        ]);
+        ?>
 		<?php if (!$model->isGroup()): ?>
 		<?=
-		$this->render('_student', [
-			'model' => $model,
-		]);
-		?>
+        $this->render('_student', [
+            'model' => $model,
+        ]);
+        ?>
 		<?php endif;?>
 	</div>
 	<div class="col-md-6">
 		<?=
-		$this->render('schedule/_view', [
-			'model' => $model,
-		]);
-		?>
+        $this->render('schedule/_view', [
+            'model' => $model,
+        ]);
+        ?>
     <?php if (!$model->isGroup()): ?>
 		<?=
-		$this->render('attendance/_view', [
-			'model' => $model,
-		]);
-		?>	
+        $this->render('attendance/_view', [
+            'model' => $model,
+        ]);
+        ?>	
     <?php endif; ?>
 	</div>
 </div>
@@ -69,73 +69,73 @@ $this->params['action-button'] = $this->render('_buttons', [
 	<div class="col-md-12">
 		<div class="nav-tabs-custom">
 				<?php
-				$paymentContent = $this->render('payment/view', [
-					'paymentsDataProvider' => $paymentsDataProvider
-				]);
+                $paymentContent = $this->render('payment/view', [
+                    'paymentsDataProvider' => $paymentsDataProvider
+                ]);
                                 $studentContent = $this->render('student/view', [
-					'studentDataProvider' => $studentDataProvider,
+                    'studentDataProvider' => $studentDataProvider,
                                         'lessonModel' => $model
-				]);
-				$noteContent = $this->render('note/view', [
-					'model' => new Note(),
-					'noteDataProvider' => $noteDataProvider
-				]);
+                ]);
+                $noteContent = $this->render('note/view', [
+                    'model' => new Note(),
+                    'noteDataProvider' => $noteDataProvider
+                ]);
 
-				$logContent = $this->render('log', [
-					'model' => $model,
+                $logContent = $this->render('log', [
+                    'model' => $model,
                                         'logDataProvider' => $logDataProvider,
-				]);
+                ]);
 
-				$privateItem = [
-					[
-						'label' => 'Payments',
-						'content' => $paymentContent,
-					]
+                $privateItem = [
+                    [
+                        'label' => 'Payments',
+                        'content' => $paymentContent,
+                    ]
                                 ];
                                 $groupItem = [
-					[
-						'label' => 'Students',
-						'content' => $studentContent,
-					]
+                    [
+                        'label' => 'Students',
+                        'content' => $studentContent,
+                    ]
                                 ];
                                 $items = [
-					[
-						'label' => 'Comments',
-						'content' => $noteContent,
-					],
-					[
-						'label' => 'History',
-						'content' => $logContent,
-					],
-				];
+                    [
+                        'label' => 'Comments',
+                        'content' => $noteContent,
+                    ],
+                    [
+                        'label' => 'History',
+                        'content' => $logContent,
+                    ],
+                ];
                                 if (!$model->isGroup()) {
                                     $lessonItems = array_merge($privateItem, $items);
                                 } else {
                                     $lessonItems = array_merge($groupItem, $items);
                                 }
-				echo Tabs::widget([
-					'items' => $lessonItems,
-				]);
-				?>
+                echo Tabs::widget([
+                    'items' => $lessonItems,
+                ]);
+                ?>
 			</div>
 		</div>	
 </div>
-<?php  
+<?php 
 $students = Student::find()
-	->notDeleted()
-	->joinWith('enrolment')
-	->andWhere(['courseId' => $model->courseId])
-	->all();
-$emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email'); 
+    ->notDeleted()
+    ->joinWith('enrolment')
+    ->andWhere(['courseId' => $model->courseId])
+    ->all();
+$emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email');
     $body = null;?>
 	<?php if ($model->getReschedule()) : ?>
 	 <?php $body = $this->render('mail/body', [
-		'model' => $model,
+        'model' => $model,
 ]); ?>
     <?php endif; ?>      
 	<?php $content = $this->render('mail/content', [
-		'content' => $body,
-	]); 
+        'content' => $body,
+    ]);
  ?> 
 <div id="loader" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -147,11 +147,11 @@ Modal::begin([
     'id'=>'lesson-mail-modal',
 ]);
 echo $this->render('/mail/_form', [
-	'model' => new EmailForm(),
-	'emails' => $emails,
-	'subject' => $model->course->program->name . ' lesson reschedule',
-	'content' => $content,
-	'id' => null,
+    'model' => new EmailForm(),
+    'emails' => $emails,
+    'subject' => $model->course->program->name . ' lesson reschedule',
+    'content' => $content,
+    'id' => null,
         'userModel'=>!empty($model->enrolment->student->customer) ? $model->enrolment->student->customer : null,
 ]);
 Modal::end();
@@ -159,7 +159,7 @@ Modal::end();
 
 <?php if (!$model->isGroup()): ?>
     <?= $this->render('_merge-lesson', [
-	'model' => $model,
+    'model' => $model,
     ]); ?>
 <?php endif; ?>
 
@@ -168,7 +168,7 @@ Modal::end();
     'id' => 'classroom-edit-modal',
 ]); ?>
 <?= $this->render('classroom/_form', [
-	'model' => $model,
+    'model' => $model,
 ]);?>
 <?php Modal::end(); ?>
 
@@ -187,8 +187,8 @@ Modal::end();
     'id' => 'lesson-schedule-modal',
 ]); ?>
 <?= $this->render('_form', [
-	'model' => $model,
-	'privateLessonModel' => !empty($privateLessonModel) ? $privateLessonModel : null
+    'model' => $model,
+    'privateLessonModel' => !empty($privateLessonModel) ? $privateLessonModel : null
 ]);?>
 <?php Modal::end(); ?>
 <?php Modal::begin([
@@ -196,7 +196,7 @@ Modal::end();
     'id' => 'attendance-modal',
 ]); ?>
 <?= $this->render('attendance/_form', [
-	'model' => $model,
+    'model' => $model,
 ]);?>
 <?php Modal::end(); ?>
 <script>

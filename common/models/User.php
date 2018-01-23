@@ -55,22 +55,22 @@ class User extends ActiveRecord implements IdentityInterface
     public $customerIds;
     public $customerId;
     public $fromDate;
-	public $toDate;
-	public $dateRange;	
-	public $invoiceStatus;
-	public $studentId;
-	public $privateLessonHourlyRate;
-	public $groupLessonHourlyRate;
-	public $hasEditable;
-	public $lessonId;	
-	public static $roleNames = [
+    public $toDate;
+    public $dateRange;
+    public $invoiceStatus;
+    public $studentId;
+    public $privateLessonHourlyRate;
+    public $groupLessonHourlyRate;
+    public $hasEditable;
+    public $lessonId;
+    public static $roleNames = [
         self::ROLE_ADMINISTRATOR => 'Admin',
         self::ROLE_OWNER => 'Owner',
         self::ROLE_STAFFMEMBER => 'Staff Member',
         self::ROLE_TEACHER => 'Teacher',
     ];
     public static $roleBootstrapClasses = [
-		self::ROLE_ADMINISTRATOR => 'danger',
+        self::ROLE_ADMINISTRATOR => 'danger',
         self::ROLE_OWNER => 'success',
         self::ROLE_STAFFMEMBER => 'info',
         self::ROLE_TEACHER => 'default',
@@ -196,20 +196,20 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @return \yii\db\ActiveQuery
      */
-	public function getUserContact()
+    public function getUserContact()
     {
         return $this->hasMany(UserContact::className(), ['userId' => 'id']);
-    } 
-	public function getPrimaryContact()
+    }
+    public function getPrimaryContact()
     {
         return $this->hasMany(UserContact::className(), ['userId' => 'id'])
-			->onCondition(['user_contact.isPrimary' => true]);
-    } 
-	public function getBillingContact()
+            ->onCondition(['user_contact.isPrimary' => true]);
+    }
+    public function getBillingContact()
     {
         return $this->hasMany(UserContact::className(), ['userId' => 'id'])
-			->onCondition(['user_contact.labelId' => Label::LABEL_BILLING]);	
-    } 
+            ->onCondition(['user_contact.labelId' => Label::LABEL_BILLING]);
+    }
     public function getUserLocation()
     {
         return $this->hasOne(UserLocation::className(), ['user_id' => 'id']);
@@ -232,28 +232,28 @@ class User extends ActiveRecord implements IdentityInterface
     public function getAddresses()
     {
         return $this->hasMany(UserAddress::className(), ['userContactId' => 'id'])
-			->via('userContact');
+            ->via('userContact');
     }
-	
-	public function getPrimaryAddress()
+    
+    public function getPrimaryAddress()
     {
-		return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
-			->via('primaryContact');
+        return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
+            ->via('primaryContact');
     }
-	public function getPrimaryEmail()
+    public function getPrimaryEmail()
     {
-		return $this->hasOne(UserEmail::className(), ['userContactId' => 'id'])
-			->via('primaryContact');
+        return $this->hasOne(UserEmail::className(), ['userContactId' => 'id'])
+            ->via('primaryContact');
     }
-	public function getBillingAddress()
+    public function getBillingAddress()
     {
-		return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
-			->via('billingContact');
+        return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
+            ->via('billingContact');
     }
-	public function getQualifications()
-	{
-		return $this->hasMany(Qualification::className(), ['teacher_id' => 'id']);
-	}
+    public function getQualifications()
+    {
+        return $this->hasMany(Qualification::className(), ['teacher_id' => 'id']);
+    }
 
     public function beforeSave($insert)
     {
@@ -268,23 +268,23 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'id']);
     }
     
-	public function getPhoneNumbers()
+    public function getPhoneNumbers()
     {
         return $this->hasMany(UserPhone::className(), ['userContactId' => 'id'])
-			->via('userContact');
+            ->via('userContact');
     }
     public function getPhoneNumber()
     {
         return $this->hasOne(UserPhone::className(), ['userContactId' => 'id'])
-			->via('userContact');
+            ->via('userContact');
     }
-	public function getPrimaryPhoneNumber()
+    public function getPrimaryPhoneNumber()
     {
-		return $this->hasOne(UserContact::className(), ['id' => 'userContactId'])
-			->via('phoneNumbers')
-			->onCondition(['user_contact.isPrimary' => true]);
-	}	
-	public function getCustomerDiscount()
+        return $this->hasOne(UserContact::className(), ['id' => 'userContactId'])
+            ->via('phoneNumbers')
+            ->onCondition(['user_contact.isPrimary' => true]);
+    }
+    public function getCustomerDiscount()
     {
         return $this->hasOne(CustomerDiscount::className(), ['customerId' => 'id']);
     }
@@ -292,10 +292,10 @@ class User extends ActiveRecord implements IdentityInterface
     public function getEmails()
     {
         return $this->hasMany(UserEmail::className(), ['userContactId' => 'id'])
-			->via('userContact');
+            ->via('userContact');
     }
 
-	public function getPhone()
+    public function getPhone()
     {
         $phones = [];
         foreach ($this->phoneNumbers as $phoneNumber) {
@@ -303,7 +303,7 @@ class User extends ActiveRecord implements IdentityInterface
         }
         return implode(", ", $phones);
     }
-	public function getEmailNames()
+    public function getEmailNames()
     {
         $emails = [];
         foreach ($this->emails as $email) {
@@ -332,17 +332,17 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(Student::className(), ['customer_id' => 'id']);
     }
-	 public function getCourses()
+    public function getCourses()
     {
         return $this->hasMany(Course::className(), ['teacherId' => 'id']);
     }
-	
+    
     public function getEmail()
     {
         $email = UserEmail::find()
-			->joinWith(['userContact' => function($query) {
+            ->joinWith(['userContact' => function ($query) {
                 $query->andWhere(['userId' => $this->id, 'isPrimary' => true]);
-			}])
+            }])
             ->one();
         return !empty($email) ? $email->email : null;
     }
@@ -477,11 +477,11 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             self::STATUS_NOT_ACTIVE => Yii::t('common', 'Inactive'),
             self::STATUS_ACTIVE => Yii::t('common', 'Active'),
-			self::STATUS_DRAFT => Yii::t('common', 'Draft'),
+            self::STATUS_DRAFT => Yii::t('common', 'Draft'),
         ];
     }
 
-	public static function status()
+    public static function status()
     {
         return [
             self::STATUS_NOT_ACTIVE => Yii::t('common', 'Inactive'),
@@ -556,7 +556,7 @@ class User extends ActiveRecord implements IdentityInterface
             }])
             ->where(['lesson.teacherId' => $id])
             ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
-			->isConfirmed()
+            ->isConfirmed()
             ->all();
         $events = [];
         foreach ($lessons as &$lesson) {
@@ -591,98 +591,98 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
-	public function isCustomer()
+    public function isCustomer()
     {
         $roles = Yii::$app->authManager->getRolesByUser($this->id);
         $role  = end($roles);
         return $role->name === self::ROLE_CUSTOMER;
     }
-	public function isWalkin()
+    public function isWalkin()
     {
         $roles = Yii::$app->authManager->getRolesByUser($this->id);
         $role  = end($roles);
         return $role->name === self::ROLE_GUEST;
     }
-	public function getRoleById($id)
+    public function getRoleById($id)
     {
-		$roles = Yii::$app->authManager->getRolesByUser($id);
-		return end($roles)->name;
+        $roles = Yii::$app->authManager->getRolesByUser($id);
+        return end($roles)->name;
     }
     public function getRoleName()
     {
-		$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-		$role = end($roles);
+        $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+        $role = end($roles);
         return self::$roleNames[$role->name];
     }
     public function getRoleBootstrapClass()
     {
-		$roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
-		$role = end($roles);
+        $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+        $role = end($roles);
         return self::$roleBootstrapClasses[$role->name];
     }
-	public static function customerCount()
+    public static function customerCount()
     {
-	 $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
                 
-            return self::find()
-			->joinWith('userLocation ul')
-			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-			->where(['raa.item_name' => 'customer'])
-			->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
+        return self::find()
+            ->joinWith('userLocation ul')
+            ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+            ->where(['raa.item_name' => 'customer'])
+            ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
                         ->notDeleted()
                         ->joinWith(['student' => function ($query) use ($currentDate) {
                             $query->enrolled($currentDate);
-                            }])
-			->active()
+                        }])
+            ->active()
                         ->groupBy('user.id')
-			->count();
+            ->count();
     }
-	
-	public static function teacherCount()
+    
+    public static function teacherCount()
     {
-		return self::find()
-			->joinWith('userLocation ul')
-			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-			->where(['raa.item_name' => 'teacher'])
-			->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
+        return self::find()
+            ->joinWith('userLocation ul')
+            ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+            ->where(['raa.item_name' => 'teacher'])
+            ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
                         ->joinWith(['userLocation' => function ($query) {
                             $query->joinWith('teacherAvailability');
                         }])
-			->active()
+            ->active()
                         ->notDeleted()
-                        ->groupBy('user.id')        
-			->count();
+                        ->groupBy('user.id')
+            ->count();
     }
-	public static function staffCount()
+    public static function staffCount()
     {
-		return self::find()
-			->joinWith('userLocation ul')
-			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-			->where(['raa.item_name' => 'staffmember'])
-			->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
+        return self::find()
+            ->joinWith('userLocation ul')
+            ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+            ->where(['raa.item_name' => 'staffmember'])
+            ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
                         ->notDeleted()
-			->active()
-			->count();
+            ->active()
+            ->count();
     }
-	public static function ownerCount()
+    public static function ownerCount()
     {
-		return self::find()
-			->joinWith('userLocation ul')
-			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-			->where(['raa.item_name' => 'owner'])
-			->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
+        return self::find()
+            ->joinWith('userLocation ul')
+            ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+            ->where(['raa.item_name' => 'owner'])
+            ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
                         ->notDeleted()
-			->active()
-			->count();
+            ->active()
+            ->count();
     }
-	public static function adminCount()
+    public static function adminCount()
     {
-		return self::find()
-			->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-			->where(['raa.item_name' => 'administrator'])
+        return self::find()
+            ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+            ->where(['raa.item_name' => 'administrator'])
                         ->notDeleted()
-			->active()
-			->count();
+            ->active()
+            ->count();
     }
 
     public function getInvoice()
@@ -739,7 +739,7 @@ class User extends ActiveRecord implements IdentityInterface
         $role = end($roles);
         return $role === self::ROLE_ADMINISTRATOR;
     }
-     public function isStaff()
+    public function isStaff()
     {
         $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($this->id), 'name');
         $role = end($roles);

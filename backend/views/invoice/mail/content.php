@@ -2,11 +2,12 @@
 use yii\grid\GridView;
 use common\models\ItemType;
 use common\models\TextTemplate;
+
 ?>
 
 Dear Customer,<br>
 <?php $textTemplate = TextTemplate::findOne(['type' => $model->type]);
-$message = !empty($textTemplate->message) ? $textTemplate->message : 'Please find the invoice below:'; 
+$message = !empty($textTemplate->message) ? $textTemplate->message : 'Please find the invoice below:';
 ?>
 	<?= $message; ?><Br>
         <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
@@ -19,7 +20,7 @@ $message = !empty($textTemplate->message) ? $textTemplate->message : 'Please fin
             'columns' => [
                 [
                     'label' => 'Description',
-        			'contentOptions' => ['style' => 'width:250px;'],
+                    'contentOptions' => ['style' => 'width:250px;'],
                     'value' => function ($data) {
                         return $data->description;
                     },
@@ -28,16 +29,16 @@ $message = !empty($textTemplate->message) ? $textTemplate->message : 'Please fin
                     'attribute' => 'unit',
                     'label' => 'Qty',
                     'headerOptions' => ['class' => 'text-center'],
-        			'contentOptions' => ['class' => 'text-center', 'style' => 'width:50px;'],
+                    'contentOptions' => ['class' => 'text-center', 'style' => 'width:50px;'],
                     'enableSorting' => false,
                 ],
                 [
                     'label' => 'Price',
-					'format' => 'currency',
+                    'format' => 'currency',
                     'headerOptions' => ['class' => 'text-right'],
-        			'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+                    'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
                     'value' => function ($data) {
-						return $data->itemTotal;
+                        return $data->itemTotal;
                     },
                 ],
             ],
@@ -61,49 +62,59 @@ $message = !empty($textTemplate->message) ? $textTemplate->message : 'Please fin
                     <table class="table-invoice-childtable" style="width: 100%; float: right; text-align: left;">
                      <tr>
                       <td style="width: 50%;">SubTotal</td>
-						<td><?= Yii::$app->formatter->format($model->subTotal,
-							['currency', 'USD', [
-						\NumberFormatter::MIN_FRACTION_DIGITS => 2,
-						\NumberFormatter::MAX_FRACTION_DIGITS => 2,
-					]]); ?></td>
+						<td><?= Yii::$app->formatter->format(
+            $model->subTotal,
+                            ['currency', 'USD', [
+                        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+                        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+                    ]]
+        ); ?></td>
                     </tr> 
                      <tr>
                       <td>Tax</td>
 						<td>
-					  <?= Yii::$app->formatter->format($model->tax,
-							['currency', 'USD', [
-						\NumberFormatter::MIN_FRACTION_DIGITS => 2,
-						\NumberFormatter::MAX_FRACTION_DIGITS => 2,
-					]]); ?>
+					  <?= Yii::$app->formatter->format(
+                        $model->tax,
+                            ['currency', 'USD', [
+                        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+                        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+                    ]]
+                    ); ?>
 					</td>
                     </tr>
                     
                       <tr>
                       <td><strong>Total</strong></td>
 						<td><strong>
-					<?= Yii::$app->formatter->format($model->total,
-							['currency', 'USD', [
-						\NumberFormatter::MIN_FRACTION_DIGITS => 2,
-						\NumberFormatter::MAX_FRACTION_DIGITS => 2,
-					]]); ?>
+					<?= Yii::$app->formatter->format(
+                        $model->total,
+                            ['currency', 'USD', [
+                        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+                        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+                    ]]
+                    ); ?>
 					</strong></td>
                     </tr>
 					 <tr>
                       <td>Paid</td>
-						<td> <?= Yii::$app->formatter->format($model->invoicePaymentTotal,
-							['currency', 'USD', [
-						\NumberFormatter::MIN_FRACTION_DIGITS => 2,
-						\NumberFormatter::MAX_FRACTION_DIGITS => 2,
-					]]); ?></td>
+						<td> <?= Yii::$app->formatter->format(
+                        $model->invoicePaymentTotal,
+                            ['currency', 'USD', [
+                        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+                        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+                    ]]
+                    ); ?></td>
                     </tr>
                       <tr>
                       <td class="p-t-20">Balance</td>
 						<td class="p-t-20"><strong>
-					<?= Yii::$app->formatter->format($model->invoiceBalance,
-							['currency', 'USD', [
-						\NumberFormatter::MIN_FRACTION_DIGITS => 2,
-						\NumberFormatter::MAX_FRACTION_DIGITS => 2,
-					]]); ?>
+					<?= Yii::$app->formatter->format(
+                        $model->invoiceBalance,
+                            ['currency', 'USD', [
+                        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+                        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+                    ]]
+                    ); ?>
 					</strong></td>
                     </tr>
                     </table>

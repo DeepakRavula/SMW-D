@@ -4,12 +4,12 @@ use yii\db\Migration;
 
 class m171216_070906_log extends Migration
 {
-
     public function up()
     {
         $tableSchema = Yii::$app->db->schema->getTableSchema('log');
         if ($tableSchema === null) {
-            $this->createTable('log',
+            $this->createTable(
+                'log',
                 [
                 'id' => $this->primaryKey(),
                 'logObjectId' => $this->integer()->notNull(),
@@ -19,7 +19,8 @@ class m171216_070906_log extends Migration
                 'locationId' => $this->integer()->notNull(),
                 'createdOn' => $this->timestamp(),
                 'createdUserId' => $this->integer()
-            ]);
+            ]
+            );
         }
     }
 

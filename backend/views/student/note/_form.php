@@ -9,7 +9,7 @@ use yii\bootstrap\ActiveForm;
 ?>
 <div class="lesson-form">
 <?php $form = ActiveForm::begin([
-	'id' => 'student-note-form',
+    'id' => 'student-note-form',
 ]); ?>
 <div class="">
 	<div>

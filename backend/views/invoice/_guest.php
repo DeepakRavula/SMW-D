@@ -14,7 +14,7 @@ use yii\helpers\Url;
     <?php $form = ActiveForm::begin([
         'method' => 'post',
         'id' => 'walkin-customer-form',
-		'action' => Url::to(['invoice/update-walkin', 'id' => $model->id])
+        'action' => Url::to(['invoice/update-walkin', 'id' => $model->id])
     ]); ?>
 
     <div class="row">

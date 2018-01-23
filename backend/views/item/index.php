@@ -7,6 +7,7 @@ use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 use yii\bootstrap\ActiveForm;
 use kartik\select2\Select2Asset;
+
 Select2Asset::register($this);
 
 /* @var $this yii\web\View */
@@ -15,7 +16,7 @@ Select2Asset::register($this);
 $this->title = 'Items';
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), ['#'], ['id' => 'create-item']);
 $this->params['show-all'] = $this->render('_button', [
-	'searchModel' => $searchModel
+    'searchModel' => $searchModel
 ]);
 ?>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
@@ -32,37 +33,37 @@ $this->params['show-all'] = $this->render('_button', [
             'code',
             [
                 'label' => 'Item Category',
-		'value' => function ($data) {
-                    return $data->itemCategory->name;
-                },
+        'value' => function ($data) {
+            return $data->itemCategory->name;
+        },
             ],
             'description',
-			[
+            [
                 'label' => 'Price',
-				'contentOptions' => ['class' => 'text-right'],
-				'headerOptions' => ['class' => 'text-right'],
-				'format' => 'currency',
-				'value' => function ($data) {
-					return $data->price;
-				},
+                'contentOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right'],
+                'format' => 'currency',
+                'value' => function ($data) {
+                    return $data->price;
+                },
             ],
             [
                 'label' => 'Royalty Free',
-		'value' => function ($data) {
-                    return $data->getRoyaltyFreeStatus();
-                },
+        'value' => function ($data) {
+            return $data->getRoyaltyFreeStatus();
+        },
             ],
             [
                 'label' => 'Tax',
-		'value' => function ($data) {
-                    return $data->taxStatus->name;
-                },
+        'value' => function ($data) {
+            return $data->taxStatus->name;
+        },
             ],
             [
                 'label' => 'Status',
-		'value' => function ($data) {
-                    return $data->getStatusType();
-                },
+        'value' => function ($data) {
+            return $data->getStatusType();
+        },
             ],
         ],
     ]); ?>

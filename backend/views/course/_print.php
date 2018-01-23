@@ -22,7 +22,7 @@ $this->title = $model->id;
         <?php echo GridView::widget([
         'dataProvider' => $lessonDataProvider,
         'summary' => false,
-        'emptyText' => false, 
+        'emptyText' => false,
         'rowOptions' => function ($model, $key, $index, $grid) {
             return ['data-id' => $model->id];
         },

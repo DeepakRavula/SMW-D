@@ -10,7 +10,6 @@ use yii\helpers\Url;
 
 class LessonLog extends Log
 {
-
     public function extraLessonCreate($event)
     {
         $lessonModel        = $event->sender;

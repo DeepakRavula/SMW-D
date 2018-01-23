@@ -23,7 +23,7 @@ yii\widgets\Pjax::begin([
         'columns' => [
             [
                 'label' => 'Createdon',
-                'value' => function($data) {
+                'value' => function ($data) {
                     return $data->log->createdOn;
                 },
                 'format' => 'datetime',

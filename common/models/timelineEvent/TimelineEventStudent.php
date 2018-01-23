@@ -46,7 +46,7 @@ class TimelineEventStudent extends \yii\db\ActiveRecord
             'action' => 'Action',
         ];
     }
-	public function getStudent()
+    public function getStudent()
     {
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
     }

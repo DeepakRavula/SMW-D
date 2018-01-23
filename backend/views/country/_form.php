@@ -13,7 +13,7 @@ use yii\helpers\Url;
 
     <?php   $url = Url::to(['country/update', 'id' => $model->id]);
             if ($model->isNewRecord) {
-               $url = Url::to(['country/create']);
+                $url = Url::to(['country/create']);
             }
         $form = ActiveForm::begin([
         'id' => 'country-form',

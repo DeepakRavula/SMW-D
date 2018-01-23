@@ -15,7 +15,7 @@ class LessonSearch extends Lesson
 {
     const STATUS_INVOICED = 'Yes';
     const STATUS_UNINVOICED='No';
-	
+    
     public $lessonStatus;
     public $invoiceStatus;
     public $fromDate;
@@ -39,7 +39,7 @@ class LessonSearch extends Lesson
         return [
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
-            [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId', 
+            [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId',
                 'invoiceType','dateRange', 'student', 'program', 'teacher'], 'safe'],
         ];
     }
@@ -68,11 +68,11 @@ class LessonSearch extends Lesson
         $session = Yii::$app->session;
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Lesson::find()
-			->isConfirmed()
-			->notDeleted()
-			->location($locationId)
-			->activePrivateLessons()
-			->andWhere(['NOT IN', 'lesson.status', [Lesson::STATUS_CANCELED]])
+            ->isConfirmed()
+            ->notDeleted()
+            ->location($locationId)
+            ->activePrivateLessons()
+            ->andWhere(['NOT IN', 'lesson.status', [Lesson::STATUS_CANCELED]])
                 ->orderBy(['lesson.date' => SORT_ASC]);
 
         $dataProvider = new ActiveDataProvider([
@@ -82,18 +82,18 @@ class LessonSearch extends Lesson
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-		$query->andFilterWhere(['OR', 
-			['student.first_name' => $this->student],
-			['student.last_name' => $this->student]
-		]);
-		$query->andFilterWhere(['program.name' => $this->program]);
-                if (!empty($this->teacher)) {
-                    $query->joinWith(['teacherProfile' => function ($query) {
-                        $query->andFilterWhere([
+        $query->andFilterWhere(['OR',
+            ['student.first_name' => $this->student],
+            ['student.last_name' => $this->student]
+        ]);
+        $query->andFilterWhere(['program.name' => $this->program]);
+        if (!empty($this->teacher)) {
+            $query->joinWith(['teacherProfile' => function ($query) {
+                $query->andFilterWhere([
                             'LIKE', "CONCAT(user_profile.firstname, ' ', user_profile.lastname)", $this->teacher
                         ]);
-                    }]);
-                }
+            }]);
+        }
         if (!empty($this->customerId)) {
             $query->student($this->customerId);
         }
@@ -121,12 +121,11 @@ class LessonSearch extends Lesson
             $query->andFilterWhere(['lesson.isPresent' => true]);
         } elseif ($this->attendanceStatus === Lesson::STATUS_ABSENT) {
             $query->andFilterWhere(['lesson.isPresent' => false]);
-        } 
+        }
         if ($this->invoiceStatus === self::STATUS_INVOICED) {
             $query->invoiced();
-        }  elseif ($this->invoiceStatus === self::STATUS_UNINVOICED) {
+        } elseif ($this->invoiceStatus === self::STATUS_UNINVOICED) {
             $query->unInvoiced();
-           
         }
         if (!empty($this->dateRange)) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
@@ -165,7 +164,7 @@ class LessonSearch extends Lesson
             Lesson::STATUS_UNSCHEDULED => 'Unscheduled'
         ];
     }
-     public static function invoiceStatuses()
+    public static function invoiceStatuses()
     {
         return [
             self::STATUS_INVOICED => 'Yes',

@@ -10,16 +10,16 @@ use yii\bootstrap\Modal;
 	<div class="clearfix"></div>
 </div>
 	<?php
-	Modal::begin([
-		'header' => '<h4 class="m-0">Add Student</h4>',
-		'id'=>'student-create-modal',
-	]);
-	echo $this->render('_form-student', [
+    Modal::begin([
+        'header' => '<h4 class="m-0">Add Student</h4>',
+        'id'=>'student-create-modal',
+    ]);
+    echo $this->render('_form-student', [
         'model' => $student,
         'customer' => $model,
     ]);
-	Modal::end();
-	?>
+    Modal::end();
+    ?>
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin(['id' => 'customer-student-listing']) ?>
 <?php

@@ -7,32 +7,33 @@ use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
+
 ?>
 <?php
 Pjax::begin([
-	'id' => 'student-profile',
+    'id' => 'student-profile',
 ])
 ?>
 <?php $age = 0; ?>
 <?php if (!empty($model->birth_date)) : ?>
 	<?php
-	$birthDate = new DateTime($model->birth_date);
-	$currentDate = new DateTime('today');
-	$age = $birthDate->diff($currentDate)->y . 'yrs old';
-	?>
+    $birthDate = new DateTime($model->birth_date);
+    $currentDate = new DateTime('today');
+    $age = $birthDate->diff($currentDate)->y . 'yrs old';
+    ?>
 <?php endif; ?>
 	<div class="col-md-6">	
 		<?php
-		LteBox::begin([
-			'type' => LteConst::TYPE_DEFAULT,
-			'boxTools' => [
-				'<i title="Edit" class="fa fa-pencil student-profile-edit-button m-r-10"></i>',
-				'<i title="Merge" id="student-merge" class="fa fa-chain"></i>'
-			],
-			'title' => 'Details',
-			'withBorder' => true,
-		])
-		?>
+        LteBox::begin([
+            'type' => LteConst::TYPE_DEFAULT,
+            'boxTools' => [
+                '<i title="Edit" class="fa fa-pencil student-profile-edit-button m-r-10"></i>',
+                '<i title="Merge" id="student-merge" class="fa fa-chain"></i>'
+            ],
+            'title' => 'Details',
+            'withBorder' => true,
+        ])
+        ?>
 		<dl class="dl-horizontal">
 			<dt>Name</dt>
 			<dd><?= $model->fullName; ?></dd>
@@ -45,12 +46,12 @@ Pjax::begin([
 		</div> 
 	<div class="col-md-6">	
 		<?php
-		LteBox::begin([
-			'type' => LteConst::TYPE_DEFAULT,
-			'title' => 'Customer',
-			'withBorder' => true,
-		])
-		?>
+        LteBox::begin([
+            'type' => LteConst::TYPE_DEFAULT,
+            'title' => 'Customer',
+            'withBorder' => true,
+        ])
+        ?>
 		<dl class="dl-horizontal">
 			<dt>Customer</dt>
 			<dd><a href="<?= Url::to(['/user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $model->customer->id]); ?>">
@@ -63,12 +64,12 @@ Pjax::begin([
 <?php Pjax::end(); ?>
 <?php
 Modal::begin([
-	'header' => '<h4 class="m-0">Edit Student Profile</h4>',
-	'id' => 'student-profile-modal',
+    'header' => '<h4 class="m-0">Edit Student Profile</h4>',
+    'id' => 'student-profile-modal',
 ]);
 echo $this->render('_form', [
-	'model' => $model,
-	'customer' => $model->customer
+    'model' => $model,
+    'customer' => $model->customer
 ]);
 Modal::end();
 ?>

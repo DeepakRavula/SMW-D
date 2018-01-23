@@ -3,13 +3,14 @@
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use common\models\Course;
+
 ?>
 <?php
 LteBox::begin([
-	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => '<i class="fa fa-pencil edit-enrolment"></i>',
-	'title' => 'PF & Discounts',
-	'withBorder' => true,
+    'type' => LteConst::TYPE_DEFAULT,
+    'boxTools' => '<i class="fa fa-pencil edit-enrolment"></i>',
+    'title' => 'PF & Discounts',
+    'withBorder' => true,
 ])
 ?>
 <dl class="dl-horizontal">

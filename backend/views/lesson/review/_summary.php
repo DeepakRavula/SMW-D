@@ -4,13 +4,13 @@ use insolita\wgadminlte\LteBox;
 
 ?>
 <?php yii\widgets\Pjax::begin([
-	'id' => 'review-lesson-summary'
+    'id' => 'review-lesson-summary'
 ]) ?>
 <?php
 LteBox::begin([
-	'type' => LteConst::TYPE_DEFAULT,
-	'title' => 'Review Lessons Summary',
-	'withBorder' => true,
+    'type' => LteConst::TYPE_DEFAULT,
+    'title' => 'Review Lessons Summary',
+    'withBorder' => true,
 ])
 ?>
 <dl class="dl-horizontal">

@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+
 use common\models\query\TeacherRoomQuery;
 
 use Yii;
@@ -42,9 +43,9 @@ class TeacherRoom extends \yii\db\ActiveRecord
                 $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
                 $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId, 'day' => $this->day]);
                 $fromTime = (new \DateTime($this->from_time))->format('H:i:s');
-                if(empty($locationAvailability)) {
+                if (empty($locationAvailability)) {
                     return $this->addError($attribute, 'Please choose from time within the operating hours ');
-                }else if ($fromTime < $locationAvailability->fromTime || $locationAvailability->toTime < $fromTime) {
+                } elseif ($fromTime < $locationAvailability->fromTime || $locationAvailability->toTime < $fromTime) {
                     return $this->addError($attribute, 'Please choose from time within the operating hours ' . Yii::$app->formatter->asTime($locationAvailability->fromTime) . ' to ' . Yii::$app->formatter->asTime($locationAvailability->toTime));
                 }
             },
@@ -53,9 +54,9 @@ class TeacherRoom extends \yii\db\ActiveRecord
                 $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
                 $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId, 'day' => $this->day]);
                 $toTime = (new \DateTime($this->to_time))->format('H:i:s');
-                if(empty($locationAvailability)) {
+                if (empty($locationAvailability)) {
                     return $this->addError($attribute, 'Please choose from time within the operating hours ');
-                }else if ($toTime > $locationAvailability->toTime || $toTime < $locationAvailability->fromTime) {
+                } elseif ($toTime > $locationAvailability->toTime || $toTime < $locationAvailability->fromTime) {
                     return $this->addError($attribute, 'Please choose from time within the operating hours ' . Yii::$app->formatter->asTime($locationAvailability->fromTime) . ' to ' . Yii::$app->formatter->asTime($locationAvailability->toTime));
                 }
             },
@@ -71,7 +72,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
             [['to_time'], function ($attribute, $params) {
                 $fromTime = (new \DateTime($this->from_time))->format('H:i:s');
                 $toTime = (new \DateTime($this->to_time))->format('H:i:s');
-                if($toTime < $fromTime) {
+                if ($toTime < $fromTime) {
                     return $this->addError($attribute, 'To time must be greater than "From Time"');
                 }
             },
@@ -101,25 +102,25 @@ class TeacherRoom extends \yii\db\ActiveRecord
         return $this->hasOne(Classroom::className(), ['id' => 'classroomId']);
     }
 
-	public function getTeacherAvailability()
+    public function getTeacherAvailability()
     {
         return $this->hasOne(TeacherAvailability::className(), ['id' => 'teacherAvailabilityId']);
     }
 
-	public function getUser()
+    public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
 
-	public function getUserLocation()
+    public function getUserLocation()
     {
         return $this->hasOne(UserLocation::className(), ['user_id' => 'id'])
-			->via('user');
+            ->via('user');
     }
 
     public function validateClassroomAvailability($attribute)
     {
-        if (! empty ($this->classroomId)) {
+        if (! empty($this->classroomId)) {
             $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
             $teacherRooms        = TeacherRoom::find()
                 ->location($locationId)
@@ -129,7 +130,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
                 ->andWhere(['classroomId' => $this->classroomId])
                 ->all();
             if (!empty($teacherRooms)) {
-                return $this->addError($attribute,'Classroom already chosen');
+                return $this->addError($attribute, 'Classroom already chosen');
             }
         }
     }
@@ -143,7 +144,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
             ->all();
         
         if (!empty($availabilities)) {
-            return $this->addError($attribute,'Availability overlapped');
+            return $this->addError($attribute, 'Availability overlapped');
         }
     }
 }

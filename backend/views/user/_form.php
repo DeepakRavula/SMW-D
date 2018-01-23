@@ -15,10 +15,10 @@ Select2Asset::register($this);
 ?>
 <div class="row user-create-form">
  <?php $form = ActiveForm::begin([
-		'action' => Url::to(['user/create', 'role_name' => $searchModel->role_name]),
+        'action' => Url::to(['user/create', 'role_name' => $searchModel->role_name]),
                 'id' => 'user-form',
-	 	'enableClientValidation' => true,
-		]); ?>
+        'enableClientValidation' => true,
+        ]); ?>
 		<div class="row">
 			<?php echo $form->field($model, 'firstname') ?>
 			<?php echo $form->field($model, 'lastname') ?>		
@@ -27,8 +27,8 @@ Select2Asset::register($this);
 <div class="row pull-right">
 	<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'pull-right btn btn-info', 'name' => 'signup-button']) ?>
 	<?php
-		echo Html::a('Cancel', '#', ['class' => 'pull-right m-r-10 btn user-add-cancel btn-default']);
-	?>
+        echo Html::a('Cancel', '#', ['class' => 'pull-right m-r-10 btn user-add-cancel btn-default']);
+    ?>
 </div>
 <?php ActiveForm::end(); ?>
 </div>

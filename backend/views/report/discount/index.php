@@ -3,6 +3,7 @@
 use yii\helpers\Url;
 use backend\assets\CustomGridAsset;
 use yii\helpers\Html;
+
 CustomGridAsset::register($this);
 Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 

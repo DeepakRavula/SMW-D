@@ -26,29 +26,29 @@ $this->params['breadcrumbs'][] = $this->title;
             'code',
             [
                 'label' => 'Item Category',
-		'value' => function ($data) {
-                    return $data->itemCategory->name;
-                },
+        'value' => function ($data) {
+            return $data->itemCategory->name;
+        },
             ],
             'description',
             'price',
             [
                 'label' => 'Royalty Free',
-		'value' => function ($data) {
-                    return $data->getRoyaltyFreeStatus();
-                },
+        'value' => function ($data) {
+            return $data->getRoyaltyFreeStatus();
+        },
             ],
             [
                 'label' => 'Tax',
-		'value' => function ($data) {
-                    return $data->taxStatus->name;
-                },
+        'value' => function ($data) {
+            return $data->taxStatus->name;
+        },
             ],
             [
                 'label' => 'Status',
-		'value' => function ($data) {
-                    return $data->getStatusType();
-                },
+        'value' => function ($data) {
+            return $data->getStatusType();
+        },
             ],
 
             [

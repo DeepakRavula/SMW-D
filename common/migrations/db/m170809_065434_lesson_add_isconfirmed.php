@@ -6,8 +6,11 @@ class m170809_065434_lesson_add_isconfirmed extends Migration
 {
     public function up()
     {
-		$this->addColumn('lesson', 'isConfirmed', 
-			$this->boolean()->after('isDeleted'));
+        $this->addColumn(
+            'lesson',
+            'isConfirmed',
+            $this->boolean()->after('isDeleted')
+        );
     }
 
     public function down()

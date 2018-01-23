@@ -29,7 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     <li>
                         <?php echo \yii\helpers\Html::a(
                             $attachment->name,
-                            ['attachment-download', 'id' => $attachment->id])
+                            ['attachment-download', 'id' => $attachment->id]
+            )
                         ?>
                         (<?php echo Yii::$app->formatter->asSize($attachment->size) ?>)
                     </li>

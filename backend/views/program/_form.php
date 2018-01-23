@@ -14,7 +14,7 @@ if (!$model->isNewRecord) {
 ?>
 <div class="lesson-form">
 <?php $form = ActiveForm::begin([
-	'id' => 'program-form',
+    'id' => 'program-form',
 ]); ?>
    	<div class="row">
    		<div class="col-md-4">

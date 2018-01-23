@@ -21,7 +21,7 @@ use yii\bootstrap\Modal;
 <?php $form = ActiveForm::begin([
             'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
-			'enableClientValidation' => false,
+            'enableClientValidation' => false,
             'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id, 'teacherId' => null]),
             'action' => Url::to(['lesson/update', 'id' => $model->id]),
             'options' => [
@@ -31,29 +31,38 @@ use yii\bootstrap\Modal;
     <div class="row">
         <div class="col-md-2">
             <?php
-            echo $form->field($model, 'duration')->widget(TimePicker::classname(),
+            echo $form->field($model, 'duration')->widget(
+            TimePicker::classname(),
                 [
                 'options' => ['id' => 'course-duration'],
                 'pluginOptions' => [
                     'showMeridian' => false,
                 ],
-            ]);
+            ]
+        );
             ?>
         </div>
         <div class="col-md-3">
             <?php
             // Dependent Dropdown
-            echo $form->field($model, 'teacherId')->widget(Select2::classname(),
+            echo $form->field($model, 'teacherId')->widget(
+                Select2::classname(),
                 [
                 'data' => ArrayHelper::map(User::find()
-                        ->teachers($model->course->program->id,
-                            \common\models\Location::findOne(['slug' => \Yii::$app->location])->id)
-                        ->join('LEFT JOIN', 'user_profile',
-                            'user_profile.user_id = ul.user_id')
+                        ->teachers(
+                            $model->course->program->id,
+                            \common\models\Location::findOne(['slug' => \Yii::$app->location])->id
+                        )
+                        ->join(
+                            'LEFT JOIN',
+                            'user_profile',
+                            'user_profile.user_id = ul.user_id'
+                        )
                         ->notDeleted()
                         ->orderBy(['user_profile.firstname' => SORT_ASC])
                         ->all(), 'id', 'userProfile.fullName'),
-            ])->label('Teacher');
+            ]
+            )->label('Teacher');
             ?>  
         </div>
         <div class="col-md-3">
@@ -81,7 +90,8 @@ use yii\bootstrap\Modal;
                 }
                 ?>
                 <?=
-                $form->field($privateLessonModel, 'expiryDate')->widget(DatePicker::classname(),
+                $form->field($privateLessonModel, 'expiryDate')->widget(
+                    DatePicker::classname(),
                     [
                     'options' => [
                         'value' => Yii::$app->formatter->asDate($privateLessonModel->expiryDate),
@@ -92,7 +102,8 @@ use yii\bootstrap\Modal;
                         'autoclose' => true,
                         'format' => 'dd-mm-yyyy',
                     ],
-                ]);
+                ]
+                );
                 ?>
 <?php endif; ?>
         </div>

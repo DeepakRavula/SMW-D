@@ -14,13 +14,13 @@ class StudentValidator extends Validator
     public function validateAttribute($model, $attribute)
     {
         if ($model->isExtra()) {
-            $studentId = $model->studentId; 
-        } else if($model->course->program->isPrivate()) {
+            $studentId = $model->studentId;
+        } elseif ($model->course->program->isPrivate()) {
             $studentId = $model->course->enrolment->student->id;
         } else {
             $studentId = !empty($model->studentId) ? $model->studentId : null;
         }
-       	$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
         $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
         $lessonDuration = explode(':', $model->fullDuration);
@@ -30,39 +30,39 @@ class StudentValidator extends Validator
         $date->modify('-1 second');
         $lessonEndTime = $date->format('H:i:s');
         $query = Lesson::find()
-			->studentLessons($locationId, $studentId)
-			->andWhere(['NOT', ['lesson.id' => $model->id]])
-			->isConfirmed()
-			->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
-			->all();
+            ->studentLessons($locationId, $studentId)
+            ->andWhere(['NOT', ['lesson.id' => $model->id]])
+            ->isConfirmed()
+            ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
+            ->all();
 
-        if((!empty($model->vacationId) || empty($model->vacationId)) && !empty($studentLessons)) {
-            foreach($studentLessons as $studentLesson) {
-                if(new \DateTime($model->date) == new \DateTime($studentLesson->date) && (int) $studentLesson->status === Lesson::STATUS_SCHEDULED) {
+        if ((!empty($model->vacationId) || empty($model->vacationId)) && !empty($studentLessons)) {
+            foreach ($studentLessons as $studentLesson) {
+                if (new \DateTime($model->date) == new \DateTime($studentLesson->date) && (int) $studentLesson->status === Lesson::STATUS_SCHEDULED) {
                     continue;
                 }
                 $conflictedLessonIds[] = $model->id;
             }
-            if(!empty($conflictedLessonIds)) {
-                $this->addError($model,$attribute, 'Lesson time conflicts with student\'s another lesson');
+            if (!empty($conflictedLessonIds)) {
+                $this->addError($model, $attribute, 'Lesson time conflicts with student\'s another lesson');
             }
         }
         if ($model->course) {
             $vacations = Vacation::find()
-			->andWhere(['enrolmentId' => $model->course->enrolment->id])
-			->andWhere(['>=', 'DATE(fromDate)', (new \DateTime())->format('Y-m-d')])
+            ->andWhere(['enrolmentId' => $model->course->enrolment->id])
+            ->andWhere(['>=', 'DATE(fromDate)', (new \DateTime())->format('Y-m-d')])
                         ->andWhere(['isDeleted' => false])
-			->all();
-            foreach($vacations as $vacation) {
-                $date = Carbon::parse($model->date); 
+            ->all();
+            foreach ($vacations as $vacation) {
+                $date = Carbon::parse($model->date);
                 $start = Carbon::parse($vacation->fromDate);
-                $end = Carbon::parse($vacation->toDate); 
+                $end = Carbon::parse($vacation->toDate);
                 $diff = $start->diff($end);
                 $interval = CarbonInterval::year($diff->y)->months($diff->m)->days($diff->d);
                 $period = Period::createFromDuration($start, $interval);
                 $result = $period->contains($date);
-                if(!empty($result)) {
-                    $this->addError($model,$attribute, 'Lesson date/time conflicts with student\'s vacation');
+                if (!empty($result)) {
+                    $this->addError($model, $attribute, 'Lesson date/time conflicts with student\'s vacation');
                 }
             }
         }
