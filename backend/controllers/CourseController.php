@@ -344,15 +344,19 @@ class CourseController extends \common\components\controllers\BaseController
                     $newLesson->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
                     $newLesson->setScenario(Lesson::SCENARIO_CREATE);
                     $newLesson->addExtra(Lesson::STATUS_UNSCHEDULED);
+                    $hasCreditInvoice = false;
                     if ($newLesson->save()) {
                         $newLesson->markAsRoot();
                         $invoice = $newLesson->extraLessonTakePayment();
                         if ($lesson->hasLessonCredit($enrolmentId)) {
                             if ($invoice->balance < $lesson->getLessonCreditAmount($enrolmentId)) {
                                 $amount = $invoice->balance;
-                                $creditInvoice = $lesson->addLessonCreditInvoice();
-                                $creditInvoice->save();
-                                $creditInvoice->addPayment($lesson, $lesson->getLessonCreditAmount($enrolmentId)) - $amount;
+                                if (!$hasCreditInvoice) {
+                                    $creditInvoice = $lesson->addLessonCreditInvoice();
+                                    $creditInvoice->save();
+                                }
+                                $creditInvoice->addPayment($lesson, $lesson->getLessonCreditAmount($enrolmentId) - $amount);
+                                $hasCreditInvoice = true;
                             } else {
                                 $amount = $lesson->getLessonCreditAmount($enrolmentId);
                             }
