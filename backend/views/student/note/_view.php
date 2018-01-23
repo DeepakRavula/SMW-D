@@ -9,11 +9,11 @@ use yii\helpers\Html;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <?php echo ListView::widget([
-	'dataProvider' =>  $noteDataProvider,
-	'itemView' => '_list',
+    'dataProvider' =>  $noteDataProvider,
+    'itemView' => '_list',
 ]); ?>
 <?php $form = ActiveForm::begin([
-	'id' => 'student-note-form',
+    'id' => 'student-note-form',
 ]); ?>
 <div class="box-footer">
 	<div class="input-group">

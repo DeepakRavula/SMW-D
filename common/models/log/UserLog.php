@@ -11,7 +11,6 @@ use yii\helpers\Url;
 
 class UserLog extends Log
 {
-
     public function create($event)
     {
         $userModel    = $event->sender;
@@ -25,13 +24,30 @@ class UserLog extends Log
         $object       = LogObject::findOne(['name' => LogObject::TYPE_USER]);
         $activity     = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
         $locationId   = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $this->addLog($object, $activity, $message, $data, $loggedUser,
-            $userModel, $locationId, $index, $path);
+        $this->addLog(
+            $object,
+            $activity,
+            $message,
+            $data,
+            $loggedUser,
+            $userModel,
+            $locationId,
+            $index,
+            $path
+        );
     }
 
-    public function addLog($object, $activity, $message, $data, $loggedUser,
-                           $model, $locationId, $index, $path)
-    {
+    public function addLog(
+        $object,
+        $activity,
+        $message,
+        $data,
+        $loggedUser,
+                           $model,
+        $locationId,
+        $index,
+        $path
+    ) {
         $log                = new Log();
         $log->logObjectId   = $object->id;
         $log->logActivityId = $activity->id;

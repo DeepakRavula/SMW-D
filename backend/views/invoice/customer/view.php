@@ -7,6 +7,7 @@ use yii\helpers\Html;
 use common\models\User;
 use yii\helpers\Url;
 use common\models\Invoice;
+
 ?>
 
 <?php
@@ -18,20 +19,20 @@ if ($model->type === Invoice::TYPE_INVOICE) {
     $boxTools = "";
 }
 LteBox::begin([
-	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => $boxTools,
-	'title' => 'Customer',
-	'withBorder' => true,
+    'type' => LteConst::TYPE_DEFAULT,
+    'boxTools' => $boxTools,
+    'title' => 'Customer',
+    'withBorder' => true,
 ])
 ?>
 <dl class="dl-horizontal">
-	<?php if(!$model->isUnassignedUser()) :?>
+	<?php if (!$model->isUnassignedUser()) :?>
 		<?php $roles = Yii::$app->authManager->getRolesByUser($model->user_id);
-		$role = end($roles); ?>
+        $role = end($roles); ?>
 	<?php endif; ?>
-	<?php if(!empty($model->user)) : ?>
+	<?php if (!empty($model->user)) : ?>
 	<dt>Name</dt>
-	<dd><?php if(!empty($role) && $role->name === User::ROLE_CUSTOMER) : ?>
+	<dd><?php if (!empty($role) && $role->name === User::ROLE_CUSTOMER) : ?>
 		<a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id]) ?>">
 	<?php endif; ?>
 	<?= $customer->publicIdentity?>

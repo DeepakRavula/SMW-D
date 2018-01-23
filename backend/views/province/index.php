@@ -26,7 +26,7 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
 <div id="province-content"></div>
  <?php  Modal::end(); ?>
 <?php Pjax::begin([
-	'id' => 'province-listing'
+    'id' => 'province-listing'
 ]);?>
 <div>
     <?php echo AdminLteGridView::widget([
@@ -36,10 +36,10 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
         'emptyText' => false,
         'columns' => [
             'name',
-			[
+            [
                 'label' => 'Tax Rate (%)',
-				'headerOptions' => ['class' => 'text-right'],
-				'contentOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
                     return $data->tax_rate;
                 },

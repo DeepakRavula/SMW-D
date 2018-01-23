@@ -44,10 +44,10 @@ class TimelineEventLink extends \yii\db\ActiveRecord
             'timelineEventId' => 'Timeline Event ID',
             'index' => 'Index',
             'baseUrl' => 'Url',
-			'path' => 'Path'
+            'path' => 'Path'
         ];
     }
-	public function getTimelineEvent()
+    public function getTimelineEvent()
     {
         return $this->hasMany(TimelineEvent::className(), ['id' => 'timelineEventId']);
     }

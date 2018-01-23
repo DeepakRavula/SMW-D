@@ -27,10 +27,10 @@ foreach ($roles as $name => $description) {
 }
 $roleName = $searchModel->role_name;
 $originalInvoice = Invoice::TYPE_INVOICE;
-$this->title = Yii::t('backend',  !isset($role) ? 'User' : $role.'s');
+$this->title = Yii::t('backend', !isset($role) ? 'User' : $role.'s');
 $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), ['#'], ['class' => 'f-s-18 add-user']);
 $this->params['show-all'] = $this->render('_button', [
-	'searchModel' => $searchModel
+    'searchModel' => $searchModel
 ]);
 ?>
  <?php
@@ -39,37 +39,37 @@ $this->params['show-all'] = $this->render('_button', [
         'id'=>'add-user-modal',
     ]);?>
 <?= $this->render('_form', [
-	'model' => new UserForm(['scenario' => UserForm::SCENARIO_CREATE]),
-	'emailModels' => new UserEmail(),
+    'model' => new UserForm(['scenario' => UserForm::SCENARIO_CREATE]),
+    'emailModels' => new UserEmail(),
     'searchModel' => $searchModel,
 ]);?>
 <?php Modal::end();?>
 <div class="user-index"> 
 <div class="grid-row-open">
     <?php Pjax::begin([
-		'id' => 'user-index',
-		'timeout' => 6000
-	]); ?>
+        'id' => 'user-index',
+        'timeout' => 6000
+    ]); ?>
         <?= AdminLteGridView::widget([
             'dataProvider' => $dataProvider,
             'summary' => false,
             'emptyText' => false,
             'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel, $roleName, $originalInvoice) {
                 $url = Url::to(['user/view', 'UserSearch[role_name]' => $roleName, 'id' => $model->id]);
-            	$data = ['data-url' => $url];
-				if ($searchModel->showAllCustomers || $searchModel->showAllTeachers) {
-					if ((int)$model->status === User::STATUS_NOT_ACTIVE) {
-						$data = array_merge($data, ['class' => 'danger inactive']);
-					} elseif ((int)$model->status === User::STATUS_ACTIVE) {
-						$data = array_merge($data, ['class' => 'info active']);
-					}
-            }
+                $data = ['data-url' => $url];
+                if ($searchModel->showAllCustomers || $searchModel->showAllTeachers) {
+                    if ((int)$model->status === User::STATUS_NOT_ACTIVE) {
+                        $data = array_merge($data, ['class' => 'danger inactive']);
+                    } elseif ((int)$model->status === User::STATUS_ACTIVE) {
+                        $data = array_merge($data, ['class' => 'info active']);
+                    }
+                }
 
-            return $data;
+                return $data;
             },
             'tableOptions' => ['class' => 'table table-bordered'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
-			'filterModel' => $searchModel,
+            'filterModel' => $searchModel,
             'columns' => [
             [
                 'attribute' => 'firstname',

@@ -9,25 +9,26 @@ use kartik\time\TimePicker;
 use yii\helpers\Html;
 use common\models\LocationAvailability;
 use kartik\depdrop\DepDrop;
+
 ?>
 <div class="row user-create-form">
 	<?php
-	$privatePrograms = ArrayHelper::map(Program::find()
-		->active()
-		->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM])
-		->all(), 'id', 'name')
-	?>
+    $privatePrograms = ArrayHelper::map(Program::find()
+        ->active()
+        ->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM])
+        ->all(), 'id', 'name')
+    ?>
 	<div class="row">
         <div class="col-xs-6">
             <label class="modal-form-label">Program</label>
         </div>
         <div class="col-xs-5 text-right">
             <?=
-		$form->field($model, 'programId')->widget(Select2::classname(), [
-			'data' => $privatePrograms,
-			'options' => ['placeholder' => 'Program']
-		])->label(false)
-		?>
+        $form->field($model, 'programId')->widget(Select2::classname(), [
+            'data' => $privatePrograms,
+            'options' => ['placeholder' => 'Program']
+        ])->label(false)
+        ?>
         </div>
     </div>
 	<?php if (Yii::$app->user->identity->isAdmin()) : ?>
@@ -38,9 +39,9 @@ use kartik\depdrop\DepDrop;
 		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
 		<div class="col-xs-3 enrolment-field">
 				<?php
-				echo $form->field($courseSchedule, 'programRate')->textInput(['class' => 'form-control	'])
-					->label(false);
-				?>
+                echo $form->field($courseSchedule, 'programRate')->textInput(['class' => 'form-control	'])
+                    ->label(false);
+                ?>
 		</div>
 		<div class="col-xs-1 enrolment-text"><label class="text-muted">/hr</label></div>
 	</div>
@@ -52,13 +53,13 @@ use kartik\depdrop\DepDrop;
 		<div class="col-xs-2"></div>
 		<div class="col-xs-3">
 			<?php
-			echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(), [
-				'pluginOptions' => [
-					'showMeridian' => false,
-					'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
-				],
-			])->label(false);
-			?>
+            echo $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(), [
+                'pluginOptions' => [
+                    'showMeridian' => false,
+                    'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
+                ],
+            ])->label(false);
+            ?>
 		</div>
 		<div class="col-xs-1 enrolment-text"><label class="text-muted">mins.</label></div>
 	</div>
@@ -82,10 +83,10 @@ use kartik\depdrop\DepDrop;
 		</div>
 		<div class="col-xs-5 text-right">
 			<?=
-			$form->field($courseSchedule, 'paymentFrequency')->widget(Select2::classname(), [
-				'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')
-			])->label(false)
-			?>
+            $form->field($courseSchedule, 'paymentFrequency')->widget(Select2::classname(), [
+                'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')
+            ])->label(false)
+            ?>
 		</div>
 	</div>
 	<div class="row">
@@ -95,11 +96,11 @@ use kartik\depdrop\DepDrop;
 		<div class="col-xs-2"></div>
 		<div class="col-xs-3">
 			<?=
-			$form->field($paymentFrequencyDiscount, 'discount')->textInput([
-				'id' => 'payment-frequency-discount',
-				'name' => 'PaymentFrequencyDiscount[discount]'
-			])->label(false);
-			?>
+            $form->field($paymentFrequencyDiscount, 'discount')->textInput([
+                'id' => 'payment-frequency-discount',
+                'name' => 'PaymentFrequencyDiscount[discount]'
+            ])->label(false);
+            ?>
 		</div>
 		<div class="col-xs-1 enrolment-text"><label class="text-muted">%</label></div>
 	</div>
@@ -110,11 +111,11 @@ use kartik\depdrop\DepDrop;
 		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
 		<div class="col-xs-3">
 			<?=
-			$form->field($multipleEnrolmentDiscount, 'discount')->textInput([
-				'id' => 'enrolment-discount',
-				'name' => 'MultipleEnrolmentDiscount[discount]'
-			])->label(false);
-			?>
+            $form->field($multipleEnrolmentDiscount, 'discount')->textInput([
+                'id' => 'enrolment-discount',
+                'name' => 'MultipleEnrolmentDiscount[discount]'
+            ])->label(false);
+            ?>
 		</div>
 		<div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
 	</div>
@@ -141,13 +142,13 @@ use kartik\depdrop\DepDrop;
 <?php
 $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
 $minLocationAvailability = LocationAvailability::find()
-	->where(['locationId' => $locationId])
-	->orderBy(['fromTime' => SORT_ASC])
-	->one();
+    ->where(['locationId' => $locationId])
+    ->orderBy(['fromTime' => SORT_ASC])
+    ->one();
 $maxLocationAvailability = LocationAvailability::find()
-	->where(['locationId' => $locationId])
-	->orderBy(['toTime' => SORT_DESC])
-	->one();
+    ->where(['locationId' => $locationId])
+    ->orderBy(['toTime' => SORT_DESC])
+    ->one();
 $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
 $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>

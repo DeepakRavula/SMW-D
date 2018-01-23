@@ -14,7 +14,7 @@ $teacherSubstitutedLesson = CalendarEventColor::findOne(['cssClass' => 'teacher-
 $rescheduledLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
 $missedLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-missed']);
 $this->registerCss(
-	".fc-bgevent { background-color: " . $teacherAvailability->code . " !important; }
+    ".fc-bgevent { background-color: " . $teacherAvailability->code . " !important; }
         .fc-bg { background-color: " . $teacherUnavailability->code . " !important; }
         .fc-today { background-color: " . $teacherUnavailability->code . " !important; }
         .private-lesson, .fc-event .private-lesson .fc-event-time, .private-lesson a {

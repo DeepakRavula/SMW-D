@@ -12,7 +12,7 @@ use yii\helpers\Url;
 <div class="holiday-form">
 <?php   $url = Url::to(['holiday/update', 'id' => $model->id]);
             if ($model->isNewRecord) {
-               $url = Url::to(['holiday/create']);
+                $url = Url::to(['holiday/create']);
             }
         $form = ActiveForm::begin([
         'id' => 'holiday-form',

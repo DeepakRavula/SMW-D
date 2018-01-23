@@ -1,6 +1,7 @@
 <?php 
 
 use yii\helpers\Url;
+
 ?>
 
     <button type="button" style="margin-left:10px" class="close modal-close-button" data-dismiss="modal" aria-label="Close">

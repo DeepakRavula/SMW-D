@@ -22,11 +22,11 @@ use common\models\LessonPayment;
         'summary' => false,
         'emptyText' => false,
         'headerRowOptions' => ['class' => 'bg-light-gray'],
-		'rowOptions' => function ($model, $key, $index, $grid) {
-        	$url = Url::to(['student/view', 'id' => $model->id]);
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $url = Url::to(['student/view', 'id' => $model->id]);
 
-	        return ['data-url' => $url];
-    	},
+            return ['data-url' => $url];
+        },
         'columns' => [
             [
                 'label' => 'Student Name',
@@ -43,7 +43,7 @@ use common\models\LessonPayment;
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view} {create} {payment}',
                 'buttons' => [
-                    'create' => function ($url, $model) use ($lessonModel){
+                    'create' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
                             ->where(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
@@ -57,9 +57,8 @@ use common\models\LessonPayment;
                         } else {
                             return null;
                         }
-
                     },
-                    'view' => function ($url, $model) use ($lessonModel){
+                    'view' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
                             ->where(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
@@ -69,14 +68,14 @@ use common\models\LessonPayment;
                         $url = Url::to(['invoice/view', 'id' => $enrolment->getInvoice($lessonModel->id)->id]);
                         return Html::a('View Invoice', $url, [
                             'title' => Yii::t('yii', 'View Invoice'),
-							'class' => ['btn-info btn-sm']
+                            'class' => ['btn-info btn-sm']
                         ]);
                     },
-                    'payment' => function ($url, $model) use ($lessonModel){
+                    'payment' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
                             ->where(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
-                        $lessonPayment = LessonPayment::findOne(['enrolmentId' => $enrolment->id, 
+                        $lessonPayment = LessonPayment::findOne(['enrolmentId' => $enrolment->id,
                             'lessonId' => $lessonModel->id]);
                         if ($lessonPayment) {
                             $url = Url::to(['lesson/payment', 'lessonId' => $lessonModel->id, 'enrolmentId' => $enrolment->id]);

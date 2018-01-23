@@ -14,6 +14,7 @@ use common\models\Lesson;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
 use common\models\LessonSplitUsage;
+
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
@@ -27,7 +28,7 @@ class PrivateLessonController extends \common\components\controllers\BaseControl
                 'actions' => [
                 ],
             ],
-			'contentNegotiator' => [
+            'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['merge', 'update-attendance', 'delete'],
                 'formatParam' => '_format',
@@ -119,19 +120,19 @@ class PrivateLessonController extends \common\components\controllers\BaseControl
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-		if (($model->hasProFormaInvoice() && $model->proFormaInvoice->hasPayments()) || ($model->hasInvoice() && $model->invoice->hasPayments())) {
-			$response = [
-				'status' => false,
-				'message' => 'Lesson has payments. You can\'t delete this lesson.',
-			];
-		} else {
-			$model->delete();
-			$response = [
-				'status' => true,
-				'url' => Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]),
-				'message' => 'Lesson has been deleted successfully',
-			];
-		}
+        if (($model->hasProFormaInvoice() && $model->proFormaInvoice->hasPayments()) || ($model->hasInvoice() && $model->invoice->hasPayments())) {
+            $response = [
+                'status' => false,
+                'message' => 'Lesson has payments. You can\'t delete this lesson.',
+            ];
+        } else {
+            $model->delete();
+            $response = [
+                'status' => true,
+                'url' => Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]),
+                'message' => 'Lesson has been deleted successfully',
+            ];
+        }
 
         return $response;
     }
@@ -146,7 +147,7 @@ class PrivateLessonController extends \common\components\controllers\BaseControl
         ]);
         return $this->redirect(['student/view', 'id' => $model->enrolment->student->id, '#'=> 'unscheduledLesson']);
     }
-	
+    
     public function actionMerge($id)
     {
         $model = $this->findModel($id);
@@ -174,17 +175,17 @@ class PrivateLessonController extends \common\components\controllers\BaseControl
             ];
         }
     }
-	
-	public function actionUpdateAttendance($id)
-	{
+    
+    public function actionUpdateAttendance($id)
+    {
         $model = $this->findModel($id);
-		$post = Yii::$app->request->post();
-		if($model->load($post) && $model->save()) {
-			return [
-				'status' => true,
-			];
-		}
-	}
+        $post = Yii::$app->request->post();
+        if ($model->load($post) && $model->save()) {
+            return [
+                'status' => true,
+            ];
+        }
+    }
     /**
      * Finds the PrivateLesson model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

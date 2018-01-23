@@ -232,10 +232,12 @@ class ItemCategoryController extends \common\components\controllers\BaseControll
         $dataProvider->pagination=false;
         $this->layout = '/print';
 
-        return $this->render('/report/item-category/_print',
+        return $this->render(
+            '/report/item-category/_print',
                 [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
-        ]);
+        ]
+        );
     }
 }

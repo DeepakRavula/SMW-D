@@ -22,7 +22,7 @@ class StudentLog extends Log
         $message            = $loggedUser->publicIdentity.' created new student {{'.$index.'}}';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
-		$locationId = $studentModel->customer->userLocation->location->id;
+        $locationId = $studentModel->customer->userLocation->location->id;
         $this->addLog($object, $activity, $message, $data, $loggedUser, $studentModel, $locationId, $index, $path);
     }
 
@@ -37,7 +37,7 @@ class StudentLog extends Log
         $message            = $loggedUser->publicIdentity.' changed {{'.$index.'}}\'s date of birth from '.$oldBirthDate.' to '.Yii::$app->formatter->asDate($studentModel->birth_date);
         $object             = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_UPDATE]);
-		$locationId = $studentModel->customer->userLocation->location->id;
+        $locationId = $studentModel->customer->userLocation->location->id;
         $this->addLog($object, $activity, $message, $data, $loggedUser, $studentModel, $locationId, $index, $path);
     }
 
@@ -108,10 +108,10 @@ class StudentLog extends Log
         $message            = $loggedUser->publicIdentity . ' merged '. $mergedStudent->fullName . ' with {{' . $index.'}}';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_MERGE]);
-		$locationId = $studentModel->customer->userLocation->location->id;
+        $locationId = $studentModel->customer->userLocation->location->id;
         $this->addLog($object, $activity, $message, $data, $loggedUser, $studentModel, $locationId, $index, $path);
     }
-	public function addExamResult($event)
+    public function addExamResult($event)
     {
         $examResult       = $event->sender;
         $loggedUser         = end($event->data);
@@ -121,10 +121,10 @@ class StudentLog extends Log
         $message            = $loggedUser->publicIdentity . ' created a ' . $examResult->program->name . ' program examresult for {{'. $index . '}}';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
-		$locationId = $examResult->student->customer->userLocation->location->id;
+        $locationId = $examResult->student->customer->userLocation->location->id;
         $this->addLog($object, $activity, $message, $data, $loggedUser, $examResult->student, $locationId, $index, $path);
     }
-	public function deleteExamResult($event)
+    public function deleteExamResult($event)
     {
         $examResult       = $event->sender;
         $loggedUser         = end($event->data);
@@ -137,7 +137,7 @@ class StudentLog extends Log
         $locationId = $examResult->student->customer->userLocation->location->id;
         $this->addLog($object, $activity, $message, $data, $loggedUser, $examResult->student, $locationId, $index, $path);
     }
-	public function addLog($object, $activity, $message, $data, $loggedUser, $model, $locationId, $index, $path)
+    public function addLog($object, $activity, $message, $data, $loggedUser, $model, $locationId, $index, $path)
     {
         $log                = new Log();
         $log->logObjectId   = $object->id;

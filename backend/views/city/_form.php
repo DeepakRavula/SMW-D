@@ -15,7 +15,7 @@ use yii\helpers\Url;
 
     <?php   $url = Url::to(['city/update', 'id' => $model->id]);
             if ($model->isNewRecord) {
-               $url = Url::to(['city/create']);
+                $url = Url::to(['city/create']);
             }
         $form = ActiveForm::begin([
         'id' => 'city-form',
@@ -28,7 +28,9 @@ use yii\helpers\Url;
 		</div>
 		<div class="col-md-4 ">
     <?php echo $form->field($model, 'province_id')->dropDownList(ArrayHelper::map(
-                            Province::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'
+                            Province::find()->orderBy(['name' => SORT_ASC])->all(),
+        'id',
+        'name'
             )) ?>
 		</div>
 </div>
@@ -43,7 +45,7 @@ use yii\helpers\Url;
      <div class="pull-left">   
         <?php if (!$model->isNewRecord) {
                 echo Html::a('Delete', ['delete', 'id' => $model->id], [
-			'id' => 'city-delete-button',
+            'id' => 'city-delete-button',
                         'class' => 'btn btn-danger',
                         'data' => [
                             'confirm' => 'Are you sure you want to delete this item?',

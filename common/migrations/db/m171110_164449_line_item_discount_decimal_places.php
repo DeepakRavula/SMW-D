@@ -6,7 +6,7 @@ class m171110_164449_line_item_discount_decimal_places extends Migration
 {
     public function up()
     {
-        $this->alterColumn ('invoice_line_item_discount', 'value', $this->decimal(10,4));
+        $this->alterColumn('invoice_line_item_discount', 'value', $this->decimal(10, 4));
     }
 
     public function down()

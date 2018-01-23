@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\User;
 
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -22,24 +22,24 @@ use common\models\User;
     <?php foreach ($enrolmentProgramRates as $key => $enrolmentProgramRate) : ?>
     <?php if ($user->isAdmin()) : ?>
         <div class="col-md-6">
-            <label>Rate From <?= (new \DateTime($enrolmentProgramRate->startDate))->format('d-m-Y') 
+            <label>Rate From <?= (new \DateTime($enrolmentProgramRate->startDate))->format('d-m-Y')
                 . ' To ' . (new \DateTime($enrolmentProgramRate->endDate))->format('d-m-Y') ?></label>
             <?= $form->field($enrolmentProgramRate, 'programRate')->textInput([
                     'id' => 'program-rate' . $key, 'name' => 'EnrolmentProgramRate['. $key . '][programRate]'
-                ])->label(false); 
+                ])->label(false);
             ?>
         </div>
     <?php else : ?>
         <div class="col-md-6">
             <?= $form->field($enrolmentProgramRate, 'programRate')->hiddenInput([
                 'id' => 'program-rate' . $key, 'name' => 'EnrolmentProgramRate['. $key . '][programRate]'
-                ])->label(false); 
+                ])->label(false);
             ?>
         </div>
     <?php endif; ?>   
     <?php endforeach; ?>   
     <div class="col-md-12">
-        <?= $form->field($model, 'isAutoRenew')->checkbox(); 
+        <?= $form->field($model, 'isAutoRenew')->checkbox();
         ?>
     </div>
     <div id="spinner" class="spinner" style="display:none">

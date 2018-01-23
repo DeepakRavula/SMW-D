@@ -6,10 +6,16 @@ class m170721_091542_alter_enrolment_discount extends Migration
 {
     public function up()
     {
-        $this->addColumn('enrolment_discount', 'discountType',
-			$this->integer()->notNull()->after('discount'));
-        $this->addColumn('enrolment_discount', 'type',
-			$this->integer()->notNull()->after('discountType'));
+        $this->addColumn(
+            'enrolment_discount',
+            'discountType',
+            $this->integer()->notNull()->after('discount')
+        );
+        $this->addColumn(
+            'enrolment_discount',
+            'type',
+            $this->integer()->notNull()->after('discountType')
+        );
     }
 
     public function down()

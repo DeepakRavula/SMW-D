@@ -2,6 +2,7 @@
 
 use yii\helpers\Url;
 use common\models\LocationAvailability;
+
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 ?>

@@ -44,7 +44,6 @@ class CustomerController extends UserController
 
     public function actions()
     {
-		
     }
 
     public function actionAddOpeningBalance($id)
@@ -78,9 +77,9 @@ class CustomerController extends UserController
             $invoiceLineItem->save();
             $invoice->tax = $invoiceLineItem->tax_rate;
             $invoice->total = $invoice->subTotal + $invoice->tax;
-            if(!empty($invoice->location->conversionDate)) {
+            if (!empty($invoice->location->conversionDate)) {
                 $date = Carbon::parse($invoice->location->conversionDate);
-            	$invoice->date = $date->subDay(1);
+                $invoice->date = $date->subDay(1);
             }
             $invoice->save();
 
@@ -110,7 +109,7 @@ class CustomerController extends UserController
                 ->one();
         if ($model !== null) {
             return $model;
-        }else {
+        } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }

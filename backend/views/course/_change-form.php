@@ -8,7 +8,8 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use common\models\User;
 use common\models\Location;
-/* 
+
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -48,7 +49,8 @@ use common\models\Location;
         <div class="col-lg-6">
             <?php
                 // Dependent Dropdown
-                echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
+                echo $form->field($model, 'teacherId')->widget(
+                    DepDrop::classname(),
                     [
                     'type' => DepDrop::TYPE_SELECT2,
                     'data'=> $defaultTeacher,
@@ -60,7 +62,8 @@ use common\models\Location;
                         'depends' => ['change-course-program'],
                         'url' => Url::to(['course/teachers'])
                     ],
-                ]);
+                ]
+                );
             ?>
         </div>
     </div>

@@ -9,6 +9,7 @@ use yii\widgets\Pjax;
 use yii\bootstrap\Modal;
 
 use kartik\date\DatePickerAsset;
+
 DatePickerAsset::register($this);
 
 /* @var $this yii\web\View */
@@ -16,9 +17,9 @@ DatePickerAsset::register($this);
 
 $this->title = $model->name;
 $this->params['label'] = $this->render('_title', [
-	'model' => $model,
+    'model' => $model,
 ]);
-$this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', '#', ['class' => 'btn btn-primary btn-sm edit-location']); 
+$this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', '#', ['class' => 'btn btn-primary btn-sm edit-location']);
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 ?>
@@ -29,16 +30,16 @@ $lastRole = end($roles);
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <?php Pjax::begin([
-	'id' => 'location-view']) ; ?>
+    'id' => 'location-view']) ; ?>
 <div class="row">
 	<div class="col-md-6">	
 		<?php
-		LteBox::begin([
-			'type' => LteConst::TYPE_DEFAULT,
-			'title' => 'Details',
-			'withBorder' => true,
-		])
-		?>
+        LteBox::begin([
+            'type' => LteConst::TYPE_DEFAULT,
+            'title' => 'Details',
+            'withBorder' => true,
+        ])
+        ?>
 		<dl class="dl-horizontal">
 			<dt>Email</dt>
 			<dd><?= $model->email; ?></dd>
@@ -55,12 +56,12 @@ $lastRole = end($roles);
 		</div> 
 	<div class="col-md-6">	
 		<?php
-		LteBox::begin([
-			'type' => LteConst::TYPE_DEFAULT,
-			'title' => 'Address',
-			'withBorder' => true,
-		])
-		?>
+        LteBox::begin([
+            'type' => LteConst::TYPE_DEFAULT,
+            'title' => 'Address',
+            'withBorder' => true,
+        ])
+        ?>
 		<dl class="dl-horizontal">
 			<dt>Address</dt>
 			<dd><?= $model->address; ?></dd>
@@ -80,13 +81,13 @@ $lastRole = end($roles);
 <div class="row">
 	<div class="col-md-12">	
 		<?php
-		LteBox::begin([
-			'type' => LteConst::TYPE_DEFAULT,
-			'title' => 'Availability',
-			'withBorder' => true,
-		])
-		?>
-		<?php echo $this->render('_availability-details',[
+        LteBox::begin([
+            'type' => LteConst::TYPE_DEFAULT,
+            'title' => 'Availability',
+            'withBorder' => true,
+        ])
+        ?>
+		<?php echo $this->render('_availability-details', [
             'model' => $model,
         ]); ?>
 		<?php LteBox::end() ?>

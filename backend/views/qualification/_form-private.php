@@ -18,29 +18,29 @@ use common\models\Qualification;
 
 <?php $form = ActiveForm::begin([
     'id' => 'qualification-form-create',
-	'action' => Url::to(['qualification/create', 'id' => $userModel->id]),
+    'action' => Url::to(['qualification/create', 'id' => $userModel->id]),
 ]); ?>
 	<?php 
-	$privateQualifications = Qualification::find()
-		->joinWith(['program' => function($query) {
-			$query->privateProgram();
-		}])
-		->andWhere(['teacher_id' => $userModel->id])
-		->all();
-		$privateQualificationIds = ArrayHelper::getColumn($privateQualifications, 'program_id'); 
-		$privatePrograms = Program::find()->privateProgram()->active()->orderBy(['name' => SORT_ASC])
-			->andWhere(['NOT IN', 'program.id', $privateQualificationIds])->all();
+    $privateQualifications = Qualification::find()
+        ->joinWith(['program' => function ($query) {
+            $query->privateProgram();
+        }])
+        ->andWhere(['teacher_id' => $userModel->id])
+        ->all();
+        $privateQualificationIds = ArrayHelper::getColumn($privateQualifications, 'program_id');
+        $privatePrograms = Program::find()->privateProgram()->active()->orderBy(['name' => SORT_ASC])
+            ->andWhere(['NOT IN', 'program.id', $privateQualificationIds])->all();
 ?>
    <div class="row">
         <div class="col-md-6">
             <?= $form->field($model, 'program_id')->widget(Select2::classname(), [
-	    		'data' => ArrayHelper::map($privatePrograms, 'id', 'name'),
-				'pluginOptions' => [
-					'multiple' => false,
-				],
-			]); ?>
+                'data' => ArrayHelper::map($privatePrograms, 'id', 'name'),
+                'pluginOptions' => [
+                    'multiple' => false,
+                ],
+            ]); ?>
         </div>
-	   <?php if(Yii::$app->user->can('viewQualificationRate')) : ?>
+	   <?php if (Yii::$app->user->can('viewQualificationRate')) : ?>
         <div class="col-md-6">
             <?= $form->field($model, 'rate')->textInput(['class' => 'right-align form-control', 'id' =>'private-qualification-rate']);?>
         </div>

@@ -11,6 +11,7 @@ use backend\models\UserForm;
 use common\models\discount\CustomerDiscount;
 use yii\widgets\Pjax;
 use common\models\User;
+
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 /* @var $this yii\web\View */
@@ -24,13 +25,13 @@ foreach ($roleNames as $name => $description) {
 }
 $this->title = $model->publicIdentity;
 $this->params['label'] = $this->render('_title', [
-	'model' => $model,
-	'searchModel' => $searchModel,
-	'roleName' => $roleName
+    'model' => $model,
+    'searchModel' => $searchModel,
+    'roleName' => $roleName
 ]);
 $this->params['action-button'] = $this->render('_action-button', [
-	'model' => $model,
-	'searchModel' => $searchModel,
+    'model' => $model,
+    'searchModel' => $searchModel,
 ]);?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
@@ -48,72 +49,72 @@ $this->params['action-button'] = $this->render('_action-button', [
 <div class="row">
 	<div class="col-md-6">	
 		<?php
-		echo $this->render('_profile', [
-			'model' => $model,
-			'role' => $roleName,
-		]);
-		?>
-        <?php if($searchModel->role_name === User::ROLE_TEACHER):?>
+        echo $this->render('_profile', [
+            'model' => $model,
+            'role' => $roleName,
+        ]);
+        ?>
+        <?php if ($searchModel->role_name === User::ROLE_TEACHER):?>
 			<?php Pjax::Begin([
-			'id' => 'private-quali-list'
-		]) ?> 
+            'id' => 'private-quali-list'
+        ]) ?> 
 		<?= $this->render('teacher/_private-qualification', [
-			'privateQualificationDataProvider' => $privateQualificationDataProvider,
-			'groupQualificationDataProvider' => $groupQualificationDataProvider,
+            'privateQualificationDataProvider' => $privateQualificationDataProvider,
+            'groupQualificationDataProvider' => $groupQualificationDataProvider,
             'model' => $model,
             'searchModel' => $searchModel,
-		]);
-		?>
+        ]);
+        ?>
 		<?php Pjax::end() ?> 	
 			<?php Pjax::Begin([
-			'id' => 'group-quali-list'
-		]) ?> 
+            'id' => 'group-quali-list'
+        ]) ?> 
 		<?= $this->render('teacher/_group-qualification', [
-			'privateQualificationDataProvider' => $privateQualificationDataProvider,
-			'groupQualificationDataProvider' => $groupQualificationDataProvider,
+            'privateQualificationDataProvider' => $privateQualificationDataProvider,
+            'groupQualificationDataProvider' => $groupQualificationDataProvider,
             'model' => $model,
             'searchModel' => $searchModel,
-		]);
-		?>
+        ]);
+        ?>
 		<?php Pjax::end() ?> 
 		<?php endif;?>
-        <?php if($searchModel->role_name == 'customer'):?>
+        <?php if ($searchModel->role_name == 'customer'):?>
 		<?php Pjax::Begin([
-			'id' => 'discount-customer'
-		]) ?> 
+            'id' => 'discount-customer'
+        ]) ?> 
 		<?= $this->render('customer/_discount', [
-			'model' => $model,
-		]);
-		?>
+            'model' => $model,
+        ]);
+        ?>
 		<?php Pjax::end() ?> 
 		<?= $this->render('customer/_opening-balance', [
-			'model' => $model,
+            'model' => $model,
             'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
-			'openingBalanceCredit' => $openingBalanceCredit
-		]);
-		?>
+            'openingBalanceCredit' => $openingBalanceCredit
+        ]);
+        ?>
             <?=$this->render('customer/_payment-preference', [
                 'model' => $model,
             ]);
-		?>
+        ?>
     <?php endif;?>
 		
 	</div> 
 	<div class="col-md-6">	
             <?php
-		echo $this->render('_email', [
-			'model' => $model,
-		]);
-		?>
+        echo $this->render('_email', [
+            'model' => $model,
+        ]);
+        ?>
 		<?php
-		echo $this->render('_phone', [
-			'model' => $model,
-		]);
-		?>
+        echo $this->render('_phone', [
+            'model' => $model,
+        ]);
+        ?>
         <?= $this->render('_address', [
-			'model' => $model,
-		]);
-		?>
+            'model' => $model,
+        ]);
+        ?>
 	</div> 
 </div>
     <div class="nav-tabs-custom">
@@ -157,15 +158,15 @@ $this->params['action-button'] = $this->render('_action-button', [
             'model' => $model,
             'minTime' => $minTime,
             'maxTime' => $maxTime,
-			'roomModel' => new TeacherRoom(),
+            'roomModel' => new TeacherRoom(),
         ]);
 
         $teacherStudentContent = $this->render('teacher/_student', [
             'studentDataProvider' => $studentDataProvider,
         ]);
-		$unavailabilityContent = $this->render('teacher/_unavailability', [
+        $unavailabilityContent = $this->render('teacher/_unavailability', [
             'unavailabilityDataProvider' => $unavailability,
-			'model' => $model,
+            'model' => $model,
         ]);
        
         $unscheduledLessonContent = $this->render('teacher/_unscheduled-lesson', [
@@ -176,50 +177,50 @@ $this->params['action-button'] = $this->render('_action-button', [
         $teacherScheduleContent = $this->render('teacher/_schedule', [
             'teacherId' => $model->id,
         ]);
-		$teacherLessonContent = $this->render('teacher/_view-lesson', [
+        $teacherLessonContent = $this->render('teacher/_view-lesson', [
             'teacherLessonDataProvider' => $teacherLessonDataProvider,
-			'searchModel' => $lessonSearchModel,
-			'model' => $model,
+            'searchModel' => $lessonSearchModel,
+            'model' => $model,
         ]);
-		$noteContent = $this->render('note/view', [
-			'model' => new Note(),
-			'noteDataProvider' => $noteDataProvider
-		]);
-		
-		$discountContent = $this->render('customer/_discount', [
-			'model' => $model,
-		]);
+        $noteContent = $this->render('note/view', [
+            'model' => new Note(),
+            'noteDataProvider' => $noteDataProvider
+        ]);
+        
+        $discountContent = $this->render('customer/_discount', [
+            'model' => $model,
+        ]);
 
-		$logContent = $this->render('log', [
-			'model' => $model,
+        $logContent = $this->render('log', [
+            'model' => $model,
                         'logDataProvider'=>$logDataProvider,
-		]);
-		$timeVoucherContent = $this->render('teacher/_time-voucher', [
-			'timeVoucherDataProvider' => $timeVoucherDataProvider,
-			'searchModel' => $invoiceSearchModel,
-			'model' => $model,
-		]);
+        ]);
+        $timeVoucherContent = $this->render('teacher/_time-voucher', [
+            'timeVoucherDataProvider' => $timeVoucherDataProvider,
+            'searchModel' => $invoiceSearchModel,
+            'model' => $model,
+        ]);
 
         ?>
 		<?php
         $items = [
-			[
-        	    'label' => 'History',
-    	        'content' => $logContent,
-	            'options' => [
-                	'id' => 'log',
-            	],
-        	],
+            [
+                'label' => 'History',
+                'content' => $logContent,
+                'options' => [
+                    'id' => 'log',
+                ],
+            ],
         ];
         $teacherItems = [
-			[
+            [
                 'label' => 'Availability',
                 'content' => $teacherAvailabilityContent,
                 'options' => [
                     'id' => 'availability',
                 ],
             ],
-			[
+            [
                 'label' => 'Unavailabilities',
                 'content' => $unavailabilityContent,
                 'options' => [
@@ -240,7 +241,7 @@ $this->params['action-button'] = $this->render('_action-button', [
                     'id' => 'calendar',
                 ],
             ],
-			[
+            [
                 'label' => 'Lessons',
                 'content' => $timeVoucherContent,
                 'options' => [
@@ -254,20 +255,20 @@ $this->params['action-button'] = $this->render('_action-button', [
                     'id' => 'unscheduled',
                 ],
             ],
-			[
+            [
                 'label' => 'Time Voucher',
                 'content' => $teacherLessonContent,
                 'options' => [
                     'id' => 'time-voucher',
                 ],
-            ],	
-			[
-        	    'label' => 'Comments',
-    	        'content' => $noteContent,
-	            'options' => [
-                	'id' => 'comment',
-            	],
-        	],
+            ],
+            [
+                'label' => 'Comments',
+                'content' => $noteContent,
+                'options' => [
+                    'id' => 'comment',
+                ],
+            ],
         ];
         $customerItems = [
             [
@@ -312,15 +313,15 @@ $this->params['action-button'] = $this->render('_action-button', [
                     'id' => 'account',
                 ],
             ],
-			[
-				'label' => 'Comments',
-				'content' => $noteContent,
-				'options' => [
-					'id' => 'comments',
-				],
-       		],
-		  ];
-		
+            [
+                'label' => 'Comments',
+                'content' => $noteContent,
+                'options' => [
+                    'id' => 'comments',
+                ],
+               ],
+          ];
+        
         if (in_array($role->name, ['teacher'])) {
             $items = array_merge($teacherItems, $items);
         }
@@ -350,19 +351,19 @@ $this->params['action-button'] = $this->render('_action-button', [
     'id' => 'user-edit-modal',
 ]); ?>
 <?= $this->render('update/_profile', [
-	'model' => $userForm,
-	'userProfile' => $model->userProfile,
+    'model' => $userForm,
+    'userProfile' => $model->userProfile,
 ]);?>
 <?php Modal::end(); ?>
 <?php Pjax::begin([
-	'id' => 'customer-discount-pjax'
+    'id' => 'customer-discount-pjax'
 ]); ?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0"> Discount</h4>',
     'id' => 'customer-discount-edit-modal',
 ]); ?>
 <?= $this->render('customer/_form-discount', [
-	'model' => new CustomerDiscount,
+    'model' => new CustomerDiscount,
     'userModel'=> $model,
 ]);?>
 <?php Modal::end(); ?>

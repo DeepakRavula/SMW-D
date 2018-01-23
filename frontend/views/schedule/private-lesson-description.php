@@ -1,6 +1,7 @@
 <?php 
 
 use common\models\Lesson;
+
 ?>
 <style>
 	li {
@@ -12,13 +13,13 @@ use common\models\Lesson;
 		font-weight: bold;
 	}
 </style>
-<?php if((int)$view === Lesson::CLASS_ROOM_VIEW) : ?>
+<?php if ((int)$view === Lesson::CLASS_ROOM_VIEW) : ?>
 	<li><label>Teacher: </label><span><?= $title; ?></span></li>
 	<li><label>Student Count: </label><span><?= $lesson->course->getEnrolmentsCount(); ?></span></li>
 <?php else : ?>
 	<li><label>Student: </label><span><?= $title; ?></span></li>
 	<li><label>Teacher: </label><span><?= $lesson->teacher->publicIdentity; ?></span></li>
-	<?php if(!empty($lesson->classroom)) : ?>
+	<?php if (!empty($lesson->classroom)) : ?>
 	<li><label>Classroom: </label><span><?= $lesson->classroom->name; ?></span></li>
 	<?php endif; ?>
 <?php endif; ?>

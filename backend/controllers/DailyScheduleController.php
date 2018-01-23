@@ -12,13 +12,13 @@ class DailyScheduleController extends \common\components\controllers\BaseControl
     public function actionIndex($date)
     {
         $this->layout = 'base';
-		$searchModel = new LocationScheduleSearch();
-		$searchModel->date = $date;
+        $searchModel = new LocationScheduleSearch();
+        $searchModel->date = $date;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-		return $this->render('index', [
-			'searchModel' => $searchModel,
-			'dataProvider' => $dataProvider,
-		]);
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 }

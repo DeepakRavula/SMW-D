@@ -14,8 +14,8 @@ use yii\widgets\Pjax;
     'id' => 'payment-modal',
 ]);
 echo $this->render('payment-method/_form', [
-	'model' => new Payment(),
-	'invoice' => $model,
+    'model' => new Payment(),
+    'invoice' => $model,
 ]);
 Modal::end(); ?>
 
@@ -23,13 +23,13 @@ Modal::end(); ?>
 <?php $boxTools = null;?>
 <?php $boxTools = '<i title="Add" class="fa fa-plus add-payment m-r-10"></i>' ?>
 <?php
-	LteBox::begin([
-		'type' => LteConst::TYPE_DEFAULT,
-		'boxTools' => $boxTools,
-		'title' => 'Payments',
-		'withBorder' => true,
-	])
-	?>
+    LteBox::begin([
+        'type' => LteConst::TYPE_DEFAULT,
+        'boxTools' => $boxTools,
+        'title' => 'Payments',
+        'withBorder' => true,
+    ])
+    ?>
 
 
 <div style="margin-bottom: 10px">   
@@ -48,38 +48,38 @@ $columns = [
         ],
         [
             'attribute' => 'amount',
-			'format' => 'currency',
-			'headerOptions' => ['class' => 'text-right'],
-			'contentOptions' => ['class' => 'text-right'],
-			'value' => function ($data) {
-           		return Yii::$app->formatter->asDecimal($data->amount);
-        	},	
+            'format' => 'currency',
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right'],
+            'value' => function ($data) {
+                return Yii::$app->formatter->asDecimal($data->amount);
+            },
         ],
     ]; ?>
 
 <div>
 	<?php yii\widgets\Pjax::begin([
-		'id' => 'invoice-payment-listing',
-		'timeout' => 6000,
-	]) ?>
+        'id' => 'invoice-payment-listing',
+        'timeout' => 6000,
+    ]) ?>
 	<?= GridView::widget([
-		'id' => 'payment-grid',
+        'id' => 'payment-grid',
         'dataProvider' => $invoicePaymentsDataProvider,
         'columns' => $columns,
-	'summary' => false,
+    'summary' => false,
         'emptyText' => false,
         'options' => ['class' => 'col-md-12'],
-	'tableOptions' => ['class' => 'table table-condensed'],
-	'headerRowOptions' => ['class' => 'bg-light-gray'],    
+    'tableOptions' => ['class' => 'table table-condensed'],
+    'headerRowOptions' => ['class' => 'bg-light-gray'],
     ]);
     ?>
 <?php \yii\widgets\Pjax::end(); ?>	
 </div>
 <?php
-	$amount = 0;
-	if ($model->total > $model->invoicePaymentTotal) {
-		$amount = $model->balance;
-	}
+    $amount = 0;
+    if ($model->total > $model->invoicePaymentTotal) {
+        $amount = $model->balance;
+    }
 ?>
 <?php if ((int) $model->type === Invoice::TYPE_INVOICE):?>
 <div class="clearfix"></div>

@@ -5,6 +5,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use kartik\daterange\DateRangePicker;
 use yii\grid\GridView;
+
 ?>
 <div class="payments-form">
     <div id="loader" class="spinner" style="display:none">
@@ -39,11 +40,18 @@ use yii\grid\GridView;
             </div>
             <div class="row-fluid">
                 <div class="form-group">
-<?php echo Html::submitButton(Yii::t('backend',
-        'Confirm & Create'),
-    ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-            <?= Html::a('Cancel', '#',
-                ['class' => 'btn btn-default vacation-cancel-button']); ?>
+<?php echo Html::submitButton(
+                    Yii::t(
+                    'backend',
+        'Confirm & Create'
+                ),
+    ['class' => 'btn btn-info', 'name' => 'signup-button']
+                ) ?>
+            <?= Html::a(
+        'Cancel',
+        '#',
+                ['class' => 'btn btn-default vacation-cancel-button']
+    ); ?>
                 </div>
             </div>
 

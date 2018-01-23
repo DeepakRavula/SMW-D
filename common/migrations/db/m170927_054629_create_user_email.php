@@ -7,7 +7,7 @@ class m170927_054629_create_user_email extends Migration
     public function up()
     {
         $tableSchema = Yii::$app->db->schema->getTableSchema('user_email');
-        if($tableSchema == null) {	
+        if ($tableSchema == null) {
             $this->createTable('user_email', [
                 'id' => $this->primaryKey()
             ]);

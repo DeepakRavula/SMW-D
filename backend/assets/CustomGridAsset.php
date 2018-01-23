@@ -1,5 +1,6 @@
 <?php
 namespace backend\assets;
+
 use yii\web\AssetBundle;
 
 class CustomGridAsset extends AssetBundle
@@ -13,4 +14,3 @@ class CustomGridAsset extends AssetBundle
         'js/kv-grid-group.js',
     ];
 }
-?>

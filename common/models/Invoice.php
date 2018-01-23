@@ -8,6 +8,7 @@ use common\models\query\InvoiceQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\TimestampBehavior;
 use common\models\payment\ProformaPaymentFrequency;
+
 /**
  * This is the model class for table "invoice".
  *
@@ -38,7 +39,7 @@ class Invoice extends \yii\db\ActiveRecord
     const SCENARIO_DISCOUNT = 'discount';
     const EVENT_CREATE = 'create';
     const EVENT_DELETE = 'deleteInvoice';
-	
+    
     public $customer_id;
     public $credit;
     public $taxAdjusted;
@@ -79,7 +80,7 @@ class Invoice extends \yii\db\ActiveRecord
             ],
         ];
     }
-	
+    
     /**
      * {@inheritdoc}
      */
@@ -93,7 +94,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
-            [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 
+            [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId',
                 'transactionId', 'balance', 'taxAdjusted', 'isTaxAdjusted'], 'safe']
         ];
     }
@@ -129,10 +130,10 @@ class Invoice extends \yii\db\ActiveRecord
     public static function invoiceCount()
     {
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-         $fromDate = (new \DateTime('first day of this month'))->format('M d,Y');
-         $toDate   = (new \DateTime('last day of this month'))->format('M d,Y');
+        $fromDate = (new \DateTime('first day of this month'))->format('M d,Y');
+        $toDate   = (new \DateTime('last day of this month'))->format('M d,Y');
         return self::find()
-                ->notDeleted()      
+                ->notDeleted()
                 ->notCanceled()
                 ->andWhere(['location_id' => $locationId])
                 ->invoice()
@@ -145,9 +146,9 @@ class Invoice extends \yii\db\ActiveRecord
     public static function pfiCount()
     {
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-         return self::find()
+        return self::find()
                 ->notDeleted()
-                ->notCanceled() 
+                ->notCanceled()
                  ->andWhere(['location_id' => $locationId])
                  ->unpaid()
                 ->proFormaInvoice()
@@ -218,7 +219,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function getPayments()
     {
         return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
-			->via('invoicePayments')
+            ->via('invoicePayments')
             ->onCondition(['payment.isDeleted' => false]);
     }
 
@@ -226,7 +227,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Location::className(), ['id' => 'location_id']);
     }
-	
+    
     public function getInvoicePayments()
     {
         return $this->hasMany(InvoicePayment::className(), ['invoice_id' => 'id']);
@@ -311,8 +312,8 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function hasMiscItem()
     {
-        foreach($this->lineItems as $item) {
-            if($item->isMisc()) {
+        foreach ($this->lineItems as $item) {
+            if ($item->isMisc()) {
                 return true;
             }
         }
@@ -353,7 +354,7 @@ class Invoice extends \yii\db\ActiveRecord
         return parent::afterSave($insert, $changedAttributes);
     }
     
-    public function createProformaPaymentFrequency() 
+    public function createProformaPaymentFrequency()
     {
         $model = new ProformaPaymentFrequency();
         $model->invoiceId = $this->id;
@@ -414,7 +415,7 @@ class Invoice extends \yii\db\ActiveRecord
 
         return $creditTotal;
     }
-	
+    
     public function getInvoiceBalance()
     {
         if ((int) $this->type === self::TYPE_INVOICE) {
@@ -450,7 +451,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $sumOfPayment = Payment::find()
                 ->andWhere(['user_id' => $customerId])
-                ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, 
+                ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED,
                     PaymentMethod::TYPE_CREDIT_APPLIED]]])
                 ->sum('payment.amount');
 
@@ -496,8 +497,10 @@ class Invoice extends \yii\db\ActiveRecord
     public function checkPaymentExists($attribute, $params)
     {
         if ($this->hasPayments()) {
-            $this->addError($attribute,
-                    'Pro-forma invoice can\'t be deleted when there payments associated. Please delete the payments and try again');
+            $this->addError(
+                $attribute,
+                    'Pro-forma invoice can\'t be deleted when there payments associated. Please delete the payments and try again'
+            );
         }
     }
 
@@ -550,7 +553,7 @@ class Invoice extends \yii\db\ActiveRecord
             if ((int) $this->type === (int) self::TYPE_INVOICE) {
                 $status = self::STATUS_CREDIT;
             } else {
-               $status = self::STATUS_PAID;
+                $status = self::STATUS_PAID;
             }
         }
         return $status;
@@ -585,11 +588,11 @@ class Invoice extends \yii\db\ActiveRecord
             if ($this->isProformaPaymentFrequencyApplicable()) {
                 $this->createProformaPaymentFrequency();
             }
-            if(empty($this->lineItems)) {
+            if (empty($this->lineItems)) {
                 return parent::beforeSave($insert);
             }
             $existingSubtotal = $this->subTotal;
-            if(!$this->isOpeningBalance() && !$this->isLessonCredit()) {
+            if (!$this->isOpeningBalance() && !$this->isLessonCredit()) {
                 $this->subTotal = $this->netSubtotal;
                 if (!$this->isTaxAdjusted) {
                     $this->tax      = $this->lineItemTax;
@@ -603,7 +606,7 @@ class Invoice extends \yii\db\ActiveRecord
             $this->balance = $this->invoiceBalance;
         }
         
-     	return parent::beforeSave($insert);
+        return parent::beforeSave($insert);
     }
 
     public function canRevert()
@@ -674,11 +677,11 @@ class Invoice extends \yii\db\ActiveRecord
         $payment->amount = $this->balance;
         return $payment->save();
     }
-	 public function sendEmail()
+    public function sendEmail()
     {
-        if(!empty($this->toEmailAddress)) {
+        if (!empty($this->toEmailAddress)) {
             $content = [];
-            foreach($this->toEmailAddress as $email) {
+            foreach ($this->toEmailAddress as $email) {
                 $subject                      = $this->subject;
                 $content[] = Yii::$app->mailer->compose('generateInvoice', [
                     'content' => $this->content,

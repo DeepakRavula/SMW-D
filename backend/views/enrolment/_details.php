@@ -6,15 +6,15 @@ use insolita\wgadminlte\LteConst;
 ?>
 
 <?php $boxTools = '';?>
-<?php if($model->course->program->isPrivate()) : ?>
+<?php if ($model->course->program->isPrivate()) : ?>
 	<?php $boxTools = $this->render('_details-box-tools');?>
 <?php endif;?>
 <?php 
 LteBox::begin([
-	'type' => LteConst::TYPE_DEFAULT,
-	'title' => 'Details',
+    'type' => LteConst::TYPE_DEFAULT,
+    'title' => 'Details',
         'boxTools' => $boxTools,
-	'withBorder' => true,
+    'withBorder' => true,
 ])
 ?>
 <style>

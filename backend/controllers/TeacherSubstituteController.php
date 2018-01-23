@@ -12,8 +12,9 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
-USE yii\data\ActiveDataProvider;
+use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
+
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
@@ -35,7 +36,7 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
                 ],
-            ],	 
+            ],
         ];
     }
 
@@ -45,7 +46,7 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
      * @return mixed
      */
     public function actionIndex()
-    {        
+    {
         $lessonIds = Yii::$app->request->get('ids');
         $teacherId = Yii::$app->request->get('teacherId');
         $lessons = Lesson::findAll($lessonIds);
@@ -112,7 +113,7 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
                     ->andWhere(['createdByUserId' => Yii::$app->user->id]);
         $teachers = User::find()
                 ->teachers($programIds, \common\models\Location::findOne(['slug' => \Yii::$app->location])->id)
-                ->join('LEFT JOIN', 'user_profile','user_profile.user_id = ul.user_id')
+                ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
                 ->notDeleted()
                 ->andWhere(['NOT', ['user.id' => end($lessons)->teacherId]])
                 ->orderBy(['user_profile.firstname' => SORT_ASC])

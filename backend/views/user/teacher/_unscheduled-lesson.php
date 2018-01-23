@@ -10,16 +10,16 @@ use common\models\LocationAvailability;
 ?>
 <div class=" p-15">
     <?php yii\widgets\Pjax::begin([
-	'id' => 'lesson-index',
+    'id' => 'lesson-index',
     'timeout' => 6000,
 ]) ?>
 <?php echo GridView::widget([
-	'dataProvider' => $dataProvider,
+    'dataProvider' => $dataProvider,
         'summary' => false,
         'emptyText' => false,
-	'tableOptions' => ['class' => 'table table-bordered'],
-	'headerRowOptions' => ['class' => 'bg-light-gray'],
-	'columns' => [
+    'tableOptions' => ['class' => 'table table-bordered'],
+    'headerRowOptions' => ['class' => 'bg-light-gray'],
+    'columns' => [
     
             [
                 'label' => 'Student',
@@ -27,15 +27,15 @@ use common\models\LocationAvailability;
                     return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
                 },
             ],
-			[
+            [
                 'label' => 'Phone',
                 'value' => function ($data) {
-					if(!empty($data->course->enrolment->student->customer->primaryPhoneNumber->number)) {
-						$number = $data->course->enrolment->student->customer->primaryPhoneNumber->number; 
-					} else {
-						$number = !empty($data->course->enrolment->student->customer->phoneNumber->number) ? $data->course->enrolment->student->customer->phoneNumber->number : null;
-					}
-					return $number;
+                    if (!empty($data->course->enrolment->student->customer->primaryPhoneNumber->number)) {
+                        $number = $data->course->enrolment->student->customer->primaryPhoneNumber->number;
+                    } else {
+                        $number = !empty($data->course->enrolment->student->customer->phoneNumber->number) ? $data->course->enrolment->student->customer->phoneNumber->number : null;
+                    }
+                    return $number;
                 },
             ],
             [
@@ -44,41 +44,41 @@ use common\models\LocationAvailability;
                     return !empty($data->course->program->name) ? $data->course->program->name : null;
                 },
             ],
-			[
+            [
                 'label' => 'Duration',
-				'headerOptions' => ['style' => 'text-align:right'],
-				'contentOptions' => ['style' => 'text-align:right'],
+                'headerOptions' => ['style' => 'text-align:right'],
+                'contentOptions' => ['style' => 'text-align:right'],
                 'value' => function ($data) {
                     return !empty($data->duration) ? (new \DateTime($data->duration))->format('H:i') : null;
                 },
             ],
             [
                 'label' => 'Original Date',
-				'format' => 'raw',
+                'format' => 'raw',
                 'value' => function ($data) {
-					return Yii::$app->formatter->asDate($data->date);
+                    return Yii::$app->formatter->asDate($data->date);
                 },
             ],
             [
                 'label' => 'Expiry Date',
                 'value' => function ($data) {
-					return !empty($data->privateLesson->expiryDate) ? Yii::$app->formatter->asDate($data->privateLesson->expiryDate) : null;
+                    return !empty($data->privateLesson->expiryDate) ? Yii::$app->formatter->asDate($data->privateLesson->expiryDate) : null;
                 },
             ],
-			[
-				'class' => 'yii\grid\ActionColumn',
-				'template' => '{edit}',
-				'buttons' => [
-					'edit' => function  ($url, $model) {
-	                    return  Html::a('<i class="fa fa-calendar"></i>','#', [
-							'id' => 'unschedule-calendar-' . $model->id,
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{edit}',
+                'buttons' => [
+                    'edit' => function ($url, $model) {
+                        return  Html::a('<i class="fa fa-calendar"></i>', '#', [
+                            'id' => 'unschedule-calendar-' . $model->id,
                                                         'duration' => $model->duration,
-							'title' => 'Reschedule',
-							'class' => 'unschedule-calendar m-l-20'
-						]);
-					},
-				],
-			],
+                            'title' => 'Reschedule',
+                            'class' => 'unschedule-calendar m-l-20'
+                        ]);
+                    },
+                ],
+            ],
         ],
 
    ]); ?>

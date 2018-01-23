@@ -21,10 +21,10 @@ $this->title = 'Holidays';
  <?php  Modal::end(); ?>
 <div>
 <?php yii\widgets\Pjax::begin([
-	'id' => 'holiday-listing'
+    'id' => 'holiday-listing'
 ]); ?>
     <?php echo AdminLteGridView::widget([
-		'id' => 'holiday-grid',
+        'id' => 'holiday-grid',
         'dataProvider' => $dataProvider,
         'summary' => false,
         'emptyText' => false,
@@ -38,7 +38,7 @@ $this->title = 'Holidays';
                     return !(empty($data->date)) ? Yii::$app->formatter->asDate($data->date) : null;
                 },
             ],
-			'description'
+            'description'
         ],
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>

@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 use common\models\Location;
+
 ?>
 <div>
 <?php $reportText = 'Summary'; ?>

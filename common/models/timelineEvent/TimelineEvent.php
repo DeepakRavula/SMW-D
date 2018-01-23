@@ -38,9 +38,9 @@ class TimelineEvent extends ActiveRecord
         return [
             'timestamp' => [
             'class' => TimestampBehavior::className(),
-			'createdAtAttribute' => 'created_at',
-			'updatedAtAttribute' => null,
-				'value' => (new \DateTime())->format('Y-m-d H:i:s')
+            'createdAtAttribute' => 'created_at',
+            'updatedAtAttribute' => null,
+                'value' => (new \DateTime())->format('Y-m-d H:i:s')
             ],
         ];
     }
@@ -63,7 +63,7 @@ class TimelineEvent extends ActiveRecord
         ];
     }
 
-	public function attributeLabels()
+    public function attributeLabels()
     {
         return [
             'created_at' => 'CreatedOn',
@@ -86,48 +86,47 @@ class TimelineEvent extends ActiveRecord
         return sprintf('%s.%s', $this->category, $this->event);
     }
 
-	public function getMessage()
-	{
-		$message = $this->message;
-		$regex = '/{{([^}]*)}}/';
-		$replace = preg_replace_callback($regex, function($match)
-		{
-			$index = $match[1];
-			$timelineEventLink = TimelineEventLink::find()
-				->joinWith(['timelineEvent' => function($query){
-					$query->andWhere(['timeline_event.id' => $this->id]);
-				}])
-				->andWhere(['index' => $index])
-				->one();
-				$url = $timelineEventLink->baseUrl . $timelineEventLink->path; 
-				$data[$index] = Html::a($index, $url); 
-			return isset($data[$match[0]]) ? $data[$match[0]] : $data[$match[1]] ;
-		}, $message);
-		
-		return $replace;
-	}
-	public function getTimelineEventEnrolment()
+    public function getMessage()
+    {
+        $message = $this->message;
+        $regex = '/{{([^}]*)}}/';
+        $replace = preg_replace_callback($regex, function ($match) {
+            $index = $match[1];
+            $timelineEventLink = TimelineEventLink::find()
+                ->joinWith(['timelineEvent' => function ($query) {
+                    $query->andWhere(['timeline_event.id' => $this->id]);
+                }])
+                ->andWhere(['index' => $index])
+                ->one();
+            $url = $timelineEventLink->baseUrl . $timelineEventLink->path;
+            $data[$index] = Html::a($index, $url);
+            return isset($data[$match[0]]) ? $data[$match[0]] : $data[$match[1]] ;
+        }, $message);
+        
+        return $replace;
+    }
+    public function getTimelineEventEnrolment()
     {
         return $this->hasOne(TimelineEventEnrolment::className(), ['timelineEventId' => 'id']);
     }
-	public function getLinks()
+    public function getLinks()
     {
         return $this->hasMany(TimelineEventLink::className(), ['timelineEventId' => 'id']);
     }
 
-	public function getTimelineEventLesson()
+    public function getTimelineEventLesson()
     {
         return $this->hasOne(TimelineEventLesson::className(), ['timelineEventId' => 'id']);
     }
-	public function getTimelineEventStudent()
+    public function getTimelineEventStudent()
     {
         return $this->hasOne(TimelineEventStudent::className(), ['timelineEventId' => 'id']);
     }
-	public function getTimelineEventInvoice()
+    public function getTimelineEventInvoice()
     {
         return $this->hasOne(TimelineEventInvoice::className(), ['timelineEventId' => 'id']);
     }
-	public function getTimelineEventPayment()
+    public function getTimelineEventPayment()
     {
         return $this->hasOne(TimelineEventPayment::className(), ['timelineEventId' => 'id']);
     }
@@ -135,7 +134,7 @@ class TimelineEvent extends ActiveRecord
     {
         return $this->hasOne(TimelineEventUser::className(), ['timelineEventId' => 'id']);
     }
-     public function getTimelineEventCourse()
+    public function getTimelineEventCourse()
     {
         return $this->hasOne(TimelineEventCourse::className(), ['timelineEventId' => 'id']);
     }

@@ -21,9 +21,9 @@ class Student extends \yii\db\ActiveRecord
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
     const STATUS_DRAFT = 3;
-	
-	const EVENT_MERGE = 'merge';
-	
+    
+    const EVENT_MERGE = 'merge';
+    
     const TYPE_UPDATE = 'update';
     const TYPE_CREATE='create';
     const SCENARIO_MERGE = 'merge';
@@ -51,8 +51,8 @@ class Student extends \yii\db\ActiveRecord
             [['first_name', 'last_name'], 'string', 'min' => 1, 'max' => 30],
             [['first_name', 'last_name'], 'trim'],
             [[ 'status'], 'integer'],
-            [['birth_date'], 'date', 'format' => 'php:d-m-Y', 'message' => 'Date format shoule be in d-m-Y format', 
-				'except' => [self::SCENARIO_MERGE, self::SCENARIO_CUSTOMER_MERGE]],
+            [['birth_date'], 'date', 'format' => 'php:d-m-Y', 'message' => 'Date format shoule be in d-m-Y format',
+                'except' => [self::SCENARIO_MERGE, self::SCENARIO_CUSTOMER_MERGE]],
             [['customer_id', 'isDeleted'], 'safe'],
         ];
     }
@@ -82,7 +82,7 @@ class Student extends \yii\db\ActiveRecord
             'last_name' => 'Last Name',
             'birth_date' => 'Birth Date',
             'customer_id' => 'Customer Name',
-			'showAllStudents' => 'Show All',
+            'showAllStudents' => 'Show All',
         ];
     }
 
@@ -106,11 +106,11 @@ class Student extends \yii\db\ActiveRecord
         return $this->hasOne(UserProfile::className(), ['user_id' => 'customer_id']);
     }
 
-	public function getStudentCsv()
+    public function getStudentCsv()
     {
         return $this->hasOne(StudentCsv::className(), ['studentId' => 'id']);
     }
-	
+    
     public function getEnrolment()
     {
         return $this->hasMany(Enrolment::className(), ['studentId' => 'id']);
@@ -169,27 +169,29 @@ class Student extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-		if (!empty($this->birth_date)) {
-			$birthDate = new \DateTime($this->birth_date);
-			$this->birth_date = $birthDate->format('Y-m-d');
-		}
-		if($insert) {
+        if (!empty($this->birth_date)) {
+            $birthDate = new \DateTime($this->birth_date);
+            $this->birth_date = $birthDate->format('Y-m-d');
+        }
+        if ($insert) {
             $this->isDeleted = false;
-		}
+        }
 
         return parent::beforeSave($insert);
     }
 
-	public function isChangeBirthDate($changedAttributes) {
-		return isset($changedAttributes['birth_date']) && new \DateTime($this->birth_date) != new \DateTime($changedAttributes['birth_date']);	
-	}
-	
-	public function afterSave($insert, $changedAttributes) {
-		if(!$insert && $this->isChangeBirthDate($changedAttributes)) {
-			$this->trigger(self::EVENT_AFTER_UPDATE);
-		}
-		return parent::afterSave($insert, $changedAttributes);
-	}
+    public function isChangeBirthDate($changedAttributes)
+    {
+        return isset($changedAttributes['birth_date']) && new \DateTime($this->birth_date) != new \DateTime($changedAttributes['birth_date']);
+    }
+    
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (!$insert && $this->isChangeBirthDate($changedAttributes)) {
+            $this->trigger(self::EVENT_AFTER_UPDATE);
+        }
+        return parent::afterSave($insert, $changedAttributes);
+    }
     public function getStudentIdentity()
     {
         if ($this->getFullname()) {
@@ -206,16 +208,16 @@ class Student extends \yii\db\ActiveRecord
             self::STATUS_INACTIVE => Yii::t('common', 'Inactive'),
         ];
     }
-	public static function count()
+    public static function count()
     {
-          $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-          $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-            return self::find()
-			->location($locationId)
-			->notDeleted()
+        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        return self::find()
+            ->location($locationId)
+            ->notDeleted()
                         ->enrolled($currentDate)
                         ->active()
                         ->groupBy(['student.id'])
-			->count();
+            ->count();
     }
 }

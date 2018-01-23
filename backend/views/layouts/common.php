@@ -15,8 +15,8 @@ $bundle = BackendAsset::register($this);
             <!-- sidebar: style can be found in sidebar.less -->
             <section class="sidebar">
               <?= $this->render('_left-menu', [
-				  
-			  ]); ?>
+                  
+              ]); ?>
             </section>
             <!-- /.sidebar -->
         </aside>

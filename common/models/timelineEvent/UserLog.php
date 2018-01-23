@@ -10,6 +10,7 @@ use common\commands\AddToTimelineCommand;
 use yii\helpers\Url;
 use common\models\timelineEvent\TimelineEventLink;
 use common\models\timelineEvent\TimelineEventStudent;
+
 /**
  * This is the model class for table "student".
  *
@@ -19,34 +20,35 @@ use common\models\timelineEvent\TimelineEventStudent;
  * @property string $birth_date
  * @property int $customer_id
  */
-class UserLog extends User {
-	
-	public function userCreate($event) {
+class UserLog extends User
+{
+    public function userCreate($event)
+    {
         $userModel = $event->sender;
-		$user = UserProfile::find(['user_id' => $userModel->user_id])->asArray()->one();
+        $user = UserProfile::find(['user_id' => $userModel->user_id])->asArray()->one();
         $data = current($event->data);
-		$locationId = 1;
-		if(!empty($userModel->user->userLocation->location_id)) {
-			$locationId = $userModel->user->userLocation->location_id;
-		}
-		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
-			'data' => $user, 
-			'message' => $userModel->loggedUser . ' created new   '.$data.'   {{' . $userModel->fullName . '}}',
-			'locationId' => $locationId,
-		]));
-		if($timelineEvent) {
-			$timelineEventLink = new TimelineEventLink();
-			$timelineEventLink->timelineEventId = $timelineEvent->id;
-			$timelineEventLink->index = $userModel->fullName;
-			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
-			$timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => $data, 'id' => $userModel->user_id]);
-			$timelineEventLink->save();
-
-			$timelineEventUser = new TimelineEventUser();
-			$timelineEventUser->timelineEventId = $timelineEvent->id;
-			$timelineEventUser->userId = $userModel->user_id;
-			$timelineEventUser->action = 'create';
-			$timelineEventUser->save();
-		}
-	}  
+        $locationId = 1;
+        if (!empty($userModel->user->userLocation->location_id)) {
+            $locationId = $userModel->user->userLocation->location_id;
         }
+        $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+            'data' => $user,
+            'message' => $userModel->loggedUser . ' created new   '.$data.'   {{' . $userModel->fullName . '}}',
+            'locationId' => $locationId,
+        ]));
+        if ($timelineEvent) {
+            $timelineEventLink = new TimelineEventLink();
+            $timelineEventLink->timelineEventId = $timelineEvent->id;
+            $timelineEventLink->index = $userModel->fullName;
+            $timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
+            $timelineEventLink->path = Url::to(['/user/view', 'UserSearch[role_name]' => $data, 'id' => $userModel->user_id]);
+            $timelineEventLink->save();
+
+            $timelineEventUser = new TimelineEventUser();
+            $timelineEventUser->timelineEventId = $timelineEvent->id;
+            $timelineEventUser->userId = $userModel->user_id;
+            $timelineEventUser->action = 'create';
+            $timelineEventUser->save();
+        }
+    }
+}

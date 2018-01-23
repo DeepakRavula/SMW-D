@@ -23,7 +23,7 @@ trait ExtraLesson
         $studentEnrolment = Enrolment::find()
                 ->notDeleted()
                 ->isConfirmed()
-                ->joinWith(['course' => function($query) use($programId){
+                ->joinWith(['course' => function ($query) use ($programId) {
                     $query->andWhere(['course.programId' => $programId]);
                 }])
                 ->andWhere(['enrolment.studentId' => $studentId])
@@ -39,7 +39,7 @@ trait ExtraLesson
             $courseSchedule->day      = (new \DateTime($this->date))->format('N');
             $courseSchedule->duration = (new \DateTime($this->duration))->format('H:i:s');
             $courseSchedule->fromTime = (new \DateTime($this->date))->format('H:i:s');
-            if (!$courseSchedule->save()){
+            if (!$courseSchedule->save()) {
                 Yii::error('Course Schedule: ' . \yii\helpers\VarDumper::dumpAsString($courseSchedule->getErrors()));
             }
             $this->courseId          = $course->id;

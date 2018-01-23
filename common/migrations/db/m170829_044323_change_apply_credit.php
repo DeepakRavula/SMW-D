@@ -7,10 +7,10 @@ class m170829_044323_change_apply_credit extends Migration
 {
     public function up()
     {
-		$applyCredit = PaymentMethod::findOne(['id' => PaymentMethod::TYPE_APPLY_CREDIT]);
-		$applyCredit->updateAttributes([
-			'displayed' => 0
-		]);
+        $applyCredit = PaymentMethod::findOne(['id' => PaymentMethod::TYPE_APPLY_CREDIT]);
+        $applyCredit->updateAttributes([
+            'displayed' => 0
+        ]);
     }
 
     public function down()

@@ -6,7 +6,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\helpers\Html;
 
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -22,8 +22,7 @@ use yii\helpers\Html;
 	
     <div class="row">
 			<?php echo $form->field($model, 'dayOfMonth')->textInput(['class' => 'form-control right-align'])->label('Day of Month'); ?>
-			<?php echo $form->field($model, 'paymentMethodId')->dropdownList
-                (ArrayHelper::map(PaymentMethod::find()->active()->paymentPreference()->all(), 'id', 'name'), ['prompt' => 'Select payment method'])->label('Payment Method'); ?>
+			<?php echo $form->field($model, 'paymentMethodId')->dropdownList(ArrayHelper::map(PaymentMethod::find()->active()->paymentPreference()->all(), 'id', 'name'), ['prompt' => 'Select payment method'])->label('Payment Method'); ?>
 	</div>
     <div class="row">
         <div class="col-md-12">
@@ -33,11 +32,14 @@ use yii\helpers\Html;
             </div>
 <div class="pull-left">
         <?php if (!empty($model->id)) : ?>
-            <?= Html::a('Delete', null,
+            <?= Html::a(
+        'Delete',
+        null,
                 [
                     'class' => 'btn btn-danger payment-preference-delete',
                     'preferenceId' => $model->id,
-                ]); ?>
+                ]
+    ); ?>
         <?php endif; ?>
 	</div>
         </div>

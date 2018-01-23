@@ -19,7 +19,6 @@ use backend\models\search\ProgramSearch;
  */
 class ProgramController extends \common\components\controllers\BaseController
 {
-
     public function behaviors()
     {
         return [
@@ -54,22 +53,26 @@ class ProgramController extends \common\components\controllers\BaseController
         $model               = new Program();
         $model->type         = $searchModel->type;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('alert',
+            Yii::$app->session->setFlash(
+                'alert',
                 [
                 'options' => ['class' => 'alert-success'],
                 'body' => 'Program has been created successfully',
-            ]);
+            ]
+            );
 
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        return $this->render('index',
+        return $this->render(
+            'index',
                 [
                 'model' => $model,
                 'searchModel' => $searchModel,
                 'privateDataProvider' => $privateDataProvider,
                 'groupDataProvider' => $groupDataProvider,
-        ]);
+        ]
+        );
     }
 
     public function actionFetchRate($id)
@@ -106,8 +109,8 @@ class ProgramController extends \common\components\controllers\BaseController
 
         $query = User::find()
             ->joinWith(['userLocation ul' => function ($query) use ($locationId) {
-                    $query->where(['ul.location_id' => $locationId]);
-                }])
+                $query->where(['ul.location_id' => $locationId]);
+            }])
             ->joinWith('qualification')
             ->where(['program_id' => $id])
             ->notDeleted();
@@ -115,12 +118,14 @@ class ProgramController extends \common\components\controllers\BaseController
             'query' => $query,
         ]);
 
-        return $this->render('view',
+        return $this->render(
+            'view',
                 [
                 'model' => $this->findModel($id),
                 'studentDataProvider' => $studentDataProvider,
                 'teacherDataProvider' => $teacherDataProvider,
-        ]);
+        ]
+        );
     }
 
     /**
@@ -132,10 +137,12 @@ class ProgramController extends \common\components\controllers\BaseController
     public function actionCreate()
     {
         $model = new Program();
-        $data  = $this->renderAjax('_form',
+        $data  = $this->renderAjax(
+            '_form',
             [
             'model' => $model,
-        ]);
+        ]
+        );
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return [
                 'status' => true
@@ -159,10 +166,12 @@ class ProgramController extends \common\components\controllers\BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $data  = $this->renderAjax('_form',
+        $data  = $this->renderAjax(
+            '_form',
             [
             'model' => $model,
-        ]);
+        ]
+        );
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             if ($model->status == Program::STATUS_INACTIVE) {
                 return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
@@ -229,16 +238,16 @@ class ProgramController extends \common\components\controllers\BaseController
         ]);
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $qualifications = Qualification::find()
-			->joinWith(['teacher' => function ($query) use ($locationId) {
-				$query->joinWith(['userLocation' => function ($query) use ($locationId) {
-                     $query->join('LEFT JOIN', 'user_profile','user_profile.user_id = user_location.user_id')
-					->joinWith('teacherAvailability')
-				->where(['location_id' => $locationId]);
-				}]);
-			}])
-			->where(['program_id' => $id])
+            ->joinWith(['teacher' => function ($query) use ($locationId) {
+                $query->joinWith(['userLocation' => function ($query) use ($locationId) {
+                    $query->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = user_location.user_id')
+                    ->joinWith('teacherAvailability')
+                ->where(['location_id' => $locationId]);
+                }]);
+            }])
+            ->where(['program_id' => $id])
                         ->notDeleted()
-			->orderBy(['user_profile.firstname' => SORT_ASC])
+            ->orderBy(['user_profile.firstname' => SORT_ASC])
                 ->all();
         $result = [];
         $output = [];
@@ -249,7 +258,7 @@ class ProgramController extends \common\components\controllers\BaseController
                     && $teacherQualification) {
                     $selectd = true;
                 }
-            } else if ($i === 0) {
+            } elseif ($i === 0) {
                 $selectd = true;
             }
             $output[] = [

@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use common\models\Classroom;
 use common\models\User;
 use common\models\LocationAvailability;
+
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 /* @var $this yii\web\View */
@@ -20,26 +21,26 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 
 <div class="lesson-qualify">
 <?php $form = ActiveForm::begin([
-		'id' => 'classroom-form',
-		'enableAjaxValidation' => true,
-		'enableClientValidation' => false,
-		'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id, 'teacherId' => null]),
-		'action' => Url::to(['lesson/edit-classroom', 'id' => $model->id]),
-		'options' => [
-			'class' => 'p-10',
-		]
-	]); ?>
+        'id' => 'classroom-form',
+        'enableAjaxValidation' => true,
+        'enableClientValidation' => false,
+        'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id, 'teacherId' => null]),
+        'action' => Url::to(['lesson/edit-classroom', 'id' => $model->id]),
+        'options' => [
+            'class' => 'p-10',
+        ]
+    ]); ?>
 	   <div class=" col-md-5">
 		   <?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id; ?>
 		   <?=
-		   $form->field($model, 'classroomId')->widget(Select2::classname(), [
-			   'data' => ArrayHelper::map(Classroom::find()->orderBy(['name' => SORT_ASC])
-					   ->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
-			   'pluginOptions' => [
-				   'placeholder' => 'Select Classroom',
-			   ]
-		   ]);
-		   ?>
+           $form->field($model, 'classroomId')->widget(Select2::classname(), [
+               'data' => ArrayHelper::map(Classroom::find()->orderBy(['name' => SORT_ASC])
+                       ->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
+               'pluginOptions' => [
+                   'placeholder' => 'Select Classroom',
+               ]
+           ]);
+           ?>
 		</div>
         <div class="col-md-5">
         <?php echo $form->field($model, 'colorCode')->widget(ColorInput::classname(), [

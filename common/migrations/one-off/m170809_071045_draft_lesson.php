@@ -7,7 +7,7 @@ class m170809_071045_draft_lesson extends Migration
 {
     public function up()
     {
-		$draftLessons = Lesson::find()
+        $draftLessons = Lesson::find()
             ->andWhere(['status' => 1])
             ->all();
         foreach ($draftLessons as $draftLesson) {
@@ -15,7 +15,7 @@ class m170809_071045_draft_lesson extends Migration
                 'isConfirmed' => false
             ]);
         }
-		$lessons = Lesson::find()
+        $lessons = Lesson::find()
             ->andWhere(['NOT IN','status', 1])
             ->all();
         foreach ($lessons as $lesson) {

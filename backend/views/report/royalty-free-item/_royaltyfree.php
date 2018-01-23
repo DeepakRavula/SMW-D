@@ -11,20 +11,20 @@ use yii\helpers\Url;
 $columns = [
         [
         'label' => 'ID',
-        'value' => function($data) {
+        'value' => function ($data) {
             return $data->invoice->getInvoiceNumber();
         }
     ],
     'invoice.date:date',
         [
         'label' => 'Description',
-        'value' => function($data) {
+        'value' => function ($data) {
             return $data->description;
         }
     ],
         [
         'label' => 'Total',
-        'value' => function($data) {
+        'value' => function ($data) {
             return $data->amount;
         },
         'format' => ['decimal', 2],

@@ -6,8 +6,11 @@ class m170717_165020_add_reason extends Migration
 {
     public function up()
     {
-		$this->addColumn('teacher_unavailability', 'reason', 
-			$this->text()->after('toTime'));
+        $this->addColumn(
+            'teacher_unavailability',
+            'reason',
+            $this->text()->after('toTime')
+        );
     }
 
     public function down()

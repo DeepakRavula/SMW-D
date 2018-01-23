@@ -267,7 +267,7 @@ class UrlManager extends \codemix\localeurls\UrlManager
 
                 // Remove any trailing slashes for root URLs
                 if ($this->suffix !== '/') {
-                    if (count($params) === 1 ) {
+                    if (count($params) === 1) {
                         // / -> ''
                         // /base/ -> /base
                         // /index.php/ -> /index.php
@@ -343,7 +343,7 @@ class UrlManager extends \codemix\localeurls\UrlManager
                 $location = $this->locations[$code];
             } else {
                 // lowercase location, uppercase country
-                list($location,$country) = $this->matchCode($code);
+                list($location, $country) = $this->matchCode($code);
                 if ($country!==null) {
                     if ($code==="$location-$country" && !$this->keepUppercaseLocationCode) {
                         $this->redirectToLocation(strtolower($code));   // Redirect ll-CC to ll-cc
@@ -375,7 +375,7 @@ class UrlManager extends \codemix\localeurls\UrlManager
             }
             if ($location===null && $this->enableLocationDetection) {
                 foreach ($this->_request->getAcceptableLocations() as $acceptable) {
-                    list($location,$country) = $this->matchCode($acceptable);
+                    list($location, $country) = $this->matchCode($acceptable);
                     if ($location!==null) {
                         $location = $country===null ? $location : "$location-$country";
                         Yii::trace("Detected browser location '$location'.", __METHOD__);
@@ -555,8 +555,8 @@ class UrlManager extends \codemix\localeurls\UrlManager
         if ($result === false) {
             throw new \yii\web\NotFoundHttpException(Yii::t('yii', 'Page not found.'));
         }
-        list ($route, $params) = $result;
-        if($location){
+        list($route, $params) = $result;
+        if ($location) {
             $params[$this->locationParam] = $location;
         }
         // See Yii Issues #8291 and #9161:

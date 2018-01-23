@@ -8,6 +8,7 @@ use yii\widgets\Pjax;
 use yii\bootstrap\Modal;
 
 use kartik\date\DatePickerAsset;
+
 DatePickerAsset::register($this);
 
 /* @var $this yii\web\View */
@@ -26,7 +27,7 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
 <div id="location-content"></div>
  <?php  Modal::end(); ?>
 <?php Pjax::begin([
-	'id' => 'location-listing',
+    'id' => 'location-listing',
 ]); ?>
 <div class="grid-row-open p-10">
     <?php echo AdminLteGridView::widget([

@@ -12,7 +12,6 @@ use common\models\Note;
 use common\models\Location;
 use common\models\log\LogHistory;
 
-
 /**
  * List of models.
  */
@@ -21,11 +20,11 @@ class ViewAction extends Action
     public function run($id)
     {
         $model = $this->findModel($id);
-       	if ($model) {
+        if ($model) {
             $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
             $enrolments = Enrolment::find()
-                    ->joinWith(['course' => function($query) {
-                            $query->isConfirmed();
+                    ->joinWith(['course' => function ($query) {
+                        $query->isConfirmed();
                     }])
                     ->location($locationId)
                     ->notDeleted()
@@ -51,9 +50,9 @@ class ViewAction extends Action
                     ]);
         } else {
             $this->controller->redirect(['index', 'StudentSearch[showAllStudents]' => false]);
-        } 
+        }
     }
-	
+    
     public function getLogs($id)
     {
         return new ActiveDataProvider([
@@ -75,7 +74,7 @@ class ViewAction extends Action
 
         return new ActiveDataProvider([
                 'query' => $unscheduledLessons,
-        ]);  
+        ]);
     }
 
     protected function getLessons($id, $locationId)
@@ -119,8 +118,8 @@ class ViewAction extends Action
     protected function getEnrolments($id, $locationId)
     {
         $query = Enrolment::find()
-                ->joinWith(['course' => function($query) {
-                        $query->isConfirmed();
+                ->joinWith(['course' => function ($query) {
+                    $query->isConfirmed();
                 }])
                 ->location($locationId)
                 ->notDeleted()
@@ -140,9 +139,9 @@ class ViewAction extends Action
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $model = Student::find()
-			->notDeleted()
-			->location($locationId)
-			->where(['student.id' => $id])->one();
+            ->notDeleted()
+            ->location($locationId)
+            ->where(['student.id' => $id])->one();
         return $model;
     }
 }

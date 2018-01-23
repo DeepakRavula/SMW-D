@@ -6,13 +6,14 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Enrolment;
 use Yii;
+
 /**
  * EnrolmentSearch represents the model behind the search form about `common\models\Enrolment`.
  */
 class EnrolmentSearch extends Enrolment
 {
     public $showAllEnrolments = false;
-    public $program; 
+    public $program;
     public $course;
     public $student;
     public $user_profile;
@@ -27,7 +28,7 @@ class EnrolmentSearch extends Enrolment
     {
         return [
             [['id', 'courseId', 'studentId', 'isDeleted'], 'integer'],
-			[['showAllEnrolments','program','course','student','startdate','teacher','startBeginDate',
+            [['showAllEnrolments','program','course','student','startdate','teacher','startBeginDate',
                             'startEndDate'], 'safe']
         ];
     }
@@ -50,13 +51,13 @@ class EnrolmentSearch extends Enrolment
      */
     public function search($params)
     {
-		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Enrolment::find()
-			->joinWith(['course' => function($query) use($locationId) {
-				$query->location($locationId);
-			}])
-			->notDeleted()
-			->isConfirmed()
+            ->joinWith(['course' => function ($query) use ($locationId) {
+                $query->location($locationId);
+            }])
+            ->notDeleted()
+            ->isConfirmed()
                         ->isRegular();
 
         $dataProvider = new ActiveDataProvider([
@@ -69,7 +70,7 @@ class EnrolmentSearch extends Enrolment
         $query->joinWith('student');
         $query->leftJoin(['program p'], 'course.programId = p.id');
         $query->leftJoin(['user_profile up'], 'course.teacherId=up.user_id');
-         $dataProvider->setSort([
+        $dataProvider->setSort([
             'attributes' => [
                 'startdate' => [
                     'asc' => ['course.startDate' => SORT_ASC],
@@ -90,19 +91,18 @@ class EnrolmentSearch extends Enrolment
             ]
         ]);
          
-$query->andFilterWhere(['p.id' => $this->program]);
- $query->andFilterWhere(['student.id' => $this->student]);
- $query->andFilterWhere(['up.user_id' => $this->teacher]);
- if($this->startdate)
- {
-     
-      list($this->startBeginDate, $this->startEndDate) = explode(' - ', $this->startdate);
- $query->andWhere(['between', 'DATE(course.startDate)',
+        $query->andFilterWhere(['p.id' => $this->program]);
+        $query->andFilterWhere(['student.id' => $this->student]);
+        $query->andFilterWhere(['up.user_id' => $this->teacher]);
+        if ($this->startdate) {
+            list($this->startBeginDate, $this->startEndDate) = explode(' - ', $this->startdate);
+            $query->andWhere(['between', 'DATE(course.startDate)',
                     (new \DateTime($this->startBeginDate))->format('Y-m-d'),
                     (new \DateTime($this->startEndDate))->format('Y-m-d')]);
- }      if (! $this->showAllEnrolments) {
-				$query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
-				->isConfirmed()
+        }
+        if (! $this->showAllEnrolments) {
+            $query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
+                ->isConfirmed()
                 ->isRegular()
                 ->orderBy(['course.endDate' => SORT_ASC]);
         }

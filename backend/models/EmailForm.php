@@ -4,15 +4,16 @@ namespace backend\models;
 
 use yii\base\Model;
 use Yii;
+
 /**
  * Create user form.
  */
 class EmailForm extends Model
 {
-	public $to;
+    public $to;
     public $subject;
     public $content;
-	public $id;
+    public $id;
 
     /**
      * {@inheritdoc}
@@ -21,7 +22,7 @@ class EmailForm extends Model
     {
         return [
             [['to', 'subject', 'content'], 'required'],
-			[['id'], 'safe']
+            [['id'], 'safe']
         ];
     }
 

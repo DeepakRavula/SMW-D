@@ -18,7 +18,7 @@ class EmailController extends \common\components\controllers\BaseController
     public function behaviors()
     {
         return [
-			'contentNegotiator' => [
+            'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['send'],
                 'formatParam' => '_format',
@@ -29,37 +29,37 @@ class EmailController extends \common\components\controllers\BaseController
             
         ];
     }
-	public function actionSend()
-	{
-		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-		$location = Location::findOne(['id' => $locationId]);
-		$model = new EmailForm();
-        if($model->load(Yii::$app->request->post())) {
+    public function actionSend()
+    {
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $location = Location::findOne(['id' => $locationId]);
+        $model = new EmailForm();
+        if ($model->load(Yii::$app->request->post())) {
             $content = [];
-            foreach($model->to as $email) {
+            foreach ($model->to as $email) {
                 $content[] = Yii::$app->mailer->compose('content', [
                     'content' => $model->content,
                 ])
-				->setFrom($location->email)
-				->setReplyTo($location->email)
-				->setTo($email)
-				->setSubject($model->subject);
-			}
+                ->setFrom($location->email)
+                ->setReplyTo($location->email)
+                ->setTo($email)
+                ->setSubject($model->subject);
+            }
             Yii::$app->mailer->sendMultiple($content);
-			$data = null;
-			if(!empty($model->id)) {
-				$invoice = Invoice::findOne(['id' => $model->id]);
-				$invoice->isSent = true;
-				$invoice->save();
-				$data = $this->renderAjax('/invoice/_show-all',[
-					'model' => $invoice,		
-				]);
-			}
-			return [
-				'status' => true,
-				'message' => 'Mail has been sent successfully',
-				'data' => $data
-			];
+            $data = null;
+            if (!empty($model->id)) {
+                $invoice = Invoice::findOne(['id' => $model->id]);
+                $invoice->isSent = true;
+                $invoice->save();
+                $data = $this->renderAjax('/invoice/_show-all', [
+                    'model' => $invoice,
+                ]);
+            }
+            return [
+                'status' => true,
+                'message' => 'Mail has been sent successfully',
+                'data' => $data
+            ];
         }
-	}
+    }
 }

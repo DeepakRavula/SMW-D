@@ -6,6 +6,7 @@
  */
 
 namespace common\components\rbac;
+
 /**
  * For more details and usage information on Item, see the [guide article on security authorization](guide:security-authorization).
  *
@@ -14,6 +15,5 @@ namespace common\components\rbac;
  */
 class Item extends \yii\rbac\Item
 {
-
     public $location_id;
 }

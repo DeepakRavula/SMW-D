@@ -4,16 +4,17 @@ use yii\db\Migration;
 
 class m171216_064646_log_object extends Migration
 {
-
     public function up()
     {
         $tableSchema = Yii::$app->db->schema->getTableSchema('log_object');
         if ($tableSchema === null) {
-            $this->createTable('log_object',
+            $this->createTable(
+                'log_object',
                 [
                 'id' => $this->primaryKey(),
                 'name' => $this->string()->notNull()
-            ]);
+            ]
+            );
         }
     }
 

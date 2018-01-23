@@ -14,9 +14,9 @@ use Yii;
  */
 class UserPhone extends \yii\db\ActiveRecord
 {
-	private $labelId;
+    private $labelId;
 
-	public function getLabelId()
+    public function getLabelId()
     {
         return $this->labelId;
     }
@@ -42,7 +42,7 @@ class UserPhone extends \yii\db\ActiveRecord
             [['userContactId', 'number'], 'required'],
             [['userContactId', 'extension'], 'integer'],
             [['number'], 'string', 'max' => 15],
-			[['labelId'], 'safe']
+            [['labelId'], 'safe']
         ];
     }
 
@@ -67,7 +67,7 @@ class UserPhone extends \yii\db\ActiveRecord
     {
         return new \common\models\query\UserPhoneQuery(get_called_class());
     }
-	public function getUserContact()
+    public function getUserContact()
     {
         return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);
     }

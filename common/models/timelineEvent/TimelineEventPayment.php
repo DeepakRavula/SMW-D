@@ -9,6 +9,7 @@ use common\models\timelineEvent\TimelineEventLink;
 use common\models\Payment;
 use common\models\InvoicePayment;
 use yii\helpers\Url;
+
 /**
  * This is the model class for table "timeline_event_payment".
  *
@@ -52,7 +53,7 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
         ];
     }
 
-	public function getPayment()
+    public function getPayment()
     {
         return $this->hasOne(Payment::className(), ['id' => 'paymentId'])->orWhere(['payment.isDeleted' => true]);
     }
@@ -61,77 +62,80 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
         return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'paymentId']);
     }
 
-    public function create($event) {
-		$paymentModel = $event->sender;
-		$payment = Payment::find(['id' => $paymentModel->id])->asArray()->one();
-		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
-			'data' => $payment,
-			'message' => $paymentModel->userName . ' recorded a ' . $paymentModel->paymentMethod->name . ' payment of ' . Yii::$app->formatter->asCurrency($paymentModel->amount) . ' on {{invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}',
-			'locationId' => $paymentModel->invoice->location_id,
-		]));
-		if($timelineEvent) {
-			$timelineEventLink = new TimelineEventLink();
-			$timelineEventLink->timelineEventId = $timelineEvent->id;
-			$timelineEventLink->index = 'invoice #' . $paymentModel->invoice->getInvoiceNumber();
-			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
-			$timelineEventLink->path = Url::to(['invoice/view', 'id' => $paymentModel->invoice->id]);
-			$timelineEventLink->save();
+    public function create($event)
+    {
+        $paymentModel = $event->sender;
+        $payment = Payment::find(['id' => $paymentModel->id])->asArray()->one();
+        $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+            'data' => $payment,
+            'message' => $paymentModel->userName . ' recorded a ' . $paymentModel->paymentMethod->name . ' payment of ' . Yii::$app->formatter->asCurrency($paymentModel->amount) . ' on {{invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}',
+            'locationId' => $paymentModel->invoice->location_id,
+        ]));
+        if ($timelineEvent) {
+            $timelineEventLink = new TimelineEventLink();
+            $timelineEventLink->timelineEventId = $timelineEvent->id;
+            $timelineEventLink->index = 'invoice #' . $paymentModel->invoice->getInvoiceNumber();
+            $timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
+            $timelineEventLink->path = Url::to(['invoice/view', 'id' => $paymentModel->invoice->id]);
+            $timelineEventLink->save();
 
-			$timelineEventPayment = new TimelineEventPayment();
-			$timelineEventPayment->paymentId = $paymentModel->id;
-			$timelineEventPayment->timelineEventId = $timelineEvent->id;
-			$timelineEventPayment->action = 'create';
-			$timelineEventPayment->save();
-		}
-	}
+            $timelineEventPayment = new TimelineEventPayment();
+            $timelineEventPayment->paymentId = $paymentModel->id;
+            $timelineEventPayment->timelineEventId = $timelineEvent->id;
+            $timelineEventPayment->action = 'create';
+            $timelineEventPayment->save();
+        }
+    }
 
-	public function edit($event) {
-		$paymentModel = $event->sender;
-		$data = current($event->data);
-		$payment = Payment::find(['id' => $paymentModel->id])->asArray()->one();
-		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
-			'data' => $payment,
-			'message' => $paymentModel->userName . ' changed an {{invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}' . ' payment from ' . Yii::$app->formatter->asCurrency($data['amount']) . ' to ' . Yii::$app->formatter->asCurrency($paymentModel->amount),
-			'locationId' => $paymentModel->invoice->location_id,
-		]));
-		if($timelineEvent) {
-			$timelineEventLink = new TimelineEventLink();
-			$timelineEventLink->timelineEventId = $timelineEvent->id;
-			$timelineEventLink->index = 'invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}';
-			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
-			$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $paymentModel->invoice->id]);
-			$timelineEventLink->save();
+    public function edit($event)
+    {
+        $paymentModel = $event->sender;
+        $data = current($event->data);
+        $payment = Payment::find(['id' => $paymentModel->id])->asArray()->one();
+        $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+            'data' => $payment,
+            'message' => $paymentModel->userName . ' changed an {{invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}' . ' payment from ' . Yii::$app->formatter->asCurrency($data['amount']) . ' to ' . Yii::$app->formatter->asCurrency($paymentModel->amount),
+            'locationId' => $paymentModel->invoice->location_id,
+        ]));
+        if ($timelineEvent) {
+            $timelineEventLink = new TimelineEventLink();
+            $timelineEventLink->timelineEventId = $timelineEvent->id;
+            $timelineEventLink->index = 'invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}';
+            $timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
+            $timelineEventLink->path = Url::to(['/invoice/view', 'id' => $paymentModel->invoice->id]);
+            $timelineEventLink->save();
 
-			$timelineEventPayment = new TimelineEventPayment();
-			$timelineEventPayment->paymentId = $paymentModel->id;
-			$timelineEventPayment->timelineEventId = $timelineEvent->id;
-			$timelineEventPayment->action = 'edit';
-			$timelineEventPayment->save();
-		}
-	}
-		public function deletePayment($event) {
-		$paymentModel = $event->sender;
-		$payment = Payment::find(['id' => $paymentModel->id])->asArray()->one();
-		$timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
-			'data' => $payment,
-			'message' => $paymentModel->userName . ' deleted a ' . $paymentModel->paymentMethod->name . ' payment of ' . Yii::$app->formatter->asCurrency($paymentModel->amount) . ' on {{invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}',
-			'locationId' => $paymentModel->invoice->location_id,
-		]));
-		if($timelineEvent) {
-			$timelineEventLink = new TimelineEventLink();
-			$timelineEventLink->timelineEventId = $timelineEvent->id;
-			$timelineEventLink->index = 'invoice #' . $paymentModel->invoice->getInvoiceNumber();
-			$timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
-			$timelineEventLink->path = Url::to(['/invoice/view', 'id' => $paymentModel->invoice->id]);
-			$timelineEventLink->save();
+            $timelineEventPayment = new TimelineEventPayment();
+            $timelineEventPayment->paymentId = $paymentModel->id;
+            $timelineEventPayment->timelineEventId = $timelineEvent->id;
+            $timelineEventPayment->action = 'edit';
+            $timelineEventPayment->save();
+        }
+    }
+    public function deletePayment($event)
+    {
+        $paymentModel = $event->sender;
+        $payment = Payment::find(['id' => $paymentModel->id])->asArray()->one();
+        $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
+            'data' => $payment,
+            'message' => $paymentModel->userName . ' deleted a ' . $paymentModel->paymentMethod->name . ' payment of ' . Yii::$app->formatter->asCurrency($paymentModel->amount) . ' on {{invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}',
+            'locationId' => $paymentModel->invoice->location_id,
+        ]));
+        if ($timelineEvent) {
+            $timelineEventLink = new TimelineEventLink();
+            $timelineEventLink->timelineEventId = $timelineEvent->id;
+            $timelineEventLink->index = 'invoice #' . $paymentModel->invoice->getInvoiceNumber();
+            $timelineEventLink->baseUrl = Yii::$app->request->hostInfo;
+            $timelineEventLink->path = Url::to(['/invoice/view', 'id' => $paymentModel->invoice->id]);
+            $timelineEventLink->save();
 
-			$timelineEventPayment = new TimelineEventPayment();
-			$timelineEventPayment->paymentId = $paymentModel->id;
-			$timelineEventPayment->timelineEventId = $timelineEvent->id;
-			$timelineEventPayment->action = 'delete';
-			$timelineEventPayment->save();
-		}
-	}
+            $timelineEventPayment = new TimelineEventPayment();
+            $timelineEventPayment->paymentId = $paymentModel->id;
+            $timelineEventPayment->timelineEventId = $timelineEvent->id;
+            $timelineEventPayment->action = 'delete';
+            $timelineEventPayment->save();
+        }
+    }
     public function editPayment($event)
     {
         $paymentModel = $event->sender;
@@ -140,7 +144,7 @@ class TimelineEventPayment extends \yii\db\ActiveRecord
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $payment,
            'message' => $paymentModel->userName . ' changed  '.$paymentModel->paymentMethod->name.'  payment  amount  from  '.Yii::$app->formatter->asCurrency($data['amount']) . ' to ' . Yii::$app->formatter->asCurrency($paymentModel->amount).'  for an  {{invoice #' . $paymentModel->invoice->getInvoiceNumber() . '}}',
-			'locationId' =>$paymentModel->user->userLocation->location_id
+            'locationId' =>$paymentModel->user->userLocation->location_id
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();

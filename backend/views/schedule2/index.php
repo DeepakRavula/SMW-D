@@ -1,5 +1,5 @@
 
-<? $bundle = \common\assets\fullcalendar\FullCalendar::register($this);?>
+<?php $bundle = \common\assets\fullcalendar\FullCalendar::register($this);?>
 <div id="calendar"></div>
 <script>
 $(function() {

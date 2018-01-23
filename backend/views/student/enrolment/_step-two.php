@@ -12,29 +12,31 @@ DatePickerAsset::register($this);
 <div class="col-md-4">
 <?php
     // Dependent Dropdown
-    echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
+    echo $form->field($model, 'teacherId')->widget(
+        DepDrop::classname(),
         [
-		  'type' => DepDrop::TYPE_SELECT2,
+          'type' => DepDrop::TYPE_SELECT2,
         'pluginOptions' => [
             'depends' => ['course-programid'],
             'url' => Url::to(['course/teachers']),
         ],
-    ]);
+    ]
+    );
     ?>
 </div>
 <div class="col-md-4">
 	<?php
-	echo $form->field($model, 'startDate')->widget(DatePicker::classname(), [
-		'type' => DatePicker::TYPE_COMPONENT_APPEND,
-		'options' => [
-			'value' => (new \DateTime())->format('d-m-Y'),
-		],
-		'pluginOptions' => [
-			'autoclose' => true,
-			'format' => 'dd-mm-yyyy',
-		],
-	]);
-	?>
+    echo $form->field($model, 'startDate')->widget(DatePicker::classname(), [
+        'type' => DatePicker::TYPE_COMPONENT_APPEND,
+        'options' => [
+            'value' => (new \DateTime())->format('d-m-Y'),
+        ],
+        'pluginOptions' => [
+            'autoclose' => true,
+            'format' => 'dd-mm-yyyy',
+        ],
+    ]);
+    ?>
 </div>
 <div class="col-md-4">
 	<?= $form->field($courseSchedule, 'day')->textInput(['readOnly' => true])->label('Day');?>

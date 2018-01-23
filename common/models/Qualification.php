@@ -15,9 +15,9 @@ use common\models\query\QualificationQuery;
  */
 class Qualification extends \yii\db\ActiveRecord
 {
-	const TYPE_HOURLY = 1;
-	const TYPE_FIXED = 2;
-	
+    const TYPE_HOURLY = 1;
+    const TYPE_FIXED = 2;
+    
     /**
      * {@inheritdoc}
      */
@@ -34,12 +34,12 @@ class Qualification extends \yii\db\ActiveRecord
         return [
             [['program_id'], 'required'],
             [['teacher_id', 'program_id', 'type',], 'integer'],
-			[['rate'], 'number', 'min' => 1.00, 'max' => 2000.00, 'message' => 'Invalid rate'],
-			[['isDeleted'], 'safe']
+            [['rate'], 'number', 'min' => 1.00, 'max' => 2000.00, 'message' => 'Invalid rate'],
+            [['isDeleted'], 'safe']
         ];
     }
 
-		public function behaviors()
+    public function behaviors()
     {
         return [
             'softDeleteBehavior' => [
@@ -47,7 +47,7 @@ class Qualification extends \yii\db\ActiveRecord
                 'softDeleteAttributeValues' => [
                     'isDeleted' => true,
                 ],
-				'replaceRegularDelete' => true
+                'replaceRegularDelete' => true
             ],
         ];
     }
@@ -60,13 +60,13 @@ class Qualification extends \yii\db\ActiveRecord
             'id' => 'ID',
             'teacher_id' => 'Teacher Name',
             'program_id' => 'Program Name ',
-			'rate' => 'Rate ($/hr)'
+            'rate' => 'Rate ($/hr)'
         ];
     }
-	public static function find()
+    public static function find()
     {
-        return new QualificationQuery(get_called_class(),parent::find()
-			->andWhere(['qualification.isDeleted' => false]));
+        return new QualificationQuery(get_called_class(), parent::find()
+            ->andWhere(['qualification.isDeleted' => false]));
     }
 
     /**

@@ -15,7 +15,6 @@ use yii\web\Response;
  */
 class TaxCodeController extends \common\components\controllers\BaseController
 {
-
     public function behaviors()
     {
         return [

@@ -32,16 +32,16 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['i
         'columns' => [
             'first_name',
             'last_name',
-			'birth_date:date',
-			[
-				'label' => 'Customer',
-				'value' => 'customer.userProfile.fullName', 
-			],
-			[
-				'label' => 'Phone',
-				'value' => 'customer.phoneNumber.number', 
-			],
-			'customer.email',
+            'birth_date:date',
+            [
+                'label' => 'Customer',
+                'value' => 'customer.userProfile.fullName',
+            ],
+            [
+                'label' => 'Phone',
+                'value' => 'customer.phoneNumber.number',
+            ],
+            'customer.email',
         ],
     ]);
 

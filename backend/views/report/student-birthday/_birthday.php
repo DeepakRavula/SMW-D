@@ -31,32 +31,32 @@ $this->title = 'Student Birthdays';
         'headerRowOptions' => ['class' => 'bg-light-gray'],
             'pjax' => true,
             'pjaxSettings' => [
-		'neverTimeout' => true,
-		'options' => [
-			'id' => 'student-birthday-grid',
-		],
+        'neverTimeout' => true,
+        'options' => [
+            'id' => 'student-birthday-grid',
+        ],
                 ],
         'columns' => [
             [
-				'label' => 'First Name',
-				'value' => 'first_name', 
-			],
+                'label' => 'First Name',
+                'value' => 'first_name',
+            ],
             [
-				'label' => 'Last Name',
-				'value' => 'last_name', 
-			],
+                'label' => 'Last Name',
+                'value' => 'last_name',
+            ],
             [
-				'label' => 'Birth Date',
-				'value' => 'birth_date', 
-			],
+                'label' => 'Birth Date',
+                'value' => 'birth_date',
+            ],
             [
-				'label' => 'Customer',
-				'value' => 'customer.userProfile.fullName', 
-			],
-			[
-				'label' => 'Phone',
-				'value' => 'customer.phoneNumber.number', 
-			],
+                'label' => 'Customer',
+                'value' => 'customer.userProfile.fullName',
+            ],
+            [
+                'label' => 'Phone',
+                'value' => 'customer.phoneNumber.number',
+            ],
             [
                 'label'=>'Email',
                 'value'=> 'customer.email',

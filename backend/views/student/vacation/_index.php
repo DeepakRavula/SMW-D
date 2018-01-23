@@ -11,9 +11,9 @@ use yii\helpers\Html;
 ?>
 <?php
 $vacations = Vacation::find()
-    ->joinWith(['enrolment' => function($query) use($studentModel) {
-            $query->andWhere(['studentId' => $studentModel->id]);
-        }])
+    ->joinWith(['enrolment' => function ($query) use ($studentModel) {
+        $query->andWhere(['studentId' => $studentModel->id]);
+    }])
     ->andWhere(['vacation.isConfirmed' => true, 'vacation.isDeleted' => false]);
 $vacationDataProvider = new ActiveDataProvider([
     'query' => $vacations,

@@ -28,12 +28,12 @@ class CustomerDiscount extends \yii\db\ActiveRecord
         return 'customer_discount';
     }
 
-	 public static function find()
+    public static function find()
     {
-        return new CustomerDiscountQuery(get_called_class(),parent::find()->where(['customer_discount.isDeleted' => false]));
+        return new CustomerDiscountQuery(get_called_class(), parent::find()->where(['customer_discount.isDeleted' => false]));
     }
 
-	public function behaviors()
+    public function behaviors()
     {
         return [
             'softDeleteBehavior' => [
@@ -53,7 +53,7 @@ class CustomerDiscount extends \yii\db\ActiveRecord
         return [
             [['customerId', 'value'], 'required'],
             [['customerId'], 'integer'],
-			[['isDeleted'], 'safe'],
+            [['isDeleted'], 'safe'],
             [['value'], 'number', 'min' => 0.10, 'max' => 100.00, 'message' => 'Invalid discount'],
         ];
     }
@@ -69,14 +69,15 @@ class CustomerDiscount extends \yii\db\ActiveRecord
             'value' => 'Value',
         ];
     }
-	public function beforeSave($insert) {
-		$this->isDeleted = false;
-		return parent::beforeSave($insert);
-	}
-
-	public function afterSave($insert, $changedAttributes)
+    public function beforeSave($insert)
     {
-         if (!$insert) {
+        $this->isDeleted = false;
+        return parent::beforeSave($insert);
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (!$insert) {
             $this->trigger(self::EVENT_EDIT);
         }
         $this->trigger(self::EVENT_CREATE);
@@ -86,5 +87,4 @@ class CustomerDiscount extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'customerId']);
     }
-
 }

@@ -4,14 +4,15 @@ use yii\bootstrap\ActiveForm;
 use kartik\datetime\DateTimePicker;
 use kartik\time\TimePicker;
 use common\models\Lesson;
+
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <?php $form = ActiveForm::begin([
-	'id' => 'lesson-review-form',
-	'enableAjaxValidation' => true,
-	'enableClientValidation' => false
+    'id' => 'lesson-review-form',
+    'enableAjaxValidation' => true,
+    'enableClientValidation' => false
 ]);
 ?>
 <div class="row">
@@ -30,31 +31,31 @@ use common\models\Lesson;
                                </div>
 	<div class="col-md-2">
 		<?php
-		echo $form->field($model, 'duration')->widget(TimePicker::classname(), [
-			'options' => ['id' => 'course-duration'],
-			'pluginOptions' => [
-				'showMeridian' => false,
-			],
-		]);
-		?>
+        echo $form->field($model, 'duration')->widget(TimePicker::classname(), [
+            'options' => ['id' => 'course-duration'],
+            'pluginOptions' => [
+                'showMeridian' => false,
+            ],
+        ]);
+        ?>
 	</div>
                                 </div>
     <div class="col-md-3 form-group m-t-25">
         <div class="pull-right">
 		<?= Html::submitButton(Yii::t('backend', 'Apply'), [
-			'id' => 'lesson-review-apply',
-			'class' => 'btn btn-info',
-			'name' => 'button',
-			'value' => Lesson::APPLY_SINGLE_LESSON
-		]) ?>
+            'id' => 'lesson-review-apply',
+            'class' => 'btn btn-info',
+            'name' => 'button',
+            'value' => Lesson::APPLY_SINGLE_LESSON
+        ]) ?>
 		<?= Html::submitButton(Yii::t('backend', 'Apply All'), [
-			'id' => 'lesson-review-apply-all',
-			'class' => 'btn btn-info',
-			'name' => 'button',
-			'value' => Lesson::APPLY_ALL_FUTURE_LESSONS
-		]) ?>
-		<?= Html::a('Cancel','#', ['id' => 'lesson-review-cancel','class' => 'btn btn-default']);
-		?>
+            'id' => 'lesson-review-apply-all',
+            'class' => 'btn btn-info',
+            'name' => 'button',
+            'value' => Lesson::APPLY_ALL_FUTURE_LESSONS
+        ]) ?>
+		<?= Html::a('Cancel', '#', ['id' => 'lesson-review-cancel','class' => 'btn btn-default']);
+        ?>
 		<div class="clearfix"></div>
         </div>
 	</div>
@@ -78,21 +79,21 @@ use common\models\Lesson;
 <div class="row">
 	<div class="col-md-12 p-l-20 form-group">
             <div class="pull-right">
-            <?= Html::a('Cancel','#', ['id' => 'lesson-review-cancel','class' => 'btn btn-default']);
-		?>
+            <?= Html::a('Cancel', '#', ['id' => 'lesson-review-cancel','class' => 'btn btn-default']);
+        ?>
 		<?= Html::submitButton(Yii::t('backend', 'Apply'), [
                     
-			'id' => 'lesson-review-apply',
-			'class' => 'btn btn-info',
-			'name' => 'button',
-			'value' => Lesson::APPLY_SINGLE_LESSON
-		]) ?>
+            'id' => 'lesson-review-apply',
+            'class' => 'btn btn-info',
+            'name' => 'button',
+            'value' => Lesson::APPLY_SINGLE_LESSON
+        ]) ?>
 		<?= Html::submitButton(Yii::t('backend', 'Apply All'), [
-			'id' => 'lesson-review-apply-all',
-			'class' => 'btn btn-info',
-			'name' => 'button',
-			'value' => Lesson::APPLY_ALL_FUTURE_LESSONS
-		]) ?>
+            'id' => 'lesson-review-apply-all',
+            'class' => 'btn btn-info',
+            'name' => 'button',
+            'value' => Lesson::APPLY_ALL_FUTURE_LESSONS
+        ]) ?>
 		<div class="clearfix"></div>
 	</div>
         </div>

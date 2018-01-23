@@ -22,50 +22,56 @@ use yii\helpers\Url;
     if ($model->isNewRecord) {
         $url = Url::to(['user-contact/create-address','id' => $userModel->id]);
     }
-	$form = ActiveForm::begin([
-			'id' => 'address-form',
-			'action' =>$url,
-	]);
-	?>
+    $form = ActiveForm::begin([
+            'id' => 'address-form',
+            'action' =>$url,
+    ]);
+    ?>
 	<div class="row">
             <div class="col-md-12">
 		<?php
-		$locationModel = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
-		?>
+        $locationModel = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
+        ?>
 		<?=
-		$form->field($model, "labelId")->widget(Select2::classname(), [
-			'data' => ArrayHelper::map(Label::find()
-					->user($userModel->id)
-					->all(), 'id', 'name'),
-			'options' => [
-				'id' => 'address-label',
-			],
-			'pluginOptions' => [
-				'tags' => true,
-			],
-		])->label('Label');
-		?>
+        $form->field($model, "labelId")->widget(Select2::classname(), [
+            'data' => ArrayHelper::map(Label::find()
+                    ->user($userModel->id)
+                    ->all(), 'id', 'name'),
+            'options' => [
+                'id' => 'address-label',
+            ],
+            'pluginOptions' => [
+                'tags' => true,
+            ],
+        ])->label('Label');
+        ?>
             </div>
             <div class="col-md-12">
 		<?= $form->field($addressModel, "address")->textInput(['maxlength' => true])->label('Address') ?>
             </div>
              <div class="col-md-12">
 		<?=
-		$form->field($addressModel, "cityId")->dropDownList(
-			ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'), ['class' => 'city form-control'])->label('City')
-		?>
+        $form->field($addressModel, "cityId")->dropDownList(
+            ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
+            ['class' => 'city form-control']
+        )->label('City')
+        ?>
             </div>
              <div class="col-md-12">
                         <?=
-		$form->field($addressModel, "provinceId")->dropDownList(
-			ArrayHelper::map(Province::find()->all(), 'id', 'name'), ['class' => 'province form-control'])->label('Province')
-		?>
+        $form->field($addressModel, "provinceId")->dropDownList(
+            ArrayHelper::map(Province::find()->all(), 'id', 'name'),
+            ['class' => 'province form-control']
+        )->label('Province')
+        ?>
                  </div>
              <div class="col-md-12">
 		<?=
-		$form->field($addressModel, "countryId")->dropDownList(
-			ArrayHelper::map(Country::find()->all(), 'id', 'name'), ['class' => 'country form-control'])->label('Country')
-		?>
+        $form->field($addressModel, "countryId")->dropDownList(
+            ArrayHelper::map(Country::find()->all(), 'id', 'name'),
+            ['class' => 'country form-control']
+        )->label('Country')
+        ?>
              </div>
 		
 		 <div class="col-md-12">
@@ -81,13 +87,13 @@ use yii\helpers\Url;
              <div class="pull-left">       
  <?php
                 if (!$model->isNewRecord) {
-            echo Html::a('Delete', [
+                    echo Html::a('Delete', [
                 '#', 'id' => $model->id
                 ], [
                 'id' => $model->id,
                 'class' => 'user-contact-delete btn btn-danger',
             ]);
-        }
+                }
 
         ?>
          </div>

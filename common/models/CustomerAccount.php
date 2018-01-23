@@ -79,11 +79,11 @@ class CustomerAccount extends \yii\db\ActiveRecord
     public function getAccountDescription()
     {
         $description = null;
-        switch($this->description) {
-            case self::INVOICE_DESCRIPTION :
+        switch ($this->description) {
+            case self::INVOICE_DESCRIPTION:
                 $description = $this->description . ' I-' . str_pad($this->invoiceId, 5, 0, STR_PAD_LEFT);
             break;
-            case self::PAYMENT_DESCRIPTION :
+            case self::PAYMENT_DESCRIPTION:
                 if (!$this->invoice->isInvoice()) {
                     $description = $this->description . ' P-' . str_pad($this->invoiceId, 5, 0, STR_PAD_LEFT);
                 } else {

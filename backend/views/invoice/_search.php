@@ -18,7 +18,7 @@ use kartik\daterange\DateRangePicker;
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
-	<?php if((int) $model->type === Invoice::TYPE_INVOICE) : ?>
+	<?php if ((int) $model->type === Invoice::TYPE_INVOICE) : ?>
 	<?php $class = 'invoice';?>
     <div class="col-md-3">
         <?php
@@ -44,7 +44,7 @@ use kartik\daterange\DateRangePicker;
         ?>
     </div>
 	<?php endif; ?>
-	<?php if((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE) : ?>
+	<?php if ((int) $model->type === Invoice::TYPE_PRO_FORMA_INVOICE) : ?>
 	<?php $class = 'pro-forma';?>
 	<div class="col-md-3">
     <label>Due Date</label>
@@ -59,7 +59,7 @@ use kartik\daterange\DateRangePicker;
                 'ranges' => [
                     Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
                     Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
-					Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+                    Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
                     Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
                 ],
                 'locale' => [

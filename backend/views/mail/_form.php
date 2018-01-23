@@ -15,30 +15,29 @@ use common\models\UserEmail;
 
 <div class="student-form">
 	<?php $model->content = $content;
-	$model->to = $emails;
+    $model->to = $emails;
         $data=null;
-        if(!empty($userModel))
-        {
-        $data = ArrayHelper::map(UserEmail::find()->joinWith('userContact')->andWhere(['user_contact.userId'=>$userModel->id])->orderBy('user_email.email')->all(), 'email', 'email');
+        if (!empty($userModel)) {
+            $data = ArrayHelper::map(UserEmail::find()->joinWith('userContact')->andWhere(['user_contact.userId'=>$userModel->id])->orderBy('user_email.email')->all(), 'email', 'email');
         }
         ?>
 	<?php $form = ActiveForm::begin([
-		'id' => 'mail-form',
-		'action' => Url::to(['email/send'])
-	]);
-	?>
+        'id' => 'mail-form',
+        'action' => Url::to(['email/send'])
+    ]);
+    ?>
 	<?= $form->field($model, 'id')->hiddenInput(['value' => $id])->label(false);?>
 	<div class="row">
         <div class="col-lg-12">
 			<?php
-			echo $form->field($model, 'to')->widget(Select2::classname(), [
-				'data' => $data,
-				'pluginOptions' => [
-					'tags' => true,
-					'multiple' => true,
-				],
-			]);
-			?>
+            echo $form->field($model, 'to')->widget(Select2::classname(), [
+                'data' => $data,
+                'pluginOptions' => [
+                    'tags' => true,
+                    'multiple' => true,
+                ],
+            ]);
+            ?>
         </div>
 	</div>
     <div id="spinner" class="spinner col-md-4 col-md-offset-4" style="display:none;">
@@ -53,18 +52,20 @@ use common\models\UserEmail;
 	<div class="row">
         <div class="col-lg-12">
 			<?php
-			echo $form->field($model, 'content')->widget(Widget::className(), [
-				'plugins' => ['table'],
-				'options' => [
-					'minHeight' => 400,
-					'maxHeight' => 400,
-					'buttonSource' => true,
-					'convertDivs' => false,
-					'removeEmptyTags' => false,
-				]
-				]
-			);
-			?>
+            echo $form->field($model, 'content')->widget(
+                Widget::className(),
+                [
+                'plugins' => ['table'],
+                'options' => [
+                    'minHeight' => 400,
+                    'maxHeight' => 400,
+                    'buttonSource' => true,
+                    'convertDivs' => false,
+                    'removeEmptyTags' => false,
+                ]
+                ]
+            );
+            ?>
 
         </div>
 	</div>

@@ -9,16 +9,20 @@ use kartik\daterange\DateRangePicker;
 use backend\models\search\UserSearch;
 use yii\helpers\ArrayHelper;
 use common\models\Student;
+
 ?>
 <div class="col-md-12">
-	<?= Html::a('<i title="Add" class="fa fa-plus-circle"></i>',
+	<?= Html::a(
+    '<i title="Add" class="fa fa-plus-circle"></i>',
         ['invoice/blank-invoice', 'Invoice[customer_id]' => $userModel->id,
-            'Invoice[type]' => INVOICE::TYPE_INVOICE, ], [
+            'Invoice[type]' => INVOICE::TYPE_INVOICE, ],
+    [
             'class' => 'add-new-invoice text-add-new m-r-10',
-        ]); ?>
+        ]
+); ?>
 	<?= Html::a('<i title="Print" class="fa fa-print"></i>', ['print/customer-invoice', 'id' => $userModel->id], ['id' => 'invoice-print', 'class' => 'text-add-new', 'target' => '_blank']) ?>
 	<?php $form = ActiveForm::begin([
-		'id' => 'customer-invoice-search-form'
+        'id' => 'customer-invoice-search-form'
     ]); ?>
 	<div class="col-xs-3">
     <?php 
@@ -32,10 +36,10 @@ use common\models\Student;
         'ranges' => [
             Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
             Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
-	    	Yii::t('kvdrp', 'This Year') => ["moment().startOf('year')", "moment().endOf('year')"],
+            Yii::t('kvdrp', 'This Year') => ["moment().startOf('year')", "moment().endOf('year')"],
             Yii::t('kvdrp', 'Last Year') => ["moment().subtract(1, 'year').startOf('year')", "moment().subtract(1, 'year').endOf('year')"],
         ],
-			
+            
         'locale' => [
             'format' => 'M d,Y',
         ],
@@ -50,14 +54,14 @@ use common\models\Student;
     </div>
 	<div class="col-xs-3">
 		<?php
-		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-		$students = ArrayHelper::map(Student::find()
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $students = ArrayHelper::map(Student::find()
                         ->notDeleted()->orderBy(['first_name' => SORT_ASC])
-			->joinWith(['customer' => function($query) use($userModel) {
-				$query->andWhere(['user.id' => $userModel->id]);
-			}])
-			->location($locationId)
-			->all(), 'id', 'fullName'); ?>
+            ->joinWith(['customer' => function ($query) use ($userModel) {
+                $query->andWhere(['user.id' => $userModel->id]);
+            }])
+            ->location($locationId)
+            ->all(), 'id', 'fullName'); ?>
         <?php echo $form->field($userModel, 'studentId')->dropDownList($students, ['prompt' => 'Select Student'])->label(false); ?>
     </div>
     <div class="col-md-2 form-group M-t-5">
@@ -71,7 +75,7 @@ use common\models\Student;
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
     'timeout' => 6000,
-	'id' => 'customer-invoice-grid'
+    'id' => 'customer-invoice-grid'
 ]) ?>
 <?php echo  GridView::widget([
     'dataProvider' => $invoiceDataProvider,
@@ -113,13 +117,13 @@ use common\models\Student;
         [
             'attribute' => 'total',
             'label' => 'Total',
-			'format' => 'currency',
+            'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'enableSorting' => false,
-			'value' => function ($data) {
+            'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->total);
-            },	
+            },
         ],
     ],
 ]); ?>

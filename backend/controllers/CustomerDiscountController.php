@@ -27,13 +27,13 @@ class CustomerDiscountController extends \common\components\controllers\BaseCont
                     'delete' => ['post'],
                 ],
             ],
-			[
-				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['create', 'delete'],
-				'formats' => [
-					'application/json' => Response::FORMAT_JSON,
-				],
-        	],
+            [
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['create', 'delete'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
         ];
     }
 
@@ -71,19 +71,19 @@ class CustomerDiscountController extends \common\components\controllers\BaseCont
      */
     public function actionCreate($id)
     {
-		$customerDiscountModel = CustomerDiscount::findOne(['customerId' => $id]);
+        $customerDiscountModel = CustomerDiscount::findOne(['customerId' => $id]);
         $userModel = User::findOne(['id' => Yii::$app->user->id]);
-		if(empty($customerDiscountModel)) {
-        	$customerDiscountModel = new CustomerDiscount();
-			$customerDiscountModel->customerId = $id;
-            $customerDiscountModel->on(CustomerDiscount::EVENT_CREATE, [new CustomerDiscountLog(), 'create']);      
-        	$customerDiscountModel->userName = $userModel->publicIdentity;
-			$message = 'Discount has been added successfully.';
-		} else {	
-			$message = 'Discount has been updated successfully.';
-        	$customerDiscountModel->on(CustomerDiscount::EVENT_EDIT, [new CustomerDiscountLog(), 'edit'], ['oldAttributes' => $customerDiscountModel->getOldAttributes()]);
-        	$customerDiscountModel->userName = $userModel->publicIdentity;
-		}
+        if (empty($customerDiscountModel)) {
+            $customerDiscountModel = new CustomerDiscount();
+            $customerDiscountModel->customerId = $id;
+            $customerDiscountModel->on(CustomerDiscount::EVENT_CREATE, [new CustomerDiscountLog(), 'create']);
+            $customerDiscountModel->userName = $userModel->publicIdentity;
+            $message = 'Discount has been added successfully.';
+        } else {
+            $message = 'Discount has been updated successfully.';
+            $customerDiscountModel->on(CustomerDiscount::EVENT_EDIT, [new CustomerDiscountLog(), 'edit'], ['oldAttributes' => $customerDiscountModel->getOldAttributes()]);
+            $customerDiscountModel->userName = $userModel->publicIdentity;
+        }
         if ($customerDiscountModel->load(Yii::$app->request->post()) && $customerDiscountModel->save()) {
             return [
                 'status' => true,
@@ -122,14 +122,14 @@ class CustomerDiscountController extends \common\components\controllers\BaseCont
      * @param string $id
      * @return mixed
      */
-	public function actionDelete($id)
+    public function actionDelete($id)
     {
-		$customerDiscount = CustomerDiscount::findOne(['customerId' => $id]);
+        $customerDiscount = CustomerDiscount::findOne(['customerId' => $id]);
         $customerDiscount->delete();
-		
-		return [
-			'status' => true,
-		];
+        
+        return [
+            'status' => true,
+        ];
     }
 
     /**

@@ -9,7 +9,7 @@ use yii\helpers\Html;
     <?php
     $columns = [
             [
-            'value' => function($data) {
+            'value' => function ($data) {
                 return (new \DateTime($data->invoice->date))->format('l, F jS, Y');
             },
             'group' => true,

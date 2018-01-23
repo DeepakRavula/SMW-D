@@ -15,7 +15,7 @@ class m170921_094919_invoice_payment_cycle_lesson_fix extends Migration
                 ->all();
         foreach ($pfiLineItems as $pfiLineItem) {
             if ($pfiLineItem->lesson->rootLesson) {
-                if ($pfiLineItem->lineItemPaymentCycleLesson->paymentCycleLessonId !== 
+                if ($pfiLineItem->lineItemPaymentCycleLesson->paymentCycleLessonId !==
                         $pfiLineItem->lesson->rootLesson->paymentCycleLesson->id) {
                     $pfiLineItem->lineItemPaymentCycleLesson->paymentCycleLessonId = $pfiLineItem
                             ->lesson->rootLesson->paymentCycleLesson->id;

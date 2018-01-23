@@ -14,11 +14,11 @@ foreach ($Roles as $name => $description) {
 ?>
 <?php
     $form = ActiveForm::begin([
-		'id' => 'user-update-form',
+        'id' => 'user-update-form',
         'enableAjaxValidation' => true,
-		'enableClientValidation' => false,
-		'action' => Url::to(['default/edit-profile', 'id' => $model->getModel()->id])
-	]);
+        'enableClientValidation' => false,
+        'action' => Url::to(['default/edit-profile', 'id' => $model->getModel()->id])
+    ]);
     ?>
 <div class="row">
 	<div class="col-xs-6">
@@ -42,10 +42,12 @@ foreach ($Roles as $name => $description) {
 	</div>
 	<?php endif; ?>
 	<div class="col-xs-6">
-    <?= $form->field($userProfile, 'picture')->widget(Upload::classname(),
+    <?= $form->field($userProfile, 'picture')->widget(
+        Upload::classname(),
         [
         'url' => ['avatar-upload']
-    ])
+    ]
+    )
     ?>
     </div>
 </div>

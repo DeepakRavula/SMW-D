@@ -16,19 +16,18 @@ class DashboardController extends \common\components\controllers\BaseController
 {
     public function actionIndex()
     {
-		$roles = ArrayHelper::getColumn(
-			Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
-				'name'
-			);
-		$role = end($roles);
-                if($role !== User::ROLE_ADMINISTRATOR && $role !== User::ROLE_OWNER)
-                {
-                   return $this->redirect(['schedule/index']);
-                }
-		if ($role !== User::ROLE_ADMINISTRATOR) {
-			$userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
-			Yii::$app->session->set('location_id', $userLocation->location_id);
-		}
+        $roles = ArrayHelper::getColumn(
+            Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
+                'name'
+            );
+        $role = end($roles);
+        if ($role !== User::ROLE_ADMINISTRATOR && $role !== User::ROLE_OWNER) {
+            return $this->redirect(['schedule/index']);
+        }
+        if ($role !== User::ROLE_ADMINISTRATOR) {
+            $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
+            Yii::$app->session->set('location_id', $userLocation->location_id);
+        }
         $searchModel = new DashboardSearch();
         $currentDate = new \DateTime();
         $searchModel->fromDate = $currentDate->format('M 1,Y');
@@ -46,44 +45,44 @@ class DashboardController extends \common\components\controllers\BaseController
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         
         $enrolments = Enrolment::find()
-			->joinWith(['course' => function($query) use($locationId, $searchModel) {
-				$query->joinWith(['program' => function($query) {
-					$query->privateProgram();
-				}])
-				->confirmed()
-				->location($locationId)
-				->between($searchModel->fromDate, $searchModel->toDate);
-			}])
+            ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+                $query->joinWith(['program' => function ($query) {
+                    $query->privateProgram();
+                }])
+                ->confirmed()
+                ->location($locationId)
+                ->between($searchModel->fromDate, $searchModel->toDate);
+            }])
             ->count('studentId');
 
         $groupEnrolments = Enrolment::find()
-            ->joinWith(['course' => function($query) use($locationId, $searchModel) {
-				$query->joinWith(['program' => function($query) {
-					$query->group();
-				}])
-				->confirmed()
-				->location($locationId)
-				->between($searchModel->fromDate, $searchModel->toDate);
-			}])
+            ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+                $query->joinWith(['program' => function ($query) {
+                    $query->group();
+                }])
+                ->confirmed()
+                ->location($locationId)
+                ->between($searchModel->fromDate, $searchModel->toDate);
+            }])
             ->count('studentId');
-		$lessonsCount = Lesson::find()
-			->isConfirmed()
-			->notDeleted()
-			->location($locationId)
-			->andWhere(['NOT IN', 'lesson.status', Lesson::STATUS_CANCELED])
-			->between($searchModel->fromDate, $searchModel->toDate)
-			->count();
-		
+        $lessonsCount = Lesson::find()
+            ->isConfirmed()
+            ->notDeleted()
+            ->location($locationId)
+            ->andWhere(['NOT IN', 'lesson.status', Lesson::STATUS_CANCELED])
+            ->between($searchModel->fromDate, $searchModel->toDate)
+            ->count();
+        
         $students = Student::find()
             ->notDeleted()
             ->joinWith(['enrolment' => function ($query) use ($locationId, $searchModel) {
                 $query->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
-                $query->confirmed()
-					->location($locationId)
-					->between($searchModel->fromDate, $searchModel->toDate);
+                    $query->confirmed()
+                    ->location($locationId)
+                    ->between($searchModel->fromDate, $searchModel->toDate);
                 }]);
             }])
-			->active()
+            ->active()
             ->distinct(['enrolment.studentId'])
             ->count();
 
@@ -92,12 +91,12 @@ class DashboardController extends \common\components\controllers\BaseController
                     ->select(['sum(course_schedule.duration) as hours, program.name as program_name'])
                     ->joinWith(['course' => function ($query) use ($locationId) {
                         $query->joinWith('program')
-							->joinWith('courseSchedule')
+                            ->joinWith('courseSchedule')
                             ->where(['course.locationId' => $locationId]);
                     }])
                     ->andWhere(['between', 'lesson.date', $searchModel->fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
                     ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
-					->isConfirmed()
+                    ->isConfirmed()
                     ->notDeleted()
                     ->groupBy(['course.programId'])
                     ->all();
@@ -108,34 +107,34 @@ class DashboardController extends \common\components\controllers\BaseController
             array_push($completedPrograms, $completedProgram);
         }
 
-		$enrolmentGains = [];
+        $enrolmentGains = [];
         $allEnrolments = Enrolment::find()
             ->select(['COUNT(enrolment.id) as enrolmentCount, program.name as programName'])
-            ->joinWith(['course' => function($query) use($locationId, $searchModel) {
-				$query->joinWith(['program' => function($query) {
-				}])
-				->confirmed()
-				->location($locationId)
-				->between($searchModel->fromDate, $searchModel->toDate);
-			}])
+            ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+                $query->joinWith(['program' => function ($query) {
+                }])
+                ->confirmed()
+                ->location($locationId)
+                ->between($searchModel->fromDate, $searchModel->toDate);
+            }])
             ->groupBy(['course.programId'])
             ->all();
         foreach ($allEnrolments as $allEnrolment) {
             $enrolmentGain = [];
             $enrolmentGain['name'] = $allEnrolment->programName;
-            $enrolmentGain['y'] = round($allEnrolment->enrolmentCount,2);
+            $enrolmentGain['y'] = round($allEnrolment->enrolmentCount, 2);
             array_push($enrolmentGains, $enrolmentGain);
         }
-		$enrolmentLosses = [];
+        $enrolmentLosses = [];
         $allLossEnrolments = Enrolment::find()
             ->select(['COUNT(enrolment.id) as enrolmentCount, program.name as programName'])
-            ->joinWith(['course' => function($query) use($locationId, $searchModel) {
-				$query->joinWith(['program' => function($query) {
-				}])
-				->confirmed()
-				->location($locationId)
-				->betweenEndDate($searchModel->fromDate, $searchModel->toDate);
-			}])
+            ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+                $query->joinWith(['program' => function ($query) {
+                }])
+                ->confirmed()
+                ->location($locationId)
+                ->betweenEndDate($searchModel->fromDate, $searchModel->toDate);
+            }])
             ->groupBy(['course.programId'])
             ->all();
         foreach ($allLossEnrolments as $allLossEnrolment) {
@@ -145,35 +144,35 @@ class DashboardController extends \common\components\controllers\BaseController
             array_push($enrolmentLosses, $enrolmentLoss);
         }
 
-		$enrolmentGainCount = Enrolment::find()
-            ->joinWith(['course' => function($query) use($locationId, $searchModel) {
-				$query->joinWith(['program' => function($query) {
-				}])
-				->confirmed()
-				->location($locationId)
-				->between($searchModel->fromDate, $searchModel->toDate);
-			}])
+        $enrolmentGainCount = Enrolment::find()
+            ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+                $query->joinWith(['program' => function ($query) {
+                }])
+                ->confirmed()
+                ->location($locationId)
+                ->between($searchModel->fromDate, $searchModel->toDate);
+            }])
             ->count();
-		$enrolmentLossCount = Enrolment::find()
-            ->joinWith(['course' => function($query) use($locationId, $searchModel) {
-				$query->joinWith(['program' => function($query) {
-				}])
-				->confirmed()
-				->location($locationId)
-				->betweenEndDate($searchModel->fromDate, $searchModel->toDate);
-			}])
+        $enrolmentLossCount = Enrolment::find()
+            ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+                $query->joinWith(['program' => function ($query) {
+                }])
+                ->confirmed()
+                ->location($locationId)
+                ->betweenEndDate($searchModel->fromDate, $searchModel->toDate);
+            }])
             ->count();
         return $this->render('index', [
-			'searchModel' => $searchModel,
-			'enrolments' => $enrolments,
-			'groupEnrolments' => $groupEnrolments,
-			'students' => $students,
-			'completedPrograms' => $completedPrograms,
-			'enrolmentGains' => $enrolmentGains,	
-			'enrolmentLosses' => $enrolmentLosses,	
-			'enrolmentGainCount' => $enrolmentGainCount,
-			'enrolmentLossCount' => $enrolmentLossCount,
-			'lessonsCount' => $lessonsCount
-		]);
+            'searchModel' => $searchModel,
+            'enrolments' => $enrolments,
+            'groupEnrolments' => $groupEnrolments,
+            'students' => $students,
+            'completedPrograms' => $completedPrograms,
+            'enrolmentGains' => $enrolmentGains,
+            'enrolmentLosses' => $enrolmentLosses,
+            'enrolmentGainCount' => $enrolmentGainCount,
+            'enrolmentLossCount' => $enrolmentLossCount,
+            'lessonsCount' => $lessonsCount
+        ]);
     }
 }

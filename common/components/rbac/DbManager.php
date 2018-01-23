@@ -17,7 +17,7 @@ use common\components\rbac\Role;
 use common\components\rbac\Permission;
 use common\models\Location;
 
-class DbManager extends \yii\rbac\DbManager	
+class DbManager extends \yii\rbac\DbManager
 {
     /**
      * @inheritdoc
@@ -36,9 +36,9 @@ class DbManager extends \yii\rbac\DbManager
             return $this->checkAccessRecursive($userId, $permissionName, $params, $assignments);
         }
     }
-	protected function checkAccessRecursive($user, $itemName, $params, $assignments)
+    protected function checkAccessRecursive($user, $itemName, $params, $assignments)
     {
-		$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         if (($item = $this->getItem($itemName)) === null) {
             return false;
         }
@@ -84,7 +84,7 @@ class DbManager extends \yii\rbac\DbManager
             'data' => $data,
             'createdAt' => $row['created_at'],
             'updatedAt' => $row['updated_at'],
-			'location_id' => !empty($row['location_id']) ? $row['location_id'] : null 
+            'location_id' => !empty($row['location_id']) ? $row['location_id'] : null
         ]);
     }
 
@@ -93,7 +93,7 @@ class DbManager extends \yii\rbac\DbManager
      */
     public function addChild($parent, $child)
     {
-		$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         if ($parent->name === $child->name) {
             throw new InvalidParamException("Cannot add '{$parent->name}' as a child of itself.");
         }
@@ -120,7 +120,7 @@ class DbManager extends \yii\rbac\DbManager
      */
     public function removeChild($parent, $child)
     {
-		$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $result = $this->db->createCommand()
             ->delete($this->itemChildTable, ['parent' => $parent->name, 'child' => $child->name, 'location_id' => $locationId])
             ->execute() > 0;
@@ -133,15 +133,15 @@ class DbManager extends \yii\rbac\DbManager
     /**
      * @inheritdoc
      */
-     public function getChildren($name)
+    public function getChildren($name)
     {
-		$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = (new Query)
             ->select(['name', 'type', 'description', 'rule_name', 'data', 'created_at', 'updated_at', 'location_id'])
             ->from([$this->itemTable, $this->itemChildTable])
-            ->where(['parent' => $name, 
-				'name' => new Expression('[[child]]'),
-				'location_id' => $locationId]);
+            ->where(['parent' => $name,
+                'name' => new Expression('[[child]]'),
+                'location_id' => $locationId]);
 
         $children = [];
         foreach ($query->all($this->db) as $row) {

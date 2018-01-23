@@ -11,16 +11,16 @@ class FullCalendar extends AssetBundle
     public $sourcePath = '@bower/fullcalendar/dist';
     public $js = [
         '/plugins/momentjs/moment-with-locales.js',
-		'fullcalendar.js',
+        'fullcalendar.js',
     ];
-	public $css = [
-		'fullcalendar.css',
-		'fullcalendar.print.css'
-	];
-	public $depends = [
+    public $css = [
+        'fullcalendar.css',
+        'fullcalendar.print.css'
+    ];
+    public $depends = [
         'yii\web\JqueryAsset',
         'yii\jui\JuiAsset',
-	];
+    ];
 
     public function init()
     {

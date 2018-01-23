@@ -19,23 +19,23 @@ use yii\helpers\ArrayHelper;
         $url = Url::to(['user-contact/create-email','id' => $userModel->id]);
     }
 $form = ActiveForm::begin([
-		'id' => 'email-form',
-		'action' => $url,
-	]);
+        'id' => 'email-form',
+        'action' => $url,
+    ]);
 ?>
 <div class="row">
     <div class="col-md-12">
 		<?= $form->field($emailModel, "email")->textInput(['maxlength' => true]) ?>
 		<?=
-		$form->field($model, "labelId")->widget(Select2::classname(), [
-			'data' => ArrayHelper::map(Label::find()
-					->user($userModel->id)
-					->all(), 'id', 'name'),
-			'pluginOptions' => [
-				'tags' => true,
-			],
-		])->label('Label');
-		?>
+        $form->field($model, "labelId")->widget(Select2::classname(), [
+            'data' => ArrayHelper::map(Label::find()
+                    ->user($userModel->id)
+                    ->all(), 'id', 'name'),
+            'pluginOptions' => [
+                'tags' => true,
+            ],
+        ])->label('Label');
+        ?>
 </div>
 </div>
     <div class="row">
@@ -47,13 +47,13 @@ $form = ActiveForm::begin([
              <div class="pull-left">       
  <?php
                 if (!$model->isNewRecord) {
-            echo Html::a('Delete', [
+                    echo Html::a('Delete', [
                 '#', 'id' => $model->id
                 ], [
                 'id' => $model->id,
                 'class' => 'user-contact-delete btn btn-danger',
             ]);
-        }
+                }
 
         ?>
                  </div>

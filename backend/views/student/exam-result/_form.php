@@ -16,16 +16,18 @@ use kartik\select2\Select2;
 ?>
  <?php
  $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
- $teachers = ArrayHelper::map(User::find()
-		->joinWith(['userLocation ul' => function ($query) {
-			$query->joinWith('teacherAvailability');
-		}])
-		->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-		->where(['raa.item_name' => 'teacher'])
-		->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
+ $teachers = ArrayHelper::map(
+     User::find()
+        ->joinWith(['userLocation ul' => function ($query) {
+            $query->joinWith('teacherAvailability');
+        }])
+        ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+        ->where(['raa.item_name' => 'teacher'])
+        ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
                 ->notDeleted()
-		->all(),
-	'id', 'userProfile.fullName'
+        ->all(),
+    'id',
+     'userProfile.fullName'
 );
 if ($model->isNewRecord) {
     $url = Url::to(['exam-result/create', 'studentId' => $model->studentId]);
@@ -35,22 +37,22 @@ if ($model->isNewRecord) {
 ?>
 <div class="lesson-form">
 <?php $form = ActiveForm::begin([
-	'id' => 'exam-result-form',
+    'id' => 'exam-result-form',
     'action' => $url,
 ]); ?>
 <div class="row">
 	<div class="col-md-6">
 		<?=  $form->field($model, 'date')->widget(DatePicker::classname(), [
-				'options' => [
-					'value' => !empty($model->date) ? Yii::$app->formatter->asDate($model->date) : Yii::$app->formatter->asDate(new \DateTime()),
-		   ],
-			'type' => DatePicker::TYPE_COMPONENT_APPEND,
-			'pluginOptions' => [
-				'autoclose' => true,
-				'format' => 'dd-mm-yyyy',
-			],
-		  ]);
-		?>
+                'options' => [
+                    'value' => !empty($model->date) ? Yii::$app->formatter->asDate($model->date) : Yii::$app->formatter->asDate(new \DateTime()),
+           ],
+            'type' => DatePicker::TYPE_COMPONENT_APPEND,
+            'pluginOptions' => [
+                'autoclose' => true,
+                'format' => 'dd-mm-yyyy',
+            ],
+          ]);
+        ?>
     </div>
 	<div class="col-md-6">
 		<?=  $form->field($model, 'mark')->textInput(['class' => 'right-align form-control']);?>
@@ -63,32 +65,36 @@ if ($model->isNewRecord) {
     </div>
 	<div class="col-md-6">
 		<?= $form->field($model, 'programId')->widget(Select2::classname(), [
-	    		'data' => ArrayHelper::map(Program::find()->active()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
-				'options' => [
+                'data' => ArrayHelper::map(Program::find()->active()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
+                'options' => [
                                     'id' => 'examresult-programid'
-				],
-				'pluginOptions' => [
+                ],
+                'pluginOptions' => [
                                     'multiple' => false,
                                     'placeholder' => 'Select Program',
-				],
-			]);
-			?>
+                ],
+            ]);
+            ?>
     </div>
 	<div class="col-md-6">
 		<?php $teacher = !empty($model->teacherId) ? $model->teacher->publicIdentity : null; ?>
         <?php
-			$teacherId = !empty($model->teacherId) ? $model->teacherId : null; 
-		echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
-			[
-			'data' => [$teacherId => $teacher],
-            'type' => DepDrop::TYPE_SELECT2,    
-			'pluginOptions' => [
-				'depends' => ['examresult-programid'],
-				'placeholder' => 'Select...',
-				'url' => Url::to(['course/teachers']),
-			],
-		]);
-		?>
+            $teacherId = !empty($model->teacherId) ? $model->teacherId : null;
+        echo $form->field($model, 'teacherId')->widget(
+ 
+            DepDrop::classname(),
+            [
+            'data' => [$teacherId => $teacher],
+            'type' => DepDrop::TYPE_SELECT2,
+            'pluginOptions' => [
+                'depends' => ['examresult-programid'],
+                'placeholder' => 'Select...',
+                'url' => Url::to(['course/teachers']),
+            ],
+        ]
+ 
+        );
+        ?>
         </div>
 </div>
         <div class="clearfix"></div>
@@ -102,14 +108,14 @@ if ($model->isNewRecord) {
             <div class="pull-left">       
  <?php
                 if (!$model->isNewRecord) {
-            echo Html::a('Delete', [
+                    echo Html::a('Delete', [
                 'exam-result/delete', 'id' => $model->id
                 ], [
                 'id' => 'evaluation-delete-' . $model->id,
                 'title' => Yii::t('yii', 'Delete'),
                 'class' => 'evaluation-delete btn btn-danger',
             ]);
-        }
+                }
 
         ?>
 </div>

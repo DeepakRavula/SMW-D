@@ -13,16 +13,16 @@ use yii\bootstrap\Modal;
     	<a href="#"  title="Add" id="new-lesson" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
     </div>
 	<?php
-	Modal::begin([
-		'header' => '<h4 class="m-0">Add Lesson</h4>',
-		'id'=>'new-lesson-modal',
-	]); ?>
+    Modal::begin([
+        'header' => '<h4 class="m-0">Add Lesson</h4>',
+        'id'=>'new-lesson-modal',
+    ]); ?>
         <div id="new-lesson-modal-content"></div>
 	<?php Modal::end(); ?>
     <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin([
-    	'id' => 'student-lesson-listing',
-    	'timeout' => 6000,
+        'id' => 'student-lesson-listing',
+        'timeout' => 6000,
     ]) ?>
     <?php
     echo GridView::widget([
@@ -85,10 +85,10 @@ use yii\bootstrap\Modal;
                     return 'No';
                 },
             ],
-			[
+            [
                 'label' => 'Present?',
                 'value' => function ($data) {
-					return $data->getPresent();
+                    return $data->getPresent();
                 },
             ],
         ],

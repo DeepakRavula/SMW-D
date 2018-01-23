@@ -47,7 +47,7 @@ class CourseSearch extends Course
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Course::find()
                 ->groupProgram($locationId)
-				->confirmed();
+                ->confirmed();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

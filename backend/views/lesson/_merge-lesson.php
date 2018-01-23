@@ -5,6 +5,7 @@ use yii\bootstrap\Modal;
 use yii\grid\GridView;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
+
 ?>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <?php
@@ -15,8 +16,8 @@ $lessons = Lesson::find()
         ->unscheduled()
         ->enrolment($enrolmentId);
 $splitLessonDataProvider = new ActiveDataProvider([
-	'query' => $lessons,
-	'pagination' => false
+    'query' => $lessons,
+    'pagination' => false
 ]);
 ?>
 <div>
@@ -27,8 +28,8 @@ $splitLessonDataProvider = new ActiveDataProvider([
     ]);?>
     <h5><strong><?= 'Please choose the lesson that should be merged.'; ?></strong></h5>
 	<?php $form = ActiveForm::begin([
-		'id' => 'merge-lesson-form',
-	]); ?>
+        'id' => 'merge-lesson-form',
+    ]); ?>
 	<div>
 	<?php
     echo GridView::widget([
@@ -85,7 +86,7 @@ $splitLessonDataProvider = new ActiveDataProvider([
             ],
         ],
     ]);
-	?>
+    ?>
 	</div>
 	<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 	<?php ActiveForm::end(); ?>

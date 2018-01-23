@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+
 use common\models\log\InvoiceLog;
 use Yii;
 
@@ -173,7 +174,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         } else {
             $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
         }
-        $invoice->on(Invoice::EVENT_AFTER_INSERT, [new InvoiceLog(), 'addProformaInvoice'], ['loggedUser' => $loggedUser]);	
+        $invoice->on(Invoice::EVENT_AFTER_INSERT, [new InvoiceLog(), 'addProformaInvoice'], ['loggedUser' => $loggedUser]);
         $invoice->trigger(Invoice::EVENT_AFTER_INSERT);
         $lessons = Lesson::find()
             ->isConfirmed()
@@ -182,7 +183,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ->joinWith('paymentCycleLesson')
             ->andWhere(['payment_cycle_lesson.paymentCycleId' => $this->id])
             ->all();
-        foreach ($lessons as $lesson) { 
+        foreach ($lessons as $lesson) {
             $lesson->studentFullName = $this->enrolment->student->fullName;
             $lesson->addPrivateLessonLineItem($invoice);
         }
@@ -200,7 +201,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         if (new \DateTime($this->startDate) <= new \DateTime() &&
             new \DateTime($this->endDate) >= new \DateTime()) {
             return true;
-        } else if ($this->isFirstPaymentCycle()) {
+        } elseif ($this->isFirstPaymentCycle()) {
             return true;
         } else {
             return false;
@@ -231,8 +232,10 @@ class PaymentCycle extends \yii\db\ActiveRecord
     public function validateCanRaisePFI($attribute)
     {
         if (!$this->canRaiseProformaInvoice()) {
-            $this->addError($attribute,
-                'ProForma-Invoice can be generated only for current and next payment cycle only.');
+            $this->addError(
+                $attribute,
+                'ProForma-Invoice can be generated only for current and next payment cycle only.'
+            );
         }
     }
     

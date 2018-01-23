@@ -15,8 +15,7 @@ class RequireJS extends AssetBundle
     public $js = [
         'require.js',
     ];
-	public $jsOptions = [
-		'data-main' => '/js/app.js',
-	];
+    public $jsOptions = [
+        'data-main' => '/js/app.js',
+    ];
 }
-

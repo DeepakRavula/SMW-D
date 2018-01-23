@@ -31,7 +31,7 @@ use kartik\grid\GridView;
             ],
             [
                 'label' => 'Code',
-                'value' => function($data) {
+                'value' => function ($data) {
                     return $data->code;
                 },
                 'contentOptions' => ['style' => 'font-size:14px;width:150px'],
@@ -52,7 +52,7 @@ use kartik\grid\GridView;
                     return $data->enrolment ? $data->enrolment->getPaymentFrequency() : null;
                 },
             ],
-			[
+            [
                 'label' => 'Qty',
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px;width:50px'],

@@ -12,24 +12,24 @@ use yii\bootstrap\Modal;
         'id' => 'classroom-detail-model',
     ]); ?>
 <?= $this->render('_form', [
-	'model' => $model,
+    'model' => $model,
 ]);?>
  <?php  Modal::end(); ?>
 <div class="row">
 	<div class="col-md-6">	
 		<?php
-		echo $this->render('_details', [
-			'model' => $model,
-		]);
-		?>
+        echo $this->render('_details', [
+            'model' => $model,
+        ]);
+        ?>
 	</div>
 	<div class="col-md-6">	
 		<?php
-		echo $this->render('unavailability/view', [
-			'model' => $model,
-			'unavailabilityDataProvider' => $unavailabilityDataProvider
-		]);
-		?>
+        echo $this->render('unavailability/view', [
+            'model' => $model,
+            'unavailabilityDataProvider' => $unavailabilityDataProvider
+        ]);
+        ?>
 	</div>
 </div>
 <script>

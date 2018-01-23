@@ -14,10 +14,10 @@ use insolita\wgadminlte\LteConst;
 <?php
 $vacations = Vacation::find()
     ->andWhere([
-		'enrolmentId' => $model->id,
-		'vacation.isConfirmed' => true,
-		'vacation.isDeleted' => false
-	]);
+        'enrolmentId' => $model->id,
+        'vacation.isConfirmed' => true,
+        'vacation.isDeleted' => false
+    ]);
 $vacationDataProvider = new ActiveDataProvider([
     'query' => $vacations,
     ]);
@@ -56,12 +56,15 @@ LteBox::begin([
                 'template' => '{delete}',
                 'buttons' => [
                     'delete' => function ($url, $model, $key) {
-                        return Html::a('<i class="fa fa-trash-o"></i>', ['#'],
+                        return Html::a(
+                            '<i class="fa fa-trash-o"></i>',
+                            ['#'],
                                 [
                                 'id' => 'vacation-delete-'.$model->id,
                                 'title' => Yii::t('yii', 'Delete'),
                                 'class' => 'vacation-delete m-l-10 btn-danger btn-xs',
-                        ]);
+                        ]
+                        );
                     },
                 ],
             ],

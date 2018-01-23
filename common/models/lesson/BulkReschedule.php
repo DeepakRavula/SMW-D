@@ -17,10 +17,10 @@ use Yii;
  */
 class BulkReschedule extends \yii\db\ActiveRecord
 {
-	const TYPE_VACATION_CREATE = 1;
-	const TYPE_VACATION_DELETE = 2;
-	const TYPE_RESCHEDULE_BULK_LESSONS = 3;
-	const TYPE_RESCHEDULE_FUTURE_LESSONS = 4;
+    const TYPE_VACATION_CREATE = 1;
+    const TYPE_VACATION_DELETE = 2;
+    const TYPE_RESCHEDULE_BULK_LESSONS = 3;
+    const TYPE_RESCHEDULE_FUTURE_LESSONS = 4;
     /**
      * @inheritdoc
      */

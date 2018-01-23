@@ -37,7 +37,9 @@ use yii\helpers\Url;
         <div class="col-md-4 ">
             <?php
             echo $form->field($model, 'country_id')->dropDownList(ArrayHelper::map(
-                    Country::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'
+                    Country::find()->orderBy(['name' => SORT_ASC])->all(),
+        'id',
+        'name'
             ))
             ?>
         </div>
@@ -50,7 +52,7 @@ use yii\helpers\Url;
          </div>
      <div class="pull-left">
         <?php if (!$model->isNewRecord) {
-            echo Html::a('Delete', ['delete', 'id' => $model->id], [
+                echo Html::a('Delete', ['delete', 'id' => $model->id], [
                 'id' => 'province-delete-button',
                 'class' => 'btn btn-danger',
                 'data' => [
@@ -58,7 +60,7 @@ use yii\helpers\Url;
                     'method' => 'post',
                 ]
             ]);
-        }
+            }
         ?>
         
             </div>

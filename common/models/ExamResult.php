@@ -18,7 +18,6 @@ use Yii;
  */
 class ExamResult extends \yii\db\ActiveRecord
 {
-    
     const EVENT_CREATE = 'event-create';
     const EVENT_UPDATE = 'event-update';
     const EVENT_DELETE = 'event-delete';
@@ -40,8 +39,8 @@ class ExamResult extends \yii\db\ActiveRecord
             [['mark', 'level', 'programId', 'teacherId'], 'required'],
             [['studentId', 'teacherId', 'programId'], 'integer'],
             [['level', 'type'], 'trim'],
-			[['mark'], 'number'],
-			[['level'], 'string', 'max' => 10],
+            [['mark'], 'number'],
+            [['level'], 'string', 'max' => 10],
             [['date'], 'safe'],
             [['type'], 'string', 'max' => 30],
         ];
@@ -64,42 +63,38 @@ class ExamResult extends \yii\db\ActiveRecord
         ];
     }
 
-	public function getTeacher()
+    public function getTeacher()
     {
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
 
-	public function getProgram()
+    public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'programId']);
     }
-	
-	public function getStudent()
+    
+    public function getStudent()
     {
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
     }
-	public function beforeSave($insert)
-	{
-		$this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
-		
-		return parent::beforeSave($insert);
-	}
+    public function beforeSave($insert)
+    {
+        $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
+        
+        return parent::beforeSave($insert);
+    }
 
         
         
-        public function afterSave($insert, $changedAttributes) {
-		if($insert) {
-			$this->trigger(self::EVENT_CREATE);
-		} 
-                
-                
-			$this->trigger(self::EVENT_UPDATE);
-		
-		return parent::afterSave($insert, $changedAttributes);
-	}
-        
-        
-        
-        
-        
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($insert) {
+            $this->trigger(self::EVENT_CREATE);
         }
+                
+                
+        $this->trigger(self::EVENT_UPDATE);
+        
+        return parent::afterSave($insert, $changedAttributes);
+    }
+}

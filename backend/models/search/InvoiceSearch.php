@@ -28,7 +28,7 @@ class InvoiceSearch extends Invoice
     public $query;
     public $mailStatus;
     public $invoiceStatus;
-	public $summariseReport = false;
+    public $summariseReport = false;
     /**
      * {@inheritdoc}
      */
@@ -87,7 +87,7 @@ class InvoiceSearch extends Invoice
             } elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
                 $query->paid()->proFormaInvoice();
             }
-			if (!empty($this->dateRange)) {
+            if (!empty($this->dateRange)) {
                 list($this->dueFromDate, $this->dueToDate) = explode(' - ', $this->dateRange);
                 $query->andWhere(['between', 'DATE(invoice.dueDate)',
                     (new \DateTime($this->dueFromDate))->format('Y-m-d'),
@@ -115,14 +115,12 @@ class InvoiceSearch extends Invoice
             Invoice::STATUS_PAID => 'Paid',
         ];
     }
-	public static function mailStatuses()
+    public static function mailStatuses()
     {
         return [
             self::STATUS_ALL => 'All',
             self::STATUS_MAIL_SENT => 'Sent',
-			self::STATUS_MAIL_NOT_SENT => 'Unsent'
+            self::STATUS_MAIL_NOT_SENT => 'Unsent'
         ];
     }
-
-    
 }

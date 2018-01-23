@@ -64,7 +64,7 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
         return $this->hasOne(Lesson::className(), ['id' => 'extendedLessonId']);
     }
 
-    public function afterSave($insert,$changedAttributes)
+    public function afterSave($insert, $changedAttributes)
     {
         if ($insert) {
             if ($this->extendedLesson->hasInvoice()) {
@@ -74,7 +74,7 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
                 if ($this->lesson->hasLessonCredit($this->lesson->enrolment->id)) {
                     $amount = $this->lesson->getSplitedAmount();
                     if ($amount > $this->lesson->getLessonCreditAmount($this->lesson->enrolment->id)) {
-                       $amount = $this->lesson->getLessonCreditAmount($this->lesson->enrolment->id);
+                        $amount = $this->lesson->getLessonCreditAmount($this->lesson->enrolment->id);
                     }
                     $invoice->addPayment($this->lesson, $amount, $this->lesson->enrolment);
                 }

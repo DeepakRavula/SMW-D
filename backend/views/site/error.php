@@ -20,7 +20,8 @@ $this->title = $name;
                         'Error {code}',
                         [
                             'code' => property_exists($exception, 'statusCode') ? $exception->statusCode : 500,
-                        ])
+                        ]
+)
                     ?>
                 </h3>
                 <p>

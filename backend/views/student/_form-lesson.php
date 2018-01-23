@@ -17,11 +17,11 @@ use kartik\time\TimePicker;
 ?>
 <div class="lesson-form">
 <?php $form = ActiveForm::begin([
-	'id' => 'lesson-form',
-	'enableClientValidation' => false,
-	'enableAjaxValidation' => true,
-	'validationUrl' => Url::to(['lesson/validate', 'studentId' => $studentModel->id]),
-	'action' => Url::to(['lesson/create', 'studentId' => $studentModel->id]),
+    'id' => 'lesson-form',
+    'enableClientValidation' => false,
+    'enableAjaxValidation' => true,
+    'validationUrl' => Url::to(['lesson/validate', 'studentId' => $studentModel->id]),
+    'action' => Url::to(['lesson/create', 'studentId' => $studentModel->id]),
 ]); ?>
 <div class="row">
         <div class="col-md-6 lesson-program">
@@ -32,7 +32,10 @@ use kartik\time\TimePicker;
             $allPrograms = $query->all();
             $enrolledPrograms = ArrayHelper::map(
                             $query->studentEnrolled($studentModel->id)
-                            ->all(), 'id', 'name');
+                            ->all(),
+                'id',
+                'name'
+            );
             $programs = [];
             foreach ($allPrograms as $program) {
                 $programs[] = [
@@ -53,7 +56,10 @@ use kartik\time\TimePicker;
                     User::find()
                         ->notDeleted()
                         ->teachers($model->programId, $locationId)
-                        ->all(), 'id', 'publicIdentity');
+                        ->all(),
+            'id',
+            'publicIdentity'
+        );
         ?>
         <?php
         // Dependent Dropdown
@@ -73,13 +79,15 @@ use kartik\time\TimePicker;
         </div>
 		 <div class="col-md-4 lesson-duration">
             <?php
-            echo $form->field($model, 'duration')->widget(TimePicker::classname(),
+            echo $form->field($model, 'duration')->widget(
+            TimePicker::classname(),
                 [
                 'pluginOptions' => [
                     'defaultTime' => (new \DateTime('00:30'))->format('H:i'),
                     'showMeridian' => false,
                 ],
-            ]);
+            ]
+        );
             ?>
         </div>
         <div class="col-md-4 lesson-date">
@@ -89,7 +97,7 @@ use kartik\time\TimePicker;
                     'value' =>Yii::$app->formatter->asDate((new \DateTime())->format('d-m-Y')),
                 ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
-				'layout' => '{input}{picker}',
+                'layout' => '{input}{picker}',
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy',

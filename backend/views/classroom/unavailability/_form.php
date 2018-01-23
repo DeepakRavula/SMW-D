@@ -32,7 +32,7 @@ use kartik\daterange\DateRangePicker;
                         'ranges' => [
                     Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
                     Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
-		    Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+            Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
                     Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
                         ],
                         'locale' => [
@@ -58,7 +58,7 @@ use kartik\daterange\DateRangePicker;
             </div>
             <div class="pull-left">
         <?php if (!$model->isNewRecord) {
-            echo Html::a('Delete', ['delete', 'id' => $model->id], [
+                    echo Html::a('Delete', ['delete', 'id' => $model->id], [
                         'id' => 'classroom-unavailability-delete-button',
                         'class' => 'btn btn-danger',
                         'data' => [

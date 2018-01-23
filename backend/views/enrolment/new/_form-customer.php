@@ -35,15 +35,15 @@ use yii\widgets\MaskedInput;
 		</div>
 		<div class="col-xs-5">
 			<?=
-				$form->field($userEmail, "labelId")->widget(Select2::classname(), [
-					'data' => ArrayHelper::map(Label::find()
-							->andWhere(['userAdded' => false])
-							->all(), 'id', 'name'),
-					'pluginOptions' => [
-						'tags' => true,
-					],
-				])->label(false);
-				?>
+                $form->field($userEmail, "labelId")->widget(Select2::classname(), [
+                    'data' => ArrayHelper::map(Label::find()
+                            ->andWhere(['userAdded' => false])
+                            ->all(), 'id', 'name'),
+                    'pluginOptions' => [
+                        'tags' => true,
+                    ],
+                ])->label(false);
+                ?>
 		</div>
 	</div>
 	<div class="row">
@@ -60,18 +60,18 @@ use yii\widgets\MaskedInput;
 		</div>
 		<div class="col-xs-3">
 	<?=
-	$form->field($phoneModel, "labelId")->widget(Select2::classname(), [
-		'data' => ArrayHelper::map(Label::find()
-				->andWhere(['userAdded' => false])
-				->all(), 'id', 'name'),
-		'options' => [
-			'id' => 'phone-label',
-		],
-		'pluginOptions' => [
-			'tags' => true,
-		],
-	])->label(false);
-	?>
+    $form->field($phoneModel, "labelId")->widget(Select2::classname(), [
+        'data' => ArrayHelper::map(Label::find()
+                ->andWhere(['userAdded' => false])
+                ->all(), 'id', 'name'),
+        'options' => [
+            'id' => 'phone-label',
+        ],
+        'pluginOptions' => [
+            'tags' => true,
+        ],
+    ])->label(false);
+    ?>
 		</div>
 	</div>
 	<div class="row">
@@ -80,18 +80,18 @@ use yii\widgets\MaskedInput;
 		</div>	
 		<div class="col-xs-4">
 	<?=
-	$form->field($addressModel, "labelId")->widget(Select2::classname(), [
-		'data' => ArrayHelper::map(Label::find()
-				->andWhere(['userAdded' => false])
-				->all(), 'id', 'name'),
-		'options' => [
-			'id' => 'address-label',
-		],
-		'pluginOptions' => [
-			'tags' => true,
-		],
-	])->label(false);
-	?>
+    $form->field($addressModel, "labelId")->widget(Select2::classname(), [
+        'data' => ArrayHelper::map(Label::find()
+                ->andWhere(['userAdded' => false])
+                ->all(), 'id', 'name'),
+        'options' => [
+            'id' => 'address-label',
+        ],
+        'pluginOptions' => [
+            'tags' => true,
+        ],
+    ])->label(false);
+    ?>
 		</div>
 	</div>
 	<div class="row">
@@ -104,21 +104,24 @@ use yii\widgets\MaskedInput;
 		<div class="col-xs-3"></div>
 		<div class="col-xs-4">
 	<?= $form->field($addressModel, 'cityId')->dropDownList(
-		ArrayHelper::map(City::find()->all(), 'id', 'name'))->label(false);
-	?>
+        ArrayHelper::map(City::find()->all(), 'id', 'name')
+    )->label(false);
+    ?>
 		</div>
 		<div class="col-xs-5">
 			<?= $form->field($addressModel, 'provinceId')->dropDownList(
-				ArrayHelper::map(Province::find()->all(), 'id', 'name'))->label(false);
-			?>
+                ArrayHelper::map(Province::find()->all(), 'id', 'name')
+    )->label(false);
+            ?>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-xs-3"></div>
 		<div class="col-xs-4">
 			<?= $form->field($addressModel, 'countryId')->dropDownList(
-				ArrayHelper::map(Country::find()->all(), 'id', 'name'))->label(false);
-			?>
+                ArrayHelper::map(Country::find()->all(), 'id', 'name')
+            )->label(false);
+            ?>
 		</div>
 		<div class="col-xs-5">
 	<?= $form->field($addressModel, 'postalCode')->textInput(['placeholder' => 'Postal Code'])->label(false); ?>

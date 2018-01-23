@@ -4,6 +4,7 @@ namespace backend\models\discount;
 
 use common\models\User;
 use common\models\discount\InvoiceLineItemDiscount;
+
 /**
  * Create user form.
  */

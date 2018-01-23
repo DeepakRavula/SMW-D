@@ -7,6 +7,7 @@ use common\models\User;
 use yii\base\Exception;
 use yii\base\Model;
 use common\models\discount\InvoiceLineItemDiscount;
+
 /**
  * Create user form.
  */

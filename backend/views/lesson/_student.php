@@ -4,12 +4,13 @@ use yii\helpers\Url;
 use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+
 ?>
 <?php
 LteBox::begin([
-	'type' => LteConst::TYPE_DEFAULT,
-	'title' => 'Student',
-	'withBorder' => true,
+    'type' => LteConst::TYPE_DEFAULT,
+    'title' => 'Student',
+    'withBorder' => true,
 ])
 ?>
 <dl class="dl-horizontal">

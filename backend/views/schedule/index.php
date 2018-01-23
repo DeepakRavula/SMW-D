@@ -13,8 +13,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 $holiday = Holiday::findOne(['DATE(date)' => (new \DateTime())->format('Y-m-d')]);
 $holidayResource = '';
-if(!empty($holiday)) {
-	$holidayResource = ' (' . $holiday->description. ')';
+if (!empty($holiday)) {
+    $holidayResource = ' (' . $holiday->description. ')';
 }
 $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holidayResource;
 $this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class' => 'tv-icon']);
@@ -100,7 +100,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class
 <div class="nav-tabs-custom">
         <?php
 
-        $teacher = $this->render('_teacher-view',[
+        $teacher = $this->render('_teacher-view', [
             'availableTeachersDetails' => $availableTeachersDetails
         ]);
 

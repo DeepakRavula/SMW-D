@@ -10,14 +10,15 @@ use common\models\LocationAvailability;
 use common\models\Lesson;
 use common\models\Qualification;
 use kartik\daterange\DateRangePicker;
+
 ?>
 <?php $this->render('/lesson/_color-code'); ?>
 <div class="col-md-12">
 	<?php
-	$form = ActiveForm::begin([
-			'id' => 'teacher-lesson-search-form',
-	]);
-	?>
+    $form = ActiveForm::begin([
+            'id' => 'teacher-lesson-search-form',
+    ]);
+    ?>
     <div class="row">
         <div class="col-md-3 form-group">
             <?php
@@ -56,86 +57,86 @@ use kartik\daterange\DateRangePicker;
 
 <?php
 $columns = [
-		[
-		'value' => function ($data) {
-			if( ! empty($data->date)) {
-    			$lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-			    return $lessonDate->format('l, F jS, Y');
-			}
+        [
+        'value' => function ($data) {
+            if (! empty($data->date)) {
+                $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+                return $lessonDate->format('l, F jS, Y');
+            }
 
-			return null;
-		},
-		'group' => true,
-		'groupedRow' => true,
-		'groupFooter' => function ($model, $key, $index, $widget) {
-			return [
-				'mergeColumns' => [[1, 3]],
-				'content' => [
-					4 => GridView::F_SUM,
-				],
-				'contentFormats' => [
-					4 => ['format' => 'number', 'decimals' => 2],
-				],
-				'contentOptions' => [
-					4 => ['style' => 'text-align:right'],
-				],
-			'options'=>['style'=>'font-weight:bold;']
-			];
-		}
-	],
-		[
-		'label' => 'Time',
-		'width' => '250px',
-		'value' => function ($data) {
-			return !empty($data->date) ? Yii::$app->formatter->asTime($data->date) : null;
-		},
-	],
-		[
-		'label' => 'Program',
-		'width' => '250px',
-		'value' => function ($data) {
-			return !empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
-		},
-	],
-		[
-		'label' => 'Student',
-		'value' => function ($data) {
-			$student = ' - ';
-			if($data->course->program->isPrivate()) {
-				$student = !empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
-			}
-			return $student;
-		},
-	],
-		[
-		'label' => 'Duration(hrs)',
-		'value' => function ($data) {
-			return $data->getDuration();
-		},
-		'contentOptions' => ['class' => 'text-right'],
-			'hAlign'=>'right',
-			'pageSummary'=>true,
+            return null;
+        },
+        'group' => true,
+        'groupedRow' => true,
+        'groupFooter' => function ($model, $key, $index, $widget) {
+            return [
+                'mergeColumns' => [[1, 3]],
+                'content' => [
+                    4 => GridView::F_SUM,
+                ],
+                'contentFormats' => [
+                    4 => ['format' => 'number', 'decimals' => 2],
+                ],
+                'contentOptions' => [
+                    4 => ['style' => 'text-align:right'],
+                ],
+            'options'=>['style'=>'font-weight:bold;']
+            ];
+        }
+    ],
+        [
+        'label' => 'Time',
+        'width' => '250px',
+        'value' => function ($data) {
+            return !empty($data->date) ? Yii::$app->formatter->asTime($data->date) : null;
+        },
+    ],
+        [
+        'label' => 'Program',
+        'width' => '250px',
+        'value' => function ($data) {
+            return !empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
+        },
+    ],
+        [
+        'label' => 'Student',
+        'value' => function ($data) {
+            $student = ' - ';
+            if ($data->course->program->isPrivate()) {
+                $student = !empty($data->enrolment->student->fullName) ? $data->enrolment->student->fullName : null;
+            }
+            return $student;
+        },
+    ],
+        [
+        'label' => 'Duration(hrs)',
+        'value' => function ($data) {
+            return $data->getDuration();
+        },
+        'contentOptions' => ['class' => 'text-right'],
+            'hAlign'=>'right',
+            'pageSummary'=>true,
             'pageSummaryFunc'=>GridView::F_SUM
-	],
+    ],
 ];
 ?>
 <?=
 GridView::widget([
-	'dataProvider' => $teacherLessonDataProvider,
+    'dataProvider' => $teacherLessonDataProvider,
         'summary' => false,
         'emptyText' => false,
-	'options' => ['class' => 'col-md-12'],
-	'tableOptions' => ['class' => 'table table-bordered'],
-	'headerRowOptions' => ['class' => 'bg-light-gray'],
-	'pjax' => true,
-	'showPageSummary' => true,
-	'pjaxSettings' => [
-		'neverTimeout' => true,
-		'options' => [
-			'id' => 'teacher-lesson-grid',
-		],
-	],
-	'columns' => $columns,
+    'options' => ['class' => 'col-md-12'],
+    'tableOptions' => ['class' => 'table table-bordered'],
+    'headerRowOptions' => ['class' => 'bg-light-gray'],
+    'pjax' => true,
+    'showPageSummary' => true,
+    'pjaxSettings' => [
+        'neverTimeout' => true,
+        'options' => [
+            'id' => 'teacher-lesson-grid',
+        ],
+    ],
+    'columns' => $columns,
 ]);
 ?>
  <?php Modal::begin([

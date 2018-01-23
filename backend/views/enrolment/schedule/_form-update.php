@@ -18,19 +18,22 @@ use common\models\Course;
 <div id="bulk-reschedule" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="enrolment-form">
 	<?php $form = ActiveForm::begin([
-		'id' => 'enrolment-update'
-	]); ?>
+        'id' => 'enrolment-update'
+    ]); ?>
     <div class="row">
         <div class="col-md-3">
 			<?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-			$teachers = ArrayHelper::map(
-				User::find()
-					->notDeleted()
-					->teachers($course->programId, $locationId)
-                    ->join('LEFT JOIN', 'user_profile','user_profile.user_id=ul.user_id')
+            $teachers = ArrayHelper::map(
+                User::find()
+                    ->notDeleted()
+                    ->teachers($course->programId, $locationId)
+                    ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id=ul.user_id')
                     ->orderBy(['user_profile.firstname'=> SORT_ASC])
-					->all(), 'id', 'publicIdentity');
-			?>
+                    ->all(),
+                'id',
+                'publicIdentity'
+            );
+            ?>
 			<?php
         // Dependent Dropdown
         echo $form->field($course, 'teacherId')->widget(DepDrop::classname(), [
@@ -49,52 +52,58 @@ use common\models\Course;
 		</div>
 		<div class="col-md-2">
 	<?= $form->field($courseSchedule, 'day', ['horizontalCssClasses' => [
-		'label' => '',
-		'wrapper' => '',
+        'label' => '',
+        'wrapper' => '',
 ]])->textInput(['readOnly' => true])->label('Day');?>
 		</div>
 		<div class="col-md-4">
 			<?php
-			echo $form->field($course, 'startDate')->widget(DatePicker::classname(),
-				[
-				'options' => [
-					'value' => (new \DateTime())->format('d-m-Y'),
-				],
-				'type' => DatePicker::TYPE_COMPONENT_APPEND,
-				'pluginOptions' => [
-					'autoclose' => true,
-					'format' => 'dd-mm-yyyy'
-				]
-			]);
-			?>
+            echo $form->field($course, 'startDate')->widget(
+    DatePicker::classname(),
+                [
+                'options' => [
+                    'value' => (new \DateTime())->format('d-m-Y'),
+                ],
+                'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'dd-mm-yyyy'
+                ]
+            ]
+);
+            ?>
 		</div>
 		<div class="col-md-3">
 			<?php
-			echo $form->field($course, 'endDate')->widget(DatePicker::classname(),
-				[
-				'options' => [
-					'value' => (new \DateTime($course->endDate))->format('d-m-Y'),
-				],
-				'type' => DatePicker::TYPE_COMPONENT_APPEND,
-				'pluginOptions' => [
-					'autoclose' => true,
-					'format' => 'dd-mm-yyyy'
-				]
-			]);
-			?>
+            echo $form->field($course, 'endDate')->widget(
+                DatePicker::classname(),
+                [
+                'options' => [
+                    'value' => (new \DateTime($course->endDate))->format('d-m-Y'),
+                ],
+                'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'dd-mm-yyyy'
+                ]
+            ]
+            );
+            ?>
 		</div>
         <?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false);?>
         <?= $form->field($courseSchedule, 'duration')->hiddenInput()->label(false);?>
 		<div class="col-md-12">
                     <div id="enrolment-calendar">
                         <?= $this->render('_calendar', [
-							'model' => $model,
-						]);?>
+                            'model' => $model,
+                        ]);?>
                     </div>
                     <div class="pull-right m-t-10">
 		<?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-edit-cancel']); ?>
-        <?php echo Html::submitButton(Yii::t('backend', 'Preview Lessons'),
-	['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'preview-button']) ?>
+        <?php echo Html::submitButton(
+                            Yii::t('backend', 'Preview Lessons'),
+    ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'preview-button']
+                        ) ?>
 
     </div>
         </div>

@@ -4,6 +4,7 @@ use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
+
 ?>
 <div id="customer-spinner" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>

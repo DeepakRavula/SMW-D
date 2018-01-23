@@ -11,12 +11,12 @@ class DailyScheduleController extends Controller
 {
     public function actionIndex()
     {
-		$searchModel = new LocationScheduleSearch();
+        $searchModel = new LocationScheduleSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        	return $this->render('index', [
+        return $this->render('index', [
                     'searchModel' => $searchModel,
                     'dataProvider' => $dataProvider,
-        	]);
+            ]);
     }
 }
