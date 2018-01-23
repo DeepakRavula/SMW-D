@@ -150,14 +150,11 @@ class ProgramController extends \common\components\controllers\BaseController
             'model' => $model,
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            if ($model->status == Program::STATUS_INACTIVE) {
-                return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
-            } else {
                 return [
                     'status' => true,
                 ];
-            }
-        } else {
+        } 
+        else {
             return [
                 'status' => true,
                 'data' => $data

@@ -44,7 +44,7 @@ Modal::begin([
     $(document).ready(function () {
         $(document).on('click', '.action-button',function () {
             var type=$('#program-type').val();
-                var customUrl = '<?= Url::to(['program/create']); ?>?type=' + type;
+            var customUrl = '<?= Url::to(['program/create']); ?>?type=' + type;
             $.ajax({
                 url: customUrl,
                 type: 'post',
@@ -77,8 +77,8 @@ Modal::begin([
                     }
                 }
             });
+        return false;
         });
-        
         $(document).on('beforeSubmit', '#program-form', function () {
             $.ajax({
                 url: $(this).attr('action'),
@@ -88,9 +88,10 @@ Modal::begin([
                 success: function (response)
                 {
                     if (response.status) {
-                        var showAllPrograms = $(this).is(":checked");
+                        var showAllPrograms = $("#programsearch-showallprograms").is(":checked");
                         var type=$('#program-type').val();
-                        var url = "<?php echo Url::to(['program/index']); ?>?ProgramSearch[showAllPrograms]=" + (showAllPrograms | 0) + '&ProgramSearch[type]=' + type;
+                        var params = $.param({'ProgramSearch[type]': type, 'ProgramSearch[showAllPrograms]': showAllPrograms | 0});
+                        var url = "<?php echo Url::to(['program/index']); ?>?" + params;
                         $.pjax.reload({url: url, container: "#program-listing", replace: false, timeout: 4000});
                         $('#program-modal').modal('hide');
                     } else {
@@ -107,23 +108,24 @@ Modal::begin([
             return false;
         });
 	    $(document).on('click', '.private', function() {
-            var type=$('#program-type').val('1');
+	        var privateprogram= <?= Program::TYPE_PRIVATE_PROGRAM ?>;
+            var type=$('#program-type').val(privateprogram);
 		    $(".group").removeClass('active');		
 		    $(".private").addClass('active');	
     	});
 	    $(document).on('click', '.group', function() {
-            var type=$('#program-type').val('2');
+	        var groupprogram= <?= Program::TYPE_GROUP_PROGRAM ?>;
+            var type=$('#program-type').val(groupprogram);
 		    $(".private").removeClass('active');	
 		    $(".group").addClass('active');	
 	    });
 	   $(document).on('click', '.group, .private', function() {
-            var type = $(this).attr('value');
+            var type = $('#program-type').attr('value');
             var showAllPrograms = $("#programsearch-showallprograms").is(":checked");
             var params = $.param({'ProgramSearch[type]': type, 'ProgramSearch[showAllPrograms]': showAllPrograms | 0});
             var url = "<?php echo Url::to(['program/index']); ?>?" + params;
             $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  
             return false;
-
        });
        $("#programsearch-showallprograms").on("change", function () {
            var showAllPrograms = $(this).is(":checked");

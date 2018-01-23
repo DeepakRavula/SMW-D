@@ -71,7 +71,7 @@ if (!$model->isNewRecord) {
 
                 <div class="form-group pull-right">
 <?php echo  Html::a('Cancel', '', ['class' => 'btn btn-default program-cancel']); ?>
-<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info m-l-10' , 'name' => 'signup-button']) ?>
 
                 </div>
             </div></div>
