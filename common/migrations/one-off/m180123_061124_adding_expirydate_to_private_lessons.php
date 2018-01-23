@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 use common\models\Lesson;
-
+use common\models\PrivateLesson;
 
 class m180123_061124_adding_expirydate_to_private_lessons extends Migration
 {
@@ -23,11 +23,18 @@ foreach($lessons as $lesson)
     {
         $rootLesson=$lesson->getRootLesson();
         $privateLessonModel = new PrivateLesson();
-        $privateLessonModel->lessonId = $this->id;
-        $date = new \DateTime($this->date);
-        $expiryDate = $date->modify('90 days');
-        $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+        $privateLessonModel->lessonId = $lesson->id;
+        $privateLessonModel->expiryDate = $rootLesson->expiryDate->format('Y-m-d H:i:s');
         $privateLessonModel->save();
+    }
+    else  if($lesson->status=== Lesson::STATUS_SCHEDULED)
+    {
+         $privateLessonModel = new PrivateLesson();
+         $privateLessonModel->lessonId = $lesson->id;
+         $date = new \DateTime($lesson->date);
+         $expiryDate = $date->modify('90 days');
+         $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+         $privateLessonModel->save();
     }
 }
 }
