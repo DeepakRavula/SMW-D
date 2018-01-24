@@ -290,16 +290,22 @@ dl {
 }
 #classroom-title-description {
    position: fixed;
-   border-radius: 6px;
-    padding: 5px 0;
+    border:1px solid #c7bf93;
+    border-radius:4px;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+	padding:6px 8px;
     left: 30%;
+    display: none;
      /* half height of the spinner gif */
     text-align:center;
     z-index:10000;
     overflow: auto;
-    width: 150px; /* width of the spinner gif */
-    height: 52px;
-    background-color: #ffffff;
+    min-width:0px;
+    min-height:0px;
+    max-width:300px;
+    color:#000;
+    background-color:#fff9c9;
     font-weight: bold;
     font-size: 14px;
 }
