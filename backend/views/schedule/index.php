@@ -263,16 +263,14 @@ function showclassroomCalendar(date) {
         },
         resourceRender: function(resourceObj, labelTds, bodyTds,element) {
 			var selector = '#classroom-calendar';
-                        var poshytipelement=element;
             schedule.modifyResourceRender(selector);
             if(resourceObj.description !== "")
             {
-            labelTds.on('mouseover', function(poshytipelement){
-                poshytipelement
-                $('#classroom-title-description').html(resourceObj.description).fadeIn().delay(1500).fadeOut();});
+            labelTds.on('mouseover', function(){
+                $('#classroom-title-description').html(resourceObj.description).fadeIn().delay(500).fadeOut();});
              labelTds.on('mousemove', function(event){
-                $('#classroom-title-description').css('top', event.pageY + 5);
-               $('#classroom-title-description').css('left', event.pageX + 5);
+                $('#classroom-title-description').css('top', event.pageY + 10);
+               $('#classroom-title-description').css('left', event.pageX + 20);
             });
         }
         },
