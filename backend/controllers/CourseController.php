@@ -336,7 +336,6 @@ class CourseController extends \common\components\controllers\BaseController
         $lessonIds = $lessonSearchRequest['ids'];
         $lessons = Lesson::findAll($lessonIds);
         $model = Course::findOne(end($lessons)->courseId);
-        $model->setScenario(Course::SCENARIO_CHANGE);
         $model->studentId = $model->enrolment->studentId;
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {

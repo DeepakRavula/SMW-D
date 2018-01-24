@@ -21,7 +21,6 @@ use common\models\Location;
     <?php $privatePrograms = ArrayHelper::map(Program::find()
             ->active()
             ->privateProgram()
-            ->studentEnrolled($model->studentId)
             ->all(), 'id', 'name');
     
     $defaultTeacher = ArrayHelper::map(User::find()
