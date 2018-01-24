@@ -157,6 +157,7 @@ class ScheduleController extends \common\components\controllers\BaseController
 			$resources[] = [
 				'id'    => $classroom->id,
 				'title' => $classroom->name,
+                                'description' => $classroom->description,
 			];
 		}
         return $resources;
@@ -179,6 +180,7 @@ class ScheduleController extends \common\components\controllers\BaseController
 					$resources[] = [
 						'id'    => $teachersAvailability->teacher->id,
 						'title' => $teachersAvailability->teacher->getPublicIdentity(),
+                                                'description' =>"serendur descrition",
 					];
 				}
 			} else {

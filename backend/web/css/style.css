@@ -288,3 +288,18 @@ dl {
 .classroom-dialog {
 	width : 400px;
 }
+#classroom-title-description {
+   position: fixed;
+   border-radius: 6px;
+    padding: 5px 0;
+    left: 30%;
+     /* half height of the spinner gif */
+    text-align:center;
+    z-index:10000;
+    overflow: auto;
+    width: 150px; /* width of the spinner gif */
+    height: 52px;
+    background-color: #ffffff;
+    font-weight: bold;
+    font-size: 14px;
+}
