@@ -180,7 +180,6 @@ class ScheduleController extends \common\components\controllers\BaseController
 					$resources[] = [
 						'id'    => $teachersAvailability->teacher->id,
 						'title' => $teachersAvailability->teacher->getPublicIdentity(),
-                                                'description' =>"serendur descrition",
 					];
 				}
 			} else {
