@@ -4,21 +4,14 @@ use yii\helpers\Url;
 use yii\helpers\Json;
 use common\models\LocationAvailability;
 use yii\grid\GridView;
-use yii\bootstrap\Modal;
 
 ?>
-<?php $this->render('/lesson/_color-code'); ?>
+
 <div class="">
     <div class="pull-right m-r-10">
     	<a href="#"  title="Add" id="new-lesson" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
     </div>
-	<?php
-    Modal::begin([
-        'header' => '<h4 class="m-0">Add Lesson</h4>',
-        'id'=>'new-lesson-modal',
-    ]); ?>
-        <div id="new-lesson-modal-content"></div>
-	<?php Modal::end(); ?>
+	
     <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin([
         'id' => 'student-lesson-listing',
@@ -114,7 +107,7 @@ use yii\bootstrap\Modal;
 
 <script>
     $(document).ready(function () {
-        $(document).on('change', '#extra-lesson-date', function () {
+        $(document).on('change', '#extra-lesson-go-to-date', function () {
             calendar.refresh();
         });
 
@@ -144,9 +137,9 @@ use yii\bootstrap\Modal;
                 overlapEventsSeparate: true,
                 events: events,
                 select: function (start, end, allDay) {
-                    $('#extra-lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A'));
+                    $('#extra-lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A')).trigger('change');
                     $('#lesson-calendar').fullCalendar('removeEvents', 'newEnrolment');
-					var duration = $('#lesson-duration').val();
+					var duration = $.isEmptyObject($('#lesson-duration').val()) ? '00:30' : $('#lesson-duration').val();
 					var endtime = start.clone();
 					var durationMinutes = moment.duration(duration).asMinutes();
 					moment(endtime.add(durationMinutes, 'minutes'));
@@ -179,23 +172,18 @@ use yii\bootstrap\Modal;
         refresh : function(){
             var events, availableHours;
             var teacherId = $('#lesson-teacher').val();
-            var date = moment($('#extra-lesson-date').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+            var date = moment($('#extra-lesson-go-to-date').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
             if (! moment(date).isValid()) {
-                var date = moment($('#extra-lesson-date').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
+                var date = moment($('#extra-lesson-go-to-date').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
             }
             if (date === 'Invalid date') {
                 $('#lesson-calendar').fullCalendar('destroy');
-                $('#new-lesson-modal .modal-dialog').css({'width': '600px'});
-                $('.lesson-program').removeClass('col-md-4');
-                $('.lesson-duration').removeClass('col-md-4');
-                $('.lesson-teacher').removeClass('col-md-4');
-                $('.lesson-date').removeClass('col-md-4');
             } else {
                 $('.lesson-program').addClass('col-md-3');
                 $('.lesson-teacher').addClass('col-md-4');
                 $('.lesson-duration').addClass('col-md-2');
                 $('.lesson-date').addClass('col-md-3');
-                $('#new-lesson-modal .modal-dialog').css({'width': '1000px'});
+                $('#popup-modal .modal-dialog').css({'width': '1000px'});
                 $.ajax({
                     url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
                     type: 'get',
@@ -235,8 +223,10 @@ use yii\bootstrap\Modal;
                 {
                    if(response.status)
                    {
-                        $('#new-lesson-modal-content').html(response.data);
-                        $('#new-lesson-modal').modal('show');
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Add Lesson</h4>');
+                        $('#popup-modal .modal-dialog').css({'width': '1000px'});
                         var teacher = $('#lesson-teacher').val();
                         if (!$.isEmptyObject(teacher)) {
                             calendar.refresh();

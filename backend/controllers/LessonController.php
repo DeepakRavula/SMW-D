@@ -176,6 +176,11 @@ class LessonController extends \common\components\controllers\BaseController
                     'status' => true,
                     'url' => Url::to(['lesson/view', 'id' => $model->id])
                 ];
+            } else {
+                $response   = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model)
+                ];
             }
         } else {
             $response = [
@@ -209,6 +214,7 @@ class LessonController extends \common\components\controllers\BaseController
         $response->format = Response::FORMAT_JSON;
         $model = new Lesson();
         $model->type = Lesson::TYPE_EXTRA;
+        $model->status = Lesson::STATUS_SCHEDULED;
         $model->setScenario(Lesson::SCENARIO_CREATE);
         $request = Yii::$app->request;
         if ($model->load($request->post())) {

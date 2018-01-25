@@ -16,8 +16,9 @@ use kartik\select2\Select2;
 <script type="text/javascript" src="/admin/plugins/fullcalendar-time-picker/fullcalendar-time-picker.js?v=4"></script>
 <?php
     Modal::begin([
-            'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
-            'id' => 'calendar-date-time-picker-modal',
+        'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
+        'id' => 'calendar-date-time-picker-modal',
+        'footer' => $this->render('/layouts/time-picker-footer')
     ]);
 ?>
 <div id="calendar-date-time-picker-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
@@ -63,13 +64,7 @@ use kartik\select2\Select2;
     </div>
     <div class="col-lg-12">
     <div id="calendar-date-time-picker" ></div>
-    </div>
-    <div class="col-md-12">
-    <div class="form-group pull-right">
-        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default calendar-date-time-picker-cancel']); ?>
-        <?= Html::submitButton(Yii::t('backend', 'Apply'), ['class' => 'btn btn-info calendar-date-time-picker-save', 'name' => 'button']) ?>
-    </div>
-    </div>    
+    </div>   
 </div>
 <?php Modal::end(); ?>
 

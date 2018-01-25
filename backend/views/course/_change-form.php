@@ -77,7 +77,7 @@ use common\models\Location;
         return false;
     });
     
-    $(document).on('modal-cancel', function() {
+    $(document).on('modal-close', function() {
         $.pjax.reload({container: '#lesson-index', timeout: 6000, async:false});
         return false;
     });
