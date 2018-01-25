@@ -33,7 +33,6 @@ class Lesson extends \yii\db\ActiveRecord
 {
     use Payable;
     use Invoiceable;
-    use ExtraLesson;
     
     const TYPE_PRIVATE_LESSON = 1;
     const TYPE_GROUP_LESSON = 2;
@@ -211,14 +210,14 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return (int) $this->status === self::STATUS_UNSCHEDULED;
     }
-
+    
     public function isCompleted()
     {
         $lessonDate  = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
         $currentDate = new \DateTime();
         return $lessonDate <= $currentDate;
     }
-
+    
     public function isCanceled()
     {
         return (int) $this->status === self::STATUS_CANCELED;
@@ -372,17 +371,10 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getProFormaLineItems()
     {
-        if (!$this->isExtra()) {
-            return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+        return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
                 ->via('invoiceItemPaymentCycleLessons')
                     ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON,
                         'invoice_line_item.isDeleted' => false]);
-        } else {
-            return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
-                ->via('invoiceItemLessons')
-                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON,
-                        'invoice_line_item.isDeleted' => false]);
-        }
     }
    
     public function getRootLesson()
@@ -512,29 +504,17 @@ class Lesson extends \yii\db\ActiveRecord
         if ($this->rootLesson) {
             $model = $this->rootLesson;
         }
-        $lessonId = $model->id;
         
         if ($this->hasProFormaInvoice()) {
-            if ($this->isExtra()) {
-                return InvoiceLineItem::find()
-                        ->notDeleted()
-                    ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
-                    ->joinWith(['lineItemLesson' => function ($query) use ($lessonId) {
-                        $query->where(['lessonId' => $lessonId]);
-                    }])
-                    ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON])
-                    ->one();
-            } else {
-                $paymentCycleLessonId = $model->paymentCycleLesson->id;
-                return InvoiceLineItem::find()
-                        ->notDeleted()
+            $paymentCycleLessonId = $model->paymentCycleLesson->id;
+            return InvoiceLineItem::find()
+                    ->notDeleted()
                     ->andWhere(['invoice_id' => $model->proFormaInvoice->id])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
                     ->joinWith(['lineItemPaymentCycleLesson' => function ($query) use ($paymentCycleLessonId) {
                         $query->where(['paymentCycleLessonId' => $paymentCycleLessonId]);
                     }])
                     ->one();
-            }
         } else {
             return null;
         }
@@ -918,5 +898,31 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $this->status = self::STATUS_UNSCHEDULED;
         return $this->save();
+    }
+    
+    public function takePayment()
+    {
+        if(!$this->hasProFormaInvoice()) {
+            if (!$this->paymentCycle->hasProFormaInvoice()) {
+                $this->paymentCycle->createProFormaInvoice();
+            } else {
+                $this->addPrivateLessonLineItem($this->paymentCycle->proFormaInvoice);
+                $this->paymentCycle->proFormaInvoice->save();
+            }
+        } else {
+            $this->proFormaInvoice->makeInvoicePayment($this);
+        }
+        
+        return $this->proFormaInvoice;
+    }
+    
+    public static function instantiate($row)
+    {
+        switch ($row['type']) {
+            case ExtraLesson::TYPE:
+                return new ExtraLesson();
+            default:
+               return new self;
+        }
     }
 }
