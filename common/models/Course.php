@@ -220,9 +220,6 @@ class Course extends \yii\db\ActiveRecord
         $dayList = self::getWeekdaysList();
         $day = $dayList[$startDate->format('N')];
         foreach ($lessons as $lesson) {
-            if ($this->isProfessionalDevelopmentDay($startDate)) {
-                $nextWeekScheduledDate = $startDate->modify('next '.$day);
-            }
             $originalLessonId	 = $lesson->id;
             $lesson->id			 = null;
             $lesson->isNewRecord = true;
@@ -312,9 +309,6 @@ class Course extends \yii\db\ActiveRecord
                 
                 $checkLimit = $lessonCount < $lessonLimit;
                 if ($checkDay && $checkLimit) {
-                    if ($this->isProfessionalDevelopmentDay($day)) {
-                        continue;
-                    }
                     $this->createLesson($day);
                 }
             }
