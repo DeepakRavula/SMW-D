@@ -88,7 +88,7 @@ class DashboardController extends \common\components\controllers\BaseController
 
         $completedPrograms = [];
         $programs = Lesson::find()
-                    ->select(['sum(course_schedule.duration) as hours, program.name as program_name'])
+                    ->select(['sum(course_schedule.duration) as hours, program.name as program_name, lesson.type'])
                     ->joinWith(['course' => function ($query) use ($locationId) {
                         $query->joinWith('program')
                             ->joinWith('courseSchedule')

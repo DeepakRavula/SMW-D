@@ -54,7 +54,7 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
         $programIds = [];
         $newLessonIds = [];
         $draftLessons = Lesson::find()
-                ->select('id')
+                ->select(['id, type'])
                 ->notDeleted()
                 ->notConfirmed()
                 ->andWhere(['createdByUserId' => Yii::$app->user->id])

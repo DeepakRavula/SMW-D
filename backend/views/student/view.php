@@ -103,7 +103,6 @@ $this->params['label'] = $this->render('_title', [
                 [
                 'label' => 'Unscheduled Lessons',
                 'content' => $unscheduledLessonContent,
-                                //'headerOptions' => $this->render('_header'),
                 'options' => [
                     'id' => 'unscheduledLesson',
                 ],
