@@ -14,16 +14,16 @@ class m180122_100528_fix_blog_data extends Migration
      */
     public function safeUp()
     {
-		$user = User::find()
-			->joinWith(['primaryEmail' => function($query) {
-				$query->andWhere(['LIKE', 'user_email.email', 'kristin@kristingreen.ca']);
-			}])->one();
-		$blogs = Blog::find()->all();
-		foreach($blogs as $blog) {
-			$blog->updateAttributes([
-				'user_id' => $user->id
-			]);
-		}
+        $user = User::find()
+            ->joinWith(['primaryEmail' => function ($query) {
+                $query->andWhere(['LIKE', 'user_email.email', 'kristin@kristingreen.ca']);
+            }])->one();
+        $blogs = Blog::find()->all();
+        foreach ($blogs as $blog) {
+            $blog->updateAttributes([
+                'user_id' => $user->id
+            ]);
+        }
     }
 
     /**
