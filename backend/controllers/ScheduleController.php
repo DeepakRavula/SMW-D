@@ -277,9 +277,9 @@ class ScheduleController extends \common\components\controllers\BaseController
         );
         $unavailabilityPeriods  = Period::createFromDuration(
             $unavailability->fromTime,
-	
+    
             $unavailabilityInterval
-	
+    
         );
         
         $overlapPeriod = $availabilityPeriods->overlaps($unavailabilityPeriods);
