@@ -43,36 +43,16 @@ class ProgramController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-    public function actionIndex()
+        public function actionIndex()
     {
+        $request = Yii::$app->request;
         $searchModel         = new ProgramSearch();
-        $searchModel->type   = Program::TYPE_PRIVATE_PROGRAM;
-        $privateDataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $searchModel->type   = Program::TYPE_GROUP_PROGRAM;
-        $groupDataProvider   = $searchModel->search(Yii::$app->request->queryParams);
-        $model               = new Program();
-        $model->type         = $searchModel->type;
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash(
-                'alert',
+        $dataProvider   = $searchModel->search(Yii::$app->request->queryParams);
+        return $this->render('index',
                 [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Program has been created successfully',
-            ]
-            );
-
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render(
-            'index',
-                [
-                'model' => $model,
                 'searchModel' => $searchModel,
-                'privateDataProvider' => $privateDataProvider,
-                'groupDataProvider' => $groupDataProvider,
-        ]
-        );
+                'dataProvider' => $dataProvider,
+        ]);
     }
 
     public function actionFetchRate($id)
@@ -134,16 +114,17 @@ class ProgramController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($type)
     {
         $model = new Program();
         $data  = $this->renderAjax(
             '_form',
             [
             'model' => $model,
-        ]
-        );
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        ]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->type=$type;
+            $model->save();
             return [
                 'status' => true
             ];
@@ -173,14 +154,11 @@ class ProgramController extends \common\components\controllers\BaseController
         ]
         );
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            if ($model->status == Program::STATUS_INACTIVE) {
-                return $this->redirect(['index', 'ProgramSearch[type]' => $model->type]);
-            } else {
                 return [
                     'status' => true,
                 ];
-            }
-        } else {
+        } 
+        else {
             return [
                 'status' => true,
                 'data' => $data

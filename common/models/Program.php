@@ -89,7 +89,7 @@ class Program extends \yii\db\ActiveRecord
     public static function statuses()
     {
         return [
-            self::STATUS_INACTIVE => Yii::t('common', 'In Active'),
+            self::STATUS_INACTIVE => Yii::t('common', 'Inactive'),
             self::STATUS_ACTIVE => Yii::t('common', 'Active'),
         ];
     }

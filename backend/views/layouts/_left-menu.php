@@ -196,7 +196,7 @@ echo Menu::widget([
                 [
                     'label' => Yii::t('backend', 'Programs'),
                     'icon' => '<i class="fa fa-table"></i>',
-                    'url' => ['/program/index', 'ProgramSearch[type]' => Program::TYPE_PRIVATE_PROGRAM],
+                    'url' => ['/program/index'],
                     'active' => (Yii::$app->controller->id === 'program') ? true : false,
                     'badge' => Program::find()->active()->count(),
                     'badgeBgClass' => 'label-default'
@@ -288,7 +288,7 @@ echo Menu::widget([
                     'badge' => User::ownerCount(),
                     'badgeBgClass' => 'label-default'
                 ],
-                
+
                     [
                     'label' => Yii::t('backend', 'Classrooms'),
                     'icon' => '<i class="fa fa-home"></i>',
@@ -299,7 +299,7 @@ echo Menu::widget([
                     'icon' => '<i class="fa  fa-upload"></i>',
                     'url' => ['/user/import'],
                 ],
-                
+
             ],
         ],
             [

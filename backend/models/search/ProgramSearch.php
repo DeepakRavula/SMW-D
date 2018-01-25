@@ -11,9 +11,19 @@ use common\models\Program;
  */
 class ProgramSearch extends Program
 {
-    public $showAllPrograms = false;
+    public $showAllPrograms;
     public $query;
-
+    const PROGRAM_TYPE_PRIVATE=1;
+    const PROGRAM_TYPE_GROUP=2;
+    public $type;
+    
+    public function init()
+    {
+        $this->type = self::PROGRAM_TYPE_PRIVATE;
+        $this->showAllPrograms = false;
+		
+        return parent::init();
+    }
     /**
      * {@inheritdoc}
      */
@@ -42,24 +52,21 @@ class ProgramSearch extends Program
     {
         $query = Program::find();
 
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'pageSize' => 10,
-            ],
         ]);
-        if (!empty($this->type)) {
-            $query->andWhere(['type' => $this->type]);
-        }
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-
         if (!$this->showAllPrograms) {
             $query->active();
         }
-
+         if((int)$this->type === self::PROGRAM_TYPE_PRIVATE) {
+            $query->andWhere(['type' => $this->type]);
+         } 
+    	if((int)$this->type === self::PROGRAM_TYPE_GROUP) {
+            $query->andWhere(['type' => $this->type]); 
+    	} 
         $query->andFilterWhere(['like', 'name', $this->name]);
         $query->andFilterWhere(['like', 'rate', $this->rate]);
 
