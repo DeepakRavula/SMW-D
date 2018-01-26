@@ -3,14 +3,11 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
 use kartik\time\TimePicker;
-use kartik\color\ColorInput;
 use yii\helpers\Url;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
-use common\models\Classroom;
 use common\models\User;
-use common\models\LocationAvailability;
-use yii\bootstrap\Modal;
+use common\models\Location;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -51,7 +48,7 @@ use yii\bootstrap\Modal;
                 'data' => ArrayHelper::map(User::find()
                         ->teachers(
                             $model->course->program->id,
-                            \common\models\Location::findOne(['slug' => \Yii::$app->location])->id
+                            Location::findOne(['slug' => \Yii::$app->location])->id
                         )
                         ->join(
                             'LEFT JOIN',
@@ -61,7 +58,10 @@ use yii\bootstrap\Modal;
                         ->notDeleted()
                         ->orderBy(['user_profile.firstname' => SORT_ASC])
                         ->all(), 'id', 'userProfile.fullName'),
-            ]
+                'options' => [
+                    'id' => 'lesson-teacherid'
+                ]
+                ]
             )->label('Teacher');
             ?>  
         </div>
@@ -78,7 +78,7 @@ use yii\bootstrap\Modal;
             </div>       
         </div>
         <div class="col-md-3">
-            <?php $locationId = \common\models\Location::findOne([
+            <?php $locationId = Location::findOne([
                     'slug' => \Yii::$app->location])->id; ?>
             <?php if ($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
 
