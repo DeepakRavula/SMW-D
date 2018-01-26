@@ -85,6 +85,17 @@ class UserQuery extends ActiveQuery
 
         return $this;
     }
+    
+    public function backendUsers()
+    {
+        return $this->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+            ->andWhere(['OR', ['raa.item_name' => ['owner', 'administrator', 'staffmember']]]);
+    }
+    
+    public function canLogin()
+    {
+        return $this->andWhere(['user.canLogin' => true]);
+    }
 
     public function location($locationId)
     {

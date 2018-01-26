@@ -141,7 +141,8 @@ class LoginForm extends Model
         if ($this->user === false) {
             $userName = $this->username;
             $this->user = User::find()
-                    ->adminOrOwner()
+                ->backendUsers()
+                ->canLogin()
                 ->joinWith(['userContact' => function ($query) use ($userName) {
                     $query->joinWith(['email' => function ($query) use ($userName) {
                         $query->andWhere(['email' => $userName]);
