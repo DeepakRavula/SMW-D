@@ -4,26 +4,24 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\User;
-use common\models\UserLocation;
 use common\models\TeacherAvailability;
 use backend\models\TeacherAvailabilitySearch;
-use yii\web\Controller;
-use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use common\models\Lesson;
 use common\models\Program;
-use common\models\Invoice;
 use yii\filters\ContentNegotiator;
 use common\models\TeacherRoom;
 use yii\bootstrap\ActiveForm;
 use common\models\Location;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
-class TeacherAvailabilityController extends \common\components\controllers\BaseController
+class TeacherAvailabilityController extends BaseController
 {
     public function behaviors()
     {
@@ -43,6 +41,17 @@ class TeacherAvailabilityController extends \common\components\controllers\BaseC
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'modify', 'events', 'show-lesson-event',
+						'availability-with-events'],
+                        'roles' => ['manageTeachers'],
+                    ],
+                ],
+            ], 
         ];
     }
 

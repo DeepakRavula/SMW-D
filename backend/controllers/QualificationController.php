@@ -11,11 +11,13 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
 use yii\widgets\ActiveForm;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
  */
-class QualificationController extends \common\components\controllers\BaseController
+class QualificationController extends BaseController
 {
     public function behaviors()
     {
@@ -34,6 +36,16 @@ class QualificationController extends \common\components\controllers\BaseControl
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'add-group'],
+                        'roles' => ['manageTeachers'],
+                    ],
+                ],
+            ], 
         ];
     }
 

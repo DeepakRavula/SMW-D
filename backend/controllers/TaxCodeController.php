@@ -4,16 +4,17 @@ namespace backend\controllers;
 use Yii;
 use common\models\TaxCode;
 use backend\models\search\TaxCodeSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * TaxCodeController implements the CRUD actions for TaxCode model.
  */
-class TaxCodeController extends \common\components\controllers\BaseController
+class TaxCodeController extends BaseController
 {
     public function behaviors()
     {
@@ -32,6 +33,16 @@ class TaxCodeController extends \common\components\controllers\BaseController
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageTaxes'],
+                    ],
+                ],
+            ], 
         ];
     }
 

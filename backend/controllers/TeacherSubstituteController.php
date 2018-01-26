@@ -8,7 +8,6 @@ use common\models\Lesson;
 use common\models\LessonHierarchy;
 use common\models\LessonReschedule;
 use common\models\User;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
@@ -18,7 +17,7 @@ use yii\widgets\ActiveForm;
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
-class TeacherSubstituteController extends \common\components\controllers\BaseController
+class TeacherSubstituteController extends BaseController
 {
     public function behaviors()
     {
@@ -37,6 +36,16 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'confirm'],
+                        'roles' => ['managePrivateLessons', 'manageGroupLessons'],
+                    ],
+                ],
+            ], 
         ];
     }
 

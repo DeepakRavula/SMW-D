@@ -3,7 +3,7 @@
 $config = [
     'homeUrl' => Yii::getAlias('@backendUrl'),
     'controllerNamespace' => 'backend\controllers',
-    'defaultRoute' => 'dashboard/index',
+    'defaultRoute' => '/dashboard/index',
     'controllerMap' => [
         'file-manager-elfinder' => [
             'class' => 'mihaildev\elfinder\Controller',
@@ -72,99 +72,6 @@ $config = [
         ],
         'datecontrol' => [
             'class' => '\kartik\datecontrol\Module',
-        ],
-    ],
-    'as beforeAction' => 'common\behaviors\GlobalBeforeAction',
-    'as globalAccess' => [
-        'class' => '\common\behaviors\GlobalAccessBehavior',
-        'rules' => [
-            [
-                'controllers' => ['sign-in'],
-                'allow' => true,
-                'roles' => ['?'],
-                'actions' => ['login', 'request-password-reset', 'reset-password'],
-            ],
-            [
-                'controllers' => ['sign-in'],
-                'allow' => true,
-                'roles' => ['@'],
-                'actions' => ['logout', 'profile', 'account'],
-            ],
-            [
-                'controllers' => ['site'],
-                'allow' => true,
-                'roles' => ['?', '@'],
-                'actions' => ['error'],
-            ],
-            [
-                'controllers' => ['debug/default'],
-                'allow' => true,
-                'roles' => ['?'],
-            ],
-            [
-                'controllers' => ['user','student-birthday'],
-                'allow' => true,
-                'roles' => ['administrator', 'staffmember'],
-            ],
-            [
-                'controllers' => ['student-birthday'],
-                'allow' => true,
-                'roles' => ['viewReport'],
-            ],
-            [
-                'controllers' => [
-                    'schedule', 'student', 'exam-result','note',
-                    'classroom-unavailability', 'calendar','item',
-                    'item-category', 'daily-schedule','user',
-                    'release-notes', 'lesson', 'invoice', 'timeline-event',
-                    'enrolment','teacher-room', 'program', 'customer', 'email',
-                    'teacher-availability', 'group-course', 'group-lesson',
-                    'group-enrolment', 'payment', 'course', 'log',
-                    'invoice-line-item', 'holiday', 'qualification',
-                    'customer-payment-preference','tax-code', 'vacation',
-                    'customer-discount', 'classroom', 'report', 'teacher-rate',
-                    'private-lesson','student-birthday', 'teacher-unavailability',
-                    'print', 'user-contact','teacher-substitute',
-                ],
-                'allow' => true,
-                'roles' => ['listCustomer', 'listEnrolment', 'listGroupLesson', 'listInvoice', 'listItem', 'listOwner'],
-            ],
-            [
-                'controllers' => ['dashboard'],
-                'allow' => true,
-                'roles' => ['viewDashboard'],
-                'actions' => ['index'],
-            ],
-            [
-                'controllers' => ['sign-in'],
-                'allow' => true,
-                'roles' => ['owner', 'staffmember'],
-                'actions' => ['lock', 'unlock']
-            ],
-            [
-                'controllers' => ['permission', 'release-notes', 'reminder-note'],
-                'allow' => true,
-                'roles' => ['administrator'],
-            ],
-            [
-                'controllers' => ['program', 'city', 'location', 'province', 'country', 'discount'],
-                'allow' => true,
-                'roles' => ['administrator'],
-            ],
-            [
-                'controllers' => ['blog'],
-                'allow' => true,
-                'roles' => ['staffmember'],
-                'actions' => ['list'],
-            ],
-            [
-                'controllers' => ['user'],
-                'allow' => false,
-            ],
-            [
-                'allow' => true,
-                'roles' => ['administrator'],
-            ],
         ],
     ],
 ];

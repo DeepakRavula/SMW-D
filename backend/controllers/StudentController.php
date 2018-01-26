@@ -7,7 +7,6 @@ use common\models\Student;
 use common\models\Program;
 use common\models\Course;
 use backend\models\search\StudentSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\User;
@@ -18,11 +17,13 @@ use common\models\discount\EnrolmentDiscount;
 use common\models\TeacherAvailability;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * StudentController implements the CRUD actions for Student model.
  */
-class StudentController extends \common\components\controllers\BaseController
+class StudentController extends BaseController
 {
     public function actions()
     {
@@ -43,11 +44,21 @@ class StudentController extends \common\components\controllers\BaseController
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['create', 'update', 'merge', 'fetch-program-rate','validate'],
+                'only' => ['create', 'update', 'merge', 'fetch-program-rate','validate', 'enrolment', ''],
                 'formats' => [
                         'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'create', 'update', 'merge', 'fetch-program-rate','validate', 'print'],
+                        'roles' => ['manageStudents'],
+                    ],
+                ],
+            ], 
         ];
     }
 

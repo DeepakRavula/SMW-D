@@ -7,11 +7,12 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
 /**
  * PaymentMethodsController implements the CRUD actions for PaymentMethods model.
  */
-class PaymentMethodController extends \common\components\controllers\BaseController
+class PaymentMethodController extends BaseController
 {
     public function behaviors()
     {
@@ -22,6 +23,16 @@ class PaymentMethodController extends \common\components\controllers\BaseControl
                     'delete' => ['post'],
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageInvoices', 'managePfi'],
+                    ],
+                ],
+            ],  
         ];
     }
 

@@ -5,7 +5,6 @@ namespace backend\controllers;
 use Yii;
 use common\models\Vacation;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use common\models\User;
 use common\models\log\EnrolmentLog;
 use yii\web\NotFoundHttpException;
@@ -14,11 +13,13 @@ use common\models\Lesson;
 use common\models\Enrolment;
 use common\models\PaymentCycle;
 use yii\web\Response;
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
 
 /**
  * VacationController implements the CRUD actions for Vacation model.
  */
-class VacationController extends \common\components\controllers\BaseController
+class VacationController extends BaseController
 {
     public function behaviors()
     {
@@ -36,6 +37,16 @@ class VacationController extends \common\components\controllers\BaseController
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageStudents'],
+                    ],
+                ],
+            ], 
         ];
     }
 
