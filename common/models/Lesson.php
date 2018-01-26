@@ -261,7 +261,8 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getEnrolment()
     {
-        return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId']);
+        return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId'])
+                ->onCondition(['enrolment.type' => Enrolment::TYPE_REGULAR]);
     }
     
     public function getStudent()
@@ -402,8 +403,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function getEnrolments()
     {
         return $this->hasMany(Enrolment::className(), ['courseId' => 'courseId'])
-            ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);
-        ;
+            ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true,
+                'enrolment.type' => Enrolment::TYPE_REGULAR]);
     }
     
     public function getLessonCredit()
@@ -684,20 +685,22 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function canMerge()
     {
-        $lessonDuration = new \DateTime($this->duration);
-        $date = new \DateTime($this->date);
-        $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
-        $lesson = new Lesson();
-        $lesson->setScenario(self::SCENARIO_MERGE);
-        $lesson->date = $date->format('Y-m-d H:i:s');
-        $lesson->duration = self::DEFAULT_MERGE_DURATION;
-        $lesson->teacherId = $this->teacherId;
-        $lesson->courseId = $this->courseId;
-        $lesson->status = self::STATUS_SCHEDULED;
-        $lesson->isDeleted = false;
+        if ($this->enrolment->hasExplodedLesson() && !$this->isExploded && !$this->isExtra()) {
+            $lessonDuration = new \DateTime($this->duration);
+            $date = new \DateTime($this->date);
+            $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
+            $lesson = new Lesson();
+            $lesson->setScenario(self::SCENARIO_MERGE);
+            $lesson->date = $date->format('Y-m-d H:i:s');
+            $lesson->duration = self::DEFAULT_MERGE_DURATION;
+            $lesson->teacherId = $this->teacherId;
+            $lesson->courseId = $this->courseId;
+            $lesson->status = self::STATUS_SCHEDULED;
+            $lesson->isDeleted = false;
 
-        return $lesson->validate() && $this->enrolment->hasExplodedLesson()
-            && !$this->isExploded;
+            return $lesson->validate();
+        }
+        return false;
     }
 
     public function isRescheduled()

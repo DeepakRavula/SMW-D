@@ -51,6 +51,11 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['enrolment.type' => Enrolment::TYPE_REGULAR]);
     }
+    
+    public function extra()
+    {
+        return $this->andWhere(['enrolment.type' => Enrolment::TYPE_EXTRA]);
+    }
 
     public function programs()
     {

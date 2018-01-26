@@ -69,7 +69,8 @@ class CourseSchedule extends \yii\db\ActiveRecord
     public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['courseId' => 'id'])
-            ->via('course');
+            ->via('course')
+                ->onCondition(['enrolment.type' => Enrolment::TYPE_REGULAR]);
     }
 
     public function getCourse()

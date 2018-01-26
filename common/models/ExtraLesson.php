@@ -28,6 +28,7 @@ class ExtraLesson extends Lesson
         $studentEnrolment = Enrolment::find()
                 ->notDeleted()
                 ->isConfirmed()
+                ->extra()
                 ->joinWith(['course' => function ($query) use ($programId) {
                     $query->andWhere(['course.programId' => $programId]);
                 }])
@@ -109,6 +110,12 @@ class ExtraLesson extends Lesson
         } else {
             return null;
         }
+    }
+    
+    public function getEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId'])
+                ->onCondition(['enrolment.type' => Enrolment::TYPE_EXTRA]);
     }
     
     public function getProFormaLineItems()

@@ -2,6 +2,7 @@
 namespace common\components\validators\lesson\conflict;
 
 use Yii;
+use common\models\Location;
 use yii\validators\Validator;
 use common\models\Lesson;
 use common\models\Vacation;
@@ -16,11 +17,11 @@ class StudentValidator extends Validator
         if ($model->isExtra()) {
             $studentId = $model->studentId;
         } elseif ($model->course->program->isPrivate()) {
-            $studentId = $model->course->enrolment->student->id;
+            $studentId = $model->enrolment->student->id;
         } else {
             $studentId = !empty($model->studentId) ? $model->studentId : null;
         }
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
         $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
         $lessonDuration = explode(':', $model->fullDuration);
@@ -49,7 +50,7 @@ class StudentValidator extends Validator
         }
         if ($model->course) {
             $vacations = Vacation::find()
-            ->andWhere(['enrolmentId' => $model->course->enrolment->id])
+            ->andWhere(['enrolmentId' => $model->enrolment->id])
             ->andWhere(['>=', 'DATE(fromDate)', (new \DateTime())->format('Y-m-d')])
                         ->andWhere(['isDeleted' => false])
             ->all();

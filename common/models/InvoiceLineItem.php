@@ -160,12 +160,15 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getEnrolment()
     {
+        $query = $this->hasOne(Enrolment::className(), ['courseId' => 'courseId'])
+                ->via('lesson');
         if ($this->isGroupLesson()) {
             return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId'])
                 ->via('lineItemEnrolment');
+        } else if ($this->isExtraLesson()) {
+            $query->onCondition(['enrolment.type' => Enrolment::TYPE_EXTRA]);
         } else {
-            return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId'])
-                ->via('lesson');
+            $query->onCondition(['enrolment.type' => Enrolment::TYPE_REGULAR]);
         }
     }
 
