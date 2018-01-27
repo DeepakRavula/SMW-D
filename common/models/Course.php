@@ -354,4 +354,26 @@ class Course extends \yii\db\ActiveRecord
         $enrolment->paymentFrequencyId = false;
         $enrolment->save();
     }
+    
+    public function checkExtraEnrolmentExist()
+    {
+        $extraCourse = $this->getExtraEnrolmentCourse();
+        return !empty($extraCourse);
+    }
+    
+    public function getExtraEnrolmentCourse()
+    {
+        $programId = $this->programId;
+        $studentId = $this->studentId;
+        $enrolment = Enrolment::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->extra()
+                ->joinWith(['course' => function ($query) use ($programId) {
+                    $query->andWhere(['course.programId' => $programId]);
+                }])
+                ->andWhere(['enrolment.studentId' => $studentId])
+                ->one();
+        return $enrolment->course;
+    }
 }

@@ -7,7 +7,8 @@ use common\models\Student;
 use common\models\Program;
 use common\models\Course;
 use backend\models\search\StudentSearch;
-use yii\web\Controller;
+use common\components\controllers\BaseController;
+use common\models\Location;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\User;
@@ -22,7 +23,7 @@ use yii\helpers\Url;
 /**
  * StudentController implements the CRUD actions for Student model.
  */
-class StudentController extends \common\components\controllers\BaseController
+class StudentController extends BaseController
 {
     public function actions()
     {
@@ -131,8 +132,7 @@ class StudentController extends \common\components\controllers\BaseController
     public function actionEnrolment($id)
     {
         $model = $this->findModel($id);
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $request = Yii::$app->request;
         $post = $request->post();
         $courseModel = new Course();
@@ -146,6 +146,10 @@ class StudentController extends \common\components\controllers\BaseController
             $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
             $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
             $courseModel->locationId = $locationId;
+            $hasExtraEnrolment = $courseModel->checkExtraEnrolmentExist();
+            if ($hasExtraEnrolment) {
+                $courseModel = $courseModel->getExtraEnrolmentCourse();
+            }
             if ($courseModel->save()) {
                 $courseSchedule->courseId = $courseModel->id;
                 $courseSchedule->studentId = $model->id;
@@ -183,8 +187,7 @@ class StudentController extends \common\components\controllers\BaseController
      */
     protected function findModel($id)
     {
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Student::find()
             ->notDeleted()
             ->location($locationId)
@@ -231,7 +234,7 @@ class StudentController extends \common\components\controllers\BaseController
 
     public function actionMerge($id)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model      = Student::findOne($id);
         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
         $model->on(Student::EVENT_MERGE, [new StudentLog(), 'merge'], ['loggedUser' => $loggedUser]);

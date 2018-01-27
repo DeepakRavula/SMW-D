@@ -41,6 +41,8 @@ class ExtraLesson extends Lesson
             $course->studentId        = $this->studentId;
             $course->createExtraLessonEnrolment();
             $courseSchedule           = new CourseSchedule();
+            $courseSchedule->studentId = $this->studentId;
+            $courseSchedule->paymentFrequency = false;
             $courseSchedule->courseId = $course->id;
             $courseSchedule->day      = (new \DateTime($this->date))->format('N');
             $courseSchedule->duration = (new \DateTime($this->duration))->format('H:i:s');

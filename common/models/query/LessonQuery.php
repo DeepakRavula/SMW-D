@@ -68,7 +68,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function studentEnrolment($locationId, $studentId)
     {
         $this ->joinWith(['course' => function ($query) use ($locationId, $studentId) {
-            $query->joinWith(['enrolment' => function ($query) use ($studentId) {
+            $query->joinWith(['enrolments' => function ($query) use ($studentId) {
                 $query->where(['enrolment.studentId' => $studentId])
                                 ->isConfirmed();
             }])
@@ -354,6 +354,12 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['lesson.type' => Lesson::TYPE_REGULAR]);
     }
+    
+    public function extra()
+    {
+        return $this->andWhere(['lesson.type' => Lesson::TYPE_EXTRA]);
+    }
+    
     public function present()
     {
         return $this->andWhere(['lesson.isPresent' => true]);
