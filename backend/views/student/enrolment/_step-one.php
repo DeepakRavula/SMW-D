@@ -6,7 +6,6 @@ use common\models\PaymentFrequency;
 use yii\helpers\ArrayHelper;
 use kartik\time\TimePicker;
 use yii\helpers\Html;
-use common\models\LocationAvailability;
 
 ?>
 <?php
@@ -93,10 +92,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
 		<div class="col-xs-2"></div>
 		<div class="col-xs-3">
 			<?=
-            $form->field($paymentFrequencyDiscount, 'discount')->textInput([
-                'id' => 'payment-frequency-discount',
-                'name' => 'PaymentFrequencyDiscount[discount]'
-            ])->label(false);
+            $form->field($paymentFrequencyDiscount, 'discount')->textInput([])->label(false);
             ?>
 		</div>
 		<div class="col-xs-1 enrolment-text"><label class="text-muted">%</label></div>
@@ -108,10 +104,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
 		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
 		<div class="col-xs-3">
 			<?=
-            $form->field($multipleEnrolmentDiscount, 'discount')->textInput([
-                'id' => 'enrolment-discount',
-                'name' => 'MultipleEnrolmentDiscount[discount]'
-            ])->label(false);
+            $form->field($multipleEnrolmentDiscount, 'discount')->textInput([])->label(false);
             ?>
 		</div>
 		<div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>

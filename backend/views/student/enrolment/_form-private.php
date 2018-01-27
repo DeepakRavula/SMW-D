@@ -2,11 +2,10 @@
 
 use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
-use yii\helpers\Html;
-use common\models\LocationAvailability;
+use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\Course;
 use common\models\CourseSchedule;
-use backend\models\discount\EnrolmentDiscount;
+use backend\models\discount\MultiEnrolmentDiscount;
 
 ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
@@ -22,8 +21,8 @@ $form = ActiveForm::begin([
 	    <?= $this->render('_step-one', [
             'model' => new Course(),
             'courseSchedule' => new CourseSchedule(),
-            'paymentFrequencyDiscount' => new EnrolmentDiscount(),
-            'multipleEnrolmentDiscount' => new EnrolmentDiscount(),
+            'paymentFrequencyDiscount' => new PaymentFrequencyEnrolmentDiscount(),
+            'multipleEnrolmentDiscount' => new MultiEnrolmentDiscount(),
             'student' => $model,
             'form' => $form
         ]);?> 

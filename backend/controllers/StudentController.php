@@ -13,9 +13,11 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\User;
 use yii\web\Response;
+use Carbon\Carbon;
 use common\models\CourseSchedule;
 use common\models\log\StudentLog;
-use common\models\discount\EnrolmentDiscount;
+use backend\models\discount\MultiEnrolmentDiscount;
+use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\TeacherAvailability;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
@@ -136,19 +138,28 @@ class StudentController extends BaseController
         $request = Yii::$app->request;
         $post = $request->post();
         $courseModel = new Course();
+        $courseModel->studentId = $id;
         $courseSchedule = new CourseSchedule();
-        $multipleEnrolmentDiscount = new EnrolmentDiscount();
-        $paymentFrequencyDiscount = new EnrolmentDiscount();
+        $multipleEnrolmentDiscount = new MultiEnrolmentDiscount();
+        $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
         $courseModel->load($post);
         $courseSchedule->load($post);
         
         if (Yii::$app->request->isPost) {
-            $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
-            $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
+            $paymentFrequencyDiscount->load($post);
+            $multipleEnrolmentDiscount->load($post);
             $courseModel->locationId = $locationId;
-            $hasExtraEnrolment = $courseModel->checkExtraEnrolmentExist();
+            $hasExtraEnrolment = $courseModel->checkCourseExist();
             if ($hasExtraEnrolment) {
-                $courseModel = $courseModel->getExtraEnrolmentCourse();
+                $endDate = (new Carbon($courseModel->startDate))->addMonths(11);
+                $startDate = new \DateTime($courseModel->startDate);
+                $teacherId = $courseModel->teacherId;
+                $courseModel = $courseModel->getEnroledCourse();
+                $courseModel->updateAttributes([
+                    'startDate' => $startDate->format('Y-m-d H:i:s'),
+                    'endDate' => $endDate->endOfMonth(),
+                    'teacherId' => $teacherId
+                ]);
             }
             if ($courseModel->save()) {
                 $courseSchedule->courseId = $courseModel->id;
@@ -159,14 +170,10 @@ class StudentController extends BaseController
                 if ($courseSchedule->save()) {
                     if (!empty($multipleEnrolmentDiscount->discount)) {
                         $multipleEnrolmentDiscount->enrolmentId = $courseModel->enrolment->id;
-                        $multipleEnrolmentDiscount->discountType = true;
-                        $multipleEnrolmentDiscount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
                         $multipleEnrolmentDiscount->save();
                     }
                     if (!empty($paymentFrequencyDiscount->discount)) {
                         $paymentFrequencyDiscount->enrolmentId = $courseModel->enrolment->id;
-                        $paymentFrequencyDiscount->discountType = 0;
-                        $paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
                         $paymentFrequencyDiscount->save();
                     }
                 }

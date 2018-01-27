@@ -25,6 +25,7 @@ class m180126_100412_extra_lesson_refactor extends Migration
             $studentEnrolment = Enrolment::find()
                 ->notDeleted()
                 ->isConfirmed()
+                ->isRegular()
                 ->joinWith(['course' => function ($query) use ($programId, $courseId) {
                     $query->andWhere(['course.programId' => $programId])
                         ->andWhere(['NOT', ['course.id' => $courseId]]);
@@ -32,7 +33,9 @@ class m180126_100412_extra_lesson_refactor extends Migration
                 ->andWhere(['enrolment.studentId' => $studentId])
                 ->one();
             if ($studentEnrolment) {
-                $extraLesson->course->delete();
+                if ($extraLesson->course) {
+                    $extraLesson->course->delete();
+                }
                 $extraLesson->updateAttributes(['courseId' => $studentEnrolment->couseId]);
             }
         }

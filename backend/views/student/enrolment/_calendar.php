@@ -70,7 +70,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                      right:'',
                      },
                  allDaySlot: false,
- 				height:450,
+ 				height:500,
                  slotDuration: '00:15:00',
                  titleFormat: 'DD-MMM-YYYY, dddd',
                  defaultView: 'agendaWeek',

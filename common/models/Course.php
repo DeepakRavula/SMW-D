@@ -257,7 +257,7 @@ class Course extends \yii\db\ActiveRecord
 
     public static function groupCourseCount()
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         return self::find()
             ->joinWith(['program' => function ($query) {
                 $query->group()
@@ -353,27 +353,27 @@ class Course extends \yii\db\ActiveRecord
         $enrolment->isConfirmed        = true;
         $enrolment->paymentFrequencyId = false;
         $enrolment->save();
+        return $enrolment;
     }
     
-    public function checkExtraEnrolmentExist()
+    public function checkCourseExist()
     {
-        $extraCourse = $this->getExtraEnrolmentCourse();
-        return !empty($extraCourse);
+        $enroledCourse = $this->getEnroledCourse();
+        return !empty($enroledCourse);
     }
     
-    public function getExtraEnrolmentCourse()
+    public function getEnroledCourse()
     {
         $programId = $this->programId;
         $studentId = $this->studentId;
         $enrolment = Enrolment::find()
                 ->notDeleted()
                 ->isConfirmed()
-                ->extra()
                 ->joinWith(['course' => function ($query) use ($programId) {
                     $query->andWhere(['course.programId' => $programId]);
                 }])
                 ->andWhere(['enrolment.studentId' => $studentId])
                 ->one();
-        return $enrolment->course;
+        return $enrolment ? $enrolment->course : null;
     }
 }

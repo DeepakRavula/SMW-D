@@ -157,10 +157,7 @@ class Lesson extends \yii\db\ActiveRecord
                 }],
             [['date'], PastDateValidator::className(), 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREATE]],
             [['date'], TeacherSubstituteValidator::className(), 'on' => self::SCENARIO_SUBSTITUTE_TEACHER],
-            [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],
-            ['duration', TeacherAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
-            ['duration', StudentAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
-            ['duration', TeacherLessonOverlapValidator::className(), 'on' => self::SCENARIO_SPLIT],
+            [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]]
         ];
     }
 
