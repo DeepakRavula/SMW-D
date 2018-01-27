@@ -4,11 +4,8 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
 use kartik\time\TimePicker;
-use kartik\color\ColorInput;
 use yii\helpers\Url;
-use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
-use common\models\Classroom;
 use common\models\User;
 use common\models\LocationAvailability;
 

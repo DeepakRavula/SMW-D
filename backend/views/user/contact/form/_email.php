@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use common\models\Label;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 use yii\helpers\ArrayHelper;
 
 /* @var $model backend\models\UserForm */
@@ -33,11 +33,19 @@ $form = ActiveForm::begin([
             'data' => ArrayHelper::map(Label::find()
                     ->user($userModel->id)
                     ->all(), 'id', 'name'),
+            'options' => [
+                'id' => 'email-label',
+                'createNew' => true,
+            ],
             'pluginOptions' => [
                 'tags' => true,
+                'placeholder' => 'select label'
             ],
         ])->label('Label');
         ?>
+    <div style="display: none" class="hidden-field-email-label">
+        <?= $form->field($model, "labelId")->textInput(['id' => 'email-label'])->label('Label'); ?>
+    </div>
 </div>
 	<div class="row pull-right">
 		<?php echo Html::a('Cancel', '#', ['class' => 'btn btn-default email-cancel-btn']); ?>        

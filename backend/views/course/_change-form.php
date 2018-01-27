@@ -2,7 +2,7 @@
 
 use yii\helpers\ArrayHelper;
 use common\models\Program;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 use kartik\depdrop\DepDrop;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;

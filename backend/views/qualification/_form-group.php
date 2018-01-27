@@ -6,7 +6,7 @@ use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\Program;
 use yii\helpers\Url;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 use common\models\Qualification;
 
 /* @var $this yii\web\View */

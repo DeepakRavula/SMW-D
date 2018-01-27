@@ -917,4 +917,14 @@ $(document).ready(function(){
 		return false;
 	});
 });
+
+$(document).on('change', '#city-label, #address-label, #phone-label, #email-label', function () {
+    var hidden = '.hidden-field';
+    var activityId = $(this).attr('id');
+    if ($(this).val() == 0) {
+        $(this).select2('destroy');
+        $(this).parent().remove();
+        $(hidden+'-'+activityId).show();
+    }
+});
 </script>

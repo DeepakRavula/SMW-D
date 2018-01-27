@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Url;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 use common\models\Program;
 use common\models\PaymentFrequency;
 use yii\helpers\ArrayHelper;

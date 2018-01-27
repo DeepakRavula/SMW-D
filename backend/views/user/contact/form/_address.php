@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use common\models\Location;
 use common\models\City;
 use common\models\Label;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 use common\models\Province;
 use common\models\Country;
 use yii\helpers\ArrayHelper;
@@ -29,7 +29,7 @@ use yii\helpers\Url;
     ?>
 	<div class="row">
 		<?php
-        $locationModel = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
+        $locationModel = Location::findOne(['id' => Location::findOne(['slug' => \Yii::$app->location])->id]);
         ?>
 		<?=
         $form->field($model, "labelId")->widget(Select2::classname(), [
@@ -38,24 +38,34 @@ use yii\helpers\Url;
                     ->all(), 'id', 'name'),
             'options' => [
                 'id' => 'address-label',
+                'createNew' => true,
             ],
             'pluginOptions' => [
+                'placeholder' => 'select label',
                 'tags' => true,
             ],
         ])->label('Label');
         ?>
+    <div style="display: none" class="hidden-field-address-label">
+        <?= $form->field($model, "labelId")->textInput(['id' => 'address-label'])->label('Label'); ?>
+    </div>
 		<?= $form->field($addressModel, "address")->textInput(['maxlength' => true])->label('Address') ?>
 		<?=
         $form->field($addressModel, "cityId")->widget(Select2::classname(), [
         'data' => ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
         'options' => [
-            'class' => 'city',
+            'id' => 'city-label',
+            'createNew' => true,
         ],
         'pluginOptions' => [
+            'placeholder' => 'select city',
             'tags' => true
         ],
     ])->label('city');
         ?>
+    <div style="display: none" class="hidden-field-city-label">
+        <?= $form->field($addressModel, "cityId")->textInput(['id' => 'city-label'])->label('City'); ?>
+    </div>
 		<?=
         $form->field($addressModel, "countryId")->dropDownList(
             ArrayHelper::map(Country::find()->all(), 'id', 'name'),
@@ -89,6 +99,7 @@ use yii\helpers\Url;
          </div>
 	<?php ActiveForm::end(); ?>
 </div>
+
 <script>
  $(document).ready(function () {
 	$(document).on('click', '.address-add-item', function () {
