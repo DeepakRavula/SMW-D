@@ -19,25 +19,19 @@ use backend\models\UserImportForm;
 use backend\models\search\InvoiceSearch;
 use common\models\TeacherUnavailability;
 use backend\models\search\UserSearch;
-use yii\helpers\ArrayHelper;
-use yii\web\Controller;
-use yii\base\Model;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use common\models\Student;
-use common\models\Program;
 use common\models\UserContact;
 use common\models\LocationAvailability;
 use common\models\InvoiceLineItem;
 use yii\helpers\Url;
 use common\models\UserEmail;
 use common\models\Label;
-use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use common\models\Payment;
-use common\models\UserAddress;
 use common\models\log\LogHistory;
 use Intervention\Image\ImageManagerStatic;
 use trntv\filekit\actions\DeleteAction;
@@ -258,7 +252,7 @@ class UserController extends \common\components\controllers\BaseController
     protected function getPaymentDataProvider($id)
     {
         return new ActiveDataProvider([
-            'query' => payment::find()
+            'query' => Payment::find()
                 ->where(['user_id' => $id]),
         ]);
     }
@@ -416,9 +410,8 @@ class UserController extends \common\components\controllers\BaseController
     public function actionView($id)
     {
         $model = $this->findModel($id);
-        $session = Yii::$app->session;
         $request = Yii::$app->request;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $locationAvailabilityMinTime = LocationAvailability::find()
             ->where(['locationId' => $locationId])
             ->orderBy(['fromTime' => SORT_ASC])
@@ -481,7 +474,12 @@ class UserController extends \common\components\controllers\BaseController
         $model = new UserForm();
         $emailModels = new UserEmail();
         $model->roles = Yii::$app->request->queryParams['role_name'];
-       
+        if ($model->roles !== User::ROLE_STAFFMEMBER) {
+            $canLogin = true;
+        } else {
+            $canLogin = false;
+        }
+        $model->canLogin = $canLogin;
         $request = Yii::$app->request;
         if ($model->load($request->post()) && $model->save() && $emailModels->load($request->post())) {
             if (!empty($emailModels->email)) {
@@ -557,8 +555,7 @@ class UserController extends \common\components\controllers\BaseController
      */
     protected function findModel($id)
     {
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
         $lastRole = end($roles);
         $adminModel = User::findOne(['id' => $id]);
