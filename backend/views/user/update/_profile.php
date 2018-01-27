@@ -35,14 +35,12 @@ $loggedUser = User::findOne(Yii::$app->user->id);
                     <div class="col-xs-6">
                         <?php echo $form->field($model, 'roles')->dropDownList(ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name')) ?>
                     </div>
-                    <?php if (!$model->getModel()->isStaff()) : ?>
-                        <div class="col-xs-6">
-                            <?php echo $form->field($model, 'password')->passwordInput() ?>
-                        </div>
-                            <div class="col-xs-6">
-                            <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
-                        </div>
-                    <?php endif; ?>
+                    <div class="col-xs-6 can-login" style="display: none">
+                        <?php echo $form->field($model, 'password')->passwordInput() ?>
+                    </div>
+                    <div class="col-xs-6 can-login" style="display: none">
+                        <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
+                    </div>
                 <?php endif; ?>
                 <?php if (!$model->getModel()->isAdmin()) : ?>
                     <div class="col-xs-6">
@@ -51,7 +49,12 @@ $loggedUser = User::findOne(Yii::$app->user->id);
                 <?php endif; ?>
             <?php endif; ?>
 	<?php endif; ?>
-	<div class="col-xs-6">
+</div>
+<div class="row">
+    <div class="col-xs-6">
+        <?php echo $form->field($model, 'canLogin')->checkbox() ?>
+    </div>
+    <div class="col-xs-6">
     <?= $form->field($userProfile, 'picture')->widget(
         Upload::classname(),
         [
@@ -70,3 +73,23 @@ $loggedUser = User::findOne(Yii::$app->user->id);
     </div>
 </div>
 <?php ActiveForm::end(); ?>
+
+<script>
+    $(document).ready(function() {
+        userProfile.managePasswordField();
+    });
+    
+    $(document).on('change', '#userform-canlogin', function () {
+        userProfile.managePasswordField();
+    });
+    
+    var userProfile = {
+        managePasswordField :function() {
+            if ($('#userform-canlogin').is(':checked')) {
+                $('.can-login').show();
+            } else {
+                $('.can-login').hide();
+            }
+        }
+    }
+</script>

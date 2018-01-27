@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\Modal;
 use kartik\date\DatePicker;
 use common\models\Lesson;
@@ -15,8 +14,9 @@ use yii\widgets\ActiveForm;
 <script type="text/javascript" src="/admin/plugins/fullcalendar-time-picker/fullcalendar-time-picker.js?v=3"></script>
 <?php
     Modal::begin([
-            'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
-            'id' => 'calendar-date-time-picker-modal',
+        'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
+        'id' => 'calendar-date-time-picker-modal',
+        'footer' => $this->render('/layouts/time-picker-footer')
     ]);
 ?>
 <div id="calendar-date-time-picker-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
@@ -52,12 +52,6 @@ use yii\widgets\ActiveForm;
         ]); ?>
     </div>
     <div id="calendar-date-time-picker" ></div>
-    <div class="col-lg-12">
-    <div class="form-group pull-right m-t-10">
-        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default calendar-date-time-picker-cancel']); ?>
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info calendar-date-time-picker-save', 'name' => 'button']) ?>
-    </div>
-    </div>
 </div>
 <?php Modal::end(); ?>
 

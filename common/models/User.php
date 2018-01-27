@@ -30,6 +30,7 @@ use common\models\Label;
  * @property int $created_at
  * @property int $updated_at
  * @property int $logged_at
+ * @property int $canLogin
  * @property string $password write-only password
  * @property \common\models\UserProfile $userProfile
  */
@@ -150,7 +151,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['customerIds'], 'required', 'on' => self::SCENARIO_MERGE],
             ['customerIds', 'canMerge', 'on' => self::SCENARIO_MERGE],
             [['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate',
-                'customerId', 'isDeleted', 'pin_hash'], 'safe']
+                'customerId', 'isDeleted', 'pin_hash', 'canLogin'], 'safe']
         ];
     }
 
