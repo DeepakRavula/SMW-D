@@ -35,7 +35,7 @@ $form = ActiveForm::begin([
                 ->all(), 'id', 'name'),
         'options' => [
             'id' => 'phone-label',
-            'createNew' => true,
+            'createNew' => true
         ],
         'pluginOptions' => [
             'tags' => true,
@@ -43,9 +43,6 @@ $form = ActiveForm::begin([
         ],
     ])->label('Label');
     ?>
-    <div style="display: none" class="hidden-field-phone-label">
-        <?= $form->field($model, "labelId")->textInput(['id' => 'phone-label',])->label('Label'); ?>
-    </div>
 	<?= $form->field($phoneModel, "extension")->textInput(['maxlength' => true]) ?>
 </div>
     <div class="row">

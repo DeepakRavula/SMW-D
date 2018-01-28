@@ -46,9 +46,6 @@ use yii\helpers\Url;
             ],
         ])->label('Label');
         ?>
-    <div style="display: none" class="hidden-field-address-label">
-        <?= $form->field($model, "labelId")->textInput(['id' => 'address-label'])->label('Label'); ?>
-    </div>
 		<?= $form->field($addressModel, "address")->textInput(['maxlength' => true])->label('Address') ?>
 		<?=
         $form->field($addressModel, "cityId")->widget(Select2::classname(), [
@@ -63,9 +60,6 @@ use yii\helpers\Url;
         ],
     ])->label('city');
         ?>
-    <div style="display: none" class="hidden-field-city-label">
-        <?= $form->field($addressModel, "cityId")->textInput(['id' => 'city-label'])->label('City'); ?>
-    </div>
 		<?=
         $form->field($addressModel, "countryId")->dropDownList(
             ArrayHelper::map(Country::find()->all(), 'id', 'name'),
