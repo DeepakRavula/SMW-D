@@ -128,6 +128,9 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
+        if (!$insert) {
+            return parent::afterSave($insert, $changedAttributes);
+        }
         $locationId = $this->enrolment->course->locationId;
         $startDate  = new \DateTime($this->startDate);
         $endDate    = new \DateTime($this->endDate);

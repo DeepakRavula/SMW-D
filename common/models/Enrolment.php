@@ -278,7 +278,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getFirstLesson()
     {
         return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
-            ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true])
+            ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true, 'lesson.type' => Lesson::TYPE_REGULAR])
             ->orderBy(['date' => SORT_ASC]);
     }
 
