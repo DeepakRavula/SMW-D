@@ -124,7 +124,7 @@ $config = [
                     'customer-payment-preference','tax-code', 'vacation',
                     'customer-discount', 'classroom', 'report', 'teacher-rate',
                     'private-lesson','student-birthday', 'teacher-unavailability',
-                    'print', 'user-contact','teacher-substitute',
+                    'print', 'user-contact','teacher-substitute','email-template',
                 ],
                 'allow' => true,
                 'roles' => ['listCustomer', 'listEnrolment', 'listGroupLesson', 'listInvoice', 'listItem', 'listOwner'],

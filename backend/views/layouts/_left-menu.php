@@ -258,6 +258,11 @@ echo Menu::widget([
                     'url' => ['/holiday/index'],
                 ],
                 [
+                    'label' => Yii::t('backend', 'Email Template'),
+                    'icon' => '<i class="fa fa-envelope"></i>',
+                    'url' => ['/email-template/index'],
+                ],
+                [
                     'label' => Yii::t('backend', 'Text Template'),
                     'icon' => '<i class="fa fa-envelope"></i>',
                     'url' => ['/text-template/index'],
