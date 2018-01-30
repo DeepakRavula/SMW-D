@@ -23,6 +23,15 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
 <?= $this->render('_view-enrolment', [
     'model' => $model,
 ]);?>
+<div class="row">
+    <div class="col-md-6">
+        <?=
+        $this->render('_student', [
+            'model' => $model,
+        ]);
+        ?>
+    </div>
+</div>
     <div class="nav-tabs-custom">
 <?php
 
@@ -61,8 +70,10 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
             ],
         ]
     ];
-
-    echo Tabs::widget([
+    if ($model->course->program->isGroup()) {
+    array_splice($items, 1, 1);
+}
+echo Tabs::widget([
         'items' => $items,
     ]);
 ?>
