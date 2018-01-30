@@ -675,7 +675,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 ->all();
             $invoiceLineItemDiscount->value = $invoiceLineItemDiscount->value / count($spiltParts);
         }
-        $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
+        $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLLAR;
         $invoiceLineItemDiscount->type      = InvoiceLineItemDiscount::TYPE_MULTIPLE_ENROLMENT;
         return $invoiceLineItemDiscount->save();
     }
@@ -702,7 +702,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $lienItemDiscount = new InvoiceLineItemDiscount();
                 $lienItemDiscount->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
                 $lienItemDiscount->invoiceLineItemId = $this->id;
-                $lienItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
+                $lienItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLLAR;
                 $lienItemDiscount->value = $lesson->proFormaLineItem->lineItemDiscount->value /
                         ($rootLesson->durationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC);
                 $lienItemDiscount->save();
@@ -715,7 +715,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 $lienItemDiscount = new InvoiceLineItemDiscount();
                 $lienItemDiscount->type = InvoiceLineItemDiscount::TYPE_MULTIPLE_ENROLMENT;
                 $lienItemDiscount->invoiceLineItemId = $this->id;
-                $lienItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
+                $lienItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLLAR;
                 $lienItemDiscount->value = $lesson->proFormaLineItem->multiEnrolmentDiscount->value /
                         ($rootLesson->durationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC);
                 $lienItemDiscount->save();
@@ -731,7 +731,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $discount->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
         $discount->invoiceLineItemId = $this->id;
         $discount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
-        $discount->value = 100.00;
+        $discount->value = InvoiceLineItemDiscount::FULL_DISCOUNT;
         return $discount->save();
     }
 }

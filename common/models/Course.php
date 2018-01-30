@@ -378,7 +378,9 @@ class Course extends \yii\db\ActiveRecord
     
     public function hasExtraLesson()
     {
-        $extraLesson = Lesson::findOne(['courseId' => $this->id, 'type' => Lesson::TYPE_EXTRA]);
-        return !empty($extraLesson);
+        return Lesson::find()
+                ->andWhere(['courseId' => $this->id])
+                ->extra()
+                ->exists();
     }
 }

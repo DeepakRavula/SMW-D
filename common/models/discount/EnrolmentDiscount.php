@@ -19,7 +19,7 @@ class EnrolmentDiscount extends \yii\db\ActiveRecord
     const TYPE_MULTIPLE_ENROLMENT = 2;
 
     const VALUE_TYPE_PERCENTAGE = 0;
-    const VALUE_TYPE_DOLOR      = 1;
+    const VALUE_TYPE_DOLLAR      = 1;
 
     /**
      * @inheritdoc

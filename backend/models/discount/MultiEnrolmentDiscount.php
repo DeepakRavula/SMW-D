@@ -12,7 +12,7 @@ class MultiEnrolmentDiscount extends EnrolmentDiscount
 {
     public function init()
     {
-        $this->discountType = \common\models\discount\EnrolmentDiscount::VALUE_TYPE_DOLOR;
+        $this->discountType = \common\models\discount\EnrolmentDiscount::VALUE_TYPE_DOLLAR;
         $this->type = \common\models\discount\EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
     }
     /**

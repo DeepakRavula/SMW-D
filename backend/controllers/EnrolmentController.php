@@ -353,7 +353,7 @@ class EnrolmentController extends BaseController
                 }
                 if (!empty($paymentFrequencyDiscount->discount)) {
                     $paymentFrequencyDiscount->enrolmentId = $course->enrolment->id;
-                    $paymentFrequencyDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLOR;
+                    $paymentFrequencyDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLLAR;
                     $paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
                     $paymentFrequencyDiscount->save();
                 }

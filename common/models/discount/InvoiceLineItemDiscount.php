@@ -17,8 +17,9 @@ use common\models\InvoiceLineItem;
 class InvoiceLineItemDiscount extends \yii\db\ActiveRecord
 {
     const VALUE_TYPE_PERCENTAGE = 1;
-    const VALUE_TYPE_DOLOR      = 0;
+    const VALUE_TYPE_DOLLAR      = 0;
 
+    const FULL_DISCOUNT = 100.00;
     const TYPE_CUSTOMER = 1;
     const TYPE_ENROLMENT_PAYMENT_FREQUENCY = 2;
     const TYPE_MULTIPLE_ENROLMENT = 3;
