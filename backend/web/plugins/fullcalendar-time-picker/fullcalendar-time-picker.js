@@ -22,7 +22,7 @@ $.fn.calendarPicker = function(options) {
             
         }
         $('#calendar-date-time-picker-teacher').val(options.teacherId);
-        calendar.showCalendar(options);
+        pickerCalendar.showCalendar(options);
     });
     
     $(document).off('change', '#calendar-date-time-picker-date').on('change', '#calendar-date-time-picker-date', function () {
@@ -66,7 +66,7 @@ $.fn.calendarPicker = function(options) {
         if (! moment(date).isValid()) {
             var date = moment($('#go-to-date').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
         }
-        calendar.teacherChange(options, date);
+        pickerCalendar.teacherChange(options, date);
     });
 
     $(document).off('change', '#go-to-date').on('change', '#go-to-date', function(){
@@ -78,7 +78,7 @@ $.fn.calendarPicker = function(options) {
     });
 };
     
-var calendar = {
+var pickerCalendar = {
     showCalendar: function (calendarOptions) {
         if ($.isEmptyObject(calendarOptions.selectConstraint)) {
             calendarOptions.selectConstraint = 'businessHours';
@@ -163,7 +163,7 @@ var calendar = {
                         eventUrl: '/admin/teacher-availability/show-lesson-event?teacherId=' + teacherId,
                         validationUrl: options.validationUrl
                     };
-                    calendar.showCalendar(calendarOptions);
+                    pickerCalendar.showCalendar(calendarOptions);
                 }
             });
         }

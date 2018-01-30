@@ -118,7 +118,7 @@ $config = [
                     'item-category', 'daily-schedule','user',
                     'release-notes', 'lesson', 'invoice', 'timeline-event',
                     'enrolment','teacher-room', 'program', 'customer', 'email',
-                    'teacher-availability', 'group-course', 'group-lesson',
+                    'teacher-availability', 'group-course', 'extra-lesson',
                     'group-enrolment', 'payment', 'course', 'log',
                     'invoice-line-item', 'holiday', 'qualification',
                     'customer-payment-preference','tax-code', 'vacation',

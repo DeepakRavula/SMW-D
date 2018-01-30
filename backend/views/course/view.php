@@ -5,6 +5,10 @@ use yii\helpers\Html;
 use yii\bootstrap\Tabs;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+use kartik\select2\Select2Asset;
+use kartik\date\DatePickerAsset;
+DatePickerAsset::register($this);
+Select2Asset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */

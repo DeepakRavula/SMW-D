@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
-<script type="text/javascript" src="/admin/plugins/fullcalendar-time-picker/fullcalendar-time-picker.js?v=3"></script>
+<script type="text/javascript" src="/admin/plugins/fullcalendar-time-picker/fullcalendar-time-picker.js?v=4"></script>
 <?php
     Modal::begin([
         'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',

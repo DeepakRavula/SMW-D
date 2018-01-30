@@ -22,7 +22,7 @@ class ExtraLesson extends Lesson
         return parent::beforeSave($insert);
     }
     
-    public function add($status)
+    public function addPrivate($status)
     {
         $course = new Course();
         $course->programId = $this->programId;
@@ -55,6 +55,22 @@ class ExtraLesson extends Lesson
         $lessonDate = \DateTime::createFromFormat('Y-m-d g:i A', $this->date);
         $this->date = $lessonDate->format('Y-m-d H:i:s');
         return $this;
+    }
+    
+    public function addGroup()
+    {
+        $enrolments = Enrolment::findAll(['courseId' => $this->courseId, 'type' => Enrolment::TYPE_REGULAR]);
+        foreach ($enrolments as $enrolment) {
+            $newEnrolment = clone ($enrolment);
+            $newEnrolment->id = null;
+            $newEnrolment->isNewRecord = true;
+            $newEnrolment->paymentFrequencyId = false;
+            $newEnrolment->type = Enrolment::TYPE_EXTRA;
+            if ($newEnrolment->save()) {
+                $newEnrolment->createProFormaInvoice();
+            }
+        }
+        return true;
     }
     
     public function createCourse()

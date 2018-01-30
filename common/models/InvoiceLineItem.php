@@ -724,4 +724,14 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             }
         }
     }
+    
+    public function addFullDiscount()
+    {
+        $discount = new InvoiceLineItemDiscount();
+        $discount->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
+        $discount->invoiceLineItemId = $this->id;
+        $discount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
+        $discount->value = 100.00;
+        return $discount->save();
+    }
 }

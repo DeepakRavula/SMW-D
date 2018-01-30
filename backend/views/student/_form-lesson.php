@@ -20,8 +20,8 @@ use kartik\time\TimePicker;
     'id' => 'modal-form',
     'enableClientValidation' => false,
     'enableAjaxValidation' => true,
-    'validationUrl' => Url::to(['lesson/validate', 'studentId' => $studentModel->id]),
-    'action' => Url::to(['lesson/create', 'studentId' => $studentModel->id]),
+    'validationUrl' => Url::to(['extra-lesson/validate-private', 'studentId' => $studentModel->id]),
+    'action' => Url::to(['extra-lesson/create-private', 'studentId' => $studentModel->id]),
 ]); ?>
 <?php $this->render('/lesson/_color-code'); ?>
 <div class="row">

@@ -227,7 +227,6 @@ class Course extends \yii\db\ActiveRecord
         $dayList = self::getWeekdaysList();
         $day = $dayList[$startDate->format('N')];
         foreach ($lessons as $lesson) {
-            $originalLessonId	 = $lesson->id;
             $lesson->id			 = null;
             $lesson->isNewRecord = true;
             $lesson->teacherId = $teacherId;
@@ -375,5 +374,11 @@ class Course extends \yii\db\ActiveRecord
                 ->andWhere(['enrolment.studentId' => $studentId])
                 ->one();
         return $enrolment ? $enrolment->course : null;
+    }
+    
+    public function hasExtraLesson()
+    {
+        $extraLesson = Lesson::findOne(['courseId' => $this->id, 'type' => Lesson::TYPE_EXTRA]);
+        return !empty($extraLesson);
     }
 }

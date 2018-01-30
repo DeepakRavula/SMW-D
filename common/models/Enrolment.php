@@ -307,6 +307,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getCourseCount()
     {
         return Lesson::find()
+                ->regular()
                 ->isConfirmed()
                 ->notDeleted()
                 ->where(['courseId' => $this->courseId])

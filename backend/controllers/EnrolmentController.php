@@ -119,6 +119,12 @@ class EnrolmentController extends \common\components\controllers\BaseController
 
     public function actionGroup($courseId, $studentId)
     {
+        $course = Course::findOne($courseId);
+        if ($course->hasExtraLesson()) {
+            $course->studentId = $studentId;
+            $enrolment = $course->createExtraLessonEnrolment();
+            $enrolment->createProFormaInvoice();
+        }
         $enrolmentModel = new Enrolment();
         $enrolmentModel->courseId = $courseId;
         $enrolmentModel->studentId = $studentId;

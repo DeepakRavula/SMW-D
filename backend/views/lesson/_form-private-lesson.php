@@ -137,7 +137,7 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 ?>
 
 <script type="text/javascript">
-$(document).on('click', '.lesson-edit-calendar', function () {
+$(document).on('click', '.lesson-edit-calendar', function () {debugger
     $('#spinner').show();
     var teacherId = $('#lesson-teacherid').val();
     var duration = $('#course-duration').val();

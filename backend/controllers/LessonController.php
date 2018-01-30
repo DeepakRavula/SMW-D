@@ -139,58 +139,6 @@ class LessonController extends \common\components\controllers\BaseController
         ]);
     }
 
-    /**
-     * Creates a new Lesson model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     *
-     * @return mixed
-     */
-    public function actionCreate($studentId)
-    {
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
-        $model = new ExtraLesson();
-        $model->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $model->setScenario(Lesson::SCENARIO_CREATE);
-        $request = Yii::$app->request;
-        $studentModel = Student::findOne($studentId);
-        $model->studentId = $studentModel->id;
-        $model->programId = !empty($studentModel->firstPrivateCourse) ? $studentModel->firstPrivateCourse->programId : null;
-        $model->teacherId = !empty($studentModel->firstPrivateCourse) ? $studentModel->firstPrivateCourse->teacherId : null;
-        $data = $this->renderAjax('/student/_form-lesson', [
-            'model' => $model,
-            'studentModel' => $studentModel
-        ]);
-        if ($model->load($request->post())) {
-            $model->add(Lesson::STATUS_SCHEDULED);
-            if ($model->save()) {
-                $model->markAsRoot();
-                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-                $model->on(
-                    Lesson::EVENT_AFTER_INSERT,
-                    [new LessonLog(), 'extraLessonCreate'],
-                    ['loggedUser' => $loggedUser]
-                );
-                $model->trigger(Lesson::EVENT_AFTER_INSERT);
-                $response   = [
-                    'status' => true,
-                    'url' => Url::to(['lesson/view', 'id' => $model->id])
-                ];
-            } else {
-                $response   = [
-                    'status' => false,
-                    'errors' => ActiveForm::validate($model)
-                ];
-            }
-        } else {
-            $response = [
-                'status' => true,
-                'data' => $data
-            ];
-        }
-        return $response;
-    }
-
     public function actionValidateOnUpdate($id, $teacherId = null)
     {
         $errors = [];
@@ -207,29 +155,7 @@ class LessonController extends \common\components\controllers\BaseController
             }
         }
     }
-
-    public function actionValidate($studentId)
-    {
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
-        $model = new ExtraLesson();
-        $model->type = Lesson::TYPE_EXTRA;
-        $model->status = Lesson::STATUS_SCHEDULED;
-        $model->setScenario(Lesson::SCENARIO_CREATE);
-        $request = Yii::$app->request;
-        if ($model->load($request->post())) {
-            $studentEnrolment = Enrolment::find()
-               ->joinWith(['course' => function ($query) use ($model) {
-                   $query->where(['course.programId' => $model->programId]);
-               }])
-                ->where(['studentId' => $studentId])
-                ->one();
-            $model->courseId = !empty($studentEnrolment) ? $studentEnrolment->courseId : null;
-            $model->studentId = $studentId;
-            return  ActiveForm::validate($model);
-        }
-    }
-
+    
     public function actionFetchDuration($id)
     {
         $model = $this->findModel($id);

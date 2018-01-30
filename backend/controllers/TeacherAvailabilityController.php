@@ -324,7 +324,7 @@ class TeacherAvailabilityController extends \common\components\controllers\BaseC
         return $events;
     }
 
-    public function actionShowLessonEvent($lessonId = null, $teacherId)
+    public function actionShowLessonEvent($teacherId, $lessonId = null)
     {
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {

@@ -85,7 +85,7 @@ class CourseController extends \common\components\controllers\BaseController
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
                 ->andWhere(['courseId' => $id])
-                ->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED,
+                ->andWhere(['status' => [Lesson::STATUS_SCHEDULED,
                         Lesson::STATUS_UNSCHEDULED]])
                 ->isConfirmed()
                 ->notDeleted()
@@ -350,7 +350,7 @@ class CourseController extends \common\components\controllers\BaseController
                     $newLesson->studentId = $model->studentId;
                     $newLesson->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
                     $newLesson->setScenario(Lesson::SCENARIO_CREATE);
-                    $newLesson->add(Lesson::STATUS_UNSCHEDULED);
+                    $newLesson->addPrivate(Lesson::STATUS_UNSCHEDULED);
                     $hasCreditInvoice = false;
                     if ($newLesson->save()) {
                         $newLesson->markAsRoot();
