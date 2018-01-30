@@ -229,7 +229,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function hasExpiryDate()
     {
-        return !empty($this->privateLesson->id);
+        return !empty($this->privateLesson);
     }
     
     public function getFullDuration()

@@ -2,7 +2,6 @@
 
 use yii\db\Migration;
 use common\models\Lesson;
-use common\models\PrivateLesson;
 
 class m180123_061124_adding_expirydate_to_private_lessons extends Migration
 {
@@ -13,25 +12,23 @@ class m180123_061124_adding_expirydate_to_private_lessons extends Migration
             ->isConfirmed()
             ->notDeleted()
             ->privateLessons()
-            ->andWhere(['NOT IN', 'lesson.status', [Lesson::STATUS_CANCELED]])
+            ->andWhere(['NOT', ['lesson.status' => Lesson::STATUS_CANCELED]])
             ->all();
 
         foreach ($lessons as $lesson) {
             if (!$lesson->hasExpiryDate()) {
-                if ($lesson->status === Lesson::STATUS_UNSCHEDULED) {
-                    $rootLesson                     = $lesson->getRootLesson();
-                    $privateLessonModel             = new PrivateLesson();
-                    $privateLessonModel->lessonId   = $lesson->id;
-                    $privateLessonModel->expiryDate = $rootLesson->expiryDate->format('Y-m-d H:i:s');
-                    $privateLessonModel->save();
-                } else if ($lesson->status === Lesson::STATUS_SCHEDULED) {
-                    $privateLessonModel             = new PrivateLesson();
-                    $privateLessonModel->lessonId   = $lesson->id;
-                    $date                           = new \DateTime($lesson->date);
-                    $expiryDate                     = $date->modify('90 days');
-                    $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-                    $privateLessonModel->save();
+                $lesson->addExpiry();
+            } else {
+                if ($lesson->rootLesson) {
+                    $lessonToUpdate = $lesson->rootLesson;
+                } else {
+                    $lessonToUpdate = $lesson;
                 }
+                $date = new \DateTime($lessonToUpdate->date);
+                $expiryDate = $date->modify('90 days');
+                $lessonToUpdate->privateLesson->updateAttributes([
+                    'expiryDate' => $expiryDate->format('Y-m-d H:i:s')
+                ]);
             }
         }
     }
