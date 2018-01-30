@@ -13,11 +13,13 @@ use yii\filters\ContentNegotiator;
 use yii\web\Response;
 use yii\bootstrap\ActiveForm;
 use common\models\discount\CustomerDiscount;
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
 
 /**
  * CustomerDiscountController implements the CRUD actions for CustomerDiscount model.
  */
-class CustomerPaymentPreferenceController extends \common\components\controllers\BaseController
+class CustomerPaymentPreferenceController extends BaseController
 {
     public function behaviors()
     {
@@ -36,22 +38,17 @@ class CustomerPaymentPreferenceController extends \common\components\controllers
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['update', 'view', 'modify', 'delete'],
+                        'roles' => ['manageCustomers'],
+                    ],
+                ],
+            ],
         ];
-    }
-
-    /**
-     * Lists all CustomerDiscount models.
-     * @return mixed
-     */
-    public function actionIndex()
-    {
-        $dataProvider = new ActiveDataProvider([
-            'query' => CustomerDiscount::find(),
-        ]);
-
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
     }
 
     /**

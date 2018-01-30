@@ -5,17 +5,18 @@ namespace backend\controllers;
 use Yii;
 use common\models\TeacherRoom;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use backend\models\UserForm;
 use yii\base\Model;
 use common\models\TeacherAvailability;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * TeacherRoomController implements the CRUD actions for TeacherRoom model.
  */
-class TeacherRoomController extends \common\components\controllers\BaseController
+class TeacherRoomController extends BaseController
 {
     public function behaviors()
     {
@@ -26,6 +27,16 @@ class TeacherRoomController extends \common\components\controllers\BaseControlle
                     'delete' => ['post'],
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageTeachers'],
+                    ],
+                ],
+            ], 
         ];
     }
 

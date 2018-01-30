@@ -5,18 +5,19 @@ namespace backend\controllers;
 use Yii;
 use common\models\Holiday;
 use backend\models\search\HolidaySearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
 use common\models\TeacherUnavailability;
 use common\models\User;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * HolidayController implements the CRUD actions for Holiday model.
  */
-class TeacherUnavailabilityController extends \common\components\controllers\BaseController
+class TeacherUnavailabilityController extends BaseController
 {
     public function behaviors()
     {
@@ -35,6 +36,16 @@ class TeacherUnavailabilityController extends \common\components\controllers\Bas
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageTeachers'],
+                    ],
+                ],
+            ], 
         ];
     }
 

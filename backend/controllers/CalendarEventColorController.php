@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\base\Model;
+use yii\filters\AccessControl;
 
 /**
  * CalendarEventColorController implements the CRUD actions for CalendarEventColor model.
@@ -22,6 +23,16 @@ class CalendarEventColorController extends \common\components\controllers\BaseCo
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['edit'],
+                        'roles' => ['manageColorCode'],
+                    ],
                 ],
             ],
         ];

@@ -21,6 +21,8 @@ use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\TeacherAvailability;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -46,11 +48,21 @@ class StudentController extends BaseController
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['create', 'update', 'merge', 'fetch-program-rate','validate'],
+                'only' => ['create', 'update', 'merge', 'fetch-program-rate','validate', 'enrolment', ''],
                 'formats' => [
                         'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'create', 'update', 'merge', 'fetch-program-rate','validate', 'print'],
+                        'roles' => ['manageStudents'],
+                    ],
+                ],
+            ], 
         ];
     }
 

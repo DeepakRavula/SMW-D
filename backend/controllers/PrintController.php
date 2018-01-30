@@ -7,7 +7,6 @@ use common\models\InvoiceLineItem;
 use common\models\Payment;
 use common\models\Invoice;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use common\models\Course;
 use common\models\Lesson;
 use common\models\ExamResult;
@@ -21,12 +20,29 @@ use common\models\CompanyAccount;
 use backend\models\search\ReportSearch;
 use common\models\PaymentMethod;
 use backend\models\search\InvoiceLineItemSearch;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
-class PrintController extends \common\components\controllers\BaseController
+class PrintController extends BaseController
 {
+	public function behaviors()
+    {
+        return [
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['invoice', 'course', 'evaluation', 'teacher-lessons', 'time-voucher', 'customer-invoice', 'account-view', 'royalty', 'royalty-free', 'tax-collected', 'user', 'customer-items-print'],
+                        'roles' => ['administrator', 'staffmember', 'owner'],
+                    ],
+                ],
+            ],  
+        ];
+    }
     public function actionInvoice($id)
     {
         $model = Invoice::findOne(['id' => $id]);

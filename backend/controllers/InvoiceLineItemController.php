@@ -10,20 +10,19 @@ use common\models\InvoiceLineItem;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
 use yii\bootstrap\ActiveForm;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
-use common\models\User;
-use common\models\InvoiceLog;
 use backend\models\LineItemMultiTax;
 use yii\helpers\Json;
 use common\models\Location;
 use common\models\TaxCode;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
-class InvoiceLineItemController extends \common\components\controllers\BaseController
+class InvoiceLineItemController extends BaseController
 {
     public function behaviors()
     {
@@ -43,6 +42,16 @@ class InvoiceLineItemController extends \common\components\controllers\BaseContr
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['compute-tax', 'fetch-tax-percentage', 'update', 'edit-opening-balance', 'delete', 'edit-tax', 'edit-other-items', 'apply-discount'],
+                        'roles' => ['manageInvoices', 'managePfi'],
+                    ],
+                ],
+            ], 
         ];
     }
 

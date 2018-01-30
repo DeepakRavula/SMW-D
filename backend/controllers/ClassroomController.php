@@ -5,18 +5,19 @@ namespace backend\controllers;
 use Yii;
 use common\models\Classroom;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\ClassroomUnavailability;
 use yii\filters\ContentNegotiator;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
 
 /**
  * ClassRoomController implements the CRUD actions for Classroom model.
  */
-class ClassroomController extends \common\components\controllers\BaseController
+class ClassroomController extends BaseController
 {
     public function behaviors()
     {
@@ -33,6 +34,16 @@ class ClassroomController extends \common\components\controllers\BaseController
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'update', 'create', 'delete'],
+                        'roles' => ['manageClassrooms'],
+                    ],
                 ],
             ],
         ];

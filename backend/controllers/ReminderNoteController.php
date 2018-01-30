@@ -5,14 +5,15 @@ namespace backend\controllers;
 use Yii;
 use common\models\ReminderNote;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * ReminderNoteController implements the CRUD actions for ReminderNote model.
  */
-class ReminderNoteController extends \common\components\controllers\BaseController
+class ReminderNoteController extends BaseController
 {
     public function behaviors()
     {
@@ -23,6 +24,16 @@ class ReminderNoteController extends \common\components\controllers\BaseControll
                     'delete' => ['post'],
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageReminderNotes'],
+                    ],
+                ],
+            ], 
         ];
     }
 

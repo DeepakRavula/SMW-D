@@ -8,7 +8,6 @@ use backend\models\search\PaymentSearch;
 use backend\models\search\ReportSearch;
 use backend\models\search\StudentBirthdaySearch;
 use backend\models\search\InvoiceLineItemSearch;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
@@ -16,11 +15,13 @@ use yii\data\ActiveDataProvider;
 use common\models\PaymentMethod;
 use backend\models\search\DiscountSearch;
 use common\models\Location;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
  */
-class ReportController extends \common\components\controllers\BaseController
+class ReportController extends BaseController
 {
     public function behaviors()
     {
@@ -31,6 +32,56 @@ class ReportController extends \common\components\controllers\BaseController
                     'delete' => ['post'],
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['student-birthday'],
+                        'roles' => ['manageBirthdays'],
+                    ],
+					[
+                        'allow' => true,
+                        'actions' => ['payment'],
+                        'roles' => ['managePayments'],
+                    ],
+					[
+                        'allow' => true,
+                        'actions' => ['royalty'],
+                        'roles' => ['manageRoyalty'],
+                    ],
+					[
+                        'allow' => true,
+                        'actions' => ['tax-collected'],
+                        'roles' => ['manageTaxCollected'],
+                    ],
+					[
+                        'allow' => true,
+                        'actions' => ['royalty-free'],
+                        'roles' => ['manageRoyaltyFreeItems'],
+                    ],
+					[
+                        'allow' => true,
+                        'actions' => ['items'],
+                        'roles' => ['manageItemReport'],
+                    ],
+					[
+                        'allow' => true,
+                        'actions' => ['customer-items'],
+                        'roles' => ['manageItemsByCustomer'],
+                    ],
+					[
+                        'allow' => true,
+                        'actions' => ['discount', 'discount-print'],
+                        'roles' => ['manageDiscountReport'],
+                    ],
+					[
+                        'allow' => true,
+                        'actions' => ['all-locations'],
+                        'roles' => ['manageAllLocations'],
+                    ],
+                ],
+            ], 
         ];
     }
     public function actionStudentBirthday()

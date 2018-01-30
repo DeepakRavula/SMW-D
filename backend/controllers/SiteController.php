@@ -4,12 +4,28 @@ namespace backend\controllers;
 
 use common\components\keyStorage\FormModel;
 use Yii;
+use yii\filters\AccessControl;
 
 /**
  * Site controller.
  */
 class SiteController extends \yii\web\Controller
 {
+	 public function behaviors()
+    {
+        return [
+			'access' => [
+				'class' => AccessControl::className(),
+				'rules' => [
+					[
+						'allow' => true,
+						'roles' => ['?', '@'],
+						'actions' => ['error'],
+					]
+				],
+			],
+        ];
+    }
     /**
      * {@inheritdoc}
      */

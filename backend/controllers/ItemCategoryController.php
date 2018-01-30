@@ -13,11 +13,13 @@ use yii\web\Response;
 use common\models\TaxStatus;
 use yii\filters\ContentNegotiator;
 use backend\models\search\InvoiceLineItemSearch;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * ItemCategoryController implements the CRUD actions for ItemCategory model.
  */
-class ItemCategoryController extends \common\components\controllers\BaseController
+class ItemCategoryController extends BaseController
 {
     public function behaviors()
     {
@@ -36,6 +38,16 @@ class ItemCategoryController extends \common\components\controllers\BaseControll
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'items', 'get-item-values', 'print'],
+                        'roles' => ['manageItemCategory'],
+                    ],
+                ],
+            ],  
         ];
     }
 

@@ -5,20 +5,18 @@ namespace backend\controllers;
 use Yii;
 use common\models\PrivateLesson;
 use backend\models\search\PrivateLessonSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
-use common\models\PaymentCycleLesson;
 use common\models\Lesson;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
-use common\models\LessonSplitUsage;
-
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
-class PrivateLessonController extends \common\components\controllers\BaseController
+class PrivateLessonController extends BaseController
 {
     public function behaviors()
     {
@@ -36,6 +34,16 @@ class PrivateLessonController extends \common\components\controllers\BaseControl
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance'],
+                        'roles' => ['managePrivateLessons'],
+                    ],
+                ],
+            ], 
         ];
     }
 

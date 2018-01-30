@@ -3,7 +3,6 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\log\InvoiceLog;
 use common\models\Invoice;
 use common\models\Item;
 use common\models\InvoiceLineItem;
@@ -15,10 +14,8 @@ use common\models\UserProfile;
 use common\models\Payment;
 use common\models\Lesson;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use common\models\ItemType;
 use common\models\TaxCode;
 use common\models\Location;
 use yii\helpers\Json;
@@ -34,11 +31,13 @@ use common\models\Label;
 use backend\models\search\UserSearch;
 use common\models\log\LogHistory;
 use backend\models\search\ItemSearch;
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
 
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
-class InvoiceController extends \common\components\controllers\BaseController
+class InvoiceController extends BaseController
 {
     public function behaviors()
     {
@@ -50,12 +49,32 @@ class InvoiceController extends \common\components\controllers\BaseController
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['delete', 'note', 'get-payment-amount', 'update-customer',
-                    'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax'],
+                'only' => ['delete', 'note', 
+					'get-payment-amount', 'update-customer',
+                    'create-walkin', 'fetch-user', 'add-misc',
+					'adjust-tax'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+				'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['blank-invoice',
+							'update-customer', 'create-walkin',
+							'note', 'view', 'fetch-user',
+							'add-misc','fetch-summary-and-status', 							   'compute-tax', 'create', 'update',
+							'delete', 'update-mail-status',
+							'all-completed-lessons', 'adjust-tax',
+							'revert-invoice', 'enrolment',
+							'invoice-payment-cycle',
+							 'group-lesson','get-payment-amount'],
+                        'roles' => ['manageInvoices', 'managePfi'],
+                    ],
+                ],
+            ], 
         ];
     }
 

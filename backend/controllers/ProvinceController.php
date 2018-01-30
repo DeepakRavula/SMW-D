@@ -5,8 +5,9 @@ namespace backend\controllers;
 use Yii;
 use common\models\Province;
 use backend\models\search\ProvinceSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
@@ -14,7 +15,7 @@ use yii\web\Response;
 /**
  * ProvinceController implements the CRUD actions for Province model.
  */
-class ProvinceController extends \common\components\controllers\BaseController
+class ProvinceController extends BaseController
 {
     public function behaviors()
     {
@@ -32,7 +33,17 @@ class ProvinceController extends \common\components\controllers\BaseController
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
                 ],
-            ]
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageProvinces'],
+                    ],
+                ],
+            ], 
         ];
     }
 
