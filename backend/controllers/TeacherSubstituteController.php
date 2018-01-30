@@ -8,16 +8,16 @@ use common\models\Lesson;
 use common\models\LessonHierarchy;
 use common\models\LessonReschedule;
 use common\models\User;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
-USE yii\data\ActiveDataProvider;
+use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
+
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
-class TeacherSubstituteController extends \common\components\controllers\BaseController
+class TeacherSubstituteController extends BaseController
 {
     public function behaviors()
     {
@@ -35,7 +35,17 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
                 ],
-            ],	 
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'confirm'],
+                        'roles' => ['managePrivateLessons', 'manageGroupLessons'],
+                    ],
+                ],
+            ], 
         ];
     }
 
@@ -45,7 +55,7 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
      * @return mixed
      */
     public function actionIndex()
-    {        
+    {
         $lessonIds = Yii::$app->request->get('ids');
         $teacherId = Yii::$app->request->get('teacherId');
         $lessons = Lesson::findAll($lessonIds);
@@ -53,7 +63,7 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
         $programIds = [];
         $newLessonIds = [];
         $draftLessons = Lesson::find()
-                ->select('id')
+                ->select(['id, type'])
                 ->notDeleted()
                 ->notConfirmed()
                 ->andWhere(['createdByUserId' => Yii::$app->user->id])
@@ -112,7 +122,7 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
                     ->andWhere(['createdByUserId' => Yii::$app->user->id]);
         $teachers = User::find()
                 ->teachers($programIds, \common\models\Location::findOne(['slug' => \Yii::$app->location])->id)
-                ->join('LEFT JOIN', 'user_profile','user_profile.user_id = ul.user_id')
+                ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
                 ->notDeleted()
                 ->andWhere(['NOT', ['user.id' => end($lessons)->teacherId]])
                 ->orderBy(['user_profile.firstname' => SORT_ASC])

@@ -4,15 +4,15 @@ namespace backend\controllers;
 use Yii;
 use common\models\ClassroomUnavailability;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-use yii\widgets\ActiveForm;
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
 /**
  * ClassroomUnavailabilityController implements the CRUD actions for ClassroomUnavailability model.
  */
-class ClassroomUnavailabilityController extends \common\components\controllers\BaseController
+class ClassroomUnavailabilityController extends BaseController
 {
     public function behaviors()
     {
@@ -23,11 +23,21 @@ class ClassroomUnavailabilityController extends \common\components\controllers\B
                     'delete' => ['post'],
                 ],
             ],
-                [
+            [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => ['create', 'update', 'delete'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'update', 'create', 'delete'],
+                        'roles' => ['manageClassrooms'],
+                    ],
                 ],
             ],
         ];
@@ -74,26 +84,22 @@ class ClassroomUnavailabilityController extends \common\components\controllers\B
         ]);
          
         if ($model->load(Yii::$app->request->post())) {
-            if(!empty($model->dateRange)){
-            list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
-            $model->fromDate = \DateTime::createFromFormat('M d,Y', $model->fromDate)->format('Y-m-d h:i:s');
-            $model->toDate = \DateTime::createFromFormat('M d,Y', $model->toDate)->format('Y-m-d h:i:s');
-            if($model->save())
-            {
-            return [
+            if (!empty($model->dateRange)) {
+                list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
+                $model->fromDate = \DateTime::createFromFormat('M d,Y', $model->fromDate)->format('Y-m-d h:i:s');
+                $model->toDate = \DateTime::createFromFormat('M d,Y', $model->toDate)->format('Y-m-d h:i:s');
+                if ($model->save()) {
+                    return [
                 'status' => true
             ];
-            }
-
-            else{
-              return [
+                } else {
+                    return [
                 'status' => false,
                 'errors' => $model->getErrors($attribute = 'dateRange'),
             ];
+                }
             }
-            }
-        }
-         else {
+        } else {
             return [
                 'status' => true,
                 'data' => $data

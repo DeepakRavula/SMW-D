@@ -16,12 +16,12 @@ $this->params['action-button'] = Html::a('<i title="Print" class="fa fa-print f-
 <div class="row">
 	<div class="col-md-6">
 		<?php
-		LteBox::begin([
-			'type' => LteConst::TYPE_DEFAULT,
-			'title' => 'Details',
-			'withBorder' => true,
-		])
-		?>
+        LteBox::begin([
+            'type' => LteConst::TYPE_DEFAULT,
+            'title' => 'Details',
+            'withBorder' => true,
+        ])
+        ?>
 		<dl class="dl-horizontal">
 			<dt>Program</dt>
 			<dd><?= $model->program->name; ?></dd>
@@ -34,12 +34,12 @@ $this->params['action-button'] = Html::a('<i title="Print" class="fa fa-print f-
 		</div>
 	<div class="col-md-6">
 		<?php
-		LteBox::begin([
-			'type' => LteConst::TYPE_DEFAULT,
-			'title' => 'Schedule',
-			'withBorder' => true,
-		])
-		?>
+        LteBox::begin([
+            'type' => LteConst::TYPE_DEFAULT,
+            'title' => 'Schedule',
+            'withBorder' => true,
+        ])
+        ?>
 		<dl class="dl-horizontal">
 			<dt>Duration</dt>
 			<dd>
@@ -71,14 +71,14 @@ $logContent = $this->render('log', [
 ?>
 <?php echo Tabs::widget([
     'items' => [
-		[
+        [
             'label' => 'Lessons',
             'content' => $lessonContent,
             'options' => [
                 'id' => 'lesson',
             ],
         ],
-		[
+        [
             'label' => 'Students',
             'content' => $studentContent,
             'options' => [

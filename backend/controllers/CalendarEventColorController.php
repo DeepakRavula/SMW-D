@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\base\Model;
+use yii\filters\AccessControl;
 
 /**
  * CalendarEventColorController implements the CRUD actions for CalendarEventColor model.
@@ -24,6 +25,16 @@ class CalendarEventColorController extends \common\components\controllers\BaseCo
                     'delete' => ['post'],
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['edit'],
+                        'roles' => ['manageColorCode'],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -34,14 +45,14 @@ class CalendarEventColorController extends \common\components\controllers\BaseCo
      */
     public function actionEdit()
     {
-		$eventModels = CalendarEventColor::find()->all();
-		$request = Yii::$app->request;
+        $eventModels = CalendarEventColor::find()->all();
+        $request = Yii::$app->request;
         Model::loadMultiple($eventModels, $request->post());
-		foreach ($eventModels as $eventModel) {
-			$eventModel->save();
-		}
-		return $this->render('create', [
-			'eventModels' => $eventModels,
-		]);
+        foreach ($eventModels as $eventModel) {
+            $eventModel->save();
+        }
+        return $this->render('create', [
+            'eventModels' => $eventModels,
+        ]);
     }
 }

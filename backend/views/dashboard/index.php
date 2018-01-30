@@ -13,47 +13,47 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
 <div class="row">
 	<div class="col-md-3 col-sm-6 col-xs-12">
 		<?php
-		echo \insolita\wgadminlte\LteInfoBox::widget([
-			'bgIconColor' => '',
-			'bgColor' => 'blue',
-			'number' => $enrolments,
-			'text' => 'Private Enrolments',
-			'icon' => 'fa fa-graduation-cap',
-		])
-		?>
+        echo \insolita\wgadminlte\LteInfoBox::widget([
+            'bgIconColor' => '',
+            'bgColor' => 'blue',
+            'number' => $enrolments,
+            'text' => 'Private Enrolments',
+            'icon' => 'fa fa-graduation-cap',
+        ])
+        ?>
 	</div>
 	<div class="col-md-3 col-sm-6 col-xs-12">
 		<?php
-		echo \insolita\wgadminlte\LteInfoBox::widget([
-			'bgIconColor' => '',
-			'bgColor' => 'gray',
-			'number' => $groupEnrolments,
-			'text' => 'Group Enrolments',
-			'icon' => 'fa fa-users',
-		])
-		?>
+        echo \insolita\wgadminlte\LteInfoBox::widget([
+            'bgIconColor' => '',
+            'bgColor' => 'gray',
+            'number' => $groupEnrolments,
+            'text' => 'Group Enrolments',
+            'icon' => 'fa fa-users',
+        ])
+        ?>
 	</div>
 	<div class="col-md-3 col-sm-6 col-xs-12">
 		<?php
-		echo \insolita\wgadminlte\LteInfoBox::widget([
-			'bgIconColor' => '',
-			'bgColor' => 'orange',
-			'number' => $students,
-			'text' => 'Active Students',
-			'icon' => 'fa fa-child',
-		])
-		?>
+        echo \insolita\wgadminlte\LteInfoBox::widget([
+            'bgIconColor' => '',
+            'bgColor' => 'orange',
+            'number' => $students,
+            'text' => 'Active Students',
+            'icon' => 'fa fa-child',
+        ])
+        ?>
 	</div>
 	<div class="col-md-3 col-sm-6 col-xs-12">
 		<?php
-		echo \insolita\wgadminlte\LteInfoBox::widget([
-			'bgIconColor' => '',
-			'bgColor' => 'green',
-			'number' => $lessonsCount,
-			'text' => 'Lessons',
-			'icon' => 'fa fa-music',
-		])
-		?>
+        echo \insolita\wgadminlte\LteInfoBox::widget([
+            'bgIconColor' => '',
+            'bgColor' => 'green',
+            'number' => $lessonsCount,
+            'text' => 'Lessons',
+            'icon' => 'fa fa-music',
+        ])
+        ?>
 	</div>
 </div>
 <div class="row">
@@ -73,25 +73,25 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
 						<div class="pad">
 							<!-- Map will be created here -->
 							<?=
-							Highcharts::widget([
-								'options' => [
-									'title' => ['text' => ''],
-									'xAxis' => [
-										'categories' => Dashboard::previousMonths(),
-									],
-									'yAxis' => [
-										'title' => ['text' => 'Income'],
-									],
-									'series' => [
-										[
-											'name' => 'Month',
-											'data' => Dashboard::income(),
-											'color' => '#E12E2B'
-										],
-									],
-								],
-							]);
-							?>	
+                            Highcharts::widget([
+                                'options' => [
+                                    'title' => ['text' => ''],
+                                    'xAxis' => [
+                                        'categories' => Dashboard::previousMonths(),
+                                    ],
+                                    'yAxis' => [
+                                        'title' => ['text' => 'Income'],
+                                    ],
+                                    'series' => [
+                                        [
+                                            'name' => 'Month',
+                                            'data' => Dashboard::income(),
+                                            'color' => '#E12E2B'
+                                        ],
+                                    ],
+                                ],
+                            ]);
+                            ?>	
 						</div>
 					</div>
 				</div>
@@ -118,30 +118,30 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
 						<div class="pad">
 							<!-- Map will be created here -->
 							<?=
-							Highcharts::widget([
-								'options' => [
-									'title' => ['text' => ''],
-									'plotOptions' => [
-										'pie' => [
-											'showInLegend' => true,
-											'size' => '80%',
-											'cursor' => 'pointer',
-											'dataLabels' => [
-												'enabled' => false,
-												'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
-											],
-										],
-									],
-									'series' => [
-										[
-											'type' => 'pie',
-											'name' => 'Gain Count',
-											'data' => $enrolmentGains
-										],
-									],
-								],
-							]);
-							?>
+                            Highcharts::widget([
+                                'options' => [
+                                    'title' => ['text' => ''],
+                                    'plotOptions' => [
+                                        'pie' => [
+                                            'showInLegend' => true,
+                                            'size' => '80%',
+                                            'cursor' => 'pointer',
+                                            'dataLabels' => [
+                                                'enabled' => false,
+                                                'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                            ],
+                                        ],
+                                    ],
+                                    'series' => [
+                                        [
+                                            'type' => 'pie',
+                                            'name' => 'Gain Count',
+                                            'data' => $enrolmentGains
+                                        ],
+                                    ],
+                                ],
+                            ]);
+                            ?>
 						</div>
 					</div>
 				</div>
@@ -166,30 +166,30 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
 							<!-- Map will be created here -->
 							<div class="m-t-20">
 								<?=
-								Highcharts::widget([
-									'options' => [
-										'title' => ['text' => ''],
-										'plotOptions' => [
-											'pie' => [
-												'showInLegend' => true,
-												'size' => '80%',
-												'cursor' => 'pointer',
-												'dataLabels' => [
-													'enabled' => false,
-													'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
-												],
-											],
-										],
-										'series' => [
-											[
-												'type' => 'pie',
-												'name' => 'Loss Count',
-												'data' => $enrolmentLosses
-											],
-										],
-									],
-								]);
-								?>
+                                Highcharts::widget([
+                                    'options' => [
+                                        'title' => ['text' => ''],
+                                        'plotOptions' => [
+                                            'pie' => [
+                                                'showInLegend' => true,
+                                                'size' => '80%',
+                                                'cursor' => 'pointer',
+                                                'dataLabels' => [
+                                                    'enabled' => false,
+                                                    'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                                ],
+                                            ],
+                                        ],
+                                        'series' => [
+                                            [
+                                                'type' => 'pie',
+                                                'name' => 'Loss Count',
+                                                'data' => $enrolmentLosses
+                                            ],
+                                        ],
+                                    ],
+                                ]);
+                                ?>
 							</div>
 						</div>
 					</div>
@@ -215,30 +215,30 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
 							<!-- Map will be created here -->
 							<?php if (!empty($completedPrograms)) : ?>
 								<?=
-								Highcharts::widget([
-									'options' => [
-										'title' => ['text' => ''],
-										'plotOptions' => [
-											'pie' => [
-												'showInLegend' => true,
-												'size' => '80%',
-												'cursor' => 'pointer',
-												'dataLabels' => [
-													'enabled' => false,
-													'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
-												],
-											],
-										],
-										'series' => [
-											[
-												'type' => 'pie',
-												'name' => 'Hours',
-												'data' => $completedPrograms
-											],
-										],
-									],
-								]);
-								?>
+                                Highcharts::widget([
+                                    'options' => [
+                                        'title' => ['text' => ''],
+                                        'plotOptions' => [
+                                            'pie' => [
+                                                'showInLegend' => true,
+                                                'size' => '80%',
+                                                'cursor' => 'pointer',
+                                                'dataLabels' => [
+                                                    'enabled' => false,
+                                                    'format' => '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                                ],
+                                            ],
+                                        ],
+                                        'series' => [
+                                            [
+                                                'type' => 'pie',
+                                                'name' => 'Hours',
+                                                'data' => $completedPrograms
+                                            ],
+                                        ],
+                                    ],
+                                ]);
+                                ?>
 							<?php endif; ?>	
 						</div>
 					</div>

@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\bootstrap\Modal;
 
 use kartik\datetime\DateTimePickerAsset;
+
 DateTimePickerAsset::register($this);
 ?>
 <div class="row-fluid">
@@ -12,7 +13,7 @@ DateTimePickerAsset::register($this);
 </div>
 <div>
 <?php yii\widgets\Pjax::begin([
-	'id' => 'unavailability-list'
+    'id' => 'unavailability-list'
 ]) ?>
 <?php
 echo GridView::widget([
@@ -25,10 +26,10 @@ echo GridView::widget([
 'headerRowOptions' => ['class' => 'bg-light-gray'],
 'columns' => [
     'fromDate:date',
-	'toDate:date',
-	'reason:raw',
-	'fromTime:time',
-	'toTime:time'	
+    'toDate:date',
+    'reason:raw',
+    'fromTime:time',
+    'toTime:time'
 ],
 ]);
 ?>
@@ -36,10 +37,10 @@ echo GridView::widget([
 <div class="clearfix"></div>
 </div>
 <?php
-	Modal::begin([
-		'header' => '<h4 class="m-0">Unavailability</h4>',
-		'id'=>'unavailability-modal',
-	]);?>
+    Modal::begin([
+        'header' => '<h4 class="m-0">Unavailability</h4>',
+        'id'=>'unavailability-modal',
+    ]);?>
 	<div id="unavailability-content"></div>
 	<?php Modal::end();?>
 <script>

@@ -9,13 +9,13 @@ class Scheduler extends AssetBundle
 {
     public $sourcePath = '@bower/fullcalendar-scheduler/dist';
     public $js = [
-		'scheduler.js',
+        'scheduler.js',
     ];
 
-	public $css = [
-		'scheduler.css'
-	];
-	public $depends = [
-		\common\assets\fullcalendar\FullCalendar::class
-	];
+    public $css = [
+        'scheduler.css'
+    ];
+    public $depends = [
+        \common\assets\fullcalendar\FullCalendar::class
+    ];
 }

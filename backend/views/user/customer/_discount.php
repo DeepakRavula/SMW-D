@@ -19,13 +19,13 @@ if (empty($discount)) {
 
 ?>
 	<?php
-	LteBox::begin([
-		'type' => LteConst::TYPE_DEFAULT,
-		'boxTools' => $boxTools,
-		'title' => 'Discount  (%)',
-		'withBorder' => true,
-	])
-	?>
+    LteBox::begin([
+        'type' => LteConst::TYPE_DEFAULT,
+        'boxTools' => $boxTools,
+        'title' => 'Discount  (%)',
+        'withBorder' => true,
+    ])
+    ?>
 
 	<dl class="dl-horizontal">
 		<dt>Discount</dt>

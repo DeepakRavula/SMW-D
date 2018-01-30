@@ -36,50 +36,50 @@ $privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
  <?php yii\widgets\Pjax::begin(['id' => 'schedule-listing']); ?>
 <?=
 GridView::widget([
-	'dataProvider' => $dataProvider,
-	'summary' => '',
-	'rowOptions' => function ($model, $key, $index, $grid) {
-		return ['class' => $model->getClass()];
-	},
-	'options' => [
+    'dataProvider' => $dataProvider,
+    'summary' => '',
+    'rowOptions' => function ($model, $key, $index, $grid) {
+        return ['class' => $model->getClass()];
+    },
+    'options' => [
         'class' => 'daily-schedule',
     ],
-	'columns' => [
-			[
-			'label' => 'Start time',
-			'value' => function ($data) {
-				return Yii::$app->formatter->asTime($data->date);
-			},
-		],
-			[
-			'label' => 'Student',
-			'value' => function ($data) {
-				$student = '-';
-				if($data->course->program->isPrivate()) {
-					$student = $data->enrolment->student->fullName;
-				}
-				return $student;
-			},
-		],
-			[
-			'label' => 'Teacher',
-			'value' => function ($data) {
-				return $data->course->teacher->publicIdentity;
-			},
-		],
-			[
-			'label' => 'Program',
-			'value' => function ($data) {
-				return $data->course->program->name;
-			},
-		],
-			[
-			'label' => 'Classroom',
-			'value' => function ($data) {
-				return !empty($data->classroomId) ? $data->classroom->name : null;
-			},
-		],
-	]
+    'columns' => [
+            [
+            'label' => 'Start time',
+            'value' => function ($data) {
+                return Yii::$app->formatter->asTime($data->date);
+            },
+        ],
+            [
+            'label' => 'Student',
+            'value' => function ($data) {
+                $student = '-';
+                if ($data->course->program->isPrivate()) {
+                    $student = $data->enrolment->student->fullName;
+                }
+                return $student;
+            },
+        ],
+            [
+            'label' => 'Teacher',
+            'value' => function ($data) {
+                return $data->course->teacher->publicIdentity;
+            },
+        ],
+            [
+            'label' => 'Program',
+            'value' => function ($data) {
+                return $data->course->program->name;
+            },
+        ],
+            [
+            'label' => 'Classroom',
+            'value' => function ($data) {
+                return !empty($data->classroomId) ? $data->classroom->name : null;
+            },
+        ],
+    ]
 ]);
 ?>
 <?php yii\widgets\Pjax::end(); ?>

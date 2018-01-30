@@ -6,6 +6,7 @@ use common\models\Program;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use common\models\Invoice;
+
 ?>
 <?php $this->render('/lesson/_color-code'); ?>
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
@@ -47,8 +48,8 @@ use common\models\Invoice;
         }])
         ->where(['lesson.teacherId' => $teacherId])
         ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
-		->isConfirmed()
-		->notDeleted()
+        ->isConfirmed()
+        ->notDeleted()
         ->all();
    $events = [];
     foreach ($lessons as &$lesson) {

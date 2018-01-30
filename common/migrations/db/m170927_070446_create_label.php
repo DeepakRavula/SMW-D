@@ -8,7 +8,7 @@ class m170927_070446_create_label extends Migration
     public function up()
     {
         $tableSchema = Yii::$app->db->schema->getTableSchema('label');
-        if($tableSchema == null) {	
+        if ($tableSchema == null) {
             $this->createTable('label', [
                 'id' => $this->primaryKey()
             ]);
@@ -16,7 +16,7 @@ class m170927_070446_create_label extends Migration
             $this->addColumn('label', 'userAdded', $this->integer()->notNull()->after('name'));
             $labels = PhoneLabel::find()->all();
             foreach ($labels as $label) {
-                $this->insert('label',[
+                $this->insert('label', [
                     'name' => $label->name,
                     'userAdded' => 0,
                 ]);

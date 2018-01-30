@@ -33,7 +33,7 @@ class Program extends \yii\db\ActiveRecord
      */
     public static function find()
     {
-        return new ProgramQuery(get_called_class(),parent::find());
+        return new ProgramQuery(get_called_class(), parent::find());
     }
 
     /**
@@ -62,7 +62,7 @@ class Program extends \yii\db\ActiveRecord
             'rate' => 'Rate',
             'status' => 'Status',
             'type' => 'Type',
-			'showAllPrograms' => 'Show All'
+            'showAllPrograms' => 'Show All'
         ];
     }
     public function behaviors()
@@ -89,11 +89,11 @@ class Program extends \yii\db\ActiveRecord
     public static function statuses()
     {
         return [
-            self::STATUS_INACTIVE => Yii::t('common', 'In Active'),
+            self::STATUS_INACTIVE => Yii::t('common', 'Inactive'),
             self::STATUS_ACTIVE => Yii::t('common', 'Active'),
         ];
     }
-	public static function types()
+    public static function types()
     {
         return [
             self::TYPE_PRIVATE_PROGRAM => Yii::t('common', 'Private'),
@@ -111,22 +111,22 @@ class Program extends \yii\db\ActiveRecord
         return $this->hasMany(Course::className(), ['programId' => 'id']);
     }
 
-	public function isPrivate()
-	{
-		return (int) $this->type === self::TYPE_PRIVATE_PROGRAM;
-	}
+    public function isPrivate()
+    {
+        return (int) $this->type === self::TYPE_PRIVATE_PROGRAM;
+    }
 
-	public function isGroup()
-	{
-		return (int) $this->type === self::TYPE_GROUP_PROGRAM;
-	}
-	public function deletable()
-	{
-		$course = Course::find()
-			->innerJoinWith(['program' =>function($query) {
-				$query->andWhere(['programId' => $this->id]);
-			}]) 
-			->exists();
-		return empty($course);
-	}
+    public function isGroup()
+    {
+        return (int) $this->type === self::TYPE_GROUP_PROGRAM;
+    }
+    public function deletable()
+    {
+        $course = Course::find()
+            ->innerJoinWith(['program' =>function ($query) {
+                $query->andWhere(['programId' => $this->id]);
+            }])
+            ->exists();
+        return empty($course);
+    }
 }

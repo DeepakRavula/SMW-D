@@ -27,16 +27,17 @@ use yii\base\ErrorException;
 use common\models\User;
 use yii\filters\ContentNegotiator;
 use common\models\PaymentCycle;
-use common\models\Invoice;
 use common\models\lesson\BulkReschedule;
 use common\models\lesson\BulkRescheduleLesson;
 use common\models\log\StudentLog;
 use common\models\log\EnrolmentLog;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
-class LessonController extends \common\components\controllers\BaseController
+class LessonController extends BaseController
 {
     public function behaviors()
     {
@@ -57,6 +58,24 @@ class LessonController extends \common\components\controllers\BaseController
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'create',
+							'validate-on-update', 'validate', 
+							'fetch-duration','edit-classroom', 
+							'update', 'update-field', 'review',
+							'fetch-conflict', 'confirm',
+							'invoice', 'take-payment',
+							'modify-classroom', 'modify-lesson',
+							'payment', 'substitute', 'unschedule'],
+                        'roles' => ['managePrivateLessons', 
+							'manageGroupLessons'],
+                    ],
+                ],
+            ],  
         ];
     }
 
@@ -101,35 +120,35 @@ class LessonController extends \common\components\controllers\BaseController
             'query' => $notes,
         ]);
 
-		$groupLessonStudents = Student::find()
+        $groupLessonStudents = Student::find()
                         ->notDeleted()
-			->joinWith(['enrolment' => function($query) use($id) {
-				$query->joinWith(['course' => function($query) use($id) {
-					$query->joinWith(['program' => function($query) use($id) {
-						$query->group();
-					}]);
-					$query->joinWith(['lessons' => function($query) use($id) {
-						$query->andWhere(['lesson.id' => $id]);
-					}]);
-				}])
-				->notDeleted()
-		        ->isConfirmed();
-			}])
-			->location($locationId);
+            ->joinWith(['enrolment' => function ($query) use ($id) {
+                $query->joinWith(['course' => function ($query) use ($id) {
+                    $query->joinWith(['program' => function ($query) use ($id) {
+                        $query->group();
+                    }]);
+                    $query->joinWith(['lessons' => function ($query) use ($id) {
+                        $query->andWhere(['lesson.id' => $id]);
+                    }]);
+                }])
+                ->notDeleted()
+                ->isConfirmed();
+            }])
+            ->location($locationId);
 
         $studentDataProvider = new ActiveDataProvider([
             'query' => $groupLessonStudents,
         ]);
         $payments = Payment::find()
-			->joinWith(['lessonCredit' => function($query) use($id){
-				$query->andWhere(['lesson_payment.lessonId' => $id]);
-			}]);
+            ->joinWith(['lessonCredit' => function ($query) use ($id) {
+                $query->andWhere(['lesson_payment.lessonId' => $id]);
+            }]);
         $paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments,
         ]);
         $logDataProvider =new ActiveDataProvider([
-			'query' => LogHistory::find()
-			->lesson($id) ]);
+            'query' => LogHistory::find()
+            ->lesson($id) ]);
         return $this->render('view', [
             'model' => $model,
             'noteDataProvider' => $noteDataProvider,
@@ -149,7 +168,7 @@ class LessonController extends \common\components\controllers\BaseController
     {
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
-        $model = new Lesson();
+        $model = new ExtraLesson();
         $model->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model->setScenario(Lesson::SCENARIO_CREATE);
         $request = Yii::$app->request;
@@ -162,16 +181,24 @@ class LessonController extends \common\components\controllers\BaseController
             'studentModel' => $studentModel
         ]);
         if ($model->load($request->post())) {
-            $model->addExtra(Lesson::STATUS_SCHEDULED);
+            $model->add(Lesson::STATUS_SCHEDULED);
             if ($model->save()) {
+                $model->markAsRoot();
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-                $model->on(Lesson::EVENT_AFTER_INSERT,
+                $model->on(
+                    Lesson::EVENT_AFTER_INSERT,
                     [new LessonLog(), 'extraLessonCreate'],
-                    ['loggedUser' => $loggedUser]);
+                    ['loggedUser' => $loggedUser]
+                );
                 $model->trigger(Lesson::EVENT_AFTER_INSERT);
                 $response   = [
                     'status' => true,
                     'url' => Url::to(['lesson/view', 'id' => $model->id])
+                ];
+            } else {
+                $response   = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model)
                 ];
             }
         } else {
@@ -187,7 +214,7 @@ class LessonController extends \common\components\controllers\BaseController
     {
         $errors = [];
         $model = $this->findModel($id);
-        if(empty($teacherId)) {
+        if (empty($teacherId)) {
             $model->setScenario(Lesson::SCENARIO_EDIT);
         }
         if ($model->load(Yii::$app->request->post())) {
@@ -202,30 +229,31 @@ class LessonController extends \common\components\controllers\BaseController
 
     public function actionValidate($studentId)
     {
-		$response = \Yii::$app->response;
-		$response->format = Response::FORMAT_JSON;
-        $model = new Lesson();
+        $response = \Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+        $model = new ExtraLesson();
         $model->type = Lesson::TYPE_EXTRA;
-		$model->setScenario(Lesson::SCENARIO_CREATE);
-		$request = Yii::$app->request;
+        $model->status = Lesson::STATUS_SCHEDULED;
+        $model->setScenario(Lesson::SCENARIO_CREATE);
+        $request = Yii::$app->request;
         if ($model->load($request->post())) {
-			$studentEnrolment = Enrolment::find()
-			   ->joinWith(['course' => function($query) use($model){
-				   $query->where(['course.programId' => $model->programId]);
-			   }])
-				->where(['studentId' => $studentId])
-				->one();
+            $studentEnrolment = Enrolment::find()
+               ->joinWith(['course' => function ($query) use ($model) {
+                   $query->where(['course.programId' => $model->programId]);
+               }])
+                ->where(['studentId' => $studentId])
+                ->one();
             $model->courseId = !empty($studentEnrolment) ? $studentEnrolment->courseId : null;
             $model->studentId = $studentId;
-			return  ActiveForm::validate($model);
-		}
+            return  ActiveForm::validate($model);
+        }
     }
 
-	public function actionFetchDuration($id)
-	{
+    public function actionFetchDuration($id)
+    {
         $model = $this->findModel($id);
-		return $model->duration;
-	}
+        return $model->duration;
+    }
     /**
      * Updates an existing Lesson model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -234,96 +262,97 @@ class LessonController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-	public function actionEditClassroom($id)
-	{
-		$request = Yii::$app->request;
+    public function actionEditClassroom($id)
+    {
+        $request = Yii::$app->request;
         $model = $this->findModel($id);
-		$model->setScenario(Lesson::SCENARIO_EDIT);
-		if ($model->load($request->post())) {
-			if($model->save()) {
-				return [
-					'status' => true
-				];
-			} else {
-				return [
-					'status' => false,
-					'errors' => ActiveForm::validate($model)
-				];
-			}
-		}
-	}
+        $model->setScenario(Lesson::SCENARIO_EDIT);
+        if ($model->load($request->post())) {
+            if ($model->save()) {
+                return [
+                    'status' => true
+                ];
+            } else {
+                return [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model)
+                ];
+            }
+        }
+    }
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
         $oldDate = $model->date;
         $response = \Yii::$app->response;
-		$response->format = Response::FORMAT_JSON;
+        $response->format = Response::FORMAT_JSON;
         $model->date =Yii::$app->formatter->asDateTime($model->date);
         $oldTeacherId = $model->teacherId;
         $user = User::findOne(['id'=>Yii::$app->user->id]);
         $model->userName = $user->publicIdentity;
-        $model->on(Lesson::EVENT_RESCHEDULE_ATTEMPTED,
-                [new LessonReschedule(), 'reschedule'], ['oldAttrtibutes' => $model->getOldAttributes()]);
-		$request = Yii::$app->request;
-		$userModel = $request->post('User');
-		if ($model->hasExpiryDate()) {
-			$privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
-			$privateLessonModel->load(Yii::$app->getRequest()->getBodyParams(), 'PrivateLesson');
-			$privateLessonModel->expiryDate = (new \DateTime($privateLessonModel->expiryDate))->format('Y-m-d H:i:s');
-                        $privateLessonModel->save();
-		}
+        $model->on(
+            Lesson::EVENT_RESCHEDULE_ATTEMPTED,
+                [new LessonReschedule(), 'reschedule'],
+            ['oldAttrtibutes' => $model->getOldAttributes()]
+        );
+        $request = Yii::$app->request;
+        $userModel = $request->post('User');
+        if ($model->hasExpiryDate()) {
+            $privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
+            $privateLessonModel->load(Yii::$app->getRequest()->getBodyParams(), 'PrivateLesson');
+            $privateLessonModel->expiryDate = (new \DateTime($privateLessonModel->expiryDate))->format('Y-m-d H:i:s');
+            $privateLessonModel->save();
+        }
         if ($model->load($request->post()) || !empty($userModel)) {
-			if(empty($model->date)) {
-				$model->date =  $oldDate;
-				$model->status = Lesson::STATUS_UNSCHEDULED;
-				$model->save();
-				  $response = [
+            if (empty($model->date)) {
+                $model->date =  $oldDate;
+                $model->status = Lesson::STATUS_UNSCHEDULED;
+                $model->save();
+                $response = [
                     'status' => true,
                     'url' => Url::to(['lesson/view', 'id' => $model->id])
                 ];
             } else {
-                
-				if(!empty($userModel)) {
-					$model->date = $userModel['fromDate'];
-					$model->duration = (new \DateTime($model->duration))->format('H:i');
-				}
-				if (new \DateTime($oldDate) != new \DateTime($model->date) || $oldTeacherId != $model->teacherId) {
-				
-                                    $model->setScenario(Lesson::SCENARIO_EDIT);
-					$validate = $model->validate();
-				}
-				$lessonConflict = $model->getErrors('date');
-				$message = current($lessonConflict);
-				if(! empty($lessonConflict)){
-					 $response = [
+                if (!empty($userModel)) {
+                    $model->date = $userModel['fromDate'];
+                    $model->duration = (new \DateTime($model->duration))->format('H:i');
+                }
+                if (new \DateTime($oldDate) != new \DateTime($model->date) || $oldTeacherId != $model->teacherId) {
+                    $model->setScenario(Lesson::SCENARIO_EDIT);
+                    $validate = $model->validate();
+                }
+                $lessonConflict = $model->getErrors('date');
+                $message = current($lessonConflict);
+                if (! empty($lessonConflict)) {
+                    $response = [
                         'status' => false,
                         'errors' => $message
                     ];
                 } else {
-					if($model->course->program->isPrivate()) {
-						$duration = new \DateTime($model->duration);
-						$model->duration = $duration->format('H:i:s');
-					}
-					$lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
-					$model->date = $lessonDate->format('Y-m-d H:i:s');
-                    if(! $model->save()) {
-					   $response = [
+                    if ($model->course->program->isPrivate()) {
+                        $duration = new \DateTime($model->duration);
+                        $model->duration = $duration->format('H:i:s');
+                    }
+                    $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+                    $model->date = $lessonDate->format('Y-m-d H:i:s');
+                    if (! $model->save()) {
+                        $response = [
                             'status' => false,
                             'errors' => $model->getErrors()
                         ];
                     }
-                  $response = [
+                    $response = [
                         'status' => true,
                         'url' => Url::to(['lesson/view', 'id' => $model->id])
                     ];
                 }
-			}
+            }
             return $response;
         }
         return $this->render('_form-private-lesson', [
-			'model' => $model,
-			'privateLessonModel' => !empty($privateLessonModel) ? $privateLessonModel : null
-		]);
+            'model' => $model,
+            'privateLessonModel' => !empty($privateLessonModel) ? $privateLessonModel : null
+        ]);
     }
 
     /**
@@ -348,127 +377,126 @@ class LessonController extends \common\components\controllers\BaseController
         }
     }
 
-	public function getConflicts($course)
-	{
-		$conflicts = [];
-		$conflictedLessonIds = [];
-		$draftLessons = Lesson::find()
-			->where(['courseId' => $course->id, 'isConfirmed' => false,
-				'status' => Lesson::STATUS_SCHEDULED])
-			->all();
-		foreach ($draftLessons as $draftLesson) {
-			$draftLesson->setScenario('review');
-		}
-		Model::validateMultiple($draftLessons);
-		foreach ($draftLessons as $draftLesson) {
-			if(!empty($draftLesson->getErrors('date'))) {
-				$conflictedLessonIds[] = $draftLesson->id;
-			}
-			$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
-		}
+    public function getConflicts($course)
+    {
+        $conflicts = [];
+        $conflictedLessonIds = [];
+        $draftLessons = Lesson::find()
+            ->where(['courseId' => $course->id, 'isConfirmed' => false,
+                'status' => Lesson::STATUS_SCHEDULED])
+            ->all();
+        foreach ($draftLessons as $draftLesson) {
+            $draftLesson->setScenario('review');
+        }
+        Model::validateMultiple($draftLessons);
+        foreach ($draftLessons as $draftLesson) {
+            if (!empty($draftLesson->getErrors('date'))) {
+                $conflictedLessonIds[] = $draftLesson->id;
+            }
+            $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
+        }
 
-		$holidayConflictedLessonIds = $course->getHolidayLessons();
-		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
-		return [
-			'conflicts' => $conflicts,
-			'lessonIds' => $conflictedLessonIds
-		];
-	}
-	public function fetchConflictedLesson($course)
-	{
-
-		$conflictedLessons = $this->getConflicts($course);
-		$lessons = Lesson::find()
-			->where(['courseId' => $course->id, 'isConfirmed' => false,
-				'status' => Lesson::STATUS_SCHEDULED])
-			->all();
-		if(!empty($conflictedLessons['lessonIds'])) {
-			$lessons = Lesson::find()
-				->orderBy(['lesson.date' => SORT_ASC])
-				->andWhere(['IN', 'lesson.id', $conflictedLessons['lessonIds']])
-				->all();
-		}
-		return $lessons;
-	}
-	public function resolveSingleLesson($lesson, $oldDate)
-	{
-		if(! empty($lesson->date)) {
-			$lesson->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
-			$lesson->date = (new \DateTime($lesson->date))->format('Y-m-d H:i:s');
-		} else {
-			$lesson->date = $oldDate;
-			$lesson->status = Lesson::STATUS_UNSCHEDULED;
-		}
-		if($lesson->save()) {
-			$response = [
-				'status' => true
-			];
-		} else {
-			$response = [
-				'status' => false,
-				'errors' => ActiveForm::validate($lesson),
-			];
-		}
-		return $response;
-	}
-	public function resolveAllLesson($conflictedLessons, $lesson)
-	{
-		foreach($conflictedLessons as $conflictedLesson) {
-			$conflictedLesson->duration = $lesson->duration;
-			if(! empty($lesson->date)) {
-				$day = (new \DateTime($lesson->date))->format('N');
-				$lessonDay = (new \DateTime($conflictedLesson->date))->format('N');
-				$time = (new \DateTime($lesson->date))->format('H:i:s');
-				list($hour, $minute, $second) = explode(':', $time);
-				$dayList = Course::getWeekdaysList();
-				$dayName = $dayList[$day];
-				if($day === $lessonDay) {
-					$lessonDate = new \DateTime($conflictedLesson->date);
-					$lessonDate->setTime($hour, $minute, $second);
-					$conflictedLesson->date = $lessonDate->format('Y-m-d H:i:s');
-				} else {
-					$lessonDate = new \DateTime($conflictedLesson->date);
-					$lessonDate->modify('next ' . $dayName);
-					$lessonDate->setTime($hour, $minute, $second);
-					$conflictedLesson->date = $lessonDate->format('Y-m-d H:i:s');
-				}
-			} else {
-				$conflictedLesson->status = Lesson::STATUS_UNSCHEDULED;
-			}
-			if(! $conflictedLesson->save()) {
-				Yii::error('Resolve lesson conflict: ' . \yii\helpers\VarDumper::dumpAsString($conflictedLesson->getErrors()));
-			}
-		}
-		$response = [
-			'status' => true
-		];
-		return $response;
-	}
+        $holidayConflictedLessonIds = $course->getHolidayLessons();
+        $conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
+        return [
+            'conflicts' => $conflicts,
+            'lessonIds' => $conflictedLessonIds
+        ];
+    }
+    public function fetchConflictedLesson($course)
+    {
+        $conflictedLessons = $this->getConflicts($course);
+        $lessons = Lesson::find()
+            ->where(['courseId' => $course->id, 'isConfirmed' => false,
+                'status' => Lesson::STATUS_SCHEDULED])
+            ->all();
+        if (!empty($conflictedLessons['lessonIds'])) {
+            $lessons = Lesson::find()
+                ->orderBy(['lesson.date' => SORT_ASC])
+                ->andWhere(['IN', 'lesson.id', $conflictedLessons['lessonIds']])
+                ->all();
+        }
+        return $lessons;
+    }
+    public function resolveSingleLesson($lesson, $oldDate)
+    {
+        if (! empty($lesson->date)) {
+            $lesson->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
+            $lesson->date = (new \DateTime($lesson->date))->format('Y-m-d H:i:s');
+        } else {
+            $lesson->date = $oldDate;
+            $lesson->status = Lesson::STATUS_UNSCHEDULED;
+        }
+        if ($lesson->save()) {
+            $response = [
+                'status' => true
+            ];
+        } else {
+            $response = [
+                'status' => false,
+                'errors' => ActiveForm::validate($lesson),
+            ];
+        }
+        return $response;
+    }
+    public function resolveAllLesson($conflictedLessons, $lesson)
+    {
+        foreach ($conflictedLessons as $conflictedLesson) {
+            $conflictedLesson->duration = $lesson->duration;
+            if (! empty($lesson->date)) {
+                $day = (new \DateTime($lesson->date))->format('N');
+                $lessonDay = (new \DateTime($conflictedLesson->date))->format('N');
+                $time = (new \DateTime($lesson->date))->format('H:i:s');
+                list($hour, $minute, $second) = explode(':', $time);
+                $dayList = Course::getWeekdaysList();
+                $dayName = $dayList[$day];
+                if ($day === $lessonDay) {
+                    $lessonDate = new \DateTime($conflictedLesson->date);
+                    $lessonDate->setTime($hour, $minute, $second);
+                    $conflictedLesson->date = $lessonDate->format('Y-m-d H:i:s');
+                } else {
+                    $lessonDate = new \DateTime($conflictedLesson->date);
+                    $lessonDate->modify('next ' . $dayName);
+                    $lessonDate->setTime($hour, $minute, $second);
+                    $conflictedLesson->date = $lessonDate->format('Y-m-d H:i:s');
+                }
+            } else {
+                $conflictedLesson->status = Lesson::STATUS_UNSCHEDULED;
+            }
+            if (! $conflictedLesson->save()) {
+                Yii::error('Resolve lesson conflict: ' . \yii\helpers\VarDumper::dumpAsString($conflictedLesson->getErrors()));
+            }
+        }
+        $response = [
+            'status' => true
+        ];
+        return $response;
+    }
     public function actionUpdateField($id)
     {
-		$model = $this->findModel($id);
-		$existingDate = $model->date;
+        $model = $this->findModel($id);
+        $existingDate = $model->date;
         $data = $this->renderAjax('/lesson/review/_form', [
             'model' => $model,
         ]);
-		$response = [
-			'status' => true,
-			'data' => $data
-		];
+        $response = [
+            'status' => true,
+            'data' => $data
+        ];
         if ($model->load(Yii::$app->request->post()) && !empty($model->applyContext)) {
-			if($model->isResolveSingleLesson()) {
-				$response = $this->resolveSingleLesson($model, $existingDate);
-			} else {
-				$conflictedLessons = $this->fetchConflictedLesson($model->course);
-				$response = $this->resolveAllLesson($conflictedLessons, $model);
-			}
-		}
-		return $response;
+            if ($model->isResolveSingleLesson()) {
+                $response = $this->resolveSingleLesson($model, $existingDate);
+            } else {
+                $conflictedLessons = $this->fetchConflictedLesson($model->course);
+                $response = $this->resolveAllLesson($conflictedLessons, $model);
+            }
+        }
+        return $response;
     }
 
     public function actionReview($courseId)
     {
-		$model = new Lesson();
+        $model = new Lesson();
         $searchModel = new LessonSearch();
         $request = Yii::$app->request;
         $lessonSearchRequest = $request->get('LessonSearch');
@@ -477,27 +505,27 @@ class LessonController extends \common\components\controllers\BaseController
         $enrolmentRequest = $request->get('Enrolment');
         $rescheduleBeginDate = $courseRequest['startDate'];
         $rescheduleEndDate = $courseRequest['endDate'];
-		$enrolmentType = $enrolmentRequest['type'];
+        $enrolmentType = $enrolmentRequest['type'];
         $courseModel = Course::findOne(['id' => $courseId]);
 
-		$conflictedLessons = $this->getConflicts($courseModel);
-		$lessonCount = Lesson::find()
-			->andWhere(['courseId' => $courseModel->id,	'isConfirmed' => false])
-			->count();
-		$conflictedLessonIdsCount = count($conflictedLessons['lessonIds']);
-		$unscheduledLessonCount = Lesson::find()
-			->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED, 'isConfirmed' => false])
-			->count();
-		$query = Lesson::find()
-			->orderBy(['lesson.date' => SORT_ASC]);
-		if(! $showAllReviewLessons) {
-			$query->andWhere(['IN', 'lesson.id', $conflictedLessons['lessonIds']]);
-		}  else {
-			$query->where(['courseId' => $courseModel->id, 'isConfirmed' => false]);
-		}
+        $conflictedLessons = $this->getConflicts($courseModel);
+        $lessonCount = Lesson::find()
+            ->andWhere(['courseId' => $courseModel->id,	'isConfirmed' => false])
+            ->count();
+        $conflictedLessonIdsCount = count($conflictedLessons['lessonIds']);
+        $unscheduledLessonCount = Lesson::find()
+            ->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED, 'isConfirmed' => false])
+            ->count();
+        $query = Lesson::find()
+            ->orderBy(['lesson.date' => SORT_ASC]);
+        if (! $showAllReviewLessons) {
+            $query->andWhere(['IN', 'lesson.id', $conflictedLessons['lessonIds']]);
+        } else {
+            $query->where(['courseId' => $courseModel->id, 'isConfirmed' => false]);
+        }
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
-			'pagination' => false,
+            'pagination' => false,
         ]);
         return $this->render('review', [
             'courseModel' => $courseModel,
@@ -507,12 +535,12 @@ class LessonController extends \common\components\controllers\BaseController
             'rescheduleBeginDate' => $rescheduleBeginDate,
             'rescheduleEndDate' => $rescheduleEndDate,
             'searchModel' => $searchModel,
-			'model' => $model,
-			'holidayConflictedLessonIds' => $courseModel->getHolidayLessons(),
-			'lessonCount' => $lessonCount,
-			'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
-			'unscheduledLessonCount' => $unscheduledLessonCount,
-			'enrolmentType' => $enrolmentType,
+            'model' => $model,
+            'holidayConflictedLessonIds' => $courseModel->getHolidayLessons(),
+            'lessonCount' => $lessonCount,
+            'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
+            'unscheduledLessonCount' => $unscheduledLessonCount,
+            'enrolmentType' => $enrolmentType,
         ]);
     }
 
@@ -521,27 +549,27 @@ class LessonController extends \common\components\controllers\BaseController
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
         $courseModel = Course::findOne(['id' => $courseId]);
-		$conflicts = [];
-		$conflictedLessonIds = [];
-		$draftLessons = Lesson::find()
-			->where(['courseId' => $courseModel->id, 'isConfirmed' => false,
-				'status' => Lesson::STATUS_SCHEDULED])
-			->all();
-		foreach ($draftLessons as $draftLesson) {
-			$draftLesson->setScenario('review');
-		}
-		Model::validateMultiple($draftLessons);
-		foreach ($draftLessons as $draftLesson) {
-			if(!empty($draftLesson->getErrors('date'))) {
-				$conflictedLessonIds[] = $draftLesson->id;
-			}
-			$conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
-		}
-		$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
-		$conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
-		$conflictedLessonIdsCount = count($conflictedLessonIds);
+        $conflicts = [];
+        $conflictedLessonIds = [];
+        $draftLessons = Lesson::find()
+            ->where(['courseId' => $courseModel->id, 'isConfirmed' => false,
+                'status' => Lesson::STATUS_SCHEDULED])
+            ->all();
+        foreach ($draftLessons as $draftLesson) {
+            $draftLesson->setScenario('review');
+        }
+        Model::validateMultiple($draftLessons);
+        foreach ($draftLessons as $draftLesson) {
+            if (!empty($draftLesson->getErrors('date'))) {
+                $conflictedLessonIds[] = $draftLesson->id;
+            }
+            $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
+        }
+        $holidayConflictedLessonIds = $courseModel->getHolidayLessons();
+        $conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
+        $conflictedLessonIdsCount = count($conflictedLessonIds);
         $hasConflict = false;
-		if ($conflictedLessonIdsCount > 0) {
+        if ($conflictedLessonIdsCount > 0) {
             $hasConflict = true;
         }
 
@@ -554,104 +582,106 @@ class LessonController extends \common\components\controllers\BaseController
     {
         $courseModel = Course::findOne(['id' => $courseId]);
         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-		$courseModel->updateAttributes([
-			'isConfirmed' => true
-		]);
-		$holidayConflictedLessonIds = $courseModel->getHolidayLessons();
-		$holidayLessons = Lesson::findAll(['id' => $holidayConflictedLessonIds]);
-		foreach($holidayLessons as $holidayLesson) {
-			$holidayLesson->updateAttributes([
-				'status' => Lesson::STATUS_UNSCHEDULED
-			]);
-			$privateLessonModel = new PrivateLesson();
-			$privateLessonModel->lessonId = $holidayLesson->id;
-			$date = new \DateTime($holidayLesson->date);
-			$expiryDate = $date->modify('90 days');
-			$privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-			$privateLessonModel->save();
-		}
+        $courseModel->updateAttributes([
+            'isConfirmed' => true
+        ]);
+        $holidayConflictedLessonIds = $courseModel->getHolidayLessons();
+        $holidayLessons = Lesson::findAll(['id' => $holidayConflictedLessonIds]);
+        foreach ($holidayLessons as $holidayLesson) {
+            $holidayLesson->updateAttributes([
+                'status' => Lesson::STATUS_UNSCHEDULED
+            ]);
+            $privateLessonModel = new PrivateLesson();
+            $privateLessonModel->lessonId = $holidayLesson->id;
+            $date = new \DateTime($holidayLesson->date);
+            $expiryDate = $date->modify('90 days');
+            $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+            $privateLessonModel->save();
+        }
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'isConfirmed' => false]);
-		$lesson = end($lessons);
+        $lesson = end($lessons);
         $request = Yii::$app->request;
         $courseRequest = $request->get('Course');
         $enrolmentRequest = $request->get('Enrolment');
         $rescheduleEndDate = $courseRequest['endDate'];
         $rescheduleBeginDate = $courseRequest['startDate'];
         $enrolmentType = $enrolmentRequest['type'];
-		if(!empty($enrolmentType)) {
-			$courseModel->enrolment->student->updateAttributes([
-				'status' => Student::STATUS_ACTIVE
-			]);
-			$courseModel->enrolment->student->customer->updateAttributes([
-				'status' => User::STATUS_ACTIVE
-			]);
-		}
-        if( ! empty($rescheduleBeginDate) && ! empty($rescheduleEndDate)) {
-			$startDate = new \DateTime($rescheduleBeginDate);
-			$endDate = new \DateTime($rescheduleEndDate);
-			$oldLessons = Lesson::find()
-				->where(['courseId' => $courseModel->id,
-					'status' => Lesson::STATUS_SCHEDULED,
-					'isConfirmed' => true])
-				->between($startDate, $endDate)
-				->all();
-			$oldLessonIds = [];
-			foreach($oldLessons as $oldLesson){
-				$oldLessonIds[] = $oldLesson->id;
-				$oldLesson->status = Lesson::STATUS_CANCELED;
-				$oldLesson->save();
-			}
-			$courseDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
-			if($endDate->format('d-m-Y') == $courseDate && !empty($lesson)) {
-				$courseModel->updateAttributes([
-					'teacherId' => $lesson->teacherId,
-				]);
-				$courseModel->courseSchedule->updateAttributes([
-					'day' => (new \DateTime($lesson->date))->format('N'),
-					'fromTime' => (new \DateTime($lesson->date))->format('H:i:s'),
-				]);
-			}
-		}
-		if(! empty($rescheduleBeginDate)) {
-			foreach ($lessons as $i => $lesson) {
-				$lessonRescheduleModel = new LessonReschedule();
-				$lessonRescheduleModel->lessonId = $oldLessonIds[$i];
-				$lessonRescheduleModel->rescheduledLessonId = $lesson->id;
-				if(!$lessonRescheduleModel->save()) {
-					Yii::error('Bulk reschedule: ' . \yii\helpers\VarDumper::dumpAsString($lessonRescheduleModel->getErrors()));
-				}
-			if(! empty($rescheduleBeginDate)) {
-				$bulkReschedule = new BulkReschedule();
-				$bulkReschedule->type = $this->getRescheduleLessonType($courseModel, $rescheduleEndDate);
-				try {
-					$bulkReschedule->save();
-				} catch(ErrorException $exception) {
-					Yii::$app->errorHandler->logException($exception);
-				}
+        if (!empty($enrolmentType)) {
+            $courseModel->enrolment->student->updateAttributes([
+                'status' => Student::STATUS_ACTIVE
+            ]);
+            $courseModel->enrolment->student->customer->updateAttributes([
+                'status' => User::STATUS_ACTIVE
+            ]);
+        }
+        if (! empty($rescheduleBeginDate) && ! empty($rescheduleEndDate)) {
+            $startDate = new \DateTime($rescheduleBeginDate);
+            $endDate = new \DateTime($rescheduleEndDate);
+            $oldLessons = Lesson::find()
+                ->where(['courseId' => $courseModel->id,
+                    'status' => Lesson::STATUS_SCHEDULED,
+                    'isConfirmed' => true])
+                ->between($startDate, $endDate)
+                ->all();
+            $oldLessonIds = [];
+            foreach ($oldLessons as $oldLesson) {
+                $oldLessonIds[] = $oldLesson->id;
+                $oldLesson->status = Lesson::STATUS_CANCELED;
+                $oldLesson->save();
+            }
+            $courseDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
+            if ($endDate->format('d-m-Y') == $courseDate && !empty($lesson)) {
+                $courseModel->updateAttributes([
+                    'teacherId' => $lesson->teacherId,
+                ]);
+                $courseModel->courseSchedule->updateAttributes([
+                    'day' => (new \DateTime($lesson->date))->format('N'),
+                    'fromTime' => (new \DateTime($lesson->date))->format('H:i:s'),
+                ]);
+            }
+        }
+        if (! empty($rescheduleBeginDate)) {
+            foreach ($lessons as $i => $lesson) {
+                $lessonRescheduleModel = new LessonReschedule();
+                $lessonRescheduleModel->lessonId = $oldLessonIds[$i];
+                $lessonRescheduleModel->rescheduledLessonId = $lesson->id;
+                if (!$lessonRescheduleModel->save()) {
+                    Yii::error('Bulk reschedule: ' . \yii\helpers\VarDumper::dumpAsString($lessonRescheduleModel->getErrors()));
+                }
+                if (! empty($rescheduleBeginDate)) {
+                    $bulkReschedule = new BulkReschedule();
+                    $bulkReschedule->type = $this->getRescheduleLessonType($courseModel, $rescheduleEndDate);
+                    try {
+                        $bulkReschedule->save();
+                    } catch (ErrorException $exception) {
+                        Yii::$app->errorHandler->logException($exception);
+                    }
 
-				$bulkRescheduleLesson = new BulkRescheduleLesson();
-				$bulkRescheduleLesson->bulkRescheduleId = $bulkReschedule->id;
-				$bulkRescheduleLesson->lessonId = $lesson->id;
-				try {
-					$bulkRescheduleLesson->save();
-				} catch(ErrorException $exception) {
-					Yii::$app->errorHandler->logException($exception);
-				}
-			}
-			}
+                    $bulkRescheduleLesson = new BulkRescheduleLesson();
+                    $bulkRescheduleLesson->bulkRescheduleId = $bulkReschedule->id;
+                    $bulkRescheduleLesson->lessonId = $lesson->id;
+                    try {
+                        $bulkRescheduleLesson->save();
+                    } catch (ErrorException $exception) {
+                        Yii::$app->errorHandler->logException($exception);
+                    }
+                }
+            }
             $bulkRescheduleEnrolment=$courseModel->enrolment;
-            $bulkRescheduleEnrolment->on(Enrolment::EVENT_AFTER_UPDATE,
+            $bulkRescheduleEnrolment->on(
+                Enrolment::EVENT_AFTER_UPDATE,
                 [new EnrolmentLog(), 'bulkReschedule'],
-                ['loggedUser' => $loggedUser,'rescheduleBeginDate' => $rescheduleBeginDate,'courseModel' => $courseModel]);
+                ['loggedUser' => $loggedUser,'rescheduleBeginDate' => $rescheduleBeginDate,'courseModel' => $courseModel]
+            );
             $bulkRescheduleEnrolment->trigger(ENROLMENT::EVENT_AFTER_UPDATE);
-		}
+        }
 
-		foreach ($lessons as $lesson) {
-			$lesson->updateAttributes([
-				'isConfirmed' => true,
-			]);
-			$lesson->markAsRoot();
-		}
+        foreach ($lessons as $lesson) {
+            $lesson->updateAttributes([
+                'isConfirmed' => true,
+            ]);
+            $lesson->markAsRoot();
+        }
         if (!empty($courseModel->enrolment) && empty($courseRequest)) {
             $enrolmentModel              = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
@@ -659,38 +689,42 @@ class LessonController extends \common\components\controllers\BaseController
             $enrolmentModel->setPaymentCycle($enrolmentModel->firstLesson->date);
 
             
-            $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
+            $enrolmentModel->on(
+            
+                Enrolment::EVENT_AFTER_INSERT,
                 [new StudentLog(), 'addEnrolment'],
-                ['loggedUser' => $loggedUser]);
-
+                ['loggedUser' => $loggedUser]
+            
+            );
         }
         if ($courseModel->program->isPrivate()) {
-			if(! empty($rescheduleBeginDate)) {
-				$message = 'Future lessons have been changed successfully';
-				$link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
-			} else {
-				$invoice = $courseModel->enrolment->firstPaymentCycle->createProFormaInvoice();
-                                $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
-				return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
-			}
-		} else {
-			$message = 'Course has been created successfully';
-			$link	 = $this->redirect(['course/view', 'id' => $courseId]);
-		}
-		Yii::$app->session->setFlash('alert', [
-			'options' => ['class' => 'alert-success'],
-			'body' => $message,
-		]);
-		return $link;
-	}
-	public function getRescheduleLessonType($courseModel, $endDate) {
-		$courseEndDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
-		$type = BulkReschedule::TYPE_RESCHEDULE_FUTURE_LESSONS;
-		if($courseEndDate !== $endDate) {
-			$type = BulkReschedule::TYPE_RESCHEDULE_BULK_LESSONS;
-		}
-		return $type;
-	}
+            if (! empty($rescheduleBeginDate)) {
+                $message = 'Future lessons have been changed successfully';
+                $link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
+            } else {
+                $invoice = $courseModel->enrolment->firstPaymentCycle->createProFormaInvoice();
+                $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
+                return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
+            }
+        } else {
+            $message = 'Course has been created successfully';
+            $link	 = $this->redirect(['course/view', 'id' => $courseId]);
+        }
+        Yii::$app->session->setFlash('alert', [
+            'options' => ['class' => 'alert-success'],
+            'body' => $message,
+        ]);
+        return $link;
+    }
+    public function getRescheduleLessonType($courseModel, $endDate)
+    {
+        $courseEndDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
+        $type = BulkReschedule::TYPE_RESCHEDULE_FUTURE_LESSONS;
+        if ($courseEndDate !== $endDate) {
+            $type = BulkReschedule::TYPE_RESCHEDULE_BULK_LESSONS;
+        }
+        return $type;
+    }
     public function actionInvoice($id)
     {
         $model = Lesson::findOne(['id' => $id]);
@@ -726,35 +760,9 @@ class LessonController extends \common\components\controllers\BaseController
                 ]);
                 return $this->redirect(['lesson/view', 'id' => $id]);
             }
-            if(!$model->hasProFormaInvoice()) {
-                if (!$model->paymentCycle->hasProFormaInvoice()) {
-                    $invoice = $model->paymentCycle->createProFormaInvoice();
-                    return $this->redirect(['invoice/view', 'id' => $invoice->id]);
-                } else {
-                    $model->addPrivateLessonLineItem($model->paymentCycle->proFormaInvoice);
-                    $model->paymentCycle->proFormaInvoice->save();
-                }
-            } else {
-                $model->proFormaInvoice->makeInvoicePayment($model);
-            }
-            return $this->redirect(['invoice/view', 'id' => $model->paymentCycle->proFormaInvoice->id]);
-        } else if ($model->isExtra()) {
-            if (!$model->hasProFormaInvoice()) {
-                $locationId = $model->enrolment->student->customer->userLocation->location_id;
-                $invoice = new Invoice();
-                $invoice->user_id = $model->enrolment->student->customer->id;
-                $invoice->location_id = $locationId;
-                $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
-                $invoice->createdUserId = Yii::$app->user->id;
-                $invoice->updatedUserId = Yii::$app->user->id;
-                $invoice->save();
-                $invoiceLineItem = $model->addPrivateLessonLineItem($invoice);
-                $invoice->save();
-            } else {
-                $invoice = $model->proFormaInvoice;
-            }
-            return $this->redirect(['invoice/view', 'id' => $invoice->id]);
         }
+        $invoice = $model->takePayment();
+        return $this->redirect(['invoice/view', 'id' => $invoice->id]);
     }
 
     public function actionModifyClassroom($id, $classroomId)
@@ -808,8 +816,8 @@ class LessonController extends \common\components\controllers\BaseController
     public function actionPayment($lessonId, $enrolmentId)
     {
         $payments = Payment::find()
-                ->joinWith(['lessonCredit' => function($query) use($lessonId, $enrolmentId){
-                        $query->andWhere(['lesson_payment.lessonId' => $lessonId,
+                ->joinWith(['lessonCredit' => function ($query) use ($lessonId, $enrolmentId) {
+                    $query->andWhere(['lesson_payment.lessonId' => $lessonId,
                             'lesson_payment.enrolmentId' => $enrolmentId]);
                 }]);
         $paymentsDataProvider = new ActiveDataProvider([
@@ -850,7 +858,7 @@ class LessonController extends \common\components\controllers\BaseController
     {
         $model = $this->findModel($id);
         if ($model->unschedule()) {
-          return [
+            return [
                 'status' => true,
                 'message'=>'Lesson unscheduled successfully',
             ];
@@ -860,6 +868,5 @@ class LessonController extends \common\components\controllers\BaseController
                 'message' => 'Lesson cannot be unscheduled',
             ];
         }
-        
     }
 }

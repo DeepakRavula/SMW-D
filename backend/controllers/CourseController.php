@@ -6,6 +6,7 @@ use Yii;
 use common\models\Course;
 use common\models\log\CourseLog;
 use common\models\Lesson;
+use common\models\ExtraLesson;
 use common\models\log\LessonLog;
 use common\models\Location;
 use common\models\Qualification;
@@ -24,10 +25,13 @@ use yii\web\Response;
 use common\models\TeacherAvailability;
 use common\models\Enrolment;
 use common\models\log\LogHistory;
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
+
 /**
  * CourseController implements the CRUD actions for Course model.
  */
-class CourseController extends \common\components\controllers\BaseController
+class CourseController extends BaseController
 {
     public function behaviors()
     {
@@ -38,13 +42,23 @@ class CourseController extends \common\components\controllers\BaseController
                     'delete' => ['post'],
                 ],
             ],
-			[
-				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['fetch-teacher-availability', 'fetch-lessons', 'fetch-group', 'change'],
-				'formats' => [
-					'application/json' => Response::FORMAT_JSON,
-				],
-        	],
+            [
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['fetch-teacher-availability', 'fetch-lessons', 'fetch-group', 'change'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'fetch-teacher-availability', 'course-date', 'create', 'update', 'delete', 'teachers', 'fetch-group', 'change'],
+                        'roles' => ['manageGroupLessons'],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -92,27 +106,29 @@ class CourseController extends \common\components\controllers\BaseController
         $logDataProvider    = new ActiveDataProvider([
             'query' => LogHistory::find()
                 ->course($id)]);
-        return $this->render('view',
+        return $this->render(
+            'view',
                 [
                 'model' => $this->findModel($id),
                 'courseId' => $id,
                 'studentDataProvider' => $studentDataProvider,
                 'lessonDataProvider' => $lessonDataProvider,
                 'logDataProvider' => $logDataProvider,
-        ]);
+        ]
+        );
     }
 
     public function actionFetchTeacherAvailability($teacherId)
     {
-		$query = TeacherAvailability::find()
+        $query = TeacherAvailability::find()
                 ->joinWith('userLocation')
                 ->where(['user_id' => $teacherId]);
         $teacherDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-		$data = $this->renderAjax('_teacher-availability', [
-        	'teacherDataProvider' => $teacherDataProvider,
-    	]);
+        $data = $this->renderAjax('_teacher-availability', [
+            'teacherDataProvider' => $teacherDataProvider,
+        ]);
         return $data;
     }
     /**
@@ -121,31 +137,31 @@ class CourseController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-	public function getCourseDate($courseScheduleModels)
-	{
-		$courseDates = ArrayHelper::getColumn($courseScheduleModels, function ($courseSchedule) {
-    		return $courseSchedule['fromTime'];
-		});
-		usort($courseDates, function($a, $b) {
-			$date1 = new \DateTime($a);
-			$date2 = new \DateTime($b);
-			return $date1 < $date2 ? -1: 1;
-		});
-		return $courseDates[0];
-	}
+    public function getCourseDate($courseScheduleModels)
+    {
+        $courseDates = ArrayHelper::getColumn($courseScheduleModels, function ($courseSchedule) {
+            return $courseSchedule['fromTime'];
+        });
+        usort($courseDates, function ($a, $b) {
+            $date1 = new \DateTime($a);
+            $date2 = new \DateTime($b);
+            return $date1 < $date2 ? -1: 1;
+        });
+        return $courseDates[0];
+    }
     public function actionCreate()
     {
-		$request = Yii::$app->request;
+        $request = Yii::$app->request;
         $response = Yii::$app->response;
         $model = new Course();
         $courseSchedule = [new CourseSchedule()];
         $model->setScenario(Course::SCENARIO_GROUP_COURSE);
         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-         $model->on(Course::EVENT_AFTER_INSERT, [new CourseLog(), 'create'], ['loggedUser' => $loggedUser]);
+        $model->on(Course::EVENT_AFTER_INSERT, [new CourseLog(), 'create'], ['loggedUser' => $loggedUser]);
         if ($model->load($request->post())) {
-			$courseScheduleModels = UserForm::createMultiple(CourseSchedule::classname());
-			Model::loadMultiple($courseScheduleModels, $request->post());
-			if ($request->isAjax) {
+            $courseScheduleModels = UserForm::createMultiple(CourseSchedule::classname());
+            Model::loadMultiple($courseScheduleModels, $request->post());
+            if ($request->isAjax) {
                 $response->format = Response::FORMAT_JSON;
                 return ArrayHelper::merge(
                     ActiveForm::validate($model),
@@ -165,8 +181,10 @@ class CourseController extends \common\components\controllers\BaseController
                             $courseScheduleModel->courseId = $model->id;
                             $courseScheduleModel->duration = $model->duration;
                             $dayList                       = Course::getWeekdaysList();
-                            $courseScheduleModel->day      = array_search($courseScheduleModel->day,
-                                $dayList);
+                            $courseScheduleModel->day      = array_search(
+                                $courseScheduleModel->day,
+                                $dayList
+                            );
                             if (!($flag                          = $courseScheduleModel->save(false))) {
                                 $transaction->rollBack();
                                 break;
@@ -175,9 +193,9 @@ class CourseController extends \common\components\controllers\BaseController
                     }
                     if ($flag) {
                         $transaction->commit();
-				$model->createLessons();
-            			$model->trigger(Course::EVENT_CREATE);
-            			return $this->redirect(['lesson/review', 'courseId' => $model->id]);
+                        $model->createLessons();
+                        $model->trigger(Course::EVENT_CREATE);
+                        return $this->redirect(['lesson/review', 'courseId' => $model->id]);
                     }
                 } catch (Exception $e) {
                     $transaction->rollBack();
@@ -186,7 +204,7 @@ class CourseController extends \common\components\controllers\BaseController
         } else {
             return $this->render('create', [
                 'model' => $model,
-				'courseSchedule' => (empty($courseSchedule)) ? [new CourseSchedule] : $courseSchedule
+                'courseSchedule' => (empty($courseSchedule)) ? [new CourseSchedule] : $courseSchedule
             ]);
         }
     }
@@ -201,14 +219,16 @@ class CourseController extends \common\components\controllers\BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $teacherModel = ArrayHelper::map(User::find()
+        $teacherModel = ArrayHelper::map(
+            User::find()
                     ->joinWith('userLocation ul')
                     ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
                     ->where(['raa.item_name' => 'teacher'])
                     ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
                     ->notDeleted()
                     ->all(),
-                'id', 'userProfile.fullName'
+                'id',
+            'userProfile.fullName'
             );
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -254,7 +274,7 @@ class CourseController extends \common\components\controllers\BaseController
         }
     }
 
-  public function actionTeachers()
+    public function actionTeachers()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
@@ -262,16 +282,16 @@ class CourseController extends \common\components\controllers\BaseController
         $location_id = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $programId = $_POST['depdrop_parents'][0];
         $qualifications = Qualification::find()
-			->joinWith(['teacher' => function ($query) use ($location_id) {
-				$query->joinWith(['userLocation' => function ($query) use ($location_id) {
-                     $query->join('LEFT JOIN', 'user_profile','user_profile.user_id = user_location.user_id')
-					->joinWith('teacherAvailability')
-				->where(['location_id' => $location_id]);
-				}]);
-			}])
-			->where(['program_id' => $programId])
+            ->joinWith(['teacher' => function ($query) use ($location_id) {
+                $query->joinWith(['userLocation' => function ($query) use ($location_id) {
+                    $query->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = user_location.user_id')
+                    ->joinWith('teacherAvailability')
+                ->where(['location_id' => $location_id]);
+                }]);
+            }])
+            ->where(['program_id' => $programId])
                         ->notDeleted()
-			->orderBy(['user_profile.firstname' => SORT_ASC])
+            ->orderBy(['user_profile.firstname' => SORT_ASC])
                 ->all();
         $result = [];
         $output = [];
@@ -288,40 +308,40 @@ class CourseController extends \common\components\controllers\BaseController
 
         return $result;
     }
-	public function actionFetchGroup($studentId, $courseName = null)
-	{
-		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-		$groupEnrolments = Enrolment::find()
-			->select(['courseId'])
-			->joinWith(['course' => function ($query) use ($locationId) {
-				$query->groupProgram($locationId);
-			}])
-			->where(['enrolment.studentId' => $studentId])
-			->isConfirmed();
+    public function actionFetchGroup($studentId, $courseName = null)
+    {
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $groupEnrolments = Enrolment::find()
+            ->select(['courseId'])
+            ->joinWith(['course' => function ($query) use ($locationId) {
+                $query->groupProgram($locationId);
+            }])
+            ->where(['enrolment.studentId' => $studentId])
+            ->isConfirmed();
         $groupCourses = Course::find()
-			->joinWith(['program' => function ($query) {
-				$query->group();
-			}])
-			->where(['NOT IN', 'course.id', $groupEnrolments])
-			->andWhere(['locationId' => $locationId])
-		   ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
-			->confirmed();
-			if(!empty($courseName)) {
-				$groupCourses->andWhere(['LIKE', 'program.name', $courseName]);
-			}
+            ->joinWith(['program' => function ($query) {
+                $query->group();
+            }])
+            ->where(['NOT IN', 'course.id', $groupEnrolments])
+            ->andWhere(['locationId' => $locationId])
+           ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
+            ->confirmed();
+        if (!empty($courseName)) {
+            $groupCourses->andWhere(['LIKE', 'program.name', $courseName]);
+        }
         $groupDataProvider = new ActiveDataProvider([
             'query' => $groupCourses,
         ]);
 
-		$data = $this->renderAjax('/student/enrolment/_form-group', [
-			'groupDataProvider' => $groupDataProvider,
-			'student' => Student::findOne(['id' => $studentId])
-		]);
-		return [
-			'status' => true,
-			'data' => $data
-		];
-	}
+        $data = $this->renderAjax('/student/enrolment/_form-group', [
+            'groupDataProvider' => $groupDataProvider,
+            'student' => Student::findOne(['id' => $studentId])
+        ]);
+        return [
+            'status' => true,
+            'data' => $data
+        ];
+    }
         
     public function actionChange()
     {
@@ -329,12 +349,12 @@ class CourseController extends \common\components\controllers\BaseController
         $lessonIds = $lessonSearchRequest['ids'];
         $lessons = Lesson::findAll($lessonIds);
         $model = Course::findOne(end($lessons)->courseId);
-        $model->setScenario(Course::SCENARIO_CHANGE);
         $model->studentId = $model->enrolment->studentId;
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
                 foreach ($lessons as $lesson) {
-                    $newLesson = new Lesson();
+                    $enrolmentId = $lesson->enrolment->id;
+                    $newLesson = new ExtraLesson();
                     $newLesson->programId = $model->programId;
                     $newLesson->duration = $lesson->duration;
                     $newLesson->date = (new \DateTime($lesson->date))->format('Y-m-d g:i A');
@@ -342,12 +362,31 @@ class CourseController extends \common\components\controllers\BaseController
                     $newLesson->studentId = $model->studentId;
                     $newLesson->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
                     $newLesson->setScenario(Lesson::SCENARIO_CREATE);
-                    $newLesson->addExtra(Lesson::STATUS_UNSCHEDULED);
+                    $newLesson->add(Lesson::STATUS_UNSCHEDULED);
+                    $hasCreditInvoice = false;
                     if ($newLesson->save()) {
+                        $newLesson->markAsRoot();
+                        $invoice = $newLesson->takePayment();
+                        if ($lesson->hasLessonCredit($enrolmentId)) {
+                            if ($invoice->balance < $lesson->getLessonCreditAmount($enrolmentId)) {
+                                $amount = $invoice->balance;
+                                if (!$hasCreditInvoice) {
+                                    $creditInvoice = $lesson->addLessonCreditInvoice();
+                                    $creditInvoice->save();
+                                }
+                                $creditInvoice->addPayment($lesson, $lesson->getLessonCreditAmount($enrolmentId) - $amount);
+                                $hasCreditInvoice = true;
+                            } else {
+                                $amount = $lesson->getLessonCreditAmount($enrolmentId);
+                            }
+                            $invoice->addPayment($lesson, $amount);
+                        }
                         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-                        $newLesson->on(Lesson::EVENT_AFTER_INSERT,
+                        $newLesson->on(
+                            Lesson::EVENT_AFTER_INSERT,
                             [new LessonLog(), 'extraLessonCreate'],
-                            ['loggedUser' => $loggedUser]);
+                            ['loggedUser' => $loggedUser]
+                        );
                         $newLesson->trigger(Lesson::EVENT_AFTER_INSERT);
                         $lesson->Cancel();
                     }

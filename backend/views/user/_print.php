@@ -10,7 +10,7 @@ use yii\grid\GridView;
 use common\models\Location;
 
 ?>
-<?php $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]); 
+<?php $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
 echo $this->render('/print/_header', [
        'locationModel'=>$model,
 ]);
@@ -18,9 +18,9 @@ echo $this->render('/print/_header', [
 
 <div class="user-index"> 
     <?php Pjax::begin([
-		'id' => 'user-index',
-		'timeout' => 6000
-	]); ?>
+        'id' => 'user-index',
+        'timeout' => 6000
+    ]); ?>
 <div class="grid-row-open">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,

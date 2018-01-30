@@ -53,12 +53,12 @@ class LoginForm extends Model
         ];
     }
 
-	public function validateUser()
+    public function validateUser()
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
-			$roles = Yii::$app->authManager->getRolesByUser($user->id);
-			$role = end($roles);
+            $roles = Yii::$app->authManager->getRolesByUser($user->id);
+            $role = end($roles);
             if (!$user || !in_array($role->name, [User::ROLE_STAFFMEMBER, User::ROLE_OWNER, User::ROLE_ADMINISTRATOR])) {
                 $this->addError('username', Yii::t('backend', 'You are not allowed to login.'));
             }
@@ -141,13 +141,14 @@ class LoginForm extends Model
         if ($this->user === false) {
             $userName = $this->username;
             $this->user = User::find()
-                    ->adminOrOwner()
-                ->joinWith(['userContact' => function($query) use($userName) {
-					$query->joinWith(['email' => function($query) use($userName){
-						$query->andWhere(['email' => $userName]);
-					}])
-					->primary();
-				}])
+                ->backendUsers()
+                ->canLogin()
+                ->joinWith(['userContact' => function ($query) use ($userName) {
+                    $query->joinWith(['email' => function ($query) use ($userName) {
+                        $query->andWhere(['email' => $userName]);
+                    }])
+                    ->primary();
+                }])
                 ->notDeleted()
                 ->one();
         }

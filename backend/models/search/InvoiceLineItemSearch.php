@@ -78,8 +78,8 @@ class InvoiceLineItemSearch extends InvoiceLineItem
      * @return ActiveDataProvider
      */
     public function search($params)
-    {   
-        if(!empty($this->dateRange)) {
+    {
+        if (!empty($this->dateRange)) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
         }
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -89,7 +89,7 @@ class InvoiceLineItemSearch extends InvoiceLineItem
         }
         $query = InvoiceLineItem::find()
                 ->notDeleted()
-            ->joinWith(['invoice' => function($query) use ($locationId, $customerId) {
+            ->joinWith(['invoice' => function ($query) use ($locationId, $customerId) {
                 if ($this->isCustomerReport) {
                     $query->andWhere(['invoice.user_id' => $customerId]);
                 }
@@ -97,15 +97,15 @@ class InvoiceLineItemSearch extends InvoiceLineItem
                     ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
                     ->location($locationId)
                     ->between((new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d'));
-                    if (!$this->isCustomerReport) {
-                        $query->orderBy([
+                if (!$this->isCustomerReport) {
+                    $query->orderBy([
                             'DATE(invoice.date)' => SORT_DESC,
                         ]);
-                    }
+                }
             }]);
             
         if ($this->isCustomerReport) {
-            $query->joinWith(['itemCategory' => function($query) {
+            $query->joinWith(['itemCategory' => function ($query) {
                 $query->orderBy(['item_category.id' => SORT_ASC]);
             }]);
         }

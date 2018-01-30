@@ -4,13 +4,11 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
 use kartik\time\TimePicker;
-use kartik\color\ColorInput;
 use yii\helpers\Url;
-use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
-use common\models\Classroom;
 use common\models\User;
 use common\models\LocationAvailability;
+
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 
 /* @var $this yii\web\View */
@@ -27,7 +25,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 <?php $form = ActiveForm::begin([
             'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
-			'enableClientValidation' => false,
+            'enableClientValidation' => false,
             'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id, 'teacherId' => null]),
             'action' => Url::to(['lesson/update', 'id' => $model->id]),
             'options' => [
@@ -37,27 +35,32 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
    <div class="row-fluid">
 	   <div class="col-md-3">
             <?php
-            echo $form->field($model, 'duration')->widget(TimePicker::classname(),
+            echo $form->field($model, 'duration')->widget(
+            TimePicker::classname(),
                 [
                 'options' => ['id' => 'course-duration'],
                 'pluginOptions' => [
                     'showMeridian' => false,
                 ],
-            ]);
+            ]
+        );
             ?>
         </div>
 	   <div class="col-md-4">
         <?php
         // Dependent Dropdown
         echo $form->field($model, 'teacherId')->dropDownList(
-            ArrayHelper::map(User::find()
-				->teachers($model->course->program->id, \common\models\Location::findOne(['slug' => \Yii::$app->location])->id)
-                ->join('LEFT JOIN', 'user_profile','user_profile.user_id = ul.user_id')
+            ArrayHelper::map(
+                User::find()
+                ->teachers($model->course->program->id, \common\models\Location::findOne(['slug' => \Yii::$app->location])->id)
+                ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
                 ->notDeleted()
                 ->orderBy(['user_profile.firstname' => SORT_ASC])
-				->all(),
-			'id', 'userProfile.fullName'
-		))->label();
+                ->all(),
+            'id',
+                'userProfile.fullName'
+        )
+        )->label();
             ?>  
         </div>
         <div class="col-md-5">
@@ -87,7 +90,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
         </div>
 	   <div class="clearfix"></div>
 		   <?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id; ?>
-		<?php if($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
+		<?php if ($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
 		<div class="col-md-3">
 			<?php
                 if ($privateLessonModel->isNewRecord) {
@@ -100,7 +103,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                 'options' => [
                     'value' => Yii::$app->formatter->asDate($privateLessonModel->expiryDate),
                 ],
-				'layout' => '{input}{picker}',
+                'layout' => '{input}{picker}',
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,

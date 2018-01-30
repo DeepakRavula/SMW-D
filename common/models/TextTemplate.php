@@ -13,8 +13,8 @@ namespace common\models;
  */
 class TextTemplate extends \yii\db\ActiveRecord
 {
-	const TYPE_PFI = 1;
-	const TYPE_INVOICE = 2;
+    const TYPE_PFI = 1;
+    const TYPE_INVOICE = 2;
     /**
      * {@inheritdoc}
      */
@@ -41,17 +41,17 @@ class TextTemplate extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-          	'message' => 'Message',
-			'type' =>  'Type'
+              'message' => 'Message',
+            'type' =>  'Type'
         ];
     }
-	public function getType()
+    public function getType()
     {
         $type = null;
         switch ($this->type) {
             case self::TYPE_INVOICE:
                 $type = 'Invoice';
-            	break;
+                break;
             case self::TYPE_PFI:
                 $type = 'Pro forma Invoice';
             break;

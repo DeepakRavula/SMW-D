@@ -32,15 +32,15 @@ class UserContactQuery extends \yii\db\ActiveQuery
         return parent::one($db);
     }
 
-	public function primary()
-	{
-		return $this->andWhere(['user_contact.isPrimary' => true]);
-	}
-     public function location($locationId)
+    public function primary()
+    {
+        return $this->andWhere(['user_contact.isPrimary' => true]);
+    }
+    public function location($locationId)
     {
         $this->joinWith('userLocation')
             ->where(['location_id' => $locationId]);
 
         return $this;
-    }    
+    }
 }

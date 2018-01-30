@@ -21,8 +21,8 @@ class ClassroomValidator extends Validator
         $overLapLessons = Lesson::find()
                 ->andWhere(['NOT', ['lesson.id' => $model->id]])
                 ->andWhere(['classroomId' => $model->classroomId])
-				->isConfirmed()
-				->scheduled()
+                ->isConfirmed()
+                ->scheduled()
                 ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
                 ->all();
         if (!empty($overLapLessons)) {
@@ -36,7 +36,7 @@ class ClassroomValidator extends Validator
                         ['>=', 'DATE(toDate)', $lessonDate]
                 ])
                 ->all();
-        if(!empty($classroomUnavailabilities)) {
+        if (!empty($classroomUnavailabilities)) {
             $this->addError($model, $attribute, 'Classroom is unavailable');
         }
     }

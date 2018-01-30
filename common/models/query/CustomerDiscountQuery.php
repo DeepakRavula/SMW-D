@@ -9,5 +9,4 @@ namespace common\models\query;
  */
 class CustomerDiscountQuery extends \yii\db\ActiveQuery
 {
-    
 }

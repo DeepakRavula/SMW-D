@@ -4,26 +4,24 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\User;
-use common\models\UserLocation;
 use common\models\TeacherAvailability;
 use backend\models\TeacherAvailabilitySearch;
-use yii\web\Controller;
-use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use common\models\Lesson;
 use common\models\Program;
-use common\models\Invoice;
 use yii\filters\ContentNegotiator;
 use common\models\TeacherRoom;
 use yii\bootstrap\ActiveForm;
 use common\models\Location;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
-class TeacherAvailabilityController extends \common\components\controllers\BaseController
+class TeacherAvailabilityController extends BaseController
 {
     public function behaviors()
     {
@@ -33,16 +31,27 @@ class TeacherAvailabilityController extends \common\components\controllers\BaseC
                 'actions' => [
                     'delete' => ['post'],
                 ],
-			],
-			'contentNegotiator' => [
-				'class' => ContentNegotiator::className(),
-				'only' => ['modify', 'delete', 'events',
+            ],
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['modify', 'delete', 'events',
                                     'show-lesson-event'],
-				'formatParam' => '_format',
-				'formats' => [
-				   'application/json' => Response::FORMAT_JSON,
-				],
-			],	 
+                'formatParam' => '_format',
+                'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'modify', 'events', 'show-lesson-event',
+						'availability-with-events'],
+                        'roles' => ['manageTeachers'],
+                    ],
+                ],
+            ], 
         ];
     }
 
@@ -133,7 +142,6 @@ class TeacherAvailabilityController extends \common\components\controllers\BaseC
       
         if ($availabilityModel->delete()) {
             $status=true;
-            
         }
 
         return [
@@ -189,9 +197,9 @@ class TeacherAvailabilityController extends \common\components\controllers\BaseC
                 $query->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
             }])
             ->where(['lesson.teacherId' => $id])
-        	->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
-			->isConfirmed()
-			->notDeleted()
+            ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+            ->isConfirmed()
+            ->notDeleted()
             ->all();
         $events = [];
         foreach ($lessons as &$lesson) {
@@ -218,15 +226,15 @@ class TeacherAvailabilityController extends \common\components\controllers\BaseC
             'events' => $events,
         ];
     }
-	public function actionModify($id, $teacherId)
+    public function actionModify($id, $teacherId)
     {
         $teacherModel = User::findOne($teacherId);
         $teacherAvailabilityModel = TeacherAvailability::findOne($id);
-        if (empty ($teacherAvailabilityModel)) {
+        if (empty($teacherAvailabilityModel)) {
             $teacherAvailabilityModel = new TeacherAvailability();
             $teacherAvailabilityModel->teacher_location_id = $teacherModel->userLocation->id;
             $roomModel = new TeacherRoom();
-        } else if (empty ($teacherAvailabilityModel->teacherRoom)) {
+        } elseif (empty($teacherAvailabilityModel->teacherRoom)) {
             $roomModel = new TeacherRoom();
         } else {
             $roomModel = $teacherAvailabilityModel->teacherRoom;
@@ -284,7 +292,7 @@ class TeacherAvailabilityController extends \common\components\controllers\BaseC
             ];
         }
     }
-	
+    
     public function actionEvents($id)
     {
         $session    = Yii::$app->session;
@@ -333,7 +341,7 @@ class TeacherAvailabilityController extends \common\components\controllers\BaseC
             }])
             ->where(['lesson.teacherId' => $teacherId])
             ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
-			->isConfirmed()
+            ->isConfirmed()
             ->notDeleted()
             ->andWhere(['NOT', ['lesson.id' => $lessonId]])
             ->all();

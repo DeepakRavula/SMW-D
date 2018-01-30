@@ -54,16 +54,16 @@ Pjax::Begin([
                     return $data->province->name;
                 },
             ],
-			[
+            [
                 'label' => 'Rate (%)',
-				'headerOptions' => ['class' => 'text-right'],
-				'contentOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
                     return $data->rate;
                 },
             ],
             'start_date:date',
-            'code',        
+            'code',
         ],
     ]); ?>
     

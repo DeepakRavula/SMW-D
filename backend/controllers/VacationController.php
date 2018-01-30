@@ -5,7 +5,6 @@ namespace backend\controllers;
 use Yii;
 use common\models\Vacation;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use common\models\User;
 use common\models\log\EnrolmentLog;
 use yii\web\NotFoundHttpException;
@@ -14,10 +13,13 @@ use common\models\Lesson;
 use common\models\Enrolment;
 use common\models\PaymentCycle;
 use yii\web\Response;
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
+
 /**
  * VacationController implements the CRUD actions for Vacation model.
  */
-class VacationController extends \common\components\controllers\BaseController
+class VacationController extends BaseController
 {
     public function behaviors()
     {
@@ -35,6 +37,16 @@ class VacationController extends \common\components\controllers\BaseController
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageStudents'],
+                    ],
+                ],
+            ], 
         ];
     }
 
@@ -48,10 +60,12 @@ class VacationController extends \common\components\controllers\BaseController
             'query' => Vacation::find(),
         ]);
 
-        return $this->render('index',
+        return $this->render(
+            'index',
                 [
                 'dataProvider' => $dataProvider,
-        ]);
+        ]
+        );
     }
 
     /**
@@ -61,10 +75,12 @@ class VacationController extends \common\components\controllers\BaseController
      */
     public function actionView($id)
     {
-        return $this->render('view',
+        return $this->render(
+            'view',
                 [
                 'model' => $this->findModel($id),
-        ]);
+        ]
+        );
     }
 
     /**
@@ -109,8 +125,10 @@ class VacationController extends \common\components\controllers\BaseController
                 foreach ($paymentCycle->lessons as $lesson) {
                     $lessonId   = $lesson->id;
                     $isAffected = true;
-                    if (!$lesson->isDeleted && !in_array($lessonId,
-                            $affectedLessonIds)) {
+                    if (!$lesson->isDeleted && !in_array(
+                        $lessonId,
+                            $affectedLessonIds
+                    )) {
                         $isAffected = false;
                     }
                     if ($isAffected) {
@@ -131,7 +149,8 @@ class VacationController extends \common\components\controllers\BaseController
                 ]);
             }
         }
-        $data = $this->renderAjax('/enrolment/_vacation-form',
+        $data = $this->renderAjax(
+            '/enrolment/_vacation-form',
             [
             'model' => new Vacation(),
             'enrolmentId' => $enrolmentId,
@@ -139,7 +158,8 @@ class VacationController extends \common\components\controllers\BaseController
             'creditAmount' => $creditAmount,
             'lessonDataProvider' => $lessonDataProvider,
             'paymentCycleDataProvider' => $paymentCycleDataProvider
-        ]);
+        ]
+        );
 
         $request = Yii::$app->request;
         $model   = new Vacation();
@@ -186,10 +206,12 @@ class VacationController extends \common\components\controllers\BaseController
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('update',
+            return $this->render(
+                'update',
                     [
                     'model' => $model,
-            ]);
+            ]
+            );
         }
     }
 

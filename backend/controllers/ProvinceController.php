@@ -5,8 +5,9 @@ namespace backend\controllers;
 use Yii;
 use common\models\Province;
 use backend\models\search\ProvinceSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
@@ -14,7 +15,7 @@ use yii\web\Response;
 /**
  * ProvinceController implements the CRUD actions for Province model.
  */
-class ProvinceController extends \common\components\controllers\BaseController
+class ProvinceController extends BaseController
 {
     public function behaviors()
     {
@@ -25,14 +26,24 @@ class ProvinceController extends \common\components\controllers\BaseController
                     'delete' => ['post'],
                 ],
             ],
-			'contentNegotiator' => [
+            'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['update', 'create','delete'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
                 ],
-			]
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageProvinces'],
+                    ],
+                ],
+            ], 
         ];
     }
 
@@ -72,22 +83,22 @@ class ProvinceController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-	public function actionCreate()
+    public function actionCreate()
     {
         $model = new Province();
         $data  = $this->renderAjax('_form', [
             'model' => $model,
-        ]); 
+        ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,
                 'data' => $data
             ];
-        } 
+        }
     }
 
     /**
@@ -98,16 +109,16 @@ class ProvinceController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-	public function actionUpdate($id)
+    public function actionUpdate($id)
     {
-		$model = $this->findModel($id);
+        $model = $this->findModel($id);
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,

@@ -17,26 +17,26 @@ $this->title = $model->publicIdentity;
 <div class="row">
 	<div class="col-md-6 user-detail">	
 		<?php
-		echo $this->render('_profile', [
-			'model' => $model,
-		]);
-		?>
+        echo $this->render('_profile', [
+            'model' => $model,
+        ]);
+        ?>
 		<?= $this->render('_address', [
-			'model' => $model,
-		]);
-		?>
+            'model' => $model,
+        ]);
+        ?>
 	</div> 
 	<div class="col-md-5 user-detail">	
 		<?php
-		echo $this->render('_phone', [
-			'model' => $model,
-		]);
-		?>
+        echo $this->render('_phone', [
+            'model' => $model,
+        ]);
+        ?>
 		 <?php
-		echo $this->render('_email', [
-			'model' => $model,
-		]);
-		?>
+        echo $this->render('_email', [
+            'model' => $model,
+        ]);
+        ?>
 	</div> 
 </div>
 <?php $userForm = new UserForm();
@@ -46,8 +46,8 @@ $this->title = $model->publicIdentity;
     'id' => 'user-edit-modal',
 ]); ?>
 <?= $this->render('update/_profile', [
-	'model' => $userForm,
-	'userProfile' => $model->userProfile,
+    'model' => $userForm,
+    'userProfile' => $model->userProfile,
 ]);?>
 <?php Modal::end(); ?>
 <?php Modal::begin([

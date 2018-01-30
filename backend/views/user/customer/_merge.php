@@ -4,6 +4,7 @@ use common\models\User;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
+
 ?>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="warning-notification" style="display:none;" class="alert-warning alert fade in"></div>
@@ -19,7 +20,9 @@ use yii\helpers\Html;
             <?= $form->field($model, "customerId")->dropDownList(
                     ArrayHelper::map(User::find()->customers($locationId)->notDeleted()->active()
                         ->andWhere(['NOT', ['user.id' => $model->id]])
-                        ->all(), 'id', 'publicIdentity'), ['multiple' => 'multiple', 'size' => '10']); ?>
+                        ->all(), 'id', 'publicIdentity'),
+        ['multiple' => 'multiple', 'size' => '10']
+    ); ?>
 
         </div>
         <div class="col-xs-2">

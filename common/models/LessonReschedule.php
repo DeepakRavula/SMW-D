@@ -3,6 +3,7 @@
 namespace common\models;
 
 use yii\base\Model;
+
 /**
  * This is the model class for table "lesson_reschedule".
  *
@@ -50,15 +51,18 @@ class LessonReschedule extends Model
         $oldLesson = Lesson::findOne($this->lessonId);
         $rescheduledLesson = Lesson::findOne($this->rescheduledLessonId);
         $oldLesson->append($rescheduledLesson);
-		if($oldLesson->isPrivate()) {
-			$paymentCycleLesson = new PaymentCycleLesson();
-			$oldPaymentCycleLesson = PaymentCycleLesson::findOne(['lessonId' => $this->lessonId]);
-                        if ($oldPaymentCycleLesson) {
-                            $paymentCycleLesson->paymentCycleId = $oldPaymentCycleLesson->paymentCycleId;
-                            $paymentCycleLesson->lessonId = $this->rescheduledLessonId;
-                            $paymentCycleLesson->save();
-                        }
-		}
+        if ($oldLesson->hasLessonCredit($oldLesson->enrolment->id)) {
+            $rescheduledLesson->addPayment($oldLesson, $oldLesson->getLessonCreditAmount($oldLesson->enrolment->id));
+        }
+        if ($oldLesson->isPrivate()) {
+            $paymentCycleLesson = new PaymentCycleLesson();
+            $oldPaymentCycleLesson = PaymentCycleLesson::findOne(['lessonId' => $this->lessonId]);
+            if ($oldPaymentCycleLesson) {
+                $paymentCycleLesson->paymentCycleId = $oldPaymentCycleLesson->paymentCycleId;
+                $paymentCycleLesson->lessonId = $this->rescheduledLessonId;
+                $paymentCycleLesson->save();
+            }
+        }
         if (!empty($oldLesson->invoiceLineItem)) {
             $oldLesson->invoiceLineItem->lineItemLesson->lessonId = $this->rescheduledLessonId;
             $oldLesson->invoiceLineItem->lineItemLesson->save();
@@ -74,15 +78,15 @@ class LessonReschedule extends Model
         $lessonModel	 = $event->sender;
         $teacherId = $lessonModel->teacherId;
         $fromDate	 = \DateTime::createFromFormat('Y-m-d H:i:s', $oldLessonModel['date']);
-        $toDate		 = \DateTime::createFromFormat('Y-m-d H:i:s', $lessonModel->date);	
+        $toDate		 = \DateTime::createFromFormat('Y-m-d H:i:s', $lessonModel->date);
         $rescheduleDate = new \DateTime($oldLessonModel['date']) != new \DateTime($lessonModel->date);
-        $rescheduleTeacher = (int)$teacherId !== (int)$oldLessonModel['teacherId']; 
+        $rescheduleTeacher = (int)$teacherId !== (int)$oldLessonModel['teacherId'];
         if ($rescheduleDate) {
             $lessonModel->updateAttributes([
                 'date' => $fromDate->format('Y-m-d H:i:s'),
                 'status' => Lesson::STATUS_CANCELED,
             ]);
-        } elseif($rescheduleTeacher) {
+        } elseif ($rescheduleTeacher) {
             $lessonModel->updateAttributes([
                 'status' => Lesson::STATUS_CANCELED,
                 'teacherId' => $oldLessonModel['teacherId']
@@ -92,7 +96,7 @@ class LessonReschedule extends Model
                 'status' => Lesson::STATUS_CANCELED,
                 'date' => $fromDate->format('Y-m-d H:i:s'),
                 'teacherId' => $oldLessonModel['teacherId']
-            ]);	
+            ]);
         }
 
         $originalLessonId	  = $lessonModel->id;
@@ -102,7 +106,7 @@ class LessonReschedule extends Model
         $lessonModel->duration    = $duration;
         if ($rescheduleDate) {
             $lessonModel->date = $toDate->format('Y-m-d H:i:s');
-        } elseif($rescheduleTeacher) {
+        } elseif ($rescheduleTeacher) {
             $lessonModel->teacherId = $teacherId;
         } else {
             $lessonModel->date = $toDate->format('Y-m-d H:i:s');
@@ -110,14 +114,17 @@ class LessonReschedule extends Model
         }
 
         $lessonModel->status = Lesson::STATUS_SCHEDULED;
-        if($lessonModel->save()) {
+        if ($oldLesson->isExtra()) {
+            $lessonModel->type = $oldLesson->type;
+        }
+        if ($lessonModel->save()) {
             $lessonModel->updateAttributes([
                 'classroomId' => $classroomId,
-            ]);	
+            ]);
             $lessonRescheduleModel			 = new LessonReschedule();
             $lessonRescheduleModel->lessonId		 = $originalLessonId;
             $lessonRescheduleModel->rescheduledLessonId	 = $lessonModel->id;
-            if($lessonRescheduleModel->save()) {
+            if ($lessonRescheduleModel->save()) {
                 $this->trigger(Lesson::EVENT_RESCHEDULED);
             }
         }

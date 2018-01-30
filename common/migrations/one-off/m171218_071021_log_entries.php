@@ -10,7 +10,6 @@ use common\models\timelineEvent\TimelineEvent;
 
 class m171218_071021_log_entries extends Migration
 {
-
     public function up()
     {
         $timeLineEvents = TimelineEvent::find()->all();
@@ -71,8 +70,7 @@ class m171218_071021_log_entries extends Migration
       }
      */
 
-    public
-        function getRelationName($timeLineEvent)
+    public function getRelationName($timeLineEvent)
     {
         $relationName['object']       = '';
         $relationName['instanceType'] = '';

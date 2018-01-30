@@ -14,9 +14,9 @@ use Yii;
  */
 class UserContact extends \yii\db\ActiveRecord
 {
-	const TYPE_EMAIL = 1;
-	const TYPE_PHONE = 2;
-	const TYPE_ADDRESS = 3;
+    const TYPE_EMAIL = 1;
+    const TYPE_PHONE = 2;
+    const TYPE_ADDRESS = 3;
     /**
      * @inheritdoc
      */
@@ -57,29 +57,28 @@ class UserContact extends \yii\db\ActiveRecord
     {
         return new \common\models\query\UserContactQuery(get_called_class());
     }
-	public function getEmail()
+    public function getEmail()
     {
         return $this->hasOne(UserEmail::className(), ['userContactId' => 'id']);
     }
-	public function getPhone()
+    public function getPhone()
     {
         return $this->hasOne(UserPhone::className(), ['userContactId' => 'id']);
     }
-	public function getAddress()
+    public function getAddress()
     {
         return $this->hasOne(UserAddress::className(), ['userContactId' => 'id']);
     }
-	public function getLabel()
+    public function getLabel()
     {
         return $this->hasOne(Label::className(), ['id' => 'labelId']);
     }
     public function getUserLocation()
     {
-      return $this->hasOne(UserLocation::className(), ['user_id' => 'userId']);  
+        return $this->hasOne(UserLocation::className(), ['user_id' => 'userId']);
     }
     public function getUser()
     {
-     return $this->hasOne(User::className(), ['id' => 'userId']);     
+        return $this->hasOne(User::className(), ['id' => 'userId']);
     }
-	
 }

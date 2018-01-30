@@ -5,17 +5,18 @@ namespace backend\controllers;
 use Yii;
 use common\models\TeacherRoom;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use backend\models\UserForm;
 use yii\base\Model;
 use common\models\TeacherAvailability;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * TeacherRoomController implements the CRUD actions for TeacherRoom model.
  */
-class TeacherRoomController extends \common\components\controllers\BaseController
+class TeacherRoomController extends BaseController
 {
     public function behaviors()
     {
@@ -26,6 +27,16 @@ class TeacherRoomController extends \common\components\controllers\BaseControlle
                     'delete' => ['post'],
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageTeachers'],
+                    ],
+                ],
+            ], 
         ];
     }
 
@@ -63,18 +74,17 @@ class TeacherRoomController extends \common\components\controllers\BaseControlle
      */
     public function actionCreate($id)
     {
-		TeacherRoom::deleteAll(['teacherId' => $id]);
-		$request = Yii::$app->request;
-		$models = UserForm::createMultiple(TeacherRoom::classname());
+        TeacherRoom::deleteAll(['teacherId' => $id]);
+        $request = Yii::$app->request;
+        $models = UserForm::createMultiple(TeacherRoom::classname());
         Model::loadMultiple($models, $request->post());
- 		foreach ($models as $model) {
-			$dayList = TeacherAvailability::getWeekdaysList();
-			$day = array_search($model->day, $dayList);
-			$model->day = $day;
-			$model->save();
-		}
-            return $this->redirect(['user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $id, '#' => 'classroom']);
-        
+        foreach ($models as $model) {
+            $dayList = TeacherAvailability::getWeekdaysList();
+            $day = array_search($model->day, $dayList);
+            $model->day = $day;
+            $model->save();
+        }
+        return $this->redirect(['user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $id, '#' => 'classroom']);
     }
 
     /**

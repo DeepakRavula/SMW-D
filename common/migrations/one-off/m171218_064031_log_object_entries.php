@@ -5,7 +5,6 @@ use common\models\log\LogObject;
 
 class m171218_064031_log_object_entries extends Migration
 {
-
     public function up()
     {
         $logObjectNames = ['course', 'enrolment', 'lesson', 'invoice', 'payment',

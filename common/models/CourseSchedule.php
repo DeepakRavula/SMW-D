@@ -16,7 +16,7 @@ use Yii;
 class CourseSchedule extends \yii\db\ActiveRecord
 {
     const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
-	
+    
     public $studentId;
     public $paymentFrequency;
     public $programRate;
@@ -42,7 +42,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
         ];
     }
 
-	
+    
     /**
      * @inheritdoc
      */
@@ -69,7 +69,8 @@ class CourseSchedule extends \yii\db\ActiveRecord
     public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['courseId' => 'id'])
-            ->via('course');
+            ->via('course')
+                ->onCondition(['enrolment.type' => Enrolment::TYPE_REGULAR]);
     }
 
     public function getCourse()
@@ -80,25 +81,25 @@ class CourseSchedule extends \yii\db\ActiveRecord
     public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'programId'])
-			->via('course');
+            ->via('course');
     }
     public function beforeSave($insert)
     {
-		if(!$insert) {
-        	return parent::beforeSave($insert);
-		}
+        if (!$insert) {
+            return parent::beforeSave($insert);
+        }
         if ($insert) {
-		   $fromTime = new \DateTime($this->fromTime);
-           $this->fromTime = $fromTime->format('H:i:s');
+            $fromTime = new \DateTime($this->fromTime);
+            $this->fromTime = $fromTime->format('H:i:s');
         }
 
         return parent::beforeSave($insert);
     }
-	 public function afterSave($insert, $changedAttributes)
+    public function afterSave($insert, $changedAttributes)
     {
-		if(!$insert) {
-        	return parent::afterSave($insert, $changedAttributes);
-		}
+        if (!$insert) {
+            return parent::afterSave($insert, $changedAttributes);
+        }
         if ((int) $this->program->isPrivate() && empty($this->enrolment)) {
             $enrolmentModel = new Enrolment();
             $enrolmentModel->courseId = $this->courseId;
@@ -107,6 +108,6 @@ class CourseSchedule extends \yii\db\ActiveRecord
             $enrolmentModel->type = Enrolment::TYPE_REGULAR;
             $enrolmentModel->save();
         }
-		 return parent::afterSave($insert, $changedAttributes);
+        return parent::afterSave($insert, $changedAttributes);
     }
 }

@@ -55,12 +55,12 @@ class TeacherAvailability extends \yii\db\ActiveRecord
         ];
     }
 
-	public static function find()
+    public static function find()
     {
         return new TeacherAvailabilityQuery(get_called_class());
     }
 
-	
+    
     public static function getWeekdaysList()
     {
         return [
@@ -92,13 +92,13 @@ class TeacherAvailability extends \yii\db\ActiveRecord
         return $this->hasOne(UserLocation::className(), ['id' => 'teacher_location_id']);
     }
 
-	public function getTeacherRoom()
+    public function getTeacherRoom()
     {
         return $this->hasOne(TeacherRoom::className(), ['teacherAvailabilityId' => 'id']);
     }
     public function afterSave($insert, $changedAttributes)
     {
-      if (!$insert) {
+        if (!$insert) {
             $this->trigger(TeacherAvailability::EVENT_UPDATE);
         }
         $this->trigger(TeacherAvailability::EVENT_CREATE);

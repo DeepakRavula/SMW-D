@@ -29,7 +29,7 @@ class PasswordResetRequestForm extends Model
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
             ['email', 'email'],
-			['email', 'exist',
+            ['email', 'exist',
                 'targetClass' => '\common\models\UserEmail',
                 'message' => 'There is no user with such email.',
             ],
@@ -45,26 +45,26 @@ class PasswordResetRequestForm extends Model
     {
         /* @var $user User */
         $userName = $this->email;
-		$user = User::find()
-			->joinWith(['userContact' => function($query) use($userName) {
-				$query->joinWith(['email' => function($query) use($userName){
-					$query->andWhere(['email' => $userName]);
-				}])
-				->primary();
-			}])
-			->notDeleted()
-			->one();
+        $user = User::find()
+            ->joinWith(['userContact' => function ($query) use ($userName) {
+                $query->joinWith(['email' => function ($query) use ($userName) {
+                    $query->andWhere(['email' => $userName]);
+                }])
+                ->primary();
+            }])
+            ->notDeleted()
+            ->one();
 
         if ($user) {
-			if(Yii::$app->authManager->checkAccess($user->id, User::ROLE_ADMINISTRATOR)) {
-				$location = Location::findOne(['id' => Location::DEFAULT_LOCATION]);
-			} else {
-				$location = Location::findOne(['id' => $user->userLocation->location_id]);
-			}
+            if (Yii::$app->authManager->checkAccess($user->id, User::ROLE_ADMINISTRATOR)) {
+                $location = Location::findOne(['id' => Location::DEFAULT_LOCATION]);
+            } else {
+                $location = Location::findOne(['id' => $user->userLocation->location_id]);
+            }
             $token = UserToken::create($user->id, UserToken::TYPE_PASSWORD_RESET, Time::SECONDS_IN_A_DAY);
             if ($user->save()) {
                 return Yii::$app->commandBus->handle(new SendEmailCommand([
-					'from' => $location->email, 
+                    'from' => $location->email,
                         'to' => $this->email,
                         'subject' => Yii::t('backend', 'Password reset for {name}', ['name' => Yii::$app->name]),
                         'view' => 'passwordResetToken',

@@ -23,18 +23,18 @@ $locationDebtAmount = $royalty + $advertisement;
 $royaltyAmount = ($total * ($royalty / 100));
 $advertisementAmount = ($total * ($advertisement / 100));
 if ($total < 0) {
-	$royaltyAmount = 0;
-	$advertisementAmount = 0;
+    $royaltyAmount = 0;
+    $advertisementAmount = 0;
 }
 ?>
 <div class="col-md-12">	
 	<?php
-	LteBox::begin([
-		'type' => LteConst::TYPE_DEFAULT,
-		'title' => 'Royalty',
-		'withBorder' => true,
-	])
-	?>
+    LteBox::begin([
+        'type' => LteConst::TYPE_DEFAULT,
+        'title' => 'Royalty',
+        'withBorder' => true,
+    ])
+    ?>
 	<dl class="dl-horizontal">
 		<dt>Payments Received</dt>
 		<dd><?= !empty($payments) ? $payments : 0; ?></dd>
@@ -53,15 +53,15 @@ if ($total < 0) {
 		<dd><?= round($subtotal, 2); ?></dd>
 		<dt>Tax</dt>
 		<?php
-		$taxCode = TaxCode::find()
-			->andWhere(['province_id' => $location->province_id,
-				'tax_type_id' => TaxType::HST
-			])
-			->orderBy(['id' => SORT_DESC])
-			->one();
-		$taxPercentage = $taxCode->rate;
-		$tax = $subtotal * ($taxPercentage / 100);
-		?>
+        $taxCode = TaxCode::find()
+            ->andWhere(['province_id' => $location->province_id,
+                'tax_type_id' => TaxType::HST
+            ])
+            ->orderBy(['id' => SORT_DESC])
+            ->one();
+        $taxPercentage = $taxCode->rate;
+        $tax = $subtotal * ($taxPercentage / 100);
+        ?>
 		<dd><?= round($tax, 2); ?></dd>
 		<dt>Total</dt>
 		<dd><?= round(($subtotal + $tax), 2); ?></dd>

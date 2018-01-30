@@ -12,7 +12,6 @@ use common\models\log\LogObject;
  */
 class LogHistoryQuery extends ActiveQuery
 {
-
     public function student($id)
     {
         return $this->andWhere(['instanceType' => LogObject::TYPE_STUDENT, 'instanceId' => $id]);
@@ -26,15 +25,15 @@ class LogHistoryQuery extends ActiveQuery
     {
         return $this->andWhere(['instanceType' => LogObject::TYPE_LESSON, 'instanceId' => $id]);
     }
-     public function enrolment($id)
+    public function enrolment($id)
     {
         return $this->andWhere(['instanceType' => LogObject::TYPE_ENROLMENT, 'instanceId' => $id]);
     }
-         public function invoice($id)
+    public function invoice($id)
     {
         return $this->andWhere(['instanceType' => LogObject::TYPE_INVOICE, 'instanceId' => $id]);
     }
-     public function user($id)
+    public function user($id)
     {
         return $this->andWhere(['instanceType' => LogObject::TYPE_USER, 'instanceId' => $id]);
     }

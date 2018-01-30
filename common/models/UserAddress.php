@@ -11,9 +11,9 @@ namespace common\models;
  */
 class UserAddress extends \yii\db\ActiveRecord
 {
-	private $labelId;
+    private $labelId;
 
-	public function getLabelId()
+    public function getLabelId()
     {
         return $this->labelId;
     }
@@ -36,11 +36,11 @@ class UserAddress extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-			[['address', 'cityId', 'provinceId', 'countryId'], 'required'],
+            [['address', 'cityId', 'provinceId', 'countryId'], 'required'],
             [['userContactId', 'provinceId', 'countryId'], 'integer'],
             [['address'], 'string', 'max' => 64],
             [['postalCode'], 'string', 'max' => 16],
-			[['labelId', 'cityId'], 'safe'],
+            [['labelId', 'cityId'], 'safe'],
             [['address','postalCode'], 'trim'],
         ];
     }
@@ -54,16 +54,16 @@ class UserAddress extends \yii\db\ActiveRecord
             'id' => 'ID',
             'user_id' => 'User ID',
             'address_id' => 'Address ID',
-			'cityId' => 'City',
-			'provinceId' => 'Province',
-			'countryId' => 'Country'
+            'cityId' => 'City',
+            'provinceId' => 'Province',
+            'countryId' => 'Country'
         ];
     }
-	public function getUserContact()
+    public function getUserContact()
     {
         return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);
     }
-	public function getCity()
+    public function getCity()
     {
         return $this->hasOne(City::className(), ['id' => 'cityId']);
     }

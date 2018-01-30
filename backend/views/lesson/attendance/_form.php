@@ -4,10 +4,11 @@ use yii\widgets\ActiveForm;
 use kartik\switchinput\SwitchInput;
 use yii\helpers\Html;
 use yii\helpers\Url;
+
 ?>
 <div class="row user-create-form">
 <?php $form = ActiveForm::begin(['id' => 'attendance-form',
-	'action' => Url::to(['private-lesson/update-attendance', 'id' => $model->id])]); ?>
+    'action' => Url::to(['private-lesson/update-attendance', 'id' => $model->id])]); ?>
 <div class="checkbox">
 	<?= $form->field($model, 'isPresent')->checkbox(); ?>
 </div>

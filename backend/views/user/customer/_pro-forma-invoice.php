@@ -10,10 +10,12 @@ use common\models\Invoice;
     <?php
         echo Html::a(
             Html::tag('i', '', ['class' => 'fa fa-plus-circle']),
-            Url::to(['/invoice/create', 'Invoice[customer_id]' => $userModel->id]), [
-            'class' => 'add-new-invoice pull-right', 
-			'title' => 'Add'
-            ]);
+            Url::to(['/invoice/create', 'Invoice[customer_id]' => $userModel->id]),
+    [
+            'class' => 'add-new-invoice pull-right',
+            'title' => 'Add'
+            ]
+);
     ?>
 </div>
 <div class="grid-row-open">
@@ -61,13 +63,13 @@ use common\models\Invoice;
         [
             'attribute' => 'total',
             'label' => 'Total',
-			'format' => 'currency',
+            'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'enableSorting' => false,
-			'value' => function ($data) {
+            'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->total);
-            },	
+            },
         ],
     ],
 ]); ?>

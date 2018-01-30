@@ -7,6 +7,7 @@ use common\models\Invoice;
 use common\models\User;
 use common\models\UserProfile;
 use common\models\PaymentFrequency;
+
 /**
  * This is the model class for table "proforma_payment_frequency".
  *

@@ -10,11 +10,13 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * HolidayController implements the CRUD actions for Holiday model.
  */
-class HolidayController extends \common\components\controllers\BaseController
+class HolidayController extends BaseController
 {
     public function behaviors()
     {
@@ -25,7 +27,7 @@ class HolidayController extends \common\components\controllers\BaseController
                     'delete' => ['post'],
                 ],
             ],
-			'contentNegotiator' => [
+            'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['update', 'create'],
                 'formatParam' => '_format',
@@ -33,6 +35,16 @@ class HolidayController extends \common\components\controllers\BaseController
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageHolidays'],
+                    ],
+                ],
+            ],  
         ];
     }
 
@@ -77,17 +89,17 @@ class HolidayController extends \common\components\controllers\BaseController
         $model = new Holiday();
         $data  = $this->renderAjax('_form', [
             'model' => $model,
-        ]); 
+        ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,
                 'data' => $data
             ];
-        } 
+        }
     }
 
     /**
@@ -100,14 +112,14 @@ class HolidayController extends \common\components\controllers\BaseController
      */
     public function actionUpdate($id)
     {
-		$model = $this->findModel($id);
+        $model = $this->findModel($id);
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,

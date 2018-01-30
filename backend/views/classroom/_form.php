@@ -12,14 +12,14 @@ use yii\helpers\Url;
 <div class=" row user-create-form">
 
     <?php 
-	$url = Url::to(['classroom/update', 'id' => $model->id]);
-	if ($model->isNewRecord) {
-	   $url = Url::to(['classroom/create']);
-	}
-	$form = ActiveForm::begin([
-		'id' => 'classroom-form',
-		'action' => $url,
-	]); ?>
+    $url = Url::to(['classroom/update', 'id' => $model->id]);
+    if ($model->isNewRecord) {
+        $url = Url::to(['classroom/create']);
+    }
+    $form = ActiveForm::begin([
+        'id' => 'classroom-form',
+        'action' => $url,
+    ]); ?>
 
 	<div class="row">
     	<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>

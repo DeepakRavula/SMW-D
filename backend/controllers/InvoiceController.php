@@ -3,7 +3,6 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\log\InvoiceLog;
 use common\models\Invoice;
 use common\models\Item;
 use common\models\InvoiceLineItem;
@@ -15,10 +14,8 @@ use common\models\UserProfile;
 use common\models\Payment;
 use common\models\Lesson;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use common\models\ItemType;
 use common\models\TaxCode;
 use common\models\Location;
 use yii\helpers\Json;
@@ -34,10 +31,13 @@ use common\models\Label;
 use backend\models\search\UserSearch;
 use common\models\log\LogHistory;
 use backend\models\search\ItemSearch;
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
+
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
-class InvoiceController extends \common\components\controllers\BaseController
+class InvoiceController extends BaseController
 {
     public function behaviors()
     {
@@ -49,12 +49,32 @@ class InvoiceController extends \common\components\controllers\BaseController
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['delete', 'note', 'get-payment-amount', 'update-customer', 
-                    'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax'],
+                'only' => ['delete', 'note', 
+					'get-payment-amount', 'update-customer',
+                    'create-walkin', 'fetch-user', 'add-misc',
+					'adjust-tax'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+				'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['blank-invoice',
+							'update-customer', 'create-walkin',
+							'note', 'view', 'fetch-user',
+							'add-misc','fetch-summary-and-status', 							   'compute-tax', 'create', 'update',
+							'delete', 'update-mail-status',
+							'all-completed-lessons', 'adjust-tax',
+							'revert-invoice', 'enrolment',
+							'invoice-payment-cycle',
+							 'group-lesson','get-payment-amount'],
+                        'roles' => ['manageInvoices', 'managePfi'],
+                    ],
+                ],
+            ], 
         ];
     }
 
@@ -72,12 +92,12 @@ class InvoiceController extends \common\components\controllers\BaseController
             $currentDate                = new \DateTime();
             $searchModel->invoiceStatus = Invoice::STATUS_OWING;
             if (!empty($invoiceSearchRequest['dateRange'])) {
-				$searchModel->dateRange = $invoiceSearchRequest['dateRange'];
-			}
+                $searchModel->dateRange = $invoiceSearchRequest['dateRange'];
+            }
         } else {
             $searchModel->fromDate = (new \DateTime('first day of this month'))->format('M d,Y');
             $searchModel->toDate   = (new \DateTime('last day of this month'))->format('M d,Y');
-             $searchModel->invoiceDateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
+            $searchModel->invoiceDateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
         }
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -110,66 +130,65 @@ class InvoiceController extends \common\components\controllers\BaseController
         }
         $location_id = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $invoice->location_id = $location_id;
-		$invoice->createdUserId = Yii::$app->user->id;
-		$invoice->updatedUserId = Yii::$app->user->id;
+        $invoice->createdUserId = Yii::$app->user->id;
+        $invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();
 
         return $this->redirect(['view', 'id' => $invoice->id]);
     }
 
-	public function actionUpdateCustomer($id,$customerId)
-	{
-		$request = Yii::$app->request;
+    public function actionUpdateCustomer($id, $customerId)
+    {
+        $request = Yii::$app->request;
         $model = $this->findModel($id);
-	$model->user_id = $customerId;
-		if($model->save()) {
-			return [
-				'status' => true,
-				'message' => 'customer has been updated successfully.'
-			];
-		} 
-	}
-	public function actionCreateWalkin($id)
-	{
-		$request = Yii::$app->request;
-                $model = $this->findModel($id);
-                 $customer = new User();
-		$userProfile = new UserProfile();
-                $userContact=new UserContact();
-                $userEmail=new UserEmail();
-                 if ($userProfile->load($request->post()) && $userEmail->load($request->post())) {
-			if ($customer->save()) {
-                                $userProfile->user_id=$customer->id;
-                                $userProfile->save();
-                                $userContact->userId=$customer->id;
-                                $userContact->isPrimary=true;
-                                $userContact-> labelId= Label::LABEL_WORK;   
-                                $userContact->save();
-                                $userEmail->userContactId=$userContact->id;
-                                $userEmail->save();
-				$model->user_id = $customer->id;
-				$model->save();
-				$auth = Yii::$app->authManager;
-				$auth->assign($auth->getRole(User::ROLE_GUEST), $customer->id);
-                                return [
-					'status' => true,
-					'message' => 'customer has been Added successfully.'
-				];
-			}
-                        }
-	}
-	public function actionNote($id)
-	{
+        $model->user_id = $customerId;
+        if ($model->save()) {
+            return [
+                'status' => true,
+                'message' => 'customer has been updated successfully.'
+            ];
+        }
+    }
+    public function actionCreateWalkin($id)
+    {
+        $request = Yii::$app->request;
         $model = $this->findModel($id);
-		if($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true,
-			];
-		}
-		
-	}
+        $customer = new User();
+        $userProfile = new UserProfile();
+        $userContact=new UserContact();
+        $userEmail=new UserEmail();
+        if ($userProfile->load($request->post()) && $userEmail->load($request->post())) {
+            if ($customer->save()) {
+                $userProfile->user_id=$customer->id;
+                $userProfile->save();
+                $userContact->userId=$customer->id;
+                $userContact->isPrimary=true;
+                $userContact-> labelId= Label::LABEL_WORK;
+                $userContact->save();
+                $userEmail->userContactId=$userContact->id;
+                $userEmail->save();
+                $model->user_id = $customer->id;
+                $model->save();
+                $auth = Yii::$app->authManager;
+                $auth->assign($auth->getRole(User::ROLE_GUEST), $customer->id);
+                return [
+                    'status' => true,
+                    'message' => 'customer has been Added successfully.'
+                ];
+            }
+        }
+    }
+    public function actionNote($id)
+    {
+        $model = $this->findModel($id);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return [
+                'status' => true,
+            ];
+        }
+    }
 
-	public function actionView($id)
+    public function actionView($id)
     {
         $model                              = $this->findModel($id);
         $request                            = Yii::$app->request;
@@ -202,8 +221,8 @@ class InvoiceController extends \common\components\controllers\BaseController
 
         $customerInvoicePayments = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                    $query->where(['ip.invoice_id' => $model->id]);
-                }])
+                $query->where(['ip.invoice_id' => $model->id]);
+            }])
             ->where(['user_id' => $model->user_id]);
 
         $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
@@ -214,8 +233,8 @@ class InvoiceController extends \common\components\controllers\BaseController
         $currentDate                         = (new \DateTime())->format('Y-m-d H:i:s');
         $invoicePayments                     = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                    $query->where(['ip.invoice_id' => $model->id]);
-                }])
+                $query->where(['ip.invoice_id' => $model->id]);
+            }])
             ->orderBy(['date' => SORT_DESC]);
         $invoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $invoicePayments,
@@ -237,14 +256,15 @@ class InvoiceController extends \common\components\controllers\BaseController
             $userModel = UserProfile::findOne(['user_id' => $customer->id]);
             $userEmail = UserEmail::find()
                 ->joinWith(['userContact uc' => function ($query) use ($model) {
-                        $query->where(['uc.userId' => $model->user_id]);
-                    }])
+                    $query->where(['uc.userId' => $model->user_id]);
+                }])
                 ->one();
         }
         $logDataProvider= new ActiveDataProvider([
-			'query' => LogHistory::find()
-			->invoice($id) ]);
-        return $this->render('view',
+            'query' => LogHistory::find()
+            ->invoice($id) ]);
+        return $this->render(
+            'view',
                 [
                 'model' => $model,
                 'searchModel' => $searchModel,
@@ -257,8 +277,9 @@ class InvoiceController extends \common\components\controllers\BaseController
                 'noteDataProvider' => $noteDataProvider,
                 'itemDataProvider' => $itemDataProvider,
                 'itemSearchModel' => $itemSearchModel,
-                'logDataProvider' => $logDataProvider,   
-        ]);
+                'logDataProvider' => $logDataProvider,
+        ]
+        );
     }
 
     public function actionFetchUser($id)
@@ -353,19 +374,19 @@ class InvoiceController extends \common\components\controllers\BaseController
     {
         $request = Yii::$app->request;
         $invoiceRequest = $request->get('Invoice');
-		$customerId = $invoiceRequest['customer_id'];
-		$user = User::findOne(['id' => $customerId]);
-		$studentIds = ArrayHelper::getColumn($user->student, 'id');
-		$paymentCycleDataProvider = new ActiveDataProvider([
-			'query' => PaymentCycle::find()
-				->joinWith(['enrolment' => function($query) use($studentIds) {
-					$query->andWhere(['studentId' => $studentIds]);
-				}]),
-			'pagination' => false,
-		]);
-		return $this->render('create', [
-			'paymentCycleDataProvider' => $paymentCycleDataProvider
-		]);
+        $customerId = $invoiceRequest['customer_id'];
+        $user = User::findOne(['id' => $customerId]);
+        $studentIds = ArrayHelper::getColumn($user->student, 'id');
+        $paymentCycleDataProvider = new ActiveDataProvider([
+            'query' => PaymentCycle::find()
+                ->joinWith(['enrolment' => function ($query) use ($studentIds) {
+                    $query->andWhere(['studentId' => $studentIds]);
+                }]),
+            'pagination' => false,
+        ]);
+        return $this->render('create', [
+            'paymentCycleDataProvider' => $paymentCycleDataProvider
+        ]);
     }
 
     /**
@@ -403,26 +424,26 @@ class InvoiceController extends \common\components\controllers\BaseController
      * @return mixed
      */
     public function actionDelete($id)
-	{
-		$model = $this->findModel($id);
-		$model->setScenario(Invoice::SCENARIO_DELETE);
-		if ($model->validate()) {
-			$model->delete();
-			$model->trigger(Invoice::EVENT_DELETE);
-			$response = [
-				'status' => true,
-				'url' => Url::to(['index', 'InvoiceSearch[type]' => $model->type]),
-			];
-		} else {
-			$model	 = ActiveForm::validate($model);
-			$response		 = [
-				'errors' => $model['invoice-id'],
-			];
-		}
-		return $response;
-	}
+    {
+        $model = $this->findModel($id);
+        $model->setScenario(Invoice::SCENARIO_DELETE);
+        if ($model->validate()) {
+            $model->delete();
+            $model->trigger(Invoice::EVENT_DELETE);
+            $response = [
+                'status' => true,
+                'url' => Url::to(['index', 'InvoiceSearch[type]' => $model->type]),
+            ];
+        } else {
+            $model	 = ActiveForm::validate($model);
+            $response		 = [
+                'errors' => $model['invoice-id'],
+            ];
+        }
+        return $response;
+    }
 
-	/**
+    /**
      * Finds the Invoice model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
@@ -457,29 +478,29 @@ class InvoiceController extends \common\components\controllers\BaseController
         $model->save();
     }
 
-	public function actionAllCompletedLessons()
-	{
-            $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-            $query = Lesson::find()
-				->isConfirmed()
+    public function actionAllCompletedLessons()
+    {
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $query = Lesson::find()
+                ->isConfirmed()
                 ->notDeleted()
                 ->location($locationId);
-            $privateLessons = $query->completedUnInvoicedPrivate()->all();
-            $groupLessons = $query->groupLessons()->completed()->all();
-            foreach ($groupLessons as $lesson) {
-                foreach ($lesson->enrolments as $enrolment) {
-                    if (!$enrolment->hasInvoice($lesson->id)) {
-                        $lesson->createGroupInvoice($enrolment->id);
-                    }
+        $privateLessons = $query->completedUnInvoicedPrivate()->all();
+        $groupLessons = $query->groupLessons()->completed()->all();
+        foreach ($groupLessons as $lesson) {
+            foreach ($lesson->enrolments as $enrolment) {
+                if (!$enrolment->hasInvoice($lesson->id)) {
+                    $lesson->createGroupInvoice($enrolment->id);
                 }
             }
+        }
             
-            foreach($privateLessons as $lesson) {
-                $lesson->createPrivateLessonInvoice();
-            }
-		
-            return $this->redirect(['index', 'InvoiceSearch[type]' => Invoice::TYPE_INVOICE]);
-	}
+        foreach ($privateLessons as $lesson) {
+            $lesson->createPrivateLessonInvoice();
+        }
+        
+        return $this->redirect(['index', 'InvoiceSearch[type]' => Invoice::TYPE_INVOICE]);
+    }
 
     public function actionRevertInvoice($id)
     {
@@ -514,8 +535,8 @@ class InvoiceController extends \common\components\controllers\BaseController
         }
         $creditInvoice->save();
         if ($invoice->isOwing()) {
-            if ($invoice->balance > abs ($creditInvoice->balance)) {
-                $amount = abs ($creditInvoice->balance);
+            if ($invoice->balance > abs($creditInvoice->balance)) {
+                $amount = abs($creditInvoice->balance);
             } else {
                 $amount = $invoice->balance;
             }
@@ -579,7 +600,6 @@ class InvoiceController extends \common\components\controllers\BaseController
                     ]);
                 }
                 return $this->redirect(['lesson/view', 'id' => $lessonId, '#' => 'student']);
-
             } else {
                 foreach ($lesson->enrolments as $enrolment) {
                     if (!$enrolment->hasInvoice($lessonId)) {
@@ -632,16 +652,15 @@ class InvoiceController extends \common\components\controllers\BaseController
                 $response = [
                     'status' => true,
                     'message' => 'Tax successfully updated!',
-		];	
+        ];
             } else {
                 $response = [
                     'status' => false,
                     'errors' => ActiveForm::validate($model),
-                ];	
+                ];
             }
             return $response;
         } else {
-
             return [
                 'status' => true,
                 'data' => $data,

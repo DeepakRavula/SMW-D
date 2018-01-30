@@ -3,17 +3,17 @@
 namespace backend\controllers;
 
 use Yii;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-use yii\helpers\Url;
 use backend\models\search\StudentBirthdaySearch;
 use common\models\Location;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
+
 /**
  * StudentController implements the CRUD actions for Student model.
  */
-class StudentBirthdayController extends \common\components\controllers\BaseController
+class StudentBirthdayController extends BaseController
 {
     public function behaviors()
     {
@@ -24,13 +24,23 @@ class StudentBirthdayController extends \common\components\controllers\BaseContr
                     'delete' => ['post'],
                 ],
             ],
-			[
-				'class' => 'yii\filters\ContentNegotiator',
-				'only' => ['create', 'update'],
-				'formats' => [
-					'application/json' => Response::FORMAT_JSON,
-				],
-        	],
+            [
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => ['create', 'update'],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'print'],
+                        'roles' => ['manageBirthdays'],
+                    ],
+                ],
+            ], 
         ];
     }
 
@@ -44,7 +54,7 @@ class StudentBirthdayController extends \common\components\controllers\BaseContr
         $searchModel = new StudentBirthdaySearch();
         $currentDate = new \DateTime();
         $searchModel->fromDate = $currentDate->format('d-m-Y');
-		$nextSevenDate = $currentDate->modify('+7days');
+        $nextSevenDate = $currentDate->modify('+7days');
         $searchModel->toDate = $nextSevenDate->format('d-m-Y');
         $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
         $request = Yii::$app->request;
@@ -67,8 +77,8 @@ class StudentBirthdayController extends \common\components\controllers\BaseContr
     {
         $searchModel = new StudentBirthdaySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-		$dataProvider->pagination = false;
-        $session = Yii::$app->session; 
+        $dataProvider->pagination = false;
+        $session = Yii::$app->session;
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Location::findOne(['id' => $locationId]);
         $this->layout = '/print';
@@ -79,11 +89,4 @@ class StudentBirthdayController extends \common\components\controllers\BaseContr
                 'model'=>$model,
         ]);
     }
-    /**
-     * Displays a single Student model.
-     *
-     * @param int $id
-     *
-     * @return mixed
-     */
-    }
+}

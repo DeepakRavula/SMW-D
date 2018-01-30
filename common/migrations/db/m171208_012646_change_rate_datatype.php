@@ -6,7 +6,7 @@ class m171208_012646_change_rate_datatype extends Migration
 {
     public function up()
     {
-        $this->alterColumn ('qualification', 'rate', $this->decimal(10,2)->null());
+        $this->alterColumn('qualification', 'rate', $this->decimal(10, 2)->null());
     }
 
     public function down()

@@ -1,8 +1,8 @@
 <div class="lesson-note-content p-10">
 <?=
-	$this->render('_view', [
-		'noteDataProvider' =>  $noteDataProvider,
-		'model' => $model,
+    $this->render('_view', [
+        'noteDataProvider' =>  $noteDataProvider,
+        'model' => $model,
 ]);
 ?>
 </div>

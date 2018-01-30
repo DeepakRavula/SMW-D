@@ -12,10 +12,10 @@ use Yii;
  */
 class ReportSearch extends Invoice
 {
-   	private $dateRange;
+    private $dateRange;
     public $fromDate;
     public $toDate;
-	public $summarizeResults = false;
+    public $summarizeResults = false;
     /**
      * {@inheritdoc}
      */

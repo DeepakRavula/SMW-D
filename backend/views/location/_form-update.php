@@ -18,7 +18,7 @@ $this->title = 'Edit Location';
 ?>
 
 <div class="location-form">
-	<?php   
+	<?php 
         $form = ActiveForm::begin([
         'id' => 'location-edit-form',
         'action' => Url::to(['location/update', 'id' => $model->id]),
@@ -45,21 +45,27 @@ $this->title = 'Edit Location';
 		<div class="col-md-4">
 			<?php
             echo $form->field($model, 'city_id')->dropDownList(ArrayHelper::map(
-                            City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'
+                            City::find()->orderBy(['name' => SORT_ASC])->all(),
+    'id',
+    'name'
             ))
             ?>
 		</div>
 		<div class="col-md-4">
 			<?php
             echo $form->field($model, 'province_id')->dropDownList(ArrayHelper::map(
-                            Province::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'
+                            Province::find()->orderBy(['name' => SORT_ASC])->all(),
+                'id',
+                'name'
             ))
             ?>
 		</div>
 		<div class="col-md-4">
 			<?php
             echo $form->field($model, 'country_id')->dropDownList(ArrayHelper::map(
-                            Country::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'
+                            Country::find()->orderBy(['name' => SORT_ASC])->all(),
+                'id',
+                'name'
             ))
             ?>
 		</div>
@@ -79,10 +85,10 @@ $this->title = 'Edit Location';
 	<div class="row p-10">
 		<div class="col-md-4">
 			<?php echo $form->field($model, 'conversionDate')->widget(DatePicker::classname(), [
-				'options' => [
-					'value' => !empty($model->conversionDate) ? Carbon::parse($model->conversionDate)->format('d-m-Y') : ''
-				],
-				'layout' => '{input}{picker}',
+                'options' => [
+                    'value' => !empty($model->conversionDate) ? Carbon::parse($model->conversionDate)->format('d-m-Y') : ''
+                ],
+                'layout' => '{input}{picker}',
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
@@ -100,7 +106,7 @@ $this->title = 'Edit Location';
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 	</div>
         <div class="pull-left">
-        <?php echo Html::a('Delete', ['delete', 'id' => $model->id],['class' => 'btn btn-danger']);?>
+        <?php echo Html::a('Delete', ['delete', 'id' => $model->id], ['class' => 'btn btn-danger']);?>
         </div>
     </div>
 </div>

@@ -14,7 +14,7 @@ if (!$model->isNewRecord) {
 ?>
 <div class="lesson-form">
 <?php $form = ActiveForm::begin([
-	'id' => 'program-form',
+    'id' => 'program-form',
 ]); ?>
    	<div class="row">
    		<div class="col-md-4">
@@ -25,9 +25,6 @@ if (!$model->isNewRecord) {
 				<div class="col-md-12">
 					<?php $rateLabel = (int) $model->type === Program::TYPE_PRIVATE_PROGRAM ? 'Rate Per Hour($)' : 'Rate Per Course($)'; ?>
 					<?php echo $form->field($model, 'rate')->textInput()->label($rateLabel); ?>
-				</div>
-				<div class="col-md-12">
-					<?php echo $form->field($model, 'type')->dropDownList(Program::types()) ?>
 				</div>
 				<div class="col-md-12">
 					<?php if (!$model->getIsNewRecord()) : ?>
@@ -74,7 +71,7 @@ if (!$model->isNewRecord) {
 
                 <div class="form-group pull-right">
 <?php echo  Html::a('Cancel', '', ['class' => 'btn btn-default program-cancel']); ?>
-<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info m-l-10' , 'name' => 'signup-button']) ?>
 
                 </div>
             </div></div>

@@ -2,33 +2,33 @@
 
 $config = [
     'components' => [
-		 'errorHandler' => [
-			'class' => 'baibaratsky\yii\rollbar\web\ErrorHandler',
-		],
+         'errorHandler' => [
+            'class' => 'baibaratsky\yii\rollbar\web\ErrorHandler',
+        ],
         'assetManager' => [
-			'class'=>'yii\web\AssetManager',
-			'linkAssets' => false,
-			'appendTimestamp' => YII_ENV_DEV,
-			'bundles'=>[
-				'insolita\wgadminlte\ExtAdminlteAsset'=>[
-					'depends'=>[
-						'yii\web\YiiAsset',
-						'common\assets\AdminLte',
-						'insolita\wgadminlte\JsCookieAsset'
-					]
-				],
-				'insolita\wgadminlte\JsCookieAsset'=>[
-					'depends'=>[
-						'yii\web\YiiAsset',
-						'common\assets\AdminLte',
-					]
-				],
-			],
+            'class'=>'yii\web\AssetManager',
+            'linkAssets' => false,
+            'appendTimestamp' => YII_ENV_DEV,
+            'bundles'=>[
+                'insolita\wgadminlte\ExtAdminlteAsset'=>[
+                    'depends'=>[
+                        'yii\web\YiiAsset',
+                        'common\assets\AdminLte',
+                        'insolita\wgadminlte\JsCookieAsset'
+                    ]
+                ],
+                'insolita\wgadminlte\JsCookieAsset'=>[
+                    'depends'=>[
+                        'yii\web\YiiAsset',
+                        'common\assets\AdminLte',
+                    ]
+                ],
+            ],
         ],
-		'request' => [
-			'enableCsrfValidation' => false,
+        'request' => [
+            'enableCsrfValidation' => false,
         ],
-	],
+    ],
     'as locale' => [
         'class' => 'common\behaviors\LocaleBehavior',
         'enablePreferredLanguage' => true,
@@ -81,27 +81,27 @@ $config = [
             'dashboard/*',
             'course/*',
             'log/*',
-			'vacation/*',
-			'calendar-event-color/*',
-			'classroom/*',
-			'exam-result/*',
-			'note/*',
-			'teacher-room/*',
+            'vacation/*',
+            'calendar-event-color/*',
+            'classroom/*',
+            'exam-result/*',
+            'note/*',
+            'teacher-room/*',
             'teacher-substitute/*',
-			'discount/*',
-			'classroom-unavailability/*',
-			'report/*',
-			'teacher-rate/*',
+            'discount/*',
+            'classroom-unavailability/*',
+            'report/*',
+            'teacher-rate/*',
             'customer-payment-preference/*',
-			'private-lesson/*',
+            'private-lesson/*',
             'daily-schedule/*',
-			'text-template/*',
-			'email/*',
-			'print/*',
-			'customer/*',
-			'user-contact/*',
-			'daily-schedule/*',
-			'permission/*',
+            'text-template/*',
+            'email/*',
+            'print/*',
+            'customer/*',
+            'user-contact/*',
+            'daily-schedule/*',
+            'permission/*',
                         'user-pin/*'
             // The actions listed here will be allowed to everyone including guests.
             // So, 'admin/*' should not appear here in the production, of course.

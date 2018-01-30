@@ -11,7 +11,7 @@ class m170821_053359_closure_table_migration extends Migration
         $lessons = Lesson::find()->all();
         foreach ($lessons as $lesson) {
             $root = LessonHierarchy::findOne([
-                'lessonId' => $lesson->id, 
+                'lessonId' => $lesson->id,
                 'childLessonId' => $lesson->id,
                 'depth' => false
             ]);
@@ -20,7 +20,7 @@ class m170821_053359_closure_table_migration extends Migration
             }
             if ($lesson->lessonReschedule) {
                 $hierarchy = LessonHierarchy::findOne([
-                    'lessonId' => $lesson->id, 
+                    'lessonId' => $lesson->id,
                     'childLessonId' => $lesson->lessonReschedule->rescheduleLesson->id,
                     'depth' => true
                 ]);

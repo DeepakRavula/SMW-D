@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+
 /**
  * This is the model class for table "invoice".
  *
@@ -17,10 +18,10 @@ trait Payable
 {
     public function makeInvoicePayment($lesson)
     {
-        if($lesson->canInvoice()) {
+        if ($lesson->canInvoice()) {
             if (!$lesson->hasInvoice()) {
                 $invoice = $lesson->createPrivateLessonInvoice();
-            } else if (!$lesson->invoice->isPaid()) {
+            } elseif (!$lesson->invoice->isPaid()) {
                 if ($lesson->hasLessonCredit($lesson->enrolment->id)) {
                     $netPrice = $lesson->getLessonCreditAmount($lesson->enrolment->id);
                     if ($lesson->isExploded) {
@@ -35,14 +36,17 @@ trait Payable
 
     public function makeGroupInvoicePayment($lesson, $enrolment)
     {
-        if($lesson->canInvoice()) {
+        if ($lesson->canInvoice()) {
             if (!$enrolment->hasInvoice($lesson->id)) {
                 $invoice = $lesson->createGroupInvoice($enrolment->id);
-            } else if (!$enrolment->getInvoice($lesson->id)->isPaid()) {
+            } elseif (!$enrolment->getInvoice($lesson->id)->isPaid()) {
                 if ($lesson->hasLessonCredit($enrolment->id)) {
                     $netPrice = $lesson->getLessonCreditAmount($enrolment->id);
-                    $enrolment->getInvoice($lesson->id)->addPayment($lesson, 
-                        $netPrice, $enrolment);
+                    $enrolment->getInvoice($lesson->id)->addPayment(
+                        $lesson,
+                        $netPrice,
+                        $enrolment
+                    );
                 }
             }
         }
@@ -53,7 +57,7 @@ trait Payable
         $creditUsageModel = new CreditUsage();
         $creditUsageModel->credit_payment_id = $creditPaymentId;
         $creditUsageModel->debit_payment_id = $debitPaymentId;
-        $creditUsageModel->save();	
+        $creditUsageModel->save();
     }
     
     public function addPayment($from, $amount, $enrolment = null)
@@ -72,7 +76,7 @@ trait Payable
             $paymentModel->reference = $from->getInvoiceNumber();
         }
         $paymentModel->save();
-	$creditPaymentId = $paymentModel->id;
+        $creditPaymentId = $paymentModel->id;
         if ($this->tableName() === 'lesson') {
             if (!$enrolment) {
                 $enrolment = $this->enrolment;
@@ -117,8 +121,8 @@ trait Payable
                         ->andWhere(['enrolment.id' => $enrolment->id])
                         ->all();
         $courseCount = $enrolment->courseCount;
-        foreach($lessons as $lesson) {
-            $amount = $enrolment->proFormaInvoice->netSubtotal / $courseCount - 
+        foreach ($lessons as $lesson) {
+            $amount = $enrolment->proFormaInvoice->netSubtotal / $courseCount -
                     $lesson->getCreditAppliedAmount($enrolment->id);
             if ($amount > $this->proFormaCredit) {
                 $amount = $this->proFormaCredit;

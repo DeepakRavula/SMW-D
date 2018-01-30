@@ -9,7 +9,7 @@ use kartik\daterange\DateRangePicker;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
     <?php $form = ActiveForm::begin([
-		'id' => 'dashboard-search-form',
+        'id' => 'dashboard-search-form',
         'action' => ['index'],
         'method' => 'get'
     ]); ?>

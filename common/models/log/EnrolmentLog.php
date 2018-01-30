@@ -14,7 +14,6 @@ class EnrolmentLog extends Log
 {
     public function editAutoRenewFeature($event)
     {
-
         $enrolmentModel        = $event->sender;
         $loggedUser            = $event->data['loggedUser'];
         $autoRenewFeatureState = Enrolment::AUTO_RENEWAL_STATE_ENABLED;
@@ -36,7 +35,7 @@ class EnrolmentLog extends Log
         $studentPath=Url::to(['/student/view', 'id' => $enrolmentModel->student->id]);
         if ($log->save()) {
             $this->addHistory($log, $enrolmentModel, $object);
-             $this->addLink($log,$studentIndex,$studentPath);
+            $this->addLink($log, $studentIndex, $studentPath);
         }
     }
     public function vacationCreate($event)
@@ -83,7 +82,7 @@ class EnrolmentLog extends Log
             $this->addLink($log, $studentIndex, $studentPath);
         }
     }
-        public function bulkReschedule($event)
+    public function bulkReschedule($event)
     {
         $enrolmentModel     = $event->sender;
         $rescheduleBeginDate=$event->data['rescheduleBeginDate'];
@@ -110,7 +109,7 @@ class EnrolmentLog extends Log
         if ($log->save()) {
             $this->addHistory($log, $enrolmentModel, $object);
             $this->addLink($log, $studentIndex, $studentPath);
-            $this->addLink($log,$teacherIndex,$teacherPath);
+            $this->addLink($log, $teacherIndex, $teacherPath);
         }
     }
 

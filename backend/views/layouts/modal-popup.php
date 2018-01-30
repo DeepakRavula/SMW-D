@@ -7,7 +7,7 @@ use yii\bootstrap\Modal;
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Modal Popup</h4>',
     'id' => 'popup-modal',
-    'footer' => $this->render('/layouts/_submit-button')
+    'footer' => $this->render('/layouts/modal-popup-footer')
 ]); ?>
 <div id="modal-spinner" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -55,10 +55,13 @@ use yii\bootstrap\Modal;
         $('#modal-spinner').hide();
     });
     
+    $('#popup-modal').on('hidden.bs.modal', function () {
+        $(document).trigger( "modal-close");
+    });
+    
     $(document).off('click', '.modal-cancel').on('click', '.modal-cancel', function () {
         $('#modal-spinner').show();
         $('#popup-modal').modal('hide');
-        $(document).trigger( "modal-cancel");
         return false;
     });
 </script>

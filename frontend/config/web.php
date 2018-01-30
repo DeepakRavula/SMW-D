@@ -18,7 +18,7 @@ $config = [
         ],
     ],
     'components' => [
-		'session' => [
+        'session' => [
             'name' => 'PHPFRONTSESSID',
         ],
         'authClientCollection' => [
@@ -75,37 +75,37 @@ $config = [
             'as afterLogin' => 'common\behaviors\LoginTimestampBehavior',
         ],
     ],
-		'as globalAccess' => [
+        'as globalAccess' => [
         'class' => '\common\behaviors\GlobalAccessBehavior',
         'rules' => [
-			[
+            [
                 'controllers' => ['user/sign-in'],
                 'allow' => true,
                 'roles' => ['?', '@'],
                 'actions' => ['login', 'request-password-reset', 'reset-password'],
             ],
-			[
+            [
                 'controllers' => ['debug/default'],
                 'allow' => true,
             ],
-			[
+            [
                 'controllers' => ['user/sign-in'],
                 'allow' => true,
                 'roles' => ['@'],
                 'actions' => ['logout', 'profile', 'account'],
             ],
-			[
+            [
                 'controllers' => ['user/default'],
                 'allow' => true,
                 'roles' => ['@'],
             ],
-			[
+            [
                 'controllers' => ['site'],
                 'allow' => true,
                 'roles' => ['?', '@'],
                 'actions' => ['error'],
             ],
-			[
+            [
                 'controllers' => ['site'],
                 'allow' => true,
                 'roles' => ['@'],

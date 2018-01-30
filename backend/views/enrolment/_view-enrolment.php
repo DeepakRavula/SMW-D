@@ -15,18 +15,18 @@ DateTimePickerAsset::register($this);
 	<div class="col-md-6">
         <?php Pjax::begin(['id' => 'enrolment-view']); ?>
 		<?=
-		$this->render('_details', [
-			'model' => $model,
-		]);
-		?>
+        $this->render('_details', [
+            'model' => $model,
+        ]);
+        ?>
             <?php Pjax::end(); ?>
         </div>
 	<div class="col-md-6">
 		<?=
-		$this->render('schedule/view', [
-			'model' => $model,
-		]);
-		?>
+        $this->render('schedule/view', [
+            'model' => $model,
+        ]);
+        ?>
 	</div>	
 </div>
 
@@ -35,52 +35,52 @@ DateTimePickerAsset::register($this);
 <?php Pjax::begin(['id' => 'enrolment-pfi']); ?>
 			<div class="col-md-6">
 			<?=
-			$this->render('_pf', [
-				'model' => $model,
-			]);
-			?>
+            $this->render('_pf', [
+                'model' => $model,
+            ]);
+            ?>
                         </div>
 <?php Pjax::end(); ?>
 <?php Pjax::begin(['id' => 'enrolment-vacation']); ?>
 	<div class="col-md-6">
 		<?=
-		$this->render('_vacation', [
-			'model' => $model,
-		]);
-		?>
+        $this->render('_vacation', [
+            'model' => $model,
+        ]);
+        ?>
 	</div>
 <?php Pjax::end(); ?>
                 </div>
 	<?php endif; ?>
 <?php
 Modal::begin([
-	'header' => '<h4 class="m-0">Edit</h4>',
-	'id' => 'enrolment-rate-edit-modal',
+    'header' => '<h4 class="m-0">Edit</h4>',
+    'id' => 'enrolment-rate-edit-modal',
 ]);
 ?>
 <?= $this->render('update/_form-rate', [
-	'model' => $model,
-	'enrolmentProgramRates' => $model->enrolmentProgramRates,
+    'model' => $model,
+    'enrolmentProgramRates' => $model->enrolmentProgramRates,
 ]);?>
 <?php Modal::end(); ?>
 <?php
 Modal::begin([
-	'header' => '<h4 class="m-0">Enrolment Edit</h4>',
-	'id' => 'enrolment-edit-modal',
+    'header' => '<h4 class="m-0">Enrolment Edit</h4>',
+    'id' => 'enrolment-edit-modal',
 ]);
 ?>
 <div id="enrolment-edit-content">
   <?php echo $this->render('/enrolment/schedule/_form-update', [
-			'course' => $model->course,
-			'courseSchedule' => $model->course->courseSchedule,
-			'model' => $model,
-		]);?>
+            'course' => $model->course,
+            'courseSchedule' => $model->course->courseSchedule,
+            'model' => $model,
+        ]);?>
 </div>
 <?php Modal::end(); ?>
 <?php
 Modal::begin([
-	'header' => '<h4 class="m-0">Enrolment Edit</h4>',
-	'id' => 'enrolment-edit-enddate-modal',
+    'header' => '<h4 class="m-0">Enrolment Edit</h4>',
+    'id' => 'enrolment-edit-enddate-modal',
 ]);
 ?>
 <div id="enrolment-edit-enddate"></div>

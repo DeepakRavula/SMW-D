@@ -16,7 +16,7 @@ use common\models\User;
 <?php $form = ActiveForm::begin([
             'id' => 'lesson-edit-form',
             'enableAjaxValidation' => true,
-			'enableClientValidation' => false,
+            'enableClientValidation' => false,
             'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id, 'teacherId' => $model->teacherId]),
             'action' => Url::to(['lesson/substitute', 'id' => $model->id]),
             'options' => [
@@ -30,14 +30,17 @@ use common\models\User;
         <?php
         // Dependent Dropdown
         echo $form->field($model, 'teacherId')->dropDownList(
-            ArrayHelper::map(User::find()
-				->teachers($model->course->program->id, \common\models\Location::findOne(['slug' => \Yii::$app->location])->id)
-                ->join('LEFT JOIN', 'user_profile','user_profile.user_id = ul.user_id')
+            ArrayHelper::map(
+                User::find()
+                ->teachers($model->course->program->id, \common\models\Location::findOne(['slug' => \Yii::$app->location])->id)
+                ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
                 ->notDeleted()
                 ->orderBy(['user_profile.firstname' => SORT_ASC])
-				->all(),
-			'id', 'userProfile.fullName'
-		))->label('Teacher');
+                ->all(),
+            'id',
+                'userProfile.fullName'
+        )
+        )->label('Teacher');
             ?>  
         </div>
         <div class="col-md-5">

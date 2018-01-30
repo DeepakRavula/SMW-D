@@ -60,8 +60,8 @@ class ScheduleController extends Controller
      */
     public function actionIndex()
     {
-		$userId = Yii::$app->user->id; 
-		$userLocation = UserLocation::findOne(['user_id' => $userId]);
+        $userId = Yii::$app->user->id;
+        $userLocation = UserLocation::findOne(['user_id' => $userId]);
         $locationId = $userLocation->location_id;
 
         $date = new \DateTime();
@@ -80,116 +80,116 @@ class ScheduleController extends Controller
 
         return $this->render('index', [
             'locationAvailabilities'   => $locationAvailabilities,
-			'from_time'                => $from_time,
-			'to_time'                  => $to_time,
-		]);
+            'from_time'                => $from_time,
+            'to_time'                  => $to_time,
+        ]);
     }
 
     public function getLessons($userId)
     {
-		$user = User::findOne(['id' => $userId]);
-		$roles = Yii::$app->authManager->getRolesByUser($userId);
-		$role = end($roles);
-		if($role->name === User::ROLE_CUSTOMER)	{
-			$studentIds = ArrayHelper::getColumn($user->student, 'id');
-		}
-		$userLocation = UserLocation::findOne(['user_id' => $userId]);
+        $user = User::findOne(['id' => $userId]);
+        $roles = Yii::$app->authManager->getRolesByUser($userId);
+        $role = end($roles);
+        if ($role->name === User::ROLE_CUSTOMER) {
+            $studentIds = ArrayHelper::getColumn($user->student, 'id');
+        }
+        $userLocation = UserLocation::findOne(['user_id' => $userId]);
         $locationId = $userLocation->location_id;
         $query = Lesson::find()
-			->isConfirmed()
-			->joinWith(['course' => function ($query) use($locationId) {
-				$query->andWhere(['course.locationId' => $locationId]);
-			}]);
-			if(!empty($studentIds)) {
-				$query->joinWith(['enrolment' => function($query) use($studentIds) {
-					$query->joinWith(['student' => function($query) use($studentIds) {
-						$query->andWhere(['student.id' => $studentIds]);
-					}]);
-				}]);	
-			}
-			if($role->name === User::ROLE_TEACHER) {
-				$query->andWhere(['lesson.teacherId' => $userId]);
-			}
-			$query->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
-				->notDeleted();
-		$lessons = $query->all();
+            ->isConfirmed()
+            ->joinWith(['course' => function ($query) use ($locationId) {
+                $query->andWhere(['course.locationId' => $locationId]);
+            }]);
+        if (!empty($studentIds)) {
+            $query->joinWith(['enrolment' => function ($query) use ($studentIds) {
+                $query->joinWith(['student' => function ($query) use ($studentIds) {
+                    $query->andWhere(['student.id' => $studentIds]);
+                }]);
+            }]);
+        }
+        if ($role->name === User::ROLE_TEACHER) {
+            $query->andWhere(['lesson.teacherId' => $userId]);
+        }
+        $query->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+                ->notDeleted();
+        $lessons = $query->all();
         return $lessons;
     }
 
     public function actionRenderDayEvents($userId)
     {
-		$teachersAvailabilities = TeacherAvailability::find()
-			->joinWith(['userLocation' => function ($query) use ($userId) {
-				$query->where(['user_location.user_id' => $userId]);
-			}])
-			->all();
+        $teachersAvailabilities = TeacherAvailability::find()
+            ->joinWith(['userLocation' => function ($query) use ($userId) {
+                $query->where(['user_location.user_id' => $userId]);
+            }])
+            ->all();
 
-		foreach ($teachersAvailabilities as $teachersAvailability) {
-			$start = $teachersAvailability->from_time;
-			$end   = $teachersAvailability->to_time;
-			$events[] = [
-				'resourceId' => $teachersAvailability->teacher->id,
-				'title'      => '',
-				'start'      => $start,
-				'end'        => $end,
-				'rendering'  => 'background',
-			];
-		}
-		$lessons = $this->getLessons($userId);
-		foreach ($lessons as &$lesson) {
-			$toTime = new \DateTime($lesson->date);
-			$length = explode(':', $lesson->fullDuration);
-			$toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
-			if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-				$description = $this->renderAjax('group-lesson-description', [
-					'lesson' => $lesson,
-					'view' => Lesson::TEACHER_VIEW
-				]);
-				$title = $lesson->course->program->name;
-				$class = 'group-lesson';
-				$backgroundColor = null;
-				if (!empty($lesson->colorCode)) {
-					$class = null;
-					$backgroundColor = $lesson->colorCode;
-				}
-			} else {
-				$title = $lesson->enrolment->student->fullName;
-				$class = 'private-lesson';
-				$backgroundColor = null;
-				if (!empty($lesson->colorCode)) {
-					$class = null;
-					$backgroundColor = $lesson->colorCode;
-				} else if($lesson->isEnrolmentFirstlesson()) {
-					$class = 'first-lesson';
-				} else if ($lesson->getRootLesson()) {
-					$rootLesson = $lesson->getRootLesson();
-					if($rootLesson->id !== $lesson->id) {
-                    	$class = 'lesson-rescheduled';
-					}
-					if ($rootLesson->teacherId !== $lesson->teacherId) {
-						$class = 'teacher-substituted';
-					}
-				}
+        foreach ($teachersAvailabilities as $teachersAvailability) {
+            $start = $teachersAvailability->from_time;
+            $end   = $teachersAvailability->to_time;
+            $events[] = [
+                'resourceId' => $teachersAvailability->teacher->id,
+                'title'      => '',
+                'start'      => $start,
+                'end'        => $end,
+                'rendering'  => 'background',
+            ];
+        }
+        $lessons = $this->getLessons($userId);
+        foreach ($lessons as &$lesson) {
+            $toTime = new \DateTime($lesson->date);
+            $length = explode(':', $lesson->fullDuration);
+            $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
+            if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
+                $description = $this->renderAjax('group-lesson-description', [
+                    'lesson' => $lesson,
+                    'view' => Lesson::TEACHER_VIEW
+                ]);
+                $title = $lesson->course->program->name;
+                $class = 'group-lesson';
+                $backgroundColor = null;
+                if (!empty($lesson->colorCode)) {
+                    $class = null;
+                    $backgroundColor = $lesson->colorCode;
+                }
+            } else {
+                $title = $lesson->enrolment->student->fullName;
+                $class = 'private-lesson';
+                $backgroundColor = null;
+                if (!empty($lesson->colorCode)) {
+                    $class = null;
+                    $backgroundColor = $lesson->colorCode;
+                } elseif ($lesson->isEnrolmentFirstlesson()) {
+                    $class = 'first-lesson';
+                } elseif ($lesson->getRootLesson()) {
+                    $rootLesson = $lesson->getRootLesson();
+                    if ($rootLesson->id !== $lesson->id) {
+                        $class = 'lesson-rescheduled';
+                    }
+                    if ($rootLesson->teacherId !== $lesson->teacherId) {
+                        $class = 'teacher-substituted';
+                    }
+                }
 
-				$description = $this->renderAjax('private-lesson-description', [
-					'title' => $title,
-					'lesson' => $lesson,
-					'view' => Lesson::TEACHER_VIEW
-				]);
-			}
+                $description = $this->renderAjax('private-lesson-description', [
+                    'title' => $title,
+                    'lesson' => $lesson,
+                    'view' => Lesson::TEACHER_VIEW
+                ]);
+            }
 
-			$events[] = [
-				'lessonId' => $lesson->id,
-				'resourceId' => $lesson->teacherId,
-				'title' => $title,
-				'start' => $lesson->date,
-				'end' => $toTime->format('Y-m-d H:i:s'),
-				'className' => $class,
-				'backgroundColor' => $backgroundColor,
-				'description' => $description, 
-			];
-		}
-		unset($lesson);
+            $events[] = [
+                'lessonId' => $lesson->id,
+                'resourceId' => $lesson->teacherId,
+                'title' => $title,
+                'start' => $lesson->date,
+                'end' => $toTime->format('Y-m-d H:i:s'),
+                'className' => $class,
+                'backgroundColor' => $backgroundColor,
+                'description' => $description,
+            ];
+        }
+        unset($lesson);
         return $events;
     }
 }

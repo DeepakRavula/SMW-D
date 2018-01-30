@@ -12,14 +12,14 @@ use yii\helpers\Html;
 
 <div class="clearfix"></div>	
 <?php $form = ActiveForm::begin([
-	'id' => 'group-course-form',
+    'id' => 'group-course-form',
         'action' => Url::to(['course/create']),
 ]); ?>
 	    <div id="step-1">
 	       <?= $this->render('/course/_form', [
-				'model' => new Course(), 
-				'form' => $form,
-			]);?>
+                'model' => new Course(),
+                'form' => $form,
+            ]);?>
                 <div class="form-group pull-right">
 		<?= Html::a('Cancel', '#', ['class' => 'btn btn-default group-course-cancel']); ?>
 		<button class="nextBtn btn btn-info m-l-20 step1-next" type="button" >Next</button>
@@ -28,17 +28,17 @@ use yii\helpers\Html;
 	    <div id="step-2">
                     <div class="col-md-12">
 	       <?= $this->render('/course/_form-add-lesson', [
-				'courseSchedule' => [new CourseSchedule()], 
-				'form' => $form,
-			]);?> 
+                'courseSchedule' => [new CourseSchedule()],
+                'form' => $form,
+            ]);?> 
                         
                     </div>
                 <div class="col-md-12">
 			<div class="pull-right">
 				<?php
-					echo Html::a('Cancel', [''], ['class' => 'btn btn-default group-course-cancel']);
+                    echo Html::a('Cancel', [''], ['class' => 'btn btn-default group-course-cancel']);
                                         echo Html::submitButton(Yii::t('backend', 'Preview Lessons'), ['id' => 'group-course-save', 'class' => 'btn btn-info m-l-10', 'name' => 'signup-button'])
-				?>
+                ?>
 			</div>
                     <div class="form-group pull-left">
 		<button class="step2-back btn btn-info" type="button" >Back</button>

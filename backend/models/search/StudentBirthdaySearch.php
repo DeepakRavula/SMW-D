@@ -11,7 +11,6 @@ use Yii;
  */
 class StudentBirthdaySearch extends Student
 {
-
     private $dateRange;
     public $fromDate;
     public $toDate;
@@ -35,7 +34,7 @@ class StudentBirthdaySearch extends Student
         return Model::scenarios();
     }
 
-	public function setDateRange($dateRange)
+    public function setDateRange($dateRange)
     {
         list($fromDate, $toDate) = explode(' - ', $dateRange);
         $this->fromDate = \DateTime::createFromFormat('d-m-Y', $fromDate);
@@ -60,7 +59,7 @@ class StudentBirthdaySearch extends Student
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Student::find()->notDeleted()
             ->location($locationId)
-			->orderBy(['DATE_FORMAT(birth_date,"%m-%d")' => SORT_DESC]);
+            ->orderBy(['DATE_FORMAT(birth_date,"%m-%d")' => SORT_DESC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -68,8 +67,8 @@ class StudentBirthdaySearch extends Student
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-		
-		$query->andWhere(['between', 'DATE_FORMAT(birth_date,"%m-%d")', $this->fromDate->format('m-d'), $this->toDate->format('m-d')]);
+        
+        $query->andWhere(['between', 'DATE_FORMAT(birth_date,"%m-%d")', $this->fromDate->format('m-d'), $this->toDate->format('m-d')]);
 
         return $dataProvider;
     }

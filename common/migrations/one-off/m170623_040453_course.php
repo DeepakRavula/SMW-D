@@ -8,19 +8,19 @@ class m170623_040453_course extends Migration
 {
     public function up()
     {
-		foreach(Course::find()->all() as $course) {
-			if(empty($course->courseSchedule)) {
-				$this->insert('course_schedule',[
-					'courseId' => $course->id,
-					'day' => $course->day,
-					'duration' => $course->duration,
-					'fromTime' => $course->fromTime,
-			  	]);
-			}
-		}
-		$this->dropColumn('course', 'day');
-		$this->dropColumn('course', 'fromTime');
-		$this->dropColumn('course', 'duration');
+        foreach (Course::find()->all() as $course) {
+            if (empty($course->courseSchedule)) {
+                $this->insert('course_schedule', [
+                    'courseId' => $course->id,
+                    'day' => $course->day,
+                    'duration' => $course->duration,
+                    'fromTime' => $course->fromTime,
+                ]);
+            }
+        }
+        $this->dropColumn('course', 'day');
+        $this->dropColumn('course', 'fromTime');
+        $this->dropColumn('course', 'duration');
     }
 
     public function down()

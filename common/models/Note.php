@@ -17,12 +17,12 @@ use Yii;
  */
 class Note extends \yii\db\ActiveRecord
 {
-	const INSTANCE_TYPE_STUDENT = 1;
-	const INSTANCE_TYPE_USER = 2;
-	const INSTANCE_TYPE_LESSON = 3;
-	const INSTANCE_TYPE_INVOICE = 4;
-	
-	public $hasEditable;
+    const INSTANCE_TYPE_STUDENT = 1;
+    const INSTANCE_TYPE_USER = 2;
+    const INSTANCE_TYPE_LESSON = 3;
+    const INSTANCE_TYPE_INVOICE = 4;
+    
+    public $hasEditable;
     /**
      * @inheritdoc
      */
@@ -61,39 +61,39 @@ class Note extends \yii\db\ActiveRecord
         ];
     }
 
-	public function getCreatedUser()
+    public function getCreatedUser()
     {
         return $this->hasOne(User::className(), ['id' => 'createdUserId']);
     }
 
-	public function getInstanceTypeName()
-	{
-		$name = null;
-		switch($this->instanceType) {
-			case self::INSTANCE_TYPE_STUDENT :
-				$name = 'student';
-			break;
-			case self::INSTANCE_TYPE_USER :
-				$name = 'user';
-			break;
-			case self::INSTANCE_TYPE_LESSON :
-				$name = 'lesson';
-			break;
-			case self::INSTANCE_TYPE_INVOICE :
-				$name = 'invoice';
-			break;
-		}
-		return $name;
-	}
-	public function beforeSave($insert)
-	{
-		$currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-		if(! $insert) {
-			$this->updatedOn = $currentDate;
-		} else {
-            $this->createdOn = $currentDate;
-			$this->updatedOn = $currentDate;
+    public function getInstanceTypeName()
+    {
+        $name = null;
+        switch ($this->instanceType) {
+            case self::INSTANCE_TYPE_STUDENT:
+                $name = 'student';
+            break;
+            case self::INSTANCE_TYPE_USER:
+                $name = 'user';
+            break;
+            case self::INSTANCE_TYPE_LESSON:
+                $name = 'lesson';
+            break;
+            case self::INSTANCE_TYPE_INVOICE:
+                $name = 'invoice';
+            break;
         }
-		return parent::beforeSave($insert);
-	}
+        return $name;
+    }
+    public function beforeSave($insert)
+    {
+        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+        if (! $insert) {
+            $this->updatedOn = $currentDate;
+        } else {
+            $this->createdOn = $currentDate;
+            $this->updatedOn = $currentDate;
+        }
+        return parent::beforeSave($insert);
+    }
 }

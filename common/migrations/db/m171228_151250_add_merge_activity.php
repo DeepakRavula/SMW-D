@@ -6,9 +6,9 @@ class m171228_151250_add_merge_activity extends Migration
 {
     public function up()
     {
-		$this->insert('log_activity', [
-			'name' => 'merge',
-		]);
+        $this->insert('log_activity', [
+            'name' => 'merge',
+        ]);
     }
 
     public function down()

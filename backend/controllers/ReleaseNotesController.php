@@ -6,17 +6,18 @@ use Yii;
 use common\models\ReleaseNotes;
 use common\models\ReleaseNotesRead;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * Release_notesController implements the CRUD actions for ReleaseNotes model.
  */
-class ReleaseNotesController extends \common\components\controllers\BaseController
+class ReleaseNotesController extends BaseController
 {
     public function behaviors()
     {
@@ -33,6 +34,16 @@ class ReleaseNotesController extends \common\components\controllers\BaseControll
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageReleaseNotes'],
+                    ],
                 ],
             ], 
         ];
@@ -76,24 +87,23 @@ class ReleaseNotesController extends \common\components\controllers\BaseControll
      */
     public function actionCreate()
     {
-        
         $model = new ReleaseNotes();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('Y-m-d H:i:s');
         $model->user_id = Yii::$app->user->id;
-         $data  = $this->renderAjax('_form', [
+        $data  = $this->renderAjax('_form', [
             'model' => $model,
-        ]); 
+        ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true,
-			];
+            return [
+                'status' => true,
+            ];
         } else {
             return [
                 'status' => true,
                 'data' => $data
             ];
-        } 
+        }
     }
 
     /**

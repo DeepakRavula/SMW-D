@@ -54,7 +54,7 @@ use kartik\grid\GridView;
         			<i class="fa fa-calendar"></i>
         				<?php echo !empty(Yii::$app->formatter->asDate($model->date)) ? Yii::$app->formatter->asDateTime($model->date) : null ?>
         		</div>
-                <?php if($model->isRescheduled()) : ?>
+                <?php if ($model->isRescheduled()) : ?>
                 <?php $rootLesson = $model->getRootLesson(); ?>
                 <div class="col-md-3 hand" data-toggle="tooltip" data-placement="bottom" title="Original Lesson Date">
                     <i class="fa fa-calendar-plus-o"></i> <?php echo Yii::$app->formatter->asDateTime($rootLesson->date); ?>
@@ -96,8 +96,8 @@ use kartik\grid\GridView;
     	<?php if (Yii::$app->controller->action->id === 'view'):?>
 
     	<?= $this->render('_buttons', [
-    		'model' => $model,
-    	]); ?>
+            'model' => $model,
+        ]); ?>
                 <?php endif; ?>
         </div>
         <div class="clearfix"></div>

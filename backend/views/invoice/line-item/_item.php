@@ -15,21 +15,21 @@ use yii\widgets\Pjax;
     ]) ?>
 <?php Pjax::Begin(['id' => 'invoice-view-tab-item', 'timeout' => 6000]); ?>
 <?php $boxTools = $this->render('_button', [
-	'model' => $model,
+    'model' => $model,
 ]);?>
 <?php
-	LteBox::begin([
-		'type' => LteConst::TYPE_DEFAULT,
-		'boxTools' => $boxTools,
-		'title' => 'Items',
-		'withBorder' => true,
-	])
-	?>
+    LteBox::begin([
+        'type' => LteConst::TYPE_DEFAULT,
+        'boxTools' => $boxTools,
+        'title' => 'Items',
+        'withBorder' => true,
+    ])
+    ?>
 
 <div style="margin-bottom: 10px">
   <?php $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
     $lastRole = end($roles);
-    if(!empty($model->lineItem) && ($lastRole->name === User::ROLE_ADMINISTRATOR ||
+    if (!empty($model->lineItem) && ($lastRole->name === User::ROLE_ADMINISTRATOR ||
         $lastRole->name === User::ROLE_OWNER)) :?>
     <div class="pull-right m-r-20">
         <a id="show-column"><i class="fa fa-caret-left fa-2x"></i></a>
@@ -37,9 +37,9 @@ use yii\widgets\Pjax;
     </div>
     <?php endif; ?>
 	<?php echo $this->render('/invoice/_view-line-item', [
-		'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-		'searchModel' => $searchModel,
-	]) ?>	
+        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+        'searchModel' => $searchModel,
+    ]) ?>	
 </div>
 <div class="clearfix"></div>
 

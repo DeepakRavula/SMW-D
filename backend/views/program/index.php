@@ -5,37 +5,32 @@ use backend\models\search\ProgramSearch;
 use yii\bootstrap\Tabs;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
-
+use yii\helpers\Html;
+use yii\grid\GridView;
+use yii\widgets\Pjax;
 $this->title = 'Programs';
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'new-program']);
+$this->params['show-all'] = $this->render('_button', [
+	'searchModel' => $searchModel
+ ]);
 ?>
-
+<div class="m-b-10">
+</div>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="row">
     <div class="col-md-12">
         <?php
-        echo $this->render('_index-private',
+        echo $this->render(
+    '_index-private',
             [
-            'model' => $model,
             'searchModel' => $searchModel,
-            'privateDataProvider' => $privateDataProvider,
+            'dataProvider' => $dataProvider,
         ]);
         ?>
     </div>
 </div>
-<div class="row">
-    <div class="col-md-12">
-        <?php
-        echo $this->render('_index-group',
-            [
-            'model' => $model,
-            'searchModel' => $searchModel,
-            'privateDataProvider' => $groupDataProvider,
-        ]);
-        ?>
-    </div>
-</div>   
-
-<div class="clearfix"></div>
+<div>
+<div>
 <?php
 Modal::begin([
     'header' => '<h4 class="m-0">Program</h4>',
@@ -44,15 +39,13 @@ Modal::begin([
 ?>
 <div id="program-content"></div>
 <?php Modal::end(); ?>
+</div>
+<?php echo Html::hiddenInput('name',Program::TYPE_PRIVATE_PROGRAM,array('id'=>'program-type')); ?>
 <script>
     $(document).ready(function () {
-        $(document).on('click', '#add-program, #group-program-listing tbody > tr,#private-program-listing tbody > tr', function () {
-            var programId = $(this).data('key');
-            if (programId === undefined) {
-                var customUrl = '<?= Url::to(['program/create']); ?>';
-            } else {
-                var customUrl = '<?= Url::to(['program/update']); ?>?id=' + programId;
-            }
+        $(document).on('click', '.action-button',function () {
+            var type=$('#program-type').val();
+            var customUrl = '<?= Url::to(['program/create']); ?>?type=' + type;
             $.ajax({
                 url: customUrl,
                 type: 'post',
@@ -67,7 +60,25 @@ Modal::begin([
                     }
                 }
             });
-            return false;
+        });
+        $(document).on('click', '#program-listing tbody > tr',function () {
+                var programId = $(this).data('key');
+                var customUrl = '<?= Url::to(['program/update']); ?>?id=' + programId;
+            $.ajax({
+                url: customUrl,
+                type: 'post',
+                dataType: "json",
+                data: $(this).serialize(),
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#program-content').html(response.data);
+                        $('#program-modal').modal('show');
+                    }
+                }
+            });
+        return false;
         });
         $(document).on('beforeSubmit', '#program-form', function () {
             $.ajax({
@@ -78,7 +89,11 @@ Modal::begin([
                 success: function (response)
                 {
                     if (response.status) {
-                        $.pjax.reload({container: '#program-listing', timeout: 6000});
+                        var showAllPrograms = $("#programsearch-showallprograms").is(":checked");
+                        var type=$('#program-type').val();
+                        var params = $.param({'ProgramSearch[type]': type, 'ProgramSearch[showAllPrograms]': showAllPrograms | 0});
+                        var url = "<?php echo Url::to(['program/index']); ?>?" + params;
+                        $.pjax.reload({url: url, container: "#program-listing", replace: false, timeout: 4000});
                         $('#program-modal').modal('hide');
                     } else {
                         $('#error-notification').html(response.message).fadeIn().delay(8000).fadeOut();
@@ -93,5 +108,33 @@ Modal::begin([
             $('#program-modal').modal('hide');
             return false;
         });
+	    $(document).on('click', '.private', function() {
+	        var privateprogram= <?= Program::TYPE_PRIVATE_PROGRAM ?>;
+            var type=$('#program-type').val(privateprogram);
+		    $(".group").removeClass('active');		
+		    $(".private").addClass('active');	
+    	});
+	    $(document).on('click', '.group', function() {
+	        var groupprogram= <?= Program::TYPE_GROUP_PROGRAM ?>;
+            var type=$('#program-type').val(groupprogram);
+		    $(".private").removeClass('active');	
+		    $(".group").addClass('active');	
+	    });
+	   $(document).on('click', '.group, .private', function() {
+            var type = $('#program-type').attr('value');
+            var showAllPrograms = $("#programsearch-showallprograms").is(":checked");
+            var params = $.param({'ProgramSearch[type]': type, 'ProgramSearch[showAllPrograms]': showAllPrograms | 0});
+            var url = "<?php echo Url::to(['program/index']); ?>?" + params;
+            $.pjax.reload({url:url,container:"#program-listing",replace:false,  timeout: 4000});  
+            return false;
+       });
+       $("#programsearch-showallprograms").on("change", function () {
+           var showAllPrograms = $(this).is(":checked");
+           var type=$('#program-type').val();
+           var params = $.param({'ProgramSearch[type]': type, 'ProgramSearch[showAllPrograms]': showAllPrograms | 0});
+           var url = "<?php echo Url::to(['program/index']); ?>?" + params;
+           $.pjax.reload({url: url, container: "#program-listing", replace: false, timeout: 4000});  //Reload GridView
+            return false;
+       });
     });
 </script>

@@ -28,7 +28,7 @@ class Payment extends ActiveRecord
     public $paymentMethodName;
     public $invoiceNumber;
     public $userName;
-	
+    
     const TYPE_OPENING_BALANCE_CREDIT = 1;
     const SCENARIO_APPLY_CREDIT = 'apply-credit';
     const SCENARIO_CREDIT_APPLIED = 'credit-applied';
@@ -58,16 +58,16 @@ class Payment extends ActiveRecord
             [['amount'], 'required'],
             [['amount'], 'validateNegativeBalance'],
             [['amount'], 'number'],
-            [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType', 
+            [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType',
                'sourceId', 'credit', 'isDeleted', 'transactionId'], 'safe'],
-            ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE, 
+            ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
                 self::SCENARIO_CREDIT_USED]],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => self::SCENARIO_CREDIT_USED],
         ];
     }
 
     public function validateNegativeBalance($attributes)
-    {   
+    {
         if (!empty($this->invoiceId) && !$this->isCreditUsed()) {
             $invoice = Invoice::findOne($this->invoiceId);
             if ((float) $this->amount > (float) $invoice->balance && !$invoice->isInvoice()) {
@@ -107,7 +107,7 @@ class Payment extends ActiveRecord
      */
     public static function find()
     {
-        return new PaymentQuery(get_called_class(),parent::find()->where(['payment.isDeleted' => false]));
+        return new PaymentQuery(get_called_class(), parent::find()->where(['payment.isDeleted' => false]));
     }
 
     public function getUser()
@@ -178,10 +178,10 @@ class Payment extends ActiveRecord
         $transaction = new Transaction();
         $transaction->save();
         $this->transactionId = $transaction->id;
-        if(!empty($this->invoiceId)) {
+        if (!empty($this->invoiceId)) {
             $model = Invoice::findOne(['id' => $this->invoiceId]);
             $this->user_id = $model->user_id;
-        } else if(!empty($this->lessonId)) {
+        } elseif (!empty($this->lessonId)) {
             $model = Lesson::findOne(['id' => $this->lessonId]);
             $this->user_id = $model->enrolment->student->customer->id;
         }
@@ -201,19 +201,19 @@ class Payment extends ActiveRecord
             $this->invoice->save();
             return parent::afterSave($insert, $changedAttributes);
         }
-        if(!empty($this->invoiceId)) {
+        if (!empty($this->invoiceId)) {
             $invoicePaymentModel = new InvoicePayment();
             $invoicePaymentModel->invoice_id = $this->invoiceId;
             $invoicePaymentModel->payment_id = $this->id;
             $invoicePaymentModel->save();
             $this->invoice->save();
 
-            if($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
+            if ($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
                 $this->invoice->addLessonCredit();
             }
         }
         $this->trigger(self::EVENT_CREATE);
-		
+        
         return parent::afterSave($insert, $changedAttributes);
     }
     

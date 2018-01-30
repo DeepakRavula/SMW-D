@@ -51,23 +51,29 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['enrolment.type' => Enrolment::TYPE_REGULAR]);
     }
+    
+    public function extra()
+    {
+        return $this->andWhere(['enrolment.type' => Enrolment::TYPE_EXTRA]);
+    }
 
     public function programs()
-	{
-		$this->joinWith(['course' => function ($query){
-        	$query->joinWith(['program' => function ($query){
-			}]);
-		}]);
+    {
+        $this->joinWith(['course' => function ($query) {
+            $query->joinWith(['program' => function ($query) {
+            }]);
+        }]);
 
-		return $this;
-	}
-	
-	public function privateProgram() {
-		$this->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM]);
-		
-		return $this;
-	}
-	
+        return $this;
+    }
+    
+    public function privateProgram()
+    {
+        $this->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM]);
+        
+        return $this;
+    }
+    
     public function location($locationId)
     {
         $this->joinWith(['course' => function ($query) use ($locationId) {

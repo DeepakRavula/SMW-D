@@ -6,7 +6,7 @@ class m171109_091049_enrolment_rate extends Migration
 {
     public function up()
     {
-        $this->addColumn('enrolment', 'programRate', $this->decimal(10,2)->notNull()->after('studentId'));
+        $this->addColumn('enrolment', 'programRate', $this->decimal(10, 2)->notNull()->after('studentId'));
     }
 
     public function down()

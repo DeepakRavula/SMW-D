@@ -54,14 +54,14 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         $this->andWhere(['invoice.location_id' => $locationId]);
         return $this;
     }
-	
+    
     public function student($id)
     {
         $this->joinWith(['lineItems' => function ($query) use ($id) {
             $query->joinWith(['lesson' => function ($query) use ($id) {
                 $query->joinWith(['enrolment' => function ($query) use ($id) {
                     $query->joinWith('student')
-						->andWhere(['student.id' => $id]);
+                        ->andWhere(['student.id' => $id]);
                 }]);
             }]);
         }]);
@@ -71,9 +71,9 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 
     public function enrolmentLesson($lessonId, $enrolmentId)
     {
-        return $this->joinWith(['lineItems' => function($query) use ($lessonId, $enrolmentId) {
-            $query->joinWith(['lineItemLesson' => function($query) use ($lessonId, $enrolmentId) {
-                $query->joinWith(['lineItemEnrolment' => function($query) use ($enrolmentId) {
+        return $this->joinWith(['lineItems' => function ($query) use ($lessonId, $enrolmentId) {
+            $query->joinWith(['lineItemLesson' => function ($query) use ($lessonId, $enrolmentId) {
+                $query->joinWith(['lineItemEnrolment' => function ($query) use ($enrolmentId) {
                     $query->andWhere(['invoice_item_enrolment.enrolmentId' => $enrolmentId]);
                 }]);
                 $query->where(['invoice_item_lesson.lessonId' => $lessonId]);
@@ -133,49 +133,49 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
-	public function unpaid()
-	{
-		return $this->andFilterWhere([
-			'invoice.status' => Invoice::STATUS_OWING,
-		]);
-	}
+    public function unpaid()
+    {
+        return $this->andFilterWhere([
+            'invoice.status' => Invoice::STATUS_OWING,
+        ]);
+    }
 
-	public function proFormaInvoice()
-	{
-		return $this->andFilterWhere([
-			'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE
-		]);
-	}
+    public function proFormaInvoice()
+    {
+        return $this->andFilterWhere([
+            'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE
+        ]);
+    }
 
-	public function invoice()
-	{
-		return $this->andFilterWhere([
-			'invoice.type' => Invoice::TYPE_INVOICE
-		]);
-	}
-	
-	public function paid()
-	{
-		return $this->andFilterWhere([
-			'invoice.status' => Invoice::STATUS_PAID,
-		]);
-	}
+    public function invoice()
+    {
+        return $this->andFilterWhere([
+            'invoice.type' => Invoice::TYPE_INVOICE
+        ]);
+    }
+    
+    public function paid()
+    {
+        return $this->andFilterWhere([
+            'invoice.status' => Invoice::STATUS_PAID,
+        ]);
+    }
 
-	public function mailSent()
-	{
-		return $this->andFilterWhere([
-			'isSent' => true
-		]);
-	}
+    public function mailSent()
+    {
+        return $this->andFilterWhere([
+            'isSent' => true
+        ]);
+    }
 
-	public function mailNotSent()
-	{
-		return $this->andFilterWhere([
-			'isSent' => false
-		]);
-	}
+    public function mailNotSent()
+    {
+        return $this->andFilterWhere([
+            'isSent' => false
+        ]);
+    }
 
-	public function between($fromDate, $toDate)
+    public function between($fromDate, $toDate)
     {
         return $this->andFilterWhere(['between', 'invoice.date', $fromDate, $toDate]);
     }
@@ -184,20 +184,20 @@ class InvoiceQuery extends \yii\db\ActiveQuery
     {
         return $this->andFilterWhere(['invoice.user_id' => $customerId]);
     }
-	public function openingBalance()
-	{
-		return $this->joinWith(['lineItems' => function ($query) {
-			$query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
-		}]);
-	}
+    public function openingBalance()
+    {
+        return $this->joinWith(['lineItems' => function ($query) {
+            $query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
+        }]);
+    }
     public function userLocation($locationId)
     {
-        $this->joinWith(['user' => function ($query) use($locationId){
-		   $query->joinWith('userProfile up')
-				 ->joinWith(['userLocation' => function($query) use($locationId){
-						$query->andWhere(['user_location.location_id' => $locationId]);
-				  }]);
-        }]);    
+        $this->joinWith(['user' => function ($query) use ($locationId) {
+            $query->joinWith('userProfile up')
+                 ->joinWith(['userLocation' => function ($query) use ($locationId) {
+                     $query->andWhere(['user_location.location_id' => $locationId]);
+                 }]);
+        }]);
         return $this;
     }
 }

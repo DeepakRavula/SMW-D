@@ -6,7 +6,7 @@ class m170714_101057_alter_invoice_discount extends Migration
 {
     public function up()
     {
-        $this->alterColumn ('invoice_discount', 'value', $this->decimal(10,2));
+        $this->alterColumn('invoice_discount', 'value', $this->decimal(10, 2));
     }
 
     public function down()

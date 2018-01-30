@@ -36,7 +36,7 @@ class DefaultController extends Controller
             ],
             'avatar-delete' => [
                 'class' => DeleteAction::className(),
-            ],			
+            ],
         ];
     }
 
@@ -55,7 +55,7 @@ class DefaultController extends Controller
                     ],
                 ],
             ],
-			[
+            [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => ['edit-profile', 'edit-phone', 'edit-address'],
                 'formats' => [
@@ -93,36 +93,36 @@ class DefaultController extends Controller
 
         return $this->render('index', ['model' => $model]);
     }
-	public function actionUpdate()
+    public function actionUpdate()
     {
-		$id = Yii::$app->user->id;
+        $id = Yii::$app->user->id;
         $model = User::findOne(['id' => $id]);
        
         return $this->render('view', [
             'model' => $model,
         ]);
     }
-		public function actionEditProfile($id)
-	{
-		$request = Yii::$app->request;
-		$model = new UserForm();
-        $model->setModel($this->findModel($id));	
-		$userProfile  = $model->getModel()->userProfile;
-		if ($model->load($request->post()) && $userProfile->load($request->post())) {
-			if($model->save()) {
-				$userProfile->save();
-				return [
-				   'status' => true,
-				];	
-			} else {
-				$errors = ActiveForm::validate($model);
+    public function actionEditProfile($id)
+    {
+        $request = Yii::$app->request;
+        $model = new UserForm();
+        $model->setModel($this->findModel($id));
+        $userProfile  = $model->getModel()->userProfile;
+        if ($model->load($request->post()) && $userProfile->load($request->post())) {
+            if ($model->save()) {
+                $userProfile->save();
+                return [
+                   'status' => true,
+                ];
+            } else {
+                $errors = ActiveForm::validate($model);
                 return [
                     'status' => false,
                     'errors' => $errors
                 ];
-			}
-		}
-	}
+            }
+        }
+    }
     protected function findModel($id)
     {
         $session = Yii::$app->session;

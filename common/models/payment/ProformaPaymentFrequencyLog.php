@@ -12,20 +12,18 @@ use common\models\timelineEvent\TimelineEventUser;
 /**
  * This is the model class for table "ProformaPaymentFrequencyLog".
  *
- 
+
  */
 class ProformaPaymentFrequencyLog extends ProformaPaymentFrequency
 {
-
     public function create($event)
     {
-
         $proformaPaymentFrequencyModel = $event->sender;
         $proformaPaymentFrequency = ProformaPaymentFrequency::find()->andWhere(['id' => $proformaPaymentFrequencyModel->id])->asArray()->one();
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $proformaPaymentFrequency,
             'message' => $proformaPaymentFrequencyModel->userName . ' updated  {{' . $proformaPaymentFrequencyModel->invoice->user->publicIdentity . '}}' . '  Payment Frequency to ' . $proformaPaymentFrequencyModel->paymentFrequency->name,
-			'locationId' => $proformaPaymentFrequencyModel->invoice->location_id,
+            'locationId' => $proformaPaymentFrequencyModel->invoice->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();
@@ -45,14 +43,13 @@ class ProformaPaymentFrequencyLog extends ProformaPaymentFrequency
     
     public function edit($event)
     {
-
         $enrolmentModel = $event->sender;
-         $data = current($event->data);
+        $data = current($event->data);
         $paymentFrequency = PaymentFrequency::find()->andWhere(['id' => $enrolmentModel->paymentFrequencyId])->asArray()->one();
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $paymentFrequency,
             'message' => $enrolmentModel->userName . ' updated  {{' . $enrolmentModel->student->customer->publicIdentity . '}}' . ' Payment Frequency  from  '.$data.' to ' . $enrolmentModel->paymentFrequency,
-			'locationId' => $enrolmentModel->student->customer->userLocation->location_id,
+            'locationId' => $enrolmentModel->student->customer->userLocation->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();
@@ -70,5 +67,3 @@ class ProformaPaymentFrequencyLog extends ProformaPaymentFrequency
         }
     }
 }
-    
-     

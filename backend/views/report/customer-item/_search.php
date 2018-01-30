@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\daterange\DateRangePicker;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 
@@ -43,12 +43,15 @@ use common\models\User;
         <div class="col-md-5"> 
             <?=
                 $form->field($model, 'customerId')->widget(Select2::classname(), [
-                    'data' => ArrayHelper::map(User::find()
+                    'data' => ArrayHelper::map(
+                        User::find()
                             ->customers($locationId)
                             ->notDeleted()
                             ->active()
                             ->all(),
-                            'id', 'publicIdentity'),
+                            'id',
+                        'publicIdentity'
+                    ),
                     'options' => ['placeholder' => 'Select Customer', 'class' => 'form-control'],
                          ])->label(false);
             ?>

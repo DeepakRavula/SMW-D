@@ -2,6 +2,7 @@
 use yii\grid\GridView;
 use common\models\Course;
 use yii\helpers\Url;
+
 ?>
     <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin([
@@ -16,11 +17,11 @@ use yii\helpers\Url;
         'emptyText' => false,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
-		'rowOptions' => function ($model, $key, $index, $grid) {
-			$url = Url::to(['enrolment/view', 'id' => $model->id]);
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $url = Url::to(['enrolment/view', 'id' => $model->id]);
 
-			return ['data-url' => $url];
-		},
+            return ['data-url' => $url];
+        },
         'columns' => [
             [
                 'label' => 'Student Name',
@@ -43,10 +44,10 @@ use yii\helpers\Url;
             [
                 'label' => 'Day',
                 'value' => function ($data) {
-					$dayList = Course::getWeekdaysList();
-					$day = $dayList[$data->courseSchedule->day];
+                    $dayList = Course::getWeekdaysList();
+                    $day = $dayList[$data->courseSchedule->day];
 
-					return !empty($day) ? $day : null;
+                    return !empty($day) ? $day : null;
                 },
             ],
             [
@@ -58,8 +59,8 @@ use yii\helpers\Url;
             [
                 'label' => 'Duration',
                 'value' => function ($data) {
-					$duration = \DateTime::createFromFormat('h:i:s', $data->courseSchedule->duration);
-					return !empty($duration) ? $duration->format('H:i') : null;
+                    $duration = \DateTime::createFromFormat('h:i:s', $data->courseSchedule->duration);
+                    return !empty($duration) ? $duration->format('H:i') : null;
                 },
             ],
             [

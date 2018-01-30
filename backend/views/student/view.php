@@ -13,13 +13,13 @@ use yii\widgets\Pjax;
 use common\models\LocationAvailability;
 
 Select2Asset::register($this);
-DateRangePickerAsset::register($this);              
+DateRangePickerAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 $this->title = $model->fullName;
 $this->params['label'] = $this->render('_title', [
-	'model' => $model,
+    'model' => $model,
 ]);?>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
@@ -33,118 +33,117 @@ $this->params['label'] = $this->render('_title', [
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <div class="row">
 	<?php
-	echo $this->render('_profile', [
-		'model' => $model,
-	]);
-	?>
+    echo $this->render('_profile', [
+        'model' => $model,
+    ]);
+    ?>
 </div>
 <div class="row">
 <?php Pjax::begin(['id' => 'enrolment-list']);?>
 	<?php
-	echo $this->render('enrolment/view', [
-		'model' => $model,
-		'enrolmentDataProvider' => $enrolmentDataProvider,
-	]);
-	?>
+    echo $this->render('enrolment/view', [
+        'model' => $model,
+        'enrolmentDataProvider' => $enrolmentDataProvider,
+    ]);
+    ?>
 <?php Pjax::end();?>
 </div>
 <div class="row">
 	<?php
-	echo $this->render('exam-result/view', [
-		'model' => new ExamResult(),
-		'studentModel' => $model,
-		'examResultDataProvider' => $examResultDataProvider
-	]);
-	?>
+    echo $this->render('exam-result/view', [
+        'model' => new ExamResult(),
+        'studentModel' => $model,
+        'examResultDataProvider' => $examResultDataProvider
+    ]);
+    ?>
 </div>
 
 <div class="nav-tabs-custom">
 		<?php
-		$lessonContent = $this->render('_lesson', [
-			'lessonDataProvider' => $lessonDataProvider,
-			'model' => $model,
+        $lessonContent = $this->render('_lesson', [
+            'lessonDataProvider' => $lessonDataProvider,
+            'model' => $model,
             'allEnrolments' => $allEnrolments
-		]);
+        ]);
 
-		$unscheduledLessonContent = $this->render('_unscheduledLesson', [
-			'dataProvider' => $unscheduledLessonDataProvider,
-		]);
+        $unscheduledLessonContent = $this->render('_unscheduledLesson', [
+            'dataProvider' => $unscheduledLessonDataProvider,
+        ]);
 
-		$vacationContent = $this->render('vacation/_index', [
-			'model' => new Vacation(),
-			'studentModel' => $model,
-		]);
+        $vacationContent = $this->render('vacation/_index', [
+            'model' => new Vacation(),
+            'studentModel' => $model,
+        ]);
 
-		$logContent = $this->render('log/index', [
-			'model' => $model,
-			'logs' => $logs
-		]);
+        $logContent = $this->render('log/index', [
+            'model' => $model,
+            'logs' => $logs
+        ]);
 
-		$noteContent = $this->render('note/view', [
-			'model' => new Note(),
-			'studentModel' => $model,
-			'noteDataProvider' => $noteDataProvider
-		]);
+        $noteContent = $this->render('note/view', [
+            'model' => new Note(),
+            'studentModel' => $model,
+            'noteDataProvider' => $noteDataProvider
+        ]);
 
-		if(!empty($model->studentCsv)) {
-			$csvContent = $this->render('csv', [
-				'model' => $model->studentCsv,
-				'studentModel' => $model
-			]);
-		}
-		$items = [
-				[
-				'label' => 'Lessons',
-				'content' => $lessonContent,
-				'options' => [
-					'id' => 'lesson',
-				],
-			],
-				[
-				'label' => 'Unscheduled Lessons',
-				'content' => $unscheduledLessonContent,
-                                //'headerOptions' => $this->render('_header'),
-				'options' => [
-					'id' => 'unscheduledLesson',
-				],
-			],
-				[
-				'label' => 'Comments',
-				'content' => $noteContent,
-				'options' => [
-					'id' => 'note',
-				],
-			],
-				[
-				'label' => 'Vacations',
-				'content' => $vacationContent,
-				'options' => [
-					'id' => 'vacation',
-				],
-			],
-			[
-				'label' => 'History',
-				'content' => $logContent,
-				'options' => [
-					'id' => 'log',
-				],
-			],
-		];
-		if(!empty($model->studentCsv)) {
-			array_push($items, [
-				'label' => 'CSV',
-				'content' => $csvContent,
-				'options' => [
-					'id' => 'csv',
-				],	
-			]);
-		}
-		?>
+        if (!empty($model->studentCsv)) {
+            $csvContent = $this->render('csv', [
+                'model' => $model->studentCsv,
+                'studentModel' => $model
+            ]);
+        }
+        $items = [
+                [
+                'label' => 'Lessons',
+                'content' => $lessonContent,
+                'options' => [
+                    'id' => 'lesson',
+                ],
+            ],
+                [
+                'label' => 'Unscheduled Lessons',
+                'content' => $unscheduledLessonContent,
+                'options' => [
+                    'id' => 'unscheduledLesson',
+                ],
+            ],
+                [
+                'label' => 'Comments',
+                'content' => $noteContent,
+                'options' => [
+                    'id' => 'note',
+                ],
+            ],
+                [
+                'label' => 'Vacations',
+                'content' => $vacationContent,
+                'options' => [
+                    'id' => 'vacation',
+                ],
+            ],
+            [
+                'label' => 'History',
+                'content' => $logContent,
+                'options' => [
+                    'id' => 'log',
+                ],
+            ],
+        ];
+        if (!empty($model->studentCsv)) {
+            array_push($items, [
+                'label' => 'CSV',
+                'content' => $csvContent,
+                'options' => [
+                    'id' => 'csv',
+                ],
+            ]);
+        }
+        ?>
 		<?php
-		echo Tabs::widget([
-		'items' => $items
-		]);
-		?>
+        echo Tabs::widget([
+        'items' => $items
+        ]);
+        ?>
 		<div class="clearfix"></div>
 </div>
 

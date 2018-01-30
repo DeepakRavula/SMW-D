@@ -1,11 +1,12 @@
 <?php
 
 use common\models\Lesson;
+
 ?>
 
-<?php if(!empty($model->reschedule) && !empty($model->enrolment)) : ?>
+<?php if (!empty($model->reschedule) && !empty($model->enrolment)) : ?>
 <?php 
-$lesson = Lesson::findOne(['lesson.id' => $model->reschedule->lessonId]); 
+$lesson = Lesson::findOne(['lesson.id' => $model->reschedule->lessonId]);
 $duration = \DateTime::createFromFormat('H:i:s', $model->duration);
 $lessonDuration = ($duration->format('H') * 60) + $duration->format('i');
 $duration = \DateTime::createFromFormat('H:i:s', $lesson->duration);

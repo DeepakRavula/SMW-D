@@ -15,7 +15,7 @@ use yii\jui\DatePicker;
 <div class="holiday-form">
 <?php   $url = Url::to(['teacher-unavailability/update', 'id' => $model->id]);
             if ($model->isNewRecord) {
-               $url = Url::to(['teacher-unavailability/create', 'id' => $teacher->id]);
+                $url = Url::to(['teacher-unavailability/create', 'id' => $teacher->id]);
             }
         $form = ActiveForm::begin([
         'id' => 'unavailability-form',
@@ -25,32 +25,32 @@ use yii\jui\DatePicker;
     <div class="row">
         <div class="col-xs-5">
 			<?php echo $form->field($model, 'fromDate')->widget(DatePicker::classname(), [
-			'options' => ['class' => 'form-control',
-			],
-		]); ?>
+            'options' => ['class' => 'form-control',
+            ],
+        ]); ?>
         </div>
 		 <div class="col-xs-5">
 			<?php
-			 echo $form->field($model, 'toDate')->widget(DatePicker::classname(), [
+             echo $form->field($model, 'toDate')->widget(DatePicker::classname(), [
             'options' => ['class' => 'form-control'],
             ]); ?>
         </div>
 		 <div class="col-xs-5">
 		<?php
             echo $form->field($model, 'fromTime')->widget(TimePicker::classname(), [
-				'pluginOptions' => [
-					'defaultTime' => false,
-				],
-			]);
+                'pluginOptions' => [
+                    'defaultTime' => false,
+                ],
+            ]);
             ?>
         </div>
 		 <div class="col-xs-5">
 		<?php
             echo $form->field($model, 'toTime')->widget(TimePicker::classname(), [
-				'pluginOptions' => [
-					'defaultTime' => false,
-				],
-			]);
+                'pluginOptions' => [
+                    'defaultTime' => false,
+                ],
+            ]);
             ?>
         </div>
 		<div class="col-xs-9">
@@ -67,17 +67,20 @@ use yii\jui\DatePicker;
             </div>
         <div class="pull-left">
             <?php if (!$model->isNewRecord) : ?>
-			<?= Html::a('Delete', [
+			<?= Html::a(
+                'Delete',
+                [
             'delete', 'id' => $model->id
         ],
         [
-			'id' => 'unavailability-delete',
+            'id' => 'unavailability-delete',
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this unavailability?',
                 'method' => 'post',
             ]
-        ]); ?>
+        ]
+            ); ?>
 		<?php endif;?>
         </div>
     </div>

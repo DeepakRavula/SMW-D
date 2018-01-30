@@ -22,13 +22,17 @@ use common\models\Province;
         <div class="col-xs-4">
 		<?php
             echo $form->field($model, 'tax_type_id')->dropDownList(ArrayHelper::map(
-                            TaxType::find()->all(), 'id', 'name'
+                            TaxType::find()->all(),
+        'id',
+        'name'
             ))
             ?>
         </div>
         <div class="col-xs-4">
              <?php echo $form->field($model, 'province_id')->dropDownList(ArrayHelper::map(
-                            Province::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'
+                            Province::find()->orderBy(['name' => SORT_ASC])->all(),
+                'id',
+                'name'
             ))
             ?> 
         </div>
@@ -58,7 +62,7 @@ use common\models\Province;
     </div>
         <div class="pull-left">
         <?php if (!$model->isNewRecord) {
-            echo Html::a('Delete', ['delete', 'id' => $model->id], [
+                    echo Html::a('Delete', ['delete', 'id' => $model->id], [
                 'id' => 'taxcode-delete-button',
                 'class' => 'btn btn-danger',
                 'data' => [
@@ -66,7 +70,7 @@ use common\models\Province;
                     'method' => 'post',
                 ]
             ]);
-        }
+                }
 
         ?>
         </div>

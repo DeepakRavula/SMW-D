@@ -15,27 +15,27 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php yii\widgets\Pjax::begin(['id' => 'text-template']); ?>
 <?php
 echo AdminLteGridView::widget([
-	'id' => 'template-grid',
-	'dataProvider' => $dataProvider,
+    'id' => 'template-grid',
+    'dataProvider' => $dataProvider,
         'summary' => false,
         'emptyText' => false,
-	'tableOptions' => ['class' => 'table table-bordered'],
-	'headerRowOptions' => ['class' => 'bg-light-gray'],
-	'columns' => [
-		[
-			'label' => 'Type',
-			'value' => function ($data) {
-				return $data->getType();
-			},
-		],
-		[
-			'label' => 'Message',
-			'format' => 'raw',
-			'value' => function ($data) {
-				return $data->message;
-			},
-		],
-	],
+    'tableOptions' => ['class' => 'table table-bordered'],
+    'headerRowOptions' => ['class' => 'bg-light-gray'],
+    'columns' => [
+        [
+            'label' => 'Type',
+            'value' => function ($data) {
+                return $data->getType();
+            },
+        ],
+        [
+            'label' => 'Message',
+            'format' => 'raw',
+            'value' => function ($data) {
+                return $data->message;
+            },
+        ],
+    ],
 ]);
 ?>
 <?php yii\widgets\Pjax::end(); ?>

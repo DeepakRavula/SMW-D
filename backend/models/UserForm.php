@@ -11,6 +11,7 @@ use yii\base\Exception;
 use yii\base\Model;
 use Yii;
 use yii\helpers\ArrayHelper;
+
 /**
  * Create user form.
  */
@@ -18,6 +19,7 @@ class UserForm extends Model
 {
     const SCENARIO_CREATE = 'create';
 
+    public $canLogin;
     public $pin;
     public $username;
     public $status;
@@ -26,9 +28,9 @@ class UserForm extends Model
     public $firstname;
     public $locations;
     private $model;
-	private $password;
-	private $confirmPassword;
-	
+    private $password;
+    private $confirmPassword;
+    
     /**
      * {@inheritdoc}
      */
@@ -41,12 +43,12 @@ class UserForm extends Model
 
             ['lastname', 'filter', 'filter' => 'trim'],
             ['lastname', 'required', 'on' => self::SCENARIO_CREATE],
-            ['lastname', 'string', 'min' => 2, 'max' => 255], 
+            ['lastname', 'string', 'min' => 2, 'max' => 255],
             ['pin', 'integer', 'min' => 1111, 'max' => 9999],
             ['pin', 'validatePin'],
             [['status'], 'integer'],
             ['roles', 'required'],
-            [['locations', 'pin'], 'safe'],
+            [['locations', 'pin', 'canLogin'], 'safe'],
             [['password', 'confirmPassword'], 'string', 'min' => 6],
             ['confirmPassword', 'compare', 'compareAttribute' => 'password', 'message' => "Confirm Password doesn't match with the password"],
         ];
@@ -65,12 +67,12 @@ class UserForm extends Model
             'roles' => Yii::t('common', 'Roles'),
             'lastname' => Yii::t('common', 'Last Name'),
             'firstname' => Yii::t('common', 'First Name'),
-			'password' => Yii::t('common', 'Password'), 
-			'confirmPassword' => Yii::t('common', 'Confirm Password'), 
+            'password' => Yii::t('common', 'Password'),
+            'confirmPassword' => Yii::t('common', 'Confirm Password'),
         ];
     }
 
-	public function getPassword()
+    public function getPassword()
     {
         return $this->password;
     }
@@ -79,7 +81,7 @@ class UserForm extends Model
     {
         $this->password = trim($value);
     }
-	public function getConfirmPassword()
+    public function getConfirmPassword()
     {
         return $this->confirmPassword;
     }
@@ -96,6 +98,7 @@ class UserForm extends Model
     public function setModel($model)
     {
         $this->username = $model->username;
+        $this->canLogin = $model->canLogin;
         $this->status = $model->status;
         $this->model = $model;
         $this->roles = ArrayHelper::getColumn(
@@ -109,7 +112,7 @@ class UserForm extends Model
             $this->firstname = $userFirstName->firstname;
             $this->lastname = $userFirstName->lastname;
         }
-		
+        
         return $this->model;
     }
     
@@ -160,7 +163,7 @@ class UserForm extends Model
 
             $lastname = $this->lastname;
             $firstname = $this->firstname;
-         
+            $model->canLogin = $this->canLogin;
             if (!$model->save()) {
                 throw new Exception('Model not saved');
             }
@@ -201,28 +204,28 @@ class UserForm extends Model
         return null;
     }
     public static function createMultiple($modelClass, $multipleModels = [])
-   {
-       $model = new $modelClass();
-       $formName = $model->formName();
-       $post = Yii::$app->request->post($formName);
-       $models = [];
+    {
+        $model = new $modelClass();
+        $formName = $model->formName();
+        $post = Yii::$app->request->post($formName);
+        $models = [];
 
-       if (!empty($multipleModels)) {
-           $keys = array_keys(ArrayHelper::map($multipleModels, 'id', 'id'));
-           $multipleModels = array_combine($keys, $multipleModels);
-       }
+        if (!empty($multipleModels)) {
+            $keys = array_keys(ArrayHelper::map($multipleModels, 'id', 'id'));
+            $multipleModels = array_combine($keys, $multipleModels);
+        }
 
-       if ($post && is_array($post)) {
-           foreach ($post as $i => $item) {
-               if (isset($item['id']) && !empty($item['id']) && isset($multipleModels[$item['id']])) {
-                   $models[] = $multipleModels[$item['id']];
-               } else {
-                   $models[] = new $modelClass();
-               }
-           }
-       }
-       unset($model, $formName, $post);
+        if ($post && is_array($post)) {
+            foreach ($post as $i => $item) {
+                if (isset($item['id']) && !empty($item['id']) && isset($multipleModels[$item['id']])) {
+                    $models[] = $multipleModels[$item['id']];
+                } else {
+                    $models[] = new $modelClass();
+                }
+            }
+        }
+        unset($model, $formName, $post);
 
-       return $models;
-   }
+        return $models;
+    }
 }

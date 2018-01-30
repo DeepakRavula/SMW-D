@@ -5,6 +5,7 @@ use common\components\gridView\AdminLteGridView;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
@@ -13,18 +14,18 @@ $this->params['action-button'] = Html::a('<i class="fa fa-plus f-s-18 m-l-10" ar
 $this->params['breadcrumbs'][] = $this->title;
 ?> 
 <?php
-	Modal::begin([
-		'header' => '<h4 class="m-0">Release Notes</h4>',
-		'id'=>'new-release-notes-modal',
-	]);
-	Modal::end();
-	?>		
+    Modal::begin([
+        'header' => '<h4 class="m-0">Release Notes</h4>',
+        'id'=>'new-release-notes-modal',
+    ]);
+    Modal::end();
+    ?>		
 
 <div class="release-notes-index "> 
     <?php Pjax::begin([
-		'id' => 'release-notes-listing',
-		'timeout' => 6000
-	]); ?>
+        'id' => 'release-notes-listing',
+        'timeout' => 6000
+    ]); ?>
     <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => false,

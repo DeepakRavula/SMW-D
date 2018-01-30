@@ -8,6 +8,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
@@ -21,6 +22,21 @@ class BlogController extends \common\components\controllers\BaseController
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
+                        'roles' => ['manageBlogs'],
+                    ],
+					[
+                        'allow' => true,
+                        'actions' => ['list'],
+                        'roles' => ['viewBlogList'],
+                    ],
                 ],
             ],
         ];
@@ -51,11 +67,11 @@ class BlogController extends \common\components\controllers\BaseController
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Blog::find(),
-			'sort' => [
-				'defaultOrder' => [
-					'id' => SORT_DESC,
-				],
-			]
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ],
+            ]
         ]);
 
         return $this->render('list', [

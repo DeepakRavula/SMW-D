@@ -2,12 +2,13 @@
 
 use yii\bootstrap\Modal;
 use yii\bootstrap\Html;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use common\models\LocationAvailability;
 use kartik\grid\GridView;
-/* 
+
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -23,8 +24,11 @@ if ($conflictedLessonIdsCount > 0) {
         <?= '<label class="control-label">Substitute Teacher</label>';
             echo Select2::widget([
                 'name' => 'teacher',
-                'data' => ArrayHelper::map($teachers, 
-                    'id', 'userProfile.fullName'),
+                'data' => ArrayHelper::map(
+                    $teachers,
+                    'id',
+                    'userProfile.fullName'
+                ),
                 'options' => [
                     'placeholder' => 'Select Substitute Teacher',
                     'id' => 'teacher-drop',
@@ -35,78 +39,78 @@ if ($conflictedLessonIdsCount > 0) {
     </div>
     
 <?php yii\widgets\Pjax::begin([
-		'id' => 'review-lesson-listing',
-		'timeout' => 6000,
-	]) ?>
+        'id' => 'review-lesson-listing',
+        'timeout' => 6000,
+    ]) ?>
     
         <?php
 $columns = [
     [
-		'label' => 'Teacher',
-		'value' => function ($model) {
-			return $model->teacher->publicIdentity;
-		},
-		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-		'contentOptions' => ['class' => 'kv-sticky-column'],
+        'label' => 'Teacher',
+        'value' => function ($model) {
+            return $model->teacher->publicIdentity;
+        },
+        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
+        'contentOptions' => ['class' => 'kv-sticky-column'],
                 ],
                 [
-		'label' => 'Program',
-		'value' => function ($model) {
-			return $model->course->program->name;
-		},
-		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-		'contentOptions' => ['class' => 'kv-sticky-column'],
+        'label' => 'Program',
+        'value' => function ($model) {
+            return $model->course->program->name;
+        },
+        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
+        'contentOptions' => ['class' => 'kv-sticky-column'],
                 ],
-		[
-		'label' => 'Date/Time',
-		'attribute' => 'date',
-		'format' => 'datetime',
-		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-		'contentOptions' => ['class' => 'kv-sticky-column', 'style' => 'width:150px;'],
+        [
+        'label' => 'Date/Time',
+        'attribute' => 'date',
+        'format' => 'datetime',
+        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
+        'contentOptions' => ['class' => 'kv-sticky-column', 'style' => 'width:150px;'],
                 ],
-		[
-		'attribute' => 'duration',
-		'value' => function ($model, $key, $index, $widget) {
-			return (new \DateTime($model->duration))->format('H:i');
-		},
-		'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-		'contentOptions' => ['class' => 'kv-sticky-column', 'style' => 'width:80px;'],
-	],
-		[
+        [
+        'attribute' => 'duration',
+        'value' => function ($model, $key, $index, $widget) {
+            return (new \DateTime($model->duration))->format('H:i');
+        },
+        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
+        'contentOptions' => ['class' => 'kv-sticky-column', 'style' => 'width:80px;'],
+    ],
+        [
                 'format' => 'raw',
-		'label' => 'Conflict',
-		'headerOptions' => ['class' => 'bg-light-gray'],
-		'value' => function ($data) use ($conflicts) {
-			if (!empty($conflicts[$data->id])) {
-				return current($conflicts[$data->id]);
-			}
-		},
-	],
-	[
-		'class' => 'yii\grid\ActionColumn',
-		'template' => '{edit}',
+        'label' => 'Conflict',
+        'headerOptions' => ['class' => 'bg-light-gray'],
+        'value' => function ($data) use ($conflicts) {
+            if (!empty($conflicts[$data->id])) {
+                return current($conflicts[$data->id]);
+            }
+        },
+    ],
+    [
+        'class' => 'yii\grid\ActionColumn',
+        'template' => '{edit}',
                 'contentOptions' => ['style' => 'width:40px;'],
-		'buttons' => [
-                    'edit' => function  ($url, $model) {
-                        return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>','#', [
+        'buttons' => [
+                    'edit' => function ($url, $model) {
+                        return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>', '#', [
                             'id' => 'edit-button', 'duration' => $model->duration,
                             'lessonId' => $model->id, 'teacherId' => $model->teacherId,
                             'programId' => $model->course->programId,
                             'class' => 'm-l-20'
                         ]);
                     },
-		],
-	],
+        ],
+    ],
 ];
 ?>
 <div class="col-lg-12">
 <?php if ($newLessonIds) : ?>
 <?=
 GridView::widget([
-	'dataProvider' => $lessonDataProvider,
-	'columns' => $columns,
+    'dataProvider' => $lessonDataProvider,
+    'columns' => $columns,
         'summary' => false,
-	'emptyText' => 'No conflicts here! You are ready to confirm!',
+    'emptyText' => 'No conflicts here! You are ready to confirm!',
 ]);
 ?>
 <?php endif; ?>
@@ -129,8 +133,8 @@ GridView::widget([
 </div>
 <?php
 Modal::begin([
-	'header' => '<h4 class="m-0">Edit Lesson</h4>',
-	'id'=>'sub-review-lesson-modal',
+    'header' => '<h4 class="m-0">Edit Lesson</h4>',
+    'id'=>'sub-review-lesson-modal',
 ]); ?>
 <div id="sub-review-lesson-content"></div>
 <?php Modal::end();?>	

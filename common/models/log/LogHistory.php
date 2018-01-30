@@ -50,27 +50,25 @@ class LogHistory extends \yii\db\ActiveRecord
             'instanceType' => 'Instance Type',
         ];
     }
-    	public static function find()
+    public static function find()
     {
-        return new LogHistoryQuery(get_called_class(),parent::find());
+        return new LogHistoryQuery(get_called_class(), parent::find());
     }
-	public function getMessage()
-	{
-		$message = $this->log->message;
-		$regex = '/{{([^}]*)}}/';
-		$replace = preg_replace_callback($regex, function($match)
-		{
-			$index = $match[1];
-			$logLink = $this->log->getLogLink($index)->one();
-			$url = $logLink->baseUrl . $logLink->path;
-			$data[$index] = Html::a($index, $url);
-			return isset($data[$match[0]]) ? $data[$match[0]] : $data[$match[1]] ;
-		}, $message);
-		return $replace;
-	}
-	public function getLog()
+    public function getMessage()
+    {
+        $message = $this->log->message;
+        $regex = '/{{([^}]*)}}/';
+        $replace = preg_replace_callback($regex, function ($match) {
+            $index = $match[1];
+            $logLink = $this->log->getLogLink($index)->one();
+            $url = $logLink->baseUrl . $logLink->path;
+            $data[$index] = Html::a($index, $url);
+            return isset($data[$match[0]]) ? $data[$match[0]] : $data[$match[1]] ;
+        }, $message);
+        return $replace;
+    }
+    public function getLog()
     {
         return $this->hasOne(Log::className(), ['id' => 'logId']);
     }
-
 }

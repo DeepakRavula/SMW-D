@@ -8,7 +8,7 @@ use common\models\Item;
 use common\models\ItemCategory;
 use common\models\TaxStatus;
 use yii\helpers\Url;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Item */
@@ -19,7 +19,7 @@ use kartik\select2\Select2;
 
     <?php   $url = Url::to(['item/update', 'id' => $model->id]);
             if ($model->isNewRecord) {
-               $url = Url::to(['item/create']);
+                $url = Url::to(['item/create']);
             }
         $form = ActiveForm::begin([
         'id' => 'update-item-form',
@@ -47,7 +47,8 @@ use kartik\select2\Select2;
         <?php echo $form->field($model, 'price')->textInput() ?>
     </div>
     <div class="col-xs-6">
-        <?= $form->field($model, 'royaltyFree')->widget(SwitchInput::classname(),
+        <?= $form->field($model, 'royaltyFree')->widget(
+            SwitchInput::classname(),
                     [
                     'name' => 'royaltyFree',
                     'pluginOptions' => [
@@ -55,15 +56,14 @@ use kartik\select2\Select2;
                         'onText' => 'Yes',
                         'offText' => 'No',
                     ],
-                ]);?>
+                ]
+        );?>
     </div>
     <div class="col-xs-6">
-        <?php echo $form->field($model, 'taxStatusId')->dropDownList
-            (ArrayHelper::map(TaxStatus::find()->all(), 'id', 'name'), ['prompt' => 'Select Tax']) ?>
+        <?php echo $form->field($model, 'taxStatusId')->dropDownList(ArrayHelper::map(TaxStatus::find()->all(), 'id', 'name'), ['prompt' => 'Select Tax']) ?>
     </div>
     <div class="col-xs-6">
-        <?php echo $form->field($model, 'status')->dropDownList
-            (Item::itemStatuses()) ?>
+        <?php echo $form->field($model, 'status')->dropDownList(Item::itemStatuses()) ?>
     </div>
 </div>
 <div class="row">
@@ -74,15 +74,15 @@ use kartik\select2\Select2;
         </div> 
         <div class="pull-left">
  <?php if (!$model->isNewRecord) {
-                echo Html::a('Delete', ['delete', 'id' => $model->id], [
-			'id' => 'item-delete-button',
+            echo Html::a('Delete', ['delete', 'id' => $model->id], [
+            'id' => 'item-delete-button',
                         'class' => 'btn btn-danger',
                         'data' => [
                             'confirm' => 'Are you sure you want to delete this item?',
                             'method' => 'post',
                         ]
                 ]);
-            }
+        }
         ?>
     </div>
     </div>

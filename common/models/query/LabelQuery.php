@@ -9,7 +9,7 @@ namespace common\models\query;
  */
 class LabelQuery extends \yii\db\ActiveQuery
 {
-    public function user($id) 
+    public function user($id)
     {
         return $this->andWhere(['OR', ['userAdded' => [$id, 0]]]);
     }

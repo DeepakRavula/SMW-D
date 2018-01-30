@@ -6,8 +6,11 @@ class m170714_072516_add_isDeleted_column extends Migration
 {
     public function up()
     {
-		$this->addColumn('teacher_unavailability', 'isDeleted', 
-			$this->integer()->notNull()->after('toTime'));
+        $this->addColumn(
+            'teacher_unavailability',
+            'isDeleted',
+            $this->integer()->notNull()->after('toTime')
+        );
     }
 
     public function down()

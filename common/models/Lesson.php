@@ -33,11 +33,10 @@ class Lesson extends \yii\db\ActiveRecord
 {
     use Payable;
     use Invoiceable;
-    use ExtraLesson;
     
     const TYPE_PRIVATE_LESSON = 1;
     const TYPE_GROUP_LESSON = 2;
-	
+    
     const STATUS_SCHEDULED = 2;
     const STATUS_COMPLETED = 3;
     const STATUS_CANCELED = 4;
@@ -48,7 +47,7 @@ class Lesson extends \yii\db\ActiveRecord
     const STATUS_PRESENT='Yes';
     const STATUS_ABSENT='No';
 
-	const MAXIMUM_LIMIT = 48;
+    const MAXIMUM_LIMIT = 48;
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA = 2;
 
@@ -73,8 +72,8 @@ class Lesson extends \yii\db\ActiveRecord
     const EVENT_UNSCHEDULED			 = 'Unscheduled';
     const EVENT_MISSED = 'missed';
 
-	const APPLY_SINGLE_LESSON = 1;
-	const APPLY_ALL_FUTURE_LESSONS = 2;
+    const APPLY_SINGLE_LESSON = 1;
+    const APPLY_ALL_FUTURE_LESSONS = 2;
     public $enrolmentId;
     public $studentFullName;
     public $programId;
@@ -129,39 +128,36 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return [
             [['teacherId', 'status', 'duration'], 'required'],
-            ['courseId', 'required', 'when' => function($model, $attribute) {
-                    return $model->type !== self::TYPE_EXTRA;
+            ['courseId', 'required', 'when' => function ($model, $attribute) {
+                return $model->type !== self::TYPE_EXTRA;
             }],
             [['courseId', 'status', 'type'], 'integer'],
-            [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 
+            [['date', 'programId','colorCode', 'classroomId', 'isDeleted',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId', 'isPresent'], 'safe'],
-            [['classroomId'], ClassroomValidator::className(), 
-				'on' => [self::SCENARIO_EDIT, self::SCENARIO_EDIT_CLASSROOM]],
-            [['date'], HolidayValidator::className(), 
-				'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
+            [['classroomId'], ClassroomValidator::className(),
+                'on' => [self::SCENARIO_EDIT, self::SCENARIO_EDIT_CLASSROOM]],
+            [['date'], HolidayValidator::className(),
+                'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT, self::SCENARIO_EDIT_REVIEW_LESSON]],
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,self::SCENARIO_GROUP_ENROLMENT_REVIEW]],
             [['programId','date', 'duration'], 'required', 'on' => self::SCENARIO_CREATE],
             ['date', TeacherEligibleValidator::className(), 'on' => [
-				self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
+                self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
                 self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_LESSON_EDIT_ON_SCHEDULE]],
             ['date', TeacherAvailabilityValidator::className(), 'on' => [
-				self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
+                self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
                 self::SCENARIO_MERGE, self::SCENARIO_REVIEW]],
             ['date', TeacherLessonOverlapValidator::className(), 'on' => [
-				self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
+                self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
                 self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_LESSON_EDIT_ON_SCHEDULE]],
             [['date'], StudentValidator::className(), 'on' => [
-				self::SCENARIO_EDIT_REVIEW_LESSON,
-				self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function($model, $attribute) {
-                return $model->course->program->isPrivate();
-            }],
+                self::SCENARIO_EDIT_REVIEW_LESSON,
+                self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function ($model, $attribute) {
+                    return $model->course->program->isPrivate();
+                }],
             [['date'], PastDateValidator::className(), 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREATE]],
             [['date'], TeacherSubstituteValidator::className(), 'on' => self::SCENARIO_SUBSTITUTE_TEACHER],
-            [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]],
-            ['duration', TeacherAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
-            ['duration', StudentAvailabilityValidator::className(), 'on' => self::SCENARIO_SPLIT],
-            ['duration', TeacherLessonOverlapValidator::className(), 'on' => self::SCENARIO_SPLIT],
+            [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]]
         ];
     }
 
@@ -181,11 +177,11 @@ class Lesson extends \yii\db\ActiveRecord
             'time' => 'From Time',
             'toTime' => 'To time',
             'colorCode' => 'Color Code',
-			'classroomId' => 'Classroom',
-			'summariseReport' => 'Summarize Results',
-			'toEmailAddress' => 'To',
-			'showAllReviewLessons' => 'Show All',
-			'isPresent' => 'Present'
+            'classroomId' => 'Classroom',
+            'summariseReport' => 'Summarize Results',
+            'toEmailAddress' => 'To',
+            'showAllReviewLessons' => 'Show All',
+            'isPresent' => 'Present'
         ];
     }
 
@@ -203,7 +199,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return (int) $this->status === self::STATUS_SCHEDULED;
     }
-	public function isResolveSingleLesson()
+    public function isResolveSingleLesson()
     {
         return (int) $this->applyContext === self::APPLY_SINGLE_LESSON;
     }
@@ -211,14 +207,14 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return (int) $this->status === self::STATUS_UNSCHEDULED;
     }
-
+    
     public function isCompleted()
     {
         $lessonDate  = \DateTime::createFromFormat('Y-m-d H:i:s', $this->date);
         $currentDate = new \DateTime();
         return $lessonDate <= $currentDate;
     }
-
+    
     public function isCanceled()
     {
         return (int) $this->status === self::STATUS_CANCELED;
@@ -231,21 +227,21 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->save();
     }
 
-	public function hasExpiryDate()
+    public function hasExpiryDate()
     {
         return !empty($this->privateLesson->id);
     }
-	
+    
     public function getFullDuration()
     {
         $duration = $this->duration;
-            foreach ($this->extendedLessons as $extendedLesson) {
-                $additionalDuration = new \DateTime($extendedLesson->lesson->duration);
-                $lessonDuration = new \DateTime($duration);
-                $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
+        foreach ($this->extendedLessons as $extendedLesson) {
+            $additionalDuration = new \DateTime($extendedLesson->lesson->duration);
+            $lessonDuration = new \DateTime($duration);
+            $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
                     . 'H' . $additionalDuration->format('i') . 'M'));
-                $duration = $lessonDuration->format('H:i:s');
-            }
+            $duration = $lessonDuration->format('H:i:s');
+        }
         return $duration;
     }
 
@@ -262,13 +258,26 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getEnrolment()
     {
-        return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId']);
+        return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId'])
+                ->onCondition(['enrolment.type' => Enrolment::TYPE_REGULAR]);
+    }
+    
+    public function getStudent()
+    {
+        return $this->hasOne(Student::className(), ['id' => 'studentId'])
+                ->via('enrolment');
+    }
+    
+    public function getCustomer()
+    {
+        return $this->hasOne(User::className(), ['id' => 'customer_id'])
+                ->via('student');
     }
 
     public function getEnrolmentDiscount()
     {
         return $this->hasOne(EnrolmentDiscount::className(), ['enrolmentId' => 'id'])
-			->via('enrolment');
+            ->via('enrolment');
     }
 
     public function getExtendedLessons()
@@ -360,17 +369,10 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getProFormaLineItems()
     {
-        if (!$this->isExtra()) {
-            return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+        return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
                 ->via('invoiceItemPaymentCycleLessons')
                     ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON,
                         'invoice_line_item.isDeleted' => false]);
-        } else {
-            return $this->hasMany(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
-                ->via('invoiceItemLessons')
-                    ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON,
-                        'invoice_line_item.isDeleted' => false]);
-        }
     }
    
     public function getRootLesson()
@@ -398,10 +400,11 @@ class Lesson extends \yii\db\ActiveRecord
     public function getEnrolments()
     {
         return $this->hasMany(Enrolment::className(), ['courseId' => 'courseId'])
-            ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);;
+            ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true,
+                'enrolment.type' => Enrolment::TYPE_REGULAR]);
     }
-	
-	public function getLessonCredit()
+    
+    public function getLessonCredit()
     {
         return $this->hasMany(LessonPayment::className(), ['lessonId' => 'id']);
     }
@@ -414,7 +417,7 @@ class Lesson extends \yii\db\ActiveRecord
             }
         }
         return !empty($this->enrolments);
-        }
+    }
 
     public function getReschedule()
     {
@@ -430,7 +433,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $lessonId = $this->id;
         if ($this->hasInvoice()) {
-        return InvoiceLineItem::find()
+            return InvoiceLineItem::find()
                 ->notDeleted()
             ->where(['invoice_id' => $this->invoice->id])
             ->joinWith(['lineItemLesson' => function ($query) use ($lessonId) {
@@ -453,11 +456,11 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(UserProfile::className(), ['user_id' => 'teacherId']);
     }
 
-	public function getLessonNumber()
-	{
-		$number = str_pad($this->id, 6, 0, STR_PAD_LEFT);
+    public function getLessonNumber()
+    {
+        $number = str_pad($this->id, 6, 0, STR_PAD_LEFT);
         return 'L-' . $number;
-	}
+    }
     public function getScheduleTitle()
     {
         if ($this->isGroup()) {
@@ -476,11 +479,11 @@ class Lesson extends \yii\db\ActiveRecord
     {
         if (!empty($this->colorCode)) {
             $class = null;
-        } else if($this->isEnrolmentFirstlesson()) {
+        } elseif ($this->isEnrolmentFirstlesson()) {
             $class = 'first-lesson';
-        } else if ($this->isPrivate()) {
+        } elseif ($this->isPrivate()) {
             $class = 'private-lesson';
-        } else if ($this->isGroup()) {
+        } elseif ($this->isGroup()) {
             $class = 'group-lesson';
         }
         if ($this->rootLesson && empty($this->colorCode) &&(!($this->isBulkRescheduled()))) {
@@ -499,29 +502,17 @@ class Lesson extends \yii\db\ActiveRecord
         if ($this->rootLesson) {
             $model = $this->rootLesson;
         }
-        $lessonId = $model->id;
         
         if ($this->hasProFormaInvoice()) {
-            if ($this->isExtra()) {
-                return InvoiceLineItem::find()
-                        ->notDeleted()
-                    ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
-                    ->joinWith(['lineItemLesson' => function ($query) use ($lessonId) {
-                        $query->where(['lessonId' => $lessonId]);
-                    }])
-                    ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON])
-                    ->one();
-            } else {
-                $paymentCycleLessonId = $model->paymentCycleLesson->id;
-                return InvoiceLineItem::find()
-                        ->notDeleted()
+            $paymentCycleLessonId = $model->paymentCycleLesson->id;
+            return InvoiceLineItem::find()
+                    ->notDeleted()
                     ->andWhere(['invoice_id' => $model->proFormaInvoice->id])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
                     ->joinWith(['lineItemPaymentCycleLesson' => function ($query) use ($paymentCycleLessonId) {
                         $query->where(['paymentCycleLessonId' => $paymentCycleLessonId]);
                     }])
                     ->one();
-            }
         } else {
             return null;
         }
@@ -533,7 +524,7 @@ class Lesson extends \yii\db\ActiveRecord
         switch ($this->status) {
             case self::STATUS_SCHEDULED:
                 if (!$this->isCompleted()) {
-                $status = 'Scheduled';
+                    $status = 'Scheduled';
                 } else {
                     $status = 'Completed';
                 }
@@ -551,7 +542,7 @@ class Lesson extends \yii\db\ActiveRecord
                 $status = 'Unscheduled';
                 if ($this->isExploded) {
                     $status .= ' (Exploded)';
-                } else if ($this->isExpired()) {
+                } elseif ($this->isExpired()) {
                     $status .= ' (Expired)';
                 }
             break;
@@ -612,12 +603,12 @@ class Lesson extends \yii\db\ActiveRecord
                 if ($this->colorCode === $defaultRescheduledLessonEventColor->code) {
                     $this->colorCode = null;
                 }
-            } else if ($this->isPrivate()) {
+            } elseif ($this->isPrivate()) {
                 $defaultPrivateLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
                 if ($this->colorCode === $defaultPrivateLessonEventColor->code) {
                     $this->colorCode = null;
                 }
-            } else if ($this->isGroup()) {
+            } elseif ($this->isGroup()) {
                 $defaultGroupLessonEventColor = CalendarEventColor::findOne(['cssClass' => 'group-lesson']);
                 if ($this->colorCode === $defaultGroupLessonEventColor->code) {
                     $this->colorCode = null;
@@ -630,7 +621,7 @@ class Lesson extends \yii\db\ActiveRecord
             if (empty($this->isExploded)) {
                 $this->isExploded = false;
             }
-            if(empty($this->type)) {
+            if (empty($this->type)) {
                 $this->type = Lesson::TYPE_REGULAR;
             }
             $this->classroomId = $this->getTeacherClassroomId();
@@ -649,23 +640,23 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-		if (!$insert) {
-			if ($this->isRescheduledLesson($changedAttributes)) {
-				$this->trigger(self::EVENT_RESCHEDULE_ATTEMPTED);
-			}
-			if($this->isRescheduledByClassroom($changedAttributes)) {
-				$this->trigger(self::EVENT_RESCHEDULED);
-			}
-		}
-		if($this->isUnscheduled()) {
-                    $privateLessonModel = new PrivateLesson();
-                    $privateLessonModel->lessonId = $this->id;
-                    $date = new \DateTime($this->date);
-                    $expiryDate = $date->modify('90 days');
-                    $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-                    $privateLessonModel->save();
-                }	
-		
+        if (!$insert) {
+            if ($this->isRescheduledLesson($changedAttributes)) {
+                $this->trigger(self::EVENT_RESCHEDULE_ATTEMPTED);
+            }
+            if ($this->isRescheduledByClassroom($changedAttributes)) {
+                $this->trigger(self::EVENT_RESCHEDULED);
+            }
+        }
+        if ($this->isUnscheduled()) {
+            $privateLessonModel = new PrivateLesson();
+            $privateLessonModel->lessonId = $this->id;
+            $date = new \DateTime($this->date);
+            $expiryDate = $date->modify('90 days');
+            $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+            $privateLessonModel->save();
+        }
+        
         return parent::afterSave($insert, $changedAttributes);
     }
 
@@ -676,33 +667,37 @@ class Lesson extends \yii\db\ActiveRecord
         $lesson          = Lesson::find()
             ->where(['courseId' => $this->courseId])
             ->unInvoicedProForma()
-			->isConfirmed()
+            ->isConfirmed()
             ->scheduled()
             ->between($paymentCycleStartDate, $paymentCycleEndDate)
             ->orderBy(['lesson.date' => SORT_ASC])
             ->one();
-        $lessonStartDate = \DateTime::createFromFormat('Y-m-d H:i:s',
-                    $lesson->date);
+        $lessonStartDate = \DateTime::createFromFormat(
+            'Y-m-d H:i:s',
+                    $lesson->date
+        );
         $lessonStartDate = new \DateTime($lessonStartDate->format('Y-m-d'));
         return $lessonStartDate == $priorDate;
     }
 
     public function canMerge()
     {
-        $lessonDuration = new \DateTime($this->duration);
-        $date = new \DateTime($this->date);
-        $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
-        $lesson = new Lesson();
-        $lesson->setScenario(self::SCENARIO_MERGE);
-        $lesson->date = $date->format('Y-m-d H:i:s');
-        $lesson->duration = self::DEFAULT_MERGE_DURATION;
-        $lesson->teacherId = $this->teacherId;
-        $lesson->courseId = $this->courseId;
-        $lesson->status = self::STATUS_SCHEDULED;
-        $lesson->isDeleted = false;
+        if ($this->enrolment->hasExplodedLesson() && !$this->isExploded && !$this->isExtra()) {
+            $lessonDuration = new \DateTime($this->duration);
+            $date = new \DateTime($this->date);
+            $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
+            $lesson = new Lesson();
+            $lesson->setScenario(self::SCENARIO_MERGE);
+            $lesson->date = $date->format('Y-m-d H:i:s');
+            $lesson->duration = self::DEFAULT_MERGE_DURATION;
+            $lesson->teacherId = $this->teacherId;
+            $lesson->courseId = $this->courseId;
+            $lesson->status = self::STATUS_SCHEDULED;
+            $lesson->isDeleted = false;
 
-        return $lesson->validate() && $this->enrolment->hasExplodedLesson()
-            && !$this->isExploded;
+            return $lesson->validate();
+        }
+        return false;
     }
 
     public function isRescheduled()
@@ -763,7 +758,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $courseCount  = Lesson::find()
                 ->andWhere(['courseId' => $this->courseId])
-				->isConfirmed()
+                ->isConfirmed()
                 ->count('id');
 
         return $courseCount;
@@ -774,10 +769,10 @@ class Lesson extends \yii\db\ActiveRecord
         $courseId             = $this->courseId;
         $enrolmentFirstLesson = self::find()
                         ->notDeleted()
-			->where(['courseId' => $courseId])
-			->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_COMPLETED, self::STATUS_UNSCHEDULED]])
-			->orderBy(['date' => SORT_ASC])
-			->one();
+            ->where(['courseId' => $courseId])
+            ->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_COMPLETED, self::STATUS_UNSCHEDULED]])
+            ->orderBy(['date' => SORT_ASC])
+            ->one();
         return $enrolmentFirstLesson->date === $this->date;
     }
 
@@ -800,12 +795,12 @@ class Lesson extends \yii\db\ActiveRecord
         if (!empty($teacherAvailability->teacherRoom)) {
             $classroomId = $teacherAvailability->teacherRoom->classroomId;
             $unavailability = ClassroomUnavailability::find()
-				->andWhere(['classroomId' => $classroomId])
-				->andWhere(['AND',
-					['<=', 'DATE(fromDate)', $start->format('Y-m-d')],
-					['>=', 'DATE(toDate)', $start->format('Y-m-d')]
-				])
-				->one();
+                ->andWhere(['classroomId' => $classroomId])
+                ->andWhere(['AND',
+                    ['<=', 'DATE(fromDate)', $start->format('Y-m-d')],
+                    ['>=', 'DATE(toDate)', $start->format('Y-m-d')]
+                ])
+                ->one();
             if (!empty($unavailability)) {
                 $classroomId = null;
             }
@@ -833,7 +828,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return Payment::find()
                 ->joinWith('lessonCredit')
-                ->where(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId, 
+                ->where(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId,
                     'payment_method_id' => PaymentMethod::TYPE_CREDIT_APPLIED])
                 ->sum('amount');
     }
@@ -842,7 +837,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return Payment::find()
                 ->joinWith('lessonCredit')
-                ->where(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId, 
+                ->where(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId,
                     'payment_method_id' => PaymentMethod::TYPE_CREDIT_USED])
                 ->sum('amount');
     }
@@ -870,8 +865,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function isHoliday()
     {
         $startDate = (new \DateTime($this->course->startDate))->format('Y-m-d');
-       	$holidays = Holiday::find()
-			->andWhere(['>=', 'DATE(date)', $startDate])
+        $holidays = Holiday::find()
+            ->andWhere(['>=', 'DATE(date)', $startDate])
                         ->all();
         $holidayDates = ArrayHelper::getColumn($holidays, function ($element) {
             return (new \DateTime($element->date))->format('Y-m-d');
@@ -890,18 +885,44 @@ class Lesson extends \yii\db\ActiveRecord
     }
 
     public function canInvoice()
-    {  
+    {
         return ($this->isCompleted() && $this->isScheduled()) || $this->isExpired() ||(!$this->isPresent);
     }
 
     public function isBulkRescheduled()
     {
-       return $this->bulkRescheduleLesson;
+        return $this->bulkRescheduleLesson;
     }
     
     public function unschedule()
     {
         $this->status = self::STATUS_UNSCHEDULED;
         return $this->save();
+    }
+    
+    public function takePayment()
+    {
+        if(!$this->hasProFormaInvoice()) {
+            if (!$this->paymentCycle->hasProFormaInvoice()) {
+                $this->paymentCycle->createProFormaInvoice();
+            } else {
+                $this->addPrivateLessonLineItem($this->paymentCycle->proFormaInvoice);
+                $this->paymentCycle->proFormaInvoice->save();
+            }
+        } else {
+            $this->proFormaInvoice->makeInvoicePayment($this);
+        }
+        
+        return $this->proFormaInvoice;
+    }
+    
+    public static function instantiate($row)
+    {
+        switch ($row['type']) {
+            case ExtraLesson::TYPE:
+                return new ExtraLesson();
+            default:
+               return new self;
+        }
     }
 }

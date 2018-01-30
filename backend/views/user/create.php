@@ -6,7 +6,8 @@ use yii\helpers\ArrayHelper;
 /* @var $roles yii\rbac\Role[] */
 
 $roles = ArrayHelper::getColumn(
-             Yii::$app->authManager->getRoles(), 'description'
+             Yii::$app->authManager->getRoles(),
+    'description'
         );
 foreach ($roles as $name => $description) {
     if ($name === $model->roles) {

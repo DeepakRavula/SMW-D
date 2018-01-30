@@ -21,7 +21,7 @@ class UserQuery extends ActiveQuery
 
         return $this;
     }
-	 public function notDraft()
+    public function notDraft()
     {
         $this->andWhere(['NOT IN', 'user.status', User::STATUS_DRAFT]);
 
@@ -40,9 +40,9 @@ class UserQuery extends ActiveQuery
 
     public function teachers($programId, $locationId)
     {
-        $this->joinWith(['userLocation ul' => function($query) {
-			$query->joinWith('teacherAvailability');
-			}])
+        $this->joinWith(['userLocation ul' => function ($query) {
+            $query->joinWith('teacherAvailability');
+        }])
             ->joinWith(['qualifications' => function ($query) use ($programId) {
                 $query->andWhere(['qualification.program_id' => $programId])
                     ->notDeleted();
@@ -85,6 +85,17 @@ class UserQuery extends ActiveQuery
 
         return $this;
     }
+    
+    public function backendUsers()
+    {
+        return $this->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+            ->andWhere(['OR', ['raa.item_name' => ['owner', 'administrator', 'staffmember']]]);
+    }
+    
+    public function canLogin()
+    {
+        return $this->andWhere(['user.canLogin' => true]);
+    }
 
     public function location($locationId)
     {
@@ -93,4 +104,4 @@ class UserQuery extends ActiveQuery
 
         return $this;
     }
-   }
+}

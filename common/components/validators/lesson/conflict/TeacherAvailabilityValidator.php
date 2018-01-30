@@ -11,16 +11,16 @@ class TeacherAvailabilityValidator extends Validator
         $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
         $lessonDuration = explode(':', $model->fullDuration);
         $date = new \DateTime($model->date);
-        $date->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));	
+        $date->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));
         $date->modify('-1 second');
         $lessonEndTime = $date->format('H:i:s');
         $day = (new \DateTime($model->date))->format('N');
         $teacher = TeacherAvailability::find()
                         ->teacher($model->teacherId)
-			->day($day);
+            ->day($day);
         $teacherAvailabilityDay = $teacher->all();
         if (empty($teacherAvailabilityDay)) {
-            $this->addError($model,$attribute, 'Teacher is not available on '.(new \DateTime($model->date))->format('l'));
+            $this->addError($model, $attribute, 'Teacher is not available on '.(new \DateTime($model->date))->format('l'));
         }
         $availableTime = $teacher->time($lessonStartTime, $lessonEndTime)
                         ->all();

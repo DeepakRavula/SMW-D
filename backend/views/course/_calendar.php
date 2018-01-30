@@ -4,6 +4,7 @@ use common\models\LocationAvailability;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Html;
 use yii\helpers\Url;
+
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 ?>
 <?php $this->render('/lesson/_color-code'); ?>

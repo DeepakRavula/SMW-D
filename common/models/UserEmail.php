@@ -15,9 +15,9 @@ use Yii;
  */
 class UserEmail extends \yii\db\ActiveRecord
 {
-	private $labelId;
+    private $labelId;
 
-	public function getLabelId()
+    public function getLabelId()
     {
         return $this->labelId;
     }
@@ -64,7 +64,7 @@ class UserEmail extends \yii\db\ActiveRecord
     }
     
    
-	public function getUserContact()
+    public function getUserContact()
     {
         return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);
     }

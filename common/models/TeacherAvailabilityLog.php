@@ -19,10 +19,8 @@ use common\models\timelineEvent\TimelineEventUser;
  */
 class TeacherAvailabilityLog extends TeacherAvailability
 {
-
     public function create($event)
     {
-
         $teacherAvailabilityModel = $event->sender;
         $teacheravailability = TeacherAvailability::find(['id' => $teacherAvailabilityModel->id])->asArray()->one();
         $dayList = TeacherAvailability::getWeekdaysList();
@@ -30,7 +28,7 @@ class TeacherAvailabilityLog extends TeacherAvailability
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $teacheravailability,
             'message' => $teacherAvailabilityModel->userName . '   made  {{' . $teacherAvailabilityModel->teacher->publicIdentity . '}} available  on  '.$day.'  from  '.Yii::$app->formatter->asTime($teacherAvailabilityModel->from_time).'  to  '.Yii::$app->formatter->asTime($teacherAvailabilityModel->to_time),
-			'locationId' => $teacherAvailabilityModel->userLocation->location_id,
+            'locationId' => $teacherAvailabilityModel->userLocation->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();
@@ -47,9 +45,8 @@ class TeacherAvailabilityLog extends TeacherAvailability
             $timelineEventUser->save();
         }
     }
-     public function edit($event)
+    public function edit($event)
     {
-
         $teacherAvailabilityModel = $event->sender;
         $teacheravailability = TeacherAvailability::find(['id' => $teacherAvailabilityModel->id])->asArray()->one();
         $data = current($event->data);
@@ -58,7 +55,7 @@ class TeacherAvailabilityLog extends TeacherAvailability
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $teacheravailability,
             'message' => $teacherAvailabilityModel->userName . '   adjusted  {{' . $teacherAvailabilityModel->teacher->publicIdentity . '}} availability  on  ' . $day . '  from    ' . Yii::$app->formatter->asTime($data['from_time']) . ' - ' . Yii::$app->formatter->asTime($data['to_time']) . '  to  ' . Yii::$app->formatter->asTime($teacherAvailabilityModel->from_time) . '  -  ' . Yii::$app->formatter->asTime($teacherAvailabilityModel->to_time),
-			'locationId' => $teacherAvailabilityModel->userLocation->location_id,
+            'locationId' => $teacherAvailabilityModel->userLocation->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();
@@ -75,7 +72,7 @@ class TeacherAvailabilityLog extends TeacherAvailability
             $timelineEventUser->save();
         }
     }
-     public function deleteAvailability($event)
+    public function deleteAvailability($event)
     {
         $teacherAvailabilityModel = $event->sender;
         $teacheravailability = TeacherAvailability::find(['id' => $teacherAvailabilityModel->id])->asArray()->one();
@@ -84,7 +81,7 @@ class TeacherAvailabilityLog extends TeacherAvailability
         $timelineEvent = Yii::$app->commandBus->handle(new AddToTimelineCommand([
             'data' => $teacheravailability,
             'message' => $teacherAvailabilityModel->userName . '   deleted  {{' . $teacherAvailabilityModel->teacher->publicIdentity . '}} availability  on  ' . $day . '  from  ' . Yii::$app->formatter->asTime($teacherAvailabilityModel->from_time) . '  to  ' . Yii::$app->formatter->asTime($teacherAvailabilityModel->to_time),
-			'locationId' => $teacherAvailabilityModel->userLocation->location_id,
+            'locationId' => $teacherAvailabilityModel->userLocation->location_id,
         ]));
         if ($timelineEvent) {
             $timelineEventLink = new TimelineEventLink();

@@ -7,13 +7,13 @@ use yii\data\ActiveDataProvider;
 use common\models\Lesson;
 use common\models\User;
 use Yii;
+
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
  */
 class LocationScheduleSearch extends Lesson
 {
-
-	public $date;
+    public $date;
     /**
      * {@inheritdoc}
      */
@@ -41,16 +41,16 @@ class LocationScheduleSearch extends Lesson
     public function search($params)
     {
         $locationId= \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-		
+        
         $query = Lesson::find()
-				->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
-			->andWhere([
-				'DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')	
-			])
-			->isConfirmed()
-			->notDeleted()
-			->location($locationId)
-			->orderBy(['TIME(date)' => SORT_ASC]);
+                ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+            ->andWhere([
+                'DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')
+            ])
+            ->isConfirmed()
+            ->notDeleted()
+            ->location($locationId)
+            ->orderBy(['TIME(date)' => SORT_ASC]);
         $dataProvider= new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,

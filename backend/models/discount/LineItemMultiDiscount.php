@@ -4,6 +4,7 @@ namespace backend\models\discount;
 
 use yii\base\Model;
 use common\models\InvoiceLineItem;
+
 /**
  * Create user form.
  */
@@ -42,7 +43,8 @@ class LineItemMultiDiscount extends Model
             }
         }
         $lineItemId = end($lineItemIds);
-        return $model->item->loadPaymentFrequencyDiscount($lineItemId, $isPaymentFrequencyDiscountValueDiff);;
+        return $model->item->loadPaymentFrequencyDiscount($lineItemId, $isPaymentFrequencyDiscountValueDiff);
+        ;
     }
     
     public static function loadCustomerDiscount($lineItemIds)

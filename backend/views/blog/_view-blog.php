@@ -5,9 +5,9 @@
                 <span class="username"><?= !empty($model->title) ? $model->title : null ?></span>
                 <span class="description"><i class="fa fa-clock"></i>
 					<?php 
-					    $postDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
-					    echo $postDate->format('F j, Y'); 
-					?>
+                        $postDate = \DateTime::createFromFormat('Y-m-d H:i:s', $model->date);
+                        echo $postDate->format('F j, Y');
+                    ?>
                 </span>
               </div>
               <!-- /.user-block -->

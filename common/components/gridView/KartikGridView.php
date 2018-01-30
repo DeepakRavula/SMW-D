@@ -1,5 +1,6 @@
 <?php
 namespace common\components\gridView;
+
 use kartik\grid\GridView;
 
 class KartikGridView extends GridView

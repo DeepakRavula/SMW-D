@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 use common\models\Classroom;
 use yii\helpers\ArrayHelper;
 use kartik\time\TimePicker;
@@ -13,9 +13,9 @@ use yii\helpers\Url;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <div class="calendar-event-color-form">
-        <?php        
+        <?php 
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-        if (empty ($teacherAvailabilityModel->id)) {
+        if (empty($teacherAvailabilityModel->id)) {
             $id = false;
         } else {
             $id = $teacherAvailabilityModel->id;
@@ -23,7 +23,7 @@ use yii\helpers\Url;
         ?>
         <?php $form       = ActiveForm::begin([
             'id' => 'teacher-availability-form',
-            'action' => Url::to(['teacher-availability/modify', 
+            'action' => Url::to(['teacher-availability/modify',
                 'teacherId' => $model->id, 'id' => $id]),
         ]); ?>
    <div class="row p-20">     
@@ -44,8 +44,11 @@ use yii\helpers\Url;
         <div class="col-md-6 form-group">
             <?=
             $form->field($roomModel, 'classroomId')->widget(Select2::classname(), [
-                'data' => ArrayHelper::map(Classroom::find()->andWhere(['locationId' => $locationId])->orderBy(['name' => SORT_ASC])->all(),
-                        'id', 'name'),
+                'data' => ArrayHelper::map(
+                    Classroom::find()->andWhere(['locationId' => $locationId])->orderBy(['name' => SORT_ASC])->all(),
+                        'id',
+                    'name'
+                ),
                 'options' => ['placeholder' => 'Select Classroom', 'class' => 'form-control'],
             ]);
             ?>
@@ -59,7 +62,9 @@ use yii\helpers\Url;
         </div>
        <div class="pull-left">
  <?php if (!empty($teacherAvailabilityModel->id)) : ?>
-            <?= Html::a('<i class="fa fa-close"></i> Delete', [
+            <?= Html::a(
+                '<i class="fa fa-close"></i> Delete',
+                [
                     'teacher-availability/delete', 'id' => $teacherAvailabilityModel->id
                 ],
                 [
@@ -68,7 +73,8 @@ use yii\helpers\Url;
                         'confirm' => 'Are you sure you want to delete this item?',
                         'method' => 'post',
                     ]
-                ]); ?>
+                ]
+            ); ?>
         <?php endif; ?>
         </div>
 </div>

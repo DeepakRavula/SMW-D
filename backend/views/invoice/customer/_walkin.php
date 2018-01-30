@@ -4,7 +4,6 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 
-
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -12,7 +11,7 @@ use yii\helpers\Url;
 <?php $form = ActiveForm::begin([
         'method' => 'post',
         'id' => 'walkin-customer-form',
-		'action' => Url::to(['invoice/create-walkin', 'id' => $model->id])
+        'action' => Url::to(['invoice/create-walkin', 'id' => $model->id])
     ]); ?>
 
     <div class="row col-md-12">

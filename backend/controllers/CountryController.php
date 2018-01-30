@@ -10,6 +10,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
+use yii\filters\AccessControl;
+
 /**
  * CountryController implements the CRUD actions for Country model.
  */
@@ -24,14 +26,24 @@ class CountryController extends \common\components\controllers\BaseController
                     'delete' => ['post'],
                 ],
             ],
-			'contentNegotiator' => [
+            'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['update', 'create','delete'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
                 ],
-			]
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'update', 'create', 'delete'],
+                        'roles' => ['manageCountries'],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -71,22 +83,22 @@ class CountryController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-	public function actionCreate()
+    public function actionCreate()
     {
         $model = new Country();
         $data  = $this->renderAjax('_form', [
             'model' => $model,
-        ]); 
+        ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,
                 'data' => $data
             ];
-        } 
+        }
     }
 
     /**
@@ -99,14 +111,14 @@ class CountryController extends \common\components\controllers\BaseController
      */
     public function actionUpdate($id)
     {
-		$model = $this->findModel($id);
+        $model = $this->findModel($id);
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,
@@ -125,7 +137,7 @@ class CountryController extends \common\components\controllers\BaseController
      */
     public function actionDelete($id)
     {
-     $model = $this->findModel($id);
+        $model = $this->findModel($id);
         if ($model->delete()) {
             return [
                 'status' => true,

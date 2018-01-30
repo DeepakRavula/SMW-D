@@ -33,10 +33,13 @@ use backend\models\discount\MultiEnrolmentDiscount;
 use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\log\StudentLog;
 use common\models\log\DiscountLog;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
+
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
-class EnrolmentController extends \common\components\controllers\BaseController
+class EnrolmentController extends BaseController
 {
     public function behaviors()
     {
@@ -47,15 +50,25 @@ class EnrolmentController extends \common\components\controllers\BaseController
                     
                 ],
             ],
-			'contentNegotiator' => [
-				'class' => ContentNegotiator::className(),
-				'only' => ['add', 'delete', 'edit','schedule', 
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['add', 'delete', 'edit','schedule',
                         'group', 'update','edit-end-date', 'edit-program-rate'],
-				'formatParam' => '_format',
-				'formats' => [
-				   'application/json' => Response::FORMAT_JSON,
-				],
-			],	 
+                'formatParam' => '_format',
+                'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'group', 'edit', 'edit-program-rate', 'create', 'add', 'confirm', 'update', 'delete', 'edit-end-date'],
+                        'roles' => ['manageEnrolments'],
+                    ],
+                ],
+            ], 
         ];
     }
 
@@ -87,27 +100,27 @@ class EnrolmentController extends \common\components\controllers\BaseController
         $model = $this->findModel($id);
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-				->andWhere([
-					'courseId' => $model->course->id,
-					'status' => Lesson::STATUS_SCHEDULED
-				])
-				->isConfirmed()
-				->notDeleted()
+                ->andWhere([
+                    'courseId' => $model->course->id,
+                    'status' => Lesson::STATUS_SCHEDULED
+                ])
+                ->isConfirmed()
+                ->notDeleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' => false,
         ]);
         $logDataProvider = new ActiveDataProvider([
             'query' => LogHistory::find()
-			->enrolment($id) ]);
+            ->enrolment($id) ]);
        
         $paymentCycleDataProvider = new ActiveDataProvider([
             'query' => PaymentCycle::find()
-				->andWhere([
-					'enrolmentId' => $id,
-				]),
+                ->andWhere([
+                    'enrolmentId' => $id,
+                ]),
             'pagination' => false,
         ]);
-		
+        
         return $this->render('view', [
             'model' => $model,
             'lessonDataProvider' => $lessonDataProvider,
@@ -116,18 +129,20 @@ class EnrolmentController extends \common\components\controllers\BaseController
         ]);
     }
 
-	public function actionGroup($courseId, $studentId)
-	{
-		$enrolmentModel = new Enrolment();
-		$enrolmentModel->courseId = $courseId;
-		$enrolmentModel->studentId = $studentId;
-		$enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
-		$enrolmentModel->isConfirmed = true;
-		if ($enrolmentModel->save()) {
+    public function actionGroup($courseId, $studentId)
+    {
+        $enrolmentModel = new Enrolment();
+        $enrolmentModel->courseId = $courseId;
+        $enrolmentModel->studentId = $studentId;
+        $enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
+        $enrolmentModel->isConfirmed = true;
+        if ($enrolmentModel->save()) {
             $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-            $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
+            $enrolmentModel->on(
+                Enrolment::EVENT_AFTER_INSERT,
                 [new StudentLog(), 'addGroupEnrolment'],
-                ['loggedUser' => $loggedUser]);
+                ['loggedUser' => $loggedUser]
+            );
             $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
             $invoice = $enrolmentModel->createProFormaInvoice();
             return [
@@ -137,7 +152,7 @@ class EnrolmentController extends \common\components\controllers\BaseController
         }
     }
 
-	public function actionEdit($id)
+    public function actionEdit($id)
     {
         $model = $this->findModel($id);
         $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
@@ -166,21 +181,24 @@ class EnrolmentController extends \common\components\controllers\BaseController
             $multipleEnrolmentDiscount->save();
             $loggedUser                   = User::findOne(['id' => Yii::$app->user->id]);
             $paymentFrequencyDiscount->save();
-             if ((int) $oldMultipleEnrolmentDiscount != (int) $multipleEnrolmentDiscount->discount) {
-                $model->on(Enrolment::EVENT_AFTER_UPDATE,
+            if ((int) $oldMultipleEnrolmentDiscount != (int) $multipleEnrolmentDiscount->discount) {
+                $model->on(
+                    Enrolment::EVENT_AFTER_UPDATE,
                     [new DiscountLog(), 'enrolmentMultipleDiscountEdit'],
-                    ['loggedUser' => $loggedUser, 'oldDiscount' => $oldMultipleEnrolmentDiscount,'newDiscount' => $multipleEnrolmentDiscount->discount]);
+                    ['loggedUser' => $loggedUser, 'oldDiscount' => $oldMultipleEnrolmentDiscount,'newDiscount' => $multipleEnrolmentDiscount->discount]
+                );
             }
             if ((int) $oldPaymentFrequencyDiscount != (int) $paymentFrequencyDiscount->discount) {
-               $model->on(Enrolment::EVENT_AFTER_UPDATE,
+                $model->on(
+                   Enrolment::EVENT_AFTER_UPDATE,
                     [new DiscountLog(), 'enrolmentPaymentFrequencyDiscountEdit'],
-                    ['loggedUser' => $loggedUser, 'oldDiscount' => $oldPaymentFrequencyDiscount,'newDiscount'=>$paymentFrequencyDiscount->discount]);
+                    ['loggedUser' => $loggedUser, 'oldDiscount' => $oldPaymentFrequencyDiscount,'newDiscount'=>$paymentFrequencyDiscount->discount]
+               );
             }
             if ($model->load($post) && $model->save()) {
                 if ((int) $oldPaymentFrequency !== (int) $model->paymentFrequencyId) {
                     $model->resetPaymentCycle();
                 }
-               
             }
            
             
@@ -190,7 +208,6 @@ class EnrolmentController extends \common\components\controllers\BaseController
                 'message' => $message,
             ];
         } else {
-
             return [
                 'status' => true,
                 'data' => $data,
@@ -208,11 +225,10 @@ class EnrolmentController extends \common\components\controllers\BaseController
                 $enrolmentProgramRate->save();
             }
             $oldAttributes = $model->getOldAttributes();
-       if($oldAttributes['isAutoRenew']!=$model->isAutoRenew)
-       {
-         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-         $model->on(Enrolment::EVENT_AFTER_UPDATE, [new EnrolmentLog(), 'editAutoRenewFeature'], ['loggedUser' => $loggedUser, 'autoRenewFeature' => $model->isAutoRenew]);
-       }
+            if ($oldAttributes['isAutoRenew']!=$model->isAutoRenew) {
+                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                $model->on(Enrolment::EVENT_AFTER_UPDATE, [new EnrolmentLog(), 'editAutoRenewFeature'], ['loggedUser' => $loggedUser, 'autoRenewFeature' => $model->isAutoRenew]);
+            }
             $model->save();
             $message = 'Details successfully updated!';
             return [
@@ -240,130 +256,130 @@ class EnrolmentController extends \common\components\controllers\BaseController
             ]);
         }
     }
-	public function createUserContact($userId, $labelId)
-	{
-		$userContact = new UserContact();
-		$userContact->userId = $userId;
-		if (!is_numeric($labelId)) {
+    public function createUserContact($userId, $labelId)
+    {
+        $userContact = new UserContact();
+        $userContact->userId = $userId;
+        if (!is_numeric($labelId)) {
             $label = new Label();
             $label->name = $labelId;
             $label->userAdded = $userId;
             $label->save();
             $userContact->labelId = $label->id;
         } else {
-			$userContact->labelId = $labelId;
-		}
-		$userContact->isPrimary = false;
-		$userContact->save();	
-		return $userContact;
-	}
-	public function actionAdd()
+            $userContact->labelId = $labelId;
+        }
+        $userContact->isPrimary = false;
+        $userContact->save();
+        return $userContact;
+    }
+    public function actionAdd()
     {
-		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-		$request = Yii::$app->request;
-		$course = new Course();
-		$courseSchedule = new CourseSchedule();
-		$user = new User();
-		$userProfile = new UserProfile();
-		$phoneNumber = new UserPhone();
-		$address = new UserAddress();
-		$userEmail = new UserEmail();
-		$userLocation = new UserLocation();
-		$student = new Student();
-		$multipleEnrolmentDiscount = new EnrolmentDiscount();
-                $paymentFrequencyDiscount = new EnrolmentDiscount();
-			
-                $post = $request->post();
-		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
-		$user->load(Yii::$app->getRequest()->getBodyParams(), 'User');
-		$userProfile->load(Yii::$app->getRequest()->getBodyParams(), 'UserProfile');
-		$phoneNumber->load(Yii::$app->getRequest()->getBodyParams(), 'UserPhone');
-		$address->load(Yii::$app->getRequest()->getBodyParams(), 'UserAddress');
-		$userEmail->load(Yii::$app->getRequest()->getBodyParams(), 'UserEmail');
-		$student->load(Yii::$app->getRequest()->getBodyParams(), 'Student');
-		$courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');
-		$paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $request = Yii::$app->request;
+        $course = new Course();
+        $courseSchedule = new CourseSchedule();
+        $user = new User();
+        $userProfile = new UserProfile();
+        $phoneNumber = new UserPhone();
+        $address = new UserAddress();
+        $userEmail = new UserEmail();
+        $userLocation = new UserLocation();
+        $student = new Student();
+        $multipleEnrolmentDiscount = new EnrolmentDiscount();
+        $paymentFrequencyDiscount = new EnrolmentDiscount();
+            
+        $post = $request->post();
+        $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
+        $user->load(Yii::$app->getRequest()->getBodyParams(), 'User');
+        $userProfile->load(Yii::$app->getRequest()->getBodyParams(), 'UserProfile');
+        $phoneNumber->load(Yii::$app->getRequest()->getBodyParams(), 'UserPhone');
+        $address->load(Yii::$app->getRequest()->getBodyParams(), 'UserAddress');
+        $userEmail->load(Yii::$app->getRequest()->getBodyParams(), 'UserEmail');
+        $student->load(Yii::$app->getRequest()->getBodyParams(), 'Student');
+        $courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');
+        $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
         $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
-		$user->status = User::STATUS_DRAFT;
-        if($user->save()){
-			$auth = Yii::$app->authManager;
-			$authManager = Yii::$app->authManager;
-			$authManager->assign($auth->getRole(User::ROLE_CUSTOMER), $user->id);
-			$userProfile->user_id = $user->id;
-			$userProfile->save();
-			$userLocation->location_id = $locationId;
-			$userLocation->user_id = $user->id;
-			$userLocation->save();
-			$userContact = $this->createUserContact($user->id, $userEmail->labelId);
-			$userEmail->userContactId = $userContact->id;
-			$userEmail->save();
-			
-			//save address and phone number
-			if(!empty($address->address)) {
-				$userContact = $this->createUserContact($user->id, $address->labelId);
-				$address->userContactId = $userContact->id;
-				$address->save();
-			}
-			if(!empty($phoneNumber->number)) {
-				$userContact = $this->createUserContact($user->id, $phoneNumber->labelId);
-				$phoneNumber->userContactId = $userContact->id;
-				$phoneNumber->save();
-			}
-			//save student
-			$student->customer_id = $user->id;
-			$student->status = Student::STATUS_DRAFT;
-			$student->save();
-			
-			//save course
-			$dayList = Course::getWeekdaysList();
-			$course->locationId = $locationId;
-			$courseSchedule->day = array_search($courseSchedule->day, $dayList);
-			$courseSchedule->studentId = $student->id;
-			if($course->save()) {
-				$courseSchedule->courseId = $course->id;
-				$courseSchedule->save();
-					
-				 if (!empty($multipleEnrolmentDiscount->discount)) {
-					$multipleEnrolmentDiscount->enrolmentId = $course->enrolment->id;
-					$multipleEnrolmentDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_PERCENTAGE;
-					$multipleEnrolmentDiscount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
-					$multipleEnrolmentDiscount->save();
-				}
-				if (!empty($paymentFrequencyDiscount->discount)) {
-					$paymentFrequencyDiscount->enrolmentId = $course->enrolment->id;
-					$paymentFrequencyDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLOR;
-					$paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
-					$paymentFrequencyDiscount->save();
-				}
-			}
-			return $this->redirect(['lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Enrolment[type]' => Enrolment::TYPE_REVERSE]);
-		}
+        $user->status = User::STATUS_DRAFT;
+        if ($user->save()) {
+            $auth = Yii::$app->authManager;
+            $authManager = Yii::$app->authManager;
+            $authManager->assign($auth->getRole(User::ROLE_CUSTOMER), $user->id);
+            $userProfile->user_id = $user->id;
+            $userProfile->save();
+            $userLocation->location_id = $locationId;
+            $userLocation->user_id = $user->id;
+            $userLocation->save();
+            $userContact = $this->createUserContact($user->id, $userEmail->labelId);
+            $userEmail->userContactId = $userContact->id;
+            $userEmail->save();
+            
+            //save address and phone number
+            if (!empty($address->address)) {
+                $userContact = $this->createUserContact($user->id, $address->labelId);
+                $address->userContactId = $userContact->id;
+                $address->save();
+            }
+            if (!empty($phoneNumber->number)) {
+                $userContact = $this->createUserContact($user->id, $phoneNumber->labelId);
+                $phoneNumber->userContactId = $userContact->id;
+                $phoneNumber->save();
+            }
+            //save student
+            $student->customer_id = $user->id;
+            $student->status = Student::STATUS_DRAFT;
+            $student->save();
+            
+            //save course
+            $dayList = Course::getWeekdaysList();
+            $course->locationId = $locationId;
+            $courseSchedule->day = array_search($courseSchedule->day, $dayList);
+            $courseSchedule->studentId = $student->id;
+            if ($course->save()) {
+                $courseSchedule->courseId = $course->id;
+                $courseSchedule->save();
+                    
+                if (!empty($multipleEnrolmentDiscount->discount)) {
+                    $multipleEnrolmentDiscount->enrolmentId = $course->enrolment->id;
+                    $multipleEnrolmentDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_PERCENTAGE;
+                    $multipleEnrolmentDiscount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
+                    $multipleEnrolmentDiscount->save();
+                }
+                if (!empty($paymentFrequencyDiscount->discount)) {
+                    $paymentFrequencyDiscount->enrolmentId = $course->enrolment->id;
+                    $paymentFrequencyDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLOR;
+                    $paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
+                    $paymentFrequencyDiscount->save();
+                }
+            }
+            return $this->redirect(['lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Enrolment[type]' => Enrolment::TYPE_REVERSE]);
+        }
     }
 
-	public function actionConfirm($courseId)
+    public function actionConfirm($courseId)
     {
         $courseModel = Course::findOne(['id' => $courseId]);
-		$courseModel->updateAttributes([
-			'isConfirmed' => true
-		]);
+        $courseModel->updateAttributes([
+            'isConfirmed' => true
+        ]);
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'isConfirmed' => false]);
-		foreach ($lessons as $lesson) {
-			$lesson->updateAttributes([
-				'status' => Lesson::STATUS_SCHEDULED,
-			]);
-		}
+        foreach ($lessons as $lesson) {
+            $lesson->updateAttributes([
+                'status' => Lesson::STATUS_SCHEDULED,
+            ]);
+        }
         if (!empty($courseModel->enrolment)) {
             $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
             $enrolmentModel->setPaymentCycle($enrolmentModel->firstLesson->date);
         }
-		Yii::$app->session->setFlash('alert', [
-			'options' => ['class' => 'alert-success'],
-			'body' => 'Enrolment has been created successfully',
-		]);
-		return $this->redirect(['student/view', 'id' => $enrolmentModel->student->id]);
-	}
+        Yii::$app->session->setFlash('alert', [
+            'options' => ['class' => 'alert-success'],
+            'body' => 'Enrolment has been created successfully',
+        ]);
+        return $this->redirect(['student/view', 'id' => $enrolmentModel->student->id]);
+    }
 
     /**
      * Updates an existing Enrolment model.
@@ -376,76 +392,73 @@ class EnrolmentController extends \common\components\controllers\BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		$data = $this->renderAjax('/enrolment/schedule/_form-update', [
-			'course' => $model->course,	
-			'courseSchedule' => $model->course->courseSchedule,
-			'model' => $model,
-		]);
-		$response = [
-			'status' => true,
-			'data' => $data,
-		];
-		$course = $model->course;
-		$courseSchedule = $model->courseSchedule;
-		$course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');        
-		$courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');        
-		if (Yii::$app->request->isPost) {
-			$endDate = new \DateTime($course->endDate);
-			$startDate		 = new \DateTime($course->startDate);
-			Lesson::deleteAll([
-				'courseId' => $model->course->id,
-				'isConfirmed' => false,
-			]);
-			$lessons		 = Lesson::find()
-				->where([
-					'courseId' => $model->course->id,
-					'status' => Lesson::STATUS_SCHEDULED,
-					'type' => Lesson::TYPE_REGULAR
-				])
-				->joinWith('bulkRescheduleLesson')
-				->isConfirmed()
-				->between($startDate, $endDate)
-				->all();
-			$courseDay = $courseSchedule->day;
-			$day = $startDate->format('l');
-			if ($day !== $courseDay) {
-				$startDate		 = new \DateTime($course->startDate);
-				$startDate->modify('next '.$courseDay);
-			}
-			$teacherId = $course->teacherId;
-			$course->generateLessons($lessons, $startDate, $teacherId);
-			$rescheduleBeginDate = (new \DateTime($course->startDate))->format('d-m-Y');
-			$rescheduleEndDate = (new \DateTime($course->endDate))->format('d-m-Y');
-			return $this->redirect(['/lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Course[startDate]' => $rescheduleBeginDate, 'Course[endDate]' => $rescheduleEndDate]);
-		} else {
-			return $response;
-		}
-
-
+        $data = $this->renderAjax('/enrolment/schedule/_form-update', [
+            'course' => $model->course,
+            'courseSchedule' => $model->course->courseSchedule,
+            'model' => $model,
+        ]);
+        $response = [
+            'status' => true,
+            'data' => $data,
+        ];
+        $course = $model->course;
+        $courseSchedule = $model->courseSchedule;
+        $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
+        $courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');
+        if (Yii::$app->request->isPost) {
+            $endDate = new \DateTime($course->endDate);
+            $startDate		 = new \DateTime($course->startDate);
+            Lesson::deleteAll([
+                'courseId' => $model->course->id,
+                'isConfirmed' => false,
+            ]);
+            $lessons		 = Lesson::find()
+                ->where([
+                    'courseId' => $model->course->id,
+                    'status' => Lesson::STATUS_SCHEDULED,
+                    'type' => Lesson::TYPE_REGULAR
+                ])
+                ->joinWith('bulkRescheduleLesson')
+                ->isConfirmed()
+                ->between($startDate, $endDate)
+                ->all();
+            $courseDay = $courseSchedule->day;
+            $day = $startDate->format('l');
+            if ($day !== $courseDay) {
+                $startDate		 = new \DateTime($course->startDate);
+                $startDate->modify('next '.$courseDay);
+            }
+            $teacherId = $course->teacherId;
+            $course->generateLessons($lessons, $startDate, $teacherId);
+            $rescheduleBeginDate = (new \DateTime($course->startDate))->format('d-m-Y');
+            $rescheduleEndDate = (new \DateTime($course->endDate))->format('d-m-Y');
+            return $this->redirect(['/lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Course[startDate]' => $rescheduleBeginDate, 'Course[endDate]' => $rescheduleEndDate]);
+        } else {
+            return $response;
+        }
     }
 
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-		if ($model->course->program->isPrivate() && $model->canDeleted()) {
+        if ($model->course->program->isPrivate() && $model->canDeleted()) {
             $lessons = Lesson::find()
-				->where(['courseId' => $model->courseId])
-				->all();
+                ->where(['courseId' => $model->courseId])
+                ->all();
             foreach ($lessons as $lesson) {
                 $lesson->delete();
             }
-			$model->delete();
-		$response = [
-				'status' => true,
-				'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
-			];
-		} else {
-			
-			$response		 = [
-				'status' => false,
-			];
-		}
-		return $response;
+            $model->delete();
+            $response = [
+                'status' => true,
+                'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
+            ];
+        } else {
+            $response		 = [
+                'status' => false,
+            ];
+        }
+        return $response;
     }
 
     /**
@@ -500,7 +513,6 @@ class EnrolmentController extends \common\components\controllers\BaseController
             ];
             return $response;
         } else {
-
             return [
                 'status' => true,
                 'data' => $data,

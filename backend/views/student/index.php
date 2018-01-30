@@ -12,14 +12,14 @@ $this->registerCssFile("@web/css/student/style.css");
 $this->title = 'Students';
 $this->params['action-button'] = Html::a('<i class="fa fa-print f-s-18 m-l-10"></i>', '#', ['id' => 'print']);
 $this->params['show-all'] = $this->render('_button', [
-	'searchModel' => $searchModel
+    'searchModel' => $searchModel
 ]);
 ?> 
 
 <div class="grid-row-open"> 
 <?= $this->render('_index', [
-	'dataProvider' => $dataProvider,
-	'searchModel' => $searchModel
+    'dataProvider' => $dataProvider,
+    'searchModel' => $searchModel
 ]);?>
     </div>
 <script>

@@ -5,19 +5,19 @@ namespace backend\controllers;
 use Yii;
 use common\models\Classroom;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\ClassroomUnavailability;
 use yii\filters\ContentNegotiator;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
-
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
 
 /**
  * ClassRoomController implements the CRUD actions for Classroom model.
  */
-class ClassroomController extends \common\components\controllers\BaseController
+class ClassroomController extends BaseController
 {
     public function behaviors()
     {
@@ -28,12 +28,22 @@ class ClassroomController extends \common\components\controllers\BaseController
                     'delete' => ['post'],
                 ],
             ],
-			'contentNegotiator' => [
+            'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['create', 'update'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'update', 'create', 'delete'],
+                        'roles' => ['manageClassrooms'],
+                    ],
                 ],
             ],
         ];
@@ -45,10 +55,10 @@ class ClassroomController extends \common\components\controllers\BaseController
      */
     public function actionIndex()
     {
-		$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $dataProvider = new ActiveDataProvider([
             'query' => Classroom::find()
-				->andWhere(['locationId' => $locationId]),
+                ->andWhere(['locationId' => $locationId]),
         ]);
 
         return $this->render('index', [
@@ -63,17 +73,17 @@ class ClassroomController extends \common\components\controllers\BaseController
      */
     public function actionView($id)
     {
-		$unavailabilities = ClassroomUnavailability::find()
-			->andWhere(['classroomId' => $id])
-			->orderBy(['id' => SORT_DESC]);
+        $unavailabilities = ClassroomUnavailability::find()
+            ->andWhere(['classroomId' => $id])
+            ->orderBy(['id' => SORT_DESC]);
 
-		$unavailabilityDataProvider = new ActiveDataProvider([
-			'query' => $unavailabilities, 
-		]);
-		
+        $unavailabilityDataProvider = new ActiveDataProvider([
+            'query' => $unavailabilities,
+        ]);
+        
         return $this->render('view', [
             'model' => $this->findModel($id),
-			'unavailabilityDataProvider' => $unavailabilityDataProvider
+            'unavailabilityDataProvider' => $unavailabilityDataProvider
         ]);
     }
 
@@ -85,16 +95,16 @@ class ClassroomController extends \common\components\controllers\BaseController
     public function actionCreate()
     {
         $model = new Classroom();
-		if ($model->load(Yii::$app->request->post())) {
-			$model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-			$model->save();
-			return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+            $model->save();
+            return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return [
                 'status' => false,
                 'errors' => ActiveForm::validate($model)
             ];
-        } 
+        }
     }
 
     /**
@@ -109,10 +119,10 @@ class ClassroomController extends \common\components\controllers\BaseController
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return [
-				'status' => true,	
-			];
+                'status' => true,
+            ];
         } else {
-             return [
+            return [
                 'status' => false,
                 'errors' => ActiveForm::validate($model)
             ];

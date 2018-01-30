@@ -7,7 +7,6 @@ use yii\helpers\ArrayHelper;
 
 class m180103_165133_adding_location_slug_in_log_table extends Migration
 {
-
     public function up()
     {
         $locations = ArrayHelper::map(Location::find()
@@ -23,16 +22,14 @@ class m180103_165133_adding_location_slug_in_log_table extends Migration
                 }
             }
             if ($addLocationSlug) {
-             $firstWord  = array_shift($pathArray);
+                $firstWord  = array_shift($pathArray);
                 $secondWord = array_shift($pathArray);
                 $thirdWord  = $locations[$logLink->log->locationId];
                 array_unshift($pathArray, $firstWord, $secondWord, $thirdWord);
                 $path       = implode("/", $pathArray);
                 $logLink->path=$path;
                 $logLink->save();
-                   
             } else {
-                
             }
         }
     }

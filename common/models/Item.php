@@ -90,7 +90,7 @@ class Item extends \yii\db\ActiveRecord
             'royaltyFree' => 'Royalty Free',
             'taxStatusId' => 'Tax Status',
             'status' => 'status',
-			'showAllItems' => 'Show All'
+            'showAllItems' => 'Show All'
         ];
     }
 
@@ -170,7 +170,7 @@ class Item extends \yii\db\ActiveRecord
             $this->isDeleted = false;
         }
 
-     	return parent::beforeSave($insert);
+        return parent::beforeSave($insert);
     }
 
     public function getItemTotal($locationId, $date)
@@ -178,7 +178,7 @@ class Item extends \yii\db\ActiveRecord
         $amount = 0;
         $items = InvoiceLineItem::find()
                 ->notDeleted()
-                ->joinWith(['invoice' => function($query) use ($locationId) {
+                ->joinWith(['invoice' => function ($query) use ($locationId) {
                     $query->notDeleted()
                         ->location($locationId);
                 }])
@@ -215,7 +215,9 @@ class Item extends \yii\db\ActiveRecord
             $paymentFrequencyDiscount = new PaymentFrequencyLineItemDiscount();
             if ($lineItem->hasEnrolmentPaymentFrequencyDiscount()) {
                 $paymentFrequencyDiscount = $paymentFrequencyDiscount->setModel(
-                        $lineItem->enrolmentPaymentFrequencyDiscount, $value);
+                        $lineItem->enrolmentPaymentFrequencyDiscount,
+                    $value
+                );
             }
             $paymentFrequencyDiscount->invoiceLineItemId = $id;
             return $paymentFrequencyDiscount;
@@ -244,7 +246,9 @@ class Item extends \yii\db\ActiveRecord
             $multiEnrolmentDiscount = new EnrolmentLineItemDiscount();
             if ($lineItem->hasMultiEnrolmentDiscount()) {
                 $multiEnrolmentDiscount = $multiEnrolmentDiscount->setModel(
-                        $lineItem->multiEnrolmentDiscount, $value);
+                        $lineItem->multiEnrolmentDiscount,
+                    $value
+                );
             }
             $multiEnrolmentDiscount->invoiceLineItemId = $id;
             return $multiEnrolmentDiscount;
@@ -257,7 +261,7 @@ class Item extends \yii\db\ActiveRecord
         $invoiceLineItemModel = null;
         foreach ($invoice->lineItems as $lineItem) {
             if ($lineItem->item_id === $this->id) {
-                $lineItem->unit += 1; 
+                $lineItem->unit += 1;
                 $lineItem->save();
                 $invoiceLineItemModel = $lineItem;
                 break;

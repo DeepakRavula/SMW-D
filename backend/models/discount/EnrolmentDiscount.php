@@ -6,6 +6,7 @@ use common\models\User;
 use yii\base\Exception;
 use yii\base\Model;
 use common\models\Enrolment;
+
 /**
  * Create user form.
  */
@@ -40,7 +41,7 @@ class EnrolmentDiscount extends Model
 
         return !empty($enrolmentDiscount) ? $enrolmentDiscount : new \common\models\discount\EnrolmentDiscount();
     }
-        public function getEnrolment()
+    public function getEnrolment()
     {
         return $this->hasMany(Enrolment::className(), ['enrolmentId' => 'id']);
     }

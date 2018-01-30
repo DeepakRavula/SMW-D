@@ -20,24 +20,24 @@ use common\models\User;
         'columns' => [
             [
                 'label' => 'Student Name',
-				'format' => 'raw',
+                'format' => 'raw',
                 'value' => function ($data) {
-					$url = Url::to(['/student/view', 'id' => $data->id]); 
+                    $url = Url::to(['/student/view', 'id' => $data->id]);
                     return Html::a($data->fullName, $url);
                 },
             ],
             [
                 'label' => 'Customer Name',
-				'format' => 'raw',
+                'format' => 'raw',
                 'value' => function ($data) {
-					$url = Url::to(['/user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $data->customer->id]); 
+                    $url = Url::to(['/user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $data->customer->id]);
                     return Html::a($data->customer->publicIdentity, $url);
                 },
             ],
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view} {create}',
                 'buttons' => [
-                    'create' => function ($url, $model) use ($courseModel){
+                    'create' => function ($url, $model) use ($courseModel) {
                         $enrolment = $courseModel->getStudentEnrolment($model);
                         $url = Url::to(['invoice/enrolment', 'id' => $enrolment->id]);
                         if (!$enrolment->hasProFormaInvoice()) {
@@ -47,16 +47,15 @@ use common\models\User;
                         } else {
                             return null;
                         }
-
                     },
-                    'view' => function ($url, $model) use ($courseModel){
+                    'view' => function ($url, $model) use ($courseModel) {
                         $enrolment = $courseModel->getStudentEnrolment($model);
                         if (!$enrolment->hasProFormaInvoice()) {
                             return null;
                         }
                         $url = Url::to(['invoice/view', 'id' => $enrolment->proFormaInvoice->id]);
                         return Html::a('View PFI', $url, [
-							'class' => ['btn-info btn-sm']
+                            'class' => ['btn-info btn-sm']
                         ]);
                     }
                 ]

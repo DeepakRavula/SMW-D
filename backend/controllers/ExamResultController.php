@@ -12,11 +12,13 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Url;
 use yii\filters\ContentNegotiator;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * ExamResultController implements the CRUD actions for ExamResult model.
  */
-class ExamResultController extends \common\components\controllers\BaseController
+class ExamResultController extends BaseController
 {
     public function behaviors()
     {
@@ -34,8 +36,17 @@ class ExamResultController extends \common\components\controllers\BaseController
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
                 ],
-            ], 
-                       
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageStudents'],
+                    ],
+                ],
+            ],            
         ];
     }
 
@@ -72,28 +83,24 @@ class ExamResultController extends \common\components\controllers\BaseController
      * @return mixed
      */
     public function actionCreate($studentId)
-    {   
+    {
         $model = new ExamResult();
-		$model->studentId = $studentId;
-		$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-		$model->on(ExamResult::EVENT_AFTER_INSERT, [new StudentLog(), 'addExamResult'], ['loggedUser' => $loggedUser]);
-		$data = $this->renderAjax('/student/exam-result/_form', [
-			'model' => $model,
-		]);
-		if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+        $model->studentId = $studentId;
+        $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+        $model->on(ExamResult::EVENT_AFTER_INSERT, [new StudentLog(), 'addExamResult'], ['loggedUser' => $loggedUser]);
+        $data = $this->renderAjax('/student/exam-result/_form', [
+            'model' => $model,
+        ]);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,
                 'data' => $data
             ];
-        } 
-        
-             
-        
-        
+        }
     }
 
     /**
@@ -105,20 +112,19 @@ class ExamResultController extends \common\components\controllers\BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-		$data =  $this->renderAjax('//student/exam-result/_form', [
-			'model' => $model,
-		]);
-		if ($model->load(Yii::$app->request->post())) {
-	       	$model->save();
-			return  [
-				'status' => true,
-			];
+        $data =  $this->renderAjax('//student/exam-result/_form', [
+            'model' => $model,
+        ]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->save();
+            return  [
+                'status' => true,
+            ];
         }
-		return [
-			'status' => true,
-			'data' => $data
-		];
-
+        return [
+            'status' => true,
+            'data' => $data
+        ];
     }
 
     /**
@@ -129,16 +135,16 @@ class ExamResultController extends \common\components\controllers\BaseController
      */
     public function actionDelete($id)
     {
-		$model = $this->findModel($id);
-		$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-		$model->on(ExamResult::EVENT_AFTER_DELETE, [new StudentLog(), 'deleteExamResult'], ['loggedUser' => $loggedUser]);
-        if($model->delete()) {
-			$url = Url::to(['student/view', 'id' => $model->studentId, '#' => 'exam-result']);
-        	return [
-				'status' => true,
-				'url' => $url,
-			];
-		}
+        $model = $this->findModel($id);
+        $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+        $model->on(ExamResult::EVENT_AFTER_DELETE, [new StudentLog(), 'deleteExamResult'], ['loggedUser' => $loggedUser]);
+        if ($model->delete()) {
+            $url = Url::to(['student/view', 'id' => $model->studentId, '#' => 'exam-result']);
+            return [
+                'status' => true,
+                'url' => $url,
+            ];
+        }
     }
 
     /**

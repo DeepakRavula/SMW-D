@@ -14,17 +14,18 @@ use common\models\PaymentMethod;
 <div class="row user-create-form">
 <?php $form = ActiveForm::begin([
     'id' => 'payment-form',
-	'action' => Url::to(['payment/invoice-payment', 'id' => $invoice->id]),
+    'action' => Url::to(['payment/invoice-payment', 'id' => $invoice->id]),
 ]); ?>
     <div class="row">
         <div class="col-md-6">
     <?php echo $form->field($model, 'payment_method_id')->dropDownList(
  ArrayHelper::map(PaymentMethod::find()
-        		->where([
-                	'active' => PaymentMethod::STATUS_ACTIVE,
-                	'displayed' => 1,
-            	])
-      			->orderBy(['sortOrder' => SORT_ASC])->all(), 'id', 'name') );
+                ->where([
+                    'active' => PaymentMethod::STATUS_ACTIVE,
+                    'displayed' => 1,
+                ])
+                  ->orderBy(['sortOrder' => SORT_ASC])->all(), 'id', 'name')
+);
             ?>
         </div>
         <div class="col-md-6">

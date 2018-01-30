@@ -5,7 +5,6 @@ use common\models\log\LogActivity;
 
 class m171218_070105_log_activity_entries extends Migration
 {
-
     public function up()
     {
         $logActivityNames = ['create', 'edit', 'update', 'delete'];

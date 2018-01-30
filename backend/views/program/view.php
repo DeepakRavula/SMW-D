@@ -20,8 +20,8 @@ foreach ($roles as $name => $description) {
 ?>
 <div class="program-view">
     <?php yii\widgets\Pjax::begin([
-		'id' => 'program-details',
-	]) ?>
+        'id' => 'program-details',
+    ]) ?>
 	<div class="row-fluid user-details-wrapper">
     <div class="col-xs-2 p-l-0">
         	<i class="fa fa-music"></i> <?php echo $model->name; ?>
@@ -33,10 +33,10 @@ foreach ($roles as $name => $description) {
     <div class="clearfix"></div>
     <?php if ($role === User::ROLE_ADMINISTRATOR):?>
         <div class="col-xs-2 m-t-15 p-l-0">
-            <?php echo Html::a('<i class="fa fa-pencil" aria-hidden="true"></i> Edit','#', [
-							'id' => 'edit-program-button',
-							'class' => 'edit-program-button m-l-20'
-						]); ?>
+            <?php echo Html::a('<i class="fa fa-pencil" aria-hidden="true"></i> Edit', '#', [
+                            'id' => 'edit-program-button',
+                            'class' => 'edit-program-button m-l-20'
+                        ]); ?>
         </div>
         <div class="col-xs-2 m-t-15 p-l-0">
             <?php
@@ -51,15 +51,15 @@ foreach ($roles as $name => $description) {
             <div class="clearfix"></div>
         </div>
     <?php
-		Modal::begin([
-		    'header' => '<h4 class="m-0">Edit program</h4>',
-		    'id'=>'program-modal',
-		]);
-		 echo $this->render('_form', [
-				'model' => $model,
-		        ]);
-		Modal::end();
-		?>		
+        Modal::begin([
+            'header' => '<h4 class="m-0">Edit program</h4>',
+            'id'=>'program-modal',
+        ]);
+         echo $this->render('_form', [
+                'model' => $model,
+                ]);
+        Modal::end();
+        ?>		
         <?php endif; ?> 
     <?php \yii\widgets\Pjax::end(); ?>
     </div>

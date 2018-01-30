@@ -6,7 +6,7 @@ class m171108_125636_payment_amount_decimal extends Migration
 {
     public function up()
     {
-        $this->alterColumn ('payment', 'amount', $this->decimal(10,4));
+        $this->alterColumn('payment', 'amount', $this->decimal(10, 4));
     }
 
     public function down()

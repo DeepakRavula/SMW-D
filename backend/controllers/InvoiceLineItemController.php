@@ -10,19 +10,19 @@ use common\models\InvoiceLineItem;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
 use yii\bootstrap\ActiveForm;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
-use common\models\User;
-use common\models\InvoiceLog;
 use backend\models\LineItemMultiTax;
 use yii\helpers\Json;
 use common\models\Location;
 use common\models\TaxCode;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
+
 /**
  * InvoiceController implements the CRUD actions for Invoice model.
  */
-class InvoiceLineItemController extends \common\components\controllers\BaseController
+class InvoiceLineItemController extends BaseController
 {
     public function behaviors()
     {
@@ -35,13 +35,23 @@ class InvoiceLineItemController extends \common\components\controllers\BaseContr
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['edit', 'apply-discount', 'update', 'compute-net-price', 
+                'only' => ['edit', 'apply-discount', 'update', 'compute-net-price',
                     'delete', 'edit-tax'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['compute-tax', 'fetch-tax-percentage', 'update', 'edit-opening-balance', 'delete', 'edit-tax', 'edit-other-items', 'apply-discount'],
+                        'roles' => ['manageInvoices', 'managePfi'],
+                    ],
+                ],
+            ], 
         ];
     }
 
@@ -53,9 +63,9 @@ class InvoiceLineItemController extends \common\components\controllers\BaseContr
 
         return $rate;
     }
-   	public function actionFetchTaxPercentage($taxStatusId)
-	{
-		$today         = (new \DateTime())->format('Y-m-d H:i:s');
+    public function actionFetchTaxPercentage($taxStatusId)
+    {
+        $today         = (new \DateTime())->format('Y-m-d H:i:s');
         $locationId    = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $locationModel = Location::findOne(['id' => $locationId]);
         $taxCode = TaxCode::find()
@@ -66,9 +76,9 @@ class InvoiceLineItemController extends \common\components\controllers\BaseContr
             ->andWhere(['province_id' => $locationModel->province_id])
             ->orderBy('start_date DESC')
             ->one();
-		return $taxCode->rate;
-	} 
-    public function actionUpdate($id) 
+        return $taxCode->rate;
+    }
+    public function actionUpdate($id)
     {
         $lineItem = $this->findModel($id);
         if ($lineItem->invoice->isReversedInvoice()) {
@@ -79,20 +89,19 @@ class InvoiceLineItemController extends \common\components\controllers\BaseContr
         ]);
         $post = Yii::$app->request->post();
         if ($lineItem->load($post)) {
-            if($lineItem->save()) {
+            if ($lineItem->save()) {
                 $response = [
                     'status' => true,
                     'message' => 'Item successfully updated!',
-		];	
+        ];
             } else {
                 $response = [
                     'status' => false,
                     'errors' => ActiveForm::validate($lineItem),
-                ];	
+                ];
             }
             return $response;
         } else {
-
             return [
                 'status' => true,
                 'data' => $data,
@@ -106,19 +115,19 @@ class InvoiceLineItemController extends \common\components\controllers\BaseContr
         $model->amount = $newAmount;
         $model->save();
         $payments = $model->invoice->payments;
-        if($newAmount < 0) {
+        if ($newAmount < 0) {
             $model->invoice->subTotal = 0.00;
             $model->invoice->total = $model->invoice->subTotal;
             $model->invoice->save();
-            if(!empty($payments)) {
-                foreach ($payments as $payment){
-                    if($payment->isAccountEntry()) {
+            if (!empty($payments)) {
+                foreach ($payments as $payment) {
+                    if ($payment->isAccountEntry()) {
                         $payment->amount = abs($newAmount);
                         $payment->save();
                         continue;
                     }
                 }
-            }else {
+            } else {
                 $payment = new Payment();
                 $payment->amount = abs($newAmount);
                 $payment->invoiceId = $payments = $model->invoice->id;
@@ -126,13 +135,13 @@ class InvoiceLineItemController extends \common\components\controllers\BaseContr
                 $payment->reference = null;
                 $payment->save();
             }
-        }elseif($newAmount > 0) {
+        } elseif ($newAmount > 0) {
             $model->invoice->subTotal = $model->invoice->lineItemTotal;
             $model->invoice->total = $model->invoice->subTotal;
             $model->invoice->save();
-            if(!empty($payments)) {
-                foreach ($payments as $payment){
-                    if($payment->isAccountEntry()) {
+            if (!empty($payments)) {
+                foreach ($payments as $payment) {
+                    if ($payment->isAccountEntry()) {
                         $payment->delete();
                     }
                 }
@@ -150,9 +159,9 @@ class InvoiceLineItemController extends \common\components\controllers\BaseContr
     public function actionEditOtherItems($model, $newAmount)
     {
         $model->amount = $newAmount;
-        if($model->save()) {
-			$model->trigger(InvoiceLineItem::EVENT_EDIT);
-		}
+        if ($model->save()) {
+            $model->trigger(InvoiceLineItem::EVENT_EDIT);
+        }
         $result = [
             'output' => $newAmount,
             'message' => '',
@@ -212,15 +221,13 @@ class InvoiceLineItemController extends \common\components\controllers\BaseContr
     {
         $model = $this->findModel($id);
         $invoiceModel = $model->invoice;
-        if($model->delete()) {
+        if ($model->delete()) {
             $invoiceModel->save();
         }
         return [
             'status' => true,
             'message' => 'Line Item has been deleted successfully'
         ];
-
-        
     }
 
     protected function findModel($id)
@@ -245,7 +252,7 @@ class InvoiceLineItemController extends \common\components\controllers\BaseContr
     public function actionEditTax()
     {
         $lineItemIds = Yii::$app->request->get('InvoiceLineItem')['ids'];
-        $multiLineItemTax = new LineItemMultiTax(); 
+        $multiLineItemTax = new LineItemMultiTax();
         $lineItem = $multiLineItemTax->setModel($lineItemIds);
         $lineItem->setScenario(InvoiceLineItem::SCENARIO_EDIT);
         $data = $this->renderAjax('/invoice/line-item/_form-tax', [

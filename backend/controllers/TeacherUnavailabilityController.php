@@ -5,18 +5,19 @@ namespace backend\controllers;
 use Yii;
 use common\models\Holiday;
 use backend\models\search\HolidaySearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
 use common\models\TeacherUnavailability;
 use common\models\User;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * HolidayController implements the CRUD actions for Holiday model.
  */
-class TeacherUnavailabilityController extends \common\components\controllers\BaseController
+class TeacherUnavailabilityController extends BaseController
 {
     public function behaviors()
     {
@@ -27,7 +28,7 @@ class TeacherUnavailabilityController extends \common\components\controllers\Bas
                     'delete' => ['post'],
                 ],
             ],
-			'contentNegotiator' => [
+            'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['update', 'create', 'delete'],
                 'formatParam' => '_format',
@@ -35,6 +36,16 @@ class TeacherUnavailabilityController extends \common\components\controllers\Bas
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageTeachers'],
+                    ],
+                ],
+            ], 
         ];
     }
 
@@ -77,22 +88,22 @@ class TeacherUnavailabilityController extends \common\components\controllers\Bas
     public function actionCreate($id)
     {
         $model = new TeacherUnavailability();
-		$teacher = User::findOne(['id' => $id]);
+        $teacher = User::findOne(['id' => $id]);
         $data  = $this->renderAjax('_form', [
             'model' => $model,
-			'teacher' => $teacher 
-        ]); 
-		$model->teacherId = $teacher->id;
+            'teacher' => $teacher
+        ]);
+        $model->teacherId = $teacher->id;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,
                 'data' => $data
             ];
-        } 
+        }
     }
 
     /**
@@ -105,14 +116,14 @@ class TeacherUnavailabilityController extends \common\components\controllers\Bas
      */
     public function actionUpdate($id)
     {
-		$model = $this->findModel($id);
+        $model = $this->findModel($id);
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-			return [
-				'status' => true
-			];
+            return [
+                'status' => true
+            ];
         } else {
             return [
                 'status' => true,
@@ -132,9 +143,9 @@ class TeacherUnavailabilityController extends \common\components\controllers\Bas
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-		return [
-			'status' => true,
-		];
+        return [
+            'status' => true,
+        ];
     }
 
     /**

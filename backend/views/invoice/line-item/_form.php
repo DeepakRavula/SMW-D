@@ -13,8 +13,8 @@ use yii\helpers\Url;
 
 <?php $form = ActiveForm::begin([
     'id' => 'line-item-edit-form',
-	'action' => Url::to(['invoice-line-item/update', 'id' => $model->id]),
-	'enableClientValidation' => true
+    'action' => Url::to(['invoice-line-item/update', 'id' => $model->id]),
+    'enableClientValidation' => true
 ]); ?>
     <div id="item-edit-spinner" class="spinner" style="display:none">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -38,7 +38,7 @@ use yii\helpers\Url;
             <dt>Price</dt>
             <dd><?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control', 'id' => 'amount-line'])->label(false);?></dd>
             </div>
-			<?php if(Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')) :?>
+			<?php if (Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')) :?>
             <div class="col-md-5 text-right">
                 <dl class="item-view">
                     <dt>Cost</label></dt>

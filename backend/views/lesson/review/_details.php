@@ -3,12 +3,13 @@
 use common\models\Program;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+
 ?>
 <?php
 LteBox::begin([
-	'type' => LteConst::TYPE_DEFAULT,
-	'title' => 'Details',
-	'withBorder' => true,
+    'type' => LteConst::TYPE_DEFAULT,
+    'title' => 'Details',
+    'withBorder' => true,
 ])
 ?>
 <dl class="dl-horizontal">

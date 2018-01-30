@@ -2,37 +2,37 @@
 
 use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
-use yii\helpers\Html;
-use common\models\LocationAvailability;
+use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\Course;
 use common\models\CourseSchedule;
-use backend\models\discount\EnrolmentDiscount;
+use backend\models\discount\MultiEnrolmentDiscount;
+
 ?>
 <div id="error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="user-create-form">
 
 <?php
 $form = ActiveForm::begin([
-		'id' => 'enrolment-form',
-		'action' => Url::to(['student/enrolment', 'id' => $student->id]),
-	]);
+        'id' => 'enrolment-form',
+        'action' => Url::to(['student/enrolment', 'id' => $student->id]),
+    ]);
 ?>	
 	    <div id="step-1">
 	    <?= $this->render('_step-one', [
-			'model' => new Course(), 
-			'courseSchedule' => new CourseSchedule(),
-			'paymentFrequencyDiscount' => new EnrolmentDiscount(),
-			'multipleEnrolmentDiscount' => new EnrolmentDiscount(),
-			'student' => $model,
-			'form' => $form
-		]);?> 
+            'model' => new Course(),
+            'courseSchedule' => new CourseSchedule(),
+            'paymentFrequencyDiscount' => new PaymentFrequencyEnrolmentDiscount(),
+            'multipleEnrolmentDiscount' => new MultiEnrolmentDiscount(),
+            'student' => $model,
+            'form' => $form
+        ]);?> 
 	    </div>
 	    <div id="step-2">
 			<?= $this->render('_step-two', [
-				'model' => new Course(), 
-				'courseSchedule' => new CourseSchedule(),
-				'form' => $form
-		]);?>  
+                'model' => new Course(),
+                'courseSchedule' => new CourseSchedule(),
+                'form' => $form
+        ]);?>  
 	    </div>
 <?php ActiveForm::end(); ?>
 		</div>

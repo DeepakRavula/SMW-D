@@ -7,6 +7,7 @@ use yii\widgets\Pjax;
 use yii\data\ActiveDataProvider;
 use common\models\Lesson;
 use backend\models\EmailForm;
+
 ?>
 
 <div class="row-fluid p-10">
@@ -14,8 +15,8 @@ use backend\models\EmailForm;
 	<p>
     <h4><strong class="m-r-10"><?= 'Schedule of Lessons' ?></strong> 
         <?= Html::a('<i class="fa fa-print"></i> ', ['print/course', 'id' => $model->course->id], ['class' => 'm-r-10', 'target' => '_blank']) ?>  
-        <?= Html::a('<i class="fa fa-envelope-o"></i> ', '#' , [
-        'id' => 'schedule-mail-button', 
+        <?= Html::a('<i class="fa fa-envelope-o"></i> ', '#', [
+        'id' => 'schedule-mail-button',
         'class' => '']) ?> </h4></p>
     </div>
     <div class="clearfix"></div>
@@ -25,7 +26,7 @@ use backend\models\EmailForm;
                 'summary' => false,
                 'emptyText' => false,
                 'tableOptions' => ['class' => 'table table-bordered'],
-				'showHeader' => false,
+                'showHeader' => false,
                 'columns' => [
                     [
                         'value' => function ($data) {
@@ -40,28 +41,28 @@ use backend\models\EmailForm;
     <?php Pjax::end(); ?> 
 </div>
 <?php 
-	$lessonDataProvider = new ActiveDataProvider([
-		'query' => Lesson::find()
-			->andWhere([
-				'courseId' => $model->course->id,
-				'status' => Lesson::STATUS_SCHEDULED
-			])
-			->isConfirmed()
-			->notDeleted()
-			->orderBy(['lesson.date' => SORT_ASC]),
-			'pagination' => [
-				'pageSize' => 60,
-			 ],
-	]);
-	$body = null;
-	$body = 'Please find the lesson schedule for the program you enrolled on ' . Yii::$app->formatter->asDate($model->course->startDate) ; 
-	$content = $this->render('mail/content', [
-		'toName' => $model->student->customer->publicIdentity,
-		'content' => $body,
-		'model' => $model,
-		'lessonDataProvider' => $lessonDataProvider
-	]); 
-	$emails = !empty($model->student->customer->email) ? $model->student->customer->email : null;
+    $lessonDataProvider = new ActiveDataProvider([
+        'query' => Lesson::find()
+            ->andWhere([
+                'courseId' => $model->course->id,
+                'status' => Lesson::STATUS_SCHEDULED
+            ])
+            ->isConfirmed()
+            ->notDeleted()
+            ->orderBy(['lesson.date' => SORT_ASC]),
+            'pagination' => [
+                'pageSize' => 60,
+             ],
+    ]);
+    $body = null;
+    $body = 'Please find the lesson schedule for the program you enrolled on ' . Yii::$app->formatter->asDate($model->course->startDate) ;
+    $content = $this->render('mail/content', [
+        'toName' => $model->student->customer->publicIdentity,
+        'content' => $body,
+        'model' => $model,
+        'lessonDataProvider' => $lessonDataProvider
+    ]);
+    $emails = !empty($model->student->customer->email) ? $model->student->customer->email : null;
 ?>
 <?php
 Modal::begin([
@@ -69,11 +70,11 @@ Modal::begin([
     'id'=>'schedule-mail-modal',
 ]);
 echo $this->render('/mail/_form', [
-	'model' => new EmailForm(),
-	'emails' => $emails,
-	'subject' => 'Schedule for ' . $model->student->fullName,
-	'content' => $content,
-	'id' => null,
+    'model' => new EmailForm(),
+    'emails' => $emails,
+    'subject' => 'Schedule for ' . $model->student->fullName,
+    'content' => $content,
+    'id' => null,
         'userModel'=>$model->student->customer,
 ]);
 Modal::end();

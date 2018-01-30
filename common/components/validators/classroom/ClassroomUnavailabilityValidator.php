@@ -9,7 +9,6 @@ use common\models\Location;
 
 class ClassroomUnavailabilityValidator extends Validator
 {
-
     public function validateAttribute($model, $attribute)
     {
         $locationId        = Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -20,9 +19,11 @@ class ClassroomUnavailabilityValidator extends Validator
         $toDate            = \DateTime::createFromFormat('M d,Y', $toDate)->format('Y-m-d');
         $currentDate       = (new \DateTime())->format('Y-m-d');
         if (($fromDate < $currentDate || $toDate < $currentDate)) {
-            return $this->addError($model, $attribute,
-                    'Unavailability cannot be set for past dates');
+            return $this->addError(
+                $model,
+                $attribute,
+                    'Unavailability cannot be set for past dates'
+            );
         }
-
     }
 }

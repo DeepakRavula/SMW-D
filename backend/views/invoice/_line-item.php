@@ -5,7 +5,7 @@ use yii\bootstrap\Modal;
 Modal::begin([
     'header' =>  '<h4 class="m-0 pull-left">Add Line Items</h4>',
     'id' => 'invoice-line-item-modal',
-    'closeButton' => false, 
+    'closeButton' => false,
 ]); ?>
 <div id="item-spinner" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -27,7 +27,7 @@ Modal::begin([
     'id' => 'apply-discount-modal',
     'footer' => $this->render('_submit-button', [
         'deletable' => false,
-        'saveClass' => 'apply-discount-form-save', 
+        'saveClass' => 'apply-discount-form-save',
         'cancelClass' => 'invoice-apply-discount-cancel'
     ])
 ]); ?>

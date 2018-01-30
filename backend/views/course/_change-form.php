@@ -2,13 +2,14 @@
 
 use yii\helpers\ArrayHelper;
 use common\models\Program;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 use kartik\depdrop\DepDrop;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use common\models\User;
 use common\models\Location;
-/* 
+
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -20,7 +21,6 @@ use common\models\Location;
     <?php $privatePrograms = ArrayHelper::map(Program::find()
             ->active()
             ->privateProgram()
-            ->studentEnrolled($model->studentId)
             ->all(), 'id', 'name');
     
     $defaultTeacher = ArrayHelper::map(User::find()
@@ -48,7 +48,8 @@ use common\models\Location;
         <div class="col-lg-6">
             <?php
                 // Dependent Dropdown
-                echo $form->field($model, 'teacherId')->widget(DepDrop::classname(),
+                echo $form->field($model, 'teacherId')->widget(
+                    DepDrop::classname(),
                     [
                     'type' => DepDrop::TYPE_SELECT2,
                     'data'=> $defaultTeacher,
@@ -60,7 +61,8 @@ use common\models\Location;
                         'depends' => ['change-course-program'],
                         'url' => Url::to(['course/teachers'])
                     ],
-                ]);
+                ]
+                );
             ?>
         </div>
     </div>
@@ -75,7 +77,7 @@ use common\models\Location;
         return false;
     });
     
-    $(document).on('modal-cancel', function() {
+    $(document).on('modal-close', function() {
         $.pjax.reload({container: '#lesson-index', timeout: 6000, async:false});
         return false;
     });
