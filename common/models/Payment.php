@@ -175,7 +175,7 @@ class Payment extends ActiveRecord
         
     public function beforeSave($insert)
     {
-        if (!empty($this->invoiceId) && !$this->isCreditUsed() && !$this->isCreditApplied()) {
+        if (!empty($this->invoiceId) && !$this->isCreditUsed()) {
             $invoice = Invoice::findOne($this->invoiceId);
             if (round($invoice->balance, 2) === round($this->amount, 2)) {
                 $this->amount = $invoice->balance;
