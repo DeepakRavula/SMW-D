@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
+use yii\filters\AccessControl;
 
 /**
  * CityController implements the CRUD actions for City model.
@@ -31,6 +32,16 @@ class CityController extends \common\components\controllers\BaseController
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'update', 'create', 'delete'],
+                        'roles' => ['manageCities'],
+                    ],
                 ],
             ],
         ];

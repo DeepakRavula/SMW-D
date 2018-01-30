@@ -3,18 +3,17 @@
 namespace backend\controllers;
 
 use Yii;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-use yii\helpers\Url;
 use backend\models\search\StudentBirthdaySearch;
 use common\models\Location;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * StudentController implements the CRUD actions for Student model.
  */
-class StudentBirthdayController extends \common\components\controllers\BaseController
+class StudentBirthdayController extends BaseController
 {
     public function behaviors()
     {
@@ -32,6 +31,16 @@ class StudentBirthdayController extends \common\components\controllers\BaseContr
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'print'],
+                        'roles' => ['manageBirthdays'],
+                    ],
+                ],
+            ], 
         ];
     }
 
@@ -80,11 +89,4 @@ class StudentBirthdayController extends \common\components\controllers\BaseContr
                 'model'=>$model,
         ]);
     }
-    /**
-     * Displays a single Student model.
-     *
-     * @param int $id
-     *
-     * @return mixed
-     */
 }

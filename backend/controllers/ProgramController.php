@@ -7,17 +7,17 @@ use common\models\Program;
 use common\models\Student;
 use common\models\User;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use common\models\Qualification;
 use backend\models\search\ProgramSearch;
-
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
 /**
  * ProgramController implements the CRUD actions for Program model.
  */
-class ProgramController extends \common\components\controllers\BaseController
+class ProgramController extends BaseController
 {
     public function behaviors()
     {
@@ -35,6 +35,21 @@ class ProgramController extends \common\components\controllers\BaseController
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['managePrograms'],
+                    ],
+					[
+                        'allow' => true,
+                        'actions' => ['fetch-rate', 'teachers'],
+                        'roles' => ['manageEnrolments'],
+                    ],
+                ],
+            ], 
         ];
     }
 

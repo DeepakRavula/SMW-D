@@ -31,16 +31,17 @@ use common\models\UserEmail;
 use common\models\Label;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
-use common\models\Payment;
 use common\models\log\LogHistory;
 use Intervention\Image\ImageManagerStatic;
 use trntv\filekit\actions\DeleteAction;
 use trntv\filekit\actions\UploadAction;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * UserController implements the CRUD actions for User model.
  */
-class UserController extends \common\components\controllers\BaseController
+class UserController extends BaseController
 {
     public function behaviors()
     {
@@ -58,6 +59,16 @@ class UserController extends \common\components\controllers\BaseController
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			 'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'edit-profile', 'import', 'delete-contact', 'create', 'edit-lesson', 'delete'],
+                        'roles' => ['manageTeachers', 'manageCustomers', 'manageAdmin', 'manageStaff', 'manageOwners'],
+                    ],
+                ],
+            ], 
         ];
     }
 

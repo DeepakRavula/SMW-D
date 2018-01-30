@@ -6,6 +6,7 @@ use Yii;
 use common\models\Location;
 use common\models\Lesson;
 use common\models\Enrolment;
+use yii\filters\AccessControl;
 use common\models\Student;
 use backend\models\search\DashboardSearch;
 use yii\helpers\ArrayHelper;
@@ -14,6 +15,22 @@ use common\models\UserLocation;
 
 class DashboardController extends \common\components\controllers\BaseController
 {
+	
+public function behaviors()
+{
+    return [
+        'access' => [
+            'class' => AccessControl::className(),
+            'rules' => [
+                [
+                    'allow' => true,
+                    'actions' => ['index'],
+                    'roles' => ['manageDashboard'],
+                ],
+            ],
+        ],
+    ];
+}
     public function actionIndex()
     {
         $roles = ArrayHelper::getColumn(
@@ -98,7 +115,7 @@ class DashboardController extends \common\components\controllers\BaseController
                     ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
                     ->isConfirmed()
                     ->notDeleted()
-                    ->groupBy(['course.programId'])
+                    ->groupBy(['lesson.id','course.programId'])
                     ->all();
         foreach ($programs as $program) {
             $completedProgram = [];

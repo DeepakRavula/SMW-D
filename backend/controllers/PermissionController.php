@@ -3,16 +3,15 @@
 namespace backend\controllers;
 
 use Yii;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
-use common\models\Location;
-
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 /**
  * NoteController implements the CRUD actions for Note model.
  */
-class PermissionController extends Controller
+class PermissionController extends BaseController
 {
     public function behaviors()
     {
@@ -30,6 +29,16 @@ class PermissionController extends Controller
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'add', 'remove'],
+                        'roles' => ['managePrivileges'],
+                    ],
+                ],
+            ],  
         ];
     }
 

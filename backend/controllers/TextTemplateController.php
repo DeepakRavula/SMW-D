@@ -5,15 +5,16 @@ namespace backend\controllers;
 use Yii;
 use common\models\TextTemplate;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * CalendarEventColorController implements the CRUD actions for CalendarEventColor model.
  */
-class TextTemplateController extends \common\components\controllers\BaseController
+class TextTemplateController extends BaseController
 {
     public function behaviors()
     {
@@ -32,6 +33,16 @@ class TextTemplateController extends \common\components\controllers\BaseControll
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update'],
+                        'roles' => ['manageEmailTemplate'],
+                    ],
+                ],
+            ], 
         ];
     }
 

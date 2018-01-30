@@ -6,17 +6,18 @@ use Yii;
 use common\models\ReleaseNotes;
 use common\models\ReleaseNotesRead;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * Release_notesController implements the CRUD actions for ReleaseNotes model.
  */
-class ReleaseNotesController extends \common\components\controllers\BaseController
+class ReleaseNotesController extends BaseController
 {
     public function behaviors()
     {
@@ -35,6 +36,16 @@ class ReleaseNotesController extends \common\components\controllers\BaseControll
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageReleaseNotes'],
+                    ],
+                ],
+            ], 
         ];
     }
 

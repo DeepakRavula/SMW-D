@@ -13,11 +13,13 @@ use yii\widgets\ActiveForm;
 use yii\web\Response;
 use common\models\CreditUsage;
 use yii\filters\ContentNegotiator;
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
  */
-class PaymentController extends \common\components\controllers\BaseController
+class PaymentController extends BaseController
 {
     public function behaviors()
     {
@@ -36,6 +38,16 @@ class PaymentController extends \common\components\controllers\BaseController
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'print', 'invoice-payment', 'credit-payment'],
+                        'roles' => ['managePfi', 'manageInvoices'],
+                    ],
+                ],
+            ],  
         ];
     }
 

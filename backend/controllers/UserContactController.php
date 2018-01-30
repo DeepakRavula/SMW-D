@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use yii\web\Controller;
 use common\models\City;
 use Yii;
 use common\models\UserEmail;
@@ -14,11 +13,13 @@ use common\models\User;
 use common\models\Label;
 use common\models\UserAddress;
 use yii\widgets\ActiveForm;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
-class UserContactController extends \common\components\controllers\BaseController
+class UserContactController extends BaseController
 {
     public function behaviors()
     {
@@ -31,7 +32,16 @@ class UserContactController extends \common\components\controllers\BaseControlle
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-            
+           'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['create-email', 'create-phone', 'update-primary', 'create-address','edit-email','edit-phone','edit-address', 'delete','validate'],
+                        'roles' => ['manageTeachers', 'manageCustomers', 'manageAdmin', 'manageStaff', 'manageOwners'],
+                    ],
+                ],
+            ],  
         ];
     }
     public function actionCreateEmail($id)

@@ -5,15 +5,16 @@ namespace backend\controllers;
 use Yii;
 use common\models\Note;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
 
 /**
  * NoteController implements the CRUD actions for Note model.
  */
-class NoteController extends \common\components\controllers\BaseController
+class NoteController extends BaseController
 {
     public function behaviors()
     {
@@ -31,6 +32,18 @@ class NoteController extends \common\components\controllers\BaseController
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['update', 'create'],
+                        'roles' => ['manageStudents', 
+							'manageCustomers', 'manageTeachers',
+							'managePrivateLessons', 'manageGroupLessons', 'managePfi', 'manageInvoices', 'manageAdmin', 'manageStaff', 'manageOwners'],
+                    ],
+                ],
+            ],  
         ];
     }
 

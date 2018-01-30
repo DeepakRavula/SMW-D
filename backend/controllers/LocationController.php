@@ -13,11 +13,13 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\widgets\ActiveForm;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * LocationController implements the CRUD actions for Location model.
  */
-class LocationController extends \common\components\controllers\BaseController
+class LocationController extends BaseController
 {
     public function behaviors()
     {
@@ -36,6 +38,16 @@ class LocationController extends \common\components\controllers\BaseController
                    'application/json' => Response::FORMAT_JSON,
                ],
            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'validate', 'add-availability', 'edit-availability', 'delete-availability', 'render-events', 'check-availability'],
+                        'roles' => ['manageLocations'],
+                    ],
+                ],
+            ],  
         ];
     }
 

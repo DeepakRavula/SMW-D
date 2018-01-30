@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
+use yii\filters\AccessControl;
 
 /**
  * CountryController implements the CRUD actions for Country model.
@@ -32,7 +33,17 @@ class CountryController extends \common\components\controllers\BaseController
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
                 ],
-            ]
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'update', 'create', 'delete'],
+                        'roles' => ['manageCountries'],
+                    ],
+                ],
+            ],
         ];
     }
 

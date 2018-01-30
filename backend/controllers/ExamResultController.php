@@ -12,11 +12,13 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\Url;
 use yii\filters\ContentNegotiator;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * ExamResultController implements the CRUD actions for ExamResult model.
  */
-class ExamResultController extends \common\components\controllers\BaseController
+class ExamResultController extends BaseController
 {
     public function behaviors()
     {
@@ -35,7 +37,16 @@ class ExamResultController extends \common\components\controllers\BaseController
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-                       
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'roles' => ['manageStudents'],
+                    ],
+                ],
+            ],            
         ];
     }
 

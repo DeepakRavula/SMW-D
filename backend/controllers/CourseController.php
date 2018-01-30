@@ -25,11 +25,13 @@ use yii\web\Response;
 use common\models\TeacherAvailability;
 use common\models\Enrolment;
 use common\models\log\LogHistory;
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
 
 /**
  * CourseController implements the CRUD actions for Course model.
  */
-class CourseController extends \common\components\controllers\BaseController
+class CourseController extends BaseController
 {
     public function behaviors()
     {
@@ -45,6 +47,16 @@ class CourseController extends \common\components\controllers\BaseController
                 'only' => ['fetch-teacher-availability', 'fetch-lessons', 'fetch-group', 'change'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'fetch-teacher-availability', 'course-date', 'create', 'update', 'delete', 'teachers', 'fetch-group', 'change'],
+                        'roles' => ['manageGroupLessons'],
+                    ],
                 ],
             ],
         ];

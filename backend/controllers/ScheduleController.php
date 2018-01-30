@@ -20,12 +20,13 @@ use common\models\Classroom;
 use common\models\TeacherUnavailability;
 use League\Period\Period;
 use Carbon\Carbon;
+use common\components\controllers\BaseController;
 use Carbon\CarbonInterval;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
  */
-class ScheduleController extends \common\components\controllers\BaseController
+class ScheduleController extends BaseController
 {
     public function behaviors()
     {
@@ -41,8 +42,8 @@ class ScheduleController extends \common\components\controllers\BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index'],
-                        'roles' => ['staffmember'],
+                        'actions' => ['index', 'render-day-events', 'render-classroom-events','render-resources', 'render-classroom-resources', 'fetch-holiday-name'],
+                        'roles' => ['manageSchedule'],
                     ],
                 ],
             ],

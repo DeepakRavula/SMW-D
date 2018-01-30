@@ -33,11 +33,13 @@ use backend\models\discount\MultiEnrolmentDiscount;
 use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\log\StudentLog;
 use common\models\log\DiscountLog;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
  */
-class EnrolmentController extends \common\components\controllers\BaseController
+class EnrolmentController extends BaseController
 {
     public function behaviors()
     {
@@ -57,6 +59,16 @@ class EnrolmentController extends \common\components\controllers\BaseController
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'group', 'edit', 'edit-program-rate', 'create', 'add', 'confirm', 'update', 'delete', 'edit-end-date'],
+                        'roles' => ['manageEnrolments'],
+                    ],
+                ],
+            ], 
         ];
     }
 

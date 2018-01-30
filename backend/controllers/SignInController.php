@@ -19,6 +19,7 @@ use Yii;
 use yii\web\ForbiddenHttpException;
 use yii\filters\VerbFilter;
 use yii\base\InvalidParamException;
+use yii\filters\AccessControl;
 use common\models\User;
 
 class SignInController extends \common\components\controllers\BaseController
@@ -33,6 +34,26 @@ class SignInController extends \common\components\controllers\BaseController
                 'actions' => [
                 ],
             ],
+			'access' => [
+				'class' => AccessControl::className(),
+				'rules' => [
+					[
+						'allow' => true,
+						'actions' => ['login', 'request-password-reset', 'reset-password'],
+						'roles' => ['?'],
+					],
+					[
+						'allow' => true,
+    		            'actions' => ['logout', 'profile', 'account'],
+	                	'roles' => ['@'],
+					],
+					[
+						'allow' => true,
+        		        'actions' => ['lock', 'unlock'],
+		                'roles' => ['owner', 'staffmember'],
+					],
+				],
+			],
         ];
     }
 
@@ -64,7 +85,7 @@ class SignInController extends \common\components\controllers\BaseController
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->redirect(['dashboard/index']);
+            return $this->redirect(['/dashboard/index']);
         } else {
             return $this->render('login', [
                 'model' => $model,

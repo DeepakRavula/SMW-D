@@ -12,11 +12,12 @@ use common\models\User;
 use common\models\discount\CustomerDiscountLog;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
-
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
 /**
  * CustomerDiscountController implements the CRUD actions for CustomerDiscount model.
  */
-class CustomerDiscountController extends \common\components\controllers\BaseController
+class CustomerDiscountController extends BaseController
 {
     public function behaviors()
     {
@@ -32,6 +33,16 @@ class CustomerDiscountController extends \common\components\controllers\BaseCont
                 'only' => ['create', 'delete'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'create'],
+                        'roles' => ['manageCustomers'],
+                    ],
                 ],
             ],
         ];

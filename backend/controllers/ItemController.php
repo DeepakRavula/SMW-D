@@ -7,17 +7,18 @@ use common\models\Item;
 use common\models\Invoice;
 use yii\data\ActiveDataProvider;
 use backend\models\search\ItemSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
 use backend\models\search\InvoiceLineItemSearch;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * ItemController implements the CRUD actions for Item model.
  */
-class ItemController extends \common\components\controllers\BaseController
+class ItemController extends BaseController
 {
     public function behaviors()
     {
@@ -36,6 +37,16 @@ class ItemController extends \common\components\controllers\BaseController
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'print', 'filter'],
+                        'roles' => ['manageItems'],
+                    ],
+                ],
+            ],  
         ];
     }
 

@@ -27,16 +27,17 @@ use yii\base\ErrorException;
 use common\models\User;
 use yii\filters\ContentNegotiator;
 use common\models\PaymentCycle;
-use common\models\Invoice;
 use common\models\lesson\BulkReschedule;
 use common\models\lesson\BulkRescheduleLesson;
 use common\models\log\StudentLog;
 use common\models\log\EnrolmentLog;
+use common\components\controllers\BaseController;
+use yii\filters\AccessControl;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
  */
-class LessonController extends \common\components\controllers\BaseController
+class LessonController extends BaseController
 {
     public function behaviors()
     {
@@ -57,6 +58,24 @@ class LessonController extends \common\components\controllers\BaseController
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+			'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'create',
+							'validate-on-update', 'validate', 
+							'fetch-duration','edit-classroom', 
+							'update', 'update-field', 'review',
+							'fetch-conflict', 'confirm',
+							'invoice', 'take-payment',
+							'modify-classroom', 'modify-lesson',
+							'payment', 'substitute', 'unschedule'],
+                        'roles' => ['managePrivateLessons', 
+							'manageGroupLessons'],
+                    ],
+                ],
+            ],  
         ];
     }
 
