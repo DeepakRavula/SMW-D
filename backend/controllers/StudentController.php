@@ -57,7 +57,7 @@ class StudentController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'create', 'update', 'merge', 'fetch-program-rate','validate', 'print','view'],
+                        'actions' => ['index', 'create', 'update', 'merge', 'fetch-program-rate','validate', 'print','view', 'enrolment'],
                         'roles' => ['manageStudents'],
                     ],
                 ],
