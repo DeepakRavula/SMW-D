@@ -21,7 +21,6 @@ use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\TeacherAvailability;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
-use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 
 /**
@@ -53,7 +52,7 @@ class StudentController extends BaseController
                         'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-			'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
