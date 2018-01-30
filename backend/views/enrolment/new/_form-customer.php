@@ -5,7 +5,7 @@ use common\models\Country;
 use common\models\Province;
 use yii\helpers\ArrayHelper;
 use common\models\Label;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\MaskedInput;
 

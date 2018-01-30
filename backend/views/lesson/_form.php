@@ -4,7 +4,7 @@ use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
 use kartik\time\TimePicker;
 use yii\helpers\Url;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\Location;

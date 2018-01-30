@@ -108,6 +108,12 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'paymentCycleLessonId'])
                 ->via('lineItemPaymentCycleLesson');
     }
+    
+    public function getPaymentCycle()
+    {
+        return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
+                ->via('paymentCycleLesson');
+    }
 
     public function getItemType()
     {
@@ -160,12 +166,15 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getEnrolment()
     {
+        $query = $this->hasOne(Enrolment::className(), ['id' => 'enrolment'])
+                ->via('paymentCycle');
         if ($this->isGroupLesson()) {
             return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId'])
                 ->via('lineItemEnrolment');
+        } else if ($this->isExtraLesson()) {
+            $query->onCondition(['enrolment.type' => Enrolment::TYPE_EXTRA]);
         } else {
-            return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId'])
-                ->via('lesson');
+            $query->onCondition(['enrolment.type' => Enrolment::TYPE_REGULAR]);
         }
     }
 
@@ -547,53 +556,48 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $invoiceItemLesson->save();
         }
         if (!$this->isGroupLesson()) {
-            if ($this->invoice->isInvoice() && $this->lesson->proFormaLineItem) {
-                if ($this->lesson->proFormaLineItem->hasCustomerDiscount()) {
+            if ($this->invoice->isInvoice() && $lesson->proFormaLineItem) {
+                $proFormaLineItem = $lesson->proFormaLineItem;
+                if ($proFormaLineItem->hasCustomerDiscount()) {
                     $customerDiscount = $this->addCustomerDiscount(
                         null,
-                            $this->lesson->proFormaLineItem->customerDiscount
+                            $proFormaLineItem->customerDiscount
                     );
                 }
-                if ($this->lesson->proFormaLineItem->hasLineItemDiscount()) {
+                if ($proFormaLineItem->hasLineItemDiscount()) {
                     $lineItemDiscount = $this->addLineItemDiscount(
-                            $this->lesson->proFormaLineItem->lineItemDiscount
+                            $proFormaLineItem->lineItemDiscount
                     );
                 }
-                if ($this->lesson->proFormaLineItem->hasEnrolmentPaymentFrequencyDiscount()) {
+                if ($proFormaLineItem->hasEnrolmentPaymentFrequencyDiscount()) {
                     $pfDiscount = $this->addEnrolmentPaymentFrequencyDiscount(
-                            null,
- 
-                        $this->lesson->proFormaLineItem->enrolmentPaymentFrequencyDiscount
- 
-                    );
+                        null, $proFormaLineItem->enrolmentPaymentFrequencyDiscount);
                 }
-                if ($this->lesson->proFormaLineItem->hasMultiEnrolmentDiscount()) {
+                if ($proFormaLineItem->hasMultiEnrolmentDiscount()) {
                     $enrolDiscount = $this->addMultiEnrolmentDiscount(
-                        null,
-                            $this->lesson->proFormaLineItem->multiEnrolmentDiscount
-                    );
+                        null, $proFormaLineItem->multiEnrolmentDiscount);
                 }
             }
-            if ($this->canAddEnrolmentPaymentFrequencyDiscount() && !$this->lesson->isExploded
-                    && !$this->invoice->isInvoice()) {
-                $this->addEnrolmentPaymentFrequencyDiscount($this->enrolment);
-            }
-            if ($this->canAddMultiEnrolmentDiscount() && !$this->lesson->isExploded
-                    && !$this->invoice->isInvoice()) {
-                $this->addMultiEnrolmentDiscount($this->enrolment);
+            if (!$lesson->isExploded && !$this->invoice->isInvoice()) {
+                if ($this->canAddEnrolmentPaymentFrequencyDiscount($lesson)) {
+                    $this->addEnrolmentPaymentFrequencyDiscount($lesson->enrolment);
+                }
+                if ($this->canAddMultiEnrolmentDiscount($lesson)) {
+                    $this->addMultiEnrolmentDiscount($lesson->enrolment);
+                }
             }
         }
     }
 
-    public function canAddEnrolmentPaymentFrequencyDiscount()
+    public function canAddEnrolmentPaymentFrequencyDiscount($lesson)
     {
-        return $this->isLessonItem() && $this->enrolment->hasPaymentFrequencyDiscount() &&
+        return $this->isLessonItem() && $lesson->enrolment->hasPaymentFrequencyDiscount() &&
             !$this->hasEnrolmentPaymentFrequencyDiscount();
     }
 
-    public function canAddMultiEnrolmentDiscount()
+    public function canAddMultiEnrolmentDiscount($lesson)
     {
-        return $this->isLessonItem() && $this->enrolment->hasMultiEnrolmentDiscount() &&
+        return $this->isLessonItem() && $lesson->enrolment->hasMultiEnrolmentDiscount() &&
             !$this->hasMultiEnrolmentDiscount();
     }
 

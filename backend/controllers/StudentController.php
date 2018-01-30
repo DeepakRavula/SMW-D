@@ -7,13 +7,17 @@ use common\models\Student;
 use common\models\Program;
 use common\models\Course;
 use backend\models\search\StudentSearch;
+use common\components\controllers\BaseController;
+use common\models\Location;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\User;
 use yii\web\Response;
+use Carbon\Carbon;
 use common\models\CourseSchedule;
 use common\models\log\StudentLog;
-use common\models\discount\EnrolmentDiscount;
+use backend\models\discount\MultiEnrolmentDiscount;
+use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\TeacherAvailability;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
@@ -142,21 +146,33 @@ class StudentController extends BaseController
     public function actionEnrolment($id)
     {
         $model = $this->findModel($id);
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $request = Yii::$app->request;
         $post = $request->post();
         $courseModel = new Course();
+        $courseModel->studentId = $id;
         $courseSchedule = new CourseSchedule();
-        $multipleEnrolmentDiscount = new EnrolmentDiscount();
-        $paymentFrequencyDiscount = new EnrolmentDiscount();
+        $multipleEnrolmentDiscount = new MultiEnrolmentDiscount();
+        $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
         $courseModel->load($post);
         $courseSchedule->load($post);
         
         if (Yii::$app->request->isPost) {
-            $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
-            $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
+            $paymentFrequencyDiscount->load($post);
+            $multipleEnrolmentDiscount->load($post);
             $courseModel->locationId = $locationId;
+            $hasExtraEnrolment = $courseModel->checkCourseExist();
+            if ($hasExtraEnrolment) {
+                $endDate = (new Carbon($courseModel->startDate))->addMonths(11);
+                $startDate = new \DateTime($courseModel->startDate);
+                $teacherId = $courseModel->teacherId;
+                $courseModel = $courseModel->getEnroledCourse();
+                $courseModel->updateAttributes([
+                    'startDate' => $startDate->format('Y-m-d H:i:s'),
+                    'endDate' => $endDate->endOfMonth(),
+                    'teacherId' => $teacherId
+                ]);
+            }
             if ($courseModel->save()) {
                 $courseSchedule->courseId = $courseModel->id;
                 $courseSchedule->studentId = $model->id;
@@ -166,14 +182,10 @@ class StudentController extends BaseController
                 if ($courseSchedule->save()) {
                     if (!empty($multipleEnrolmentDiscount->discount)) {
                         $multipleEnrolmentDiscount->enrolmentId = $courseModel->enrolment->id;
-                        $multipleEnrolmentDiscount->discountType = true;
-                        $multipleEnrolmentDiscount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
                         $multipleEnrolmentDiscount->save();
                     }
                     if (!empty($paymentFrequencyDiscount->discount)) {
                         $paymentFrequencyDiscount->enrolmentId = $courseModel->enrolment->id;
-                        $paymentFrequencyDiscount->discountType = 0;
-                        $paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
                         $paymentFrequencyDiscount->save();
                     }
                 }
@@ -194,8 +206,7 @@ class StudentController extends BaseController
      */
     protected function findModel($id)
     {
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Student::find()
             ->notDeleted()
             ->location($locationId)
@@ -242,7 +253,7 @@ class StudentController extends BaseController
 
     public function actionMerge($id)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model      = Student::findOne($id);
         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
         $model->on(Student::EVENT_MERGE, [new StudentLog(), 'merge'], ['loggedUser' => $loggedUser]);

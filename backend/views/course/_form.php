@@ -8,7 +8,7 @@ use common\models\LocationAvailability;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\time\TimePicker;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */

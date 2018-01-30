@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\Lesson;
+use yii\helpers\VarDumper;
 use common\models\query\LessonQuery;
 
 class ExtraLesson extends Lesson
@@ -23,32 +24,30 @@ class ExtraLesson extends Lesson
     
     public function add($status)
     {
-        $programId = $this->programId;
-        $studentId = $this->studentId;
-        $studentEnrolment = Enrolment::find()
-                ->notDeleted()
-                ->isConfirmed()
-                ->joinWith(['course' => function ($query) use ($programId) {
-                    $query->andWhere(['course.programId' => $programId]);
-                }])
-                ->andWhere(['enrolment.studentId' => $studentId])
-                ->one();
-        if ($studentEnrolment) {
-            $this->courseId = $studentEnrolment->courseId;
+        $course = new Course();
+        $course->programId = $this->programId;
+        $course->studentId = $this->studentId;
+        $hasEnroled = $course->checkCourseExist();
+        if ($hasEnroled) {
+            $course = $course->getEnroledCourse();
         } else {
-            $course                   = $this->createCourse();
-            $course->studentId        = $this->studentId;
-            $course->createExtraLessonEnrolment();
+            $course = $this->createCourse();
             $courseSchedule           = new CourseSchedule();
+            $courseSchedule->studentId = $this->studentId;
+            $courseSchedule->paymentFrequency = false;
             $courseSchedule->courseId = $course->id;
             $courseSchedule->day      = (new \DateTime($this->date))->format('N');
             $courseSchedule->duration = (new \DateTime($this->duration))->format('H:i:s');
             $courseSchedule->fromTime = (new \DateTime($this->date))->format('H:i:s');
             if (!$courseSchedule->save()) {
-                Yii::error('Course Schedule: ' . \yii\helpers\VarDumper::dumpAsString($courseSchedule->getErrors()));
+                Yii::error('Course Schedule: ' . VarDumper::dumpAsString($courseSchedule->getErrors()));
             }
-            $this->courseId          = $course->id;
         }
+        if (!$course->extraEnrolment) {
+            $course->studentId = $this->studentId;
+            $course->createExtraLessonEnrolment();
+        }
+        $this->courseId = $course->id;
         $this->status = $status;
         $this->isConfirmed = true;
         $this->isDeleted = false;
@@ -73,9 +72,9 @@ class ExtraLesson extends Lesson
     public function takePayment()
     {
         if (!$this->hasProFormaInvoice()) {
-            $locationId = $this->enrolment->student->customer->userLocation->location_id;
+            $locationId = $this->customer->userLocation->location_id;
             $invoice = new Invoice();
-            $invoice->user_id = $this->enrolment->student->customer->id;
+            $invoice->user_id = $this->customer->id;
             $invoice->location_id = $locationId;
             $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
             $invoice->createdUserId = Yii::$app->user->id;
@@ -109,6 +108,12 @@ class ExtraLesson extends Lesson
         } else {
             return null;
         }
+    }
+    
+    public function getEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId'])
+                ->onCondition(['enrolment.type' => Enrolment::TYPE_EXTRA]);
     }
     
     public function getProFormaLineItems()

@@ -126,6 +126,7 @@ use yii\grid\GridView;
                     right:'',
                        },
                 allDaySlot: false,
+                height:500,
                 slotDuration: '00:15:00',
                 titleFormat: 'DD-MMM-YYYY, dddd',
                 defaultView: 'agendaWeek',

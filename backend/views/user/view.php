@@ -917,4 +917,20 @@ $(document).ready(function(){
 		return false;
 	});
 });
+
+$(document).on('change', '#city-label, #address-label, #phone-label, #email-label', function () {
+    var activityId = $(this).attr('id');
+    var activityName = $(this).attr('name');
+    if ($(this).val() == 0) {
+        $(this).select2('destroy');
+        $(this).prop('disabled', true);
+        var labelClass = $(this).parent().find('.control-label').attr('class');
+        var labelFor = $(this).parent().find('.control-label').attr('for');
+        var labelText = $(this).parent().find('.control-label').text();
+        $(this).parent().find('.control-label').remove();
+        $("<input type='text'/>").attr("id", activityId).attr("name", activityName).attr("class", 'form-control').prependTo($(this).parent());
+        $("<label>").attr('for', labelFor).attr("class", labelClass).text(labelText).prependTo($(this).parent());
+        
+    }
+});
 </script>

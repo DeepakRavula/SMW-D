@@ -2,7 +2,7 @@
 
 use yii\bootstrap\Modal;
 use yii\bootstrap\Html;
-use kartik\select2\Select2;
+use common\components\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use common\models\LocationAvailability;
