@@ -16,6 +16,7 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\log\LessonLog;
 use common\models\User;
+use yii\filters\AccessControl;
 use yii\filters\ContentNegotiator;
 use common\components\controllers\BaseController;
 
@@ -35,12 +36,20 @@ class ExtraLessonController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['validate-private', 'create-private', 'validate-group', 'create-group'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['managePrivateLessons', 'manageGroupLessons'],
+                    ],
+                ]
+            ] 
         ];
     }
 
