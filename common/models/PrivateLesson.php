@@ -91,7 +91,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
             $privateLesson->id = null;
             $privateLesson->lessonId = $lesson->id;
             $privateLesson->save();
-            $model->append($lesson);
+            $model->makeAsChild($lesson);
         }
         return $model->cancel();
     }

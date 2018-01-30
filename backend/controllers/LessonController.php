@@ -183,7 +183,7 @@ class LessonController extends BaseController
         if ($model->load($request->post())) {
             $model->add(Lesson::STATUS_SCHEDULED);
             if ($model->save()) {
-                $model->markAsRoot();
+                $model->makeAsRoot();
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $model->on(
                     Lesson::EVENT_AFTER_INSERT,
@@ -591,12 +591,6 @@ class LessonController extends BaseController
             $holidayLesson->updateAttributes([
                 'status' => Lesson::STATUS_UNSCHEDULED
             ]);
-            $privateLessonModel = new PrivateLesson();
-            $privateLessonModel->lessonId = $holidayLesson->id;
-            $date = new \DateTime($holidayLesson->date);
-            $expiryDate = $date->modify('90 days');
-            $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-            $privateLessonModel->save();
         }
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'isConfirmed' => false]);
         $lesson = end($lessons);
@@ -680,7 +674,7 @@ class LessonController extends BaseController
             $lesson->updateAttributes([
                 'isConfirmed' => true,
             ]);
-            $lesson->markAsRoot();
+            $lesson->makeAsRoot();
         }
         if (!empty($courseModel->enrolment) && empty($courseRequest)) {
             $enrolmentModel              = Enrolment::findOne(['id' => $courseModel->enrolment->id]);

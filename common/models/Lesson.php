@@ -648,14 +648,6 @@ class Lesson extends \yii\db\ActiveRecord
                 $this->trigger(self::EVENT_RESCHEDULED);
             }
         }
-        if ($this->isUnscheduled()) {
-            $privateLessonModel = new PrivateLesson();
-            $privateLessonModel->lessonId = $this->id;
-            $date = new \DateTime($this->date);
-            $expiryDate = $date->modify('90 days');
-            $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-            $privateLessonModel->save();
-        }
         
         return parent::afterSave($insert, $changedAttributes);
     }
@@ -924,5 +916,35 @@ class Lesson extends \yii\db\ActiveRecord
             default:
                return new self;
         }
+    }
+    
+    public function makeAsRoot()
+    {
+        if ($this->markAsRoot()) {
+            return $this->addExpiry();
+        }
+    }
+    
+    public function makeAsChild($lesson)
+    {
+        if ($this->append($lesson)) {
+            return $lesson->addExpiry();
+        }
+    }
+
+    public function addExpiry()
+    {
+        if ($this->rootLesson) {
+            $lesson = $this->rootLesson;
+        } else {
+            $lesson = $this;
+        }
+        $privateLessonModel = new PrivateLesson();
+        $privateLessonModel->lessonId = $this->id;
+        $date = new \DateTime($lesson->date);
+        $expiryDate = $date->modify('90 days');
+        $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+        $privateLessonModel->save();
+        return $privateLessonModel;
     }
 }
