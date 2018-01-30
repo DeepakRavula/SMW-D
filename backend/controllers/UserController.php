@@ -37,6 +37,7 @@ use trntv\filekit\actions\DeleteAction;
 use trntv\filekit\actions\UploadAction;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
+use common\models\Payment;
 
 /**
  * UserController implements the CRUD actions for User model.
