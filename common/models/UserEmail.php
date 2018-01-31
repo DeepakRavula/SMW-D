@@ -45,7 +45,7 @@ class UserEmail extends \yii\db\ActiveRecord
             [['email'], 'email'],
             [['labelId'], 'safe'],
             [['email'], 'trim'],
-            [['email'], 'unique', 'message' => 'Email already exits'],
+            [['email'], 'unique', 'message' => 'Email already exists'],
         ];
     }
 
