@@ -17,12 +17,10 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Note;
 use common\models\Student;
-use common\models\ExtraLesson;
 use yii\web\Response;
 use common\models\Payment;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
-use common\models\log\LessonLog;
 use yii\base\ErrorException;
 use common\models\User;
 use yii\filters\ContentNegotiator;
@@ -568,12 +566,8 @@ class LessonController extends BaseController
         }
         if (! empty($rescheduleBeginDate)) {
             foreach ($lessons as $i => $lesson) {
-                $lessonRescheduleModel = new LessonReschedule();
-                $lessonRescheduleModel->lessonId = $oldLessonIds[$i];
-                $lessonRescheduleModel->rescheduledLessonId = $lesson->id;
-                if (!$lessonRescheduleModel->save()) {
-                    Yii::error('Bulk reschedule: ' . \yii\helpers\VarDumper::dumpAsString($lessonRescheduleModel->getErrors()));
-                }
+                $oldLesson = Lesson::findOne($oldLessonIds[$i]);
+                $oldLesson->rescheduleTo($lesson);
                 if (! empty($rescheduleBeginDate)) {
                     $bulkReschedule = new BulkReschedule();
                     $bulkReschedule->type = $this->getRescheduleLessonType($courseModel, $rescheduleEndDate);
@@ -765,10 +759,7 @@ class LessonController extends BaseController
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $model->save();
             $parentLesson = $model->parent()->one();
-            $lessonRescheduleModel			= new LessonReschedule();
-            $lessonRescheduleModel->lessonId	        = $parentLesson->id;
-            $lessonRescheduleModel->rescheduledLessonId = $model->id;
-            $lessonRescheduleModel->save();
+            $parentLesson->rescheduleTo($model);
             return [
                 'status' => true
             ];

@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use kartik\date\DatePicker;
+use common\models\Location;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 use common\models\User;
@@ -32,7 +32,7 @@ use common\models\User;
         echo $form->field($model, 'teacherId')->dropDownList(
             ArrayHelper::map(
                 User::find()
-                ->teachers($model->course->program->id, \common\models\Location::findOne(['slug' => \Yii::$app->location])->id)
+                ->teachers($model->course->program->id, Location::findOne(['slug' => \Yii::$app->location])->id)
                 ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
                 ->notDeleted()
                 ->orderBy(['user_profile.firstname' => SORT_ASC])
@@ -57,11 +57,9 @@ use common\models\User;
         </div>
         </div>
         <div class="col-md-12">
-			<div id="teacher-lesson"></div>
+            <div id="teacher-lesson"></div>
         </div>
-	   <div class="clearfix"></div>
-		<?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id; ?>
-   <div class="row">
+    <div class="row">
        <div class="col-md-12">
            <div class="pull-right">
         <?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-cancel']);?>

@@ -6,7 +6,7 @@ use Yii;
 use yii\helpers\Url;
 use common\models\Lesson;
 use common\models\LessonHierarchy;
-use common\models\LessonReschedule;
+use common\models\Location;
 use common\models\User;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -97,10 +97,7 @@ class TeacherSubstituteController extends BaseController
                 $newLesson->teacherId = $teacherId;
                 $newLesson->isConfirmed = false;
                 $newLesson->save();
-                $lessonRescheduleModel			    = new LessonReschedule();
-                $lessonRescheduleModel->lessonId	    = $lesson->id;
-                $lessonRescheduleModel->rescheduledLessonId = $newLesson->id;
-                $lessonRescheduleModel->save();
+                $lesson->rescheduleTo($newLesson);
                 $newLessonIds[] = $newLesson->id;
                 $newLesson->setScenario('substitute-teacher');
                 $errors = ActiveForm::validate($newLesson);
@@ -121,7 +118,7 @@ class TeacherSubstituteController extends BaseController
                     ->notConfirmed()
                     ->andWhere(['createdByUserId' => Yii::$app->user->id]);
         $teachers = User::find()
-                ->teachers($programIds, \common\models\Location::findOne(['slug' => \Yii::$app->location])->id)
+                ->teachers($programIds, Location::findOne(['slug' => \Yii::$app->location])->id)
                 ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
                 ->notDeleted()
                 ->andWhere(['NOT', ['user.id' => end($lessons)->teacherId]])

@@ -17,7 +17,6 @@ use common\components\validators\lesson\conflict\TeacherLessonOverlapValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
 use common\components\validators\lesson\conflict\IntraEnrolledLessonValidator;
 use common\components\validators\lesson\conflict\TeacherAvailabilityValidator;
-use common\components\validators\lesson\conflict\StudentAvailabilityValidator;
 use common\components\validators\lesson\conflict\TeacherSubstituteValidator;
 
 /**
@@ -37,6 +36,7 @@ class Lesson extends \yii\db\ActiveRecord
     const TYPE_PRIVATE_LESSON = 1;
     const TYPE_GROUP_LESSON = 2;
     
+    const STATUS_RESCHEDULED = 1;
     const STATUS_SCHEDULED = 2;
     const STATUS_COMPLETED = 3;
     const STATUS_CANCELED = 4;
@@ -645,9 +645,6 @@ class Lesson extends \yii\db\ActiveRecord
             if ($this->isRescheduledLesson($changedAttributes)) {
                 $this->trigger(self::EVENT_RESCHEDULE_ATTEMPTED);
             }
-            if ($this->isRescheduledByClassroom($changedAttributes)) {
-                $this->trigger(self::EVENT_RESCHEDULED);
-            }
         }
         if ($this->isUnscheduled()) {
             $privateLessonModel = new PrivateLesson();
@@ -925,5 +922,13 @@ class Lesson extends \yii\db\ActiveRecord
             default:
                return new self;
         }
+    }
+    
+    public function rescheduleTo($lesson)
+    {
+        $lessonRescheduleModel = new LessonReschedule();
+        $lessonRescheduleModel->lessonId = $this->id;
+        $lessonRescheduleModel->rescheduledLessonId = $lesson->id;
+        return $lessonRescheduleModel->save();
     }
 }
