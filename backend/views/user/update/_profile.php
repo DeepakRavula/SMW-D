@@ -87,7 +87,8 @@ $loggedUser = User::findOne(Yii::$app->user->id);
     
     var userProfile = {
         managePasswordField :function() {
-            if ($('#userform-canlogin').is(':checked')) {
+            var canLogin = <?= $model->canLogin ?>;
+            if ($('#userform-canlogin').is(':checked') || canLogin) {
                 $('.can-login').show();
             } else {
                 $('.can-login').hide();
