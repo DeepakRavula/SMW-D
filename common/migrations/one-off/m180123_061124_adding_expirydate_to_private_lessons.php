@@ -17,7 +17,7 @@ class m180123_061124_adding_expirydate_to_private_lessons extends Migration
 
         foreach ($lessons as $lesson) {
             if (!$lesson->hasExpiryDate()) {
-                $lesson->addExpiry();
+                $lesson->setExpiry();
             } else {
                 if ($lesson->rootLesson) {
                     $lessonToUpdate = $lesson->rootLesson;

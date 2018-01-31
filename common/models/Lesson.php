@@ -922,18 +922,18 @@ class Lesson extends \yii\db\ActiveRecord
     public function makeAsRoot()
     {
         if ($this->markAsRoot()) {
-            return $this->addExpiry();
+            return $this->setExpiry();
         }
     }
     
     public function makeAsChild($lesson)
     {
         if ($this->append($lesson)) {
-            return $lesson->addExpiry();
+            return $lesson->setExpiry();
         }
     }
 
-    public function addExpiry()
+    public function setExpiry()
     {
         if ($this->rootLesson) {
             $lesson = $this->rootLesson;
