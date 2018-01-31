@@ -16,17 +16,16 @@ LteBox::begin([
     <dt>Student</dt>
     <dd>
         <a href= "<?= Url::to(['student/view', 'id' => $model->student->id]) ?>">
-            <?= $model->student->fullName; ?>
+            <?= $model->student->fullName ?? null; ?>
         </a></dd>
     <dt>Customer</dt>
     <dd>
         <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER,
                 'id' => $model->student->customer->id]) ?>">
-            <?= $model->student->customer->publicIdentity; ?>
+            <?= $model->student->customer->publicIdentity ?? null; ?>
         </a>
     </dd>
     <dt>Phone</dt>
-    <dd><?= !empty($model->student->customer->phoneNumber->number) ? $model->student->customer->phoneNumber->number
-                    : 'None'; ?></dd>
+    <dd><?= $model->student->customer->phoneNumber->number ?? null; ?></dd>
 </dl>
 <?php LteBox::end() ?>

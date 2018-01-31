@@ -47,31 +47,31 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
     $logContent=$this->render('log/index', [
         'logDataProvider' => $logDataProvider,
     ]);
-    $items = [
-        [
-            'label' => 'Lesson',
-            'content' => $lessonContent,
-            'options' => [
-                'id' => 'lesson',
-            ],
+    $items       = [
+    [
+        'label' => 'Payment Cycle',
+        'content' => $noteContent,
+        'options' => [
+            'id' => 'payment-cycle',
         ],
-        [
-            'label' => 'Payment Cycle',
-            'content' => $noteContent,
-            'options' => [
-                'id' => 'payment-cycle',
-            ],
+    ],
+    [
+        'label' => 'Lesson',
+        'content' => $lessonContent,
+        'options' => [
+            'id' => 'lesson',
         ],
-        [
-            'label' => 'History',
-            'content' => $logContent,
-            'options' => [
-                'id' => 'history',
-            ],
-        ]
-    ];
-    if ($model->course->program->isGroup()) {
-    array_splice($items, 1, 1);
+    ],
+    [
+        'label' => 'History',
+        'content' => $logContent,
+        'options' => [
+            'id' => 'history',
+        ],
+    ]
+];
+if ($model->course->program->isGroup()) {
+    array_shift($items);
 }
 echo Tabs::widget([
         'items' => $items,
