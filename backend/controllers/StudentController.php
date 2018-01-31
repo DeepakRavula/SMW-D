@@ -47,17 +47,18 @@ class StudentController extends BaseController
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['create', 'update', 'merge', 'fetch-program-rate','validate', 'enrolment'],
+                'only' => ['create', 'update', 'merge', 'fetch-program-rate','validate'],
                 'formats' => [
                         'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-			'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'create', 'update', 'merge', 'fetch-program-rate','validate', 'print','view', 'enrolment'],
+                        'actions' => ['index', 'create', 'update', 'merge', 'fetch-program-rate',
+                            'enrolment', 'validate', 'print', 'view'],
                         'roles' => ['manageStudents'],
                     ],
                 ],

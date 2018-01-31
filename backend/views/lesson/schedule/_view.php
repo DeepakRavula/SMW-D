@@ -3,6 +3,7 @@
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\helpers\Url;
+use common\models\Location;
 use common\models\User;
 use common\models\LocationAvailability;
 
@@ -24,20 +25,23 @@ LteBox::begin([
         <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => User::ROLE_TEACHER, 'id' => $model->teacherId]) ?>">
 <?= $model->teacher->publicIdentity; ?>
         </a></dd>
+<?php if ($model->rootLesson) : ?>
+    <dt>Original Date</dt>
+    <dd><?= (new \DateTime($model->rootLesson->date))->format('l, F jS, Y'); ?></dd>
+<?php endif; ?>
     <dt>Date</dt>
     <dd><?= (new \DateTime($model->date))->format('l, F jS, Y'); ?></dd>
     <dt>Time</dt>
     <dd><?= Yii::$app->formatter->asTime($model->date); ?></dd>
     <dt>Duration</dt>
     <dd><?= (new \DateTime($model->duration))->format('H:i'); ?></dd>
-	<?php if ($model->isUnscheduled()) : ?>
-        <dt>Expiry Date</dt>
-        <dd><?= Yii::$app->formatter->asDate($model->privateLesson->expiryDate); ?></dd>
-<?php endif; ?>
+    <dt>Expiry Date</dt>
+    <dd><?= Yii::$app->formatter->asDate($model->privateLesson->expiryDate); ?></dd>
+
 </dl>
 <?php LteBox::end() ?>
 <?php
-$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 $minLocationAvailability = LocationAvailability::find()
     ->where(['locationId' => $locationId])
     ->orderBy(['fromTime' => SORT_ASC])

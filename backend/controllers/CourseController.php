@@ -365,7 +365,7 @@ class CourseController extends BaseController
                     $newLesson->addPrivate(Lesson::STATUS_UNSCHEDULED);
                     $hasCreditInvoice = false;
                     if ($newLesson->save()) {
-                        $newLesson->markAsRoot();
+                        $newLesson->makeAsRoot();
                         $invoice = $newLesson->takePayment();
                         if ($lesson->hasLessonCredit($enrolmentId)) {
                             if ($invoice->balance < $lesson->getLessonCreditAmount($enrolmentId)) {

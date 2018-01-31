@@ -66,7 +66,7 @@ use common\models\Qualification;
             ]); ?>
         </div>
 	   <?php endif; ?>
-	   <?php if (Yii::$app->user->can('viewQualificationRate')) : ?>
+	   <?php if (Yii::$app->user->can('teacherQualificationRate')) : ?>
         <div class="col-md-6">
             <?= $form->field($model, 'rate')->textInput(['class' => 'right-align form-control']);?>
         </div>

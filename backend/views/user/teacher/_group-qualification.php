@@ -33,7 +33,7 @@ use insolita\wgadminlte\LteConst;
                         'value' => function ($data) {
                             return $data->rate;
                         },
-                        'visible' => Yii::$app->user->can('viewQualificationRate')
+                        'visible' => Yii::$app->user->can('teacherQualificationRate')
                 ]
             ],
             ]); ?>	

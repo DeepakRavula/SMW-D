@@ -23,6 +23,15 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
 <?= $this->render('_view-enrolment', [
     'model' => $model,
 ]);?>
+<div class="row">
+    <div class="col-md-6">
+        <?=
+        $this->render('_student', [
+            'model' => $model,
+        ]);
+        ?>
+    </div>
+</div>
     <div class="nav-tabs-custom">
 <?php
 
@@ -38,31 +47,33 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
     $logContent=$this->render('log/index', [
         'logDataProvider' => $logDataProvider,
     ]);
-    $items = [
-        [
-            'label' => 'Lesson',
-            'content' => $lessonContent,
-            'options' => [
-                'id' => 'lesson',
-            ],
+    $items       = [
+    [
+        'label' => 'Payment Cycle',
+        'content' => $noteContent,
+        'options' => [
+            'id' => 'payment-cycle',
         ],
-        [
-            'label' => 'Payment Cycle',
-            'content' => $noteContent,
-            'options' => [
-                'id' => 'payment-cycle',
-            ],
+    ],
+    [
+        'label' => 'Lesson',
+        'content' => $lessonContent,
+        'options' => [
+            'id' => 'lesson',
         ],
-        [
-            'label' => 'History',
-            'content' => $logContent,
-            'options' => [
-                'id' => 'history',
-            ],
-        ]
-    ];
-
-    echo Tabs::widget([
+    ],
+    [
+        'label' => 'History',
+        'content' => $logContent,
+        'options' => [
+            'id' => 'history',
+        ],
+    ]
+];
+if ($model->course->program->isGroup()) {
+    array_shift($items);
+}
+echo Tabs::widget([
         'items' => $items,
     ]);
 ?>
