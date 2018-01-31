@@ -189,16 +189,12 @@ class PaymentController extends BaseController
 
     public function actionInvoicePayment($id)
     {
-        $invoice = Invoice::findOne($id);
         $paymentModel = new Payment();
         $db = \Yii::$app->db;
         $transaction = $db->beginTransaction();
         $request = Yii::$app->request;
         if ($paymentModel->load($request->post())) {
             $paymentModel->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
-            if (round($invoice->total, 2) === round($paymentModel->amount, 2)) {
-                $paymentModel->amount = $invoice->total;
-            }
             $paymentModel->invoiceId = $id;
             if ($paymentModel->save()) {
                 $transaction->commit();

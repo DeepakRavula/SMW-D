@@ -51,9 +51,11 @@ $loggedUser = User::findOne(Yii::$app->user->id);
 	<?php endif; ?>
 </div>
 <div class="row">
-    <div class="col-xs-6">
-        <?php echo $form->field($model, 'canLogin')->checkbox() ?>
-    </div>
+    <?php if ($model->getModel()->isStaff()) : ?>
+        <div class="col-xs-6">
+            <?php echo $form->field($model, 'canLogin')->checkbox() ?>
+        </div>
+    <?php endif; ?>
     <div class="col-xs-6">
     <?= $form->field($userProfile, 'picture')->widget(
         Upload::classname(),
@@ -85,7 +87,8 @@ $loggedUser = User::findOne(Yii::$app->user->id);
     
     var userProfile = {
         managePasswordField :function() {
-            if ($('#userform-canlogin').is(':checked')) {
+            var canLogin = <?= $model->canLogin ?>;
+            if ($('#userform-canlogin').is(':checked') || canLogin) {
                 $('.can-login').show();
             } else {
                 $('.can-login').hide();
