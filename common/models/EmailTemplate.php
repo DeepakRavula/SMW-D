@@ -48,7 +48,7 @@ class EmailTemplate extends \yii\db\ActiveRecord
         ];
     }
     
-     public function getEmailType() {
-         return $this->hasOne(EmailType::Classname(),['id' => 'emailTypeId']);
+     public function getEmailObject() {
+         return $this->hasOne(EmailObject::Classname(),['id' => 'emailTypeId']);
      }
 }

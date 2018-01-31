@@ -3,19 +3,19 @@
 namespace common\models;
 
 /**
- * This is the model class for table "email-type".
+ * This is the model class for table "email-object".
  *
  * @property string $id
  * @property string $name
  */
-class EmailType extends \yii\db\ActiveRecord
+class EmailObject extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'email_type';
+        return 'email_object';
     }
 
     /**

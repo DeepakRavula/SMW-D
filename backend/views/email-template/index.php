@@ -26,7 +26,7 @@ echo AdminLteGridView::widget([
         [
             'label' => 'Type',
             'value' => function ($data) {
-                return $data->emailType->name;
+                return $data->emailObject->name;
             },
         ],
         [

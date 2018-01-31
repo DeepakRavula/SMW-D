@@ -4,7 +4,6 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\EmailTemplate;
-use backend\models\search\EmailTemplateSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

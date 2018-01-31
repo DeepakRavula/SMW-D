@@ -5,7 +5,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use dosamigos\ckeditor\CKEditor;
 use yii\helpers\ArrayHelper;
-use common\models\EmailType;
+use common\models\EmailObject;
 /* @var $this yii\web\View */
 /* @var $model common\models\EmailTemplate */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -17,7 +17,7 @@ use common\models\EmailType;
         'id' => 'email-template-form',
     ]); ?>
     <?php echo $form->field($model, 'emailTypeId')->dropDownList(ArrayHelper::map(
-                            EmailType::find()->orderBy(['name' => SORT_ASC])->all(),
+                            EmailObject::find()->orderBy(['name' => SORT_ASC])->all(),
         'id',
         'name'
             )) ?>
@@ -38,19 +38,6 @@ use common\models\EmailType;
     <div class="form-group pull-right">
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default template-cancel']);?>
         <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-info' : 'btn btn-info']) ?>
-    </div>
-    <div class="pull-left">   
-        <?php if (!$model->isNewRecord) {
-                echo Html::a('Delete', ['delete', 'id' => $model->id], [
-            'id' => 'email-delete-button',
-                        'class' => 'btn btn-danger',
-                        'data' => [
-                            'confirm' => 'Are you sure you want to delete this item?',
-                            'method' => 'post',
-                        ]
-                ]);
-            }
-        ?>
     </div>
     <div class="clearfix"></div>
     </div>
