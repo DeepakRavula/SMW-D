@@ -38,7 +38,8 @@ class DbManager extends \yii\rbac\DbManager
     }
     protected function checkAccessRecursive($user, $itemName, $params, $assignments)
     {
-        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id ?? null;
+        
         if (($item = $this->getItem($itemName)) === null) {
             return false;
         }
