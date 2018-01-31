@@ -26,7 +26,7 @@ class m180123_061124_adding_expirydate_to_private_lessons extends Migration
                 }
                 $date = new \DateTime($lessonToUpdate->date);
                 $expiryDate = $date->modify('90 days');
-                $lessonToUpdate->privateLesson->updateAttributes([
+                $lesson->privateLesson->updateAttributes([
                     'expiryDate' => $expiryDate->format('Y-m-d H:i:s')
                 ]);
             }
