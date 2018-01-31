@@ -7,7 +7,7 @@ use yii\bootstrap\Modal;
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Modal Popup</h4>',
     'id' => 'popup-modal',
-    'footer' => $this->render('/layouts/modal-popup-footer')
+    'footer' => $this->render('modal-popup-footer')
 ]); ?>
 <div id="modal-spinner" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
