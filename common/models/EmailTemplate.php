@@ -13,8 +13,6 @@ namespace common\models;
  */
 class EmailTemplate extends \yii\db\ActiveRecord
 {
-    const TYPE_PFI = 1;
-    const TYPE_INVOICE = 2;
     /**
      * {@inheritdoc}
      */
