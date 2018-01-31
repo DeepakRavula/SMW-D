@@ -47,6 +47,7 @@ $config = [
             'administrator/*',
             'qualification/*',
             'lesson/*',
+            'extra-lesson/*',
             'item/*',
             'item-category/*',
             'invoice/*',

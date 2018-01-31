@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\VarDumper;
 
 /**
  * This is the model class for table "invoice".
@@ -69,7 +70,7 @@ trait Invoiceable
             $invoiceLineItem->addLineItemDetails($this);
             return $invoiceLineItem;
         } else {
-            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
+            Yii::error('Create Invoice Line Item: ' . VarDumper::dumpAsString($invoiceLineItem->getErrors()));
         }
     }
 
@@ -98,13 +99,16 @@ trait Invoiceable
         $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
         $invoiceLineItem->code         = $invoiceLineItem->getItemCode();
         if (!$invoiceLineItem->save()) {
-            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
+            Yii::error('Create Invoice Line Item: ' . VarDumper::dumpAsString($invoiceLineItem->getErrors()));
         } else {
             $invoiceLineItem->addLineItemDetails($this);
             $invoiceItemLesson                    = new InvoiceItemEnrolment();
             $invoiceItemLesson->enrolmentId       = $enrolment->id;
             $invoiceItemLesson->invoiceLineItemId = $invoiceLineItem->id;
             $invoiceItemLesson->save();
+            if ($enrolment->isExtra()) {
+                $invoiceLineItem->addFullDiscount();
+            }
             return $invoiceLineItem;
         }
     }
@@ -129,7 +133,7 @@ trait Invoiceable
             $invoiceLineItem->addLineItemDetails($this);
             return $invoiceLineItem;
         } else {
-            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
+            Yii::error('Create Invoice Line Item: ' . VarDumper::dumpAsString($invoiceLineItem->getErrors()));
         }
     }
     
@@ -272,19 +276,22 @@ trait Invoiceable
         $invoice->createdUserId = Yii::$app->user->id;
         $invoice->updatedUserId = Yii::$app->user->id;
         if (!$invoice->save()) {
-            Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+            Yii::error('Create Invoice: ' . VarDumper::dumpAsString($invoice->getErrors()));
         }
         $invoiceLineItem = $this->addGroupProFormaLineItem($invoice);
         if (!$invoiceLineItem->save()) {
-            Yii::error('Create Invoice Line Item: ' . \yii\helpers\VarDumper::dumpAsString($invoiceLineItem->getErrors()));
+            Yii::error('Create Invoice Line Item: ' . VarDumper::dumpAsString($invoiceLineItem->getErrors()));
         } else {
             $invoiceItemLesson = new InvoiceItemEnrolment();
             $invoiceItemLesson->enrolmentId    = $this->id;
             $invoiceItemLesson->invoiceLineItemId    = $invoiceLineItem->id;
             $invoiceItemLesson->save();
         }
+        if ($this->isExtra()) {
+            $invoiceLineItem->addFullDiscount();
+        }
         if (!$invoice->save()) {
-            Yii::error('Create Invoice: ' . \yii\helpers\VarDumper::dumpAsString($invoice->getErrors()));
+            Yii::error('Create Invoice: ' . VarDumper::dumpAsString($invoice->getErrors()));
         }
         return $invoice;
     }

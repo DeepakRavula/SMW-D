@@ -40,7 +40,7 @@ class CustomerDiscountController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'create'],
+                        'actions' => ['index', 'view', 'create', 'delete'],
                         'roles' => ['manageCustomers'],
                     ],
                 ],

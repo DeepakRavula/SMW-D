@@ -51,6 +51,7 @@ class Lesson extends \yii\db\ActiveRecord
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA = 2;
 
+    const SCENARIO_CREATE_GROUP = 'group-extra-lesson-create';
     const SCENARIO_SUBSTITUTE_TEACHER = 'substitute-teacher';
     const SCENARIO_LESSON_EDIT_ON_SCHEDULE = 'lesson-edit-schedule';
     const SCENARIO_MERGE = 'merge';
@@ -137,25 +138,25 @@ class Lesson extends \yii\db\ActiveRecord
             [['classroomId'], ClassroomValidator::className(),
                 'on' => [self::SCENARIO_EDIT, self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),
-                'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
+                'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE, self::SCENARIO_CREATE_GROUP,
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT, self::SCENARIO_EDIT_REVIEW_LESSON]],
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,self::SCENARIO_GROUP_ENROLMENT_REVIEW]],
-            [['programId','date', 'duration'], 'required', 'on' => self::SCENARIO_CREATE],
+            [['programId','date', 'duration'], 'required', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_CREATE_GROUP]],
             ['date', TeacherEligibleValidator::className(), 'on' => [
                 self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
                 self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_LESSON_EDIT_ON_SCHEDULE]],
             ['date', TeacherAvailabilityValidator::className(), 'on' => [
                 self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
-                self::SCENARIO_MERGE, self::SCENARIO_REVIEW]],
+                self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_CREATE_GROUP]],
             ['date', TeacherLessonOverlapValidator::className(), 'on' => [
-                self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
+                self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT, self::SCENARIO_CREATE_GROUP,
                 self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_LESSON_EDIT_ON_SCHEDULE]],
             [['date'], StudentValidator::className(), 'on' => [
                 self::SCENARIO_EDIT_REVIEW_LESSON,
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function ($model, $attribute) {
                     return $model->course->program->isPrivate();
                 }],
-            [['date'], PastDateValidator::className(), 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREATE]],
+            [['date'], PastDateValidator::className(), 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREATE, self::SCENARIO_CREATE_GROUP]],
             [['date'], TeacherSubstituteValidator::className(), 'on' => self::SCENARIO_SUBSTITUTE_TEACHER],
             [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]]
         ];

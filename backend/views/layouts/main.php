@@ -14,6 +14,7 @@ use yii\helpers\Url;
     <div id="success-notification" style="display: none;" class="alert-success alert fade in"></div>
 <?php echo $content ?>
 <?= $this->render('/layouts/modal-popup'); ?>
+<?= $this->render('/layouts/calendar'); ?>
 <?php $this->endContent(); ?>
 <body>
     <script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>

@@ -40,7 +40,7 @@ class EnrolmentLineItemDiscount extends InvoiceDiscount
     
     public function init()
     {
-        $this->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLOR;
+        $this->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLLAR;
         $this->type = InvoiceLineItemDiscount::TYPE_MULTIPLE_ENROLMENT;
     }
 }

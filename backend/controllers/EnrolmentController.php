@@ -131,6 +131,12 @@ class EnrolmentController extends BaseController
 
     public function actionGroup($courseId, $studentId)
     {
+        $course = Course::findOne($courseId);
+        if ($course->hasExtraLesson()) {
+            $course->studentId = $studentId;
+            $enrolment = $course->createExtraLessonEnrolment();
+            $enrolment->createProFormaInvoice();
+        }
         $enrolmentModel = new Enrolment();
         $enrolmentModel->courseId = $courseId;
         $enrolmentModel->studentId = $studentId;
@@ -347,7 +353,7 @@ class EnrolmentController extends BaseController
                 }
                 if (!empty($paymentFrequencyDiscount->discount)) {
                     $paymentFrequencyDiscount->enrolmentId = $course->enrolment->id;
-                    $paymentFrequencyDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLOR;
+                    $paymentFrequencyDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLLAR;
                     $paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
                     $paymentFrequencyDiscount->save();
                 }

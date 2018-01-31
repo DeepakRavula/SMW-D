@@ -8,7 +8,9 @@ use yii\helpers\Html;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 ?>
-
+<div class="pull-right m-r-10">
+    <a href="#"  title="Add" id="new-lesson" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
+</div>
 <div class="grid-row-open p-10">
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php $columns = [
@@ -75,3 +77,24 @@ use yii\helpers\Html;
 	<?php yii\widgets\Pjax::end(); ?>
 
 </div>
+
+<script>
+$(document).on('click', '#new-lesson', function () {
+    $.ajax({
+        url    : '<?= Url::to(['extra-lesson/create-group', 'courseId' => $courseModel->id]); ?>',
+        type   : 'get',
+        dataType: "json",
+        success: function(response)
+        {
+           if(response.status)
+           {
+                $('#modal-content').html(response.data);
+                $('#popup-modal').modal('show');
+                $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Add Lesson</h4>');
+                $('#popup-modal .modal-dialog').css({'width': '1000px'});
+            }
+        }
+    });
+    return false;
+});
+</script>

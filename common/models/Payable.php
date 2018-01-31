@@ -115,6 +115,7 @@ trait Payable
     {
         $enrolment = Enrolment::findOne($this->lineItem->lineItemEnrolment->enrolmentId);
         $lessons = Lesson::find()
+                        ->regular()
                         ->isConfirmed()
                         ->notDeleted()
                         ->joinWith('enrolment')

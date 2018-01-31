@@ -1,8 +1,7 @@
 <?php
 
 use common\models\LocationAvailability;
-use kartik\depdrop\DepDrop;
-use yii\helpers\Html;
+use common\models\Location;
 use yii\helpers\Url;
 
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
@@ -17,7 +16,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
     </div>
 </div>
 <?php
-    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])
@@ -50,7 +49,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                         businessHours: response.availableHours,
                         minTime: '<?= $minTime; ?>',
                         maxTime: '<?= $maxTime; ?>',
-                        eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event']); ?>?lessonId=&teacherId=' + teacherId
+                        eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event']); ?>?teacherId=' + teacherId
                     };
                     $('#calendar-date-time-picker').calendarPicker(options);
                 }

@@ -62,7 +62,7 @@ class InvoiceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['blank-invoice',
+                        'actions' => ['blank-invoice', 'index',
 							'update-customer', 'create-walkin',
 							'note', 'view', 'fetch-user',
 							'add-misc','fetch-summary-and-status', 							   'compute-tax', 'create', 'update',

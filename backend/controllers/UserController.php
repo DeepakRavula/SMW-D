@@ -65,7 +65,7 @@ class UserController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'edit-profile', 'import', 'delete-contact', 'create', 'edit-lesson', 'delete'],
+                        'actions' => ['index', 'view', 'edit-profile', 'import', 'delete-contact', 'create', 'edit-lesson', 'delete', 'avatar-upload'],
                         'roles' => ['manageTeachers', 'manageCustomers', 'manageAdmin', 'manageStaff', 'manageOwners'],
                     ],
                 ],

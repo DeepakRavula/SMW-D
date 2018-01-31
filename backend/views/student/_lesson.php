@@ -217,7 +217,7 @@ use yii\grid\GridView;
         });
         $(document).on('click', '#new-lesson', function (e) {
             $.ajax({
-                url    : '<?= Url::to(['lesson/create', 'studentId' => $model->id]); ?>',
+                url    : '<?= Url::to(['extra-lesson/create-private', 'studentId' => $model->id]); ?>',
                 type   : 'get',
                 dataType: "json",
                 data   : $(this).serialize(),

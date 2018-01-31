@@ -115,7 +115,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
         var duration = $(this).attr('duration');
         var params = $.param({ id: teacherId });
         var lessonId = $(this).parent().parent().data('key');
-        var eventParams = $.param({ lessonId: lessonId, teacherId: teacherId });
+        var eventParams = $.param({ teacherId: teacherId, lessonId: lessonId });
         var validationParams = $.param({ id: lessonId, teacherId: '' });
         $.ajax({
             url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
