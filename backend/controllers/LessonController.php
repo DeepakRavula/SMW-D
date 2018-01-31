@@ -63,8 +63,8 @@ class LessonController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'create',
-							'validate-on-update', 'validate', 
+                        'actions' => ['index', 'view', 
+							'validate-on-update', 
 							'fetch-duration','edit-classroom', 
 							'update', 'update-field', 'review',
 							'fetch-conflict', 'confirm',
@@ -517,12 +517,6 @@ class LessonController extends BaseController
             $holidayLesson->updateAttributes([
                 'status' => Lesson::STATUS_UNSCHEDULED
             ]);
-            $privateLessonModel = new PrivateLesson();
-            $privateLessonModel->lessonId = $holidayLesson->id;
-            $date = new \DateTime($holidayLesson->date);
-            $expiryDate = $date->modify('90 days');
-            $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-            $privateLessonModel->save();
         }
         $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'isConfirmed' => false]);
         $lesson = end($lessons);
@@ -606,7 +600,7 @@ class LessonController extends BaseController
             $lesson->updateAttributes([
                 'isConfirmed' => true,
             ]);
-            $lesson->markAsRoot();
+            $lesson->makeAsRoot();
         }
         if (!empty($courseModel->enrolment) && empty($courseRequest)) {
             $enrolmentModel              = Enrolment::findOne(['id' => $courseModel->enrolment->id]);

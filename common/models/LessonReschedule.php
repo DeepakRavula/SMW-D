@@ -50,7 +50,7 @@ class LessonReschedule extends Model
     {
         $oldLesson = Lesson::findOne($this->lessonId);
         $rescheduledLesson = Lesson::findOne($this->rescheduledLessonId);
-        $oldLesson->append($rescheduledLesson);
+        $oldLesson->makeAsChild($rescheduledLesson);
         if ($oldLesson->hasLessonCredit($oldLesson->enrolment->id)) {
             $rescheduledLesson->addPayment($oldLesson, $oldLesson->getLessonCreditAmount($oldLesson->enrolment->id));
         }
