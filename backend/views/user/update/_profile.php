@@ -51,9 +51,11 @@ $loggedUser = User::findOne(Yii::$app->user->id);
 	<?php endif; ?>
 </div>
 <div class="row">
-    <div class="col-xs-6">
-        <?php echo $form->field($model, 'canLogin')->checkbox() ?>
-    </div>
+    <?php if ($model->getModel()->isStaff()) : ?>
+        <div class="col-xs-6">
+            <?php echo $form->field($model, 'canLogin')->checkbox() ?>
+        </div>
+    <?php endif; ?>
     <div class="col-xs-6">
     <?= $form->field($userProfile, 'picture')->widget(
         Upload::classname(),
