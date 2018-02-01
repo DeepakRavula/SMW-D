@@ -33,7 +33,7 @@ LteBox::begin([
     <dt>Scheduled Date</dt>
     <dd><?= (new \DateTime($model->date))->format('l, F jS, Y'); ?></dd>
 <?php endif; ?>
- <?php if ($model->isUnscheduled()) : ?>
+ <?php if ($model->isUnscheduled() && empty($model->rootLesson)) : ?>
     <dt>Original Date</dt>
     <dd><?= (new \DateTime($model->date))->format('l, F jS, Y'); ?></dd>
 <?php endif; ?>
