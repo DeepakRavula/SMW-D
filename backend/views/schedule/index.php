@@ -261,9 +261,18 @@ function showclassroomCalendar(date) {
                 $("#classroom-calendar").fullCalendar("refetchResources");
             }
         },
-        resourceRender: function() {
-			var selector = '#classroom-calendar';
+        resourceRender: function(resourceObj, labelTds, bodyTds,element) {
+	    var selector = '#classroom-calendar';
             schedule.modifyResourceRender(selector);
+            if(resourceObj.description !== "")
+            {
+             labelTds.on('mouseover', function(){
+               $('#classroom-title-description').html(resourceObj.description).fadeIn().delay(500).fadeOut();});
+             labelTds.on('mousemove', function(event){
+               $('#classroom-title-description').css('top', event.pageY + 10);
+               $('#classroom-title-description').css('left', event.pageX + 20);
+            });
+        }
         },
         events: {
             url: '<?= Url::to(['schedule/render-classroom-events']) ?>?' + params,
