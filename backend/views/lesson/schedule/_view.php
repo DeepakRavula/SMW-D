@@ -23,27 +23,28 @@ LteBox::begin([
     <dt>Teacher</dt>
     <dd>
         <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => User::ROLE_TEACHER, 'id' => $model->teacherId]) ?>">
-<?= $model->teacher->publicIdentity; ?>
+            <?= $model->teacher->publicIdentity; ?>
         </a></dd>
-<?php if ($model->rootLesson) : ?>
-    <dt>Original Date</dt>
-    <dd><?= (new \DateTime($model->rootLesson->date))->format('l, F jS, Y'); ?></dd>
-<?php endif; ?>
-<?php if (!($model->isUnscheduled())) : ?>
-    <dt>Scheduled Date</dt>
-    <dd><?= (new \DateTime($model->date))->format('l, F jS, Y'); ?></dd>
-<?php endif; ?>
- <?php if ($model->isUnscheduled() && empty($model->rootLesson)) : ?>
-    <dt>Original Date</dt>
-    <dd><?= (new \DateTime($model->date))->format('l, F jS, Y'); ?></dd>
-<?php endif; ?>
+    <?php if ($model->rootLesson) : ?>
+        <dt>Original Date</dt>
+        <dd><?= (new \DateTime($model->rootLesson->date))->format('l, F jS, Y'); ?></dd>
+    <?php endif; ?>
+    <?php if (!($model->isUnscheduled())) : ?>
+        <dt>Scheduled Date</dt>
+        <dd><?= (new \DateTime($model->date))->format('l, F jS, Y'); ?></dd>
+    <?php endif; ?>
+    <?php if ($model->isUnscheduled() && empty($model->rootLesson)) : ?>
+        <dt>Original Date</dt>
+        <dd><?= (new \DateTime($model->date))->format('l, F jS, Y'); ?></dd>
+    <?php endif; ?>
     <dt>Time</dt>
     <dd><?= Yii::$app->formatter->asTime($model->date); ?></dd>
     <dt>Duration</dt>
     <dd><?= (new \DateTime($model->duration))->format('H:i'); ?></dd>
+     <?php if ($model->hasExpiryDate()) : ?>
     <dt>Expiry Date</dt>
     <dd><?= Yii::$app->formatter->asDate($model->privateLesson->expiryDate); ?></dd>
-
+    <?php endif; ?>
 </dl>
 <?php LteBox::end() ?>
 <?php

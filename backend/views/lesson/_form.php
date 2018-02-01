@@ -94,7 +94,7 @@ use common\models\Location;
                         'autoclose' => true,
                         'format' => 'dd-mm-yyyy',
                     ],
-                ]
+                    ]
                 );
                 ?>
 <?php endif; ?>
