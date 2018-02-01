@@ -169,10 +169,9 @@ class TeacherAvailabilityController extends BaseController
 
     public function actionAvailabilityWithEvents($id)
     {
-        $session = Yii::$app->session;
         $response = Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $teacherAvailabilities = TeacherAvailability::find()
         ->joinWith(['userLocation' => function ($query) use ($id) {
             $query->joinWith(['userProfile' => function ($query) use ($id) {
@@ -194,10 +193,10 @@ class TeacherAvailabilityController extends BaseController
         $lessons = [];
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
+                $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id]);
             }])
             ->where(['lesson.teacherId' => $id])
-            ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+            ->scheduledOrRescheduled()
             ->isConfirmed()
             ->notDeleted()
             ->all();
@@ -295,8 +294,7 @@ class TeacherAvailabilityController extends BaseController
     
     public function actionEvents($id)
     {
-        $session    = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $location   = Location::findOne($locationId);
         $events     = [];
         foreach ($location->locationAvailabilities as $availability) {
@@ -337,10 +335,10 @@ class TeacherAvailabilityController extends BaseController
     {
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
+                $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id]);
             }])
             ->where(['lesson.teacherId' => $teacherId])
-            ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+            ->scheduledOrRescheduled()
             ->isConfirmed()
             ->notDeleted()
             ->andWhere(['NOT', ['lesson.id' => $lessonId]])

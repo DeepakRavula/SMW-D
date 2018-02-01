@@ -67,7 +67,7 @@ class LessonController extends BaseController
 							'update', 'update-field', 'review',
 							'fetch-conflict', 'confirm',
 							'invoice', 'take-payment',
-							'modify-classroom', 'modify-lesson',
+							'modify-classroom',
 							'payment', 'substitute', 'unschedule'],
                         'roles' => ['managePrivateLessons', 
 							'manageGroupLessons'],
@@ -160,6 +160,7 @@ class LessonController extends BaseController
     {
         $errors = [];
         $model = $this->findModel($id);
+        $model->programId = $model->course->programId;
         if (empty($teacherId)) {
             $model->setScenario(Lesson::SCENARIO_EDIT);
         }
@@ -208,10 +209,7 @@ class LessonController extends BaseController
     {
         $model = $this->findModel($id);
         $oldDate = $model->date;
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
         $model->date =Yii::$app->formatter->asDateTime($model->date);
-        $oldTeacherId = $model->teacherId;
         $user = User::findOne(['id'=>Yii::$app->user->id]);
         $model->userName = $user->publicIdentity;
         $model->on(
@@ -219,15 +217,19 @@ class LessonController extends BaseController
                 [new LessonReschedule(), 'reschedule'],
             ['oldAttrtibutes' => $model->getOldAttributes()]
         );
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+            'privateLessonModel' => $model->privateLesson
+        ]);
         $request = Yii::$app->request;
-        $userModel = $request->post('User');
-        if ($model->hasExpiryDate()) {
-            $privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
-            $privateLessonModel->load(Yii::$app->getRequest()->getBodyParams(), 'PrivateLesson');
-            $privateLessonModel->expiryDate = (new \DateTime($privateLessonModel->expiryDate))->format('Y-m-d H:i:s');
-            $privateLessonModel->save();
-        }
-        if ($model->load($request->post()) || !empty($userModel)) {
+        if ($request->post()) {
+            $model->load($request->post());
+            if ($model->hasExpiryDate()) {
+                $privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);
+                $privateLessonModel->load(Yii::$app->getRequest()->getBodyParams(), 'PrivateLesson');
+                $privateLessonModel->expiryDate = (new \DateTime($privateLessonModel->expiryDate))->format('Y-m-d H:i:s');
+                $privateLessonModel->save();
+            }
             if (empty($model->date)) {
                 $model->date =  $oldDate;
                 $model->status = Lesson::STATUS_UNSCHEDULED;
@@ -237,46 +239,35 @@ class LessonController extends BaseController
                     'url' => Url::to(['lesson/view', 'id' => $model->id])
                 ];
             } else {
-                if (!empty($userModel)) {
-                    $model->date = $userModel['fromDate'];
-                    $model->duration = (new \DateTime($model->duration))->format('H:i');
-                }
-                if (new \DateTime($oldDate) != new \DateTime($model->date) || $oldTeacherId != $model->teacherId) {
-                    $model->setScenario(Lesson::SCENARIO_EDIT);
-                    $validate = $model->validate();
-                }
-                $lessonConflict = $model->getErrors('date');
-                $message = current($lessonConflict);
-                if (! empty($lessonConflict)) {
-                    $response = [
-                        'status' => false,
-                        'errors' => $message
-                    ];
-                } else {
+                $model->setScenario(Lesson::SCENARIO_EDIT);
+                if ($model->validate()) {
                     if ($model->course->program->isPrivate()) {
                         $duration = new \DateTime($model->duration);
                         $model->duration = $duration->format('H:i:s');
                     }
-                    $lessonDate = \DateTime::createFromFormat('d-m-Y g:i A', $model->date);
+                    $lessonDate = new \DateTime($model->date);
                     $model->date = $lessonDate->format('Y-m-d H:i:s');
-                    if (! $model->save()) {
+                    if ($model->save()) {
                         $response = [
-                            'status' => false,
-                            'errors' => $model->getErrors()
+                            'status' => true,
+                            'url' => Url::to(['lesson/view', 'id' => $model->id])
                         ];
                     }
+                } else {
                     $response = [
-                        'status' => true,
-                        'url' => Url::to(['lesson/view', 'id' => $model->id])
+                        'status' => false,
+                        'errors' => $model->getErrors()
                     ];
                 }
             }
-            return $response;
+            
+        } else {
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
         }
-        return $this->render('_form-private-lesson', [
-            'model' => $model,
-            'privateLessonModel' => !empty($privateLessonModel) ? $privateLessonModel : null
-        ]);
+        return $response;
     }
 
     /**
@@ -306,8 +297,9 @@ class LessonController extends BaseController
         $conflicts = [];
         $conflictedLessonIds = [];
         $draftLessons = Lesson::find()
-            ->where(['courseId' => $course->id, 'isConfirmed' => false,
-                'status' => Lesson::STATUS_SCHEDULED])
+            ->where(['courseId' => $course->id])
+            ->notConfirmed()
+            ->scheduled()
             ->all();
         foreach ($draftLessons as $draftLesson) {
             $draftLesson->setScenario('review');
@@ -331,8 +323,9 @@ class LessonController extends BaseController
     {
         $conflictedLessons = $this->getConflicts($course);
         $lessons = Lesson::find()
-            ->where(['courseId' => $course->id, 'isConfirmed' => false,
-                'status' => Lesson::STATUS_SCHEDULED])
+            ->where(['courseId' => $course->id])
+            ->notConfirmed()
+            ->scheduled()
             ->all();
         if (!empty($conflictedLessons['lessonIds'])) {
             $lessons = Lesson::find()
@@ -476,8 +469,9 @@ class LessonController extends BaseController
         $conflicts = [];
         $conflictedLessonIds = [];
         $draftLessons = Lesson::find()
-            ->where(['courseId' => $courseModel->id, 'isConfirmed' => false,
-                'status' => Lesson::STATUS_SCHEDULED])
+            ->where(['courseId' => $courseModel->id])
+            ->notConfirmed()
+            ->scheduled()
             ->all();
         foreach ($draftLessons as $draftLesson) {
             $draftLesson->setScenario('review');
@@ -536,9 +530,9 @@ class LessonController extends BaseController
             $startDate = new \DateTime($rescheduleBeginDate);
             $endDate = new \DateTime($rescheduleEndDate);
             $oldLessons = Lesson::find()
-                ->where(['courseId' => $courseModel->id,
-                    'status' => Lesson::STATUS_SCHEDULED,
-                    'isConfirmed' => true])
+                ->where(['courseId' => $courseModel->id])
+                ->isConfirmed()
+                ->scheduled()
                 ->between($startDate, $endDate)
                 ->all();
             $oldLessonIds = [];
@@ -694,33 +688,6 @@ class LessonController extends BaseController
             $response = [
                 'status' => false,
                 'errors' => current($model),
-            ];
-        }
-
-        return $response;
-    }
-
-    public function actionModifyLesson($id, $start, $end, $teacherId)
-    {
-        $model = Lesson::findOne($id);
-        $model->setScenario(Lesson::SCENARIO_EDIT);
-        $model->teacherId = $teacherId;
-        $startDate = new \DateTime($start);
-        $endDate = new \DateTime($end);
-        $diff = date_diff($startDate, $endDate);
-        $model->duration = $diff->format("%H:%I:%S");
-        $model->date = $startDate->format('Y-m-d H:i:s');
-
-        if ($model->validate()) {
-            $model->save(false);
-            $response = [
-                'status' => true,
-            ];
-        } else {
-            $errors = ActiveForm::validate($model);
-            $response = [
-                'status' => false,
-                'errors' => current($errors),
             ];
         }
 

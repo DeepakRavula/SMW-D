@@ -360,16 +360,20 @@ var schedule = {
         schedule.modifyLesson(event);
     },
     modifyLesson : function(event) {
-        var params = $.param({
-            id: event.lessonId,
-            start: moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
-            end: moment(event.end).format('YYYY-MM-DD HH:mm:ss'),
-            teacherId: event.resourceId
-        });
+        var start = moment(event.start);
+        var end = moment(event.end);
+        var durationSeconds = moment.duration(end.diff(start)).asSeconds();
+        var sendInfo = {
+            'Lesson[teacherId]': event.resourceId,
+            'Lesson[date]': moment(event.start).format('YYYY-MM-DD HH:mm:ss'),
+            'Lesson[duration]': moment().startOf('day').seconds(durationSeconds).format('HH:mm:ss')
+        };
+        var params = $.param({ id: event.lessonId });
         $.ajax({
-            url: '<?= Url::to(['lesson/modify-lesson']); ?>?' + params,
+            url: '<?= Url::to(['lesson/update']); ?>?' + params,
             type: 'post',
             dataType: "json",
+            data: sendInfo,
             success: function (response)
             {
                 if (response.status) {

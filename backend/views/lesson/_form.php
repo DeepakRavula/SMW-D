@@ -1,10 +1,10 @@
 <?php
-use yii\helpers\Html;
+use common\models\LocationAvailability;
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
 use kartik\time\TimePicker;
 use yii\helpers\Url;
-use common\components\select2\Select2;
+use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\Location;
@@ -16,7 +16,7 @@ use common\models\Location;
 
 <div class="lesson-qualify">
 <?php $form = ActiveForm::begin([
-            'id' => 'lesson-edit-form',
+            'id' => 'modal-form',
             'enableAjaxValidation' => true,
             'enableClientValidation' => false,
             'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id, 'teacherId' => null]),
@@ -66,31 +66,17 @@ use common\models\Location;
             ?>  
         </div>
         <div class="col-md-3">
-            <div class="form-group field-calendar-date-time-picker-date">
-                <label class="control-label" for="calendar-date-time-picker-date">Reschedule Date</label>
-                <div id="calendar-date-time-picker-date-datetime" class="input-group date">
-                    <input type="text" id="lesson-date" class="form-control" name="Lesson[date]"
-                           value='<?php echo Yii::$app->formatter->asDateTime($model->date); ?>' readonly>
-                    <span class="input-group-addon" title="Clear field">
-                        <span class="glyphicon glyphicon-remove"></span>
-                    </span>
-                </div>
-            </div>       
+            <?php echo $form->field($model, 'date', [
+                'inputTemplate' => '<div class="input-group">{input}<span class="input-group-addon" title="Clear field">
+                    <span class="glyphicon glyphicon-remove"></span></span></div>'
+                ])->textInput([
+                    'readonly' => true,
+                    'value' => Yii::$app->formatter->asDateTime($model->date)
+                ])->label('Reschedule Date');
+            ?>  
         </div>
         <div class="col-md-3">
-            <?php $locationId = Location::findOne([
-                    'slug' => \Yii::$app->location])->id; ?>
-            <?php if ($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
-
-                <?php
-                if ($privateLessonModel->isNewRecord) {
-                    $date                           = new \DateTime($model->date);
-                    $date->modify('90 days');
-                    $privateLessonModel->expiryDate = $date->format('d-m-Y');
-                }
-                ?>
-                <?=
-                $form->field($privateLessonModel, 'expiryDate')->widget(
+            <?= $form->field($privateLessonModel, 'expiryDate')->widget(
                     DatePicker::classname(),
                     [
                     'options' => [
@@ -102,16 +88,8 @@ use common\models\Location;
                         'autoclose' => true,
                         'format' => 'dd-mm-yyyy',
                     ],
-                ]
-                );
-                ?>
-<?php endif; ?>
+            ]); ?>
         </div>
-            <div class="pull-right m-t-25 m-r-10">
-            <?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-schedule-cancel']);?> 
-            <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
-        <div class="clearfix"></div>
-    </div>  
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -128,22 +106,110 @@ use common\models\Location;
             </div>
         </div>
     </div>
-    <div class="clearfix"></div>
-    <div class="row">
-    <div class="col-md-12">
-        <div class="pull-right m-t-10">
-            <?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-schedule-cancel']);?> 
-            <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
-        <div class="clearfix"></div>
-    </div>
-    </div>
-    </div>
         <?php ActiveForm::end(); ?>
 </div>
+<?php
+$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+$minLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['fromTime' => SORT_ASC])
+    ->one();
+$maxLocationAvailability = LocationAvailability::find()
+    ->where(['locationId' => $locationId])
+    ->orderBy(['toTime' => SORT_DESC])
+    ->one();
+$from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+$to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+?>
+
 <script type="text/javascript">
-$(document).ready(function() {
-$(document).on('click', '.glyphicon-remove', function () {
+    var calendar = {
+        load: function (events, availableHours, date) {
+            $('#lesson-edit-calendar').fullCalendar('destroy');
+            $('#lesson-edit-calendar').fullCalendar({
+                schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+                defaultDate: date,
+                firstDay : 1,
+                nowIndicator: true,
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right:''
+                },
+                height: 500,
+                allDaySlot: false,
+                slotDuration: '00:15:00',
+                titleFormat: 'DD-MMM-YYYY, dddd',
+                defaultView: 'agendaWeek',
+                minTime: "<?php echo $from_time; ?>",
+                maxTime: "<?php echo $to_time; ?>",
+                selectConstraint: 'businessHours',
+                eventConstraint: 'businessHours',
+                businessHours: availableHours,
+                overlapEvent: false,
+                overlapEventsSeparate: true,
+                events: events,
+                select: function (start, end, allDay) {
+                    $('#lesson-date').val(moment(start).format('DD-MM-YYYY hh:mm A')).trigger('change');
+                    $('#lesson-edit-calendar').fullCalendar('removeEvents', 'newEnrolment');
+                    var duration = $('#course-duration').val();
+                    var endtime = start.clone();
+                    var durationMinutes = moment.duration($.isEmptyObject(duration) ? '00:30' : duration).asMinutes();
+                    moment(endtime.add(durationMinutes, 'minutes'));
+
+                    $('#lesson-edit-calendar').fullCalendar('renderEvent',
+                            {
+                                id: 'newEnrolment',
+                                start: start,
+                                end: endtime,
+                                allDay: false
+                            },
+                            true // make the event "stick"
+                            );
+                    $('#lesson-edit-calendar').fullCalendar('unselect');
+                },
+                selectable: true,
+                selectHelper: true,
+                eventAfterAllRender: function () {
+                    $('.fc-short').removeClass('fc-short');
+                }
+            });
+        }
+    };
+    var refreshcalendar = {
+        refresh: function () {
+            var events, availableHours;
+            var teacherId = $('#lesson-teacherid').val();
+            var date = moment($('#lesson-date').val(), 'DD-MM-YYYY h:mm A', true).format('YYYY-MM-DD');
+            $.ajax({
+                url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    events = response.events;
+                    availableHours = response.availableHours;
+                    $('#loadingspinner').hide();
+                    calendar.load(events,availableHours,date);
+                }
+            });
+        }
+    };
+    
+    $('#popup-modal').on('shown.bs.modal', function () {
+        refreshcalendar.refresh();
+    });
+
+    $(document).on('change', '#lesson-teacherid', function () {
+        refreshcalendar.refresh();
+    });
+    
+    $(document).on('click', '.glyphicon-remove', function () {
         $('#lesson-date').val('').trigger('change');
     });
+    
+    $(document).on('modal-success', function(event, params) {
+        window.location.href = params.url;
+        return false;
     });
 </script>
