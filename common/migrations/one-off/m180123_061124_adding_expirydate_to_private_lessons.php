@@ -12,7 +12,6 @@ class m180123_061124_adding_expirydate_to_private_lessons extends Migration
             ->isConfirmed()
             ->notDeleted()
             ->privateLessons()
-            ->andWhere(['NOT', ['lesson.status' => Lesson::STATUS_CANCELED]])
             ->all();
 
         foreach ($lessons as $lesson) {
@@ -20,12 +19,11 @@ class m180123_061124_adding_expirydate_to_private_lessons extends Migration
                 $lesson->setExpiry();
             } else {
                 if ($lesson->rootLesson) {
-                    $lessonToUpdate = $lesson->rootLesson;
+                    $expiryDate = new \DateTime($lesson->rootLesson->privateLesson->expiryDate);
                 } else {
-                    $lessonToUpdate = $lesson;
+                    $date = new \DateTime($lesson->date);
+                    $expiryDate = $date->modify('90 days');
                 }
-                $date = new \DateTime($lessonToUpdate->date);
-                $expiryDate = $date->modify('90 days');
                 $lesson->privateLesson->updateAttributes([
                     'expiryDate' => $expiryDate->format('Y-m-d H:i:s')
                 ]);
