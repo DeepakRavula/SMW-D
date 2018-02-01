@@ -5,5 +5,6 @@
  * and open the template in the editor.
  */
 ?>
+<div id="classroom-title-description"></div>
 <div class="clearfix"></div>
 <div id='classroom-calendar'></div>
