@@ -80,15 +80,7 @@ use common\models\Location;
         <div class="col-md-3">
             <?php $locationId = Location::findOne([
                     'slug' => \Yii::$app->location])->id; ?>
-            <?php if ($model->course->program->isPrivate() && $model->isUnscheduled()) : ?>
-
-                <?php
-                if ($privateLessonModel->isNewRecord) {
-                    $date                           = new \DateTime($model->date);
-                    $date->modify('90 days');
-                    $privateLessonModel->expiryDate = $date->format('d-m-Y');
-                }
-                ?>
+            <?php if ($model->course->program->isPrivate() && $model->hasExpiryDate()) : ?>
                 <?=
                 $form->field($privateLessonModel, 'expiryDate')->widget(
                     DatePicker::classname(),
