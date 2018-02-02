@@ -106,4 +106,15 @@ class PrivateLesson extends \yii\db\ActiveRecord
         $lesson = Lesson::findOne($this->lessonId);
         $lesson->cancel();
     }
+    public function afterSave($insert, $changedAttributes)
+    {
+            if(!empty($this->lesson->rootLesson))
+            {
+            $rootPrivateLesson=$this->lesson->rootLesson->privateLesson;
+            $rootPrivateLesson->expiryDate=(new \DateTime($this->expiryDate))->format('Y-m-d H:i:s');
+            $rootPrivateLesson->save();
+            }
+
+        return parent::afterSave($insert, $changedAttributes);
+    }
 }
