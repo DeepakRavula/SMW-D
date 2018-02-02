@@ -32,36 +32,3 @@ Select2Asset::register($this);
 </div>
 <?php ActiveForm::end(); ?>
 </div>
-
-<script>
-    $(document).ready(function() {
-     $('.add-address').bind('click', function () {
-		$('.address-fields').show();
-		$('.hr-ad').hide();
-		setTimeout(function () {
-			$('.add-address').addClass('add-item');
-		}, 100);
-	});
-	$('.add-phone').bind('click', function () {
-		$('.phone-fields').show();
-		$('.hr-ph').hide();
-		setTimeout(function () {
-			$('.add-phone').addClass('add-item-phone');
-		}, 100);
-	});
-	$('.add-quali').bind('click', function () {
-		$('.quali-fields').show();
-		$('.hr-qu').hide();
-	});
-
-	$('#user-update-tab a').click(function (e) {
-		$('.section-tab').css('display', 'block');
-		//$('#contact-section').css('display','block');
-		e.preventDefault();
-		$(this).tab('show');
-	});
-	$('.nav-tabs a').on('shown.bs.tab', function (e) {
-		$('input[name="UserForm[section]"]').val(e.target.hash);
-	});
-});
-</script>

@@ -152,6 +152,16 @@ class ScheduleController extends BaseController
     public function actionRenderClassroomResources($date)
     {
         $date      = \DateTime::createFromFormat('Y-m-d', $date);
+		$classrooms = Classroom::find()
+			->andWhere(['locationId' => Location::findOne(['slug' => Yii::$app->location])->id])
+			->all();
+		foreach ($classrooms as $classroom) {
+			$resources[] = [
+				'id'    => $classroom->id,
+				'title' => $classroom->name,
+                                'description' => $classroom->description,
+			];
+		}
         $classrooms = Classroom::find()
             ->andWhere(['locationId' => Location::findOne(['slug' => Yii::$app->location])->id])
             ->all();
@@ -484,7 +494,7 @@ class ScheduleController extends BaseController
                 $toTime = new \DateTime($lesson->date);
                 $length = explode(':', $lesson->fullDuration);
                 $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
-                $title = $lesson->classroomTitle;
+                $title = $lesson->scheduleTitle;
                 $class = $lesson->class;
                 $backgroundColor = $lesson->colorCode;
                 if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {

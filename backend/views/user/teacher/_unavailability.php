@@ -64,6 +64,7 @@ $(document).ready(function(){
 				{
 					$('#unavailability-content').html(response.data);
 					$('#unavailability-modal').modal('show');
+                    $('#unavailability-modal .modal-dialog').addClass('classroom-dialog'); 
 				}
 			}
 		});
@@ -80,7 +81,9 @@ $(document).ready(function(){
 				if(response.status) {
 					$.pjax.reload({container: '#unavailability-list', timeout: 6000});
 					$('#unavailability-modal').modal('hide');
-				}
+				} else {
+                    $('#unavailability-form').yiiActiveForm('updateMessages', response.errors, true);
+                }
 			}
 		});
 		return false;

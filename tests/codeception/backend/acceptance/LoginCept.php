@@ -29,7 +29,7 @@ $I->expectTo('see validations errors');
 $I->see('Incorrect username or password.', '.help-block');
 
 $I->amGoingTo('try to login with correct credentials');
-$loginPage->login('webmaster@example.org', 'webmaster');
+$loginPage->login('senguttuvang@gmail.com', 'webmaster');
 if (method_exists($I, 'wait')) {
     $I->wait(3); // only for selenium
 }

@@ -477,12 +477,6 @@ class Lesson extends \yii\db\ActiveRecord
             return $this->enrolment->student->fullName;
         }
     }
-    
-    public function getClassroomTitle()
-    {
-        return $this->enrolment->student->fullName;
-    }
-
     public function getClass()
     {
         if (!empty($this->colorCode)) {
