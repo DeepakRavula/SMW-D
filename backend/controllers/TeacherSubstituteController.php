@@ -10,6 +10,8 @@ use common\models\Location;
 use common\models\User;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use yii\filters\AccessControl;
+use common\components\controllers\BaseController;
 use yii\filters\ContentNegotiator;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
@@ -36,7 +38,7 @@ class TeacherSubstituteController extends BaseController
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-			'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
@@ -63,7 +65,7 @@ class TeacherSubstituteController extends BaseController
         $programIds = [];
         $newLessonIds = [];
         $draftLessons = Lesson::find()
-                ->select(['id, type'])
+                ->select(['id', 'type'])
                 ->notDeleted()
                 ->notConfirmed()
                 ->andWhere(['createdByUserId' => Yii::$app->user->id])
@@ -97,6 +99,7 @@ class TeacherSubstituteController extends BaseController
                 $newLesson->teacherId = $teacherId;
                 $newLesson->isConfirmed = false;
                 $newLesson->save();
+                $newLesson->makeAsRoot();
                 $lesson->rescheduleTo($newLesson);
                 $newLessonIds[] = $newLesson->id;
                 $newLesson->setScenario('substitute-teacher');
@@ -165,7 +168,8 @@ class TeacherSubstituteController extends BaseController
         $lessonIds = [];
         foreach ($lessons as $lesson) {
             $lessonIds[] = $lesson->id;
-            $lesson->updateAttributes(['isConfirmed' => true]);
+            $lesson->isConfirmed = true;
+            $lesson->save();
         }
         $response = [
             'status' => true,

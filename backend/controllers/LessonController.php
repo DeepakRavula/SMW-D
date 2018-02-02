@@ -532,14 +532,13 @@ class LessonController extends BaseController
             $oldLessons = Lesson::find()
                 ->where(['courseId' => $courseModel->id])
                 ->isConfirmed()
-                ->scheduled()
+                ->scheduledOrRescheduled()
                 ->between($startDate, $endDate)
                 ->all();
             $oldLessonIds = [];
             foreach ($oldLessons as $oldLesson) {
                 $oldLessonIds[] = $oldLesson->id;
-                $oldLesson->status = Lesson::STATUS_CANCELED;
-                $oldLesson->save();
+                $oldLesson->Cancel();
             }
             $courseDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
             if ($endDate->format('d-m-Y') == $courseDate && !empty($lesson)) {
@@ -551,6 +550,9 @@ class LessonController extends BaseController
                     'fromTime' => (new \DateTime($lesson->date))->format('H:i:s'),
                 ]);
             }
+        }
+        foreach ($lessons as $lesson) {
+            $lesson->makeAsRoot();
         }
         if (! empty($rescheduleBeginDate)) {
             foreach ($lessons as $i => $lesson) {
@@ -583,27 +585,17 @@ class LessonController extends BaseController
             );
             $bulkRescheduleEnrolment->trigger(ENROLMENT::EVENT_AFTER_UPDATE);
         }
-
         foreach ($lessons as $lesson) {
-            $lesson->updateAttributes([
-                'isConfirmed' => true,
-            ]);
-            $lesson->makeAsRoot();
+            $lesson->isConfirmed = true;
+            $lesson->save();
         }
         if (!empty($courseModel->enrolment) && empty($courseRequest)) {
             $enrolmentModel              = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
             $enrolmentModel->isConfirmed = true;
             $enrolmentModel->save();
             $enrolmentModel->setPaymentCycle($enrolmentModel->firstLesson->date);
-
-            
-            $enrolmentModel->on(
-            
-                Enrolment::EVENT_AFTER_INSERT,
-                [new StudentLog(), 'addEnrolment'],
-                ['loggedUser' => $loggedUser]
-            
-            );
+            $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT, [new StudentLog(), 'addEnrolment'],
+                ['loggedUser' => $loggedUser]);
         }
         if ($courseModel->program->isPrivate()) {
             if (! empty($rescheduleBeginDate)) {
@@ -616,7 +608,7 @@ class LessonController extends BaseController
             }
         } else {
             $message = 'Course has been created successfully';
-            $link	 = $this->redirect(['course/view', 'id' => $courseId]);
+            $link = $this->redirect(['course/view', 'id' => $courseId]);
         }
         Yii::$app->session->setFlash('alert', [
             'options' => ['class' => 'alert-success'],
@@ -624,6 +616,7 @@ class LessonController extends BaseController
         ]);
         return $link;
     }
+    
     public function getRescheduleLessonType($courseModel, $endDate)
     {
         $courseEndDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');

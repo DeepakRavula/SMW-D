@@ -652,8 +652,13 @@ class Lesson extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
-            if ($this->isRescheduledLesson($changedAttributes)) {
+            if ($this->isRescheduledByDate($changedAttributes)) {
                 $this->trigger(self::EVENT_RESCHEDULE_ATTEMPTED);
+            }
+            if ($this->isConfirmed && $this->isScheduled() && $this->rootLesson) {
+                if (new \DateTime($this->rootLesson->date) != new \DateTime($this->date)) {
+                    $this->updateAttributes(['status' => self::STATUS_RESCHEDULED]);
+                }
             }
         }
         
@@ -703,12 +708,6 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return isset($changedAttributes['teacherId']) &&
             (int)$changedAttributes['teacherId'] !== (int)$this->teacherId;
-    }
-
-    public function isRescheduledLesson($changedAttributes)
-    {
-        return $this->isRescheduledByDate($changedAttributes) ||
-            $this->isRescheduledByTeacher($changedAttributes);
     }
 
     public function getDuration()
