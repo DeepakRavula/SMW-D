@@ -16,8 +16,6 @@ use common\components\validators\lesson\conflict\TeacherEligibleValidator;
 use common\components\validators\lesson\conflict\TeacherLessonOverlapValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
 use common\components\validators\lesson\conflict\IntraEnrolledLessonValidator;
-use common\components\validators\lesson\conflict\TeacherAvailabilityValidator;
-use common\components\validators\lesson\conflict\StudentAvailabilityValidator;
 use common\components\validators\lesson\conflict\TeacherSubstituteValidator;
 
 /**
@@ -145,9 +143,6 @@ class Lesson extends \yii\db\ActiveRecord
             ['date', TeacherEligibleValidator::className(), 'on' => [
                 self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
                 self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_LESSON_EDIT_ON_SCHEDULE]],
-            ['date', TeacherAvailabilityValidator::className(), 'on' => [
-                self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
-                self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_CREATE_GROUP]],
             ['date', TeacherLessonOverlapValidator::className(), 'on' => [
                 self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT, self::SCENARIO_CREATE_GROUP,
                 self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_LESSON_EDIT_ON_SCHEDULE]],

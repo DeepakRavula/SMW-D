@@ -86,8 +86,16 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                     defaultView: 'agendaWeek',
                     minTime: "<?php echo $from_time; ?>",
                     maxTime: "<?php echo $to_time; ?>",
-                    selectConstraint: 'businessHours',
-                    eventConstraint: 'businessHours',
+                    selectConstraint: {
+                        start: '00:01', // a start time (10am in this example)
+                        end: '24:00', // an end time (6pm in this example)
+                        dow: [ 1, 2, 3, 4, 5, 6, 0 ]
+                    },
+                    eventConstraint: {
+                        start: '00:01', // a start time (10am in this example)
+                        end: '24:00', // an end time (6pm in this example)
+                        dow: [ 1, 2, 3, 4, 5, 6, 0 ]
+                    },
                     businessHours: availableHours,
                     overlapEvent: false,
                     overlapEventsSeparate: true,
