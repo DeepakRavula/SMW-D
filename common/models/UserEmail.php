@@ -45,7 +45,11 @@ class UserEmail extends \yii\db\ActiveRecord
             [['email'], 'email'],
             [['labelId'], 'safe'],
             [['email'], 'trim'],
-            [['email'], 'unique', 'message' => 'Email already exists'],
+            ['email', 'unique', 'targetClass'=> self::className(), 'filter' => function ($query) {
+                if (!$this->isNewRecord) {
+                    $query->andWhere(['not', ['id' => $this->id]]);
+                } 
+            }],
         ];
     }
 
