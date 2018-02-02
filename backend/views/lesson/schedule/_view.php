@@ -35,8 +35,10 @@ LteBox::begin([
     <dd><?= Yii::$app->formatter->asTime($model->date); ?></dd>
     <dt>Duration</dt>
     <dd><?= (new \DateTime($model->duration))->format('H:i'); ?></dd>
+<?php if ($model->privateLesson) : ?>
     <dt>Expiry Date</dt>
     <dd><?= Yii::$app->formatter->asDate($model->privateLesson->expiryDate); ?></dd>
+<?php endif; ?>
 
 </dl>
 <?php LteBox::end() ?>

@@ -10,7 +10,7 @@ use common\models\query\LessonQuery;
 class ExtraLesson extends Lesson
 {
     const TYPE = 2;
-
+    
     public static function find()
     {
         return new LessonQuery(get_called_class(), ['type' => self::TYPE]);
@@ -67,6 +67,10 @@ class ExtraLesson extends Lesson
             $newEnrolment->paymentFrequencyId = false;
             $newEnrolment->type = Enrolment::TYPE_EXTRA;
             if ($newEnrolment->save()) {
+                $newEnrolment->enrolmentProgramRate->updateAttributes([
+                    'programRate' => $this->programRate
+                ]);
+                $newEnrolment->applyFullDiscount = $this->applyFullDiscount;
                 $newEnrolment->createProFormaInvoice();
             }
         }

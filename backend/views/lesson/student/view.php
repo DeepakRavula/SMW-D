@@ -60,7 +60,8 @@ use common\models\LessonPayment;
                     },
                     'view' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
-                            ->where(['courseId' => $lessonModel->courseId])
+                            ->andWhere(['type' => $lessonModel->type])
+                            ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
                         if (!$enrolment->hasInvoice($lessonModel->id)) {
                             return null;
@@ -73,7 +74,8 @@ use common\models\LessonPayment;
                     },
                     'payment' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
-                            ->where(['courseId' => $lessonModel->courseId])
+                            ->andWhere(['type' => $lessonModel->type])
+                            ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
                         $lessonPayment = LessonPayment::findOne(['enrolmentId' => $enrolment->id,
                             'lessonId' => $lessonModel->id]);
