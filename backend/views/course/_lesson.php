@@ -1,8 +1,10 @@
 <?php
 
-use yii\grid\GridView;
+use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\helpers\Html;
+use common\components\gridView\KartikGridView;
+
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -14,6 +16,10 @@ use yii\helpers\Html;
 <div class="grid-row-open p-10">
 <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
     <?php $columns = [
+        [
+                'class' => '\kartik\grid\CheckboxColumn',
+                'mergeHeader' => false
+        ],
         [
             'label' => 'Date',
             'value' => function ($data) {
