@@ -5,7 +5,6 @@ namespace backend\controllers;
 use Yii;
 use yii\helpers\Url;
 use common\models\Lesson;
-use common\models\LessonHierarchy;
 use common\models\Location;
 use common\models\User;
 use yii\filters\VerbFilter;
@@ -71,7 +70,6 @@ class TeacherSubstituteController extends BaseController
                 ->andWhere(['createdByUserId' => Yii::$app->user->id])
                 ->all();
         if ($draftLessons && !$resolvingConflict) {
-            LessonHierarchy::deleteAll(['childLessonId' => $draftLessons]);
             Lesson::deleteAll(['id' => $draftLessons]);
         }
         $conflicts = [];
@@ -99,8 +97,6 @@ class TeacherSubstituteController extends BaseController
                 $newLesson->teacherId = $teacherId;
                 $newLesson->isConfirmed = false;
                 $newLesson->save();
-                $newLesson->makeAsRoot();
-                $lesson->rescheduleTo($newLesson);
                 $newLessonIds[] = $newLesson->id;
                 $newLesson->setScenario('substitute-teacher');
                 $errors = ActiveForm::validate($newLesson);
@@ -156,17 +152,16 @@ class TeacherSubstituteController extends BaseController
     
     public function actionConfirm()
     {
-        $oldLessons = Yii::$app->request->get('ids');
-        foreach ($oldLessons as $lesson) {
-            $oldLesson = Lesson::findOne($lesson);
-            $oldLesson->Cancel();
-        }
+        $oldLessons = Lesson::findAll(Yii::$app->request->get('ids'));
         $lessons = Lesson::find()
                 ->notConfirmed()
                 ->andWhere(['createdByUserId' => Yii::$app->user->id])
                 ->all();
         $lessonIds = [];
-        foreach ($lessons as $lesson) {
+        foreach ($lessons as $i => $lesson) {
+            $oldLesson = $oldLessons[$i];
+            $oldLesson->Cancel();
+            $oldLesson->rescheduleTo($lesson);
             $lessonIds[] = $lesson->id;
             $lesson->isConfirmed = true;
             $lesson->save();

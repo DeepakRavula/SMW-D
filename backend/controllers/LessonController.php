@@ -551,8 +551,10 @@ class LessonController extends BaseController
                 ]);
             }
         }
-        foreach ($lessons as $lesson) {
-            $lesson->makeAsRoot();
+        if (empty($rescheduleBeginDate)) {
+            foreach ($lessons as $lesson) {
+                $lesson->makeAsRoot();
+            }
         }
         if (! empty($rescheduleBeginDate)) {
             foreach ($lessons as $i => $lesson) {
