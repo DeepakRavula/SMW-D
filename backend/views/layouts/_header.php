@@ -8,7 +8,6 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\User;
 use common\models\Location;
-use common\models\UserLocation;
 use common\widgets\LocationDropdown;
 
 $bundle = BackendAsset::register($this);
@@ -37,10 +36,6 @@ $bundle = BackendAsset::register($this);
                         'name'
                     );
                 $role = end($roles);
-                if ($role !== User::ROLE_ADMINISTRATOR) {
-                    $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
-                    Yii::$app->session->set('location_id', $userLocation->location_id);
-                }
                 ?>
                     <?php if ($role === User::ROLE_ADMINISTRATOR):?>
                         <div class="m-t-10 pull-left">
@@ -54,8 +49,7 @@ $bundle = BackendAsset::register($this);
 				
                         <?php else:?>
                         <?php
-                            $userLocationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-                            $location = Location::findOne(['id' => $userLocationId]);
+                            $location = Location::findOne(['slug' => \Yii::$app->location])->id;
                             echo '<div class="p-t-15 pull-left location-header" data-toggle="tooltip" data-original-title="Your location" data-placement="bottom"><i class="fa fa-map-marker m-r-10"></i>'.$location->name.'</div>';
                         ?>
                         <?php endif; ?>
