@@ -21,7 +21,7 @@ class m180203_071814_lesson_status_refactor extends Migration
         foreach ($lessons as $lesson) {
             if ($lesson->rootLesson) {
                 if (new \DateTime($lesson->rootLesson->date) != new \DateTime($lesson->date)) {
-                    $lesson->updateAttributes(['status' => self::STATUS_RESCHEDULED]);
+                    $lesson->updateAttributes(['status' => Lesson::STATUS_RESCHEDULED]);
                 }
             }
         }
