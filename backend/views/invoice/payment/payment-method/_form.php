@@ -32,13 +32,9 @@ use common\models\PaymentMethod;
             <?= $form->field($model, 'amount')->textInput(['class' => 'right-align payment-amount form-control']);?>
         </div>
     </div>
-	   <div class="reference">
-       <?php if ($model->payment_method_id === PaymentMethod::TYPE_CHEQUE) : ?>
-               <?= $form->field($model, 'reference')->textInput()->label('Cheque Number'); ?>
-       <?php elseif ($model->payment_method_id !== PaymentMethod::TYPE_CASH) : ?>
-               <?= $form->field($model, 'reference')->textInput(); ?>
-       <?php endif; ?>
-		  </div>
+    <div class="reference">
+        <?= $form->field($model, 'reference')->textInput()->label('Reference'); ?>
+    </div>
 	   	<div class="cheque-date">
    			<?php
             $currentDate = (new \DateTime())->format('d-m-Y');
@@ -62,30 +58,23 @@ use common\models\PaymentMethod;
 	<?php ActiveForm::end(); ?>
 </div>
 </div>
-    <script>
-var paymentMethods = {
-	'cash' : '4',
-	'cheque' : '5'
-};
-$(document).ready(function() {
-	$('.amount').show();
-	$('.reference').hide();
-	$('.cheque-date').hide();
-	$(document).on('change', '#payment-payment_method_id', function() {
-		var paymentMethod = $('#payment-payment_method_id').val();
-		if(paymentMethod == paymentMethods.cash) {
-			$('.amount').show();
-			$('.reference').hide();
-			$('.cheque-date').hide();	
-		}else if(paymentMethod == paymentMethods.cheque) {
-			$('.amount').show();
-			$('.reference').show();
-			$('.cheque-date').show();	
-		} else {
-			$('.amount').show();
-			$('.reference').show();
-			$('.cheque-date').hide();	
-		}
-	});	
-});	
+<script>
+    var paymentMethods = {
+        'cheque' : '5'
+    };
+    
+    $(document).ready(function() {
+        $('.cheque-date').hide();
+    });	
+    
+    $(document).on('change', '#payment-payment_method_id', function() {
+        var paymentMethod = $('#payment-payment_method_id').val();
+        if(paymentMethod == paymentMethods.cheque) {
+            $('.reference').find('label').text('Cheque Number');
+            $('.cheque-date').show();	
+        } else {
+            $('.reference').find('label').text('Reference');
+            $('.cheque-date').hide();	
+        }
+    });	
 </script>
