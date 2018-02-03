@@ -11,11 +11,10 @@ class m180123_061124_adding_expirydate_to_private_lessons extends Migration
         $lessons = Lesson::find()
             ->isConfirmed()
             ->notDeleted()
-            ->privateLessons()
             ->all();
 
         foreach ($lessons as $lesson) {
-            if (!$lesson->hasExpiryDate()) {
+            if (!$lesson->privateLesson) {
                 $lesson->setExpiry();
             } else {
                 if ($lesson->rootLesson) {
