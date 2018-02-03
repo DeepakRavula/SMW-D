@@ -941,4 +941,27 @@ class Lesson extends \yii\db\ActiveRecord
         $privateLessonModel->save();
         return $privateLessonModel;
     }
+    public function getLessonDuration($date, $teacherId)
+    {
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $totalDuration=0;
+        $lessons = Lesson::find()
+            ->innerJoinWith('enrolment')
+            ->location($locationId)
+            ->where(['lesson.teacherId' => $teacherId])
+            ->notDeleted()
+            ->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED]])
+            ->andWhere(['lesson.date'=> $date])
+            ->isConfirmed()
+            ->all();
+        foreach($lessons as $lesson)
+        {
+            $duration=$lesson->getUnit();
+            print_r($duration);
+            $totalDuration=$totalDuration+$duration;
+            print_r($totalDuration);
+        }
+          print_r($totalDuration);
+        return $totalDuration;
+    }
 }
