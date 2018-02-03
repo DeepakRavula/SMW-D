@@ -140,7 +140,7 @@ class ScheduleController extends BaseController
                     $query->andWhere(['course.teacherId' => $teacherId]);
                 }
             }])
-            ->scheduledOrCompleted()
+            ->scheduledOrRescheduled()
             ->isConfirmed()
             ->present()
             ->andWhere(['DATE(lesson.date)' => $date->format('Y-m-d')])

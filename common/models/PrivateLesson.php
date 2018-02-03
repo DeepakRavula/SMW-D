@@ -82,7 +82,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
             $lesson->date = $date->format('Y-m-d H:i:s');
             $lesson->isExploded = true;
             $lesson->save();
-            $model->rescheduledTo($lesson);
+            $model->rescheduleTo($lesson);
         }
         return $model->cancel();
     }
