@@ -935,16 +935,12 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function setExpiry()
     {
-
         if ($this->rootLesson) {
             $expiryDate = new \DateTime($this->rootLesson->privateLesson->expiryDate);
             $date       = new \DateTime($this->date);
             if ($date >= $expiryDate) {
                 $expiryDate = $date->modify('1 day');
             }
-            $rootPrivateLesson=$this->rootLesson->privateLesson;
-            $rootPrivateLesson->expiryDate=$expiryDate->format('Y-m-d H:i:s');
-            $rootPrivateLesson->save();
         } else {
             $date       = new \DateTime($this->date);
             $expiryDate = $date->modify('90 days');

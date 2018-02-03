@@ -82,16 +82,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
             $lesson->date = $date->format('Y-m-d H:i:s');
             $lesson->isExploded = true;
             $lesson->save();
-            $paymentCycleLesson = new PaymentCycleLesson();
-            $paymentCycleLesson->paymentCycleId = $model->paymentCycle->id;
-            $paymentCycleLesson->lessonId = $lesson->id;
-            $paymentCycleLesson->save();
-            $privateLesson = clone $this;
-            $privateLesson->isNewRecord = true;
-            $privateLesson->id = null;
-            $privateLesson->lessonId = $lesson->id;
-            $privateLesson->save();
-            $model->makeAsChild($lesson);
+            $model->rescheduledTo($lesson);
         }
         return $model->cancel();
     }
@@ -108,12 +99,11 @@ class PrivateLesson extends \yii\db\ActiveRecord
     }
     public function afterSave($insert, $changedAttributes)
     {
-            if(!empty($this->lesson->rootLesson))
-            {
-            $rootPrivateLesson=$this->lesson->rootLesson->privateLesson;
-            $rootPrivateLesson->expiryDate=(new \DateTime($this->expiryDate))->format('Y-m-d H:i:s');
+        if($this->lesson->rootLesson) {
+            $rootPrivateLesson = $this->lesson->rootLesson->privateLesson;
+            $rootPrivateLesson->expiryDate = (new \DateTime($this->expiryDate))->format('Y-m-d H:i:s');
             $rootPrivateLesson->save();
-            }
+        }
 
         return parent::afterSave($insert, $changedAttributes);
     }
