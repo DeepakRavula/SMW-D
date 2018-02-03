@@ -113,9 +113,9 @@ trait Payable
 
     public function addGroupLessonCredit()
     {
-        $enrolment = Enrolment::findOne($this->lineItem->lineItemEnrolment->enrolmentId);
+        $enrolment = $this->lineItem->enrolment;
         $lessons = Lesson::find()
-                        ->regular()
+                        ->andWhere(['lesson.type' => $enrolment->type])
                         ->isConfirmed()
                         ->notDeleted()
                         ->joinWith('enrolment')

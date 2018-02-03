@@ -617,4 +617,18 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->paymentsFrequency->frequencyLength == 1 ? 'pays every month'
             : 'pays every ' . $this->paymentsFrequency->frequencyLength . 'month';
     }
+    
+    public function getPayment()
+    {
+        if (!$this->isExtra()) {
+            $lessons = $this->course->lessons;
+        } else {
+            $lessons = $this->course->extraLessons;
+        }
+        $amount = 0;
+        foreach ($lessons as $lesson) {
+            $amount += $lesson->getCreditAppliedAmount($this->id);
+        }
+        return $amount;
+    }
 }
