@@ -135,7 +135,7 @@ class Lesson extends \yii\db\ActiveRecord
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId', 'isPresent'], 'safe'],
             [['classroomId'], ClassroomValidator::className(),
-                'on' => [self::SCENARIO_EDIT, self::SCENARIO_EDIT_CLASSROOM]],
+                'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),
                 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE, self::SCENARIO_CREATE_GROUP,
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT, self::SCENARIO_EDIT_REVIEW_LESSON]],

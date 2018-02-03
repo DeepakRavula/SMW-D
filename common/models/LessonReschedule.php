@@ -62,8 +62,13 @@ class LessonReschedule extends Model
                 $paymentCycleLesson->lessonId = $this->rescheduledLessonId;
                 $paymentCycleLesson->save();
             }
+            if ($oldLesson->proFormaLineItem) {
+                $lineItemPaymentCycleLesson = $oldLesson->proFormaLineItem->lineItemPaymentCycleLesson;
+                $lineItemPaymentCycleLesson->paymentCycleLessonId = $paymentCycleLesson->id;
+                $lineItemPaymentCycleLesson->save();
+            }
         }
-        if (!empty($oldLesson->invoiceLineItem)) {
+        if ($oldLesson->invoiceLineItem) {
             $oldLesson->invoiceLineItem->lineItemLesson->lessonId = $this->rescheduledLessonId;
             $oldLesson->invoiceLineItem->lineItemLesson->save();
         }
