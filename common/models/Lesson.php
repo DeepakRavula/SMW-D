@@ -400,15 +400,6 @@ class Lesson extends \yii\db\ActiveRecord
                 'enrolment.type' => Enrolment::TYPE_REGULAR]);
     }
     
-    public function getPayment()
-    {
-        return Payment::find()
-                ->creditApplied()
-                ->joinWith('lessonCredit')
-                ->andWhere(['lesson_payment.lessonId' => $this->id])
-                ->sum('amount');
-    }
-    
     public function getLessonCredit()
     {
         return $this->hasMany(LessonPayment::className(), ['lessonId' => 'id']);
