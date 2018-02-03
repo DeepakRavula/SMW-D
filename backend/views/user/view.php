@@ -11,9 +11,12 @@ use backend\models\UserForm;
 use common\models\discount\CustomerDiscount;
 use yii\widgets\Pjax;
 use common\models\User;
-
-require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
-
+use kartik\date\DatePickerAsset;
+use kartik\time\TimePickerAsset;
+use kartik\select2\Select2Asset;
+Select2Asset::register($this);
+TimePickerAsset::register($this);
+DatePickerAsset::register($this);
 /* @var $this yii\web\View */
 /* @var $model common\models\User */
 
@@ -387,6 +390,27 @@ $this->params['action-button'] = $this->render('_action-button', [
 <div id="address-content"></div>
 <?php Modal::end(); ?>
 <script>
+    var lesson = {
+        update :function(params) {
+            $.ajax({
+                    url: '<?= Url::to(['lesson/update']); ?>?' + params,
+                    type: 'get',
+                    dataType: "json",
+                    success: function (response)
+                    {
+                        if (response.status)
+                        {
+                            $('#modal-content').html(response.data);
+                            $('#popup-modal').modal('show');
+                            $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit schedule</h4>');
+                            $('#popup-modal .modal-dialog').css({'width': '1000px'});
+                        }
+                    }
+                });
+                return false;
+        }
+    };
+    
 	var contactTypes = {
 		'email' : 1,
 		'phone' : 2,
