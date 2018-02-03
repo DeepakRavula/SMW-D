@@ -912,17 +912,19 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function setExpiry()
     {
-        if ($this->rootLesson) {
-            $expiryDate = new \DateTime($this->rootLesson->privateLesson->expiryDate);
-        } else {
-            $date = new \DateTime($this->date);
-            $expiryDate = $date->modify('90 days');
+        if (!$this->privateLesson) {
+            if ($this->rootLesson) {
+                $expiryDate = new \DateTime($this->rootLesson->privateLesson->expiryDate);
+            } else {
+                $date = new \DateTime($this->date);
+                $expiryDate = $date->modify('90 days');
+            }
+            $privateLessonModel = new PrivateLesson();
+            $privateLessonModel->lessonId = $this->id;
+            $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
+            $privateLessonModel->save();
+            return $privateLessonModel;
         }
-        $privateLessonModel = new PrivateLesson();
-        $privateLessonModel->lessonId = $this->id;
-        $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
-        $privateLessonModel->save();
-        return $privateLessonModel;
     }
     
     public function rescheduleTo($lesson)
