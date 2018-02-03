@@ -6,6 +6,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Lesson;
 use common\models\User;
+use common\models\Location;
 use Yii;
 
 /**
@@ -41,7 +42,7 @@ class LocationScheduleSearch extends Lesson
     public function search($params)
     {
         $userId = Yii::$app->user->id;
-        $locationId= \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $roles = Yii::$app->authManager->getRolesByUser($userId);
         $role = end($roles);
         $user = User::findOne(['id' => $userId]);
@@ -51,9 +52,8 @@ class LocationScheduleSearch extends Lesson
             $this->locationId = $locationId;
         }
         $query = Lesson::find()
-            ->andWhere(['lesson.status' => Lesson::STATUS_SCHEDULED,
-                'DATE(date)' => (new \DateTime())->format('Y-m-d')
-            ])
+            ->andWhere(['DATE(date)' => (new \DateTime())->format('Y-m-d')])
+            ->scheduledOrRescheduled()
             ->isConfirmed()
             ->notDeleted();
         if (!empty($this->locationId)) {

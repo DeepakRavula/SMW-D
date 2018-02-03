@@ -100,10 +100,8 @@ class EnrolmentController extends BaseController
         $model = $this->findModel($id);
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-                ->andWhere([
-                    'courseId' => $model->course->id,
-                    'status' => Lesson::STATUS_SCHEDULED
-                ])
+                ->andWhere(['courseId' => $model->course->id])
+                ->scheduledOrRescheduled()
                 ->isConfirmed()
                 ->notDeleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
@@ -419,11 +417,9 @@ class EnrolmentController extends BaseController
                 'isConfirmed' => false,
             ]);
             $lessons		 = Lesson::find()
-                ->where([
-                    'courseId' => $model->course->id,
-                    'status' => Lesson::STATUS_SCHEDULED,
-                    'type' => Lesson::TYPE_REGULAR
-                ])
+                ->where(['courseId' => $model->course->id])
+                ->regular()
+                ->scheduledOrRescheduled()
                 ->joinWith('bulkRescheduleLesson')
                 ->isConfirmed()
                 ->between($startDate, $endDate)

@@ -17,6 +17,17 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  */
 class TeacherUnavailability extends \yii\db\ActiveRecord
 {
+     private $dateRange;
+
+    public function getDateRange()
+    {
+        return $this->dateRange;;
+    }
+
+    public function setDateRange($value)
+    {
+        $this->dateRange = $value;
+    }
     /**
      * @inheritdoc
      */
@@ -31,8 +42,9 @@ class TeacherUnavailability extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['dateRange'], 'required'],
             [['teacherId'], 'integer'],
-            [['fromDate', 'toDate'], 'required'],
+            [['fromDate', 'toDate'], 'safe'],
             [['fromTime', 'toTime', 'reason'], 'safe'],
         ];
     }
@@ -78,8 +90,9 @@ class TeacherUnavailability extends \yii\db\ActiveRecord
             $this->fromTime = (new \DateTime($this->fromTime))->format('H:i:s');
             $this->toTime = (new \DateTime($this->toTime))->format('H:i:s');
         }
-        $this->fromDate = (new \DateTime($this->fromDate))->format('Y-m-d');
-        $this->toDate = (new \DateTime($this->toDate))->format('Y-m-d');
+        list($fromDate, $toDate) = explode(' - ', $this->dateRange);
+        $this->fromDate = (new \DateTime($fromDate))->format('Y-m-d');
+        $this->toDate = (new \DateTime($toDate))->format('Y-m-d');
         if ($insert) {
             $this->isDeleted = false;
         }

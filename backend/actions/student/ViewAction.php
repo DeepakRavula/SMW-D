@@ -81,7 +81,7 @@ class ViewAction extends Action
     {
         $lessons = Lesson::find()
                 ->studentEnrolment($locationId, $id)
-                ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+                ->scheduledOrRescheduled()
                 ->isConfirmed()
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->notDeleted();

@@ -110,7 +110,7 @@ class ScheduleController extends Controller
         if ($role->name === User::ROLE_TEACHER) {
             $query->andWhere(['lesson.teacherId' => $userId]);
         }
-        $query->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+        $query->scheduledOrRescheduled()
                 ->notDeleted();
         $lessons = $query->all();
         return $lessons;

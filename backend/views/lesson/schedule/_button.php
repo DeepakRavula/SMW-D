@@ -3,7 +3,7 @@ use yii\helpers\Url;
 
 ?>
 <i title="Edit" class="m-r-10 fa fa-pencil edit-lesson-schedule"></i>
-    <?php if ($model->isScheduled()) : ?>
+    <?php if ($model->isScheduledOrRescheduled()) : ?>
         <i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i>
         <ul class="dropdown-menu dropdown-menu-right" id="menu-shown">
             <li><a id="lesson-unschedule" href="#">Unschedule Lesson</a></li>

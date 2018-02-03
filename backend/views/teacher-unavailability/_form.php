@@ -6,36 +6,44 @@ use yii\helpers\Url;
 use kartik\datetime\DateTimePicker;
 use kartik\time\TimePicker;
 use yii\jui\DatePicker;
+use kartik\daterange\DateRangePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Holiday */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="holiday-form">
+<div class="user-create-form row">
 <?php   $url = Url::to(['teacher-unavailability/update', 'id' => $model->id]);
+ $validationUrl = Url::to(['teacher-unavailability/validate', 'id' => $model->id]);
             if ($model->isNewRecord) {
                 $url = Url::to(['teacher-unavailability/create', 'id' => $teacher->id]);
+                $validationUrl = Url::to(['teacher-unavailability/validate']);
             }
         $form = ActiveForm::begin([
         'id' => 'unavailability-form',
         'action' => $url,
+        'enableAjaxValidation' => true,
+        'enableClientValidation' => false,
+        'validationUrl' => $validationUrl,
     ]); ?>
-
     <div class="row">
-        <div class="col-xs-5">
-			<?php echo $form->field($model, 'fromDate')->widget(DatePicker::classname(), [
-            'options' => ['class' => 'form-control',
-            ],
-        ]); ?>
-        </div>
-		 <div class="col-xs-5">
-			<?php
-             echo $form->field($model, 'toDate')->widget(DatePicker::classname(), [
-            'options' => ['class' => 'form-control'],
-            ]); ?>
-        </div>
-		 <div class="col-xs-5">
+            <label>Date Range</label>
+                <?php
+                echo DateRangePicker::widget([
+                    'model' => $model,
+                    'attribute' => 'dateRange',
+                    'convertFormat' => true,
+                    'initRangeExpr' => true,
+                    'pluginOptions' => [
+                        'autoApply' => true,
+                        'locale' => [
+                            'format' => 'M d,Y',
+                        ],
+                        'opens' => 'right',
+                    ],
+                ]);
+                ?>
 		<?php
             echo $form->field($model, 'fromTime')->widget(TimePicker::classname(), [
                 'pluginOptions' => [
@@ -43,24 +51,18 @@ use yii\jui\DatePicker;
                 ],
             ]);
             ?>
-        </div>
-		 <div class="col-xs-5">
 		<?php
             echo $form->field($model, 'toTime')->widget(TimePicker::classname(), [
                 'pluginOptions' => [
                     'defaultTime' => false,
                 ],
             ]);
-            ?>
-        </div>
-		<div class="col-xs-9">
+            ?>		
 		<?php
             echo $form->field($model, 'reason')->textarea(['rows' => 4]);?>
-        </div>
         <div class="clearfix"></div>
     </div>
     <div class="row">
-    <div class="col-md-12">
         <div class="pull-right">
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default unavailability-cancel']);?>
        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
@@ -83,7 +85,6 @@ use yii\jui\DatePicker;
             ); ?>
 		<?php endif;?>
         </div>
-    </div>
     <div class="clearfix"></div>
     </div>
     <?php ActiveForm::end(); ?>

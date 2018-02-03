@@ -494,7 +494,7 @@ class ScheduleController extends BaseController
                 $toTime = new \DateTime($lesson->date);
                 $length = explode(':', $lesson->fullDuration);
                 $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
-                $title = $lesson->classroomTitle;
+                $title = $lesson->scheduleTitle;
                 $class = $lesson->class;
                 $backgroundColor = $lesson->colorCode;
                 if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {

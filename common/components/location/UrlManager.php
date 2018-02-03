@@ -157,7 +157,7 @@ class UrlManager extends \codemix\localeurls\UrlManager
                 throw new InvalidConfigException('Locale URL support requires enablePrettyUrl to be set to true.');
             }
         }
-        $this->_defaultLocation = Yii::$app->location;
+        $this->_defaultLocation = Yii::$app->location ?? null;
         parent::init();
     }
 

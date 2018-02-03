@@ -2,10 +2,7 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
-use common\models\Lesson;
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
-use common\models\LocationAvailability;
 
 ?>
 <div class=" p-15">
@@ -87,75 +84,10 @@ use common\models\LocationAvailability;
 
 </div>
 
-<div class="form-group">
-    <?php $lessonModel = new Lesson();
-    $form = ActiveForm::begin([
-       'id' => 'unschedule-lesson-form'
-    ]); ?>
-	<?= $form->field($lessonModel, 'date')->hiddenInput()->label(false);?>
-    <?php ActiveForm::end(); ?>
-</div>
-
-<?php
-$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-$minLocationAvailability = LocationAvailability::find()
-    ->where(['locationId' => $locationId])
-    ->orderBy(['fromTime' => SORT_ASC])
-    ->one();
-$maxLocationAvailability = LocationAvailability::find()
-    ->where(['locationId' => $locationId])
-    ->orderBy(['toTime' => SORT_DESC])
-    ->one();
-$from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-$to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-?>
 <script type="text/javascript">
     $(document).on('click', '.unschedule-calendar', function () {
-        var teacherId = '<?= $model->id; ?>';
-        var duration = $(this).attr('duration');
-        var params = $.param({ id: teacherId });
         var lessonId = $(this).parent().parent().data('key');
-        var eventParams = $.param({ teacherId: teacherId, lessonId: lessonId });
-        var validationParams = $.param({ id: lessonId, teacherId: '' });
-        $.ajax({
-            url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
-            type: 'get',
-            dataType: "json",
-            success: function (response)
-            {
-                var options = {
-                    date: moment(new Date()),
-                    duration: duration,
-                    businessHours: response.availableHours,
-                    minTime: '<?= $from_time; ?>',
-                    maxTime: '<?= $to_time; ?>',
-                    eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event']); ?>?' + eventParams,
-                    validationUrl: '<?= Url::to(['lesson/validate-on-update']); ?>?' + validationParams
-                };
-                $('#calendar-date-time-picker').calendarPicker(options);
-            }
-        });
-        return false;
+        var params = $.param({ id: lessonId });
+        lesson.update(params);
     });
-    
-    $(document).on('after-date-set', function (event, params) {
-        if (!$.isEmptyObject(params.date)) {
-            $('#lesson-date').val(moment(params.date).format('DD-MM-YYYY h:mm A'));
-            var lessonId = $('.unschedule-calendar').parent().parent().data('key');
-            var param = $.param({ id: lessonId });
-            $.ajax({
-                url    : '<?= Url::to(['lesson/update']);?>?' + param,
-                type   : 'post',
-                dataType: "json",
-                data   : $('#unschedule-lesson-form').serialize(),
-                success: function (response)
-                {
-                    if (response.status) {
-                        $.pjax.reload({ container:"#lesson-index", replace:false, timeout: 4000 }); 
-                    }
-                }
-            });
-            return false;
-        }
-   });
 </script>

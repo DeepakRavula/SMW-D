@@ -5,14 +5,14 @@ use common\models\Lesson;
 use common\models\Program;
 use yii\helpers\Json;
 use yii\helpers\Url;
-use common\models\Invoice;
+use common\models\Location;
 
 ?>
 <?php $this->render('/lesson/_color-code'); ?>
 <link type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.css" rel="stylesheet">
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.0.1/fullcalendar.min.js"></script>
     <?php
-    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])
@@ -47,7 +47,7 @@ use common\models\Invoice;
             $query->andWhere(['locationId' => $locationId]);
         }])
         ->where(['lesson.teacherId' => $teacherId])
-        ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+        ->scheduledOrRescheduled()
         ->isConfirmed()
         ->notDeleted()
         ->all();
@@ -89,8 +89,16 @@ use common\models\Invoice;
     defaultView: 'agendaWeek',
     minTime: "<?php echo $from_time; ?>",
     maxTime: "<?php echo $to_time; ?>",
-	selectConstraint: 'businessHours',
-    eventConstraint: 'businessHours',
+    selectConstraint: {
+        start: '00:01', // a start time (10am in this example)
+        end: '24:00', // an end time (6pm in this example)
+        dow: [ 1, 2, 3, 4, 5, 6, 0 ]
+    },
+    eventConstraint: {
+        start: '00:01', // a start time (10am in this example)
+        end: '24:00', // an end time (6pm in this example)
+        dow: [ 1, 2, 3, 4, 5, 6, 0 ]
+    },
 	businessHours: <?php echo Json::encode($availableHours); ?>,
 	allowCalEventOverlap: true,
     overlapEventsSeparate: true,
