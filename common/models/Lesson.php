@@ -929,6 +929,8 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function setExpiry()
     {
+        if($this->isPrivate())
+        {
         if ($this->rootLesson) {
             $expiryDate = new \DateTime($this->rootLesson->privateLesson->expiryDate);
         } else {
@@ -940,5 +942,6 @@ class Lesson extends \yii\db\ActiveRecord
         $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
         $privateLessonModel->save();
         return $privateLessonModel;
+    }
     }
 }

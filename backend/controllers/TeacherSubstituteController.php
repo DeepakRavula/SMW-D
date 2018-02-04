@@ -56,18 +56,21 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
      */
     public function actionIndex()
     {
+
         $lessonIds = Yii::$app->request->get('ids');
         $teacherId = Yii::$app->request->get('teacherId');
+
         $lessons = Lesson::findAll($lessonIds);
         $resolvingConflict = Yii::$app->request->get('resolvingConflicts');
         $programIds = [];
         $newLessonIds = [];
         $draftLessons = Lesson::find()
-                ->select(['id, type'])
+                ->select(['id','type'])
                 ->notDeleted()
                 ->notConfirmed()
                 ->andWhere(['createdByUserId' => Yii::$app->user->id])
                 ->all();
+
         if ($draftLessons && !$resolvingConflict) {
             LessonHierarchy::deleteAll(['childLessonId' => $draftLessons]);
             Lesson::deleteAll(['id' => $draftLessons]);

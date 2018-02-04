@@ -88,7 +88,7 @@ use yii\bootstrap\Modal;
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'summary' => false,
         'emptyText' => false,
-        'options' => ['id' => 'group-lesson-index'],
+        'options' => ['id' => 'lesson-index-1'],
         'columns' => $columns,
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>
@@ -123,18 +123,18 @@ $(document).on('click', '#new-lesson', function () {
 });
 $(document).on('click', '#substitute-teacher-group-lesson', function(){
 alert('success begin');
-        var lessonIds = $('#group-lesson-index').yiiGridView('getSelectedRows');
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(lessonIds)) {
             $('#index-error-notification').html("Choose any lessons to substitute teacher").fadeIn().delay(5000).fadeOut();
         } else {
-            alert('sucess');
-            var params = $.param({ ids: lessonIds });
+          var params = $.param({ ids: lessonIds });
             $.ajax({
                 url    : '<?= Url::to(['teacher-substitute/index']) ?>?' +params,
                 type   : 'get',
                 success: function(response)
                 {
                     if (response.status) {
+                        alert('sucess');
                         $('#teacher-substitute-modal').modal('show');
                         $('#teacher-substitute-modal .modal-dialog').css({'width': '1000px'});
                         $('#teacher-substitute-content').html(response.data);
