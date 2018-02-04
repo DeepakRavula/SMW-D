@@ -13,11 +13,11 @@ use yii\web\Response;
 use yii\filters\ContentNegotiator;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
-
+use yii\filters\AccessControl;
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
-class TeacherSubstituteController extends BaseController
+class TeacherSubstituteController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
