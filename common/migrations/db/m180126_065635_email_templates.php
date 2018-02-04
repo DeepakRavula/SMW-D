@@ -28,8 +28,8 @@ class m180126_065635_email_templates extends Migration
             'subject' => $this->text()->notNull(),
             'header' => $this->text()->notNull(),
             'footer' => $this->text()->notNull(),
-            'createdAt' => $this->timestamp()->notNull(),
-            'updatedAt' => $this->timestamp()->notNull(),
+            'updatedAt' => $this->timestamp()->defaultValue(null),
+            'createdAt' => $this->timestamp()->defaultValue(null),
         ]);
     }
 

@@ -7,6 +7,7 @@ use yii\imperavi\Widget;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 use common\models\UserEmail;
+use common\models\EmailTemaplte;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */

@@ -11,7 +11,8 @@ use backend\models\EmailForm;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\Student;
-
+use common\models\EmailTemplate;
+use common\models\EmailObject;
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -132,9 +133,11 @@ $emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email');
 	 <?php $body = $this->render('mail/body', [
         'model' => $model,
 ]); ?>
-    <?php endif; ?>      
+    <?php endif; ?>  
+<?php $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]); ?>
 	<?php $content = $this->render('mail/content', [
         'content' => $body,
+        'emailTemplate' => $emailTemplate
     ]);
  ?> 
 <div id="loader" class="spinner" style="display:none">
@@ -149,7 +152,7 @@ Modal::begin([
 echo $this->render('/mail/_form', [
     'model' => new EmailForm(),
     'emails' => $emails,
-    'subject' => $model->course->program->name . ' lesson reschedule',
+    'subject' => $emailTemplate->subject ?? $model->course->program->name . ' lesson reschedule',
     'content' => $content,
     'id' => null,
         'userModel'=>!empty($model->enrolment->student->customer) ? $model->enrolment->student->customer : null,

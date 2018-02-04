@@ -7,7 +7,8 @@ use yii\widgets\Pjax;
 use yii\data\ActiveDataProvider;
 use common\models\Lesson;
 use backend\models\EmailForm;
-
+use common\models\EmailObject;
+use common\models\EmailTemplate;
 ?>
 
 <div class="row-fluid p-10">
@@ -54,13 +55,15 @@ use backend\models\EmailForm;
                 'pageSize' => 60,
              ],
     ]);
+    $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_COURSE]);
     $body = null;
-    $body = 'Please find the lesson schedule for the program you enrolled on ' . Yii::$app->formatter->asDate($model->course->startDate) ;
+    $body = $emailTemplate->header ?? 'Please find the lesson schedule for the program you enrolled on ' . Yii::$app->formatter->asDate($model->course->startDate) ;
     $content = $this->render('mail/content', [
         'toName' => $model->student->customer->publicIdentity,
         'content' => $body,
         'model' => $model,
-        'lessonDataProvider' => $lessonDataProvider
+        'lessonDataProvider' => $lessonDataProvider,
+        'emailTemplate' => $emailTemplate
     ]);
     $emails = !empty($model->student->customer->email) ? $model->student->customer->email : null;
 ?>
@@ -72,7 +75,7 @@ Modal::begin([
 echo $this->render('/mail/_form', [
     'model' => new EmailForm(),
     'emails' => $emails,
-    'subject' => 'Schedule for ' . $model->student->fullName,
+    'subject' => $emailTemplate->subject ?? 'Schedule for ' . $model->student->fullName,
     'content' => $content,
     'id' => null,
         'userModel'=>$model->student->customer,

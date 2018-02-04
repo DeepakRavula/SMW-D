@@ -6,10 +6,7 @@ use common\models\TextTemplate;
 ?>
 
 Dear Customer,<br>
-<?php $textTemplate = TextTemplate::findOne(['type' => $model->type]);
-$message = !empty($textTemplate->message) ? $textTemplate->message : 'Please find the invoice below:';
-?>
-	<?= $message; ?><Br>
+	<?= $emailTemplate->header ?? 'Please find the invoice below:'; ?><Br>
         <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
@@ -129,5 +126,5 @@ $message = !empty($textTemplate->message) ? $textTemplate->message : 'Please fin
     <?php echo $model->reminderNotes; ?>
 </div>
 <br>
-Thank you<br>
-Arcadia Music Academy Team.<br>
+<?= $emailTemplate->footer ?? 'Thank you
+Arcadia Academy of Music Team.'; ?>

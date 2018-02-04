@@ -1,7 +1,7 @@
 <?php
 
 namespace common\models;
-
+use yii\behaviors\TimestampBehavior;
 /**
  * This is the model class for table "emailtemplate".
  *
@@ -16,6 +16,10 @@ class EmailTemplate extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    const COURSE='Course';
+    const LESSON='Lesson';
+    const INVOICE='Invoice';
+    const PROFORMA_INVOICE='ProformaInvoice';
     public static function tableName()
     {
         return 'email_template';
@@ -24,6 +28,18 @@ class EmailTemplate extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdAt',
+                'updatedAtAttribute' => 'updatedAt',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            
+        ];
+    }
     public function rules()
     {
         return [
