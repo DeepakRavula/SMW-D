@@ -140,9 +140,9 @@ class ExtraLessonController extends BaseController
         if ($model->load($request->post())) {
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $model->isConfirmed = true;
+            $model->addGroup();
             if ($model->save()) {
                 $model->makeAsRoot();
-                $model->addGroup();
                 $response   = [
                     'status' => true,
                     'url' => Url::to(['lesson/view', 'id' => $model->id])

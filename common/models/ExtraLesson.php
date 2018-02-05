@@ -60,15 +60,10 @@ class ExtraLesson extends Lesson
     public function addGroup()
     {
         $enrolments = Enrolment::findAll(['courseId' => $this->courseId, 'type' => Enrolment::TYPE_REGULAR]);
+        $course = $this->createCourse();
         foreach ($enrolments as $enrolment) {
-            $newEnrolment = clone ($enrolment);
-            $newEnrolment->id = null;
-            $newEnrolment->isNewRecord = true;
-            $newEnrolment->paymentFrequencyId = false;
-            $newEnrolment->type = Enrolment::TYPE_EXTRA;
-            if ($newEnrolment->save()) {
-                $newEnrolment->createProFormaInvoice();
-            }
+            $course->studentId = $enrolment->studentId;
+            $course->createExtraLessonEnrolment();
         }
         return true;
     }
