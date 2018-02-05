@@ -438,19 +438,17 @@ Modal::begin([
 			data   : $(this).serialize(),
 			success: function(response)
 			{
-			   if(response.status)
-			   {
-					$('#payment-modal').modal('hide');
-					$.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
-				}else
-				{
-				 $('#payment-form').yiiActiveForm('updateMessages',
-					   response.errors
-					, true);
-				}
+                            if(response.status)
+                            {
+                                $('#payment-modal').modal('hide');
+                                $.pjax.reload({container: "#invoice-view-lineitem-listing", replace:false,async: false, timeout: 6000});
+                                $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
+                                $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+                                $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
+                                $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+                            } else {
+                             $('#payment-form').yiiActiveForm('updateMessages', response.errors , true);
+                            }
 			}
 		});
 		return false;
@@ -513,6 +511,7 @@ Modal::begin([
 			   if(response.status)
 			   {
                                $('#payment-edit-spinner').hide();
+                               $.pjax.reload({container: "#invoice-view-lineitem-listing", replace:false,async: false, timeout: 6000});
 					$.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});

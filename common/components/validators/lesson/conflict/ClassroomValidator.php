@@ -22,7 +22,7 @@ class ClassroomValidator extends Validator
                 ->andWhere(['NOT', ['lesson.id' => $model->id]])
                 ->andWhere(['classroomId' => $model->classroomId])
                 ->isConfirmed()
-                ->scheduled()
+                ->scheduledOrRescheduled()
                 ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
                 ->all();
         if (!empty($overLapLessons)) {

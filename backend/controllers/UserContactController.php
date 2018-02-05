@@ -48,6 +48,7 @@ class UserContactController extends BaseController
     {
         $user = User::findOne(['id' => $id]);
         $email = new UserEmail();
+        
         $contact = new UserContact();
         $data = $this->renderAjax('/user/contact/form/_email', [
             'emailModel' => $email,
@@ -345,12 +346,16 @@ class UserContactController extends BaseController
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    public function actionValidate()
+    public function actionValidate($id = null)
     {
-        $email = new UserEmail();
+        if(!empty($id)) {
+            $model = UserEmail::findOne(['userContactId' => $id]);
+        } else {
+            $model = new UserEmail();
+        }
         $request = Yii::$app->request;
-        if ($email->load($request->post())) {
-            return  ActiveForm::validate($email);
+        if ($model->load($request->post())) {
+            return  ActiveForm::validate($model);
         }
     }
 }

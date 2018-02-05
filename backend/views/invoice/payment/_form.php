@@ -41,15 +41,14 @@ use common\models\PaymentMethod;
                 'value' => \Yii::$app->formatter->asDecimal($model->amount, 2)
             ]);?>
         </div>
-       <?php if ($model->payment_method_id === PaymentMethod::TYPE_CHEQUE) : ?>
-           <div class="col-md-3">
-               <?= $form->field($model, 'reference')->textInput()->label('Cheque Number'); ?>
-           </div>
-       <?php elseif ($model->payment_method_id !== PaymentMethod::TYPE_CASH) : ?>
-           <div class="col-md-3">
-               <?= $form->field($model, 'reference')->textInput(); ?>
-           </div>
-       <?php endif; ?>
+        <?php if ($model->payment_method_id === PaymentMethod::TYPE_CHEQUE) : ?>
+            <?php $label = 'Cheque Number'; ?>
+        <?php else : ?>
+            <?php $label = 'Reference'; ?>
+        <?php endif; ?>
+        <div class="col-md-3">
+            <?= $form->field($model, 'reference')->textInput()->label($label); ?>
+        </div>
    </div>   
     <div class="row">    
         <div class="clearfix"></div>
