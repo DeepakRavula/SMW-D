@@ -159,6 +159,7 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
     
     public function actionConfirm()
     {
+        $groupLessons=false;
         $oldLessons = Yii::$app->request->get('ids');
         foreach ($oldLessons as $lesson) {
             $oldLesson = Lesson::findOne($lesson);
@@ -172,11 +173,22 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
         foreach ($lessons as $lesson) {
             $lessonIds[] = $lesson->id;
             $lesson->updateAttributes(['isConfirmed' => true]);
+            if ($lesson->isGroup()) {
+                $groupLessons = true;
+                $courseModel  = $lesson->course;
+            }
         }
+        if ($groupLessons) {
+            $response = [
+                'status' => true,
+                'url' => Url::to(['/course/view', 'id' => $courseModel->id]),
+            ];
+        } else {
         $response = [
             'status' => true,
             'url' => Url::to(['/lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[ids]' => $lessonIds])
         ];
+ }
         return $response;
     }
 }
