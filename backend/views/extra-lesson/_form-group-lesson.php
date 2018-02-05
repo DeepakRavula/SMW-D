@@ -89,6 +89,19 @@ use kartik\time\TimePicker;
 </div>
 <?php ActiveForm::end(); ?>
 </div>
+<?php
+    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+    $minLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['fromTime' => SORT_ASC])
+        ->one();
+    $maxLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['toTime' => SORT_DESC])
+        ->one();
+    $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+    $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+?>
 
 <script>
 $(document).ready(function() {
@@ -99,7 +112,9 @@ $(document).ready(function() {
         'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
         'dateRenderId' : '#extra-gruop-lesson-date',
         'changeId' : '#teacher-change',
-        'durationId' : '#extralesson-duration'
+        'durationId' : '#extralesson-duration',
+        'minTime': '<?= $minTime; ?>',
+        'maxTime': '<?= $maxTime; ?>'
     };
     $.fn.calendarDayView(options);
 }); 

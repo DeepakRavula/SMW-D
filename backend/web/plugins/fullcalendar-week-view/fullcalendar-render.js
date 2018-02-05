@@ -28,8 +28,8 @@ var calendar = {
             slotDuration: '00:15:00',
             titleFormat: 'DD-MMM-YYYY, dddd',
             defaultView: 'agendaWeek',
-            minTime: '09:00',
-            maxTime: '16:00',
+            minTime: calendarOptions.minTime,
+            maxTime: calendarOptions.maxTime,
             selectConstraint: {
                 start: '00:01', // a start time (10am in this example)
                 end: '24:00', // an end time (6pm in this example)
