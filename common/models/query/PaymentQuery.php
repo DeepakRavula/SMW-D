@@ -69,6 +69,11 @@ class PaymentQuery extends ActiveQuery
         return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
     }
     
+    public function notCreditUsed()
+    {
+        return $this->andWhere(['NOT', ['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]]);
+    }
+    
     public function creditApplied()
     {
         return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_APPLIED]);

@@ -74,10 +74,8 @@ class PrintController extends BaseController
         $model = Course::findOne(['id' => $id]);
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-                ->andWhere([
-                    'courseId' => $model->id,
-                    'status' => Lesson::STATUS_SCHEDULED
-                ])
+                ->andWhere(['courseId' => $model->id])
+                ->scheduledOrRescheduled()
                 ->isConfirmed()
                 ->notDeleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
@@ -126,10 +124,10 @@ class PrintController extends BaseController
         $teacherLessons = Lesson::find()
             ->innerJoinWith('enrolment')
             ->location($locationId)
-            ->where(['lesson.teacherId' => $model->id])
+            ->andWhere(['lesson.teacherId' => $model->id])
             ->isConfirmed()
             ->notDeleted()
-            ->andWhere(['status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_SCHEDULED]])
+            ->scheduledOrRescheduled()
             ->between($lessonSearch->fromDate, $lessonSearch->toDate)
             ->orderBy(['date' => SORT_ASC]);
             

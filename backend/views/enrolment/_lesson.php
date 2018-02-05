@@ -43,10 +43,8 @@ use backend\models\EmailForm;
 <?php 
     $lessonDataProvider = new ActiveDataProvider([
         'query' => Lesson::find()
-            ->andWhere([
-                'courseId' => $model->course->id,
-                'status' => Lesson::STATUS_SCHEDULED
-            ])
+            ->andWhere(['courseId' => $model->course->id])
+            ->scheduledOrRescheduled()
             ->isConfirmed()
             ->notDeleted()
             ->orderBy(['lesson.date' => SORT_ASC]),

@@ -155,7 +155,7 @@ class UserController extends BaseController
         $lessonQuery = Lesson::find()
                 ->location($locationId)
                 ->student($id)
-                ->where(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
+                ->scheduledOrRescheduled()
                 ->isConfirmed()
                 ->notDeleted();
 
@@ -293,15 +293,16 @@ class UserController extends BaseController
             $lessonSearch->summariseReport=$lessonSearchModel['summariseReport'];
         }
         $teacherLessons = Lesson::find()
-			->innerJoinWith('enrolment')
-			->location($locationId)
-			->where(['lesson.teacherId' => $id])
-			->notDeleted()
-			->andWhere(['status' => [Lesson::STATUS_SCHEDULED]])
-			->between($lessonSearch->fromDate, $lessonSearch->toDate)
+            ->innerJoinWith('enrolment')
+            ->location($locationId)
+            ->where(['lesson.teacherId' => $id])
+            ->notDeleted()
+            ->scheduledOrRescheduled()
+            ->isConfirmed()
+            ->between($lessonSearch->fromDate, $lessonSearch->toDate)
             ->orderBy(['date' => SORT_ASC]);
 			if($lessonSearch->summariseReport) {
-				$teacherLessons->groupBy(['DATE(lesson.date)']);
+				$teacherLessons->groupBy('DATE(lesson.date)');
 			} 
         return new ActiveDataProvider([
             'query' => $teacherLessons,
@@ -588,19 +589,6 @@ class UserController extends BaseController
         }
     }
     
-    public function actionEditLesson($lessonId)
-    {
-        $model = Lesson::findOne(['id' => $lessonId]);
-        $teacher = User::findOne($model->teacherId);
-        $data  = $this->renderAjax('teacher/_form-lesson', [
-            'model' => $model,
-            'userModel' => $teacher
-        ]);
-        return [
-            'status' => true,
-            'data' => $data
-        ];
-    }
     public function deleteContact($id)
     {
         $model = $this->findModel($id);

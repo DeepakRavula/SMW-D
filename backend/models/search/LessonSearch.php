@@ -100,7 +100,7 @@ class LessonSearch extends Lesson
         if (!empty($this->invoiceType)) {
             if ((int) $this->invoiceType === Invoice::TYPE_PRO_FORMA_INVOICE) {
                 $query->unInvoicedProForma()
-                    ->scheduled();
+                    ->scheduledOrRescheduled();
             } else {
                 $query->unInvoiced()
                     ->completed()
@@ -114,8 +114,10 @@ class LessonSearch extends Lesson
             $query->completed();
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_SCHEDULED) {
             $query->scheduled();
+        } elseif ((int)$this->lessonStatus === Lesson::STATUS_RESCHEDULED) {
+            $query->rescheduled();
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_UNSCHEDULED) {
-            $query->andFilterWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
+            $query->unscheduled();
         }
         if ($this->attendanceStatus === Lesson::STATUS_PRESENT) {
             $query->andFilterWhere(['lesson.isPresent' => true]);
@@ -161,6 +163,7 @@ class LessonSearch extends Lesson
         return [
             Lesson::STATUS_COMPLETED => 'Completed',
             Lesson::STATUS_SCHEDULED => 'Scheduled',
+            Lesson::STATUS_RESCHEDULED => 'Rescheduled',
             Lesson::STATUS_UNSCHEDULED => 'Unscheduled'
         ];
     }

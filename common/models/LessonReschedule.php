@@ -62,8 +62,13 @@ class LessonReschedule extends Model
                 $paymentCycleLesson->lessonId = $this->rescheduledLessonId;
                 $paymentCycleLesson->save();
             }
+            if ($oldLesson->proFormaLineItem) {
+                $lineItemPaymentCycleLesson = $oldLesson->proFormaLineItem->lineItemPaymentCycleLesson;
+                $lineItemPaymentCycleLesson->paymentCycleLessonId = $paymentCycleLesson->id;
+                $lineItemPaymentCycleLesson->save();
+            }
         }
-        if (!empty($oldLesson->invoiceLineItem)) {
+        if ($oldLesson->invoiceLineItem) {
             $oldLesson->invoiceLineItem->lineItemLesson->lessonId = $this->rescheduledLessonId;
             $oldLesson->invoiceLineItem->lineItemLesson->save();
         }
@@ -113,7 +118,7 @@ class LessonReschedule extends Model
             $lessonModel->teacherId = $teacherId;
         }
 
-        $lessonModel->status = Lesson::STATUS_SCHEDULED;
+        $lessonModel->status = Lesson::STATUS_RESCHEDULED;
         if ($oldLesson->isExtra()) {
             $lessonModel->type = $oldLesson->type;
         }
@@ -121,12 +126,8 @@ class LessonReschedule extends Model
             $lessonModel->updateAttributes([
                 'classroomId' => $classroomId,
             ]);
-            $lessonRescheduleModel			 = new LessonReschedule();
-            $lessonRescheduleModel->lessonId		 = $originalLessonId;
-            $lessonRescheduleModel->rescheduledLessonId	 = $lessonModel->id;
-            if ($lessonRescheduleModel->save()) {
-                $this->trigger(Lesson::EVENT_RESCHEDULED);
-            }
+            $originalLesson = Lesson::findOne($originalLessonId);
+            $originalLesson->rescheduleTo($lessonModel);
         }
     }
 }

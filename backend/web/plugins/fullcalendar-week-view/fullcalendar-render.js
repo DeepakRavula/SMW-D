@@ -30,8 +30,16 @@ var calendar = {
             defaultView: 'agendaWeek',
             minTime: '09:00',
             maxTime: '16:00',
-            selectConstraint: 'businessHours',
-            eventConstraint: 'businessHours',
+            selectConstraint: {
+                start: '00:01', // a start time (10am in this example)
+                end: '24:00', // an end time (6pm in this example)
+                dow: [ 1, 2, 3, 4, 5, 6, 0 ]
+            },
+            eventConstraint: {
+                start: '00:01', // a start time (10am in this example)
+                end: '24:00', // an end time (6pm in this example)
+                dow: [ 1, 2, 3, 4, 5, 6, 0 ]
+            },
             businessHours: calendarOptions.businessHours,
             allowCalEventOverlap: true,
             overlapEventsSeparate: true,

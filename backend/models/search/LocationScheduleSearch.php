@@ -5,7 +5,7 @@ namespace backend\models\search;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Lesson;
-use common\models\User;
+use common\models\Location;
 use Yii;
 
 /**
@@ -40,13 +40,11 @@ class LocationScheduleSearch extends Lesson
      */
     public function search($params)
     {
-        $locationId= \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         
         $query = Lesson::find()
-                ->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_COMPLETED]])
-            ->andWhere([
-                'DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')
-            ])
+            ->scheduledOrRescheduled()
+            ->andWhere(['DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')])
             ->isConfirmed()
             ->notDeleted()
             ->location($locationId)

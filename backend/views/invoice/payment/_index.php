@@ -114,6 +114,7 @@ $columns = [
             {
                 if(response.status)
                 {
+                    $.pjax.reload({container: "#invoice-view-lineitem-listing", replace:false,async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});

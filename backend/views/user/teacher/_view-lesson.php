@@ -236,7 +236,7 @@ $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 					var endtime = start.clone();
 					var durationMinutes = moment.duration(duration).asMinutes();
 					moment(endtime.add(durationMinutes, 'minutes'));
-					
+
                     $('#teacher-lesson').fullCalendar('renderEvent',
                         {
                             id: 'newEnrolment',
@@ -294,7 +294,7 @@ var refreshcalendar = {
                 		$('#lesson-modal .modal-dialog').css({'width': '1000px'});
                          refreshcalendar.refresh();
                         $('#lesson-modal').modal('show');
-                       
+
                     }
                 }
             });
