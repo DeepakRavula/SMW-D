@@ -13,7 +13,7 @@ $this->registerCssFile("@web/css/note.css");
 	<?php endif; ?>
     <p class="message">
 		<a class="name">
-			<small class="text-muted pull-right"><i class="fa fa-clock-o"></i><?= Yii::$app->formatter->asDatetime($model->createdOn, "php:d M  H:i a"); ?></small>
+			<small class="text-muted pull-right"><?= Yii::$app->formatter->asDatetime($model->createdOn, "php:d M  H:i a"); ?></small>
 			<?= $model->createdUser->publicIdentity; ?>
 		</a>
 		<?= $model->content; ?>
