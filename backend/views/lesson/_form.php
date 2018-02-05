@@ -70,11 +70,13 @@ use common\models\Location;
                 'inputTemplate' => '<div class="input-group">{input}<span class="input-group-addon" title="Clear field">
                     <span class="glyphicon glyphicon-remove"></span></span></div>'
                 ])->textInput([
+                    'id' => 'lesson-date',
                     'readonly' => true,
                     'value' => Yii::$app->formatter->asDateTime($model->date)
                 ])->label('Reschedule Date');
             ?>  
         </div>
+        <?php if ($privateLessonModel) : ?>
         <div class="col-md-3">
             <?= $form->field($privateLessonModel, 'expiryDate')->widget(
                     DatePicker::classname(),
@@ -90,6 +92,7 @@ use common\models\Location;
                     ],
             ]); ?>
         </div>
+        <?php endif; ?>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -143,8 +146,16 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 defaultView: 'agendaWeek',
                 minTime: "<?php echo $from_time; ?>",
                 maxTime: "<?php echo $to_time; ?>",
-                selectConstraint: 'businessHours',
-                eventConstraint: 'businessHours',
+                selectConstraint: {
+                    start: '00:01', // a start time (10am in this example)
+                    end: '24:00', // an end time (6pm in this example)
+                    dow: [ 1, 2, 3, 4, 5, 6, 0 ]
+                },
+                eventConstraint: {
+                    start: '00:01', // a start time (10am in this example)
+                    end: '24:00', // an end time (6pm in this example)
+                    dow: [ 1, 2, 3, 4, 5, 6, 0 ]
+                },
                 businessHours: availableHours,
                 overlapEvent: false,
                 overlapEventsSeparate: true,

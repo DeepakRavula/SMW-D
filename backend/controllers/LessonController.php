@@ -241,10 +241,8 @@ class LessonController extends BaseController
             } else {
                 $model->setScenario(Lesson::SCENARIO_EDIT);
                 if ($model->validate()) {
-                    if ($model->course->program->isPrivate()) {
-                        $duration = new \DateTime($model->duration);
-                        $model->duration = $duration->format('H:i:s');
-                    }
+                    $duration = new \DateTime($model->duration);
+                    $model->duration = $duration->format('H:i:s');
                     $lessonDate = new \DateTime($model->date);
                     $model->date = $lessonDate->format('Y-m-d H:i:s');
                     if ($model->save()) {
