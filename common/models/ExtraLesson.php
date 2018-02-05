@@ -65,9 +65,9 @@ class ExtraLesson extends Lesson
             $course->studentId = $enrolment->studentId;
             $newEnrolment = $course->createExtraLessonEnrolment();
             $newEnrolment->enrolmentProgramRate->updateAttributes([
-                'programRate' => $this->programRate
+                'programRate' => $this->programRate,
+                'applyFullDiscount' => $this->applyFullDiscount
             ]);
-            $newEnrolment->applyFullDiscount = $this->applyFullDiscount;
             $newEnrolment->createProFormaInvoice();
         }
         return true;

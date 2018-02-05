@@ -139,7 +139,7 @@ trait Invoiceable
             $invoiceItemLesson->enrolmentId    = $this->id;
             $invoiceItemLesson->invoiceLineItemId    = $invoiceLineItem->id;
             $invoiceItemLesson->save();
-            if ($this->applyFullDiscount) {
+            if ($this->enrolmentProgramRate->applyFullDiscount) {
                 $invoiceLineItem->addFullDiscount();
             }
             return $invoiceLineItem;
@@ -292,9 +292,6 @@ trait Invoiceable
         $invoiceLineItem = $this->addGroupProFormaLineItem($invoice);
         if (!$invoiceLineItem->save()) {
             Yii::error('Create Invoice Line Item: ' . VarDumper::dumpAsString($invoiceLineItem->getErrors()));
-        }
-        if ($this->applyFullDiscount) {
-            $invoiceLineItem->addFullDiscount();
         }
         if (!$invoice->save()) {
             Yii::error('Create Invoice: ' . VarDumper::dumpAsString($invoice->getErrors()));
