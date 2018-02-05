@@ -10,6 +10,7 @@ class m180123_061124_adding_expirydate_to_private_lessons extends Migration
     {
         $lessons = Lesson::find()
             ->isConfirmed()
+            ->privateLessons()
             ->notDeleted()
             ->all();
 
