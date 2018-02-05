@@ -10,7 +10,7 @@ use common\models\query\LessonQuery;
 class ExtraLesson extends Lesson
 {
     const TYPE = 2;
-
+    
     public static function find()
     {
         return new LessonQuery(get_called_class(), ['type' => self::TYPE]);
@@ -63,7 +63,12 @@ class ExtraLesson extends Lesson
         $course = $this->createCourse();
         foreach ($enrolments as $enrolment) {
             $course->studentId = $enrolment->studentId;
-            $course->createExtraLessonEnrolment();
+            $newEnrolment = $course->createExtraLessonEnrolment();
+            $newEnrolment->enrolmentProgramRate->updateAttributes([
+                'programRate' => $this->programRate
+            ]);
+            $newEnrolment->applyFullDiscount = $this->applyFullDiscount;
+            $newEnrolment->createProFormaInvoice();
         }
         return true;
     }

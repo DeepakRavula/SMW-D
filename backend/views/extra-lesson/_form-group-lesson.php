@@ -34,7 +34,7 @@ use kartik\time\TimePicker;
             'publicIdentity'
         );
         ?>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <?php
         // Dependent Dropdown
         echo $form->field($model, 'teacherId')->widget(Select2::classname(), [
@@ -46,7 +46,7 @@ use kartik\time\TimePicker;
             ]);
         ?>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-2">
             <?php
             echo $form->field($model, 'duration')->widget(
             TimePicker::classname(),
@@ -59,11 +59,17 @@ use kartik\time\TimePicker;
         );
             ?>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
             <?php echo $form->field($model, 'date')->textInput([
                 'readOnly' => true, 
                 'id' => 'extra-gruop-lesson-date'
             ])?>
+    </div>
+    <div class="col-md-2">
+            <?php echo $form->field($model, 'programRate')->textInput()?>
+    </div>
+    <div class="col-md-2 m-b-20">
+            <?php echo $form->field($model, 'applyFullDiscount')->checkbox()?>
     </div>
         
         <div class="col-md-12">

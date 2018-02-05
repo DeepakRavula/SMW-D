@@ -586,6 +586,12 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                     $this->addMultiEnrolmentDiscount($lesson->enrolment);
                 }
             }
+        } else if ($lesson->proFormaLineItem) {
+            $proFormaLineItem = $this->enrolment->proFormaInvoice->lineItem;
+            if ($proFormaLineItem->hasEnrolmentPaymentFrequencyDiscount()) {
+                $pfDiscount = $this->addEnrolmentPaymentFrequencyDiscount(
+                    null, $proFormaLineItem->enrolmentPaymentFrequencyDiscount);
+            }
         }
     }
 
@@ -728,7 +734,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function addFullDiscount()
     {
         $discount = new InvoiceLineItemDiscount();
-        $discount->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
+        $discount->type = InvoiceLineItemDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
         $discount->invoiceLineItemId = $this->id;
         $discount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
         $discount->value = InvoiceLineItemDiscount::FULL_DISCOUNT;

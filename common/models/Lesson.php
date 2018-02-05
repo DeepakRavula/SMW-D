@@ -88,6 +88,8 @@ class Lesson extends \yii\db\ActiveRecord
     public $userName;
     public $applyContext;
     public $locationId;
+    public $programRate;
+    public $applyFullDiscount;
 
     /**
      * {@inheritdoc}
@@ -132,7 +134,8 @@ class Lesson extends \yii\db\ActiveRecord
                 return $model->type !== self::TYPE_EXTRA;
             }],
             [['courseId', 'status', 'type'], 'integer'],
-            [['date', 'programId','colorCode', 'classroomId', 'isDeleted',
+            ['programRate', 'required', 'on' => self::SCENARIO_CREATE_GROUP],
+            [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyFullDiscount',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId', 'isPresent'], 'safe'],
             [['classroomId'], ClassroomValidator::className(),
                 'on' => [self::SCENARIO_EDIT_CLASSROOM]],

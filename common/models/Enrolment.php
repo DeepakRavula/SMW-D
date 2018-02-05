@@ -28,6 +28,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public $programName;
     public $enrolmentCount;
     public $userName;
+    public $applyFullDiscount;
     
     const AUTO_RENEWAL_DAYS_FROM_END_DATE = 90;
     const AUTO_RENEWAL_STATE_ENABLED='enabled';
@@ -69,7 +70,7 @@ class Enrolment extends \yii\db\ActiveRecord
             [['courseId'], 'required'],
             [['courseId', 'studentId'], 'integer'],
             [['paymentFrequencyId', 'type',  'isDeleted', 'isConfirmed',
-                'hasEditable', 'isAutoRenew'], 'safe'],
+                'hasEditable', 'isAutoRenew', 'applyFullDiscount'], 'safe'],
         ];
     }
 
@@ -278,7 +279,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getFirstLesson()
     {
         return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
-            ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true, 'lesson.type' => Lesson::TYPE_REGULAR])
+            ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true, 'lesson.type' => $this->type])
             ->orderBy(['date' => SORT_ASC]);
     }
 
