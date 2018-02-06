@@ -200,7 +200,7 @@ class Course extends \yii\db\ActiveRecord
         if ((int) $this->program->isGroup() && !$this->isExtra()) {
             $startDate = new \DateTime($this->startDate);
             $this->startDate = (new \DateTime($this->startDate))->format('Y-m-d H:i:s');
-            $weeks = $this->weeksCount - 1;
+            $weeks = $this->weeksCount;
             $endDate = $startDate->add(new \DateInterval('P' . $weeks .'W'));
             $this->endDate = $endDate->format('Y-m-d H:i:s');
         } else {

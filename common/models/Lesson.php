@@ -935,4 +935,5 @@ class Lesson extends \yii\db\ActiveRecord
         $lessonRescheduleModel->rescheduledLessonId = $lesson->id;
         return $lessonRescheduleModel->save();
     }
+
 }
