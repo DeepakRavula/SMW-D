@@ -11,6 +11,10 @@ use yii\bootstrap\Modal;
 
 ?>
     <div class="col-md-12">
+        <div class="col-md-10">
+<div id="index-success-notification" style="display:none;" class="alert-success alert fade in"></div>
+<div id="index-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
+        </div>
 <div class="pull-right" style="margin-left:50px">
     <div class="btn-group">
         <button class="btn dropdown-toggle" data-toggle="dropdown">Bulk Action&nbsp;&nbsp;<span class="caret"></span></button>
