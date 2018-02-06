@@ -45,7 +45,7 @@ use common\models\LessonPayment;
                 'buttons' => [
                     'create' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
-                            ->where(['courseId' => $lessonModel->courseId])
+                            ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
                     
                         $url = Url::to(['invoice/group-lesson', 'lessonId' => $lessonModel->id, 'enrolmentId' => $enrolment->id]);
@@ -60,7 +60,6 @@ use common\models\LessonPayment;
                     },
                     'view' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
-                            ->andWhere(['type' => $lessonModel->type])
                             ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
                         if (!$enrolment->hasInvoice($lessonModel->id)) {
@@ -74,7 +73,6 @@ use common\models\LessonPayment;
                     },
                     'payment' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
-                            ->andWhere(['type' => $lessonModel->type])
                             ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
                         $lessonPayment = LessonPayment::findOne(['enrolmentId' => $enrolment->id,

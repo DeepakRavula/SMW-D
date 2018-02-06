@@ -244,6 +244,11 @@ class LessonQuery extends \yii\db\ActiveQuery
 
         return $this;
     }
+    
+    public function notCanceled()
+    {
+        return $this->andFilterWhere(['NOT', ['lesson.status' => Lesson::STATUS_CANCELED]]);
+    }
 
     public function between($fromDate, $toDate)
     {

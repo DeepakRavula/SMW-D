@@ -265,8 +265,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getEnrolment()
     {
-        return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId'])
-                ->onCondition(['enrolment.type' => Enrolment::TYPE_REGULAR]);
+        return $this->hasOne(Enrolment::className(), ['courseId' => 'courseId']);
     }
     
     public function getStudent()
@@ -407,8 +406,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function getEnrolments()
     {
         return $this->hasMany(Enrolment::className(), ['courseId' => 'courseId'])
-            ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true,
-                'enrolment.type' => Enrolment::TYPE_REGULAR]);
+            ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);
     }
     
     public function getLessonCredit()

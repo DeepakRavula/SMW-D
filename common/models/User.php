@@ -711,8 +711,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function getEnrolment()
     {
         return $this->hasOne(Enrolment::className(), ['studentId' => 'id'])
-            ->via('students')
-                ->onCondition(['enrolment.type' => Enrolment::TYPE_REGULAR]);
+            ->via('students');
     }
     
     public function hasInvoice()

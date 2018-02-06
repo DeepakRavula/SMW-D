@@ -13,6 +13,8 @@ class m180205_170000_add_applyFullDiscount_field_enrolmentProgramRate extends Mi
     public function safeUp()
     {
         $this->addColumn('enrolment_program_rate', 'applyFullDiscount', $this->boolean()->notNull()->after('programRate'));
+        $this->alterColumn('course', 'endDate', $this->timestamp()->null());
+        $this->addColumn('course', 'type', $this->integer()->notNull()->defaultValue(1)->after('locationId'));
     }
 
     /**

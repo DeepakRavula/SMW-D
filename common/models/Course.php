@@ -26,7 +26,11 @@ class Course extends \yii\db\ActiveRecord
     const SCENARIO_GROUP_COURSE = 'group-course';
     const SCENARIO_EDIT_ENROLMENT = 'edit-enrolment';
     const EVENT_CREATE = 'event-create';
-    
+    const SCENARIO_EXTRA_GROUP_COURSE = 'extra-group-course';
+
+    const TYPE_REGULAR = 1;
+    const TYPE_EXTRA = 2;
+
     public $lessonStatus;
     public $rescheduleBeginDate;
     public $weeksCount;
@@ -52,7 +56,7 @@ class Course extends \yii\db\ActiveRecord
             [['programId', 'teacherId'], 'required'],
             [['weeksCount'], 'required', 'when' => function ($model, $attribute) {
                 return (int)$model->program->type === Program::TYPE_GROUP_PROGRAM;
-            }],
+            }, 'except' => self::SCENARIO_EXTRA_GROUP_COURSE],
             [['startDate'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
             [['startDate', 'endDate'], 'safe'],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
@@ -145,15 +149,9 @@ class Course extends \yii\db\ActiveRecord
 
     public function getEnrolment()
     {
-        return $this->hasOne(Enrolment::className(), ['courseId' => 'id'])
-                ->onCondition(['enrolment.type' => Enrolment::TYPE_REGULAR]);
+        return $this->hasOne(Enrolment::className(), ['courseId' => 'id']);
     }
     
-    public function getExtraEnrolment()
-    {
-        return $this->hasOne(Enrolment::className(), ['courseId' => 'id'])
-                ->onCondition(['enrolment.type' => Enrolment::TYPE_EXTRA]);
-    }
     public function getLocation()
     {
         return $this->hasOne(Location::className(), ['id' => 'locationId']);
@@ -161,8 +159,7 @@ class Course extends \yii\db\ActiveRecord
 
     public function getLessons()
     {
-        return $this->hasMany(Lesson::className(), ['courseId' => 'id'])
-                ->onCondition(['lesson.type' => Lesson::TYPE_REGULAR]);
+        return $this->hasMany(Lesson::className(), ['courseId' => 'id']);
     }
     
     public function getExtraLessons()
@@ -175,6 +172,7 @@ class Course extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Enrolment::className(), ['courseId' => 'id']);
     }
+    
     public function getEnrolmentsCount()
     {
         return $this->getEnrolments()->count();
@@ -187,6 +185,7 @@ class Course extends \yii\db\ActiveRecord
             Lesson::STATUS_UNSCHEDULED => 'Unscheduled',
         ];
     }
+    
     public function beforeSave($insert)
     {
         if (!$insert) {
@@ -195,7 +194,10 @@ class Course extends \yii\db\ActiveRecord
         if (empty($this->isConfirmed)) {
             $this->isConfirmed = false;
         }
-        if ((int) $this->program->isGroup()) {
+        if (empty($this->type)) {
+            $this->type = self::TYPE_REGULAR;
+        }
+        if ((int) $this->program->isGroup() && !$this->isExtra()) {
             $startDate = new \DateTime($this->startDate);
             $this->startDate = (new \DateTime($this->startDate))->format('Y-m-d H:i:s');
             $weeks = $this->weeksCount - 1;
@@ -216,7 +218,7 @@ class Course extends \yii\db\ActiveRecord
         if (!$insert) {
             return parent::afterSave($insert, $changedAttributes);
         }
-        if ((int) $this->program->isGroup()) {
+        if ((int) $this->program->isGroup() && !$this->isExtra()) {
             $groupCourse = new CourseGroup();
             $groupCourse->courseId = $this->id;
             $groupCourse->weeksCount = $this->weeksCount;
@@ -273,6 +275,7 @@ class Course extends \yii\db\ActiveRecord
             ->confirmed()
             ->count();
     }
+    
     public function getHolidayLessons()
     {
         $lessons = Lesson::findAll(['courseId' => $this->id, 'isConfirmed' => false]);
@@ -292,6 +295,7 @@ class Course extends \yii\db\ActiveRecord
         }
         return $lessonIds;
     }
+    
     public function createLessons()
     {
         $interval = new \DateInterval('P1D');
@@ -355,32 +359,31 @@ class Course extends \yii\db\ActiveRecord
         $enrolment                     = new Enrolment();
         $enrolment->courseId           = $this->id;
         $enrolment->studentId          = $this->studentId;
-        $enrolment->type               = Enrolment::TYPE_EXTRA;
         $enrolment->isConfirmed        = true;
         $enrolment->paymentFrequencyId = false;
         $enrolment->save();
         return $enrolment;
     }
     
-    public function checkCourseExist()
+    public function checkExtraCourseExist()
     {
-        $enroledCourse = $this->getEnroledCourse();
+        $enroledCourse = $this->getExtraCourse();
         return !empty($enroledCourse);
     }
     
-    public function getEnroledCourse()
+    public function getExtraCourse()
     {
         $programId = $this->programId;
         $studentId = $this->studentId;
-        $enrolment = Enrolment::find()
-                ->notDeleted()
-                ->isConfirmed()
-                ->joinWith(['course' => function ($query) use ($programId) {
-                    $query->andWhere(['course.programId' => $programId]);
+        $course = self::find()
+                ->confirmed()
+                ->extra()
+                ->joinWith(['enrolment' => function ($query) use ($studentId) {
+                    $query->andWhere(['enrolment.studentId' => $studentId]);
                 }])
-                ->andWhere(['enrolment.studentId' => $studentId])
+                ->andWhere(['course.programId' => $programId])
                 ->one();
-        return $enrolment ? $enrolment->course : null;
+        return $course ?? null;
     }
     
     public function hasExtraLesson()
@@ -389,5 +392,10 @@ class Course extends \yii\db\ActiveRecord
                 ->andWhere(['courseId' => $this->id])
                 ->extra()
                 ->exists();
+    }
+    
+    public function isExtra()
+    {
+        return (int) $this->type === (int) self::TYPE_EXTRA;
     }
 }

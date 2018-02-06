@@ -3,6 +3,7 @@
 namespace common\models\query;
 
 use common\models\Program;
+use common\models\Course;
 
 /**
  * This is the ActiveQuery class for [[\common\models\Course]].
@@ -79,16 +80,28 @@ class CourseQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['course.isConfirmed' => true]);
     }
+    
     public function between($fromDate, $toDate)
     {
         $this->andWhere(['between', 'DATE(startDate)', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')]);
             
         return $this;
     }
+    
     public function betweenEndDate($fromDate, $toDate)
     {
         $this->andWhere(['between', 'DATE(endDate)', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')]);
             
         return $this;
+    }
+    
+    public function regular()
+    {
+        return $this->andWhere(['course.type' => Course::TYPE_REGULAR]);
+    }
+    
+    public function extra()
+    {
+        return $this->andWhere(['course.type' => Course::TYPE_EXTRA]);
     }
 }
