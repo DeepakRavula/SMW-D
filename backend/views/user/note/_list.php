@@ -12,7 +12,7 @@ $this->registerCssFile("@web/css/note.css");
 	<img src='<?= $model->createdUser->userProfile->getAvatar()?>'  alt="user image" class="img-circle offline">
 	<?php endif; ?>	<p class="message">
 		<a class="name">
-			<small class="text-muted pull-right"><?= Yii::$app->formatter->asDatetime($model->createdOn, "php:d M  H:i a"); ?></small>
+			<small class="text-muted pull-right"><?= Yii::$app->formatter->asDatetime($model->createdOn, "php:d M  g:i a"); ?></small>
 			<?= $model->createdUser->publicIdentity; ?>
 		</a>
 		<?= $model->content; ?>
