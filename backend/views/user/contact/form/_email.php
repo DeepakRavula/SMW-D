@@ -15,15 +15,18 @@ use yii\helpers\ArrayHelper;
 <div class="row user-create-form">
 <?php
   $url = Url::to(['user-contact/edit-email', 'id' => $model->id]);
+  $validationUrl = Url::to(['user-contact/validate', 'id' => $model->id]);
     if ($model->isNewRecord) {
-        $url = Url::to(['user-contact/create-email','id' => $userModel->id]);
+        $url = Url::to(['user-contact/create-email','id' => $userModel->id
+]);
+        $validationUrl = Url::to(['user-contact/validate']);
     }
 $form = ActiveForm::begin([
         'id' => 'email-form',
         'action' => $url,
-                'enableAjaxValidation' => true,
+        'enableAjaxValidation' => true,
         'enableClientValidation' => true,
-                'validationUrl' => Url::to(['user-contact/validate', 'id' => $userModel->id]),
+        'validationUrl' => $validationUrl,
     ]);
 ?>
 <div class="row">

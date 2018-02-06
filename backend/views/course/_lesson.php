@@ -55,7 +55,7 @@ use yii\bootstrap\Modal;
                     'buttons' => [
                         'create' => function ($url, $model) {
                             $url = Url::to(['invoice/group-lesson', 'lessonId' => $model->id, 'enrolmentId' => null]);
-                            if (!$model->hasGroupInvoice() && $model->isScheduled()) {
+                            if (!$model->hasGroupInvoice() && $model->isScheduledOrRescheduled()) {
                                 return Html::a('Create Invoice', $url, [
                                     'class' => ['btn-success btn-sm']
                                 ]);
@@ -65,7 +65,7 @@ use yii\bootstrap\Modal;
                         },
                         'view' => function ($url, $model) {
                             $url = Url::to(['lesson/view', 'id' => $model->id, '#' => 'student']);
-                            if ($model->hasGroupInvoice() && $model->isScheduled()) {
+                            if ($model->hasGroupInvoice() && $model->isScheduledOrRescheduled()) {
                                 return Html::a('View Invoice', $url, [
                                     'class' => ['btn-info btn-sm']
                                 ]);

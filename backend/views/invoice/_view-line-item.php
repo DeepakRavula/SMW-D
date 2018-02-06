@@ -90,15 +90,32 @@ use yii\widgets\Pjax;
             'headerOptions' => ['class' => 'text-left'],
             'attribute' => 'description',
         ],
-         [
+        [
             'label' => 'Qty',
             'value' => function ($data) {
                 return $data->unit;
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
-        ],
-        [
+        ]
+    ];
+    if ($model->isProformaInvoice()) {
+        $columns[] = [
+            'label' => 'Payment',
+            'format' => 'currency',
+            'value' => function ($data) {
+                if (!$data->isGroupLesson()) {
+                    $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                } else {
+                    $amount = $data->enrolment->payment ?? 0;
+                }
+                return Yii::$app->formatter->asDecimal($amount);
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+        ];
+    }
+    $columns[] = [
             'label' => 'Price',
             'format' => 'currency',
             'value' => function ($data) {
@@ -106,8 +123,7 @@ use yii\widgets\Pjax;
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
-        ],
-    ];
+        ];
 }?>
 <?php Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
 	<?= GridView::widget([

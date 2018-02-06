@@ -161,7 +161,14 @@ class Course extends \yii\db\ActiveRecord
 
     public function getLessons()
     {
-        return $this->hasMany(Lesson::className(), ['courseId' => 'id']);
+        return $this->hasMany(Lesson::className(), ['courseId' => 'id'])
+                ->onCondition(['lesson.type' => Lesson::TYPE_REGULAR]);
+    }
+    
+    public function getExtraLessons()
+    {
+        return $this->hasMany(Lesson::className(), ['courseId' => 'id'])
+                ->onCondition(['lesson.type' => Lesson::TYPE_EXTRA]);
     }
 
     public function getEnrolments()
@@ -307,10 +314,10 @@ class Course extends \yii\db\ActiveRecord
                 $lessonCount = Lesson::find()
                     ->andWhere([
                         'courseId' => $this->id,
-                        'status' => Lesson::STATUS_SCHEDULED,
                         'DAYNAME(date)' => $dayName,
                         'TIME(date)' => $time
                     ])
+                    ->scheduled()
                     ->count();
                 
                 $checkLimit = $lessonCount < $lessonLimit;

@@ -228,14 +228,16 @@ class InvoiceController extends BaseController
         $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $customerInvoicePayments,
         ]);
-        $session                             = Yii::$app->session;
-        $locationId                          = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId                          = Location::findOne(['slug' => \Yii::$app->location])->id;
         $currentDate                         = (new \DateTime())->format('Y-m-d H:i:s');
         $invoicePayments                     = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                 $query->where(['ip.invoice_id' => $model->id]);
             }])
             ->orderBy(['date' => SORT_DESC]);
+        if ($model->isProFormaInvoice()) {
+            $invoicePayments->notCreditUsed();
+        }
         $invoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $invoicePayments,
         ]);

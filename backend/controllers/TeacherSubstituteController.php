@@ -5,11 +5,11 @@ namespace backend\controllers;
 use Yii;
 use yii\helpers\Url;
 use common\models\Lesson;
-use common\models\LessonHierarchy;
-use common\models\LessonReschedule;
+use common\models\Location;
 use common\models\User;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use common\components\controllers\BaseController;
 use yii\filters\ContentNegotiator;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
@@ -36,7 +36,7 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-			'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
@@ -65,14 +65,13 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
         $programIds = [];
         $newLessonIds = [];
         $draftLessons = Lesson::find()
-                ->select(['id','type'])
+                ->select(['id', 'type'])
                 ->notDeleted()
                 ->notConfirmed()
                 ->andWhere(['createdByUserId' => Yii::$app->user->id])
                 ->all();
 
         if ($draftLessons && !$resolvingConflict) {
-            LessonHierarchy::deleteAll(['childLessonId' => $draftLessons]);
             Lesson::deleteAll(['id' => $draftLessons]);
         }
         $conflicts = [];
@@ -100,10 +99,6 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
                 $newLesson->teacherId = $teacherId;
                 $newLesson->isConfirmed = false;
                 $newLesson->save();
-                $lessonRescheduleModel			    = new LessonReschedule();
-                $lessonRescheduleModel->lessonId	    = $lesson->id;
-                $lessonRescheduleModel->rescheduledLessonId = $newLesson->id;
-                $lessonRescheduleModel->save();
                 $newLessonIds[] = $newLesson->id;
                 $newLesson->setScenario('substitute-teacher');
                 $errors = ActiveForm::validate($newLesson);
@@ -124,7 +119,7 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
                     ->notConfirmed()
                     ->andWhere(['createdByUserId' => Yii::$app->user->id]);
         $teachers = User::find()
-                ->teachers($programIds, \common\models\Location::findOne(['slug' => \Yii::$app->location])->id)
+                ->teachers($programIds, Location::findOne(['slug' => \Yii::$app->location])->id)
                 ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
                 ->notDeleted()
                 ->andWhere(['NOT', ['user.id' => end($lessons)->teacherId]])
@@ -159,24 +154,24 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
     
     public function actionConfirm()
     {
-        $groupLessons=false;
-        $oldLessons = Yii::$app->request->get('ids');
-        foreach ($oldLessons as $lesson) {
-            $oldLesson = Lesson::findOne($lesson);
-            $oldLesson->Cancel();
-        }
+        $oldLessons = Lesson::findAll(Yii::$app->request->get('ids'));
         $lessons = Lesson::find()
                 ->notConfirmed()
                 ->andWhere(['createdByUserId' => Yii::$app->user->id])
                 ->all();
         $lessonIds = [];
-        foreach ($lessons as $lesson) {
+        $groupLessons=false;
+        foreach ($lessons as $i => $lesson) {
+            $oldLesson = $oldLessons[$i];
+            $oldLesson->Cancel();
+            $oldLesson->rescheduleTo($lesson);
             $lessonIds[] = $lesson->id;
-            $lesson->updateAttributes(['isConfirmed' => true]);
             if ($lesson->isGroup()) {
                 $groupLessons = true;
-                $courseModel  = $lesson->course;
+                $courseModel=$lesson->course;
             }
+            $lesson->isConfirmed = true;
+            $lesson->save();
         }
         if ($groupLessons) {
             $response = [

@@ -13,6 +13,7 @@ use common\models\TeacherUnavailability;
 use common\models\User;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
+use yii\widgets\ActiveForm;
 
 /**
  * HolidayController implements the CRUD actions for Holiday model.
@@ -30,7 +31,7 @@ class TeacherUnavailabilityController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['update', 'create', 'delete'],
+                'only' => ['update', 'create', 'delete', 'validate'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -41,7 +42,7 @@ class TeacherUnavailabilityController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'view', 'delete', 'create'],
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'validate'],
                         'roles' => ['manageTeachers'],
                     ],
                 ],
@@ -94,15 +95,33 @@ class TeacherUnavailabilityController extends BaseController
             'teacher' => $teacher
         ]);
         $model->teacherId = $teacher->id;
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return [
-                'status' => true
-            ];
+        if ($model->load(Yii::$app->request->post())) {
+            if($model->save()) {
+                return [
+                    'status' => true
+                ];
+            } else {
+                return [
+                    'status' => false,
+                    'errors' => $model->getErrors(),
+                ];
+            }
         } else {
             return [
                 'status' => true,
                 'data' => $data
             ];
+        }
+    }
+
+    public function actionValidate($id = null) {
+        $model = new TeacherUnavailability();
+        if(!empty($id)) {
+            $model = TeacherUnavailability::findOne(['id' => $id]);
+        } 
+        $request = Yii::$app->request;
+        if ($model->load($request->post())) {
+            return  ActiveForm::validate($model);
         }
     }
 
@@ -117,6 +136,7 @@ class TeacherUnavailabilityController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->dateRange = (new \DateTime($model->fromDate))->format('M d,Y') . ' - ' . (new \DateTime($model->toDate))->format('M d,Y');
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);

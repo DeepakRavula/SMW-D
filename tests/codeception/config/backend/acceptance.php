@@ -1,7 +1,6 @@
 <?php
 
 defined('YII_APP_BASE_PATH') or define('YII_APP_BASE_PATH', dirname(dirname(dirname(__DIR__))));
-
 return \yii\helpers\ArrayHelper::merge(
     require(YII_APP_BASE_PATH.'/common/config/base.php'),
     require(YII_APP_BASE_PATH.'/common/config/web.php'),
