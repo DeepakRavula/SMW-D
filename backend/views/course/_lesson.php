@@ -126,7 +126,6 @@ $(document).on('click', '#new-lesson', function () {
     return false;
 });
 $(document).on('click', '#substitute-teacher-group-lesson', function(){
-alert('success begin');
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(lessonIds)) {
             $('#index-error-notification').html("Choose any lessons to substitute teacher").fadeIn().delay(5000).fadeOut();
@@ -138,7 +137,6 @@ alert('success begin');
                 success: function(response)
                 {
                     if (response.status) {
-                        alert('sucess');
                         $('#teacher-substitute-modal').modal('show');
                         $('#teacher-substitute-modal .modal-dialog').css({'width': '1000px'});
                         $('#teacher-substitute-content').html(response.data);
