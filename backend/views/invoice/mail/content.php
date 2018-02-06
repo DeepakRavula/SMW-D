@@ -122,6 +122,46 @@ $message = !empty($textTemplate->message) ? $textTemplate->message : 'Please fin
                 </tr>
               </tbody>
             </table>
+              Payments:
+                     <?php
+$columns = [
+    'date:date',
+    'paymentMethod.name',
+    [
+        'label' => 'Number',
+        'value' => function ($data) {
+            return $data->reference;
+        },
+        ],
+        [
+            'attribute' => 'amount',
+            'format' => 'currency',
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right'],
+            'value' => function ($data) {
+                return Yii::$app->formatter->asDecimal($data->amount);
+            },
+        ],
+    ]; ?>
+
+<div>
+	<?php yii\widgets\Pjax::begin([
+        'id' => 'invoice-payment-listing',
+        'timeout' => 6000,
+    ]) ?>
+	<?= GridView::widget([
+        'id' => 'payment-grid',
+        'dataProvider' => $invoicePaymentsDataProvider,
+        'columns' => $columns,
+    'summary' => false,
+        'emptyText' => false,
+        'options' => ['class' => 'col-md-12'],
+    'tableOptions' => ['class' => 'table table-condensed'],
+    'headerRowOptions' => ['class' => 'bg-light-gray'],
+    ]);
+    ?>
+<?php \yii\widgets\Pjax::end(); ?>
+</div>
           </div>
         <!-- /.col -->
         </div>
