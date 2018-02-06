@@ -302,7 +302,7 @@ class UserController extends BaseController
             ->between($lessonSearch->fromDate, $lessonSearch->toDate)
             ->orderBy(['date' => SORT_ASC]);
 			if($lessonSearch->summariseReport) {
-				$teacherLessons->groupBy(['lesson.id,DATE(lesson.date)']);
+				$teacherLessons->groupBy(['DATE(lesson.date)']);
 			} 
         return new ActiveDataProvider([
             'query' => $teacherLessons,
