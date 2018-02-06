@@ -72,7 +72,7 @@ echo AdminLteGridView::widget([
             }
             $.ajax({
                 url    : customUrl,
-                type   : 'post',
+                type   : 'get',
                 dataType: "json",
                 data   : $(this).serialize(),
                 success: function(response)
