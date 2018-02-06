@@ -142,11 +142,13 @@ $columns = [
 			'label' => 'Duration(hrs)',
 			'value' => function ($data){
 				$locationId = Yii::$app->session->get('location_id');
-				$lessons = Lesson::find()
-					->location($locationId)
-					->notDeleted()
-					->andWhere(['status' => [Lesson::STATUS_COMPLETED,Lesson::STATUS_SCHEDULED]])
-					->andWhere(['DATE(date)' => (new \DateTime($data->date))->format('Y-m-d'), 'lesson.teacherId' => $data->teacherId])
+				$lessons =Lesson::find()
+            ->innerJoinWith('enrolment')
+            ->location($locationId)
+            ->notDeleted()
+            ->scheduledOrRescheduled()
+            ->isConfirmed()
+            ->andWhere(['DATE(date)' => (new \DateTime($data->date))->format('Y-m-d'), 'lesson.teacherId' => $data->teacherId])
 					->all();
 				$totalDuration = 0;
 				foreach($lessons as $lesson) {
@@ -303,7 +305,7 @@ var refreshcalendar = {
         $("#lessonsearch-summarisereport").on("change", function() {
         var summariesOnly = $(this).is(":checked");
         var dateRange = $('#lessonsearch-daterange').val();
-        var params = $.param({ 'LessonSearch[dateRange]': dateRange,'LessonSearch[summariseReport]':summariesOnly });
+        var params = $.param({ 'LessonSearch[dateRange]': dateRange,'LessonSearch[summariseReport]':summariesOnly | 0 });
         var url = '<?php echo Url::to(['user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $model->id]); ?>&' + params;
         $.pjax.reload({url:url,container:"#teacher-lesson-grid",replace:false,  timeout: 4000});  //Reload GridView
 		var printUrl = '<?= Url::to(['print/teacher-lessons', 'id' => $model->id]); ?>&' + params;
@@ -312,7 +314,7 @@ var refreshcalendar = {
         $("#teacher-lesson-search-form").on("submit", function () {
             var summariesOnly = $(this).is(":checked");
         var dateRange = $('#lessonsearch-daterange').val();
-        var params = $.param({ 'LessonSearch[dateRange]': dateRange,'LessonSearch[summariseReport]': summariesOnly });
+        var params = $.param({ 'LessonSearch[dateRange]': dateRange,'LessonSearch[summariseReport]': summariesOnly | 0 });
             $.pjax.reload({container: "#teacher-lesson-grid", replace: false, timeout: 6000, data: $(this).serialize()});
             var url = '<?= Url::to(['print/teacher-lessons', 'id' => $model->id]); ?>&' + params;
             $('#print-btn').attr('href', url);
