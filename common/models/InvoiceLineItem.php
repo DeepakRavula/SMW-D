@@ -546,7 +546,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $invoiceItemPaymentCycleLesson->save();
         }
         if ($this->isPrivateLesson() || $this->isExtraLesson() ||
-            ($this->isGroupLesson() && $this->invoice->isInvoice())) {
+            $this->isGroupLesson()) {
             $invoiceItemLesson = new InvoiceItemLesson();
             $invoiceItemLesson->lessonId    = $lesson->id;
             $invoiceItemLesson->invoiceLineItemId    = $this->id;
@@ -582,12 +582,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 if ($this->canAddMultiEnrolmentDiscount($lesson)) {
                     $this->addMultiEnrolmentDiscount($lesson->enrolment);
                 }
-            }
-        } else if ($lesson->proFormaLineItem) {
-            $proFormaLineItem = $this->enrolment->proFormaInvoice->lineItem;
-            if ($proFormaLineItem->hasEnrolmentPaymentFrequencyDiscount()) {
-                $pfDiscount = $this->addEnrolmentPaymentFrequencyDiscount(
-                    null, $proFormaLineItem->enrolmentPaymentFrequencyDiscount);
             }
         }
     }

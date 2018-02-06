@@ -23,6 +23,7 @@ use yii\web\Response;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\Note;
+use common\models\Course;
 use common\models\PaymentCycle;
 use common\models\InvoiceReverse;
 use common\models\UserEmail;
@@ -622,7 +623,13 @@ class InvoiceController extends BaseController
             if (!empty($enrolmentId)) {
                 return $this->redirect(['lesson/view', 'id' => $lessonId, '#' => 'student']);
             } else {
-                return $this->redirect(['course/view', 'id' => $lesson->courseId]);
+                $course = Course::findOne($lesson->courseId);
+                if ($course->isExtra()) {
+                    $courseId = $course->regularCourse->id;
+                } else {
+                    $courseId = $lesson->courseId;
+                }
+                return $this->redirect(['course/view', 'id' => $courseId]);
             }
         }
     }

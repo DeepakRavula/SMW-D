@@ -20,6 +20,7 @@ use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 use backend\models\UserForm;
 use yii\base\Model;
+use common\models\CourseExtra;
 use common\models\CourseSchedule;
 use yii\web\Response;
 use common\models\TeacherAvailability;
@@ -88,6 +89,11 @@ class CourseController extends BaseController
      */
     public function actionView($id)
     {
+        $extraCourse = CourseExtra::find()
+                ->where(['courseId' => $id])
+                ->all();
+        $courseId = ArrayHelper::map($extraCourse, 'extraCourseId', 'extraCourseId');
+        $courseId[] = $id;
         $studentDataProvider = new ActiveDataProvider([
             'query' => Student::find()
                 ->notDeleted()
@@ -97,7 +103,7 @@ class CourseController extends BaseController
 
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-                ->andWhere(['courseId' => $id])
+                ->andWhere(['courseId' => $courseId])
                 ->notCanceled()
                 ->isConfirmed()
                 ->notDeleted()

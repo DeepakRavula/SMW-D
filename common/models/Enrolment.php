@@ -285,7 +285,10 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function getLessons()
     {
-        return $this->hasMany(Lesson::className(), ['courseId' => 'courseId']);
+        return $this->hasMany(Lesson::className(), ['courseId' => 'courseId'])
+                ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
+                    'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                        Lesson::STATUS_UNSCHEDULED]]);
     }
 
     public function getFirstPaymentCycle()
@@ -308,10 +311,10 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getCourseCount()
     {
         return Lesson::find()
-                ->regular()
                 ->isConfirmed()
                 ->notDeleted()
-                ->where(['courseId' => $this->courseId])
+                ->notCanceled()
+                ->andWhere(['courseId' => $this->courseId])
                 ->count('id');
     }
 

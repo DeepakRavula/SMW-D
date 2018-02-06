@@ -2,6 +2,7 @@
 
 use common\components\select2\Select2;
 use common\models\User;
+use common\models\LocationAvailability;
 use common\models\Location;
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
@@ -96,7 +97,6 @@ use kartik\time\TimePicker;
 <?php ActiveForm::end(); ?>
 </div>
 <?php
-    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])

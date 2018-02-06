@@ -152,6 +152,12 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasOne(Enrolment::className(), ['courseId' => 'id']);
     }
     
+    public function getRegularCourse()
+    {
+        return $this->hasOne(Course::className(), ['id' => 'courseId'])
+                ->viaTable('create_extra', ['extraCourseId' => 'id']);
+    }
+    
     public function getLocation()
     {
         return $this->hasOne(Location::className(), ['id' => 'locationId']);
@@ -159,7 +165,10 @@ class Course extends \yii\db\ActiveRecord
 
     public function getLessons()
     {
-        return $this->hasMany(Lesson::className(), ['courseId' => 'id']);
+        return $this->hasMany(Lesson::className(), ['courseId' => 'id'])
+                ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
+                    'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                        Lesson::STATUS_UNSCHEDULED]]);
     }
     
     public function getExtraLessons()
@@ -397,5 +406,13 @@ class Course extends \yii\db\ActiveRecord
     public function isExtra()
     {
         return (int) $this->type === (int) self::TYPE_EXTRA;
+    }
+    
+    public function extendTo($course)
+    {
+        $courseExtend = new CourseExtra();
+        $courseExtend->courseId = $this->id;
+        $courseExtend->extraCourseId = $course->id;
+        return $courseExtend->save();
     }
 }
