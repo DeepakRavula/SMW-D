@@ -8,7 +8,7 @@ use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 use common\models\UserEmail;
 use common\models\EmailTemaplte;
-
+use dosamigos\ckeditor\CKEditor;
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -47,7 +47,22 @@ use common\models\EmailTemaplte;
     </div>
 	<div class="row">
         <div class="col-lg-12">
-			<?php echo $form->field($model, 'subject')->textInput(['value' => $subject]) ?>
+            <?php $model->subject = $subject ?>
+            <?php
+            echo $form->field($model, 'subject')->widget(
+                Widget::className(),
+                [
+                'plugins' => ['table'],
+                'options' => [
+                    'minHeight' => 150,
+                    'maxHeight' => 150,
+                    'buttonSource' => true,
+                    'convertDivs' => false,
+                    'removeEmptyTags' => false,
+                ]
+                ]
+            );
+            ?>
         </div>
 	</div>
 	<div class="row">

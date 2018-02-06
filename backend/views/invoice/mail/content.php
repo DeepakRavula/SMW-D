@@ -126,5 +126,5 @@ Dear Customer,<br>
     <?php echo $model->reminderNotes; ?>
 </div>
 <br>
-<?= $emailTemplate->footer ?? 'Thank you
+<?= $emailTemplate->footer ?? 'Thank you 
 Arcadia Academy of Music Team.'; ?>
