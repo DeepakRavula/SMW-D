@@ -10,38 +10,55 @@ Dear Customer,<br>
 $message = !empty($textTemplate->message) ? $textTemplate->message : 'Please find the invoice below:';
 ?>
 	<?= $message; ?><Br>
-        <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
+        <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); 
+            $columns = [
+        [   'label' => 'Description',
+            'contentOptions' => ['style' => 'width:250px;'],
+            'value' => function ($data) {
+              return $data->description;
+            },
+        ],
+        [
+            'label' => 'Qty',
+            'value' => function ($data) {
+                return $data->unit;
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+        ]
+    ];
+    if ($model->isProformaInvoice()) {
+        $columns[] = [
+            'label' => 'Payment',
+            'format' => 'currency',
+            'value' => function ($data) {
+                if (!$data->isGroupLesson()) {
+                    $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                } else {
+                    $amount = $data->enrolment->payment ?? 0;
+                }
+                return Yii::$app->formatter->asDecimal($amount);
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+        ];
+    }
+    $columns[] = [
+            'label' => 'Price',
+            'format' => 'currency',
+            'value' => function ($data) {
+                return Yii::$app->formatter->asDecimal($data->itemTotal);
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+        ];?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
             'tableOptions' => ['class' => 'table table-bordered m-0', 'style'=>'width:100%; text-align:left'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
             'summary' => false,
             'emptyText' => false,
-            'columns' => [
-                [
-                    'label' => 'Description',
-                    'contentOptions' => ['style' => 'width:250px;'],
-                    'value' => function ($data) {
-                        return $data->description;
-                    },
-                ],
-                [
-                    'attribute' => 'unit',
-                    'label' => 'Qty',
-                    'headerOptions' => ['class' => 'text-center'],
-                    'contentOptions' => ['class' => 'text-center', 'style' => 'width:50px;'],
-                    'enableSorting' => false,
-                ],
-                [
-                    'label' => 'Price',
-                    'format' => 'currency',
-                    'headerOptions' => ['class' => 'text-right'],
-                    'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
-                    'value' => function ($data) {
-                        return $data->itemTotal;
-                    },
-                ],
-            ],
+            'columns' => $columns,
         ]); ?>
     <?php yii\widgets\Pjax::end(); ?>
     <div class="row">
