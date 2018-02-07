@@ -55,20 +55,31 @@ class LessonReschedule extends Model
             if ($oldLesson->hasLessonCredit($oldLesson->enrolment->id)) {
                 $rescheduledLesson->addPayment($oldLesson, $oldLesson->getLessonCreditAmount($oldLesson->enrolment->id));
             }
-            $paymentCycleLesson = new PaymentCycleLesson();
-            $oldPaymentCycleLesson = PaymentCycleLesson::findOne(['lessonId' => $this->lessonId]);
-            if ($oldPaymentCycleLesson) {
-                $paymentCycleLesson->paymentCycleId = $oldPaymentCycleLesson->paymentCycleId;
-                $paymentCycleLesson->lessonId = $this->rescheduledLessonId;
-                $paymentCycleLesson->save();
-            }
-            if ($oldLesson->proFormaLineItem) {
-                $lineItemPaymentCycleLesson = $oldLesson->proFormaLineItem->lineItemPaymentCycleLesson;
-                $lineItemPaymentCycleLesson->paymentCycleLessonId = $paymentCycleLesson->id;
-                $lineItemPaymentCycleLesson->save();
+            if ($oldLesson->isExtra() && $oldLesson->proFormaLineItem) {
+                $lineItemLesson = $oldLesson->proFormaLineItem->lineItemLesson;
+                $lineItemLesson->lessonId = $this->rescheduledLessonId;
+                $lineItemLesson->save();
+            } else {
+                $paymentCycleLesson = new PaymentCycleLesson();
+                $oldPaymentCycleLesson = PaymentCycleLesson::findOne(['lessonId' => $this->lessonId]);
+                if ($oldPaymentCycleLesson) {
+                    $paymentCycleLesson->paymentCycleId = $oldPaymentCycleLesson->paymentCycleId;
+                    $paymentCycleLesson->lessonId = $this->rescheduledLessonId;
+                    $paymentCycleLesson->save();
+                    if ($oldLesson->proFormaLineItem) {
+                        $lineItemPaymentCycleLesson = $oldLesson->proFormaLineItem->lineItemPaymentCycleLesson;
+                        $lineItemPaymentCycleLesson->paymentCycleLessonId = $paymentCycleLesson->id;
+                        $lineItemPaymentCycleLesson->save();
+                    }
+                }
             }
         } else {
             foreach ($oldLesson->course->enrolments as $enrolment) {
+                if ($oldLesson->hasGroupProFormaLineItem($enrolment)) {
+                    $pfli = $oldLesson->getGroupProFormaLineItem($enrolment);
+                    $pfli->lineItemLesson->lessonId = $this->rescheduledLessonId;
+                    $pfli->lineItemLesson->save();
+                }
                 if ($oldLesson->hasLessonCredit($enrolment->id)) {
                     $rescheduledLesson->addPayment($oldLesson, $oldLesson->getLessonCreditAmount($enrolment->id));
                 }

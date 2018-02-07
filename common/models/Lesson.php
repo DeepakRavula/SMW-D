@@ -316,11 +316,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getPaymentCycle()
     {
-        $model = $this;
-        if ($this->rootLesson) {
-            $model = $this->rootLesson;
-        }
-        return $model->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
+        return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
                     ->via('paymentCycleLesson');
     }
 
@@ -388,13 +384,29 @@ class Lesson extends \yii\db\ActiveRecord
  
     public function getProFormaInvoice()
     {
-        $model = $this;
-        if ($this->rootLesson) {
-            $model = $this->rootLesson;
-        }
-        return $model->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
             ->via('proFormaLineItems')
                 ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
+    }
+    
+    public function getGroupProFormaLineItem($enrolment)
+    {
+        $lessonId = $this->id;
+        $enrolmentId = $enrolment->id;
+        return InvoiceLineItem::find()
+                ->notDeleted()
+                ->joinWith(['lineItemLesson' => function ($query) use ($lessonId) {
+                    $query->andWhere(['lessonId' => $lessonId]);
+                }])
+                ->joinWith(['lineItemEnrolment' => function ($query) use ($enrolmentId) {
+                    $query->andWhere(['invoice_item_enrolment.enrolmentId' => $enrolmentId]);
+                }])
+                ->one();
+    }
+    
+    public function hasGroupProFormaLineItem($enrolment)
+    {
+        return !empty($this->getGroupProFormaLineItem($enrolment));
     }
 
     public function getLessonReschedule()
@@ -429,11 +441,6 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(LessonHierarchy::className(), ['childLessonId' => 'id']);
     }
     
-    public function getBulkRescheduleLesson()
-    {
-        return $this->hasOne(BulkRescheduleLesson::className(), ['lessonId' => 'id']);
-    }
-
     public function getInvoiceLineItem()
     {
         $lessonId = $this->id;
@@ -485,9 +492,10 @@ class Lesson extends \yii\db\ActiveRecord
         } elseif ($this->isGroup()) {
             $class = 'group-lesson';
         }
-        if ($this->rootLesson && empty($this->colorCode) &&(!($this->isBulkRescheduled()))) {
-            $class = 'lesson-rescheduled';
-            if ($this->rootLesson->teacherId !== $this->teacherId) {
+        if ($this->rootLesson && empty($this->colorCode)) {
+            if ($this->isRescheduled()) {
+                $class = 'lesson-rescheduled';
+            } elseif ($this->rootLesson->teacherId !== $this->teacherId) {
                 $class = 'teacher-substituted';
             }
         }
@@ -497,16 +505,11 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getProFormaLineItem()
     {
-        $model = $this;
-        if ($this->rootLesson) {
-            $model = $this->rootLesson;
-        }
-        
         if ($this->hasProFormaInvoice()) {
-            $paymentCycleLessonId = $model->paymentCycleLesson->id;
+            $paymentCycleLessonId = $this->paymentCycleLesson->id;
             return InvoiceLineItem::find()
                     ->notDeleted()
-                    ->andWhere(['invoice_id' => $model->proFormaInvoice->id])
+                    ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
                     ->joinWith(['lineItemPaymentCycleLesson' => function ($query) use ($paymentCycleLessonId) {
                         $query->where(['paymentCycleLessonId' => $paymentCycleLessonId]);
@@ -528,17 +531,15 @@ class Lesson extends \yii\db\ActiveRecord
                     $status = 'Completed';
                 }
             break;
-            case self::STATUS_COMPLETED:
-                $status = 'Completed';
-                if ($this->isCompleted()) {
-                    $status = 'Completed';
-                }
-            break;
             case self::STATUS_CANCELED:
                 $status = 'Canceled';
             break;
             case self::STATUS_RESCHEDULED:
-                $status = 'Rescheduled';
+                if (!$this->isCompleted()) {
+                    $status = 'Rescheduled';
+                } else {
+                    $status = 'Completed';
+                }
             break;
             case self::STATUS_UNSCHEDULED:
                 $status = 'Unscheduled';
@@ -856,11 +857,6 @@ class Lesson extends \yii\db\ActiveRecord
         return ($this->isCompleted() && $this->isScheduledOrRescheduled()) || $this->isExpired() || (!$this->isPresent);
     }
 
-    public function isBulkRescheduled()
-    {
-        return $this->bulkRescheduleLesson;
-    }
-    
     public function unschedule()
     {
         $this->status = self::STATUS_UNSCHEDULED;

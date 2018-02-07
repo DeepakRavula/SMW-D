@@ -23,6 +23,8 @@ class m180206_132347_create_course_extra extends Migration
                 ]
             );
         }
+        $this->dropTable('bulk_reschedule');
+        $this->dropTable('bulk_reschedule_lesson');
     }
 
     /**

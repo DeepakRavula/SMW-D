@@ -29,7 +29,7 @@ class ExtraLesson extends Lesson
         $course->studentId = $this->studentId;
         $hasEnroled = $course->checkExtraCourseExist();
         if ($hasEnroled) {
-            $course = $course->getEnroledCourse();
+            $course = $course->getExtraCourse();
         } else {
             $course = $this->createCourse();
             $course->studentId = $this->studentId;
@@ -97,11 +97,7 @@ class ExtraLesson extends Lesson
     
     public function getProFormaLineItem()
     {
-        $model = $this;
-        if ($this->rootLesson) {
-            $model = $this->rootLesson;
-        }
-        $lessonId = $model->id;
+        $lessonId = $this->id;
         
         if ($this->hasProFormaInvoice()) {
             return InvoiceLineItem::find()
@@ -115,6 +111,13 @@ class ExtraLesson extends Lesson
         } else {
             return null;
         }
+    }
+    
+    public function getProFormaInvoice()
+    {
+        return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
+            ->via('proFormaLineItems')
+                ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
     }
     
     public function getEnrolment()

@@ -127,7 +127,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
 
 <script type="text/javascript">
     var calendar = {
-        load: function (events, availableHours, date) {
+        load: function (params, availableHours, date) {
             $('#lesson-edit-calendar').fullCalendar('destroy');
             $('#lesson-edit-calendar').fullCalendar({
                 schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -159,7 +159,13 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                 businessHours: availableHours,
                 overlapEvent: false,
                 overlapEventsSeparate: true,
-                events: events,
+                events: {
+                    url: '<?= Url::to(['teacher-availability/show-lesson-event']) ?>?' + params,
+                    type: 'GET',
+                    error: function() {
+                        $("#calendar").fullCalendar("refetchEvents");
+                    }
+                },
                 select: function (start, end, allDay) {
                     $('#lesson-date').val(moment(start).format('DD-MM-YYYY hh:mm A')).trigger('change');
                     $('#lesson-edit-calendar').fullCalendar('removeEvents', 'newEnrolment');
@@ -201,7 +207,9 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                     events = response.events;
                     availableHours = response.availableHours;
                     $('#loadingspinner').hide();
-                    calendar.load(events,availableHours,date);
+                    var params = $.param({ teacherId: teacherId,
+                        lessonId: <?= $model->id; ?> });
+                    calendar.load(params,availableHours,date);
                 }
             });
         }
