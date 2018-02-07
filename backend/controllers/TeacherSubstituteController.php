@@ -9,16 +9,15 @@ use common\models\Location;
 use common\models\User;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
 use yii\filters\ContentNegotiator;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
-
+use yii\filters\AccessControl;
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
-class TeacherSubstituteController extends BaseController
+class TeacherSubstituteController extends \common\components\controllers\BaseController
 {
     public function behaviors()
     {
@@ -57,8 +56,10 @@ class TeacherSubstituteController extends BaseController
      */
     public function actionIndex()
     {
+
         $lessonIds = Yii::$app->request->get('ids');
         $teacherId = Yii::$app->request->get('teacherId');
+
         $lessons = Lesson::findAll($lessonIds);
         $resolvingConflict = Yii::$app->request->get('resolvingConflicts');
         $programIds = [];
@@ -69,6 +70,7 @@ class TeacherSubstituteController extends BaseController
                 ->notConfirmed()
                 ->andWhere(['createdByUserId' => Yii::$app->user->id])
                 ->all();
+
         if ($draftLessons && !$resolvingConflict) {
             Lesson::deleteAll(['id' => $draftLessons]);
         }
@@ -166,10 +168,19 @@ class TeacherSubstituteController extends BaseController
             $lesson->isConfirmed = true;
             $lesson->save();
         }
+        if(end($lessons)->isGroup())
+        {
+            $courseModel=end($lessons)->course;
+           $response = [
+                'status' => true,
+                'url' => Url::to(['/course/view', 'id' => $courseModel->id]),
+            ];
+        } else {
         $response = [
             'status' => true,
             'url' => Url::to(['/lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[ids]' => $lessonIds])
         ];
+ }
         return $response;
     }
 }

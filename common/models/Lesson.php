@@ -3,7 +3,6 @@
 namespace common\models;
 
 use Yii;
-use common\models\lesson\BulkRescheduleLesson;
 use common\models\discount\EnrolmentDiscount;
 use yii\helpers\ArrayHelper;
 use yii\behaviors\BlameableBehavior;
@@ -388,7 +387,7 @@ class Lesson extends \yii\db\ActiveRecord
             ->via('proFormaLineItems')
                 ->onCondition(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
     }
-    
+
     public function getGroupProFormaLineItem($enrolment)
     {
         $lessonId = $this->id;
@@ -931,5 +930,4 @@ class Lesson extends \yii\db\ActiveRecord
         $lessonRescheduleModel->rescheduledLessonId = $lesson->id;
         return $lessonRescheduleModel->save();
     }
-
 }

@@ -55,6 +55,13 @@ class LessonReschedule extends Model
             if ($oldLesson->hasLessonCredit($oldLesson->enrolment->id)) {
                 $rescheduledLesson->addPayment($oldLesson, $oldLesson->getLessonCreditAmount($oldLesson->enrolment->id));
             }
+            $paymentCycleLesson = new PaymentCycleLesson();
+            $oldPaymentCycleLesson = PaymentCycleLesson::findOne(['lessonId' => $this->lessonId]);
+            if ($oldPaymentCycleLesson) {
+                $paymentCycleLesson->paymentCycleId = $oldPaymentCycleLesson->paymentCycleId;
+                $paymentCycleLesson->lessonId = $this->rescheduledLessonId;
+                $paymentCycleLesson->save();
+            }
             if ($oldLesson->isExtra() && $oldLesson->proFormaLineItem) {
                 $lineItemLesson = $oldLesson->proFormaLineItem->lineItemLesson;
                 $lineItemLesson->lessonId = $this->rescheduledLessonId;
