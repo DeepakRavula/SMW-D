@@ -142,7 +142,12 @@ $message = !empty($textTemplate->message) ? $textTemplate->message : 'Please fin
               Payments:
                      <?php
 $columns = [
-    'date:date',
+    [
+        'label' => 'Date',
+        'value' => function ($data) {
+            return Yii::$app->formatter->asDate($data->date);
+        },
+        ],
     'paymentMethod.name',
     [
         'label' => 'Number',
@@ -151,7 +156,7 @@ $columns = [
         },
         ],
         [
-            'attribute' => 'amount',
+            'label' =>'Amount',
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
