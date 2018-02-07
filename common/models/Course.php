@@ -174,7 +174,9 @@ class Course extends \yii\db\ActiveRecord
     public function getExtraLessons()
     {
         return $this->hasMany(Lesson::className(), ['courseId' => 'id'])
-                ->onCondition(['lesson.type' => Lesson::TYPE_EXTRA]);
+                ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
+                    'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                        Lesson::STATUS_UNSCHEDULED], 'lesson.type' => Lesson::TYPE_EXTRA]);
     }
 
     public function getEnrolments()

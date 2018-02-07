@@ -51,10 +51,10 @@ class LessonReschedule extends Model
         $oldLesson = Lesson::findOne($this->lessonId);
         $rescheduledLesson = Lesson::findOne($this->rescheduledLessonId);
         $oldLesson->makeAsChild($rescheduledLesson);
-        if ($oldLesson->hasLessonCredit($oldLesson->enrolment->id)) {
-            $rescheduledLesson->addPayment($oldLesson, $oldLesson->getLessonCreditAmount($oldLesson->enrolment->id));
-        }
         if ($oldLesson->isPrivate()) {
+            if ($oldLesson->hasLessonCredit($oldLesson->enrolment->id)) {
+                $rescheduledLesson->addPayment($oldLesson, $oldLesson->getLessonCreditAmount($oldLesson->enrolment->id));
+            }
             $paymentCycleLesson = new PaymentCycleLesson();
             $oldPaymentCycleLesson = PaymentCycleLesson::findOne(['lessonId' => $this->lessonId]);
             if ($oldPaymentCycleLesson) {
@@ -67,10 +67,12 @@ class LessonReschedule extends Model
                 $lineItemPaymentCycleLesson->paymentCycleLessonId = $paymentCycleLesson->id;
                 $lineItemPaymentCycleLesson->save();
             }
-        }
-        if ($oldLesson->invoiceLineItem) {
-            $oldLesson->invoiceLineItem->lineItemLesson->lessonId = $this->rescheduledLessonId;
-            $oldLesson->invoiceLineItem->lineItemLesson->save();
+        } else {
+            foreach ($oldLesson->course->enrolments as $enrolment) {
+                if ($oldLesson->hasLessonCredit($enrolment->id)) {
+                    $rescheduledLesson->addPayment($oldLesson, $oldLesson->getLessonCreditAmount($enrolment->id));
+                }
+            }
         }
         return true;
     }
