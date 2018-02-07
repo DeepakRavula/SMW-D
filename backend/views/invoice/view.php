@@ -74,6 +74,8 @@ $invoiceLineItemsDataProvider = new ActiveDataProvider([
 $content = $this->render('mail/content', [
         'model' => $model,
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+        'invoicePayments' => $invoicePayments,
+        'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
     ]);
 ?>
 <?php
