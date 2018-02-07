@@ -712,8 +712,6 @@ class LessonController extends BaseController
         if ($model->load(Yii::$app->request->post())) {
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $model->save();
-            $parentLesson = $model->parent()->one();
-            $parentLesson->rescheduleTo($model);
             return [
                 'status' => true
             ];

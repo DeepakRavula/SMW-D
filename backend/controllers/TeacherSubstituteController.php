@@ -160,21 +160,18 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
                 ->andWhere(['createdByUserId' => Yii::$app->user->id])
                 ->all();
         $lessonIds = [];
-        $groupLessons=false;
         foreach ($lessons as $i => $lesson) {
             $oldLesson = $oldLessons[$i];
             $oldLesson->Cancel();
             $oldLesson->rescheduleTo($lesson);
             $lessonIds[] = $lesson->id;
-            if ($lesson->isGroup()) {
-                $groupLessons = true;
-                $courseModel=$lesson->course;
-            }
             $lesson->isConfirmed = true;
             $lesson->save();
         }
-        if ($groupLessons) {
-            $response = [
+        if(end($lessons)->isGroup())
+        {
+            $courseModel=end($lessons)->course;
+           $response = [
                 'status' => true,
                 'url' => Url::to(['/course/view', 'id' => $courseModel->id]),
             ];
