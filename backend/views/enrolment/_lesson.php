@@ -56,7 +56,6 @@ use common\models\EmailTemplate;
              ],
     ]);
     $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_COURSE]);
-    $body = null;
     $body = $emailTemplate->header ?? 'Please find the lesson schedule for the program you enrolled on ' . Yii::$app->formatter->asDate($model->course->startDate) ;
     $content = $this->render('mail/content', [
         'toName' => $model->student->customer->publicIdentity,

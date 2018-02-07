@@ -77,8 +77,8 @@ class EmailTemplateController extends \common\components\controllers\BaseControl
         $data  = $this->renderAjax('_form', [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post())) {
-            if($model->save()) {
+        if (Yii::$app->request->post()) {
+            if($model->load(Yii::$app->request->post()) && $model->save()) {
                 return [
                     'status' => true
                 ];
@@ -112,11 +112,20 @@ class EmailTemplateController extends \common\components\controllers\BaseControl
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if (Yii::$app->request->post()) {
+            if($model->load(Yii::$app->request->post()) && $model->save()) {
+                return [
+                    'status' => true
+                ];
+            } 
+        else {
             return [
-                'status' => true
-            ];
-        } else {
+                    'status' => false,
+                    'errors' =>$model->getErrors()
+                ];
+            }
+        }
+            else {
             return [
                 'status' => true,
                 'data' => $data
