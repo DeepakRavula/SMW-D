@@ -46,6 +46,12 @@ $columns = [
             return $data->reference;
         },
         ],
+    [
+        'label' => 'Notes',
+        'value' => function ($data) {
+            return $data->notes;
+        },
+        ],
         [
             'attribute' => 'amount',
             'format' => 'currency',

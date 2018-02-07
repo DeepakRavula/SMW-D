@@ -50,7 +50,7 @@ use common\models\PaymentMethod;
             <?= $form->field($model, 'reference')->textInput()->label($label); ?>
         </div>
    </div>   
-    <div class="row">    
+    <div class="row">  
         <div class="clearfix"></div>
 	   <div class="col-md-12">
            <div class="pull-right">
