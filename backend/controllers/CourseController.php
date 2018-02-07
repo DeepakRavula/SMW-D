@@ -322,12 +322,13 @@ class CourseController extends BaseController
             ->where(['enrolment.studentId' => $studentId])
             ->isConfirmed();
         $groupCourses = Course::find()
+            ->regular()
             ->joinWith(['program' => function ($query) {
                 $query->group();
             }])
-            ->where(['NOT IN', 'course.id', $groupEnrolments])
+            ->andWhere(['NOT IN', 'course.id', $groupEnrolments])
             ->andWhere(['locationId' => $locationId])
-           ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
+            ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
             ->confirmed();
         if (!empty($courseName)) {
             $groupCourses->andWhere(['LIKE', 'program.name', $courseName]);
