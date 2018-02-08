@@ -130,10 +130,12 @@ class EnrolmentController extends BaseController
     public function actionGroup($courseId, $studentId)
     {
         $course = Course::findOne($courseId);
-        if ($course->hasExtraLesson()) {
-            $course->studentId = $studentId;
-            $enrolment = $course->createExtraLessonEnrolment();
-            $enrolment->createProFormaInvoice();
+        if ($course->hasExtraCourse()) {
+            foreach ($course->extraCourses as $extraCourse) {
+                $extraCourse->studentId = $studentId;
+                $enrolment = $extraCourse->createExtraLessonEnrolment();
+                $enrolment->createProFormaInvoice();
+            }
         }
         $enrolmentModel = new Enrolment();
         $enrolmentModel->courseId = $courseId;
@@ -224,9 +226,9 @@ class EnrolmentController extends BaseController
         $model = $this->findModel($id);
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
-            foreach ($model->enrolmentProgramRates as $key => $enrolmentProgramRate) {
-                $enrolmentProgramRate->load($post['EnrolmentProgramRate'][$key], '');
-                $enrolmentProgramRate->save();
+            foreach ($model->courseProgramRates as $key => $courseProgramRate) {
+                $courseProgramRate->load($post['CourseProgramRate'][$key], '');
+                $courseProgramRate->save();
             }
             $oldAttributes = $model->getOldAttributes();
             if ($oldAttributes['isAutoRenew']!=$model->isAutoRenew) {

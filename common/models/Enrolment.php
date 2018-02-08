@@ -150,14 +150,14 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(Vacation::className(), ['studentId' => 'studentId']);
     }
     
-    public function getEnrolmentProgramRate()
+    public function getCourseProgramRate()
     {
-        return $this->hasOne(EnrolmentProgramRate::className(), ['enrolmentId' => 'id']);
+        return $this->hasOne(CourseProgramRate::className(), ['courseId' => 'courseId']);
     }
     
-    public function getEnrolmentProgramRates()
+    public function getCourseProgramRates()
     {
-        return $this->hasMany(EnrolmentProgramRate::className(), ['enrolmentId' => 'id']);
+        return $this->hasMany(CourseProgramRate::className(), ['courseId' => 'courseId']);
     }
     
     public function getProgram()
@@ -410,15 +410,6 @@ class Enrolment extends \yii\db\ActiveRecord
     }
     public function afterSave($insert, $changedAttributes)
     {
-        if ($insert) {
-            $enrolmentProgramRate = new EnrolmentProgramRate();
-            $enrolmentProgramRate->enrolmentId = $this->id;
-            $enrolmentProgramRate->startDate  = (new Carbon($this->course->startDate))->format('Y-m-d');
-            $enrolmentProgramRate->endDate = (new Carbon($this->course->endDate))->format('Y-m-d');
-            $enrolmentProgramRate->programRate = $this->course->program->rate;
-            $enrolmentProgramRate->applyFullDiscount = false;
-            $enrolmentProgramRate->save();
-        }
         if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate))
             || (!$insert) || $this->isExtra()) {
             return parent::afterSave($insert, $changedAttributes);

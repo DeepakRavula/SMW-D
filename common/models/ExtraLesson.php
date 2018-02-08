@@ -55,7 +55,7 @@ class ExtraLesson extends Lesson
         foreach ($enrolments as $enrolment) {
             $course->studentId = $enrolment->studentId;
             $newEnrolment = $course->createExtraLessonEnrolment();
-            $newEnrolment->enrolmentProgramRate->updateAttributes([
+            $newEnrolment->courseProgramRate->updateAttributes([
                 'programRate' => $this->programRate,
                 'applyFullDiscount' => $this->applyFullDiscount
             ]);

@@ -158,6 +158,12 @@ class Course extends \yii\db\ActiveRecord
                 ->viaTable('create_extra', ['extraCourseId' => 'id']);
     }
     
+    public function getExtraCourses()
+    {
+        return $this->hasMany(Course::className(), ['id' => 'extraCourseId'])
+                ->viaTable('course_extra', ['courseId' => 'id']);
+    }
+    
     public function getLocation()
     {
         return $this->hasOne(Location::className(), ['id' => 'locationId']);
@@ -228,6 +234,14 @@ class Course extends \yii\db\ActiveRecord
     {
         if (!$insert) {
             return parent::afterSave($insert, $changedAttributes);
+        } else {
+            $courseProgramRate = new CourseProgramRate();
+            $courseProgramRate->courseId = $this->id;
+            $courseProgramRate->startDate  = (new Carbon($this->startDate))->format('Y-m-d');
+            $courseProgramRate->endDate = (new Carbon($this->endDate))->format('Y-m-d');
+            $courseProgramRate->programRate = $this->program->rate;
+            $courseProgramRate->applyFullDiscount = false;
+            $courseProgramRate->save();
         }
         if ((int) $this->program->isGroup() && !$this->isExtra()) {
             $groupCourse = new CourseGroup();
@@ -416,5 +430,10 @@ class Course extends \yii\db\ActiveRecord
         $courseExtend->courseId = $this->id;
         $courseExtend->extraCourseId = $course->id;
         return $courseExtend->save();
+    }
+    
+    public function hasExtraCourse()
+    {
+        return !empty($this->extraCourses);
     }
 }
