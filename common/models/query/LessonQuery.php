@@ -150,7 +150,7 @@ class LessonQuery extends \yii\db\ActiveQuery
         $query = Lesson::find()
             ->from(['completed_lesson' => $completedLessons])
             ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'completed_lesson.id = invoiced_lesson.id')
-            ->where(['invoiced_lesson.id' => null]);
+            ->andWhere(['invoiced_lesson.id' => null]);
 
         return $query;
     }
@@ -160,7 +160,7 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->joinWith(['invoiceItemLessons' => function ($query) {
             $query->joinWith(['invoiceLineItem' => function ($query) {
                 $query->joinWith(['invoice' => function ($query) {
-                    $query->where(['not', ['invoice.id' => null]])
+                    $query->andWhere(['not', ['invoice.id' => null]])
                         ->andWhere(['invoice.isDeleted' => false,
                             'invoice.type' => Invoice::TYPE_INVOICE]);
                 }]);
