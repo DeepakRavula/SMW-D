@@ -15,7 +15,7 @@ $this->title = 'Cities';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 
-$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), '#', ['class' => 'add-city btn btn-primary btn-sm']);
+$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10 aria-hidden="true"></i>'), '#', ['class' => 'add-city btn-sm']);
 $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
 <?php Modal::begin([
@@ -74,6 +74,7 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
                     if(response.status)
                     {
                         $('#city-content').html(response.data);
+                        $('#city-modal .modal-dialog').css({'width': '400px'});
                         $('#city-modal').modal('show');
                     }
                 }
