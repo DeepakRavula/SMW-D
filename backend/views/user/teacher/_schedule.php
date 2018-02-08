@@ -44,7 +44,8 @@ use common\models\Location;
     $lessons = [];
     $lessons = Lesson::find()
         ->joinWith(['course' => function ($query) use ($locationId) {
-            $query->andWhere(['locationId' => $locationId]);
+            $query->andWhere(['locationId' => $locationId])
+                    ->confirmed();
         }])
         ->where(['lesson.teacherId' => $teacherId])
         ->scheduledOrRescheduled()

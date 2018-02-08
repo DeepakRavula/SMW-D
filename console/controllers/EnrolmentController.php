@@ -8,7 +8,7 @@ use common\models\User;
 use common\models\Enrolment;
 use yii\console\Controller;
 use common\models\Course;
-use common\models\EnrolmentProgramRate;
+use common\models\CourseProgramRate;
 
 class EnrolmentController extends Controller
 {
@@ -35,12 +35,12 @@ class EnrolmentController extends Controller
             $lastPaymentCycleMonthCount = $lastPaymentCycleEndDate->diffInMonths($lastPaymentCycleStartDate);
             $renewalStartDate = (new Carbon($course->endDate))->addDays(1);
             $renewalEndDate = (new Carbon($course->endDate))->addMonths(11)->endOfMonth();
-            $enrolmentProgramRate = new EnrolmentProgramRate();
-            $enrolmentProgramRate->enrolmentId = $course->enrolment->id;
-            $enrolmentProgramRate->startDate  = $renewalStartDate->format('Y-m-d');
-            $enrolmentProgramRate->endDate = $renewalEndDate->format('Y-m-d');
-            $enrolmentProgramRate->programRate = $course->program->rate;
-            $enrolmentProgramRate->save();
+            $courseProgramRate = new CourseProgramRate();
+            $courseProgramRate->courseId = $course->id;
+            $courseProgramRate->startDate  = $renewalStartDate->format('Y-m-d');
+            $courseProgramRate->endDate = $renewalEndDate->format('Y-m-d');
+            $courseProgramRate->programRate = $course->program->rate;
+            $courseProgramRate->save();
             $course->updateAttributes(['endDate' => $renewalEndDate]);
             $interval = new \DateInterval('P1D');
             $start = new \DateTime($renewalStartDate);            

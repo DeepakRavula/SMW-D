@@ -1,17 +1,15 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use common\models\Location;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use common\models\Student;
 use common\models\UserProfile;
 use common\components\gridView\KartikGridView;
-use common\models\Enrolment;
 use yii\bootstrap\Modal;
 use common\models\LocationAvailability;
-use kartik\daterange\DateRangePicker;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
@@ -44,7 +42,7 @@ $this->params['show-all'] = $this->render('_button', [
                 ->joinWith(['course' => function ($query) {
                     $query->joinWith(['enrolment'])
                         ->confirmed()
-                        ->location(\common\models\Location::findOne(['slug' => \Yii::$app->location])->id);
+                        ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
                 }])
                 ->asArray()->all(),
                     'id',
@@ -69,7 +67,7 @@ $this->params['show-all'] = $this->render('_button', [
                 ->joinWith(['enrolment' => function ($query) {
                     $query->joinWith(['course' => function ($query) {
                         $query->confirmed()
-                                ->location(\common\models\Location::findOne(['slug' => \Yii::$app->location])->id);
+                                ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
                     }]);
                 }])
                 ->asArray()->all(), 'id', 'first_name'),
@@ -95,7 +93,7 @@ $this->params['show-all'] = $this->render('_button', [
                 ->joinWith(['courses' => function ($query) {
                     $query->joinWith('enrolment')
                         ->confirmed()
-                        ->location(\common\models\Location::findOne(['slug' => \Yii::$app->location])->id);
+                        ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
                 }])
                 ->asArray()->all(), 'user_id', 'firstname'),
                 'filterWidgetOptions'=>[
@@ -184,7 +182,7 @@ echo KartikGridView::widget([
 <?= $this->render('_index');?>
 <?php Modal::end(); ?>
 <?php
-    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 $minLocationAvailability = LocationAvailability::find()
     ->where(['locationId' => $locationId])
     ->orderBy(['fromTime' => SORT_ASC])

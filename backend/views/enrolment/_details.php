@@ -40,9 +40,9 @@ LteBox::begin([
 	</dd>
 	<dt>Teacher</dt>
 	<dd><?= $model->course->teacher->publicIdentity; ?></dd>
-        <?php foreach ($model->enrolmentProgramRates as $enrolmentProgramRate) : ?>
-	<dt>Rate From <?= Yii::$app->formatter->asDate($enrolmentProgramRate->startDate) . ' To ' . Yii::$app->formatter->asDate($enrolmentProgramRate->endDate) ?></dt>
-	<dd><?= $enrolmentProgramRate->programRate; ?></dd>
+        <?php foreach ($model->courseProgramRates as $courseProgramRate) : ?>
+	<dt>Rate From <?= Yii::$app->formatter->asDate($courseProgramRate->startDate) . ' To ' . Yii::$app->formatter->asDate($courseProgramRate->endDate) ?></dt>
+	<dd><?= $courseProgramRate->programRate; ?></dd>
         <?php endforeach; ?>
         <dt>Auto Renewal</dt>
 	<dd><?= $model->isAutoRenew ? "Enabled" : 'Disabled' ; ?></dd>

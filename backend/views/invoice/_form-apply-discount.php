@@ -94,10 +94,9 @@ use yii\helpers\Url;
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
         <label class="on percent dollar-symbol on-off-symbol">%</label>
-        <?php endif; ?> 
     </div>
     <?= $form->field($lineItemDiscount, 'valueType')->hiddenInput()->label(false); ?>
-    
+    <?php endif; ?> 
     <?php ActiveForm::end(); ?>
 </div>
 <?php $message = 'Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.'; ?>

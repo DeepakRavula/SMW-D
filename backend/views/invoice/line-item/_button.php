@@ -13,6 +13,10 @@
             <li><a class="add-new-misc multiselect-disable" href="#">Add Item...</a></li>
             <li><a class="edit-tax multiselect-disable" href="#">Edit Tax...</a></li> 
         <?php endif; ?>
-        <li><a class = "apply-discount" href="#">Edit Discount...</a></li>
+        <?php if (!$model->lineItem->isOpeningBalance()) : ?>
+            <li><a class = "apply-discount" href="#">Edit Discount...</a></li>
+        <?php else: ?>    
+            <li><a class = "apply-discount multiselect-disable" href="#">Edit Discount...</a></li>
+        <?php endif; ?>
     <?php endif; ?>
 </ul>

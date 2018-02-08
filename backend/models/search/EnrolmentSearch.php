@@ -55,7 +55,8 @@ class EnrolmentSearch extends Enrolment
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Enrolment::find()
             ->joinWith(['course' => function ($query) use ($locationId) {
-                $query->location($locationId);
+                $query->location($locationId)
+                        ->confirmed();
             }])
             ->notDeleted()
             ->isConfirmed()

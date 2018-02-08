@@ -41,7 +41,7 @@ trait Invoiceable
             $invoiceLineItem->amount = $this->proFormaLineItem->amount;
             $invoiceLineItem->unit   = $this->proFormaLineItem->unit;
         } else {
-            $invoiceLineItem->amount = $this->enrolmentProgramRate ? $this->enrolmentProgramRate->programRate
+            $invoiceLineItem->amount = $this->courseProgramRate ? $this->courseProgramRate->programRate
                     : $this->enrolment->program->rate;
             $invoiceLineItem->unit   = $this->unit;
         }
@@ -89,7 +89,7 @@ trait Invoiceable
         } else {
             $courseCount = $enrolment->courseCount;
         }
-        $lessonAmount = $enrolment->enrolmentProgramRate->programRate / $courseCount;
+        $lessonAmount = $enrolment->courseProgramRate->programRate / $courseCount;
         $qualification = Qualification::findOne(['teacher_id' => $enrolment->firstLesson->teacherId,
             'program_id' => $enrolment->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
@@ -109,7 +109,7 @@ trait Invoiceable
             $invoiceItemLesson->enrolmentId       = $enrolment->id;
             $invoiceItemLesson->invoiceLineItemId = $invoiceLineItem->id;
             $invoiceItemLesson->save();
-            if ($this->enrolmentProgramRate->applyFullDiscount) {
+            if ($this->courseProgramRate->applyFullDiscount) {
                 $invoiceLineItem->addFullDiscount();
             }
             $invoiceLineItem->addLineItemDetails($this);
@@ -117,40 +117,6 @@ trait Invoiceable
         }
     }
 
-    public function addGroupProFormaLineItem($invoice)
-    {
-        $invoiceLineItem = $this->addLessonLineItem($invoice);
-        $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-        if ($this->isExtra()) {
-            $courseCount = 1;
-        } else {
-            $courseCount = $this->courseCount;
-        }
-        $invoiceLineItem->unit       = $this->firstLesson->unit * $courseCount;
-        $qualification = Qualification::findOne(['teacher_id' => $this->firstLesson->teacherId,
-            'program_id' => $this->course->program->id]);
-        $rate = !empty($qualification->rate) ? $qualification->rate : 0;
-        $invoiceLineItem->cost       = $rate;
-        $invoiceLineItem->rate = $rate;
-        $invoiceLineItem->amount = $this->enrolmentProgramRate->programRate;
-        $studentFullName = $this->student->fullName;
-        $invoiceLineItem->description  = $this->program->name . ' for '. $studentFullName . ' with '
-            . $this->firstLesson->teacher->publicIdentity;
-        $invoiceLineItem->code = $invoiceLineItem->getItemCode();
-        if ($invoiceLineItem->save()) {
-            $invoiceItemLesson = new InvoiceItemEnrolment();
-            $invoiceItemLesson->enrolmentId    = $this->id;
-            $invoiceItemLesson->invoiceLineItemId    = $invoiceLineItem->id;
-            $invoiceItemLesson->save();
-            if ($this->enrolmentProgramRate->applyFullDiscount) {
-                $invoiceLineItem->addFullDiscount();
-            }
-            return $invoiceLineItem;
-        } else {
-            Yii::error('Create Invoice Line Item: ' . VarDumper::dumpAsString($invoiceLineItem->getErrors()));
-        }
-    }
-    
     public function createInvoice()
     {
         $invoice = new Invoice();

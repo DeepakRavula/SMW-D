@@ -72,7 +72,7 @@ class LessonQuery extends \yii\db\ActiveQuery
                 $query->where(['enrolment.studentId' => $studentId])
                                 ->isConfirmed();
             }])
-        ->where(['course.locationId' => $locationId]);
+            ->andWhere(['course.locationId' => $locationId]);
         }]);
         return $this;
     }
@@ -192,7 +192,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         $this->joinWith(['course' => function ($query) {
             $query->joinWith('program')
-                ->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+                ->andWhere(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
         }]);
 
         return $this;
@@ -202,7 +202,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         $this->joinWith(['course' => function ($query) {
             $query->joinWith(['program' => function ($query) {
-                $query->where(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+                $query->andWhere(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
             }])
             ->joinWith(['enrolment' => function ($query) {
                 $query->joinWith(['student' => function ($query) {
@@ -218,7 +218,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         $this->joinWith(['course' => function ($query) {
             $query->joinWith('program')
-                ->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
+                ->andWhere(['program.type' => Program::TYPE_GROUP_PROGRAM]);
         }]);
 
         return $this;
