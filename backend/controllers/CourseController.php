@@ -317,7 +317,8 @@ class CourseController extends BaseController
         $groupEnrolments = Enrolment::find()
             ->select(['courseId'])
             ->joinWith(['course' => function ($query) use ($locationId) {
-                $query->groupProgram($locationId);
+                $query->groupProgram($locationId)
+                        ->confirmed();
             }])
             ->where(['enrolment.studentId' => $studentId])
             ->isConfirmed();

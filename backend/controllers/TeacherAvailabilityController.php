@@ -193,7 +193,8 @@ class TeacherAvailabilityController extends BaseController
         $lessons = [];
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id]);
+                $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id])
+                        ->confirmed();
             }])
             ->where(['lesson.teacherId' => $id])
             ->scheduledOrRescheduled()
@@ -335,7 +336,8 @@ class TeacherAvailabilityController extends BaseController
     {
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id]);
+                $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id])
+                    ->confirmed();
             }])
             ->andWhere(['lesson.teacherId' => $teacherId])
             ->scheduledOrRescheduled()

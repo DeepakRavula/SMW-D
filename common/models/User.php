@@ -11,6 +11,7 @@ use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 use backend\models\UserForm;
+use common\models\Location;
 use common\models\discount\CustomerDiscount;
 use common\models\Label;
 
@@ -552,7 +553,8 @@ class User extends ActiveRecord implements IdentityInterface
         $lessons = [];
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
+                $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id])
+                        ->confirmed();
             }])
             ->where(['lesson.teacherId' => $id])
             ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED]]])

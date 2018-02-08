@@ -214,7 +214,8 @@ class Enrolment extends \yii\db\ActiveRecord
             ->joinWith(['course' => function ($query) {
                 $query->joinWith(['enrolment' =>function ($query) {
                     $query->andWhere(['enrolment.id' => $this->id]);
-                }]);
+                }])
+                ->confirmed();
             }])
             ->isConfirmed()
             ->andWhere(['<=', 'date', (new \DateTime())->format('Y-m-d H:i:s')])

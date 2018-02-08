@@ -112,7 +112,8 @@ class ExtraLessonController extends BaseController
         if ($model->load($request->post())) {
             $studentEnrolment = Enrolment::find()
                ->joinWith(['course' => function ($query) use ($model) {
-                   $query->where(['course.programId' => $model->programId]);
+                   $query->andWhere(['course.programId' => $model->programId])
+                           ->confirmed();
                }])
                 ->where(['studentId' => $studentId])
                 ->one();

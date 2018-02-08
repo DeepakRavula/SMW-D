@@ -109,7 +109,8 @@ public function behaviors()
                     ->joinWith(['course' => function ($query) use ($locationId) {
                         $query->joinWith('program')
                             ->joinWith('courseSchedule')
-                            ->where(['course.locationId' => $locationId]);
+                            ->andWhere(['course.locationId' => $locationId])
+                            ->confirmed();
                     }])
                     ->andWhere(['between', 'lesson.date', $searchModel->fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
                     ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
