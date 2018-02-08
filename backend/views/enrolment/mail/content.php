@@ -2,7 +2,8 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-
+use common\models\EmailObject;
+use common\models\EmailTemplate;
 ?>
 
 Dear <?= $toName; ?>,<br> 
@@ -54,5 +55,5 @@ echo GridView::widget([
 ]);
 ?>
 <br>
-Thank you<br>
-Arcadia Music Academy Team.<br>
+<?= $emailTemplate->footer ?? 'Thank you
+Arcadia Academy of Music Team.' ?>

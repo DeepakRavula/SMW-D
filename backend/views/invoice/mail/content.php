@@ -6,11 +6,8 @@ use common\models\TextTemplate;
 ?>
 
 Dear Customer,<br>
-<?php $textTemplate = TextTemplate::findOne(['type' => $model->type]);
-$message = !empty($textTemplate->message) ? $textTemplate->message : 'Please find the invoice below:';
-?>
-	<?= $message; ?><Br>
-        <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); 
+	<?= $emailTemplate->header ?? 'Please find the invoice below:'; ?><Br>
+            <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']);
             $columns = [
         [   'label' => 'Description',
             'contentOptions' => ['style' => 'width:250px;'],
@@ -52,6 +49,7 @@ $message = !empty($textTemplate->message) ? $textTemplate->message : 'Please fin
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
         ];?>
+        <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
         <?php echo GridView::widget([
             'dataProvider' => $invoiceLineItemsDataProvider,
             'tableOptions' => ['class' => 'table table-bordered m-0', 'style'=>'width:100%; text-align:left'],
@@ -191,5 +189,5 @@ $columns = [
     <?php echo $model->reminderNotes; ?>
 </div>
 <br>
-Thank you<br>
-Arcadia Music Academy Team.<br>
+<?= $emailTemplate->footer ?? 'Thank you 
+Arcadia Academy of Music Team.'; ?>

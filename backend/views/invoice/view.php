@@ -11,7 +11,8 @@ use common\models\UserProfile;
 use common\models\UserEmail;
 use yii\data\ActiveDataProvider;
 use backend\models\EmailForm;
-
+use common\models\EmailTemplate;
+use common\models\EmailObject;
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 
@@ -71,11 +72,13 @@ $invoiceLineItemsDataProvider = new ActiveDataProvider([
         ->andWhere(['invoice_id' => $model->id]),
     'pagination' => false,
 ]);
+$emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
 $content = $this->render('mail/content', [
         'model' => $model,
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-        'invoicePayments' => $invoicePayments,
-        'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
+    'emailTemplate' => $emailTemplate,
+    'invoicePayments' => $invoicePayments,
+    'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
     ]);
 ?>
 <?php
@@ -86,7 +89,7 @@ Modal::begin([
  echo $this->render('/mail/_form', [
     'model' => new EmailForm(),
     'emails' => !empty($model->user->email) ?$model->user->email : null,
-    'subject' => 'Invoice from Arcadia Academy of Music',
+    'subject' => $emailTemplate->subject ?? 'Invoice from Arcadia Academy of Music',
     'content' => $content,
     'id' => $model->id,
         'userModel'=>$model->user,
