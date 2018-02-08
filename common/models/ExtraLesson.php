@@ -52,13 +52,13 @@ class ExtraLesson extends Lesson
         $regularCourse = Course::findOne($this->courseId);
         $course = $this->createCourse();
         $regularCourse->extendTo($course);
+        $course->courseProgramRate->updateAttributes([
+            'programRate' => $this->programRate,
+            'applyFullDiscount' => $this->applyFullDiscount
+        ]);
         foreach ($enrolments as $enrolment) {
             $course->studentId = $enrolment->studentId;
-            $newEnrolment = $course->createExtraLessonEnrolment();
-            $newEnrolment->courseProgramRate->updateAttributes([
-                'programRate' => $this->programRate,
-                'applyFullDiscount' => $this->applyFullDiscount
-            ]);
+            $course->createExtraLessonEnrolment();
         }
         return $course;
     }

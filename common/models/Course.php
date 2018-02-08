@@ -131,6 +131,11 @@ class Course extends \yii\db\ActiveRecord
             ->andWhere(['studentId' => $student->id])
             ->one();
     }
+    
+    public function getCourseProgramRate()
+    {
+        return $this->hasOne(CourseProgramRate::className(), ['courseId' => 'id']);
+    }
 
     public function getCourseSchedule()
     {
