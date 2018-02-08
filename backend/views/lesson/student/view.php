@@ -41,11 +41,11 @@ use common\models\LessonPayment;
                 },
             ],
             ['class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {create} {payment}',
+                'template' => '{view} {create} {createPFI} {viewPFI} {payment}',
                 'buttons' => [
                     'create' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
-                            ->where(['courseId' => $lessonModel->courseId])
+                            ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
                     
                         $url = Url::to(['invoice/group-lesson', 'lessonId' => $lessonModel->id, 'enrolmentId' => $enrolment->id]);
@@ -54,26 +54,36 @@ use common\models\LessonPayment;
                                 'title' => Yii::t('yii', 'Create Invoice'),
                                                             'class' => ['btn-success btn-sm']
                             ]);
-                        } else {
-                            return null;
                         }
                     },
                     'view' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
-                            ->where(['courseId' => $lessonModel->courseId])
+                            ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
-                        if (!$enrolment->hasInvoice($lessonModel->id)) {
-                            return null;
+                        if ($enrolment->hasInvoice($lessonModel->id)) {
+                            $url = Url::to(['invoice/view', 'id' => $enrolment->getInvoice($lessonModel->id)->id]);
+                            return Html::a('View Invoice', $url, [
+                                'title' => Yii::t('yii', 'View Invoice'),
+                                'class' => ['btn-info btn-sm']
+                            ]);
                         }
-                        $url = Url::to(['invoice/view', 'id' => $enrolment->getInvoice($lessonModel->id)->id]);
-                        return Html::a('View Invoice', $url, [
-                            'title' => Yii::t('yii', 'View Invoice'),
-                            'class' => ['btn-info btn-sm']
-                        ]);
+                    },
+                    'viewPFI' => function ($url, $model) use ($lessonModel) {
+                        $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
+                            ->andWhere(['courseId' => $lessonModel->courseId])
+                            ->andWhere(['studentId' => $model->id])->one();
+                        if ($lessonModel->hasGroupProFormaLineItem($enrolment)) {
+                            $pfi = $lessonModel->getGroupProFormaLineItem($enrolment)->invoice;
+                            $url = Url::to(['invoice/view', 'id' => $pfi->id]);
+                            return Html::a('View PFI', $url, [
+                                'title' => Yii::t('yii', 'View PFI'),
+                                'class' => ['btn-info btn-sm']
+                            ]);
+                        }
                     },
                     'payment' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
-                            ->where(['courseId' => $lessonModel->courseId])
+                            ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
                         $lessonPayment = LessonPayment::findOne(['enrolmentId' => $enrolment->id,
                             'lessonId' => $lessonModel->id]);

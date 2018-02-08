@@ -558,32 +558,7 @@ class LessonController extends BaseController
             foreach ($lessons as $i => $lesson) {
                 $oldLesson = Lesson::findOne($oldLessonIds[$i]);
                 $oldLesson->rescheduleTo($lesson);
-                if (! empty($rescheduleBeginDate)) {
-                    $bulkReschedule = new BulkReschedule();
-                    $bulkReschedule->type = $this->getRescheduleLessonType($courseModel, $rescheduleEndDate);
-                    try {
-                        $bulkReschedule->save();
-                    } catch (ErrorException $exception) {
-                        Yii::$app->errorHandler->logException($exception);
-                    }
-
-                    $bulkRescheduleLesson = new BulkRescheduleLesson();
-                    $bulkRescheduleLesson->bulkRescheduleId = $bulkReschedule->id;
-                    $bulkRescheduleLesson->lessonId = $lesson->id;
-                    try {
-                        $bulkRescheduleLesson->save();
-                    } catch (ErrorException $exception) {
-                        Yii::$app->errorHandler->logException($exception);
-                    }
-                }
             }
-            $bulkRescheduleEnrolment=$courseModel->enrolment;
-            $bulkRescheduleEnrolment->on(
-                Enrolment::EVENT_AFTER_UPDATE,
-                [new EnrolmentLog(), 'bulkReschedule'],
-                ['loggedUser' => $loggedUser,'rescheduleBeginDate' => $rescheduleBeginDate,'courseModel' => $courseModel]
-            );
-            $bulkRescheduleEnrolment->trigger(ENROLMENT::EVENT_AFTER_UPDATE);
         }
         foreach ($lessons as $lesson) {
             $lesson->isConfirmed = true;
@@ -712,8 +687,6 @@ class LessonController extends BaseController
         if ($model->load(Yii::$app->request->post())) {
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $model->save();
-            $parentLesson = $model->parent()->one();
-            $parentLesson->rescheduleTo($model);
             return [
                 'status' => true
             ];

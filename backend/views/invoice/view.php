@@ -77,6 +77,8 @@ $content = $this->render('mail/content', [
         'model' => $model,
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
     'emailTemplate' => $emailTemplate,
+    'invoicePayments' => $invoicePayments,
+    'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
     ]);
 ?>
 <?php

@@ -337,7 +337,7 @@ class TeacherAvailabilityController extends BaseController
             ->joinWith(['course' => function ($query) {
                 $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id]);
             }])
-            ->where(['lesson.teacherId' => $teacherId])
+            ->andWhere(['lesson.teacherId' => $teacherId])
             ->scheduledOrRescheduled()
             ->isConfirmed()
             ->notDeleted()

@@ -23,6 +23,7 @@ class EnrolmentController extends Controller
     {
         $priorDate = (new Carbon())->addDays(Enrolment::AUTO_RENEWAL_DAYS_FROM_END_DATE);
         $courses = Course::find()
+                ->regular()
                 ->confirmed()
                 ->needToRenewal($priorDate)
                 ->privateProgram()

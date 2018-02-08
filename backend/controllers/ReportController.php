@@ -80,6 +80,11 @@ class ReportController extends BaseController
                         'actions' => ['all-locations'],
                         'roles' => ['manageAllLocations'],
                     ],
+                    [
+                        'allow' => true,
+                        'actions' => ['item-category'],
+                        'roles' => ['manageItemCategoryReport'],
+                    ],
                 ],
             ], 
         ];

@@ -10,7 +10,6 @@ use common\models\Location;
 use common\models\Invoice;
 use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
-use common\models\Location;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */

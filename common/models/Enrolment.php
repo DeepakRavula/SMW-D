@@ -28,6 +28,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public $programName;
     public $enrolmentCount;
     public $userName;
+    public $applyFullDiscount;
     
     const AUTO_RENEWAL_DAYS_FROM_END_DATE = 90;
     const AUTO_RENEWAL_STATE_ENABLED='enabled';
@@ -68,8 +69,8 @@ class Enrolment extends \yii\db\ActiveRecord
         return [
             [['courseId'], 'required'],
             [['courseId', 'studentId'], 'integer'],
-            [['paymentFrequencyId', 'type',  'isDeleted', 'isConfirmed',
-                'hasEditable', 'isAutoRenew'], 'safe'],
+            [['paymentFrequencyId', 'isDeleted', 'isConfirmed',
+                'hasEditable', 'isAutoRenew', 'applyFullDiscount'], 'safe'],
         ];
     }
 
@@ -278,13 +279,16 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getFirstLesson()
     {
         return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
-            ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true, 'lesson.type' => Lesson::TYPE_REGULAR])
+            ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true])
             ->orderBy(['date' => SORT_ASC]);
     }
 
     public function getLessons()
     {
-        return $this->hasMany(Lesson::className(), ['courseId' => 'courseId']);
+        return $this->hasMany(Lesson::className(), ['courseId' => 'courseId'])
+                ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
+                    'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                        Lesson::STATUS_UNSCHEDULED]]);
     }
 
     public function getFirstPaymentCycle()
@@ -307,10 +311,10 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getCourseCount()
     {
         return Lesson::find()
-                ->regular()
                 ->isConfirmed()
                 ->notDeleted()
-                ->where(['courseId' => $this->courseId])
+                ->notCanceled()
+                ->andWhere(['courseId' => $this->courseId])
                 ->count('id');
     }
 
@@ -400,9 +404,6 @@ class Enrolment extends \yii\db\ActiveRecord
             if (empty($this->isConfirmed)) {
                 $this->isConfirmed = false;
             }
-            if (empty($this->type)) {
-                $this->type = self::TYPE_REGULAR;
-            }
             $this->isAutoRenew = true;
         }
         return parent::beforeSave($insert);
@@ -415,6 +416,7 @@ class Enrolment extends \yii\db\ActiveRecord
             $enrolmentProgramRate->startDate  = (new Carbon($this->course->startDate))->format('Y-m-d');
             $enrolmentProgramRate->endDate = (new Carbon($this->course->endDate))->format('Y-m-d');
             $enrolmentProgramRate->programRate = $this->course->program->rate;
+            $enrolmentProgramRate->applyFullDiscount = false;
             $enrolmentProgramRate->save();
         }
         if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate))
@@ -583,7 +585,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function isExtra()
     {
-        return $this->type === self::TYPE_EXTRA;
+        return $this->course->type === self::TYPE_EXTRA;
     }
 
     public function hasPaymentFrequencyDiscount()

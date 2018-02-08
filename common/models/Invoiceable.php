@@ -84,8 +84,12 @@ trait Invoiceable
                 $this->date
         );
         $enrolment                     = Enrolment::findOne($this->enrolmentId);
-        $courseCount                   = $enrolment->courseCount;
-        $lessonAmount                  = $enrolment->course->program->rate / $courseCount;
+        if ($enrolment->isExtra()) {
+            $courseCount = 1;
+        } else {
+            $courseCount = $enrolment->courseCount;
+        }
+        $lessonAmount = $enrolment->enrolmentProgramRate->programRate / $courseCount;
         $qualification = Qualification::findOne(['teacher_id' => $enrolment->firstLesson->teacherId,
             'program_id' => $enrolment->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
@@ -101,14 +105,14 @@ trait Invoiceable
         if (!$invoiceLineItem->save()) {
             Yii::error('Create Invoice Line Item: ' . VarDumper::dumpAsString($invoiceLineItem->getErrors()));
         } else {
-            $invoiceLineItem->addLineItemDetails($this);
             $invoiceItemLesson                    = new InvoiceItemEnrolment();
             $invoiceItemLesson->enrolmentId       = $enrolment->id;
             $invoiceItemLesson->invoiceLineItemId = $invoiceLineItem->id;
             $invoiceItemLesson->save();
-            if ($enrolment->isExtra()) {
+            if ($this->enrolmentProgramRate->applyFullDiscount) {
                 $invoiceLineItem->addFullDiscount();
             }
+            $invoiceLineItem->addLineItemDetails($this);
             return $invoiceLineItem;
         }
     }
@@ -117,20 +121,30 @@ trait Invoiceable
     {
         $invoiceLineItem = $this->addLessonLineItem($invoice);
         $invoiceLineItem->item_type_id = ItemType::TYPE_GROUP_LESSON;
-        $courseCount = $this->courseCount;
+        if ($this->isExtra()) {
+            $courseCount = 1;
+        } else {
+            $courseCount = $this->courseCount;
+        }
         $invoiceLineItem->unit       = $this->firstLesson->unit * $courseCount;
         $qualification = Qualification::findOne(['teacher_id' => $this->firstLesson->teacherId,
             'program_id' => $this->course->program->id]);
         $rate = !empty($qualification->rate) ? $qualification->rate : 0;
         $invoiceLineItem->cost       = $rate;
         $invoiceLineItem->rate = $rate;
-        $invoiceLineItem->amount = $this->course->program->rate;
+        $invoiceLineItem->amount = $this->enrolmentProgramRate->programRate;
         $studentFullName = $this->student->fullName;
         $invoiceLineItem->description  = $this->program->name . ' for '. $studentFullName . ' with '
             . $this->firstLesson->teacher->publicIdentity;
         $invoiceLineItem->code = $invoiceLineItem->getItemCode();
         if ($invoiceLineItem->save()) {
-            $invoiceLineItem->addLineItemDetails($this);
+            $invoiceItemLesson = new InvoiceItemEnrolment();
+            $invoiceItemLesson->enrolmentId    = $this->id;
+            $invoiceItemLesson->invoiceLineItemId    = $invoiceLineItem->id;
+            $invoiceItemLesson->save();
+            if ($this->enrolmentProgramRate->applyFullDiscount) {
+                $invoiceLineItem->addFullDiscount();
+            }
             return $invoiceLineItem;
         } else {
             Yii::error('Create Invoice Line Item: ' . VarDumper::dumpAsString($invoiceLineItem->getErrors()));
@@ -278,17 +292,9 @@ trait Invoiceable
         if (!$invoice->save()) {
             Yii::error('Create Invoice: ' . VarDumper::dumpAsString($invoice->getErrors()));
         }
-        $invoiceLineItem = $this->addGroupProFormaLineItem($invoice);
-        if (!$invoiceLineItem->save()) {
-            Yii::error('Create Invoice Line Item: ' . VarDumper::dumpAsString($invoiceLineItem->getErrors()));
-        } else {
-            $invoiceItemLesson = new InvoiceItemEnrolment();
-            $invoiceItemLesson->enrolmentId    = $this->id;
-            $invoiceItemLesson->invoiceLineItemId    = $invoiceLineItem->id;
-            $invoiceItemLesson->save();
-        }
-        if ($this->isExtra()) {
-            $invoiceLineItem->addFullDiscount();
+        foreach ($this->lessons as $lesson) {
+            $lesson->enrolmentId = $this->id;
+            $lesson->addGroupLessonLineItem($invoice);
         }
         if (!$invoice->save()) {
             Yii::error('Create Invoice: ' . VarDumper::dumpAsString($invoice->getErrors()));
