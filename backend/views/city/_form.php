@@ -23,12 +23,12 @@ use yii\helpers\Url;
     ]); ?>
 
   	<div class="row">
-		<div class="col-md-6">
+		<div class="col-md-8">
     <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 		</div>
     </div>
     <div class="row">
-		<div class="col-md-6 ">
+		<div class="col-md-8 ">
     <?php echo $form->field($model, 'province_id')->dropDownList(ArrayHelper::map(
                             Province::find()->orderBy(['name' => SORT_ASC])->all(),
         'id',
