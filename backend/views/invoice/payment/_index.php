@@ -47,9 +47,11 @@ $columns = [
         },
         ],
     [
+        'contentOptions' => ['class' => 'text-left payment-notes-description', 'style' => 'width:50px;'],
         'label' => 'Notes',
         'value' => function ($data) {
             return $data->notes;
+
         },
         ],
         [
