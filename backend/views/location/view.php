@@ -7,7 +7,7 @@ use insolita\wgadminlte\LteConst;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\bootstrap\Modal;
-
+use yii\bootstrap\Tabs;
 use kartik\date\DatePickerAsset;
 
 DatePickerAsset::register($this);
@@ -80,17 +80,25 @@ $lastRole = end($roles);
 <?php Pjax::end(); ?>
 <div class="row">
 	<div class="col-md-12">	
-		<?php
-        LteBox::begin([
-            'type' => LteConst::TYPE_DEFAULT,
-            'title' => 'Availability',
-            'withBorder' => true,
-        ])
+		<div class="nav-tabs-custom">
+        <?php
+        $scheduleAvailability = $this->render('_availability-details');
+        $operationAvailability = $this->render('_new-availability-details');
         ?>
-		<?php echo $this->render('_availability-details', [
-            'model' => $model,
-        ]); ?>
-		<?php LteBox::end() ?>
+        <?php echo Tabs::widget([
+            'items' => [
+                [
+                    'label' => 'Availability',
+                    'content' => $scheduleAvailability,
+                ],
+                [
+                    'label' => 'Operation Time Availability',
+                    'content' => $operationAvailability,
+                ],
+            ],
+        ]);?>
+</div>
+
 	</div>
 </div>
 <?php Modal::begin([
