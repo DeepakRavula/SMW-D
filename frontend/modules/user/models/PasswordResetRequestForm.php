@@ -5,6 +5,7 @@ namespace frontend\modules\user\models;
 use cheatsheet\Time;
 use common\commands\SendEmailCommand;
 use common\models\UserToken;
+use common\models\Location;
 use Yii;
 use common\models\User;
 use yii\base\Model;
