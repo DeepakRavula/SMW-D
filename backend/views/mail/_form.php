@@ -47,22 +47,8 @@ use dosamigos\ckeditor\CKEditor;
     </div>
 	<div class="row">
         <div class="col-lg-12">
-            <?php $model->subject = $subject ?>
             <?php
-            echo $form->field($model, 'subject')->widget(
-                Widget::className(),
-                [
-                'plugins' => ['table'],
-                'options' => [
-                    'minHeight' => 150,
-                    'maxHeight' => 150,
-                    'buttonSource' => true,
-                    'convertDivs' => false,
-                    'removeEmptyTags' => false,
-                ]
-                ]
-            );
-            ?>
+            echo $form->field($model, 'subject')->textInput(['value' => $subject]) ?>
         </div>
 	</div>
 	<div class="row">

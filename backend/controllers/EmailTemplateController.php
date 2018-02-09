@@ -64,40 +64,6 @@ class EmailTemplateController extends \common\components\controllers\BaseControl
             'model' => $this->findModel($id),
         ]);
     }
-
-    /**
-     * Creates a new EmailTemplate model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     *
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new EmailTemplate();
-        $data  = $this->renderAjax('_form', [
-            'model' => $model,
-        ]);
-        if (Yii::$app->request->post()) {
-            if($model->load(Yii::$app->request->post()) && $model->save()) {
-                return [
-                    'status' => true
-                ];
-            }
-            else {
-                return [
-                    'status' => false,
-                    'errors' =>$model->getErrors()
-                ];
-            }
-        }
-        else {
-            return [
-                'status' => true,
-                'data' => $data
-            ];
-        }
-    }
-
     /**
      * Updates an existing EmailTemplate model.
      * If update is successful, the browser will be redirected to the 'view' page.
