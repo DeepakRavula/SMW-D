@@ -6,7 +6,7 @@ class m180207_104206_adding_notes_column_payment extends Migration
 {
     public function up()
     {
-         $this->addColumn('payment', 'notes', 'TEXT NOT NULL AFTER reference');
+         $this->addColumn('payment', 'notes', 'TEXT  AFTER reference');
 
     }
 
