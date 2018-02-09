@@ -267,28 +267,29 @@ class Location extends \yii\db\ActiveRecord
         foreach ($permissions as $permission) {
             if (in_array($permission->name, $adminAndOwnerPermissions)) {
                 foreach ($exceptStaffRoles as $exceptStaffRole) {
-                    $command->insert('rbac_auth_item_child', [
+                    $command->insert('rbac_auth_item_child', array(
                         'parent' => $exceptStaffRole,
                         'child' => $permission->name,
                         'location_id' => $this->id
-                    ])->execute();
+                    ))->execute();
                 }
             } else if(in_array($permission->name, $adminPermissions)) {
-                $command->insert('rbac_auth_item_child', [
+                $command->insert('rbac_auth_item_child', array(
                     'parent' => User::ROLE_ADMINISTRATOR,
                     'child' => $permission->name,
                     'location_id' => $this->id
-                ])->execute();
+                ))->execute();
             } else {
                 foreach ($roles as $role) {
-                    $command->insert('rbac_auth_item_child', [
+                    $command->insert('rbac_auth_item_child', array(
                         'parent' => $role,
                         'child' => $permission->name,
                         'location_id' => $this->id
-                    ])->execute();
+                    ))->execute();
                 }
             }	
         }
+
     }
 	public function adminPermissions() {
 		return [
