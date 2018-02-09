@@ -88,11 +88,11 @@ $lastRole = end($roles);
         <?php echo Tabs::widget([
             'items' => [
                 [
-                    'label' => 'Availability',
+                    'label' => 'Operation Time Availability',
                     'content' => $scheduleAvailability,
                 ],
                 [
-                    'label' => 'Operation Time Availability',
+                    'label' => 'Schedule Time Availability',
                     'content' => $operationAvailability,
                 ],
             ],
@@ -251,7 +251,7 @@ $lastRole = end($roles);
 
  $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
     var tab  = e.target.text;
-    if (tab === "Operation Time Availability") {
+    if (tab === "Schedule Time Availability") {
     $('#calendarnew').fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
