@@ -147,6 +147,7 @@ $lastRole = end($roles);
 		$('#location-edit-modal').modal('hide');
 		return false;
 	});
+   
 	$('#calendar').fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
@@ -246,6 +247,112 @@ $lastRole = end($roles);
                 }
             });
         }
+});
+
+ $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
+    var tab  = e.target.text;
+    if (tab === "Operation Time Availability") {
+    $('#calendarnew').fullCalendar({
+        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+        header: false,
+        defaultView: 'agendaDay',
+		firstDay : 1,
+        nowIndicator: true,
+        minTime: "00:00:00",
+        maxTime: "23:59:59",
+        slotDuration: "00:30:00",
+        editable: true,
+        selectable: true,
+        draggable: false,
+        droppable: false,
+        resources: [{'id':'1', 'title':'Monday'}, {'id':'2','title':'Tuesday'},
+            {'id':'3','title':'Wednesday'}, {'id':'4','title':'Thursday'}, {'id':'5','title':'Friday'}, 
+            {'id':'6','title':'Saturday'}, {'id':'7','title':'Sunday'}],
+        events: {
+            url: '<?= Url::to(['location/render-events', 'id' => $model->id]) ?>',
+            type: 'POST',
+            error: function() {
+                $("#calendarnew").fullCalendar("refetchEvents");
+            }
+        },
+        eventRender: function(event, element) {
+            element.find("div.fc-content").prepend("<i  class='fa fa-close pull-right text-danger'></i>");
+        },
+        eventClick: function(event) {
+            var params = $.param({ resourceId: event.resourceId });
+            $(".fa-close").click(function() {
+                var status = confirm("Are you sure to delete availability?");
+                if (status) {
+                    $.ajax({
+                        url    : '<?= Url::to(['location/delete-availability', 'id' => $model->id]) ?>&' + params,
+                        type   : 'POST',
+                        dataType: 'json',
+                        success: function()
+                        {
+                            $("#calendarnew").fullCalendar("refetchEvents");
+                        }
+                    });
+                }
+            });
+        },
+        eventResize: function(event) {
+            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
+            $.ajax({
+                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
+                type   : 'POST',
+                dataType: 'json',
+                success: function()
+                {
+                    $("#calendarnew").fullCalendar("refetchEvents");
+                }
+            });
+        },
+        eventDrop: function(event) {
+            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
+            $.ajax({
+                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
+                type   : 'POST',
+                dataType: 'json',
+                success: function()
+                {
+                    $("#calendarnew").fullCalendar("refetchEvents");
+                }
+            });
+        },
+        select: function( start, end, jsEvent, view, resourceObj ) {
+            var endTime = moment(end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: resourceObj.id, startTime: startTime, endTime: endTime });
+            var availabilityCheckParams = $.param({ resourceId: resourceObj.id});
+            $.ajax({
+                url    : '<?= Url::to(['location/check-availability', 'id' => $model->id]) ?>&' + availabilityCheckParams,
+                type   : 'POST',
+                dataType: 'json',
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $.ajax({
+                            url    : '<?= Url::to(['location/add-availability', 'id' => $model->id]) ?>&' + params,
+                            type   : 'POST',
+                            dataType: 'json',
+                            success: function()
+                            {
+                                $("#calendarnew").fullCalendar("refetchEvents");
+                            }
+                        });
+                    } else {
+                        $('#flash-danger').text("You are not allowed to set more than one availability for a day!").fadeIn().delay(3000).fadeOut();
+                    }
+                }
+            });
+        }
+});
+}
 });
     });
 </script>
