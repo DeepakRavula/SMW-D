@@ -26,7 +26,7 @@ class EmailTemplateController extends \common\components\controllers\BaseControl
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['update', 'create','delete'],
+                'only' => ['update'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -95,23 +95,6 @@ class EmailTemplateController extends \common\components\controllers\BaseControl
             return [
                 'status' => true,
                 'data' => $data
-            ];
-        }
-    }
-    /**
-     * Deletes an existing EmailTemplate model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param int $id
-     *
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $model = $this->findModel($id);
-        if ($model->delete()) {
-            return [
-                'status' => true,
             ];
         }
     }
