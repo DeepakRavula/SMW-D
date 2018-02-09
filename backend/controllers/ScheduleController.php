@@ -150,26 +150,17 @@ class ScheduleController extends BaseController
         return $lessons;
     }
 
-    public function actionRenderClassroomResources($date)
+    public function actionRenderClassroomResources()
     {
-        $date      = \DateTime::createFromFormat('Y-m-d', $date);
-		$classrooms = Classroom::find()
-			->andWhere(['locationId' => Location::findOne(['slug' => Yii::$app->location])->id])
-			->all();
-		foreach ($classrooms as $classroom) {
-			$resources[] = [
-				'id'    => $classroom->id,
-				'title' => $classroom->name,
-                                'description' => $classroom->description,
-			];
-		}
+        $resources = [];
         $classrooms = Classroom::find()
-            ->andWhere(['locationId' => Location::findOne(['slug' => Yii::$app->location])->id])
-            ->all();
+                ->andWhere(['locationId' => Location::findOne(['slug' => Yii::$app->location])->id])
+                ->all();
         foreach ($classrooms as $classroom) {
             $resources[] = [
                 'id'    => $classroom->id,
                 'title' => $classroom->name,
+                'description' => $classroom->description,
             ];
         }
         return $resources;

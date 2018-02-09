@@ -255,7 +255,7 @@ function showclassroomCalendar(date) {
         editable: true,
         eventDurationEditable: false,
         resources: {
-            url: '<?= Url::to(['schedule/render-classroom-resources']) ?>?' + params,
+            url: '<?= Url::to(['schedule/render-classroom-resources']) ?>',
             type: 'GET',
             error: function() {
                 $("#classroom-calendar").fullCalendar("refetchResources");
