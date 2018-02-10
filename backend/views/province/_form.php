@@ -28,19 +28,23 @@ use yii\helpers\Url;
 
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-8">
 <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
         </div>
-        <div class="col-md-4 ">
+    </div>
+    <div class="row">
+        <div class="col-md-8">
             <?php echo $form->field($model, 'tax_rate')->textInput() ?>
         </div>
-        <div class="col-md-4 ">
+    </div>
+    <div class="row">
+        <div class="col-md-8">
             <?php
             echo $form->field($model, 'country_id')->dropDownList(ArrayHelper::map(
                     Country::find()->orderBy(['name' => SORT_ASC])->all(),
         'id',
         'name'
-            ))
+            ))->label('Country')
             ?>
         </div>
     </div>
