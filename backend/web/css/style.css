@@ -309,3 +309,6 @@ dl {
     font-weight: bold;
     font-size: 14px;
 }
+.direct-chat-timestamp {
+    color: #999;
+}

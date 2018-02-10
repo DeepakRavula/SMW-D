@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\Location;
 use yii\behaviors\BlameableBehavior;
 use common\models\query\InvoiceQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -129,7 +130,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public static function invoiceCount()
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $fromDate = (new \DateTime('first day of this month'))->format('M d,Y');
         $toDate   = (new \DateTime('last day of this month'))->format('M d,Y');
         return self::find()
@@ -145,7 +146,7 @@ class Invoice extends \yii\db\ActiveRecord
     
     public static function pfiCount()
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         return self::find()
                 ->notDeleted()
                 ->notCanceled()

@@ -75,7 +75,7 @@ class ExtraLessonController extends BaseController
         if ($model->load($request->post())) {
             $model->addPrivate(Lesson::STATUS_SCHEDULED);
             if ($model->save()) {
-                $model->markAsRoot();
+                $model->makeAsRoot();
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $model->on(
                     Lesson::EVENT_AFTER_INSERT,
@@ -112,7 +112,8 @@ class ExtraLessonController extends BaseController
         if ($model->load($request->post())) {
             $studentEnrolment = Enrolment::find()
                ->joinWith(['course' => function ($query) use ($model) {
-                   $query->where(['course.programId' => $model->programId]);
+                   $query->andWhere(['course.programId' => $model->programId])
+                           ->confirmed();
                }])
                 ->where(['studentId' => $studentId])
                 ->one();
@@ -140,9 +141,13 @@ class ExtraLessonController extends BaseController
         if ($model->load($request->post())) {
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $model->isConfirmed = true;
+            $course = $model->addGroup();
+            $model->courseId = $course->id;
             if ($model->save()) {
-                $model->markAsRoot();
-                $model->addGroup();
+                $model->makeAsRoot();
+                foreach ($course->enrolments as $enrolment) {
+                    $enrolment->createProFormaInvoice();
+                }
                 $response   = [
                     'status' => true,
                     'url' => Url::to(['lesson/view', 'id' => $model->id])

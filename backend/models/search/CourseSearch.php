@@ -3,6 +3,7 @@
 namespace backend\models\search;
 
 use Yii;
+use common\models\Location;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Course;
@@ -44,9 +45,10 @@ class CourseSearch extends Course
      */
     public function search($params)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Course::find()
                 ->groupProgram($locationId)
+                ->regular()
                 ->confirmed();
 
         $dataProvider = new ActiveDataProvider([

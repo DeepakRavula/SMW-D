@@ -114,15 +114,15 @@ trait Payable
     public function addGroupLessonCredit()
     {
         $enrolment = $this->lineItem->enrolment;
-        $lessons = Lesson::find()
-                        ->andWhere(['lesson.type' => $enrolment->type])
-                        ->isConfirmed()
-                        ->notDeleted()
-                        ->joinWith('enrolment')
-                        ->andWhere(['enrolment.id' => $enrolment->id])
-                        ->all();
-        $courseCount = $enrolment->courseCount;
-        foreach ($lessons as $lesson) {
+        $courseCount = count($enrolment->lessons);
+        foreach ($this->lineItems as $lineItem) {
+            $lesson = Lesson::find()
+                        ->descendantsOf($lineItem->lesson->id)
+                        ->orderBy(['id' => SORT_DESC])
+                        ->one();
+            if (!$lesson) {
+                $lesson = Lesson::findOne($lineItem->lesson->id);
+            }
             $amount = $enrolment->proFormaInvoice->netSubtotal / $courseCount -
                     $lesson->getCreditAppliedAmount($enrolment->id);
             if ($amount > $this->proFormaCredit) {

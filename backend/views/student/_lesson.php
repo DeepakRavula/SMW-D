@@ -41,13 +41,7 @@ use yii\grid\GridView;
             [
                 'label' => 'Lesson Status',
                 'value' => function ($data) {
-                    if ($data->isCompleted()) {
-                        $status = 'Completed';
-                    } else {
-                        $status = 'Scheduled';
-                    }
-
-                    return $status;
+                    return $data->getStatus();
                 },
             ],
             [

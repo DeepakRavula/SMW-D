@@ -98,7 +98,8 @@ class ScheduleController extends Controller
         $query = Lesson::find()
             ->isConfirmed()
             ->joinWith(['course' => function ($query) use ($locationId) {
-                $query->andWhere(['course.locationId' => $locationId]);
+                $query->andWhere(['course.locationId' => $locationId])
+                        ->confirmed();
             }]);
         if (!empty($studentIds)) {
             $query->joinWith(['enrolment' => function ($query) use ($studentIds) {

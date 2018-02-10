@@ -2,6 +2,7 @@
 
 use common\components\select2\Select2;
 use common\models\User;
+use common\models\LocationAvailability;
 use common\models\Location;
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
@@ -34,7 +35,7 @@ use kartik\time\TimePicker;
             'publicIdentity'
         );
         ?>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <?php
         // Dependent Dropdown
         echo $form->field($model, 'teacherId')->widget(Select2::classname(), [
@@ -46,7 +47,7 @@ use kartik\time\TimePicker;
             ]);
         ?>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-2">
             <?php
             echo $form->field($model, 'duration')->widget(
             TimePicker::classname(),
@@ -59,11 +60,17 @@ use kartik\time\TimePicker;
         );
             ?>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
             <?php echo $form->field($model, 'date')->textInput([
                 'readOnly' => true, 
                 'id' => 'extra-gruop-lesson-date'
             ])?>
+    </div>
+    <div class="col-md-2">
+            <?php echo $form->field($model, 'programRate')->textInput()?>
+    </div>
+    <div class="col-md-2 m-b-20">
+            <?php echo $form->field($model, 'applyFullDiscount')->checkbox()?>
     </div>
         
         <div class="col-md-12">
@@ -89,6 +96,18 @@ use kartik\time\TimePicker;
 </div>
 <?php ActiveForm::end(); ?>
 </div>
+<?php
+    $minLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['fromTime' => SORT_ASC])
+        ->one();
+    $maxLocationAvailability = LocationAvailability::find()
+        ->where(['locationId' => $locationId])
+        ->orderBy(['toTime' => SORT_DESC])
+        ->one();
+    $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+    $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+?>
 
 <script>
 $(document).ready(function() {
@@ -99,7 +118,9 @@ $(document).ready(function() {
         'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
         'dateRenderId' : '#extra-gruop-lesson-date',
         'changeId' : '#teacher-change',
-        'durationId' : '#extralesson-duration'
+        'durationId' : '#extralesson-duration',
+        'minTime': '<?= $minTime; ?>',
+        'maxTime': '<?= $maxTime; ?>'
     };
     $.fn.calendarDayView(options);
 }); 

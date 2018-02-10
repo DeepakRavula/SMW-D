@@ -290,6 +290,7 @@ class UserController extends BaseController
             list($lessonSearch->fromDate, $lessonSearch->toDate) = explode(' - ', $lessonSearch->dateRange);
             $lessonSearch->fromDate = new \DateTime($lessonSearch['fromDate']);
             $lessonSearch->toDate = new \DateTime($lessonSearch['toDate']);
+            $lessonSearch->summariseReport=$lessonSearchModel['summariseReport'];
         }
         $teacherLessons = Lesson::find()
             ->innerJoinWith('enrolment')
@@ -300,7 +301,9 @@ class UserController extends BaseController
             ->isConfirmed()
             ->between($lessonSearch->fromDate, $lessonSearch->toDate)
             ->orderBy(['date' => SORT_ASC]);
-            
+			if($lessonSearch->summariseReport) {
+				$teacherLessons->groupBy(['DATE(lesson.date)']);
+			} 
         return new ActiveDataProvider([
             'query' => $teacherLessons,
             'pagination' => false,
@@ -439,6 +442,8 @@ class UserController extends BaseController
         $db = $searchModel->search(Yii::$app->request->queryParams);
         $lessonSearchModel=new LessonSearch();
         $lessonSearchModel->dateRange=(new\DateTime())->format('M d,Y').' - '.(new\DateTime())->format('M d,Y');
+        $lessonSearch = $request->get('LessonSearch');
+        $lessonSearchModel->summariseReport=$lessonSearch['summariseReport'];
         $invoiceSearchModel = new InvoiceSearch();
         $invoiceSearchModel->dateRange = (new\DateTime())->format('M d,Y') . ' - ' . (new\DateTime())->format('M d,Y');
         $invoiceSearch = $request->get('InvoiceSearch');
@@ -469,7 +474,7 @@ class UserController extends BaseController
             'unscheduledLessonDataProvider' => $this->getUnscheduleLessonDataProvider($id),
             'positiveOpeningBalanceModel' => $this->getPositiveOpeningBalance($id),
             'openingBalanceCredit' => $this->getOpeningBalanceCredit($id),
-            'teacherLessonDataProvider' => $this->getTeacherLessonDataProvider($id, $locationId),
+            'teacherLessonDataProvider' => $this->getTeacherLessonDataProvider($id, $locationId,$lessonSearchModel->summariseReport),
             'noteDataProvider' => $this->getNoteDataProvider($id),
             'accountDataProvider' => $this->getAccountDataProvider($id, $searchModel->accountView),
             'teachersAvailabilities' => $this->getTeacherAvailabilities($id, $locationId),

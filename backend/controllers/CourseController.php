@@ -20,6 +20,7 @@ use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 use backend\models\UserForm;
 use yii\base\Model;
+use common\models\CourseExtra;
 use common\models\CourseSchedule;
 use yii\web\Response;
 use common\models\TeacherAvailability;
@@ -44,7 +45,8 @@ class CourseController extends BaseController
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['fetch-teacher-availability', 'fetch-lessons', 'fetch-group', 'change'],
+                'only' => ['fetch-teacher-availability', 'fetch-lessons', 
+                    'fetch-group', 'change', 'teachers'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -87,6 +89,11 @@ class CourseController extends BaseController
      */
     public function actionView($id)
     {
+        $extraCourse = CourseExtra::find()
+                ->where(['courseId' => $id])
+                ->all();
+        $courseId = ArrayHelper::map($extraCourse, 'extraCourseId', 'extraCourseId');
+        $courseId[] = $id;
         $studentDataProvider = new ActiveDataProvider([
             'query' => Student::find()
                 ->notDeleted()
@@ -96,9 +103,8 @@ class CourseController extends BaseController
 
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
-                ->andWhere(['courseId' => $id])
-                ->andWhere(['status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_RESCHEDULED,
-                        Lesson::STATUS_UNSCHEDULED]])
+                ->andWhere(['courseId' => $courseId])
+                ->notCanceled()
                 ->isConfirmed()
                 ->notDeleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
@@ -175,7 +181,7 @@ class CourseController extends BaseController
                 try {
                     $model->startDate           = $this->getCourseDate($courseScheduleModels);
                     $model->lessonsPerWeekCount = count($courseScheduleModels);
-                    $model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+                    $model->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
                     if ($flag = $model->save(false)) {
                         foreach ($courseScheduleModels as $courseScheduleModel) {
                             $courseScheduleModel->courseId = $model->id;
@@ -224,7 +230,7 @@ class CourseController extends BaseController
                     ->joinWith('userLocation ul')
                     ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
                     ->where(['raa.item_name' => 'teacher'])
-                    ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
+                    ->andWhere(['ul.location_id' => Location::findOne(['slug' => \Yii::$app->location])->id])
                     ->notDeleted()
                     ->all(),
                 'id',
@@ -276,10 +282,7 @@ class CourseController extends BaseController
 
     public function actionTeachers()
     {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-        $session = Yii::$app->session;
-        $location_id = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $location_id = Location::findOne(['slug' => \Yii::$app->location])->id;
         $programId = $_POST['depdrop_parents'][0];
         $qualifications = Qualification::find()
             ->joinWith(['teacher' => function ($query) use ($location_id) {
@@ -310,21 +313,23 @@ class CourseController extends BaseController
     }
     public function actionFetchGroup($studentId, $courseName = null)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $groupEnrolments = Enrolment::find()
             ->select(['courseId'])
             ->joinWith(['course' => function ($query) use ($locationId) {
-                $query->groupProgram($locationId);
+                $query->groupProgram($locationId)
+                        ->confirmed();
             }])
             ->where(['enrolment.studentId' => $studentId])
             ->isConfirmed();
         $groupCourses = Course::find()
+            ->regular()
             ->joinWith(['program' => function ($query) {
                 $query->group();
             }])
-            ->where(['NOT IN', 'course.id', $groupEnrolments])
+            ->andWhere(['NOT IN', 'course.id', $groupEnrolments])
             ->andWhere(['locationId' => $locationId])
-           ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
+            ->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
             ->confirmed();
         if (!empty($courseName)) {
             $groupCourses->andWhere(['LIKE', 'program.name', $courseName]);

@@ -16,6 +16,7 @@ Select2Asset::register($this);
 $this->title = 'Group Course Details';
 $this->params['goback'] = Html::a('<i class="fa fa-angle-left fa-2x"></i>', ['index'], ['class' => 'go-back']);
 $this->params['action-button'] = Html::a('<i title="Print" class="fa fa-print f-s-18"></i>', ['print/course', 'id' => $model->id], ['class' => 'pull-left', 'target' => '_blank']);
+require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup-with-teacher.php';
 ?>
 <div class="row">
 	<div class="col-md-6">

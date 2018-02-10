@@ -135,7 +135,8 @@ class ScheduleController extends BaseController
     {
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) use ($teacherId) {
-                $query->andWhere(['course.locationId' => Location::findOne(['slug' => Yii::$app->location])->id]);
+                $query->andWhere(['course.locationId' => Location::findOne(['slug' => Yii::$app->location])->id])
+                        ->confirmed();
                 if (!empty($teacherId) && $teacherId != 'undefined') {
                     $query->andWhere(['course.teacherId' => $teacherId]);
                 }

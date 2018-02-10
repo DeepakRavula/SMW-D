@@ -10,6 +10,7 @@ class m180123_061124_adding_expirydate_to_private_lessons extends Migration
     {
         $lessons = Lesson::find()
             ->isConfirmed()
+            ->privateLessons()
             ->notDeleted()
             ->all();
 
@@ -26,6 +27,18 @@ class m180123_061124_adding_expirydate_to_private_lessons extends Migration
                 $lesson->privateLesson->updateAttributes([
                     'expiryDate' => $expiryDate->format('Y-m-d H:i:s')
                 ]);
+            }
+        }
+        
+        $groupLessons = Lesson::find()
+            ->isConfirmed()
+            ->groupLessons()
+            ->notDeleted()
+            ->all();
+        
+        foreach ($groupLessons as $groupLesson) {
+            if ($groupLesson->privateLesson) {
+                $groupLesson->privateLesson->delete();
             }
         }
     }

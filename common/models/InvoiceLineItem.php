@@ -166,15 +166,12 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function getEnrolment()
     {
-        $query = $this->hasOne(Enrolment::className(), ['id' => 'enrolment'])
-                ->via('paymentCycle');
         if ($this->isGroupLesson()) {
             return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId'])
                 ->via('lineItemEnrolment');
-        } else if ($this->isExtraLesson()) {
-            $query->onCondition(['enrolment.type' => Enrolment::TYPE_EXTRA]);
         } else {
-            $query->onCondition(['enrolment.type' => Enrolment::TYPE_REGULAR]);
+            return $this->hasOne(Enrolment::className(), ['id' => 'enrolment'])
+                ->via('paymentCycle');
         }
     }
 
@@ -549,7 +546,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $invoiceItemPaymentCycleLesson->save();
         }
         if ($this->isPrivateLesson() || $this->isExtraLesson() ||
-            ($this->isGroupLesson() && $this->invoice->isInvoice())) {
+            $this->isGroupLesson()) {
             $invoiceItemLesson = new InvoiceItemLesson();
             $invoiceItemLesson->lessonId    = $lesson->id;
             $invoiceItemLesson->invoiceLineItemId    = $this->id;
@@ -728,7 +725,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function addFullDiscount()
     {
         $discount = new InvoiceLineItemDiscount();
-        $discount->type = InvoiceLineItemDiscount::TYPE_LINE_ITEM;
+        $discount->type = InvoiceLineItemDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
         $discount->invoiceLineItemId = $this->id;
         $discount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
         $discount->value = InvoiceLineItemDiscount::FULL_DISCOUNT;

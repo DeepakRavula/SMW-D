@@ -14,6 +14,8 @@ use kartik\select2\Select2Asset;
 Select2Asset::register($this);
 TimePickerAsset::register($this);
 DatePickerAsset::register($this);
+use common\models\EmailTemplate;
+use common\models\EmailObject;
 
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 /* @var $this yii\web\View */
@@ -135,9 +137,11 @@ $emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email');
 	 <?php $body = $this->render('mail/body', [
         'model' => $model,
 ]); ?>
-    <?php endif; ?>      
+    <?php endif; ?>  
+<?php $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]); ?>
 	<?php $content = $this->render('mail/content', [
         'content' => $body,
+        'emailTemplate' => $emailTemplate
     ]);
  ?> 
 <div id="loader" class="spinner" style="display:none">
@@ -152,7 +156,7 @@ Modal::begin([
 echo $this->render('/mail/_form', [
     'model' => new EmailForm(),
     'emails' => $emails,
-    'subject' => $model->course->program->name . ' lesson reschedule',
+    'subject' => $emailTemplate->subject ?? $model->course->program->name . ' lesson reschedule',
     'content' => $content,
     'id' => null,
         'userModel'=>!empty($model->enrolment->student->customer) ? $model->enrolment->student->customer : null,

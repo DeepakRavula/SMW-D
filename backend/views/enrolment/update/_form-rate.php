@@ -19,20 +19,20 @@ use common\models\User;
     ]); ?>
 <div class="row">
     <?php $user = User::findOne(Yii::$app->user->id); ?>
-    <?php foreach ($enrolmentProgramRates as $key => $enrolmentProgramRate) : ?>
+    <?php foreach ($courseProgramRates as $key => $courseProgramRate) : ?>
     <?php if ($user->isAdmin()) : ?>
         <div class="col-md-6">
-            <label>Rate From <?= (new \DateTime($enrolmentProgramRate->startDate))->format('d-m-Y')
-                . ' To ' . (new \DateTime($enrolmentProgramRate->endDate))->format('d-m-Y') ?></label>
-            <?= $form->field($enrolmentProgramRate, 'programRate')->textInput([
-                    'id' => 'program-rate' . $key, 'name' => 'EnrolmentProgramRate['. $key . '][programRate]'
+            <label>Rate From <?= (new \DateTime($courseProgramRate->startDate))->format('d-m-Y')
+                . ' To ' . (new \DateTime($courseProgramRate->endDate))->format('d-m-Y') ?></label>
+            <?= $form->field($courseProgramRate, 'programRate')->textInput([
+                    'id' => 'program-rate' . $key, 'name' => 'CourseProgramRate['. $key . '][programRate]'
                 ])->label(false);
             ?>
         </div>
     <?php else : ?>
         <div class="col-md-6">
-            <?= $form->field($enrolmentProgramRate, 'programRate')->hiddenInput([
-                'id' => 'program-rate' . $key, 'name' => 'EnrolmentProgramRate['. $key . '][programRate]'
+            <?= $form->field($courseProgramRate, 'programRate')->hiddenInput([
+                'id' => 'program-rate' . $key, 'name' => 'CourseProgramRate['. $key . '][programRate]'
                 ])->label(false);
             ?>
         </div>

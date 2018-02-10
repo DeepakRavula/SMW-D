@@ -13,14 +13,14 @@ use Yii;
  * @property string $endDate
  * @property string $programRate
  */
-class EnrolmentProgramRate extends \yii\db\ActiveRecord
+class CourseProgramRate extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'enrolment_program_rate';
+        return 'course_program_rate';
     }
 
     /**
@@ -29,8 +29,8 @@ class EnrolmentProgramRate extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['enrolmentId', 'startDate', 'endDate', 'programRate'], 'required'],
-            [['enrolmentId'], 'integer'],
+            [['courseId', 'startDate', 'endDate', 'programRate'], 'required'],
+            [['courseId'], 'integer'],
             [['programRate'], 'number'],
             [['startDate', 'endDate'], 'string', 'max' => 255],
         ];
@@ -43,7 +43,7 @@ class EnrolmentProgramRate extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'enrolmentId' => 'Enrolment ID',
+            'courseId' => 'Course ID',
             'startDate' => 'Start Date',
             'endDate' => 'End Date',
             'programRate' => 'Program Rate',
@@ -52,10 +52,10 @@ class EnrolmentProgramRate extends \yii\db\ActiveRecord
 
     /**
      * @inheritdoc
-     * @return \common\models\query\EnrolmentProgramRateQuery the active query used by this AR class.
+     * @return \common\models\query\CourseProgramRateQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new \common\models\query\EnrolmentProgramRateQuery(get_called_class());
+        return new \common\models\query\CourseProgramRateQuery(get_called_class());
     }
 }

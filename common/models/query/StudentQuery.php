@@ -53,7 +53,8 @@ class StudentQuery extends ActiveQuery
     {
         $this->joinWith(['enrolment' => function ($query) use ($currentDate) {
             $query->joinWith(['course' => function ($query) use ($currentDate) {
-                $query->andWhere(['>=', 'course.endDate', $currentDate]);
+                $query->andWhere(['>=', 'course.endDate', $currentDate])
+                    ->confirmed();
             }])
             ->notDeleted()
             ->isConfirmed()
@@ -67,7 +68,8 @@ class StudentQuery extends ActiveQuery
     {
         $this->joinWith(['enrolment' => function ($query) use ($courseId) {
             $query->joinWith(['course' => function ($query) use ($courseId) {
-                $query->where(['course.id' => $courseId]);
+                $query->andWhere(['course.id' => $courseId])
+                        ->confirmed();
             }])
             ->andWhere(['NOT', ['studentId' => null]])
             ->isConfirmed();
@@ -91,7 +93,7 @@ class StudentQuery extends ActiveQuery
             ->select(['student.id', 'student.first_name', 'student.last_name'])
             ->joinWith(['enrolment' => function ($query) use ($courseId) {
                 $query->joinWith(['course' => function ($query) use ($courseId) {
-                    $query->where(['course.id' => $courseId]);
+                    $query->andWhere(['course.id' => $courseId]);
                 }]);
             }]);
 

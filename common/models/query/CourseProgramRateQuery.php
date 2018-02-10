@@ -3,11 +3,11 @@
 namespace common\models\query;
 
 /**
- * This is the ActiveQuery class for [[\common\models\EnrolmentProgramRate]].
+ * This is the ActiveQuery class for [[\common\models\CourseProgramRate]].
  *
- * @see \common\models\EnrolmentProgramRate
+ * @see \common\models\CourseProgramRate
  */
-class EnrolmentProgramRateQuery extends \yii\db\ActiveQuery
+class CourseProgramRateQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
@@ -16,7 +16,7 @@ class EnrolmentProgramRateQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return \common\models\EnrolmentProgramRate[]|array
+     * @return \common\models\CourseProgramRate[]|array
      */
     public function all($db = null)
     {
@@ -25,7 +25,7 @@ class EnrolmentProgramRateQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return \common\models\EnrolmentProgramRate|array|null
+     * @return \common\models\CourseProgramRate|array|null
      */
     public function one($db = null)
     {

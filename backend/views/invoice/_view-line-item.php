@@ -107,7 +107,7 @@ use yii\widgets\Pjax;
                 if (!$data->isGroupLesson()) {
                     $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
                 } else {
-                    $amount = $data->enrolment->payment ?? 0;
+                    $amount = $data->lesson->getCreditAppliedAmount($data->enrolment->id) ?? 0;
                 }
                 return Yii::$app->formatter->asDecimal($amount);
             },

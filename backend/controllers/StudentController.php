@@ -152,6 +152,7 @@ class StudentController extends BaseController
         $courseModel = new Course();
         $courseModel->studentId = $id;
         $courseSchedule = new CourseSchedule();
+        $courseSchedule->studentId = $model->id;
         $multipleEnrolmentDiscount = new MultiEnrolmentDiscount();
         $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
         $courseModel->load($post);
@@ -161,21 +162,8 @@ class StudentController extends BaseController
             $paymentFrequencyDiscount->load($post);
             $multipleEnrolmentDiscount->load($post);
             $courseModel->locationId = $locationId;
-            $hasExtraEnrolment = $courseModel->checkCourseExist();
-            if ($hasExtraEnrolment) {
-                $endDate = (new Carbon($courseModel->startDate))->addMonths(11);
-                $startDate = new \DateTime($courseModel->startDate);
-                $teacherId = $courseModel->teacherId;
-                $courseModel = $courseModel->getEnroledCourse();
-                $courseModel->updateAttributes([
-                    'startDate' => $startDate->format('Y-m-d H:i:s'),
-                    'endDate' => $endDate->endOfMonth(),
-                    'teacherId' => $teacherId
-                ]);
-            }
             if ($courseModel->save()) {
                 $courseSchedule->courseId = $courseModel->id;
-                $courseSchedule->studentId = $model->id;
                 $dayList = TeacherAvailability::getWeekdaysList();
                 $courseSchedule->day = array_search($courseSchedule->day, $dayList);
                 $courseSchedule->save();
