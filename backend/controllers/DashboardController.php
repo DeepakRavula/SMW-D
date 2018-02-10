@@ -6,6 +6,7 @@ use Yii;
 use common\models\Location;
 use common\models\Lesson;
 use common\models\Enrolment;
+use common\models\Course;
 use yii\filters\AccessControl;
 use common\models\Student;
 use backend\models\search\DashboardSearch;
@@ -67,6 +68,7 @@ public function behaviors()
                     $query->privateProgram();
                 }])
                 ->confirmed()
+                ->andWhere(['course.type' => Course::TYPE_REGULAR])
                 ->location($locationId)
                 ->between($searchModel->fromDate, $searchModel->toDate);
             }])
@@ -78,6 +80,7 @@ public function behaviors()
                     $query->group();
                 }])
                 ->confirmed()
+                ->andWhere(['course.type' => Course::TYPE_REGULAR])
                 ->location($locationId)
                 ->between($searchModel->fromDate, $searchModel->toDate);
             }])
