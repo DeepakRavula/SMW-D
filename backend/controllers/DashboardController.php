@@ -8,12 +8,13 @@ use common\models\Lesson;
 use common\models\Enrolment;
 use yii\filters\AccessControl;
 use common\models\Student;
+use common\components\controllers\BaseController;
 use backend\models\search\DashboardSearch;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\UserLocation;
 
-class DashboardController extends \common\components\controllers\BaseController
+class DashboardController extends BaseController
 {
 	
 public function behaviors()
@@ -25,7 +26,7 @@ public function behaviors()
                 [
                     'allow' => true,
                     'actions' => ['index'],
-                    'roles' => ['manageDashboard'],
+                    'roles' => ['loginToBackend'],
                 ],
             ],
         ],
@@ -33,6 +34,9 @@ public function behaviors()
 }
     public function actionIndex()
     {
+        if (Yii::$app->user->can('staffmenber')) {
+            $this->redirect(['schedule/index']);
+        }
         $roles = ArrayHelper::getColumn(
             Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
                 'name'
@@ -59,7 +63,7 @@ public function behaviors()
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         
         $enrolments = Enrolment::find()
             ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
