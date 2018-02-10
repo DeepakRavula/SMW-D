@@ -68,7 +68,7 @@ public function behaviors()
                     $query->privateProgram();
                 }])
                 ->confirmed()
-                ->andWhere(['course.type' => Course::TYPE_REGULAR])
+                //->regular()
                 ->location($locationId)
                 ->between($searchModel->fromDate, $searchModel->toDate);
             }])
@@ -80,7 +80,7 @@ public function behaviors()
                     $query->group();
                 }])
                 ->confirmed()
-                ->andWhere(['course.type' => Course::TYPE_REGULAR])
+                //->regular()
                 ->location($locationId)
                 ->between($searchModel->fromDate, $searchModel->toDate);
             }])
