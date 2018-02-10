@@ -39,9 +39,14 @@ Modal::end(); ?>
 <?php
 $columns = [
     'date:date',
-    'paymentMethod.name',
     [
-        'label' => 'Number',
+        'label' => 'Type',
+        'value' => function ($data) {
+            return $data->paymentMethod->name;
+        },
+        ],
+    [
+        'label' => 'Ref',
         'value' => function ($data) {
             return $data->reference;
         },
