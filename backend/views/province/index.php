@@ -19,11 +19,6 @@ $lastRole = end($roles);
 $addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'add-province']);
 $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
-<style>
-    #province-modal.modal-dialog{
-    width:400Px;
-}
-</style>
 <?php Modal::begin([
         'header' => '<h4 class="m-0">Province</h4>',
         'id' => 'province-modal',
