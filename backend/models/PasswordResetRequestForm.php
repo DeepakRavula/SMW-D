@@ -56,7 +56,7 @@ class PasswordResetRequestForm extends Model
             ->one();
 
         if ($user) {
-            if (Yii::$app->user->can(User::ROLE_ADMINISTRATOR)) {
+            if ($user->isAdmin()) {
                 $location = Location::findOne(['id' => Location::DEFAULT_LOCATION]);
             } else {
                 $location = Location::findOne(['id' => $user->userLocation->location_id]);
