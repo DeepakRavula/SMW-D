@@ -16,7 +16,7 @@ $this->title = 'Countries';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 
-$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus-circle" aria-hidden="true"></i> Add'), '#', ['class' => 'add-country  btn btn-primary btn-sm']);
+$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'add-country']);
 $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
 <?php Modal::begin([
@@ -45,6 +45,7 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
 <script>
     $(document).ready(function() {
         $(document).on('click', '.add-country, #country-listing  tbody > tr', function () {
+            $('#country-modal .modal-dialog').css({'width': '400px'});
             var countryId = $(this).data('key');
             if (countryId === undefined) {
                 var customUrl = '<?= Url::to(['country/create']); ?>';
