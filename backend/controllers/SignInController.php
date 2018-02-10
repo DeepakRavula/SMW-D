@@ -10,7 +10,7 @@ namespace backend\controllers;
 
 use backend\models\LoginForm;
 use backend\models\AccountForm;
-use backend\models\PasswordResetRequestForm;
+use common\models\PasswordResetRequestForm;
 use backend\models\ResetPasswordForm;
 use Intervention\Image\ImageManagerStatic;
 use trntv\filekit\actions\DeleteAction;
