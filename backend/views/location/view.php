@@ -8,8 +8,8 @@ use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\bootstrap\Modal;
 use yii\bootstrap\Tabs;
+use common\models\LocationAvailability;
 use kartik\date\DatePickerAsset;
-
 DatePickerAsset::register($this);
 
 /* @var $this yii\web\View */
@@ -165,7 +165,7 @@ $lastRole = end($roles);
             {'id':'3','title':'Wednesday'}, {'id':'4','title':'Thursday'}, {'id':'5','title':'Friday'}, 
             {'id':'6','title':'Saturday'}, {'id':'7','title':'Sunday'}],
         events: {
-            url: '<?= Url::to(['location/render-events', 'id' => $model->id]) ?>',
+            url: '<?= Url::to(['location/render-events', 'id' => $model->id,'type' =>LocationAvailability::TYPE_OPERATION_TIME]) ?>',
             type: 'POST',
             error: function() {
                 $("#calendar").fullCalendar("refetchEvents");
@@ -180,7 +180,7 @@ $lastRole = end($roles);
                 var status = confirm("Are you sure to delete availability?");
                 if (status) {
                     $.ajax({
-                        url    : '<?= Url::to(['location/delete-availability', 'id' => $model->id]) ?>&' + params,
+                        url    : '<?= Url::to(['location/delete-availability', 'id' => $model->id,'type'=>LocationAvailability::TYPE_OPERATION_TIME]) ?>&' + params,
                         type   : 'POST',
                         dataType: 'json',
                         success: function()
@@ -196,7 +196,7 @@ $lastRole = end($roles);
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
             var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
             $.ajax({
-                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
+                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id,'type'=>LocationAvailability::TYPE_OPERATION_TIME]) ?>&' + params,
                 type   : 'POST',
                 dataType: 'json',
                 success: function()
@@ -210,7 +210,7 @@ $lastRole = end($roles);
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
             var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
             $.ajax({
-                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
+                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id,'type'=>LocationAvailability::TYPE_OPERATION_TIME]) ?>&' + params,
                 type   : 'POST',
                 dataType: 'json',
                 success: function()
@@ -225,7 +225,7 @@ $lastRole = end($roles);
             var params = $.param({ resourceId: resourceObj.id, startTime: startTime, endTime: endTime });
             var availabilityCheckParams = $.param({ resourceId: resourceObj.id});
             $.ajax({
-                url    : '<?= Url::to(['location/check-availability', 'id' => $model->id]) ?>&' + availabilityCheckParams,
+                url    : '<?= Url::to(['location/check-availability', 'id' => $model->id,'type'=>LocationAvailability::TYPE_OPERATION_TIME]) ?>&' + availabilityCheckParams,
                 type   : 'POST',
                 dataType: 'json',
                 success: function(response)
@@ -233,7 +233,7 @@ $lastRole = end($roles);
                     if(response.status)
                     {
                         $.ajax({
-                            url    : '<?= Url::to(['location/add-availability', 'id' => $model->id]) ?>&' + params,
+                            url    : '<?= Url::to(['location/add-availability', 'id' => $model->id,'type'=>LocationAvailability::TYPE_OPERATION_TIME]) ?>&' + params,
                             type   : 'POST',
                             dataType: 'json',
                             success: function()
@@ -269,7 +269,7 @@ $lastRole = end($roles);
             {'id':'3','title':'Wednesday'}, {'id':'4','title':'Thursday'}, {'id':'5','title':'Friday'}, 
             {'id':'6','title':'Saturday'}, {'id':'7','title':'Sunday'}],
         events: {
-            url: '<?= Url::to(['location/render-events', 'id' => $model->id]) ?>',
+            url: '<?= Url::to(['location/render-events', 'id' => $model->id,'type'=> LocationAvailability::TYPE_SCHEDULE_TIME]) ?>',
             type: 'POST',
             error: function() {
                 $("#calendarnew").fullCalendar("refetchEvents");
@@ -284,7 +284,7 @@ $lastRole = end($roles);
                 var status = confirm("Are you sure to delete availability?");
                 if (status) {
                     $.ajax({
-                        url    : '<?= Url::to(['location/delete-availability', 'id' => $model->id]) ?>&' + params,
+                        url    : '<?= Url::to(['location/delete-availability', 'id' => $model->id,'type'=> LocationAvailability::TYPE_SCHEDULE_TIME]) ?>&' + params,
                         type   : 'POST',
                         dataType: 'json',
                         success: function()
@@ -300,7 +300,7 @@ $lastRole = end($roles);
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
             var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
             $.ajax({
-                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
+                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id,'type'=> LocationAvailability::TYPE_SCHEDULE_TIME]) ?>&' + params,
                 type   : 'POST',
                 dataType: 'json',
                 success: function()
@@ -314,7 +314,7 @@ $lastRole = end($roles);
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
             var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
             $.ajax({
-                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
+                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id,'type'=> LocationAvailability::TYPE_SCHEDULE_TIME]) ?>&' + params,
                 type   : 'POST',
                 dataType: 'json',
                 success: function()
@@ -329,7 +329,7 @@ $lastRole = end($roles);
             var params = $.param({ resourceId: resourceObj.id, startTime: startTime, endTime: endTime });
             var availabilityCheckParams = $.param({ resourceId: resourceObj.id});
             $.ajax({
-                url    : '<?= Url::to(['location/check-availability', 'id' => $model->id]) ?>&' + availabilityCheckParams,
+                url    : '<?= Url::to(['location/check-availability', 'id' => $model->id,'type'=>LocationAvailability::TYPE_SCHEDULE_TIME]) ?>&' + availabilityCheckParams,
                 type   : 'POST',
                 dataType: 'json',
                 success: function(response)
@@ -337,7 +337,7 @@ $lastRole = end($roles);
                     if(response.status)
                     {
                         $.ajax({
-                            url    : '<?= Url::to(['location/add-availability', 'id' => $model->id]) ?>&' + params,
+                            url    : '<?= Url::to(['location/add-availability', 'id' => $model->id,'type' => LocationAvailability::TYPE_SCHEDULE_TIME]) ?>&' + params,
                             type   : 'POST',
                             dataType: 'json',
                             success: function()
