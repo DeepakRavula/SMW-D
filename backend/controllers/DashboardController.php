@@ -10,9 +10,7 @@ use yii\filters\AccessControl;
 use common\models\Student;
 use common\components\controllers\BaseController;
 use backend\models\search\DashboardSearch;
-use yii\helpers\ArrayHelper;
 use common\models\User;
-use common\models\UserLocation;
 
 class DashboardController extends BaseController
 {
@@ -34,20 +32,9 @@ public function behaviors()
 }
     public function actionIndex()
     {
-        if (Yii::$app->user->can('staffmenber')) {
+        $loggedUser = User::findOne(Yii::$app->user->id);
+        if ($loggedUser->isStaff()) {
             $this->redirect(['schedule/index']);
-        }
-        $roles = ArrayHelper::getColumn(
-            Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
-                'name'
-            );
-        $role = end($roles);
-        if ($role !== User::ROLE_ADMINISTRATOR && $role !== User::ROLE_OWNER) {
-            return $this->redirect(['schedule/index']);
-        }
-        if ($role !== User::ROLE_ADMINISTRATOR) {
-            $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
-            Yii::$app->session->set('location_id', $userLocation->location_id);
         }
         $searchModel = new DashboardSearch();
         $currentDate = new \DateTime();
