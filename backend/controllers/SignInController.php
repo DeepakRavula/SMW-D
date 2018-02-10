@@ -17,43 +17,38 @@ use trntv\filekit\actions\DeleteAction;
 use trntv\filekit\actions\UploadAction;
 use Yii;
 use yii\web\ForbiddenHttpException;
-use yii\filters\VerbFilter;
+use common\components\controllers\BaseController;
 use yii\base\InvalidParamException;
 use yii\filters\AccessControl;
 use common\models\User;
 
-class SignInController extends \common\components\controllers\BaseController
+class SignInController extends BaseController
 {
     public $defaultAction = 'login';
 
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                ],
-            ],
-			'access' => [
-				'class' => AccessControl::className(),
-				'rules' => [
-					[
-						'allow' => true,
-						'actions' => ['login', 'request-password-reset', 'reset-password'],
-						'roles' => ['?'],
-					],
-					[
-						'allow' => true,
-    		            'actions' => ['logout', 'profile', 'account'],
-	                	'roles' => ['@'],
-					],
-					[
-						'allow' => true,
-        		        'actions' => ['lock', 'unlock'],
-		                'roles' => ['owner', 'staffmember'],
-					],
-				],
-			],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['login', 'request-password-reset', 'reset-password'],
+                        'roles' => ['@', '?'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['logout', 'profile', 'account'],
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['lock', 'unlock'],
+                        'roles' => ['owner', 'staffmember'],
+                    ]
+                ]
+            ]
         ];
     }
 
