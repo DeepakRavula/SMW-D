@@ -49,7 +49,12 @@ use common\models\PaymentMethod;
                     'autoclose' => true,
                 ],
             ])->label('Cheque Date'); ?>
-   </div>   
+   </div>
+    <div class="row">
+        <div class="col-md-12">
+         <?= $form->field($model, 'notes')->textInput(['class' => 'form-control'])->label('Notes'); ?>
+        </div>
+    </div>
     <div class="row">
 	   <div class="form-group pull-right">
            <?= Html::a('Cancel', '', ['class' => 'btn btn-default payment-cancel-btn']);?>

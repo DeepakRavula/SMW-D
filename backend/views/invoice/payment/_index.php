@@ -39,11 +39,24 @@ Modal::end(); ?>
 <?php
 $columns = [
     'date:date',
-    'paymentMethod.name',
     [
-        'label' => 'Number',
+        'label' => 'Type',
+        'value' => function ($data) {
+            return $data->paymentMethod->name;
+        },
+        ],
+    [
+        'label' => 'Ref',
         'value' => function ($data) {
             return $data->reference;
+        },
+        ],
+    [
+        'contentOptions' => ['class' => 'text-left payment-notes-description', 'style' => 'width:125px;'],
+        'label' => 'Notes',
+        'value' => function ($data) {
+            return $data->notes;
+
         },
         ],
         [
