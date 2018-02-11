@@ -29,7 +29,7 @@ class HolidayController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['update', 'create'],
+                'only' => ['update', 'create','delete'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -140,7 +140,9 @@ class HolidayController extends BaseController
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+         return [
+                'status' => true
+            ];
     }
 
     /**
