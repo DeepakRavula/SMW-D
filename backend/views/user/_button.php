@@ -23,7 +23,13 @@ $form = ActiveForm::begin([
     <?php endif; ?>
 	 <?php if ($searchModel->role_name === User::ROLE_TEACHER):?>
 		<?= $form->field($searchModel, 'showAllTeachers')->checkbox(['data-pjax' => true]); ?>
-    <?php endif; ?> 
+    <?php endif; ?>
+    <?php if ($searchModel->role_name === User::ROLE_ADMINISTRATOR):?>
+		<?= $form->field($searchModel, 'showAllAdministrators')->checkbox(['data-pjax' => true])->label('Show All'); ?>
+    <?php endif; ?>
+    <?php if ($searchModel->role_name === User::ROLE_STAFFMEMBER):?>
+		<?= $form->field($searchModel, 'showAllStaffMembers')->checkbox(['data-pjax' => true]); ?>
+    <?php endif; ?>
 </div>
 <?php \yii\widgets\Pjax::end(); ?>
 <?php ActiveForm::end(); ?>

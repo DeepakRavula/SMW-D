@@ -22,6 +22,8 @@ class UserSearch extends User
     public $query;
     public $showAllCustomers;
     public $showAllTeachers;
+    public $showAllAdministrators;
+    public $showAllStaffMembers;
     private $email;
     
     public function getAccountView()
@@ -50,7 +52,7 @@ class UserSearch extends User
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at', 'accountView'], 'integer'],
             [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname',
-                'lastname', 'query', 'showAllCustomers', 'showAllTeachers', 'accountView'], 'safe'],
+                'lastname', 'query', 'showAllCustomers', 'showAllTeachers','showAllAdministrators', 'accountView'], 'safe'],
         ];
     }
 
