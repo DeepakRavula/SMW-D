@@ -117,7 +117,12 @@ class SignInController extends BaseController
         $model->rememberMe = true;
         if ($model->load(Yii::$app->request->post()) && $model->unlock()) {
             Yii::$app->session->set('lock', false);
-            return $this->redirect(['schedule/index']);
+            $userModel = User::findOne(['id' => Yii::$app->user->id]);
+            if ($userModel->isOwner()) {
+                return $this->redirect(['dashboard/index']);
+            } else {
+                return $this->redirect(['schedule/index']);
+            }
         } else {
             return $this->render('unlock', [
                 'model' => $model
