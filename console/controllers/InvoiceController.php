@@ -30,9 +30,11 @@ class InvoiceController extends Controller
          */
         $priorDate             = (new \DateTime())->modify('+15 day');
         $matchedLessons        = Lesson::find()
+            ->privateLessons()
+            ->regular()
             ->unInvoicedProForma()
             ->isConfirmed()
-            ->scheduledOrRescheduled()
+            ->notCanceled()
             ->between($priorDate, $priorDate)
             ->notDeleted()
             ->all();
@@ -48,7 +50,7 @@ class InvoiceController extends Controller
     public function actionAllCompletedLessons()
     {
         $query = Lesson::find()
-				->isConfirmed()
+                ->isConfirmed()
                 ->notDeleted();
         $privateLessons = $query->completedUnInvoicedPrivate()->all();
         $groupLessons = $query->groupLessons()->completed()->all();

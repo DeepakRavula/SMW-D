@@ -74,6 +74,7 @@ $config = [
             'class' => '\kartik\datecontrol\Module',
         ],
     ],
+    'as beforeAction' => 'common\behaviors\GlobalBeforeAction'
 ];
 
 if (YII_ENV_DEV) {
