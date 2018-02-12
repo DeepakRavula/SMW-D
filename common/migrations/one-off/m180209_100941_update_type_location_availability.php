@@ -6,16 +6,16 @@ class m180209_100941_update_type_location_availability extends Migration
 {
     public function up()
     {
-         $locationAvailabilitys = LocationAvailability::find()
+         $locationAvailabilities = LocationAvailability::find()
             ->all();
-        foreach ($locationAvailabilitys as $locationAvailability) {
+        foreach ($locationAvailabilities as $locationAvailability) {
             $locationAvailability->updateAttributes([
                 'type' => LocationAvailability::TYPE_OPERATION_TIME
             ]);
-             $newLocationAvailability = new LocationAvailability();
-                $newLocationAvailability->locationId = $locationAvailability->locationId;            $newLocationAvailability->day = $locationAvailability->day;
-                $newLocationAvailability->type = LocationAvailability::TYPE_SCHEDULE_TIME;           $newLocationAvailability->fromTime = $locationAvailability->fromTime;                $newLocationAvailability->toTime = $locationAvailability->toTime;
-                $newLocationAvailability->save();
+                $scheduleAvailability = new LocationAvailability();
+                $scheduleAvailability->locationId = $locationAvailability->locationId;               $scheduleAvailability->day = $locationAvailability->day;
+                $scheduleAvailability->type = LocationAvailability::TYPE_SCHEDULE_TIME;              $scheduleAvailability->fromTime = $locationAvailability->fromTime;                   $scheduleAvailability->toTime = $locationAvailability->toTime;
+                $scheduleAvailability->save();
         }     
     }
 

@@ -82,18 +82,18 @@ $lastRole = end($roles);
 	<div class="col-md-12">	
 		<div class="nav-tabs-custom">
         <?php
-        $scheduleAvailability = $this->render('_availability-details');
-        $operationAvailability = $this->render('_new-availability-details');
+        $operationAvailability = $this->render('operation-availability-details');
+        $scheduleAvailability = $this->render('schedule-availability-details');
         ?>
         <?php echo Tabs::widget([
             'items' => [
                 [
                     'label' => 'Operation Time Availability',
-                    'content' => $scheduleAvailability,
+                    'content' => $operationAvailability,
                 ],
                 [
                     'label' => 'Schedule Time Availability',
-                    'content' => $operationAvailability,
+                    'content' => $scheduleAvailability,
                 ],
             ],
         ]);?>
@@ -109,10 +109,9 @@ $lastRole = end($roles);
  <?php  Modal::end(); ?>
 <script>
 	$(document).ready(function(){
-   var id = '#calendar';
+   var id = '#operationCalendar';
    var type = <?= LocationAvailability::TYPE_OPERATION_TIME ?>;
-   scheduleCalendar(id,type);
-   
+   showCalendars(id,type);
 		$(document).on('click', '.edit-location', function () {
 			var locationId = '<?= $model->id;?>';
 		$.ajax({
@@ -152,21 +151,19 @@ $lastRole = end($roles);
 		return false;
 	});
     });
-   
-	
    $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
             var tab  = e.target.text;
     if (tab === "Schedule Time Availability") {
-        var id='#calendarnew';
+        var id='#scheduleCalendar';
         var type = <?= LocationAvailability::TYPE_SCHEDULE_TIME ?>;
-        scheduleCalendar(id,type);
+        showCalendars(id,type);
     } else {
-        var id='#calendar';
+        var id='#operationCalendar';
         var type = <?= LocationAvailability::TYPE_OPERATION_TIME ?>;
-        scheduleCalendar(id,type);
+        showCalendars(id,type);
     }
 });
-function scheduleCalendar(id,type) {
+function showCalendars(id,type) {
        $(id).fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
