@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use common\components\select2\Select2;
+use kartik\select2\Select2;
 use yii\imperavi\Widget;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;

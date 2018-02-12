@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use common\models\Label;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
-use common\components\select2\Select2;
+use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\widgets\MaskedInput;
 
@@ -34,8 +34,7 @@ $form = ActiveForm::begin([
                 ->user($userModel->id)
                 ->all(), 'id', 'name'),
         'options' => [
-            'id' => 'phone-label',
-            'createNew' => true
+            'id' => 'phone-label'
         ],
         'pluginOptions' => [
             'tags' => true,

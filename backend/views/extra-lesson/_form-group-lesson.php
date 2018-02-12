@@ -1,6 +1,6 @@
 <?php
 
-use common\components\select2\Select2;
+use kartik\select2\Select2;
 use common\models\User;
 use common\models\LocationAvailability;
 use common\models\Location;

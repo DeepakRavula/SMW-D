@@ -8,7 +8,7 @@ use common\models\User;
 use common\models\Program;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
-use common\components\select2\Select2;
+use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Lesson */
