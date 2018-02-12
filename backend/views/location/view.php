@@ -251,7 +251,6 @@ $lastRole = end($roles);
 
  $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
     var tab  = e.target.text;
-    if (tab === "Schedule Time Availability") {
     $('#calendarnew').fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
@@ -352,7 +351,6 @@ $lastRole = end($roles);
             });
         }
 });
-}
 });
     });
 </script>
