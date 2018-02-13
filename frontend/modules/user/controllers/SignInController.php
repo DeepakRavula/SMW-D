@@ -6,7 +6,7 @@ use common\commands\SendEmailCommand;
 use common\models\User;
 use common\models\UserToken;
 use frontend\modules\user\models\LoginForm;
-use frontend\modules\user\models\PasswordResetRequestForm;
+use common\models\PasswordResetRequestForm;
 use frontend\modules\user\models\ResetPasswordForm;
 use frontend\modules\user\models\SignupForm;
 use Yii;
