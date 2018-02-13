@@ -30,6 +30,9 @@ $form = ActiveForm::begin([
     <?php if ($searchModel->role_name === User::ROLE_STAFFMEMBER):?>
 		<?= $form->field($searchModel, 'showAllStaffMembers')->checkbox(['data-pjax' => true]); ?>
     <?php endif; ?>
+    <?php if ($searchModel->role_name === User::ROLE_OWNER):?>
+		<?= $form->field($searchModel, 'showAllOwners')->checkbox(['data-pjax' => true]); ?>
+    <?php endif; ?>
 </div>
 <?php \yii\widgets\Pjax::end(); ?>
 <?php ActiveForm::end(); ?>

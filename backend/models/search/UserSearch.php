@@ -24,6 +24,7 @@ class UserSearch extends User
     public $showAllTeachers;
     public $showAllAdministrators;
     public $showAllStaffMembers;
+    public $showAllOwners;
     private $email;
     
     public function getAccountView()
@@ -52,7 +53,7 @@ class UserSearch extends User
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at', 'accountView'], 'integer'],
             [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname',
-                'lastname', 'query', 'showAllCustomers', 'showAllTeachers','showAllAdministrators', 'accountView'], 'safe'],
+                'lastname', 'query', 'showAllCustomers', 'showAllTeachers','showAllAdministrators','showAllOwners','showAllStaffMembers','accountView'], 'safe'],
         ];
     }
 
@@ -147,7 +148,18 @@ class UserSearch extends User
             }
             $query->groupBy('user.id');
         }
-
+          if ($this->role_name === USER::ROLE_STAFFMEMBER) {
+            if (!$this->showAllStaffMembers) {
+                $query->active();
+            }
+            $query->groupBy('user.id');
+        }
+        if ($this->role_name === USER::ROLE_OWNER) {
+            if (!$this->showAllOwners) {
+                $query->active();
+            }
+            $query->groupBy('user.id');
+        }
         return $dataProvider;
     }
 

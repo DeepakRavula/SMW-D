@@ -57,7 +57,7 @@ $this->params['show-all'] = $this->render('_button', [
             'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel, $roleName, $originalInvoice) {
                 $url = Url::to(['user/view', 'UserSearch[role_name]' => $roleName, 'id' => $model->id]);
                 $data = ['data-url' => $url];
-                if ($searchModel->showAllCustomers || $searchModel->showAllTeachers || $searchModel->showAllAdministrators ) {
+                if ($searchModel->showAllCustomers || $searchModel->showAllTeachers || $searchModel->showAllAdministrators||$searchModel->showAllOwners||$searchModel->showAllStaffMembers) {
                     if ((int)$model->status === User::STATUS_NOT_ACTIVE) {
                         $data = array_merge($data, ['class' => 'danger inactive']);
                     } elseif ((int)$model->status === User::STATUS_ACTIVE) {
@@ -122,6 +122,16 @@ $(document).ready(function(){
     $("#usersearch-showalladministrators").on("change", function() {
       var showAllAdministrators = $(this).is(":checked");
       var url = "<?php echo Url::to(['user/index', 'UserSearch[role_name]' => User::ROLE_ADMINISTRATOR]); ?>&UserSearch[query]=" + "<?php echo $searchModel->query; ?>&UserSearch[showAllAdministrators]=" + (showAllAdministrators | 0);
+      $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 6000});  //Reload GridView
+    });
+    $("#usersearch-showallstaffmembers").on("change", function() {
+      var showAllStaffMembers = $(this).is(":checked");
+      var url = "<?php echo Url::to(['user/index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER]); ?>&UserSearch[query]=" + "<?php echo $searchModel->query; ?>&UserSearch[showAllStaffMembers]=" + (showAllStaffMembers | 0);
+      $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 6000});  //Reload GridView
+    });
+        $("#usersearch-showallowners").on("change", function() {
+      var showAllOwners = $(this).is(":checked");
+      var url = "<?php echo Url::to(['user/index', 'UserSearch[role_name]' => User::ROLE_OWNER]); ?>&UserSearch[query]=" + "<?php echo $searchModel->query; ?>&UserSearch[showAllOwners]=" + (showAllOwners | 0);
       $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 6000});  //Reload GridView
     });
 });
