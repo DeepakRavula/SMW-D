@@ -5,11 +5,6 @@ namespace common\models;
 use yii\behaviors\SluggableBehavior;
 use common\models\LocationDebt;
 use Carbon\Carbon;
-use Yii;
-use common\models\User;
-use yii\db\Query;
-
-
 /**
  * This is the model class for table "location".
  *
