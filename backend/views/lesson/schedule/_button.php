@@ -5,7 +5,7 @@ use yii\helpers\Url;
 <?php if (!$model->isCompleted()||($model->isUnscheduled() && !$model->isExpired())) : ?>
     <i title="Edit" class="m-r-10 fa fa-pencil edit-lesson-schedule"></i>
 <?php endif; ?>
-    <?php if (($model->isScheduledOrRescheduled())&& !($model->isGroup() && $model->isCompleted())) : ?>
+    <?php if (($model->isScheduledOrRescheduled())|| $model->isExpired()) : ?>
         <i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i>
         <ul class="dropdown-menu dropdown-menu-right" id="menu-shown">
             <?php if (!$model->isCompleted()) : ?>
