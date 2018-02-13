@@ -13,24 +13,40 @@ echo GridView::widget([
     'summary' => false,
         'emptyText' => false,
     'columns' => [
-        [
-            'value' => function ($data) {
-                return $data->paymentMethod->name;
-            },
-            'contentOptions' => ['class' => 'text-left'],
+    [
+        'label' => 'Date',
+        'value' => function ($data) {
+            return Yii::$app->formatter->asDate($data->date);
+        },
+        ],
+    [
+        'label' => 'Type',
+        'value' => function ($data) {
+            return $data->paymentMethod->name;
+        },
+        ],
+    [
+        'label' => 'Ref',
+        'value' => function ($data) {
+            return $data->reference;
+        },
+        ],
+    [
+        'contentOptions' => ['class' => 'text-left payment-notes-description', 'style' => 'width:125px;'],
+        'label' => 'Notes',
+        'value' => function ($data) {
+            return $data->notes;
+
+        },
         ],
         [
+            'label' => 'Amount',
+            'format' => 'currency',
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right'],
             'value' => function ($data) {
-                return !empty($data->reference) ? $data->reference : null;
+                return Yii::$app->formatter->asDecimal($data->amount);
             },
-        ],
-        [
-            
-            'value' => function ($data) {
-                return $data->invoice->getInvoicePaymentMethodTotal($data->payment_method_id);
-            },
-            'headerOptions' => ['class' => 'text-left'],
-            'contentOptions' => ['class' => 'text-left', 'style' => 'width:80px;'],
         ],
     ],
 ]);
