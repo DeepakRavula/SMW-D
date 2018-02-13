@@ -961,7 +961,7 @@ $(document).on('change', '#city-label, #address-label, #phone-label, #email-labe
 $(document).on('keyup', '.select2-search__field', function () {
     var searchText = $('.select2-results__option').first().text();
     var tagId = $('.select2-results__option').attr('id');
-    if (tagId == undefined) {
+    if (typeof tagId == 'undefined') {
         $('.select2-results__option').first().attr('id', 'create-new');
         if ($('.select2-results__option').attr('id') == 'create-new') {
             $('#create-new').html('"' + '<b>' + searchText +'</b>'+ '" (create new)');
