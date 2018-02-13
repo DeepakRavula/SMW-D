@@ -2,7 +2,6 @@
 <ul class="dropdown-menu dropdown-menu-right">
 	<?php if ($model->program->isPrivate()) : ?>
 	<li><a class="edit-enrolment-enddate" href="#">Adjust enddate...</a></li>
-	<li><a class="add-new-vacation" href="#">Add Vacation...</a></li>
 	<li><a class="enrolment-edit" href="#">Bulk Reschedule...</a></li>
 	<?php endif;?>
 </ul>
