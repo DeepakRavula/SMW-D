@@ -26,6 +26,7 @@ $vacationDataProvider = new ActiveDataProvider([
 LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
     'title' => 'Vacations',
+    'boxTools' =>'<i title="Add" class="fa fa-plus add-new-vacation m-r-10"></i>',
     'withBorder' => true,
 ])
 ?>
