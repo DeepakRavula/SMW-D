@@ -25,7 +25,7 @@ $form = ActiveForm::begin([
 		<?= $form->field($searchModel, 'showAllTeachers')->checkbox(['data-pjax' => true]); ?>
     <?php endif; ?>
     <?php if ($searchModel->role_name === User::ROLE_ADMINISTRATOR):?>
-		<?= $form->field($searchModel, 'showAllAdministrators')->checkbox(['data-pjax' => true])->label('Show All'); ?>
+		<?= $form->field($searchModel, 'showAllAdministrators')->checkbox(['data-pjax' => true]); ?>
     <?php endif; ?>
     <?php if ($searchModel->role_name === User::ROLE_STAFFMEMBER):?>
 		<?= $form->field($searchModel, 'showAllStaffMembers')->checkbox(['data-pjax' => true]); ?>

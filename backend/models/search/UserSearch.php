@@ -141,6 +141,12 @@ class UserSearch extends User
             }
             $query->groupBy('user.id');
         }
+        if ($this->role_name === USER::ROLE_ADMINISTRATOR) {
+            if (!$this->showAllAdministrators) {
+                $query->active();
+            }
+            $query->groupBy('user.id');
+        }
 
         return $dataProvider;
     }
