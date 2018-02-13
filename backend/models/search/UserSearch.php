@@ -129,36 +129,24 @@ class UserSearch extends User
                 $query->joinWith(['student' => function ($query) use ($currentDate) {
                     $query->enrolled($currentDate);
                 }]);
-                $query->active();
+                
             }
-            $query->groupBy('user.id');
+           
         }
         if ($this->role_name === USER::ROLE_TEACHER) {
             if (!$this->showAllTeachers) {
                 $query->joinWith(['userLocation' => function ($query) {
                     $query->joinWith('teacherAvailability');
                 }]);
-                $query->active();
+                
             }
-            $query->groupBy('user.id');
+            
         }
-        if ($this->role_name === USER::ROLE_ADMINISTRATOR) {
-            if (!$this->showAllAdministrators) {
-                $query->active();
-            }
-            $query->groupBy('user.id');
-        }
-          if ($this->role_name === USER::ROLE_STAFFMEMBER) {
-            if (!$this->showAllStaffMembers) {
-                $query->active();
-            }
-            $query->groupBy('user.id');
-        }
-        if ($this->role_name === USER::ROLE_OWNER) {
-            if (!$this->showAllOwners) {
-                $query->active();
-            }
-            $query->groupBy('user.id');
+        if(!($this->showAllCustomers || $this->showAllTeachers||$this->showAllAdministrators || $this->showAllOwners || $this->showAllStaffMembers))
+        {
+            $query->active()
+            ->groupBy('user.id');
+            
         }
         return $dataProvider;
     }
