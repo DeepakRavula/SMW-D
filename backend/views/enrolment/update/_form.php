@@ -3,7 +3,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use common\models\PaymentFrequency;
 use yii\helpers\Html;
-use common\components\select2\Select2;
+use kartik\select2\Select2;
 use yii\helpers\Url;
 use kartik\datetime\DateTimePicker;
 

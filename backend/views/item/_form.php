@@ -8,7 +8,7 @@ use common\models\Item;
 use common\models\ItemCategory;
 use common\models\TaxStatus;
 use yii\helpers\Url;
-use common\components\select2\Select2;
+use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Item */
