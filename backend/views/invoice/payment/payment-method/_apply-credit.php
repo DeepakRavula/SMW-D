@@ -83,9 +83,10 @@ echo GridView::widget([
         'value' => 'date',
         ],
         [
-        'format' => 'decimal',
         'label' => 'Credit',
-        'value' => 'amount',
+        'value' => function ($model) {
+            return Yii::$app->formatter->asDecimal($model['amount'], 2);
+        }
         ],
     ],
 ]);
