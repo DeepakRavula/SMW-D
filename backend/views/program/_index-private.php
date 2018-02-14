@@ -31,16 +31,14 @@ $lastRole = end($roles);
     <?php
     echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'rowOptions' => function ($model, $key, $data) use ($searchModel) {
+        'rowOptions' => function ($model) use ($searchModel) {
                 if ($searchModel->showAllPrograms) {
                     if ((int)$model->status === Program::STATUS_INACTIVE) {
-                        $data = array_merge($data, ['class' => 'danger inactive']);
+                        return ['class' => 'danger inactive'];
                     } elseif ((int)$model->status === Program::STATUS_ACTIVE) {
-                        $data = array_merge($data, ['class' => 'info active']);
+                        return ['class' => 'info active'];
                     }
                 }
-
-                return true;
             },
         'columns' => [
             [
