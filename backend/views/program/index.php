@@ -56,6 +56,7 @@ Modal::begin([
                     if (response.status)
                     {
                         $('#program-content').html(response.data);
+                        $('#program-modal .modal-dialog').css({'width': '500px'});
                         $('#program-modal').modal('show');
                     }
                 }

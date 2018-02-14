@@ -78,7 +78,7 @@ $(document).ready(function () {
 		});
         return false;
     });
-	$(document).on('change', '#course-programid, #courseschedule-duration, #courseschedule-programrate, #payment-frequency-discount, #enrolment-discount', function(){
+	$(document).on('change', '#course-programid, #courseschedule-duration, #courseschedule-programrate, #paymentfrequencyenrolmentdiscount-discount, #multienrolmentdiscount-discount', function(){
 		if ($(this).attr('id') != "course-programid") {
 			var programRate = $('#courseschedule-programrate').val();
 		} else {
@@ -86,8 +86,8 @@ $(document).ready(function () {
 		}
 		var duration = $('#courseschedule-duration').val();
 		var programId = $('#course-programid').val();
-		var paymentFrequencyDiscount = $('#payment-frequency-discount').val();
-		var multiEnrolmentDiscount = $('#enrolment-discount').val();
+		var paymentFrequencyDiscount = $('#paymentfrequencyenrolmentdiscount-discount').val();
+		var multiEnrolmentDiscount = $('#multienrolmentdiscount-discount').val();
 		enrolment.fetchProgram(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate);
         });
 });
