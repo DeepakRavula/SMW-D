@@ -56,7 +56,7 @@ if (!$model->isNewRecord) {
    		</div>
 	</div>
     <div class="row-fluid">
-        <div class="row">
+        <div class="row m-t-10">
             <div class="col-md-12">
                 <div class="form-group pull-left">
                     <?php
