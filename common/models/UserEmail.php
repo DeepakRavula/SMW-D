@@ -46,8 +46,13 @@ class UserEmail extends \yii\db\ActiveRecord
             [['labelId'], 'safe'],
             [['email'], 'trim'],
             ['email', 'unique', 'targetClass'=> self::className(), 'filter' => function ($query) {
+                $query->joinWith(['userContact uc' => function ($query) {
+                    $query->joinWith(['user u' => function ($query) {
+                        $query->andWhere(['u.isDeleted' => false]);
+                    }]);
+                }]);
                 if (!$this->isNewRecord) {
-                    $query->andWhere(['not', ['id' => $this->id]]);
+                    $query->andWhere(['not', ['user_email.id' => $this->id]]);
                 } 
             }],
         ];
@@ -71,5 +76,38 @@ class UserEmail extends \yii\db\ActiveRecord
     public function getUserContact()
     {
         return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);
+    }
+    
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'userId'])
+                ->via('userContact');
+    }
+    
+    public function beforeDelete() 
+    {
+        foreach ($this->user->emails as $email) {
+            if ($this->id !== $email->id) {
+                $email->makePrimary();
+                break;
+            }
+        }
+        if ($this->userContact) {
+            $this->userContact->delete();
+        }
+        return parent::beforeDelete();
+    }
+    
+    public function afterSave($insert, $changedAttributes) 
+    {
+        if (!$this->user->hasPrimaryEmail()) {
+            $this->makePrimary();
+        }
+        parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function makePrimary()
+    {
+        return $this->userContact->makePrimary();
     }
 }

@@ -71,4 +71,12 @@ class UserPhone extends \yii\db\ActiveRecord
     {
         return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);
     }
+    
+    public function beforeDelete() 
+    {
+        if ($this->userContact) {
+            $this->userContact->delete();
+        }
+        return parent::beforeDelete();
+    }
 }

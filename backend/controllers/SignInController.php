@@ -182,7 +182,7 @@ class SignInController extends BaseController
         $isEmailSent = false;
         $userName=$model->email;
         $primaryEmail = User::find()
-                ->joinWith(['userContact' => function ($query) use ($userName) {
+                ->joinWith(['userContacts' => function ($query) use ($userName) {
                     $query->joinWith(['email' => function ($query) use ($userName) {
                         $query->andWhere(['email' => $userName]);
                     }])

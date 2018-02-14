@@ -77,4 +77,12 @@ class UserAddress extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Country::className(), ['id' => 'countryId']);
     }
+    
+    public function beforeDelete() 
+    {
+        if ($this->userContact) {
+            $this->userContact->delete();
+        }
+        return parent::beforeDelete();
+    }
 }

@@ -131,7 +131,7 @@ class DefaultController extends Controller
         $lastRole = end($roles);
         $adminModel = User::findOne(['id' => $id]);
         $model = User::find()->location($locationId)
-                ->where(['user.id' => $id])
+                ->andWhere(['user.id' => $id])
                 ->notDeleted()
                 ->one();
         if ($model !== null) {

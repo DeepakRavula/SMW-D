@@ -498,7 +498,8 @@ class UserController extends BaseController
         }
         $model->canLogin = $canLogin;
         $request = Yii::$app->request;
-        if ($model->load($request->post()) && $model->save() && $emailModels->load($request->post())) {
+        if ($model->load($request->post()) && $emailModels->load($request->post())) {
+            $model->save();
             if (!empty($emailModels->email)) {
                 $userContact = new UserContact();
                 $userContact->userId = $model->getModel()->id;
@@ -577,7 +578,7 @@ class UserController extends BaseController
         $lastRole = end($roles);
         $adminModel = User::findOne(['id' => $id]);
         $model = User::find()->location($locationId)
-                ->where(['user.id' => $id])
+                ->andWhere(['user.id' => $id])
                 ->notDeleted()
                 ->one();
         if ($model !== null) {

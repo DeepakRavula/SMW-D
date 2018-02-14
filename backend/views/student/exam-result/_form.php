@@ -6,6 +6,7 @@ use kartik\date\DatePicker;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\Program;
+use common\models\Location;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 use kartik\select2\Select2;
@@ -15,7 +16,7 @@ use kartik\select2\Select2;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
  <?php
- $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+ $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
  $teachers = ArrayHelper::map(
      User::find()
         ->joinWith(['userLocation ul' => function ($query) {
@@ -23,8 +24,8 @@ use kartik\select2\Select2;
         }])
         ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
         ->where(['raa.item_name' => 'teacher'])
-        ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
-                ->notDeleted()
+        ->andWhere(['ul.location_id' => $locationId])
+        ->notDeleted()
         ->all(),
     'id',
      'userProfile.fullName'
