@@ -20,7 +20,7 @@ use yii\helpers\Url;
     ]); ?>
 
     <div class="row">
-        <div class="col-xs-4">
+        <div class="col-md-8">
             <?php echo $form->field($model, 'date')->widget(\yii\jui\DatePicker::classname(), [
                     'options' => ['class' => 'form-control'],
                     'clientOptions' => [
@@ -29,7 +29,7 @@ use yii\helpers\Url;
                     ],
                 ]); ?>
         </div>
-		 <div class="col-xs-5">
+		 <div class="col-md-8">
 			 <?php  if ($model->isNewRecord) : ?>
 				<?php $model->description = 'Holiday';?>
 			<?php endif;?>				
