@@ -6,14 +6,14 @@ use Yii;
 use common\models\Location;
 use common\models\Lesson;
 use common\models\Enrolment;
+use common\models\Course;
 use yii\filters\AccessControl;
 use common\models\Student;
+use common\components\controllers\BaseController;
 use backend\models\search\DashboardSearch;
-use yii\helpers\ArrayHelper;
 use common\models\User;
-use common\models\UserLocation;
 
-class DashboardController extends \common\components\controllers\BaseController
+class DashboardController extends BaseController
 {
 	
 public function behaviors()
@@ -25,7 +25,7 @@ public function behaviors()
                 [
                     'allow' => true,
                     'actions' => ['index'],
-                    'roles' => ['manageDashboard'],
+                    'roles' => ['loginToBackend'],
                 ],
             ],
         ],
@@ -33,17 +33,9 @@ public function behaviors()
 }
     public function actionIndex()
     {
-        $roles = ArrayHelper::getColumn(
-            Yii::$app->authManager->getRolesByUser(Yii::$app->user->id),
-                'name'
-            );
-        $role = end($roles);
-        if ($role !== User::ROLE_ADMINISTRATOR && $role !== User::ROLE_OWNER) {
-            return $this->redirect(['schedule/index']);
-        }
-        if ($role !== User::ROLE_ADMINISTRATOR) {
-            $userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->id]);
-            Yii::$app->session->set('location_id', $userLocation->location_id);
+        $loggedUser = User::findOne(Yii::$app->user->id);
+        if ($loggedUser->isStaff()) {
+            $this->redirect(['schedule/index']);
         }
         $searchModel = new DashboardSearch();
         $currentDate = new \DateTime();
@@ -59,7 +51,7 @@ public function behaviors()
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         
         $enrolments = Enrolment::find()
             ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
@@ -67,6 +59,7 @@ public function behaviors()
                     $query->privateProgram();
                 }])
                 ->confirmed()
+                ->andWhere(['course.type' => Course::TYPE_REGULAR])
                 ->location($locationId)
                 ->between($searchModel->fromDate, $searchModel->toDate);
             }])
@@ -78,6 +71,7 @@ public function behaviors()
                     $query->group();
                 }])
                 ->confirmed()
+                ->andWhere(['course.type' => Course::TYPE_REGULAR])
                 ->location($locationId)
                 ->between($searchModel->fromDate, $searchModel->toDate);
             }])

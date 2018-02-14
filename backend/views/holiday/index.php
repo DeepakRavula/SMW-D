@@ -12,7 +12,7 @@ use common\components\gridView\AdminLteGridView;
 
 $this->title = 'Holidays';
 ?>
-<?php $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i> Add'), '#', ['id' => 'add-holiday']);?>
+<?php $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['id' => 'add-holiday']);?>
  <?php Modal::begin([
         'header' => '<h4 class="m-0">Holiday</h4>',
         'id' => 'holiday-modal',
@@ -46,6 +46,7 @@ $this->title = 'Holidays';
 <script>
     $(document).ready(function() {
         $(document).on('click', '#add-holiday, #holiday-listing  tbody > tr', function () {
+            $('#holiday-modal .modal-dialog').css({'width': '400px'});
             var holidayId = $(this).data('key');
             if (holidayId === undefined) {
                 var customUrl = '<?= Url::to(['holiday/create']); ?>';

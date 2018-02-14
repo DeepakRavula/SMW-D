@@ -747,4 +747,14 @@ class User extends ActiveRecord implements IdentityInterface
         $role = end($roles);
         return $role === self::ROLE_STAFFMEMBER;
     }
+    
+    public function hasPin()
+    {
+        return $this->isStaff() || $this->isOwner();
+    }
+    
+    public function canManagePin()
+    {
+        return $this->isAdmin() || $this->isOwner();
+    }
 }

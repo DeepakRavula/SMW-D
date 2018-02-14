@@ -5,7 +5,6 @@ use Yii;
 use common\models\Invoice;
 use common\models\log\Log;
 use yii\helpers\Url;
-use yii\helpers\Json;
 
 class InvoiceLog extends Log
 {
@@ -40,7 +39,7 @@ class InvoiceLog extends Log
             $userPath=Url::to(['/user/view', 'UserSearch[role_name]' => 'customer', 'id' => $model->user->id]);
         }
         $log->message = $loggedUser->publicIdentity . ' created an {{'.$invoiceIndex.'}} for {{' .$userIndex. '}}';
-        $log->data = Json::encode($data);
+        $log->data = json_encode($data);
         $log->createdUserId = $loggedUser->id;
         $log->locationId = $locationId;
         
@@ -56,7 +55,12 @@ class InvoiceLog extends Log
         $logLink = new LogLink();
         $logLink->logId = $log->id;
         $logLink->index = $index;
-        $logLink->baseUrl = Yii::$app->request->hostInfo;
+        if (is_a(Yii::$app, 'yii\console\Application')) {
+            $baseUrl = Yii::$app->getUrlManager()->baseUrl;
+        } else {
+            $baseUrl = Yii::$app->request->hostInfo;
+        }
+        $logLink->baseUrl = $baseUrl;
         $logLink->path = $path;
         $logLink->save();
     }

@@ -49,8 +49,13 @@ use common\models\PaymentMethod;
         <div class="col-md-3">
             <?= $form->field($model, 'reference')->textInput()->label($label); ?>
         </div>
-   </div>   
-    <div class="row">    
+   </div>
+   <div class="row">
+       <div class="col-md-12">
+           <?= $form->field($model, 'notes')->textInput(['class' => 'form-control'])->label('Notes'); ?>
+       </div>
+   </div>
+    <div class="row">  
         <div class="clearfix"></div>
 	   <div class="col-md-12">
            <div class="pull-right">

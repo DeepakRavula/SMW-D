@@ -10,50 +10,45 @@ namespace backend\controllers;
 
 use backend\models\LoginForm;
 use backend\models\AccountForm;
-use backend\models\PasswordResetRequestForm;
+use common\models\PasswordResetRequestForm;
 use backend\models\ResetPasswordForm;
 use Intervention\Image\ImageManagerStatic;
 use trntv\filekit\actions\DeleteAction;
 use trntv\filekit\actions\UploadAction;
 use Yii;
 use yii\web\ForbiddenHttpException;
-use yii\filters\VerbFilter;
+use common\components\controllers\BaseController;
 use yii\base\InvalidParamException;
 use yii\filters\AccessControl;
 use common\models\User;
 
-class SignInController extends \common\components\controllers\BaseController
+class SignInController extends BaseController
 {
     public $defaultAction = 'login';
 
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                ],
-            ],
-			'access' => [
-				'class' => AccessControl::className(),
-				'rules' => [
-					[
-						'allow' => true,
-						'actions' => ['login', 'request-password-reset', 'reset-password'],
-						'roles' => ['?'],
-					],
-					[
-						'allow' => true,
-    		            'actions' => ['logout', 'profile', 'account'],
-	                	'roles' => ['@'],
-					],
-					[
-						'allow' => true,
-        		        'actions' => ['lock', 'unlock'],
-		                'roles' => ['owner', 'staffmember'],
-					],
-				],
-			],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['login', 'request-password-reset', 'reset-password'],
+                        'roles' => ['@', '?'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['logout', 'profile', 'account'],
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['lock', 'unlock'],
+                        'roles' => ['owner', 'staffmember'],
+                    ]
+                ]
+            ]
         ];
     }
 
@@ -122,7 +117,12 @@ class SignInController extends \common\components\controllers\BaseController
         $model->rememberMe = true;
         if ($model->load(Yii::$app->request->post()) && $model->unlock()) {
             Yii::$app->session->set('lock', false);
-            return $this->redirect(['schedule/index']);
+            $userModel = User::findOne(['id' => Yii::$app->user->id]);
+            if ($userModel->isOwner()) {
+                return $this->redirect(['dashboard/index']);
+            } else {
+                return $this->redirect(['schedule/index']);
+            }
         } else {
             return $this->render('unlock', [
                 'model' => $model

@@ -15,65 +15,65 @@ $loggedUser = User::findOne(Yii::$app->user->id);
         'action' => Url::to(['user/edit-profile', 'id' => $model->getModel()->id])
     ]);
     ?>
-<div class="row">
+    <div class="row">
 	<div class="col-xs-6">
-		<?php echo $form->field($model, 'firstname') ?>
+            <?php echo $form->field($model, 'firstname') ?>
 	</div>
 	<div class="col-xs-6">
-	<?php echo $form->field($model, 'lastname') ?>
+            <?php echo $form->field($model, 'lastname') ?>
 	</div>
-</div>
-<div class="row">
-	<?php if (!$model->getModel()->getIsNewRecord()) : ?>
-		<div class="col-xs-6">
-			<?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
-		</div>
-	<?php endif; ?>
-	<?php if ($loggedUser->isOwner() || $loggedUser->isAdmin()) : ?>
-            <?php if (!$model->getModel()->getIsNewRecord()) : ?>
-                <?php if ($loggedUser->isAdmin()) : ?>
-                    <div class="col-xs-6">
-                        <?php echo $form->field($model, 'roles')->dropDownList(ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name')) ?>
-                    </div>
-                    <div class="col-xs-6 can-login" style="display: none">
-                        <?php echo $form->field($model, 'password')->passwordInput() ?>
-                    </div>
-                    <div class="col-xs-6 can-login" style="display: none">
-                        <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
-                    </div>
-                <?php endif; ?>
-                <?php if (!$model->getModel()->isAdmin()) : ?>
-                    <div class="col-xs-6">
-                        <?php echo $form->field($model, 'pin')->passwordInput() ?>
-                    </div>
-                <?php endif; ?>
-            <?php endif; ?>
-	<?php endif; ?>
-</div>
-<div class="row">
-    <?php if ($model->getModel()->isStaff()) : ?>
+    </div>
+    <div class="row">
         <div class="col-xs-6">
-            <?php echo $form->field($model, 'canLogin')->checkbox() ?>
+            <?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
         </div>
-    <?php endif; ?>
-    <div class="col-xs-6">
-    <?= $form->field($userProfile, 'picture')->widget(
-        Upload::classname(),
-        [
-        'url' => ['avatar-upload']
-    ]
-    )
-    ?>
+        <?php if ($loggedUser->isAdmin()) : ?>
+            <div class="col-xs-6">
+                <?php echo $form->field($model, 'roles')->dropDownList(ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name')) ?>
+            </div>
+        <?php endif; ?>
+        <?php if (!$model->getModel()->isStaff()) : ?>
+            <div class="col-xs-6 can-login" style="display: none">
+                <?php echo $form->field($model, 'password')->passwordInput() ?>
+            </div>
+            <div class="col-xs-6 can-login" style="display: none">
+                <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
+            </div>
+        <?php endif; ?>
+        <?php if ($loggedUser->canManagePin()) : ?>
+            <?php if ($model->getModel()->hasPin()) : ?>
+                <div class="col-xs-6">
+                    <?php echo $form->field($model, 'pin')->passwordInput() ?>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
     </div>
-</div>
-<div class="row">
+    <div class="row">
+        <?php if ($loggedUser->canManagePin()) : ?>
+        <?php if ($model->getModel()->isStaff()) : ?>
+            <div class="col-xs-6">
+                <?php echo $form->field($model, 'canLogin')->checkbox() ?>
+            </div>
+        <?php endif; ?>
+        <?php endif; ?>
+        <div class="col-xs-6">
+        <?= $form->field($userProfile, 'picture')->widget(
+            Upload::classname(),
+            [
+            'url' => ['avatar-upload']
+        ]
+        )
+        ?>
+        </div>
+    </div>
+    <div class="row">
 	<div class="col-md-12">
-        <div class="pull-right">
-        <?php echo Html::a('Cancel', '#', [ 'id' => 'user-cancel-btn', 'class' => 'btn btn-default']);?>
-		<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-	</div>
+            <div class="pull-right">
+                <?php echo Html::a('Cancel', '#', [ 'id' => 'user-cancel-btn', 'class' => 'btn btn-default']);?>
+                <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+            </div>
+        </div>
     </div>
-</div>
 <?php ActiveForm::end(); ?>
 
 <script>

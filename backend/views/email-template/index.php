@@ -11,7 +11,6 @@ use common\components\gridView\AdminLteGridView;
 
 $this->title = 'Email Templates';
 $this->params['breadcrumbs'][] = $this->title;
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'email_template']);
 ?> 
 <div class="student-index">  
 <?php yii\widgets\Pjax::begin(['id' => 'mail-template']); ?>
@@ -63,13 +62,9 @@ echo AdminLteGridView::widget([
  <?php  Modal::end(); ?>
   <script>
     $(document).ready(function() {
-        $(document).on('click', '.action-button, #mail-template  tbody > tr', function () {
+        $(document).on('click', '#mail-template  tbody > tr', function () {
             var emailId = $(this).data('key');
-            if (emailId === undefined) {
-                var customUrl = '<?= Url::to(['email-template/create']); ?>';
-            } else {
                 var customUrl = '<?= Url::to(['email-template/update']); ?>?id=' + emailId;
-            }
             $.ajax({
                 url    : customUrl,
                 type   : 'get',

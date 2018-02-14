@@ -17,7 +17,8 @@ class LocationAvailability extends \yii\db\ActiveRecord
 {
     const DEFAULT_FROM_TIME = '09:00:00';
     const DEFAULT_TO_TIME   = '17:00:00';
-
+    const TYPE_OPERATION_TIME =1;
+    const TYPE_SCHEDULE_TIME =2;
     /**
      * @inheritdoc
      */
@@ -32,8 +33,8 @@ class LocationAvailability extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['locationId', 'day'], 'required'],
-            [['locationId', 'day'], 'integer'],
+            [['locationId', 'day','type'], 'required'],
+            [['locationId', 'day','type'], 'integer'],
             [['fromTime', 'toTime'], 'safe'],
         ];
     }
@@ -47,6 +48,7 @@ class LocationAvailability extends \yii\db\ActiveRecord
             'id' => 'ID',
             'locationId' => 'Location ID',
             'day' => 'Day',
+            'type' => 'Type',
             'fromTime' => 'From Time',
             'toTime' => 'To Time',
         ];

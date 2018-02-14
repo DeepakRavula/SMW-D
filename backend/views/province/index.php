@@ -16,7 +16,7 @@ $this->title = 'Provinces';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 
-$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i> Add'), '#', ['class' => 'add-province']);
+$addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'add-province']);
 $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
 <?php Modal::begin([
@@ -58,6 +58,7 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
 <script>
     $(document).ready(function() {
         $(document).on('click', '.add-province, #province-listing  tbody > tr', function () {
+            $('#province-modal .modal-dialog').css({'width': '350px'});
             var provinceId = $(this).data('key');
             if (provinceId === undefined) {
                 var customUrl = '<?= Url::to(['province/create']); ?>';

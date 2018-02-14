@@ -5,7 +5,6 @@ namespace common\models;
 use yii\behaviors\SluggableBehavior;
 use common\models\LocationDebt;
 use Carbon\Carbon;
-
 /**
  * This is the model class for table "location".
  *
@@ -164,6 +163,8 @@ class Location extends \yii\db\ActiveRecord
             $locationDebt->type = LocationDebt::TYPE_ADVERTISEMENT;
             $locationDebt->value = $this->advertisementValue;
             $locationDebt->save();
+
+            $this->addPermission();
         }
         return parent::afterSave($insert, $changedAttributes);
     }
@@ -250,4 +251,79 @@ class Location extends \yii\db\ActiveRecord
         $taxAmount=$subTotal * ($taxPercentage / 100);
         return $taxAmount;
     }
+    public function addPermission() {
+    	$auth = Yii::$app->authManager;
+	    $roles = [User::ROLE_ADMINISTRATOR, User::ROLE_STAFFMEMBER, User::ROLE_OWNER];
+		$exceptStaffRoles = [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER];
+		$adminPermissions = $this->adminPermissions();
+		$adminAndOwnerPermissions = $this->adminAndOwnerPermissions();
+        $permissions = $auth->getPermissions();
+		$command = Yii::$app->db->createCommand();
+        foreach ($permissions as $permission) {
+            if (in_array($permission->name, $adminAndOwnerPermissions)) {
+                foreach ($exceptStaffRoles as $exceptStaffRole) {
+                    $command->insert('rbac_auth_item_child', array(
+                        'parent' => $exceptStaffRole,
+                        'child' => $permission->name,
+                        'location_id' => $this->id
+                    ))->execute();
+                }
+            } else if(in_array($permission->name, $adminPermissions)) {
+                $command->insert('rbac_auth_item_child', array(
+                    'parent' => User::ROLE_ADMINISTRATOR,
+                    'child' => $permission->name,
+                    'location_id' => $this->id
+                ))->execute();
+            } else {
+                foreach ($roles as $role) {
+                    $command->insert('rbac_auth_item_child', array(
+                        'parent' => $role,
+                        'child' => $permission->name,
+                        'location_id' => $this->id
+                    ))->execute();
+                }
+            }	
+        }
+
+    }
+	public function adminPermissions() {
+		return [
+			'manageAdminArea',
+			'manageAdmin',
+			'managePrograms',
+			'managePrivileges',
+			'manageCities',
+			'manageProvinces',
+			'manageCountries',
+			'manageTaxes',
+			'manageReminderNotes',
+			'manageColorCode',
+			'manageItemCategory',
+			'manageBlogs',
+			'manageLocations',
+			'manageHolidays',
+			'manageEmailTemplate',
+			'manageOwners',
+			'manageAccessControl'	
+		];
+	}
+	public function adminAndOwnerPermissions() {
+		return [
+			'teacherQualificationRate',
+			'manageDashboard',
+			'manageBirthdays',
+			'managePayments',
+			'manageRoyalty',
+			'manageReports',
+			'manageTaxCollected',
+			'manageRoyaltyFreeItems',
+			'manageItemsByCustomer',
+			'manageItemReport',
+			'manageItemCategoryReport',
+			'manageDiscountReport',
+			'manageAllLocations',
+			'manageStaff',
+			
+		];
+	}
 }

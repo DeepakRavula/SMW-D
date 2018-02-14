@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use common\models\Location;
 use common\models\City;
 use common\models\Label;
-use common\components\select2\Select2;
+use kartik\select2\Select2;
 use common\models\Province;
 use common\models\Country;
 use yii\helpers\ArrayHelper;
@@ -37,8 +37,7 @@ use yii\helpers\Url;
                     ->user($userModel->id)
                     ->all(), 'id', 'name'),
             'options' => [
-                'id' => 'address-label',
-                'createNew' => true,
+                'id' => 'address-label'
             ],
             'pluginOptions' => [
                 'placeholder' => 'select label',

@@ -26,7 +26,7 @@ class EmailTemplateController extends \common\components\controllers\BaseControl
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['update', 'create','delete'],
+                'only' => ['update'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -64,40 +64,6 @@ class EmailTemplateController extends \common\components\controllers\BaseControl
             'model' => $this->findModel($id),
         ]);
     }
-
-    /**
-     * Creates a new EmailTemplate model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     *
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new EmailTemplate();
-        $data  = $this->renderAjax('_form', [
-            'model' => $model,
-        ]);
-        if (Yii::$app->request->post()) {
-            if($model->load(Yii::$app->request->post()) && $model->save()) {
-                return [
-                    'status' => true
-                ];
-            }
-            else {
-                return [
-                    'status' => false,
-                    'errors' =>$model->getErrors()
-                ];
-            }
-        }
-        else {
-            return [
-                'status' => true,
-                'data' => $data
-            ];
-        }
-    }
-
     /**
      * Updates an existing EmailTemplate model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -129,23 +95,6 @@ class EmailTemplateController extends \common\components\controllers\BaseControl
             return [
                 'status' => true,
                 'data' => $data
-            ];
-        }
-    }
-    /**
-     * Deletes an existing EmailTemplate model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param int $id
-     *
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $model = $this->findModel($id);
-        if ($model->delete()) {
-            return [
-                'status' => true,
             ];
         }
     }

@@ -16,15 +16,7 @@ use common\models\EmailObject;
         $form = ActiveForm::begin([
         'id' => 'email-template-form',
     ]); ?>
-    <?php echo $form->field($model, 'emailTypeId')->dropDownList(ArrayHelper::map(
-                            EmailObject::find()->orderBy(['name' => SORT_ASC])->all(),
-        'id',
-        'name'
-            )) ?>
-    	<?= $form->field($model, 'subject')->widget(CKEditor::className(), [
-        'options' => ['rows' => 6],
-        'preset' => 'basic',
-    ]) ?>
+    	<?= $form->field($model, 'subject')->textInput()?>
     	<?= $form->field($model, 'header')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
         'preset' => 'basic',
@@ -37,7 +29,7 @@ use common\models\EmailObject;
     <div class="row-fluid">
     <div class="form-group pull-right">
         <?= Html::a('Cancel', '', ['class' => 'btn btn-default template-cancel']);?>
-        <?php echo Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-info' : 'btn btn-info']) ?>
+        <?php echo Html::submitButton('Update', ['class' => 'btn btn-info']) ?>
     </div>
     <div class="clearfix"></div>
     </div>

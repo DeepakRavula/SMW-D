@@ -7,9 +7,9 @@ use insolita\wgadminlte\LteConst;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use yii\bootstrap\Modal;
-
+use yii\bootstrap\Tabs;
+use common\models\LocationAvailability;
 use kartik\date\DatePickerAsset;
-
 DatePickerAsset::register($this);
 
 /* @var $this yii\web\View */
@@ -80,17 +80,25 @@ $lastRole = end($roles);
 <?php Pjax::end(); ?>
 <div class="row">
 	<div class="col-md-12">	
-		<?php
-        LteBox::begin([
-            'type' => LteConst::TYPE_DEFAULT,
-            'title' => 'Availability',
-            'withBorder' => true,
-        ])
+		<div class="nav-tabs-custom">
+        <?php
+        $operationAvailability = $this->render('operation-availability-details');
+        $scheduleAvailability = $this->render('schedule-availability-details');
         ?>
-		<?php echo $this->render('_availability-details', [
-            'model' => $model,
-        ]); ?>
-		<?php LteBox::end() ?>
+        <?php echo Tabs::widget([
+            'items' => [
+                [
+                    'label' => 'Operation Time Availability',
+                    'content' => $operationAvailability,
+                ],
+                [
+                    'label' => 'Schedule Visibility',
+                    'content' => $scheduleAvailability,
+                ],
+            ],
+        ]);?>
+</div>
+
 	</div>
 </div>
 <?php Modal::begin([
@@ -101,6 +109,9 @@ $lastRole = end($roles);
  <?php  Modal::end(); ?>
 <script>
 	$(document).ready(function(){
+   var id = '#operationCalendar';
+   var type = <?= LocationAvailability::TYPE_OPERATION_TIME ?>;
+   showCalendars(id,type);
 		$(document).on('click', '.edit-location', function () {
 			var locationId = '<?= $model->id;?>';
 		$.ajax({
@@ -139,7 +150,21 @@ $lastRole = end($roles);
 		$('#location-edit-modal').modal('hide');
 		return false;
 	});
-	$('#calendar').fullCalendar({
+    });
+   $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
+            var tab  = e.target.text;
+    if (tab === "Schedule Visibility") {
+        var id='#scheduleCalendar';
+        var type = <?= LocationAvailability::TYPE_SCHEDULE_TIME ?>;
+        showCalendars(id,type);
+    } else {
+        var id='#operationCalendar';
+        var type = <?= LocationAvailability::TYPE_OPERATION_TIME ?>;
+        showCalendars(id,type);
+    }
+});
+function showCalendars(id,type) {
+       $(id).fullCalendar({
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
         defaultView: 'agendaDay',
@@ -156,17 +181,35 @@ $lastRole = end($roles);
             {'id':'3','title':'Wednesday'}, {'id':'4','title':'Thursday'}, {'id':'5','title':'Friday'}, 
             {'id':'6','title':'Saturday'}, {'id':'7','title':'Sunday'}],
         events: {
-            url: '<?= Url::to(['location/render-events', 'id' => $model->id]) ?>',
+            url: '<?= Url::to(['location/render-events', 'id' => $model->id]) ?>&type='+ type,
             type: 'POST',
             error: function() {
-                $("#calendar").fullCalendar("refetchEvents");
+                $(id).fullCalendar("refetchEvents");
             }
         },
         eventRender: function(event, element) {
-            element.find("div.fc-content").prepend("<i  class='fa fa-close pull-right text-danger'></i>");
+            availability.modifyEventRender(event,element,type,id);
         },
         eventClick: function(event) {
-            var params = $.param({ resourceId: event.resourceId });
+            availability.clickEvent(event,type,id);
+        },
+        eventResize: function(event) {
+            availability.eventResize(event,type,id);
+        },
+        eventDrop: function(event) {
+            availability.eventDrop(event,type,id);
+        },
+        select: function( start, end, jsEvent, view, resourceObj ) {
+            availability.eventSelect(start, end, jsEvent, view, resourceObj,type,id);
+        }
+    });
+   }
+ var availability = {
+        modifyEventRender : function (event, element,type,id) {
+             element.find("div.fc-content").prepend("<i  class='fa fa-close pull-right text-danger'></i>");
+        },
+        clickEvent : function (event,type,id) {
+            var params = $.param({ resourceId: event.resourceId, type: type });
             $(".fa-close").click(function() {
                 var status = confirm("Are you sure to delete availability?");
                 if (status) {
@@ -176,45 +219,45 @@ $lastRole = end($roles);
                         dataType: 'json',
                         success: function()
                         {
-                            $("#calendar").fullCalendar("refetchEvents");
+                            $(id).fullCalendar("refetchEvents");
                         }
                     });
                 }
             });
         },
-        eventResize: function(event) {
-            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+        eventResize : function (event,type,id) {
+         var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
-            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime, type: type });
             $.ajax({
                 url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
                 type   : 'POST',
                 dataType: 'json',
                 success: function()
                 {
-                    $("#calendar").fullCalendar("refetchEvents");
+                    $(id).fullCalendar("refetchEvents");
                 }
             });
         },
-        eventDrop: function(event) {
-            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+        eventDrop : function (event,type,id) {
+        var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
-            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime });
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime, type: type });
             $.ajax({
                 url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
                 type   : 'POST',
                 dataType: 'json',
                 success: function()
                 {
-                    $("#calendar").fullCalendar("refetchEvents");
+                    $(id).fullCalendar("refetchEvents");
                 }
             });
         },
-        select: function( start, end, jsEvent, view, resourceObj ) {
+        eventSelect :function(start, end, jsEvent, view, resourceObj,type,id) {
             var endTime = moment(end).format('YYYY-MM-DD HH:mm:ss');
             var startTime = moment(start).format('YYYY-MM-DD HH:mm:ss');
-            var params = $.param({ resourceId: resourceObj.id, startTime: startTime, endTime: endTime });
-            var availabilityCheckParams = $.param({ resourceId: resourceObj.id});
+            var params = $.param({ resourceId: resourceObj.id, startTime: startTime, endTime: endTime, type: type });
+            var availabilityCheckParams = $.param({ resourceId: resourceObj.id, type: type});
             $.ajax({
                 url    : '<?= Url::to(['location/check-availability', 'id' => $model->id]) ?>&' + availabilityCheckParams,
                 type   : 'POST',
@@ -229,7 +272,7 @@ $lastRole = end($roles);
                             dataType: 'json',
                             success: function()
                             {
-                                $("#calendar").fullCalendar("refetchEvents");
+                                $(id).fullCalendar("refetchEvents");
                             }
                         });
                     } else {
@@ -238,6 +281,5 @@ $lastRole = end($roles);
                 }
             });
         }
-});
-    });
+ }
 </script>

@@ -21,7 +21,7 @@ use yii\helpers\Url;
     ]); ?>
 
     <div class="row">
-		<div class="col-md-4">
+		<div class="col-md-8">
     <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 		</div>
 	</div>

@@ -145,39 +145,43 @@ class LocationController extends BaseController
         }
     }
     
-    public function actionEditAvailability($id, $resourceId, $startTime, $endTime)
+    public function actionEditAvailability($id, $resourceId, $type,$startTime, $endTime)
     {
         $availabilityModel = LocationAvailability::find()
-            ->where(['locationId' => $id, 'day' => $resourceId])
+            ->where(['locationId' => $id, 'day' => $resourceId, 'type' => $type])
             ->one();
         $availabilityModel->fromTime = $startTime;
         $availabilityModel->toTime = $endTime;
         return $availabilityModel->save();
     }
 
-    public function actionDeleteAvailability($id, $resourceId)
+    public function actionDeleteAvailability($id, $resourceId,$type)
     {
         $availabilityModel = LocationAvailability::find()
-            ->where(['locationId' => $id, 'day' => $resourceId])
+            ->where(['locationId' => $id, 'day' => $resourceId, 'type' => $type])
             ->one();
         return $availabilityModel->delete();
     }
 
-    public function actionAddAvailability($id, $resourceId, $startTime, $endTime)
+    public function actionAddAvailability($id, $resourceId,$type,$startTime, $endTime)
     {
         $model = new LocationAvailability();
         $model->locationId = $id;
         $model->day = $resourceId;
+        $model->type = $type;
         $model->fromTime = $startTime;
         $model->toTime = $endTime;
         return $model->save();
     }
 
-    public function actionRenderEvents($id)
+    public function actionRenderEvents($id,$type)
     {
         $model  = $this->findModel($id);
+        $availabilities= LocationAvailability::find()
+                ->andWhere(['locationId' =>$id ,'type' => $type])
+                ->all();
         $events = [];
-        foreach ($model->locationAvailabilities as $availability) {
+        foreach ($availabilities as $availability) {
             $startTime = new \DateTime($availability->fromTime);
             $endTime   = new \DateTime($availability->toTime);
             $events[] = [
@@ -188,14 +192,13 @@ class LocationController extends BaseController
                 'className' => 'location-availability',
             ];
         }
-
         return $events;
     }
 
-    public function actionCheckAvailability($id, $resourceId)
+    public function actionCheckAvailability($id, $resourceId,$type)
     {
         $availabilityModel = LocationAvailability::find()
-            ->where(['locationId' => $id, 'day' => $resourceId])
+            ->where(['locationId' => $id, 'day' => $resourceId,'type' => $type])
             ->one();
         $response = [
             'status' => true,

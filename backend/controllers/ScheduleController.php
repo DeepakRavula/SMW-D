@@ -98,9 +98,9 @@ class ScheduleController extends BaseController
         $date = new \DateTime();
         $locationAvailabilities = LocationAvailability::find()
             ->where(['locationId' => $locationId])
+            ->andWhere(['type' => LocationAvailability::TYPE_SCHEDULE_TIME])
             ->all();
-        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
-            'day' => $date->format('N')]);
+        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,'day' => $date->format('N'),'type' => LocationAvailability::TYPE_SCHEDULE_TIME]);
         if (empty($locationAvailability)) {
             $from_time = LocationAvailability::DEFAULT_FROM_TIME;
             $to_time   = LocationAvailability::DEFAULT_TO_TIME;
@@ -150,26 +150,17 @@ class ScheduleController extends BaseController
         return $lessons;
     }
 
-    public function actionRenderClassroomResources($date)
+    public function actionRenderClassroomResources()
     {
-        $date      = \DateTime::createFromFormat('Y-m-d', $date);
-		$classrooms = Classroom::find()
-			->andWhere(['locationId' => Location::findOne(['slug' => Yii::$app->location])->id])
-			->all();
-		foreach ($classrooms as $classroom) {
-			$resources[] = [
-				'id'    => $classroom->id,
-				'title' => $classroom->name,
-                                'description' => $classroom->description,
-			];
-		}
+        $resources = [];
         $classrooms = Classroom::find()
-            ->andWhere(['locationId' => Location::findOne(['slug' => Yii::$app->location])->id])
-            ->all();
+                ->andWhere(['locationId' => Location::findOne(['slug' => Yii::$app->location])->id])
+                ->all();
         foreach ($classrooms as $classroom) {
             $resources[] = [
                 'id'    => $classroom->id,
                 'title' => $classroom->name,
+                'description' => $classroom->description,
             ];
         }
         return $resources;

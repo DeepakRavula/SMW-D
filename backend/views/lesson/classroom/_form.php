@@ -6,7 +6,7 @@ use kartik\date\DatePicker;
 use kartik\time\TimePicker;
 use kartik\color\ColorInput;
 use yii\helpers\Url;
-use common\components\select2\Select2;
+use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use common\models\Classroom;
 use common\models\User;
