@@ -92,7 +92,7 @@ $lastRole = end($roles);
                     'content' => $operationAvailability,
                 ],
                 [
-                    'label' => 'Schedule Time Availability',
+                    'label' => 'Schedule Visibility',
                     'content' => $scheduleAvailability,
                 ],
             ],
@@ -153,7 +153,7 @@ $lastRole = end($roles);
     });
    $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
             var tab  = e.target.text;
-    if (tab === "Schedule Time Availability") {
+    if (tab === "Schedule Visibility") {
         var id='#scheduleCalendar';
         var type = <?= LocationAvailability::TYPE_SCHEDULE_TIME ?>;
         showCalendars(id,type);
