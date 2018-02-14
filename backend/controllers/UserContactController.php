@@ -11,6 +11,7 @@ use yii\web\Response;
 use common\models\UserPhone;
 use common\models\User;
 use common\models\Label;
+use common\models\Location;
 use common\models\UserAddress;
 use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
@@ -324,8 +325,7 @@ class UserContactController extends BaseController
             $contactModel = $model->address;
             $type = UserContact::TYPE_ADDRESS;
         }
-        if ($model->delete()) {
-            $contactModel->delete();
+        if ($contactModel->delete()) {
             return [
                 'status' => true,
                 'type' => $type,
@@ -335,10 +335,9 @@ class UserContactController extends BaseController
 
     protected function findModel($id)
     {
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = UserContact::find()->location($locationId)
-                ->where(['user_contact.id' => $id])
+                ->andWhere(['user_contact.id' => $id])
                 ->one();
         if ($model !== null) {
             return $model;

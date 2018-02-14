@@ -143,7 +143,7 @@ class LoginForm extends Model
             $this->user = User::find()
                 ->backendUsers()
                 ->canLogin()
-                ->joinWith(['userContact' => function ($query) use ($userName) {
+                ->joinWith(['userContacts' => function ($query) use ($userName) {
                     $query->joinWith(['email' => function ($query) use ($userName) {
                         $query->andWhere(['email' => $userName]);
                     }])
