@@ -16,6 +16,49 @@
 ]);
    ?>
         <div class="row-fluid invoice-info m-t-10">
+           <?php     $columns = [
+        [
+                 'label' => 'Description',
+            'headerOptions' => ['class' => 'text-left'],
+            'value' => function ($data) {
+                    return $data->description;
+            },
+        ],
+        [
+            'label' => 'Qty',
+            'value' => function ($data) {
+                return $data->unit;
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+        ]
+    ];
+    if ($model->isProformaInvoice()) {
+        $columns[] = [
+            'label' => 'Payment',
+            'format' => 'currency',
+            'value' => function ($data) {
+                if (!$data->isGroupLesson()) {
+                    $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                } else {
+                    $amount = $data->lesson->getCreditAppliedAmount($data->enrolment->id) ?? 0;
+                }
+                return Yii::$app->formatter->asDecimal($amount);
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+        ];
+    }
+    $columns[] = [
+            'label' => 'Price',
+            'format' => 'currency',
+            'value' => function ($data) {
+                return Yii::$app->formatter->asDecimal($data->itemTotal);
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+        ];
+?>
             <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']); ?>
                 <?php echo GridView::widget([
          'dataProvider' => $invoiceLineItemsDataProvider,
@@ -23,35 +66,7 @@
          'headerRowOptions' => ['class' => 'bg-light-gray'],
          'summary' => false,
         'emptyText' => false,
-         'columns' => [
-            [
-                 'label' => 'Description',
-                'headerOptions' => ['class' => 'text-left'],
-                'value' => function ($data) {
-                    return $data->description;
-                },
-            ],
-             [
-         'label' => 'Qty',
-         'value' => function ($data) {
-             return $data->unit;
-         },
-                 'headerOptions' => ['class' => 'text-right'],
-         'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
-         ],
-         [
-            'format' => ['currency', 'USD', [
-                            \NumberFormatter::MIN_FRACTION_DIGITS => 4,
-                            \NumberFormatter::MAX_FRACTION_DIGITS => 4,
-                        ]],
-            'label' => 'Net Price',
-                 'value' => function ($data) {
-                     return $data->itemTotal;
-                 },
-                 'headerOptions' => ['class' => 'text-right'],
-                 'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
-             ],
-         ],
+         'columns' => $columns,
          ]); ?>
                     <?php yii\widgets\Pjax::end(); ?>
         </div>

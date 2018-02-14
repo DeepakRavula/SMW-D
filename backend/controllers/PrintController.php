@@ -49,17 +49,20 @@ class PrintController extends BaseController
         $invoiceLineItems = InvoiceLineItem::find()
                 ->notDeleted()
                 ->where(['invoice_id' => $id]);
-        $payments = Payment::find()
-            ->joinWith(['invoicePayments' => function ($query) use ($id) {
-                $query->where(['invoice_id' => $id]);
+        $invoicePayments                     = Payment::find()
+            ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
+                $query->where(['ip.invoice_id' => $model->id]);
             }])
-             ->groupBy(['payment.id','payment.payment_method_id']);
+            ->orderBy(['date' => SORT_DESC]);
+        if ($model->isProFormaInvoice()) {
+            $invoicePayments->notCreditUsed();
+        }
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoiceLineItems,
             'pagination' => false,
         ]);
         $paymentsDataProvider = new ActiveDataProvider([
-            'query' => $payments,
+            'query' => $invoicePayments,
         ]);
         $this->layout = '/print';
 
