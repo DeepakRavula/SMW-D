@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\query\UserEmailQuery;
 
 /**
  * This is the model class for table "user_email".
@@ -72,7 +73,11 @@ class UserEmail extends \yii\db\ActiveRecord
         ];
     }
     
-   
+    public static function find()
+    {
+        return new UserEmailQuery(get_called_class());
+    }
+    
     public function getUserContact()
     {
         return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);
