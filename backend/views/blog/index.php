@@ -8,7 +8,7 @@ use common\components\gridView\AdminLteGridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Blogs';
-$this->params['action-button'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Create', ['create'], ['class' => 'btn btn-primary btn-sm']);
+$this->params['action-button'] = Html::a('<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>', ['create'], ['class' => 'btn btn-sm']);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="grid-row-open p-20">
