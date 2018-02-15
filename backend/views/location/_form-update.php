@@ -10,7 +10,6 @@ use kartik\date\DatePicker;
 use Carbon\Carbon;
 use yii\helpers\Url;
 use yii\widgets\MaskedInput;
-use common\models\User;
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -21,7 +20,7 @@ $this->title = 'Edit Location';
 	<?php 
         $form = ActiveForm::begin([
         'id' => 'location-edit-form',
-        'action' => Url::to(['location/update', 'id' => $model->id]),
+        'action' => Url::to(['/location-update']),
     ]); ?>
 		<div class="row p-10">
 		<div class="col-md-6">

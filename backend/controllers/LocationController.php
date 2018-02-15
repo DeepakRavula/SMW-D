@@ -9,7 +9,6 @@ use yii\web\Response;
 use common\models\Location;
 use yii\helpers\Url;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\widgets\ActiveForm;
@@ -79,10 +78,11 @@ class LocationController extends BaseController
      *
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView()
+    {   
+        $location = Location::findOne(['slug' => Yii::$app->location]);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($location->id),
         ]);
     }
 
@@ -99,7 +99,7 @@ class LocationController extends BaseController
             'model' => $model,
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(Url::to(['location/view', 'id' => $model->id]));
+            return $this->redirect(Url::to(['/location-view', 'location' => $model->slug]));
         } else {
             return [
                 'status' => true,
@@ -125,9 +125,10 @@ class LocationController extends BaseController
      *
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionUpdate()
     {
-        $model = $this->findModel($id);
+        $location = Location::findOne(['slug' => Yii::$app->location]);
+        $model = $this->findModel($location->id);
         $model->royaltyValue = $model->royalty->value;
         $model->advertisementValue = $model->advertisement->value;
         $data = $this->renderAjax('_form-update', [
@@ -150,28 +151,31 @@ class LocationController extends BaseController
         }
     }
     
-    public function actionEditAvailability($id, $resourceId, $type,$startTime, $endTime)
+    public function actionEditAvailability($resourceId, $type,$startTime, $endTime)
     {
+        $location = Location::findOne(['slug' => Yii::$app->location]);
         $availabilityModel = LocationAvailability::find()
-            ->where(['locationId' => $id, 'day' => $resourceId, 'type' => $type])
+            ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
             ->one();
         $availabilityModel->fromTime = $startTime;
         $availabilityModel->toTime = $endTime;
         return $availabilityModel->save();
     }
 
-    public function actionDeleteAvailability($id, $resourceId,$type)
+    public function actionDeleteAvailability($resourceId,$type)
     {
+        $location = Location::findOne(['slug' => Yii::$app->location]);
         $availabilityModel = LocationAvailability::find()
-            ->where(['locationId' => $id, 'day' => $resourceId, 'type' => $type])
+            ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
             ->one();
         return $availabilityModel->delete();
     }
 
-    public function actionAddAvailability($id, $resourceId,$type,$startTime, $endTime)
+    public function actionAddAvailability($resourceId,$type,$startTime, $endTime)
     {
+        $location = Location::findOne(['slug' => Yii::$app->location]);
         $model = new LocationAvailability();
-        $model->locationId = $id;
+        $model->locationId = $location->id;
         $model->day = $resourceId;
         $model->type = $type;
         $model->fromTime = $startTime;
@@ -179,11 +183,11 @@ class LocationController extends BaseController
         return $model->save();
     }
 
-    public function actionRenderEvents($id,$type)
+    public function actionRenderEvents($type)
     {
-        $model  = $this->findModel($id);
+        $location = Location::findOne(['slug' => Yii::$app->location]);
         $availabilities= LocationAvailability::find()
-                ->andWhere(['locationId' =>$id ,'type' => $type])
+                ->andWhere(['locationId' => $location->id ,'type' => $type])
                 ->all();
         $events = [];
         foreach ($availabilities as $availability) {
@@ -200,10 +204,11 @@ class LocationController extends BaseController
         return $events;
     }
 
-    public function actionCheckAvailability($id, $resourceId,$type)
+    public function actionCheckAvailability($resourceId,$type)
     {
+        $location = Location::findOne(['slug' => Yii::$app->location]);
         $availabilityModel = LocationAvailability::find()
-            ->where(['locationId' => $id, 'day' => $resourceId,'type' => $type])
+            ->where(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
             ->one();
         $response = [
             'status' => true,
@@ -233,7 +238,7 @@ class LocationController extends BaseController
                'body' => 'Location has been deleted successfully',
         ]);
 
-        return $this->redirect(['index']);
+        return $this->redirect(['index', 'location' => $this->findModel(1)->slug]);
     }
 
     /**
