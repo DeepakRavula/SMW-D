@@ -10,7 +10,6 @@ use common\models\Location;
 use yii\helpers\Url;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
@@ -23,35 +22,30 @@ class LocationController extends BaseController
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                ],
-            ],
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
                'only' => ['create', 'update', 'edit-availability', 'add-availability', 'render-events', 'check-availability', 'validate',
                    'delete-availability'],
-               'formatParam' => '_format',
-               'formats' => [
-                   'application/json' => Response::FORMAT_JSON,
-               ],
-           ],
-			'access' => [
+                'formatParam' => '_format',
+                'formats' => [
+                   'application/json' => Response::FORMAT_JSON
+                ],
+            ],
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
                         'allow' => true,
                         'actions' => ['update','view','validate', 'add-availability', 'edit-availability', 'delete-availability', 'render-events', 'check-availability'],
-                        'roles' => ['manageLocations','owner'],
+                        'roles' => ['manageLocations']
                     ],
-                     [
+                    [
                         'allow' => true,
                         'actions' => ['index', 'delete', 'create'],
-                        'roles' => ['manageLocations'],
-                    ],
-                ],
-            ],  
+                        'roles' => ['administrator']
+                    ]
+                ]
+            ] 
         ];
     }
 
