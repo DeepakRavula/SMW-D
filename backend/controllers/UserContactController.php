@@ -14,6 +14,7 @@ use common\models\Label;
 use common\models\Location;
 use common\models\UserAddress;
 use yii\widgets\ActiveForm;
+use yii\web\NotFoundHttpException;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 
@@ -335,10 +336,7 @@ class UserContactController extends BaseController
 
     protected function findModel($id)
     {
-        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $model = UserContact::find()->location($locationId)
-                ->andWhere(['user_contact.id' => $id])
-                ->one();
+        $model = UserContact::findOne($id);
         if ($model !== null) {
             return $model;
         } else {
