@@ -49,8 +49,7 @@ $bundle = BackendAsset::register($this);
 				
                         <?php else:?>
                         <?php
-                            $location = Location::findOne(['slug' => Yii::$app->location]);
-                            echo '<div class="p-t-15 pull-left location-header btn btn-default" data-toggle="tooltip" data-original-title="Your location" data-placement="bottom"><i class="fa fa-map-marker m-r-10"></i><a href='.Url::to(['/location/view','id' => $location->id]).'>'. $location->name.'</a></div>';
+                        echo $this->render ('location-menu');
                         ?>
                         <?php endif; ?>
                 <div class="navbar-custom-menu">

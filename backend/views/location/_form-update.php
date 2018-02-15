@@ -10,7 +10,7 @@ use kartik\date\DatePicker;
 use Carbon\Carbon;
 use yii\helpers\Url;
 use yii\widgets\MaskedInput;
-
+use common\models\User;
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -106,7 +106,9 @@ $this->title = 'Edit Location';
         <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 	</div>
         <div class="pull-left">
-        <?php echo Html::a('Delete', ['delete', 'id' => $model->id], ['class' => 'btn btn-danger']);?>
+        <?php 
+        if(Yii::$app->user->can('administrator')) {
+        echo Html::a('Delete', ['delete', 'id' => $model->id], ['class' => 'btn btn-danger']); }?>
         </div>
     </div>
 </div>
