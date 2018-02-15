@@ -2,7 +2,6 @@
 
 use common\models\User;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use trntv\filekit\widget\Upload;
@@ -71,7 +70,12 @@ $loggedUser = User::findOne(Yii::$app->user->id);
 
 <script>
     $(document).ready(function() {
-        userProfile.managePasswordField();
+        var canLogin = <?= $model->canLogin ?>;
+        if (canLogin) {
+            $('.can-login').show();
+        } else {
+            $('.can-login').hide();
+        }
     });
     
     $(document).on('change', '#userform-canlogin', function () {
@@ -80,8 +84,7 @@ $loggedUser = User::findOne(Yii::$app->user->id);
     
     var userProfile = {
         managePasswordField :function() {
-            var canLogin = <?= $model->canLogin ?>;
-            if ($('#userform-canlogin').is(':checked') || canLogin) {
+            if ($('#userform-canlogin').is(':checked')) {
                 $('.can-login').show();
             } else {
                 $('.can-login').hide();
