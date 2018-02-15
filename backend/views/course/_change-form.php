@@ -24,6 +24,7 @@ use common\models\Location;
             ->all(), 'id', 'name');
     
     $defaultTeacher = ArrayHelper::map(User::find()
+            ->notDeleted()
             ->allTeachers()
             ->location(Location::findOne(['slug' => \Yii::$app->location])->id)
             ->all(), 'id', 'publicIdentity');

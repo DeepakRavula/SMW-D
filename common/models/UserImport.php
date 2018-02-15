@@ -82,7 +82,7 @@ class UserImport extends Model
             }
 
             $user = User::find()
-                ->joinWith(['userContact' => function ($query) use ($row) {
+                ->joinWith(['userContacts' => function ($query) use ($row) {
                     $query->joinWith(['phone' => function ($query) use ($row) {
                         $query->andWhere(['number' => $row['Billing Home Tel']]);
                     }]);

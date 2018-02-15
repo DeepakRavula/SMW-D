@@ -224,7 +224,7 @@ class SignInController extends \yii\web\Controller
                 'oauth_client' => $client->getName(),
                 'oauth_client_user_id' => ArrayHelper::getValue($attributes, 'id'),
             ])
-                        ->notDeleted()
+            ->notDeleted()
             ->one();
         if (!$user) {
             $user = new User();

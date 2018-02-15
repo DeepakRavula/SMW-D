@@ -26,12 +26,20 @@ $lastRole = end($roles);
 			'value' => 2]),
 	]
 ]); ?>
-    <div>
+    <div class="m-t-25">
     <?php Pjax::begin(['id' => 'program-listing', 'enablePushState' => false]) ?>
     <?php
     echo GridView::widget([
         'dataProvider' => $dataProvider,
-        
+        'rowOptions' => function ($model) use ($searchModel) {
+                if ($searchModel->showAllPrograms) {
+                    if ((int)$model->status === Program::STATUS_INACTIVE) {
+                        return ['class' => 'danger inactive'];
+                    } elseif ((int)$model->status === Program::STATUS_ACTIVE) {
+                        return ['class' => 'info active'];
+                    }
+                }
+            },
         'columns' => [
             [
                 'attribute' => 'name',

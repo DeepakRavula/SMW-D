@@ -2,7 +2,6 @@
 
 use common\models\User;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use trntv\filekit\widget\Upload;
@@ -27,19 +26,12 @@ $loggedUser = User::findOne(Yii::$app->user->id);
         <div class="col-xs-6">
             <?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
         </div>
-        <?php if ($loggedUser->isAdmin()) : ?>
-            <div class="col-xs-6">
-                <?php echo $form->field($model, 'roles')->dropDownList(ArrayHelper::map(Yii::$app->authManager->getRoles(), 'name', 'name')) ?>
-            </div>
-        <?php endif; ?>
-        <?php if (!$model->getModel()->isStaff()) : ?>
-            <div class="col-xs-6 can-login" style="display: none">
-                <?php echo $form->field($model, 'password')->passwordInput() ?>
-            </div>
-            <div class="col-xs-6 can-login" style="display: none">
-                <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
-            </div>
-        <?php endif; ?>
+        <div class="col-xs-6 can-login" style="display: none">
+            <?php echo $form->field($model, 'password')->passwordInput() ?>
+        </div>
+        <div class="col-xs-6 can-login" style="display: none">
+            <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
+        </div>
         <?php if ($loggedUser->canManagePin()) : ?>
             <?php if ($model->getModel()->hasPin()) : ?>
                 <div class="col-xs-6">
@@ -78,7 +70,12 @@ $loggedUser = User::findOne(Yii::$app->user->id);
 
 <script>
     $(document).ready(function() {
-        userProfile.managePasswordField();
+        var canLogin = <?= $model->canLogin ?>;
+        if (canLogin) {
+            $('.can-login').show();
+        } else {
+            $('.can-login').hide();
+        }
     });
     
     $(document).on('change', '#userform-canlogin', function () {
@@ -87,8 +84,7 @@ $loggedUser = User::findOne(Yii::$app->user->id);
     
     var userProfile = {
         managePasswordField :function() {
-            var canLogin = <?= $model->canLogin ?>;
-            if ($('#userform-canlogin').is(':checked') || canLogin) {
+            if ($('#userform-canlogin').is(':checked')) {
                 $('.can-login').show();
             } else {
                 $('.can-login').hide();

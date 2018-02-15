@@ -120,6 +120,7 @@ class User extends ActiveRecord implements IdentityInterface
                 'softDeleteAttributeValues' => [
                     'isDeleted' => true,
                 ],
+                'replaceRegularDelete' => true
             ]
         ];
     }
@@ -172,6 +173,9 @@ class User extends ActiveRecord implements IdentityInterface
             'customerIds' => Yii::t('common', 'Selected Customers'),
             'showAllCustomers' => Yii::t('common', 'Show All'),
             'showAllTeachers' => Yii::t('common', 'Show All'),
+            'showAllAdministrators' => Yii::t('common', 'Show All'),
+            'showAllStaffMembers' => Yii::t('common', 'Show All'),
+            'showAllOwners' => Yii::t('common', 'Show All'),
         ];
     }
 
@@ -197,9 +201,13 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUserContact()
+    public function getUserContacts()
     {
         return $this->hasMany(UserContact::className(), ['userId' => 'id']);
+    }
+    public function getUserToken()
+    {
+        return $this->hasOne(UserToken::className(), ['userId' => 'id']);
     }
     public function getPrimaryContact()
     {
@@ -233,7 +241,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function getAddresses()
     {
         return $this->hasMany(UserAddress::className(), ['userContactId' => 'id'])
-            ->via('userContact');
+            ->via('userContacts');
     }
     
     public function getPrimaryAddress()
@@ -264,6 +272,26 @@ class User extends ActiveRecord implements IdentityInterface
         return parent::beforeSave($insert);
     }
     
+    public function beforeDelete() 
+    {
+        if ($this->userLocation) {
+            $this->userLocation->delete();
+        }
+        if ($this->userToken) {
+            $this->userLocation->delete();
+        }
+        foreach ($this->emails as $email) {
+            $email->delete();
+        }
+        foreach ($this->addresses as $address) {
+            $address->delete();
+        }
+        foreach ($this->phoneNumbers as $phone) {
+            $phone->delete();
+        }
+        return parent::beforeDelete();
+    }
+
     public function getCustomerPaymentPreference()
     {
         return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'id']);
@@ -272,12 +300,12 @@ class User extends ActiveRecord implements IdentityInterface
     public function getPhoneNumbers()
     {
         return $this->hasMany(UserPhone::className(), ['userContactId' => 'id'])
-            ->via('userContact');
+            ->via('userContacts');
     }
     public function getPhoneNumber()
     {
         return $this->hasOne(UserPhone::className(), ['userContactId' => 'id'])
-            ->via('userContact');
+            ->via('userContacts');
     }
     public function getPrimaryPhoneNumber()
     {
@@ -293,7 +321,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function getEmails()
     {
         return $this->hasMany(UserEmail::className(), ['userContactId' => 'id'])
-            ->via('userContact');
+            ->via('userContacts');
     }
 
     public function getPhone()
@@ -629,14 +657,14 @@ class User extends ActiveRecord implements IdentityInterface
         return self::find()
             ->joinWith('userLocation ul')
             ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-            ->where(['raa.item_name' => 'customer'])
-            ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
-                        ->notDeleted()
-                        ->joinWith(['student' => function ($query) use ($currentDate) {
-                            $query->enrolled($currentDate);
-                        }])
+            ->andWhere(['raa.item_name' => 'customer'])
+            ->andWhere(['ul.location_id' => Location::findOne(['slug' => \Yii::$app->location])->id])
+            ->notDeleted()
+            ->joinWith(['student' => function ($query) use ($currentDate) {
+                $query->enrolled($currentDate);
+            }])
             ->active()
-                        ->groupBy('user.id')
+            ->groupBy('user.id')
             ->count();
     }
     
@@ -645,14 +673,14 @@ class User extends ActiveRecord implements IdentityInterface
         return self::find()
             ->joinWith('userLocation ul')
             ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-            ->where(['raa.item_name' => 'teacher'])
-            ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
-                        ->joinWith(['userLocation' => function ($query) {
-                            $query->joinWith('teacherAvailability');
-                        }])
+            ->andWhere(['raa.item_name' => 'teacher'])
+            ->andWhere(['ul.location_id' => Location::findOne(['slug' => \Yii::$app->location])->id])
+            ->joinWith(['userLocation' => function ($query) {
+                $query->joinWith('teacherAvailability');
+            }])
             ->active()
-                        ->notDeleted()
-                        ->groupBy('user.id')
+            ->notDeleted()
+            ->groupBy('user.id')
             ->count();
     }
     public static function staffCount()
@@ -660,9 +688,9 @@ class User extends ActiveRecord implements IdentityInterface
         return self::find()
             ->joinWith('userLocation ul')
             ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-            ->where(['raa.item_name' => 'staffmember'])
-            ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
-                        ->notDeleted()
+            ->andWhere(['raa.item_name' => 'staffmember'])
+            ->andWhere(['ul.location_id' => Location::findOne(['slug' => \Yii::$app->location])->id])
+            ->notDeleted()
             ->active()
             ->count();
     }
@@ -671,9 +699,9 @@ class User extends ActiveRecord implements IdentityInterface
         return self::find()
             ->joinWith('userLocation ul')
             ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-            ->where(['raa.item_name' => 'owner'])
-            ->andWhere(['ul.location_id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id])
-                        ->notDeleted()
+            ->andWhere(['raa.item_name' => 'owner'])
+            ->andWhere(['ul.location_id' => Location::findOne(['slug' => \Yii::$app->location])->id])
+            ->notDeleted()
             ->active()
             ->count();
     }
@@ -681,8 +709,8 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return self::find()
             ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-            ->where(['raa.item_name' => 'administrator'])
-                        ->notDeleted()
+            ->andWhere(['raa.item_name' => 'administrator'])
+            ->notDeleted()
             ->active()
             ->count();
     }
@@ -756,5 +784,10 @@ class User extends ActiveRecord implements IdentityInterface
     public function canManagePin()
     {
         return $this->isAdmin() || $this->isOwner();
+    }
+    
+    public function hasPrimaryEmail()
+    {
+        return !empty($this->primaryEmail);
     }
 }
