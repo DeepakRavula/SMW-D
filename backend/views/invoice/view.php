@@ -623,12 +623,12 @@ Modal::begin([
 		});
 		return false;
 	});
-   $(document).on("click", '#print-btn', function() {
-    var url = '<?= Url::to(['print/invoice', 'id' => $model->id]) ?>';
-    alert(url);
-    $('#print-btn').attr('href', url);
-    return false;
-});     
+ 
+  $(document).on("click", '#print-btn', function() {  
+    var url = '<?= Url::to(['print/invoice' ,'id' => $model->id]); ?>';
+        window.open(url,'_blank');
+        return false;
+  }); 
 });
 
 $(document).on("click", '.adjust-invoice-tax', function() {
