@@ -13,6 +13,7 @@ use yii\helpers\ArrayHelper;
 /* @var $permissions yii\rbac\Permission[] */
 ?>
 <div class="row user-create-form">
+    <div id="email-error" style="display:none;" class="alert-danger alert fade in"></div>
 <?php
   $url = Url::to(['user-contact/edit-email', 'id' => $model->id]);
   $validationUrl = Url::to(['user-contact/validate', 'id' => $model->id]);
@@ -40,8 +41,7 @@ $form = ActiveForm::begin([
                 'id' => 'email-label'
             ],
             'pluginOptions' => [
-                'tags' => true,
-                'placeholder' => 'select label'
+                'tags' => true
             ],
         ])->label('Label');
         ?>
@@ -58,6 +58,7 @@ $form = ActiveForm::begin([
                 '#', 'id' => $model->id
                 ], [
                 'id' => $model->id,
+                'isPrimary' => $model->isPrimary,
                 'class' => 'user-contact-delete btn btn-danger',
             ]);
                 }

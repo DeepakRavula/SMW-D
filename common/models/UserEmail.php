@@ -16,6 +16,8 @@ use common\models\query\UserEmailQuery;
  */
 class UserEmail extends \yii\db\ActiveRecord
 {
+    const SCENARIO_USER_CREATE = 'user-create';
+
     private $labelId;
 
     public function getLabelId()
@@ -46,6 +48,7 @@ class UserEmail extends \yii\db\ActiveRecord
             [['email'], 'email'],
             [['labelId'], 'safe'],
             [['email'], 'trim'],
+            ['email', 'required', 'on' => self::SCENARIO_USER_CREATE],
             ['email', 'unique', 'targetClass'=> self::className(), 'filter' => function ($query) {
                 $query->joinWith(['userContact uc' => function ($query) {
                     $query->joinWith(['user u' => function ($query) {

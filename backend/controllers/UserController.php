@@ -488,30 +488,48 @@ class UserController extends BaseController
 
     public function actionCreate()
     {
-        $model = new UserForm();
-        $emailModels = new UserEmail();
+        $model = new UserForm(['scenario' => UserForm::SCENARIO_CREATE]);
+        $emailModel = new UserEmail();
         $model->roles = Yii::$app->request->queryParams['role_name'];
         if ($model->roles !== User::ROLE_STAFFMEMBER) {
             $canLogin = true;
         } else {
             $canLogin = false;
         }
-        $model->canLogin = $canLogin;
-        $request = Yii::$app->request;
-        if ($model->load($request->post()) && $emailModels->load($request->post())) {
-            $model->save();
-            if (!empty($emailModels->email)) {
-                $userContact = new UserContact();
-                $userContact->userId = $model->getModel()->id;
-                $userContact->labelId = Label::LABEL_WORK;
-                $userContact->isPrimary = true;
-                $userContact->save();
-
-                $emailModels->userContactId = $userContact->id;
-                $emailModels->save();
-            }
-            return $this->redirect(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id]);
+        if ($model->roles == User::ROLE_ADMINISTRATOR || $model->roles == User::ROLE_OWNER) {
+            $emailModel->setScenario(UserEmail::SCENARIO_USER_CREATE);
         }
+        $model->canLogin = $canLogin;
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+            'emailModel' => $emailModel
+        ]);
+        $request = Yii::$app->request;
+        if ($request->post()) {
+            if ($model->load($request->post()) && $emailModel->load($request->post())) {
+                $model->save();
+                if (!empty($emailModel->email)) {
+                    $userContact = new UserContact();
+                    $userContact->userId = $model->getModel()->id;
+                    $userContact->labelId = Label::LABEL_WORK;
+                    $userContact->isPrimary = true;
+                    $userContact->save();
+
+                    $emailModel->userContactId = $userContact->id;
+                    $emailModel->save();
+                }
+                $response = [
+                    'status' => true,
+                    'url' => Url::to(['view', 'UserSearch[role_name]' => $model->roles, 'id' => $model->getModel()->id])
+                ];
+            }
+        } else {
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
     }
 
     public function actionEditProfile($id)

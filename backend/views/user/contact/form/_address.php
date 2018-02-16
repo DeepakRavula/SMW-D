@@ -40,8 +40,7 @@ use yii\helpers\Url;
                 'id' => 'address-label'
             ],
             'pluginOptions' => [
-                'placeholder' => 'select label',
-                'tags' => true,
+                'tags' => true
             ],
         ])->label('Label');
         ?>
@@ -50,11 +49,9 @@ use yii\helpers\Url;
         $form->field($addressModel, "cityId")->widget(Select2::classname(), [
         'data' => ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
         'options' => [
-            'id' => 'city-label',
-            'createNew' => true,
+            'id' => 'city-label'
         ],
         'pluginOptions' => [
-            'placeholder' => 'select city',
             'tags' => true
         ],
     ])->label('city');

@@ -5,11 +5,8 @@ use common\models\Invoice;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
-use yii\bootstrap\Modal;
 use yii\helpers\ArrayHelper;
 use common\components\gridView\AdminLteGridView;
-use backend\models\UserForm;
-use common\models\UserEmail;
 use kartik\select2\Select2Asset;
 
 Select2Asset::register($this);
@@ -28,22 +25,13 @@ foreach ($roles as $name => $description) {
 $roleName = $searchModel->role_name;
 $originalInvoice = Invoice::TYPE_INVOICE;
 $this->title = Yii::t('backend', !isset($role) ? 'User' : $role.'s');
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), ['#'], ['class' => 'f-s-18 add-user']);
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'f-s-18 add-user']);
 $this->params['show-all'] = $this->render('_button', [
     'searchModel' => $searchModel
 ]);
 ?>
- <?php
-    Modal::begin([
-        'header' => '<h4 class="m-0">' . $role . 's / Add</h4>',
-        'id'=>'add-user-modal',
-    ]);?>
-<?= $this->render('_form', [
-    'model' => new UserForm(['scenario' => UserForm::SCENARIO_CREATE]),
-    'emailModels' => new UserEmail(),
-    'searchModel' => $searchModel,
-]);?>
-<?php Modal::end();?>
+ 
+
 <div class="user-index"> 
 <div class="grid-row-open">
     <?php Pjax::begin([
@@ -98,17 +86,31 @@ $this->params['show-all'] = $this->render('_button', [
 </div>
 </div>
 <script>
+    $(document).on('modal-success', function(event, params) {
+        window.location.href = params.url;
+        return false;
+    });
+    
+    $(document).on('click', '.add-user', function() {
+        var params = $.param({ 'role_name': '<?= $searchModel->role_name ?>' });
+        $.ajax({
+            url    : '<?= Url::to(['user/create']) ?>?' +params,
+            type   : 'get',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal .modal-dialog').css({'width': '400px'});
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">' + '<?= $role ?>' + 's / Add</h4>');
+                    $('#modal-content').html(response.data);
+                }
+            }
+        });
+        return false;
+    });
 $(document).ready(function(){
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-	$(document).on('click', '.add-user', function() {
-        $('#add-user-modal .modal-dialog').css({'width': '400px'});
-		$('#add-user-modal').modal('show');
-		return false;
-	});
-	$(document).on('click', '.user-add-cancel', function() {
-		$('#add-user-modal').modal('hide');
-		return false;
-	});
+    
   $("#usersearch-showallcustomers").on("change", function() {
       var showAllCustomers = $(this).is(":checked");
       var url = "<?php echo Url::to(['user/index', 'UserSearch[role_name]' => User::ROLE_CUSTOMER]); ?>&UserSearch[query]=" + "<?php echo $searchModel->query; ?>&UserSearch[showAllCustomers]=" + (showAllCustomers | 0);

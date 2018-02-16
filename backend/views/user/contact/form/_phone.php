@@ -37,8 +37,7 @@ $form = ActiveForm::begin([
             'id' => 'phone-label'
         ],
         'pluginOptions' => [
-            'tags' => true,
-            'placeholder' => 'select label',
+            'tags' => true
         ],
     ])->label('Label');
     ?>
