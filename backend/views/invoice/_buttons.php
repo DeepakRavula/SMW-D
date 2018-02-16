@@ -40,7 +40,7 @@ use yii\widgets\Pjax;
 <?= Html::a('<i title="Mail" class="fa fa-envelope-o"></i>', '#', [
     'id' => 'invoice-mail-button',
     'class' => 'm-r-10 btn btn-box-tool']) ?>
-<?= Html::a('<i title="Print" class="fa fa-print m-r-10"></i>', ['print/invoice', 'id' => $model->id], ['class' => 'm-r-10 btn btn-box-tool', 'target' => '_blank']) ?>
+                        <?= Html::a('<i class="fa fa-print m-r-10"></i>', ['#'], ['class' => 'm-r-10 btn btn-box-tool','id'=>'print-btn']) ?>
 <?= strtoupper($model->getStatus()) . ' '?>
 <?= Yii::$app->formatter->format($model->total, ['currency', 'USD', [
     \NumberFormatter::MIN_FRACTION_DIGITS => 2,
