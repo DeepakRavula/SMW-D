@@ -38,21 +38,29 @@ Modal::end(); ?>
  
 <?php
 $columns = [
-    'date:date',
+      [
+        'contentOptions' => ['class' => 'text-left payment-notes-description', 'style' => 'width:65px;'],
+        'label' => 'Type',
+        'value' => function ($data) {
+            return Yii::$app->formatter->asDate($data->date);
+        },
+        ],
     [
+        'contentOptions' => ['class' => 'text-left payment-notes-description', 'style' => 'width:65px;'],
         'label' => 'Type',
         'value' => function ($data) {
             return $data->paymentMethod->name;
         },
         ],
     [
+        'contentOptions' => ['class' => 'text-left payment-notes-description', 'style' => 'width:65px;'],
         'label' => 'Ref',
         'value' => function ($data) {
             return $data->reference;
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left payment-notes-description', 'style' => 'width:125px;'],
+        'contentOptions' => ['class' => 'text-left payment-notes-description', 'style' => 'width:135px;'],
         'label' => 'Notes',
         'value' => function ($data) {
             return $data->notes;
@@ -60,10 +68,10 @@ $columns = [
         },
         ],
         [
-            'attribute' => 'amount',
+            'label'=>'Amount',
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right','style' => 'width:65px'],
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->amount);
             },
