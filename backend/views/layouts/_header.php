@@ -46,11 +46,13 @@ $bundle = BackendAsset::register($this);
                             </div>
                             <?php Html::endForm() ?>
                         </div>
-				
+                        <?php elseif($role === User::ROLE_OWNER):?>
+                        <?php 
+                        $location = Location::findOne(['slug' => Yii::$app->location]);
+                            echo Html::a($location->name, ['/location-view'], ['class' => 'btn btn-default p-t-15 pull-left location-header fa fa-map-marker m-r-10' ]); ?> 
                         <?php else:?>
                         <?php
-                            $location = Location::findOne(['slug' => Yii::$app->location]);
-                            echo '<div class="p-t-15 pull-left location-header" data-toggle="tooltip" data-original-title="Your location" data-placement="bottom"><i class="fa fa-map-marker m-r-10"></i>'.$location->name.'</div>';
+                            echo $this->render('location-header-menu');
                         ?>
                         <?php endif; ?>
                 <div class="navbar-custom-menu">

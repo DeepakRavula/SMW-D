@@ -18,7 +18,7 @@ $this->title = 'Edit Location';
 ?>
 
 <div class="location-form">
-	<?php   $url = Url::to(['location/update', 'id' => $model->id]);
+	<?php   $url = Url::to(['/location-update']);
         if ($model->isNewRecord) {
             $url = Url::to(['location/create']);
         }

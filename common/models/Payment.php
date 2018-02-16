@@ -70,7 +70,7 @@ class Payment extends ActiveRecord
     {
         if (!empty($this->invoiceId) && !$this->isCreditUsed()) {
             $invoice = Invoice::findOne($this->invoiceId);
-            if (round($invoice->balance, 2) === round($this->amount, 2)) {
+            if (round(abs($invoice->balance), 2) === round(abs($this->amount), 2)) {
                 $this->amount = $invoice->balance;
             }
             if ((float) $this->amount > (float) $invoice->balance && !$invoice->isInvoice()) {
@@ -177,8 +177,14 @@ class Payment extends ActiveRecord
     {
         if (!empty($this->invoiceId) && !$this->isCreditUsed()) {
             $invoice = Invoice::findOne($this->invoiceId);
-            if (round($invoice->balance, 2) === round($this->amount, 2)) {
+            if (round(abs($invoice->balance), 2) === round(abs($this->amount), 2)) {
                 $this->amount = $invoice->balance;
+            }
+        }
+        if (!empty($this->sourceId) && !$this->isCreditUsed()) {
+            $invoice = Invoice::findOne($this->sourceId);
+            if (round(abs($invoice->balance), 2) === round(abs($this->amount), 2)) {
+                $this->amount = abs($invoice->balance);
             }
         }
         if (!$insert) {

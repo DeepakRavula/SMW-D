@@ -110,7 +110,8 @@ public function behaviors()
                     ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
                     ->isConfirmed()
                     ->notDeleted()
-                    ->groupBy(['lesson.id','course.programId'])
+                          
+                    ->groupBy(['course.programId'])
                     ->all();
         foreach ($programs as $program) {
             $completedProgram = [];

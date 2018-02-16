@@ -94,7 +94,11 @@ class DbManager extends \yii\rbac\DbManager
      */
     public function addChild($parent, $child)
     {
-        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        if (is_a(Yii::$app, 'yii\console\Application')) {
+            $locationId = Location::findOne(1)->id;
+        } else {
+            $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        }
         if ($parent->name === $child->name) {
             throw new InvalidParamException("Cannot add '{$parent->name}' as a child of itself.");
         }
@@ -136,7 +140,11 @@ class DbManager extends \yii\rbac\DbManager
      */
     public function getChildren($name)
     {
-        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        if (is_a(Yii::$app, 'yii\console\Application')) {
+            $locationId = Location::findOne(1)->id;
+        } else {
+            $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        }
         $query = (new Query)
             ->select(['name', 'type', 'description', 'rule_name', 'data', 'created_at', 'updated_at', 'location_id'])
             ->from([$this->itemTable, $this->itemChildTable])
