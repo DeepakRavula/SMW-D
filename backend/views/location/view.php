@@ -113,9 +113,8 @@ $lastRole = end($roles);
    var type = <?= LocationAvailability::TYPE_OPERATION_TIME ?>;
    showCalendars(id,type);
 		$(document).on('click', '.edit-location', function () {
-			var locationId = '<?= $model->id;?>';
 		$.ajax({
-			url    : '<?= Url::to(['location/update']); ?>?id=' + locationId,
+			url    : '<?= Url::to(['/location-update']); ?>',
 			type   : 'post',
 			dataType: "json",
 			data   : $(this).serialize(),
@@ -181,7 +180,7 @@ function showCalendars(id,type) {
             {'id':'3','title':'Wednesday'}, {'id':'4','title':'Thursday'}, {'id':'5','title':'Friday'}, 
             {'id':'6','title':'Saturday'}, {'id':'7','title':'Sunday'}],
         events: {
-            url: '<?= Url::to(['location/render-events', 'id' => $model->id]) ?>&type='+ type,
+            url: '<?= Url::to(['location/render-events']) ?>?type='+ type,
             type: 'POST',
             error: function() {
                 $(id).fullCalendar("refetchEvents");
@@ -214,7 +213,7 @@ function showCalendars(id,type) {
                 var status = confirm("Are you sure to delete availability?");
                 if (status) {
                     $.ajax({
-                        url    : '<?= Url::to(['location/delete-availability', 'id' => $model->id]) ?>&' + params,
+                        url    : '<?= Url::to(['location/delete-availability']) ?>?' + params,
                         type   : 'POST',
                         dataType: 'json',
                         success: function()
@@ -230,7 +229,7 @@ function showCalendars(id,type) {
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
             var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime, type: type });
             $.ajax({
-                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
+                url    : '<?= Url::to(['location/edit-availability']) ?>?' + params,
                 type   : 'POST',
                 dataType: 'json',
                 success: function()
@@ -244,7 +243,7 @@ function showCalendars(id,type) {
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
             var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime, type: type });
             $.ajax({
-                url    : '<?= Url::to(['location/edit-availability', 'id' => $model->id]) ?>&' + params,
+                url    : '<?= Url::to(['location/edit-availability']) ?>?' + params,
                 type   : 'POST',
                 dataType: 'json',
                 success: function()
@@ -259,7 +258,7 @@ function showCalendars(id,type) {
             var params = $.param({ resourceId: resourceObj.id, startTime: startTime, endTime: endTime, type: type });
             var availabilityCheckParams = $.param({ resourceId: resourceObj.id, type: type});
             $.ajax({
-                url    : '<?= Url::to(['location/check-availability', 'id' => $model->id]) ?>&' + availabilityCheckParams,
+                url    : '<?= Url::to(['location/check-availability']) ?>?' + availabilityCheckParams,
                 type   : 'POST',
                 dataType: 'json',
                 success: function(response)
@@ -267,7 +266,7 @@ function showCalendars(id,type) {
                     if(response.status)
                     {
                         $.ajax({
-                            url    : '<?= Url::to(['location/add-availability', 'id' => $model->id]) ?>&' + params,
+                            url    : '<?= Url::to(['location/add-availability']) ?>?' + params,
                             type   : 'POST',
                             dataType: 'json',
                             success: function()

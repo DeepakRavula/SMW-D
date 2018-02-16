@@ -6,6 +6,8 @@ return [
     'showScriptName' => false,
     'rules' => [
         // url rules
+        'location-view' => 'location/view',
+        'location-update' => 'location/update',
         'calendar/render-classroom-resources' => 'calendar/render-classroom-resources',
         'calendar/render-classroom-events' => 'calendar/render-classroom-events',
         'calendar/render-day-events' => 'calendar/render-day-events',

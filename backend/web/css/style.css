@@ -237,6 +237,9 @@ dl {
     border-radius: 50%;
 }
 .location-header {
+	margin-top:9px;
+}
+.staff-location-header {
 	margin-top:15px;
 }
 .invoice-search {
