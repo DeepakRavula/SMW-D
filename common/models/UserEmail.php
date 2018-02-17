@@ -44,6 +44,7 @@ class UserEmail extends \yii\db\ActiveRecord
     {
         return [
             [['userContactId'], 'integer'],
+            ['email', 'required', 'on' => self::SCENARIO_USER_CREATE],
             [['email'], 'string', 'max' => 255],
             [['email'], 'email'],
             [['labelId'], 'safe'],
