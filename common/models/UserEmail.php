@@ -83,7 +83,7 @@ class UserEmail extends \yii\db\ActiveRecord
                 }
         $email = $query->one();
         if ($email) {
-            return $this->addError($attributes, "Email already exsists!");
+            return $this->addError($attributes, "Email already exists!");
         }
     }
     
