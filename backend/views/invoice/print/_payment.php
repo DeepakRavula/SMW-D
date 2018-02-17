@@ -8,10 +8,12 @@ use yii\grid\GridView;
         .invoice-notes-column-width
         {
             width:155px;
+            position:fixed;
         }
         .invoice-other-column-width
         {
             width:65px;
+            position:fixed;
         }
     }
 </style>
@@ -26,28 +28,28 @@ echo GridView::widget([
         'emptyText' => false,
     'columns' => [
     [
-        'contentOptions' => ['class' => 'invoice-other-column-width'],
+        'contentOptions' => ['style' =>'max-width:60px'],
         'label' => 'Date',
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->date);
         },
         ],
     [
-         'contentOptions' => ['class' => 'invoice-other-column-width'],
+         'contentOptions' => ['style' =>'max-width:60px'],
         'label' => 'Type',
         'value' => function ($data) {
             return $data->paymentMethod->name;
         },
         ],
     [
-        'contentOptions' => ['class' => 'invoice-other-column-width'],
+        'contentOptions' => ['style' =>'max-width:60px'],
         'label' => 'Ref',
         'value' => function ($data) {
             return $data->reference;
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left invoice-notes-column-width'],
+       'contentOptions' => ['class'=>'text-left','style' => 'max-width:155px;overflow: auto; word-wrap: break-word;'],
         'label' => 'Notes',
         'value' => function ($data) {
             return $data->notes;
@@ -58,7 +60,7 @@ echo GridView::widget([
             'label' => 'Amount',
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right invoice-other-column-width'],
+            'contentOptions' => ['class' => 'text-right','style' =>'max-width:60px'],
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->amount);
             },
