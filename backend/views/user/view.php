@@ -737,7 +737,8 @@ $(document).ready(function(){
         return false;
     });
     $(document).on('click', '.user-contact-delete', function () {
-        if ($(this).attr('isPrimary')) {
+        var isPrimary = parseInt($(this).attr('isPrimary'));
+        if (isPrimary) {
             $('#email-error').html('Primary email cannot be deleted').fadeIn().delay(5000).fadeOut();
            return false; 
         }
