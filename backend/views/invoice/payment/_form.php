@@ -52,7 +52,7 @@ use common\models\PaymentMethod;
    </div>
    <div class="row">
        <div class="col-md-12">
-           <?= $form->field($model, 'notes')->textInput(['class' => 'form-control'])->label('Notes'); ?>
+           <?= $form->field($model, 'notes')->textArea(['class' => 'form-control'])->label('Notes'); ?>
        </div>
    </div>
     <div class="row">  

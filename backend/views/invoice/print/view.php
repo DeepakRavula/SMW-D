@@ -72,7 +72,7 @@
         </div>
         <div class="row">
       <!-- accepted payments column -->
-      <div class="col-xs-6">
+      <div class="col-xs-8">
           <strong>Payments:</strong>
           <?php
           echo $this->render('_payment', [
@@ -83,7 +83,7 @@
           ?>
       </div>
       <!-- /.col -->
-      <div class="col-xs-6">
+      <div class="col-xs-4">
           <div class="table-responsive">
               <table class="table-invoice-childtable" style="float:right; width:auto;">
                   <tr>

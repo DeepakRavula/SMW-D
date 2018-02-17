@@ -48,17 +48,7 @@ class UserEmail extends \yii\db\ActiveRecord
             [['email'], 'email'],
             [['labelId'], 'safe'],
             [['email'], 'trim'],
-            ['email', 'required', 'on' => self::SCENARIO_USER_CREATE],
-            ['email', 'unique', 'targetClass'=> self::className(), 'filter' => function ($query) {
-                $query->joinWith(['userContact uc' => function ($query) {
-                    $query->joinWith(['user u' => function ($query) {
-                        $query->andWhere(['u.isDeleted' => false]);
-                    }]);
-                }]);
-                if (!$this->isNewRecord) {
-                    $query->andWhere(['not', ['user_email.id' => $this->id]]);
-                } 
-            }],
+            ['email', 'validateUnique'],
         ];
     }
 
@@ -79,6 +69,24 @@ class UserEmail extends \yii\db\ActiveRecord
     public static function find()
     {
         return new UserEmailQuery(get_called_class());
+    }
+    
+    public function validateUnique($attributes)
+    {
+        $query = self::find()
+                ->where(['email' => $this->email])
+                ->joinWith(['userContact uc' => function ($query) {
+                    $query->joinWith(['user u' => function ($query) {
+                        $query->andWhere(['u.isDeleted' => false]);
+                    }]);
+                }]);
+                if (!$this->isNewRecord) {
+                    $query->andWhere(['not', ['user_email.id' => $this->id]]);
+                }
+        $email = $query->one();
+        if ($email) {
+            return $this->addError($attributes, "Email already exists!");
+        }
     }
     
     public function getUserContact()
