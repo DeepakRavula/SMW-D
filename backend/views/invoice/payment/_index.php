@@ -39,28 +39,28 @@ Modal::end(); ?>
 <?php
 $columns = [
       [
-        'contentOptions' => ['class' => 'text-left payment-notes-description', 'style' => 'width:65px;'],
-        'label' => 'Type',
+        'contentOptions' => ['class' => 'text-left','style' => 'max-width:60px;'],
+        'label' => 'Date',
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->date);
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left payment-notes-description', 'style' => 'width:65px;'],
+        'contentOptions' => ['class' => 'text-left','style' => 'max-width:60px;'],
         'label' => 'Type',
         'value' => function ($data) {
             return $data->paymentMethod->name;
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left payment-notes-description', 'style' => 'width:65px;'],
+        'contentOptions' => ['class' => 'text-left', 'style' => 'max-width:60px;'],
         'label' => 'Ref',
         'value' => function ($data) {
             return $data->reference;
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left payment-notes-description', 'style' => 'width:135px;'],
+        'contentOptions' => ['class' => 'text-left','style' => 'max-width:155px;overflow: auto; word-wrap: break-word;'],
         'label' => 'Notes',
         'value' => function ($data) {
             return $data->notes;
@@ -71,7 +71,7 @@ $columns = [
             'label'=>'Amount',
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right','style' => 'width:65px'],
+            'contentOptions' => ['class' => 'text-right','style' => 'max-width:60px;'],
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->amount);
             },
