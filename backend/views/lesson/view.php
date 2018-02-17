@@ -61,7 +61,7 @@ $this->params['action-button'] = $this->render('_buttons', [
             'model' => $model,
         ]);
         ?>
-    <?php if (!$model->isGroup()): ?>
+    <?php if (!$model->isGroup() && !$model->isUnscheduled()): ?>
 		<?=
         $this->render('attendance/_view', [
             'model' => $model,
