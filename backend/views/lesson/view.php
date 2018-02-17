@@ -61,12 +61,14 @@ $this->params['action-button'] = $this->render('_buttons', [
             'model' => $model,
         ]);
         ?>
-    <?php if (!$model->isGroup()): ?>
+    <?php if ($model->isPrivate() && !$model->isUnscheduled()): ?>
+        <div id="attendance-panel">
 		<?=
         $this->render('attendance/_view', [
             'model' => $model,
         ]);
         ?>	
+        </div>
     <?php endif; ?>
 	</div>
 </div>
@@ -382,6 +384,7 @@ Modal::end();
                     $('#menu-shown').hide();
                     $('#success-notification').html(response.message).fadeIn().delay(3000).fadeOut();
                     $.pjax.reload({container: '#lesson-detail', timeout: 6000});
+                    $('#attendance-panel').hide();
                 } else {
                     $('#menu-shown').hide();
                     $('#error-notification').html(response.message).fadeIn().delay(3000).fadeOut();
