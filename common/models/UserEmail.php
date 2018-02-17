@@ -103,12 +103,6 @@ class UserEmail extends \yii\db\ActiveRecord
     
     public function beforeDelete() 
     {
-        foreach ($this->user->emails as $email) {
-            if ($this->id !== $email->id) {
-                $email->makePrimary();
-                break;
-            }
-        }
         if ($this->userContact) {
             $this->userContact->delete();
         }
