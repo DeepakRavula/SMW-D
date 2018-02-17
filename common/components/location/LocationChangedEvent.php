@@ -26,7 +26,7 @@ class LocationChangedEvent extends Event
     
     public static function onLocationChanged()
     {
-        if (Yii::$app->user->id && !Yii::$app->request->pathInfo === 'location-view') {
+        if (Yii::$app->user->id && Yii::$app->request->pathInfo !== 'location-view') {
             $userLogged = User::findOne(Yii::$app->user->id);
             if ($userLogged->isAdmin()) {
                 return Yii::$app->getResponse()->redirect('/admin/dashboard/index');
