@@ -15,13 +15,11 @@ use common\models\Blog;
         'id' => 'blog-form',
     ]); ?>
 
-    <?php echo $form->errorSummary($model); ?>
-
     <?php echo $form->field($model, 'title')->textInput() ?>
 	
 	<?= $form->field($model, 'content')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'full',
+        'preset' => 'basic',
     ]) ?>
 <div class="row">
     <div class="col-md-12">
