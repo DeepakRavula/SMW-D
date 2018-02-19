@@ -7,7 +7,7 @@ use dosamigos\ckeditor\CKEditor;
 use yii\helpers\ArrayHelper;
 use common\models\Blog;
 /* @var $this yii\web\View */
-/* @var $model common\models\EmailTemplate */
+/* @var $model common\models\Blog */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
