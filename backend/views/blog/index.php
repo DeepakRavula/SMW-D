@@ -49,12 +49,6 @@ echo AdminLteGridView::widget([
 
 <?php yii\widgets\Pjax::end(); ?>
     </div>
-<?php Modal::begin([
-        'header' => '<h4 class="m-0">Blog</h4>',
-        'id' => 'blog-modal',
-    ]); ?>
-<div id="blog-contents"></div>
- <?php  Modal::end(); ?>
   <script>
     $(document).ready(function() {
         $(document).on('click', '.action-button,#blog-listing  tbody > tr', function () {
@@ -73,31 +67,12 @@ echo AdminLteGridView::widget([
                 {
                     if(response.status)
                     {
-                        $('#blog-contents').html(response.data);
-                        $('#blog-modal').modal('show');
+                         $('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Blogs</h4>');
+                        $('#modal-content').html(response.data);
                     }
                 }
             });
-            return false;
-        });
-        $(document).on('beforeSubmit', '#blog-form', function () {
-            $.ajax({
-                url    : $(this).attr('action'),
-                type   : 'post',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-                    if(response.status) {
-                        $.pjax.reload({container: '#blog-listing', timeout: 6000});
-                        $('#blog-modal').modal('hide');
-                    }
-                }
-            });
-            return false;
-        });
-        $(document).on('click', '.blog-cancel', function () {
-            $('#blog-modal').modal('hide');
             return false;
         });
     });
