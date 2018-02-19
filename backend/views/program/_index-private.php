@@ -26,7 +26,7 @@ $lastRole = end($roles);
 			'value' => 2]),
 	]
 ]); ?>
-    <div class="m-t-25">
+    <div class="m-t-10">
     <?php Pjax::begin(['id' => 'program-listing', 'enablePushState' => false]) ?>
     <?php
     echo GridView::widget([
