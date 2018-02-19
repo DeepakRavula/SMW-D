@@ -39,7 +39,7 @@ class BlogController extends \common\components\controllers\BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
+                        'actions' => ['index','create', 'update', 'delete'],
                         'roles' => ['manageBlogs'],
                     ],
                 ],
@@ -52,7 +52,7 @@ class BlogController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-    public function actionIndex()
+   public function actionIndex()
     {
         $blog = Blog::find();
         $dataProvider = new ActiveDataProvider([
@@ -62,7 +62,6 @@ class BlogController extends \common\components\controllers\BaseController
             'dataProvider' => $dataProvider,
         ]);
     }
-
     /**
      * Lists all Blog models.
      *
@@ -126,7 +125,7 @@ class BlogController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-    public function actionUpdate($id)
+   public function actionUpdate($id)
     {
         $model = $this->findModel($id);
         $data = $this->renderAjax('_form', [
@@ -152,7 +151,6 @@ class BlogController extends \common\components\controllers\BaseController
             ];
         }
     }
-
     /**
      * Deletes an existing Blog model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
