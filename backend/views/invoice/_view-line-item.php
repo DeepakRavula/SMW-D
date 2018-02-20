@@ -4,6 +4,14 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 
 ?>
+<?php if($print)
+{
+    $attributeDescription='Description';
+    
+
+} else
+{$attributeDescription=''; 
+}?>
 <?php if ($searchModel->toggleAdditionalColumns) {
     $columns = [
         [
@@ -29,7 +37,7 @@ use yii\widgets\Pjax;
         ],
         [
             'headerOptions' => ['class' => 'text-left'],
-            'attribute' => 'description',
+            'label'=>'Description',
         ],
         [
             'label' => 'Qty',
@@ -88,7 +96,11 @@ use yii\widgets\Pjax;
         ],
         [
             'headerOptions' => ['class' => 'text-left'],
-            'attribute' => 'description',
+            'label' => 'Description',
+            'attribute' => $attributeDescription,
+            'value' => function ($data) {
+                return $data->description;
+            },
         ],
         [
             'label' => 'Qty',
@@ -124,6 +136,10 @@ use yii\widgets\Pjax;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
         ];
+            if($print)
+            {
+                array_splice($columns,0,2);
+            }
 }?>
 <?php Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
 	<?= GridView::widget([
