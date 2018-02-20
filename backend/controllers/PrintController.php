@@ -61,15 +61,17 @@ class PrintController extends BaseController
             'query' => $invoiceLineItems,
             'pagination' => false,
         ]);
-        $paymentsDataProvider = new ActiveDataProvider([
+        $invoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $invoicePayments,
         ]);
+        $searchModel=new InvoiceSearch();
+        $searchModel->toggleAdditionalColumns=false;
         $this->layout = '/print';
 
         return $this->render('/invoice/print/view', [
             'model' => $model,
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-            'paymentsDataProvider' => $paymentsDataProvider,
+            'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'searchModel'=>$searchModel,
         ]);
     }
