@@ -2,29 +2,29 @@
 ?>
 <?php
 $columns = [
-        [
-        'contentOptions' => ['style' => 'max-width:50px;'],
+      [
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:60px;max-width:60px;'],
         'label' => 'Date',
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->date);
         },
         ],
     [
-        'contentOptions' => ['style' => 'max-width:60px;'],
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:60px;max-width:60px;'],
         'label' => 'Type',
         'value' => function ($data) {
             return $data->paymentMethod->name;
         },
         ],
     [
-        'contentOptions' => ['style' => 'max-width:75px;'],
+        'contentOptions' => ['class' => 'text-left', 'style' => 'min-width:60px;max-width:60px;'],
         'label' => 'Ref',
         'value' => function ($data) {
             return $data->reference;
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left', 'style' => 'min-width:100px;max-width:100px;'],
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:90px;max-width:150px;word-wrap: break-word;'],
         'label' => 'Notes',
         'value' => function ($data) {
             return $data->notes;
@@ -32,10 +32,10 @@ $columns = [
         },
         ],
         [
-            'label' => 'Amount',
+            'label'=>'Amount',
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right', 'style' => 'max-width:25px;'],
+            'contentOptions' => ['class' => 'text-right','style' => 'min-width:60px;max-width:60px;'],
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->amount);
             },
