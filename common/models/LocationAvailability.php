@@ -53,4 +53,16 @@ class LocationAvailability extends \yii\db\ActiveRecord
             'toTime' => 'To Time',
         ];
     }
+    public static function getWeekdaysList()
+    {
+        return [
+        1   =>  'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+                'Sunday'
+        ];
+    }
 }
