@@ -34,3 +34,10 @@ $this->title = 'Edit Location';
         </div>
     </div>
 <?php ActiveForm::end(); ?>
+<script>
+    $(document).on('modal-success', function(event, params) {
+        var url = "<?php echo Url::to(['location/view']); ?>";
++        $.pjax.reload({url: url, container: "#location-view", replace: false, timeout: 4000});
+        return false;
+    });
+</script>

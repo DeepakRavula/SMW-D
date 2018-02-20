@@ -79,7 +79,6 @@ $lastRole = end($roles);
 		<?php LteBox::end() ?>
 		</div> 
 </div>
-<?php Pjax::end(); ?>
 <div class="row">
 	<div class="col-md-12">	
 		<div class="nav-tabs-custom">
@@ -103,6 +102,7 @@ $lastRole = end($roles);
 
 	</div>
 </div>
+
 <?php Modal::begin([
         'header' => '<h4 class="m-0">Location</h4>',
         'id' => 'location-edit-modal',
@@ -258,7 +258,7 @@ function showCalendars(id,type) {
                         $('#popup-modal').modal('show');
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
                         $('#modal-delete').show();
-                         $(".modal-delete").attr("action",url);
+                        $(".modal-delete").attr("action",url);
                         $('#modal-content').html(response.data);
                          $(id).fullCalendar("refetchEvents");
                     }
@@ -279,7 +279,7 @@ function showCalendars(id,type) {
                         $('#popup-modal').modal('show');
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
                         $('#modal-delete').show();
-                         $(".modal-delete").attr("action",url);
+                        $(".modal-delete").attr("action",url);
                         $('#modal-content').html(response.data);
                         $(id).fullCalendar("refetchEvents");
                     }
@@ -310,3 +310,4 @@ function showCalendars(id,type) {
         }
  }
 </script>
+<?php Pjax::end(); ?>
