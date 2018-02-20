@@ -67,7 +67,7 @@ use yii\bootstrap\Modal;
      $(document).off('click', '.modal-delete').on('click', '.modal-delete', function () {
         $('#modal-spinner').show();
         $.ajax({
-            url    : $('#modal-delete').attr('action'),
+            url    : $('.modal-delete').attr('action'),
             type   : 'post',
             dataType: "json",
             data   : $('#modal-form').serialize(),

@@ -211,6 +211,7 @@ function showCalendars(id,type) {
         },
         clickEvent : function (event,type,id) {
             var params = $.param({ resourceId: event.resourceId,type: type});
+            var url    = '<?= Url::to(['location/delete-availability']) ?>?' + params;
             $.ajax({
                 url    : '<?= Url::to(['location/modify']) ?>?' + params,
                 type   : 'POST',
@@ -220,6 +221,7 @@ function showCalendars(id,type) {
                     if (response.status) {
                         $('#popup-modal').modal('show');
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
+                        $(".modal-delete").attr("action",url);
                         $('#modal-delete').show();
                         $('#modal-content').html(response.data);
                         $(id).fullCalendar("refetchEvents");
@@ -245,6 +247,7 @@ function showCalendars(id,type) {
         },
         eventResize : function (event,type,id) {
             var params = $.param({ resourceId: event.resourceId,type: type });
+             var url    = '<?= Url::to(['location/delete-availability']) ?>?' + params;
             $.ajax({
                 url    : '<?= Url::to(['location/modify']) ?>?' + params,
                 type   : 'POST',
@@ -255,6 +258,7 @@ function showCalendars(id,type) {
                         $('#popup-modal').modal('show');
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
                         $('#modal-delete').show();
+                         $(".modal-delete").attr("action",url);
                         $('#modal-content').html(response.data);
                          $(id).fullCalendar("refetchEvents");
                     }
@@ -264,6 +268,7 @@ function showCalendars(id,type) {
         },
         eventDrop : function (event,type,id) {
             var params = $.param({ resourceId: event.resourceId,type: type });
+             var url    = '<?= Url::to(['location/delete-availability']) ?>?' + params;
             $.ajax({
                 url    : '<?= Url::to(['location/modify']) ?>?' + params,
                 type   : 'POST',
@@ -274,6 +279,7 @@ function showCalendars(id,type) {
                         $('#popup-modal').modal('show');
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
                         $('#modal-delete').show();
+                         $(".modal-delete").attr("action",url);
                         $('#modal-content').html(response.data);
                         $(id).fullCalendar("refetchEvents");
                     }
