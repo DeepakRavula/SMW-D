@@ -70,6 +70,7 @@ class PrintController extends BaseController
             'model' => $model,
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
             'paymentsDataProvider' => $paymentsDataProvider,
+            'searchModel'=>$searchModel,
         ]);
     }
     public function actionCourse($id)
