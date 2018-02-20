@@ -163,6 +163,22 @@ dl {
   }
   
 }
+    @media print {
+  .dl-invoice-summary dt {
+    text-align: left;
+    float:left;
+    line-height:1.5;
+    font-weight:normal;
+  }
+  .dl-invoice-summary dd{
+	text-align: right;
+        line-height:1.5;
+  }
+  .m-l-30
+  {
+      margin-left:30px;
+  }
+}
 .lesson-colorcode{
     width: 15px; 
     height:15px;

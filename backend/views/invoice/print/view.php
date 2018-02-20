@@ -8,23 +8,6 @@
    $this->params['breadcrumbs'][] = ['label' => 'Invoices', 'url' => ['index']];
    $this->params['breadcrumbs'][] = $this->title;
    ?>
-<style>
-    @media print {
-  .dl-invoice-summary dt {
-    text-align: left;
-    line-height:1.0;
-    font-weight:normal;
-  }
-  .dl-invoice-summary dd{
-	text-align: right;
-        line-height:1.0;
-  }
-  .m-l-30
-  {
-      margin-left:30px;
-  }
-}
-    </style>
 <?php
    echo $this->render('/print/_invoice-header', [
        'invoiceModel'=>$model,
