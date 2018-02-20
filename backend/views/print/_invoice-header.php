@@ -1,15 +1,3 @@
-<style>
-    @media print {
-    .new-invoice-print-address
-    {
-        width: 1000px;
-        margin-top: 10px;
-        font-size: 16px;
-        font-weight: 300;
-        color: #000;
-    }
-    }
-</style>
 <div class="invoice-view">
     <div class="row">
         <div class="col-xs-12 page-header">
