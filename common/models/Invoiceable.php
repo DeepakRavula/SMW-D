@@ -188,6 +188,7 @@ trait Invoiceable
         $endDate = (new \DateTime($endDate))->format('Y-m-d');
         $query = Lesson::find()
                     ->notDeleted()
+                    ->notCanceled()
                     ->isConfirmed();
         if ($startDate) {
             $startDate = (new \DateTime($startDate))->format('Y-m-d');

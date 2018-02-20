@@ -17,7 +17,7 @@ use yii\filters\AccessControl;
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
-class TeacherSubstituteController extends \common\components\controllers\BaseController
+class TeacherSubstituteController extends BaseController
 {
     public function behaviors()
     {
@@ -82,11 +82,15 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
                 $lesson->setScenario('substitute-teacher');
                 $newLessonIds[] = $lesson->id;
                 $errors = ActiveForm::validate($lesson);
+                $attribute = 'lesson-date';
+                if ($lesson->isExtra()) {
+                    $attribute = 'extralesson-date';
+                }
                 if ($errors) {
-                    if (current($errors['lesson-date']) !== Lesson::TEACHER_UNSCHEDULED_ERROR_MESSAGE) {
+                    if (current($errors[$attribute]) !== Lesson::TEACHER_UNSCHEDULED_ERROR_MESSAGE) {
                         $conflictedLessonIds[] = $lesson->id;
                     }
-                    $conflicts[$lesson->id] = $errors['lesson-date'];
+                    $conflicts[$lesson->id] = $errors[$attribute];
                 }
             }
         }
@@ -102,11 +106,15 @@ class TeacherSubstituteController extends \common\components\controllers\BaseCon
                 $newLessonIds[] = $newLesson->id;
                 $newLesson->setScenario('substitute-teacher');
                 $errors = ActiveForm::validate($newLesson);
+                $attribute = 'lesson-date';
+                if ($newLesson->isExtra()) {
+                    $attribute = 'extralesson-date';
+                }
                 if ($errors) {
-                    if (current($errors['lesson-date']) !== Lesson::TEACHER_UNSCHEDULED_ERROR_MESSAGE) {
+                    if (current($errors[$attribute]) !== Lesson::TEACHER_UNSCHEDULED_ERROR_MESSAGE) {
                         $conflictedLessonIds[] = $newLesson->id;
                     }
-                    $conflicts[$newLesson->id] = $errors['lesson-date'];
+                    $conflicts[$newLesson->id] = $errors[$attribute];
                 }
             }
             $programIds[] = $lesson->course->programId;

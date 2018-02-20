@@ -70,7 +70,7 @@ class ScheduleController extends BaseController
         $teachersAvailabilities = TeacherAvailability::find()
             ->joinWith(['userLocation' => function ($query) use ($locationId) {
                 $query->joinWith(['userProfile'])
-                ->where(['user_location.location_id' => $locationId]);
+                ->andWhere(['user_location.location_id' => $locationId]);
             }])
             ->orderBy(['teacher_availability_day.id' => SORT_DESC])
            ->orderBy(['user_profile.firstname' => SORT_ASC])
