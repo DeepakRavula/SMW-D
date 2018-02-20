@@ -3,7 +3,9 @@
 use yii\bootstrap\Modal;
 
 ?>
-
+<script src="/plugins/bootbox/bootbox.min.js"></script>
+<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
+<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Modal Popup</h4>',
     'id' => 'popup-modal',
@@ -65,7 +67,11 @@ use yii\bootstrap\Modal;
         return false;
     });
      $(document).off('click', '.modal-delete').on('click', '.modal-delete', function () {
-        $('#modal-spinner').show();
+        bootbox.confirm({ 
+  			message: "Are you sure you want to delete this?", 
+  			callback: function(result){
+				if(result) {
+					$('.bootbox').modal('hide');
         $.ajax({
             url    : $('.modal-delete').attr('action'),
             type   : 'post',
@@ -77,6 +83,7 @@ use yii\bootstrap\Modal;
                 {
                     $('#modal-spinner').hide();
                     $('#popup-modal').modal('hide');
+                    $(document).trigger( "modal-delete", response);
                 } else {
                     $('#modal-spinner').hide();
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
@@ -84,6 +91,10 @@ use yii\bootstrap\Modal;
                 }
             }
         });
-        return false;
-    });
+   return false;	
+			}
+			}
+		});	
+		return false;
+        });
 </script>

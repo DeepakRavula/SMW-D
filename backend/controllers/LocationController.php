@@ -152,9 +152,16 @@ class LocationController extends BaseController
         $availabilityModel = LocationAvailability::find()
             ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
             ->one();
-        return $availabilityModel->delete();
+        if($availabilityModel->delete()) {
+            return [
+                'status' => true
+            ];
+        } else {
+            return [
+                'status' => false,
+            ];
+        }
     }
-
 
     public function actionRenderEvents($type)
     {
