@@ -64,4 +64,26 @@ use yii\bootstrap\Modal;
         $('#popup-modal').modal('hide');
         return false;
     });
+     $(document).off('click', '.modal-delete').on('click', '.modal-delete', function () {
+        $('#modal-spinner').show();
+        $.ajax({
+            url    : $('#modal-delete').attr('action'),
+            type   : 'post',
+            dataType: "json",
+            data   : $('#modal-form').serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#modal-spinner').hide();
+                    $('#popup-modal').modal('hide');
+                } else {
+                    $('#modal-spinner').hide();
+                    $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
+                    $(document).trigger( "modal-error", response);
+                }
+            }
+        });
+        return false;
+    });
 </script>
