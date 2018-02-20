@@ -18,9 +18,11 @@
   .dl-invoice-summary dd{
 	text-align: right;
         line-height:1.0;
-        margin-top: -1px;
   }
-  
+  .m-l-30
+  {
+      margin-left:30px;
+  }
 }
     </style>
 <?php
@@ -39,9 +41,9 @@ echo $this->render('/invoice/_view-line-item', [
     'print'=>true,
 ]);
 ?>
-            <b>Payments</b>           
-            <div class="row">
-	<div class="col-xs-9">     
+            <div class="row">  
+                <div class="m-l-30"><b>Payments</b></div>
+	<div class="col-xs-9">          
 		<?= $this->render('/invoice/payment/_payment-list', [
             'model' => $model,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,

@@ -118,6 +118,7 @@ Modal::end();
             'model' => $model,
             'invoicePayments' => $invoicePayments,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
+            'print'=>false,        
         ]);?>
 	</div>
 	<?php Pjax::Begin(['id' => 'invoice-bottom-summary', 'timeout' => 6000]); ?>
