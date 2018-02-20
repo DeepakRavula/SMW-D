@@ -163,21 +163,29 @@ dl {
   }
   
 }
-    @media print {
-  .dl-invoice-summary dt {
-    text-align: left;
-    float:left;
-    line-height:1.5;
-    font-weight:normal;
-  }
-  .dl-invoice-summary dd{
-	text-align: right;
+@media print {
+    .dl-invoice-summary dt {
+        text-align: left;
+        float:left;
         line-height:1.5;
-  }
-  .m-l-30
-  {
-      margin-left:30px;
-  }
+        font-weight:normal;
+    }
+    .dl-invoice-summary dd{
+        text-align: right;
+        line-height:1.5;
+    }
+    .m-l-30
+    {
+        margin-left:30px;
+    }
+    .new-invoice-print-address
+    {
+        width: 1000px;
+        margin-top: 10px;
+        font-size: 16px;
+        font-weight: 300;
+        color: #000;
+    }
 }
 .lesson-colorcode{
     width: 15px; 

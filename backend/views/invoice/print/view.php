@@ -35,8 +35,7 @@ echo $this->render('/invoice/_view-line-item', [
 	</div>
 	<?php Pjax::Begin(['id' => 'invoice-bottom-summary', 'timeout' => 6000]); ?>
 	<div class="col-xs-3">
-		<?=
-        $this->render('/invoice/_bottom-summary-list', [
+		<?=$this->render('/invoice/_bottom-summary-list', [
             'model' => $model,
         ]);
         ?>	
