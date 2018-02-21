@@ -3,29 +3,36 @@
 <?php
 $columns = [
       [
-        'contentOptions' => ['class' => 'text-left','style' => 'min-width:40px;max-width:50px;'],
+        //'contentOptions' => ['class' => 'text-left','style' => 'min-width:40px;max-width:40px;'],
+        //'headerOptions' => ['class' => 'text-left','style' => 'min-width:40px;max-width:40px;'],
         'label' => 'Date',
+        'options'=>['width'=>'90px;'] , 
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->date);
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left','style' => 'min-width:40px;max-width:60px;'],
+       // 'contentOptions' => ['class' => 'text-left','style' => 'min-width:50px;max-width:50px;'],
+        //'headerOptions' => ['class' => 'text-left','style' => 'min-width:50px;max-width:50px;'],
+        'options'=>['width'=>'90px;'] , 
         'label' => 'Type',
         'value' => function ($data) {
             return $data->paymentMethod->name;
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left', 'style' => 'min-width:60px;max-width:60px;word-wrap:break-word;'],
-        'label' => 'Ref',
+      
+         'label' => 'Ref',
+         'options'=>['width'=>'90px;'] , 
+        'contentOptions' => ['class' => 'text-left', 'style' => 'min-width:90px;max-width:90px;word-wrap:break-word;'],
         'value' => function ($data) {
             return $data->reference;
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left','style' => 'min-width:80px;max-width:140px;word-wrap:break-word;'],
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:250px;max-width:250px;word-wrap:break-word;'],
         'label' => 'Notes',
+        'options'=>['width'=>'250px;',] , 
         'value' => function ($data) {
             return $data->notes;
 
@@ -34,8 +41,9 @@ $columns = [
         [
             'label'=>'Amount',
             'format' => 'currency',
+             'options'=>['class' => 'text-right','width'=>'90px;'] , 
             'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right','style' => 'width:40px;'],
+           'contentOptions' => ['class' => 'text-right'],
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->amount);
             },

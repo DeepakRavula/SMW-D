@@ -9,12 +9,12 @@
                     <div class="col-xs-4 invoice-col">
                         <div class="pull-right">
             <?php if (!empty($invoiceModel)): ?>
-                            <div class=""><b>#<?= $invoiceModel->getInvoiceNumber(); ?></b></div><br>
-                <br>
-                <?= Yii::$app->formatter->asDate($invoiceModel->date); ?> <br>
-                <?= $invoiceModel->getStatus(); ?><br>
+                            <div class="admin-login right-align"><b>#<?= $invoiceModel->getInvoiceNumber(); ?></b></div>
+                             <div class="text-right right-align"> <label>Status:</label><?= $invoiceModel->getStatus(); ?></div>
+                <div class="text-right right-align"><label>Date:</label> <?= Yii::$app->formatter->asDate($invoiceModel->date); ?></div>
                 <?php if (!empty($invoiceModel->dueDate)) : ?>
-                <?= Yii::$app->formatter->asDate($invoiceModel->dueDate); ?>
+                <div class="text-right"> <label>Due Date:</label><?= Yii::$app->formatter->asDate($invoiceModel->dueDate); ?>
+                            </div>
     <?php endif; ?>
 <?php endif; ?>
             <?php if (!empty($courseModel)): ?>
