@@ -50,7 +50,6 @@ echo AdminLteGridView::widget([
 <?php yii\widgets\Pjax::end(); ?>
     </div>
   <script>
-    $(document).ready(function() {
         $(document).on('click', '.action-button,#blog-listing  tbody > tr', function () {
             var blogId = $(this).data('key');
              if (blogId === undefined) {
@@ -75,5 +74,4 @@ echo AdminLteGridView::widget([
             });
             return false;
         });
-    });
 </script>
