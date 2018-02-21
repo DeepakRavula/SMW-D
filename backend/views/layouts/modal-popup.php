@@ -4,8 +4,6 @@ use yii\bootstrap\Modal;
 
 ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
-<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
-<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Modal Popup</h4>',
     'id' => 'popup-modal',
