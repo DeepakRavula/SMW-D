@@ -1,28 +1,28 @@
 <?php
 
-use yii\helpers\Html;
+use yii\grid\GridView;
+use yii\bootstrap\Modal;
 use yii\helpers\Url;
+use yii\helpers\Html;
 use common\components\gridView\AdminLteGridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Blogs';
-$this->params['action-button'] = Html::a('<i class="fa fa-plus-circle" aria-hidden="true"></i> Create', ['create'], ['class' => 'btn btn-primary btn-sm']);
 $this->params['breadcrumbs'][] = $this->title;
-?>
-<div class="grid-row-open p-20">
-
-    <?php echo AdminLteGridView::widget([
-        'dataProvider' => $dataProvider,
-        'tableOptions' => ['class' => 'table table-bordered m-0'],
-            'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::to(['blog/view', 'id' => $model->id]);
-
-            return ['data-url' => $url];
-        },
-        'columns' => [
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'new-blog']);
+?> 
+<div class="blog-index">  
+<?php yii\widgets\Pjax::begin(['id' => 'blog-listing']); ?>
+<?php
+echo AdminLteGridView::widget([
+    'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
+    'tableOptions' => ['class' => 'table table-bordered'],
+    'headerRowOptions' => ['class' => 'bg-light-gray'],
+    'columns' => [
             [
                 'label' => 'User Name',
                 'value' => function ($data) {
@@ -47,4 +47,33 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
-</div>
+<?php yii\widgets\Pjax::end(); ?>
+    </div>
+  <script>
+    $(document).ready(function() {
+        $(document).on('click', '.action-button,#blog-listing  tbody > tr', function () {
+            var blogId = $(this).data('key');
+             if (blogId === undefined) {
+                    var customUrl = '<?= Url::to(['blog/create']); ?>';
+            } else {
+                var customUrl = '<?= Url::to(['blog/update']); ?>?id=' + blogId;
+            }
+            $.ajax({
+                url    : customUrl,
+                type   : 'get',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                         $('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Blogs</h4>');
+                        $('#modal-content').html(response.data);
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
