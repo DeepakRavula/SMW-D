@@ -61,7 +61,7 @@ body .user-panel > .info {
 }
 #show-all label{
 	font-weight: normal;
-	font-size: 18px;	
+	font-size: 17px;
 }
 #show-all-programs-label{
 	font-weight: normal;
@@ -342,4 +342,7 @@ dl {
 }
 .direct-chat-timestamp {
     color: #999;
+}
+.show-all-top {
+    margin-top: -10px;
 }

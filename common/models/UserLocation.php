@@ -56,6 +56,11 @@ class UserLocation extends \yii\db\ActiveRecord
         return $this->hasOne(Location::className(), ['id' => 'location_id']);
     }
     
+    public function getTeacherAvailabilities()
+    {
+        return $this->hasMany(TeacherAvailability::className(), ['teacher_location_id' => 'id']);
+    }
+    
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);

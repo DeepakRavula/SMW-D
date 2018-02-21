@@ -40,16 +40,15 @@ class UserQuery extends ActiveQuery
 
     public function teachers($programId, $locationId)
     {
-        $this->joinWith(['userLocation ul' => function ($query) {
-            $query->joinWith('teacherAvailability');
-        }])
+        $this->joinWith(['userLocation ul' => function ($query) use ($locationId) {
+                $query->andWhere(['ul.location_id' => $locationId]);
+            }])
             ->joinWith(['qualifications' => function ($query) use ($programId) {
                 $query->andWhere(['qualification.program_id' => $programId])
                     ->notDeleted();
             }])
             ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-            ->where(['raa.item_name' => 'teacher'])
-            ->andWhere(['ul.location_id' => $locationId]);
+            ->andWhere(['raa.item_name' => 'teacher']);
 
         return $this;
     }
