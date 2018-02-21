@@ -41,7 +41,7 @@ class LocationController extends BaseController
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'delete', 'create','modify'],
+                        'actions' => ['index', 'delete', 'create'],
                         'roles' => ['administrator']
                     ]
                 ]
@@ -153,14 +153,15 @@ class LocationController extends BaseController
             ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
             ->one();
         if($availabilityModel->delete()) {
-            return [
+            $response= [
                 'status' => true
             ];
         } else {
-            return [
+            $response= [
                 'status' => false,
             ];
         }
+        return $response;
     }
 
     public function actionRenderEvents($type)
