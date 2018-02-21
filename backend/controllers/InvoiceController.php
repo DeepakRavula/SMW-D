@@ -266,6 +266,7 @@ class InvoiceController extends BaseController
         $logDataProvider= new ActiveDataProvider([
             'query' => LogHistory::find()
             ->invoice($id) ]);
+        $searchModel->isPrint=false;
         return $this->render(
             'view',
                 [
