@@ -9,7 +9,7 @@
                     <div class="col-xs-4 invoice-col">
                         <div class="pull-right">
             <?php if (!empty($invoiceModel)): ?>
-                <b><?= $invoiceModel->getInvoiceNumber(); ?></b><br>
+                            <div class=""><b>#<?= $invoiceModel->getInvoiceNumber(); ?></b></div><br>
                 <br>
                 <?= Yii::$app->formatter->asDate($invoiceModel->date); ?> <br>
                 <?= $invoiceModel->getStatus(); ?><br>

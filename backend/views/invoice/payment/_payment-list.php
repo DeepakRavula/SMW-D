@@ -3,28 +3,28 @@
 <?php
 $columns = [
       [
-        'contentOptions' => ['class' => 'text-left','style' => 'min-width:60px;max-width:60px;'],
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:40px;max-width:50px;'],
         'label' => 'Date',
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->date);
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left','style' => 'min-width:60px;max-width:60px;'],
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:40px;max-width:60px;'],
         'label' => 'Type',
         'value' => function ($data) {
             return $data->paymentMethod->name;
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left', 'style' => 'min-width:60px;max-width:60px;'],
+        'contentOptions' => ['class' => 'text-left', 'style' => 'min-width:60px;max-width:60px;word-wrap:break-word;'],
         'label' => 'Ref',
         'value' => function ($data) {
             return $data->reference;
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left','style' => 'min-width:90px;max-width:150px;word-wrap: break-word;'],
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:80px;max-width:140px;word-wrap:break-word;'],
         'label' => 'Notes',
         'value' => function ($data) {
             return $data->notes;
@@ -35,7 +35,7 @@ $columns = [
             'label'=>'Amount',
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right','style' => 'min-width:60px;max-width:60px;'],
+            'contentOptions' => ['class' => 'text-right','style' => 'width:40px;'],
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->amount);
             },
