@@ -93,7 +93,7 @@ class BlogController extends \common\components\controllers\BaseController
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post())) {
+        if (Yii::$app->request->post()) {
             $model->user_id = Yii::$app->user->id;
             $currentDate = new \DateTime();
             $model->date = $currentDate->format('Y-m-d H:i:s');
