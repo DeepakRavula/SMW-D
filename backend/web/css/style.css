@@ -186,6 +186,10 @@ dl {
         font-weight: 300;
         color: #000;
     }
+    .f-s-30{
+    font-size:30px;
+}
+
 }
 .lesson-colorcode{
     width: 15px; 
@@ -339,4 +343,3 @@ dl {
 .direct-chat-timestamp {
     color: #999;
 }
-
