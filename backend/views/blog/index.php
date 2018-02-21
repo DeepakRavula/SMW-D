@@ -54,8 +54,12 @@ echo AdminLteGridView::widget([
             var blogId = $(this).data('key');
              if (blogId === undefined) {
                     var customUrl = '<?= Url::to(['blog/create']); ?>';
+                    $('#modal-delete').hide();
             } else {
                 var customUrl = '<?= Url::to(['blog/update']); ?>?id=' + blogId;
+                var url = '<?= Url::to(['blog/delete']); ?>?id=' + blogId;
+                $('#modal-delete').show();
+                $(".modal-delete").attr("action",url);
             }
             $.ajax({
                 url    : customUrl,
@@ -66,7 +70,7 @@ echo AdminLteGridView::widget([
                 {
                     if(response.status)
                     {
-                         $('#popup-modal').modal('show');
+                        $('#popup-modal').modal('show');
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Blogs</h4>');
                         $('#modal-content').html(response.data);
                     }
