@@ -56,7 +56,11 @@ $columns = [
                 [
         'label' => 'Student',
         'value' => function ($model) {
-            return $model->student->getFullName();
+            $student = '-';
+            if($model->isPrivate()) {
+            $student = $model->student->fullName;;
+            }
+                return $student;
         },
         'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
