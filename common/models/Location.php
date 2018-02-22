@@ -171,6 +171,7 @@ class Location extends \yii\db\ActiveRecord
         }
         return parent::afterSave($insert, $changedAttributes);
     }
+    
     public function getActiveStudentsCount($fromDate, $toDate)
     {
         $activeStudentsCount = Student::find()
@@ -188,6 +189,7 @@ class Location extends \yii\db\ActiveRecord
             ->count();
         return $activeStudentsCount;
     }
+    
     public function getRevenue($fromDate, $toDate)
     {
         $invoiceTaxTotal = Invoice::find()
@@ -218,6 +220,7 @@ class Location extends \yii\db\ActiveRecord
 
         return $total;
     }
+    
     public function getLocationDebt($locationDebt, $fromDate, $toDate)
     {
         $locationDebtValue=0;
@@ -234,6 +237,7 @@ class Location extends \yii\db\ActiveRecord
         }
         return $locationDebtValue;
     }
+    
     public function subTotal($fromDate, $toDate)
     {
         $royaltyValue=$this->getLocationDebt(LocationDebt::TYPE_ROYALTY, $fromDate, $toDate);
@@ -241,6 +245,7 @@ class Location extends \yii\db\ActiveRecord
         $subTotal=$royaltyValue+$advertisementValue;
         return $subTotal;
     }
+    
     public function getTaxAmount($fromDate, $toDate)
     {
         $taxCode = TaxCode::find()
@@ -255,78 +260,106 @@ class Location extends \yii\db\ActiveRecord
         return $taxAmount;
     }
     
-    public function addPermission() {
+    public function addPermission() 
+    {
     	$auth = Yii::$app->authManager;
-        $exceptStaffRoles = [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER];
-        $adminPermissions = $this->adminPermissions();
-        $adminAndOwnerPermissions = $this->adminAndOwnerPermissions();
+        $ownerRole = User::ROLE_OWNER;
+        $staffAndOwnerRole = [User::ROLE_STAFFMEMBER, User::ROLE_OWNER];
+        $staffPermissions = $this->staffPermissions();
+        $ownerPermissions = $this->ownerPermissions();
         $permissions = $auth->getPermissions();
         $command = Yii::$app->db->createCommand();
         foreach ($permissions as $permission) {
-            if (in_array($permission->name, $adminAndOwnerPermissions)) {
+            if (in_array($permission->name, $ownerPermissions)) {
                 foreach ($exceptStaffRoles as $exceptStaffRole) {
                     $command->insert('rbac_auth_item_child', array(
-                        'parent' => $exceptStaffRole,
+                        'parent' => $ownerRole,
                         'child' => $permission->name,
                         'location_id' => $this->id
                     ))->execute();
                 }
-            } else if(in_array($permission->name, $adminPermissions)) {
+            } else if(in_array($permission->name, $staffPermissions)) {
                 $command->insert('rbac_auth_item_child', array(
-                    'parent' => User::ROLE_ADMINISTRATOR,
+                    'parent' => $staffAndOwnerRole,
                     'child' => $permission->name,
                     'location_id' => $this->id
                 ))->execute();
-            } else {
-                $command->insert('rbac_auth_item_child', array(
-                    'parent' => User::ROLE_ADMINISTRATOR,
-                    'child' => $permission->name,
-                    'location_id' => $this->id
-                ))->execute();
-            }	
+            }
+            $command->insert('rbac_auth_item_child', array(
+                'parent' => User::ROLE_ADMINISTRATOR,
+                'child' => $permission->name,
+                'location_id' => $this->id
+            ))->execute();
         }
-
     }
-	public function adminPermissions() {
-		return [
-			'manageAdminArea',
-			'manageAdmin',
-			'managePrograms',
-			'managePrivileges',
-			'manageCities',
-			'manageProvinces',
-			'manageCountries',
-			'manageTaxes',
-			'manageReminderNotes',
-			'manageColorCode',
-			'manageItemCategory',
-			'manageBlogs',
-			'manageHolidays',
-			'manageEmailTemplate',
-			'manageOwners',
-                        'manageAllLocations',
-			'manageAccessControl'	
-		];
-	}
-	public function adminAndOwnerPermissions() {
-		return [
-			'teacherQualificationRate',
-			'manageMonthlyRevenue',
-                        'manageEnrolmentGains',
-                        'manageEnrolmentLosses',
-                        'manageInstructionHours',
-			'manageBirthdays',
-			'managePayments',
-			'manageRoyalty',
-			'manageReports',
-			'manageTaxCollected',
-			'manageRoyaltyFreeItems',
-			'manageItemsByCustomer',
-			'manageItemReport',
-			'manageItemCategoryReport',
-			'manageDiscountReport',
-			'manageStaff',
-                        'manageLocations',
-		];
-	}
+    
+    public function adminPermissions() 
+    {
+        return [
+            'manageAdminArea',
+            'manageAdmin',
+            'managePrograms',
+            'managePrivileges',
+            'manageCities',
+            'manageProvinces',
+            'manageCountries',
+            'manageTaxes',
+            'manageReminderNotes',
+            'manageColorCode',
+            'manageItemCategory',
+            'manageBlogs',
+            'manageHolidays',
+            'manageEmailTemplate',
+            'manageOwners',
+            'manageAccessControl',
+            'manageAllLocations',
+            'manageReleaseNotes',
+        ];
+    }
+    
+    public function ownerPermissions() 
+    {
+        return [
+            'teacherQualificationRate',
+            'manageBirthdays',
+            'managePayments',
+            'manageRoyalty',
+            'manageReports',
+            'manageTaxCollected',
+            'manageRoyaltyFreeItems',
+            'manageItemsByCustomer',
+            'manageItemReport',
+            'manageItemCategoryReport',
+            'manageDiscountReport',
+            'manageLocations',
+            'manageStaff',
+            'manageImport',
+            'manageClassrooms',
+            'manageSetupArea',
+            'manageMonthlyRevenue',
+            'manageEnrolmentGains',
+            'manageEnrolmentLosses',
+            'manageInstructionHours',
+        ];
+    }
+    
+    public function staffPermissions() 
+    {
+        return [
+            'loginToBackend',
+            'manageDashboard',
+            'manageCustomers',
+            'manageEnrolments',
+            'manageGroupLessons',
+            'manageInvoices',
+            'manageItems',
+            'managePayments',
+            'managePfi',
+            'managePrivateLessons',
+            'manageSchedule',
+            'manageStudents',
+            'manageTeachers',
+            'viewBlogList',
+        ];
+    }
 }
