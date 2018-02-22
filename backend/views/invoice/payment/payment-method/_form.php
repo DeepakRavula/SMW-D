@@ -16,6 +16,10 @@ use common\models\PaymentMethod;
     'id' => 'payment-form',
     'action' => Url::to(['payment/invoice-payment', 'id' => $invoice->id]),
 ]); ?>
+    <div id="payment-add-spinner" class="spinner" style="display:none">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+    </div>
     <div class="row">
         <div class="col-md-6">
     <?php echo $form->field($model, 'payment_method_id')->dropDownList(

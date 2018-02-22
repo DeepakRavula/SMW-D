@@ -435,6 +435,7 @@ Modal::begin([
 		return false;
 	});
 	$(document).on('beforeSubmit', '#payment-form', function (e) {
+        $('#payment-add-spinner').show();
 		e.preventDefault();
 		$.ajax({
 			url    : $(this).attr('action'),
@@ -445,6 +446,7 @@ Modal::begin([
 			{
                             if(response.status)
                             {
+                                $('#payment-add-spinner').hide();
                                 $('#payment-modal').modal('hide');
                                 $.pjax.reload({container: "#invoice-view-lineitem-listing", replace:false,async: false, timeout: 6000});
                                 $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
@@ -459,6 +461,7 @@ Modal::begin([
 		return false;
 	});
 	$(document).on("click", "#payment-grid tbody > tr", function() {
+        $('#payment-edit-modal .modal-dialog').css({'width': '400px'});
 		var paymentId = $(this).data('key');	
 		$.ajax({
 			url    : '<?= Url::to(['payment/update']); ?>?id=' + paymentId,
