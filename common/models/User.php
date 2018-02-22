@@ -234,6 +234,11 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(timelineEvent\TimelineEventUser::className(), ['userId' => 'id']);
     }
+    
+    public function getTeacherLessons()
+    {
+        return $this->hasMany(Lesson::className(), ['teacherId' => 'id']);
+    }
 
     /**
      * @return \yii\db\ActiveQuery

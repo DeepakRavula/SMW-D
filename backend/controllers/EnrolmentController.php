@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Location;
 use Yii;
 use common\models\PaymentCycle;
 use common\models\Enrolment;
@@ -281,7 +282,7 @@ class EnrolmentController extends BaseController
     }
     public function actionAdd()
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $request = Yii::$app->request;
         $course = new Course();
         $courseSchedule = new CourseSchedule();
@@ -422,7 +423,6 @@ class EnrolmentController extends BaseController
                 ->where(['courseId' => $model->course->id])
                 ->regular()
                 ->scheduledOrRescheduled()
-                ->joinWith('bulkRescheduleLesson')
                 ->isConfirmed()
                 ->between($startDate, $endDate)
                 ->all();

@@ -28,10 +28,6 @@ use yii\widgets\Pjax;
             },
         ],
         [
-            'headerOptions' => ['class' => 'text-left'],
-            'attribute' => 'description',
-        ],
-        [
             'label' => 'Qty',
             'value' => function ($data) {
                 return $data->unit;
@@ -88,7 +84,10 @@ use yii\widgets\Pjax;
         ],
         [
             'headerOptions' => ['class' => 'text-left'],
-            'attribute' => 'description',
+            'label' => 'Description',
+            'value' => function ($data) {
+                return $data->description;
+            },
         ],
         [
             'label' => 'Qty',
@@ -124,6 +123,10 @@ use yii\widgets\Pjax;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
         ];
+            if($searchModel->isPrint)
+            {
+                array_splice($columns,0,2);
+            }
 }?>
 <?php Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
 	<?= GridView::widget([
