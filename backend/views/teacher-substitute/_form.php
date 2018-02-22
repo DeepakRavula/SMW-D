@@ -54,6 +54,14 @@ $columns = [
         'contentOptions' => ['class' => 'kv-sticky-column'],
                 ],
                 [
+        'label' => 'Student',
+        'value' => function ($model) {
+            return $model->student->getFullName();
+        },
+        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+                ],
+                [
         'label' => 'Program',
         'value' => function ($model) {
             return $model->course->program->name;
