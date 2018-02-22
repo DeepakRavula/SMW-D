@@ -318,5 +318,29 @@ function showCalendars(id,type) {
             });
         }
  }
+  $(document).on('modal-success', function(event, params) {
+        var url = "<?php echo Url::to(['location/view']); ?>";
+        var activeTab=$('.nav-tabs .active > a').text();
+        var id="#operationCalendar";
+       if (activeTab === "Schedule Visibility") {
+        var id='#scheduleCalendar';
+    } 
+       $(id).fullCalendar("refetchEvents");
+        return false;
+    });
+    $(document).on('modal-error', function(event, params) {
+        $('#location-availability-error').html(response.errors).fadeIn().delay(3000).fadeOut();
+        return false;
+    });
+    $(document).on('modal-delete', function(event, params) {
+        var url = "<?php echo Url::to(['location/view']); ?>";
+        var activeTab=$('.nav-tabs .active > a').text();
+        var id="#operationCalendar";
+       if (activeTab === "Schedule Visibility") {
+        var id='#scheduleCalendar';
+    } 
+       $(id).fullCalendar("refetchEvents");
+        return false;
+    });
 </script>
 <?php Pjax::end(); ?>

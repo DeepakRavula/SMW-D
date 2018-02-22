@@ -15,8 +15,10 @@ $this->title = 'Edit Location';
 <?php 
         $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['location/modify','resourceId' =>$model->day,'type'=>$model->type,'fromTime' => $model->fromTime,'toTime' =>$model->toTime]),
-    ]); ?>
+        'action' => Url::to(['location/modify','resourceId' =>$model->day,'type'=>$model->type,'startTime' => $model->fromTime,'endTime' =>$model->toTime]),
+        'enableAjaxValidation' => true,
+        'enableClientValidation' => false,   
+            ]); ?>
    <div class="row p-20">     
         <div class="col-md-6 form-group">
                 <?= $form->field($model, 'fromTime')->widget(TimePicker::classname(), [
@@ -35,14 +37,5 @@ $this->title = 'Edit Location';
     </div>
 <?php ActiveForm::end(); ?>
 <script>
-    $(document).on('modal-success', function(event, params) {
-        var url = "<?php echo Url::to(['location/view']); ?>";
-+        $.pjax.reload({url: url, container: "#location-view", replace: false, timeout: 4000});
-        return false;
-    });
-    $(document).on('modal-delete', function(event, params) {
-        var url = "<?php echo Url::to(['location/view']); ?>";
-+        $.pjax.reload({url: url, container: "#location-view", replace: false, timeout: 4000});
-        return false;
-    });
+   
 </script>

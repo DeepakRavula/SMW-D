@@ -209,7 +209,6 @@ class LocationController extends BaseController
     {
           
            $location = Location::findOne(['slug' => Yii::$app->location]);
-           $post     = Yii::$app->request->post();
            $model    = LocationAvailability::find()
                        ->where(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
                        ->one();
@@ -227,18 +226,26 @@ class LocationController extends BaseController
         $data =  $this->renderAjax('/location/_form-location-availability', [
             'model' => $model,
         ]);
-        if ($post) {   
-        if($model->load($post)) {
+        if (Yii::$app->request->post()) {   
+        if($model->load(Yii::$app->request->post())) {
             $model->fromTime = (new \DateTime($model->fromTime))->format('H:i:s');
             $model->toTime   = (new \DateTime($model->toTime))->format('H:i:s');
-            $model->save();
+            if($model->save())
+            {
             return[
                 'status' => true,
             ];
+            }
+            else
+            {
+               return [
+                    'status' => false,
+                    'errors' =>$model->getErrors()
+                ]; 
+            }
         } else {
             return [
                     'status' => false,
-                    'errors' =>$model->getErrors()
                 ];
             }
         } else {

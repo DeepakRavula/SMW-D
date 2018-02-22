@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use common\components\validators\availability\LocationAvailabilityValidator;
+
 
 /**
  * This is the model class for table "location_availability".
