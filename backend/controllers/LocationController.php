@@ -205,7 +205,7 @@ class LocationController extends BaseController
 
         return $this->redirect(['index', 'location' => $this->findModel(1)->slug]);
     }
-      public function actionModify($resourceId,$type)
+      public function actionModify($resourceId,$type,$startTime,$endTime)
     {
           
            $location = Location::findOne(['slug' => Yii::$app->location]);
@@ -217,12 +217,12 @@ class LocationController extends BaseController
              $model=new LocationAvailability;
              $model->locationId=$location->id;
              $model->day=$resourceId;
-             $model->fromTime=(new \DateTime())->format('g:i a');
-             $model->toTime=(new \DateTime())->format('g:i a');
+             $model->fromTime=(new \DateTime($startTime))->format('g:i a');
+             $model->toTime=(new \DateTime($endTime))->format('g:i a');
              $model->type=$type;
          }
-         $model->fromTime=(new \DateTime($model->fromTime))->format('g:i a');
-         $model->toTime=(new \DateTime($model->toTime))->format('g:i a');
+         $model->fromTime=(new \DateTime($startTime))->format('g:i a');
+         $model->toTime=(new \DateTime($endTime))->format('g:i a');
         $data =  $this->renderAjax('/location/_form-location-availability', [
             'model' => $model,
         ]);

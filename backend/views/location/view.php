@@ -210,7 +210,9 @@ function showCalendars(id,type) {
              element.find("div.fc-content").prepend("<i  class='fa fa-close pull-right text-danger'></i>");
         },
         clickEvent : function (event,type,id) {
-            var params = $.param({ resourceId: event.resourceId,type: type});
+            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: event.resourceId,type: type,startTime:startTime,endTime:endTime});
             var url    = '<?= Url::to(['location/delete-availability']) ?>?' + params;
             $.ajax({
                 url    : '<?= Url::to(['location/modify']) ?>?' + params,
@@ -246,7 +248,9 @@ function showCalendars(id,type) {
             });
         },
         eventResize : function (event,type,id) {
-            var params = $.param({ resourceId: event.resourceId,type: type });
+            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: event.resourceId,type: type,startTime:startTime,endTime:endTime});
              var url    = '<?= Url::to(['location/delete-availability']) ?>?' + params;
             $.ajax({
                 url    : '<?= Url::to(['location/modify']) ?>?' + params,
@@ -267,7 +271,9 @@ function showCalendars(id,type) {
             });
         },
         eventDrop : function (event,type,id) {
-            var params = $.param({ resourceId: event.resourceId,type: type });
+            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: event.resourceId,type: type,startTime:startTime,endTime:endTime});
              var url    = '<?= Url::to(['location/delete-availability']) ?>?' + params;
             $.ajax({
                 url    : '<?= Url::to(['location/modify']) ?>?' + params,
@@ -288,7 +294,9 @@ function showCalendars(id,type) {
             });
         },
         eventSelect :function(start, end, jsEvent, view, resourceObj,type,id) {
-            var params = $.param({ resourceId: resourceObj.id,type: type});
+           var endTime = moment(end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: resourceObj.id,type: type,startTime:startTime,endTime:endTime});
             $.ajax({
                 url    : '<?= Url::to(['location/modify']) ?>?' + params,
                 type   : 'POST',
