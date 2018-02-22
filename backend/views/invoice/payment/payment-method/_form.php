@@ -35,6 +35,10 @@ use common\models\PaymentMethod;
     <div class="reference">
         <?= $form->field($model, 'reference')->textInput()->label('Reference'); ?>
     </div>
+    <div id="add-payment-spinner" class="spinner" style="display:none">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+    </div>
 	   	<div class="cheque-date">
    			<?php
             $currentDate = (new \DateTime())->format('d-m-Y');
