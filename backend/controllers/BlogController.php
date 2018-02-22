@@ -9,6 +9,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\filters\ContentNegotiator;
+use yii\web\Response;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
@@ -24,18 +26,21 @@ class BlogController extends \common\components\controllers\BaseController
                     'delete' => ['post'],
                 ],
             ],
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::className(),
+                'only' => ['create','update','delete'],
+                'formatParam' => '_format',
+                'formats' => [
+                   'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
 			'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
+                        'actions' => ['index','create', 'update', 'delete'],
                         'roles' => ['manageBlogs'],
-                    ],
-					[
-                        'allow' => true,
-                        'actions' => ['list'],
-                        'roles' => ['viewBlogList'],
                     ],
                 ],
             ],
@@ -47,37 +52,21 @@ class BlogController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-    public function actionIndex()
+   public function actionIndex()
     {
+        $blog = Blog::find();
         $dataProvider = new ActiveDataProvider([
-            'query' => Blog::find(),
+            'query' => $blog,
         ]);
-
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);
     }
-
     /**
      * Lists all Blog models.
      *
      * @return mixed
      */
-    public function actionList()
-    {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Blog::find(),
-            'sort' => [
-                'defaultOrder' => [
-                    'id' => SORT_DESC,
-                ],
-            ]
-        ]);
-
-        return $this->render('list', [
-            'dataProvider' => $dataProvider,
-        ]);
-    }
     /**
      * Displays a single Blog model.
      *
@@ -101,19 +90,31 @@ class BlogController extends \common\components\controllers\BaseController
     public function actionCreate()
     {
         $model = new Blog();
-
-        if ($model->load(Yii::$app->request->post())) {
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+        ]);
+        if (Yii::$app->request->post()) {
             $model->user_id = Yii::$app->user->id;
             $currentDate = new \DateTime();
             $model->date = $currentDate->format('Y-m-d H:i:s');
-            $model->save();
-
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            if($model->load(Yii::$app->request->post()) && $model->save()) {
+                return [
+                    'status' => true
+                ];
+            }
+         else {
+            return [
+                    'status' => false,
+                    'errors' =>$model->getErrors()
+                ];
+            }
         }
+            else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+    }
     }
 
     /**
@@ -124,19 +125,32 @@ class BlogController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-    public function actionUpdate($id)
+   public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+        ]);
+        if (Yii::$app->request->post()) {
+            if($model->load(Yii::$app->request->post()) && $model->save()) {
+                return [
+                    'status' => true
+                ];
+            } 
+        else {
+            return [
+                    'status' => false,
+                    'errors' =>$model->getErrors()
+                ];
+            }
+        }
+            else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
         }
     }
-
     /**
      * Deletes an existing Blog model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -145,11 +159,14 @@ class BlogController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-    public function actionDelete($id)
+   public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $model = $this->findModel($id);
+        if ($model->delete()) {
+            return [
+                'status' => true,
+            ];
+        }
     }
 
     /**
