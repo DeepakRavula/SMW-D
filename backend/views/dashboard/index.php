@@ -56,6 +56,8 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
         ?>
 	</div>
 </div>
+<?php $auth = Yii::$app->authManager; ?>
+<?php if ($auth->checkAccess(Yii::$app->user->id, 'manageMonthlyRevenue')) : ?>
 <div class="row">
 	<div class="col-md-12">
 		<div class="box box-success">
@@ -100,8 +102,9 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
 		</div>
 	</div>
 </div>
+<?php endif; ?> 
 <div class="row">
-
+<?php if ($auth->checkAccess(Yii::$app->user->id, 'manageEnrolmentGains')) : ?>
 	<div class="col-md-4">
 		<div class="box box-success">
             <div class="box-header with-border">
@@ -149,6 +152,8 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
             <!-- /.box-body -->
 		</div>
 	</div>
+    <?php endif; ?> 
+    <?php if ($auth->checkAccess(Yii::$app->user->id, 'manageEnrolmentLosses')) : ?>
 	<div class="col-md-4">
 		<div class="box box-success">
             <div class="box-header with-border">
@@ -198,6 +203,8 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
             <!-- /.box-body -->
 		</div>
 	</div>
+    <?php endif; ?> 
+    <?php if ($auth->checkAccess(Yii::$app->user->id, 'manageInstructionHours')) : ?>
 	<div class="col-md-4">
 		<div class="box box-success">
             <div class="box-header with-border">
@@ -247,6 +254,7 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
             <!-- /.box-body -->
 		</div>	
 	</div>
+    <?php endif; ?> 
 	<!-- /.col -->
 </div>
 <?php yii\widgets\Pjax::end(); ?>
