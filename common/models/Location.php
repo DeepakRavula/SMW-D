@@ -254,14 +254,14 @@ class Location extends \yii\db\ActiveRecord
         $taxAmount=$subTotal * ($taxPercentage / 100);
         return $taxAmount;
     }
+    
     public function addPermission() {
     	$auth = Yii::$app->authManager;
-	    $roles = [User::ROLE_ADMINISTRATOR, User::ROLE_STAFFMEMBER, User::ROLE_OWNER];
-		$exceptStaffRoles = [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER];
-		$adminPermissions = $this->adminPermissions();
-		$adminAndOwnerPermissions = $this->adminAndOwnerPermissions();
+        $exceptStaffRoles = [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER];
+        $adminPermissions = $this->adminPermissions();
+        $adminAndOwnerPermissions = $this->adminAndOwnerPermissions();
         $permissions = $auth->getPermissions();
-		$command = Yii::$app->db->createCommand();
+        $command = Yii::$app->db->createCommand();
         foreach ($permissions as $permission) {
             if (in_array($permission->name, $adminAndOwnerPermissions)) {
                 foreach ($exceptStaffRoles as $exceptStaffRole) {
@@ -278,13 +278,11 @@ class Location extends \yii\db\ActiveRecord
                     'location_id' => $this->id
                 ))->execute();
             } else {
-                foreach ($roles as $role) {
-                    $command->insert('rbac_auth_item_child', array(
-                        'parent' => $role,
-                        'child' => $permission->name,
-                        'location_id' => $this->id
-                    ))->execute();
-                }
+                $command->insert('rbac_auth_item_child', array(
+                    'parent' => User::ROLE_ADMINISTRATOR,
+                    'child' => $permission->name,
+                    'location_id' => $this->id
+                ))->execute();
             }	
         }
 
@@ -303,17 +301,20 @@ class Location extends \yii\db\ActiveRecord
 			'manageColorCode',
 			'manageItemCategory',
 			'manageBlogs',
-			'manageLocations',
 			'manageHolidays',
 			'manageEmailTemplate',
 			'manageOwners',
+                        'manageAllLocations',
 			'manageAccessControl'	
 		];
 	}
 	public function adminAndOwnerPermissions() {
 		return [
 			'teacherQualificationRate',
-			'manageDashboard',
+			'manageMonthlyRevenue',
+                        'manageEnrolmentGains',
+                        'manageEnrolmentLosses',
+                        'manageInstructionHours',
 			'manageBirthdays',
 			'managePayments',
 			'manageRoyalty',
@@ -324,9 +325,8 @@ class Location extends \yii\db\ActiveRecord
 			'manageItemReport',
 			'manageItemCategoryReport',
 			'manageDiscountReport',
-			'manageAllLocations',
 			'manageStaff',
-			
+                        'manageLocations',
 		];
 	}
 }

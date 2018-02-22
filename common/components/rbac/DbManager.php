@@ -94,11 +94,13 @@ class DbManager extends \yii\rbac\DbManager
      */
     public function addChild($parent, $child)
     {
-        if (is_a(Yii::$app, 'yii\console\Application')) {
-            $locationId = Location::findOne(1)->id;
-        } else {
-            $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        }
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $this->addChildWithLocation($parent, $child, $locationId);
+        return true;
+    }
+    
+    public function addChildWithLocation($parent, $child, $locationId)
+    {
         if ($parent->name === $child->name) {
             throw new InvalidParamException("Cannot add '{$parent->name}' as a child of itself.");
         }
@@ -107,7 +109,7 @@ class DbManager extends \yii\rbac\DbManager
             throw new InvalidParamException('Cannot add a role as a child of a permission.');
         }
 
-        if ($this->detectLoop($parent, $child)) {
+        if ($this->detectLoopWithLocation($parent, $child, $locationId)) {
             throw new InvalidCallException("Cannot add '{$child->name}' as a child of '{$parent->name}'. A loop has been detected.");
         }
 
@@ -134,17 +136,33 @@ class DbManager extends \yii\rbac\DbManager
 
         return $result;
     }
+    
+    public function detectLoopWithLocation($parent, $child, $locationId)
+    {
+        if ($child->name === $parent->name) {
+            return true;
+        }
+        foreach ($this->getChildrenWithLocation($child->name, $locationId) as $grandchild) {
+            if ($this->detectLoopWithLocation($parent, $grandchild, $locationId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * @inheritdoc
      */
     public function getChildren($name)
     {
-        if (is_a(Yii::$app, 'yii\console\Application')) {
-            $locationId = Location::findOne(1)->id;
-        } else {
-            $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        }
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $children = $this->getChildrenWithLocation($name, $locationId);
+        return $children;
+    }
+    
+    public function getChildrenWithLocation($name, $locationId)
+    {
         $query = (new Query)
             ->select(['name', 'type', 'description', 'rule_name', 'data', 'created_at', 'updated_at', 'location_id'])
             ->from([$this->itemTable, $this->itemChildTable])
@@ -157,5 +175,88 @@ class DbManager extends \yii\rbac\DbManager
             $children[$row['name']] = $this->populateItem($row);
         }
         return $children;
+    }
+    
+    public function add($object)
+    {
+        if ($object instanceof Item) {
+            if ($object->ruleName && $this->getRule($object->ruleName) === null) {
+                $rule = \Yii::createObject($object->ruleName);
+                $rule->name = $object->ruleName;
+                $this->addRule($rule);
+            }
+
+            return $this->addItem($object);
+        } elseif ($object instanceof Rule) {
+            return $this->addRule($object);
+        }
+
+        throw new InvalidParamException('Adding unsupported object type.');
+    }
+    
+    public function addItem($item)
+    {
+        $time = time();
+        if ($item->createdAt === null) {
+            $item->createdAt = $time;
+        }
+        if ($item->updatedAt === null) {
+            $item->updatedAt = $time;
+        }
+        $this->db->createCommand()
+            ->insert($this->itemTable, [
+                'name' => $item->name,
+                'type' => $item->type,
+                'description' => $item->description,
+                'rule_name' => $item->ruleName,
+                'isLocationSpecific' => $item->isLocationSpecific,
+                'data' => $item->data === null ? null : serialize($item->data),
+                'created_at' => $item->createdAt,
+                'updated_at' => $item->updatedAt,
+            ])->execute();
+
+        $this->invalidateCache();
+
+        return true;
+    }
+    
+    public function createPermission($name)
+    {
+        $permission = new Permission();
+        $permission->name = $name;
+        return $permission;
+    }
+    
+    public function updateItem($name, $item)
+    {
+        if ($item->name !== $name && !$this->supportsCascadeUpdate()) {
+            $this->db->createCommand()
+                ->update($this->itemChildTable, ['parent' => $item->name], ['parent' => $name])
+                ->execute();
+            $this->db->createCommand()
+                ->update($this->itemChildTable, ['child' => $item->name], ['child' => $name])
+                ->execute();
+            $this->db->createCommand()
+                ->update($this->assignmentTable, ['item_name' => $item->name], ['item_name' => $name])
+                ->execute();
+        }
+
+        $item->updatedAt = time();
+
+        $this->db->createCommand()
+            ->update($this->itemTable, [
+                'name' => $item->name,
+                'description' => $item->description,
+                'rule_name' => $item->ruleName,
+                'isLocationSpecific' => $item->isLocationSpecific,
+                'data' => $item->data === null ? null : serialize($item->data),
+                'updated_at' => $item->updatedAt,
+            ], [
+                'name' => $name,
+            ])->execute();
+
+        $this->invalidateCache();
+
+        return true;
     }
 }
