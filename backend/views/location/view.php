@@ -205,6 +205,13 @@ function showCalendars(id,type) {
         }
     });
    }
+   function deleteModal(event,type,id) {
+         var params = $.param({ resourceId: event.resourceId,type: type });
+         var url    = '<?= Url::to(['location/delete-availability']) ?>?' + params;
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
+        $('#modal-delete').show();
+        $(".modal-delete").attr("action",url); 
+   }
  var availability = {
         modifyEventRender : function (event, element,type,id) {
              element.find("div.fc-content").prepend("<i  class='fa fa-close pull-right text-danger'></i>");
@@ -220,9 +227,7 @@ function showCalendars(id,type) {
                 {
                     if (response.status) {
                         $('#popup-modal').modal('show');
-                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
-                        $(".modal-delete").attr("action",url);
-                        $('#modal-delete').show();
+                        deleteModal(event,type,id);
                         $('#modal-content').html(response.data);
                         $(id).fullCalendar("refetchEvents");
                     }
@@ -256,11 +261,9 @@ function showCalendars(id,type) {
                 {
                     if (response.status) {
                         $('#popup-modal').modal('show');
-                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
-                        $('#modal-delete').show();
-                        $(".modal-delete").attr("action",url);
+                        deleteModal(event,type,id);
                         $('#modal-content').html(response.data);
-                         $(id).fullCalendar("refetchEvents");
+                        $(id).fullCalendar("refetchEvents");
                     }
                    
                 }
@@ -277,9 +280,7 @@ function showCalendars(id,type) {
                 {
                     if (response.status) {
                         $('#popup-modal').modal('show');
-                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
-                        $('#modal-delete').show();
-                        $(".modal-delete").attr("action",url);
+                        deleteModal(event,type,id);
                         $('#modal-content').html(response.data);
                         $(id).fullCalendar("refetchEvents");
                     }
