@@ -213,7 +213,8 @@ class LocationController extends BaseController
            $model    = LocationAvailability::find()
                        ->where(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
                        ->one();
-         if (empty($model)) {
+           
+         if (empty($model)) { 
              $model=new LocationAvailability;
              $model->locationId=$location->id;
              $model->day=$resourceId;
@@ -226,20 +227,21 @@ class LocationController extends BaseController
         $data =  $this->renderAjax('/location/_form-location-availability', [
             'model' => $model,
         ]);
-        if ($model->load($post))
-        {
-            $model->locationId=$location->id;
+        if ($post) {   
+        if($model->load($post)) {
             $model->fromTime = (new \DateTime($model->fromTime))->format('H:i:s');
             $model->toTime   = (new \DateTime($model->toTime))->format('H:i:s');
-        if($model->save())
-        {
+            $model->save();
             return[
                 'status' => true,
             ];
-        }
-        }
-        
-         else {
+        } else {
+            return [
+                    'status' => false,
+                    'errors' =>$model->getErrors()
+                ];
+            }
+        } else {
             return [
                 'status' => true,
                 'data' => $data
