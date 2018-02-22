@@ -86,6 +86,7 @@ trait Payable
         
         $paymentModel->id = null;
         $paymentModel->isNewRecord = true;
+        $paymentModel->setScenario(Payment::SCENARIO_CREDIT_USED);
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
         if ($from->tableName() === 'invoice') {
             $paymentModel->invoiceId = $from->id;
@@ -99,6 +100,7 @@ trait Payable
         } else {
             $paymentModel->reference = $this->getLessonNumber();
         }
+        $paymentModel->amount = -abs($paymentModel->amount);
         $paymentModel->save();
 
         $debitPaymentId = $paymentModel->id;

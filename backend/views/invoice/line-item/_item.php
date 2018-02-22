@@ -39,7 +39,7 @@ use yii\widgets\Pjax;
 	<?php echo $this->render('/invoice/_view-line-item', [
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
         'searchModel' => $searchModel,
-        'model' => $model
+        'model' => $model, 
     ]) ?>	
 </div>
 <div class="clearfix"></div>

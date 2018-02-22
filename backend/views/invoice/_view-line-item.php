@@ -28,10 +28,6 @@ use yii\widgets\Pjax;
             },
         ],
         [
-            'headerOptions' => ['class' => 'text-left'],
-            'attribute' => 'description',
-        ],
-        [
             'label' => 'Qty',
             'value' => function ($data) {
                 return $data->unit;
@@ -62,6 +58,24 @@ use yii\widgets\Pjax;
                 return Yii::$app->formatter->asDecimal($data->cost);
             },
         ],
+             ];
+    if ($model->isProformaInvoice()) {
+        $columns[] = [
+            'label' => 'Payment',
+            'format' => 'currency',
+            'value' => function ($data) {
+                if (!$data->isGroupLesson()) {
+                    $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                } else {
+                    $amount = $data->lesson->getCreditAppliedAmount($data->enrolment->id) ?? 0;
+                }
+                return Yii::$app->formatter->asDecimal($amount);
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+        ];
+    }
+    $columns[] =              
         [
             'label' => 'Price',
             'format' => 'currency',
@@ -70,7 +84,6 @@ use yii\widgets\Pjax;
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->itemTotal);
             },
-        ],
     ];
 } else {
     $columns = [
@@ -88,7 +101,10 @@ use yii\widgets\Pjax;
         ],
         [
             'headerOptions' => ['class' => 'text-left'],
-            'attribute' => 'description',
+            'label' => 'Description',
+            'value' => function ($data) {
+                return $data->description;
+            },
         ],
         [
             'label' => 'Qty',
@@ -124,6 +140,10 @@ use yii\widgets\Pjax;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
         ];
+            if($searchModel->isPrint)
+            {
+                array_splice($columns,0,2);
+            }
 }?>
 <?php Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
 	<?= GridView::widget([
