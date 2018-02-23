@@ -134,7 +134,9 @@ class ScheduleController extends BaseController
 
     public function getLessons($date, $teacherId)
     {
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $query = Lesson::find()
+            ->location($locationId)
             ->scheduledOrRescheduled()
             ->isConfirmed()
             ->present()

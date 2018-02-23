@@ -68,6 +68,11 @@ class UserController extends BaseController
                         'actions' => ['index', 'view', 'edit-profile', 'import', 'delete-contact', 'create', 'edit-lesson', 'delete', 'avatar-upload'],
                         'roles' => ['manageTeachers', 'manageCustomers', 'manageAdmin', 'manageStaff', 'manageOwners'],
                     ],
+                    [
+                        'allow' => true,
+                        'actions' => ['upload'],
+                        'roles' => ['manageImport'],
+                    ],
                 ],
             ], 
         ];
