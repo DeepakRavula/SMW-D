@@ -155,11 +155,14 @@ dl {
         line-height:1.5;
         font-weight:normal;
   }
-  .dl-invoice-summary dd, .royalty dd{
+  .dl-invoice-summary dd{
 	text-align: right;
         line-height:1.5;
   }
-  
+  .royalty dd{
+      text-align:right;
+      width:100px;
+  }
 }
 @media print {
     .dl-invoice-summary dt {
@@ -187,7 +190,11 @@ dl {
     .f-s-30{
     font-size:30px;
 }
-
+.royalty dd{
+   float:right;
+   margin-right:500px;
+   line-height:0.75;
+}
 }
 .lesson-colorcode{
     width: 15px; 
