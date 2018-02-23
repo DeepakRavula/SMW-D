@@ -3,7 +3,6 @@
 
 use miloschuman\highcharts\Highcharts;
 use common\models\Dashboard;
-use yii\helpers\Url;
 
 $this->title = 'Dashboard';
 
@@ -56,8 +55,8 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
         ?>
 	</div>
 </div>
-<?php $auth = Yii::$app->authManager; ?>
-<?php if ($auth->checkAccess(Yii::$app->user->id, 'manageMonthlyRevenue')) : ?>
+
+<?php if (Yii::$app->user->can('manageMonthlyRevenue')) : ?>
 <div class="row">
 	<div class="col-md-12">
 		<div class="box box-success">
@@ -104,7 +103,7 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
 </div>
 <?php endif; ?> 
 <div class="row">
-<?php if ($auth->checkAccess(Yii::$app->user->id, 'manageEnrolmentGains')) : ?>
+<?php if (Yii::$app->user->can('manageEnrolmentGains')) : ?>
 	<div class="col-md-4">
 		<div class="box box-success">
             <div class="box-header with-border">
@@ -153,7 +152,7 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
 		</div>
 	</div>
     <?php endif; ?> 
-    <?php if ($auth->checkAccess(Yii::$app->user->id, 'manageEnrolmentLosses')) : ?>
+    <?php if (Yii::$app->user->can('manageEnrolmentLosses')) : ?>
 	<div class="col-md-4">
 		<div class="box box-success">
             <div class="box-header with-border">
@@ -204,7 +203,7 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
 		</div>
 	</div>
     <?php endif; ?> 
-    <?php if ($auth->checkAccess(Yii::$app->user->id, 'manageInstructionHours')) : ?>
+    <?php if (Yii::$app->user->can('manageInstructionHours')) : ?>
 	<div class="col-md-4">
 		<div class="box box-success">
             <div class="box-header with-border">
