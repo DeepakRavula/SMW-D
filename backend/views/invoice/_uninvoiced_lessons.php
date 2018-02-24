@@ -78,6 +78,6 @@ use yii\helpers\Html;
         ],
     ]); ?>
  <?php yii\widgets\Pjax::end(); ?>
-	<?php echo $form->field($model, 'notes')->label('Printed Notes')->textarea() ?>
+	<?php echo $form->field($model, 'notes')->label('Notes')->textarea() ?>
 <?php endif; ?>
 </div>
