@@ -329,7 +329,8 @@ function showCalendars(id,type) {
         return false;
     });
     $(document).on('modal-error', function(event, params) {
-        $('#location-availability-error').html(response.errors).fadeIn().delay(3000).fadeOut();
+        alert(params.errors);
+        $('#location-availability-error').html(params.errors).fadeIn().delay(3000).fadeOut();
         return false;
     });
     $(document).on('modal-delete', function(event, params) {

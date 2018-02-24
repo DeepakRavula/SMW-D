@@ -232,29 +232,30 @@ class LocationController extends BaseController
             $model->toTime   = (new \DateTime($model->toTime))->format('H:i:s');
             if($model->save())
             {
-            return[
+            $response=[
                 'status' => true,
             ];
             }
             else
             {
-               return [
+               $response= [
                     'status' => false,
-                    'errors' =>$model->getErrors()
+                    'errors' =>$model->getErrors(),
                 ]; 
             }
         } else {
-            return [
+            $response= [
                     'status' => false,
+                    'errors' =>$model->getErrors($attributes),
                 ];
             }
         } else {
-            return [
+            $response= [
                 'status' => true,
                 'data' => $data
             ];
         }
-        
+        return $response;
     }
     /**
      * Finds the Location model based on its primary key value.

@@ -38,6 +38,9 @@ class LocationAvailability extends \yii\db\ActiveRecord
             [['locationId', 'day','type'], 'required'],
             [['locationId', 'day','type'], 'integer'],
             [['fromTime', 'toTime'], 'safe'],
+            [['fromTime'], 'validateToTime'] ,
+            [['toTime'], 'validateToTime'] 
+            
         ];
     }
 
@@ -54,6 +57,14 @@ class LocationAvailability extends \yii\db\ActiveRecord
             'fromTime' => 'From Time',
             'toTime' => 'To Time',
         ];
+    }
+        public function validateToTime($attributes)
+    {
+           if($this->toTime<=$this->fromTime)
+           {
+               return $this->addError($attributes, "End Time cannot be greater than StartTime");
+           }
+                
     }
     public static function getWeekdaysList()
     {

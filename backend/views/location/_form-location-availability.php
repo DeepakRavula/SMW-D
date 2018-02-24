@@ -12,13 +12,12 @@ TimePickerAsset::register($this);
 /* @var $form yii\bootstrap\ActiveForm */
 $this->title = 'Edit Location';
 ?>
+<div id="location-availability-error" style="display: none;" class="alert-danger alert fade in"></div>
 <?php 
         $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['location/modify','resourceId' =>$model->day,'type'=>$model->type,'startTime' => $model->fromTime,'endTime' =>$model->toTime]),
-        'enableAjaxValidation' => true,
-        'enableClientValidation' => false,   
-            ]); ?>
+        'action' => Url::to(['location/modify','resourceId' =>$model->day,'type'=>$model->type,'startTime' => $model->fromTime,'endTime' =>$model->toTime]),  
+                    ]); ?>
    <div class="row p-20">     
         <div class="col-md-6 form-group">
                 <?= $form->field($model, 'fromTime')->widget(TimePicker::classname(), [
