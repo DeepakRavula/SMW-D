@@ -4,6 +4,7 @@ namespace console\controllers;
 
 use yii\console\Controller;
 use Yii;
+use yii\db\Migration;
 
 class LocationController extends Controller
 {
@@ -18,15 +19,9 @@ class LocationController extends Controller
     
     public function actionWipeTransactionalData()
     {
-        $str = implode("\n", file(Yii::getAlias('@console') . '/config/wipe_location_transactional_data.sql'));
-
-        $fp = fopen(Yii::getAlias('@console') . '/config/wipe_location_transactional_data.sql', 'w');
-
-        // Replace something in the file string - this is a VERY simple example
-        $str = str_replace("locationToWipe", $this->locationId, $str);
-        fwrite($fp, $str, strlen($str));
-        fclose($fp);
-        $migration = new \yii\db\Migration();
-        return $migration->execute($fp);
+        $file = Yii::getAlias('@console') . '/config/wipe_location_transactional_data.sql';
+        
+        $migration = new Migration();
+        return $migration->execute(file_get_contents($file), [':locationToWipe' => $this->locationId]);
     }
 }
