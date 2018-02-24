@@ -22,23 +22,25 @@ $loggedUser = User::findOne(Yii::$app->user->id);
             <?php echo $form->field($model, 'lastname') ?>
 	</div>
     </div>
-    <div class="row">
-        <div class="col-xs-6">
-            <?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
-        </div>
-        <?php if ($loggedUser->canManagePin()) : ?>
-            <?php if ($model->getModel()->hasPin()) : ?>
-                <div class="col-xs-6">
-                    <?php echo $form->field($model, 'pin')->passwordInput() ?>
-                </div>
-            <?php endif; ?>
-        <?php endif; ?>
+        <div class="row">
         <div class="col-xs-6 can-login" style="display: none">
                 <?php echo $form->field($model, 'password')->passwordInput() ?>
         </div>
         <div class="col-xs-6 can-login" style="display: none">
                 <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
         </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
+        </div>
+        <div class="col-xs-6">
+        <?php if ($loggedUser->canManagePin()) : ?>
+            <?php if ($model->getModel()->hasPin()) : ?>
+                    <?php echo $form->field($model, 'pin')->passwordInput() ?>
+            <?php endif; ?>          
+        <?php endif; ?>
+            </div>
     </div>
     <div class="row">
         <?php if ($loggedUser->canManagePin()) : ?>
