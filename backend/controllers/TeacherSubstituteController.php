@@ -56,10 +56,8 @@ class TeacherSubstituteController extends BaseController
      */
     public function actionIndex()
     {
-
         $lessonIds = Yii::$app->request->get('ids');
         $teacherId = Yii::$app->request->get('teacherId');
-
         $lessons = Lesson::findAll($lessonIds);
         $resolvingConflict = Yii::$app->request->get('resolvingConflicts');
         $programIds = [];
@@ -143,6 +141,8 @@ class TeacherSubstituteController extends BaseController
             'query' => $query,
         ]);
         $conflictedLessonIdsCount = count($conflictedLessonIds);
+        $lessonModel = current($lessons);
+        //print_r($lessonModel->isPrivate());die;
         $data = $this->renderAjax('_form', [
             'lessons' => $lessons,
             'teachers' => $teachers,
@@ -150,7 +150,8 @@ class TeacherSubstituteController extends BaseController
             'newLessonIds' => $newLessonIds,
             'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
             'conflictedLessonIds' => $conflictedLessonIds,
-            'lessonDataProvider' => $lessonDataProvider
+            'lessonDataProvider' => $lessonDataProvider,
+            'lessonModel' => $lessonModel
         ]);
         $response = [
             'status' => $status,

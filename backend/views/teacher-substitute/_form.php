@@ -53,19 +53,22 @@ $columns = [
         'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
                 ],
-                [
+                ];
+        if($lessonModel->isPrivate()) {
+        $columns[] = 
+            [
         'label' => 'Student',
         'value' => function ($model) {
-            $student = '-';
-            if($model->isPrivate()) {
-            $student = $model->student->fullName;;
-            }
-                return $student;
+                return $model->student->fullName;
         },
         'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
-                ],
-                [
+                
+                ];
+                }
+                $columns[]  = [
+                   
+                        [
         'label' => 'Program',
         'value' => function ($model) {
             return $model->course->program->name;
