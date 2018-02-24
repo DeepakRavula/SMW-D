@@ -7,7 +7,7 @@ use common\models\Location;
 /**
  * Class m180222_080131_add_dashboard_permissions
  */
-class m180222_080131_add_dashboard_permissions extends Migration
+class m180224_080131_add_dashboard_permissions extends Migration
 {
     /**
      * @inheritdoc
