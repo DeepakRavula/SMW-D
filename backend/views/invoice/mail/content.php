@@ -68,7 +68,7 @@ Dear Customer,<br>
                   <td colspan="4" style="width: 75%;">
                     <?php if (!empty($model->notes)):?>
                     <div class="row-fluid m-t-20">
-                      <em><strong> Printed Notes: </strong><Br>
+                      <em><strong> Notes: </strong><Br>
                         <?php echo $model->notes; ?></em>
                       </div>
                       <?php endif; ?>
