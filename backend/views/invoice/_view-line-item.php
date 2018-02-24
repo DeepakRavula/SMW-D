@@ -58,6 +58,24 @@ use yii\widgets\Pjax;
                 return Yii::$app->formatter->asDecimal($data->cost);
             },
         ],
+             ];
+    if ($model->isProformaInvoice()) {
+        $columns[] = [
+            'label' => 'Payment',
+            'format' => 'currency',
+            'value' => function ($data) {
+                if (!$data->isGroupLesson()) {
+                    $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                } else {
+                    $amount = $data->lesson->getCreditAppliedAmount($data->enrolment->id) ?? 0;
+                }
+                return Yii::$app->formatter->asDecimal($amount);
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
+        ];
+    }
+    $columns[] =              
         [
             'label' => 'Price',
             'format' => 'currency',
@@ -66,7 +84,6 @@ use yii\widgets\Pjax;
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->itemTotal);
             },
-        ],
     ];
 } else {
     $columns = [

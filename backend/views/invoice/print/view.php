@@ -44,7 +44,7 @@ echo $this->render('/invoice/_view-line-item', [
 </div>
         </div>
 	 <div style="clear:both; margin-top: 20px; position: relative;">
-        <strong>Printed Notes: </strong><?php echo $model->notes; ?>
+        <strong> Notes: </strong><?php echo $model->notes; ?>
     </div>
     <div class="reminder_notes text-muted well well-sm no-shadow" style="clear:both; margin-top: 20px; position: relative;">
         <?php echo $model->reminderNotes; ?>

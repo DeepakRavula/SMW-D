@@ -21,7 +21,7 @@ use common\models\PaymentMethod;
         <span class="sr-only">Loading...</span>
     </div>
    <div class="row">
-	   <div class="col-md-5">
+	   <div class="col-md-6">
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'options' => [
                     'id' => 'extra-lesson-date',
@@ -35,21 +35,24 @@ use common\models\PaymentMethod;
             ]);
             ?>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <?= $form->field($model, 'amount')->textInput(['readOnly' => $model->isCreditUsed() ||
                     $model->isCreditApplied(),
                 'value' => \Yii::$app->formatter->asDecimal($model->amount, 2)
             ]);?>
         </div>
+   </div>
+<div class="row">
+        <div class="col-md-12">
         <?php if ($model->payment_method_id === PaymentMethod::TYPE_CHEQUE) : ?>
             <?php $label = 'Cheque Number'; ?>
         <?php else : ?>
             <?php $label = 'Reference'; ?>
         <?php endif; ?>
-        <div class="col-md-3">
+        
             <?= $form->field($model, 'reference')->textInput()->label($label); ?>
         </div>
-   </div>
+    </div>
    <div class="row">
        <div class="col-md-12">
            <?= $form->field($model, 'notes')->textArea(['class' => 'form-control'])->label('Notes'); ?>

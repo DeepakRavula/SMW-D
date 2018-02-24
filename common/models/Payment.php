@@ -71,7 +71,7 @@ class Payment extends ActiveRecord
         if (!empty($this->invoiceId) && !$this->isCreditUsed()) {
             $invoice = Invoice::findOne($this->invoiceId);
             if (round(abs($invoice->balance), 2) === round(abs($this->amount), 2)) {
-                $this->amount = $invoice->balance;
+                $this->amount = abs($invoice->balance);
             }
             if ((float) $this->amount > (float) $invoice->balance && !$invoice->isInvoice()) {
                 return $this->addError($attributes, "Can't over pay");
@@ -178,7 +178,7 @@ class Payment extends ActiveRecord
         if (!empty($this->invoiceId) && !$this->isCreditUsed()) {
             $invoice = Invoice::findOne($this->invoiceId);
             if (round(abs($invoice->balance), 2) === round(abs($this->amount), 2)) {
-                $this->amount = $invoice->balance;
+                $this->amount = abs($invoice->balance);
             }
         }
         if (!empty($this->sourceId) && !$this->isCreditUsed()) {

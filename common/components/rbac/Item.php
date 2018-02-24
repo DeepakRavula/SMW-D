@@ -16,4 +16,6 @@ namespace common\components\rbac;
 class Item extends \yii\rbac\Item
 {
     public $location_id;
+    
+    public $isLocationSpecific;
 }
