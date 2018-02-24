@@ -26,12 +26,6 @@ $loggedUser = User::findOne(Yii::$app->user->id);
         <div class="col-xs-6">
             <?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
         </div>
-            <div class="col-xs-6 can-login" style="display: none">
-                <?php echo $form->field($model, 'password')->passwordInput() ?>
-            </div>
-            <div class="col-xs-6 can-login" style="display: none">
-                <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
-            </div>
         <?php if ($loggedUser->canManagePin()) : ?>
             <?php if ($model->getModel()->hasPin()) : ?>
                 <div class="col-xs-6">
@@ -39,6 +33,12 @@ $loggedUser = User::findOne(Yii::$app->user->id);
                 </div>
             <?php endif; ?>
         <?php endif; ?>
+        <div class="col-xs-6 can-login" style="display: none">
+                <?php echo $form->field($model, 'password')->passwordInput() ?>
+        </div>
+        <div class="col-xs-6 can-login" style="display: none">
+                <?php echo $form->field($model, 'confirmPassword')->passwordInput() ?>
+        </div>
     </div>
     <div class="row">
         <?php if ($loggedUser->canManagePin()) : ?>
