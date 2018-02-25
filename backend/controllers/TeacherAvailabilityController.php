@@ -186,7 +186,7 @@ class TeacherAvailabilityController extends BaseController
                 'end' => $teacherAvailability->to_time,
                 'dow' => [$teacherAvailability->day],
                 'className' => 'teacher-available',
-                'rendering' => 'inverse-background',
+                'rendering' => 'background',
             ];
         }
 

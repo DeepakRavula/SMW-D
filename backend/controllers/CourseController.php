@@ -306,7 +306,7 @@ class CourseController extends BaseController
         }
         $result = [
             'output' => $output,
-            'selected' => '',
+            'selected' => current($output)
         ];
 
         return $result;
