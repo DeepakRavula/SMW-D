@@ -24,9 +24,10 @@ echo $this->render('/invoice/_view-line-item', [
     'print'=>true,
 ]);
 ?>
+           <div class="m-l-22"><b>Payments</b></div>  
             <div class="row">  
-                <div class="m-l-30"><b>Payments</b></div>
-	<div class="col-xs-9">          
+               
+	<div class="col-xs-10">          
 		<?= $this->render('/invoice/payment/_payment-list', [
             'model' => $model,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
@@ -34,7 +35,7 @@ echo $this->render('/invoice/_view-line-item', [
             ]);?>
 	</div>
 	<?php Pjax::Begin(['id' => 'invoice-bottom-summary', 'timeout' => 6000]); ?>
-	<div class="col-xs-3">
+	<div class="col-xs-2">
 		<?=$this->render('/invoice/_bottom-summary-list', [
             'model' => $model,
         ]);
