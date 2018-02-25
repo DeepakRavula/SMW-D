@@ -328,11 +328,6 @@ function showCalendars(id,type) {
        $(id).fullCalendar("refetchEvents");
         return false;
     });
-    $(document).on('modal-error', function(event, params) {
-        alert(params.errors);
-        $('#location-availability-error').html(params.errors).fadeIn().delay(3000).fadeOut();
-        return false;
-    });
     $(document).on('modal-delete', function(event, params) {
         var url = "<?php echo Url::to(['location/view']); ?>";
         var activeTab=$('.nav-tabs .active > a').text();
