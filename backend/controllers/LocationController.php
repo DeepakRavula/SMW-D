@@ -25,7 +25,7 @@ class LocationController extends BaseController
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
                'only' => ['create', 'update', 'edit-availability', 'add-availability', 'render-events', 'check-availability', 'validate',
-                   'delete-availability','modify'],
+                   'delete-availability','modify','validate-location-availability'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON
@@ -36,7 +36,7 @@ class LocationController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['update','view','validate', 'add-availability', 'edit-availability', 'delete-availability', 'render-events', 'check-availability','modify'],
+                        'actions' => ['update','view','validate-location-availability', 'add-availability', 'edit-availability', 'delete-availability', 'render-events', 'check-availability','modify'],
                         'roles' => ['manageLocations']
                     ],
                     [
@@ -101,9 +101,12 @@ class LocationController extends BaseController
             ];
         }
     }
-    public function actionValidate()
+    public function actionValidateLocationAvailability($resourceId,$type)
     {
-        $model = new Location();
+        $location = Location::findOne(['slug' => Yii::$app->location]);
+        $model    = LocationAvailability::find()
+                       ->where(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
+                       ->one();
         
         $request = Yii::$app->request;
         if ($model->load($request->post())) {

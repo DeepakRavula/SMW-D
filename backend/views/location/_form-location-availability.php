@@ -17,9 +17,11 @@ $this->title = 'Edit Location';
         $form = ActiveForm::begin([
         'id' => 'modal-form',
         'action' => Url::to(['location/modify','resourceId' =>$model->day,'type'=>$model->type,'startTime' => $model->fromTime,'endTime' =>$model->toTime]),  
-                    ]); ?>
+        'enableAjaxValidation' => true,
+        'enableClientValidation' => false,
+        'validationUrl' => Url::to(['location/validate-location-availability','resourceId' =>$model->day,'type'=>$model->type]),          ]); ?>
    <div class="row p-20">     
-        <div class="col-md-6 form-group">
+        <div class="col-md-6 form-group">                           
                 <?= $form->field($model, 'fromTime')->widget(TimePicker::classname(), [
                     'options' => [
                         'id' => 'location-availability-from-time'
