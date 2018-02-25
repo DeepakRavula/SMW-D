@@ -169,7 +169,7 @@ function showCalendars(id,type) {
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
         defaultView: 'agendaDay',
-		firstDay : 1,
+	firstDay : 1,
         nowIndicator: true,
         minTime: "00:00:00",
         maxTime: "23:59:59",
@@ -192,13 +192,13 @@ function showCalendars(id,type) {
             availability.modifyEventRender(event,element,type,id);
         },
         eventClick: function(event) {
-            availability.clickEvent(event,type,id);
+            availability.locationModify(event,type,id);
         },
         eventResize: function(event) {
-            availability.eventResize(event,type,id);
+            availability.locationModify(event,type,id);
         },
         eventDrop: function(event) {
-            availability.eventDrop(event,type,id);
+            availability.locationModify(event,type,id);
         },
         select: function( start, end, jsEvent, view, resourceObj ) {
             availability.eventSelect(start, end, jsEvent, view, resourceObj,type,id);
@@ -216,11 +216,10 @@ function showCalendars(id,type) {
         modifyEventRender : function (event, element,type,id) {
              element.find("div.fc-content").prepend("<i  class='fa fa-close pull-right text-danger'></i>");
         },
-        clickEvent : function (event,type,id) {
-            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+        locationModify:function (event,type,id){
+             var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
             var params = $.param({ resourceId: event.resourceId,type: type,startTime:startTime,endTime:endTime});
-            var url    = '<?= Url::to(['location/delete-availability']) ?>?' + params;
             $.ajax({
                 url    : '<?= Url::to(['location/modify']) ?>?' + params,
                 type   : 'POST',
@@ -236,11 +235,14 @@ function showCalendars(id,type) {
                     
                 }
             });
+         },        
+        clickEvent : function (event,type,id) {
+            availability.locationModify(event,type,id);
             var params = $.param({ resourceId: event.resourceId, type: type });
             $(".fa-close").click(function() {
                 var status = confirm("Are you sure to delete availability?");
                 if (status) {
-                    $.ajax({
+                    $.ajax({                
                         url    : '<?= Url::to(['location/delete-availability']) ?>?' + params,
                         type   : 'POST',
                         dataType: 'json',
@@ -249,48 +251,6 @@ function showCalendars(id,type) {
                             $(id).fullCalendar("refetchEvents");
                         }
                     });
-                }
-            });
-        },
-        eventResize : function (event,type,id) {
-            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
-            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
-            var params = $.param({ resourceId: event.resourceId,type: type,startTime:startTime,endTime:endTime});
-             var url    = '<?= Url::to(['location/delete-availability']) ?>?' + params;
-            $.ajax({
-                url    : '<?= Url::to(['location/modify']) ?>?' + params,
-                type   : 'POST',
-                dataType: 'json',
-                success: function(response)
-                {
-                    if (response.status) {
-                        $('#popup-modal').modal('show');
-                        deleteModal(event,type,id);
-                        $('#modal-content').html(response.data);
-                        $(id).fullCalendar("refetchEvents");
-                    }
-                   
-                }
-            });
-        },
-        eventDrop : function (event,type,id) {
-            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
-            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
-            var params = $.param({ resourceId: event.resourceId,type: type,startTime:startTime,endTime:endTime});
-             var url    = '<?= Url::to(['location/delete-availability']) ?>?' + params;
-            $.ajax({
-                url    : '<?= Url::to(['location/modify']) ?>?' + params,
-                type   : 'POST',
-                dataType: 'json',
-                success: function()
-                {
-                    if (response.status) {
-                        $('#popup-modal').modal('show');
-                        deleteModal(event,type,id);
-                        $('#modal-content').html(response.data);
-                        $(id).fullCalendar("refetchEvents");
-                    }
-                    
                 }
             });
         },
