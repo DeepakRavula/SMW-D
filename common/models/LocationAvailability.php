@@ -2,7 +2,7 @@
 
 namespace common\models;
 
-use Yii;
+
 
 /**
  * This is the model class for table "location_availability".
@@ -36,6 +36,9 @@ class LocationAvailability extends \yii\db\ActiveRecord
             [['locationId', 'day','type'], 'required'],
             [['locationId', 'day','type'], 'integer'],
             [['fromTime', 'toTime'], 'safe'],
+            [['fromTime'], 'validateToTime'] ,
+            [['toTime'], 'validateToTime'] 
+            
         ];
     }
 
@@ -51,6 +54,30 @@ class LocationAvailability extends \yii\db\ActiveRecord
             'type' => 'Type',
             'fromTime' => 'From Time',
             'toTime' => 'To Time',
+        ];
+    }
+        public function validateToTime($attributes)
+    {
+           
+               $fromTime=(new \DateTime($this->fromTime))->format('H:i:s');
+                $toTime=(new \DateTime($this->toTime))->format('H:i:s');
+                
+                if($toTime<=$fromTime)
+           {
+               return $this->addError($attributes, "To Time should be greater than From Time");
+           }
+                
+    }
+    public static function getWeekdaysList()
+    {
+        return [
+        1   =>  'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+                'Sunday'
         ];
     }
 }
