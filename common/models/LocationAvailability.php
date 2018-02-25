@@ -2,8 +2,6 @@
 
 namespace common\models;
 
-use Yii;
-use common\components\validators\availability\LocationAvailabilityValidator;
 
 
 /**
