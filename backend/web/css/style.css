@@ -163,6 +163,10 @@ dl {
       text-align:right;
       width:100px;
   }
+   .m-l-22
+    {
+        margin-left:22px;
+    }
 }
 @media print {
     .dl-invoice-summary dt {
@@ -175,9 +179,9 @@ dl {
         text-align: right;
         line-height:1.5;
     }
-    .m-l-30
+    .m-l-22
     {
-        margin-left:30px;
+        margin-left:22px;
     }
     .new-invoice-print-address
     {
