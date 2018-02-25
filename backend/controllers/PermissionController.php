@@ -7,6 +7,7 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
 use common\components\controllers\BaseController;
+use common\components\rbac\Item;
 use yii\filters\AccessControl;
 /**
  * NoteController implements the CRUD actions for Note model.
@@ -48,7 +49,7 @@ class PermissionController extends BaseController
      */
     public function actionIndex()
     {
-        $permissions = Yii::$app->authManager->getPermissions();
+        $permissions = Yii::$app->authManager->getLocationSpecificItems(Item::TYPE_PERMISSION);
         $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRoles(), 'name');
         return $this->render('index', [
             'permissions' => $permissions,

@@ -40,15 +40,11 @@ $statusTd = function ($role, $roles, $permission) {
 						<tr>
                         <th>Privilege</th>
                         <th style="width:5%">Staff</th>
-                        <th style="width:5%">Owner</th>
-                        <th style="width:5%">Admin</th>
                     </tr>
 					 <?php foreach ($permissions as $permission): ?>
                         <tr>
                             <td><?= $permission->description ?></td>
-							<?=$statusTd(User::ROLE_STAFFMEMBER, $roles, $permission) ?>
-                            <?=$statusTd(User::ROLE_OWNER, $roles, $permission) ?>
-                            <?=$statusTd(User::ROLE_ADMINISTRATOR, $roles, $permission) ?>
+                            <?=$statusTd(User::ROLE_STAFFMEMBER, $roles, $permission) ?>
                         </tr>
                         <?php endforeach; ?>
                     </tbody></table>

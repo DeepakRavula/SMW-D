@@ -64,6 +64,20 @@ class DbManager extends \yii\rbac\DbManager
 
         return false;
     }
+    
+    public function getLocationSpecificItems($type)
+    {
+        $query = (new Query())
+            ->from($this->itemTable)
+            ->where(['type' => $type, 'isLocationSpecific' => true]);
+
+        $items = [];
+        foreach ($query->all($this->db) as $row) {
+            $items[$row['name']] = $this->populateItem($row);
+        }
+
+        return $items;
+    }
 
     /**
      * Populates an auth item with the data fetched from database

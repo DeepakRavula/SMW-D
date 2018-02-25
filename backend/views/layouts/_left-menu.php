@@ -213,13 +213,6 @@ echo Menu::widget([
                     'badge' => Program::find()->active()->count(),
                     'badgeBgClass' => 'label-default'
                 ],
-                    [
-                    'label' => Yii::t('backend', 'Privileges'),
-                    'icon' => '<i class="fa fa-users"></i>',
-                    'url' => ['/permission'],
-					'visible' => Yii::$app->user->can('managePrivileges'),
-                    'active' => Yii::$app->controller->id === 'permission',
-                ],
                 [
                     'label' => Yii::t('backend', 'Cities'),
                     'icon' => '<i class="fa fa-building"></i>',
@@ -284,14 +277,8 @@ echo Menu::widget([
                     'label' => Yii::t('backend', 'Email Template'),
                     'icon' => '<i class="fa fa-envelope"></i>',
                     'url' => ['/email-template/index'],
-                ],
-                [
-                    'label' => Yii::t('backend', 'Text Template'),
-                    'icon' => '<i class="fa fa-envelope"></i>',
-                    'url' => ['/text-template/index'],
-					'visible' => Yii::$app->user->can('manageEmailTemplate'),
-                ],
-            ],
+                ]
+            ]
         ],
         [
             'label' => Yii::t('backend', 'Setup'),
@@ -300,6 +287,13 @@ echo Menu::widget([
             'visible' => Yii::$app->user->can('manageSetupArea'),
             'options' => ['class' => 'treeview'],
             'items' => [
+                [
+                    'label' => Yii::t('backend', 'Privileges'),
+                    'icon' => '<i class="fa fa-users"></i>',
+                    'url' => ['/permission'],
+                    'visible' => Yii::$app->user->can('managePrivileges'),
+                    'active' => Yii::$app->controller->id === 'permission',
+                ],
                     [
                     'label' => Yii::t('backend', 'Staff Members'),
                     'icon' => '<i class="fa fa-users"></i>',
@@ -333,21 +327,7 @@ echo Menu::widget([
                 ],
 
             ],
-        ],
-            [
-            'label' => Yii::t('backend', 'Access Control'),
-            'url' => '#',
-            'icon' => '<i class="fa fa-edit"></i>',
-            'visible' => Yii::$app->user->can('manageAccessControl'),
-            'options' => ['class' => 'treeview'],
-            'items' => [
-                    ['label' => Yii::t('backend', 'Roles'), 'url' => ['/admin/role'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                    ['label' => Yii::t('backend', 'Permissions'), 'url' => ['/admin/permission'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                    ['label' => Yii::t('backend', 'Assignments'), 'url' => ['/admin/assignment'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                    ['label' => Yii::t('backend', 'Routes'), 'url' => ['/admin/route'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-                    ['label' => Yii::t('backend', 'Rules'), 'url' => ['/admin/rule'], 'icon' => '<i class="fa fa-angle-double-right"></i>'],
-            ],
-        ],
-    ],
+        ]
+    ]
 ])
 ?>
