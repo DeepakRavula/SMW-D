@@ -53,7 +53,17 @@ $columns = [
         'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
                 ],
-                [
+                ];
+        if($lessonModel->isPrivate()) {
+            array_push($columns, [
+                'label' => 'Student',
+                'value' => function ($model) {
+                        return $model->student->fullName;
+                },
+                'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
+                'contentOptions' => ['class' => 'kv-sticky-column']]);
+        }
+        array_push($columns, [
         'label' => 'Program',
         'value' => function ($model) {
             return $model->course->program->name;
@@ -100,8 +110,7 @@ $columns = [
                         ]);
                     },
         ],
-    ],
-];
+    ]);
 ?>
 <div class="col-lg-12">
 <?php if ($newLessonIds) : ?>

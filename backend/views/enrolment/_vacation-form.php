@@ -169,6 +169,8 @@ use yii\grid\GridView;
                     $('#vacation-modal').modal('hide');
                     $('#enrolment-delete-success').html('Vacation has been created successfully').fadeIn().delay(3000).fadeOut();
                     $.pjax.reload({container: "#enrolment-vacation", replace: false, async: false, timeout: 4000});
+                    $.pjax.reload({container: "#payment-cycle-listing", replace: false, async: false, timeout: 4000});
+                    $.pjax.reload({container: "#lesson-index", replace: false, async: false, timeout: 4000});
                 } else{
                     $('#vacation-conflict').html(response.errors).fadeIn().delay(3000).fadeOut();
                 }

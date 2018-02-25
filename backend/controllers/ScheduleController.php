@@ -20,6 +20,7 @@ use common\models\Classroom;
 use common\models\TeacherUnavailability;
 use League\Period\Period;
 use Carbon\Carbon;
+use common\models\User;
 use common\components\controllers\BaseController;
 use Carbon\CarbonInterval;
 
@@ -70,7 +71,7 @@ class ScheduleController extends BaseController
         $teachersAvailabilities = TeacherAvailability::find()
             ->joinWith(['userLocation' => function ($query) use ($locationId) {
                 $query->joinWith(['userProfile'])
-                ->where(['user_location.location_id' => $locationId]);
+                ->andWhere(['user_location.location_id' => $locationId]);
             }])
             ->orderBy(['teacher_availability_day.id' => SORT_DESC])
            ->orderBy(['user_profile.firstname' => SORT_ASC])
@@ -133,20 +134,18 @@ class ScheduleController extends BaseController
 
     public function getLessons($date, $teacherId)
     {
-        $lessons = Lesson::find()
-            ->joinWith(['course' => function ($query) use ($teacherId) {
-                $query->andWhere(['course.locationId' => Location::findOne(['slug' => Yii::$app->location])->id])
-                        ->confirmed();
-                if (!empty($teacherId) && $teacherId != 'undefined') {
-                    $query->andWhere(['course.teacherId' => $teacherId]);
-                }
-            }])
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $query = Lesson::find()
+            ->location($locationId)
             ->scheduledOrRescheduled()
             ->isConfirmed()
             ->present()
             ->andWhere(['DATE(lesson.date)' => $date->format('Y-m-d')])
-            ->notDeleted()
-            ->all();
+            ->notDeleted();
+        if (!empty($teacherId) && $teacherId != 'undefined') {
+            $query->andWhere(['teacherId' => $teacherId]);
+        }
+        $lessons = $query->all();
         return $lessons;
     }
 
@@ -170,11 +169,20 @@ class ScheduleController extends BaseController
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
+        $formatedDate = $date->format('Y-m-d');
+        $formatedDay = $date->format('N');
+        $query = User::find()
+                ->notDeleted()
+                ->active()
+                ->joinWith(['teacherLessons' => function ($query) use ($formatedDate) {
+                    $query->isConfirmed()->notDeleted()->scheduledOrRescheduled()
+                        ->andWhere(['DATE(lesson.date)' => $formatedDate]);
+                }]);
         if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')
             && ($programId == 'undefined')) {
             $teachersAvailabilities = TeacherAvailability::find()
                         ->joinWith(['userLocation' => function ($query) use ($locationId) {
-                            $query->where(['user_location.location_id' => $locationId]);
+                            $query->andWhere(['user_location.location_id' => $locationId]);
                         }])
                         ->andWhere(['day' => $date->format('N')])
                         ->all();
@@ -191,14 +199,15 @@ class ScheduleController extends BaseController
                     'title' => 'No Teacher Available Today'
                 ];
             }
+            $query->allTeachers()->location($locationId);
         }
         if (!empty($teacherId) && $teacherId != 'undefined') {
             $teachersAvailabilities = TeacherAvailability::find()
                     ->joinWith(['userLocation' => function ($query) use ($teacherId) {
-                        $query->where(['user_location.user_id' => $teacherId]);
+                        $query->andWhere(['user_location.user_id' => $teacherId]);
                     }])
                     ->andWhere(['day' => $date->format('N')])
-                     ->groupBy(['teacher_availability_day.id','teacher_location_id'])
+                    ->groupBy(['teacher_availability_day.id','teacher_location_id'])
                     ->all();
             if (!empty($teachersAvailabilities)) {
                 foreach ($teachersAvailabilities as $teachersAvailability) {
@@ -207,22 +216,18 @@ class ScheduleController extends BaseController
                         'title' => $teachersAvailability->teacher->getPublicIdentity(),
                     ];
                 }
-            } else {
-                $resources[] = [
-                    'id'    => '0',
-                    'title' => 'Selected Teacher Not Available Today'
-                ];
             }
+            $query->andWhere(['user.id' => $teacherId])->location($locationId);
         } elseif (!empty($programId) && $programId != 'undefined') {
             $teachersAvailabilities = TeacherAvailability::find()
                     ->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
-                        $query->where(['user_location.location_id' => $locationId]);
+                        $query->andWhere(['user_location.location_id' => $locationId]);
                         $query->joinWith(['qualifications'  => function ($query) use ($programId) {
                             $query->andWhere(['qualification.program_id' => $programId]);
                         }]);
                     }])
                     ->andWhere(['day' => $date->format('N')])
-                     ->groupBy(['teacher_availability_day.id','teacher_location_id'])
+                    ->groupBy(['teacher_availability_day.id','teacher_location_id'])
                     ->all();
             if (!empty($teachersAvailabilities)) {
                 foreach ($teachersAvailabilities as $teachersAvailability) {
@@ -237,14 +242,34 @@ class ScheduleController extends BaseController
                     'title' => 'No Teacher Available Today for the Selected Program'
                 ];
             }
+            $query->teachers($programId, $locationId);
+        }
+        $teachers = $query->joinWith(['userLocation' => function ($query) use ($formatedDay) {
+                        $query->joinWith(['teacherAvailabilities' => function ($query) use ($formatedDay) {
+                            $query->andWhere(['NOT', ['teacher_availability_day.day' => $formatedDay]]);
+                        }]);
+                    }])
+                    ->all();
+        foreach ($teachers as $teacher) {
+            $resources[] = [
+                'id'    => $teacher->id,
+                'title' => $teacher->getPublicIdentity()
+            ];
+        }
+        if (empty($resources)) {
+            $resources[] = [
+                'id'    => '0',
+                'title' => 'Selected Teacher Not Available Today'
+            ];
         }
         return $resources;
     }
+    
     public function getTeacherAvailability($teacherId, $date)
     {
         $availabilities = TeacherAvailability::find()
             ->joinWith(['userLocation' => function ($query) use ($teacherId) {
-                $query->where(['user_location.user_id' => $teacherId]);
+                $query->andWhere(['user_location.user_id' => $teacherId]);
             }])
             ->andWhere(['day' => $date->format('N')])
             ->all();

@@ -64,7 +64,11 @@ use yii\bootstrap\Modal;
         $('#popup-modal').modal('hide');
         return false;
     });
+<<<<<<< HEAD
      $(document).off('click', '.modal-delete').on('click', '.modal-delete', function () {
+=======
+    $(document).off('click', '.modal-delete').on('click', '.modal-delete', function () {
+>>>>>>> origin/master
         bootbox.confirm({ 
   			message: "Are you sure you want to delete this?", 
   			callback: function(result){
@@ -73,9 +77,15 @@ use yii\bootstrap\Modal;
         $.ajax({
             url    : $('.modal-delete').attr('action'),
             type   : 'post',
+<<<<<<< HEAD
             dataType: "json",
             data   : $('#modal-form').serialize(),
             success: function(response)
+=======
+           dataType: "json",
+            data   : $('#modal-form').serialize(),
+           success: function(response)
+>>>>>>> origin/master
             {
                 if(response.status)
                 {

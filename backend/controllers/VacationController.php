@@ -103,6 +103,7 @@ class VacationController extends BaseController
             $lessonsQuery       = Lesson::find()
                 ->notDeleted()
                 ->isConfirmed()
+                ->notCanceled()
                 ->andWhere(['courseId' => $enrolment->courseId])
                 ->andWhere(['AND', ['>=', 'DATE(date)', $startDate], ['<=', 'DATE(date)',
                     $endDate]]);

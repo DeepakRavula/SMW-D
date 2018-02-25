@@ -61,7 +61,7 @@ body .user-panel > .info {
 }
 #show-all label{
 	font-weight: normal;
-	font-size: 18px;	
+	font-size: 17px;
 }
 #show-all-programs-label{
 	font-weight: normal;
@@ -150,18 +150,52 @@ dl {
 
 @media (min-width: 768px) {
   .dl-invoice-summary dt {
-    float: left;
-    width: 230px;
-    overflow: hidden;
-    clear: left;
-    text-align: right;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    text-align: left;
+        float:left;
+        line-height:1.5;
+        font-weight:normal;
   }
-  .dl-invoice-summary dd, .royalty dd{
+  .dl-invoice-summary dd{
 	text-align: right;
+        line-height:1.5;
   }
-  
+  .royalty dd{
+      text-align:right;
+      width:100px;
+  }
+}
+@media print {
+    .dl-invoice-summary dt {
+        text-align: left;
+        float:left;
+        line-height:1.5;
+        font-weight:normal;
+    }
+    .dl-invoice-summary dd{
+        text-align: right;
+        line-height:1.5;
+    }
+    .m-l-30
+    {
+        margin-left:30px;
+    }
+    .new-invoice-print-address
+    {
+        width: 1000px;
+        margin-top: 10px;
+        font-size: 16px;
+        font-weight: 300;
+        color: #000;
+    }
+    .f-s-30{
+    font-size:30px;
+}
+.royalty dd{
+   float:right;
+   margin-right:500px;
+   line-height:0.75;
+   margin-top:-12px;
+}
 }
 .lesson-colorcode{
     width: 15px; 
@@ -315,4 +349,6 @@ dl {
 .direct-chat-timestamp {
     color: #999;
 }
-
+.show-all-top {
+    margin-top: -10px;
+}

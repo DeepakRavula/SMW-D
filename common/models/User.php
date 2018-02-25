@@ -207,7 +207,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
     public function getUserToken()
     {
-        return $this->hasOne(UserToken::className(), ['userId' => 'id']);
+        return $this->hasOne(UserToken::className(), ['user_id' => 'id']);
     }
     public function getPrimaryContact()
     {
@@ -233,6 +233,11 @@ class User extends ActiveRecord implements IdentityInterface
     public function getLogs()
     {
         return $this->hasMany(timelineEvent\TimelineEventUser::className(), ['userId' => 'id']);
+    }
+    
+    public function getTeacherLessons()
+    {
+        return $this->hasMany(Lesson::className(), ['teacherId' => 'id']);
     }
 
     /**
@@ -278,7 +283,7 @@ class User extends ActiveRecord implements IdentityInterface
             $this->userLocation->delete();
         }
         if ($this->userToken) {
-            $this->userLocation->delete();
+            $this->userToken->delete();
         }
         foreach ($this->emails as $email) {
             $email->delete();

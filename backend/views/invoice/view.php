@@ -118,6 +118,7 @@ Modal::end();
             'model' => $model,
             'invoicePayments' => $invoicePayments,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
+            'print'=>false,        
         ]);?>
 	</div>
 	<?php Pjax::Begin(['id' => 'invoice-bottom-summary', 'timeout' => 6000]); ?>
@@ -435,6 +436,7 @@ Modal::begin([
 		return false;
 	});
 	$(document).on('beforeSubmit', '#payment-form', function (e) {
+            $('#add-payment-spinner').show();
 		e.preventDefault();
 		$.ajax({
 			url    : $(this).attr('action'),
@@ -445,20 +447,24 @@ Modal::begin([
 			{
                             if(response.status)
                             {
+                                $('#payment-add-spinner').hide();
                                 $('#payment-modal').modal('hide');
                                 $.pjax.reload({container: "#invoice-view-lineitem-listing", replace:false,async: false, timeout: 6000});
                                 $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
                                 $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                                 $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                                 $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+                                $('#add-payment-spinner').hide();
                             } else {
-                             $('#payment-form').yiiActiveForm('updateMessages', response.errors , true);
+                                $('#payment-form').yiiActiveForm('updateMessages', response.errors , true);
+                                $('#add-payment-spinner').hide();
                             }
 			}
 		});
 		return false;
 	});
 	$(document).on("click", "#payment-grid tbody > tr", function() {
+        $('#payment-edit-modal .modal-dialog').css({'width': '400px'});
 		var paymentId = $(this).data('key');	
 		$.ajax({
 			url    : '<?= Url::to(['payment/update']); ?>?id=' + paymentId,
