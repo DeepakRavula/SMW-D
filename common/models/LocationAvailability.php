@@ -60,9 +60,13 @@ class LocationAvailability extends \yii\db\ActiveRecord
     }
         public function validateToTime($attributes)
     {
-           if($this->toTime<=$this->fromTime)
+           
+               $fromTime=(new \DateTime($this->fromTime))->format('H:i:s');
+                $toTime=(new \DateTime($this->toTime))->format('H:i:s');
+                
+                if($toTime<=$fromTime)
            {
-               return $this->addError($attributes, "End Time cannot be greater than StartTime");
+               return $this->addError($attributes, "To Time should be greater than From Time");
            }
                 
     }

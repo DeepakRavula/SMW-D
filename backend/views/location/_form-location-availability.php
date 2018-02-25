@@ -19,7 +19,7 @@ $this->title = 'Edit Location';
         'action' => Url::to(['location/modify','resourceId' =>$model->day,'type'=>$model->type,'startTime' => $model->fromTime,'endTime' =>$model->toTime]),  
         'enableAjaxValidation' => true,
         'enableClientValidation' => false,
-        'validationUrl' => Url::to(['location/validate-location-availability','resourceId' =>$model->day,'type'=>$model->type]),          ]); ?>
+        'validationUrl' => Url::to(['location/validate-location-availability','resourceId' =>$model->day,'type'=>$model->type,'startTime' => $model->fromTime,'endTime' =>$model->toTime]),          ]); ?>
    <div class="row p-20">     
         <div class="col-md-6 form-group">                           
                 <?= $form->field($model, 'fromTime')->widget(TimePicker::classname(), [

@@ -101,13 +101,20 @@ class LocationController extends BaseController
             ];
         }
     }
-    public function actionValidateLocationAvailability($resourceId,$type)
+    public function actionValidateLocationAvailability($resourceId,$type,$startTime,$endTime)
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
         $model    = LocationAvailability::find()
                        ->where(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
                        ->one();
-        
+        if (empty($model)) { 
+             $model=new LocationAvailability;
+             $model->locationId=$location->id;
+             $model->day=$resourceId;
+             $model->fromTime=(new \DateTime($startTime))->format('g:i a');
+             $model->toTime=(new \DateTime($endTime))->format('g:i a');
+             $model->type=$type;
+         }
         $request = Yii::$app->request;
         if ($model->load($request->post())) {
             return  ActiveForm::validate($model);
@@ -181,7 +188,7 @@ class LocationController extends BaseController
                 'resourceId' => $availability->day,
                 'start' => $startTime->format('Y-m-d H:i:s'),
                 'end' => $endTime->format('Y-m-d H:i:s'),
-                'backgroundColor' => '#ffffff',
+                'backgroundColor' => '#97ef83',
                 'className' => 'location-availability',
             ];
         }
