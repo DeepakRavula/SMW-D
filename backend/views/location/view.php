@@ -188,9 +188,6 @@ function showCalendars(id,type) {
                 $(id).fullCalendar("refetchEvents");
             }
         },
-        eventRender: function(event, element) {
-            availability.modifyEventRender(event,element,type,id);
-        },
         eventClick: function(event) {
             availability.locationModify(event,type,id);
         },
@@ -201,23 +198,27 @@ function showCalendars(id,type) {
             availability.locationModify(event,type,id);
         },
         select: function( start, end, jsEvent, view, resourceObj ) {
-            availability.eventSelect(start, end, jsEvent, view, resourceObj,type,id);
+            var event = {
+                start: start,
+                end: end,
+                resourceId: resourceObj.id
+            };
+            var id = [];
+            availability.locationModify(event,type,id);
         }
     });
    }
-   function deleteModal(event,type,id) {
-         var params = $.param({ resourceId: event.resourceId,type: type });
-         var url    = '<?= Url::to(['location/delete-availability']) ?>?' + params;
-        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
+   
+    function deleteModal(event,type,id) {
+        var params = $.param({ resourceId: event.resourceId,type: type });
+        var url    = '<?= Url::to(['location/delete-availability']) ?>?' + params;
         $('#modal-delete').show();
         $(".modal-delete").attr("action",url); 
-   }
- var availability = {
-        modifyEventRender : function (event, element,type,id) {
-             element.find("div.fc-content").prepend("<i  class='fa fa-close pull-right text-danger'></i>");
-        },
+    }
+    
+    var availability = {
         locationModify:function (event,type,id){
-             var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
             var params = $.param({ resourceId: event.resourceId,type: type,startTime:startTime,endTime:endTime});
             $.ajax({
@@ -228,75 +229,38 @@ function showCalendars(id,type) {
                 {
                     if (response.status) {
                         $('#popup-modal').modal('show');
-                        deleteModal(event,type,id);
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
+                        if (!$.isEmptyObject(id)) {
+                            deleteModal(event,type,id);
+                        }
                         $('#modal-content').html(response.data);
                         $(id).fullCalendar("refetchEvents");
+                    } else {
+                        $('#flash-danger').text("You are not allowed to set more than one availability for a day!").fadeIn().delay(3000).fadeOut();
                     }
-                    
                 }
             });
          },        
         clickEvent : function (event,type,id) {
             availability.locationModify(event,type,id);
-            var params = $.param({ resourceId: event.resourceId, type: type });
-            $(".fa-close").click(function() {
-                var status = confirm("Are you sure to delete availability?");
-                if (status) {
-                    $.ajax({                
-                        url    : '<?= Url::to(['location/delete-availability']) ?>?' + params,
-                        type   : 'POST',
-                        dataType: 'json',
-                        success: function()
-                        {
-                            $(id).fullCalendar("refetchEvents");
-                        }
-                    });
-                }
-            });
         },
-        eventSelect :function(start, end, jsEvent, view, resourceObj,type,id) {
-           var endTime = moment(end).format('YYYY-MM-DD HH:mm:ss');
-            var startTime = moment(start).format('YYYY-MM-DD HH:mm:ss');
-            var params = $.param({ resourceId: resourceObj.id,type: type,startTime:startTime,endTime:endTime});
-            $.ajax({
-                url    : '<?= Url::to(['location/modify']) ?>?' + params,
-                type   : 'POST',
-                dataType: 'json',
-                success: function(response)
-                {
-                   if (response.status) {
-                        $('#popup-modal').modal('show');
-                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
-                        $('#modal-content').html(response.data);
-                        $(id).fullCalendar("refetchEvents");
-                    }
-                                
-                    else {
-                        $('#flash-danger').text("You are not allowed to set more than one availability for a day!").fadeIn().delay(3000).fadeOut();
-                    }
-                }
-            });
+        refechEvents: function () {
+            var activeTab = $('.nav-tabs .active > a').text();
+            var id = "#operationCalendar";
+            if (activeTab === "Schedule Visibility") {
+                var id = '#scheduleCalendar';
+            } 
+            $(id).fullCalendar("refetchEvents");
+            return false;
         }
- }
-  $(document).on('modal-success', function(event, params) {
-        var url = "<?php echo Url::to(['location/view']); ?>";
-        var activeTab=$('.nav-tabs .active > a').text();
-        var id="#operationCalendar";
-       if (activeTab === "Schedule Visibility") {
-        var id='#scheduleCalendar';
-    } 
-       $(id).fullCalendar("refetchEvents");
-        return false;
+    }
+    
+    $(document).on('modal-success', function(event, params) {
+        availability.refechEvents();
     });
+    
     $(document).on('modal-delete', function(event, params) {
-        var url = "<?php echo Url::to(['location/view']); ?>";
-        var activeTab=$('.nav-tabs .active > a').text();
-        var id="#operationCalendar";
-       if (activeTab === "Schedule Visibility") {
-        var id='#scheduleCalendar';
-    } 
-       $(id).fullCalendar("refetchEvents");
-        return false;
+        availability.refechEvents();
     });
 </script>
 <?php Pjax::end(); ?>
