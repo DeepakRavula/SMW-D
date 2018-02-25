@@ -1,14 +1,15 @@
 <?php
 
 use yii\bootstrap\Modal;
-
 ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
-<?php Modal::begin([
+<?php
+Modal::begin([
     'header' => '<h4 class="m-0">Modal Popup</h4>',
     'id' => 'popup-modal',
     'footer' => $this->render('modal-popup-footer')
-]); ?>
+]);
+?>
 <div id="modal-spinner" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>
@@ -26,83 +27,73 @@ use yii\bootstrap\Modal;
         $('#modal-form').submit();
         return false;
     });
-    
+
     $(document).off('beforeSubmit', '#modal-form').on('beforeSubmit', '#modal-form', function () {
         $('#modal-spinner').show();
         $.ajax({
-            url    : $('#modal-form').attr('action'),
-            type   : 'post',
+            url: $('#modal-form').attr('action'),
+            type: 'post',
             dataType: "json",
-            data   : $('#modal-form').serialize(),
-            success: function(response)
+            data: $('#modal-form').serialize(),
+            success: function (response)
             {
-                if(response.status)
+                if (response.status)
                 {
                     $('#modal-spinner').hide();
                     $('#popup-modal').modal('hide');
-                    $(document).trigger( "modal-success", response);
+                    $(document).trigger("modal-success", response);
                 } else {
                     $('#modal-spinner').hide();
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
-                    $(document).trigger( "modal-error", response);
+                    $(document).trigger("modal-error", response);
                 }
             }
         });
         return false;
     });
-    
+
     $('#popup-modal').on('shown.bs.modal', function () {
         $('#modal-spinner').hide();
     });
-    
+
     $('#popup-modal').on('hidden.bs.modal', function () {
-        $(document).trigger( "modal-close");
+        $(document).trigger("modal-close");
     });
-    
+
     $(document).off('click', '.modal-cancel').on('click', '.modal-cancel', function () {
         $('#modal-spinner').show();
         $('#popup-modal').modal('hide');
         return false;
     });
-<<<<<<< HEAD
-     $(document).off('click', '.modal-delete').on('click', '.modal-delete', function () {
-=======
     $(document).off('click', '.modal-delete').on('click', '.modal-delete', function () {
->>>>>>> origin/master
-        bootbox.confirm({ 
-  			message: "Are you sure you want to delete this?", 
-  			callback: function(result){
-				if(result) {
-					$('.bootbox').modal('hide');
-        $.ajax({
-            url    : $('.modal-delete').attr('action'),
-            type   : 'post',
-<<<<<<< HEAD
-            dataType: "json",
-            data   : $('#modal-form').serialize(),
-            success: function(response)
-=======
-           dataType: "json",
-            data   : $('#modal-form').serialize(),
-           success: function(response)
->>>>>>> origin/master
-            {
-                if(response.status)
-                {
-                    $('#modal-spinner').hide();
-                    $('#popup-modal').modal('hide');
-                    $(document).trigger( "modal-delete", response);
-                } else {
-                    $('#modal-spinner').hide();
-                    $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
-                    $(document).trigger( "modal-error", response);
-                }
-            }
-        });
-   return false;	
-			}
-			}
-		});	
-		return false;
-        });
+        bootbox.confirm({
+        message: "Are you sure you want to delete this?",
+                callback: function(result){
+                if (result) {
+                $('.bootbox').modal('hide');
+                 $.ajax({
+                        url : $('.modal-delete').attr('action'),
+                        type   : 'post',
+                        dataType: "json",
+                        data   : $('#modal-form').serialize(),
+                   success: function(response)
+                                        {
+                                        if (response.status)
+                                        {
+                                        $('#modal-spinner').hide();
+                                                $('#popup-modal').modal('hide');
+                                                $(document).trigger("modal-delete", response);
+                                        } else {
+                                        $('#modal-spinner').hide();
+                                                $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
+                                                $(document).trigger("modal-error", response);
+                                        }
+                                        }
+                                });
+                                return false;
+                        }
+                        }
+                        });
+                return false;
+            });
 </script>
