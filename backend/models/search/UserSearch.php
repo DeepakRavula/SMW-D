@@ -144,10 +144,11 @@ class UserSearch extends User
         }
         if(!($this->showAllCustomers || $this->showAllTeachers||$this->showAllAdministrators || $this->showAllOwners || $this->showAllStaffMembers))
         {
-            $query->active()
-            ->groupBy('user.id');
+            $query->active();
+          
             
         }
+	  $query->groupBy('user.id');
         return $dataProvider;
     }
 
