@@ -302,7 +302,6 @@ class Location extends \yii\db\ActiveRecord
             'manageAdminArea',
             'manageAdmin',
             'managePrograms',
-            'managePrivileges',
             'manageCities',
             'manageProvinces',
             'manageCountries',
@@ -325,6 +324,7 @@ class Location extends \yii\db\ActiveRecord
         return [
             'teacherQualificationRate',
             'manageBirthdays',
+            'managePrivileges',
             'manageRoyalty',
             'manageReports',
             'manageTaxCollected',
