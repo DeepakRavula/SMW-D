@@ -264,23 +264,26 @@ class Location extends \yii\db\ActiveRecord
     {
     	$auth = Yii::$app->authManager;
         $ownerRole = User::ROLE_OWNER;
-        $staffAndOwnerRole = [User::ROLE_STAFFMEMBER, User::ROLE_OWNER];
+        $staffRole = User::ROLE_STAFFMEMBER;
         $staffPermissions = $this->staffPermissions();
         $ownerPermissions = $this->ownerPermissions();
         $permissions = $auth->getPermissions();
         $command = Yii::$app->db->createCommand();
         foreach ($permissions as $permission) {
             if (in_array($permission->name, $ownerPermissions)) {
-                foreach ($exceptStaffRoles as $exceptStaffRole) {
-                    $command->insert('rbac_auth_item_child', array(
-                        'parent' => $ownerRole,
-                        'child' => $permission->name,
-                        'location_id' => $this->id
-                    ))->execute();
-                }
+                $command->insert('rbac_auth_item_child', array(
+                    'parent' => $ownerRole,
+                    'child' => $permission->name,
+                    'location_id' => $this->id
+                ))->execute();
             } else if(in_array($permission->name, $staffPermissions)) {
                 $command->insert('rbac_auth_item_child', array(
-                    'parent' => $staffAndOwnerRole,
+                    'parent' => $ownerRole,
+                    'child' => $permission->name,
+                    'location_id' => $this->id
+                ))->execute();
+                $command->insert('rbac_auth_item_child', array(
+                    'parent' => $staffRole,
                     'child' => $permission->name,
                     'location_id' => $this->id
                 ))->execute();
@@ -322,7 +325,6 @@ class Location extends \yii\db\ActiveRecord
         return [
             'teacherQualificationRate',
             'manageBirthdays',
-            'managePayments',
             'manageRoyalty',
             'manageReports',
             'manageTaxCollected',

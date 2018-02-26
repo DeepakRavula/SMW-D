@@ -36,7 +36,7 @@ class LocationController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['update','view','validate-location-availability', 'add-availability', 'edit-availability', 'delete-availability', 'render-events', 'check-availability','modify'],
+                        'actions' => ['update','view','validate-location-availability', 'add-availability', 'edit-availability', 'delete-availability', 'render-events', 'check-availability','modify', 'validate'],
                         'roles' => ['manageLocations']
                     ],
                     [
@@ -63,6 +63,16 @@ class LocationController extends BaseController
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionValidate()
+    {
+        $model = new Location();
+
+        $request = Yii::$app->request;
+        if ($model->load($request->post())) {
+            return  ActiveForm::validate($model);
+        }
     }
 
     /**
