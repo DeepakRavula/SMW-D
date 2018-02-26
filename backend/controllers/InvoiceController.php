@@ -558,9 +558,10 @@ class InvoiceController extends BaseController
         $paymentCycle = PaymentCycle::findOne($id);
 
         if ($paymentCycle->canRaiseProformaInvoice()) {
-            $paymentCycle->createProFormaInvoice();
-
-            return $this->redirect(['view', 'id' => $paymentCycle->proFormaInvoice->id]);
+	    $invoice = $paymentCycle->createProFormaInvoice();
+            if ($invoice) {
+		return $this->redirect(['view', 'id' => $invoice->id]);
+	    }
         } else {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
