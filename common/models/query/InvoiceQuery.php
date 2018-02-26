@@ -49,6 +49,13 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['invoice.isCanceled' => false]);
     }
 
+    public function notReturned()
+    {
+        return $this->joinWith(['reverseInvoice' => function ($query) {
+            $query->andWhere(['invoice_reverse.id' => null]);
+        }]);
+    }
+
     public function location($locationId)
     {
         $this->andWhere(['invoice.location_id' => $locationId]);

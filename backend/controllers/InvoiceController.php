@@ -545,9 +545,10 @@ class InvoiceController extends BaseController
                 $amount = $invoice->balance;
             }
             $invoice->addPayment($creditInvoice, $amount);
-            $invoice->save();
             $creditInvoice->save();
         }
+        $invoice->isCanceled = true;
+        $invoice->save();
         
         return $this->redirect(['view', 'id' => $creditInvoice->id]);
     }

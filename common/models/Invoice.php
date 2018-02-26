@@ -156,7 +156,12 @@ class Invoice extends \yii\db\ActiveRecord
                 ->groupBy(['invoice.id','invoice.invoice_number'])
                 ->count();
     }
-    
+
+    public function hasLineItem()
+    {
+        return !empty($this->lineItem);
+    }
+
     public function getLineItems()
     {
         return $this->hasMany(InvoiceLineItem::className(), ['invoice_id' => 'id'])
@@ -209,6 +214,11 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Invoice::className(), ['id' => 'reversedInvoiceId'])
                 ->viaTable('invoice_reverse', ['reversedInvoiceId' => 'id']);
+    }
+
+    public function getReverseInvoice()
+    {
+        return $this->hasOne(InvoiceReverse::className(), ['reversedInvoiceId' => 'id']);
     }
 
     public function getInvoiceReverse()

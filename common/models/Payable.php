@@ -181,10 +181,12 @@ trait Payable
 
     public function addLessonCredit()
     {
-        if ($this->lineItem->isGroupLesson()) {
-            $this->addGroupLessonCredit();
-        } else {
-            $this->addPrivateLessonCredit();
+	if ($this->lineItem) {
+            if ($this->lineItem->isGroupLesson()) {
+                $this->addGroupLessonCredit();
+            } else {
+                $this->addPrivateLessonCredit();
+            }
         }
     }
     

@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use common\models\Invoice;
 use yii\data\ActiveDataProvider;
+use common\models\Location;
 use common\models\InvoiceLineItem;
 
 /**
@@ -82,7 +83,7 @@ class InvoiceLineItemSearch extends InvoiceLineItem
         if (!empty($this->dateRange)) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
         }
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $customerId = $this->customerId;
         if (!$customerId) {
             $customerId = null;
@@ -94,6 +95,8 @@ class InvoiceLineItemSearch extends InvoiceLineItem
                     $query->andWhere(['invoice.user_id' => $customerId]);
                 }
                 $query->notDeleted()
+                    ->notCanceled()
+                    ->notReturned()
                     ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
                     ->location($locationId)
                     ->between((new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d'));

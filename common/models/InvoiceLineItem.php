@@ -235,11 +235,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 ->where(['invoice.type' => Invoice::TYPE_INVOICE]);
     }
     
-    public function afterSoftDelete()
-    {
-        return $this->invoice->save();
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -268,6 +263,14 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         $lessonItemCategory = ItemCategory::findOne(['name' => 'Lesson']);
         return (int) $this->item->itemCategoryId === (int) $lessonItemCategory->id;
+    }
+
+    public function afterSoftDelete()
+    {
+        if (!$this->invoice->hasLineItem()) {
+            $this->invoice->delete();
+        }
+        return $this->invoice->save();
     }
 
     public function isDefaultDiscountedItems()
