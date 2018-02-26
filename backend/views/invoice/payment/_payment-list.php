@@ -3,8 +3,8 @@
 <?php
 $columns = [
       [
-        //'contentOptions' => ['class' => 'text-left','style' => 'min-width:40px;max-width:40px;'],
-        //'headerOptions' => ['class' => 'text-left','style' => 'min-width:40px;max-width:40px;'],
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:90px;max-width:90px;'],
+        'headerOptions' => ['class' => 'text-left','style' => 'min-width:90px;max-width:90px;'],
         'label' => 'Date',
         'options'=>['width'=>'90px;'] , 
         'value' => function ($data) {
@@ -12,9 +12,9 @@ $columns = [
         },
         ],
     [
-       // 'contentOptions' => ['class' => 'text-left','style' => 'min-width:50px;max-width:50px;'],
-        //'headerOptions' => ['class' => 'text-left','style' => 'min-width:50px;max-width:50px;'],
-        'options'=>['width'=>'90px;'] , 
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:120px;max-width:120px;'],
+        'headerOptions' => ['class' => 'text-left','style' => 'min-width:120px;max-width:120px;'],
+        'options' => ['width'=>'120px;'] ,
         'label' => 'Type',
         'value' => function ($data) {
             return $data->paymentMethod->name;
@@ -23,16 +23,16 @@ $columns = [
     [
       
          'label' => 'Ref',
-         'options'=>['width'=>'90px;'] , 
-        'contentOptions' => ['class' => 'text-left', 'style' => 'min-width:90px;max-width:90px;word-wrap:break-word;'],
+         'options'=>['width'=>'120px;'] ,
+        'contentOptions' => ['class' => 'text-left', 'style' => 'min-width:120px;max-width:120px;word-wrap:break-word;'],
         'value' => function ($data) {
             return $data->reference;
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left','style' => 'min-width:250px;max-width:250px;word-wrap:break-word;'],
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:400px;max-width:400px;word-wrap:break-word;'],
         'label' => 'Notes',
-        'options'=>['width'=>'250px;',] , 
+        'options' => ['width'=>'400px;'],
         'value' => function ($data) {
             return $data->notes;
 
