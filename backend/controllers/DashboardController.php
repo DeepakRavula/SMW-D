@@ -33,8 +33,7 @@ public function behaviors()
 }
     public function actionIndex()
     {
-        $loggedUser = User::findOne(Yii::$app->user->id);
-        if ($loggedUser->isStaff()) {
+        if (!$this->canView()) {
             $this->redirect(['schedule/index']);
         }
         $searchModel = new DashboardSearch();
@@ -187,5 +186,13 @@ public function behaviors()
             'enrolmentLossCount' => $enrolmentLossCount,
             'lessonsCount' => $lessonsCount
         ]);
+    }
+
+    public function canView()
+    {
+        return Yii::$app->user->can('manageMonthlyRevenue') ||
+            Yii::$app->user->can('manageEnrolmentGains') ||
+            Yii::$app->user->can('manageEnrolmentLosses') ||
+            Yii::$app->user->can('manageInstructionHours');
     }
 }
