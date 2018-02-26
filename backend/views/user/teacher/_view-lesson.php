@@ -283,23 +283,9 @@ var refreshcalendar = {
 		});
 		$(document).on('click', '#teacher-lesson-grid  tbody > tr', function () {
             var lessonId = $(this).data('key');
-			var params = $.param({ lessonId: lessonId });
-            $.ajax({
-                url    : '<?= Url::to(['user/edit-lesson']);?>?' + params,
-                type   : 'get',
-                dataType: "json",
-                success: function(response)
-                {
-                    if(response.status)
-                    {
-                        $('#lesson-content').html(response.data);
-                		$('#lesson-modal .modal-dialog').css({'width': '1000px'});
-                         refreshcalendar.refresh();
-                        $('#lesson-modal').modal('show');
-
-                    }
-                }
-            });
+			var params = $.param({ id: lessonId });
+			lesson.update(params);
+            
             return false;
         });
         $("#lessonsearch-summarisereport").on("change", function() {
