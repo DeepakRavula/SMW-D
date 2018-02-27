@@ -361,7 +361,10 @@ class ScheduleController extends BaseController
         if ((empty($teacherId) && empty($programId)) || ($teacherId == 'undefined')
             && ($programId == 'undefined')) {
             $teachersAvailabilities = TeacherAvailability::find()
-                ->where(['day' => $date->dayOfWeek])
+                ->joinWith(['userLocation' => function ($query) use ($locationId) {
+                    $query->andWhere(['user_location.location_id' => $locationId]);
+                }])
+                ->andWhere(['day' => $date->dayOfWeek])
                 ->all();
             foreach ($teachersAvailabilities as $teachersAvailability) {
                 $unavailability = $this->getTeacherUnavailability($teachersAvailability, $date);
@@ -405,7 +408,7 @@ class ScheduleController extends BaseController
         } elseif (!empty($programId) && $programId != 'undefined') {
             $teachersAvailabilities = TeacherAvailability::find()
                 ->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
-                    $query->where(['user_location.location_id' => $locationId]);
+                    $query->andWhere(['user_location.location_id' => $locationId]);
                     $query->joinWith(['qualifications'  => function ($query) use ($programId) {
                         $query->andWhere(['qualification.program_id' => $programId]);
                     }]);
