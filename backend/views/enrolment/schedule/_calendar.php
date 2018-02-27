@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Url;
+use common\models\Location;
 use common\models\LocationAvailability;
 
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
@@ -9,7 +10,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 <?= $this->render('/lesson/_color-code');?>
 <div id="enrolment-calendar"></div>
 <?php
-   $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+   $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
     
     $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
@@ -36,7 +37,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
  			if (! moment(date).isValid()) {
                  var date = moment($('#course-startdate').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
              }
- 			$('#enrolment-edit-modal .modal-dialog').css({'width': '1000px'});
+ 			
  			$.ajax({
  				url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
  				type: 'get',
@@ -112,36 +113,11 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
              });
          }
      };
- 	$(document).on('change', '#course-startdate', function () {
- 		calendar.refresh();
- 	});
- 	$(document).on('change', '#course-teacherid', function() {
- 		$('#courseschedule-day').val('');
- 		calendar.refresh();
- 		return false;
- 	});
-        $(document).on('click', '.enrolment-edit', function (e) {
-		var enrolmentId = '<?php echo $model->id;?>';
-		var param = $.param({id: enrolmentId });
-		$.ajax({
-			url    : '<?= Url::to(['enrolment/update']); ?>?' + param,
-			type   : 'get',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-					$('#enrolment-edit-content').html(response.data);
-					$('#enrolment-edit-modal').modal('show');
-                    var teacher = $('#course-teacherid').val();
-					if (!$.isEmptyObject(teacher)) {
-						calendar.refresh();
-					}
-				}
-			}
- });
-		return false;
- });
- });
+
+    $(document).on('change', '#course-teacherid', function() {
+        $('#courseschedule-day').val('');
+        calendar.refresh();
+        return false;
+    });
+});
  </script>

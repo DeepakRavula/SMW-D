@@ -78,35 +78,26 @@ use kartik\time\TimePicker;
 </div>
 <?php ActiveForm::end(); ?>
 </div>
-<?php
-    $minLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
-        ->orderBy(['fromTime' => SORT_ASC])
-        ->one();
-    $maxLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
-        ->orderBy(['toTime' => SORT_DESC])
-        ->one();
-    $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-    $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-?>
 
 <script>
-$(document).ready(function() {
-    var options = {
-        'renderId' : '#lesson-calendar',
-        'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
-        'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
-        'dateRenderId' : '#extra-gruop-lesson-date',
-        'changeId' : '#teacher-change',
-        'durationId' : '#extralesson-duration',
-        'minTime': '<?= $minTime; ?>',
-        'maxTime': '<?= $maxTime; ?>'
-    };
-    $.fn.calendarDayView(options);
-}); 
-$(document).on('modal-success', function(event, params) {
-    window.location.href = params.url;
-    return false;
-});
+    $(document).ready(function() {
+        var options = {
+            'renderId' : '#lesson-calendar',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
+            'changeId' : '#teacher-change',
+            'durationId' : '#extralesson-duration'
+        };
+        $.fn.calendarDayView(options);
+    });
+
+    $(document).on('modal-success', function(event, params) {
+        window.location.href = params.url;
+        return false;
+    });
+
+    $(document).on('week-view-calendar-select', function(event, params) {
+        $('#extra-gruop-lesson-date').val(params.date).trigger('change');
+        return false;
+    });
 </script>

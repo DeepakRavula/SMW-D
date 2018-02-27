@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap\Tabs;
+use kartik\select2\Select2Asset;
+use kartik\date\DatePickerAsset;
 
 $this->title = $model->course->program->name;
 $this->params['label'] = $this->render('_title', [
@@ -99,6 +101,28 @@ echo Tabs::widget([
                             }
                         }
                     });
+                }
+            }
+        });
+        return false;
+    });
+
+    $(document).on('click', '.enrolment-edit', function () {
+        var enrolmentId = '<?php echo $model->id;?>';
+        var param = $.param({id: enrolmentId });
+        $.ajax({
+            url    : '<?= Url::to(['enrolment/update']); ?>?' + param,
+            type   : 'get',
+            dataType: "json",
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Enrolment Edit</h4>');
+                    $('.modal-save').text('Preview Lessons');
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal .modal-dialog').css({'width': '1000px'});
                 }
             }
         });

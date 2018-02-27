@@ -1,10 +1,5 @@
 <?php
-
-use yii\data\ActiveDataProvider;
 use yii\bootstrap\Modal;
-use yii\grid\GridView;
-use common\models\Course;
-use common\models\Enrolment;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
 use kartik\datetime\DateTimePickerAsset;
@@ -63,20 +58,7 @@ Modal::begin([
     'courseProgramRates' => $model->courseProgramRates,
 ]);?>
 <?php Modal::end(); ?>
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Enrolment Edit</h4>',
-    'id' => 'enrolment-edit-modal',
-]);
-?>
-<div id="enrolment-edit-content">
-  <?php echo $this->render('/enrolment/schedule/_form-update', [
-            'course' => $model->course,
-            'courseSchedule' => $model->course->courseSchedule,
-            'model' => $model,
-        ]);?>
-</div>
-<?php Modal::end(); ?>
+
 <?php
 Modal::begin([
     'header' => '<h4 class="m-0">Enrolment Edit</h4>',
@@ -218,8 +200,7 @@ Modal::begin([
 			$.pjax.reload({url: url, container: "#enrolment-view", replace: false, async: false, timeout: 4000});
                         $.pjax.reload({url: url, container: "#enrolment-pfi", replace: false, async: false, timeout: 4000});
                         $.pjax.reload({url: url, container: "#lesson-index", replace: false, async: false, timeout: 4000});
-                        //$.pjax.reload({url: url, container: "#course-endDate", replace: false, async: false, timeout: 4000});
-			$.pjax.reload({url: url, container: "#enrolment-log", replace: false, async: false, timeout: 4000});
+                        $.pjax.reload({url: url, container: "#enrolment-log", replace: false, async: false, timeout: 4000});
                         $.pjax.reload({url: url, container: "#lesson-schedule", replace: false, async: false, timeout: 4000});
 		}
 	}

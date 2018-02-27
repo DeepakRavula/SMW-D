@@ -7,11 +7,12 @@
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 
+<?= $this->render('/lesson/_color-code');?>
 <div id="fullcalendar-week-view" style="display: none">
     <div class="fullcalendar-week-view col-md-12">
         <div class="col-lg-2 pull-right">
             <?php echo '<label>Go to Date</label>'; ?>
-            <input id="go-to-datepicker" type="text" value="<?=(new \DateTime())->format('d-m-Y')?>" class="form-control">
+            <input id="go-to-datepicker" readonly="true" type="text" value="<?=(new \DateTime())->format('d-m-Y')?>" class="form-control">
         </div>
         <div id="week-view-calendar"></div>
     </div>

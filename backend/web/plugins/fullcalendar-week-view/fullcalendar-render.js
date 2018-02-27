@@ -58,7 +58,10 @@ var calendar = {
             },
             select: function (start) {
                 $('#week-view-calendar').fullCalendar('removeEvents', 'newEnrolment');
-                $(calendarOptions.dateRenderId).val(moment(start).format('DD-MM-YYYY h:mm A')).trigger('change');
+                var response = {
+                    'date': moment(start).format('DD-MM-YYYY h:mm A')
+                };
+                $(document).trigger("week-view-calendar-select", response);
                 var endtime = start.clone();
                 var duration = $(calendarOptions.durationId).val();
                 var durationMinutes = moment.duration($.isEmptyObject(duration) ? '00:30' : duration).asMinutes();
@@ -92,9 +95,10 @@ var calendar = {
             type: 'get',
             success: function (response)
             {
-                var businessHours = response.availableHours;
                 var calendarOptions = options;
-                calendarOptions.businessHours = businessHours;
+                calendarOptions.businessHours = response.availableHours;
+                calendarOptions.minTime = response.minTime;
+                calendarOptions.maxTime = response.maxTime;
                 calendarOptions.date = date;
                 calendarOptions.eventUrl = options.eventUrl + '?' + eventParams;
                 calendar.showCalendar(calendarOptions);

@@ -1,28 +1,23 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
-use kartik\depdrop\DepDrop;
+use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use yii\helpers\Url;
-use common\models\Course;
-
-/* @var $this yii\web\View */
-/* @var $model common\models\Enrolment */
-/* @var $form yii\bootstrap\ActiveForm */
+use common\models\Location;
 ?>
-<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
-<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+
 <div id="bulk-reschedule" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="enrolment-form">
-	<?php $form = ActiveForm::begin([
-        'id' => 'enrolment-update'
+    <?php $form = ActiveForm::begin([
+        'id' => 'enrolment-update',
+        'action' => Url::to(['enrolment/update', 'id' => $model->id])
     ]); ?>
     <div class="row">
         <div class="col-md-3">
-			<?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+            <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
             $teachers = ArrayHelper::map(
                 User::find()
                     ->notDeleted()
@@ -34,32 +29,24 @@ use common\models\Course;
                 'publicIdentity'
             );
             ?>
-			<?php
-        // Dependent Dropdown
-        echo $form->field($course, 'teacherId')->widget(DepDrop::classname(), [
+            <?php
+            echo $form->field($course, 'teacherId')->widget(Select2::classname(), [
                 'data' => $teachers,
-                'type' => DepDrop::TYPE_SELECT2,
                 'options' => [
                     'id' => 'course-teacherid',
                     'placeholder' => 'Select teacher',
-                ],
-                'pluginOptions' => [
-                    'depends' => ['course-program'],
-                    'url' => Url::to(['/course/teachers'])
                 ]
             ]);
-        ?>
-		</div>
-		<div class="col-md-2">
-	<?= $form->field($courseSchedule, 'day', ['horizontalCssClasses' => [
-        'label' => '',
-        'wrapper' => '',
-]])->textInput(['readOnly' => true])->label('Day');?>
-		</div>
-		<div class="col-md-4">
-			<?php
-            echo $form->field($course, 'startDate')->widget(
-    DatePicker::classname(),
+            ?>
+        </div>
+        <div class="col-md-2">
+            <?= $form->field($courseSchedule, 'dayTime')->textInput(['readOnly' => true])->label('Day & Time');?>
+        </div>
+        <div class="col-md-2">
+            <?= $form->field($courseSchedule, 'duration')->textInput(['readOnly' => true])->label('Duration');?>
+        </div>
+        <div class="col-md-3">
+            <?= $form->field($course, 'startDate')->widget(DatePicker::classname(),
                 [
                 'options' => [
                     'value' => (new \DateTime())->format('d-m-Y'),
@@ -69,13 +56,10 @@ use common\models\Course;
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy'
                 ]
-            ]
-);
-            ?>
-		</div>
-		<div class="col-md-3">
-			<?php
-            echo $form->field($course, 'endDate')->widget(
+            ]);?>
+        </div>
+        <div class="col-md-3">
+            <?= $form->field($course, 'endDate')->widget(
                 DatePicker::classname(),
                 [
                 'options' => [
@@ -86,29 +70,32 @@ use common\models\Course;
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy'
                 ]
-            ]
-            );
-            ?>
-		</div>
+            ]); ?>
+        </div>
+        <?= $form->field($courseSchedule, 'day')->hiddenInput()->label(false);?>
         <?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false);?>
         <?= $form->field($courseSchedule, 'duration')->hiddenInput()->label(false);?>
-		<div class="col-md-12">
-                    <div id="enrolment-calendar">
-                        <?= $this->render('_calendar', [
-                            'model' => $model,
-                        ]);?>
-                    </div>
-                    <div class="pull-right m-t-10">
-		<?= Html::a('Cancel', '', ['class' => 'btn btn-default enrolment-edit-cancel']); ?>
-        <?php echo Html::submitButton(
-                            Yii::t('backend', 'Preview Lessons'),
-    ['class' => 'btn btn-info', 'name' => 'signup-button', 'id' => 'preview-button']
-                        ) ?>
-
-    </div>
+        <div class="col-md-12">
+            <div id="bulk-reschedule-calendar"></div>
         </div>
-	</div>
-
-<?php ActiveForm::end(); ?>
-
+    </div>
+    <?php ActiveForm::end(); ?>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var options = {
+            'renderId' : '#bulk-reschedule-calendar',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
+            'changeId' : '#course-teacherid',
+            'durationId' : '#couseschedule-duration'
+        };
+        $.fn.calendarDayView(options);
+    });
+
+    $(document).on('week-view-calendar-select', function(event, params) {
+        $('#extra-gruop-lesson-date').val(params.date).trigger('change');
+        return false;
+    });
+</script>
