@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap\Tabs;
-use common\models\LocationAvailability;
 
 $this->title = $model->course->program->name;
 $this->params['label'] = $this->render('_title', [
@@ -78,81 +77,31 @@ echo Tabs::widget([
     ]);
 ?>
 </div>
-<?php
-    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-    $minLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
-        ->orderBy(['fromTime' => SORT_ASC])
-        ->one();
-    $maxLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
-        ->orderBy(['toTime' => SORT_DESC])
-        ->one();
-    $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-    $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-?>
+
 <script>
-$(document).ready(function () {
-    function loadCalendar() {
- 		var date = $('#course-startdate').val();
-        $('#enrolment-calendar').fullCalendar({
-     		defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
-            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-			firstDay : 1,
-            nowIndicator: true,
-             header: {
-                 left: 'prev,next today',
-                 center: 'title',
-                 right: ''
-             },
-             allDaySlot: false,
-             slotDuration: '00:15:00',
-             titleFormat: 'DD-MMM-YYYY, dddd',
-             defaultView: 'agendaWeek',
-             minTime: "<?php echo $from_time; ?>",
-             maxTime: "<?php echo $to_time; ?>",
-            selectConstraint: {
-                start: '00:01', // a start time (10am in this example)
-                end: '24:00', // an end time (6pm in this example)
-                dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-            },
-            eventConstraint: {
-                start: '00:01', // a start time (10am in this example)
-                end: '24:00', // an end time (6pm in this example)
-                dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-            },
-             businessHours: [],
-             allowCalEventOverlap: true,
-             overlapEventsSeparate: true,
-             events: [],
-     	});
-	}
-	$(document).on('click', '.enrolment-delete', function () {
-		var enrolmentId = '<?= $model->id;?>';
-		 bootbox.confirm({ 
-		message: "Are you sure you want to delete this enrolment?", 
-		callback: function(result){
-			if(result) {
-				$('.bootbox').modal('hide');
-			$.ajax({
-				url: '<?= Url::to(['enrolment/delete']); ?>?id=' + enrolmentId,
-				dataType: "json",
-                data   : $(this).serialize(),
-				success: function (response)
-				{
-					if (response.status)
-					{
-                        window.location.href = response.url;
-					} else {
-						$('#enrolment-delete').html('You are not allowed to delete this enrolment.').fadeIn().delay(3000).fadeOut();
-					}
-				}
-			});
-			return false;	
-		}
-		}
-	});	
-	return false;
-	});
-});
+    $(document).on('click', '.enrolment-delete', function () {
+        var enrolmentId = '<?= $model->id;?>';
+        bootbox.confirm({
+            message: "Are you sure you want to delete this enrolment?",
+            callback: function(result){
+                if(result) {
+                    $('.bootbox').modal('hide');
+                    $.ajax({
+                        url: '<?= Url::to(['enrolment/delete']); ?>?id=' + enrolmentId,
+                        dataType: "json",
+                        data   : $(this).serialize(),
+                        success: function (response)
+                        {
+                            if (response.status) {
+                                window.location.href = response.url;
+                            } else {
+                                $('#enrolment-delete').html('You are not allowed to delete this enrolment.').fadeIn().delay(3000).fadeOut();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        return false;
+    });
 </script>

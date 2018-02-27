@@ -5,7 +5,6 @@ use common\models\User;
 use common\models\LocationAvailability;
 use common\models\Location;
 use yii\bootstrap\ActiveForm;
-use kartik\date\DatePicker;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use kartik\time\TimePicker;
@@ -73,26 +72,9 @@ use kartik\time\TimePicker;
             <?php echo $form->field($model, 'applyFullDiscount')->checkbox()?>
     </div>
         
-        <div class="col-md-12">
-            <div class="col-lg-2 pull-right">
-            <?php echo '<label>Go to Date</label>'; ?>
-            <?php echo DatePicker::widget([
-                    'name' => 'selected-date',
-                    'id' => 'extra-group-lesson-go-to-date',
-                    'value' => Yii::$app->formatter->asDate((new DateTime())->format('d-m-Y')),
-                    'type' => DatePicker::TYPE_INPUT,
-                    'buttonOptions' => [
-                        'removeButton' => true,
-                    ],
-                    'pluginOptions' => [
-                        'autoclose' => true,
-                        'format' => 'dd-mm-yyyy',
-                        'todayHighlight' => true
-                    ]
-            ]); ?>
-        </div>
-            <div id="lesson-calendar"></div>
-        </div>
+    <div class="col-md-12">
+        <div id="lesson-calendar"></div>
+    </div>
 </div>
 <?php ActiveForm::end(); ?>
 </div>
@@ -112,7 +94,6 @@ use kartik\time\TimePicker;
 <script>
 $(document).ready(function() {
     var options = {
-        'dateId' : '#extra-group-lesson-go-to-date',
         'renderId' : '#lesson-calendar',
         'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
         'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',

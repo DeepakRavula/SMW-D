@@ -1,7 +1,15 @@
 $.fn.calendarDayView = function(options) {
+    $.ajax({
+        url: 'schedule/calendar',
+        type: 'get',
+        success: function (response)
+        {
+            $(options.renderId).html(response.data);
+        }
+    });
     calendar.render(options);
     
-    $(document).off('change', options.dateId).on('change', options.dateId, function () {
+    $(document).off('change', '#week-view-calendar-go-to-date').on('change', '#week-view-calendar-go-to-date', function () {
         calendar.render(options);
     });
     
@@ -12,8 +20,8 @@ $.fn.calendarDayView = function(options) {
 
 var calendar = {
     showCalendar: function (calendarOptions) {
-        $(calendarOptions.renderId).fullCalendar('destroy');
-        $(calendarOptions.renderId).fullCalendar({
+        $('#week-view-calendar').fullCalendar('destroy');
+        $('#week-view-calendar').fullCalendar({
             schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
             defaultDate: moment(calendarOptions.date).format('YYYY-MM-DD'),
             firstDay : 1,
@@ -47,17 +55,17 @@ var calendar = {
                 url: calendarOptions.eventUrl,
                 type: 'GET',
                 error: function() {
-                    $(calendarOptions.renderId).fullCalendar("refetchEvents");
+                    $('#week-view-calendar').fullCalendar("refetchEvents");
                 }
             },
             select: function (start) {
-                $(calendarOptions.renderId).fullCalendar('removeEvents', 'newEnrolment');
+                $('#week-view-calendar').fullCalendar('removeEvents', 'newEnrolment');
                 $(calendarOptions.dateRenderId).val(moment(start).format('DD-MM-YYYY h:mm A')).trigger('change');
                 var endtime = start.clone();
                 var duration = $(calendarOptions.durationId).val();
                 var durationMinutes = moment.duration($.isEmptyObject(duration) ? '00:30' : duration).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
-                $(calendarOptions.renderId).fullCalendar('renderEvent',
+                $('#week-view-calendar').fullCalendar('renderEvent',
                     {
                         id: 'newEnrolment',
                         start: start,
@@ -66,7 +74,7 @@ var calendar = {
                     },
                 true // make the event "stick"
                 );
-                $(calendarOptions.renderId).fullCalendar('unselect');
+                $('#week-view-calendar').fullCalendar('unselect');
             },
             eventAfterAllRender: function () {
                 $('.fc-short').removeClass('fc-short');
@@ -77,7 +85,7 @@ var calendar = {
     },
 
     render: function (options) {
-        var date = moment($(options.dateId).val(), "DD-MM-YYYY");
+        var date = moment($('#week-view-calendar-go-to-date').val(), "DD-MM-YYYY");
         var teacherId = $(options.changeId).val();
         var params = $.param({ id: teacherId });
         var eventParams = $.param({ teacherId: teacherId });
