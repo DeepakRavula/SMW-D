@@ -30,8 +30,9 @@ use common\models\LocationAvailability;
              {
              var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
  			if (! moment(date).isValid()) {
-                 var date = moment($('#course-startdate').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
+                 var date = moment($('#course-startdate').val(), 'DD-MM-YYYY hh:mm A', true).format('YYYY-MM-DD');
              }
+	     $('#courseschedule-day').val(moment(date).format('dddd'));
  			$.ajax({
  				url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
  				type: 'get',
