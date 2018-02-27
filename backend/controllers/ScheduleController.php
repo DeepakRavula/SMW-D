@@ -143,7 +143,7 @@ class ScheduleController extends BaseController
             ->andWhere(['DATE(lesson.date)' => $date->format('Y-m-d')])
             ->notDeleted();
         if (!empty($teacherId) && $teacherId != 'undefined') {
-            $query->andWhere(['teacherId' => $teacherId]);
+            $query->andWhere(['lesson.teacherId' => $teacherId]);
         }
         $lessons = $query->all();
         return $lessons;
