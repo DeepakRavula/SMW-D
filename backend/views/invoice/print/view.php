@@ -25,7 +25,6 @@ echo $this->render('/invoice/_view-line-item', [
 ]);
 ?>
            <div class="m-l-22"><b>Payments</b></div>  
-            <div class="row">  
                
 	<div class="col-xs-10">          
 		<?= $this->render('/invoice/payment/_payment-list', [
@@ -43,7 +42,7 @@ echo $this->render('/invoice/_view-line-item', [
 	</div>
     <?php Pjax::end(); ?>
 </div>
-        </div>
+   
 	 <div style="clear:both; margin-top: 20px; position: relative;">
         <strong> Notes: </strong><?php echo $model->notes; ?>
     </div>
