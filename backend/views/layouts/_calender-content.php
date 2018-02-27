@@ -6,23 +6,16 @@
  */
 use kartik\date\DatePicker;
 ?>
-<div class="col-md-12">
+
+<div id="fullcalendar-week-view" class="col-md-12">
     <div class="col-lg-2 pull-right">
         <?php echo '<label>Go to Date</label>'; ?>
-        <?php echo DatePicker::widget([
-                'name' => 'switched-date',
-                'id' => 'week-view-calendar-go-to-date',
-                'value' => Yii::$app->formatter->asDate((new DateTime())->format('d-m-Y')),
-                'type' => DatePicker::TYPE_INPUT,
-                'buttonOptions' => [
-                    'removeButton' => true,
-                ],
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'dd-mm-yyyy',
-                    'todayHighlight' => true
-                ]
-        ]); ?>
+        <div id="week-view-calendar-go-to-date" class="input-group date">
+			<input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
+			<div class="input-group-addon">
+				<span class="glyphicon glyphicon-calendar"></span>
+			</div>
+		</div>
     </div>
     <div id="week-view-calendar"></div>
 </div>
