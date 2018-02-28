@@ -176,10 +176,11 @@ $this->params['label'] = $this->render('_title', [
              if(teacherId!==null && teacherId!=="")
              {
              var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
-             $('#courseschedule-day').val(moment(date).format('dddd'));
- 			if (! moment(date).isValid()) {
-                 var date = moment($('#course-startdate').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
+	     if (! moment(date).isValid()) {
+                 var date = moment($('#course-startdate').val(), 'DD-MM-YYYY hh:mm A', true).format('YYYY-MM-DD');
              }
+             $('#courseschedule-day').val(moment(date).format('dddd'));
+ 			
  			$('#enrolment-edit-modal .modal-dialog').css({'width': '1000px'});
  			$.ajax({
  				url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
