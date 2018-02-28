@@ -80,4 +80,12 @@ class UserLocation extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Qualification::className(), ['teacher_id' => 'user_id']);
     }
+
+    public function beforeDelete()
+    {
+        foreach ($this->teacherAvailabilities as $teacherAvailability) {
+            $teacherAvailability->delete();
+        }
+        return parent::beforeDelete();
+    }
 }

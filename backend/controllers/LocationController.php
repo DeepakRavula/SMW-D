@@ -25,7 +25,7 @@ class LocationController extends BaseController
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
                'only' => ['create', 'update', 'edit-availability', 'add-availability', 'render-events', 'check-availability', 'validate',
-                   'delete-availability','modify','validate-location-availability'],
+                   'modify','validate-location-availability'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON
@@ -36,7 +36,7 @@ class LocationController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['update','view','validate-location-availability', 'add-availability', 'edit-availability', 'delete-availability', 'render-events', 'check-availability','modify', 'validate'],
+                        'actions' => ['update','view','validate-location-availability', 'add-availability', 'edit-availability', 'render-events', 'check-availability','modify', 'validate'],
                         'roles' => ['manageLocations']
                     ],
                     [
@@ -166,24 +166,6 @@ class LocationController extends BaseController
     }
     
     
-    public function actionDeleteAvailability($resourceId,$type)
-    {
-        $location = Location::findOne(['slug' => Yii::$app->location]);
-        $availabilityModel = LocationAvailability::find()
-            ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
-            ->one();
-        if($availabilityModel->delete()) {
-            $response= [
-                'status' => true
-            ];
-        } else {
-            $response= [
-                'status' => false,
-            ];
-        }
-        return $response;
-    }
-
     public function actionRenderEvents($type)
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);

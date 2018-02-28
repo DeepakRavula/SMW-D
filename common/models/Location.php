@@ -153,6 +153,11 @@ class Location extends \yii\db\ActiveRecord
                 $model->id          = null;
                 $model->isNewRecord = true;
                 $model->day         = $day;
+                $model->type        = LocationAvailability::TYPE_OPERATION_TIME;
+                $model->save();
+                $model->id          = null;
+                $model->isNewRecord = true;
+                $model->type        = LocationAvailability::TYPE_SCHEDULE_TIME;
                 $model->save();
             }
             $locationDebt = new LocationDebt();
