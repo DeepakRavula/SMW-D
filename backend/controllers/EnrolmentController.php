@@ -422,10 +422,15 @@ class EnrolmentController extends BaseController
             $lessons		 = Lesson::find()
                 ->where(['courseId' => $model->course->id])
                 ->regular()
-                ->scheduledOrRescheduled()
+                ->scheduled()
                 ->isConfirmed()
                 ->between($startDate, $endDate)
                 ->all();
+	    foreach($lessons as $lesson)
+	    {
+		 print_r("Lesson Id :".$lesson->id."\n");   
+	    }
+	    die('coming');
             $courseDay = $courseSchedule->day;
             $day = $startDate->format('l');
             if ($day !== $courseDay) {
