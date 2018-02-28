@@ -53,14 +53,6 @@ use yii\helpers\Html;
                     return !empty($date) ? $date : null;
                 },
             ],
-            [
-                'label' => 'Status',
-                'format' => 'raw',
-                'contentOptions' => ['style' => 'width: 80px;'],
-                'value' => function ($data) {
-                    return $data->isExploded ? Html::a('<i class="fa fa-code-fork fa-lg"></i>', null) : null;
-                }
-            ],
         ];
 
     ?>
