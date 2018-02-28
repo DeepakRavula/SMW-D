@@ -3,8 +3,6 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap\Tabs;
-use kartik\select2\Select2Asset;
-use kartik\date\DatePickerAsset;
 
 $this->title = $model->course->program->name;
 $this->params['label'] = $this->render('_title', [
@@ -18,6 +16,8 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
         'class' => 'enrolment-delete btn btn-box-tool',
     ])?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
+<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
+<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div id="enrolment-enddate-alert" style="display: none;" class="alert-info alert fade in"></div>

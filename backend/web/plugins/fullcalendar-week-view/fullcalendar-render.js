@@ -1,13 +1,14 @@
 $.fn.calendarDayView = function(options) {
     $("#fullcalendar-week-view").clone(true, true).contents().appendTo(options.renderId);
-    $('.fullcalendar-week-view input').datepicker({
-        format: 'dd-mm-yyyy',
+    $('#go-to-datepicker').datepicker({
+        format: 'M-d-yyyy',
         autoclose: true,
-        todayHighlight: true
+        todayHighlight: true,
+        orientation: "auto"
     });
     calendar.render(options);
     
-    $(document).off('change', '#go-to-datepicker').on('change', '#go-to-datepicker', function () {
+    $(document).off('change', '#fullcalendar-week-view-go-to-datepicker').on('change', '#fullcalendar-week-view-go-to-datepicker', function () {
         calendar.render(options);
     });
     
@@ -86,7 +87,7 @@ var calendar = {
     },
 
     render: function (options) {
-        var date = moment($('#go-to-datepicker').val(), "DD-MM-YYYY");
+        var date = moment($('#fullcalendar-week-view-go-to-datepicker').val(), "MMM-DD-YYYY");debugger
         var teacherId = $(options.changeId).val();
         var params = $.param({ id: teacherId });
         var eventParams = $.param({ teacherId: teacherId });

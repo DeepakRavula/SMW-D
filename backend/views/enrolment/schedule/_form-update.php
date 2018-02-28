@@ -6,6 +6,7 @@ use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use yii\helpers\Url;
+use kartik\time\TimePicker;
 use common\models\Location;
 ?>
 
@@ -39,33 +40,40 @@ use common\models\Location;
             ]);
             ?>
         </div>
-        <div class="col-md-2">
-            <?= $form->field($courseSchedule, 'dayTime')->textInput(['readOnly' => true])->label('Day & Time');?>
-        </div>
-        <div class="col-md-2">
-            <?= $form->field($courseSchedule, 'duration')->textInput(['readOnly' => true])->label('Duration');?>
-        </div>
         <div class="col-md-3">
+            <?= $form->field($courseSchedule, 'dayTime')->textInput(['readOnly' => true])->label('Day');?>
+        </div>
+        <div class="col-md-2">
+            <?= $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(), [
+                'pluginOptions' => [
+                    'showMeridian' => false,
+                    'defaultTime' => (new \DateTime($courseSchedule->duration))->format('H:i'),
+                ]
+            ])->label('Duration');?>
+        </div>
+        <div class="col-md-2">
             <?= $form->field($course, 'startDate')->widget(DatePicker::classname(),
                 [
                 'options' => [
+                    'readOnly' => true,
                     'value' => (new \DateTime())->format('d-m-Y'),
                 ],
-                'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                'type' => DatePicker::TYPE_INPUT,
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy'
                 ]
             ]);?>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <?= $form->field($course, 'endDate')->widget(
                 DatePicker::classname(),
                 [
                 'options' => [
+                    'readOnly' => true,
                     'value' => (new \DateTime($course->endDate))->format('d-m-Y'),
                 ],
-                'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                'type' => DatePicker::TYPE_INPUT,
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy'
@@ -74,7 +82,6 @@ use common\models\Location;
         </div>
         <?= $form->field($courseSchedule, 'day')->hiddenInput()->label(false);?>
         <?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false);?>
-        <?= $form->field($courseSchedule, 'duration')->hiddenInput()->label(false);?>
         <div class="col-md-12">
             <div id="bulk-reschedule-calendar"></div>
         </div>
@@ -89,13 +96,20 @@ use common\models\Location;
             'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
             'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
             'changeId' : '#course-teacherid',
-            'durationId' : '#couseschedule-duration'
+            'durationId' : '#courseschedule-duration'
         };
         $.fn.calendarDayView(options);
     });
 
     $(document).on('week-view-calendar-select', function(event, params) {
-        $('#extra-gruop-lesson-date').val(params.date).trigger('change');
+        $('#courseschedule-day').val(moment(params.date).format('e')).trigger('change');
+        $('#courseschedule-daytime').val(moment(params.date).format('dddd hh:mm A')).trigger('change');
+        $('#courseschedule-fromtime').val(moment(params.date).format('HH:MM:SS')).trigger('change');
+        return false;
+    });
+
+    $(document).on('modal-success', function(event, params) {
+        paymentFrequency.onEditableSuccess();
         return false;
     });
 </script>

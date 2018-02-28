@@ -21,6 +21,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
     public $paymentFrequency;
     public $programRate;
     public $discount;
+    private $dayTime;
 
     /**
      * @inheritdoc
@@ -36,7 +37,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['day', 'fromTime'], 'required'],
+            [['day', 'fromTime', 'dayTime'], 'required'],
             [['courseId', 'paymentFrequency'], 'integer'],
             [['fromTime', 'duration', 'discount', 'paymentFrequency', 'programRate'], 'safe'],
         ];
@@ -107,5 +108,16 @@ class CourseSchedule extends \yii\db\ActiveRecord
             $enrolmentModel->save();
         }
         return parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function getDayTime()
+    {
+        $days = Course::getWeekdaysList();
+        return $days[$this->day] . ' ' . (new \DateTime($this->fromTime))->format('h:i A');
+    }
+
+    public function setDayTime($value)
+    {
+        $this->dayTime = $value;
     }
 }
