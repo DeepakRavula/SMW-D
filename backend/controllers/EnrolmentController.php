@@ -426,11 +426,7 @@ class EnrolmentController extends BaseController
                 ->isConfirmed()
                 ->between($startDate, $endDate)
                 ->all();
-	    foreach($lessons as $lesson)
-	    {
-		 print_r("Lesson Id :".$lesson->id."\n");   
-	    }
-	    die('coming');
+	   
             $courseDay = $courseSchedule->day;
             $day = $startDate->format('l');
             if ($day !== $courseDay) {
