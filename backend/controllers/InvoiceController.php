@@ -459,8 +459,7 @@ class InvoiceController extends BaseController
      */
     protected function findModel($id)
     {
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Invoice::find()
                 ->where([
                     'invoice.id' => $id,
@@ -476,7 +475,6 @@ class InvoiceController extends BaseController
 
     public function actionUpdateMailStatus($id, $state)
     {
-        $request = Yii::$app->request;
         $model = $this->findModel($id);
         $model->isSent = $state;
         $model->save();
@@ -484,7 +482,7 @@ class InvoiceController extends BaseController
 
     public function actionAllCompletedLessons()
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Lesson::find()
                 ->isConfirmed()
                 ->notDeleted()
@@ -556,7 +554,9 @@ class InvoiceController extends BaseController
     public function actionInvoicePaymentCycle($id)
     {
         $paymentCycle = PaymentCycle::findOne($id);
-
+        if (!$paymentCycle) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
         if ($paymentCycle->canRaiseProformaInvoice()) {
 	    $invoice = $paymentCycle->createProFormaInvoice();
             if ($invoice) {
