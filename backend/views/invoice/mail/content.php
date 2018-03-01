@@ -4,8 +4,6 @@ use common\models\ItemType;
 use common\models\TextTemplate;
 
 ?>
-
-Dear Customer,<br>
 	<?= $emailTemplate->header ?? 'Please find the invoice below:'; ?><Br>
             <?php yii\widgets\Pjax::begin(['id' => 'lesson-index']);
             $columns = [
