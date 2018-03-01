@@ -15,14 +15,14 @@ use yii\helpers\Url;
         'action' => Url::to(['payment/credit-payment', 'id' => $invoice->id]),
     ]); ?>
  	<div class="row">
-        <div class="col-xs-3">
-    		<?php echo $form->field($model, 'credit')->textInput()->label('Available Credit')?>
+        <div class="col-xs-4">
+    		<?php echo $form->field($model, 'credit')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Available Credit')?>
         </div>
-        <div class="col-xs-3">			
-   			<?php echo $form->field($model, 'amountNeeded')->textInput()->label('Amount Needed') ?>
+        <div class="col-xs-4">
+   			<?php echo $form->field($model, 'amountNeeded')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Amount Needed') ?>
         </div>
-		<div class="col-xs-3">
-   			<?php echo $form->field($model, 'amount')->textInput()->label('Amount To Apply') ?>
+		<div class="col-xs-4">
+   			<?php echo $form->field($model, 'amount')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Amount To Apply') ?>
         </div>
 	</div>
 	<?php echo $form->field($model, 'sourceType')->hiddenInput()->label(false); ?>

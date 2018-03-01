@@ -61,6 +61,7 @@ Modal::end(); ?>
 <?php Pjax::end(); ?>
 <script type="text/javascript">
     $(document).on('click', '#apply-credit-grid td', function () {
+		$('input[name="Payment[amount]"]').attr('readonly', false);
         var amount = $(this).closest('tr').data('amount');
         var id = $(this).closest('tr').data('id');
         var type = $(this).closest('tr').data('source');    
