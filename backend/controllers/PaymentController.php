@@ -238,7 +238,6 @@ class PaymentController extends BaseController
                 $creditUsageModel->save();
 
                 $invoiceModel = Invoice::findOne(['id' => $paymentModel->sourceId]);
-                $invoiceModel->balance = $invoiceModel->balance + abs($paymentModel->amount);
                 $invoiceModel->save();
                 $response = [
                     'status' => true,

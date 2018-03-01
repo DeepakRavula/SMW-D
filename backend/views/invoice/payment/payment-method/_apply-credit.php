@@ -37,7 +37,8 @@ if (!empty($invoiceCredits)) {
             $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->date);
         }
         $results[] = [
-            'id' => $invoiceCredit->getInvoiceNumber(),
+            'id' => $invoiceCredit->id,
+            'invoice_number' => $invoiceCredit->getInvoiceNumber(),
             'date' => $paymentDate->format('d-m-Y'),
             'amount' => abs($invoiceCredit->balance),
             'source' => $source,
@@ -49,7 +50,7 @@ if (!empty($invoiceCredits)) {
 $creditDataProvider = new ArrayDataProvider([
     'allModels' => $results,
     'sort' => [
-        'attributes' => ['id', 'date', 'amount', 'source'],
+        'attributes' => ['id', 'invoice_number', 'date', 'amount', 'source'],
     ],
 ]);
 ?>
@@ -73,7 +74,7 @@ echo GridView::widget([
     'columns' => [
         [
         'label' => 'Invoice Number',
-        'value' => 'id',
+        'value' => 'invoice_number',
         ],
         [
         'label' => 'Source',
