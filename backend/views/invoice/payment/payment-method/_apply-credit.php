@@ -37,7 +37,7 @@ if (!empty($invoiceCredits)) {
             $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->date);
         }
         $results[] = [
-            'id' => $invoiceCredit->id,
+            'id' => $invoiceCredit->getInvoiceNumber(),
             'date' => $paymentDate->format('d-m-Y'),
             'amount' => abs($invoiceCredit->balance),
             'source' => $source,
@@ -53,8 +53,9 @@ $creditDataProvider = new ArrayDataProvider([
     ],
 ]);
 ?>
-<?php if ($creditDataProvider->totalCount > 0):
-
+<?php if ($creditDataProvider->totalCount > 0): ?>
+<h5><strong>Choose the credit that you wish to apply</strong></h5>
+<?php
 echo GridView::widget([
     'dataProvider' => $creditDataProvider,
     'tableOptions' => ['class' => 'table table-bordered'],
@@ -71,7 +72,7 @@ echo GridView::widget([
     },
     'columns' => [
         [
-        'label' => 'Id',
+        'label' => 'Invoice Number',
         'value' => 'id',
         ],
         [
