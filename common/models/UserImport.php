@@ -13,6 +13,8 @@ class UserImport extends Model
 {
     public $file;
     public $path;
+    
+    const DEFAULT_OPENING_BALANCE=0;
     /**
      * {@inheritdoc}
      */
@@ -269,7 +271,11 @@ class UserImport extends Model
     {
         $studentCsv = new StudentCsv();
         $studentCsv->studentId = $student->id;
+	$studentCsv->balance= self::DEFAULT_OPENING_BALANCE;
+	if(!empty($row['Balance as date']))
+	{
         $studentCsv->balance = $row['Balance as date'];
+	}
         $studentCsv->firstName = $row['First Name'];
         $studentCsv->lastName = $row['Last Name'];
         $studentCsv->email = $row['Email Address'];
