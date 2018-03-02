@@ -16,7 +16,7 @@ use yii\helpers\Url;
     ]); ?>
  	<div class="row">
             <div class="col-xs-3">
-    		<?php echo $form->field($model, 'sourceId')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Source')?>
+    		<?php echo $form->field($model, 'sourceType')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Source')?>
         </div>
         <div class="col-xs-3">
     		<?php echo $form->field($model, 'credit')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Available Credit')?>
@@ -28,6 +28,7 @@ use yii\helpers\Url;
    			<?php echo $form->field($model, 'amount')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Amount To Apply') ?>
         </div>
 	</div>
+	<?php echo $form->field($model, 'sourceId')->hiddenInput()->label(false); ?>
     <div class="form-group pull-right">
         <?= Html::a('Cancel', '#', ['class' => 'btn btn-default apply-credit-cancel']);
         ?>

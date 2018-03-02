@@ -55,7 +55,7 @@ class Payment extends ActiveRecord
     public function rules()
     {
         return [
-            [['sourceId'], 'required', 'on' => self::SCENARIO_APPLY_CREDIT],
+            [['sourceType'], 'required', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
             [['amount'], 'validateNegativeBalance'],
@@ -97,7 +97,7 @@ class Payment extends ActiveRecord
             'user_id' => 'User ID',
             'payment_method_id' => 'Payment Method',
             'amount' => 'Amount',
-            'sourceId' => 'Source',
+            'sourceType' => 'Source',
             'groupByMethod' => 'Summaries Only',
         ];
     }

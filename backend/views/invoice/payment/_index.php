@@ -73,7 +73,8 @@ Modal::end(); ?>
         }
         $('input[name="Payment[amountNeeded]"]').val((amountNeeded).toFixed(2));          
         $('#payment-credit').val((amount).toFixed(2));
-        $('#payment-sourceid').val(invoice_number);
+        $('#payment-sourcetype').val(invoice_number);
+        $('#payment-sourceid').val(id);
         return false;
     });
     
