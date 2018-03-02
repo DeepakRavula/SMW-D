@@ -214,44 +214,26 @@ class PaymentController extends BaseController
     public function actionCreditPayment($id)
     {
         $model = Invoice::findOne(['id' => $id]);
-        $paymentModel = new Payment();
+        $paymentModel = new Payment(['scenario' => Payment::SCENARIO_APPLY_CREDIT]);
         $request = Yii::$app->request;
-        if ($paymentModel->load($request->post())) {
-            $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-            $paymentModel->reference = $paymentModel->sourceId;
-            $paymentModel->invoiceId = $model->id;
-            if ($paymentModel->validate()) {
-                $paymentModel->save();
-
-                $creditPaymentId = $paymentModel->id;
-                $paymentModel->id = null;
-                $paymentModel->isNewRecord = true;
-                $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-                $paymentModel->invoiceId = $paymentModel->sourceId;
-                $paymentModel->reference = $model->id;
-                $paymentModel->save();
-
-                $debitPaymentId = $paymentModel->id;
-                $creditUsageModel = new CreditUsage();
-                $creditUsageModel->credit_payment_id = $creditPaymentId;
-                $creditUsageModel->debit_payment_id = $debitPaymentId;
-                $creditUsageModel->save();
-
+        if ($request->post()) {
+            if ($paymentModel->load($request->post()) && $paymentModel->validate()) {
                 $invoiceModel = Invoice::findOne(['id' => $paymentModel->sourceId]);
+                $model->addPayment($invoiceModel, $paymentModel->amount);
                 $invoiceModel->save();
                 $response = [
-                    'status' => true,
+                    'status' => true
                 ];
             } else {
-                $paymentModel = ActiveForm::validate($paymentModel);
                 $response = [
                     'status' => false,
-                    'errors' => $paymentModel,
+                    'errors' => ActiveForm::validate($paymentModel)
                 ];
             }
         } else {
             $data = $this->renderAjax('/invoice/payment/payment-method/_apply-credit', [
-                'invoice' => $model
+                'invoice' => $model,
+                'paymentModel' => $paymentModel
             ]);
             $response = [
                 'status' => true,
