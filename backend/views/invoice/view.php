@@ -454,6 +454,7 @@ Modal::begin([
                                 $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                                 $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                                 $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+				$.pjax.reload({container: "#invoice-details", replace: false, async: false, timeout: 6000});
                                 $('#add-payment-spinner').hide();
                             } else {
                                 $('#payment-form').yiiActiveForm('updateMessages', response.errors , true);
