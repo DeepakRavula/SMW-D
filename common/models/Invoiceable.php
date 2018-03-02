@@ -127,6 +127,9 @@ trait Invoiceable
     
     public function createPrivateLessonInvoice()
     {
+        if ($this->hasProFormaInvoice()) {
+            return $this->proFormaInvoice;
+        }
         $invoice = $this->createInvoice();
         $location_id = $this->enrolment->student->customer->userLocation->location_id;
         if (is_a(Yii::$app, 'yii\console\Application')) {
@@ -164,8 +167,11 @@ trait Invoiceable
 
     public function createGroupInvoice($enrolmentId)
     {
-        $invoice   = $this->createInvoice();
         $enrolment = Enrolment::findOne($enrolmentId);
+        if ($enrolment->hasInvoice($this->id)) {
+            return $enrolment->getInvoice($this->id);
+        }
+        $invoice   = $this->createInvoice();
         $location_id = $enrolment->student->customer->userLocation->location_id;
         $user = User::findOne(['id' => $enrolment->student->customer->id]);
         $invoice->userName = $user->publicIdentity;
@@ -238,6 +244,9 @@ trait Invoiceable
     
     public function createProFormaInvoice()
     {
+        if ($this->hasProFormaInvoice()) {
+            return $this->proFormaInvoice;
+        }
         $locationId = $this->student->customer->userLocation->location_id;
         $user = User::findOne(['id' => $this->student->customer->id]);
         $invoice = new Invoice();

@@ -3,18 +3,18 @@
 <?php
 $columns = [
       [
-        'contentOptions' => ['class' => 'text-left','style' => 'min-width:90px;max-width:90px;'],
-        'headerOptions' => ['class' => 'text-left','style' => 'min-width:90px;max-width:90px;'],
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:15%;max-width:15%;'],
+        'headerOptions' => ['class' => 'text-left','style' => 'min-width:15%;max-width:15%;'],
         'label' => 'Date',
-        'options'=>['width'=>'90px;'] , 
+        'options'=>['width'=>'15%;'] , 
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->date);
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left','style' => 'min-width:120px;max-width:120px;'],
-        'headerOptions' => ['class' => 'text-left','style' => 'min-width:120px;max-width:120px;'],
-        'options' => ['width'=>'120px;'] ,
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:15%;max-width:15%;'],
+        'headerOptions' => ['class' => 'text-left','style' => 'min-width:15%;max-width:15%;'],
+        'options' => ['width'=>'15%;'] ,
         'label' => 'Type',
         'value' => function ($data) {
             return $data->paymentMethod->name;
@@ -23,16 +23,16 @@ $columns = [
     [
       
          'label' => 'Ref',
-         'options'=>['width'=>'120px;'] ,
-        'contentOptions' => ['class' => 'text-left', 'style' => 'min-width:120px;max-width:120px;word-wrap:break-word;'],
+         'options'=>['width'=>'20%;'] ,
+        'contentOptions' => ['class' => 'text-left', 'style' => 'min-width:20%;max-width:20%;word-wrap:break-word;'],
         'value' => function ($data) {
             return $data->reference;
         },
         ],
     [
-        'contentOptions' => ['class' => 'text-left','style' => 'min-width:400px;max-width:400px;word-wrap:break-word;'],
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:30%;max-width:30%;word-wrap:break-word;'],
         'label' => 'Notes',
-        'options' => ['width'=>'400px;'],
+        'options' => ['width'=>'30%;'],
         'value' => function ($data) {
             return $data->notes;
 
@@ -41,7 +41,7 @@ $columns = [
         [
             'label'=>'Amount',
             'format' => 'currency',
-             'options'=>['class' => 'text-right','width'=>'90px;'] , 
+             'options'=>['class' => 'text-right','width'=>'10%;'] , 
             'headerOptions' => ['class' => 'text-right'],
            'contentOptions' => ['class' => 'text-right'],
             'value' => function ($data) {

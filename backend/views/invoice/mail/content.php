@@ -1,7 +1,5 @@
 <?php
 use yii\grid\GridView;
-use common\models\ItemType;
-use common\models\TextTemplate;
 
 ?>
 
@@ -30,9 +28,13 @@ Dear Customer,<br>
             'format' => 'currency',
             'value' => function ($data) {
                 if (!$data->isGroupLesson()) {
-                    $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                    if ($data->invoice->isDeleted()) {
+                        $amount = 0;
+                    } else {
+                        $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                    }
                 } else {
-                    $amount = $data->enrolment->payment ?? 0;
+                    $amount = $data->lesson->getCreditAppliedAmount($data->enrolment->id) ?? 0;
                 }
                 return Yii::$app->formatter->asDecimal($amount);
             },
