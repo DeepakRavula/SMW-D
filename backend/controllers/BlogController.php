@@ -42,6 +42,11 @@ class BlogController extends \common\components\controllers\BaseController
                         'actions' => ['index','create', 'update', 'delete'],
                         'roles' => ['manageBlogs'],
                     ],
+					[
+                        'allow' => true,
+                        'actions' => ['list'],
+                        'roles' => ['viewBlogList'],
+                    ],
                 ],
             ],
         ];
@@ -168,7 +173,21 @@ class BlogController extends \common\components\controllers\BaseController
             ];
         }
     }
+	public function actionList()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => Blog::find(),
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ],
+            ]
+        ]);
 
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
     /**
      * Finds the Blog model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
