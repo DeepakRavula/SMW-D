@@ -9,6 +9,7 @@ use yii\data\ArrayDataProvider;
 <?php
 $invoiceCredits = Invoice::find()
         ->invoiceCredit($invoice->user_id)
+        ->andWhere(['NOT', ['invoice.id' => $invoice->id]])
         ->all();
 
 $results = [];
@@ -69,6 +70,7 @@ echo GridView::widget([
             'data-amount' => $model['amount'],
             'data-id' => $model['id'],
             'data-source' => $model['type'],
+            'data-number' => $model['invoice_number'],
         ];
     },
     'columns' => [
@@ -93,7 +95,7 @@ echo GridView::widget([
     ],
 ]);
  echo $this->render('_form-credit', [
-        'model' => new Payment(),
+        'model' => $paymentModel,
         'invoice' => $invoice,
 ]);
 ?>

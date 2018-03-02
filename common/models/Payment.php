@@ -55,6 +55,8 @@ class Payment extends ActiveRecord
     public function rules()
     {
         return [
+            [['sourceId'], 'required', 'on' => self::SCENARIO_APPLY_CREDIT],
+            [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
             [['amount'], 'validateNegativeBalance'],
             [['amount'], 'number'],
@@ -79,6 +81,12 @@ class Payment extends ActiveRecord
         }
     }
 
+    public function validateOnApplyCredit($attributes)
+    {
+        if ($this->credit < $this->amount) {
+            return $this->addError($attributes, "Insufficient credt");
+        }
+    }
     /**
      * {@inheritdoc}
      */
@@ -89,6 +97,7 @@ class Payment extends ActiveRecord
             'user_id' => 'User ID',
             'payment_method_id' => 'Payment Method',
             'amount' => 'Amount',
+            'sourceId' => 'Source',
             'groupByMethod' => 'Summaries Only',
         ];
     }
