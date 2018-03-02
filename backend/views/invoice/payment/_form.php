@@ -38,7 +38,7 @@ use common\models\PaymentMethod;
         <div class="col-md-5">
             <?= $form->field($model, 'amount')->textInput(['class' => 'right-align payment-amount form-control','readOnly' => $model->isCreditUsed() ||
                     $model->isCreditApplied(),
-                'value' => \Yii::$app->formatter->asDecimal($model->amount, 2)
+                'value' => \Yii::$app->formatter->asDecimal($model->amount, 2),
             ]);?>
         </div>
    </div>

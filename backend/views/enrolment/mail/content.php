@@ -6,7 +6,6 @@ use common\models\EmailObject;
 use common\models\EmailTemplate;
 ?>
 
-Dear <?= $toName; ?>,<br> 
 <?= $content; ?>
 <table border="0" cellpadding="0" cellspacing="0">
 	<tbody>
