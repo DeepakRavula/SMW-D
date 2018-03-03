@@ -308,6 +308,7 @@ class EnrolmentController extends BaseController
         $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
         $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
         $user->status = User::STATUS_DRAFT;
+	$user->canLogin=true;
         if ($user->save()) {
             $auth = Yii::$app->authManager;
             $authManager = Yii::$app->authManager;

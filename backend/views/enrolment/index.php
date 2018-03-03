@@ -198,10 +198,32 @@ $maxLocationAvailability = LocationAvailability::find()
 $(document).ready(function(){
         function loadCalendar() {
             var date = $('#course-startdate').val();
+	    var events, availableHours;
+             var teacherId = $('#course-teacherid').val();
+             var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+ 			if (! moment(date).isValid()) {
+				alert(moment(date));
+                 var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+             }
+	     $('#courseschedule-day').val(moment(date).format('dddd'));
+ 			$.ajax({
+ 				url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
+ 				type: 'get',
+ 				dataType: "json",
+ 				success: function (response)
+ 				{
+ 					events = response.events;
+ 					availableHours = response.availableHours;
+					enrolment.refreshCalendar(availableHours,events,date)
+ 				}
+ 			});
+			}
+var enrolment = {
+         refreshCalendar : function(availableHours, events, date){			
             $('#reverse-enrolment-calendar').fullCalendar({
 			firstDay : 1,
                 nowIndicator: true,
-                defaultDate: moment(date, 'DD-MM-YYYY', true).format('YYYY-MM-DD'),
+                defaultDate: date,
                 schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                 header: {
                     left: 'prev,next today',
@@ -224,12 +246,37 @@ $(document).ready(function(){
                     end: '24:00', // an end time (6pm in this example)
                     dow: [ 1, 2, 3, 4, 5, 6, 0 ]
                 },
-                businessHours: [],
+                businessHours: availableHours,
                 allowCalEventOverlap: true,
                 overlapEventsSeparate: true,
-                events: [],
-            });
-        }
+                events: events,
+		selectable: true,
+		select: function (start, end, allDay) {
+                     $('#course-startdate').val(moment(start).format('DD-MM-YYYY hh:mm A'));
+                     $('#courseschedule-fromtime').val(moment(start).format('hh:mm A'));
+                     $('#reverse-enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
+ 					$('#courseschedule-day').val(moment(start).format('dddd'));
+ 					var endtime = start.clone();
+                 	var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();
+                 	moment(endtime.add(durationMinutes, 'minutes'));
+                     $('#reverse-enrolment-calendar').fullCalendar('renderEvent',
+                         {
+                             id: 'newEnrolment',
+                             start: start,
+                             end: endtime,
+                             allDay: false
+                         },
+                     true // make the event "stick"
+                     );
+                     $('#reverse-enrolment-calendar').fullCalendar('unselect');
+                 },
+                 eventAfterAllRender: function (view) {
+                     $('.fc-short').removeClass('fc-short');
+                 },
+                 selectHelper: true,
+             });
+            }
+	};
 	$(document).on('click', '.step1-next', function() {
 		if($('#course-programid').val() == "") {
                 $('#new-enrolment-form').yiiActiveForm('updateAttribute', 'course-programid', ["Program cannot be blank"]);
@@ -237,7 +284,7 @@ $(document).ready(function(){
                 $('#step-1, #step-3, #step-4').hide();
                 $('#reverse-enrol-modal .modal-dialog').css({'width': '1000px'});
                 $('#step-2').show();
-                loadCalendar();
+		loadCalendar();
             }
             return false;
         });
