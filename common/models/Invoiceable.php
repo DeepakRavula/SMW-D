@@ -126,9 +126,9 @@ trait Invoiceable
     }
     
     public function createPrivateLessonInvoice()
-    {
-        if ($this->hasProFormaInvoice()) {
-            return $this->proFormaInvoice;
+    {        
+        if ($this->hasInvoice()) {
+            return $this->invoice;
         }
         $invoice = $this->createInvoice();
         $location_id = $this->enrolment->student->customer->userLocation->location_id;
