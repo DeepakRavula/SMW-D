@@ -448,14 +448,19 @@ class EnrolmentController extends BaseController
         if ($model->course->program->isPrivate() && $model->canDeleted()) {
             $lessons = Lesson::find()
                 ->where(['courseId' => $model->courseId])
+                ->isConfirmed()
+                ->notCanceled()
                 ->all();
-            foreach ($lessons as $lesson) {
-                $lesson->delete();
+            $message = null;
+            $invoice = $model->addLessonsCredit($lessons);
+            if ($invoice) {
+                $message = '$' . $invoice->balance . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
             }
             $model->delete();
             $response = [
                 'status' => true,
                 'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
+                'message' => $message
             ];
         } else {
             $response		 = [
