@@ -149,6 +149,7 @@ class UserSearch extends User
             
         }
 	  $query->groupBy('user.id');
+	  $query->orderBy(['uf.firstname' => SORT_ASC]);
         return $dataProvider;
     }
 
