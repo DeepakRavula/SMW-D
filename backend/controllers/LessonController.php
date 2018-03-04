@@ -531,7 +531,7 @@ class LessonController extends BaseController
             $oldLessons = Lesson::find()
                 ->where(['courseId' => $courseModel->id])
                 ->isConfirmed()
-                ->scheduledOrRescheduled()
+                ->scheduled()
                 ->between($startDate, $endDate)
                 ->all();
             $oldLessonIds = [];
