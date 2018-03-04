@@ -4,6 +4,7 @@ namespace common\models\log;
 
 use Yii;
 use common\models\query\LogHistoryQuery;
+use common\models\Location;
 use yii\helpers\Html;
 
 /**
@@ -71,4 +72,14 @@ class LogHistory extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Log::className(), ['id' => 'logId']);
     }
+    public static function logsCount()
+    {
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        return self::find()
+		->joinWith('log')
+		->Where(['log.locationId' => $locationId])
+		->today()
+		->count();
+    }
+
 }
