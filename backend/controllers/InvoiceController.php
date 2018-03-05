@@ -464,10 +464,13 @@ class InvoiceController extends BaseController
                 ->where([
                     'invoice.id' => $id,
                     'location_id' => $locationId,
+		    'isDeleted'=>false,
                 ])
                 ->one();
         if ($model !== null) {
             return $model;
+	    
+	    
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
