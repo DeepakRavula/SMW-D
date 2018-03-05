@@ -72,7 +72,11 @@ $invoiceLineItemsDataProvider = new ActiveDataProvider([
         ->andWhere(['invoice_id' => $model->id]),
     'pagination' => false,
 ]);
-$emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
+if ($model->isProFormaInvoice()) {
+	$emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_PFI]);
+} else {
+	$emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
+}
 $content = $this->render('mail/content', [
         'model' => $model,
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
