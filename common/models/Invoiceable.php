@@ -126,7 +126,10 @@ trait Invoiceable
     }
     
     public function createPrivateLessonInvoice()
-    {
+    {        
+        if ($this->hasInvoice()) {
+            return $this->invoice;
+        }
         $invoice = $this->createInvoice();
         $location_id = $this->enrolment->student->customer->userLocation->location_id;
         if (is_a(Yii::$app, 'yii\console\Application')) {
@@ -164,8 +167,11 @@ trait Invoiceable
 
     public function createGroupInvoice($enrolmentId)
     {
-        $invoice   = $this->createInvoice();
         $enrolment = Enrolment::findOne($enrolmentId);
+        if ($enrolment->hasInvoice($this->id)) {
+            return $enrolment->getInvoice($this->id);
+        }
+        $invoice   = $this->createInvoice();
         $location_id = $enrolment->student->customer->userLocation->location_id;
         $user = User::findOne(['id' => $enrolment->student->customer->id]);
         $invoice->userName = $user->publicIdentity;
@@ -198,6 +204,28 @@ trait Invoiceable
         }
         $lessons = $query->andWhere(['courseId' => $this->courseId])
                     ->all();
+        $invoice = $this->addLessonCredit($lessons);
+        $paymentCycleQuery = PaymentCycle::find()
+                ->where(['enrolmentId' => $this->id]);
+        if ($startDate) {
+            $paymentCycleQuery->andWhere(['OR', ['between', "DATE(endDate)", $startDate, $endDate],
+                                ['between', "DATE(startDate)", $startDate, $endDate]]);
+        } else {
+            $paymentCycleQuery->andWhere(['OR',
+                ['AND', ['<', 'DATE(startDate)', $endDate], ['>', 'DATE(endDate)', $endDate]],
+                ['>', 'DATE(startDate)', $endDate]]);
+        }
+        $paymentCycles = $paymentCycleQuery->all();
+        foreach ($paymentCycles as $paymentCycle) {
+            if (!$paymentCycle->hasLessons()) {
+                $paymentCycle->delete();
+            }
+        }
+        return !empty($invoice) ? $invoice : null;
+    }
+
+    public function addLessonsCredit($lessons)
+    {
         $hasCredit = false;
         foreach ($lessons as $lesson) {
             if ($lesson->hasLessonCredit($this->id)) {
@@ -217,27 +245,14 @@ trait Invoiceable
             $lesson->Cancel();
             $lesson->delete();
         }
-        $paymentCycleQuery = PaymentCycle::find()
-                ->where(['enrolmentId' => $this->id]);
-        if ($startDate) {
-            $paymentCycleQuery->andWhere(['OR', ['between', "DATE(endDate)", $startDate, $endDate],
-                                ['between', "DATE(startDate)", $startDate, $endDate]]);
-        } else {
-            $paymentCycleQuery->andWhere(['OR',
-                ['AND', ['<', 'DATE(startDate)', $endDate], ['>', 'DATE(endDate)', $endDate]],
-                ['>', 'DATE(startDate)', $endDate]]);
-        }
-        $paymentCycles = $paymentCycleQuery->all();
-        foreach ($paymentCycles as $paymentCycle) {
-            if (!$paymentCycle->hasLessons()) {
-                $paymentCycle->delete();
-            }
-        }
         return $hasCredit ? $invoice : null;
     }
-    
+
     public function createProFormaInvoice()
     {
+        if ($this->hasProFormaInvoice()) {
+            return $this->proFormaInvoice;
+        }
         $locationId = $this->student->customer->userLocation->location_id;
         $user = User::findOne(['id' => $this->student->customer->id]);
         $invoice = new Invoice();

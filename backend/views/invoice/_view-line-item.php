@@ -65,7 +65,11 @@ use yii\widgets\Pjax;
             'format' => 'currency',
             'value' => function ($data) {
                 if (!$data->isGroupLesson()) {
-                    $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                    if ($data->invoice->isDeleted()) {
+                        $amount = 0;
+                    } else {
+                        $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                    }
                 } else {
                     $amount = $data->lesson->getCreditAppliedAmount($data->enrolment->id) ?? 0;
                 }
@@ -121,7 +125,11 @@ use yii\widgets\Pjax;
             'format' => 'currency',
             'value' => function ($data) {
                 if (!$data->isGroupLesson()) {
-                    $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                    if ($data->invoice->isDeleted()) {
+                        $amount = 0;
+                    } else {
+                        $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                    }
                 } else {
                     $amount = $data->lesson->getCreditAppliedAmount($data->enrolment->id) ?? 0;
                 }

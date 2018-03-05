@@ -160,6 +160,9 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function createProFormaInvoice()
     {
+        if ($this->hasProFormaInvoice()) {
+            return $this->proFormaInvoice;
+        }
         $locationId = $this->enrolment->student->customer->userLocation->location_id;
         $user = User::findOne(['id' => $this->enrolment->student->customer->id]);
         $invoice = new Invoice();

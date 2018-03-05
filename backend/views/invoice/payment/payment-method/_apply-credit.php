@@ -9,6 +9,7 @@ use yii\data\ArrayDataProvider;
 <?php
 $invoiceCredits = Invoice::find()
         ->invoiceCredit($invoice->user_id)
+        ->andWhere(['NOT', ['invoice.id' => $invoice->id]])
         ->all();
 
 $results = [];
@@ -38,6 +39,7 @@ if (!empty($invoiceCredits)) {
         }
         $results[] = [
             'id' => $invoiceCredit->id,
+            'invoice_number' => $invoiceCredit->getInvoiceNumber(),
             'date' => $paymentDate->format('d-m-Y'),
             'amount' => abs($invoiceCredit->balance),
             'source' => $source,
@@ -49,12 +51,13 @@ if (!empty($invoiceCredits)) {
 $creditDataProvider = new ArrayDataProvider([
     'allModels' => $results,
     'sort' => [
-        'attributes' => ['id', 'date', 'amount', 'source'],
+        'attributes' => ['id', 'invoice_number', 'date', 'amount', 'source'],
     ],
 ]);
 ?>
-<?php if ($creditDataProvider->totalCount > 0):
-
+<?php if ($creditDataProvider->totalCount > 0): ?>
+<h5><strong>Choose the credit that you wish to apply</strong></h5>
+<?php
 echo GridView::widget([
     'dataProvider' => $creditDataProvider,
     'tableOptions' => ['class' => 'table table-bordered'],
@@ -67,12 +70,13 @@ echo GridView::widget([
             'data-amount' => $model['amount'],
             'data-id' => $model['id'],
             'data-source' => $model['type'],
+            'data-number' => $model['invoice_number'],
         ];
     },
     'columns' => [
         [
-        'label' => 'Id',
-        'value' => 'id',
+        'label' => 'Invoice Number',
+        'value' => 'invoice_number',
         ],
         [
         'label' => 'Source',
@@ -91,7 +95,7 @@ echo GridView::widget([
     ],
 ]);
  echo $this->render('_form-credit', [
-        'model' => new Payment(),
+        'model' => $paymentModel,
         'invoice' => $invoice,
 ]);
 ?>
