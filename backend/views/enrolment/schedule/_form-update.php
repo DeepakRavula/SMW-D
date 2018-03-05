@@ -31,20 +31,19 @@ use common\models\Location;
             );
             ?>
             <?php
-            echo $form->field($course, 'teacherId')->widget(Select2::classname(), [
+            echo $form->field($courseReschedule, 'teacherId')->widget(Select2::classname(), [
                 'data' => $teachers,
                 'options' => [
-                    'id' => 'course-teacherid',
                     'placeholder' => 'Select teacher',
                 ]
             ]);
             ?>
         </div>
         <div class="col-md-3">
-            <?= $form->field($courseSchedule, 'dayTime')->textInput(['readOnly' => true])->label('Day');?>
+            <?= $form->field($courseReschedule, 'dayTime')->textInput(['readOnly' => true]);?>
         </div>
         <div class="col-md-2">
-            <?= $form->field($courseSchedule, 'duration')->widget(TimePicker::classname(), [
+            <?= $form->field($courseReschedule, 'duration')->widget(TimePicker::classname(), [
                 'pluginOptions' => [
                     'showMeridian' => false,
                     'defaultTime' => (new \DateTime($courseSchedule->duration))->format('H:i'),
@@ -52,7 +51,7 @@ use common\models\Location;
             ])->label('Duration');?>
         </div>
         <div class="col-md-2">
-            <?= $form->field($course, 'startDate')->widget(DatePicker::classname(),
+            <?= $form->field($courseReschedule, 'rescheduleBeginDate')->widget(DatePicker::classname(),
                 [
                 'options' => [
                     'readOnly' => true,
@@ -66,7 +65,7 @@ use common\models\Location;
             ]);?>
         </div>
         <div class="col-md-2">
-            <?= $form->field($course, 'endDate')->widget(
+            <?= $form->field($courseReschedule, 'rescheduleEndDate')->widget(
                 DatePicker::classname(),
                 [
                 'options' => [
@@ -80,8 +79,6 @@ use common\models\Location;
                 ]
             ]); ?>
         </div>
-        <?= $form->field($courseSchedule, 'day')->hiddenInput()->label(false);?>
-        <?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false);?>
         <div class="col-md-12">
             <div id="bulk-reschedule-calendar"></div>
         </div>
@@ -107,7 +104,7 @@ use common\models\Location;
         $('#courseschedule-fromtime').val(moment(params.date).format('HH:MM:SS')).trigger('change');
         return false;
     });
-
+    
     $(document).on('modal-success', function(event, params) {
         paymentFrequency.onEditableSuccess();
         return false;

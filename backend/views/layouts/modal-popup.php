@@ -63,8 +63,8 @@ Modal::begin([
     $(document).off('click', '.modal-cancel').on('click', '.modal-cancel', function () {
         $('#modal-spinner').show();
         $('#popup-modal').modal('hide');
-        return false;
     });
+    
     $(document).off('click', '.modal-delete').on('click', '.modal-delete', function () {
         bootbox.confirm({
         message: "Are you sure you want to delete this?",

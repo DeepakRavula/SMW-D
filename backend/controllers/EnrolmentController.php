@@ -29,6 +29,7 @@ use common\models\UserLocation;
 use common\models\User;
 use common\models\UserProfile;
 use Carbon\Carbon;
+use common\models\CourseReschedule;
 use common\models\discount\EnrolmentDiscount;
 use backend\models\discount\MultiEnrolmentDiscount;
 use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
@@ -400,7 +401,10 @@ class EnrolmentController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $courseReschedule = new CourseReschedule();
+        $courseReschedule->setModel($model->course);
         $data = $this->renderAjax('/enrolment/schedule/_form-update', [
+            'courseReschedule' => $courseReschedule,
             'course' => $model->course,
             'courseSchedule' => $model->course->courseSchedule,
             'model' => $model,

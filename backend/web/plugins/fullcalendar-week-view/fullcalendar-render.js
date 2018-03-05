@@ -1,4 +1,5 @@
 $.fn.calendarDayView = function(options) {
+    $("#fullcalendar-week-view").show();
     $("#fullcalendar-week-view").clone(true, true).contents().appendTo(options.renderId);
     $('#go-to-datepicker').datepicker({
         format: 'M-d-yyyy',
@@ -87,7 +88,7 @@ var calendar = {
     },
 
     render: function (options) {
-        var date = moment($('#fullcalendar-week-view-go-to-datepicker').val(), "MMM-DD-YYYY");debugger
+        var date = moment($('#fullcalendar-week-view-go-to-datepicker').val(), "MMM-DD-YYYY");
         var teacherId = $(options.changeId).val();
         var params = $.param({ id: teacherId });
         var eventParams = $.param({ teacherId: teacherId });
