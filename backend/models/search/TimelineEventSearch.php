@@ -2,15 +2,17 @@
 
 namespace backend\models\search;
 
-use common\models\timelineEvent\TimelineEvent;
+use common\models\log\Log;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use common\models\Location;
+use common\models\log\LogHistory;
 
 /**
  * TimelineEventSearch represents the model behind the search form about `common\models\TimelineEvent`.
  */
-class TimelineEventSearch extends TimelineEvent
+class TimelineEventSearch extends Log
 {
 	const CATEGORY_LESSON = 'lesson';
 	const CATEGORY_ENROLMENT = 'enrolment';
@@ -62,15 +64,14 @@ class TimelineEventSearch extends TimelineEvent
      */
     public function search($params)
     {
+	    
 		$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = LogHistory::find()
-		->location($locationId)
-		->createdUser();
+		->location($locationId);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-		$query->andWhere(['between', 'DATE(created_at)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
@@ -102,7 +103,10 @@ class TimelineEventSearch extends TimelineEvent
 		if(!empty($this->student) && $this->category === self::ALL)	{
 			$query->student($this->student);
 		}
-		$query->where(['between', 'DATE(timeline_event.created_at)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
+		$query->joinWith(['log' => function ($query) use ($locationId) {
+                    $query->joinWith(['logObject']);
+		}]);
+		$query->andWhere(['between', 'DATE(log.createdOn)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
 		
 		$query->location($locationId);
 		$query->andFilterWhere(['createdUserId' => $this->createdUserId]);

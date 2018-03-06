@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\VerbFilter;
 use common\components\controllers\BaseController;
@@ -42,14 +43,12 @@ class TimelineEventController extends BaseController
      */
     public function actionIndex()
     {
-        $logs = LogHistory::find();
-        $dataProvider = new ActiveDataProvider([
-            'query' => $logs,
-        ]);
-	$searchModel=new TimelineEventSearch();
+        $searchModel = new TimelineEventSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
-	    'searchModel' =>$searchModel,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 }
