@@ -31,6 +31,7 @@ use common\models\UserEmail;
 use common\models\Label;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
 use common\models\log\LogHistory;
 use Intervention\Image\ImageManagerStatic;
 use trntv\filekit\actions\DeleteAction;
@@ -613,69 +614,23 @@ class UserController extends BaseController
         }
     }
     
-    public function deleteContact($id)
-    {
-        $model = $this->findModel($id);
-        if (!empty($model->emails)) {
-            foreach ($model->emails as $email) {
-                $email->userContact->delete();
-                $email->delete();
-            }
-        }
-        if (!empty($model->phoneNumbers)) {
-            foreach ($model->phoneNumbers as $phone) {
-                $phone->userContact->delete();
-                $phone->delete();
-            }
-        }
-        if (!empty($model->addresses)) {
-            foreach ($model->addresses as $address) {
-                $address->userContact->delete();
-                $address->delete();
-            }
-        }
-    }
     public function actionDelete($id)
     {
-        $model = new UserForm();
-        $model->setModel($this->findModel($id));
-
-        $role = $model->roles;
-        if (in_array($role, [User::ROLE_ADMINISTRATOR, User::ROLE_OWNER, User::ROLE_STAFFMEMBER])) {
-            $this->deleteContact($id);
-            $model->getModel()->delete();
+        $model =  $this->findModel($id);
+        $model->setScenario(User::SCENARIO_DELETE);
+        $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($id), 'name');
+        $role = end($roles);
+        if ($model->validate()) {
+            $model->delete();
             $response = [
                 'status' => true,
-                'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles])
+                'url' => Url::to(['index', 'UserSearch[role_name]' => $role])
             ];
-        } elseif ($role === User::ROLE_CUSTOMER) {
-            if (empty($model->getModel()->student)) {
-                $this->deleteContact($id);
-                $model->getModel()->delete();
-                $response = [
-                    'status' => true,
-                    'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles])
-                ];
-            } else {
-                $response = [
-                    'status' => false,
-                    'message' => 'Unable to delete. There are student(s) associated with this ' . $role
-                ];
-            }
-        } elseif ($role === User::ROLE_TEACHER) {
-            if (empty($model->getModel()->qualifications) && empty($model->getModel()->courses)) {
-                $this->deleteContact($id);
-                $model->getModel()->delete();
-                $response = [
-                    'status' => true,
-                    'url' => Url::to(['index', 'UserSearch[role_name]' => $model->roles])
-                ];
-            } else {
-                $response = [
-                    'status' => false,
-                    'message' => 'Unable to delete. There are qualification/course(s) associated with this ' . $role
-                ];
-            }
+        } else {
+            $response = [
+                'status' => false,
+                'message' => current($model->getErrors())
+            ];
         }
         return $response;
     }
