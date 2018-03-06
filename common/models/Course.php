@@ -160,7 +160,7 @@ class Course extends \yii\db\ActiveRecord
     public function getRegularCourse()
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId'])
-                ->viaTable('create_extra', ['extraCourseId' => 'id']);
+                ->viaTable('course_extra', ['extraCourseId' => 'id']);
     }
     
     public function getExtraCourses()
@@ -415,6 +415,26 @@ class Course extends \yii\db\ActiveRecord
                 ->one();
         return $course ?? null;
     }
+
+    public function hasRegularCourse()
+    {
+        return !empty($this->getRegularCourse());
+    }
+
+    public function getStudentRegularCourse()
+    {
+        $programId = $this->programId;
+        $studentId = $this->studentId;
+        $course = self::find()
+                ->confirmed()
+                ->regular()
+                ->joinWith(['enrolment' => function ($query) use ($studentId) {
+                    $query->andWhere(['enrolment.studentId' => $studentId]);
+                }])
+                ->andWhere(['course.programId' => $programId])
+                ->one();
+        return $course ?? null;
+    }
     
     public function hasExtraLesson()
     {
@@ -427,6 +447,11 @@ class Course extends \yii\db\ActiveRecord
     public function isExtra()
     {
         return (int) $this->type === (int) self::TYPE_EXTRA;
+    }
+
+    public function isRegular()
+    {
+        return (int) $this->type === (int) self::TYPE_REGULAR;
     }
     
     public function extendTo($course)
