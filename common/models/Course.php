@@ -418,7 +418,7 @@ class Course extends \yii\db\ActiveRecord
 
     public function hasRegularCourse()
     {
-        return !empty($this->getRegularCourse());
+        return !empty($this->getStudentRegularCourse());
     }
 
     public function getStudentRegularCourse()
