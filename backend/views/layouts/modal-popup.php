@@ -25,12 +25,12 @@ Modal::begin([
 <script>
     $(document).off('click', '.modal-save').on('click', '.modal-save', function () {
         $('#modal-form').submit();
-        $('.modal-save').attr('disabled', true);
         return false;
     });
 
     $(document).off('beforeSubmit', '#modal-form').on('beforeSubmit', '#modal-form', function () {
         $('#modal-spinner').show();
+	 $('.modal-save').attr('disabled', true);
         $.ajax({
             url: $('#modal-form').attr('action'),
             type: 'post',
