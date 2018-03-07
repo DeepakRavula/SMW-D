@@ -30,7 +30,7 @@ Modal::begin([
 
     $(document).off('beforeSubmit', '#modal-form').on('beforeSubmit', '#modal-form', function () {
         $('#modal-spinner').show();
-	 $('.modal-save').attr('disabled', true);
+	$('.modal-save').attr('disabled', true);
         $.ajax({
             url: $('#modal-form').attr('action'),
             type: 'post',
