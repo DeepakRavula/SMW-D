@@ -1,9 +1,7 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
-use common\models\User;
 use common\models\Program;
 use yii\helpers\Url;
 use kartik\select2\Select2;
@@ -16,11 +14,15 @@ use common\models\Qualification;
 
 <div class="lesson-qualify p-10">
 
-<?php $form = ActiveForm::begin([
-    'id' => 'qualification-form',
-    'action' => Url::to(['qualification/update', 'id' => $model->id]),
-    'enableAjaxValidation' => true,
-    'enableClientValidation' => false
+<?php
+if ($model->isNewRecord) {
+    $url = Url::to(['qualification/update']);
+} else {
+    $url = Url::to(['qualification/update', 'id' => $userModel->id]);
+}
+$form = ActiveForm::begin([
+    'id' => 'modal-form',
+    'action' => $url
 ]); ?>
 	<?php 
     $privateQualifications = Qualification::find()
@@ -72,32 +74,5 @@ use common\models\Qualification;
         </div>
 	   <?php endif; ?>
     </div>
-<div class="row">
-    <div class="col-md-12">
-        <div class="pull-right">
-            <?= Html::a('Cancel', '', ['class' => 'btn btn-default qualification-cancel']);?>
-	   		<?php if (Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')) : ?>
-           <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
-			<?php endif; ?>
-        <div class="clearfix"></div>
-	</div>
-        <div class="pull-left">
-<?= Html::a(
-                'Delete',
-                [
-            'delete', 'id' => $model->id
-        ],
-        [
-            'id' => 'qualification-delete',
-            'class' => 'btn btn-danger pull-left',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this qualification?',
-                'method' => 'post',
-            ]
-        ]
-            ); ?>
-        </div>   
-    </div>
-	<?php ActiveForm::end(); ?>
-</div>
+    <?php ActiveForm::end(); ?>
 </div>

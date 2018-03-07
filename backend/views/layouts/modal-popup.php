@@ -71,32 +71,31 @@ Modal::begin([
     $(document).off('click', '.modal-delete').on('click', '.modal-delete', function () {
         bootbox.confirm({
         message: "Are you sure you want to delete this?",
-                callback: function(result){
+            callback: function(result){
                 if (result) {
-                $('.bootbox').modal('hide');
-                 $.ajax({
+                    $('.bootbox').modal('hide');
+                    $.ajax({
                         url : $('.modal-delete').attr('action'),
                         type   : 'post',
                         dataType: "json",
                         data   : $('#modal-form').serialize(),
-                   success: function(response)
-                                        {
-                                        if (response.status)
-                                        {
-                                        $('#modal-spinner').hide();
-                                                $('#popup-modal').modal('hide');
-                                                $(document).trigger("modal-delete", response);
-                                        } else {
-                                        $('#modal-spinner').hide();
-                                                $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
-                                                $(document).trigger("modal-error", response);
-                                        }
-                                        }
-                                });
-                                return false;
+                        success: function(response)
+                        {
+                            if (response.status) {
+                                $('#modal-spinner').hide();
+                                $('#popup-modal').modal('hide');
+                                $(document).trigger("modal-delete", response);
+                            } else {
+                                $('#modal-spinner').hide();
+                                $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
+                                $(document).trigger("modal-error", response);
+                            }
                         }
-                        }
-                        });
-                return false;
-            });
+                    });
+                    return false;
+                }
+            }
+        });
+        return false;
+    });
 </script>

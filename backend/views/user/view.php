@@ -858,14 +858,37 @@ $(document).ready(function(){
 		$('#private-qualification-modal').modal('hide');
 		return false;
 	});
-	$(document).on('click', '.add-new-qualification', function (e) {
-		$('#private-qualification-modal').modal('show');
-		return false;
-	});
-	$(document).on('click', '.add-new-group-qualification', function (e) {
-		$('#group-qualification-modal').modal('show');
-		return false;
-	});
+    $(document).on('click', '.add-new-qualification, .add-new-group-qualification, #qualification-grid tbody > tr', function (e) {
+        var qualificationId = $('qualification-grid  tbody > tr').data('key');
+        var teacherId = '<?= $model->id;?>';
+        if (qualificationId === undefined) {
+            var customUrl = '<?= Url::to(['qualification/create']); ?>?id=' + teacherId;
+        } else {
+            var customUrl = '<?= Url::to(['qualification/update']); ?>?id=' + qualificationId;
+        }
+        $.ajax({
+            url    : customUrl,
+            type   : 'get',
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    if (unavailabilityId !== undefined) {
+                        var params = $.param({ id: unavailabilityId });
+                        var url    = '<?= Url::to(['teacher-unavailability/delete']) ?>?' + params;
+                        $('#modal-delete').show();
+                        $(".modal-delete").attr("action", url);
+                    }
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Unavailability</h4>');
+                    $('#popup-modal .modal-dialog').addClass('classroom-dialog');
+                }
+            }
+        });
+        return false;
+    });
+        
 	$(document).on("click", "#qualification-grid tbody > tr", function() {
 		var qualificationId = $(this).data('key');	
 		$.ajax({
