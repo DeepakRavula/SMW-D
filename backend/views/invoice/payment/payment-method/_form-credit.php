@@ -11,8 +11,11 @@ use yii\helpers\Url;
 
 <div class="user-create-form row">
     <?php $form = ActiveForm::begin([
-        'id' => 'apply-credit-form',
+        'id' => 'modal-form',
         'action' => Url::to(['payment/credit-payment', 'id' => $invoice->id]),
+        'enableClientValidation' => false,
+        'enableAjaxValidation' => true,
+        'validationUrl' => Url::to(['payment/validate-apply-credit', 'id' => $invoice->id]),
     ]); ?>
  	<div class="row">
             <div class="col-xs-3">
@@ -29,13 +32,5 @@ use yii\helpers\Url;
         </div>
 	</div>
 	<?php echo $form->field($model, 'sourceId')->hiddenInput()->label(false); ?>
-    <div class="form-group pull-right">
-        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default apply-credit-cancel']);
-        ?>
-       <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-			
-    </div>
-
     <?php ActiveForm::end(); ?>
-
 </div>

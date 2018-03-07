@@ -229,14 +229,7 @@ Modal::end();
  ]); ?>
 <div id="adjust-tax-modal-content"></div>
  <?php Modal::end();?>
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Apply Credit</h4>',
-    'id' => 'credit-modal',
-    'toggleButton' => ['label' => 'click me', 'class' => 'hide'],
-]); ?>
-<div id="credit-modal-content"></div>
-<?php Modal::end();?>
+
 <script>
  $(document).ready(function() {
     $(document).on('click', '.edit-tax', function () {
@@ -347,15 +340,26 @@ Modal::begin([
                 dataType: 'json',
                 success: function(response)
                 {
-                    if (response.status) {
-                        $('#credit-modal').modal('show');
-                        $('#credit-modal-content').html(response.data);
+                    if (response.status && response.hasCredit) {
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Apply Credit</h4>');
+                        $('.modal-save').text('Pay now')
+                    } else {
+                        $('#invoice-error-notification').html('No credits available!').fadeIn().delay(5000).fadeOut();
                     }
                 }
             });
-            
             return false;
   	});
+
+        $(document).on('modal-success', function(event, params) {
+            $.pjax.reload({container: "#invoice-view-lineitem-listing", replace:false,async: false, timeout: 6000});
+            $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
+            $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+            $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
+            $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+        });
 	$(document).on('click', '.apply-credit-cancel', function (e) {
 		$('#credit-modal').modal('hide');
 		return false;

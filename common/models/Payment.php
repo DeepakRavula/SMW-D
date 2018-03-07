@@ -83,7 +83,8 @@ class Payment extends ActiveRecord
 
     public function validateOnApplyCredit($attributes)
     {
-        if ($this->credit < $this->amount) {
+        $invoiceModel = Invoice::findOne(['id' => $this->sourceId]);
+        if (round(abs($invoiceModel->balance), 2) < round(abs($this->amount), 2)) {
             return $this->addError($attributes, "Insufficient credt");
         }
     }

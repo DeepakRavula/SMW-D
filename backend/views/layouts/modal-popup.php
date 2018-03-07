@@ -25,6 +25,7 @@ Modal::begin([
 <script>
     $(document).off('click', '.modal-save').on('click', '.modal-save', function () {
         $('#modal-form').submit();
+        $('.modal-save').attr('disabled', true);
         return false;
     });
 
@@ -46,6 +47,7 @@ Modal::begin([
                     $('#modal-spinner').hide();
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
                     $(document).trigger("modal-error", response);
+                    $('.modal-save').attr('disabled', false);
                 }
             }
         });
@@ -57,6 +59,7 @@ Modal::begin([
     });
 
     $('#popup-modal').on('hidden.bs.modal', function () {
+        $('.modal-save').attr('disabled', false);
         $(document).trigger("modal-close");
     });
 
