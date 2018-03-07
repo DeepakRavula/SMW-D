@@ -1,4 +1,3 @@
-
 <?php
 
 use yii\helpers\ArrayHelper;
@@ -193,7 +192,6 @@ $this->params['action-button'] = $this->render('_action-button', [
         $discountContent = $this->render('customer/_discount', [
             'model' => $model,
         ]);
-
         $logContent = $this->render('log', [
             'model' => $model,
                         'logDataProvider'=>$logDataProvider,
@@ -203,7 +201,6 @@ $this->params['action-button'] = $this->render('_action-button', [
             'searchModel' => $invoiceSearchModel,
             'model' => $model,
         ]);
-
         ?>
 		<?php
         $items = [
@@ -328,7 +325,6 @@ $this->params['action-button'] = $this->render('_action-button', [
         if (in_array($role->name, ['teacher'])) {
             $items = array_merge($teacherItems, $items);
         }
-
         if (in_array($role->name, ['customer'])) {
             $items = array_merge($customerItems, $items);
         }
@@ -452,10 +448,28 @@ $this->params['action-button'] = $this->render('_action-button', [
 $(document).ready(function(){
 	$.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$(document).on('click', '.add-new-student', function () {
-        $('#student-create-modal .modal-dialog').css({'width': '400px'});
-		$('#student-create-modal').modal('show');
+	 $.ajax({
+            url    : '<?= Url::to(['student/create', 'userId' => $model->id]); ?>',
+            type   : 'get',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal .modal-dialog').css({'width': '400px'});
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Add Student</h4>');
+                    $('#modal-content').html(response.data);
+                }
+            }
+        });
         return false;
 	});
+	 $(document).on('modal-success', function(event, params) {
+        if(params.status){
+		window.location.href = params.url;
+	}
+        return false;
+	});
+    
 	$(document).on('click', '.address-cancel-btn', function () {
 		$('#address-modal').modal('hide');
         return false;
