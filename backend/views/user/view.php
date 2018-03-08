@@ -410,39 +410,78 @@ $this->params['action-button'] = $this->render('_action-button', [
                 return false;
         }
     };
+
+    var qualification = {
+        modify :function(url, qualification) {
+            var qualificationId = qualification;
+            $.ajax({
+                url    : url,
+                type   : 'get',
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                        if (qualificationId !== undefined) {
+                            var param = $.param({ id: qualificationId });
+                            var url = '<?= Url::to(['qualification/delete']) ?>?' + param;
+                            $('#modal-delete').show();
+                            $(".modal-delete").attr("action", url);
+                        }
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Qualification</h4>');
+                        $('#popup-modal .modal-dialog').css({'width': '400px'});
+                    }
+                }
+            });
+            return false;
+        }
+    };
     
-	var contactTypes = {
-		'email' : 1,
-		'phone' : 2,
-		'address' : 3,
-	};
-	var contact = {
+    var contactTypes = {
+        'email' : 1,
+        'phone' : 2,
+        'address' : 3,
+    };
+    
+    var contact = {
         updatePrimary :function(event, val, form, data) {
-			var target = event.currentTarget;
-			var contactId = $(target).find('li:first').find('.contact').val();
-			var id = '<?= $model->id;?>';
-			var contactType = $(target).find('li:first').find('.contactType').val();
-			var params = $.param({'id':id, 'contactId' : contactId, 'contactType' : contactType});
+            var target = event.currentTarget;
+            var contactId = $(target).find('li:first').find('.contact').val();
+            var id = '<?= $model->id;?>';
+            var contactType = $(target).find('li:first').find('.contactType').val();
+            var params = $.param({'id':id, 'contactId' : contactId, 'contactType' : contactType});
             $.ajax({
                 url: "<?php echo Url::to(['user-contact/update-primary']);?>?" + params,
                 type: "POST",
                 dataType: "json",
                 success: function (response)
                 {
-					if(response) {
-						if(contactType == contactTypes.email) {
-	                    	$.pjax.reload({container : '#user-email', timeout : 6000, async : true});
-						} else if (contactType == contactTypes.phone) {
-    						$.pjax.reload({container : '#user-phone', timeout : 6000, async : true});
-						} else {
-    						$.pjax.reload({container : '#user-address', timeout : 6000, async : true});
-						};
-					};
+                    if(response) {
+                        if(contactType == contactTypes.email) {
+                            $.pjax.reload({container : '#user-email', timeout : 6000, async : true});
+                        } else if (contactType == contactTypes.phone) {
+                            $.pjax.reload({container : '#user-phone', timeout : 6000, async : true});
+                        } else {
+                            $.pjax.reload({container : '#user-address', timeout : 6000, async : true});
+                        }
+                    }
                 }
             });
             return true;
         }
     };
+
+    $(document).on('modal-delete', function(event, params) {
+        $.pjax.reload({container: '#group-quali-list', replace:false,async: false, timeout: 6000});
+        $.pjax.reload({container: '#private-quali-list', replace:false,async: false, timeout: 6000});
+    });
+
+    $(document).on('modal-success', function(event, params) {
+        $.pjax.reload({container: '#group-quali-list', replace:false,async: false, timeout: 6000});
+        $.pjax.reload({container: '#private-quali-list', replace:false,async: false, timeout: 6000});
+    });
+    
 	$('.availability').click(function () {
 		$('.teacher-availability-create').show();
 	});
@@ -852,132 +891,35 @@ $(document).ready(function(){
  		});
  		return false;
   	});
-	$(document).on("click", '.qualification-cancel', function() {
-		$('#qualification-edit-modal').modal('hide');
-		$('#group-qualification-modal').modal('hide');
-		$('#private-qualification-modal').modal('hide');
-		return false;
-	});
-    $(document).on('click', '.add-new-qualification, .add-new-group-qualification, #qualification-grid tbody > tr', function (e) {
-        var qualificationId = $('qualification-grid  tbody > tr').data('key');
-        var teacherId = '<?= $model->id;?>';
-        if (qualificationId === undefined) {
-            var customUrl = '<?= Url::to(['qualification/create']); ?>?id=' + teacherId;
-        } else {
-            var customUrl = '<?= Url::to(['qualification/update']); ?>?id=' + qualificationId;
-        }
-        $.ajax({
-            url    : customUrl,
-            type   : 'get',
-            success: function(response)
-            {
-                if(response.status)
-                {
-                    $('#modal-content').html(response.data);
-                    $('#popup-modal').modal('show');
-                    if (unavailabilityId !== undefined) {
-                        var params = $.param({ id: unavailabilityId });
-                        var url    = '<?= Url::to(['teacher-unavailability/delete']) ?>?' + params;
-                        $('#modal-delete').show();
-                        $(".modal-delete").attr("action", url);
-                    }
-                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Unavailability</h4>');
-                    $('#popup-modal .modal-dialog').addClass('classroom-dialog');
-                }
-            }
-        });
-        return false;
-    });
         
-	$(document).on("click", "#qualification-grid tbody > tr", function() {
-		var qualificationId = $(this).data('key');	
-		$.ajax({
-			url    : '<?= Url::to(['qualification/update']); ?>?id=' + qualificationId,
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-					$('#qualification-edit-content').html(response.data);
-					$('#qualification-edit-modal').modal('show');
-				}
-			}
-		});
-		return false;
-	});
-	$(document).on('beforeSubmit', '#qualification-form', function (e) {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-                    $.pjax.reload({container: '#private-grid', timeout: 6000, async:false});
-                    $.pjax.reload({container: '#group-grid', timeout: 6000, async:false});
-					$('#qualification-edit-modal').modal('hide');
-				} else
-				{
-				 $('#qualification-form').yiiActiveForm('updateMessages', response.errors, true);
-				}
-			}
-		});
-		return false;
-	});
-	$(document).on('beforeSubmit', '#qualification-form-create', function (e) {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-                    $.pjax.reload({container: '#private-grid', timeout: 6000});
-					$('#private-qualification-modal').modal('hide');
-				}else
-				{
-				 $('#qualification-form-create').yiiActiveForm('updateMessages', response.errors, true);
-				}
-			}
-		});
-		return false;
-	});
-	$(document).on('beforeSubmit', '#group-qualification-form', function (e) {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-                    $.pjax.reload({container: '#group-grid', timeout: 6000});
-					$('#group-qualification-modal').modal('hide');
-				}else
-				{
-				 $('#qualification-form-create').yiiActiveForm('updateMessages', response.errors, true);
-				}
-			}
-		});
-		return false;
-	});
-});
+    $(document).off('click', '#qualification-grid tbody > tr').on('click', '#qualification-grid tbody > tr', function () {
+        var qualificationId = $(this).data('key');
+        var url = '<?= Url::to(['qualification/update']); ?>?id=' + qualificationId;
+        qualification.modify(url, qualificationId);
+    });
 
-$(document).on('keyup', '.select2-search__field', function () {
-    var searchText = $('.select2-results__option').first().text();
-    var tagId = $('.select2-results__option').attr('id');
-    if (typeof tagId == 'undefined') {
-        $('.select2-results__option').first().attr('id', 'create-new');
-        if ($('.select2-results__option').attr('id') == 'create-new') {
-            $('#create-new').html('"' + '<b>' + searchText +'</b>'+ '" (create new)');
-        }
-    }
+    $(document).off('click', '.add-new-group-qualification').on('click', '.add-new-group-qualification', function () {
+        var type = 2;
+        var teacherId = '<?= $model->id;?>';
+        var url = '<?= Url::to(['qualification/create']); ?>?id=' + teacherId + '&type=' + type;
+        qualification.modify(url);
+    });
+    
+    $(document).off('click', '.add-new-qualification').on('click', '.add-new-qualification', function () {
+        var type = 1;
+        var teacherId = '<?= $model->id;?>';
+        var url = '<?= Url::to(['qualification/create']); ?>?id=' + teacherId + '&type=' + type;
+        qualification.modify(url);
+    });
 });
+    $(document).on('keyup', '.select2-search__field', function () {
+        var searchText = $('.select2-results__option').first().text();
+        var tagId = $('.select2-results__option').attr('id');
+        if (typeof tagId == 'undefined') {
+            $('.select2-results__option').first().attr('id', 'create-new');
+            if ($('.select2-results__option').attr('id') == 'create-new') {
+                $('#create-new').html('"' + '<b>' + searchText +'</b>'+ '" (create new)');
+            }
+        }
+    });
 </script>
