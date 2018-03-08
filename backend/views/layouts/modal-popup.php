@@ -74,6 +74,7 @@ Modal::begin([
                 callback: function(result){
                 if (result) {
                 $('.bootbox').modal('hide');
+                $('#modal-spinner').show();
                  $.ajax({
                         url : $('.modal-delete').attr('action'),
                         type   : 'post',
