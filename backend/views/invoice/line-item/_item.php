@@ -139,57 +139,28 @@ $(document).ready(function() {
 });
 </script>
 <script>
-$(document).on('click', '#invoice-delete-button', function () {
-		 bootbox.confirm({
-                    message: "Are you sure you want to delete this invoice?",
-  			callback: function(result){
-				if(result) {
-					$('.bootbox').modal('hide');
-				$.ajax({
-				url: '<?= Url::to(['invoice/delete', 'id' => $model->id]) ?>',
-					type: 'post',
-					success: function (response)
-					{
-						if (response.status)
-						{
-						 window.location.href = response.url;
-						} else {
-						$('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
-						}
-					}
-				});
-				return false;
-			}
-			}
-		});
-		return false;
-        });
-$(document).on('click', '.item-delete', function () {
-    var status = confirm("Are you sure you want to delete this item?");
-    if (status) {
-        $('#item-edit-spinner').show();
-        var itemId = $(this).attr('data-id'); 
-        $.ajax({
-            url    : '<?= Url::to(['invoice-line-item/delete']) ?>?id=' + itemId,
-            type   : 'post',
-            dataType: 'json',
-            success: function(response)
-            {
-                if(response.status)
-                {
-                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
-                    $('#line-item-edit-modal').modal('hide');
-                    $('#customer-update').html(response.message).fadeIn().delay(5000).fadeOut();
-                    $('#item-edit-spinner').hide();
-                } else {
-                    $('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+    $(document).on('click', '#invoice-delete-button', function () {
+        bootbox.confirm({
+            message: "Are you sure you want to delete this invoice?",
+                callback: function(result){
+                    if(result) {
+                        $('.bootbox').modal('hide');
+                        $.ajax({
+                            url: '<?= Url::to(['invoice/delete', 'id' => $model->id]) ?>',
+                            type: 'post',
+                            success: function (response)
+                            {
+                                if (response.status) {
+                                    window.location.href = response.url;
+                                } else {
+                                    $('#invoice-error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                       });
+                       return false;
+                    }
                 }
-            }
         });
-    }
-    return false;
-});
+        return false;
+    });
 </script>    

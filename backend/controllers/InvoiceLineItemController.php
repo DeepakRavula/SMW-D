@@ -66,7 +66,7 @@ class InvoiceLineItemController extends BaseController
     public function actionFetchTaxPercentage($taxStatusId)
     {
         $today         = (new \DateTime())->format('Y-m-d H:i:s');
-        $locationId    = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId    = Location::findOne(['slug' => \Yii::$app->location])->id;
         $locationModel = Location::findOne(['id' => $locationId]);
         $taxCode = TaxCode::find()
             ->joinWith(['taxStatus' => function ($query) use ($taxStatusId) {
@@ -232,8 +232,7 @@ class InvoiceLineItemController extends BaseController
 
     protected function findModel($id)
     {
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = InvoiceLineItem::find()
                 ->joinWith(['invoice' => function ($query) use ($locationId) {
                     $query->where(['location_id' => $locationId]);

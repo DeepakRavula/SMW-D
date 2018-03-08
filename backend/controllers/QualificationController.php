@@ -5,7 +5,6 @@ namespace backend\controllers;
 use Yii;
 use common\models\Qualification;
 use backend\models\search\QualificationSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -85,15 +84,15 @@ class QualificationController extends BaseController
      *
      * @return mixed
      */
-    public function actionCreate($id)
+    public function actionCreate($id, $type)
     {
         $model = new Qualification();
-
-        if ($model->load(Yii::$app->request->post())) {
-            $model->teacher_id = $id;
-            $model->type = Qualification::TYPE_HOURLY;
-            $model->isDeleted = false;
-            if ($model->save()) {
+        $model->teacher_id = $id;
+        $model->type = $type;
+        $model->isDeleted = false;
+        $post = Yii::$app->request->post();
+        if ($post) {
+            if ($model->load($post) && $model->save()) {
                 $response = [
                     'status' => true,
                 ];
@@ -103,32 +102,18 @@ class QualificationController extends BaseController
                     'errors' => ActiveForm::validate($model)
                 ];
             }
-            return $response;
+        } else {
+            $data = $this->renderAjax('_form', [
+                'model' => $model,
+                'teacherId' => $id
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
         }
+        return $response;
     }
-
-    public function actionAddGroup($id)
-    {
-        $model = new Qualification();
-
-        if ($model->load(Yii::$app->request->post())) {
-            $model->teacher_id = $id;
-            $model->type = Qualification::TYPE_FIXED;
-            $model->isDeleted = false;
-            if ($model->save()) {
-                $response = [
-                    'status' => true,
-                ];
-            } else {
-                $response = [
-                    'status' => false,
-                    'errors' => ActiveForm::validate($model)
-                ];
-            }
-            return $response;
-        }
-    }
-
     /**
      * Updates an existing Qualification model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -140,11 +125,12 @@ class QualificationController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $data = $this->renderAjax('update', [
+        $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post())) {
-            if ($model->save()) {
+        $post = Yii::$app->request->post();
+        if ($post) {
+            if ($model->load($post) && $model->save()) {
                 $response = [
                     'status' => true,
                 ];
@@ -154,13 +140,13 @@ class QualificationController extends BaseController
                     'errors' => ActiveForm::validate($model)
                 ];
             }
-            return $response;
         } else {
-            return [
+            $response = [
                 'status' => true,
                 'data' => $data
             ];
         }
+        return $response;
     }
 
     /**

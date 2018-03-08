@@ -405,7 +405,12 @@ class Enrolment extends \yii\db\ActiveRecord
             if (empty($this->isConfirmed)) {
                 $this->isConfirmed = false;
             }
-            $this->isAutoRenew = true;
+            if ($this->isExtra() || $this->course->program->isGroup()) {
+                $renew = false;
+            } else {
+                $renew = true;
+            }
+            $this->isAutoRenew = $renew;
         }
         return parent::beforeSave($insert);
     }

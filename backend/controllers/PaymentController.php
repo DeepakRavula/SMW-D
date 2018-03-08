@@ -14,6 +14,8 @@ use yii\web\Response;
 use common\models\CreditUsage;
 use yii\filters\ContentNegotiator;
 use yii\filters\AccessControl;
+use yii\data\ArrayDataProvider;
+use common\models\ItemType;
 use common\components\controllers\BaseController;
 
 /**
@@ -32,7 +34,7 @@ class PaymentController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['invoice-payment', 'credit-payment', 'update', 'delete'],
+                'only' => ['invoice-payment', 'credit-payment', 'update', 'delete', 'validate-apply-credit'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -43,7 +45,8 @@ class PaymentController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'print', 'invoice-payment', 'credit-payment'],
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'print', 
+                            'invoice-payment', 'credit-payment', 'validate-apply-credit'],
                         'roles' => ['managePfi', 'manageInvoices'],
                     ],
                 ],
@@ -211,6 +214,18 @@ class PaymentController extends BaseController
         }
     }
 
+    public function actionValidateApplyCredit($id)
+    {
+        $model = Invoice::findOne(['id' => $id]);
+        $paymentModel = new Payment(['scenario' => Payment::SCENARIO_APPLY_CREDIT]);
+        $request = Yii::$app->request;
+        if ($paymentModel->load($request->post()) && !$paymentModel->validate()) {
+            return ActiveForm::validate($paymentModel);
+        } else {
+            return true;
+        }
+    }
+
     public function actionCreditPayment($id)
     {
         $model = Invoice::findOne(['id' => $id]);
@@ -231,15 +246,70 @@ class PaymentController extends BaseController
                 ];
             }
         } else {
+            $creditDataProvider = $this->getAvailableCredit($model);
             $data = $this->renderAjax('/invoice/payment/payment-method/_apply-credit', [
                 'invoice' => $model,
-                'paymentModel' => $paymentModel
+                'paymentModel' => $paymentModel,
+                'creditDataProvider' => $creditDataProvider
             ]);
             $response = [
                 'status' => true,
+                'hasCredit' => $creditDataProvider->totalCount > 0,
                 'data' => $data
             ];
         }
         return $response;
+    }
+
+    public function getAvailableCredit($invoice)
+    {
+        $invoiceCredits = Invoice::find()
+                ->invoiceCredit($invoice->user_id)
+                ->andWhere(['NOT', ['invoice.id' => $invoice->id]])
+                ->all();
+
+        $results = [];
+        if (!empty($invoiceCredits)) {
+            foreach ($invoiceCredits as $invoiceCredit) {
+                if ($invoiceCredit->isReversedInvoice()) {
+                    $lastInvoicePayment = $invoiceCredit;
+                } else {
+                    $lastInvoicePayments = $invoiceCredit->payments;
+                    $lastInvoicePayment = end($lastInvoicePayments);
+                }
+                $lineItems = $invoiceCredit->lineItems;
+                $lineItem = end($lineItems);
+                if ((int) $lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE) {
+                    $source = 'Opening Balance';
+                    $type = 'account_entry';
+                } elseif ((int) $invoiceCredit->isLessonCredit()) {
+                    $source = 'Lesson Credit';
+                    $type = 'invoice';
+                } else {
+                    $source = 'Invoice';
+                    $type = 'invoice';
+                }
+                $paymentDate = new \DateTime();
+                if (!empty($lastInvoicePayment)) {
+                    $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->date);
+                }
+                $results[] = [
+                    'id' => $invoiceCredit->id,
+                    'invoice_number' => $invoiceCredit->getInvoiceNumber(),
+                    'date' => $paymentDate->format('d-m-Y'),
+                    'amount' => abs($invoiceCredit->balance),
+                    'source' => $source,
+                    'type' => $type,
+                ];
+            }
+        }
+
+        $creditDataProvider = new ArrayDataProvider([
+            'allModels' => $results,
+            'sort' => [
+                'attributes' => ['id', 'invoice_number', 'date', 'amount', 'source'],
+            ],
+        ]);
+        return $creditDataProvider;
     }
 }

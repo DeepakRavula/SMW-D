@@ -483,7 +483,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         if (!empty($this->colorCode)) {
             $class = null;
-        } elseif ($this->isEnrolmentFirstlesson()) {
+        } elseif (!$this->isExtra () && $this->isEnrolmentFirstlesson()) {
             $class = 'first-lesson';
         } elseif ($this->isPrivate()) {
             $class = 'private-lesson';
@@ -735,8 +735,8 @@ class Lesson extends \yii\db\ActiveRecord
         $courseId             = $this->courseId;
         $enrolmentFirstLesson = self::find()
                         ->notDeleted()
-            ->where(['courseId' => $courseId])
-            ->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_RESCHEDULED, self::STATUS_UNSCHEDULED]])
+            ->andWhere(['courseId' => $courseId])
+            ->notCanceled()
             ->orderBy(['date' => SORT_ASC])
             ->one();
         return $enrolmentFirstLesson->date === $this->date;

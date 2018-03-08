@@ -44,69 +44,59 @@ echo GridView::widget([
 	<div id="unavailability-content"></div>
 	<?php Modal::end();?>
 <script>
-$(document).ready(function(){
-	$(document).on('click', '.add-unavailability, #unavailability-list  tbody > tr', function() {
-	    var unavailabilityId = $(this).data('key');
-		var teacherId = '<?= $model->id;?>';
-		if (unavailabilityId === undefined) {
-			var customUrl = '<?= Url::to(['teacher-unavailability/create']); ?>?id=' + teacherId;
-		} else {
-			var customUrl = '<?= Url::to(['teacher-unavailability/update']); ?>?id=' + unavailabilityId;
-		}
-		$.ajax({
-			url    : customUrl,
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-				if(response.status)
-				{
-					$('#unavailability-content').html(response.data);
-					$('#unavailability-modal').modal('show');
-                    $('#unavailability-modal .modal-dialog').addClass('classroom-dialog'); 
-				}
-			}
-		});
-		return false;
-	});
-	$(document).on('beforeSubmit', '#unavailability-form', function () {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-				if(response.status) {
-					$.pjax.reload({container: '#unavailability-list', timeout: 6000});
-					$('#unavailability-modal').modal('hide');
-				} else {
-                    $('#unavailability-form').yiiActiveForm('updateMessages', response.errors, true);
+    $(document).on('click', '.add-unavailability, #unavailability-list  tbody > tr', function() {
+        var unavailabilityId = $('#unavailability-list  tbody > tr').data('key');
+        var teacherId = '<?= $model->id;?>';
+        if (unavailabilityId === undefined) {
+            var customUrl = '<?= Url::to(['teacher-unavailability/create']); ?>?id=' + teacherId;
+        } else {
+            var customUrl = '<?= Url::to(['teacher-unavailability/update']); ?>?id=' + unavailabilityId;
+        }
+        $.ajax({
+            url    : customUrl,
+            type   : 'get',
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    if (unavailabilityId !== undefined) {
+                        var params = $.param({ id: unavailabilityId });
+                        var url    = '<?= Url::to(['teacher-unavailability/delete']) ?>?' + params;
+                        $('#modal-delete').show();
+                        $(".modal-delete").attr("action", url);
+                    }
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Unavailability</h4>');
+                    $('#popup-modal .modal-dialog').addClass('classroom-dialog');
                 }
-			}
-		});
-		return false;
-	});
-	$(document).on('click', '#unavailability-delete-button', function (e) {
-		var unavailabilityId = $('#unavailability-list  tbody > tr').data('key'); 
-		$.ajax({
-			url    : '<?= Url::to(['teacher-unavailability/delete']); ?>?id=' + unavailabilityId,
-			type   : 'get',
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-					$.pjax.reload({container : '#unavailability-list', timeout : 6000});
+            }
+        });
+        return false;
+    });
+    
+    $(document).on('modal-success', function(event, params) {
+        $.pjax.reload({container: '#unavailability-list', timeout: 6000});
+    });
+
+    $(document).on('modal-delete', function(event, params) {
+        $.pjax.reload({container: '#unavailability-list', timeout: 6000});
+    });
+
+    $(document).on('click', '#unavailability-delete-button', function (e) {
+        var unavailabilityId = $('#unavailability-list  tbody > tr').data('key');
+        $.ajax({
+            url    : '<?= Url::to(['teacher-unavailability/delete']); ?>?id=' + unavailabilityId,
+            type   : 'get',
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $.pjax.reload({container : '#unavailability-list', timeout : 6000});
                     $('#unavailability-modal').modal('hide');
-				} 
-			}
-		});
-		return false;
-	});
-	$(document).on('click', '.unavailability-cancel', function () {
-		$('#unavailability-modal').modal('hide');
-		return false;
-	});
-});	
+                }
+            }
+        });
+        return false;
+    });
 </script>
