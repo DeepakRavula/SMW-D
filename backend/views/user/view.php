@@ -476,6 +476,10 @@ $this->params['action-button'] = $this->render('_action-button', [
     });
 
     $(document).on('modal-success', function(event, params) {
+        if (params.url) {
+            window.location.href = params.url;
+        }
+        $.pjax.reload({container: '#customer-student-listing', replace:false,async: false, timeout: 6000});
         $.pjax.reload({container: '#group-quali-list', replace:false,async: false, timeout: 6000});
         $.pjax.reload({container: '#private-quali-list', replace:false,async: false, timeout: 6000});
     });
@@ -504,13 +508,6 @@ $(document).ready(function(){
         });
         return false;
 	});
-	 $(document).on('modal-success', function(event, params) {
-        if(params.status){
-		window.location.href = params.url;
-	}
-        return false;
-	});
-    
 	$(document).on('click', '.address-cancel-btn', function () {
 		$('#address-modal').modal('hide');
         return false;
