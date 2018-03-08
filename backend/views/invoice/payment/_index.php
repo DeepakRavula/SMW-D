@@ -65,7 +65,7 @@ Modal::end(); ?>
         var amount = $(this).closest('tr').data('amount');
         var id = $(this).closest('tr').data('id');
         var invoice_number = $(this).closest('tr').data('number')
-        var amountNeeded = <?= $amount; ?>; 
+        var amountNeeded = '<?= $amount; ?>'; 
         if(amount > amountNeeded) {
             $('input[name="Payment[amount]"]').val((amountNeeded).toFixed(2));          
         } else {
