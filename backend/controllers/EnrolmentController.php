@@ -308,6 +308,7 @@ class EnrolmentController extends BaseController
         $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
         $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
         $user->status = User::STATUS_DRAFT;
+	$user->canLogin=true;
         if ($user->save()) {
             $auth = Yii::$app->authManager;
             $authManager = Yii::$app->authManager;
@@ -422,10 +423,11 @@ class EnrolmentController extends BaseController
             $lessons		 = Lesson::find()
                 ->where(['courseId' => $model->course->id])
                 ->regular()
-                ->scheduledOrRescheduled()
+                ->scheduled()
                 ->isConfirmed()
                 ->between($startDate, $endDate)
                 ->all();
+	   
             $courseDay = $courseSchedule->day;
             $day = $startDate->format('l');
             if ($day !== $courseDay) {
@@ -448,14 +450,19 @@ class EnrolmentController extends BaseController
         if ($model->course->program->isPrivate() && $model->canDeleted()) {
             $lessons = Lesson::find()
                 ->where(['courseId' => $model->courseId])
+                ->isConfirmed()
+                ->notCanceled()
                 ->all();
-            foreach ($lessons as $lesson) {
-                $lesson->delete();
+            $message = null;
+            $invoice = $model->addLessonsCredit($lessons);
+            if ($invoice) {
+                $message = '$' . $invoice->balance . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
             }
             $model->delete();
             $response = [
                 'status' => true,
                 'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
+                'message' => $message
             ];
         } else {
             $response		 = [
@@ -477,7 +484,10 @@ class EnrolmentController extends BaseController
      */
     protected function findModel($id)
     {
-        if (($model = Enrolment::findOne($id)) !== null) {
+          $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $model = Enrolment::find()->location($locationId)
+            ->where(['enrolment.id' => $id, 'isDeleted' => false])->one();
+        if ($model !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

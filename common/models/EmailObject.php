@@ -12,6 +12,7 @@ class EmailObject extends \yii\db\ActiveRecord
 {
     const OBJECT_COURSE = 1;
     const OBJECT_LESSON = 2;
+    const OBJECT_PFI=3;
     const OBJECT_INVOICE = 4;
     
     /**

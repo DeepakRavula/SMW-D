@@ -1,10 +1,6 @@
 <?php
 
-use yii\helpers\Html;
 use yii\grid\GridView;
-use yii\helpers\Url;
-use yii\bootstrap\Modal;
-use common\models\Qualification;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 
@@ -39,20 +35,3 @@ use insolita\wgadminlte\LteConst;
     ]); ?>	
 	<?php LteBox::end() ?>
 <?php yii\widgets\Pjax::end(); ?>
-<?php
-    Modal::begin([
-        'header' => '<h4 class="m-0">Edit Qualification</h4>',
-        'id'=>'qualification-edit-modal',
-    ]);?>
-	<div id="qualification-edit-content"></div>
-	<?php Modal::end();?>		
-<?php
-    Modal::begin([
-        'header' => '<h4 class="m-0">Add Private Qualification</h4>',
-        'id'=>'private-qualification-modal',
-    ]);
-    echo $this->render('/qualification/_form-private', [
-        'model' => new Qualification(),
-        'userModel' => $model,
-    ]);
-    Modal::end();?>	

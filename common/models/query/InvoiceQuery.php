@@ -184,7 +184,7 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 
     public function between($fromDate, $toDate)
     {
-        return $this->andFilterWhere(['between', 'invoice.date', $fromDate, $toDate]);
+        return $this->andFilterWhere(['between', 'DATE(invoice.date)', $fromDate, $toDate]);
     }
 
     public function customer($customerId)

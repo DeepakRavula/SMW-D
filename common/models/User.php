@@ -40,6 +40,9 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_ACTIVE = 2;
     const STATUS_DRAFT = 3;
 
+    const DEFAULT_ADMIN_EMAIL1 = 'tonia@arcadiamusicacademy.com';
+    const DEFAULT_ADMIN_EMAIL2 = 'kristin@kristingreen.ca';
+    const DEFAULT_ADMIN_EMAIL3 = 'senguttuvang@gmail.com';
     const ROLE_ADMINISTRATOR = 'administrator';
     const ROLE_CUSTOMER = 'customer';
     const ROLE_TEACHER = 'teacher';
@@ -52,6 +55,7 @@ class User extends ActiveRecord implements IdentityInterface
     const EVENT_AFTER_LOGIN = 'afterLogin';
 
     const SCENARIO_MERGE = 'merge';
+    const SCENARIO_DELETE = 'delete';
 
     public $customerIds;
     public $customerId;
@@ -147,6 +151,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             [['username'], 'unique'],
+            ['email', 'validateOnDelete', 'on' => self::SCENARIO_DELETE],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['username'], 'filter', 'filter' => '\yii\helpers\Html::encode'],
             [['customerIds'], 'required', 'on' => self::SCENARIO_MERGE],
@@ -187,6 +192,23 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasOne(UserProfile::className(), ['user_id' => 'id']);
     }
 
+    public function validateOnDelete($attribute)
+    {
+        $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($this->id), 'name');
+        $role = end($roles);
+        if ($this->isDefaultAdmin()) {
+            $this->addError($attribute, 'Sorry! You can not delete super admins!.');
+        } else if ($this->isCustomer()) {
+            if (!empty($this->student)) {
+                $this->addError($attribute, 'Unable to delete. There are student(s) associated with this ' . $role);
+            }
+        } else if ($this->isTeacher()) {
+            if (!empty($this->qualifications) && !empty($this->courses)) {
+                $this->addError($attribute, 'Unable to delete. There are qualification/course(s) associated with this ' . $role);
+            }
+        }
+    }
+
     public function canMerge($attribute)
     {
         foreach ($this->customerIds as $customerId) {
@@ -195,6 +217,25 @@ class User extends ActiveRecord implements IdentityInterface
                 $this->addError($attribute, 'Sorry! You can not merge '
                     . $customer->publicIdentity . ' has payments/invoice history.');
             }
+        }
+    }
+
+    public function isDefaultAdmin()
+    {
+        $userIds = [];
+        $users = self::find()
+            ->notDeleted()
+            ->joinWith('primaryEmail')
+            ->andWhere(['user_email.email' => [self::DEFAULT_ADMIN_EMAIL1,
+                self::DEFAULT_ADMIN_EMAIL2, self::DEFAULT_ADMIN_EMAIL3]])
+            ->all();
+        foreach ($users as $user) {
+            $userIds[] = $user->id;
+        }
+        if (in_array($this->id, $userIds)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -760,12 +801,27 @@ class User extends ActiveRecord implements IdentityInterface
         $role = end($roles);
         return $role === self::ROLE_OWNER;
     }
-    
-    public function isBackendUsers()
+
+    public function isTeacher()
     {
         $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($this->id), 'name');
         $role = end($roles);
-        return $role === self::ROLE_OWNER || $role === self::ROLE_ADMINISTRATOR || $role === self::ROLE_STAFFMEMBER;
+        return $role === self::ROLE_TEACHER;
+    }
+    
+    public function isBackendUsers()
+    {
+        return $this->isAdmin() || $this->isOwner() || $this->isStaff();
+    }
+
+    public function isManagableByStaff()
+    {
+        return $this->isCustomer() || $this->isTeacher();
+    }
+
+    public function isManagableByOwner()
+    {
+        return $this->isManagableByStaff() || $this->isStaff();
     }
     
     public function isAdmin()
@@ -774,6 +830,7 @@ class User extends ActiveRecord implements IdentityInterface
         $role = end($roles);
         return $role === self::ROLE_ADMINISTRATOR;
     }
+    
     public function isStaff()
     {
         $roles = ArrayHelper::getColumn(Yii::$app->authManager->getRolesByUser($this->id), 'name');

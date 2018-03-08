@@ -255,7 +255,7 @@ class LessonController extends BaseController
                 } else {
                     $response = [
                         'status' => false,
-                        'errors' => $model->getErrors()
+                        'errors' => current(ActiveForm::validate($model))
                     ];
                 }
             }
@@ -531,7 +531,7 @@ class LessonController extends BaseController
             $oldLessons = Lesson::find()
                 ->where(['courseId' => $courseModel->id])
                 ->isConfirmed()
-                ->scheduledOrRescheduled()
+                ->scheduled()
                 ->between($startDate, $endDate)
                 ->all();
             $oldLessonIds = [];

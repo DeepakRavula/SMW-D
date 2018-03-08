@@ -55,7 +55,8 @@ class StudentSearch extends Student
         $query->joinWith('customerProfile cp');
         $query->andFilterWhere(['like', 'first_name', $this->first_name])
             ->andFilterWhere(['like', 'last_name', $this->last_name])
-            ->groupBy('student.id');
+            ->groupBy('student.id')
+		->orderBy(['first_name'=> SORT_ASC]);
 
         if (!$this->showAllStudents) {
             $currentDate = (new \DateTime())->format('Y-m-d H:i:s');

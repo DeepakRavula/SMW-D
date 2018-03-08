@@ -11,12 +11,15 @@ use yii\helpers\Url;
 
 <div class="user-create-form row">
     <?php $form = ActiveForm::begin([
-        'id' => 'apply-credit-form',
+        'id' => 'modal-form',
         'action' => Url::to(['payment/credit-payment', 'id' => $invoice->id]),
+        'enableClientValidation' => false,
+        'enableAjaxValidation' => true,
+        'validationUrl' => Url::to(['payment/validate-apply-credit', 'id' => $invoice->id]),
     ]); ?>
  	<div class="row">
             <div class="col-xs-3">
-    		<?php echo $form->field($model, 'sourceId')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Source')?>
+    		<?php echo $form->field($model, 'sourceType')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Source')?>
         </div>
         <div class="col-xs-3">
     		<?php echo $form->field($model, 'credit')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Available Credit')?>
@@ -28,13 +31,6 @@ use yii\helpers\Url;
    			<?php echo $form->field($model, 'amount')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Amount To Apply') ?>
         </div>
 	</div>
-    <div class="form-group pull-right">
-        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default apply-credit-cancel']);
-        ?>
-       <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-			
-    </div>
-
+	<?php echo $form->field($model, 'sourceId')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
-
 </div>

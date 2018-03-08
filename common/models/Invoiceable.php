@@ -126,9 +126,9 @@ trait Invoiceable
     }
     
     public function createPrivateLessonInvoice()
-    {
-        if ($this->hasProFormaInvoice()) {
-            return $this->proFormaInvoice;
+    {        
+        if ($this->hasInvoice()) {
+            return $this->invoice;
         }
         $invoice = $this->createInvoice();
         $location_id = $this->enrolment->student->customer->userLocation->location_id;
@@ -204,6 +204,28 @@ trait Invoiceable
         }
         $lessons = $query->andWhere(['courseId' => $this->courseId])
                     ->all();
+        $invoice = $this->addLessonsCredit($lessons);
+        $paymentCycleQuery = PaymentCycle::find()
+                ->where(['enrolmentId' => $this->id]);
+        if ($startDate) {
+            $paymentCycleQuery->andWhere(['OR', ['between', "DATE(endDate)", $startDate, $endDate],
+                                ['between', "DATE(startDate)", $startDate, $endDate]]);
+        } else {
+            $paymentCycleQuery->andWhere(['OR',
+                ['AND', ['<', 'DATE(startDate)', $endDate], ['>', 'DATE(endDate)', $endDate]],
+                ['>', 'DATE(startDate)', $endDate]]);
+        }
+        $paymentCycles = $paymentCycleQuery->all();
+        foreach ($paymentCycles as $paymentCycle) {
+            if (!$paymentCycle->hasLessons()) {
+                $paymentCycle->delete();
+            }
+        }
+        return !empty($invoice) ? $invoice : null;
+    }
+
+    public function addLessonsCredit($lessons)
+    {
         $hasCredit = false;
         foreach ($lessons as $lesson) {
             if ($lesson->hasLessonCredit($this->id)) {
@@ -223,25 +245,9 @@ trait Invoiceable
             $lesson->Cancel();
             $lesson->delete();
         }
-        $paymentCycleQuery = PaymentCycle::find()
-                ->where(['enrolmentId' => $this->id]);
-        if ($startDate) {
-            $paymentCycleQuery->andWhere(['OR', ['between', "DATE(endDate)", $startDate, $endDate],
-                                ['between', "DATE(startDate)", $startDate, $endDate]]);
-        } else {
-            $paymentCycleQuery->andWhere(['OR',
-                ['AND', ['<', 'DATE(startDate)', $endDate], ['>', 'DATE(endDate)', $endDate]],
-                ['>', 'DATE(startDate)', $endDate]]);
-        }
-        $paymentCycles = $paymentCycleQuery->all();
-        foreach ($paymentCycles as $paymentCycle) {
-            if (!$paymentCycle->hasLessons()) {
-                $paymentCycle->delete();
-            }
-        }
         return $hasCredit ? $invoice : null;
     }
-    
+
     public function createProFormaInvoice()
     {
         if ($this->hasProFormaInvoice()) {

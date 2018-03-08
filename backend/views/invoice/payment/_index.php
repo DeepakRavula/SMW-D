@@ -73,31 +73,8 @@ Modal::end(); ?>
         }
         $('input[name="Payment[amountNeeded]"]').val((amountNeeded).toFixed(2));          
         $('#payment-credit').val((amount).toFixed(2));
-        $('#payment-sourceid').val(invoice_number);
-        return false;
-    });
-    
-    $(document).on('beforeSubmit', '#apply-credit-form', function (e) {
-        $.ajax({
-            url    : $(this).attr('action'),
-            type   : 'post',
-            dataType: 'json',
-            data   : $(this).serialize(),
-            success: function(response)
-            {
-                if(response.status)
-                {
-                    $.pjax.reload({container: "#invoice-view-lineitem-listing", replace:false,async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
-                    $('#credit-modal').modal('hide');
-                } else {
-                    $('#apply-credit-form').yiiActiveForm('updateMessages', response.errors , true);
-                }
-            }
-        });
+        $('#payment-sourcetype').val(invoice_number);
+        $('#payment-sourceid').val(id);
         return false;
     });
 </script>
