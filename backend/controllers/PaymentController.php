@@ -14,6 +14,8 @@ use yii\web\Response;
 use common\models\CreditUsage;
 use yii\filters\ContentNegotiator;
 use yii\filters\AccessControl;
+use yii\data\ArrayDataProvider;
+use common\models\ItemType;
 use common\components\controllers\BaseController;
 
 /**
@@ -32,7 +34,7 @@ class PaymentController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['invoice-payment', 'credit-payment', 'update', 'delete'],
+                'only' => ['invoice-payment', 'credit-payment', 'update', 'delete', 'validate-apply-credit'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -43,7 +45,8 @@ class PaymentController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'print', 'invoice-payment', 'credit-payment'],
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'print', 
+                            'invoice-payment', 'credit-payment', 'validate-apply-credit'],
                         'roles' => ['managePfi', 'manageInvoices'],
                     ],
                 ],
@@ -211,54 +214,88 @@ class PaymentController extends BaseController
         }
     }
 
+    public function actionValidateApplyCredit($id)
+    {
+        $model = Invoice::findOne(['id' => $id]);
+        $paymentModel = new Payment(['scenario' => Payment::SCENARIO_APPLY_CREDIT]);
+        $request = Yii::$app->request;
+        if ($paymentModel->load($request->post()) && !$paymentModel->validate()) {
+            return ActiveForm::validate($paymentModel);
+        } else {
+            return true;
+        }
+    }
+
     public function actionCreditPayment($id)
     {
         $model = Invoice::findOne(['id' => $id]);
-        $paymentModel = new Payment();
+        $paymentModel = new Payment(['scenario' => Payment::SCENARIO_APPLY_CREDIT]);
         $request = Yii::$app->request;
-        if ($paymentModel->load($request->post())) {
-            $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
-            $paymentModel->reference = $paymentModel->sourceId;
-            $paymentModel->invoiceId = $model->id;
-            if ($paymentModel->validate()) {
-                $paymentModel->save();
-
-                $creditPaymentId = $paymentModel->id;
-                $paymentModel->id = null;
-                $paymentModel->isNewRecord = true;
-                $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-                $paymentModel->invoiceId = $paymentModel->sourceId;
-                $paymentModel->reference = $model->id;
-                $paymentModel->save();
-
-                $debitPaymentId = $paymentModel->id;
-                $creditUsageModel = new CreditUsage();
-                $creditUsageModel->credit_payment_id = $creditPaymentId;
-                $creditUsageModel->debit_payment_id = $debitPaymentId;
-                $creditUsageModel->save();
-
+        if ($request->post()) {
+            if ($paymentModel->load($request->post()) && $paymentModel->validate()) {
                 $invoiceModel = Invoice::findOne(['id' => $paymentModel->sourceId]);
-                $invoiceModel->balance = $invoiceModel->balance + abs($paymentModel->amount);
+                $model->addPayment($invoiceModel, $paymentModel->amount);
                 $invoiceModel->save();
                 $response = [
-                    'status' => true,
+                    'status' => true
                 ];
             } else {
-                $paymentModel = ActiveForm::validate($paymentModel);
                 $response = [
                     'status' => false,
-                    'errors' => $paymentModel,
+                    'errors' => ActiveForm::validate($paymentModel)
                 ];
             }
         } else {
+            $creditDataProvider = $this->getAvailableCredit($model);
             $data = $this->renderAjax('/invoice/payment/payment-method/_apply-credit', [
-                'invoice' => $model
+                'invoice' => $model,
+                'paymentModel' => $paymentModel,
+                'creditDataProvider' => $creditDataProvider
             ]);
             $response = [
                 'status' => true,
+                'hasCredit' => $creditDataProvider->totalCount > 0,
                 'data' => $data
             ];
         }
         return $response;
+    }
+
+    public function getAvailableCredit($invoice)
+    {
+        $invoiceCredits = Invoice::find()
+                ->invoiceCredit($invoice->user_id)
+                ->andWhere(['NOT', ['invoice.id' => $invoice->id]])
+                ->all();
+
+        $results = [];
+        if (!empty($invoiceCredits)) {
+            foreach ($invoiceCredits as $invoiceCredit) {
+                if ($invoiceCredit->isReversedInvoice()) {
+                    $lastInvoicePayment = $invoiceCredit;
+                } else {
+                    $lastInvoicePayments = $invoiceCredit->payments;
+                    $lastInvoicePayment = end($lastInvoicePayments);
+                }
+                $paymentDate = new \DateTime();
+                if (!empty($lastInvoicePayment)) {
+                    $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->date);
+                }
+                $results[] = [
+                    'id' => $invoiceCredit->id,
+                    'invoice_number' => $invoiceCredit->getInvoiceNumber(),
+                    'date' => $paymentDate->format('d-m-Y'),
+                    'amount' => abs($invoiceCredit->balance)
+                ];
+            }
+        }
+
+        $creditDataProvider = new ArrayDataProvider([
+            'allModels' => $results,
+            'sort' => [
+                'attributes' => ['id', 'invoice_number', 'date', 'amount'],
+            ],
+        ]);
+        return $creditDataProvider;
     }
 }

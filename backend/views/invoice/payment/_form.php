@@ -21,7 +21,7 @@ use common\models\PaymentMethod;
         <span class="sr-only">Loading...</span>
     </div>
    <div class="row">
-	   <div class="col-md-6">
+	   <div class="col-md-7">
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'options' => [
                     'id' => 'extra-lesson-date',
@@ -35,10 +35,10 @@ use common\models\PaymentMethod;
             ]);
             ?>
         </div>
-        <div class="col-md-6">
-            <?= $form->field($model, 'amount')->textInput(['readOnly' => $model->isCreditUsed() ||
+        <div class="col-md-5">
+            <?= $form->field($model, 'amount')->textInput(['class' => 'right-align payment-amount form-control','readOnly' => $model->isCreditUsed() ||
                     $model->isCreditApplied(),
-                'value' => \Yii::$app->formatter->asDecimal($model->amount, 2)
+                'value' => \Yii::$app->formatter->asDecimal($model->amount, 2),
             ]);?>
         </div>
    </div>

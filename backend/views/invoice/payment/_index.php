@@ -49,9 +49,12 @@ Modal::end(); ?>
     
 </div>
 <?php
-    $amount = 0;
+    $amount = 0.00;
     if ($model->total > $model->invoicePaymentTotal) {
         $amount = $model->balance;
+    }
+    if (empty($amount)) {
+        $amount = 0.00;
     }
 ?>
 <?php if ((int) $model->type === Invoice::TYPE_INVOICE):?>
@@ -63,8 +66,8 @@ Modal::end(); ?>
     $(document).on('click', '#apply-credit-grid td', function () {
         var amount = $(this).closest('tr').data('amount');
         var id = $(this).closest('tr').data('id');
-        var type = $(this).closest('tr').data('source');    
-        var amountNeeded = <?= $amount; ?>; 
+        var invoice_number = $(this).closest('tr').data('number')
+        var amountNeeded = <?= $amount; ?>;
         if(amount > amountNeeded) {
             $('input[name="Payment[amount]"]').val((amountNeeded).toFixed(2));          
         } else {
@@ -72,32 +75,9 @@ Modal::end(); ?>
         }
         $('input[name="Payment[amountNeeded]"]').val((amountNeeded).toFixed(2));          
         $('#payment-credit').val((amount).toFixed(2));
+        $('#payment-sourcetype').val(invoice_number);
         $('#payment-sourceid').val(id);
-        $('#payment-sourcetype').val(type);
-        return false;
-    });
-    
-    $(document).on('beforeSubmit', '#apply-credit-form', function (e) {
-        $.ajax({
-            url    : $(this).attr('action'),
-            type   : 'post',
-            dataType: 'json',
-            data   : $(this).serialize(),
-            success: function(response)
-            {
-                if(response.status)
-                {
-                    $.pjax.reload({container: "#invoice-view-lineitem-listing", replace:false,async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
-                    $('#credit-modal').modal('hide');
-                } else {
-                    $('#apply-credit-form').yiiActiveForm('updateMessages', response.errors , true);
-                }
-            }
-        });
+        $('input[name="Payment[amount]"]').attr('readonly', false);
         return false;
     });
 </script>

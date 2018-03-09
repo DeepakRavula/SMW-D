@@ -44,12 +44,17 @@ class CourseQuery extends \yii\db\ActiveQuery
 
     public function groupProgram($locationId)
     {
-        $this->joinWith(['program' => function ($query) use ($locationId) {
-            $query->where(['program.type' => Program::TYPE_GROUP_PROGRAM]);
+        $this->joinWith(['program' => function ($query) {
+            $query->andWhere(['program.type' => Program::TYPE_GROUP_PROGRAM]);
         }])
-        ->where(['locationId' => $locationId]);
+        ->andWhere(['course.locationId' => $locationId]);
 
         return $this;
+    }
+
+    public function program($programId)
+    {
+        return $this->andWhere(['course.programId' => $programId]);
     }
     
     public function student($studentId)

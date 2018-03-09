@@ -72,7 +72,11 @@ $invoiceLineItemsDataProvider = new ActiveDataProvider([
         ->andWhere(['invoice_id' => $model->id]),
     'pagination' => false,
 ]);
-$emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
+if ($model->isProFormaInvoice()) {
+	$emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_PFI]);
+} else {
+	$emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
+}
 $content = $this->render('mail/content', [
         'model' => $model,
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
@@ -160,19 +164,7 @@ Modal::end();
         ?>
 	</div>
 </div>
-<?php Modal::begin([
-    'header' => '<h4 class="m-0">Edit Line Item</h4>',
-    'id' => 'line-item-edit-modal',
-    'footer' => $this->render('_submit-button', [
-        'deletable' => true,
-        'deleteClass' => 'item-delete',
-        'saveClass' => 'line-item-save',
-        'cancelClass' => 'line-item-cancel'
-    ])
-]); ?>
 
-<div id="line-item-edit-content"></div>
-<?php Modal::end();?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Message</h4>',
     'id' => 'message-modal',
@@ -225,14 +217,7 @@ Modal::end();
  ]); ?>
 <div id="adjust-tax-modal-content"></div>
  <?php Modal::end();?>
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Apply Credit</h4>',
-    'id' => 'credit-modal',
-    'toggleButton' => ['label' => 'click me', 'class' => 'hide'],
-]); ?>
-<div id="credit-modal-content"></div>
-<?php Modal::end();?>
+
 <script>
  $(document).ready(function() {
     $(document).on('click', '.edit-tax', function () {
@@ -258,13 +243,14 @@ Modal::begin([
         }
     });
 
-    $(document).on('click', '#line-item-grid table tr', function () {
+    $(document).off('click', '#line-item-grid table tr').on('click', '#line-item-grid table tr', function () {
         var id = $(this).data('key');
         var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
         if (!$.isEmptyObject(selectedRows)) {
             $('#invoice-error-notification').html('You are not allowed to perform this action!').fadeIn().delay(5000).fadeOut();
         } else {
             var params = $.param({ id : id });
+            var url = '<?= Url::to(['invoice-line-item/delete']) ?>?' + params;
             $.ajax({
                 url    : '<?= Url::to(['invoice-line-item/update']) ?>?' + params,
                 type: 'get',
@@ -273,16 +259,34 @@ Modal::begin([
                 {
                     if (response.status)
                     {
-                        $('#line-item-edit-modal .modal-dialog').css({'width': '600px'});
-                        $('#line-item-edit-modal').modal('show');
-                        $('.item-delete').attr('data-id', id);
-                        $('#line-item-edit-content').html(response.data);
+                        $('#popup-modal .modal-dialog').css({'width': '600px'});
+                        $('#popup-modal').modal('show');
+                        $('#modal-delete').show();
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Line Item</h4>');
+                        $('.modal-delete').attr('action', url);
+                        $('#modal-content').html(response.data);
                     }
                 }
             });
         }
         return false;
     });
+
+    $(document).on('modal-success', function () {
+        $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
+        return false;
+    });
+    
+    $(document).on('modal-delete', function () {
+        $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+    });
+    
  	$(document).on('click', '.edit-tax-cancel', function (e) {
  		$('#edit-tax-modal').modal('hide');
  		return false;
@@ -343,20 +347,29 @@ Modal::begin([
                 dataType: 'json',
                 success: function(response)
                 {
-                    if (response.status) {
-                        $('#credit-modal').modal('show');
-                        $('#credit-modal-content').html(response.data);
+                    if (response.status && response.hasCredit) {
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                        $('#modal-delete').hide();
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Apply Credit</h4>');
+                        $('.modal-save').text('Pay now')
+                    } else {
+                        $('#invoice-error-notification').html('No credits available!').fadeIn().delay(5000).fadeOut();
                     }
                 }
             });
-            
             return false;
   	});
-	$(document).on('click', '.apply-credit-cancel', function (e) {
-		$('#credit-modal').modal('hide');
-		return false;
-  	});
-	$(document).on('click', '.add-payment', function (e) {
+
+        $(document).on('modal-success', function(event, params) {
+            $.pjax.reload({container: "#invoice-view-lineitem-listing", replace:false,async: false, timeout: 6000});
+            $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
+            $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+            $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
+            $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
+        });
+
+        $(document).on('click', '.add-payment', function (e) {
         $('#payment-modal .modal-dialog').css({'width': '400px'});
 		$('#payment-modal').modal('show');
 		$.ajax({
@@ -482,34 +495,7 @@ Modal::begin([
 		});
 		return false;
 	});
-	$(document).on('click', '.line-item-save', function () {
-        $('#item-edit-spinner').show();
-            $.ajax({
-                    url    : $('#line-item-edit-form').attr('action'),
-                    type   : 'post',
-                    dataType: "json",
-                    data   : $('#line-item-edit-form').serialize(),
-                    success: function(response)
-                    {
-                       if(response.status)
-                            {
-                                $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
-                $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
-               $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000}); 
-                                    if(response.message) {
-                                            $('#success-notification').html(response.message).fadeIn().delay(8000).fadeOut();
-                                    }
-                                    $('#line-item-edit-modal').modal('hide');
-                                    $('#item-edit-spinner').hide();
-                            } else {
-                                    $('#line-item-edit-form').yiiActiveForm('updateMessages', response.errors, true);
-                                    $('#item-edit-spinner').hide();
-                            }
-                    }
-            });
-            return false;
-	});
+	
 	$(document).on('beforeSubmit', '#payment-edit-form', function (e) {
             $('#payment-edit-spinner').show();
 		$.ajax({

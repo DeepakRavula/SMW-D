@@ -30,7 +30,7 @@ LEFT JOIN teacher_unavailability tu ON tu.`teacherId`= u.`id`
 LEFT JOIN teacher_availability_day tad ON tad.`teacher_location_id`= ul.`location_id`
 where ul.location_id = :locationToWipe;
 
-DELETE   iv, ili, iil, iipcl, iie, ilid, ir, p, cu1, cu2, t1, t2 FROM invoice iv
+DELETE   iv, ip, ili, iil, iipcl, iie, ilid, ir, p, cu1, cu2, t1, t2 FROM invoice iv
 LEFT JOIN invoice_line_item ili ON ili.`invoice_id`= iv.`id`
 LEFT JOIN invoice_item_lesson iil ON iil.`invoiceLineItemId`= ili.`id`
 LEFT JOIN invoice_item_enrolment iie ON iie.`invoiceLineItemId`= ili.`id`
@@ -45,7 +45,7 @@ LEFT JOIN transaction t1 ON t1.`id`= iv.`transactionId`
 LEFT JOIN transaction t2 ON t2.`id`= p.`transactionId`
 where iv.location_id = :locationToWipe;
 
-DELETE   co, ce, cg, cpr, cs, e, ed, pc, pcl, v, le, lp, lsu, lh1, lh2, pl  FROM course co
+DELETE   co, ce, cg, cpr, cs, e, ed, pc, py, cu3, cu4, t3, pcl, v, le, lp, lsu, lh1, lh2, pl  FROM course co
 LEFT JOIN course_extra ce ON ce.`courseId`= co.`id`
 LEFT JOIN course_group cg ON cg.`courseId`= co.`id`
 LEFT JOIN course_program_rate cpr ON cpr.`courseId`= co.`id`
@@ -57,6 +57,10 @@ LEFT JOIN payment_cycle_lesson pcl ON pcl.`paymentCycleId`= pc.`id`
 LEFT JOIN vacation v ON v.`enrolmentId`= e.`id`
 LEFT JOIN lesson le ON le.`courseId`= co.`id`
 LEFT JOIN lesson_payment lp ON lp.`lessonId`= le.`id`
+LEFT JOIN payment py ON py.`id`= lp.`paymentId`
+LEFT JOIN credit_usage cu3 ON cu3.`credit_payment_id`= py.`id`
+LEFT JOIN credit_usage cu4 ON cu4.`debit_payment_id`= py.`id`
+LEFT JOIN transaction t3 ON t3.`id`= py.`transactionId`
 LEFT JOIN lesson_split_usage lsu ON lsu.`lessonId`= le.`id`
 LEFT JOIN lesson_hierarchy lh1 ON lh1.`lessonId`= le.`id`
 LEFT JOIN lesson_hierarchy lh2 ON lh2.`childLessonId`= le.`id`
