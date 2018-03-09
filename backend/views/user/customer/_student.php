@@ -9,17 +9,6 @@ use yii\bootstrap\Modal;
 	<a href="#" title="Add" class="add-new-student  pull-right"><i class="fa fa-plus"></i></a>
 	<div class="clearfix"></div>
 </div>
-	<?php
-    Modal::begin([
-        'header' => '<h4 class="m-0">Add Student</h4>',
-        'id'=>'student-create-modal',
-    ]);
-    echo $this->render('_form-student', [
-        'model' => $student,
-        'customer' => $model,
-    ]);
-    Modal::end();
-    ?>
 <div class="grid-row-open">
 <?php yii\widgets\Pjax::begin(['id' => 'customer-student-listing']) ?>
 <?php

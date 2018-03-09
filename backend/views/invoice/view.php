@@ -243,7 +243,7 @@ Modal::end();
         }
     });
 
-    $(document).on('click', '#line-item-grid table tr', function () {
+    $(document).off('click', '#line-item-grid table tr').on('click', '#line-item-grid table tr', function () {
         var id = $(this).data('key');
         var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
         if (!$.isEmptyObject(selectedRows)) {
