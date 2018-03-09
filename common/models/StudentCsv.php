@@ -51,7 +51,7 @@ class StudentCsv extends \yii\db\ActiveRecord
         return [
             [['studentId', 'firstName', 'lastName'], 'required'],
             [['studentId', 'billingWorkTelExt'], 'integer'],
-            [['birthDate', 'balance'], 'safe'],
+            [['birthDate', 'openingBalance'], 'safe'],
             [['firstName', 'lastName'], 'string', 'max' => 25],
             [['email'], 'string', 'max' => 50],
             [['address', 'billingAddress'], 'string', 'max' => 60],
@@ -98,10 +98,10 @@ class StudentCsv extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if ($insert) {
-            if (!empty($this->balance)) {
+            if (!empty($this->openingBalance)) {
                 $paymentModel = new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]);
                 $paymentModel->user_id = $this->student->customer->id;
-                $paymentModel->amount = $this->balance;
+                $paymentModel->amount = $this->openingBalance;
                 $paymentModel->addOpeningBalance();
             }
         }

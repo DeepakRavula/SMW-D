@@ -12,7 +12,8 @@ class m180228_192405_add_balance_student_csv extends Migration
      */
     public function safeUp()
     {
-        $this->addColumn('student_csv', 'balance', $this->decimal(10,4)->notNull()->after('notes'));
+        $this->dropColumn('student_csv', 'openingBalance');
+        $this->addColumn('student_csv', 'openingBalance', $this->decimal(10,4)->notNull()->after('notes'));
     }
 
     /**
