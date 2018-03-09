@@ -12,16 +12,6 @@ use common\models\Qualification;
        'locationModel'=>$model->userLocation->location,
 ]);
    ?>
-<style>
-        @media print{
-            .report-h1{
-                font-size:36px;
-            }
-            .report-h2{
-                font-size:32px;
-            }
-	}
-    </style>
       <!-- /.col -->
       <div class="col-md-12">
           <div class="report-h1"> Time Voucher For  <?php echo $model->publicIdentity.'     '; ?></div>
