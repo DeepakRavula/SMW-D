@@ -277,18 +277,6 @@ class PaymentController extends BaseController
                     $lastInvoicePayments = $invoiceCredit->payments;
                     $lastInvoicePayment = end($lastInvoicePayments);
                 }
-                $lineItems = $invoiceCredit->lineItems;
-                $lineItem = end($lineItems);
-                if ((int) $lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE) {
-                    $source = 'Opening Balance';
-                    $type = 'account_entry';
-                } elseif ((int) $invoiceCredit->isLessonCredit()) {
-                    $source = 'Lesson Credit';
-                    $type = 'invoice';
-                } else {
-                    $source = 'Invoice';
-                    $type = 'invoice';
-                }
                 $paymentDate = new \DateTime();
                 if (!empty($lastInvoicePayment)) {
                     $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->date);
@@ -297,9 +285,7 @@ class PaymentController extends BaseController
                     'id' => $invoiceCredit->id,
                     'invoice_number' => $invoiceCredit->getInvoiceNumber(),
                     'date' => $paymentDate->format('d-m-Y'),
-                    'amount' => abs($invoiceCredit->balance),
-                    'source' => $source,
-                    'type' => $type,
+                    'amount' => abs($invoiceCredit->balance)
                 ];
             }
         }
@@ -307,7 +293,7 @@ class PaymentController extends BaseController
         $creditDataProvider = new ArrayDataProvider([
             'allModels' => $results,
             'sort' => [
-                'attributes' => ['id', 'invoice_number', 'date', 'amount', 'source'],
+                'attributes' => ['id', 'invoice_number', 'date', 'amount'],
             ],
         ]);
         return $creditDataProvider;
