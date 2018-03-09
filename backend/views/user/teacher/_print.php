@@ -20,7 +20,7 @@ use common\models\Qualification;
             .report-h2{
                 font-size:32px;
             }
-        }
+	}
     </style>
       <!-- /.col -->
       <div class="col-md-12">
