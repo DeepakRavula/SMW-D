@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
+use common\models\Enrolment;
 use kartik\daterange\DateRangePicker;
 use yii\grid\GridView;
 
@@ -28,6 +29,10 @@ use yii\grid\GridView;
                     'attribute' => 'dateRange',
                     'convertFormat' => true,
                     'initRangeExpr' => true,
+                    'options' => [
+                        'readOnly' => true,
+                        'class' => 'form-control'
+                    ],
                     'pluginOptions' => [
                         'autoApply' => true,
                         'locale' => [

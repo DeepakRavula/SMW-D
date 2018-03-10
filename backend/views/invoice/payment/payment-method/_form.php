@@ -66,7 +66,7 @@ use common\models\PaymentMethod;
     <div class="row">
 	   <div class="form-group pull-right">
            <?= Html::a('Cancel', '', ['class' => 'btn btn-default payment-cancel-btn']);?>
-        <?= Html::submitButton(Yii::t('backend', 'Pay'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
+        <?= Html::submitButton(Yii::t('backend', 'Pay'), ['class' => 'btn btn-info create-payment', 'name' => 'button']) ?>
 	</div>
 	<?php ActiveForm::end(); ?>
 </div>

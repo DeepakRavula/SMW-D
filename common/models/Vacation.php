@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use yii\helpers\ArrayHelper;
 use Yii;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\components\validators\vacation\EnrolmentDateValidator;
@@ -42,10 +41,8 @@ class Vacation extends \yii\db\ActiveRecord
     {
         return [
             [['enrolmentId', 'isConfirmed'], 'integer'],
-            [['fromDate', 'toDate', 'dateRange', 'isDeleted'], 'safe'],
-            ['fromDate', EnrolmentDateValidator::className()],
-            ['toDate', EnrolmentDateValidator::className()],
-            ['dateRange', EnrolmentDateValidator::className()],
+            ['dateRange', 'required'],
+            [['fromDate', 'toDate', 'dateRange', 'isDeleted'], 'safe']
         ];
     }
 
@@ -56,6 +53,7 @@ class Vacation extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'dateRange' => 'Date Range',
             'studentId' => 'Student ID',
             'fromDate' => 'From Date',
             'toDate' => 'To Date',

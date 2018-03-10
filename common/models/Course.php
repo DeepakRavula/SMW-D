@@ -226,7 +226,7 @@ class Course extends \yii\db\ActiveRecord
             $endDate = $startDate->add(new \DateInterval('P' . $weeks .'W'));
             $this->endDate = $endDate->format('Y-m-d H:i:s');
         } else {
-            $endDate = (new Carbon($this->startDate))->addMonths(11);
+            $endDate = (new Carbon($this->startDate))->addMonths(23);
             $startDate = new \DateTime($this->startDate);
             $this->startDate = $startDate->format('Y-m-d H:i:s');
             $this->endDate = $endDate->endOfMonth();

@@ -449,6 +449,7 @@ Modal::end();
 		return false;
 	});
 	$(document).on('beforeSubmit', '#payment-form', function (e) {
+            $('.create-payment').attr('disabled', true);
             $('#add-payment-spinner').show();
 		e.preventDefault();
 		$.ajax({
@@ -641,4 +642,16 @@ $(document).on("click", '.adjust-invoice-tax', function() {
     });
     return false;
 });
+
+    $(document).off('click', '.create-payment').on('click', '.create-payment', function () {
+        $('.create-payment').attr('disabled', true);
+        $('#payment-form').submit();
+        return false;
+    });
+
+    $(document).on('afterValidate', '#payment-form', function (event, messages, errorAttributes) {
+        if (errorAttributes.length > 0) {
+            $('.create-payment').attr('disabled', false);
+        }
+    });
 </script>
