@@ -18,11 +18,17 @@ LteBox::begin([
 ])
 ?>
 <dl class="dl-horizontal">
-    <dt>Teacher</dt>
-    <dd>
-        <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => User::ROLE_TEACHER, 'id' => $model->teacherId]) ?>">
+    <?php if ($model->isRescheduled() || $model->isUnscheduled()) : ?>
+        <?php $teacher = $model->rootLesson ? $model->rootLesson->teacher->publicIdentity : $model->teacher->publicIdentity ; ?>
+        <dt>Original Teacher</dt>
+        <dd><?= $teacher ?></dd>
+    <?php endif; ?>
+    <?php if (!($model->isUnscheduled())) : ?>
+        <dt>Scheduled Teacher</dt>
+        <dd><a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => User::ROLE_TEACHER, 'id' => $model->teacherId]) ?>">
             <?= $model->teacher->publicIdentity; ?>
         </a></dd>
+    <?php endif; ?>
     <?php if ($model->isRescheduled() || $model->isUnscheduled()) : ?>
         <?php $date = $model->rootLesson ? $model->rootLesson->date : $model->date ; ?>
         <dt>Original Date</dt>
