@@ -56,6 +56,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
                     return $data->item->getItemTotal($locationId, $data->invoice->date);
                 },
+                'format' => ['decimal', 2],
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
