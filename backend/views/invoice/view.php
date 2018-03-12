@@ -121,15 +121,6 @@ if (!empty($lineItem)) {
 	</div>
 	<?php Pjax::end(); ?>
 </div>
-<div class="row">
-	<div class="col-md-12">
-		<?=
-        $this->render('note/_reminder', [
-            'model' => $model,
-        ]);
-        ?>
-	</div>
-</div>
 
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Message</h4>',
