@@ -726,27 +726,7 @@ class InvoiceController extends BaseController
             'userModel' => $model->user,
         ]);
         $post = Yii::$app->request->post();
-        if ($post) {
-            $model->load($post);
-            $model->isTaxAdjusted = false;
-            $model->tax += $model->taxAdjusted;
-            if ((float) $model->tax !== (float) $model->lineItemTax) {
-                $model->isTaxAdjusted = true;
-            }
-
-            if ($model->save()) {
-                $response = [
-                    'status' => true,
-                    'message' => 'Tax successfully updated!',
-                ];
-            } else {
-                $response = [
-                    'status' => false,
-                    'errors' => ActiveForm::validate($model),
-                ];
-            }
-            return $response;
-        } else {
+        if (!$post) {
             return [
                 'status' => true,
                 'data' => $data,

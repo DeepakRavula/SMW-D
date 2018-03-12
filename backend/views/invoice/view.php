@@ -238,7 +238,13 @@ if (!empty($lineItem)) {
         return false;
     });
 
-    $(document).on('modal-success', function () {
+    $(document).on('modal-success', function (event, params) {
+        if (!$.isEmptyObject(params.message)) {
+            $('#success-notification').html(params.message).fadeIn().delay(5000).fadeOut();
+        }
+        if (!$.isEmptyObject(params.data)) {
+            $('.mail-flag').html(params.data);
+        }
         $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
         $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
         $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
@@ -247,7 +253,7 @@ if (!empty($lineItem)) {
         $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
     });
     
-    $(document).on('modal-delete', function () {
+    $(document).on('modal-delete', function (event, params) {
         $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
         $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
         $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
@@ -346,6 +352,7 @@ if (!empty($lineItem)) {
         $(document).on('click', '.add-payment', function (e) {
         $('#payment-modal .modal-dialog').css({'width': '400px'});
 		$('#payment-modal').modal('show');
+                $('.create-payment').attr('disabled', false);
 		$.ajax({
             url    : '<?= Url::to(['invoice/get-payment-amount', 'id' => $model->id]); ?>',
             type   : 'get',
@@ -359,27 +366,8 @@ if (!empty($lineItem)) {
         });
 		return false;
   	});
-	$(document).on('beforeSubmit', '#mail-form', function (e) {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   	{
-                    $('#spinner').hide();		
-                    $('#invoice-mail-modal').modal('hide');
-					$('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
-					$('.mail-flag').html(response.data);
-					
-				}
-			}
-		});
-		return false;
-	});
-	$(document).on('click', '.payment-cancel-btn', function (e) {
+
+        $(document).on('click', '.payment-cancel-btn', function (e) {
 		$('#payment-modal').modal('hide');
 		return false;
   	});
@@ -446,6 +434,7 @@ if (!empty($lineItem)) {
                                 $('#add-payment-spinner').hide();
                             } else {
                                 $('#payment-form').yiiActiveForm('updateMessages', response.errors , true);
+                                $('.create-payment').attr('disabled', false);
                                 $('#add-payment-spinner').hide();
                             }
 			}

@@ -29,7 +29,7 @@ use dosamigos\ckeditor\CKEditor;
         }
         ?>
 	<?php $form = ActiveForm::begin([
-        'id' => 'mail-form',
+        'id' => 'modal-form',
         'action' => Url::to(['email/send'])
     ]);
     ?>
