@@ -82,13 +82,14 @@
                 </tr>
               </tbody>
             </table>
+			  <?php if($model->hasPayments()) : ?>
     Payments
         <?= $this->render('/invoice/payment/_payment-list', [
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'searchModel' => $searchModel,
             'model' => $model,
         ]); ?>
-                     
+       <?php endif; ?>
 </div>
           </div>
         <!-- /.col -->

@@ -23,15 +23,16 @@ echo $this->render('/invoice/_view-line-item', [
     'print'=>true,
 ]);
 ?>
-           <div class="m-l-22"><b>Payments</b></div>  
-               
-	<div class="col-xs-10">          
+<div class="col-xs-10">
+    <?php if($model->hasPayments()) :?>
+        <div class="m-l-22"> <b>Payments</b></div>
 		<?= $this->render('/invoice/payment/_payment-list', [
             'model' => $model,
             'searchModel' => $searchModel,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'print'=>true,        
             ]);?>
+	<?php endif; ?>
 	</div>
 	<?php Pjax::Begin(['id' => 'invoice-bottom-summary', 'timeout' => 6000]); ?>
 	<div class="col-xs-2">
