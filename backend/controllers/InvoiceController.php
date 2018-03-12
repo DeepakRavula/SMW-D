@@ -202,6 +202,7 @@ class InvoiceController extends BaseController
         $itemDataProvider                   = $itemSearchModel->search(Yii::$app->request->queryParams);
         $searchModel                        = new InvoiceSearch();
         $searchModel->load($request->get());
+        $searchModel->isWeb = true;
         $invoiceLineItems                   = InvoiceLineItem::find()
             ->notDeleted()
             ->andWhere(['invoice_id' => $id]);
@@ -687,6 +688,10 @@ class InvoiceController extends BaseController
     public function actionMail($id)
     {
         $model = Invoice::findOne($id);
+        $searchModel = new InvoiceSearch();
+        $searchModel->isPrint = false;
+        $searchModel->toggleAdditionalColumns = false;
+        $searchModel->isWeb = false;
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => InvoiceLineItem::find()
                 ->notDeleted()
@@ -717,6 +722,7 @@ class InvoiceController extends BaseController
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'id' => $model->id,
+            'searchModel' => $searchModel,
             'userModel' => $model->user,
         ]);
         $post = Yii::$app->request->post();

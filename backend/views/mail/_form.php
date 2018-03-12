@@ -2,7 +2,6 @@
 
 use yii\bootstrap\ActiveForm;
 use kartik\select2\Select2;
-use yii\imperavi\Widget;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 use common\models\UserEmail;
@@ -18,6 +17,7 @@ use dosamigos\ckeditor\CKEditor;
         $invoiceModel = Invoice::findOne($id);
         $model->content = $this->renderAjax('/invoice/mail/content', [
             'model' => $invoiceModel,
+            'searchModel' => $searchModel,
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
             'emailTemplate' => $emailTemplate,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
