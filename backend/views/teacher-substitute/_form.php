@@ -46,15 +46,7 @@ if ($conflictedLessonIdsCount > 0) {
         <?php
 $columns = [
     [
-        'label' => ' Original Teacher',
-        'value' => function ($model) {
-            return $original->teacher->publicIdentity;;
-        },
-        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-        'contentOptions' => ['class' => 'kv-sticky-column'],
-                ],
-    [
-        'label' => ' Substitute Teacher',
+        'label' => 'Teacher',
         'value' => function ($model) {
             return $model->teacher->publicIdentity;
         },

@@ -24,7 +24,7 @@ LteBox::begin([
         <dd><?= $teacher ?></dd>
     <?php endif; ?>
     <?php if (!($model->isUnscheduled())) : ?>
-        <dt>Scheduled Teacher</dt>
+        <dt>Teacher</dt>
         <dd><a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => User::ROLE_TEACHER, 'id' => $model->teacherId]) ?>">
             <?= $model->teacher->publicIdentity; ?>
         </a></dd>
