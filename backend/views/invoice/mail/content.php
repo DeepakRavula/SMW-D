@@ -94,9 +94,11 @@
           </div>
         <!-- /.col -->
         </div>
-<div>
-    <?php echo $model->reminderNotes; ?>
-</div>
+
 <br>
 <?= $emailTemplate->footer ?? 'Thank you 
 Arcadia Academy of Music Team.'; ?>
+
+<div>
+    <?php echo $model->reminderNotes; ?>
+</div>
