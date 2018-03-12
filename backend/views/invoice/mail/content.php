@@ -1,9 +1,15 @@
 <?= $emailTemplate->header ?? 'Please find the invoice below:'; ?><Br>
+<table style="width:100%">
+    <tr>
+	<td>
     <?= $this->render('/invoice/_view-line-item', [
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
             'searchModel' => $searchModel,
             'model' => $model,
         ]); ?>
+	</td>
+    </tr>
+</table>
     <div class="row">
         <!-- /.col -->
           <div class="table-responsive">
@@ -16,13 +22,22 @@
                       <em><strong> Notes: </strong><Br>
                         <?php echo $model->notes; ?></em>
                       </div>
-                      <?php endif; ?>
+		      <?php endif; ?>
+			  <div >
+			      <b> Payments</b>
+        <?= $this->render('/invoice/payment/_payment-list', [
+            'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
+            'searchModel' => $searchModel,
+            'model' => $model,
+        ]); ?>  
+		      </div>
+                      
                   </td>
                   <td colspan="4">
                     <table class="table-invoice-childtable" style="width: 100%; float: right; text-align: left;">
                      <tr>
                       <td style="width: 50%;">SubTotal</td>
-						<td><?= Yii::$app->formatter->format(
+						<td style="text-align:right"><?= Yii::$app->formatter->format(
             $model->subTotal,
                             ['currency', 'USD', [
                         \NumberFormatter::MIN_FRACTION_DIGITS => 2,
@@ -32,7 +47,7 @@
                     </tr> 
                      <tr>
                       <td>Tax</td>
-						<td>
+						<td style="text-align:right">
 					  <?= Yii::$app->formatter->format(
                         $model->tax,
                             ['currency', 'USD', [
@@ -45,7 +60,7 @@
                     
                       <tr>
                       <td><strong>Total</strong></td>
-						<td><strong>
+						<td style="text-align:right"><strong>
 					<?= Yii::$app->formatter->format(
                         $model->total,
                             ['currency', 'USD', [
@@ -57,7 +72,7 @@
                     </tr>
 					 <tr>
                       <td>Paid</td>
-						<td> <?= Yii::$app->formatter->format(
+						<td style="text-align:right"> <?= Yii::$app->formatter->format(
                         $model->invoicePaymentTotal,
                             ['currency', 'USD', [
                         \NumberFormatter::MIN_FRACTION_DIGITS => 2,
@@ -67,7 +82,7 @@
                     </tr>
                       <tr>
                       <td class="p-t-20">Balance</td>
-						<td class="p-t-20"><strong>
+						<td class="p-t-20" style="text-align:right"><strong>
 					<?= Yii::$app->formatter->format(
                         $model->invoiceBalance,
                             ['currency', 'USD', [
@@ -82,20 +97,11 @@
                 </tr>
               </tbody>
             </table>
-    Payments
-        <?= $this->render('/invoice/payment/_payment-list', [
-            'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
-            'searchModel' => $searchModel,
-            'model' => $model,
-        ]); ?>
+    
                      
 </div>
           </div>
         <!-- /.col -->
-        </div>
-<div>
-    <?php echo $model->reminderNotes; ?>
-</div>
 <br>
 <?= $emailTemplate->footer ?? 'Thank you 
 Arcadia Academy of Music Team.'; ?>

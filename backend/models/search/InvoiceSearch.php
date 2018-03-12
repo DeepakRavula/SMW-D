@@ -17,6 +17,7 @@ class InvoiceSearch extends Invoice
     const STATUS_ALL = 3;
     public $toggleAdditionalColumns;
     public $isPrint;
+    public $isMail;
     public $fromDate;
     public $toDate;
     public $invoiceDateRange;

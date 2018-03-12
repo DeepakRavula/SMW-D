@@ -692,6 +692,7 @@ class InvoiceController extends BaseController
         $searchModel->isPrint = false;
         $searchModel->toggleAdditionalColumns = false;
         $searchModel->isWeb = false;
+	$searchModel->isMail=true;
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => InvoiceLineItem::find()
                 ->notDeleted()

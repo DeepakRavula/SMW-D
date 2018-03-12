@@ -2,7 +2,7 @@
 ?>
 <?php
 $columns = [
-      [
+            [
         'contentOptions' => ['class' => 'text-left','style' => 'min-width:15%;max-width:15%;'],
         'headerOptions' => ['class' => 'text-left','style' => 'min-width:15%;max-width:15%;'],
         'label' => 'Date',
@@ -29,7 +29,9 @@ $columns = [
             return $data->reference;
         },
         ],
-    [
+	];
+	if ($searchModel->isWeb) {
+		array_push($columns, [
         'contentOptions' => ['class' => 'text-left','style' => 'min-width:30%;max-width:30%;word-wrap:break-word;'],
         'label' => 'Notes',
         'options' => ['width'=>'30%;'],
@@ -37,8 +39,9 @@ $columns = [
             return $data->notes;
 
         },
-        ],
-        [
+		]);
+	}
+ array_push($columns, [
             'label'=>'Amount',
             'format' => 'currency',
              'options'=>['class' => 'text-right','width'=>'10%;'] , 
@@ -47,11 +50,11 @@ $columns = [
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->amount);
             },
-        ],
-    ]; ?>
+	    ]);
+    ?>
 
 <div>
-    <?php if ($searchModel->isWeb) {
+    <?php if ($searchModel->isWeb ) {
         $tableOption = ['class' => 'table table-condensed'];
     } else {
         $tableOption = ['class' => 'table table-bordered m-0', 'style'=>'width:100%; text-align:left'];
