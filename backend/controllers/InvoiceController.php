@@ -29,6 +29,9 @@ use common\models\InvoiceReverse;
 use common\models\UserEmail;
 use common\models\UserContact;
 use common\models\Label;
+use common\models\EmailTemplate;
+use common\models\EmailObject;
+use backend\models\EmailForm;
 use backend\models\search\UserSearch;
 use common\models\log\LogHistory;
 use backend\models\search\ItemSearch;
@@ -53,7 +56,7 @@ class InvoiceController extends BaseController
                 'only' => ['delete', 'note', 
 					'get-payment-amount', 'update-customer',
                     'create-walkin', 'fetch-user', 'add-misc',
-					'adjust-tax'],
+					'adjust-tax', 'mail'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -63,7 +66,7 @@ class InvoiceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['blank-invoice', 'index',
+                        'actions' => ['blank-invoice', 'index', 'mail',
 							'update-customer', 'create-walkin',
 							'note', 'view', 'fetch-user',
 							'add-misc','fetch-summary-and-status', 							   'compute-tax', 'create', 'update',
@@ -229,8 +232,6 @@ class InvoiceController extends BaseController
         $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $customerInvoicePayments,
         ]);
-        $locationId                          = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $currentDate                         = (new \DateTime())->format('Y-m-d H:i:s');
         $invoicePayments                     = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                 $query->where(['ip.invoice_id' => $model->id]);
@@ -668,6 +669,70 @@ class InvoiceController extends BaseController
                     'status' => true,
                     'message' => 'Tax successfully updated!',
         ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model),
+                ];
+            }
+            return $response;
+        } else {
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
+    }
+
+    public function actionMail($id)
+    {
+        $model = Invoice::findOne($id);
+        $invoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => InvoiceLineItem::find()
+                ->notDeleted()
+                ->andWhere(['invoice_id' => $model->id]),
+            'pagination' => false,
+        ]);
+        if ($model->isProFormaInvoice()) {
+            $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_PFI]);
+        } else {
+            $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
+        }
+        $invoicePayments                     = Payment::find()
+            ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
+                $query->where(['ip.invoice_id' => $model->id]);
+            }])
+            ->orderBy(['date' => SORT_DESC]);
+        if ($model->isProFormaInvoice()) {
+            $invoicePayments->notCreditUsed();
+        }
+        $invoicePaymentsDataProvider = new ActiveDataProvider([
+            'query' => $invoicePayments,
+        ]);
+        $data = $this->renderAjax('/mail/_form', [
+            'model' => new EmailForm(),
+            'emails' => !empty($model->user->email) ?$model->user->email : null,
+            'subject' => $emailTemplate->subject ?? 'Invoice from Arcadia Academy of Music',
+            'emailTemplate' => $emailTemplate,
+            'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+            'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
+            'id' => $model->id,
+            'userModel' => $model->user,
+        ]);
+        $post = Yii::$app->request->post();
+        if ($post) {
+            $model->load($post);
+            $model->isTaxAdjusted = false;
+            $model->tax += $model->taxAdjusted;
+            if ((float) $model->tax !== (float) $model->lineItemTax) {
+                $model->isTaxAdjusted = true;
+            }
+
+            if ($model->save()) {
+                $response = [
+                    'status' => true,
+                    'message' => 'Tax successfully updated!',
+                ];
             } else {
                 $response = [
                     'status' => false,
