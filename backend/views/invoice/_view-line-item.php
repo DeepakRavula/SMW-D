@@ -4,7 +4,7 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 
     if ($searchModel->isWeb) {
-        $tableOption = ['class' => 'table table-bordered m-0', 'style'=>'width:100%; text-align:left'];
+        $tableOption = ['class' => 'table table-condensed'];
         $columns = [
             [
             'class' => 'yii\grid\CheckboxColumn',

@@ -1,5 +1,4 @@
 <?php
-   use yii\grid\GridView;
    use yii\widgets\Pjax; 
 /* @var $this yii\web\View */
    /* @var $model common\models\Invoice */
@@ -29,6 +28,7 @@ echo $this->render('/invoice/_view-line-item', [
 	<div class="col-xs-10">          
 		<?= $this->render('/invoice/payment/_payment-list', [
             'model' => $model,
+            'searchModel' => $searchModel,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'print'=>true,        
             ]);?>
