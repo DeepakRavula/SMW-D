@@ -311,15 +311,14 @@ class Payment extends ActiveRecord
             $date = Carbon::parse($invoice->location->conversionDate);
             $invoice->date = $date->subDay(1);
         }
-        $invoice->save();
-
         if ($this->amount < 0) {
-            $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
+            $this->date = (new \DateTime($invoice->date))->format('Y-m-d H:i:s');
             $this->invoiceId = $invoice->id;
             $this->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
             $this->amount = abs($this->amount);
             $this->save();
         }
+        $invoice->save();
         return $invoice;
     }
 }

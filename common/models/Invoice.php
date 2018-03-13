@@ -95,7 +95,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
-            [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId',
+            [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 'date',
                 'transactionId', 'balance', 'taxAdjusted', 'isTaxAdjusted'], 'safe']
         ];
     }
@@ -594,6 +594,7 @@ class Invoice extends \yii\db\ActiveRecord
             if (!empty($reminderNotes)) {
                 $this->reminderNotes = $reminderNotes->notes;
             }
+            $this->balance = 0;
             $this->isDeleted = false;
         } else {
             if ($this->isProformaPaymentFrequencyApplicable()) {

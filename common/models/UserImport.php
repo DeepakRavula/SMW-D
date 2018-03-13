@@ -272,8 +272,8 @@ class UserImport extends Model
         $studentCsv = new StudentCsv();
         $studentCsv->studentId = $student->id;
 	$studentCsv->openingBalance = self::DEFAULT_OPENING_BALANCE;
-	if (!empty($row['Balance to date'])) {
-            $studentCsv->openingBalance = $row['Balance to date'];
+	if (!empty($row['Balance To Date'])) {
+            $studentCsv->openingBalance = $row['Balance To Date'];
 	}
 	$studentCsv->firstName = $row['First Name'];
         $studentCsv->lastName = $row['Last Name'];
