@@ -97,31 +97,11 @@
                 </tr>
               </tbody>
             </table>
-<<<<<<< HEAD
-			  <?php if($model->hasPayments()) : ?>
-    Payments
-        <?= $this->render('/invoice/payment/_payment-list', [
-            'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
-            'searchModel' => $searchModel,
-            'model' => $model,
-        ]); ?>
-       <?php endif; ?>
-</div>
-          </div>
-        <!-- /.col -->
-        </div>
 
-=======
     
-                     
 </div>
           </div>
         <!-- /.col -->
->>>>>>> email-payment-in-notes-tab
 <br>
 <?= $emailTemplate->footer ?? 'Thank you 
 Arcadia Academy of Music Team.'; ?>
-
-<div>
-    <?php echo $model->reminderNotes; ?>
-</div>
