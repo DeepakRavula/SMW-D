@@ -82,7 +82,10 @@ class UserSearch extends User
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
+	$query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
+	$dataProvider->sort->defaultOrder = [
+          'uf.lastname' => SORT_DESC,
+	    ];
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
@@ -98,7 +101,6 @@ class UserSearch extends User
         $query->leftJoin(['rbac_auth_assignment aa'], 'user.id = aa.user_id');
         $query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
         $query->leftJoin(['user_location ul'], 'ul.user_id = user.id');
-        $query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
         $dataProvider->setSort([
             'attributes' => [
                 'firstname' => [
@@ -149,7 +151,7 @@ class UserSearch extends User
             
         }
 	  $query->groupBy('user.id');
-	  $query->orderBy(['uf.firstname' => SORT_ASC]);
+	  $query->orderBy(['uf.lastname' => SORT_DESC]);
         return $dataProvider;
     }
 
