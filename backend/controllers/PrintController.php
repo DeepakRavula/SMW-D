@@ -66,7 +66,8 @@ class PrintController extends BaseController
         ]);
         $searchModel=new InvoiceSearch();
         $searchModel->toggleAdditionalColumns=false;
-        $searchModel->isPrint=true;
+        $searchModel->isPrint = true;
+        $searchModel->isMail = false;
         $this->layout = '/print';
 
         return $this->render('/invoice/print/view', [

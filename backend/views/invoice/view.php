@@ -9,6 +9,8 @@ use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 use common\models\UserProfile;
 use common\models\UserEmail;
+use yii\imperavi\TableImperaviRedactorPluginAsset;
+TableImperaviRedactorPluginAsset::register($this);
 use kartik\select2\Select2Asset;
 Select2Asset::register($this);
 /* @var $this yii\web\View */

@@ -203,6 +203,7 @@ class InvoiceController extends BaseController
         $searchModel                        = new InvoiceSearch();
         $searchModel->load($request->get());
         $searchModel->isWeb = true;
+        $searchModel->isMail = false;
         $invoiceLineItems                   = InvoiceLineItem::find()
             ->notDeleted()
             ->andWhere(['invoice_id' => $id]);

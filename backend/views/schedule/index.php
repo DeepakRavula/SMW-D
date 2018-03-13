@@ -3,7 +3,6 @@
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\bootstrap\Tabs;
-use common\models\CalendarEventColor;
 use common\models\Holiday;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
