@@ -51,7 +51,12 @@ $columns = [
     ]; ?>
 
 <div>
-	<?php yii\widgets\Pjax::begin([
+    <?php if ($searchModel->isWeb) {
+        $tableOption = ['class' => 'table table-condensed'];
+    } else {
+        $tableOption = ['class' => 'table table-bordered m-0', 'style'=>'width:100%; text-align:left'];
+    }
+    yii\widgets\Pjax::begin([
         'id' => 'invoice-payment-listing',
         'timeout' => 6000,
     ]) ?>
@@ -62,7 +67,7 @@ $columns = [
     'summary' => false,
         'emptyText' => false,
         'options' => ['class' => 'col-md-12'],
-    'tableOptions' => ['class' => 'table table-condensed'],
+    'tableOptions' => $tableOption,
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     ]);
     ?>

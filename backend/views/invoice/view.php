@@ -9,10 +9,8 @@ use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 use common\models\UserProfile;
 use common\models\UserEmail;
-use yii\data\ActiveDataProvider;
-use backend\models\EmailForm;
-use common\models\EmailTemplate;
-use common\models\EmailObject;
+use kartik\select2\Select2Asset;
+Select2Asset::register($this);
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 
@@ -65,41 +63,8 @@ if (!empty($lineItem)) {
 }
 
 ?>
-<?php
-$invoiceLineItemsDataProvider = new ActiveDataProvider([
-    'query' => InvoiceLineItem::find()
-        ->notDeleted()
-        ->andWhere(['invoice_id' => $model->id]),
-    'pagination' => false,
-]);
-if ($model->isProFormaInvoice()) {
-	$emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_PFI]);
-} else {
-	$emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
-}
-$content = $this->render('mail/content', [
-        'model' => $model,
-        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-    'emailTemplate' => $emailTemplate,
-    'invoicePayments' => $invoicePayments,
-    'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
-    ]);
-?>
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Email Preview</h4>',
-    'id'=>'invoice-mail-modal'
-]);
- echo $this->render('/mail/_form', [
-    'model' => new EmailForm(),
-    'emails' => !empty($model->user->email) ?$model->user->email : null,
-    'subject' => $emailTemplate->subject ?? 'Invoice from Arcadia Academy of Music',
-    'content' => $content,
-    'id' => $model->id,
-        'userModel'=>$model->user,
-]);
-Modal::end();
-?>
+
+
 
 <?php Pjax::end(); ?>
 <div class="row">
@@ -118,8 +83,9 @@ Modal::end();
 </div>
 <div class="row">
 	<div class="col-md-9">     
-		<?= $this->render('payment/_index', [
+        <?= $this->render('payment/_index', [
             'model' => $model,
+            'searchModel' => $searchModel,
             'invoicePayments' => $invoicePayments,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'print'=>false,        
@@ -154,15 +120,6 @@ Modal::end();
         ?>	
 	</div>
 	<?php Pjax::end(); ?>
-</div>
-<div class="row">
-	<div class="col-md-12">
-		<?=
-        $this->render('note/_reminder', [
-            'model' => $model,
-        ]);
-        ?>
-	</div>
 </div>
 
 <?php Modal::begin([
@@ -272,15 +229,22 @@ Modal::end();
         return false;
     });
 
-    $(document).on('modal-success', function () {
+    $(document).on('modal-success', function (event, params) {
+        if (!$.isEmptyObject(params.message)) {
+            $('#success-notification').html(params.message).fadeIn().delay(5000).fadeOut();
+        }
+        if (!$.isEmptyObject(params.data)) {
+            $('.mail-flag').html(params.data);
+        }
         $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
         $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
         $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
         $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
-        return false;
+        $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
     });
     
-    $(document).on('modal-delete', function () {
+    $(document).on('modal-delete', function (event, params) {
         $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
         $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
         $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
@@ -337,8 +301,23 @@ Modal::end();
 		return false;
   	});
 	$(document).on('click', '#invoice-mail-button', function (e) {
-		$('#invoice-mail-modal').modal('show');
-		return false;
+            $.ajax({
+                url    : '<?= Url::to(['invoice/mail', 'id' => $model->id]); ?>',
+                type   : 'get',
+                dataType: 'json',
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal .modal-dialog').css({'width': '1000px'});
+                        $('#modal-delete').hide();
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
+                        $('.modal-save').text('Send')
+                    }
+                }
+            });
+            return false;
   	});
 	$(document).on('click', '.apply-credit', function (e) {
             $.ajax({
@@ -361,17 +340,10 @@ Modal::end();
             return false;
   	});
 
-        $(document).on('modal-success', function(event, params) {
-            $.pjax.reload({container: "#invoice-view-lineitem-listing", replace:false,async: false, timeout: 6000});
-            $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
-            $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
-            $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
-            $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
-        });
-
         $(document).on('click', '.add-payment', function (e) {
         $('#payment-modal .modal-dialog').css({'width': '400px'});
 		$('#payment-modal').modal('show');
+                $('.create-payment').attr('disabled', false);
 		$.ajax({
             url    : '<?= Url::to(['invoice/get-payment-amount', 'id' => $model->id]); ?>',
             type   : 'get',
@@ -385,27 +357,8 @@ Modal::end();
         });
 		return false;
   	});
-	$(document).on('beforeSubmit', '#mail-form', function (e) {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   	{
-                    $('#spinner').hide();		
-                    $('#invoice-mail-modal').modal('hide');
-					$('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
-					$('.mail-flag').html(response.data);
-					
-				}
-			}
-		});
-		return false;
-	});
-	$(document).on('click', '.payment-cancel-btn', function (e) {
+
+        $(document).on('click', '.payment-cancel-btn', function (e) {
 		$('#payment-modal').modal('hide');
 		return false;
   	});
@@ -472,6 +425,7 @@ Modal::end();
                                 $('#add-payment-spinner').hide();
                             } else {
                                 $('#payment-form').yiiActiveForm('updateMessages', response.errors , true);
+                                $('.create-payment').attr('disabled', false);
                                 $('#add-payment-spinner').hide();
                             }
 			}
