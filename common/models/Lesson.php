@@ -679,6 +679,11 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return (int) $this->status === self::STATUS_RESCHEDULED;
     }
+    public function isSubstituteByTeacher() {
+	    if(!empty($this->rootLesson)) {
+	    return  $this->rootLesson->teacherId !== $this->teacherId;
+	    }
+    }
 
     public function isRescheduledByDate($changedAttributes)
     {

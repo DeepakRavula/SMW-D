@@ -142,7 +142,6 @@ class TeacherSubstituteController extends BaseController
         ]);
         $conflictedLessonIdsCount = count($conflictedLessonIds);
         $lessonModel = current($lessons);
-        //print_r($lessonModel->isPrivate());die;
         $data = $this->renderAjax('_form', [
             'lessons' => $lessons,
             'teachers' => $teachers,
