@@ -311,7 +311,7 @@ if (!empty($lineItem)) {
   	});
 	$(document).on('click', '#invoice-mail-button', function (e) {
             $.ajax({
-                url    : '<?= Url::to(['invoice/mail', 'id' => $model->id]); ?>',
+                url    : '<?= Url::to(['email/invoice', 'id' => $model->id]); ?>',
                 type   : 'get',
                 dataType: 'json',
                 success: function(response)
@@ -320,9 +320,8 @@ if (!empty($lineItem)) {
                         $('#modal-content').html(response.data);
                         $('#popup-modal').modal('show');
                         $('#popup-modal .modal-dialog').css({'width': '1000px'});
-                        $('#modal-delete').hide();
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
-                        $('.modal-save').text('Send')
+                        $('.modal-save').text('Send');
                     }
                 }
             });
@@ -338,7 +337,6 @@ if (!empty($lineItem)) {
                     if (response.status && response.hasCredit) {
                         $('#modal-content').html(response.data);
                         $('#popup-modal').modal('show');
-                        $('#modal-delete').hide();
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Apply Credit</h4>');
                         $('.modal-save').text('Pay now')
                     } else {
