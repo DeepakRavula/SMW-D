@@ -5,17 +5,12 @@ use yii\helpers\Url;
 use common\models\Note;
 use yii\bootstrap\Modal;
 use common\models\PrivateLesson;
-use backend\models\EmailForm;
-use yii\helpers\ArrayHelper;
-use common\models\Student;
 use kartik\date\DatePickerAsset;
 use kartik\time\TimePickerAsset;
 use kartik\select2\Select2Asset;
 Select2Asset::register($this);
 TimePickerAsset::register($this);
 DatePickerAsset::register($this);
-use common\models\EmailTemplate;
-use common\models\EmailObject;
 
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 /* @var $this yii\web\View */
