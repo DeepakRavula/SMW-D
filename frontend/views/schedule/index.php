@@ -116,6 +116,31 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
                 loadCalendar(from_time, to_time, view);
 
             });
+	    $(document).on('click', '.fc-icon-left-single-arrow', function () {
+		 var date = $('#calendar').fullCalendar('getDate').format('DD-MM-YYYY');
+		 var day  = moment(date).day();
+		$.ajax({
+			url: '<?= Url::to(['/schedule/render-calendar-time']); ?>?day=' + day,		type: 'get',
+ 				dataType: "json",
+ 				success: function (response)
+ 				{
+					 var view = $('#calendar').fullCalendar('getView');
+					 var from_time=response.from_time;
+					 var to_time=response.to_time;
+					loadCalendar(from_time, to_time, view);
+ 				}
+ 			});    
+               
+
+            });
+	    $(document).on('click', '.fc-icon-right-single-arrow', function () {
+                var from_time = '<?= $from_time ?>';
+                var to_time = '<?= $to_time ?>';
+                var view = 'agendaDay';
+                loadCalendar(from_time, to_time, view);
+
+            });
+	    
         });
 
 </script>

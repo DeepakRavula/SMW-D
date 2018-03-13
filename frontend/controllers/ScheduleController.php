@@ -44,7 +44,7 @@ class ScheduleController extends Controller
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['render-day-events', 'render-classroom-events',
-                   'render-resources', 'render-classroom-resources'],
+                   'render-resources', 'render-classroom-resources','render-calendar-time'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -206,4 +206,16 @@ class ScheduleController extends Controller
         unset($lesson);
         return $events;
     }
+     public function actionRenderCalendarTime($day)
+    {
+	      $userId = Yii::$app->user->id;
+        $userLocation = UserLocation::findOne(['user_id' => $userId]);
+        $locationId = $userLocation->location_id;
+	$locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
+            'day' => $day]);
+	$calendarTime['from_time']=$locationAvailability->fromTime;
+	$calendarTime['to_time']=$locationAvailability->toTime;
+	return $calendarTime;
+	
+     }
 }
