@@ -2,8 +2,6 @@
 
 use yii\helpers\Json;
 use yii\helpers\Url;
-use yii\bootstrap\Tabs;
-use common\models\CalendarEventColor;
 
 $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
 ?>
@@ -51,96 +49,111 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
 <div id='calendar'></div>
 <?php $userId = Yii::$app->user->id; ?>
 <script type="text/javascript">
-        var locationAvailabilities = <?php echo Json::encode($locationAvailabilities); ?>;
-        var userId = '<?php echo $userId; ?>';
-        $(document).ready(function () {
-            var params = $.param({userId: userId});
-            function loadCalendar(from_time, to_time, view)
-            {
-		$('#calendar').fullCalendar('destroy');    
-                $('#calendar').unbind().removeData().fullCalendar({
-                    nowIndicator: true,
-                    schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-                    header: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'month,agendaWeek,agendaDay'
-                    },
-                    titleFormat: 'DD-MMM-YYYY, dddd',
-                    defaultView: view,
-                    minTime: from_time,
-                    maxTime: to_time,
-                    slotDuration: "00:15:00",
-                    editable: false,
-                    droppable: false,
-                    events: {
-                        url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
-                        type: 'GET',
-                        error: function () {
-                            $("#calendar").fullCalendar("refetchEvents");
-                        }
-                    },
-                    eventRender: function (event, element) {
-                        element.poshytip({
-                            className: 'tip-yellowsimple',
-                            alignTo: 'cursor',
-                            alignX: 'center',
-                            alignY: 'top',
-                            offsetY: 5,
-                            followCursor: false,
-                            slide: false,
-                            content: function (updateCallback) {
-                                return event.description;
-                            }
-                        });
-                    },
-                    allDaySlot: false,
+    var userId = '<?php echo $userId; ?>';
+    var params = $.param({userId: userId});
+    
+    function loadCalendar(from_time, to_time, view)
+    {
+        $('#calendar').fullCalendar('destroy');
+        $('#calendar').unbind().removeData().fullCalendar({
+            nowIndicator: true,
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'agendaWeek, agendaDay'
+            },
+            titleFormat: 'DD-MMM-YYYY, dddd',
+            defaultView: view,
+            minTime: from_time,
+            maxTime: to_time,
+            slotDuration: "00:15:00",
+            editable: false,
+            droppable: false,
+            events: {
+                url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
+                type: 'GET',
+                error: function () {
+                    $("#calendar").fullCalendar("refetchEvents");
+                }
+            },
+            eventRender: function (event, element) {
+                element.poshytip({
+                    className: 'tip-yellowsimple',
+                    alignTo: 'cursor',
+                    alignX: 'center',
+                    alignY: 'top',
+                    offsetY: 5,
+                    followCursor: false,
+                    slide: false,
+                    content: function (updateCallback) {
+                        return event.description;
+                    }
                 });
-
-            }
-            var from_time = '<?= $from_time ?>';
-            var to_time = '<?= $to_time ?>';
-            var view = 'agendaDay';
-            loadCalendar(from_time, to_time, view);
-            $(document).on('click', '.fc-agendaWeek-button', function () {
-                var from_time = '<?= $week_from_time ?>';
-                var to_time = '<?= $week_to_time ?>';
-                var view = 'agendaWeek';
-                loadCalendar(from_time, to_time, view);
-
-            });
-            $(document).on('click', '.fc-agendaDay-button', function () {
-                var from_time = '<?= $from_time ?>';
-                var to_time = '<?= $to_time ?>';
-                var view = 'agendaDay';
-                loadCalendar(from_time, to_time, view);
-
-            });
-	    $(document).on('click', '.fc-icon-left-single-arrow', function () {
-		 var date = $('#calendar').fullCalendar('getDate').format('DD-MM-YYYY');
-		 var day  = moment(date).day();
-		$.ajax({
-			url: '<?= Url::to(['/schedule/render-calendar-time']); ?>?day=' + day,		type: 'get',
- 				dataType: "json",
- 				success: function (response)
- 				{
-					 var view = $('#calendar').fullCalendar('getView');
-					 var from_time=response.from_time;
-					 var to_time=response.to_time;
-					loadCalendar(from_time, to_time, view);
- 				}
- 			});    
-               
-
-            });
-	    $(document).on('click', '.fc-icon-right-single-arrow', function () {
-                var from_time = '<?= $from_time ?>';
-                var to_time = '<?= $to_time ?>';
-                var view = 'agendaDay';
-                loadCalendar(from_time, to_time, view);
-
-            });
-	    
+            },
+            allDaySlot: false
         });
+    };
 
+    function renderCalendar() {
+        var date = $('#calendar').fullCalendar('getDate');
+        var day  = moment(date).day();
+        var view = $('#calendar').fullCalendar('getView');
+        getCalendarTime(day, view.name);
+        return false;
+    };
+
+    (function(){
+        //renderCalendar();
+        setTimeout(arguments.callee, 10000);
+    })();
+
+    function getCalendarTime(day, view) {
+        var params   = $.param({ day: day, view: view });
+        $.ajax({
+            url: '<?= Url::to(['/schedule/render-calendar-time']); ?>?' + params ,
+            type: 'get',
+            dataType: "json",
+            success: function (response)
+            {
+                var from_time = response.from_time;
+                var to_time = response.to_time;
+                loadCalendar(from_time, to_time, view);
+            }
+        });
+        return false;
+    };
+    
+    $(document).ready(function () {
+        var from_time = '<?= $from_time ?>';
+        var to_time = '<?= $to_time ?>';
+        var view = 'agendaDay';
+        loadCalendar(from_time, to_time, view);
+    });
+    
+    $(document).off('click', '.fc-prev-button, .fc-next-button')
+        .on('click', '.fc-prev-button, .fc-next-button', function () {
+        var date = $('#calendar').fullCalendar('getDate');debugger
+        var nextDay = date.add(1, 'days');debugger
+        var day  = moment(nextDay).day();
+        var view = $('#calendar').fullCalendar('getView');
+        getCalendarTime(day, view);
+        return false;
+    });
+
+    $(document).off('click', '.fc-agendaWeek-button').on('click', '.fc-agendaWeek-button', function () {
+        var date = $('#calendar').fullCalendar('getDate');
+        var day  = moment(date).day();
+        var view = 'agendaWeek';
+        getCalendarTime(day, view);
+        return false;
+    });
+
+    $(document).off('click', '.fc-agendaDay-button').on('click', '.fc-agendaDay-button', function () {
+        var date = $('#calendar').fullCalendar('getDate');
+        var day  = moment(date).day();
+        var view = 'agendaDay';
+        getCalendarTime(day, view);
+        return false;
+    });
 </script>
