@@ -45,7 +45,9 @@ echo $this->render('/invoice/_view-line-item', [
 </div>
    
 	 <div style="clear:both; margin-top: 20px; position: relative;">
+        <?php if (!empty($model->notes)):?>
         <strong> Notes: </strong><?php echo $model->notes; ?>
+		<?php endif;?>
     </div>
     <div class="reminder_notes text-muted well well-sm no-shadow" style="clear:both; margin-top: 20px; position: relative;">
         <?php echo $model->reminderNotes; ?>

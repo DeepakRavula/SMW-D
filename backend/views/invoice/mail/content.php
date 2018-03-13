@@ -19,17 +19,21 @@
                   <td colspan="4" style="width: 75%;">
                     <?php if (!empty($model->notes)):?>
                     <div class="row-fluid m-t-20">
+						<?php if(!empty($model->notes)) : ?>
                       <em><strong> Notes: </strong><Br>
                         <?php echo $model->notes; ?></em>
+						<?php endif;?>
                       </div>
 		      <?php endif; ?>
 			  <div >
+			<?php if($model->hasPayments()) : ?>
 			      <b> Payments</b>
         <?= $this->render('/invoice/payment/_payment-list', [
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'searchModel' => $searchModel,
             'model' => $model,
-        ]); ?>  
+        ]); ?>
+				  <?php endif; ?>
 		      </div>
                       
                   </td>
@@ -105,3 +109,4 @@
 <br>
 <?= $emailTemplate->footer ?? 'Thank you 
 Arcadia Academy of Music Team.'; ?>
+<div><?= $model->reminderNotes; ?></div>
