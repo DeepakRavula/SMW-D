@@ -642,7 +642,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
-            if ($this->isRescheduledByDate($changedAttributes)) {
+            if ($this->isRescheduledByDate($changedAttributes) || $this->isRescheduledByTeacher($changedAttributes)) {
                 $this->trigger(self::EVENT_RESCHEDULE_ATTEMPTED);
             }
             if ($this->isConfirmed && $this->isScheduled() && $this->rootLesson) {
