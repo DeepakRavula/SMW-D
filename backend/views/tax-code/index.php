@@ -65,7 +65,6 @@ Pjax::Begin([
             var taxcodeId = $(this).data('key');
             if (taxcodeId === undefined) {
                 var customUrl = '<?= Url::to(['tax-code/create']); ?>';
-		$('#modal-delete').hide();
             } else {
                 var customUrl = '<?= Url::to(['tax-code/update']); ?>?id=' + taxcodeId;
 		var url = '<?= Url::to(['tax-code/delete']); ?>?id=' + taxcodeId;

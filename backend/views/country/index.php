@@ -48,7 +48,6 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
             var countryId = $(this).data('key');
             if (countryId === undefined) {
                     var customUrl = '<?= Url::to(['country/create']); ?>';
-                    $('#modal-delete').hide();
             } else {
                 var customUrl = '<?= Url::to(['country/update']); ?>?id=' + countryId;
                 var url = '<?= Url::to(['country/delete']); ?>?id=' + countryId;

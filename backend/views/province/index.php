@@ -55,7 +55,6 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
             var provinceId = $(this).data('key');
              if (provinceId === undefined) {
                     var customUrl = '<?= Url::to(['province/create']); ?>';
-                    $('#modal-delete').hide();
             } else {
                 var customUrl = '<?= Url::to(['province/update']); ?>?id=' + provinceId;
                 var url = '<?= Url::to(['province/delete']); ?>?id=' + provinceId;

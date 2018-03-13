@@ -17,6 +17,7 @@ class InvoiceSearch extends Invoice
     const STATUS_ALL = 3;
     public $toggleAdditionalColumns;
     public $isPrint;
+    public $isMail;
     public $fromDate;
     public $toDate;
     public $invoiceDateRange;
@@ -38,7 +39,7 @@ class InvoiceSearch extends Invoice
             [['fromDate', 'toDate'], 'date', 'format' => 'php:M d,Y'],
             [['mailStatus', 'invoiceStatus'], 'integer'],
             [['type', 'query', 'toggleAdditionalColumns', 'dateRange','invoiceDateRange',
-                'dueFromDate', 'dueToDate', 'summariseReport','isPrint', 'isWeb'], 'safe'],
+                'dueFromDate', 'dueToDate', 'summariseReport','isPrint', 'isWeb', 'isMail'], 'safe'],
         ];
     }
 

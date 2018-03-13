@@ -203,6 +203,7 @@ class InvoiceController extends BaseController
         $searchModel                        = new InvoiceSearch();
         $searchModel->load($request->get());
         $searchModel->isWeb = true;
+        $searchModel->isMail = false;
         $invoiceLineItems                   = InvoiceLineItem::find()
             ->notDeleted()
             ->andWhere(['invoice_id' => $id]);
@@ -678,55 +679,6 @@ class InvoiceController extends BaseController
             }
             return $response;
         } else {
-            return [
-                'status' => true,
-                'data' => $data,
-            ];
-        }
-    }
-
-    public function actionMail($id)
-    {
-        $model = Invoice::findOne($id);
-        $searchModel = new InvoiceSearch();
-        $searchModel->isPrint = false;
-        $searchModel->toggleAdditionalColumns = false;
-        $searchModel->isWeb = false;
-        $invoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => InvoiceLineItem::find()
-                ->notDeleted()
-                ->andWhere(['invoice_id' => $model->id]),
-            'pagination' => false,
-        ]);
-        if ($model->isProFormaInvoice()) {
-            $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_PFI]);
-        } else {
-            $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
-        }
-        $invoicePayments                     = Payment::find()
-            ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                $query->where(['ip.invoice_id' => $model->id]);
-            }])
-            ->orderBy(['date' => SORT_DESC]);
-        if ($model->isProFormaInvoice()) {
-            $invoicePayments->notCreditUsed();
-        }
-        $invoicePaymentsDataProvider = new ActiveDataProvider([
-            'query' => $invoicePayments,
-        ]);
-        $data = $this->renderAjax('/mail/_form', [
-            'model' => new EmailForm(),
-            'emails' => !empty($model->user->email) ?$model->user->email : null,
-            'subject' => $emailTemplate->subject ?? 'Invoice from Arcadia Academy of Music',
-            'emailTemplate' => $emailTemplate,
-            'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-            'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
-            'id' => $model->id,
-            'searchModel' => $searchModel,
-            'userModel' => $model->user,
-        ]);
-        $post = Yii::$app->request->post();
-        if (!$post) {
             return [
                 'status' => true,
                 'data' => $data,

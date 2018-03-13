@@ -28,8 +28,10 @@ $columns = [
         'value' => function ($data) {
             return $data->reference;
         },
-        ],
-    [
+        ]
+];
+if (!$searchModel->isMail) {
+    array_push($columns, [
         'contentOptions' => ['class' => 'text-left','style' => 'min-width:30%;max-width:30%;word-wrap:break-word;'],
         'label' => 'Notes',
         'options' => ['width'=>'30%;'],
@@ -37,24 +39,24 @@ $columns = [
             return $data->notes;
 
         },
-        ],
-        [
-            'label'=>'Amount',
-            'format' => 'currency',
-             'options'=>['class' => 'text-right','width'=>'10%;'] , 
-            'headerOptions' => ['class' => 'text-right'],
-           'contentOptions' => ['class' => 'text-right'],
-            'value' => function ($data) {
-                return Yii::$app->formatter->asDecimal($data->amount);
-            },
-        ],
-    ]; ?>
+    ]);
+}
+    array_push($columns, [
+        'label'=>'Amount',
+        'format' => 'currency',
+         'options'=>['class' => 'text-right','width'=>'10%;'] , 
+        'headerOptions' => ['class' => 'text-right'],
+       'contentOptions' => ['class' => 'text-right'],
+        'value' => function ($data) {
+            return Yii::$app->formatter->asDecimal($data->amount);
+        }
+    ]); ?>
 
 <div>
     <?php if ($searchModel->isWeb) {
         $tableOption = ['class' => 'table table-condensed'];
     } else {
-        $tableOption = ['class' => 'table table-bordered m-0', 'style'=>'width:100%; text-align:left'];
+        $tableOption = ['class' => 'table table-condensed m-0', 'style'=>'width:100%; text-align:left'];
     }
     yii\widgets\Pjax::begin([
         'id' => 'invoice-payment-listing',

@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
             ]
         ];
     } else {
-        $tableOption = ['class' => 'table table-bordered m-0', 'style'=>'width:100%; text-align:left'];
+        $tableOption = ['class' => 'table table-condensed m-0', 'style'=>'width:100%; text-align:left'];
         $columns = [
             [
             'headerOptions' => ['class' => 'text-left'],
