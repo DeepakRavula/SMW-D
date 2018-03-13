@@ -10,6 +10,7 @@ use Yii;
  */
 class EmailForm extends Model
 {
+    public $invoiceId;
     public $to;
     public $subject;
     public $content;
@@ -22,7 +23,7 @@ class EmailForm extends Model
     {
         return [
             [['to', 'subject', 'content'], 'required'],
-            [['id'], 'safe']
+            [['invoiceId'], 'safe']
         ];
     }
 

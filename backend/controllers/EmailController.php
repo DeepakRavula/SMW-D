@@ -66,8 +66,8 @@ class EmailController extends BaseController
             }
             Yii::$app->mailer->sendMultiple($content);
             $data = null;
-            if (!empty($model->id)) {
-                $invoice = Invoice::findOne(['id' => $model->id]);
+            if (!empty($model->invoiceId)) {
+                $invoice = Invoice::findOne(['id' => $model->invoiceId]);
                 $invoice->isSent = true;
                 $invoice->save();
                 $data = $this->renderAjax('/invoice/_show-all', [
