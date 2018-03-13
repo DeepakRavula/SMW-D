@@ -68,6 +68,17 @@ class ScheduleController extends Controller
         $locationAvailabilities = LocationAvailability::find()
             ->where(['locationId' => $locationId])
             ->all();
+	$week_from_time = LocationAvailability::DEFAULT_FROM_TIME;
+	$week_to_time = LocationAvailability::DEFAULT_TO_TIME;
+	foreach ($locationAvailabilities as $locationAvailable)
+	{
+		if ($locationAvailable->fromTime < $week_from_time) {
+				$week_from_time = $locationAvailable->fromTime;
+			}
+			if ($locationAvailable->toTime > $week_to_time) {
+				$week_to_time = $locationAvailable->toTime;
+			}
+		}
         $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
             'day' => $date->format('N')]);
         if (empty($locationAvailability)) {
@@ -82,6 +93,8 @@ class ScheduleController extends Controller
             'locationAvailabilities'   => $locationAvailabilities,
             'from_time'                => $from_time,
             'to_time'                  => $to_time,
+	    'week_from_time'	       => $week_from_time,
+	    'week_to_time'	       => $week_to_time,
         ]);
     }
 

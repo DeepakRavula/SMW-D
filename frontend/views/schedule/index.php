@@ -53,9 +53,15 @@ $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y');
 <script type="text/javascript">
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
 var userId = '<?php echo $userId; ?>';
-$(document).ready(function() {
+$(document).ready(function() {	
     var params = $.param({ userId: userId });
-    $('#calendar').fullCalendar({
+    var from_time = <?= $from_time?>
+    var to_time = <?= $to_time?>
+    var view='agendaDay';
+    loadCalendar(from_time,to_time,view);
+    function loadCalendar(from_time,to_time,view)
+    {
+	    $('#calendar').fullCalendar({
         nowIndicator: true,
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: {
@@ -64,9 +70,9 @@ $(document).ready(function() {
 			right: 'month,agendaWeek,agendaDay'
 		},
         titleFormat: 'DD-MMM-YYYY, dddd',
-        defaultView: 'agendaDay',
-        minTime: "<?php echo $from_time; ?>",
-        maxTime: "<?php echo $to_time; ?>",
+        defaultView: view,
+        minTime: from_time,
+        maxTime: to_time,
         slotDuration: "00:15:00",
         editable: false,
         droppable: false,
@@ -93,5 +99,14 @@ $(document).ready(function() {
 		},
 		allDaySlot:false,
     });
+	    
+    }
+    $(document).on('click', '.fc-agendaWeek-button', function () {
+		var from_time = <?= $week_from_time?>
+		var to_time = <?= $week_to_time?>
+		var view='agendaWeek';
+		loadCalendar(from_time,to_time,view);
+			
+	});
 });
 </script>
