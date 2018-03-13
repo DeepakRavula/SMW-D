@@ -2,7 +2,7 @@
 ?>
 <?php
 $columns = [
-      [
+            [
         'contentOptions' => ['class' => 'text-left','style' => 'min-width:15%;max-width:15%;'],
         'headerOptions' => ['class' => 'text-left','style' => 'min-width:15%;max-width:15%;'],
         'label' => 'Date',
@@ -53,7 +53,7 @@ if (!$searchModel->isMail) {
     ]); ?>
 
 <div>
-    <?php if ($searchModel->isWeb) {
+    <?php if ($searchModel->isWeb ) {
         $tableOption = ['class' => 'table table-condensed'];
     } else {
         $tableOption = ['class' => 'table table-condensed m-0', 'style'=>'width:100%; text-align:left'];
