@@ -2,7 +2,7 @@
 ?>
 <?php
 $columns = [
-      [
+            [
         'contentOptions' => ['class' => 'text-left','style' => 'min-width:15%;max-width:15%;'],
         'headerOptions' => ['class' => 'text-left','style' => 'min-width:15%;max-width:15%;'],
         'label' => 'Date',
@@ -28,8 +28,10 @@ $columns = [
         'value' => function ($data) {
             return $data->reference;
         },
-        ],
-    [
+        ]
+];
+if (!$searchModel->isMail) {
+    array_push($columns, [
         'contentOptions' => ['class' => 'text-left','style' => 'min-width:30%;max-width:30%;word-wrap:break-word;'],
         'label' => 'Notes',
         'options' => ['width'=>'30%;'],
@@ -37,21 +39,26 @@ $columns = [
             return $data->notes;
 
         },
-        ],
-        [
-            'label'=>'Amount',
-            'format' => 'currency',
-             'options'=>['class' => 'text-right','width'=>'10%;'] , 
-            'headerOptions' => ['class' => 'text-right'],
-           'contentOptions' => ['class' => 'text-right'],
-            'value' => function ($data) {
-                return Yii::$app->formatter->asDecimal($data->amount);
-            },
-        ],
-    ]; ?>
+    ]);
+}
+    array_push($columns, [
+        'label'=>'Amount',
+        'format' => 'currency',
+         'options'=>['class' => 'text-right','width'=>'10%;'] , 
+        'headerOptions' => ['class' => 'text-right'],
+       'contentOptions' => ['class' => 'text-right'],
+        'value' => function ($data) {
+            return Yii::$app->formatter->asDecimal($data->amount);
+        }
+    ]); ?>
 
 <div>
-	<?php yii\widgets\Pjax::begin([
+    <?php if ($searchModel->isWeb ) {
+        $tableOption = ['class' => 'table table-condensed'];
+    } else {
+        $tableOption = ['class' => 'table table-condensed m-0', 'style'=>'width:100%; text-align:left'];
+    }
+    yii\widgets\Pjax::begin([
         'id' => 'invoice-payment-listing',
         'timeout' => 6000,
     ]) ?>
@@ -62,7 +69,7 @@ $columns = [
     'summary' => false,
         'emptyText' => false,
         'options' => ['class' => 'col-md-12'],
-    'tableOptions' => ['class' => 'table table-condensed'],
+    'tableOptions' => $tableOption,
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     ]);
     ?>

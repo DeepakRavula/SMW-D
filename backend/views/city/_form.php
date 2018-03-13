@@ -18,7 +18,7 @@ use yii\helpers\Url;
                 $url = Url::to(['city/create']);
             }
         $form = ActiveForm::begin([
-        'id' => 'city-form',
+        'id' => 'modal-form',
         'action' => $url,
     ]); ?>
 
@@ -35,30 +35,18 @@ use yii\helpers\Url;
         'name'
             )) ?>
 		</div>
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-    <div class="pull-right">
-        <?php echo Html::a('Cancel', '', ['class' => 'btn btn-default city-cancel']);?>
-        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-		
-    </div>
-     <div class="pull-left">   
-        <?php if (!$model->isNewRecord) {
-                echo Html::a('Delete', ['delete', 'id' => $model->id], [
-            'id' => 'city-delete-button',
-                        'class' => 'btn btn-danger',
-                        'data' => [
-                            'confirm' => 'Are you sure you want to delete this item?',
-                            'method' => 'post',
-                        ]
-                ]);
-            }
-        ?>
-    </div>
-</div>
 </div>    
     <?php ActiveForm::end(); ?>
-
 </div>
+<script>
+    $(document).on('modal-success', function(event, params) {
+        var url = "<?php echo Url::to(['city/index']); ?>";
+        $.pjax.reload({url: url, container: "#city-listing", replace: false, timeout: 4000});
+        return false;
+    });
+    $(document).on('modal-delete', function(event, params) {
+        var url = "<?php echo Url::to(['city/index']); ?>";
++        $.pjax.reload({url: url, container: "#city-listing", replace: false, timeout: 4000});
+        return false;
+    });
+</script>

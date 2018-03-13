@@ -43,6 +43,7 @@ Modal::end(); ?>
     		<?=
         $this->render('/invoice/payment/_payment-list', [
             'model' => $model,
+            'searchModel' => $searchModel,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
         ]);
         ?>

@@ -21,14 +21,11 @@ use yii\web\Response;
 use common\models\Payment;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
-use yii\base\ErrorException;
 use common\models\User;
 use yii\filters\ContentNegotiator;
 use common\models\PaymentCycle;
 use common\models\lesson\BulkReschedule;
-use common\models\lesson\BulkRescheduleLesson;
 use common\models\log\StudentLog;
-use common\models\log\EnrolmentLog;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 

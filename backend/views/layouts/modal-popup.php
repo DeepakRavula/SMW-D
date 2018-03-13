@@ -69,6 +69,8 @@ Modal::begin([
 
     $('#popup-modal').on('hidden.bs.modal', function () {
         $('.modal-save').attr('disabled', false);
+        $('#modal-delete').hide();
+        $('.modal-save').text('Save');
         $(document).trigger("modal-close");
     });
 

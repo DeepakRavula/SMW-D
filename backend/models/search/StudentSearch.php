@@ -47,7 +47,9 @@ class StudentSearch extends Student
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
+		$dataProvider->sort->defaultOrder = [
+            'first_name' => SORT_ASC,
+        ];
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }

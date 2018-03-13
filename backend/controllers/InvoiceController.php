@@ -29,6 +29,9 @@ use common\models\InvoiceReverse;
 use common\models\UserEmail;
 use common\models\UserContact;
 use common\models\Label;
+use common\models\EmailTemplate;
+use common\models\EmailObject;
+use backend\models\EmailForm;
 use backend\models\search\UserSearch;
 use common\models\log\LogHistory;
 use backend\models\search\ItemSearch;
@@ -53,7 +56,7 @@ class InvoiceController extends BaseController
                 'only' => ['delete', 'note', 
 					'get-payment-amount', 'update-customer',
                     'create-walkin', 'fetch-user', 'add-misc',
-					'adjust-tax'],
+					'adjust-tax', 'mail'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -63,7 +66,7 @@ class InvoiceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['blank-invoice', 'index',
+                        'actions' => ['blank-invoice', 'index', 'mail',
 							'update-customer', 'create-walkin',
 							'note', 'view', 'fetch-user',
 							'add-misc','fetch-summary-and-status', 							   'compute-tax', 'create', 'update',
@@ -199,6 +202,8 @@ class InvoiceController extends BaseController
         $itemDataProvider                   = $itemSearchModel->search(Yii::$app->request->queryParams);
         $searchModel                        = new InvoiceSearch();
         $searchModel->load($request->get());
+        $searchModel->isWeb = true;
+        $searchModel->isMail = false;
         $invoiceLineItems                   = InvoiceLineItem::find()
             ->notDeleted()
             ->andWhere(['invoice_id' => $id]);
@@ -229,8 +234,6 @@ class InvoiceController extends BaseController
         $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $customerInvoicePayments,
         ]);
-        $locationId                          = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $currentDate                         = (new \DateTime())->format('Y-m-d H:i:s');
         $invoicePayments                     = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                 $query->where(['ip.invoice_id' => $model->id]);

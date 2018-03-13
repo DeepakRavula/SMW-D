@@ -5,17 +5,12 @@ use yii\helpers\Url;
 use common\models\Note;
 use yii\bootstrap\Modal;
 use common\models\PrivateLesson;
-use backend\models\EmailForm;
-use yii\helpers\ArrayHelper;
-use common\models\Student;
 use kartik\date\DatePickerAsset;
 use kartik\time\TimePickerAsset;
 use kartik\select2\Select2Asset;
 Select2Asset::register($this);
 TimePickerAsset::register($this);
 DatePickerAsset::register($this);
-use common\models\EmailTemplate;
-use common\models\EmailObject;
 
 require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 /* @var $this yii\web\View */
@@ -127,44 +122,11 @@ $this->params['action-button'] = $this->render('_buttons', [
 			</div>
 		</div>	
 </div>
-<?php 
-$students = Student::find()
-    ->notDeleted()
-    ->joinWith('enrolment')
-    ->andWhere(['courseId' => $model->courseId])
-    ->all();
-$emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email');
-    $body = null;?>
-	<?php if ($model->getReschedule()) : ?>
-	 <?php $body = $this->render('mail/body', [
-        'model' => $model,
-]); ?>
-    <?php endif; ?>  
-<?php $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_LESSON]); ?>
-	<?php $content = $this->render('mail/content', [
-        'content' => $body,
-        'emailTemplate' => $emailTemplate
-    ]);
- ?> 
+
 <div id="loader" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>
 </div>
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Email Preview</h4>',
-    'id'=>'lesson-mail-modal',
-]);
-echo $this->render('/mail/_form', [
-    'model' => new EmailForm(),
-    'emails' => $emails,
-    'subject' => $emailTemplate->subject ?? $model->course->program->name . ' lesson reschedule',
-    'content' => $content,
-    'id' => null,
-        'userModel'=>!empty($model->enrolment->student->customer) ? $model->enrolment->student->customer : null,
-]);
-Modal::end();
-?>
 
 <?php if (!$model->isGroup()): ?>
     <?= $this->render('_merge-lesson', [
@@ -297,8 +259,22 @@ Modal::end();
         return false;
     });
     
-    $(document).on('click', '#lesson-mail-button', function (e) {
-        $('#lesson-mail-modal').modal('show');
+    $(document).on('click', '#lesson-mail-button', function () {
+        $.ajax({
+            url    : '<?= Url::to(['email/lesson', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: 'json',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal .modal-dialog').css({'width': '1000px'});
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
+                    $('.modal-save').text('Send');
+                }
+            }
+        });
         return false;
     });
 

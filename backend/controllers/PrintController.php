@@ -66,7 +66,8 @@ class PrintController extends BaseController
         ]);
         $searchModel=new InvoiceSearch();
         $searchModel->toggleAdditionalColumns=false;
-        $searchModel->isPrint=true;
+        $searchModel->isPrint = true;
+        $searchModel->isMail = false;
         $this->layout = '/print';
 
         return $this->render('/invoice/print/view', [
@@ -127,6 +128,7 @@ class PrintController extends BaseController
             list($lessonSearch->fromDate, $lessonSearch->toDate) = explode(' - ', $lessonSearch->dateRange);
             $lessonSearch->fromDate = new \DateTime($lessonSearch['fromDate']);
             $lessonSearch->toDate = new \DateTime($lessonSearch['toDate']);
+	    $lessonSearch->summariseReport=$lessonSearchModel['summariseReport'];
         }
         $teacherLessons = Lesson::find()
             ->innerJoinWith('enrolment')
@@ -137,7 +139,9 @@ class PrintController extends BaseController
             ->scheduledOrRescheduled()
             ->between($lessonSearch->fromDate, $lessonSearch->toDate)
             ->orderBy(['date' => SORT_ASC]);
-            
+            if($lessonSearch->summariseReport) {
+		$teacherLessons->groupBy(['DATE(lesson.date)']);
+			} 
         $teacherLessonDataProvider = new ActiveDataProvider([
             'query' => $teacherLessons,
             'pagination' => false,
