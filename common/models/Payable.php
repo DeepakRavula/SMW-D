@@ -62,7 +62,7 @@ trait Payable
     
     public function addPayment($from, $amount, $enrolment = null)
     {
-        if (round(abs($amount), 2) < round(abs(0.00), 2)) {
+        if (round($amount, 2) < round(0.00, 2)) {
             return true;
         }
         $paymentModel = new Payment();

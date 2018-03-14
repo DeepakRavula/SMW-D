@@ -81,7 +81,7 @@ use yii\widgets\Pjax;
             'format' => 'currency',
             'value' => function ($data) {
                 if (!$data->isGroupLesson()) {
-                    if ($data->invoice->isDeleted()) {
+                    if ($data->invoice->isDeleted() && !$data->proFormaLesson) {
                         $amount = 0;
                     } else {
                         $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
