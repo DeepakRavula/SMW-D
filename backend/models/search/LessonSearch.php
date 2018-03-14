@@ -79,18 +79,15 @@ class LessonSearch extends Lesson
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-	//$type = Lesson::TYPE_GROUP_LESSON;
-	print_r((int)$this->type);die("cbcbcbcbc");
-	if ((int)$this->type === Lesson::TYPE_GROUP_LESSON) {
 	$dataProvider->setSort([
             'attributes' => [
                 'program' => [
                     'asc' => ['program.name' => SORT_ASC],
                     'desc' => ['program.name' => SORT_DESC],
                 ],
-                'rate' => [
-                    'asc' => ['program.rate' => SORT_ASC],
-                    'desc' => ['program.rate' => SORT_DESC],
+                'student' => [
+                    'asc' => ['student.first_name' => SORT_ASC],
+                    'desc' => ['student.first_name' => SORT_DESC],
                 ],
                 'teacher' => [
                     'asc' => ['user_profile.firstname' => SORT_ASC],
@@ -98,7 +95,6 @@ class LessonSearch extends Lesson
                 ]
             ]
         ]);
-	}
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }

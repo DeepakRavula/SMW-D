@@ -15,6 +15,9 @@ class CourseSearch extends Course
 {
     public $query;
     public $showAllCourses;
+    public $program;
+    public $rate;
+    public $teacher;
     /**
      * {@inheritdoc}
      */
@@ -22,7 +25,7 @@ class CourseSearch extends Course
     {
         return [
             [['id', 'programId', 'teacherId', 'locationId'], 'integer'],
-            [['startDate', 'endDate', 'query', 'showAllCourses'], 'safe'],
+            [['startDate', 'endDate','program','rate','teacher', 'query', 'showAllCourses'], 'safe'],
             ['showAllCourses', 'boolean'],
         ];
     }
@@ -63,7 +66,15 @@ class CourseSearch extends Course
             $query->joinWith('userProfile up');
         }]);
         $query->joinWith('program');
-
+	$dataProvider->setSort([
+            'attributes' => [
+                'program' => [
+                    'asc' => ['program.name' => SORT_ASC],
+                    'desc' => ['program.name' => SORT_DESC],
+                ],
+               
+            ]
+        ]);
         $query->andFilterWhere([
             'id' => $this->id,
             'programId' => $this->programId,
