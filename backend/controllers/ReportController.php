@@ -149,7 +149,7 @@ class ReportController extends BaseController
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         
         $invoiceTaxTotal = Invoice::find()
             ->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
@@ -199,7 +199,7 @@ class ReportController extends BaseController
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $invoiceTaxes = InvoiceLineItem::find()
                         ->notDeleted()
             ->joinWith(['invoice' => function ($query) use ($locationId, $searchModel) {
@@ -243,7 +243,7 @@ class ReportController extends BaseController
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $royaltyFreeItems = InvoiceLineItem::find()
                         ->notDeleted()
             ->joinWith(['invoice' => function ($query) use ($locationId, $searchModel) {
