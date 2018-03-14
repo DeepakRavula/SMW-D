@@ -63,16 +63,22 @@ class ScheduleController extends Controller
         $userLocation = UserLocation::findOne(['user_id' => $userId]);
         $locationId = $userLocation->location_id;
         $date = new \DateTime();
-        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
-                'day' => $date->format('N')]);
+        $locationAvailability = LocationAvailability::find()
+		->andWhere(['locationId' => $locationId])
+               ->andWhere(['day' => $date->format('N')])
+	->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
+		->one();
         $minAvailability = LocationAvailability::find()
                 ->andWhere(['locationId' => $locationId])
+		->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
                 ->orderBy(['fromTime' => SORT_ASC])
                 ->one();
         $maxAvailability = LocationAvailability::find()
                 ->andWhere(['locationId' => $locationId])
-                ->orderBy(['toTime' => SORT_DESC])
+		->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
+		->orderBy(['toTime' => SORT_DESC])
                 ->one();
+	
         $week_from_time = $minAvailability->fromTime;
         $week_to_time   = $maxAvailability->toTime;
         $from_time = $locationAvailability->fromTime;

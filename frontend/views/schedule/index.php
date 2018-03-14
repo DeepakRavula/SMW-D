@@ -52,7 +52,7 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
     var userId = '<?php echo $userId; ?>';
     var params = $.param({userId: userId});
     
-    function loadCalendar(from_time, to_time, view)
+    function loadCalendar(date,from_time, to_time, view)
     {
         $('#calendar').fullCalendar('destroy');
         $('#calendar').unbind().removeData().fullCalendar({
@@ -64,6 +64,7 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
                 right: 'agendaWeek, agendaDay'
             },
             titleFormat: 'DD-MMM-YYYY, dddd',
+	    defaultDate: date,
             defaultView: view,
             minTime: from_time,
             maxTime: to_time,
@@ -98,27 +99,22 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
     function renderCalendar() {
         var date = $('#calendar').fullCalendar('getDate');
         var day  = moment(date).day();
-        var view = $('#calendar').fullCalendar('getView');
-        getCalendarTime(day, view.name);
+        var view = $('#calendar').fullCalendar('getView').name;
+        getCalendarTime(date,day, view);
         return false;
     };
 
-    (function(){
-        //renderCalendar();
-        setTimeout(arguments.callee, 10000);
-    })();
-
-    function getCalendarTime(day, view) {
-        var params   = $.param({ day: day, view: view });
+    function getCalendarTime(date,day, view) {
+	var params   = $.param({ day: day, view: view });
         $.ajax({
             url: '<?= Url::to(['/schedule/render-calendar-time']); ?>?' + params ,
             type: 'get',
             dataType: "json",
             success: function (response)
-            {
+            {   
                 var from_time = response.from_time;
                 var to_time = response.to_time;
-                loadCalendar(from_time, to_time, view);
+                loadCalendar(date,from_time, to_time, view);
             }
         });
         return false;
@@ -128,16 +124,16 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
         var from_time = '<?= $from_time ?>';
         var to_time = '<?= $to_time ?>';
         var view = 'agendaDay';
-        loadCalendar(from_time, to_time, view);
+	var date = $('#calendar').fullCalendar('getDate');
+        loadCalendar(date,from_time, to_time, view);
     });
     
     $(document).off('click', '.fc-prev-button, .fc-next-button')
         .on('click', '.fc-prev-button, .fc-next-button', function () {
-        var date = $('#calendar').fullCalendar('getDate');debugger
-        var nextDay = date.add(1, 'days');debugger
-        var day  = moment(nextDay).day();
-        var view = $('#calendar').fullCalendar('getView');
-        getCalendarTime(day, view);
+        var date = $('#calendar').fullCalendar('getDate');
+        var day  = moment(date).day();
+        var view = $('#calendar').fullCalendar('getView').name;
+        getCalendarTime(date,day, view);
         return false;
     });
 
@@ -145,7 +141,7 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
         var date = $('#calendar').fullCalendar('getDate');
         var day  = moment(date).day();
         var view = 'agendaWeek';
-        getCalendarTime(day, view);
+        getCalendarTime(date,day, view);
         return false;
     });
 
@@ -153,7 +149,7 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
         var date = $('#calendar').fullCalendar('getDate');
         var day  = moment(date).day();
         var view = 'agendaDay';
-        getCalendarTime(day, view);
+        getCalendarTime(date,day, view);
         return false;
     });
 </script>
