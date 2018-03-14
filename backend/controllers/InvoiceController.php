@@ -29,9 +29,6 @@ use common\models\InvoiceReverse;
 use common\models\UserEmail;
 use common\models\UserContact;
 use common\models\Label;
-use common\models\EmailTemplate;
-use common\models\EmailObject;
-use backend\models\EmailForm;
 use backend\models\search\UserSearch;
 use common\models\log\LogHistory;
 use backend\models\search\ItemSearch;
@@ -93,7 +90,6 @@ class InvoiceController extends BaseController
         $request = Yii::$app->request;
         $invoiceSearchRequest = $request->get('InvoiceSearch');
         if ((int) $invoiceSearchRequest['type'] === Invoice::TYPE_PRO_FORMA_INVOICE) {
-            $currentDate                = new \DateTime();
             $searchModel->invoiceStatus = Invoice::STATUS_OWING;
             if (!empty($invoiceSearchRequest['dateRange'])) {
                 $searchModel->dateRange = $invoiceSearchRequest['dateRange'];
@@ -132,7 +128,7 @@ class InvoiceController extends BaseController
             $invoice->user_id = $invoiceRequest['customer_id'];
             $invoice->type = $invoiceRequest['type'];
         }
-        $location_id = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $location_id = Location::findOne(['slug' => \Yii::$app->location])->id;
         $invoice->location_id = $location_id;
         $invoice->createdUserId = Yii::$app->user->id;
         $invoice->updatedUserId = Yii::$app->user->id;
@@ -143,9 +139,15 @@ class InvoiceController extends BaseController
 
     public function actionUpdateCustomer($id, $customerId)
     {
-        $request = Yii::$app->request;
         $model = $this->findModel($id);
         $model->user_id = $customerId;
+        if ($model->allPayments) {
+            foreach ($model->allPayments as $payment) {
+                $payment->updateAttributes([
+                    'user_id' => $customerId
+                ]);
+            }
+        }
         if ($model->save()) {
             return [
                 'status' => true,

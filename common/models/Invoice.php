@@ -234,6 +234,12 @@ class Invoice extends \yii\db\ActiveRecord
             ->onCondition(['payment.isDeleted' => false]);
     }
 
+    public function getAllPayments()
+    {
+        return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
+            ->via('invoicePayments');
+    }
+
     public function getLocation()
     {
         return $this->hasOne(Location::className(), ['id' => 'location_id']);
