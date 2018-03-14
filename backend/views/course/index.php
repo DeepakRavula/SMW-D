@@ -35,15 +35,15 @@ $this->params['show-all'] = $this->render('_button', [
         },
         'columns' => [
             [
-                'attribute' => 'program_id',
-                'label' => 'Course Name',
+                'attribute' => 'program',
+                'label' => 'Course',
                 'value' => function ($data) {
                     return !empty($data->program->name) ? $data->program->name : null;
                 },
             ],
             [
-                'attribute' => 'teacher_id',
-                'label' => 'Teacher Name',
+                'attribute' => 'teacher',
+                'label' => 'Teacher',
                 'value' => function ($data) {
                     return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
                 },
@@ -59,6 +59,7 @@ $this->params['show-all'] = $this->render('_button', [
                 },
             ],
             [
+		'attribute' => 'duration',
                 'label' => 'Duration',
                 'headerOptions' => ['style' => 'text-align:right'],
                 'contentOptions' => ['style' => 'text-align:right'],
@@ -69,12 +70,14 @@ $this->params['show-all'] = $this->render('_button', [
                 },
             ],
             [
+		'attribute' => 'startDate',
                 'label' => 'Start Date',
                 'value' => function ($data) {
                     return !empty($data->startDate) ? Yii::$app->formatter->asDate($data->startDate) : null;
                 },
             ],
             [
+		'attribute' => 'endDate',
                 'label' => 'End Date',
                 'value' => function ($data) {
                     return !empty($data->endDate) ? Yii::$app->formatter->asDate($data->endDate) : null;

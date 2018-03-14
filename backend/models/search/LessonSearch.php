@@ -31,6 +31,7 @@ class LessonSearch extends Lesson
     public $teacher;
     public $ids;
     public $attendanceStatus;
+    public $rate;
     /**
      * {@inheritdoc}
      */
@@ -40,7 +41,7 @@ class LessonSearch extends Lesson
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
             [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId',
-                'invoiceType','dateRange', 'student', 'program', 'teacher'], 'safe'],
+                'invoiceType','dateRange', 'rate','student', 'program', 'teacher'], 'safe'],
         ];
     }
     
@@ -78,7 +79,26 @@ class LessonSearch extends Lesson
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
+	//$type = Lesson::TYPE_GROUP_LESSON;
+	print_r((int)$this->type);die("cbcbcbcbc");
+	if ((int)$this->type === Lesson::TYPE_GROUP_LESSON) {
+	$dataProvider->setSort([
+            'attributes' => [
+                'program' => [
+                    'asc' => ['program.name' => SORT_ASC],
+                    'desc' => ['program.name' => SORT_DESC],
+                ],
+                'rate' => [
+                    'asc' => ['program.rate' => SORT_ASC],
+                    'desc' => ['program.rate' => SORT_DESC],
+                ],
+                'teacher' => [
+                    'asc' => ['user_profile.firstname' => SORT_ASC],
+                    'desc' => ['user_profile.firstname' => SORT_DESC],
+                ]
+            ]
+        ]);
+	}
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
@@ -87,6 +107,7 @@ class LessonSearch extends Lesson
             ['student.last_name' => $this->student]
         ]);
         $query->andFilterWhere(['program.name' => $this->program]);
+	
         if (!empty($this->teacher)) {
             $query->joinWith(['teacherProfile' => function ($query) {
                 $query->andFilterWhere([
@@ -154,7 +175,6 @@ class LessonSearch extends Lesson
                 'query' => $lessonQuery,
             ]);
         }
-
         return $dataProvider;
     }
 

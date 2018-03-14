@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\User;
 use common\models\Invoice;
+use common\models\UserProfile;
 
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
@@ -82,10 +83,6 @@ class UserSearch extends User
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-	$query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
-	$dataProvider->sort->defaultOrder = [
-          'uf.lastname' => SORT_DESC,
-	    ];
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
@@ -101,6 +98,7 @@ class UserSearch extends User
         $query->leftJoin(['rbac_auth_assignment aa'], 'user.id = aa.user_id');
         $query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
         $query->leftJoin(['user_location ul'], 'ul.user_id = user.id');
+	$query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
         $dataProvider->setSort([
             'attributes' => [
                 'firstname' => [
@@ -110,9 +108,13 @@ class UserSearch extends User
                 'lastname' => [
                     'asc' => ['uf.lastname' => SORT_ASC],
                     'desc' => ['uf.lastname' => SORT_DESC],
+		    'default' => SORT_DESC,
                 ],
             ]
         ]);
+	$dataProvider->sort->defaultOrder = [
+          'lastname' => SORT_DESC,
+	    ];
         $query->joinWith(['emails' => function ($query) {
             $query->andFilterWhere(['like', 'email', $this->email]);
         }]);
@@ -151,7 +153,6 @@ class UserSearch extends User
             
         }
 	  $query->groupBy('user.id');
-	  $query->orderBy(['uf.lastname' => SORT_DESC]);
         return $dataProvider;
     }
 
