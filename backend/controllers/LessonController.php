@@ -189,7 +189,7 @@ class LessonController extends BaseController
     {
         $request = Yii::$app->request;
         $model = $this->findModel($id);
-        $model->setScenario(Lesson::SCENARIO_EDIT);
+        $model->setScenario(Lesson::SCENARIO_EDIT_CLASSROOM);
         if ($model->load($request->post())) {
             if ($model->save()) {
                 return [

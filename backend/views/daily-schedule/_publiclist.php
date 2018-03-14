@@ -1,56 +1,18 @@
 <?php
 
 use yii\grid\GridView;
-use common\models\CalendarEventColor;
 
 ?>
-<?php
-$privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
-    $groupLesson = CalendarEventColor::findOne(['cssClass' => 'group-lesson']);
-    $firstLesson = CalendarEventColor::findOne(['cssClass' => 'first-lesson']);
-    $teacherSubstitutedLesson = CalendarEventColor::findOne(['cssClass' => 'teacher-substituted']);
-    $rescheduledLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
-    $this->registerCss(
-        " 
-        .private-lesson {
-			font-weight:bold;
-			color:white;
-			font-size: 16px;
-            background-color: " . $privateLesson->code . " !important;
-		}
-        .first-lesson {
-			font-weight:bold;
-			color:white;
-			font-size: 16px;
-            background-color: " . $firstLesson->code . " !important;
-		}
-        .group-lesson {
-			font-weight:bold;
-			color:white;
-			font-size: 16px;
-           	background-color: " . $groupLesson->code . " !important; 
-		}
-        .teacher-substituted {
-			font-weight:bold;
-			color:white;
-			font-size: 16px;
-            background-color: " . $teacherSubstitutedLesson->code . " !important;
-		}
-        .lesson-rescheduled {
-			font-weight:bold;
-			color:white;
-			font-size: 16px;
-            background-color: " . $rescheduledLesson->code . " !important; }"
-    );
-?>
- <?php yii\widgets\Pjax::begin(['id' => 'schedule-listing']); ?>
+
+<?php yii\widgets\Pjax::begin(['id' => 'schedule-listing']); ?>
 <?=
 GridView::widget([
     'dataProvider' => $dataProvider,
     'summary' => false,
-        'emptyText' => false,
+    'emptyText' => false,
     'rowOptions' => function ($model, $key, $index, $grid) {
-        return ['class' => $model->getClass()];
+        return ['style' => 'font-weight:bold; color:white; font-size: 16px;'
+            . 'background-color:' . $model->getColorCode() . ';'];
     },
     'tableOptions' => ['class' => 'table table-condensed'],
     'options' => [
@@ -76,7 +38,7 @@ GridView::widget([
             [
             'label' => 'Teacher',
             'value' => function ($data) {
-                return $data->course->teacher->publicIdentity;
+                return $data->teacher->publicIdentity;
             },
         ],
             [
