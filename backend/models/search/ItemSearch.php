@@ -4,6 +4,7 @@ namespace backend\models\search;
 
 use Yii;
 use yii\base\Model;
+use common\models\Location;
 use yii\data\ActiveDataProvider;
 use common\models\Item;
 
@@ -42,7 +43,7 @@ class ItemSearch extends Item
      */
     public function search($params)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query      = Item::find()
             ->notDeleted();
         if ($this->avoidDefaultItems && !($this->showAllItems)) {

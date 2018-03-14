@@ -226,7 +226,12 @@ class InvoiceController extends BaseController
                 }
             }
         }
-
+        $userSearchModel = new UserSearch();
+        $queryParams = array_merge([],Yii::$app->request->getQueryParams());
+        $queryParams["UserSearch"]["role_name"] = User::ROLE_CUSTOMER;
+        $userDataProvider = $userSearchModel->search($queryParams);
+        $userDataProvider->pagination = false;
+        
         $customerInvoicePayments = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                 $query->where(['ip.invoice_id' => $model->id]);
@@ -276,6 +281,8 @@ class InvoiceController extends BaseController
             'view',
                 [
                 'model' => $model,
+                'userSearchModel' => $userSearchModel,
+                'userDataProvider' => $userDataProvider,
                 'searchModel' => $searchModel,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                 'invoicePayments' => $customerInvoicePaymentsDataProvider,
@@ -289,26 +296,6 @@ class InvoiceController extends BaseController
                 'logDataProvider' => $logDataProvider,
         ]
         );
-    }
-
-    public function actionFetchUser($id)
-    {
-        $model = $this->findModel($id);
-        $request = Yii::$app->request;
-        $searchModel = new UserSearch();
-        $searchModel->load($request->get());
-        $searchModel->role_name = $request->get('role_name');
-        $userDataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $userDataProvider->pagination = false;
-        $data = $this->renderAjax('customer/_list', [
-            'userDataProvider' => $userDataProvider,
-            'model' => $model,
-            'searchModel' => $searchModel,
-        ]);
-        return [
-            'status' => true,
-            'data' => $data
-        ];
     }
 
     public function actionAddMisc($id, $itemId)

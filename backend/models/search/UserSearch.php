@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\User;
+use common\models\Location;
 use common\models\Invoice;
 
 /**
@@ -73,8 +74,7 @@ class UserSearch extends User
      */
     public function search($params)
     {
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = User::find()
             ->notDeleted()
             ->notDraft();

@@ -81,18 +81,5 @@ use yii\widgets\Pjax;
         });
         return false;
     });
-    
-    $(document).on('keyup paste, click', '#item-search, #item-picker-submit', function() {
-        var searchVal = $(this).val().toLowerCase();
-        $('#item-add-listing tbody > tr').addClass('hide');
-        $('#item-add-listing tbody > tr').each(function(){
-            var text = $(this).text().toLowerCase();
-            if(text.indexOf(searchVal) != -1)
-            {
-                $(this).removeClass('hide');
-            }
-        });
-        return false;
-    });
 </script>
 

@@ -9,9 +9,9 @@ use yii\widgets\Pjax;
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <?php echo $this->render('/invoice/_line-item', [
         'invoiceModel' => $model,
-    'itemDataProvider' => $itemDataProvider,
-    'searchModel'=>'$searchModel',
-    'itemSearchModel'=>$itemSearchModel,
+        'itemDataProvider' => $itemDataProvider,
+        'searchModel' => $searchModel,
+        'itemSearchModel' => $itemSearchModel,
     ]) ?>
 <?php Pjax::Begin(['id' => 'invoice-view-tab-item', 'timeout' => 6000]); ?>
 <?php $boxTools = $this->render('_button', [

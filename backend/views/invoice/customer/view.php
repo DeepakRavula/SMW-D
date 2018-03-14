@@ -2,8 +2,6 @@
 
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
-use yii\widgets\Pjax;
-use yii\helpers\Html;
 use common\models\User;
 use yii\helpers\Url;
 use common\models\Invoice;

@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Invoice;
+use common\models\Location;
 
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
@@ -59,8 +60,7 @@ class InvoiceSearch extends Invoice
      */
     public function search($params)
     {
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Invoice::find()
                 ->where([
                     'invoice.location_id' => $locationId,

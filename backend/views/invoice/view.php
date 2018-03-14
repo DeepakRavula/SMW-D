@@ -138,12 +138,7 @@ if (!empty($lineItem)) {
 ]); ?>
 <div id="payment-edit-content"></div>
 <?php Modal::end();?>
-<?php Modal::begin([
-    'header' => "<h4>Add Customer</h4>",
-    'id' => 'invoice-customer-modal',
-    'footer' => Html::a('Cancel', '#', ['class' => 'btn btn-default pull-right customer-cancel'])
-]); ?>
-<?php Modal::end();?>
+
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Add Walk-in</h4>',
     'id' => 'walkin-modal',
@@ -175,7 +170,18 @@ if (!empty($lineItem)) {
     ])
  ]); ?>
 <div id="adjust-tax-modal-content"></div>
- <?php Modal::end();?>
+<?php Modal::end();
+Modal::begin([
+    'header' =>  '<h4 class="m-0 pull-left">Choose Customer</h4>',
+    'id' => 'customer-modal',
+    'closeButton' => false,
+]); ?>
+<?= $this->render('customer/_list', [
+        'model' => $model,
+        'searchModel' => $userSearchModel,
+        'userDataProvider' => $userDataProvider
+]); ?>
+<?php Modal::end(); ?>
 
 <script>
  $(document).ready(function() {
@@ -263,25 +269,11 @@ if (!empty($lineItem)) {
   	});
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$(document).on('click', '.add-customer', function (e) {
-		$.ajax({
-			url    : $(this).attr('href'),
-			type: 'get',
-			dataType: "json",
-			success: function (response)
-			{
-				if (response.status)
-				{
-					$('#invoice-customer-modal .modal-body').html(response.data);
-					$('#invoice-username').val('');
-					$('#invoice-customer-modal').modal('show');
-					$('#invoice-customer-modal .modal-dialog').css({'width': '800px'});
-				} 
-			}
-		});
+		$('#customer-modal').modal('show');
 		return false;
   	});
-	$(document).on('click', '.customer-cancel', function (e) {
-		$('#invoice-customer-modal').modal('hide');
+	$(document).on('click', '.add-customer-cancel', function (e) {
+		$('#customer-modal').modal('hide');
 		return false;
   	});
     $(document).on('click', '.add-walkin', function (e) {
@@ -564,7 +556,7 @@ if (!empty($lineItem)) {
                    $('#customer-spinner').hide();
                     $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                    $('#invoice-customer-modal').modal('hide');
+                    $('#customer-modal').modal('hide');
                                
 				}
 			}
