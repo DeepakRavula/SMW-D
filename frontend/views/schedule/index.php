@@ -95,9 +95,17 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
         });
     };
 
+    function getDay(date) {
+        var day = moment(date).day();
+        if (day === 0) {
+            day = 7;
+        }
+        return day;
+    };
+
     function renderCalendar() {
         var date = $('#calendar').fullCalendar('getDate');
-        var day  = moment(date).day();
+        var day  = getDay(date);
         var view = $('#calendar').fullCalendar('getView').name;
         getCalendarTime(date, day, view);
         return false;
@@ -130,7 +138,7 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
     $(document).off('click', '.fc-prev-button, .fc-next-button')
         .on('click', '.fc-prev-button, .fc-next-button', function () {
         var date = $('#calendar').fullCalendar('getDate');
-        var day  = moment(date).day();
+        var day  = getDay(date);
         var view = $('#calendar').fullCalendar('getView').name;
         getCalendarTime(date, day, view);
         return false;
@@ -138,7 +146,7 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
 
     $(document).off('click', '.fc-agendaWeek-button').on('click', '.fc-agendaWeek-button', function () {
         var date = $('#calendar').fullCalendar('getDate');
-        var day  = moment(date).day();
+        var day  = getDay(date);
         var view = 'agendaWeek';
         getCalendarTime(date, day, view);
         return false;
@@ -146,7 +154,7 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
 
     $(document).off('click', '.fc-agendaDay-button').on('click', '.fc-agendaDay-button', function () {
         var date = $('#calendar').fullCalendar('getDate');
-        var day  = moment(date).day();
+        var day  = getDay(date);
         var view = 'agendaDay';
         getCalendarTime(date, day, view);
         return false;
@@ -154,7 +162,7 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
 
     $(document).off('click', '.fc-today-button').on('click', '.fc-today-button', function () {
         var date = Date();
-        var day  = moment(date).day();
+        var day  = getDay(date);
         var view = $('#calendar').fullCalendar('getView').name;
         getCalendarTime(date, day, view);
         return false;
