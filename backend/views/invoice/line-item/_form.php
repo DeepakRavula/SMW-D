@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 
@@ -12,9 +11,8 @@ use yii\helpers\Url;
 <div class="lesson-qualify p-10">
 
 <?php $form = ActiveForm::begin([
-    'id' => 'line-item-edit-form',
-    'action' => Url::to(['invoice-line-item/update', 'id' => $model->id]),
-    'enableClientValidation' => true
+    'id' => 'modal-form',
+    'action' => Url::to(['invoice-line-item/update', 'id' => $model->id])
 ]); ?>
     <div id="item-edit-spinner" class="spinner" style="display:none">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -36,7 +34,8 @@ use yii\helpers\Url;
         <div class="row">
             <div class="col-md-7 text-right">
             <dt>Price</dt>
-            <dd><?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control', 'id' => 'amount-line'])->label(false);?></dd>
+            <dd><?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control', 
+                'id' => 'amount-line', 'value' => Yii::$app->formatter->asDecimal($model->amount, 2)])->label(false);?></dd>
             </div>
 			<?php if (Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')) :?>
             <div class="col-md-5 text-right">

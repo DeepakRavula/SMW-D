@@ -1,4 +1,10 @@
 @media print{
+         .report-h1{
+                font-size:36px;
+            }
+            .report-h2{
+                font-size:32px;
+            }
 	.print-container{
 		margin-top:5px;
 	}
@@ -15,19 +21,19 @@
 		font-weight:normal;
 	}
 	.boxed {
-	  border: 4px solid #949599;
-	  height: 200px;
+	  border: 2px solid #949599;
+	  height: 150px;
 	  margin: 20px;
 	  padding: 20px;
-	  width: 580px;
+	  width: 480px;
 	}
 	.sign {
 	  font-weight: bold;
 	  text-align : right;
-	  font-size : 28px;
+	  font-size : 18px;
 	}
 	.sign span {
-	  width: 250px;
+	  width: 175px;
 	  display: inline-block;
 	  border-bottom: 1px solid #999999;
 	  font-weight: normal;
@@ -54,6 +60,32 @@
 	.report-grid .table-bordered > tbody > tr:nth-child(even){
 		
 	}
+}
+@media (min-width: 768px) {
+  .boxed {
+	  border: 2px solid #949599;
+	  height: 150px;
+	  margin: 20px;
+	  padding: 20px;
+	  width: 480px;
+	}
+	.sign {
+	  font-weight: bold;
+	  text-align : right;
+	  font-size : 18px;
+	}
+	.sign span {
+	  width: 175px;
+	  display: inline-block;
+	  border-bottom: 1px solid #999999;
+	  font-weight: normal;
+	}  
+        .report-h1{
+                font-size:36px;
+            }
+            .report-h2{
+                font-size:32px;
+            }
 }
 @page{
   size: auto;

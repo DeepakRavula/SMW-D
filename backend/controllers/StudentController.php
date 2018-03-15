@@ -1,7 +1,5 @@
 <?php
-
 namespace backend\controllers;
-
 use Yii;
 use common\models\Student;
 use common\models\Program;
@@ -88,13 +86,18 @@ class StudentController extends BaseController
      *
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($userId=null)
     {
         $model = new Student();
         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
         $model->on(Student::EVENT_AFTER_INSERT, [new StudentLog(), 'create'], ['loggedUser' => $loggedUser]);
         $request = Yii::$app->request;
         $user = $request->post('User');
+	$userModel=User::findOne(['id' => $userId]);
+	 $data = $this->renderAjax('/user/customer/_form-student', [
+            'model' => $model,
+	    'customer'=>$userModel, 
+        ]);
         if ($model->load($request->post())) {
             $model->customer_id = $user['id'];
             $model->status = Student::STATUS_ACTIVE;
@@ -110,6 +113,13 @@ class StudentController extends BaseController
                 ];
             }
         }
+	else
+	{
+	$response =  [
+                    'status' => true,
+                    'data' =>	$data,
+                ];	
+	}
         return $response;
     }
 

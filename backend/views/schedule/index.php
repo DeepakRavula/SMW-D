@@ -3,7 +3,6 @@
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\bootstrap\Tabs;
-use common\models\CalendarEventColor;
 use common\models\Holiday;
 use wbraganca\selectivity\SelectivityWidget;
 use yii\helpers\ArrayHelper;
@@ -361,7 +360,7 @@ var schedule = {
                     $("#calendar").fullCalendar("refetchEvents");
                     $('#success-notification').html('Lesson successfully modified!').fadeIn().delay(5000).fadeOut();
                 } else {
-                    $('#notification').html(response.errors[0]).fadeIn().delay(5000).fadeOut();
+                    $('#notification').html(response.errors).fadeIn().delay(5000).fadeOut();
                     $("#calendar").fullCalendar("refetchEvents");
                     $(window).scrollTop(0);
                 }

@@ -308,6 +308,7 @@ class EnrolmentController extends BaseController
         $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
         $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
         $user->status = User::STATUS_DRAFT;
+	$user->canLogin=true;
         if ($user->save()) {
             $auth = Yii::$app->authManager;
             $authManager = Yii::$app->authManager;
@@ -483,7 +484,10 @@ class EnrolmentController extends BaseController
      */
     protected function findModel($id)
     {
-        if (($model = Enrolment::findOne($id)) !== null) {
+          $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $model = Enrolment::find()->location($locationId)
+            ->where(['enrolment.id' => $id, 'isDeleted' => false])->one();
+        if ($model !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

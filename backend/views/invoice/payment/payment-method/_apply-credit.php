@@ -6,56 +6,7 @@ use common\models\ItemType;
 use yii\data\ArrayDataProvider;
 
 ?>
-<?php
-$invoiceCredits = Invoice::find()
-        ->invoiceCredit($invoice->user_id)
-        ->andWhere(['NOT', ['invoice.id' => $invoice->id]])
-        ->all();
 
-$results = [];
-if (!empty($invoiceCredits)) {
-    foreach ($invoiceCredits as $invoiceCredit) {
-        if ($invoiceCredit->isReversedInvoice()) {
-            $lastInvoicePayment = $invoiceCredit;
-        } else {
-            $lastInvoicePayments = $invoiceCredit->payments;
-            $lastInvoicePayment = end($lastInvoicePayments);
-        }
-        $lineItems = $invoiceCredit->lineItems;
-        $lineItem = end($lineItems);
-        if ((int) $lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE) {
-            $source = 'Opening Balance';
-            $type = 'account_entry';
-        } elseif ((int) $invoiceCredit->isLessonCredit()) {
-            $source = 'Lesson Credit';
-            $type = 'invoice';
-        } else {
-            $source = 'Invoice';
-            $type = 'invoice';
-        }
-        $paymentDate = new \DateTime();
-        if (!empty($lastInvoicePayment)) {
-            $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->date);
-        }
-        $results[] = [
-            'id' => $invoiceCredit->id,
-            'invoice_number' => $invoiceCredit->getInvoiceNumber(),
-            'date' => $paymentDate->format('d-m-Y'),
-            'amount' => abs($invoiceCredit->balance),
-            'source' => $source,
-            'type' => $type,
-        ];
-    }
-}
-
-$creditDataProvider = new ArrayDataProvider([
-    'allModels' => $results,
-    'sort' => [
-        'attributes' => ['id', 'invoice_number', 'date', 'amount', 'source'],
-    ],
-]);
-?>
-<?php if ($creditDataProvider->totalCount > 0): ?>
 <h5><strong>Choose the credit that you wish to apply</strong></h5>
 <?php
 echo GridView::widget([
@@ -69,34 +20,34 @@ echo GridView::widget([
         return [
             'data-amount' => $model['amount'],
             'data-id' => $model['id'],
-            'data-source' => $model['type'],
             'data-number' => $model['invoice_number'],
         ];
     },
     'columns' => [
         [
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:60%;max-width:30%;'],
+        'headerOptions' => ['class' => 'text-left','style' => 'min-width:60%;max-width:30%;'],
         'label' => 'Invoice Number',
         'value' => 'invoice_number',
         ],
         [
-        'label' => 'Source',
-        'value' => 'source',
-        ],
-        [
+        'contentOptions' => ['class' => 'text-center','style' => 'min-width:40%;max-width:40%;'],
+        'headerOptions' => ['class' => 'text-center','style' => 'min-width:40%;max-width:40%;'],
         'label' => 'Date',
         'value' => 'date',
         ],
         [
+        'contentOptions' => ['class' => 'text-right','style' => 'min-width:30%;max-width:30%;'],
+        'headerOptions' => ['class' => 'text-right','style' => 'min-width:30%;max-width:30%;'],
         'label' => 'Credit',
         'value' => function ($model) {
             return Yii::$app->formatter->asDecimal($model['amount'], 2);
         }
         ],
-    ],
+    ]
 ]);
- echo $this->render('_form-credit', [
-        'model' => $paymentModel,
-        'invoice' => $invoice,
-]);
+    echo $this->render('_form-credit', [
+            'model' => $paymentModel,
+            'invoice' => $invoice,
+    ]);
 ?>
-<?php endif; ?>

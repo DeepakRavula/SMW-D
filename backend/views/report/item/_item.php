@@ -2,7 +2,6 @@
 
 use kartik\grid\GridView;
 use yii\helpers\Url;
-use common\models\InvoiceLineItem;
 use backend\assets\CustomGridAsset;
 
 CustomGridAsset::register($this);
@@ -53,9 +52,9 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 [
                 'label' => 'Amount',
                 'value' => function ($data) {
-                    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-                    return $data->item->getItemTotal($locationId, $data->invoice->date);
+                    return Yii::$app->formatter->asDecimal($data->itemTotal);
                 },
+                'format' => ['decimal', 2],
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => true,

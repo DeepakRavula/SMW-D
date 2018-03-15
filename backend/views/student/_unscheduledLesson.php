@@ -1,9 +1,7 @@
 <?php
 
-use yii\bootstrap\Modal;
 use yii\grid\GridView;
 use yii\helpers\Url;
-use yii\helpers\Html;
 
 ?>
 

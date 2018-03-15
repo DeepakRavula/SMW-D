@@ -43,50 +43,32 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
 </div>
 <?php Pjax::end();?>
 <script>
-    $(document).ready(function() {
-        $(document).on('click', '.add-country, #country-listing  tbody > tr', function () {
-            $('#country-modal .modal-dialog').css({'width': '400px'});
+        $(document).on('click', '.action-button,#country-listing  tbody > tr', function () {
+	    $('#popup-modal .modal-dialog').css({'width': '400px'});
             var countryId = $(this).data('key');
             if (countryId === undefined) {
-                var customUrl = '<?= Url::to(['country/create']); ?>';
+                    var customUrl = '<?= Url::to(['country/create']); ?>';
             } else {
                 var customUrl = '<?= Url::to(['country/update']); ?>?id=' + countryId;
+                var url = '<?= Url::to(['country/delete']); ?>?id=' + countryId;
+                $('#modal-delete').show();
+                $(".modal-delete").attr("action",url);
             }
             $.ajax({
                 url    : customUrl,
-                type   : 'post',
+                type   : 'get',
                 dataType: "json",
                 data   : $(this).serialize(),
                 success: function(response)
                 {
                     if(response.status)
                     {
-                        $('#country-content').html(response.data);
-                        $('#country-modal').modal('show');
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Country</h4>');
+                        $('#modal-content').html(response.data);
                     }
                 }
             });
             return false;
         });
-        $(document).on('beforeSubmit', '#country-form', function () {
-            $.ajax({
-                url    : $(this).attr('action'),
-                type   : 'post',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-                    if(response.status) {
-                        $.pjax.reload({container: '#country-listing', timeout: 6000});
-                        $('#country-modal').modal('hide');
-                    }
-                }
-            });
-            return false;
-        });
-        $(document).on('click', '.country-cancel', function () {
-            $('#country-modal').modal('hide');
-            return false;
-        });
-    });
 </script>

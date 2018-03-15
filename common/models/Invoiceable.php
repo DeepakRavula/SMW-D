@@ -204,7 +204,7 @@ trait Invoiceable
         }
         $lessons = $query->andWhere(['courseId' => $this->courseId])
                     ->all();
-        $invoice = $this->addLessonCredit($lessons);
+        $invoice = $this->addLessonsCredit($lessons);
         $paymentCycleQuery = PaymentCycle::find()
                 ->where(['enrolmentId' => $this->id]);
         if ($startDate) {

@@ -53,7 +53,7 @@ class InvoiceController extends BaseController
                 'only' => ['delete', 'note', 
 					'get-payment-amount', 'update-customer',
                     'create-walkin', 'fetch-user', 'add-misc',
-					'adjust-tax'],
+					'adjust-tax', 'mail'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -63,7 +63,7 @@ class InvoiceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['blank-invoice', 'index',
+                        'actions' => ['blank-invoice', 'index', 'mail',
 							'update-customer', 'create-walkin',
 							'note', 'view', 'fetch-user',
 							'add-misc','fetch-summary-and-status', 							   'compute-tax', 'create', 'update',
@@ -90,7 +90,6 @@ class InvoiceController extends BaseController
         $request = Yii::$app->request;
         $invoiceSearchRequest = $request->get('InvoiceSearch');
         if ((int) $invoiceSearchRequest['type'] === Invoice::TYPE_PRO_FORMA_INVOICE) {
-            $currentDate                = new \DateTime();
             $searchModel->invoiceStatus = Invoice::STATUS_OWING;
             if (!empty($invoiceSearchRequest['dateRange'])) {
                 $searchModel->dateRange = $invoiceSearchRequest['dateRange'];
@@ -129,7 +128,7 @@ class InvoiceController extends BaseController
             $invoice->user_id = $invoiceRequest['customer_id'];
             $invoice->type = $invoiceRequest['type'];
         }
-        $location_id = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $location_id = Location::findOne(['slug' => \Yii::$app->location])->id;
         $invoice->location_id = $location_id;
         $invoice->createdUserId = Yii::$app->user->id;
         $invoice->updatedUserId = Yii::$app->user->id;
@@ -140,9 +139,15 @@ class InvoiceController extends BaseController
 
     public function actionUpdateCustomer($id, $customerId)
     {
-        $request = Yii::$app->request;
         $model = $this->findModel($id);
         $model->user_id = $customerId;
+        if ($model->allPayments) {
+            foreach ($model->allPayments as $payment) {
+                $payment->updateAttributes([
+                    'user_id' => $customerId
+                ]);
+            }
+        }
         if ($model->save()) {
             return [
                 'status' => true,
@@ -199,6 +204,8 @@ class InvoiceController extends BaseController
         $itemDataProvider                   = $itemSearchModel->search(Yii::$app->request->queryParams);
         $searchModel                        = new InvoiceSearch();
         $searchModel->load($request->get());
+        $searchModel->isWeb = true;
+        $searchModel->isMail = false;
         $invoiceLineItems                   = InvoiceLineItem::find()
             ->notDeleted()
             ->andWhere(['invoice_id' => $id]);
@@ -229,8 +236,6 @@ class InvoiceController extends BaseController
         $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $customerInvoicePayments,
         ]);
-        $locationId                          = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $currentDate                         = (new \DateTime())->format('Y-m-d H:i:s');
         $invoicePayments                     = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                 $query->where(['ip.invoice_id' => $model->id]);
@@ -464,10 +469,13 @@ class InvoiceController extends BaseController
                 ->where([
                     'invoice.id' => $id,
                     'location_id' => $locationId,
+		    'isDeleted'=>false,
                 ])
                 ->one();
         if ($model !== null) {
             return $model;
+	    
+	    
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }

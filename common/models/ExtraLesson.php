@@ -33,6 +33,11 @@ class ExtraLesson extends Lesson
         } else {
             $course = $this->createCourse();
             $course->studentId = $this->studentId;
+            if ($course->hasRegularCourse()) {
+                $regularCourse = $course->getStudentRegularCourse();
+                $regularCourse->extendTo($course);
+            }
+            $course->studentId = $this->studentId;
             $course->createExtraLessonEnrolment();
             $this->courseSchedule($course);
         }

@@ -98,17 +98,21 @@ GridView::widget([
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script>
 $(document).ready(function () {
-	var locationId = $.cookie('locationId');
-	if(locationId) {
-		$('#locationId').val(locationId);
-	}
-	$(document).on('change', '#locationId', function(){
-		$.cookie('locationId', $(this).val());
-		$("#schedule-search").submit();
-	});
-	$(document).on('submit', '#schedule-search', function () {
-		$.pjax.reload({container: "#schedule-listing", replace: false, timeout: 6000, data: $(this).serialize()});
-		return false;
-	});
+    var locationId = $.cookie('locationId');
+    if(locationId) {
+        $('#locationId').val(locationId);
+    }
+    $(document).on('change', '#locationId', function(){
+        $.cookie('locationId', $(this).val());
+        $("#schedule-search").submit();
+    });
+    $(document).on('submit', '#schedule-search', function () {
+        $.pjax.reload({container: "#schedule-listing", replace: false, timeout: 6000, data: $(this).serialize()});
+        return false;
+    });
+    (function(){
+        $.pjax.reload({container: "#schedule-listing", replace: false, timeout: 6000});
+        setTimeout(arguments.callee, 60000);
+    })();
 });
 </script>

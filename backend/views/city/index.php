@@ -18,15 +18,7 @@ $lastRole = end($roles);
 $addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10 aria-hidden="true"></i>'), '#', ['class' => 'add-city btn-sm']);
 $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
-<?php Modal::begin([
-        'header' => '<h4 class="m-0">City</h4>',
-        'id' => 'city-modal',
-    ]); ?>
-<div id="city-content"></div>
- <?php  Modal::end(); ?>
-<?php Pjax::begin([
-    'id' => 'city-listing',
-]);?>
+<?php yii\widgets\Pjax::begin(['id' => 'city-listing']); ?>
 <div>
     <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
@@ -56,50 +48,32 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
 </div>
 <?php Pjax::end(); ?>
 <script>
-    $(document).ready(function() {
-        $(document).on('click', '.add-city, #city-listing  tbody > tr', function () {
+    $(document).on('click', '.action-button,#city-listing  tbody > tr', function () {
             var cityId = $(this).data('key');
-            if (cityId === undefined) {
-                var customUrl = '<?= Url::to(['city/create']); ?>';
+             if (cityId === undefined) {
+                    var customUrl = '<?= Url::to(['city/create']); ?>';
             } else {
                 var customUrl = '<?= Url::to(['city/update']); ?>?id=' + cityId;
+                var url = '<?= Url::to(['city/delete']); ?>?id=' + cityId;
+                $('#modal-delete').show();
+                $(".modal-delete").attr("action",url);
             }
             $.ajax({
                 url    : customUrl,
-                type   : 'post',
+                type   : 'get',
                 dataType: "json",
                 data   : $(this).serialize(),
                 success: function(response)
                 {
                     if(response.status)
                     {
-                        $('#city-content').html(response.data);
-                        $('#city-modal .modal-dialog').css({'width': '400px'});
-                        $('#city-modal').modal('show');
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">City</h4>');
+			$('#popup-modal .modal-dialog').css({'width': '400px'});
+                        $('#modal-content').html(response.data);
                     }
                 }
             });
             return false;
         });
-        $(document).on('beforeSubmit', '#city-form', function () {
-            $.ajax({
-                url    : $(this).attr('action'),
-                type   : 'post',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-                    if(response.status) {
-                        $.pjax.reload({container: '#city-listing', timeout: 6000});
-                        $('#city-modal').modal('hide');
-                    }
-                }
-            });
-            return false;
-        });
-        $(document).on('click', '.city-cancel', function () {
-            $('#city-modal').modal('hide');
-            return false;
-        });
-    });
 </script>

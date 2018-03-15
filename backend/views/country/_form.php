@@ -12,42 +12,31 @@ use yii\helpers\Url;
 <div class="country-form">
 
     <?php   $url = Url::to(['country/update', 'id' => $model->id]);
-            if ($model->isNewRecord) {
-                $url = Url::to(['country/create']);
-            }
-        $form = ActiveForm::begin([
-        'id' => 'country-form',
-        'action' => $url,
+	    if ($model->isNewRecord) {
+		$url = Url::to(['country/create']);
+	    }
+	$form = ActiveForm::begin([
+	'id' => 'modal-form',
+	'action' => $url,
     ]); ?>
 
     <div class="row">
 		<div class="col-md-8">
-    <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-		</div>
-	</div>
-<div class="row">
-    <div class="col-md-12">
-    <div class="pull-right">
-         <?php
-        echo Html::a('Cancel', '#', ['class' => 'btn btn-default country-cancel']);?>
-        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
+<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+	    </div>
     </div>
-    <div class="pull-left">
-       <?php if (!$model->isNewRecord) {
-            echo Html::a('Delete', ['delete', 'id' => $model->id], [
-                'id' => 'province-delete-button',
-                'class' => 'btn btn-danger',
-                'data' => [
-                    'confirm' => 'Are you sure you want to delete this item?',
-                    'method' => 'post',
-                ]
-            ]);
-        }
-        ?>
-    </div>
-</div>
-</div>
-
-    <?php ActiveForm::end(); ?>
+<?php ActiveForm::end(); ?>
 
 </div>
+<script>
+    $(document).on('modal-success', function(event, params) {
+	var url = "<?php echo Url::to(['country/index']); ?>";
+	$.pjax.reload({url: url, container: "#country-listing", replace: false, timeout: 4000});
+	return false;
+    });
+    $(document).on('modal-delete', function(event, params) {
+	var url = "<?php echo Url::to(['country/index']); ?>";
++        $.pjax.reload({url: url, container: "#country-listing", replace: false, timeout: 4000});
+	return false;
+    });
+</script>

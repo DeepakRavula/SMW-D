@@ -483,7 +483,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         if (!empty($this->colorCode)) {
             $class = null;
-        } elseif ($this->isEnrolmentFirstlesson()) {
+        } elseif (!$this->isExtra () && $this->isEnrolmentFirstlesson()) {
             $class = 'first-lesson';
         } elseif ($this->isPrivate()) {
             $class = 'private-lesson';
@@ -642,7 +642,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
-            if ($this->isRescheduledByDate($changedAttributes)) {
+            if ($this->isRescheduledByDate($changedAttributes) || $this->isRescheduledByTeacher($changedAttributes)) {
                 $this->trigger(self::EVENT_RESCHEDULE_ATTEMPTED);
             }
             if ($this->isConfirmed && $this->isScheduled() && $this->rootLesson) {
@@ -678,6 +678,11 @@ class Lesson extends \yii\db\ActiveRecord
     public function isRescheduled()
     {
         return (int) $this->status === self::STATUS_RESCHEDULED;
+    }
+    public function isSubstituteByTeacher() {
+	    if(!empty($this->rootLesson)) {
+	    return  $this->rootLesson->teacherId !== $this->teacherId;
+	    }
     }
 
     public function isRescheduledByDate($changedAttributes)
@@ -735,8 +740,8 @@ class Lesson extends \yii\db\ActiveRecord
         $courseId             = $this->courseId;
         $enrolmentFirstLesson = self::find()
                         ->notDeleted()
-            ->where(['courseId' => $courseId])
-            ->andWhere(['status' =>[self::STATUS_SCHEDULED, self::STATUS_RESCHEDULED, self::STATUS_UNSCHEDULED]])
+            ->andWhere(['courseId' => $courseId])
+            ->notCanceled()
             ->orderBy(['date' => SORT_ASC])
             ->one();
         return $enrolmentFirstLesson->date === $this->date;

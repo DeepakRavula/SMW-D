@@ -24,12 +24,22 @@ Modal::begin([
 
 <script>
     $(document).off('click', '.modal-save').on('click', '.modal-save', function () {
+        $('.modal-save').attr('disabled', true);
         $('#modal-form').submit();
         return false;
     });
 
+    $(document).on('afterValidate', '#modal-form', function (event, messages) {
+        $.each( messages, function( key, value ) {
+            if (value) {
+                $('.modal-save').attr('disabled', false);
+            }
+        });
+    });
+
     $(document).off('beforeSubmit', '#modal-form').on('beforeSubmit', '#modal-form', function () {
         $('#modal-spinner').show();
+	$('.modal-save').attr('disabled', true);
         $.ajax({
             url: $('#modal-form').attr('action'),
             type: 'post',
@@ -46,6 +56,7 @@ Modal::begin([
                     $('#modal-spinner').hide();
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
                     $(document).trigger("modal-error", response);
+                    $('.modal-save').attr('disabled', false);
                 }
             }
         });
@@ -57,6 +68,9 @@ Modal::begin([
     });
 
     $('#popup-modal').on('hidden.bs.modal', function () {
+        $('.modal-save').attr('disabled', false);
+        $('#modal-delete').hide();
+        $('.modal-save').text('Save');
         $(document).trigger("modal-close");
     });
 
@@ -65,35 +79,36 @@ Modal::begin([
         $('#popup-modal').modal('hide');
         return false;
     });
+    
     $(document).off('click', '.modal-delete').on('click', '.modal-delete', function () {
         bootbox.confirm({
         message: "Are you sure you want to delete this?",
-                callback: function(result){
+            callback: function(result){
                 if (result) {
-                $('.bootbox').modal('hide');
-                 $.ajax({
+                    $('.bootbox').modal('hide');
+                    $('#modal-spinner').show();
+                    $.ajax({
                         url : $('.modal-delete').attr('action'),
                         type   : 'post',
                         dataType: "json",
                         data   : $('#modal-form').serialize(),
-                   success: function(response)
-                                        {
-                                        if (response.status)
-                                        {
-                                        $('#modal-spinner').hide();
-                                                $('#popup-modal').modal('hide');
-                                                $(document).trigger("modal-delete", response);
-                                        } else {
-                                        $('#modal-spinner').hide();
-                                                $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
-                                                $(document).trigger("modal-error", response);
-                                        }
-                                        }
-                                });
-                                return false;
+                        success: function(response)
+                        {
+                            if (response.status) {
+                                $('#modal-spinner').hide();
+                                $('#popup-modal').modal('hide');
+                                $(document).trigger("modal-delete", response);
+                            } else {
+                                $('#modal-spinner').hide();
+                                $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
+                                $(document).trigger("modal-error", response);
+                            }
                         }
-                        }
-                        });
-                return false;
-            });
+                    });
+                    return false;
+                }
+            }
+        });
+        return false;
+    });
 </script>

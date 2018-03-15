@@ -6,6 +6,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use common\models\query\PaymentQuery;
 use common\models\PaymentMethod;
+use Carbon\Carbon;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
@@ -83,7 +84,8 @@ class Payment extends ActiveRecord
 
     public function validateOnApplyCredit($attributes)
     {
-        if ($this->credit < $this->amount) {
+        $invoiceModel = Invoice::findOne(['id' => $this->sourceId]);
+        if (round(abs($invoiceModel->balance), 2) < round(abs($this->amount), 2)) {
             return $this->addError($attributes, "Insufficient credt");
         }
     }
@@ -275,5 +277,48 @@ class Payment extends ActiveRecord
     public function afterSoftDelete()
     {
         return $this->invoice->save();
+    }
+
+    public function addOpeningBalance()
+    {
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $invoice = new Invoice();
+        $invoice->user_id = $this->user_id;
+        $invoice->location_id = $locationId;
+        $invoice->type = Invoice::TYPE_INVOICE;
+        $invoice->save();
+
+        $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
+        $invoiceLineItem->invoice_id = $invoice->id;
+        $item = Item::findOne(['code' => Item::OPENING_BALANCE_ITEM]);
+        $invoiceLineItem->item_id = $item->id;
+        $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
+        $invoiceLineItem->description = $item->description;
+        $invoiceLineItem->unit = 1;
+        $invoiceLineItem->amount = 0;
+        $invoiceLineItem->code = $invoiceLineItem->getItemCode();
+        $invoiceLineItem->cost = 0;
+        if ($this->amount > 0) {
+            $invoiceLineItem->amount = $this->amount;
+            $invoice->subTotal = $invoiceLineItem->amount;
+        } else {
+            $invoice->subTotal = 0.00;
+        }
+        $invoiceLineItem->save();
+        $invoice->tax = $invoiceLineItem->tax_rate;
+        $invoice->total = $invoice->subTotal + $invoice->tax;
+        if (!empty($invoice->location->conversionDate)) {
+            $date = Carbon::parse($invoice->location->conversionDate);
+            $invoice->date = $date->subDay(1);
+        }
+        if ($this->amount < 0) {
+            $this->date = (new \DateTime($invoice->date))->format('Y-m-d H:i:s');
+            $this->invoiceId = $invoice->id;
+            $this->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
+            $this->amount = abs($this->amount);
+            $this->save();
+        }
+        $invoice->save();
+        return $invoice;
     }
 }

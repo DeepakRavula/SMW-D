@@ -12,7 +12,9 @@ use common\models\Student;
  */
 ?>
 <?php $this->registerCssFile("@web/css/student/style.css");?>
-<?php yii\widgets\Pjax::begin(['id' => 'student-listing']); ?>
+<?php yii\widgets\Pjax::begin([
+    'enablePushState' => false,
+	'id' => 'student-listing']); ?>
 <?php
 echo AdminLteGridView::widget([
     'id' => 'student-grid',
