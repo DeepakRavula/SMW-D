@@ -94,5 +94,9 @@ $(document).ready(function() {
         });
         return false;
     });
+	$(document).on('click', '.location-cancel', function () {
+		$('#location-modal').modal('hide');
+		return false;
+	});
 });
 </script>
