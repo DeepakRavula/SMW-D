@@ -111,6 +111,9 @@ class UserSearch extends User
                 ],
             ]
         ]);
+	$dataProvider->sort->defaultOrder = [
+          'lastname' => SORT_DESC,
+	    ];
         $query->joinWith(['emails' => function ($query) {
             $query->andFilterWhere(['like', 'email', $this->email]);
         }]);
@@ -149,7 +152,6 @@ class UserSearch extends User
             
         }
 	  $query->groupBy('user.id');
-	  $query->orderBy(['uf.firstname' => SORT_ASC]);
         return $dataProvider;
     }
 
