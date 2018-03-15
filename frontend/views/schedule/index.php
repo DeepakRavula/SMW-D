@@ -93,6 +93,11 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
             },
             allDaySlot: false
         });
+	$(".fc-today-button").click(function() {
+	//$('#calendar').fullCalendar('today');
+	renderCalendar();
+        return false;
+});
     };
 
     function getDay(date) {
