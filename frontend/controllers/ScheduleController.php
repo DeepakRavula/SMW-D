@@ -64,9 +64,9 @@ class ScheduleController extends Controller
         $locationId = $userLocation->location_id;
         $date = new \DateTime();
         $locationAvailability = LocationAvailability::find()
-		->andWhere(['locationId' => $locationId])
-               ->andWhere(['day' => $date->format('N')])
-	->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
+                ->andWhere(['locationId' => $locationId])
+                ->andWhere(['day' => $date->format('N')])
+                ->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
 		->one();
         $minAvailability = LocationAvailability::find()
                 ->andWhere(['locationId' => $locationId])
@@ -206,16 +206,20 @@ class ScheduleController extends Controller
         $userLocation = UserLocation::findOne(['user_id' => $userId]);
         $locationId = $userLocation->location_id;
         if ($view === 'agendaDay') {
-            $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
+            $locationAvailability = LocationAvailability::findOne([
+                'type' => LocationAvailability::TYPE_OPERATION_TIME,
+                'locationId' => $locationId,
                 'day' => $day]);
             $calendarTime['from_time'] = $locationAvailability->fromTime;
             $calendarTime['to_time'] = $locationAvailability->toTime;
         } else {
             $minAvailability = LocationAvailability::find()
+                ->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
                 ->andWhere(['locationId' => $locationId])
                 ->orderBy(['fromTime' => SORT_ASC])
                 ->one();
             $maxAvailability = LocationAvailability::find()
+                ->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
                 ->andWhere(['locationId' => $locationId])
                 ->orderBy(['toTime' => SORT_DESC])
                 ->one();
