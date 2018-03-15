@@ -56,47 +56,10 @@ class CustomerController extends UserController
     public function actionAddOpeningBalance($id)
     {
         $model = $this->findModel($id);
-        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $paymentModel = new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]);
+        $paymentModel->user_id = $model->id;
         if ($paymentModel->load(Yii::$app->request->post())) {
-            $invoice = new Invoice();
-            $invoice->user_id = $model->id;
-            $invoice->location_id = $locationId;
-            $invoice->type = Invoice::TYPE_INVOICE;
-            $invoice->save();
-
-            $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
-            $invoiceLineItem->invoice_id = $invoice->id;
-            $item = Item::findOne(['code' => Item::OPENING_BALANCE_ITEM]);
-            $invoiceLineItem->item_id = $item->id;
-            $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
-            $invoiceLineItem->description = $item->description;
-            $invoiceLineItem->unit = 1;
-            $invoiceLineItem->amount = 0;
-            $invoiceLineItem->code = $invoiceLineItem->getItemCode();
-            $invoiceLineItem->cost = 0;
-            if ($paymentModel->amount > 0) {
-                $invoiceLineItem->amount = $paymentModel->amount;
-                $invoice->subTotal = $invoiceLineItem->amount;
-            } else {
-                $invoice->subTotal = 0.00;
-            }
-            $invoiceLineItem->save();
-            $invoice->tax = $invoiceLineItem->tax_rate;
-            $invoice->total = $invoice->subTotal + $invoice->tax;
-            if (!empty($invoice->location->conversionDate)) {
-                $date = Carbon::parse($invoice->location->conversionDate);
-                $invoice->date = $date->subDay(1);
-            }
-            $invoice->save();
-
-            if ($paymentModel->amount < 0) {
-                $paymentModel->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
-                $paymentModel->invoiceId = $invoice->id;
-                $paymentModel->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
-                $paymentModel->amount = abs($paymentModel->amount);
-                $paymentModel->save();
-            }
+            $invoice = $paymentModel->addOpeningBalance();
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-success'],
                 'body' => 'Invoice has been created successfully',

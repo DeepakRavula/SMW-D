@@ -5,11 +5,11 @@ namespace backend\controllers;
 use Yii;
 use common\models\Item;
 use common\models\Invoice;
-use yii\data\ActiveDataProvider;
 use backend\models\search\ItemSearch;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use common\models\Location;
 use yii\filters\ContentNegotiator;
 use backend\models\search\InvoiceLineItemSearch;
 use common\components\controllers\BaseController;
@@ -85,7 +85,7 @@ class ItemController extends BaseController
     public function actionCreate()
     {
         $model             = new Item();
-        $model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $model->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $data              = $this->renderAjax('_form', [
             'model' => $model,
         ]);
@@ -198,21 +198,18 @@ class ItemController extends BaseController
         ]);
     }
     
-    public function actionFilter($invoiceId, $string)
+    public function actionFilter($invoiceId)
     {
         $invoiceModel = Invoice::findOne($invoiceId);
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-        $itemData = Item::find()
-                ->notDeleted()
-                ->andWhere(['LIKE', 'item.code', $string])
-                ->orWhere(['LIKE', 'item.description', $string])
-                ->location($locationId)
-                ->active();
-        $itemDataProvider = new ActiveDataProvider([
-            'query' => $itemData,
-        ]);
+        $request = Yii::$app->request;
+        $searchModel = new ItemSearch();
+        $searchModel->avoidDefaultItems = true;
+        $searchModel->load($request->get('ItemSearch'));
+        $itemDataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        
         $data = $this->renderAjax('/invoice/_form-invoice-line-item', [
             'invoiceModel' => $invoiceModel,
+            'itemSearchModel' => $searchModel,
             'itemDataProvider' => $itemDataProvider
         ]);
         return [

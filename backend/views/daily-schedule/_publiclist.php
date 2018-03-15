@@ -1,56 +1,18 @@
 <?php
 
 use yii\grid\GridView;
-use common\models\CalendarEventColor;
 
 ?>
-<?php
-$privateLesson = CalendarEventColor::findOne(['cssClass' => 'private-lesson']);
-    $groupLesson = CalendarEventColor::findOne(['cssClass' => 'group-lesson']);
-    $firstLesson = CalendarEventColor::findOne(['cssClass' => 'first-lesson']);
-    $teacherSubstitutedLesson = CalendarEventColor::findOne(['cssClass' => 'teacher-substituted']);
-    $rescheduledLesson = CalendarEventColor::findOne(['cssClass' => 'lesson-rescheduled']);
-    $this->registerCss(
-        " 
-        .private-lesson {
-			font-weight:bold;
-			color:white;
-			font-size: 16px;
-            background-color: " . $privateLesson->code . " !important;
-		}
-        .first-lesson {
-			font-weight:bold;
-			color:white;
-			font-size: 16px;
-            background-color: " . $firstLesson->code . " !important;
-		}
-        .group-lesson {
-			font-weight:bold;
-			color:white;
-			font-size: 16px;
-           	background-color: " . $groupLesson->code . " !important; 
-		}
-        .teacher-substituted {
-			font-weight:bold;
-			color:white;
-			font-size: 16px;
-            background-color: " . $teacherSubstitutedLesson->code . " !important;
-		}
-        .lesson-rescheduled {
-			font-weight:bold;
-			color:white;
-			font-size: 16px;
-            background-color: " . $rescheduledLesson->code . " !important; }"
-    );
-?>
- <?php yii\widgets\Pjax::begin(['id' => 'schedule-listing']); ?>
+
+<?php yii\widgets\Pjax::begin(['id' => 'schedule-listing']); ?>
 <?=
 GridView::widget([
     'dataProvider' => $dataProvider,
     'summary' => false,
-        'emptyText' => false,
+    'emptyText' => false,
     'rowOptions' => function ($model, $key, $index, $grid) {
-        return ['class' => $model->getClass()];
+        return ['style' => 'font-weight:bold; color:white; font-size: 16px;'
+            . 'background-color:' . $model->getColorCode() . ';'];
     },
     'tableOptions' => ['class' => 'table table-condensed'],
     'options' => [
@@ -76,7 +38,7 @@ GridView::widget([
             [
             'label' => 'Teacher',
             'value' => function ($data) {
-                return $data->course->teacher->publicIdentity;
+                return $data->teacher->publicIdentity;
             },
         ],
             [
@@ -98,17 +60,21 @@ GridView::widget([
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script>
 $(document).ready(function () {
-	var locationId = $.cookie('locationId');
-	if(locationId) {
-		$('#locationId').val(locationId);
-	}
-	$(document).on('change', '#locationId', function(){
-		$.cookie('locationId', $(this).val());
-		$("#schedule-search").submit();
-	});
-	$(document).on('submit', '#schedule-search', function () {
-		$.pjax.reload({container: "#schedule-listing", replace: false, timeout: 6000, data: $(this).serialize()});
-		return false;
-	});
+    var locationId = $.cookie('locationId');
+    if(locationId) {
+        $('#locationId').val(locationId);
+    }
+    $(document).on('change', '#locationId', function(){
+        $.cookie('locationId', $(this).val());
+        $("#schedule-search").submit();
+    });
+    $(document).on('submit', '#schedule-search', function () {
+        $.pjax.reload({container: "#schedule-listing", replace: false, timeout: 6000, data: $(this).serialize()});
+        return false;
+    });
+    (function(){
+        $.pjax.reload({container: "#schedule-listing", replace: false, timeout: 6000});
+        setTimeout(arguments.callee, 60000);
+    })();
 });
 </script>

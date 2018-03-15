@@ -7,8 +7,6 @@ use yii\widgets\Pjax;
 use kartik\grid\GridView;
 use kartik\daterange\DateRangePicker;
 use yii\bootstrap\Modal;
-use kartik\switchinput\SwitchInput;
-use common\components\gridView\KartikGridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */

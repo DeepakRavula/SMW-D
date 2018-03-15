@@ -9,6 +9,8 @@ use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 use common\models\UserProfile;
 use common\models\UserEmail;
+use yii\imperavi\TableImperaviRedactorPluginAsset;
+TableImperaviRedactorPluginAsset::register($this);
 use kartik\select2\Select2Asset;
 Select2Asset::register($this);
 /* @var $this yii\web\View */
@@ -121,15 +123,6 @@ if (!empty($lineItem)) {
 	</div>
 	<?php Pjax::end(); ?>
 </div>
-<div class="row">
-	<div class="col-md-12">
-		<?=
-        $this->render('note/_reminder', [
-            'model' => $model,
-        ]);
-        ?>
-	</div>
-</div>
 
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Message</h4>',
@@ -145,12 +138,7 @@ if (!empty($lineItem)) {
 ]); ?>
 <div id="payment-edit-content"></div>
 <?php Modal::end();?>
-<?php Modal::begin([
-    'header' => "<h4>Add Customer</h4>",
-    'id' => 'invoice-customer-modal',
-    'footer' => Html::a('Cancel', '#', ['class' => 'btn btn-default pull-right customer-cancel'])
-]); ?>
-<?php Modal::end();?>
+
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Add Walk-in</h4>',
     'id' => 'walkin-modal',
@@ -182,7 +170,18 @@ if (!empty($lineItem)) {
     ])
  ]); ?>
 <div id="adjust-tax-modal-content"></div>
- <?php Modal::end();?>
+<?php Modal::end();
+Modal::begin([
+    'header' =>  '<h4 class="m-0 pull-left">Choose Customer</h4>',
+    'id' => 'customer-modal',
+    'closeButton' => false,
+]); ?>
+<?= $this->render('customer/_list', [
+        'model' => $model,
+        'searchModel' => $userSearchModel,
+        'userDataProvider' => $userDataProvider
+]); ?>
+<?php Modal::end(); ?>
 
 <script>
  $(document).ready(function() {
@@ -270,25 +269,11 @@ if (!empty($lineItem)) {
   	});
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$(document).on('click', '.add-customer', function (e) {
-		$.ajax({
-			url    : $(this).attr('href'),
-			type: 'get',
-			dataType: "json",
-			success: function (response)
-			{
-				if (response.status)
-				{
-					$('#invoice-customer-modal .modal-body').html(response.data);
-					$('#invoice-username').val('');
-					$('#invoice-customer-modal').modal('show');
-					$('#invoice-customer-modal .modal-dialog').css({'width': '800px'});
-				} 
-			}
-		});
+		$('#customer-modal').modal('show');
 		return false;
   	});
-	$(document).on('click', '.customer-cancel', function (e) {
-		$('#invoice-customer-modal').modal('hide');
+	$(document).on('click', '.add-customer-cancel', function (e) {
+		$('#customer-modal').modal('hide');
 		return false;
   	});
     $(document).on('click', '.add-walkin', function (e) {
@@ -311,7 +296,7 @@ if (!empty($lineItem)) {
   	});
 	$(document).on('click', '#invoice-mail-button', function (e) {
             $.ajax({
-                url    : '<?= Url::to(['invoice/mail', 'id' => $model->id]); ?>',
+                url    : '<?= Url::to(['email/invoice', 'id' => $model->id]); ?>',
                 type   : 'get',
                 dataType: 'json',
                 success: function(response)
@@ -320,9 +305,8 @@ if (!empty($lineItem)) {
                         $('#modal-content').html(response.data);
                         $('#popup-modal').modal('show');
                         $('#popup-modal .modal-dialog').css({'width': '1000px'});
-                        $('#modal-delete').hide();
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
-                        $('.modal-save').text('Send')
+                        $('.modal-save').text('Send');
                     }
                 }
             });
@@ -338,7 +322,6 @@ if (!empty($lineItem)) {
                     if (response.status && response.hasCredit) {
                         $('#modal-content').html(response.data);
                         $('#popup-modal').modal('show');
-                        $('#modal-delete').hide();
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Apply Credit</h4>');
                         $('.modal-save').text('Pay now')
                     } else {
@@ -573,7 +556,7 @@ if (!empty($lineItem)) {
                    $('#customer-spinner').hide();
                     $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
 					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                    $('#invoice-customer-modal').modal('hide');
+                    $('#customer-modal').modal('hide');
                                
 				}
 			}

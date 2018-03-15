@@ -313,6 +313,9 @@ class User extends ActiveRecord implements IdentityInterface
     public function beforeSave($insert)
     {
         if ($insert) {
+            if (empty($this->canLogin)) {
+                $this->canLogin = false;
+            }
             $this->isDeleted = false;
         }
         return parent::beforeSave($insert);

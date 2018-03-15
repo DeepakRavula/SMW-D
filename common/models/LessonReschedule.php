@@ -131,7 +131,7 @@ class LessonReschedule extends Model
             $lessonModel->teacherId = $teacherId;
         }
 
-        $lessonModel->status = Lesson::STATUS_RESCHEDULED;
+        $lessonModel->status = Lesson::STATUS_SCHEDULED;
         if ($oldLesson->isExtra()) {
             $lessonModel->type = $oldLesson->type;
         }

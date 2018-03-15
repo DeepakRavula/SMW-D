@@ -29,9 +29,6 @@ use common\models\InvoiceReverse;
 use common\models\UserEmail;
 use common\models\UserContact;
 use common\models\Label;
-use common\models\EmailTemplate;
-use common\models\EmailObject;
-use backend\models\EmailForm;
 use backend\models\search\UserSearch;
 use common\models\log\LogHistory;
 use backend\models\search\ItemSearch;
@@ -93,7 +90,6 @@ class InvoiceController extends BaseController
         $request = Yii::$app->request;
         $invoiceSearchRequest = $request->get('InvoiceSearch');
         if ((int) $invoiceSearchRequest['type'] === Invoice::TYPE_PRO_FORMA_INVOICE) {
-            $currentDate                = new \DateTime();
             $searchModel->invoiceStatus = Invoice::STATUS_OWING;
             if (!empty($invoiceSearchRequest['dateRange'])) {
                 $searchModel->dateRange = $invoiceSearchRequest['dateRange'];
@@ -132,7 +128,7 @@ class InvoiceController extends BaseController
             $invoice->user_id = $invoiceRequest['customer_id'];
             $invoice->type = $invoiceRequest['type'];
         }
-        $location_id = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $location_id = Location::findOne(['slug' => \Yii::$app->location])->id;
         $invoice->location_id = $location_id;
         $invoice->createdUserId = Yii::$app->user->id;
         $invoice->updatedUserId = Yii::$app->user->id;
@@ -143,9 +139,15 @@ class InvoiceController extends BaseController
 
     public function actionUpdateCustomer($id, $customerId)
     {
-        $request = Yii::$app->request;
         $model = $this->findModel($id);
         $model->user_id = $customerId;
+        if ($model->allPayments) {
+            foreach ($model->allPayments as $payment) {
+                $payment->updateAttributes([
+                    'user_id' => $customerId
+                ]);
+            }
+        }
         if ($model->save()) {
             return [
                 'status' => true,
@@ -203,6 +205,7 @@ class InvoiceController extends BaseController
         $searchModel                        = new InvoiceSearch();
         $searchModel->load($request->get());
         $searchModel->isWeb = true;
+        $searchModel->isMail = false;
         $invoiceLineItems                   = InvoiceLineItem::find()
             ->notDeleted()
             ->andWhere(['invoice_id' => $id]);
@@ -223,7 +226,12 @@ class InvoiceController extends BaseController
                 }
             }
         }
-
+        $userSearchModel = new UserSearch();
+        $queryParams = array_merge([],Yii::$app->request->getQueryParams());
+        $queryParams["UserSearch"]["role_name"] = User::ROLE_CUSTOMER;
+        $userDataProvider = $userSearchModel->search($queryParams);
+        $userDataProvider->pagination = false;
+        
         $customerInvoicePayments = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
                 $query->where(['ip.invoice_id' => $model->id]);
@@ -273,6 +281,8 @@ class InvoiceController extends BaseController
             'view',
                 [
                 'model' => $model,
+                'userSearchModel' => $userSearchModel,
+                'userDataProvider' => $userDataProvider,
                 'searchModel' => $searchModel,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                 'invoicePayments' => $customerInvoicePaymentsDataProvider,
@@ -286,26 +296,6 @@ class InvoiceController extends BaseController
                 'logDataProvider' => $logDataProvider,
         ]
         );
-    }
-
-    public function actionFetchUser($id)
-    {
-        $model = $this->findModel($id);
-        $request = Yii::$app->request;
-        $searchModel = new UserSearch();
-        $searchModel->load($request->get());
-        $searchModel->role_name = $request->get('role_name');
-        $userDataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $userDataProvider->pagination = false;
-        $data = $this->renderAjax('customer/_list', [
-            'userDataProvider' => $userDataProvider,
-            'model' => $model,
-            'searchModel' => $searchModel,
-        ]);
-        return [
-            'status' => true,
-            'data' => $data
-        ];
     }
 
     public function actionAddMisc($id, $itemId)
@@ -678,55 +668,6 @@ class InvoiceController extends BaseController
             }
             return $response;
         } else {
-            return [
-                'status' => true,
-                'data' => $data,
-            ];
-        }
-    }
-
-    public function actionMail($id)
-    {
-        $model = Invoice::findOne($id);
-        $searchModel = new InvoiceSearch();
-        $searchModel->isPrint = false;
-        $searchModel->toggleAdditionalColumns = false;
-        $searchModel->isWeb = false;
-        $invoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => InvoiceLineItem::find()
-                ->notDeleted()
-                ->andWhere(['invoice_id' => $model->id]),
-            'pagination' => false,
-        ]);
-        if ($model->isProFormaInvoice()) {
-            $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_PFI]);
-        } else {
-            $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
-        }
-        $invoicePayments                     = Payment::find()
-            ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                $query->where(['ip.invoice_id' => $model->id]);
-            }])
-            ->orderBy(['date' => SORT_DESC]);
-        if ($model->isProFormaInvoice()) {
-            $invoicePayments->notCreditUsed();
-        }
-        $invoicePaymentsDataProvider = new ActiveDataProvider([
-            'query' => $invoicePayments,
-        ]);
-        $data = $this->renderAjax('/mail/_form', [
-            'model' => new EmailForm(),
-            'emails' => !empty($model->user->email) ?$model->user->email : null,
-            'subject' => $emailTemplate->subject ?? 'Invoice from Arcadia Academy of Music',
-            'emailTemplate' => $emailTemplate,
-            'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-            'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
-            'id' => $model->id,
-            'searchModel' => $searchModel,
-            'userModel' => $model->user,
-        ]);
-        $post = Yii::$app->request->post();
-        if (!$post) {
             return [
                 'status' => true,
                 'data' => $data,
