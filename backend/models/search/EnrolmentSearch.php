@@ -74,10 +74,6 @@ class EnrolmentSearch extends Enrolment
         $query->leftJoin(['user_profile up'], 'course.teacherId=up.user_id');
         $dataProvider->setSort([
             'attributes' => [
-                'startdate' => [
-                    'asc' => ['course.startDate' => SORT_ASC],
-                    'desc' => ['course.startDate' => SORT_DESC],
-                ],
                 'program' => [
                     'asc' => ['p.name' => SORT_ASC],
                     'desc' => ['p.name' => SORT_DESC],
@@ -89,10 +85,16 @@ class EnrolmentSearch extends Enrolment
                 'teacher' => [
                     'asc' => ['up.firstname' => SORT_ASC],
                     'desc' => ['up.firstname' => SORT_DESC],
+                ],
+		'startdate' => [
+                    'asc' => ['course.startDate' => SORT_ASC],
+                    'desc' => ['course.startDate' => SORT_DESC],
                 ]
             ]
         ]);
-         
+         $dataProvider->sort->defaultOrder = [
+            'program' => SORT_ASC,
+        ];
         $query->andFilterWhere(['p.id' => $this->program]);
         $query->andFilterWhere(['student.id' => $this->student]);
         $query->andFilterWhere(['up.user_id' => $this->teacher]);
@@ -108,7 +110,8 @@ class EnrolmentSearch extends Enrolment
                 ->isRegular()
                 ->orderBy(['course.endDate' => SORT_ASC]);
         }
-
+	$query->orderBy(['p.name' => SORT_ASC]);
+	$query->orderBy(['student.first_name' => SORT_DESC]);
         return $dataProvider;
     }
 }
