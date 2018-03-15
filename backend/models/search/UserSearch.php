@@ -27,6 +27,7 @@ class UserSearch extends User
     public $showAllStaffMembers;
     public $showAllOwners;
     private $email;
+    public $phone;
     
     public function getAccountView()
     {
@@ -54,7 +55,7 @@ class UserSearch extends User
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at', 'accountView'], 'integer'],
             [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname',
-                'lastname', 'query', 'showAllCustomers', 'showAllTeachers','showAllAdministrators','showAllOwners','showAllStaffMembers','accountView'], 'safe'],
+                'lastname', 'query', 'phone','showAllCustomers', 'showAllTeachers','showAllAdministrators','showAllOwners','showAllStaffMembers','accountView'], 'safe'],
         ];
     }
 
@@ -99,6 +100,7 @@ class UserSearch extends User
         $query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
         $query->leftJoin(['user_location ul'], 'ul.user_id = user.id');
 	$query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
+	$query->leftJoin(['user_phone up'], 'up.userContactId = user_contact.id');
         $dataProvider->setSort([
             'attributes' => [
                 'firstname' => [
@@ -108,6 +110,11 @@ class UserSearch extends User
                 'lastname' => [
                     'asc' => ['uf.lastname' => SORT_ASC],
                     'desc' => ['uf.lastname' => SORT_DESC],
+		    'default' => SORT_DESC,
+                ],
+		'phone' => [
+                    'asc' => ['up.phone' => SORT_ASC],
+                    'desc' => ['up.phone' => SORT_DESC],
 		    'default' => SORT_DESC,
                 ],
             ]

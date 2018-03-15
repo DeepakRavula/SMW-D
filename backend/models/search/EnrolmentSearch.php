@@ -107,11 +107,8 @@ class EnrolmentSearch extends Enrolment
         if (! $this->showAllEnrolments) {
             $query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
                 ->isConfirmed()
-                ->isRegular()
-                ->orderBy(['course.endDate' => SORT_ASC]);
+                ->isRegular();
         }
-	$query->orderBy(['p.name' => SORT_ASC]);
-	$query->orderBy(['student.first_name' => SORT_DESC]);
         return $dataProvider;
     }
 }

@@ -14,6 +14,7 @@ use common\models\Student;
 <?php $this->registerCssFile("@web/css/student/style.css");?>
 <?php yii\widgets\Pjax::begin([
     'enablePushState' => false,
+    'timeout' => 6000,
 	'id' => 'student-listing']); ?>
 <?php
 echo AdminLteGridView::widget([
