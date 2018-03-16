@@ -32,7 +32,7 @@ class ItemCategoryController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['items', 'get-item-values', 'create', 'update'],
+                'only' => ['items', 'get-item-values', 'create', 'update','delete'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -165,8 +165,10 @@ class ItemCategoryController extends BaseController
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
-    }
+         return [
+		    'status' => true
+		];
+	}
 
     /**
      * Finds the ItemCategory model based on its primary key value.
