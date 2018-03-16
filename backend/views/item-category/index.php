@@ -31,14 +31,6 @@ $this->params['action-button'] = $addButton;
     ]); ?>
 <?php Pjax::end(); ?>
 </div>
-
-    <?php Modal::begin([
-        'header' => '<h4 class="m-0">Item Category</h4>',
-        'id' => 'item-category-edit-modal',
-    ]); ?>
-    <div id="item-category-edit-content"></div>
-    <?php Modal::end(); ?>
-
 <script>
     $(document).ready(function() {
         $(document).on('click', '#create-item-category, #item-category-listing  tbody > tr', function () {
@@ -51,7 +43,6 @@ $this->params['action-button'] = $addButton;
                 $('#modal-delete').show();
                 $(".modal-delete").attr("action",url);
             }
-	    
             $.ajax({
                 url    : customUrl,
                 type   : 'post',
@@ -72,5 +63,11 @@ $this->params['action-button'] = $addButton;
             });
             return false;
         });
+	$(document).on('modal-success', function(event,params) {
+	    $.pjax.reload({container: '#item-category-listing', replace:false,async: false, timeout: 6000});
+		  });
+	$(document).on('modal-delete', function(event, params) {
+            $.pjax.reload({container: '#item-category-listing', replace:false,async: false, timeout: 6000});
+    });
     });
 </script>

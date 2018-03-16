@@ -19,7 +19,7 @@ use yii\helpers\Url;
         'id' => 'modal-form',
         'action' => $url,
     ]); ?>
-    <div class="col-xs-6">
+    <div class="col-md-12">
         <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
     </div>
 </div>
