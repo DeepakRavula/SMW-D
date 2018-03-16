@@ -100,7 +100,8 @@ class UserSearch extends User
         $query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
         $query->leftJoin(['user_location ul'], 'ul.user_id = user.id');
 	$query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
-	$query->leftJoin(['user_phone up'], 'up.userContactId = user_contact.id');
+	//$query->JoinWith('phoneNumbers p');
+	//$query->leftJoin(['user_phone p'], 'user_contact.id = p.userContactId');
         $dataProvider->setSort([
             'attributes' => [
                 'firstname' => [
@@ -110,12 +111,14 @@ class UserSearch extends User
                 'lastname' => [
                     'asc' => ['uf.lastname' => SORT_ASC],
                     'desc' => ['uf.lastname' => SORT_DESC],
-		    'default' => SORT_DESC,
                 ],
+//		'email' => [
+//                    'asc' => ['uf.lastname' => SORT_ASC],
+//                    'desc' => ['uf.lastname' => SORT_DESC],
+//                ],
 		'phone' => [
-                    'asc' => ['up.phone' => SORT_ASC],
-                    'desc' => ['up.phone' => SORT_DESC],
-		    'default' => SORT_DESC,
+                    'asc' => ['p.number' => SORT_ASC],
+                    'desc' => ['p.number' => SORT_DESC],
                 ],
             ]
         ]);
