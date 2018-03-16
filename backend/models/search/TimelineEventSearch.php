@@ -65,9 +65,8 @@ class TimelineEventSearch extends Log
     public function search($params)
     {
 	    
-		$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $query = LogHistory::find()
-		->location($locationId);
+	$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $query = LogHistory::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -103,13 +102,13 @@ class TimelineEventSearch extends Log
 		if(!empty($this->student) && $this->category === self::ALL)	{
 			$query->student($this->student);
 		}
-		$query->joinWith(['log' => function ($query) use ($locationId) {
+		$query->joinWith(['log' => function ($query) {
                     $query->joinWith(['logObject']);
 		}]);
 		$query->andWhere(['between', 'DATE(log.createdOn)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
 		
 		$query->location($locationId);
-		$query->andFilterWhere(['createdUserId' => $this->createdUserId]);
+		$query->andFilterWhere(['log.createdUserId' => $this->createdUserId]);
 		
         return $dataProvider;
     }
