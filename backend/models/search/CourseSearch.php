@@ -63,15 +63,6 @@ class CourseSearch extends Course
             $query->joinWith('userProfile up');
         }]);
         $query->joinWith('program');
-	$dataProvider->setSort([
-            'attributes' => [
-                'program' => [
-                    'asc' => ['program.name' => SORT_ASC],
-                    'desc' => ['program.name' => SORT_DESC],
-                ],
-               
-            ]
-        ]);
         $query->andFilterWhere([
             'id' => $this->id,
             'programId' => $this->programId,
