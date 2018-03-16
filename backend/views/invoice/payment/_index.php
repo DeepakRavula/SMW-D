@@ -64,9 +64,15 @@ Modal::end(); ?>
 <?php LteBox::end() ?>
 <?php Pjax::end(); ?>
 <script type="text/javascript">
-    $(document).on('click', '#apply-credit-grid td', function () {
-        var amount = $(this).closest('tr').data('amount');
-        var id = $(this).closest('tr').data('id');
+    $(document).on('click', '#apply-credit-grid tr', function () {
+		var selected = $(this).hasClass("apply-credit-row");
+		$("#apply-credit-grid tr").removeClass("apply-credit-row");
+		if(!selected) {
+            $(this).addClass("apply-credit-row");
+		}
+
+        var amount = $(this).data('amount');
+        var id = $(this).data('id');
         var amountNeeded = <?= $amount; ?>;
         if(amount > amountNeeded) {
             $('input[name="Payment[amount]"]').val((amountNeeded).toFixed(2));          

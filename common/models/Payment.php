@@ -24,7 +24,6 @@ class Payment extends ActiveRecord
     public $lessonId;
     public $credit;
     public $amountNeeded;
-    public $sourceType;
     public $sourceId;
     public $paymentMethodName;
     public $invoiceNumber;
@@ -56,12 +55,11 @@ class Payment extends ActiveRecord
     public function rules()
     {
         return [
-            [['sourceType'], 'required', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
             [['amount'], 'validateNegativeBalance'],
             [['amount'], 'number'],
-            [['payment_method_id', 'user_id', 'reference', 'date', 'sourceType',
+            [['payment_method_id', 'user_id', 'reference', 'date', 
                'sourceId', 'credit', 'isDeleted', 'transactionId','notes'], 'safe'],
             ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
                 self::SCENARIO_CREDIT_USED]],
@@ -99,7 +97,6 @@ class Payment extends ActiveRecord
             'user_id' => 'User ID',
             'payment_method_id' => 'Payment Method',
             'amount' => 'Amount',
-            'sourceType' => 'Source',
             'groupByMethod' => 'Summaries Only',
         ];
     }
