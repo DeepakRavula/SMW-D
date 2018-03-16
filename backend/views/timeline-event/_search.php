@@ -20,11 +20,8 @@ use common\models\Location;
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
-	<label class="control-label">Filter by Category</label>
+	<label class="control-label">Filter by User</label>
 <div class="row">   
-    <div class="col-md-2">
-        <?php echo $form->field($model, 'category')->dropDownList(TimeLineEventSearch::categories())->label(false); ?>
-    </div>
 	<div class="form-group col-md-3">
         <?php
 	$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -42,21 +39,6 @@ use common\models\Location;
             'pluginOptions' => [
 				'multiple' => false,
 				'placeholder' => 'User',
-			],
-        ])->label(false); ?>
-    </div>  
-	<div class="form-group col-md-3">
-        <?php 
-		echo $form->field($model, 'student')->widget(Select2::classname(), [
-	    'data' => ArrayHelper::map(Student::find()
-                        ->notDeleted()
-			->location($locationId)
-			->active()
-            ->orderBy(['first_name' => SORT_ASC])
-            ->all(), 'id', 'fullName'),
-            'pluginOptions' => [
-				'multiple' => false,
-				'placeholder' => 'Student',
 			],
         ])->label(false); ?>
     </div>  
@@ -101,11 +83,10 @@ use common\models\Location;
 <script>
 $(document).ready(function(){
     $("#print-timeline").on("click", function() {
-        var category = $("#timelineeventsearch-category").val();
         var user = $('#timelineeventsearch-createduserid').val();
         var dateRange = $('#timelineeventsearch-daterange').val();
-        var params = $.param({ 'TimelineEventSearch[category]': category,
-            'TimelineEventSearch[createdUserId]': user, 'TimelineEventSearch[dateRange]': dateRange });
+        var params = $.param({'TimelineEventSearch[createdUserId]': user,
+		'TimelineEventSearch[dateRange]': dateRange });
         var url = '<?php echo Url::to(['timeline-event/print']); ?>?' + params;
         window.open(url,'_blank');
     });

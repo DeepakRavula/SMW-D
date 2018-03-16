@@ -8,7 +8,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Location;
 use common\models\log\LogHistory;
-
+use common\models\User;
 /**
  * TimelineEventSearch represents the model behind the search form about `common\models\TimelineEvent`.
  */
@@ -21,7 +21,7 @@ class TimelineEventSearch extends Log
 	const ALL = 'all';
 
 	private $fromDate;
-    private $toDate;
+	private $toDate;
 	public $category;
 	public $student;
 
@@ -66,50 +66,36 @@ class TimelineEventSearch extends Log
     {
 	    
 	$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+	$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
         $query = LogHistory::find();
-
+	$query->joinWith(['log' => function ($query) {
+                    $query->joinWith(['logObject']);
+		}]);
+	$query->location($locationId);
+	if(empty($this->createdUserId))
+	{
+	$query->andFilterWhere(['log.createdUserId' => $loggedUser->id]);
+	
+	}
+	if(empty($this->dateRange))
+	{
+	$query->andWhere(['between', 'DATE(log.createdOn)', (new \DateTime())->format('Y-m-d'), (new \DateTime())->format('Y-m-d')]);
+	}
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-		if ($this->category === self::CATEGORY_ENROLMENT) {
-			if(!empty($this->student)) {
-				$query->studentEnrolment($this->student);
-			} else {
-	            $query->enrolment();
-			}
-        } elseif ($this->category === self::CATEGORY_LESSON) {
-			if(!empty($this->student)) {
-				$query->studentLesson($this->student);
-			} else {
-            	$query->lesson();
-			}
-        } elseif($this->category === self::CATEGORY_INVOICE) {
-			if(!empty($this->student)) {
-				$query->studentInvoice($this->student);
-			} else {
-            	$query->invoice();
-			}
-        } elseif($this->category === self::CATEGORY_PAYMENT) {
-			if(!empty($this->student)) {
-				$query->studentPayment($this->student);
-			} else {
-            	$query->payment();
-			}
-        }
-		if(!empty($this->student) && $this->category === self::ALL)	{
-			$query->student($this->student);
-		}
-		$query->joinWith(['log' => function ($query) {
-                    $query->joinWith(['logObject']);
-		}]);
+	if(!empty($this->createdUserId))
+	{
+	$query->andFilterWhere(['log.createdUserId' => $this->createdUserId]);	
+	}
+	if(!empty($this->dateRange))
+	{
 		$query->andWhere(['between', 'DATE(log.createdOn)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
 		
-		$query->location($locationId);
-		$query->andFilterWhere(['log.createdUserId' => $this->createdUserId]);
-		
+	}
         return $dataProvider;
     }
 	public static function categories()
