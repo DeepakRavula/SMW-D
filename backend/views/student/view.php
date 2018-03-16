@@ -165,6 +165,7 @@ $this->params['label'] = $this->render('_title', [
         ->one();
     $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
     $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+	$customerDiscount = $model->customer->customerDiscount->value;
 ?>
 <script>
     $(document).ready(function () {
@@ -268,8 +269,10 @@ $this->params['label'] = $this->render('_title', [
  	});
 		$('#step-2, #step-1').hide();
         $(document).on('click', '#add-private-enrol', function () {
+			var customerDiscount = '<?= $customerDiscount;?>';
 			$('#step-1').show();
 			$('#step-2').hide();
+			$('#customer-discount').val(customerDiscount);
             $('#private-enrol-modal').modal('show');
  			$('#private-enrol-modal .modal-dialog').css({'width': '600px'});
             return false;
