@@ -18,7 +18,7 @@ LteBox::begin([
 ])
 ?>
 <dl class="dl-horizontal">
-    <?php if ($model->isSubstituteByTeacher()) : ?>
+    <?php if ($model->hasSubstituteByTeacher()) : ?>
         <?php $teacher = $model->rootLesson->teacher->publicIdentity  ; ?>
         <dt>Original Teacher</dt>
         <dd><?= $teacher ?></dd>
