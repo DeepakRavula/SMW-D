@@ -55,7 +55,6 @@ echo AdminLteGridView::widget([
         ],
             [
             'label' => 'Customer',
-	    'attribute' => 'customer',
             'value' => function ($data) {
                 $fullName = !(empty($data->customer->userProfile->fullName)) ? $data->customer->userProfile->fullName : null;
 
@@ -64,7 +63,6 @@ echo AdminLteGridView::widget([
         ],
             [
             'label' => 'Phone',
-	    'attribute' => 'phone',
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($data) {

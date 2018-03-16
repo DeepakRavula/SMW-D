@@ -74,12 +74,8 @@ $this->params['show-all'] = $this->render('_button', [
                     return !empty($data->userProfile->lastname) ? $data->userProfile->lastname : null;
                 },
             ],
-	    [
-            'attribute' =>'email',
-	    'label' => 'Email',
-	    ],
+            'email',
             [
-		'attribute' => 'phone',
                 'label' => 'Phone',
                 'value' => function ($data) {
                     return !empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;

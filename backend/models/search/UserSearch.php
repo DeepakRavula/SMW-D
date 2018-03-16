@@ -55,7 +55,7 @@ class UserSearch extends User
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at', 'accountView'], 'integer'],
             [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname',
-                'lastname', 'query', 'phone','showAllCustomers', 'showAllTeachers','showAllAdministrators','showAllOwners','showAllStaffMembers','accountView'], 'safe'],
+                'lastname', 'query','showAllCustomers', 'showAllTeachers','showAllAdministrators','showAllOwners','showAllStaffMembers','accountView'], 'safe'],
         ];
     }
 

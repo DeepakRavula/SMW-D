@@ -13,15 +13,13 @@ use common\models\Student;
 class StudentSearch extends Student
 {
     public $showAllStudents;
-    public $customer;
-    public $phone;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['first_name', 'last_name','customer','phone','customer_id', 'showAllStudents'], 'safe'],
+            [['first_name', 'last_name','customer_id', 'showAllStudents'], 'safe'],
         ];
     }
 

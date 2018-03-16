@@ -15,9 +15,6 @@ class CourseSearch extends Course
 {
     public $query;
     public $showAllCourses;
-    public $program;
-    public $rate;
-    public $teacher;
     /**
      * {@inheritdoc}
      */
@@ -25,7 +22,7 @@ class CourseSearch extends Course
     {
         return [
             [['id', 'programId', 'teacherId', 'locationId'], 'integer'],
-            [['startDate', 'endDate','program','rate','teacher', 'query', 'showAllCourses'], 'safe'],
+            [['startDate', 'endDate', 'query', 'showAllCourses'], 'safe'],
             ['showAllCourses', 'boolean'],
         ];
     }
