@@ -33,7 +33,7 @@ use yii\helpers\Html;
                         5 => ['style' => 'text-align:right'],
                     ],
                     'options' => ['style' => 'font-weight:bold;']
-                ];
+    ];
             }
         ],
             [
