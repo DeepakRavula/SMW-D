@@ -14,7 +14,6 @@ use common\models\Program;
 use common\models\User;
 use common\models\TeacherAvailability;
 use common\models\LocationAvailability;
-use common\models\Classroom;
 use common\models\UserLocation;
 
 /**
@@ -44,7 +43,7 @@ class ScheduleController extends Controller
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['render-day-events', 'render-classroom-events',
-                   'render-resources', 'render-classroom-resources'],
+                   'render-resources', 'render-classroom-resources','render-calendar-time'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -63,25 +62,32 @@ class ScheduleController extends Controller
         $userId = Yii::$app->user->id;
         $userLocation = UserLocation::findOne(['user_id' => $userId]);
         $locationId = $userLocation->location_id;
-
         $date = new \DateTime();
-        $locationAvailabilities = LocationAvailability::find()
-            ->where(['locationId' => $locationId])
-            ->all();
-        $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,
-            'day' => $date->format('N')]);
-        if (empty($locationAvailability)) {
-            $from_time = LocationAvailability::DEFAULT_FROM_TIME;
-            $to_time   = LocationAvailability::DEFAULT_TO_TIME;
-        } else {
-            $from_time = $locationAvailability->fromTime;
-            $to_time   = $locationAvailability->toTime;
-        }
-
+        $locationAvailability = LocationAvailability::find()
+                ->andWhere(['locationId' => $locationId])
+                ->andWhere(['day' => $date->format('N')])
+                ->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
+		->one();
+        $minAvailability = LocationAvailability::find()
+                ->andWhere(['locationId' => $locationId])
+		->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
+                ->orderBy(['fromTime' => SORT_ASC])
+                ->one();
+        $maxAvailability = LocationAvailability::find()
+                ->andWhere(['locationId' => $locationId])
+		->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
+		->orderBy(['toTime' => SORT_DESC])
+                ->one();
+	
+        $week_from_time = $minAvailability->fromTime;
+        $week_to_time   = $maxAvailability->toTime;
+        $from_time = $locationAvailability->fromTime;
+        $to_time = $locationAvailability->toTime;
         return $this->render('index', [
-            'locationAvailabilities'   => $locationAvailabilities,
             'from_time'                => $from_time,
             'to_time'                  => $to_time,
+	    'week_from_time'	       => $week_from_time,
+	    'week_to_time'	       => $week_to_time,
         ]);
     }
 
@@ -192,5 +198,34 @@ class ScheduleController extends Controller
         }
         unset($lesson);
         return $events;
+    }
+
+    public function actionRenderCalendarTime($day, $view)
+    {
+        $userId = Yii::$app->user->id;
+        $userLocation = UserLocation::findOne(['user_id' => $userId]);
+        $locationId = $userLocation->location_id;
+        if ($view === 'agendaDay') {
+            $locationAvailability = LocationAvailability::findOne([
+                'type' => LocationAvailability::TYPE_OPERATION_TIME,
+                'locationId' => $locationId,
+                'day' => $day]);
+            $calendarTime['from_time'] = $locationAvailability->fromTime;
+            $calendarTime['to_time'] = $locationAvailability->toTime;
+        } else {
+            $minAvailability = LocationAvailability::find()
+                ->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
+                ->andWhere(['locationId' => $locationId])
+                ->orderBy(['fromTime' => SORT_ASC])
+                ->one();
+            $maxAvailability = LocationAvailability::find()
+                ->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
+                ->andWhere(['locationId' => $locationId])
+                ->orderBy(['toTime' => SORT_DESC])
+                ->one();
+            $calendarTime['from_time'] = $minAvailability->fromTime;
+            $calendarTime['to_time'] = $maxAvailability->toTime;
+        }
+	return $calendarTime;
     }
 }
