@@ -67,7 +67,6 @@ Modal::end(); ?>
     $(document).on('click', '#apply-credit-grid td', function () {
         var amount = $(this).closest('tr').data('amount');
         var id = $(this).closest('tr').data('id');
-        var invoice_number = $(this).closest('tr').data('number')
         var amountNeeded = <?= $amount; ?>;
         if(amount > amountNeeded) {
             $('input[name="Payment[amount]"]').val((amountNeeded).toFixed(2));          
@@ -76,7 +75,6 @@ Modal::end(); ?>
         }
         $('input[name="Payment[amountNeeded]"]').val((amountNeeded).toFixed(2));          
         $('#payment-credit').val((amount).toFixed(2));
-        $('#payment-sourcetype').val(invoice_number);
         $('#payment-sourceid').val(id);
         $('input[name="Payment[amount]"]').attr('readonly', false);
         return false;

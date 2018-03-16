@@ -18,16 +18,13 @@ use yii\helpers\Url;
         'validationUrl' => Url::to(['payment/validate-apply-credit', 'id' => $invoice->id]),
     ]); ?>
  	<div class="row">
-            <div class="col-xs-3">
-    		<?php echo $form->field($model, 'sourceType')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Source')?>
-        </div>
-        <div class="col-xs-3">
+        <div class="col-xs-4">
     		<?php echo $form->field($model, 'credit')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Available Credit')?>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-4">
    			<?php echo $form->field($model, 'amountNeeded')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Amount Needed') ?>
         </div>
-		<div class="col-xs-3">
+		<div class="col-xs-4">
    			<?php echo $form->field($model, 'amount')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Amount To Apply') ?>
         </div>
 	</div>
