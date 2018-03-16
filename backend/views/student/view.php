@@ -165,7 +165,7 @@ $this->params['label'] = $this->render('_title', [
         ->one();
     $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
     $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-	$customerDiscount = $model->customer->customerDiscount->value;
+	$customerDiscount = $model->customer->customerDiscount->value ?? null;
 ?>
 <script>
     $(document).ready(function () {
