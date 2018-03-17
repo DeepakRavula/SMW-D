@@ -57,6 +57,7 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
             var params = $.param({userId: userId});
             function loadCalendar(from_time, to_time, view)
             {
+		$('#calendar').fullCalendar('destroy');    
                 $('#calendar').unbind().removeData().fullCalendar({
                     nowIndicator: true,
                     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
