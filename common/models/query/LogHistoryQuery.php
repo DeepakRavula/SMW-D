@@ -42,7 +42,7 @@ class LogHistoryQuery extends ActiveQuery
 		
      }
      public function today() {	
-	 return $this->andWhere(['>=', 'createdOn', strtotime('today midnight')]);	
+	 return $this->andWhere(['>=', 'createdOn', (new \DateTime())->format('Y-m-d')]);	
      }
 
 }

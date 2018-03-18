@@ -67,11 +67,18 @@ class TimelineEventSearch extends Log
 	    
 	$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 	$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-        $query = LogHistory::find();
+        $query = LogHistory::find()->today();
 	$query->joinWith(['log' => function ($query) {
                     $query->joinWith(['logObject']);
 		}]);
 	$query->location($locationId);
+	$dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        if (!($this->load($params) && $this->validate())) {
+            return $dataProvider;
+        }
+	
 	if(empty($this->createdUserId))
 	{
 	$query->andFilterWhere(['log.createdUserId' => $loggedUser->id]);
@@ -81,15 +88,11 @@ class TimelineEventSearch extends Log
 	{
 	$query->andWhere(['between', 'DATE(log.createdOn)', (new \DateTime())->format('Y-m-d'), (new \DateTime())->format('Y-m-d')]);
 	}
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
-        if (!($this->load($params) && $this->validate())) {
-            return $dataProvider;
-        }
+        
 	if(!empty($this->createdUserId))
 	{
-	$query->andFilterWhere(['log.createdUserId' => $this->createdUserId]);	
+	$query->andFilterWhere(['log.createdUserId' => $this->createdUserId])
+		->orFilterWhere(['log.createdUserId' => $loggedUser->id]);
 	}
 	if(!empty($this->dateRange))
 	{
