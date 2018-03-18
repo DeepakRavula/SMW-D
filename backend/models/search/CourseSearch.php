@@ -15,6 +15,7 @@ class CourseSearch extends Course
 {
     public $query;
     public $showAllCourses;
+    public $program;
     /**
      * {@inheritdoc}
      */
@@ -22,7 +23,7 @@ class CourseSearch extends Course
     {
         return [
             [['id', 'programId', 'teacherId', 'locationId'], 'integer'],
-            [['startDate', 'endDate', 'query', 'showAllCourses'], 'safe'],
+            [['startDate', 'endDate', 'query','program','showAllCourses'], 'safe'],
             ['showAllCourses', 'boolean'],
         ];
     }
@@ -62,7 +63,34 @@ class CourseSearch extends Course
         $query->joinWith(['teacher' => function ($query) use ($locationId) {
             $query->joinWith('userProfile up');
         }]);
-        $query->joinWith('program');
+        $query->joinWith('program p');
+	$dataProvider->setSort([
+            'attributes' => [
+                'program' => [
+                    'asc' => ['p.name' => SORT_ASC],
+                    'desc' => ['p.name' => SORT_DESC],
+                ],
+                'rate' => [
+                    'asc' => ['p.rate' => SORT_ASC],
+                    'desc' => ['p.rate' => SORT_DESC],
+                ],
+                'teacher' => [
+                    'asc' => ['up.firstname' => SORT_ASC],
+                    'desc' => ['up.firstname' => SORT_DESC],
+                ],
+		'startDate' => [
+                    'asc' => ['startDate' => SORT_ASC],
+                    'desc' => ['startDate' => SORT_DESC],
+                ],
+		'endDate' => [
+                    'asc' => ['endDate' => SORT_ASC],
+                    'desc' => ['endDate' => SORT_DESC],
+                ]
+            ]
+        ]);
+	$dataProvider->sort->defaultOrder = [
+            'program' => SORT_ASC,
+        ];
         $query->andFilterWhere([
             'id' => $this->id,
             'programId' => $this->programId,

@@ -43,6 +43,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
             ],
             [
                 'label' => 'Teacher',
+		'attribute' => 'teacher',
                 'value' => function ($data) {
                     return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
                 },
