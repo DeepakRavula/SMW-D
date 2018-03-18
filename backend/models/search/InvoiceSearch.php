@@ -29,6 +29,7 @@ class InvoiceSearch extends Invoice
     public $query;
     public $mailStatus;
     public $invoiceStatus;
+    public $phone;
     public $summariseReport = false;
     /**
      * {@inheritdoc}
@@ -39,7 +40,7 @@ class InvoiceSearch extends Invoice
             [['fromDate', 'toDate'], 'date', 'format' => 'php:M d,Y'],
             [['mailStatus', 'invoiceStatus'], 'integer'],
             [['type', 'query', 'toggleAdditionalColumns', 'dateRange','invoiceDateRange',
-                'dueFromDate', 'dueToDate', 'summariseReport','isPrint', 'isWeb', 'isMail'], 'safe'],
+                'dueFromDate', 'dueToDate','number','phone','summariseReport','isPrint', 'isWeb', 'isMail'], 'safe'],
         ];
     }
 
@@ -104,7 +105,32 @@ class InvoiceSearch extends Invoice
             }
         }
         $query->andFilterWhere(['type' => $this->type]);
-
+	$query->joinWith(['user' => function ($query) {
+		$query->joinWith('userProfile');
+        }]);
+       	$dataProvider->setSort([
+            'attributes' => [
+                'number' => [
+                    'asc' => ['invoice_number' => SORT_ASC],
+                    'desc' => ['invoice_number' => SORT_DESC],
+                ],
+                'dueDate' => [
+                    'asc' => ['dueDate' => SORT_ASC],
+                    'desc' => ['dueDate' => SORT_DESC],
+                ],
+                'customer' => [
+                    'asc' => ['user_profile.firstname' => SORT_ASC],
+                    'desc' => ['user_profile.firstname' => SORT_DESC],
+                ],
+		'date' => [
+                    'asc' => ['date' => SORT_ASC],
+                    'desc' => ['date' => SORT_DESC],
+                ],
+            ]
+        ]);
+	$dataProvider->sort->defaultOrder = [
+            'number' => SORT_ASC,
+        ];
         return $dataProvider;
     }
 
