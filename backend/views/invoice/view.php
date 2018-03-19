@@ -63,7 +63,13 @@ if (!empty($lineItem)) {
 } else {
     $itemTypeId = null;
 }
-
+    $amount = 0.00;
+    if ($model->total > $model->invoicePaymentTotal) {
+        $amount = $model->balance;
+    }
+    if (empty($amount)) {
+        $amount = 0.00;
+    }
 ?>
 
 
@@ -320,8 +326,10 @@ Modal::begin([
                 success: function(response)
                 {
                     if (response.status && response.hasCredit) {
+						var amountNeeded = <?= $amount; ?>;
                         $('#modal-content').html(response.data);
                         $('#popup-modal').modal('show');
+						$('#payment-amountneeded').val((amountNeeded).toFixed(2));
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Apply Credit</h4>');
                         $('.modal-save').text('Pay now')
                     } else {
