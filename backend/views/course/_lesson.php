@@ -54,31 +54,6 @@ use yii\bootstrap\Modal;
                 return $status;
             },
         ],
-                ['class' => 'yii\grid\ActionColumn',
-                    'template' => '{create} {view}',
-                    'buttons' => [
-                        'create' => function ($url, $model) {
-                            $url = Url::to(['invoice/group-lesson', 'lessonId' => $model->id, 'enrolmentId' => null]);
-                            if (!$model->hasGroupInvoice() && $model->isScheduledOrRescheduled()) {
-                                return Html::a('Create Invoice', $url, [
-                                    'class' => ['btn-success btn-sm']
-                                ]);
-                            } else {
-                                return null;
-                            }
-                        },
-                        'view' => function ($url, $model) {
-                            $url = Url::to(['lesson/view', 'id' => $model->id, '#' => 'student']);
-                            if ($model->hasGroupInvoice() && $model->isScheduledOrRescheduled()) {
-                                return Html::a('View Invoice', $url, [
-                                    'class' => ['btn-info btn-sm']
-                                ]);
-                            } else {
-                                return null;
-                            }
-                        }
-                    ]
-                ],
     ];
      ?>   
     <?php echo GridView::widget([

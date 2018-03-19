@@ -1,7 +1,6 @@
 <?php
 
 use yii\grid\GridView;
-use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 
@@ -15,10 +14,10 @@ use yii\widgets\Pjax;
             'dataProvider' => $userDataProvider,
             'summary' => false,
             'emptyText' => false,
-            'rowOptions'=>['class' => 'add-customer-invoice'],
+            'rowOptions' => ['class' => 'add-customer-invoice'],
             'tableOptions' => ['class' => 'table table-condensed'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],
-            'filterModel'=>$searchModel,
+            'filterModel' => $searchModel,
             'columns' => [
             [
                 'attribute' => 'firstname',
@@ -44,3 +43,10 @@ use yii\widgets\Pjax;
         ],
     ]); ?>
 <?php Pjax::end(); ?>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="pull-right">
+                <?= Html::a('Cancel', '', ['class' => 'btn btn-default add-customer-cancel']);?>
+            </div>
+        </div>
+    </div>

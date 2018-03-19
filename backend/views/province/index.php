@@ -19,12 +19,6 @@ $lastRole = end($roles);
 $addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'add-province']);
 $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
-<?php Modal::begin([
-        'header' => '<h4 class="m-0">Province</h4>',
-        'id' => 'province-modal',
-    ]); ?>
-<div id="province-content"></div>
- <?php  Modal::end(); ?>
 <?php Pjax::begin([
     'id' => 'province-listing'
 ]);?>
@@ -56,50 +50,32 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
 </div>
 <?php Pjax::end(); ?>
 <script>
-    $(document).ready(function() {
-        $(document).on('click', '.add-province, #province-listing  tbody > tr', function () {
-            $('#province-modal .modal-dialog').css({'width': '350px'});
+        $(document).on('click', '.action-button,#province-listing  tbody > tr', function () {
+            $('#popup-modal .modal-dialog').css({'width': '350px'});
             var provinceId = $(this).data('key');
-            if (provinceId === undefined) {
-                var customUrl = '<?= Url::to(['province/create']); ?>';
+             if (provinceId === undefined) {
+                    var customUrl = '<?= Url::to(['province/create']); ?>';
             } else {
                 var customUrl = '<?= Url::to(['province/update']); ?>?id=' + provinceId;
+                var url = '<?= Url::to(['province/delete']); ?>?id=' + provinceId;
+                $('#modal-delete').show();
+                $(".modal-delete").attr("action",url);
             }
             $.ajax({
                 url    : customUrl,
-                type   : 'post',
+                type   : 'get',
                 dataType: "json",
                 data   : $(this).serialize(),
                 success: function(response)
                 {
                     if(response.status)
                     {
-                        $('#province-content').html(response.data);
-                        $('#province-modal').modal('show');
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Province</h4>');
+                        $('#modal-content').html(response.data);
                     }
                 }
             });
             return false;
         });
-        $(document).on('beforeSubmit', '#province-form', function () {
-            $.ajax({
-                url    : $(this).attr('action'),
-                type   : 'post',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-                    if(response.status) {
-                        $.pjax.reload({container: '#province-listing', timeout: 6000});
-                        $('#province-modal').modal('hide');
-                    }
-                }
-            });
-            return false;
-        });
-        $(document).on('click', '.province-cancel', function () {
-            $('#province-modal').modal('hide');
-            return false;
-        });
-    });
 </script>

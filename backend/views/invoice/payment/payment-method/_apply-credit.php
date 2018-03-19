@@ -20,24 +20,25 @@ echo GridView::widget([
         return [
             'data-amount' => $model['amount'],
             'data-id' => $model['id'],
-            'data-source' => $model['type'],
             'data-number' => $model['invoice_number'],
         ];
     },
     'columns' => [
         [
+        'contentOptions' => ['class' => 'text-left','style' => 'min-width:60%;max-width:30%;'],
+        'headerOptions' => ['class' => 'text-left','style' => 'min-width:60%;max-width:30%;'],
         'label' => 'Invoice Number',
         'value' => 'invoice_number',
         ],
         [
-        'label' => 'Source',
-        'value' => 'source',
-        ],
-        [
+        'contentOptions' => ['class' => 'text-center','style' => 'min-width:40%;max-width:40%;'],
+        'headerOptions' => ['class' => 'text-center','style' => 'min-width:40%;max-width:40%;'],
         'label' => 'Date',
         'value' => 'date',
         ],
         [
+        'contentOptions' => ['class' => 'text-right','style' => 'min-width:30%;max-width:30%;'],
+        'headerOptions' => ['class' => 'text-right','style' => 'min-width:30%;max-width:30%;'],
         'label' => 'Credit',
         'value' => function ($model) {
             return Yii::$app->formatter->asDecimal($model['amount'], 2);

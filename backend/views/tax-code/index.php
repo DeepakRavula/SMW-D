@@ -18,15 +18,6 @@ $lastRole = end($roles);
 $addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), ['create'], ['class' => 'add-taxcode']);
 $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
 ?>
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Tax Code</h4>',
-    'id' => 'taxcode-modal',
-]);
-
-?>
-<div id="taxcode-content"></div>
-    <?php Modal::end(); ?>
 <div>
 <?php
 Pjax::Begin([
@@ -70,49 +61,29 @@ Pjax::Begin([
 <?php Pjax::end();?>
 </div>
 <script>
-    $(document).ready(function() {
-        $(document).on('click', '.add-taxcode, #taxcode-listing  tbody > tr', function () {
+        $(document).on('click', '.action-button, #taxcode-listing  tbody > tr', function () {
             var taxcodeId = $(this).data('key');
             if (taxcodeId === undefined) {
                 var customUrl = '<?= Url::to(['tax-code/create']); ?>';
             } else {
                 var customUrl = '<?= Url::to(['tax-code/update']); ?>?id=' + taxcodeId;
+		var url = '<?= Url::to(['tax-code/delete']); ?>?id=' + taxcodeId;
+		$('#modal-delete').show();
+                $(".modal-delete").attr("action",url);
             }
             $.ajax({
                 url    : customUrl,
-                type   : 'post',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-                    if(response.status)
-                    {
-                        $('#taxcode-content').html(response.data);
-                        $('#taxcode-modal').modal('show');
-                    }
-                }
-            });
-            return false;
-        });
-        $(document).on('beforeSubmit', '#taxcode-form', function () {
-            $.ajax({
-                url    : $(this).attr('action'),
-                type   : 'post',
+                type   : 'get',
                 dataType: "json",
                 data   : $(this).serialize(),
                 success: function(response)
                 {
                     if(response.status) {
-                        $.pjax.reload({container: '#taxcode-listing', timeout: 6000});
-                        $('#taxcode-modal').modal('hide');
-                    }
-                }
+			    $('#popup-modal').modal('show');
+			    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Tax Code</h4>');
+			    $('#modal-content').html(response.data);                    }
+			}
             });
             return false;
         });
-        $(document).on('click', '.taxcode-cancel', function () {
-            $('#taxcode-modal').modal('hide');
-            return false;
-        });
-    });
 </script>

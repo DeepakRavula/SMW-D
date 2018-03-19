@@ -43,15 +43,19 @@ Modal::end(); ?>
     		<?=
         $this->render('/invoice/payment/_payment-list', [
             'model' => $model,
+            'searchModel' => $searchModel,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
         ]);
         ?>
     
 </div>
 <?php
-    $amount = 0;
+    $amount = 0.00;
     if ($model->total > $model->invoicePaymentTotal) {
         $amount = $model->balance;
+    }
+    if (empty($amount)) {
+        $amount = 0.00;
     }
 ?>
 <?php if ((int) $model->type === Invoice::TYPE_INVOICE):?>
@@ -61,11 +65,10 @@ Modal::end(); ?>
 <?php Pjax::end(); ?>
 <script type="text/javascript">
     $(document).on('click', '#apply-credit-grid td', function () {
-        $('input[name="Payment[amount]"]').attr('readonly', false);
         var amount = $(this).closest('tr').data('amount');
         var id = $(this).closest('tr').data('id');
         var invoice_number = $(this).closest('tr').data('number')
-        var amountNeeded = <?= $amount; ?>; 
+        var amountNeeded = <?= $amount; ?>;
         if(amount > amountNeeded) {
             $('input[name="Payment[amount]"]').val((amountNeeded).toFixed(2));          
         } else {
@@ -75,6 +78,7 @@ Modal::end(); ?>
         $('#payment-credit').val((amount).toFixed(2));
         $('#payment-sourcetype').val(invoice_number);
         $('#payment-sourceid').val(id);
+        $('input[name="Payment[amount]"]').attr('readonly', false);
         return false;
     });
 </script>

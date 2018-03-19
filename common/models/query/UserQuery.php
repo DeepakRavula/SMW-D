@@ -57,7 +57,7 @@ class UserQuery extends ActiveQuery
     {
         $this->joinWith('userLocation ul')
             ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-            ->where(['raa.item_name' => 'customer'])
+            ->andWhere(['raa.item_name' => 'customer'])
             ->andWhere(['ul.location_id' => $locationId]);
 
         return $this;

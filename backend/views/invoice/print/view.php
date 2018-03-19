@@ -1,5 +1,4 @@
 <?php
-   use yii\grid\GridView;
    use yii\widgets\Pjax; 
 /* @var $this yii\web\View */
    /* @var $model common\models\Invoice */
@@ -24,14 +23,16 @@ echo $this->render('/invoice/_view-line-item', [
     'print'=>true,
 ]);
 ?>
-           <div class="m-l-22"><b>Payments</b></div>  
-               
-	<div class="col-xs-10">          
+<div class="col-xs-10">
+    <?php if($model->hasPayments()) :?>
+        <div class="m-l-22"> <b>Payments</b></div>
 		<?= $this->render('/invoice/payment/_payment-list', [
             'model' => $model,
+            'searchModel' => $searchModel,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'print'=>true,        
             ]);?>
+	<?php endif; ?>
 	</div>
 	<?php Pjax::Begin(['id' => 'invoice-bottom-summary', 'timeout' => 6000]); ?>
 	<div class="col-xs-2">
@@ -44,7 +45,9 @@ echo $this->render('/invoice/_view-line-item', [
 </div>
    
 	 <div style="clear:both; margin-top: 20px; position: relative;">
+        <?php if (!empty($model->notes)):?>
         <strong> Notes: </strong><?php echo $model->notes; ?>
+		<?php endif;?>
     </div>
     <div class="reminder_notes text-muted well well-sm no-shadow" style="clear:both; margin-top: 20px; position: relative;">
         <?php echo $model->reminderNotes; ?>

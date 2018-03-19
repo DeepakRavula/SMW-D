@@ -62,6 +62,9 @@ trait Payable
     
     public function addPayment($from, $amount, $enrolment = null)
     {
+        if (round($amount, 2) < round(0.00, 2)) {
+            return true;
+        }
         $paymentModel = new Payment();
         $paymentModel->amount = $amount;
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;

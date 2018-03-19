@@ -5,9 +5,8 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\User;
-use common\models\Lesson;
 use common\models\Invoice;
+use common\models\Location;
 
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
@@ -19,6 +18,7 @@ class InvoiceSearch extends Invoice
     const STATUS_ALL = 3;
     public $toggleAdditionalColumns;
     public $isPrint;
+    public $isMail;
     public $fromDate;
     public $toDate;
     public $invoiceDateRange;
@@ -26,6 +26,7 @@ class InvoiceSearch extends Invoice
     public $dueToDate;
     public $dueFromDate;
     public $type;
+    public $isWeb;
     public $query;
     public $mailStatus;
     public $invoiceStatus;
@@ -39,7 +40,7 @@ class InvoiceSearch extends Invoice
             [['fromDate', 'toDate'], 'date', 'format' => 'php:M d,Y'],
             [['mailStatus', 'invoiceStatus'], 'integer'],
             [['type', 'query', 'toggleAdditionalColumns', 'dateRange','invoiceDateRange',
-                'dueFromDate', 'dueToDate', 'summariseReport','isPrint'], 'safe'],
+                'dueFromDate', 'dueToDate', 'summariseReport','isPrint', 'isWeb', 'isMail'], 'safe'],
         ];
     }
 
@@ -59,8 +60,7 @@ class InvoiceSearch extends Invoice
      */
     public function search($params)
     {
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Invoice::find()
                 ->where([
                     'invoice.location_id' => $locationId,

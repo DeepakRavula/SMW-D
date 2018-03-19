@@ -54,8 +54,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'label' => 'Amount',
                 'format' => ['decimal', 2],
                 'value' => function ($data) {
-                    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-                    return $data->itemCategory->getItemTotal($locationId, $data->invoice->date);
+                    return Yii::$app->formatter->asDecimal($data->itemTotal);
                 },
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',

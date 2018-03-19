@@ -9,6 +9,7 @@ use yii\helpers\Html;
 <?php $boxTools = '<i title="Edit" class="fa fa-pencil add-invoice-note m-r-10"></i>';?> 
 <?php if (empty($model->notes)) :?>
 <?php $boxTools = '<i title="Add" class="fa fa-plus add-invoice-note m-r-10"></i>';?> <?php endif;?> 
+<?php Pjax::Begin(['id' => 'invoice-details', 'timeout' => 6000]); ?>
 	<?php
 LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
@@ -33,3 +34,4 @@ LteBox::begin([
 	<dd><?= $model->notes; ?></dd>
 </dl>
 <?php LteBox::end()?>
+<?php Pjax::end(); ?>
