@@ -10,13 +10,17 @@ class StudentCsvController extends Controller
 {
     public function actionWipeTransactionalData()
     {
-        $file1 = Yii::getAlias('@console') . '/sql/wipe_csv_transactional_data_course.sql';
-        $file2 = Yii::getAlias('@console') . '/sql/wipe_csv_transactional_data_invoice.sql';
-        $file3 = Yii::getAlias('@console') . '/sql/wipe_csv_transactional_data_user.sql';
-        
-        $migration = new Migration();
-        $migration->execute(file_get_contents($file1));
-        $migration->execute(file_get_contents($file2));
-        return $migration->execute(file_get_contents($file3));
+        if (env('YII_ENV') === 'dev') {
+            $file1 = Yii::getAlias('@console') . '/sql/wipe_csv_transactional_data_course.sql';
+            $file2 = Yii::getAlias('@console') . '/sql/wipe_csv_transactional_data_invoice.sql';
+            $file3 = Yii::getAlias('@console') . '/sql/wipe_csv_transactional_data_user.sql';
+
+            $migration = new Migration();
+            $migration->execute(file_get_contents($file1));
+            $migration->execute(file_get_contents($file2));
+            return $migration->execute(file_get_contents($file3));
+        } else {
+            echo 'This can be done in non production environment only!';
+        }
     }
 }
