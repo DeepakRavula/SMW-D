@@ -89,8 +89,6 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return [
             ['user_id', 'required'],
-            [['reminderNotes'], 'string'],
-            [['reminderNotes'], 'trim'],
             [['isSent'], 'boolean'],
             [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
@@ -111,7 +109,6 @@ class Invoice extends \yii\db\ActiveRecord
             'date' => 'Date',
             'notes' => 'Printed Notes',
             'type' => 'Type',
-            'reminderNotes' => 'Reminder Notes',
             'customer_id' => 'Customer Name',
             'toEmailAddress' => 'To',
             'invoiceDateRange' => 'Date Range'
@@ -596,10 +593,6 @@ class Invoice extends \yii\db\ActiveRecord
             $this->tax            = 0.00;
             $this->isTaxAdjusted  = false;
             $this->isCanceled     = false;
-            $reminderNotes = ReminderNote::find()->one();
-            if (!empty($reminderNotes)) {
-                $this->reminderNotes = $reminderNotes->notes;
-            }
             $this->balance = 0;
             $this->isDeleted = false;
         } else {
@@ -631,7 +624,10 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->lineItem && !$this->isReversedInvoice() && !$this->isInvoiceReversed() && !$this->isOpeningBalance();
     }
-
+	public function getReminderNotes() {
+		$reminderNote =  ReminderNote::find()->one();
+		return $reminderNote->notes;
+	}
     public function getNetSubtotal()
     {
         $subtotal = 0.0;
