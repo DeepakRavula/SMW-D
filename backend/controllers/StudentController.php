@@ -212,7 +212,7 @@ class StudentController extends BaseController
         return $model;
     }
 
-    public function actionFetchProgramRate($duration, $id = null, $paymentFrequencyDiscount = null, $multiEnrolmentDiscount = null, $rate = null)
+    public function actionFetchProgramRate($duration, $id = null, $paymentFrequencyDiscount = null, $multiEnrolmentDiscount = null, $rate = null, $customerDiscount = null)
     {
         if ($id) {
             $program     = Program::findOne(['id' => $id]);
@@ -234,14 +234,17 @@ class StudentController extends BaseController
             } else {
                 $multiEnrolmentDiscount = 0;
             }
+			if($customerDiscount) {
+                $discount += ($ratePerLesson - $discount) * $customerDiscount / 100;
+			}
             if ($paymentFrequencyDiscount) {
                 $discount += ($ratePerLesson - $discount) * $paymentFrequencyDiscount / 100;
             }
             $ratePerLessonWithDiscount = $ratePerLesson - $discount;
             $ratePerMonthWithDiscount = $ratePerLessonWithDiscount * 4;
             return [
-                'ratePerLessonWithDiscount' => $ratePerLessonWithDiscount,
-                'ratePerMonthWithDiscount' => $ratePerMonthWithDiscount,
+                'ratePerLessonWithDiscount' => round($ratePerLessonWithDiscount, 2),
+                'ratePerMonthWithDiscount' => round($ratePerMonthWithDiscount, 2),
                 'ratePerLesson' => $ratePerLesson,
                 'ratePerMonth' => $ratePerMonth,
                 'rate' => $rate
