@@ -318,6 +318,13 @@ class Lesson extends \yii\db\ActiveRecord
                     ->via('paymentCycleLesson');
     }
 
+    public function getLessonPayments()
+    {
+        return $this->hasMany(LessonPayment::className(), ['lessonId' => 'id'])
+            ->viaTable('payment', ['id' => 'paymentId'])
+                ->onCondition(['payment.isDeleted' => false]);
+    }
+
     public function getPaymentCycleLesson()
     {
         return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id']);
