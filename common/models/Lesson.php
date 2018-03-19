@@ -650,6 +650,17 @@ class Lesson extends \yii\db\ActiveRecord
                     $this->updateAttributes(['status' => self::STATUS_RESCHEDULED]);
                 }
             }
+			$options = array(
+           'cluster' => env('PUSHER_CLUSTER'),
+           'encrypted' => true
+       );
+       $pusher = new \Pusher\Pusher(
+           env('PUSHER_KEY'),
+           env('PUSHER_SECRET'),
+           env('PUSHER_APP_ID'),
+           $options
+       );
+       $pusher->trigger('my-channel', 'my-event', '');
         }
         
         return parent::afterSave($insert, $changedAttributes);
