@@ -69,8 +69,8 @@ GridView::widget([
 		encrypted: true
    });
 
-    var channel = pusher.subscribe('my-channel');
-    channel.bind('my-event', function(data) {
+    var channel = pusher.subscribe('lesson');
+    channel.bind('lesson-edit', function(data) {
        $.pjax.reload({container : '#schedule-listing', timeout : 6000});
        return false;
    });

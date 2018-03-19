@@ -660,7 +660,7 @@ class Lesson extends \yii\db\ActiveRecord
            env('PUSHER_APP_ID'),
            $options
        );
-       $pusher->trigger('my-channel', 'my-event', '');
+       $pusher->trigger('lesson', 'lesson-edit', '');
         }
         
         return parent::afterSave($insert, $changedAttributes);
