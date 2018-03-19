@@ -31,14 +31,6 @@ $this->params['action-button'] = $addButton;
     ]); ?>
 <?php Pjax::end(); ?>
 </div>
-
-    <?php Modal::begin([
-        'header' => '<h4 class="m-0">Item Category</h4>',
-        'id' => 'item-category-edit-modal',
-    ]); ?>
-    <div id="item-category-edit-content"></div>
-    <?php Modal::end(); ?>
-
 <script>
     $(document).ready(function() {
         $(document).on('click', '#create-item-category, #item-category-listing  tbody > tr', function () {
@@ -47,6 +39,9 @@ $this->params['action-button'] = $addButton;
                 var customUrl = '<?= Url::to(['item-category/create']); ?>';
             } else {
                 var customUrl = '<?= Url::to(['item-category/update']); ?>?id=' + itemId;
+		 var url = '<?= Url::to(['item-category/delete']); ?>?id=' + itemId;
+                $('#modal-delete').show();
+                $(".modal-delete").attr("action",url);
             }
             $.ajax({
                 url    : customUrl,
@@ -57,8 +52,10 @@ $this->params['action-button'] = $addButton;
                 {
                     if(response.status)
                     {
-                        $('#item-category-edit-content').html(response.data);
-                        $('#item-category-edit-modal').modal('show');
+			$('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Item Category</h4>');
+			$('#popup-modal .modal-dialog').css({'width': '400px'});
+                        $('#modal-content').html(response.data);
                     } else {
                         $('#error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                     }
@@ -66,25 +63,11 @@ $this->params['action-button'] = $addButton;
             });
             return false;
         });
-        $(document).on('beforeSubmit', '#update-item-category-form', function () {
-            $.ajax({
-                url    : $(this).attr('action'),
-                type   : 'post',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-                    if(response.status) {
-                        $.pjax.reload({container: '#item-category-listing', timeout: 6000});
-                        $('#item-category-edit-modal').modal('hide');
-                    }
-                }
-            });
-            return false;
-        });
-        $(document).on('click', '.item-category-cancel', function () {
-            $('#item-category-edit-modal').modal('hide');
-            return false;
-        });
+	$(document).on('modal-success', function(event,params) {
+	    $.pjax.reload({container: '#item-category-listing', replace:false,async: false, timeout: 6000});
+		  });
+	$(document).on('modal-delete', function(event, params) {
+            $.pjax.reload({container: '#item-category-listing', replace:false,async: false, timeout: 6000});
+    });
     });
 </script>
