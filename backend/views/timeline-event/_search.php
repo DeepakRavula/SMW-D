@@ -71,9 +71,9 @@ use common\models\Location;
     </div>  
     <div class="col-md-3 form-group m-t-3">
         <?php echo Html::submitButton(Yii::t('backend', 'Search'), ['class' => 'btn btn-primary']) ?>
-    <div id="print-timeline" class="btn btn-default">
-        <?= Html::a('<i class="fa fa-print"></i> Print') ?>
-    </div>
+<!--    <div id="print-timeline" class="btn btn-default">
+        Html::a('<i class="fa fa-print"></i> Print') 
+    </div>-->
     </div>
 	</div>
 
