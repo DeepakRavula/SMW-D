@@ -195,6 +195,7 @@ $this->params['action-button'] = $actionButton; ?>
     ]) ?>
     <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
+	'filterModel' => $searchModel,
         'summary' => false,
         'emptyText' => false,
         'tableOptions' => ['class' => 'table table-bordered'],

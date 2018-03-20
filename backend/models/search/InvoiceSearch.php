@@ -32,6 +32,7 @@ class InvoiceSearch extends Invoice
     public $invoiceStatus;
     public $phone;
     public $summariseReport = false;
+    public $number;
     /**
      * {@inheritdoc}
      */
@@ -106,8 +107,15 @@ class InvoiceSearch extends Invoice
         }
         $query->andFilterWhere(['type' => $this->type]);
 	$query->joinWith(['user' => function ($query) {
-		$query->joinWith('userProfile');
+		$query->joinWith(['userProfile' => function ($query) {
+		}]);
+		$query->joinWith(['userContacts' => function ($query){
+				$query->joinWith(['phone']);
+			}]);
         }]);
+	$query->andFilterWhere(['like', 'invoice_number', $this->number])
+            ->andFilterWhere(['like', 'user_phone.number', $this->phone])
+            ->groupBy('invoice.id');
        	$dataProvider->setSort([
             'attributes' => [
                 'number' => [
