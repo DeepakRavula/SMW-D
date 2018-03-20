@@ -50,7 +50,7 @@ if ($model->isNewRecord) {
             'type' => DatePicker::TYPE_COMPONENT_APPEND,
             'pluginOptions' => [
                 'autoclose' => true,
-                'format' => 'dd-mm-yyyy',
+                'format' => 'M d,yyyy',
             ],
           ]);
         ?>

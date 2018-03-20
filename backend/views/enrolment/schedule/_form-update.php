@@ -62,7 +62,7 @@ use common\models\Course;
     DatePicker::classname(),
                 [
                 'options' => [
-                    'value' => (new \DateTime())->format('M d,Y'),
+                    'value' => Yii::$app->formatter->asDate(new \DateTime()),
                 ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
