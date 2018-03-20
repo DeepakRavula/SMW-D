@@ -1,7 +1,7 @@
 <?php
 namespace common\components\gridView;
 
-use \yiister\adminlte\widgets\grid\GridView;
+use yii\grid\GridView;
 
 class AdminLteGridView extends GridView
 {

@@ -25,12 +25,14 @@ $this->params['action-button'] = $actionButton; ?>
         if ((int) $searchModel->type === (int) Invoice::TYPE_PRO_FORMA_INVOICE) {
             $columns = [
                 [
-                'label' => 'Invoice Number',
+		'attribute' => 'number',
+		'label' => 'Number',
                     'value' => function ($data) {
                         return $data->getInvoiceNumber();
                     },
                 ],
                 [
+		    'attribute' => 'dueDate',
                     'label' => 'Due Date',
                     'value' => function ($data) {
                         $date = Yii::$app->formatter->asDate($data->dueDate);
@@ -39,12 +41,14 @@ $this->params['action-button'] = $actionButton; ?>
                     },
                 ],
                 [
+		    'attribute' => 'customer',
                     'label' => 'Customer',
                     'value' => function ($data) {
                         return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                     },
                 ],
                 [
+		    'attribute' => 'phone',
                     'label' => 'Phone',
                     'value' => function ($data) {
                         return !empty($data->user->phoneNumber->number) ? $data->user->phoneNumber->number : null;
@@ -107,12 +111,14 @@ $this->params['action-button'] = $actionButton; ?>
         } else {
             $columns = [
                 [
-                'label' => 'Invoice Number',
+		'attribute' => 'number',
+                'label' => 'Number',
                     'value' => function ($data) {
                         return $data->getInvoiceNumber();
                     },
                 ],
                 [
+		'attribute' => 'date',
                 'label' => 'Date',
                     'value' => function ($data) {
                         $date = Yii::$app->formatter->asDate($data->date);
@@ -121,12 +127,14 @@ $this->params['action-button'] = $actionButton; ?>
                     },
                 ],
                 [
+		    'attribute' => 'customer',
                     'label' => 'Customer',
                     'value' => function ($data) {
                         return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                     },
                 ],
                 [
+		    'attribute' => 'phone',
                     'label' => 'Phone',
                     'value' => function ($data) {
                         return !empty($data->user->phoneNumber->number) ? $data->user->phoneNumber->number : null;

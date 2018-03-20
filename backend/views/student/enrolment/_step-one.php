@@ -92,7 +92,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
 		<div class="col-xs-2"></div>
 		<div class="col-xs-3">
 			<?=
-            $form->field($paymentFrequencyDiscount, 'discount')->textInput([])->label(false);
+            $form->field($paymentFrequencyDiscount, 'discount')->textInput(['class' => 'form-control text-right'])->label(false);
             ?>
 		</div>
 		<div class="col-xs-1 enrolment-text"><label class="text-muted">%</label></div>
@@ -104,11 +104,27 @@ $privatePrograms = ArrayHelper::map(Program::find()
 		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
 		<div class="col-xs-3">
 			<?=
-            $form->field($multipleEnrolmentDiscount, 'discount')->textInput([])->label(false);
+            $form->field($multipleEnrolmentDiscount, 'discount')->textInput(['class' => 'form-control text-right'])->label(false);
             ?>
 		</div>
 		<div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
 	</div>
+	<?php if($student->customer->hasDiscount()) : ?>
+		<div class="row">
+		<div class="col-xs-6">
+			<label class="modal-form-label">Customer Discount</label>
+		</div>
+		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+		<div class="col-xs-3">
+			<div class="form-group">
+			<div class="input-group">
+				<input type="text" readonly="true" id="customer-discount" class="text-right col-md-2 form-control	" autocomplete="off" >
+			</div>
+			</div>
+		</div>
+		<div class="col-xs-1 enrolment-text"><label class="text-muted">%</label></div>
+	</div>
+	<?php endif;?>
 	<div class="row">
 		<div class="col-xs-6">
 			<label class="modal-form-label">Discounted Rate (per month)</label>
