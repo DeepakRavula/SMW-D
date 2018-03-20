@@ -249,7 +249,7 @@ trait Invoiceable
                 }
                 $invoice->addPayment($lesson, $lesson->getLessonCreditAmount($this->id), $this);
             }
-            $lesson->Cancel();
+            $lesson->cancel();
             $lesson->delete();
         }
         return $hasCredit ? $invoice : null;
