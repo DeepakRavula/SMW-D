@@ -11,6 +11,7 @@ use yii\helpers\Url;
 use common\models\Lesson;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
+use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 /**
