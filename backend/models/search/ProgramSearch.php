@@ -55,6 +55,9 @@ class ProgramSearch extends Program
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+	$dataProvider->sort->defaultOrder = [
+            'name' => SORT_ASC,
+        ];
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
