@@ -62,12 +62,12 @@ use common\models\Course;
     DatePicker::classname(),
                 [
                 'options' => [
-                    'value' => (new \DateTime())->format('d-m-Y'),
+                    'value' => (new \DateTime())->format('M d,Y'),
                 ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd-mm-yyyy'
+                    'format' => 'M d,yyyy'
                 ]
             ]
 );
@@ -79,12 +79,12 @@ use common\models\Course;
                 DatePicker::classname(),
                 [
                 'options' => [
-                    'value' => (new \DateTime($course->endDate))->format('d-m-Y'),
+                    'value' => Yii::$app->formatter->asDate($course->endDate),
                 ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd-mm-yyyy'
+                    'format' => 'M d,yyyy'
                 ]
             ]
             );
