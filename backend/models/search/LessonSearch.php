@@ -160,9 +160,17 @@ class LessonSearch extends Lesson
                     'asc' => ['program.name' => SORT_ASC],
                     'desc' => ['program.name' => SORT_DESC],
                 ],
+		 'teacher' => [
+                    'asc' => ['user_profile.firstname' => SORT_ASC],
+                    'desc' => ['user_profile.firstname' => SORT_DESC],
+                ],
                 'student' => [
                     'asc' => ['student.first_name' => SORT_ASC],
                     'desc' => ['student.first_name' => SORT_DESC],
+                ],
+		'dateRange' => [
+                    'asc' => ['date' => SORT_ASC],
+                    'desc' => ['date' => SORT_DESC],
                 ],
             ]
         ]);
