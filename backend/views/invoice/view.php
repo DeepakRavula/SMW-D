@@ -416,6 +416,24 @@ Modal::begin([
                             {
                                 $('#payment-add-spinner').hide();
                                 $('#payment-modal').modal('hide');
+                                if (response.canPost) {
+                                    bootbox.confirm({
+                                        message: 'This PFI is now fully paid. Would you like to post this document and distribute the                                               payments received to the associated lessons?',
+                                        callback: function(result) {
+                                            if (result) {
+                                                $.ajax({
+                                                    url    : '<?= Url::to(['invoice/post-distribute', 'id' => $model->id]); ?>',
+                                                    type   : 'post',
+                                                    dataType: "json",
+                                                    success: function()
+                                                    {
+                                                        $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
                                 $.pjax.reload({container: "#invoice-view-lineitem-listing", replace:false,async: false, timeout: 6000});
                                 $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
                                 $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});

@@ -230,10 +230,6 @@ class Payment extends ActiveRecord
             $invoicePaymentModel->payment_id = $this->id;
             $invoicePaymentModel->save();
             $this->invoice->save();
-
-            if ($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
-                $this->invoice->addLessonCredit();
-            }
         }
         $this->trigger(self::EVENT_CREATE);
         

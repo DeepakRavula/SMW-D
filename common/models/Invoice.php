@@ -595,6 +595,7 @@ class Invoice extends \yii\db\ActiveRecord
             $this->isCanceled     = false;
             $this->balance = 0;
             $this->isDeleted = false;
+            $this->isPosted = false;
         } else {
             if ($this->isProformaPaymentFrequencyApplicable()) {
                 $this->createProformaPaymentFrequency();

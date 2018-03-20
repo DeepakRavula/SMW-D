@@ -43,39 +43,35 @@ class InvoiceController extends BaseController
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                ],
-            ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['delete', 'note', 
-					'get-payment-amount', 'update-customer',
-                    'create-walkin', 'fetch-user', 'add-misc',
-					'adjust-tax', 'mail'],
+                'only' => [
+                    'delete', 'note', 'get-payment-amount', 'update-customer',
+                    'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax', 'mail',
+                    'post-distribute'
+                ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-				'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['blank-invoice', 'index', 'mail',
-							'update-customer', 'create-walkin',
-							'note', 'view', 'fetch-user',
-							'add-misc','fetch-summary-and-status', 							   'compute-tax', 'create', 'update',
-							'delete', 'update-mail-status',
-							'all-completed-lessons', 'adjust-tax',
-							'revert-invoice', 'enrolment',
-							'invoice-payment-cycle',
-							 'group-lesson','get-payment-amount'],
-                        'roles' => ['manageInvoices', 'managePfi'],
-                    ],
-                ],
-            ], 
+                        'actions' => ['blank-invoice', 'index', 'mail', 'update-customer', 'create-walkin',
+                            'note', 'view', 'fetch-user', 'add-misc','fetch-summary-and-status',
+                            'compute-tax', 'create', 'update', 'delete', 'update-mail-status',
+                            'all-completed-lessons', 'adjust-tax', 'revert-invoice', 'enrolment',
+                            'invoice-payment-cycle', 'group-lesson','get-payment-amount',
+                            'post-distribute'
+                        ],
+                        'roles' => [
+                            'manageInvoices', 'managePfi'
+                        ]
+                    ]
+                ]
+            ]
         ];
     }
 
@@ -673,5 +669,13 @@ class InvoiceController extends BaseController
                 'data' => $data,
             ];
         }
+    }
+
+    public function actionPostDistribute($id)
+    {
+        $model = Invoice::findOne($id);
+        $model->isPosted = true;
+        $model->save();
+        return $model->addLessonCredit();
     }
 }
