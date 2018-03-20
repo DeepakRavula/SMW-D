@@ -67,7 +67,14 @@ trait Invoiceable
         $invoiceLineItem->description = $description;
         $invoiceLineItem->code       = $invoiceLineItem->getItemCode();
         if ($invoiceLineItem->save()) {
-            $invoiceLineItem->addLineItemDetails($this);
+            $lesson = Lesson::find()
+                ->descendantsOf($this->id)
+                ->orderBy(['lesson.id' => SORT_DESC])
+                ->one();
+            if (!$lesson) {
+                $lesson = $this;
+            }
+            $invoiceLineItem->addLineItemDetails($lesson);
             return $invoiceLineItem;
         } else {
             Yii::error('Create Invoice Line Item: ' . VarDumper::dumpAsString($invoiceLineItem->getErrors()));
