@@ -114,7 +114,7 @@ $privatePrograms = ArrayHelper::map(Program::find()
 		<div class="col-xs-6">
 			<label class="modal-form-label">Customer Discount</label>
 		</div>
-		<div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+		<div class="col-xs-2 enrolment-dollar"></div>
 		<div class="col-xs-3">
 			<div class="form-group">
 			<div class="input-group">
