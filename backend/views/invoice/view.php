@@ -28,6 +28,7 @@ $this->params['action-button'] = $this->render('_buttons', [
     'model' => $model,
 ]); ?>
 <?php endif; ?>
+<div id="line-item-update" style="display:none;" class="alert-success alert fade in"></div>
 <div id="customer-update" style="display:none;" class="alert-success alert fade in"></div>
 <div id="invoice-discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>

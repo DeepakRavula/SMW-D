@@ -9,7 +9,6 @@ use yii\widgets\Pjax;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<div id="line-item-update" style="display:none;" class="alert-success alert fade in"></div>
 <div id="invoice-line-item-modal" class="invoice-line-item-form">
     <div>
     <?php Pjax::Begin(['id' => 'item-add-listing', 'timeout' => 6000 ,'enablePushState' => false]); ?>
@@ -75,7 +74,8 @@ use yii\widgets\Pjax;
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000}); 
-                    $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000}); 
+                    $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
+					$('#invoice-line-item-modal').modal('hide');
                 }
             }
         });
