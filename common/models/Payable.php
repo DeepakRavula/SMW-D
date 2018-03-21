@@ -191,6 +191,7 @@ trait Payable
                 $this->addPrivateLessonCredit();
             }
         }
+        return true;
     }
     
     public function addLessonPayment($paymentId, $enrolmentId)

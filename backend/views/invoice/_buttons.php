@@ -17,6 +17,33 @@ use yii\widgets\Pjax;
                    'id' => 'invoice-delete-button',
         ]
 )?>
+<div class="m-b-10 pull-right">
+    <div class="btn-group-sm">
+        <button class="btn dropdown-toggle" data-toggle="dropdown">More Action&nbsp;&nbsp;<span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <?php if (!$model->isPosted) : ?>
+            <li><a id="post-distriute" href="#">Post & Distribute</a></li>
+            <?php else : ?>
+            <li><a class="multiselect-disable" href="#">Post & Distribute</a></li>
+            <?php endif; ?>
+            <?php if ($model->canDistributeCredits()) : ?>
+            <li><a id="distriute" href="#">Distribute Funds to Lessons</a></li>
+            <?php else : ?>
+            <li><a class="multiselect-disable" href="#">Distribute Funds to Lessons</a></li>
+            <?php endif; ?>
+            <?php if (!$model->canRetractCredits()) : ?>
+            <li><a class="multiselect-disable" href="#">Retract Funds From Lessons</a></li>
+            <?php else : ?>
+            <li><a id="retract" href="#">Retract Funds From Lessons</a></li>
+            <?php endif; ?>
+            <?php if (!$model->canUnpost()) : ?>
+            <li><a class="multiselect-disable" href="#">Un-post</a></li>
+            <?php else : ?>
+            <li><a id="un-post" href="#">Un-post</a></li>
+            <?php endif; ?>
+        </ul>
+    </div>
+</div>
     <?php endif; ?>
 	<?php else : ?>
 		<?php if ($model->canRevert()): ?>
@@ -45,5 +72,5 @@ use yii\widgets\Pjax;
 <?= Yii::$app->formatter->format($model->total, ['currency', 'USD', [
     \NumberFormatter::MIN_FRACTION_DIGITS => 2,
     \NumberFormatter::MAX_FRACTION_DIGITS => 2,
-]]); ?>
+]]); ?> &nbsp;&nbsp;
 <?php Pjax::end();?>

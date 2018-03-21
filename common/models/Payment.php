@@ -230,10 +230,6 @@ class Payment extends ActiveRecord
             $invoicePaymentModel->payment_id = $this->id;
             $invoicePaymentModel->save();
             $this->invoice->save();
-
-            if ($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
-                $this->invoice->addLessonCredit();
-            }
         }
         $this->trigger(self::EVENT_CREATE);
         
@@ -271,9 +267,34 @@ class Payment extends ActiveRecord
         return $this->invoice->getCustomerAccountBalance($this->user_id);
     }
 
+    public function isAutoPayments()
+    {
+        return $this->isCreditApplied() || $this->isCreditUsed();
+    }
+
     public function afterSoftDelete()
     {
-        return $this->invoice->save();
+        if ($this->isAutoPayments()) {
+            if ($this->isCreditApplied()) {
+                if ($this->creditUsage->debitUsagePayment) {
+                    $this->creditUsage->debitUsagePayment->delete();
+                }
+                if ($this->lessonCredit) {
+                    $lesson = $this->lessonCredit->lesson;
+                    foreach ($lesson->getCreditUsedPayment($this->lessonCredit->enrolmentId) as $credit) {
+                        $credit->delete();
+                    }
+                }
+            } else {
+                if ($this->debitUsage->creditUsagePayment) {
+                    $this->debitUsage->creditUsagePayment->delete();
+                }
+            }
+        }
+        if ($this->invoice) {
+            $this->invoice->save();
+        }
+        return true;
     }
 
     public function addOpeningBalance()

@@ -94,7 +94,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
             [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 'date',
-                'transactionId', 'balance', 'taxAdjusted', 'isTaxAdjusted'], 'safe']
+                'transactionId', 'balance', 'taxAdjusted', 'isTaxAdjusted', 'isPosted'], 'safe']
         ];
     }
 
@@ -222,6 +222,13 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoiceId'])
                 ->viaTable('invoice_reverse', ['invoiceId' => 'id']);
+    }
+
+    public function getCreditUsedPayments()
+    {
+        return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
+            ->via('invoicePayments')
+            ->onCondition(['payment.isDeleted' => false, 'payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
     }
 
     public function getPayments()
@@ -595,6 +602,7 @@ class Invoice extends \yii\db\ActiveRecord
             $this->isCanceled     = false;
             $this->balance = 0;
             $this->isDeleted = false;
+            $this->isPosted = false;
         } else {
             if ($this->isProformaPaymentFrequencyApplicable()) {
                 $this->createProformaPaymentFrequency();
@@ -663,6 +671,41 @@ class Invoice extends \yii\db\ActiveRecord
     public function accountBalance()
     {
         return $this->getCustomerAccountBalance($this->user_id);
+    }
+
+    public function canRetractCredits()
+    {
+        foreach ($this->lineItems as $item) {
+            if ($item->proFormaLesson->hasInvoice()) {
+                return false;
+            }
+        }
+        return $this->hasCreditUsed();
+    }
+
+    public function hasCreditUsed()
+    {
+        return !empty($this->creditUsedPayments);
+    }
+
+    public function canDistributeCredits()
+    {
+        return !$this->hasCreditUsed() && $this->isPosted && $this->isPaid();
+    }
+
+    public function canUnpost()
+    {
+        return !$this->hasCreditUsed() && $this->isPosted;
+    }
+
+    public function retractCreditsFromLessons()
+    {
+        if ($this->canRetractCredits()) {
+            foreach ($this->creditUsedPayments as $credit) {
+                $credit->delete();
+            }
+        }
+        return true;
     }
 
     public function getStudentProgramName()
