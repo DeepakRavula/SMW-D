@@ -72,5 +72,5 @@ use yii\widgets\Pjax;
 <?= Yii::$app->formatter->format($model->total, ['currency', 'USD', [
     \NumberFormatter::MIN_FRACTION_DIGITS => 2,
     \NumberFormatter::MAX_FRACTION_DIGITS => 2,
-]]); ?>
+]]); ?> &nbsp;&nbsp;
 <?php Pjax::end();?>

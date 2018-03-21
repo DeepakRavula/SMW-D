@@ -94,7 +94,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
             [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 'date',
-                'transactionId', 'balance', 'taxAdjusted', 'isTaxAdjusted'], 'safe']
+                'transactionId', 'balance', 'taxAdjusted', 'isTaxAdjusted', 'isPosted'], 'safe']
         ];
     }
 
