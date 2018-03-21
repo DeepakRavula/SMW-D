@@ -7,6 +7,7 @@ use common\models\Lesson;
 use common\models\Invoice;
 use common\models\Student;
 use common\models\Course;
+use common\models\log\LogHistory;
 
 ?>
 <?php
@@ -74,10 +75,10 @@ echo Menu::widget([
         ],
         [
             'label' => Yii::t('backend', 'Group Lessons'),
-            'url' => ['/lesson/index', 'LessonSearch[type]' => Lesson::TYPE_GROUP_LESSON],
+            'url' => ['/course/index', 'CourseSearch[type]' => Lesson::TYPE_GROUP_LESSON],
             'icon' => '<i class="fa fa-music"></i>',
             'visible' => Yii::$app->user->can('manageGroupLessons'),
-            'active' => (isset(Yii::$app->request->queryParams['LessonSearch']['type']) && Yii::$app->request->queryParams['LessonSearch']['type'] == Lesson::TYPE_GROUP_LESSON) ? true : false,
+            'active' => (isset(Yii::$app->request->queryParams['CourseSearch']['type']) && Yii::$app->request->queryParams['CourseSearch']['type'] == Lesson::TYPE_GROUP_LESSON) ? true : false,
         ],
             [
             'label' => Yii::t('backend', 'Proforma Invoices'),
@@ -325,6 +326,14 @@ echo Menu::widget([
                     'url' => ['/user/import'],
 					'visible' => Yii::$app->user->can('manageImport'),
                 ],
+		[
+		    
+					'label' => Yii::t('backend', 'Timeline'),
+					'icon' => '<i class="fa fa-bell"></i>',
+					'url' => ['/timeline-event/index'],
+					'badge' => LogHistory::logsCount(),
+					'badgeBgClass' => 'label-default'
+				],
 
             ],
         ]

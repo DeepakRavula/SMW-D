@@ -393,7 +393,7 @@ class CourseController extends BaseController
                             ['loggedUser' => $loggedUser]
                         );
                         $newLesson->trigger(Lesson::EVENT_AFTER_INSERT);
-                        $lesson->Cancel();
+                        $lesson->cancel();
                     }
                 }
                 $response = [

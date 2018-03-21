@@ -19,7 +19,7 @@ class LocationController extends Controller
     
     public function actionWipeTransactionalData()
     {
-        $file = Yii::getAlias('@console') . '/config/wipe_location_transactional_data.sql';
+        $file = Yii::getAlias('@console') . '/sql/wipe_location_transactional_data.sql';
         
         $migration = new Migration();
         return $migration->execute(file_get_contents($file), [':locationToWipe' => $this->locationId]);
