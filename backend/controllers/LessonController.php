@@ -534,7 +534,7 @@ class LessonController extends BaseController
             $oldLessonIds = [];
             foreach ($oldLessons as $oldLesson) {
                 $oldLessonIds[] = $oldLesson->id;
-                $oldLesson->Cancel();
+                $oldLesson->cancel();
             }
             $courseDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
             if ($endDate->format('d-m-Y') == $courseDate && !empty($lesson)) {

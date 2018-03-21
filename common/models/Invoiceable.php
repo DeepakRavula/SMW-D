@@ -39,7 +39,6 @@ trait Invoiceable
         );
         if ($this->proFormaLineItem) {
             $invoiceLineItem->amount = $this->proFormaLineItem->amount;
-            $invoiceLineItem->unit   = $this->proFormaLineItem->unit;
         } else {
             $invoiceLineItem->amount = $this->courseProgramRate ? $this->courseProgramRate->programRate
                     : $this->enrolment->program->rate;
@@ -53,6 +52,7 @@ trait Invoiceable
             }
             $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
         } else {
+            $invoiceLineItem->unit   = $this->unit;
             if ($this->isUnscheduled()) {
                 $invoiceLineItem->cost       = 0;
             } else {
@@ -157,7 +157,6 @@ trait Invoiceable
         }
         if (!empty($this->extendedLessons)) {
             foreach ($this->extendedLessons as $extendedLesson) {
-                $lineItem = $extendedLesson->lesson->addPrivateLessonLineItem($invoice);
                 $invoice->save();
                 if ($extendedLesson->lesson->hasLessonCredit($this->enrolment->id)) {
                     $amount = $extendedLesson->lesson->getSplitedAmount();
@@ -249,7 +248,7 @@ trait Invoiceable
                 }
                 $invoice->addPayment($lesson, $lesson->getLessonCreditAmount($this->id), $this);
             }
-            $lesson->Cancel();
+            $lesson->cancel();
             $lesson->delete();
         }
         return $hasCredit ? $invoice : null;
