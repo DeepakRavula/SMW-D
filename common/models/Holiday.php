@@ -52,7 +52,7 @@ class Holiday extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        $holidayDate = \DateTime::createFromFormat('d-m-Y', $this->date);
+        $holidayDate = \DateTime::createFromFormat('M d,Y', $this->date);
         $this->date = $holidayDate->format('Y-m-d');
 
         return parent::beforeSave($insert);

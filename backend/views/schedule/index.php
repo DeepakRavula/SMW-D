@@ -35,7 +35,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class
 </style>
 	<div class="col-md-2 schedule-picker">
 		<div id="datepicker" class="input-group date">
-			<input type="text" class="form-control" value=<?= Yii::$app->formatter->asDate(new \DateTime())?>>
+			<input type="text" class="form-control" value="<?= Yii::$app->formatter->asDate(new \DateTime())?>">
 			<div class="input-group-addon">
 				<span class="glyphicon glyphicon-calendar"></span>
 			</div>

@@ -75,7 +75,7 @@ class TaxCode extends \yii\db\ActiveRecord
     }
     public function beforeSave($insert)
     {
-        $startDate = \DateTime::createFromFormat('d-m-Y', $this->start_date);
+        $startDate = \DateTime::createFromFormat('M d,Y', $this->start_date);
         $this->start_date = $startDate->format('Y-m-d H:i:s');
         return parent::beforeSave($insert);
     }
