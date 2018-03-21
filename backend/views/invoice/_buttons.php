@@ -26,7 +26,7 @@ use yii\widgets\Pjax;
             <?php else : ?>
             <li><a class="multiselect-disable" href="#">Post & Distribute</a></li>
             <?php endif; ?>
-            <?php if (!$model->hasCreditUsed()) : ?>
+            <?php if ($model->canDistributeCredits()) : ?>
             <li><a id="distriute" href="#">Distribute Funds to Lessons</a></li>
             <?php else : ?>
             <li><a class="multiselect-disable" href="#">Distribute Funds to Lessons</a></li>
@@ -35,6 +35,11 @@ use yii\widgets\Pjax;
             <li><a class="multiselect-disable" href="#">Retract Funds From Lessons</a></li>
             <?php else : ?>
             <li><a id="retract" href="#">Retract Funds From Lessons</a></li>
+            <?php endif; ?>
+            <?php if (!$model->canUnpost()) : ?>
+            <li><a class="multiselect-disable" href="#">Un-post</a></li>
+            <?php else : ?>
+            <li><a id="un-post" href="#">Un-post</a></li>
             <?php endif; ?>
         </ul>
     </div>

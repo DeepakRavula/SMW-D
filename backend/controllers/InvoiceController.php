@@ -47,7 +47,7 @@ class InvoiceController extends BaseController
                 'only' => [
                     'delete', 'note', 'get-payment-amount', 'update-customer',
                     'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax', 'mail',
-                    'post-distribute', 'retract-credits'
+                    'post-distribute', 'retract-credits', 'unpost'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -63,7 +63,7 @@ class InvoiceController extends BaseController
                             'compute-tax', 'create', 'update', 'delete', 'update-mail-status',
                             'all-completed-lessons', 'adjust-tax', 'revert-invoice', 'enrolment',
                             'invoice-payment-cycle', 'group-lesson','get-payment-amount',
-                            'post-distribute', 'retract-credits'
+                            'post-distribute', 'retract-credits', 'unpost'
                         ],
                         'roles' => [
                             'manageInvoices', 'managePfi'
@@ -676,6 +676,13 @@ class InvoiceController extends BaseController
         $model->isPosted = true;
         $model->save();
         return $model->addLessonCredit();
+    }
+
+    public function actionUnpost($id)
+    {
+        $model = Invoice::findOne($id);
+        $model->isPosted = false;
+        return $model->save();
     }
 
     public function actionRetractCredits($id)

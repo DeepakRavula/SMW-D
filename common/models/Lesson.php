@@ -839,6 +839,15 @@ class Lesson extends \yii\db\ActiveRecord
                 ->creditUsed()
                 ->sum('amount');
     }
+
+    public function getCreditUsedPayment($enrolmentId)
+    {
+        return Payment::find()
+                ->joinWith('lessonCredit')
+                ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
+                ->creditUsed()
+                ->all();
+    }
     
     public function hasLessonCredit($enrolmentId)
     {

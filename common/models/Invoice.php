@@ -688,6 +688,16 @@ class Invoice extends \yii\db\ActiveRecord
         return !empty($this->creditUsedPayments);
     }
 
+    public function canDistributeCredits()
+    {
+        return !$this->hasCreditUsed() && $this->isPosted && $this->isPaid();
+    }
+
+    public function canUnpost()
+    {
+        return !$this->hasCreditUsed() && $this->isPosted;
+    }
+
     public function retractCreditsFromLessons()
     {
         if ($this->canRetractCredits()) {

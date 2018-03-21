@@ -601,13 +601,23 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         }
     });
 
-    $(document).off('click', '#post-distriute, #distriute').on('click', '#post-distriute, #distriute', function () {
-        invoice.post();
+    $(document).off('click', '#post-distriute').on('click', '#post-distriute', function () {
+        invoice.distribute();
+        return false;
+    });
+
+    $(document).off('click', '#distriute').on('click', '#distriute', function () {
+        invoice.distribute();
         return false;
     });
 
     $(document).off('click', '#retract').on('click', '#retract', function () {
         invoice.retract();
+        return false;
+    });
+
+    $(document).off('click', '#un-post').on('click', '#un-post', function () {
+        invoice.unpost();
         return false;
     });
 
@@ -618,16 +628,34 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                 message: 'This PFI is now fully paid. Would you like to post this document and distribute the                                               payments received to the associated lessons?',
                 callback: function(result) {
                     if (result) {
-                        $.ajax({
-                            url    : '<?= Url::to(['invoice/post-distribute', 'id' => $model->id]); ?>',
-                            type   : 'post',
-                            dataType: "json",
-                            success: function()
-                            {
-                                invoice.reload();
-                            }
-                        });
+                        invoice.distribute();
                     }
+                }
+            });
+        },
+
+        distribute: function() {
+            $('#invoice-spinner').show();
+            $.ajax({
+                url    : '<?= Url::to(['invoice/post-distribute', 'id' => $model->id]); ?>',
+                type   : 'post',
+                dataType: "json",
+                success: function()
+                {
+                    invoice.reload();
+                }
+            });
+        },
+
+        unpost: function() {
+            $('#invoice-spinner').show();
+            $.ajax({
+                url    : '<?= Url::to(['invoice/unpost', 'id' => $model->id]); ?>',
+                type   : 'post',
+                dataType: "json",
+                success: function()
+                {
+                    invoice.reload();
                 }
             });
         },
@@ -652,6 +680,7 @@ $(document).on("click", '.adjust-invoice-tax', function() {
             $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
+            $.pjax.reload({container: "#invoice-title", replace:false,async: false, timeout: 6000});
             $('#invoice-spinner').hide();
         }
     }
