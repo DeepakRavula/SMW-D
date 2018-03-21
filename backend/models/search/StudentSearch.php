@@ -13,14 +13,15 @@ use common\models\Student;
 class StudentSearch extends Student
 {
     public $showAllStudents;
-
+    public $customer;
+    public $phone;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['first_name', 'last_name', 'customer_id', 'showAllStudents'], 'safe'],
+            [['first_name', 'last_name','customer_id', 'customer','phone','showAllStudents'], 'safe'],
         ];
     }
 
@@ -47,25 +48,47 @@ class StudentSearch extends Student
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-		$dataProvider->sort->defaultOrder = [
-            'first_name' => SORT_ASC,
-        ];
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-
-        $query->joinWith('customerProfile cp');
+	$query->joinWith('customerProfile');
+	$query->joinWith(['customer' => function ($query) {
+		$query->joinWith(['userContacts'=> function ($query) {
+			$query->joinWith('phone');
+		}]);
+        }]);
+	$dataProvider->setSort([
+            'attributes' => [
+		'first_name' => [
+                    'asc' => ['first_name' => SORT_ASC],
+                    'desc' => ['first_name' => SORT_DESC],
+                ],
+		'last_name' => [
+                    'asc' => ['last_name' => SORT_ASC],
+                    'desc' => ['last_name' => SORT_DESC],
+                ],
+                'customer' => [
+                    'asc' => ['user_profile.firstname' => SORT_ASC],
+                    'desc' => ['user_profile.firstname' => SORT_DESC],
+                ],
+		'phone' => [
+                    'asc' => ['user_phone.number' => SORT_ASC],
+                    'desc' => ['user_phone.number' => SORT_DESC],
+                ],
+            ]
+        ]);
+	$dataProvider->sort->defaultOrder = [
+            'first_name' => SORT_ASC,
+        ];	
         $query->andFilterWhere(['like', 'first_name', $this->first_name])
             ->andFilterWhere(['like', 'last_name', $this->last_name])
-            ->groupBy('student.id')
-		->orderBy(['first_name'=> SORT_ASC]);
+            ->groupBy('student.id');
 
         if (!$this->showAllStudents) {
             $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
             $query->enrolled($currentDate)
                 ->active();
         }
-
         return $dataProvider;
     }
 }

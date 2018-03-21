@@ -65,4 +65,8 @@ class Log extends \yii\db\ActiveRecord
         return $this->hasMany(LogLink::className(), ['logId' => 'id'])
             ->onCondition(['log_link.index' => $index]);
     }
+    public function getLogObject()
+    {
+        return $this->hasMany(LogObject::className(), ['id' => 'logObjectId']);
+    }
 }

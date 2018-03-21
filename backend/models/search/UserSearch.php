@@ -8,6 +8,7 @@ use yii\data\ActiveDataProvider;
 use common\models\User;
 use common\models\Location;
 use common\models\Invoice;
+use common\models\UserProfile;
 
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
@@ -27,6 +28,7 @@ class UserSearch extends User
     public $showAllStaffMembers;
     public $showAllOwners;
     private $email;
+    public $phone;
     
     public function getAccountView()
     {
@@ -54,7 +56,7 @@ class UserSearch extends User
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at', 'accountView'], 'integer'],
             [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname',
-                'lastname', 'query', 'showAllCustomers', 'showAllTeachers','showAllAdministrators','showAllOwners','showAllStaffMembers','accountView'], 'safe'],
+                'lastname', 'query','phone','showAllCustomers', 'showAllTeachers','showAllAdministrators','showAllOwners','showAllStaffMembers','accountView'], 'safe'],
         ];
     }
 
@@ -82,7 +84,6 @@ class UserSearch extends User
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
@@ -98,7 +99,11 @@ class UserSearch extends User
         $query->leftJoin(['rbac_auth_assignment aa'], 'user.id = aa.user_id');
         $query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
         $query->leftJoin(['user_location ul'], 'ul.user_id = user.id');
-        $query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
+	$query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
+	$query->joinWith(['userContacts uc' => function ($query) {
+		$query->joinWith('phone');
+        }]);
+	$query->joinWith('emails');
         $dataProvider->setSort([
             'attributes' => [
                 'firstname' => [
@@ -109,6 +114,14 @@ class UserSearch extends User
                     'asc' => ['uf.lastname' => SORT_ASC],
                     'desc' => ['uf.lastname' => SORT_DESC],
                 ],
+		'email' => [
+                    'asc' => ['user_email.email' => SORT_ASC],
+                    'desc' => ['user_email.email' => SORT_DESC],
+                ],
+		'phone' => [
+                    'asc' => ['user_phone.number' => SORT_ASC],
+                    'desc' => ['user_phone.number' => SORT_DESC],
+                ]
             ]
         ]);
 	$dataProvider->sort->defaultOrder = [

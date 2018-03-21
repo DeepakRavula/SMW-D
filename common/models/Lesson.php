@@ -226,7 +226,7 @@ class Lesson extends \yii\db\ActiveRecord
         return (int) $this->status === self::STATUS_CANCELED;
     }
     
-    public function Cancel()
+    public function cancel()
     {
         $this->status = self::STATUS_CANCELED;
         
@@ -327,7 +327,12 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getPaymentCycleLesson()
     {
-        return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id']);
+        if ($this->isExploded) {
+            $lesson = $this->parent()->one();
+        } else {
+            $lesson = $this;
+        }
+        return $lesson->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id']);
     }
 
     public function getLessonSplitsUsage()
@@ -511,10 +516,15 @@ class Lesson extends \yii\db\ActiveRecord
     public function getProFormaLineItem()
     {
         if ($this->hasProFormaInvoice()) {
-            $paymentCycleLessonId = $this->paymentCycleLesson->id;
+            if ($this->isExploded) {
+                $lesson = $this->parent()->one();
+            } else {
+                $lesson = $this;
+            }
+            $paymentCycleLessonId = $lesson->paymentCycleLesson->id;
             return InvoiceLineItem::find()
                     ->notDeleted()
-                    ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
+                    ->andWhere(['invoice_id' => $lesson->proFormaInvoice->id])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
                     ->joinWith(['lineItemPaymentCycleLesson' => function ($query) use ($paymentCycleLessonId) {
                         $query->where(['paymentCycleLessonId' => $paymentCycleLessonId]);
@@ -657,7 +667,20 @@ class Lesson extends \yii\db\ActiveRecord
                     $this->updateAttributes(['status' => self::STATUS_RESCHEDULED]);
                 }
             }
-        }
+			$options = [
+			   'cluster' => env('PUSHER_CLUSTER'),
+			   'encrypted' => true
+		    ];
+			$pusher = new \Pusher\Pusher(
+			   env('PUSHER_KEY'),
+			   env('PUSHER_SECRET'),
+			   env('PUSHER_APP_ID'),
+			   $options
+		   );
+			if(!isset($changedAttributes['isConfirmed']) && $this->isConfirmed) {
+				$pusher->trigger('lesson', 'lesson-edit', '');
+			}
+		}
         
         return parent::afterSave($insert, $changedAttributes);
     }
@@ -789,7 +812,12 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getUnit()
     {
-        $getDuration = \DateTime::createFromFormat('H:i:s', $this->duration);
+        if ($this->extendedLessons) {
+            $unit = $this->fullDuration;
+        } else {
+            $unit = $this->duration;
+        }
+        $getDuration = \DateTime::createFromFormat('H:i:s', $unit);
         $hours       = $getDuration->format('H');
         $minutes     = $getDuration->format('i');
         return (($hours * 60) + $minutes) / 60;

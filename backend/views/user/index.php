@@ -34,7 +34,8 @@ $this->params['show-all'] = $this->render('_button', [
 
 <div class="user-index"> 
 <div class="grid-row-open">
-    <?php Pjax::begin([
+    <?php yii\widgets\Pjax::begin([
+	'enablePushState' => false,
         'id' => 'user-index',
         'timeout' => 6000
     ]); ?>
@@ -75,6 +76,7 @@ $this->params['show-all'] = $this->render('_button', [
             ],
             'email',
             [
+		'attribute' => 'phone',
                 'label' => 'Phone',
                 'value' => function ($data) {
                     return !empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
@@ -82,7 +84,7 @@ $this->params['show-all'] = $this->render('_button', [
             ]
         ],
     ]); ?>
-<?php Pjax::end(); ?>
+<?php yii\widgets\Pjax::end(); ?>
 </div>
 </div>
 <script>

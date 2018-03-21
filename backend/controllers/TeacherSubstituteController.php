@@ -170,7 +170,7 @@ class TeacherSubstituteController extends BaseController
         $lessonIds = [];
         foreach ($lessons as $i => $lesson) {
             $oldLesson = $oldLessons[$i];
-            $oldLesson->Cancel();
+            $oldLesson->cancel();
             $oldLesson->rescheduleTo($lesson);
             $lessonIds[] = $lesson->id;
             $lesson->isConfirmed = true;

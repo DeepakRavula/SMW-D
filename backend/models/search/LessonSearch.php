@@ -28,9 +28,9 @@ class LessonSearch extends Lesson
     public $summariseReport = false;
     public $student;
     public $program;
-    public $teacher;
     public $ids;
     public $attendanceStatus;
+    public $rate;
     /**
      * {@inheritdoc}
      */
@@ -40,7 +40,7 @@ class LessonSearch extends Lesson
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
             [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId',
-                'invoiceType','dateRange', 'student', 'program', 'teacher'], 'safe'],
+                'invoiceType','dateRange', 'rate','student', 'program'], 'safe'],
         ];
     }
     
@@ -72,13 +72,11 @@ class LessonSearch extends Lesson
             ->notDeleted()
             ->location($locationId)
             ->activePrivateLessons()
-            ->andWhere(['NOT IN', 'lesson.status', [Lesson::STATUS_CANCELED]])
-                ->orderBy(['lesson.date' => SORT_ASC]);
+            ->andWhere(['NOT IN', 'lesson.status', [Lesson::STATUS_CANCELED]]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
@@ -87,6 +85,7 @@ class LessonSearch extends Lesson
             ['student.last_name' => $this->student]
         ]);
         $query->andFilterWhere(['program.name' => $this->program]);
+	
         if (!empty($this->teacher)) {
             $query->joinWith(['teacherProfile' => function ($query) {
                 $query->andFilterWhere([
@@ -154,7 +153,30 @@ class LessonSearch extends Lesson
                 'query' => $lessonQuery,
             ]);
         }
-
+	$query->joinWith('teacherProfile');
+	$dataProvider->setSort([
+            'attributes' => [
+                'program' => [
+                    'asc' => ['program.name' => SORT_ASC],
+                    'desc' => ['program.name' => SORT_DESC],
+                ],
+		 'teacher' => [
+                    'asc' => ['user_profile.firstname' => SORT_ASC],
+                    'desc' => ['user_profile.firstname' => SORT_DESC],
+                ],
+                'student' => [
+                    'asc' => ['student.first_name' => SORT_ASC],
+                    'desc' => ['student.first_name' => SORT_DESC],
+                ],
+		'dateRange' => [
+                    'asc' => ['date' => SORT_ASC],
+                    'desc' => ['date' => SORT_DESC],
+                ],
+            ]
+        ]);
+	$dataProvider->sort->defaultOrder = [
+            'program' => SORT_ASC,
+	    ];
         return $dataProvider;
     }
 

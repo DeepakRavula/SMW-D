@@ -23,7 +23,7 @@ $form = ActiveForm::begin([
             'courseSchedule' => new CourseSchedule(),
             'paymentFrequencyDiscount' => new PaymentFrequencyEnrolmentDiscount(),
             'multipleEnrolmentDiscount' => new MultiEnrolmentDiscount(),
-            'student' => $model,
+            'student' => $student,
             'form' => $form
         ]);?> 
 	    </div>
@@ -39,9 +39,9 @@ $form = ActiveForm::begin([
 
 <script>
 var enrolment = {
-	fetchProgram: function(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate) {
+	fetchProgram: function(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate, customerDiscount) {
 		var params = $.param({duration: duration, id: programId, paymentFrequencyDiscount: paymentFrequencyDiscount,
-			multiEnrolmentDiscount: multiEnrolmentDiscount, rate: programRate });
+			multiEnrolmentDiscount: multiEnrolmentDiscount, rate: programRate, customerDiscount : customerDiscount });
 		$.ajax({
 			url: '<?= Url::to(['student/fetch-program-rate']); ?>?' + params,
 			type: 'get',
@@ -88,7 +88,8 @@ $(document).ready(function () {
 		var programId = $('#course-programid').val();
 		var paymentFrequencyDiscount = $('#paymentfrequencyenrolmentdiscount-discount').val();
 		var multiEnrolmentDiscount = $('#multienrolmentdiscount-discount').val();
-		enrolment.fetchProgram(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate);
+		var customerDiscount = $('#customer-discount').val();
+		enrolment.fetchProgram(duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate, customerDiscount);
         });
 });
 </script>
