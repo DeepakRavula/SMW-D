@@ -1,6 +1,7 @@
 <?php
 
 use yii\db\Migration;
+use common\models\User;
 use common\models\Payment;
 
 /**
@@ -8,6 +9,13 @@ use common\models\Payment;
  */
 class m180321_201829_reverse_lesson_credits extends Migration
 {
+    public function init()
+    {
+        parent::init();
+        $user = User::findByRole(User::ROLE_BOT);
+        $botUser = end($user);
+        Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
+    }
     /**
      * @inheritdoc
      */
@@ -22,7 +30,25 @@ class m180321_201829_reverse_lesson_credits extends Migration
             ->all();        
         foreach ($payments as $payment) {
             $invoice = $payment->invoice;
-            $invoice->
+            foreach ($invoice->creditUsedPayments as $credit) {
+                $credit->delete();
+            }
+        }
+        $payments = Payment::find()
+            ->location(14)
+            ->creditUsed()
+            ->joinWith(['invoice' => function ($query) {
+                $query->proFormaInvoice()->notDeleted();
+            }])
+            ->all();
+        foreach ($payments as $payment) {
+            $invoice = $payment->invoice;
+            if (!$invoice->isPaid()) {
+                foreach ($invoice->creditUsedPayments as $credit) {
+                    $credit->delete();
+                }
+                $invoice->updateAttributes(['isPosted' => false]);
+            }
         }
     }
 
