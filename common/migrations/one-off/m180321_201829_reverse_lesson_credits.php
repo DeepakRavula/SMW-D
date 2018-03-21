@@ -6,7 +6,7 @@ use common\models\Payment;
 /**
  * Class m180317_201829_reverse_lesson_credits
  */
-class m180317_201829_reverse_lesson_credits extends Migration
+class m180321_201829_reverse_lesson_credits extends Migration
 {
     /**
      * @inheritdoc
@@ -22,11 +22,8 @@ class m180317_201829_reverse_lesson_credits extends Migration
             ->all();        
         foreach ($payments as $payment) {
             $invoice = $payment->invoice;
-            if ((int)$invoice->id === (int)1205) {
-                echo $payment->debitUsage->creditUsagePayment->lessonPayment->lesson->id. ',';
-            }
+            $invoice->
         }
-        die('done');
     }
 
     /**
@@ -34,7 +31,7 @@ class m180317_201829_reverse_lesson_credits extends Migration
      */
     public function safeDown()
     {
-        echo "m180317_201829_reverse_lesson_credits cannot be reverted.\n";
+        echo "m180321_201829_reverse_lesson_credits cannot be reverted.\n";
 
         return false;
     }
