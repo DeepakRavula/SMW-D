@@ -15,7 +15,6 @@ use common\models\Payment;
 use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use common\models\TaxCode;
 use common\models\Location;
 use yii\helpers\Json;
@@ -48,7 +47,7 @@ class InvoiceController extends BaseController
                 'only' => [
                     'delete', 'note', 'get-payment-amount', 'update-customer',
                     'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax', 'mail',
-                    'post-distribute'
+                    'post-distribute', 'retract-credits'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -64,7 +63,7 @@ class InvoiceController extends BaseController
                             'compute-tax', 'create', 'update', 'delete', 'update-mail-status',
                             'all-completed-lessons', 'adjust-tax', 'revert-invoice', 'enrolment',
                             'invoice-payment-cycle', 'group-lesson','get-payment-amount',
-                            'post-distribute'
+                            'post-distribute', 'retract-credits'
                         ],
                         'roles' => [
                             'manageInvoices', 'managePfi'
@@ -677,5 +676,12 @@ class InvoiceController extends BaseController
         $model->isPosted = true;
         $model->save();
         return $model->addLessonCredit();
+    }
+
+    public function actionRetractCredits($id)
+    {
+        $model = Invoice::findOne($id);
+        $model->retractCreditsFromLessons();
+        return $model->save();
     }
 }

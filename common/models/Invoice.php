@@ -224,6 +224,13 @@ class Invoice extends \yii\db\ActiveRecord
                 ->viaTable('invoice_reverse', ['invoiceId' => 'id']);
     }
 
+    public function getCreditUsedPayments()
+    {
+        return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
+            ->via('invoicePayments')
+            ->onCondition(['payment.isDeleted' => false, 'payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
+    }
+
     public function getPayments()
     {
         return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
@@ -664,6 +671,31 @@ class Invoice extends \yii\db\ActiveRecord
     public function accountBalance()
     {
         return $this->getCustomerAccountBalance($this->user_id);
+    }
+
+    public function canRetractCredits()
+    {
+        foreach ($this->lineItems as $item) {
+            if ($item->proFormaLesson->hasInvoice()) {
+                return false;
+            }
+        }
+        return $this->hasCreditUsed();
+    }
+
+    public function hasCreditUsed()
+    {
+        return !empty($this->creditUsedPayments);
+    }
+
+    public function retractCreditsFromLessons()
+    {
+        if ($this->canRetractCredits()) {
+            foreach ($this->creditUsedPayments as $credit) {
+                $credit->delete();
+            }
+        }
+        return true;
     }
 
     public function getStudentProgramName()
