@@ -639,35 +639,42 @@ class InvoiceController extends BaseController
     public function actionAdjustTax($id)
     {
         $model = Invoice::findOne($id);
-        $data = $this->renderAjax('_form-adjust-tax', [
-            'model' => $model
-        ]);
-        $post = Yii::$app->request->post();
-        if ($model->load($post)) {
-            $model->isTaxAdjusted = false;
-            $model->tax += $model->taxAdjusted;
-            if ((float) $model->tax !== (float) $model->lineItemTax) {
-                $model->isTaxAdjusted = true;
-            }
-            
-            if ($model->save()) {
-                $response = [
-                    'status' => true,
-                    'message' => 'Tax successfully updated!',
-        ];
+        if (!$model->isPosted) {
+            $data = $this->renderAjax('_form-adjust-tax', [
+                'model' => $model
+            ]);
+            $post = Yii::$app->request->post();
+            if ($model->load($post)) {
+                $model->isTaxAdjusted = false;
+                $model->tax += $model->taxAdjusted;
+                if ((float) $model->tax !== (float) $model->lineItemTax) {
+                    $model->isTaxAdjusted = true;
+                }
+
+                if ($model->save()) {
+                    $response = [
+                        'status' => true,
+                        'message' => 'Tax successfully updated!',
+            ];
+                } else {
+                    $response = [
+                        'status' => false,
+                        'errors' => ActiveForm::validate($model),
+                    ];
+                }
             } else {
                 $response = [
-                    'status' => false,
-                    'errors' => ActiveForm::validate($model),
+                    'status' => true,
+                    'data' => $data,
                 ];
             }
-            return $response;
         } else {
-            return [
-                'status' => true,
-                'data' => $data,
+            $response = [
+                'status' => false,
+                'message' => 'Tax cannot be updated if invoice posted!'
             ];
         }
+        return $response;
     }
 
     public function actionPostDistribute($id)

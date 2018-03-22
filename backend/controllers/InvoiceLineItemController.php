@@ -3,8 +3,6 @@
 namespace backend\controllers;
 
 use Yii;
-use common\models\Payment;
-use common\models\PaymentMethod;
 use backend\models\discount\LineItemMultiDiscount;
 use common\models\InvoiceLineItem;
 use yii\web\Response;
@@ -47,7 +45,7 @@ class InvoiceLineItemController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['compute-tax', 'fetch-tax-percentage', 'update', 'edit-opening-balance', 'delete', 'edit-tax', 'edit-other-items', 'apply-discount'],
+                        'actions' => ['compute-tax', 'fetch-tax-percentage', 'update', 'delete', 'edit-tax', 'apply-discount'],
                         'roles' => ['manageInvoices', 'managePfi'],
                     ],
                 ],
@@ -63,6 +61,7 @@ class InvoiceLineItemController extends BaseController
 
         return $rate;
     }
+    
     public function actionFetchTaxPercentage($taxStatusId)
     {
         $today         = (new \DateTime())->format('Y-m-d H:i:s');
@@ -78,96 +77,43 @@ class InvoiceLineItemController extends BaseController
             ->one();
         return $taxCode->rate;
     }
+
     public function actionUpdate($id)
     {
         $lineItem = $this->findModel($id);
-        if ($lineItem->invoice->isReversedInvoice()) {
-            $lineItem->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
-        }
-        $data = $this->renderAjax('/invoice/line-item/_form', [
-            'model' => $lineItem
-        ]);
-        $post = Yii::$app->request->post();
-        if ($lineItem->load($post)) {
-            if ($lineItem->save()) {
+        if (!$lineItem->invoice->isPosted) {
+            if ($lineItem->invoice->isReversedInvoice()) {
+                $lineItem->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
+            }
+            $data = $this->renderAjax('/invoice/line-item/_form', [
+                'model' => $lineItem
+            ]);
+            $post = Yii::$app->request->post();
+            if ($lineItem->load($post)) {
+                if ($lineItem->save()) {
+                    $response = [
+                        'status' => true,
+                        'message' => 'Item successfully updated!',
+                    ];
+                } else {
+                    $response = [
+                        'status' => false,
+                        'errors' => ActiveForm::validate($lineItem),
+                    ];
+                }
+            } else {
                 $response = [
                     'status' => true,
-                    'message' => 'Item successfully updated!',
-        ];
-            } else {
-                $response = [
-                    'status' => false,
-                    'errors' => ActiveForm::validate($lineItem),
+                    'data' => $data,
                 ];
             }
-            return $response;
         } else {
-            return [
-                'status' => true,
-                'data' => $data,
+            $response = [
+                'status' => false,
+                'message' => 'Item cannot be updated if invoice posted!',
             ];
         }
-    }
-
-    public function actionEditOpeningBalance($model, $newAmount)
-    {
-        $model->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
-        $model->amount = $newAmount;
-        $model->save();
-        $payments = $model->invoice->payments;
-        if ($newAmount < 0) {
-            $model->invoice->subTotal = 0.00;
-            $model->invoice->total = $model->invoice->subTotal;
-            $model->invoice->save();
-            if (!empty($payments)) {
-                foreach ($payments as $payment) {
-                    if ($payment->isAccountEntry()) {
-                        $payment->amount = abs($newAmount);
-                        $payment->save();
-                        continue;
-                    }
-                }
-            } else {
-                $payment = new Payment();
-                $payment->amount = abs($newAmount);
-                $payment->invoiceId = $payments = $model->invoice->id;
-                $payment->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
-                $payment->reference = null;
-                $payment->save();
-            }
-        } elseif ($newAmount > 0) {
-            $model->invoice->subTotal = $model->invoice->lineItemTotal;
-            $model->invoice->total = $model->invoice->subTotal;
-            $model->invoice->save();
-            if (!empty($payments)) {
-                foreach ($payments as $payment) {
-                    if ($payment->isAccountEntry()) {
-                        $payment->delete();
-                    }
-                }
-            }
-        }
-        
-        $result = [
-            'output' => $newAmount,
-            'message' => '',
-        ];
-
-        return $result;
-    }
-
-    public function actionEditOtherItems($model, $newAmount)
-    {
-        $model->amount = $newAmount;
-        if ($model->save()) {
-            $model->trigger(InvoiceLineItem::EVENT_EDIT);
-        }
-        $result = [
-            'output' => $newAmount,
-            'message' => '',
-        ];
-
-        return $result;
+        return $response;
     }
 
     public function actionApplyDiscount()
@@ -175,59 +121,75 @@ class InvoiceLineItemController extends BaseController
         $lineItemIds = Yii::$app->request->get('InvoiceLineItem')['ids'];
         $lineItemId = end($lineItemIds);
         $model = $this->findModel($lineItemId);
-        $lineItemDiscount = LineItemMultiDiscount::loadLineItemDiscount($lineItemIds);
-        $paymentFrequencyDiscount = LineItemMultiDiscount::loadPaymentFrequencyDiscount($lineItemIds);
-        $customerDiscount = LineItemMultiDiscount::loadCustomerDiscount($lineItemIds);
-        $multiEnrolmentDiscount = LineItemMultiDiscount::loadEnrolmentDiscount($lineItemIds);
-        $data = $this->renderAjax('/invoice/_form-apply-discount', [
-            'lineItemIds' => $lineItemIds,
-            'model' => $model,
-            'customerDiscount' => $customerDiscount,
-            'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
-            'lineItemDiscount' => $lineItemDiscount,
-            'multiEnrolmentDiscount' => $multiEnrolmentDiscount
-        ]);
-        $post = Yii::$app->request->post();
-        if ($post) {
-            foreach ($lineItemIds as $lineItemId) {
-                $model = $this->findModel($lineItemId);
-                $lineItemDiscount = LineItemMultiDiscount::loadLineItemDiscount([$lineItemId]);
-                $customerDiscount = LineItemMultiDiscount::loadCustomerDiscount([$lineItemId]);
-                $lineItemDiscount->load($post);
-                $customerDiscount->load($post);
-                $lineItemDiscount->save();
-                $customerDiscount->save();
-                if ($model->isLessonItem()) {
-                    $paymentFrequencyDiscount = LineItemMultiDiscount::loadPaymentFrequencyDiscount([$lineItemId]);
-                    $multiEnrolmentDiscount = LineItemMultiDiscount::loadEnrolmentDiscount([$lineItemId]);
-                    $paymentFrequencyDiscount->load($post);
-                    $multiEnrolmentDiscount->load($post);
-                    $paymentFrequencyDiscount->save();
-                    $multiEnrolmentDiscount->save();
+        if (!$model->invoice->isPosted) {
+            $lineItemDiscount = LineItemMultiDiscount::loadLineItemDiscount($lineItemIds);
+            $paymentFrequencyDiscount = LineItemMultiDiscount::loadPaymentFrequencyDiscount($lineItemIds);
+            $customerDiscount = LineItemMultiDiscount::loadCustomerDiscount($lineItemIds);
+            $multiEnrolmentDiscount = LineItemMultiDiscount::loadEnrolmentDiscount($lineItemIds);
+            $data = $this->renderAjax('/invoice/_form-apply-discount', [
+                'lineItemIds' => $lineItemIds,
+                'model' => $model,
+                'customerDiscount' => $customerDiscount,
+                'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
+                'lineItemDiscount' => $lineItemDiscount,
+                'multiEnrolmentDiscount' => $multiEnrolmentDiscount
+            ]);
+            $post = Yii::$app->request->post();
+            if ($post) {
+                foreach ($lineItemIds as $lineItemId) {
+                    $model = $this->findModel($lineItemId);
+                    $lineItemDiscount = LineItemMultiDiscount::loadLineItemDiscount([$lineItemId]);
+                    $customerDiscount = LineItemMultiDiscount::loadCustomerDiscount([$lineItemId]);
+                    $lineItemDiscount->load($post);
+                    $customerDiscount->load($post);
+                    $lineItemDiscount->save();
+                    $customerDiscount->save();
+                    if ($model->isLessonItem()) {
+                        $paymentFrequencyDiscount = LineItemMultiDiscount::loadPaymentFrequencyDiscount([$lineItemId]);
+                        $multiEnrolmentDiscount = LineItemMultiDiscount::loadEnrolmentDiscount([$lineItemId]);
+                        $paymentFrequencyDiscount->load($post);
+                        $multiEnrolmentDiscount->load($post);
+                        $paymentFrequencyDiscount->save();
+                        $multiEnrolmentDiscount->save();
+                    }
                 }
+                $response = [
+                    'status' => true
+                ];
+            } else {
+                return [
+                    'status' => true,
+                    'data' => $data
+                ];
             }
-            return [
-                'status' => true
-            ];
         } else {
-            return [
-                'status' => true,
-                'data' => $data
+            $response = [
+                'status' => false,
+                'message' => 'Discount cannot be applied if invoice posted'
             ];
         }
+        return $response;
     }
 
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $invoiceModel = $model->invoice;
-        if ($model->delete()) {
-            $invoiceModel->save();
+        if (!$model->invoice->isPosted) {
+            $invoiceModel = $model->invoice;
+            if ($model->delete()) {
+                $invoiceModel->save();
+            }
+            $response = [
+                'status' => true,
+                'message' => 'Line Item has been deleted successfully'
+            ];
+        } else {
+            $response = [
+                'status' => false,
+                'message' => 'Line Item cannot be deleted if invoice posted'
+            ];
         }
-        return [
-            'status' => true,
-            'message' => 'Line Item has been deleted successfully'
-        ];
+        return $response;
     }
 
     protected function findModel($id)
@@ -251,33 +213,42 @@ class InvoiceLineItemController extends BaseController
     public function actionEditTax()
     {
         $lineItemIds = Yii::$app->request->get('InvoiceLineItem')['ids'];
-        $multiLineItemTax = new LineItemMultiTax();
-        $lineItem = $multiLineItemTax->setModel($lineItemIds);
-        $lineItem->setScenario(InvoiceLineItem::SCENARIO_EDIT);
-        $data = $this->renderAjax('/invoice/line-item/_form-tax', [
-            'lineItemIds' => $lineItemIds,
-            'model' => $lineItem
-        ]);
-        $post = Yii::$app->request->post();
-        if ($post) {
-            foreach ($lineItemIds as $lineItemId) {
-                $lineItem = InvoiceLineItem::findOne($lineItemId);
-                $lineItem->load($post);
-                if (!$lineItem->save()) {
-                    Yii::error('Line item discount error: '.VarDumper::dumpAsString($lineItem->getErrors()));
+        $model = $this->findModel(end($lineItemIds));
+        if (!$model->invoice->isPosted) {
+            $multiLineItemTax = new LineItemMultiTax();
+            $lineItem = $multiLineItemTax->setModel($lineItemIds);
+            $lineItem->setScenario(InvoiceLineItem::SCENARIO_EDIT);
+            $data = $this->renderAjax('/invoice/line-item/_form-tax', [
+                'lineItemIds' => $lineItemIds,
+                'model' => $lineItem
+            ]);
+            $post = Yii::$app->request->post();
+            if ($post) {
+                foreach ($lineItemIds as $lineItemId) {
+                    $lineItem = InvoiceLineItem::findOne($lineItemId);
+                    $lineItem->load($post);
+                    if (!$lineItem->save()) {
+                        Yii::error('Line item discount error: '.VarDumper::dumpAsString($lineItem->getErrors()));
+                    }
                 }
+                $lineItem->invoice->isTaxAdjusted = false;
+                $lineItem->invoice->save();
+                $response = [
+                    'status' => true,
+                    'message' => 'Tax successfully updated!'
+                ];
+            } else {
+                $response = [
+                    'status' => true,
+                    'data' => $data
+                ];
             }
-            $lineItem->invoice->isTaxAdjusted = false;
-            $lineItem->invoice->save();
-            return [
-                'status' => true,
-                'message' => 'Tax successfully updated!'
-            ];
         } else {
-            return [
-                'status' => true,
-                'data' => $data
+            $response = [
+                'status' => false,
+                'message' => 'Tax cannot be updated if invoice posted!'
             ];
         }
+        return $response;
     }
 }

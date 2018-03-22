@@ -205,6 +205,8 @@ Modal::begin([
                         $('#edit-tax-modal .modal-dialog').css({'width': '400px'});
                         $('#edit-tax-modal').modal('show');
                         $('#edit-tax-modal-content').html(response.data);
+                    } else {
+                        $('#invoice-error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                     }
                 }
             });
@@ -233,11 +235,17 @@ Modal::begin([
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Line Item</h4>');
                         $('.modal-delete').attr('action', url);
                         $('#modal-content').html(response.data);
+                    } else {
+                        $('#invoice-error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                     }
                 }
             });
         }
         return false;
+    });
+
+    $(document).on('modal-error', function (event, params) {
+        $('#modal-popup-error-notification').html(params.message).fadeIn().delay(5000).fadeOut();
     });
 
     $(document).on('modal-success', function (event, params) {
@@ -532,10 +540,11 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                 $('#customer-spinner').hide();
                 $('#adjust-tax-modal').modal('show');
                 $('#adjust-tax-modal-content').html(response.data);
+            } else {
+                $('#invoice-error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
             }
         }
     });
-    return false;
 });
 
     $(document).off('click', '.create-payment').on('click', '.create-payment', function () {
