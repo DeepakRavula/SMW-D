@@ -551,7 +551,7 @@ $(document).on("click", '.adjust-invoice-tax', function() {
     });
 
     $(document).off('click', '#post-distriute').on('click', '#post-distriute', function () {
-        invoice.distribute();
+        invoice.postAndDistribute();
         return false;
     });
 
@@ -577,7 +577,7 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                 message: 'This PFI is now fully paid. Would you like to post this document and distribute the                                               payments received to the associated lessons?',
                 callback: function(result) {
                     if (result) {
-                        invoice.distribute();
+                        invoice.postAndDistribute();
                         $('#success-notification').html('PFI has been posted succesfully!').fadeIn().delay(5000).fadeOut();
                     }
                 }
@@ -588,6 +588,20 @@ $(document).on("click", '.adjust-invoice-tax', function() {
             $('#invoice-spinner').show();
             $.ajax({
                 url    : '<?= Url::to(['invoice/distribute', 'id' => $model->id]); ?>',
+                type   : 'post',
+                dataType: "json",
+                success: function()
+                {
+                    invoice.reload();
+                    $('#success-notification').html('Funds distributed succesfully!').fadeIn().delay(5000).fadeOut();
+                }
+            });
+        },
+
+        postAndDistribute: function() {
+            $('#invoice-spinner').show();
+            $.ajax({
+                url    : '<?= Url::to(['invoice/post-distribute', 'id' => $model->id]); ?>',
                 type   : 'post',
                 dataType: "json",
                 success: function()
