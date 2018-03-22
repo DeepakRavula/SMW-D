@@ -22,6 +22,7 @@ class Payment extends ActiveRecord
 {
     public $invoiceId;
     public $lessonId;
+    public $old;
     public $credit;
     public $amountNeeded;
     public $sourceId;
@@ -30,10 +31,12 @@ class Payment extends ActiveRecord
     public $userName;
     
     const TYPE_OPENING_BALANCE_CREDIT = 1;
+    const SCENARIO_EDIT = 'edit';
     const SCENARIO_APPLY_CREDIT = 'apply-credit';
     const SCENARIO_CREDIT_APPLIED = 'credit-applied';
     const SCENARIO_OPENING_BALANCE = 'allow-negative-payments';
     const SCENARIO_CREDIT_USED = 'credit-used';
+    const SCENARIO_CREDIT_USED_EDIT = 'credit-used-edit';
     const SCENARIO_ACCOUNT_ENTRY = 'account-entry';
     const SCENARIO_LESSON_CREDIT = 'lesson-credit';
     
@@ -55,15 +58,17 @@ class Payment extends ActiveRecord
     public function rules()
     {
         return [
+            [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
             [['amount'], 'validateNegativeBalance'],
             [['amount'], 'number'],
-            [['payment_method_id', 'user_id', 'reference', 'date', 
+            [['payment_method_id', 'user_id', 'reference', 'date', 'old',
                'sourceId', 'credit', 'isDeleted', 'transactionId','notes'], 'safe'],
             ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
-                self::SCENARIO_CREDIT_USED]],
-            ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => self::SCENARIO_CREDIT_USED],
+                self::SCENARIO_CREDIT_USED, self::SCENARIO_CREDIT_USED_EDIT]],
+            ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
+                self::SCENARIO_CREDIT_USED_EDIT]],
         ];
     }
 
@@ -85,6 +90,15 @@ class Payment extends ActiveRecord
         $invoiceModel = Invoice::findOne(['id' => $this->sourceId]);
         if (round(abs($invoiceModel->balance), 2) < round(abs($this->amount), 2)) {
             return $this->addError($attributes, "Insufficient credt");
+        }
+    }
+
+    public function validateOnEdit($attributes)
+    {
+        if (round($this->old['amount'], 2) !== round($this->amount, 2)) {
+            if ($this->invoice->isProFormaInvoice() && $this->invoice->hasCreditUsed()) {
+                return $this->addError($attributes, "Can't adjust payment before retract lesson credit");
+            }
         }
     }
     /**
@@ -230,10 +244,6 @@ class Payment extends ActiveRecord
             $invoicePaymentModel->payment_id = $this->id;
             $invoicePaymentModel->save();
             $this->invoice->save();
-
-            if ($this->invoice->isProFormaInvoice() && !$this->isCreditUsed()) {
-                $this->invoice->addLessonCredit();
-            }
         }
         $this->trigger(self::EVENT_CREATE);
         
@@ -271,9 +281,43 @@ class Payment extends ActiveRecord
         return $this->invoice->getCustomerAccountBalance($this->user_id);
     }
 
+    public function isAutoPayments()
+    {
+        return $this->isCreditApplied() || $this->isCreditUsed();
+    }
+
+    public function canDelete()
+    {
+        $canDelete = true;
+        if ($this->invoice->isProFormaInvoice() && $this->invoice->hasCreditUsed()) {
+            $canDelete = false;
+        }
+        return $canDelete;
+    }
+
     public function afterSoftDelete()
     {
-        return $this->invoice->save();
+        if ($this->isAutoPayments()) {
+            if ($this->isCreditApplied()) {
+                if ($this->creditUsage->debitUsagePayment) {
+                    $this->creditUsage->debitUsagePayment->delete();
+                }
+                if ($this->lessonCredit) {
+                    $lesson = $this->lessonCredit->lesson;
+                    foreach ($lesson->getCreditUsedPayment($this->lessonCredit->enrolmentId) as $credit) {
+                        $credit->delete();
+                    }
+                }
+            } else {
+                if ($this->debitUsage->creditUsagePayment) {
+                    $this->debitUsage->creditUsagePayment->delete();
+                }
+            }
+        }
+        if ($this->invoice) {
+            $this->invoice->save();
+        }
+        return true;
     }
 
     public function addOpeningBalance()

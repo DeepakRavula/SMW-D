@@ -8,14 +8,11 @@ use backend\models\search\PaymentSearch;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Invoice;
-use common\models\PaymentMethod;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
-use common\models\CreditUsage;
 use yii\filters\ContentNegotiator;
 use yii\filters\AccessControl;
 use yii\data\ArrayDataProvider;
-use common\models\ItemType;
 use common\components\controllers\BaseController;
 
 /**
@@ -114,28 +111,38 @@ class PaymentController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->old = clone $model;
+        $model->setScenario(Payment::SCENARIO_EDIT);
         $model->date = (new \DateTime($model->date))->format('d-m-Y');
         if ($model->isCreditUsed()) {
-            $model->setScenario(Payment::SCENARIO_CREDIT_USED);
+            $model->setScenario(Payment::SCENARIO_CREDIT_USED_EDIT);
         }
         $data = $this->renderAjax('/invoice/payment/_form', [
             'model' => $model,
         ]);
         $request = Yii::$app->request;
-        if ($model->load($request->post())) {
+        if ($request->post()) {
+            $model->load($request->post());
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
-            $model->save();
-            $model->invoice->save();
-            $response = [
-                'status' => true
-            ];
-            return $response;
+            if ($model->save()) {
+                $model->invoice->save();
+                $response = [
+                    'status' => true
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model)
+                ];
+            }
         } else {
-            return [
-                    'status' => true,
-                    'data' => $data,
+            $response = [
+                'status' => true,
+                'canDelete' => $model->canDelete(),
+                'data' => $data,
             ];
         }
+        return $response;
     }
 
     /**
@@ -150,7 +157,9 @@ class PaymentController extends BaseController
     {
         $model        = $this->findModel($id);
         $modelInvoice = $model->invoice;
-        $model->delete();
+        if ($model->canDelete()) {
+            $model->delete();
+        }
         $modelInvoice->save();
         
         return [
@@ -203,13 +212,14 @@ class PaymentController extends BaseController
                 $transaction->commit();
                 return [
                     'status' => true,
+                    'canPost' => $paymentModel->invoice->canPost()
                 ];
             } else {
                 $errors = ActiveForm::validate($paymentModel);
                 return [
-                'status' => false,
-                'errors' => $errors,
-            ];
+                    'status' => false,
+                    'errors' => $errors,
+                ];
             }
         }
     }
