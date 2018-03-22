@@ -117,7 +117,8 @@
     "codeception/codeception": "^2.0",
     "codeception/specify": "^0.4.3",
     "codeception/verify": "^0.3.0",
-    "deployer/deployer": "^6.1"
+    "deployer/deployer": "^6.1",
+    "deployer/recipes": "^6.0"
   },
   "suggest": {
     "trntv/yii2-debug-xhprof": "dev-master@dev"
