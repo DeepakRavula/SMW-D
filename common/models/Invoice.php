@@ -689,10 +689,12 @@ class Invoice extends \yii\db\ActiveRecord
         foreach ($this->lineItems as $item) {
             if ($item->isGroupLesson()) {
                 $enrolment = $item->enrolment;
+                $lesson = $item->lesson;
             } else {
                 $enrolment = $item->proFormaLesson->enrolment;
+                $lesson = $item->proFormaLesson;
             }
-            if (!$item->proFormaLesson->hasLessonCredit($enrolment->id)) {
+            if (!$lesson->hasLessonCredit($enrolment->id)) {
                 $canRetractcredits = false;
                 break;
             }

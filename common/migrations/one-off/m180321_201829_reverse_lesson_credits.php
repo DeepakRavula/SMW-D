@@ -2,6 +2,7 @@
 
 use yii\db\Migration;
 use common\models\User;
+use common\models\Invoice;
 use common\models\Payment;
 
 /**
@@ -22,31 +23,25 @@ class m180321_201829_reverse_lesson_credits extends Migration
     public function safeUp()
     {
         $payments = Payment::find()
+            ->notDeleted()
             ->creditUsed()
             ->joinWith(['invoice' => function ($query) {
                 $query->proFormaInvoice()->deleted();
             }])
             ->all();        
         foreach ($payments as $payment) {
-            $invoice = $payment->invoice;
-            foreach ($invoice->creditUsedPayments as $credit) {
-                $credit->delete();
-            }
+            $payment->delete();
         }
         $payments = Payment::find()
+            ->notDeleted()
             ->creditUsed()
             ->joinWith(['invoice' => function ($query) {
-                $query->proFormaInvoice()->notDeleted();
+                $query->proFormaInvoice()->notDeleted()->unpaid();
             }])
             ->all();
         foreach ($payments as $payment) {
-            $invoice = $payment->invoice;
-            if (!$invoice->isPaid()) {
-                foreach ($invoice->creditUsedPayments as $credit) {
-                    $credit->delete();
-                }
-                $invoice->updateAttributes(['isPosted' => false]);
-            }
+            $payment->delete();
+            $payment->invoice->updateAttributes(['isPosted' => false]);
         }
     }
 
