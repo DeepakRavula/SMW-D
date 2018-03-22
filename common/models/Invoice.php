@@ -326,6 +326,16 @@ class Invoice extends \yii\db\ActiveRecord
         return (bool) $this->isDeleted;
     }
 
+    public function canDistributeCreditsToLesson()
+    {
+        return $this->isPosted && !$this->hasCreditUsed();
+    }
+
+    public function canPost()
+    {
+        return $this->isProFormaInvoice() && $this->isPaid() && !$this->isPosted;
+    }
+
     public function hasCredit()
     {
         return (int) $this->status === (int) self::STATUS_CREDIT;
@@ -675,12 +685,19 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function canRetractCredits()
     {
+        $canRetractcredits = $this->hasCreditUsed();
         foreach ($this->lineItems as $item) {
-            if ($item->proFormaLesson->hasInvoice()) {
-                return false;
+            if ($item->isGroupLesson()) {
+                $enrolment = $item->enrolment;
+            } else {
+                $enrolment = $item->proFormaLesson->enrolment;
+            }
+            if (!$item->proFormaLesson->hasLessonCredit($enrolment->id)) {
+                $canRetractcredits = false;
+                break;
             }
         }
-        return $this->hasCreditUsed();
+        return $canRetractcredits;
     }
 
     public function hasCreditUsed()

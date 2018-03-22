@@ -141,12 +141,6 @@ if (!empty($lineItem)) {
     'model' => $model,
 ]); ?>
 <?php Modal::end();?>
-<?php Modal::begin([
-    'header' => '<h4 class="m-0">Edit Payment</h4>',
-    'id' => 'payment-edit-modal',
-]); ?>
-<div id="payment-edit-content"></div>
-<?php Modal::end();?>
 
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Add Walk-in</h4>',
@@ -321,10 +315,10 @@ Modal::begin([
                 success: function(response)
                 {
                     if (response.status && response.hasCredit) {
-						var amountNeeded = <?= $amount; ?>;
+                        var amountNeeded = <?= $amount; ?>;
                         $('#modal-content').html(response.data);
                         $('#popup-modal').modal('show');
-						$('#payment-amountneeded').val((amountNeeded).toFixed(2));
+                        $('#payment-amountneeded').val((amountNeeded).toFixed(2));
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Apply Credit</h4>');
                         $('.modal-save').text('Pay now')
                     } else {
@@ -425,150 +419,105 @@ Modal::begin([
 		});
 		return false;
 	});
-	$(document).on("click", "#payment-grid tbody > tr", function() {
-        $('#payment-edit-modal .modal-dialog').css({'width': '400px'});
-		var paymentId = $(this).data('key');	
-		$.ajax({
-			url    : '<?= Url::to(['payment/update']); ?>?id=' + paymentId,
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-					$('#payment-edit-content').html(response.data);
-					$('#payment-edit-modal').modal('show');
-				}
-			}
-		});
-		return false;
-	});
-	
-	$(document).on('beforeSubmit', '#payment-edit-form', function (e) {
-            $('#payment-edit-spinner').show();
-            $.ajax({
-                url    : $(this).attr('action'),
-                type   : 'post',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-                    if(response.status)
-                    {
-                        $('#payment-edit-spinner').hide();
-                        invoice.reload();
-                        $('input[name="Payment[amount]"]').val(response.amount);
-                        $('#payment-edit-modal').modal('hide');
-                    }
-                }
-            });
-            return false;
-	});
-        
-	$(document).on('click', '#payment-delete-button', function (e) {
-            var paymentId = $('#payment-grid tbody > tr').data('key');
-            $.ajax({
-                url    : '<?= Url::to(['payment/delete']); ?>?id=' + paymentId,
-                type   : 'get',
-                success: function(response)
-                {
-                    if(response.status)
-                    {
-                        $.pjax.reload({container : '#invoice-view', timeout : 6000});
-                        $('#payment-edit-modal').modal('hide');
-                    }
-                }
-            });
-            return false;
-	});
 
-	$(document).on("click", '.line-item-cancel', function() {
-            $('#line-item-edit-modal').modal('hide');
+    $(document).on("click", "#payment-grid tbody > tr", function() {
+        var paymentId = $(this).data('key');
+        var url = '<?= Url::to(['payment/delete']); ?>?id=' + paymentId;
+        $.ajax({
+            url    : '<?= Url::to(['payment/update']); ?>?id=' + paymentId,
+            type   : 'get',
+            dataType: "json",
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Payment</h4>');
+                    $('#popup-modal .modal-dialog').css({'width': '400px'});
+                    if (response.canDelete) {
+                        $('#modal-delete').show();
+                        $('.modal-delete').attr('action', url);
+                    }
+                }
+            }
+        });
+        return false;
+    });
+	
+    $(document).on('beforeSubmit', '#customer-form', function (e) {
+            $.ajax({
+                    url    : $(this).attr('action'),
+                    type   : 'post',
+                    dataType: "json",
+                    data   : $(this).serialize(),
+                    success: function(response)
+                    {
+                       if(response.status)
+                       {
+                                    $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
+                                    $('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
+                                    $('#invoice-customer-modal').modal('hide');
+                            }else
+                            {
+                             $('#customer-form').yiiActiveForm('updateMessages',
+                                    response.errors, true);
+                            }
+                    }
+            });
             return false;
-	});
-        
-    $(document).on("click", '.mail-view-cancel-button', function() {
-		$('#invoice-mail-modal').modal('hide');
-		return false;
-	});
-	$(document).on("click", '.payment-cancel', function() {
-		$('#payment-edit-modal').modal('hide');
-		return false;
-	});
-	$(document).on('beforeSubmit', '#customer-form', function (e) {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-					$.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
-					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                                        $('#invoice-customer-modal').modal('hide');
-				}else
-				{
-				 $('#customer-form').yiiActiveForm('updateMessages',
-					response.errors, true);
-				}
-			}
-		});
-		return false;
-	});
-	$(document).on('beforeSubmit', '#walkin-customer-form', function (e) {
-		$.ajax({
-			url    : $(this).attr('action'),
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-					$.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
-					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                                        $('#walkin-modal').modal('hide');
-				}else
-				{
-				 $('#walkin-customer-form').yiiActiveForm('updateMessages',
-					response.errors, true);
-				}
-			}
-		});
-		return false;
-	});
-        $(document).on("click", '.add-customer-invoice', function() {
-           $('#customer-spinner').show();
-             var customerId=$(this).attr('data-key');
-             var params = $.param({'customerId': customerId });
-	$.ajax({
-            url    : '<?= Url::to(['invoice/update-customer' ,'id' => $model->id]); ?>&' + params,
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-                   $('#customer-spinner').hide();
-                    $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
-					$('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                    $('#customer-modal').modal('hide');
-                               
-				}
-			}
-		});
-		return false;
-	});
+    });
+    $(document).on('beforeSubmit', '#walkin-customer-form', function (e) {
+            $.ajax({
+                    url    : $(this).attr('action'),
+                    type   : 'post',
+                    dataType: "json",
+                    data   : $(this).serialize(),
+                    success: function(response)
+                    {
+                       if(response.status)
+                       {
+                                    $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
+                                    $('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
+                                    $('#walkin-modal').modal('hide');
+                            }else
+                            {
+                             $('#walkin-customer-form').yiiActiveForm('updateMessages',
+                                    response.errors, true);
+                            }
+                    }
+            });
+            return false;
+    });
+    $(document).on("click", '.add-customer-invoice', function() {
+       $('#customer-spinner').show();
+         var customerId=$(this).attr('data-key');
+         var params = $.param({'customerId': customerId });
+    $.ajax({
+        url    : '<?= Url::to(['invoice/update-customer' ,'id' => $model->id]); ?>&' + params,
+                    type   : 'post',
+                    dataType: "json",
+                    data   : $(this).serialize(),
+                    success: function(response)
+                    {
+                       if(response.status)
+                       {
+               $('#customer-spinner').hide();
+                $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
+                                    $('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
+                $('#customer-modal').modal('hide');
+
+                            }
+                    }
+            });
+            return false;
+    });
  
-  $(document).on("click", '#print-btn', function() {  
-    var url = '<?= Url::to(['print/invoice' ,'id' => $model->id]); ?>';
+    $(document).on("click", '#print-btn', function() {
+        var url = '<?= Url::to(['print/invoice' ,'id' => $model->id]); ?>';
         window.open(url,'_blank');
         return false;
-  }); 
+    });
 });
 
 $(document).on("click", '.adjust-invoice-tax', function() {
@@ -629,6 +578,7 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                 callback: function(result) {
                     if (result) {
                         invoice.distribute();
+                        $('#success-notification').html('PFI has been posted succesfully!').fadeIn().delay(5000).fadeOut();
                     }
                 }
             });
@@ -637,12 +587,13 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         distribute: function() {
             $('#invoice-spinner').show();
             $.ajax({
-                url    : '<?= Url::to(['invoice/post-distribute', 'id' => $model->id]); ?>',
+                url    : '<?= Url::to(['invoice/distribute', 'id' => $model->id]); ?>',
                 type   : 'post',
                 dataType: "json",
                 success: function()
                 {
                     invoice.reload();
+                    $('#success-notification').html('Funds distributed succesfully!').fadeIn().delay(5000).fadeOut();
                 }
             });
         },
@@ -656,6 +607,7 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                 success: function()
                 {
                     invoice.reload();
+                    $('#success-notification').html('PFI has been un-posted succesfully!').fadeIn().delay(5000).fadeOut();
                 }
             });
         },
@@ -669,6 +621,7 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                 success: function()
                 {
                     invoice.reload();
+                    $('#success-notification').html('Funds retracted succesfully!').fadeIn().delay(5000).fadeOut();
                 }
             });
         },
