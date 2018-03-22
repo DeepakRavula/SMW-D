@@ -22,7 +22,6 @@ class m180321_201829_reverse_lesson_credits extends Migration
     public function safeUp()
     {
         $payments = Payment::find()
-            ->location(14)
             ->creditUsed()
             ->joinWith(['invoice' => function ($query) {
                 $query->proFormaInvoice()->deleted();
@@ -35,7 +34,6 @@ class m180321_201829_reverse_lesson_credits extends Migration
             }
         }
         $payments = Payment::find()
-            ->location(14)
             ->creditUsed()
             ->joinWith(['invoice' => function ($query) {
                 $query->proFormaInvoice()->notDeleted();
