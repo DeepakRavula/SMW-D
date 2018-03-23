@@ -333,7 +333,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function canPost()
     {
-        return $this->isProFormaInvoice() && $this->isPaid() && !$this->isPosted;
+        return $this->isProFormaInvoice() && !$this->isPosted;
     }
 
     public function hasCredit()

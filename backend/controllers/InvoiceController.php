@@ -45,7 +45,7 @@ class InvoiceController extends BaseController
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => [
-                    'delete', 'note', 'get-payment-amount', 'update-customer',
+                    'delete', 'note', 'get-payment-amount', 'update-customer', 'post',
                     'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax', 'mail',
                     'post-distribute', 'retract-credits', 'unpost', 'distribute'
                 ],
@@ -63,7 +63,7 @@ class InvoiceController extends BaseController
                             'compute-tax', 'create', 'update', 'delete', 'update-mail-status',
                             'all-completed-lessons', 'adjust-tax', 'revert-invoice', 'enrolment',
                             'invoice-payment-cycle', 'group-lesson','get-payment-amount',
-                            'post-distribute', 'retract-credits', 'unpost', 'distribute'
+                            'post-distribute', 'retract-credits', 'unpost', 'distribute', 'post'
                         ],
                         'roles' => [
                             'manageInvoices', 'managePfi'
@@ -684,6 +684,16 @@ class InvoiceController extends BaseController
             $model->isPosted = true;
             $model->save();
             $model->distributeCreditsToLesson();
+        }
+        return true;
+    }
+
+    public function actionPost($id)
+    {
+        $model = Invoice::findOne($id);
+        if ($model->canPost()) {
+            $model->isPosted = true;
+            $model->save();
         }
         return true;
     }

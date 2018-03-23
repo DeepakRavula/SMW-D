@@ -22,6 +22,11 @@ use yii\widgets\Pjax;
         <button class="btn dropdown-toggle" data-toggle="dropdown">More Action&nbsp;&nbsp;<span class="caret"></span></button>
         <ul class="dropdown-menu dropdown-menu-right">
             <?php if ($model->canPost()) : ?>
+            <li><a id="post" href="#">Post</a></li>
+            <?php else : ?>
+            <li><a class="multiselect-disable" href="#">Post</a></li>
+            <?php endif; ?>
+            <?php if ($model->canPost() && $model->canDistributeCredits()) : ?>
             <li><a id="post-distriute" href="#">Post & Distribute</a></li>
             <?php else : ?>
             <li><a class="multiselect-disable" href="#">Post & Distribute</a></li>

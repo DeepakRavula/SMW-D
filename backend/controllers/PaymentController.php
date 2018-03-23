@@ -140,6 +140,7 @@ class PaymentController extends BaseController
         } else {
             $response = [
                 'status' => true,
+                'canDelete' => $model->canDelete(),
                 'data' => $data,
             ];
         }
@@ -158,9 +159,6 @@ class PaymentController extends BaseController
     {
         $model        = $this->findModel($id);
         $model->setScenario(Payment::SCENARIO_DELETE);
-        if ($model->isCreditUsed()) {
-            $model->setScenario(Payment::SCENARIO_CREDIT_USED_DELETE);
-        }
         $modelInvoice = $model->invoice;
         if ($model->validate()) {
             $model->delete();
@@ -224,7 +222,7 @@ class PaymentController extends BaseController
                 $transaction->commit();
                 return [
                     'status' => true,
-                    'canPost' => $paymentModel->invoice->canPost()
+                    'canPost' => $paymentModel->invoice->isPaid()
                 ];
             } else {
                 $errors = ActiveForm::validate($paymentModel);

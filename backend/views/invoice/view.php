@@ -416,7 +416,7 @@ Modal::begin([
                                 $('#payment-add-spinner').hide();
                                 $('#payment-modal').modal('hide');
                                 if (response.canPost) {
-                                    invoice.post();
+                                    invoice.postAfterPaid();
                                 }
                                 invoice.reload();
                                 $('#add-payment-spinner').hide();
@@ -445,8 +445,10 @@ Modal::begin([
                     $('#popup-modal').modal('show');
                     $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Payment</h4>');
                     $('#popup-modal .modal-dialog').css({'width': '400px'});
-                    $('#modal-delete').show();
-                    $('.modal-delete').attr('action', url);
+                    if (response.canDelete) {
+                        $('#modal-delete').show();
+                        $('.modal-delete').attr('action', url);
+                    }
                 }
             }
         });
@@ -579,8 +581,27 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         return false;
     });
 
+    $(document).off('click', '#post').on('click', '#post', function () {
+        invoice.post();
+        return false;
+    });
+
     var invoice = {
-        post: function () {
+        post: function() {
+            $('#invoice-spinner').show();
+            $.ajax({
+                url    : '<?= Url::to(['invoice/post', 'id' => $model->id]); ?>',
+                type   : 'post',
+                dataType: "json",
+                success: function()
+                {
+                    invoice.reload();
+                    $('#success-notification').html('PFI posted succesfully!').fadeIn().delay(5000).fadeOut();
+                }
+            });
+        },
+        
+        postAfterPaid: function () {
             $('#invoice-spinner').show();
             bootbox.confirm({
                 message: 'This PFI is now fully paid. Would you like to post this document and distribute the                                               payments received to the associated lessons?',

@@ -116,14 +116,8 @@ class Payment extends ActiveRecord
 
     public function validateOnDelete($attributes)
     {
-        if ($this->invoice->isProFormaInvoice() && $this->invoice->hasCreditUsed()) {
+        if ($this->invoice->isProFormaInvoice() && $this->invoice->hasCreditUsed() && !$this->isCreditUsed()) {
             $this->addError($attributes, "Can't delete payment before retract lesson credit");
-        }
-        if ($this->invoice->isInvoice() && $this->isCreditUsed()) {
-            $appliedInvoice = $this->debitUsage->creditUsagePayment->invoice;
-            if ($appliedInvoice->isProFormaInvoice() && $appliedInvoice->hasCreditUsed()) {
-                $this->addError($attributes, "Can't delete payment before retract lesson credit");
-            }
         }
     }
     /**
@@ -313,11 +307,7 @@ class Payment extends ActiveRecord
 
     public function canDelete()
     {
-        $canDelete = true;
-        if ($this->invoice->isProFormaInvoice() && $this->invoice->hasCreditUsed()) {
-            $canDelete = false;
-        }
-        return $canDelete;
+        return !$this->isAutoPayments();
     }
 
     public function afterSoftDelete()
