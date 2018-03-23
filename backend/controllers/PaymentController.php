@@ -127,18 +127,19 @@ class PaymentController extends BaseController
             if ($model->save()) {
                 $model->invoice->save();
                 $response = [
-                    'status' => true
+                    'status' => true,
+                    'message' => 'Payment succesfully updated!'
                 ];
             } else {
+                $errors = ActiveForm::validate($model);
                 $response = [
                     'status' => false,
-                    'errors' => ActiveForm::validate($model)
+                    'errors' => $errors
                 ];
             }
         } else {
             $response = [
                 'status' => true,
-                'canDelete' => $model->canDelete(),
                 'data' => $data,
             ];
         }
@@ -156,15 +157,26 @@ class PaymentController extends BaseController
     public function actionDelete($id)
     {
         $model        = $this->findModel($id);
-        $modelInvoice = $model->invoice;
-        if ($model->canDelete()) {
-            $model->delete();
+        $model->setScenario(Payment::SCENARIO_DELETE);
+        if ($model->isCreditUsed()) {
+            $model->setScenario(Payment::SCENARIO_CREDIT_USED_DELETE);
         }
-        $modelInvoice->save();
-        
-        return [
-            'status' => true,
-        ];
+        $modelInvoice = $model->invoice;
+        if ($model->validate()) {
+            $model->delete();
+            $modelInvoice->save();
+            $response = [
+                'status' => true,
+                'message' => 'Payment succesfully deleted!'
+            ];
+        } else {
+            $errors = current($model->getErrors());
+            $response = [
+                'status' => false,
+                'message' => current($errors)
+            ];
+        }
+        return $response;
     }
 
     /**
@@ -247,7 +259,8 @@ class PaymentController extends BaseController
                 $model->addPayment($invoiceModel, $paymentModel->amount);
                 $invoiceModel->save();
                 $response = [
-                    'status' => true
+                    'status' => true,
+                    'message' => 'Payment succesfully applied!'
                 ];
             } else {
                 $response = [

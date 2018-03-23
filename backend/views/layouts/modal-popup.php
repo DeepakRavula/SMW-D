@@ -100,7 +100,6 @@ Modal::begin([
                                 $(document).trigger("modal-delete", response);
                             } else {
                                 $('#modal-spinner').hide();
-                                $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
                                 $(document).trigger("modal-error", response);
                             }
                         }
