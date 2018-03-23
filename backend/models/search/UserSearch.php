@@ -125,7 +125,7 @@ class UserSearch extends User
             ]
         ]);
 	$dataProvider->sort->defaultOrder = [
-          'lastname' => SORT_DESC,
+          'lastname' => SORT_ASC,
 	    ];
         $query->joinWith(['emails' => function ($query) {
             $query->andFilterWhere(['like', 'email', $this->email]);
