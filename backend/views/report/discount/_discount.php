@@ -95,6 +95,7 @@ use kartik\grid\GridView;
             ],
             [
                 'label' => 'Item($)',
+		'format' => ['decimal', 2],
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:60px;'],
                 'value' => function ($data) {
