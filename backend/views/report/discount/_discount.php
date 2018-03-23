@@ -73,6 +73,7 @@ use kartik\grid\GridView;
             ],
             [
                 'label' => 'Enrol($)',
+		'format' => ['decimal', 2],
                 'hAlign' => 'right',
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px; width:80px;'],
                 'value' => function ($data) {
