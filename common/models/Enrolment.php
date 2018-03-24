@@ -630,4 +630,9 @@ class Enrolment extends \yii\db\ActiveRecord
         }
         return $amount;
     }
+
+    public function extendToEndDate()
+    {
+        
+    }
 }
