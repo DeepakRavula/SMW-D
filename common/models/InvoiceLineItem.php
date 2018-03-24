@@ -170,7 +170,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId'])
                 ->via('lineItemEnrolment');
         } else {
-            return $this->hasOne(Enrolment::className(), ['id' => 'enrolment'])
+            return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId'])
                 ->via('paymentCycle');
         }
     }
