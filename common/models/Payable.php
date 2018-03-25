@@ -182,15 +182,16 @@ trait Payable
         }
     }
 
-    public function addLessonCredit()
+    public function distributeCreditsToLesson()
     {
-	if ($this->lineItem) {
+	if ($this->lineItem && $this->canDistributeCreditsToLesson()) {
             if ($this->lineItem->isGroupLesson()) {
                 $this->addGroupLessonCredit();
             } else {
                 $this->addPrivateLessonCredit();
             }
         }
+        return true;
     }
     
     public function addLessonPayment($paymentId, $enrolmentId)

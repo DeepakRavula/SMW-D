@@ -36,7 +36,6 @@ class BackendAsset extends AssetBundle
         'yii\web\YiiAsset',
         'common\assets\AdminLte',
         'common\assets\Html5shiv',
-        'common\assets\MarionetteJS',
     ];
 
     public function init()

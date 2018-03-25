@@ -37,7 +37,6 @@ class FrontendAsset extends AssetBundle
     public $depends = [
         'yii\web\YiiAsset',
         'common\assets\AdminLte',
-        'common\assets\MarionetteJS',
         'yii\bootstrap\BootstrapAsset',
         'common\assets\Html5shiv',
     ];

@@ -44,6 +44,11 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+    public function deleted()
+    {
+        return $this->andWhere(['invoice.isDeleted' => true]);
+    }
+
     public function notCanceled()
     {
         return $this->andWhere(['invoice.isCanceled' => false]);

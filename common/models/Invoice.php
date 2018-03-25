@@ -94,7 +94,7 @@ class Invoice extends \yii\db\ActiveRecord
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
             [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 'date',
-                'transactionId', 'balance', 'taxAdjusted', 'isTaxAdjusted'], 'safe']
+                'transactionId', 'balance', 'taxAdjusted', 'isTaxAdjusted', 'isPosted'], 'safe']
         ];
     }
 
@@ -224,6 +224,13 @@ class Invoice extends \yii\db\ActiveRecord
                 ->viaTable('invoice_reverse', ['invoiceId' => 'id']);
     }
 
+    public function getCreditUsedPayments()
+    {
+        return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
+            ->via('invoicePayments')
+            ->onCondition(['payment.isDeleted' => false, 'payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
+    }
+
     public function getPayments()
     {
         return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
@@ -317,6 +324,16 @@ class Invoice extends \yii\db\ActiveRecord
     public function isDeleted()
     {
         return (bool) $this->isDeleted;
+    }
+
+    public function canDistributeCreditsToLesson()
+    {
+        return $this->isPosted && !$this->hasCreditUsed();
+    }
+
+    public function canPost()
+    {
+        return $this->isProFormaInvoice() && !$this->isPosted;
     }
 
     public function hasCredit()
@@ -515,6 +532,9 @@ class Invoice extends \yii\db\ActiveRecord
                 $attribute,
                     'Pro-forma invoice can\'t be deleted when there payments associated. Please delete the payments and try again'
             );
+        } 
+        if ($this->isProFormaInvoice() && $this->isPosted) {
+            $this->addError($attribute, 'PFI cannot be deleted after posted!');
         }
     }
 
@@ -595,6 +615,7 @@ class Invoice extends \yii\db\ActiveRecord
             $this->isCanceled     = false;
             $this->balance = 0;
             $this->isDeleted = false;
+            $this->isPosted = false;
         } else {
             if ($this->isProformaPaymentFrequencyApplicable()) {
                 $this->createProformaPaymentFrequency();
@@ -663,6 +684,50 @@ class Invoice extends \yii\db\ActiveRecord
     public function accountBalance()
     {
         return $this->getCustomerAccountBalance($this->user_id);
+    }
+
+    public function canRetractCredits()
+    {
+        $canRetractcredits = $this->hasCreditUsed();
+        foreach ($this->lineItems as $item) {
+            if ($item->isGroupLesson()) {
+                $enrolment = $item->enrolment;
+                $lesson = $item->lesson;
+            } else {
+                $enrolment = $item->proFormaLesson->enrolment;
+                $lesson = $item->proFormaLesson;
+            }
+            if (!$lesson->hasLessonCredit($enrolment->id)) {
+                $canRetractcredits = false;
+                break;
+            }
+        }
+        return $canRetractcredits;
+    }
+
+    public function hasCreditUsed()
+    {
+        return !empty($this->creditUsedPayments);
+    }
+
+    public function canDistributeCredits()
+    {
+        return !$this->hasCreditUsed() && $this->isPosted && $this->isPaid();
+    }
+
+    public function canUnpost()
+    {
+        return !$this->hasCreditUsed() && $this->isPosted;
+    }
+
+    public function retractCreditsFromLessons()
+    {
+        if ($this->canRetractCredits()) {
+            foreach ($this->creditUsedPayments as $credit) {
+                $credit->delete();
+            }
+        }
+        return true;
     }
 
     public function getStudentProgramName()
