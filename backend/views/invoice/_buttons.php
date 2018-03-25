@@ -7,6 +7,7 @@ use yii\widgets\Pjax;
 ?>
 
 <?php Pjax::Begin(['id' => 'invoice-header-summary']) ?>
+<div id="invoice-header">
 <?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
     <?php if ((bool) !$model->isDeleted()): ?>
 	<?=	Html::a(
@@ -78,4 +79,5 @@ use yii\widgets\Pjax;
     \NumberFormatter::MIN_FRACTION_DIGITS => 2,
     \NumberFormatter::MAX_FRACTION_DIGITS => 2,
 ]]); ?> &nbsp;&nbsp;
+</div>
 <?php Pjax::end();?>

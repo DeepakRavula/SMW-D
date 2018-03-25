@@ -35,6 +35,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 <div id="view-danger-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
+<br>
 <div class="row">
 	<div class="col-md-6">
 		<?=
