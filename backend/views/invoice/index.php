@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\Invoice;
-use common\components\gridView\AdminLteGridView;
+use common\components\gridView\KartikGridView;
 use backend\models\search\InvoiceSearch;
 use kartik\daterange\DateRangePicker;
 
@@ -32,9 +32,14 @@ $this->params['action-button'] = $actionButton; ?>
                     },
                 ],
                 [
-					'attribute' => 'dateRange',
+		'attribute' => 'dateRange',
                     'label' => 'Due Date',
-					     'filter' => DateRangePicker::widget([
+                    'value' => function ($data) {
+                        $date = Yii::$app->formatter->asDate($data->dueDate);
+                        return !empty($date) ? $date : null;
+                    },
+			  'filterType' => KartikGridView::FILTER_DATE_RANGE,
+			  'filterWidgetOptions' => [
                     'model' => $searchModel,
                     'convertFormat' => true,
                     'initRangeExpr' => true,
@@ -53,12 +58,7 @@ $this->params['action-button'] = $actionButton; ?>
                         ],
                         'opens' => 'right'
                     ],
-                ]),
-                    'value' => function ($data) {
-                        $date = Yii::$app->formatter->asDate($data->dueDate);
-
-                        return !empty($date) ? $date : null;
-                    },
+                ],
                 ],
                 [
 					'attribute' => 'customer',
@@ -143,9 +143,10 @@ $this->params['action-button'] = $actionButton; ?>
                     },
                 ],
                 [
-					'attribute' => 'date',
+					'attribute' => 'invoiceDateRange',
 					'label' => 'Date',
-					'filter' => DateRangePicker::widget([
+					'filterType' => KartikGridView::FILTER_DATE_RANGE,
+			  'filterWidgetOptions' => [
                     'model' => $searchModel,
                     'convertFormat' => true,
                     'initRangeExpr' => true,
@@ -164,7 +165,7 @@ $this->params['action-button'] = $actionButton; ?>
                         ],
                         'opens' => 'right'
                     ],
-                ]),
+                ],
                     'value' => function ($data) {
                         $date = Yii::$app->formatter->asDate($data->date);
 
@@ -238,7 +239,7 @@ $this->params['action-button'] = $actionButton; ?>
         'id' => 'invoice-listing',
         'timeout' => 6000,
     ]) ?>
-    <?php echo AdminLteGridView::widget([
+    <?php echo KartikGridView::widget([
         'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,
         'summary' => false,
