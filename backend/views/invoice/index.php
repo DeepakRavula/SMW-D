@@ -4,6 +4,9 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\Invoice;
 use common\components\gridView\AdminLteGridView;
+use backend\models\search\InvoiceSearch;
+use kartik\daterange\DateRangePicker;
+
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -15,22 +18,42 @@ $actionButton = (int) $searchModel->type === Invoice::TYPE_INVOICE ?  $invoiceAd
 
 $this->title = (int) $searchModel->type === Invoice::TYPE_PRO_FORMA_INVOICE ? 'Pro-forma Invoices' : 'Invoices';
 $this->params['action-button'] = $actionButton; ?>
-<?php echo $this->render('_search', ['model' => $searchModel]); ?>
 <div class="clearfix"></div>
 <div class="grid-row-open">
 	<?php
         if ((int) $searchModel->type === (int) Invoice::TYPE_PRO_FORMA_INVOICE) {
             $columns = [
                 [
-		'attribute' => 'number',
-		'label' => 'Number',
+					'attribute' => 'number',
+					'label' => 'Number',
+					'contentOptions' => ['style' => 'width:100px'],
                     'value' => function ($data) {
                         return $data->getInvoiceNumber();
                     },
                 ],
                 [
-		    'attribute' => 'dueDate',
+					'attribute' => 'dateRange',
                     'label' => 'Due Date',
+					     'filter' => DateRangePicker::widget([
+                    'model' => $searchModel,
+                    'convertFormat' => true,
+                    'initRangeExpr' => true,
+                    'attribute' => 'dateRange',
+                    'convertFormat' => true,
+                    'pluginOptions'=>[
+                        'autoApply' => true,
+                        'ranges' => [
+                            Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
+                            Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
+                            Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+                            Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
+                        ],
+                        'locale' => [
+                            'format' => 'M d,Y',
+                        ],
+                        'opens' => 'right'
+                    ],
+                ]),
                     'value' => function ($data) {
                         $date = Yii::$app->formatter->asDate($data->dueDate);
 
@@ -38,14 +61,14 @@ $this->params['action-button'] = $actionButton; ?>
                     },
                 ],
                 [
-		    'attribute' => 'customer',
+					'attribute' => 'customer',
                     'label' => 'Customer',
                     'value' => function ($data) {
                         return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                     },
                 ],
                 [
-		    'attribute' => 'phone',
+					'attribute' => 'phone',
                     'label' => 'Phone',
                     'value' => function ($data) {
                         return !empty($data->user->phoneNumber->number) ? $data->user->phoneNumber->number : null;
@@ -53,12 +76,16 @@ $this->params['action-button'] = $actionButton; ?>
                 ],
                 [
                     'label' => 'Sent?',
+					'attribute' => 'mailStatus',
+					'filter'=> InvoiceSearch::mailStatuses(),
                        'value' => function ($data) {
                            return $data->isSent ? 'Yes' : 'No';
                        },
                 ],
                 [
                     'label' => 'Paid?',
+					'attribute' => 'invoiceStatus',
+					'filter'=> InvoiceSearch::invoiceStatuses(),
                        'value' => function ($data) {
                            return $data->isPaid() ? 'Yes' : 'No';
                        },
@@ -108,15 +135,36 @@ $this->params['action-button'] = $actionButton; ?>
         } else {
             $columns = [
                 [
-		'attribute' => 'number',
-                'label' => 'Number',
+					'attribute' => 'number',
+					'label' => 'Number',
+					'contentOptions' => ['style' => 'width:100px'],
                     'value' => function ($data) {
                         return $data->getInvoiceNumber();
                     },
                 ],
                 [
-		'attribute' => 'date',
-                'label' => 'Date',
+					'attribute' => 'date',
+					'label' => 'Date',
+					'filter' => DateRangePicker::widget([
+                    'model' => $searchModel,
+                    'convertFormat' => true,
+                    'initRangeExpr' => true,
+                    'attribute' => 'invoiceDateRange',
+                    'convertFormat' => true,
+                    'pluginOptions'=>[
+                        'autoApply' => true,
+                        'ranges' => [
+                            Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
+                            Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
+                            Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+                            Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
+                        ],
+                        'locale' => [
+                            'format' => 'M d,Y',
+                        ],
+                        'opens' => 'right'
+                    ],
+                ]),
                     'value' => function ($data) {
                         $date = Yii::$app->formatter->asDate($data->date);
 
@@ -192,8 +240,8 @@ $this->params['action-button'] = $actionButton; ?>
     ]) ?>
     <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
+		'filterModel' => $searchModel,
         'summary' => false,
-        'emptyText' => false,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'rowOptions' => function ($model, $key, $index, $grid) {
