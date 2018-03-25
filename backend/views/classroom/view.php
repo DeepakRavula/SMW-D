@@ -15,6 +15,7 @@ use yii\bootstrap\Modal;
     'model' => $model,
 ]);?>
  <?php  Modal::end(); ?>
+<br>
 <div class="row">
 	<div class="col-md-6">	
 		<?php

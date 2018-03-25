@@ -21,7 +21,7 @@ $this->title = $model->name;
 $this->params['label'] = $this->render('_title', [
     'model' => $model,
 ]);
-$this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i> Edit', '#', ['class' => 'btn btn-primary btn-sm edit-location']);
+$this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i>', '#', ['class' => 'f-s-18 edit-location']);
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 ?>
@@ -31,6 +31,7 @@ $lastRole = end($roles);
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
+<br>
 <?php Pjax::begin([
     'id' => 'location-view']) ; ?>
 <div class="row">
