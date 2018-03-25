@@ -302,9 +302,7 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function getCourseProgramRate()
     {
-        return $this->hasOne(CourseProgramRate::className(), ['courseId' => 'courseId'])
-                ->onCondition(['AND', ['<=', 'course_program_rate.startDate', (new \DateTime($this->date))->format('Y-m-d')],
-                    ['>=', 'course_program_rate.endDate', (new \DateTime($this->date))->format('Y-m-d')]]);
+        return $this->hasOne(CourseProgramRate::className(), ['courseId' => 'courseId']);
     }
 
     public function getClassroom()
@@ -316,6 +314,13 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
                     ->via('paymentCycleLesson');
+    }
+
+    public function getLessonPayments()
+    {
+        return $this->hasMany(LessonPayment::className(), ['lessonId' => 'id'])
+            ->viaTable('payment', ['id' => 'paymentId'])
+                ->onCondition(['payment.isDeleted' => false]);
     }
 
     public function getPaymentCycleLesson()
@@ -821,6 +826,7 @@ class Lesson extends \yii\db\ActiveRecord
         return Payment::find()
                 ->joinWith('lessonCredit')
                 ->where(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
+                ->notDeleted()
                 ->sum('amount');
     }
     
@@ -830,6 +836,7 @@ class Lesson extends \yii\db\ActiveRecord
                 ->joinWith('lessonCredit')
                 ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
                 ->creditApplied()
+                ->notDeleted()
                 ->sum('amount');
     }
     
@@ -839,7 +846,18 @@ class Lesson extends \yii\db\ActiveRecord
                 ->joinWith('lessonCredit')
                 ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
                 ->creditUsed()
+                ->notDeleted()
                 ->sum('amount');
+    }
+
+    public function getCreditUsedPayment($enrolmentId)
+    {
+        return Payment::find()
+                ->joinWith('lessonCredit')
+                ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
+                ->creditUsed()
+                ->notDeleted()
+                ->all();
     }
     
     public function hasLessonCredit($enrolmentId)

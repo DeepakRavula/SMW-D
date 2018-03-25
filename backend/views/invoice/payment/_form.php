@@ -3,7 +3,6 @@
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
 use yii\helpers\Url;
-use yii\helpers\Html;
 use common\models\PaymentMethod;
 
 /* @var $this yii\web\View */
@@ -12,15 +11,12 @@ use common\models\PaymentMethod;
 ?>
 <div class=" p-10">
 <?php $form = ActiveForm::begin([
-    'id' => 'payment-edit-form',
-        'action' => Url::to(['payment/update', 'id' => $model->id]),
+    'id' => 'modal-form',
+    'action' => Url::to(['payment/update', 'id' => $model->id]),
     'enableClientValidation' => true
 ]); ?>
-    <div id="payment-edit-spinner" class="spinner" style="display:none">
-        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-        <span class="sr-only">Loading...</span>
-    </div>
-   <div class="row">
+
+    <div class="row">
 	   <div class="col-md-7">
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'options' => [
@@ -58,32 +54,5 @@ use common\models\PaymentMethod;
            <?= $form->field($model, 'notes')->textArea(['class' => 'form-control'])->label('Notes'); ?>
        </div>
    </div>
-    <div class="row">  
-        <div class="clearfix"></div>
-	   <div class="col-md-12">
-           <div class="pull-right">
-        <?= Html::a('Cancel', '', ['class' => 'btn btn-default payment-cancel']);?>       
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
-           </div>
-    <?php if (!$model->isCreditUsed() && !$model->isCreditApplied()) : ?>
-           <div class="pull-left">
-		<?= Html::a(
-                'Delete',
-                [
-            'delete', 'id' => $model->id
-        ],
-        [
-            'id' => 'payment-delete-button',
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this payment?',
-                'method' => 'post',
-            ]
-        ]
-            ); ?>
-           </div>
-    <?php endif; ?> 
-	</div>
-	</div>
 	<?php ActiveForm::end(); ?>
 </div>

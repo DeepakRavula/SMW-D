@@ -8,14 +8,11 @@ use backend\models\search\PaymentSearch;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Invoice;
-use common\models\PaymentMethod;
 use yii\widgets\ActiveForm;
 use yii\web\Response;
-use common\models\CreditUsage;
 use yii\filters\ContentNegotiator;
 use yii\filters\AccessControl;
 use yii\data\ArrayDataProvider;
-use common\models\ItemType;
 use common\components\controllers\BaseController;
 
 /**
@@ -114,28 +111,40 @@ class PaymentController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->old = clone $model;
+        $model->setScenario(Payment::SCENARIO_EDIT);
         $model->date = (new \DateTime($model->date))->format('d-m-Y');
         if ($model->isCreditUsed()) {
-            $model->setScenario(Payment::SCENARIO_CREDIT_USED);
+            $model->setScenario(Payment::SCENARIO_CREDIT_USED_EDIT);
         }
         $data = $this->renderAjax('/invoice/payment/_form', [
             'model' => $model,
         ]);
         $request = Yii::$app->request;
-        if ($model->load($request->post())) {
+        if ($request->post()) {
+            $model->load($request->post());
             $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
-            $model->save();
-            $model->invoice->save();
-            $response = [
-                'status' => true
-            ];
-            return $response;
-        } else {
-            return [
+            if ($model->save()) {
+                $model->invoice->save();
+                $response = [
                     'status' => true,
-                    'data' => $data,
+                    'message' => 'Payment succesfully updated!'
+                ];
+            } else {
+                $errors = ActiveForm::validate($model);
+                $response = [
+                    'status' => false,
+                    'errors' => $errors
+                ];
+            }
+        } else {
+            $response = [
+                'status' => true,
+                'canDelete' => $model->canDelete(),
+                'data' => $data,
             ];
         }
+        return $response;
     }
 
     /**
@@ -149,13 +158,23 @@ class PaymentController extends BaseController
     public function actionDelete($id)
     {
         $model        = $this->findModel($id);
+        $model->setScenario(Payment::SCENARIO_DELETE);
         $modelInvoice = $model->invoice;
-        $model->delete();
-        $modelInvoice->save();
-        
-        return [
-            'status' => true,
-        ];
+        if ($model->validate()) {
+            $model->delete();
+            $modelInvoice->save();
+            $response = [
+                'status' => true,
+                'message' => 'Payment succesfully deleted!'
+            ];
+        } else {
+            $errors = current($model->getErrors());
+            $response = [
+                'status' => false,
+                'message' => current($errors)
+            ];
+        }
+        return $response;
     }
 
     /**
@@ -203,13 +222,14 @@ class PaymentController extends BaseController
                 $transaction->commit();
                 return [
                     'status' => true,
+                    'canPost' => $paymentModel->invoice->isPaid()
                 ];
             } else {
                 $errors = ActiveForm::validate($paymentModel);
                 return [
-                'status' => false,
-                'errors' => $errors,
-            ];
+                    'status' => false,
+                    'errors' => $errors,
+                ];
             }
         }
     }
@@ -237,7 +257,8 @@ class PaymentController extends BaseController
                 $model->addPayment($invoiceModel, $paymentModel->amount);
                 $invoiceModel->save();
                 $response = [
-                    'status' => true
+                    'status' => true,
+                    'message' => 'Payment succesfully applied!'
                 ];
             } else {
                 $response = [
