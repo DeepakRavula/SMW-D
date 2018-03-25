@@ -4,9 +4,6 @@ namespace Deployer;
 require 'recipe/yii2-app-advanced.php';
 require 'recipe/slack.php';
 
-set('user', function () {
-    return getenv('DEP_USER');
-});
 $user = getenv('DEP_HOST_USER');
 // Hosts
 host('smw')
@@ -17,18 +14,17 @@ host('smw')
     ->forwardAgent(true)
 	->set('deploy_path', '/home/arcadia/smw-dev')
 	->set('branch', 'master')
-	->stage('development');
+	->set('instance', 'Dev');
+
+set('user', function () {
+    return runLocally('git config --get user.name');
+});
 
 set('slack_webhook', 'https://hooks.slack.com/services/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');
 set('slack_title', 'Studio Manager Web');
-set('slack_text', '{{user}} deploying {{branch}} to {{deploy_path}}');
-set('slack_success_text', 'Deploy to {{deploy_path}} successful');
-set('slack_failure_text', 'Deploy to {{deploy_path}} failure');
-set('slack_color', 'blue');
-set('slack_success_color', 'green');
-set('slack_failure_color', 'red');
-
-set('default_stage', 'development');
+set('slack_text', 'Smw deployed to {{instance}} by {{user}}');
+set('slack_success_text', 'Deploy to {{instance}} instance successful');
+set('slack_failure_text', 'Deploy to {{instance}} instance failure');
 
 // Project name
 set('application', 'Studio Manager Web');
@@ -62,7 +58,7 @@ task('deploy:composer', function() {
     $deployPath = get('deploy_path');
 
     cd($deployPath);
-    run("composer install");
+    run("/opt/cpanel/composer/bin/composer install");
 
     writeln('<info>Install composer is done.</info>');
 });
@@ -85,17 +81,16 @@ task('deploy:one-off', function() {
     writeln('<info>One off migration is done.</info>');
 });
 
-before('deploy', 'slack:notify');
-
 task('deploy', [
     'deploy:prepare',
     'deploy:latest_code',
-    //'deploy:composer',
+    'deploy:composer',
     'deploy:migration',
     'deploy:one-off',
 ]);
 
+before('deploy', 'slack:notify');
 // [Optional] if deploy fails automatically unlock.
-after('deploy:failed', 'deploy:unlock');
+//after('deploy:failed', 'deploy:unlock');
 after('success', 'slack:notify:success');
 after('deploy:failed', 'slack:notify:failure');
