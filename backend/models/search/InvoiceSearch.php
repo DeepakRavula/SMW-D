@@ -114,8 +114,11 @@ class InvoiceSearch extends Invoice
 				$query->joinWith(['phone']);
 			}]);
         }]);
-		$query->andFilterWhere(['like', 'invoice_number', intval(preg_replace('/[^0-9]+/', '', $this->number), 10)])
-            ->andFilterWhere(['like', 'user_phone.number', trim($this->phone)])
+        if(!empty($this->number))
+        {
+		$query->andFilterWhere(['like', 'invoice_number', intval(preg_replace('/[^0-9]+/', '', $this->number), 10)]);
+        }
+           $query->andFilterWhere(['like', 'user_phone.number', trim($this->phone)])
             ->andFilterWhere(['like', 'user_profile.firstname', trim($this->customer)])
             ->orFilterWhere(['like', 'user_profile.lastname', trim($this->customer)])
             ->groupBy('invoice.id');
