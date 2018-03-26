@@ -301,7 +301,7 @@ class UserImport extends Model
         $studentCsv->billingOtherTel = $row['Billing Other Tel'];
         $studentCsv->billingWorkTel = $row['Billing Work Tel'];
         $studentCsv->billingWorkTelExt = $row['Billing Work Tel Ext.'];
-        $studentCsv->notes ="sssss";
+        $studentCsv->notes =json_encode($row['Comments']);
         $studentCsv->save();
     }
 }
