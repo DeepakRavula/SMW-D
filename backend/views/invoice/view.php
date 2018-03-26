@@ -31,6 +31,7 @@ $this->params['action-button'] = $this->render('_buttons', [
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>
 </div>
+<div id="line-item-update" style="display:none;" class="alert-success alert fade in"></div>
 <div id="customer-update" style="display:none;" class="alert-success alert fade in"></div>
 <div id="invoice-discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
