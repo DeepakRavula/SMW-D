@@ -602,4 +602,21 @@ $(document).on('click', '.evaluation-delete', function () {
 		return false;
     });
 });
+
+    $(document).off('click', '.enrolment-save-btn').on('click', '.enrolment-save-btn', function () {
+        $('.enrolment-save-btn').attr('disabled', true);
+        $('.step2-back').attr('disabled', true);
+        $('.private-enrol-cancel').attr('disabled', true);
+        $('#enrolment-form').submit();
+        return false;
+    });
+
+    $(document).on('afterValidate', '#enrolment-form', function (event, messages, errorAttributes) {
+        if (errorAttributes.length > 0) {
+            $('#private-enrolment-spinner').hide();
+            $('.enrolment-save-btn').attr('disabled', false);
+            $('.step2-back').attr('disabled', false);
+            $('.private-enrol-cancel').attr('disabled', false);
+        }
+    });
 </script>

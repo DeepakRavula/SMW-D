@@ -1,11 +1,8 @@
 <?php
 
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
-use yii\helpers\Html;
 use yii\bootstrap\Modal;
-use yii\grid\GridView;
-use common\components\gridView\AdminLteGridView;
+use common\models\Location;
 use common\models\LocationAvailability;
 use kartik\datetime\DateTimePickerAsset;
 
@@ -75,9 +72,13 @@ Modal::begin([
 ]);
 ?>
 <div id="review-lesson-content"></div>
-<?php Modal::end(); ?>		
+<?php Modal::end(); ?>
+<div id="enrolment-loader" class="spinner" style="display:none">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+</div>
 <?php
-$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 $minLocationAvailability = LocationAvailability::find()
         ->where(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])
@@ -111,14 +112,19 @@ $teacherId = $courseModel->teacher->id;
             return true;
         }
     }
+
+    $(document).off('click', '#confirm-button').on('click', '#confirm-button', function () {
+        $('#confirm-button').attr('disabled', true);
+        $('.btn-default').attr('disabled', true);
+        $('#enrolment-loader').show();
+    });
+    
     $(document).ready(function () {
         if ($('#confirm-button').attr('disabled')) {
             $('#confirm-button').bind('click', false);
         }
         var calendar = {
             load: function (events, availableHours, date) {
-                //var teacherId = $('#lesson-teacherid').val();
-                //var params = $.param({teacherId: teacherId});
                 $('#lesson-edit-calendar').fullCalendar('destroy');
                 $('#lesson-edit-calendar').fullCalendar({
                     schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
