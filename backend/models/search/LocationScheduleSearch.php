@@ -43,6 +43,7 @@ class LocationScheduleSearch extends Lesson
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         
         $query = Lesson::find()
+	    ->notCanceled()
             ->andWhere(['DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')])
             ->isConfirmed()
             ->notDeleted()

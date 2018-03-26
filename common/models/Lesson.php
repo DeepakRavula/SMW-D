@@ -983,4 +983,18 @@ class Lesson extends \yii\db\ActiveRecord
         $lessonRescheduleModel->rescheduledLessonId = $lesson->id;
         return $lessonRescheduleModel->save();
     }
+    public function statusMethod() {
+	    $lessonClass = $this->getClass();
+	    $message="";
+	    if($lessonClass === 'lesson-rescheduled') {
+		$message = "Lesson has been rescheduled";    
+	    }
+	    else if($lessonClass === 'first-lesson' || $lessonClass === 'private-lesson' || $lessonClass === 'group-lesson'){
+		    $message = "Scheduled";
+	    }
+	    else {
+		    $message = "Unscheduled";
+	    }
+	    return $message; 
+    }
 }

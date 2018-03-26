@@ -58,6 +58,12 @@ GridView::widget([
                 return !empty($data->classroomId) ? $data->classroom->name : null;
             },
         ],
+	    [
+            'label' => 'Status',
+            'value' => function ($data) {
+                return !empty($data->statusMethod()) ? $data->statusMethod() : null;
+            },
+        ],
     ]
 ]);
 ?>
