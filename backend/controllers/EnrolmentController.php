@@ -511,7 +511,8 @@ class EnrolmentController extends BaseController
                 $course->updateAttributes([
                     'endDate' => Carbon::parse($course->endDate)->format('Y-m-d H:i:s')
                 ]);
-                if ($endDate > $course->endDate) {
+                $newEndDate = Carbon::parse($course->endDate)->format('d-m-Y');
+                if ($endDate > $newEndDate) {
                     $startDate = null;
                     $invoice = $model->addCreditInvoice($startDate, $course->endDate);
                     if (!$invoice) {
@@ -520,8 +521,14 @@ class EnrolmentController extends BaseController
                         $credit = abs($invoice->invoiceBalance);
                         $message = '$' . $credit . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
                     }
-                } else {
+                    $model->updateAttributes([
+                        'isAutoRenew' => false
+                    ]);
+                } else if ($endDate < $newEndDate) {
                     $model->extendToEndDate();
+                }
+                if($message) {
+                    $message = 'Enrolment end date succesfully updated!';
                 }
             }
             $response = [

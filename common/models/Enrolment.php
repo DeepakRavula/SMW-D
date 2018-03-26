@@ -424,6 +424,12 @@ class Enrolment extends \yii\db\ActiveRecord
         $start = new \DateTime($this->course->startDate);
         $end = new \DateTime($this->course->endDate);
         $period = new \DatePeriod($start, $interval, $end);
+        $this->generateLessons($period);
+        return parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function generateLessons($period)
+    {
         foreach ($period as $day) {
             $checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
             if ($checkDay) {
@@ -433,7 +439,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 $this->course->createLesson($day);
             }
         }
-        return parent::afterSave($insert, $changedAttributes);
+        return true;
     }
 
     public static function getPaymentFrequencies()
@@ -633,6 +639,17 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function extendToEndDate()
     {
-        
+        $lastLesson = Lesson::find()
+            ->isConfirmed()
+            ->roots()
+            ->andWhere(['lesson.courseId' => $this->courseId])
+            ->orderby(['lesson.date' => SORT_DESC])
+            ->one();
+        $interval = new \DateInterval('P1D');
+        $start = new \DateTime($lastLesson->date);
+        $end = new \DateTime($this->course->endDate);
+        $period = new \DatePeriod($start, $interval, $end);
+        $this->generateLessons($period);
+        $this->resetPaymentCycle();
     }
 }
