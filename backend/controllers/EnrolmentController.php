@@ -509,7 +509,7 @@ class EnrolmentController extends BaseController
             $message = null;
             if ($endDate !== $course->endDate) {
                 $course->updateAttributes([
-                    'endDate' => Carbon::parse($course->endDate)->format('Y-m-d H:i:s')
+                    'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
                 ]);
                 $newEndDate = Carbon::parse($course->endDate)->format('d-m-Y');
                 if ($endDate > $newEndDate) {
