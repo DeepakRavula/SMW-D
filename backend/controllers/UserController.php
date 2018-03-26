@@ -56,18 +56,26 @@ class UserController extends BaseController
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson', 'update-primary-email', 'delete', 'create'],
+                'only' => [
+                    'edit-profile', 'edit-phone', 'edit-address', 'edit-email', 'edit-lesson',
+                    'update-primary-email', 'delete', 'create', 'upload'
+                ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-			 'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'edit-profile', 'import', 'delete-contact', 'create', 'edit-lesson', 'delete', 'avatar-upload'],
-                        'roles' => ['manageTeachers', 'manageCustomers', 'manageAdmin', 'manageStaff', 'manageOwners'],
+                        'actions' => ['index', 'view', 'edit-profile', 'import', 'delete-contact', 
+                            'create', 'edit-lesson', 'delete', 'avatar-upload'
+                        ],
+                        'roles' => [
+                            'manageTeachers', 'manageCustomers', 'manageAdmin', 'manageStaff',
+                            'manageOwners'
+                        ],
                     ],
                     [
                         'allow' => true,

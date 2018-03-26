@@ -15,7 +15,6 @@ use common\models\Payment;
 use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use common\models\TaxCode;
 use common\models\Location;
 use yii\helpers\Json;
@@ -43,39 +42,35 @@ class InvoiceController extends BaseController
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                ],
-            ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['delete', 'note', 
-					'get-payment-amount', 'update-customer',
-                    'create-walkin', 'fetch-user', 'add-misc',
-					'adjust-tax', 'mail'],
+                'only' => [
+                    'delete', 'note', 'get-payment-amount', 'update-customer', 'post',
+                    'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax', 'mail',
+                    'post-distribute', 'retract-credits', 'unpost', 'distribute'
+                ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-				'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['blank-invoice', 'index', 'mail',
-							'update-customer', 'create-walkin',
-							'note', 'view', 'fetch-user',
-							'add-misc','fetch-summary-and-status', 							   'compute-tax', 'create', 'update',
-							'delete', 'update-mail-status',
-							'all-completed-lessons', 'adjust-tax',
-							'revert-invoice', 'enrolment',
-							'invoice-payment-cycle',
-							 'group-lesson','get-payment-amount'],
-                        'roles' => ['manageInvoices', 'managePfi'],
-                    ],
-                ],
-            ], 
+                        'actions' => ['blank-invoice', 'index', 'mail', 'update-customer', 'create-walkin',
+                            'note', 'view', 'fetch-user', 'add-misc','fetch-summary-and-status',
+                            'compute-tax', 'create', 'update', 'delete', 'update-mail-status',
+                            'all-completed-lessons', 'adjust-tax', 'revert-invoice', 'enrolment',
+                            'invoice-payment-cycle', 'group-lesson','get-payment-amount',
+                            'post-distribute', 'retract-credits', 'unpost', 'distribute', 'post'
+                        ],
+                        'roles' => [
+                            'manageInvoices', 'managePfi'
+                        ]
+                    ]
+                ]
+            ]
         ];
     }
 
@@ -644,34 +639,85 @@ class InvoiceController extends BaseController
     public function actionAdjustTax($id)
     {
         $model = Invoice::findOne($id);
-        $data = $this->renderAjax('_form-adjust-tax', [
-            'model' => $model
-        ]);
-        $post = Yii::$app->request->post();
-        if ($model->load($post)) {
-            $model->isTaxAdjusted = false;
-            $model->tax += $model->taxAdjusted;
-            if ((float) $model->tax !== (float) $model->lineItemTax) {
-                $model->isTaxAdjusted = true;
-            }
-            
-            if ($model->save()) {
-                $response = [
-                    'status' => true,
-                    'message' => 'Tax successfully updated!',
-        ];
+        if (!$model->isPosted) {
+            $data = $this->renderAjax('_form-adjust-tax', [
+                'model' => $model
+            ]);
+            $post = Yii::$app->request->post();
+            if ($model->load($post)) {
+                $model->isTaxAdjusted = false;
+                $model->tax += $model->taxAdjusted;
+                if ((float) $model->tax !== (float) $model->lineItemTax) {
+                    $model->isTaxAdjusted = true;
+                }
+
+                if ($model->save()) {
+                    $response = [
+                        'status' => true,
+                        'message' => 'Tax successfully updated!',
+            ];
+                } else {
+                    $response = [
+                        'status' => false,
+                        'errors' => ActiveForm::validate($model),
+                    ];
+                }
             } else {
                 $response = [
-                    'status' => false,
-                    'errors' => ActiveForm::validate($model),
+                    'status' => true,
+                    'data' => $data,
                 ];
             }
-            return $response;
         } else {
-            return [
-                'status' => true,
-                'data' => $data,
+            $response = [
+                'status' => false,
+                'message' => 'Tax cannot be updated if invoice posted!'
             ];
         }
+        return $response;
+    }
+
+    public function actionPostDistribute($id)
+    {
+        $model = Invoice::findOne($id);
+        if ($model->canPost()) {
+            $model->isPosted = true;
+            $model->save();
+            $model->distributeCreditsToLesson();
+        }
+        return true;
+    }
+
+    public function actionPost($id)
+    {
+        $model = Invoice::findOne($id);
+        if ($model->canPost()) {
+            $model->isPosted = true;
+            $model->save();
+        }
+        return true;
+    }
+
+    public function actionDistribute($id)
+    {
+        $model = Invoice::findOne($id);
+        if ($model->canDistributeCreditsToLesson()) {
+            $model->distributeCreditsToLesson();
+        }
+        return true;
+    }
+
+    public function actionUnpost($id)
+    {
+        $model = Invoice::findOne($id);
+        $model->isPosted = false;
+        return $model->save();
+    }
+
+    public function actionRetractCredits($id)
+    {
+        $model = Invoice::findOne($id);
+        $model->retractCreditsFromLessons();
+        return $model->save();
     }
 }

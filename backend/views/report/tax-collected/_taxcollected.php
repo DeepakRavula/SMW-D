@@ -33,7 +33,7 @@ use yii\helpers\Html;
                         5 => ['style' => 'text-align:right'],
                     ],
                     'options' => ['style' => 'font-weight:bold;']
-                ];
+    ];
             }
         ],
             [
@@ -50,6 +50,9 @@ use yii\helpers\Html;
         ],
             [
             'label' => 'Subtotal',
+	    'value' => function ($data) {
+                return $data->amount;
+            },	
             'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
@@ -58,6 +61,9 @@ use yii\helpers\Html;
         ],
             [
             'label' => 'Tax',
+	    'value' => function ($data) {
+                return $data->tax_rate;
+            },
             'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',

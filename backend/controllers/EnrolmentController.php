@@ -488,9 +488,9 @@ class EnrolmentController extends BaseController
      */
     protected function findModel($id)
     {
-          $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $model = Enrolment::find()->location($locationId)
-            ->where(['enrolment.id' => $id, 'isDeleted' => false])->one();
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $model = Enrolment::find()->location($locationId)->isRegular()
+            ->andWhere(['enrolment.id' => $id, 'isDeleted' => false])->one();
         if ($model !== null) {
             return $model;
         } else {

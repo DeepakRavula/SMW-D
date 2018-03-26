@@ -37,4 +37,12 @@ class LogHistoryQuery extends ActiveQuery
     {
         return $this->andWhere(['instanceType' => LogObject::TYPE_USER, 'instanceId' => $id]);
     }
+     public function location($locationId) {  
+	 return $this->andWhere(['locationId' => $locationId]);
+		
+     }
+     public function today() {	
+	 return $this->andWhere(['>=', 'createdOn', (new \DateTime())->format('Y-m-d')]);	
+     }
+
 }

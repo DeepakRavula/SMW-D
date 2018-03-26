@@ -270,6 +270,25 @@ dl {
     font-size: 11px;
 	margin-top: 8px;
 }
+.posted-invoice {
+    position: relative;
+}
+.posted-invoice:before {
+    content: "Posted";
+    color: white;
+    font-weight: bold;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: green;
+    border-radius: 30px;
+    padding: 4px 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+	margin-top: 8px;
+}
 .course-icon {
 	font-size: 20px;
     margin-top: 6px;
@@ -389,4 +408,7 @@ dl {
 }
 .show-all-top {
     margin-top: -10px;
+}
+.apply-credit-row {
+	background-color: antiquewhite;
 }

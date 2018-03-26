@@ -110,6 +110,8 @@ $(document).off('click', '.edit-tax-save').on('click', '.edit-tax-save', functio
                 $('#edit-tax-modal').modal('hide');
                 $('input[type="checkbox"]').trigger('change');
                 $('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+            } else {
+                $('#invoice-error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
             }
         }
     });

@@ -164,31 +164,31 @@ class TeacherSubstituteController extends BaseController
     {
         $oldLessons = Lesson::findAll(Yii::$app->request->get('ids'));
         $lessons = Lesson::find()
+                ->notDeleted()
                 ->notConfirmed()
                 ->andWhere(['createdByUserId' => Yii::$app->user->id])
                 ->all();
         $lessonIds = [];
         foreach ($lessons as $i => $lesson) {
             $oldLesson = $oldLessons[$i];
-            $oldLesson->Cancel();
+            $oldLesson->cancel();
             $oldLesson->rescheduleTo($lesson);
             $lessonIds[] = $lesson->id;
             $lesson->isConfirmed = true;
             $lesson->save();
         }
-        if(end($lessons)->isGroup())
-        {
-            $courseModel=end($lessons)->course;
-           $response = [
+        if (end($lessons)->isGroup()) {
+            $courseModel = end($lessons)->course;
+            $response = [
                 'status' => true,
                 'url' => Url::to(['/course/view', 'id' => $courseModel->id]),
             ];
         } else {
-        $response = [
-            'status' => true,
-            'url' => Url::to(['/lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[ids]' => $lessonIds])
-        ];
- }
+            $response = [
+                'status' => true,
+                'url' => Url::to(['/lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[ids]' => $lessonIds])
+            ];
+        }
         return $response;
     }
 }

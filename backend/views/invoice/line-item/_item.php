@@ -77,6 +77,8 @@ $(document).ready(function() {
                     if (response.status) {
                         $('#apply-discount-modal').modal('show');
                         $('#apply-discount-content').html(response.data);
+                    } else {
+                        $('#invoice-error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                     }
                 }
             });
