@@ -258,24 +258,29 @@ class Course extends \yii\db\ActiveRecord
         return parent::afterSave($insert, $changedAttributes);
     }
 
-    public function generateLessons($lessons, $startDate, $teacherId)
+    public function generateLessons($lessons, $startDate, $teacherId, $dayTime)
     {
-        $lessonTime	= (new \DateTime($this->startDate))->format('H:i:s');
-        list($hour, $minute, $second) = explode(':', $lessonTime);
-        $nextWeekScheduledDate = $startDate;
+        $hour = (new \DateTime($dayTime))->format('H');
+        $minute = (new \DateTime($dayTime))->format('i');
+        $second = (new \DateTime($dayTime))->format('s');
         $dayList = self::getWeekdaysList();
-        $day = $dayList[$startDate->format('N')];
+        $day = $dayList[(new \DateTime($dayTime))->format('N')];
+        $nextWeekScheduledDate = $startDate;
         foreach ($lessons as $lesson) {
-            $lesson->id			 = null;
+            $lesson->id = null;
             $lesson->isNewRecord = true;
             $lesson->teacherId = $teacherId;
-            $lesson->status		 = Lesson::STATUS_SCHEDULED;
+            $lesson->status = Lesson::STATUS_SCHEDULED;
             $nextWeekScheduledDate->setTime($hour, $minute, $second);
-            $lesson->date		 = $nextWeekScheduledDate->format('Y-m-d H:i:s');
+            $lesson->date = $nextWeekScheduledDate->format('Y-m-d H:i:s');
             $lesson->isConfirmed = false;
+            if ($this->isProfessionalDevelopmentDay($nextWeekScheduledDate)) {
+                $startDate->modify('next ' . $day);
+                $nextWeekScheduledDate->setTime($hour, $minute, $second);
+                $lesson->date = $nextWeekScheduledDate->format('Y-m-d H:i:s');
+            }
             $lesson->save();
-
-            $startDate->modify('next '.$day);
+            $startDate->modify('next ' . $day);
         }
     }
 

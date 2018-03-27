@@ -76,9 +76,8 @@ class CourseReschedule extends Course
             ->isConfirmed()
             ->between($startDate, $endDate)
             ->all();
-        foreach ($lessons as $lesson) {
-            
-        }
+        $course = Course::findOne($this->courseId);
+        $course->generateLessons($lessons, $startDate, $this->teacherId, $this->dayTime);
         return true;
     }
 }
