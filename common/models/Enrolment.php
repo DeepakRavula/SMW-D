@@ -644,7 +644,7 @@ class Enrolment extends \yii\db\ActiveRecord
         return $amount;
     }
 
-    public function extendToEndDate()
+    public function extend()
     {
         $lastLesson = Lesson::find()
             ->isConfirmed()
@@ -658,5 +658,13 @@ class Enrolment extends \yii\db\ActiveRecord
         $period = new \DatePeriod($start, $interval, $end);
         $this->generateLessons($period, true);
         $this->resetPaymentCycle();
+        return true;
+    }
+
+    public function shrink()
+    {
+        $startDate = null;
+        $invoice = $this->addCreditInvoice($startDate, $$this->course->endDate);
+        return $invoice;
     }
 }
