@@ -208,6 +208,7 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return !empty($this->getInvoice($lessonId));
     }
+    
     public function canDeleted()
     {
         $completedLessons = Lesson::find()
@@ -222,6 +223,7 @@ class Enrolment extends \yii\db\ActiveRecord
             ->exists();
         return empty($completedLessons) ? true : false;
     }
+    
     public function getInvoice($lessonId)
     {
         $enrolmentId = $this->id;
@@ -385,6 +387,7 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return (int) $this->paymentFrequency === (int) self::LENGTH_FULL;
     }
+    
     public function isExpiring($daysCount)
     {
         $isExpiring = false;
@@ -414,6 +417,7 @@ class Enrolment extends \yii\db\ActiveRecord
         }
         return parent::beforeSave($insert);
     }
+    
     public function afterSave($insert, $changedAttributes)
     {
         if ($this->course->program->isGroup() || (!empty($this->rescheduleBeginDate))
@@ -424,16 +428,25 @@ class Enrolment extends \yii\db\ActiveRecord
         $start = new \DateTime($this->course->startDate);
         $end = new \DateTime($this->course->endDate);
         $period = new \DatePeriod($start, $interval, $end);
+        $this->generateLessons($period);
+        return parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function generateLessons($period, $isConfirmed = null)
+    {
+        if (!$isConfirmed) {
+            $isConfirmed = false;
+        }
         foreach ($period as $day) {
             $checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
             if ($checkDay) {
                 if ($this->course->isProfessionalDevelopmentDay($day)) {
                     continue;
                 }
-                $this->course->createLesson($day);
+                $this->course->createLesson($day, $isConfirmed);
             }
         }
-        return parent::afterSave($insert, $changedAttributes);
+        return true;
     }
 
     public static function getPaymentFrequencies()
@@ -629,5 +642,29 @@ class Enrolment extends \yii\db\ActiveRecord
             $amount += $lesson->getCreditAppliedAmount($this->id);
         }
         return $amount;
+    }
+
+    public function extend()
+    {
+        $lastLesson = Lesson::find()
+            ->isConfirmed()
+            ->roots()
+            ->andWhere(['lesson.courseId' => $this->courseId])
+            ->orderby(['lesson.date' => SORT_DESC])
+            ->one();
+        $interval = new \DateInterval('P1D');
+        $start = (new \DateTime($lastLesson->date))->modify('+1 day');
+        $end = new \DateTime($this->course->endDate);
+        $period = new \DatePeriod($start, $interval, $end);
+        $this->generateLessons($period, true);
+        $this->resetPaymentCycle();
+        return true;
+    }
+
+    public function shrink()
+    {
+        $startDate = null;
+        $invoice = $this->addCreditInvoice($startDate, $$this->course->endDate);
+        return $invoice;
     }
 }

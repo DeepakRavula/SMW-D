@@ -6,6 +6,7 @@ use kartik\datetime\DateTimePickerAsset;
 
 DateTimePickerAsset::register($this);
 ?>
+<br>
 <div class="row">
 	<div class="col-md-6">
         <?php Pjax::begin(['id' => 'enrolment-view']); ?>

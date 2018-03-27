@@ -510,31 +510,40 @@ class EnrolmentController extends BaseController
         $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
         $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
         if ($post) {
-            $message = '';
+            $message = null;
             if ($endDate !== $course->endDate) {
-                $courseEndDate = Carbon::parse($course->endDate)->format('Y-m-d');
                 $course->updateAttributes([
-                    'endDate' => Carbon::parse($course->endDate)->format('Y-m-d H:i:s')
+                    'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
                 ]);
-                $startDate = null;
-                $invoice = $model->addCreditInvoice($startDate, $course->endDate);
-                if (!$invoice) {
-                    $credit = 0;
-                } else {
-                    $credit = abs($invoice->invoiceBalance);
+                $newEndDate = Carbon::parse($course->endDate)->format('d-m-Y');
+                if ($endDate > $newEndDate) {
+                    $invoice = $model->shrink();
+                    if (!$invoice) {
+                        $credit = 0;
+                    } else {
+                        $credit = abs($invoice->invoiceBalance);
+                        $message = '$' . $credit . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
+                    }
+                    $model->updateAttributes([
+                        'isAutoRenew' => false
+                    ]);
+                } else if ($endDate < $newEndDate) {
+                    $model->extend();
                 }
-                $message = '$' . $credit . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
+                if($message) {
+                    $message = 'Enrolment end date succesfully updated!';
+                }
             }
             $response = [
                 'status' => true,
                 'message' => $message,
             ];
-            return $response;
         } else {
-            return [
+            $response = [
                 'status' => true,
                 'data' => $data,
             ];
         }
+        return $response;
     }
 }

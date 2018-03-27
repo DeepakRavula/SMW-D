@@ -55,6 +55,15 @@ a.desc:after {
 	font-weight :bold;
 	font-size : 18px;
 }
+.content {
+	padding: 10px;
+}
+.content-header>h1 {
+	font-size: 20px;
+}
+.content-header {
+	margin-bottom: 5px;
+}
 /*# sourceMappingURL=style.map *//*# sourceMappingURL=style.map */
 .alert {
 	padding:6px;
@@ -326,6 +335,10 @@ dl {
     height: 40px;
     border: 2px solid transparent;
     border-radius: 50%;
+	margin-top: -20px;
+}
+#invoice-header {
+	margin-top : -5px;
 }
 .location-header {
 	margin-top:9px;

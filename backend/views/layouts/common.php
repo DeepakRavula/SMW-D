@@ -48,7 +48,6 @@ $bundle = BackendAsset::register($this);
                             <?php echo $this->params['show-all']; ?>
                         </div>
                     <?php endif; ?> 
-                    <div class="clearfix"></div>
                 </h1>
 
             </section>

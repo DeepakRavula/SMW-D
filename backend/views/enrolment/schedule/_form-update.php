@@ -54,13 +54,12 @@ use common\models\Location;
             <?= $form->field($courseReschedule, 'rescheduleBeginDate')->widget(DatePicker::classname(),
                 [
                 'options' => [
-                    'readOnly' => true,
-                    'value' => (new \DateTime())->format('d-m-Y'),
+                    'value' => Yii::$app->formatter->asDate(new \DateTime()),
                 ],
                 'type' => DatePicker::TYPE_INPUT,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd-mm-yyyy'
+                    'format' => 'M d,yyyy'
                 ]
             ]);?>
         </div>
@@ -69,13 +68,12 @@ use common\models\Location;
                 DatePicker::classname(),
                 [
                 'options' => [
-                    'readOnly' => true,
-                    'value' => (new \DateTime($course->endDate))->format('d-m-Y'),
+                    'value' => Yii::$app->formatter->asDate($course->endDate),
                 ],
                 'type' => DatePicker::TYPE_INPUT,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd-mm-yyyy'
+                    'format' => 'M d,yyyy'
                 ]
             ]); ?>
         </div>

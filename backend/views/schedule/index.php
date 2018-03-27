@@ -34,7 +34,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class
 </style>
 	<div class="col-md-2 schedule-picker">
 		<div id="datepicker" class="input-group date">
-			<input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
+			<input type="text" class="form-control" value="<?= Yii::$app->formatter->asDate(new \DateTime())?>">
 			<div class="input-group-addon">
 				<span class="glyphicon glyphicon-calendar"></span>
 			</div>
@@ -103,7 +103,7 @@ var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
 $(document).ready(function() {
     $('#datepicker').datepicker ({
-        format: 'dd-mm-yyyy',
+        format: 'M d,yyyy',
         autoclose: true,
         todayHighlight: true
     });
