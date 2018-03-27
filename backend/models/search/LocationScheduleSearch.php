@@ -41,9 +41,10 @@ class LocationScheduleSearch extends Lesson
     public function search($params)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        
         $query = Lesson::find()
-	    ->notCanceled()
+//            ->scheduledOrRescheduled
+//	    ->notCanceled()
+//            ->hasRootLesson()
             ->andWhere(['DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')])
             ->isConfirmed()
             ->notDeleted()

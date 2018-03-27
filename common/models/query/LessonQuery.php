@@ -372,4 +372,8 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['lesson.status' => [Lesson::STATUS_SCHEDULED, Lesson::STATUS_RESCHEDULED]]);
     }
+    public function canceled()
+    {
+        return $this->andFilterWhere(['lesson.status' => Lesson::STATUS_CANCELED]);
+    }
 }
