@@ -338,6 +338,11 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasMany(LessonSplitUsage::className(), ['lessonId' => 'id']);
     }
 
+    public function getBulkRescheduleLesson()
+    {
+        return $this->hasOne(BulkRescheduleLesson::className(), ['lessonId' => 'id']);
+    }
+
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
@@ -654,13 +659,18 @@ class Lesson extends \yii\db\ActiveRecord
         return true;
     }
 
+    public function checkAsReschedule()
+    {
+        return $this->isConfirmed && $this->isScheduled() && $this->rootLesson && !$this->bulkRescheduleLesson;
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
             if ($this->isRescheduledByDate($changedAttributes) || $this->isRescheduledByTeacher($changedAttributes)) {
                 $this->trigger(self::EVENT_RESCHEDULE_ATTEMPTED);
             }
-            if ($this->isConfirmed && $this->isScheduled() && $this->rootLesson) {
+            if ($this->checkAsReschedule()) {
                 if (new \DateTime($this->rootLesson->date) != new \DateTime($this->date)) {
                     $this->updateAttributes(['status' => self::STATUS_RESCHEDULED]);
                 }

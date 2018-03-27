@@ -29,11 +29,13 @@ use common\models\UserLocation;
 use common\models\User;
 use common\models\UserProfile;
 use Carbon\Carbon;
+use common\models\CourseReschedule;
 use common\models\discount\EnrolmentDiscount;
 use backend\models\discount\MultiEnrolmentDiscount;
 use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\log\StudentLog;
 use common\models\log\DiscountLog;
+use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 
@@ -400,7 +402,10 @@ class EnrolmentController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $courseReschedule = new CourseReschedule();
+        $courseReschedule->setModel($model->course);
         $data = $this->renderAjax('/enrolment/schedule/_form-update', [
+            'courseReschedule' => $courseReschedule,
             'course' => $model->course,
             'courseSchedule' => $model->course->courseSchedule,
             'model' => $model,
@@ -410,38 +415,25 @@ class EnrolmentController extends BaseController
             'data' => $data,
         ];
         $course = $model->course;
-        $courseSchedule = $model->courseSchedule;
-        $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
-        $courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');
         if (Yii::$app->request->isPost) {
-            $endDate = new \DateTime($course->endDate);
-            $startDate		 = new \DateTime($course->startDate);
-            Lesson::deleteAll([
-                'courseId' => $model->course->id,
-                'isConfirmed' => false,
-            ]);
-            $lessons		 = Lesson::find()
-                ->where(['courseId' => $model->course->id])
-                ->regular()
-                ->scheduled()
-                ->isConfirmed()
-                ->between($startDate, $endDate)
-                ->all();
-	   
-            $courseDay = $courseSchedule->day;
-            $day = $startDate->format('l');
-            if ($day !== $courseDay) {
-                $startDate		 = new \DateTime($course->startDate);
-                $startDate->modify('next '.$courseDay);
+            $courseReschedule->load(Yii::$app->request->post());
+            $endDate = new \DateTime($courseReschedule->rescheduleEndDate);
+            $startDate = new \DateTime($courseReschedule->rescheduleBeginDate);
+            if ($courseReschedule->validate()) {
+                $courseReschedule->reschdeule();
+                $rescheduleBeginDate = $startDate->format('d-m-Y');
+                $rescheduleEndDate = $endDate->format('d-m-Y');
+                $response = $this->redirect(['/lesson/review', 'courseId' => $course->id,
+                    'LessonSearch[showAllReviewLessons]' => false, 'Course[startDate]' => $rescheduleBeginDate,
+                    'Course[endDate]' => $rescheduleEndDate]);
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($courseReschedule)
+                ];
             }
-            $teacherId = $course->teacherId;
-            $course->generateLessons($lessons, $startDate, $teacherId);
-            $rescheduleBeginDate = (new \DateTime($course->startDate))->format('d-m-Y');
-            $rescheduleEndDate = (new \DateTime($course->endDate))->format('d-m-Y');
-            return $this->redirect(['/lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Course[startDate]' => $rescheduleBeginDate, 'Course[endDate]' => $rescheduleEndDate]);
-        } else {
-            return $response;
         }
+        return $response;
     }
 
     public function actionDelete($id)

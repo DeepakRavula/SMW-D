@@ -82,6 +82,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
         return $this->hasOne(Program::className(), ['id' => 'programId'])
             ->via('course');
     }
+    
     public function beforeSave($insert)
     {
         if (!$insert) {
@@ -94,6 +95,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
 
         return parent::beforeSave($insert);
     }
+    
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {

@@ -5,7 +5,6 @@ use common\models\User;
 use common\models\LocationAvailability;
 use common\models\Location;
 use yii\bootstrap\ActiveForm;
-use kartik\date\DatePicker;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use kartik\time\TimePicker;
@@ -73,59 +72,32 @@ use kartik\time\TimePicker;
             <?php echo $form->field($model, 'applyFullDiscount')->checkbox()?>
     </div>
         
-        <div class="col-md-12">
-            <div class="col-lg-2 pull-right">
-            <?php echo '<label>Go to Date</label>'; ?>
-            <?php echo DatePicker::widget([
-                    'name' => 'selected-date',
-                    'id' => 'extra-group-lesson-go-to-date',
-                    'value' => Yii::$app->formatter->asDate((new DateTime())->format('d-m-Y')),
-                    'type' => DatePicker::TYPE_INPUT,
-                    'buttonOptions' => [
-                        'removeButton' => true,
-                    ],
-                    'pluginOptions' => [
-                        'autoclose' => true,
-                        'format' => 'dd-mm-yyyy',
-                        'todayHighlight' => true
-                    ]
-            ]); ?>
-        </div>
-            <div id="lesson-calendar"></div>
-        </div>
+    <div class="col-md-12">
+        <div id="lesson-calendar"></div>
+    </div>
 </div>
 <?php ActiveForm::end(); ?>
 </div>
-<?php
-    $minLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
-        ->orderBy(['fromTime' => SORT_ASC])
-        ->one();
-    $maxLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
-        ->orderBy(['toTime' => SORT_DESC])
-        ->one();
-    $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-    $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-?>
 
 <script>
-$(document).ready(function() {
-    var options = {
-        'dateId' : '#extra-group-lesson-go-to-date',
-        'renderId' : '#lesson-calendar',
-        'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
-        'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
-        'dateRenderId' : '#extra-gruop-lesson-date',
-        'changeId' : '#teacher-change',
-        'durationId' : '#extralesson-duration',
-        'minTime': '<?= $minTime; ?>',
-        'maxTime': '<?= $maxTime; ?>'
-    };
-    $.fn.calendarDayView(options);
-}); 
-$(document).on('modal-success', function(event, params) {
-    window.location.href = params.url;
-    return false;
-});
+    $(document).ready(function() {
+        var options = {
+            'renderId' : '#lesson-calendar',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
+            'changeId' : '#teacher-change',
+            'durationId' : '#extralesson-duration'
+        };
+        $.fn.calendarDayView(options);
+    });
+
+    $(document).on('modal-success', function(event, params) {
+        window.location.href = params.url;
+        return false;
+    });
+
+    $(document).on('week-view-calendar-select', function(event, params) {
+        $('#extra-gruop-lesson-date').val(params.date).trigger('change');
+        return false;
+    });
 </script>
