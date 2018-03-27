@@ -13,7 +13,7 @@ use common\models\Location;
 <div id="bulk-reschedule" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="enrolment-form">
     <?php $form = ActiveForm::begin([
-        'id' => 'enrolment-update',
+        'id' => 'modal-form',
         'action' => Url::to(['enrolment/update', 'id' => $model->id])
     ]); ?>
     <div class="row">
@@ -92,19 +92,17 @@ use common\models\Location;
             'renderId' : '#bulk-reschedule-calendar',
             'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
             'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
-            'changeId' : '#course-teacherid',
+            'changeId' : '#coursereschedule-teacherid',
             'durationId' : '#courseschedule-duration'
         };
         $.fn.calendarDayView(options);
     });
 
     $(document).on('week-view-calendar-select', function(event, params) {
-        $('#courseschedule-day').val(moment(params.date).format('e')).trigger('change');
-        $('#courseschedule-daytime').val(moment(params.date).format('dddd hh:mm A')).trigger('change');
-        $('#courseschedule-fromtime').val(moment(params.date).format('HH:MM:SS')).trigger('change');
+        $('#coursereschedule-daytime').val(moment(params.date, "DD-MM-YYYY h:mm a").format('dddd hh:mm A')).trigger('change');
         return false;
     });
-    
+
     $(document).on('modal-success', function(event, params) {
         paymentFrequency.onEditableSuccess();
         return false;

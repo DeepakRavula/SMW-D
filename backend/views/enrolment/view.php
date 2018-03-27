@@ -126,6 +126,5 @@ echo Tabs::widget([
                 }
             }
         });
-        return false;
     });
 </script>

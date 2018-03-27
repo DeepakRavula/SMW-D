@@ -77,6 +77,7 @@ Modal::begin([
     $(document).off('click', '.modal-cancel').on('click', '.modal-cancel', function () {
         $('#modal-spinner').show();
         $('#popup-modal').modal('hide');
+        return false;
     });
     
     $(document).off('click', '.modal-delete').on('click', '.modal-delete', function () {
