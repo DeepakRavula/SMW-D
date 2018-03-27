@@ -88,7 +88,7 @@ class CourseQuery extends \yii\db\ActiveQuery
     
     public function between($fromDate, $toDate)
     {
-        $this->andWhere(['between', 'DATE(startDate)', (new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d')]);
+        $this->andWhere(['between', 'DATE(startDate)', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')]);
             
         return $this;
     }
