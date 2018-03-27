@@ -42,14 +42,16 @@ class LocationScheduleSearch extends Lesson
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Lesson::find()
-//            ->scheduledOrRescheduled
-//	    ->notCanceled()
-//            ->hasRootLesson()
+	    ->notCanceled()
             ->andWhere(['DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')])
             ->isConfirmed()
             ->notDeleted()
             ->location($locationId)
             ->orderBy(['TIME(date)' => SORT_ASC]);
+	$cancelledLessons = Lesson::find()
+            ->rescheduled()
+	    ->roots();
+	$query = $query->union($cancelledLessons);
         $dataProvider= new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
