@@ -26,13 +26,13 @@ $form = ActiveForm::begin([
         <?php
         echo $form->field($course, 'endDate')->widget(DateTimePicker::classname(), [
             'options' => [
-                'value' => (new \DateTime($course->endDate))->format('d-m-Y'),
+                'value' => Yii::$app->formatter->asDate($course->endDate),
             ],
             'layout' => '{input}{picker}',
             'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
             'pluginOptions' => [
                 'autoclose' => true,
-                'format' => 'dd-mm-yyyy',
+                'format' => 'M d,yyyy',
                 'startView' => 2,
                 'minView' => 2,
             ]

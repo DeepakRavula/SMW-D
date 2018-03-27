@@ -32,6 +32,8 @@ class InvoiceSearch extends Invoice
     public $invoiceStatus;
     public $phone;
     public $summariseReport = false;
+    public $number;
+	public $customer;
     /**
      * {@inheritdoc}
      */
@@ -41,7 +43,7 @@ class InvoiceSearch extends Invoice
             [['fromDate', 'toDate'], 'date', 'format' => 'php:M d,Y'],
             [['mailStatus', 'invoiceStatus'], 'integer'],
             [['type', 'query', 'toggleAdditionalColumns', 'dateRange','invoiceDateRange',
-                'dueFromDate', 'dueToDate','number','phone','summariseReport','isPrint', 'isWeb', 'isMail'], 'safe'],
+                'customer', 'dueFromDate', 'dueToDate','number','phone','summariseReport','isPrint', 'isWeb', 'isMail'], 'safe'],
         ];
     }
 
@@ -105,9 +107,21 @@ class InvoiceSearch extends Invoice
             }
         }
         $query->andFilterWhere(['type' => $this->type]);
-	$query->joinWith(['user' => function ($query) {
-		$query->joinWith('userProfile');
+		$query->joinWith(['user' => function ($query) {
+			$query->joinWith(['userProfile' => function ($query) {
+		}]);
+		$query->joinWith(['userContacts' => function ($query){
+				$query->joinWith(['phone']);
+			}]);
         }]);
+        if(!empty($this->number))
+        {
+		$query->andFilterWhere(['like', 'invoice_number', intval(preg_replace('/[^0-9]+/', '', $this->number), 10)]);
+        }
+           $query->andFilterWhere(['like', 'user_phone.number', trim($this->phone)])
+            ->andFilterWhere(['like', 'user_profile.firstname', trim($this->customer)])
+            ->orFilterWhere(['like', 'user_profile.lastname', trim($this->customer)])
+            ->groupBy('invoice.id');
        	$dataProvider->setSort([
             'attributes' => [
                 'number' => [

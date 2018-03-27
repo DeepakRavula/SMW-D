@@ -77,7 +77,7 @@ class UserImport extends Model
         $successCount = 0;
         $studentCount = 0;
         $customerCount = 0;
-        set_time_limit(1000);
+        //set_time_limit(1000);
         foreach ($rows as $i => $row) {
             if (empty($row['Billing Home Tel'])) {
                 continue;
@@ -301,7 +301,7 @@ class UserImport extends Model
         $studentCsv->billingOtherTel = $row['Billing Other Tel'];
         $studentCsv->billingWorkTel = $row['Billing Work Tel'];
         $studentCsv->billingWorkTelExt = $row['Billing Work Tel Ext.'];
-        $studentCsv->notes = json_encode($row['Comments']);
+        $studentCsv->notes =json_encode($row['Comments']);
         $studentCsv->save();
     }
 }

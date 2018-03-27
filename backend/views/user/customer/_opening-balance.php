@@ -33,7 +33,7 @@ if (!empty($positiveOpeningBalanceModel)) {
     ?>
 	<dl class="dl-horizontal">
 		<dt>Amount</dt>
-		<dd><?= $amount; ?></dd>
+		<dd><?= Yii::$app->formatter->asCurrency($amount); ?></dd>
 	</dl>
 	<?php LteBox::end() ?>
 <?php Modal::begin([

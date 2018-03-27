@@ -38,16 +38,15 @@ class ReportSearch extends Invoice
     public function setDateRange($dateRange)
     {
         list($fromDate, $toDate) = explode(' - ', $dateRange);
-        $this->fromDate = \DateTime::createFromFormat('d-m-Y', $fromDate);
-        $this->toDate = \DateTime::createFromFormat('d-m-Y', $toDate);
+        $this->fromDate = $fromDate;
+        $this->toDate = $toDate;
     }
 
     public function getDateRange()
     {
-        $fromDate = $this->fromDate->format('d-m-Y');
-        $toDate = $this->toDate->format('d-m-Y');
+        $fromDate = $this->fromDate;
+        $toDate = $this->toDate;
         $this->dateRange = $fromDate.' - '.$toDate;
-
         return $this->dateRange;
     }
 }

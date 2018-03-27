@@ -23,9 +23,10 @@ $form = ActiveForm::begin([
         [
         'name' => 'isSent',
         'pluginOptions' => [
-            'handleWidth' => 60,
+            'handleWidth' => 50,
             'onText' => 'Sent',
             'offText' => 'Not Sent',
+			'size' => 'mini'
         ],
     ]
     )->label(false);?>
