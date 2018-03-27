@@ -20,7 +20,7 @@ use yii\grid\GridView;
                 'label' => 'Due Date',
                 'value' => function ($data) {
                     return !empty($data->proFormaInvoice->dueDate) ?
-                        (new \DateTime($data->proFormaInvoice->dueDate))->format('d-m-Y') : '-';
+                        Yii::$app->formatter->asDate($data->proFormaInvoice->dueDate) : '-';
                 }
             ],
             [

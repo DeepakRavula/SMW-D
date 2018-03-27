@@ -1,7 +1,7 @@
 <?php
 
 namespace common\models;
-
+use Yii;
 /**
  * This is the model class for table "holiday".
  *
@@ -52,8 +52,8 @@ class Holiday extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        $holidayDate = \DateTime::createFromFormat('d-m-Y', $this->date);
-        $this->date = $holidayDate->format('Y-m-d');
+        $holidayDate = Yii::$app->formatter->asDate($this->date);
+        $this->date = (new \DateTime($holidayDate))->format('Y-m-d');
 
         return parent::beforeSave($insert);
     }
