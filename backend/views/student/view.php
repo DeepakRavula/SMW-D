@@ -31,6 +31,7 @@ $this->params['label'] = $this->render('_title', [
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<br>
 <div class="row">
 	<?php
     echo $this->render('_profile', [

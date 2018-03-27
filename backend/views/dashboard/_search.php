@@ -8,6 +8,11 @@ use kartik\daterange\DateRangePicker;
 /* @var $model backend\models\search\UserSearch */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
+<style>
+	.pull-right {
+		margin-top:-10px;
+	}
+</style>
     <?php $form = ActiveForm::begin([
         'id' => 'dashboard-search-form',
         'action' => ['index'],
@@ -39,18 +44,18 @@ use kartik\daterange\DateRangePicker;
             ]);
            ?>
         </div>
-        <div class="col-md-2 form-inline">
-            <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['name' => 'dashboard-apply-button', 'class' => 'btn btn-primary']) ?>
-        </div>
     </div>
 </div>
     <?php ActiveForm::end(); ?>
 <script>
-    $(document).ready(function () {
-$("#dashboard-search-form").on("submit", function () {
+$(document).ready(function () {
+	$("#dashboard-search-form").on("submit", function () {
             var dateRange = $('#dashboardsearch-daterange').val();
             $.pjax.reload({container: "#dashboard", replace: false, timeout: 6000, data: $(this).serialize()});
             return false;
         });
     });
+	$(document).on('change', '#dashboardsearch-daterange', function() {
+		$("#dashboard-search-form").submit();
+	});
 </script>

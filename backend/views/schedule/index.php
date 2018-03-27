@@ -34,7 +34,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class
    .fc-view.fc-agendaDay-view{overflow-x:scroll;}
 </style>
 	<div class="col-md-2 schedule-picker">
-		<div id="datepicker" class="input-group date">
+		<div id="datepicker" class="input-group date" style="margin-top:5px">
 			<input type="text" class="form-control" value=<?=(new \DateTime())->format('d-m-Y')?>>
 			<div class="input-group-addon">
 				<span class="glyphicon glyphicon-calendar"></span>
