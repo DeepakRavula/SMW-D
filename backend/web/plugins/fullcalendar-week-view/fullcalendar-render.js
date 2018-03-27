@@ -7,13 +7,16 @@ $.fn.calendarDayView = function(options) {
         todayHighlight: true,
         orientation: "auto"
     });
+    $('#week-view-spinner').show();
     calendar.render(options);
     
     $(document).off('change', '#fullcalendar-week-view-go-to-datepicker').on('change', '#fullcalendar-week-view-go-to-datepicker', function () {
+        $('#week-view-spinner').show();
         calendar.render(options);
     });
     
     $(document).off('change', options.changeId).on('change', options.changeId, function () {
+        $('#week-view-spinner').show();
         calendar.render(options);
     });
 };
@@ -81,6 +84,7 @@ var calendar = {
             },
             eventAfterAllRender: function () {
                 $('.fc-short').removeClass('fc-short');
+                $('#week-view-spinner').hide();
             },
             selectable: true,
             selectHelper: true

@@ -17,7 +17,7 @@ use common\models\Location;
         'action' => Url::to(['enrolment/update', 'id' => $model->id])
     ]); ?>
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
             $teachers = ArrayHelper::map(
                 User::find()
@@ -39,7 +39,7 @@ use common\models\Location;
             ]);
             ?>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <?= $form->field($courseReschedule, 'dayTime')->textInput(['readOnly' => true]);?>
         </div>
         <div class="col-md-2">

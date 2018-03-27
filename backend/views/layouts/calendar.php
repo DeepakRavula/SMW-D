@@ -13,8 +13,12 @@
     <div class="col-lg-2 pull-right">
         <label>Go to Date</label>
         <div id="go-to-datepicker" class="input-append date">
-            <input id="fullcalendar-week-view-go-to-datepicker" class="form-control" readonly="true" type="text" value="<?=(new \DateTime())->format('M-d-Y')?>"><span class="add-on"><i class="icon-th"></i></span>
+            <input id="fullcalendar-week-view-go-to-datepicker" class="form-control" readonly="true" type="text" value="<?= Yii::$app->formatter->asDate(new \DateTime())?>"><span class="add-on"><i class="icon-th"></i></span>
         </div>
+    </div>
+    <div id="week-view-spinner" class="spinner" style="display:none">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
     </div>
     <div id="week-view-calendar"></div>
 </div>

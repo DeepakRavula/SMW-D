@@ -2,12 +2,8 @@
 
 namespace common\models;
 
-use yii\helpers\ArrayHelper;
-use common\models\Program;
-use common\models\Lesson;
-use Yii;
-use Carbon\Carbon;
-use common\models\CourseGroup;
+use common\components\validators\reschedule\CourseRescheduleBeginValidator;
+use common\components\validators\reschedule\CourseRescheduleEndValidator;
 
 /**
  * This is the model class for table "course".
@@ -27,12 +23,14 @@ class CourseReschedule extends Course
     public $rescheduleEndDate;
     public $duration;
     public $dayTime;
+    public $courseId;
     public $teacherId;
 
     public function setModel($model)
     {
         $this->duration = $model->duration;
         $this->teacherId = $model->teacherId;
+        $this->courseId = $model->id;
         return $this;
     }
     /**
@@ -41,7 +39,10 @@ class CourseReschedule extends Course
     public function rules()
     {
         return [
-            [['dayTime', 'teacherId', 'duration', 'rescheduleEndDate', 'rescheduleBeginDate'], 'required']
+            [['dayTime', 'teacherId', 'duration', 'rescheduleEndDate', 'rescheduleBeginDate'], 'required'],
+            [['courseId'], 'safe'],
+            [['rescheduleBeginDate'], CourseRescheduleBeginValidator::className()],
+            [['rescheduleEndDate'], CourseRescheduleEndValidator::className()]
         ];
     }
 
@@ -57,5 +58,27 @@ class CourseReschedule extends Course
             'rescheduleEndDate' => 'Reschedule End',
             'dayTime' => 'Day & Time'
         ];
+    }
+
+    public function reschdeule()
+    {
+        Lesson::deleteAll([
+            'courseId' => $this->courseId,
+            'isConfirmed' => false,
+        ]);
+        $endDate = new \DateTime($this->rescheduleEndDate);
+        $startDate = new \DateTime($this->rescheduleBeginDate);
+        $lessons = Lesson::find()
+            ->where(['courseId' => $this->courseId])
+            ->regular()
+            ->notDeleted()
+            ->scheduled()
+            ->isConfirmed()
+            ->between($startDate, $endDate)
+            ->all();
+        foreach ($lessons as $lesson) {
+            
+        }
+        return true;
     }
 }
