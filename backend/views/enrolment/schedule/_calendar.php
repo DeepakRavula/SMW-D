@@ -31,10 +31,10 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
              
              if(teacherId!==null && teacherId!=="")
              {
-             var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+             var date = moment($('#course-startdate').val(), 'MMM D,YYYY', true).format('YYYY-MM-DD');
              $('#courseschedule-day').val(moment(date).format('dddd'));
  			if (! moment(date).isValid()) {
-                 var date = moment($('#course-startdate').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
+                 var date = moment($('#course-startdate').val(), 'MMM D,YYYY hh:mm A', true).format('YYYY-MM-DD');
              }
  			$('#enrolment-edit-modal .modal-dialog').css({'width': '1000px'});
  			$.ajax({
@@ -86,7 +86,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                  overlapEventsSeparate: true,
                  events: events,
                  select: function (start, end, allDay) {
-                     $('#course-startdate').val(moment(start).format('DD-MM-YYYY hh:mm A'));
+                     $('#course-startdate').val(moment(start).format('MMM D,YYYY hh:mm A'));
                      $('#courseschedule-fromtime').val(moment(start).format('hh:mm A'));
                      $('#enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
  					$('#courseschedule-day').val(moment(start).format('dddd'));

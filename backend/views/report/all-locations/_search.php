@@ -34,7 +34,7 @@ use kartik\grid\GridView;
                     Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
                 ],
                 'locale' => [
-                    'format' => 'd-m-Y',
+                    'format' => 'M d,Y',
                 ],
                 'opens' => 'right',
                 ],

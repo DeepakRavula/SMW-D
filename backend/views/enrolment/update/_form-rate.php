@@ -22,8 +22,8 @@ use common\models\User;
     <?php foreach ($courseProgramRates as $key => $courseProgramRate) : ?>
     <?php if ($user->isAdmin()) : ?>
         <div class="col-md-6">
-            <label>Rate From <?= (new \DateTime($courseProgramRate->startDate))->format('d-m-Y')
-                . ' To ' . (new \DateTime($courseProgramRate->endDate))->format('d-m-Y') ?></label>
+            <label>Rate From <?= Yii::$app->formatter->asDate($courseProgramRate->startDate)
+                . ' To ' . Yii::$app->formatter->asDate($courseProgramRate->endDate) ?></label>
             <?= $form->field($courseProgramRate, 'programRate')->textInput([
                     'id' => 'program-rate' . $key, 'name' => 'CourseProgramRate['. $key . '][programRate]'
                 ])->label(false);

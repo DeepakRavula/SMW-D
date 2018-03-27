@@ -51,7 +51,7 @@ use insolita\wgadminlte\LteConst;
             [
                 'label' => 'Exam Date',
                 'value' => function ($data) {
-                    return !empty($data->date) ? (new \DateTime($data->date))->format('M. d, Y') : null;
+                    return !empty($data->date) ? Yii::$app->formatter->asDate($data->date) : null;
                 }
             ],
             'mark',
