@@ -989,7 +989,7 @@ class Lesson extends \yii\db\ActiveRecord
 	    if($lessonClass === 'lesson-rescheduled') {
 		$message = "Lesson has been rescheduled";    
 	    }
-	    else if($lessonClass === 'first-lesson' || $lessonClass === 'private-lesson' || $lessonClass === 'group-lesson'){
+	    else if($lessonClass === 'first-lesson' || $lessonClass === 'private-lesson' || $lessonClass === 'group-lesson' || $lessonClass === 'teacher-substituted'){
 		    $message = "Scheduled";
 	    }
 	    else {
