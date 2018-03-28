@@ -41,17 +41,28 @@ class LocationScheduleSearch extends Lesson
     public function search($params)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $query = Lesson::find()
+        
+	$rescheduledLessons = Lesson::find()
+	    ->canceled()
+	    ->andWhere(['DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')])
+            ->isConfirmed()
+            ->notDeleted()
+            ->location($locationId)
+	    ->all();
+	$rootLessonIds = [];
+	foreach ($rescheduledLessons as $rescheduledLesson) {	
+		if(!empty($rescheduledLesson->childLesson ) && $rescheduledLesson->childLesson->isRescheduled()) {
+		$rootLessonIds[] = $rescheduledLesson->id;
+	    }
+	}
+	$query = Lesson::find()
 	    ->notCanceled()
             ->andWhere(['DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')])
             ->isConfirmed()
             ->notDeleted()
             ->location($locationId)
+	    ->orWhere(['IN', 'lesson.id',$rootLessonIds])
             ->orderBy(['TIME(date)' => SORT_ASC]);
-	$cancelledLessons = Lesson::find()
-            ->rescheduled()
-	    ->roots();
-	$query = $query->union($cancelledLessons);
         $dataProvider= new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,

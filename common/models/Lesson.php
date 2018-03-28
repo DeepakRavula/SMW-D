@@ -985,23 +985,11 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return self::find()->descendantsOf($this->id)->orderBy(['id' => SORT_DESC])->one();
     }
-    public function statusMethod() {
-	    $lessonClass = $this->getClass();
-	    $message="";
-	    $lesson = $this->childLesson;
-	    
-	    if($lessonClass === 'lesson-rescheduled') {
-		$message = "Lesson has been rescheduled";    
-	    }
-	    else if($this->status === Lesson::STATUS_UNSCHEDULED) {
-		   $message = "Unscheduled"; 
-	    }
-	    else if($lessonClass === 'first-lesson' || $lessonClass === 'private-lesson' || $lessonClass === 'group-lesson' || $lessonClass === 'teacher-substituted'){
-		    $message = "Scheduled";
-	    }
-	    else {
-		    $message = "Unscheduled";
-	    }
-	    return $message; 
+    public function dailyScheduleStatus() {
+	$status = $this->getStatus();
+	    if($status === 'Canceled') {
+		$status = "Rescheduled to " . Yii::$app->formatter->asDate($this->childLesson->date);    
+	    }    
+	return $status; 
     }
 }

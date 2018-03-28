@@ -61,7 +61,7 @@ GridView::widget([
 	    [
             'label' => 'Status',
             'value' => function ($data) {
-                return !empty($data->statusMethod()) ? $data->statusMethod() : null;
+                return  $data->dailyScheduleStatus();
             },
         ],
     ]
