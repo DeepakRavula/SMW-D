@@ -30,11 +30,11 @@ DatePickerAsset::register($this);
     echo $form->field($model, 'startDate')->widget(DatePicker::classname(), [
         'type' => DatePicker::TYPE_COMPONENT_APPEND,
         'options' => [
-            'value' => (new \DateTime())->format('d-m-Y'),
+            'value' => Yii::$app->formatter->asDate(new \DateTime()),
         ],
         'pluginOptions' => [
             'autoclose' => true,
-            'format' => 'dd-mm-yyyy',
+            'format' => 'M d,yyyy',
         ],
     ]);
     ?>

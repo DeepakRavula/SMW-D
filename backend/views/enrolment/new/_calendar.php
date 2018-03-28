@@ -28,9 +28,9 @@ use common\models\LocationAvailability;
              var teacherId = $('#course-teacherid').val();
              if(teacherId!==null && teacherId!=="")
              {
-             var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+             var date = moment($('#course-startdate').val(), 'MMM D,YYYY', true).format('YYYY-MM-DD');
  			if (! moment(date).isValid()) {
-                 var date = moment($('#course-startdate').val(), 'DD-MM-YYYY hh:mm A', true).format('YYYY-MM-DD');
+                 var date = moment($('#course-startdate').val(), 'MMM D,YYYY hh:mm A', true).format('YYYY-MM-DD');
              }
 	     $('#courseschedule-day').val(moment(date).format('dddd'));
  			$.ajax({
@@ -82,7 +82,7 @@ use common\models\LocationAvailability;
                  overlapEventsSeparate: true,
                  events: events,
                  select: function (start, end, allDay) {
-                     $('#course-startdate').val(moment(start).format('DD-MM-YYYY hh:mm A'));
+                     $('#course-startdate').val(moment(start).format('MMM D,YYYY hh:mm A'));
                      $('#courseschedule-fromtime').val(moment(start).format('hh:mm A'));
                      $('#reverse-enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
  					$('#courseschedule-day').val(moment(start).format('dddd'));

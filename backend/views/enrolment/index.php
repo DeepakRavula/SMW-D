@@ -200,10 +200,9 @@ $(document).ready(function(){
             var date = $('#course-startdate').val();
 	    var events, availableHours;
              var teacherId = $('#course-teacherid').val();
-             var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+             var date = moment($('#course-startdate').val(), 'MMM D,YYYY', true).format('YYYY-MM-DD');
  			if (! moment(date).isValid()) {
-				alert(moment(date));
-                 var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+                 var date = moment($('#course-startdate').val(), 'MMM D,YYYY', true).format('YYYY-MM-DD');
              }
 	     $('#courseschedule-day').val(moment(date).format('dddd'));
  			$.ajax({
