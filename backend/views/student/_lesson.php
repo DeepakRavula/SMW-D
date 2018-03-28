@@ -176,9 +176,9 @@ use yii\grid\GridView;
         refresh : function(){
             var events, availableHours;
             var teacherId = $('#lesson-teacher').val();
-            var date = moment($('#extra-lesson-go-to-date').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+            var date = moment($('#extra-lesson-go-to-date').val(), 'MMM DD,YYYY', true).format('YYYY-MM-DD');
             if (! moment(date).isValid()) {
-                var date = moment($('#extra-lesson-go-to-date').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
+                var date = moment($('#extra-lesson-go-to-date').val(), 'MMM DD,YYYY hh:mm A', true).format('YYYY-MM-DD');
             }
             if (date === 'Invalid date') {
                 $('#lesson-calendar').fullCalendar('destroy');
