@@ -1,11 +1,12 @@
 <?php
 
 use yii\helpers\Html;
+use common\models\User;
 use backend\models\search\InvoiceSearch;
 use yii\widgets\Pjax;
 
 ?>
-
+<?php $loggedUser = User::findOne(Yii::$app->user->id); ?>
 <?php Pjax::Begin(['id' => 'invoice-header-summary']) ?>
 <div id="invoice-header">
 <?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
@@ -42,7 +43,7 @@ use yii\widgets\Pjax;
             <?php else : ?>
             <li><a id="retract" href="#">Retract Funds From Lessons</a></li>
             <?php endif; ?>
-            <?php if (!$model->canUnpost()) : ?>
+            <?php if (!$model->canUnpost() && !$loggedUser->isAdmin() && !$loggedUser->isOwner()) : ?>
             <li><a class="multiselect-disable" href="#">Un-post</a></li>
             <?php else : ?>
             <li><a id="un-post" href="#">Un-post</a></li>

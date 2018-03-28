@@ -15,6 +15,7 @@ use yii\filters\ContentNegotiator;
 use common\models\TeacherRoom;
 use yii\bootstrap\ActiveForm;
 use common\models\Location;
+use common\models\LocationAvailability;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 
@@ -220,10 +221,21 @@ class TeacherAvailabilityController extends BaseController
             ];
         }
         unset($lesson);
-
+        $minLocationAvailability = LocationAvailability::find()
+            ->where(['locationId' => $locationId])
+            ->orderBy(['fromTime' => SORT_ASC])
+            ->one();
+        $maxLocationAvailability = LocationAvailability::find()
+            ->where(['locationId' => $locationId])
+            ->orderBy(['toTime' => SORT_DESC])
+            ->one();
+        $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+        $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
         return [
             'availableHours' => $availableHours,
             'events' => $events,
+            'minTime' => $minTime,
+            'maxTime' => $maxTime
         ];
     }
     public function actionModify($id, $teacherId)

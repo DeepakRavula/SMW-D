@@ -415,7 +415,7 @@ class Invoice extends \yii\db\ActiveRecord
             ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
             ->sum('payment.amount');
 
-        return $invoicePaymentTotal;
+        return !empty($invoicePaymentTotal) ? $invoicePaymentTotal : 0.0000;
     }
 
     public function getProFormaPaymentTotal()
@@ -606,7 +606,7 @@ class Invoice extends \yii\db\ActiveRecord
             }
             $this->invoice_number = $invoiceNumber;
             $this->date           = (new \DateTime())->format('Y-m-d');
-            $this->status         = Invoice::STATUS_OWING;
+            $this->status         = Invoice::STATUS_PAID;
             $this->isSent         = false;
             $this->subTotal       = 0.00;
             $this->total          = 0.00;

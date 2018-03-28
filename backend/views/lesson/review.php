@@ -187,7 +187,7 @@ $teacherId = $courseModel->teacher->id;
             refresh: function () {
                 var events, availableHours;
                 var teacherId = <?= $teacherId ?>;
-                var date = moment($('#lesson-date').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+                var date = moment($('#lesson-date').val(), 'MMM DD,YYYY h:mm A', true).format('YYYY-MM-DD');
                 if (!moment(date).isValid()) {
                     var date = moment($('#lesson-date').val(), 'DD-MM-YYYY h:mm A', true).format('YYYY-MM-DD');
                 }
