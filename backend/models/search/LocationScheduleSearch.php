@@ -41,7 +41,6 @@ class LocationScheduleSearch extends Lesson
     public function search($params)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        
 	$rescheduledLessons = Lesson::find()
 	    ->canceled()
 	    ->andWhere(['DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')])
@@ -70,7 +69,6 @@ class LocationScheduleSearch extends Lesson
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-
         return $dataProvider;
     }
 }
