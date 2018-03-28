@@ -31,9 +31,11 @@ $this->params['action-button'] = $this->render('_buttons', [
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>
 </div>
+<div id="line-item-update" style="display:none;" class="alert-success alert fade in"></div>
 <div id="customer-update" style="display:none;" class="alert-success alert fade in"></div>
 <div id="invoice-discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <div id="invoice-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
+<br>
 <?php Pjax::begin([
     'id' => 'invoice-view',
 ]);?>
@@ -245,7 +247,9 @@ Modal::begin([
     });
 
     $(document).on('modal-error', function (event, params) {
-        $('#modal-popup-error-notification').html(params.message).fadeIn().delay(5000).fadeOut();
+        if (params.message) {
+            $('#modal-popup-error-notification').html(params.message).fadeIn().delay(5000).fadeOut();
+        }
     });
 
     $(document).on('modal-success', function (event, params) {
@@ -414,7 +418,7 @@ Modal::begin([
                                 $('#payment-add-spinner').hide();
                                 $('#payment-modal').modal('hide');
                                 if (response.canPost) {
-                                    invoice.post();
+                                    invoice.postAfterPaid();
                                 }
                                 invoice.reload();
                                 $('#add-payment-spinner').hide();
@@ -579,8 +583,27 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         return false;
     });
 
+    $(document).off('click', '#post').on('click', '#post', function () {
+        invoice.post();
+        return false;
+    });
+
     var invoice = {
-        post: function () {
+        post: function() {
+            $('#invoice-spinner').show();
+            $.ajax({
+                url    : '<?= Url::to(['invoice/post', 'id' => $model->id]); ?>',
+                type   : 'post',
+                dataType: "json",
+                success: function()
+                {
+                    invoice.reload();
+                    $('#success-notification').html('PFI posted succesfully!').fadeIn().delay(5000).fadeOut();
+                }
+            });
+        },
+        
+        postAfterPaid: function () {
             $('#invoice-spinner').show();
             bootbox.confirm({
                 message: 'This PFI is now fully paid. Would you like to post this document and distribute the                                               payments received to the associated lessons?',

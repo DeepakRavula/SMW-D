@@ -199,7 +199,7 @@ class Location extends \yii\db\ActiveRecord
     {
         $invoiceTaxTotal = Invoice::find()
             ->where(['location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE])
-            ->andWhere(['between', 'date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+            ->andWhere(['between', 'date', (new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d')])
             ->notDeleted()
             ->sum('tax');
 
@@ -209,7 +209,7 @@ class Location extends \yii\db\ActiveRecord
             }])
             ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
             ->notDeleted()
-            ->andWhere(['between', 'payment.date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+            ->andWhere(['between', 'payment.date', (new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d')])
             ->sum('payment.amount');
 
         $royaltyPayment = InvoiceLineItem::find()
@@ -217,7 +217,7 @@ class Location extends \yii\db\ActiveRecord
             ->joinWith(['invoice i' => function ($query) {
                 $query->where(['i.location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE]);
             }])
-            ->andWhere(['between', 'i.date', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+            ->andWhere(['between', 'i.date', (new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d')])
             ->royaltyFree()
             ->sum('invoice_line_item.amount');
 

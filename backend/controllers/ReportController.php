@@ -93,9 +93,9 @@ class ReportController extends BaseController
     {
         $searchModel = new StudentBirthdaySearch();
         $currentDate = new \DateTime();
-        $searchModel->fromDate = $currentDate->format('d-m-Y');
+        $searchModel->fromDate = Yii::$app->formatter->asDate($currentDate);
         $nextSevenDate = $currentDate->modify('+7days');
-        $searchModel->toDate = $nextSevenDate->format('d-m-Y');
+        $searchModel->toDate = Yii::$app->formatter->asDate($nextSevenDate);
         $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
         $request = Yii::$app->request;
         if ($searchModel->load($request->get())) {
@@ -137,8 +137,8 @@ class ReportController extends BaseController
     {
         $searchModel = new ReportSearch();
         $currentDate = new \DateTime();
-        $searchModel->fromDate = $currentDate->format('1-m-Y');
-        $searchModel->toDate = $currentDate->format('t-m-Y');
+        $searchModel->fromDate = Yii::$app->formatter->asDate($currentDate);
+        $searchModel->toDate = Yii::$app->formatter->asDate($currentDate);
         $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         $request = Yii::$app->request;
         if ($searchModel->load($request->get())) {
@@ -153,7 +153,7 @@ class ReportController extends BaseController
         
         $invoiceTaxTotal = Invoice::find()
             ->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
-            ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+            ->andWhere(['between', 'date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->notDeleted()
             ->sum('tax');
 
@@ -163,7 +163,7 @@ class ReportController extends BaseController
             }])
             ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
             ->notDeleted()
-            ->andWhere(['between', 'payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+            ->andWhere(['between', 'payment.date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->sum('payment.amount');
 
         $royaltyPayment = InvoiceLineItem::find()
@@ -171,7 +171,7 @@ class ReportController extends BaseController
             ->joinWith(['invoice i' => function ($query) use ($locationId) {
                 $query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
             }])
-            ->andWhere(['between', 'i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+            ->andWhere(['between', 'i.date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->royaltyFree()
             ->sum('invoice_line_item.amount');
                 
@@ -187,8 +187,8 @@ class ReportController extends BaseController
     {
         $searchModel = new ReportSearch();
         $currentDate = new \DateTime();
-        $searchModel->fromDate = $currentDate->format('1-m-Y');
-        $searchModel->toDate = $currentDate->format('t-m-Y');
+        $searchModel->fromDate = Yii::$app->formatter->asDate($currentDate);
+        $searchModel->toDate = Yii::$app->formatter->asDate($currentDate);
         $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         $request = Yii::$app->request;
         if ($searchModel->load($request->get())) {
@@ -207,7 +207,7 @@ class ReportController extends BaseController
                     'location_id' => $locationId,
                     'type' => Invoice::TYPE_INVOICE,
                 ])
-                ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                ->andWhere(['between', 'date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
                 ->notDeleted();
             }])
             ->andWhere(['>', 'tax_rate', 0]);
@@ -231,8 +231,8 @@ class ReportController extends BaseController
     {
         $searchModel = new ReportSearch();
         $currentDate = new \DateTime();
-        $searchModel->fromDate = $currentDate->format('1-m-Y');
-        $searchModel->toDate = $currentDate->format('t-m-Y');
+        $searchModel->fromDate = Yii::$app->formatter->asDate($currentDate);
+        $searchModel->toDate = Yii::$app->formatter->asDate($currentDate);
         $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         $request = Yii::$app->request;
         if ($searchModel->load($request->get())) {
@@ -251,7 +251,7 @@ class ReportController extends BaseController
                     'location_id' => $locationId,
                     'type' => Invoice::TYPE_INVOICE,
                 ])
-                ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                ->andWhere(['between', 'date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
                 ->notDeleted();
             }])
             ->royaltyFree();
@@ -393,8 +393,8 @@ class ReportController extends BaseController
     {
         $searchModel = new ReportSearch();
         $currentDate = new \DateTime();
-        $searchModel->fromDate = $currentDate->format('1-m-Y');
-        $searchModel->toDate = $currentDate->format('t-m-Y');
+        $searchModel->fromDate = Yii::$app->formatter->asDate($currentDate);
+        $searchModel->toDate = Yii::$app->formatter->asDate($currentDate);
         $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         $request = Yii::$app->request;
         if ($searchModel->load($request->get())) {

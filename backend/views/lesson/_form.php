@@ -167,7 +167,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
                     }
                 },
                 select: function (start, end, allDay) {
-                    $('#lesson-date').val(moment(start).format('DD-MM-YYYY hh:mm A')).trigger('change');
+                    $('#lesson-date').val(moment(start).format('MMM D,YYYY hh:mm A')).trigger('change');
                     $('#lesson-edit-calendar').fullCalendar('removeEvents', 'newEnrolment');
                     var duration = $('#course-duration').val();
                     var endtime = start.clone();
@@ -197,7 +197,7 @@ $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
         refresh: function () {
             var events, availableHours;
             var teacherId = $('#lesson-teacherid').val();
-            var date = moment($('#lesson-date').val(), 'DD-MM-YYYY h:mm A', true).format('YYYY-MM-DD');
+            var date = moment($('#lesson-date').val(), 'MMM D,YYYY h:mm A', true).format('YYYY-MM-DD');
             $.ajax({
                 url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
                 type: 'get',

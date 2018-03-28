@@ -31,6 +31,7 @@ $this->params['label'] = $this->render('_title', [
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<br>
 <div class="row">
 	<?php
     echo $this->render('_profile', [
@@ -602,4 +603,21 @@ $(document).on('click', '.evaluation-delete', function () {
 		return false;
     });
 });
+
+    $(document).off('click', '.enrolment-save-btn').on('click', '.enrolment-save-btn', function () {
+        $('.enrolment-save-btn').attr('disabled', true);
+        $('.step2-back').attr('disabled', true);
+        $('.private-enrol-cancel').attr('disabled', true);
+        $('#enrolment-form').submit();
+        return false;
+    });
+
+    $(document).on('afterValidate', '#enrolment-form', function (event, messages, errorAttributes) {
+        if (errorAttributes.length > 0) {
+            $('#private-enrolment-spinner').hide();
+            $('.enrolment-save-btn').attr('disabled', false);
+            $('.step2-back').attr('disabled', false);
+            $('.private-enrol-cancel').attr('disabled', false);
+        }
+    });
 </script>

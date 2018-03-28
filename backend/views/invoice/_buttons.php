@@ -7,6 +7,7 @@ use yii\widgets\Pjax;
 ?>
 
 <?php Pjax::Begin(['id' => 'invoice-header-summary']) ?>
+<div id="invoice-header">
 <?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
     <?php if ((bool) !$model->isDeleted()): ?>
 	<?=	Html::a(
@@ -22,6 +23,11 @@ use yii\widgets\Pjax;
         <button class="btn dropdown-toggle" data-toggle="dropdown">More Action&nbsp;&nbsp;<span class="caret"></span></button>
         <ul class="dropdown-menu dropdown-menu-right">
             <?php if ($model->canPost()) : ?>
+            <li><a id="post" href="#">Post</a></li>
+            <?php else : ?>
+            <li><a class="multiselect-disable" href="#">Post</a></li>
+            <?php endif; ?>
+            <?php if ($model->canPost() && $model->canDistributeCredits()) : ?>
             <li><a id="post-distriute" href="#">Post & Distribute</a></li>
             <?php else : ?>
             <li><a class="multiselect-disable" href="#">Post & Distribute</a></li>
@@ -73,4 +79,5 @@ use yii\widgets\Pjax;
     \NumberFormatter::MIN_FRACTION_DIGITS => 2,
     \NumberFormatter::MAX_FRACTION_DIGITS => 2,
 ]]); ?> &nbsp;&nbsp;
+</div>
 <?php Pjax::end();?>

@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Lesson;
 use common\models\Invoice;
+use common\models\Location;
 
 /**
  * LessonSearch represents the model behind the search form about `common\models\Lesson`.
@@ -65,8 +66,7 @@ class LessonSearch extends Lesson
         $this->fromDate = (new \DateTime())->format('M d,Y');
         $this->toDate = (new \DateTime())->format('M d,Y');
         $this->dateRange = $this->fromDate.' - '.$this->toDate;
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Lesson::find()
             ->isConfirmed()
             ->notDeleted()
@@ -78,6 +78,14 @@ class LessonSearch extends Lesson
             'query' => $query,
         ]);
         if (!empty($params) && !($this->load($params) && $this->validate())) {
+            return $dataProvider;
+        }
+        if (!empty($this->ids)) {
+            $lessonQuery = Lesson::find()
+                    ->where(['id' => $this->ids]);
+            $dataProvider = new ActiveDataProvider([
+                'query' => $lessonQuery,
+            ]);
             return $dataProvider;
         }
         $query->andFilterWhere(['OR',
@@ -146,14 +154,7 @@ class LessonSearch extends Lesson
             }
         }
         
-        if (!empty($this->ids)) {
-            $lessonQuery = Lesson::find()
-                    ->where(['id' => $this->ids]);
-            $dataProvider = new ActiveDataProvider([
-                'query' => $lessonQuery,
-            ]);
-        }
-	$query->joinWith('teacherProfile');
+        $query->joinWith('teacherProfile');
 	$dataProvider->setSort([
             'attributes' => [
                 'program' => [

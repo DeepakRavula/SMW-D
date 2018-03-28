@@ -27,7 +27,7 @@ use yii\helpers\Url;
             <?php echo $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?>
              <?php
             $customerName = $model->isNewRecord ? $customer->userProfile->lastname : null;
-            $model->birth_date = !empty($model->birth_date) ? (new \DateTime($model->birth_date))->format('d-m-Y') : null;
+            $model->birth_date = !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null;
         ?>
             <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true, 'value' => $customerName]) ?>
             <?php echo $form->field($model, 'birth_date')->textInput()?>
@@ -51,7 +51,7 @@ $(document).ready(function() {
 $.fn.datepicker.noConflict();
 $('#student-birth_date').datepicker({
    altField: '#student-birth_date',
-   altFormat: 'dd-mm-yy',
+   altFormat: 'M d,yy',
    changeMonth: true,
    changeYear: true,
    yearRange : '-70:today',

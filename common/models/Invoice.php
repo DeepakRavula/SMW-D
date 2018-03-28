@@ -333,7 +333,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function canPost()
     {
-        return $this->isProFormaInvoice() && $this->isPaid() && !$this->isPosted;
+        return $this->isProFormaInvoice() && !$this->isPosted;
     }
 
     public function hasCredit()
@@ -532,6 +532,9 @@ class Invoice extends \yii\db\ActiveRecord
                 $attribute,
                     'Pro-forma invoice can\'t be deleted when there payments associated. Please delete the payments and try again'
             );
+        } 
+        if ($this->isProFormaInvoice() && $this->isPosted) {
+            $this->addError($attribute, 'PFI cannot be deleted after posted!');
         }
     }
 

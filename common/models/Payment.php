@@ -32,6 +32,8 @@ class Payment extends ActiveRecord
     
     const TYPE_OPENING_BALANCE_CREDIT = 1;
     const SCENARIO_EDIT = 'edit';
+    const SCENARIO_DELETE = 'delete';
+    const SCENARIO_CREDIT_USED_DELETE = 'credit-used-delete';
     const SCENARIO_APPLY_CREDIT = 'apply-credit';
     const SCENARIO_CREDIT_APPLIED = 'credit-applied';
     const SCENARIO_OPENING_BALANCE = 'allow-negative-payments';
@@ -58,10 +60,12 @@ class Payment extends ActiveRecord
     public function rules()
     {
         return [
+            [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE, self::SCENARIO_CREDIT_USED_DELETE]],
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
             [['amount'], 'validateNegativeBalance'],
+            [['amount'], 'validateNegativeBalanceOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'number'],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old',
                'sourceId', 'credit', 'isDeleted', 'transactionId','notes'], 'safe'],
@@ -80,8 +84,16 @@ class Payment extends ActiveRecord
                 $this->amount = abs($invoice->balance);
             }
             if ((float) $this->amount > (float) $invoice->balance && !$invoice->isInvoice()) {
-                return $this->addError($attributes, "Can't over pay");
+                $this->addError($attributes, "Can't over pay");
             }
+        }
+    }
+
+    public function validateNegativeBalanceOnEdit($attributes)
+    {
+        if ((float) round($this->amount, 2) > (float) round($this->invoice->balance + $this->old['amount'], 2) &&
+                !$this->invoice->isInvoice()) {
+            $this->addError($attributes, "Can't over pay");
         }
     }
 
@@ -89,7 +101,7 @@ class Payment extends ActiveRecord
     {
         $invoiceModel = Invoice::findOne(['id' => $this->sourceId]);
         if (round(abs($invoiceModel->balance), 2) < round(abs($this->amount), 2)) {
-            return $this->addError($attributes, "Insufficient credt");
+            $this->addError($attributes, "Insufficient credt");
         }
     }
 
@@ -97,8 +109,15 @@ class Payment extends ActiveRecord
     {
         if (round($this->old['amount'], 2) !== round($this->amount, 2)) {
             if ($this->invoice->isProFormaInvoice() && $this->invoice->hasCreditUsed()) {
-                return $this->addError($attributes, "Can't adjust payment before retract lesson credit");
+                $this->addError($attributes, "Can't adjust payment before retract lesson credit");
             }
+        }
+    }
+
+    public function validateOnDelete($attributes)
+    {
+        if ($this->invoice->isProFormaInvoice() && $this->invoice->hasCreditUsed() && !$this->isCreditUsed()) {
+            $this->addError($attributes, "Can't delete payment before retract lesson credit");
         }
     }
     /**
@@ -288,11 +307,7 @@ class Payment extends ActiveRecord
 
     public function canDelete()
     {
-        $canDelete = true;
-        if ($this->invoice->isProFormaInvoice() && $this->invoice->hasCreditUsed()) {
-            $canDelete = false;
-        }
-        return $canDelete;
+        return !$this->isAutoPayments();
     }
 
     public function afterSoftDelete()

@@ -87,8 +87,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 [
                 'value' => function ($data) {
                     if (!empty($data->date)) {
-                        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-                        return $lessonDate->format('Y-m-d');
+                        $lessonDate = Yii::$app->formatter->asDate($data->date);
+                        return $lessonDate;
                     }
 
                     return null;

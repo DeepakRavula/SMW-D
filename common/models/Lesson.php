@@ -302,9 +302,7 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function getCourseProgramRate()
     {
-        return $this->hasOne(CourseProgramRate::className(), ['courseId' => 'courseId'])
-                ->onCondition(['AND', ['<=', 'course_program_rate.startDate', (new \DateTime($this->date))->format('Y-m-d')],
-                    ['>=', 'course_program_rate.endDate', (new \DateTime($this->date))->format('Y-m-d')]]);
+        return $this->hasOne(CourseProgramRate::className(), ['courseId' => 'courseId']);
     }
 
     public function getClassroom()

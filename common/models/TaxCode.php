@@ -1,7 +1,7 @@
 <?php
 
 namespace common\models;
-
+use Yii;
 /**
  * This is the model class for table "tax_code".
  *
@@ -75,8 +75,8 @@ class TaxCode extends \yii\db\ActiveRecord
     }
     public function beforeSave($insert)
     {
-        $startDate = \DateTime::createFromFormat('d-m-Y', $this->start_date);
-        $this->start_date = $startDate->format('Y-m-d H:i:s');
+        $startDate = Yii::$app->formatter->asDate($this->start_date);
+        $this->start_date = (new \DateTime($startDate))->format('Y-m-d H:i:s');
         return parent::beforeSave($insert);
     }
 }
