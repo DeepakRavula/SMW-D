@@ -101,7 +101,7 @@ use yii\widgets\Pjax;
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
         'value' => function ($data) {
-            return Yii::$app->formatter->asDecimal($data->itemTotal);
+            return Yii::$app->formatter->asDecimal($data->netPrice);
         }
     ]);
 Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
