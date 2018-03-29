@@ -98,11 +98,10 @@ class UserImport extends Model
                 $student->last_name = $row['Last Name'];
                 if (!empty($row['Date of Birth'])) {
                     $birthDate = new \DateTime($row['Date of Birth']);
-                    $student->birth_date = $birthDate->format('d-m-Y');
+                    $student->birth_date = $birthDate->format('M d,Y');
                 }
                 $student->customer_id = $user->id;
                 $student->status = Student::STATUS_ACTIVE;
-
                 if (!$student->validate(['birth_date'])) {
                     $student->birth_date = null;
                     $errors[] = 'Error on Line '.($i + 2).': Incorrect Date format. Skipping DOB for student named, "'.$student->first_name.'"';
