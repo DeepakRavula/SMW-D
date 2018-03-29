@@ -499,13 +499,13 @@ class EnrolmentController extends BaseController
         $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
         if ($post) {
             $message = null;
-            if ($endDate !== $course->endDate) {
-                $course->updateAttributes([
-                    'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
-                ]);
-                $newEndDate = Carbon::parse($course->endDate)->format('d-m-Y');
+            $course->updateAttributes([
+                'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
+            ]);
+            $newEndDate = Carbon::parse($course->endDate);
+            if ($endDate !== $newEndDate) {
                 $lastLesson = $model->lastRootLesson;
-                $lastLessonDate = Carbon::parse($lastLesson->date)->format('d-m-Y');
+                $lastLessonDate = Carbon::parse($lastLesson->date);
                 if ($lastLessonDate > $newEndDate) {
                     $invoice = $model->shrink();
                     if (!$invoice) {
