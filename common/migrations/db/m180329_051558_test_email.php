@@ -3,19 +3,23 @@
 use yii\db\Migration;
 
 /**
- * Class m180328_101244_test_email
+ * Class m180329_051558_test_email
  */
-class m180328_101244_test_email extends Migration
+class m180329_051558_test_email extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-	    $this->createTable('test_email', [
+	     $this->createTable('test_email', [
             'id' => $this->primaryKey(),
             'email' => $this->string()->notNull(),
         ]);
+	    $this->insert('test_email', [
+            'email' => 'senguttuvang@example.com',
+        ]);
+
     }
 
     /**
@@ -23,7 +27,7 @@ class m180328_101244_test_email extends Migration
      */
     public function safeDown()
     {
-        echo "m180328_101244_test_email cannot be reverted.\n";
+        echo "m180329_051558_test_email cannot be reverted.\n";
 
         return false;
     }
@@ -37,7 +41,7 @@ class m180328_101244_test_email extends Migration
 
     public function down()
     {
-        echo "m180328_101244_test_email cannot be reverted.\n";
+        echo "m180329_051558_test_email cannot be reverted.\n";
 
         return false;
     }

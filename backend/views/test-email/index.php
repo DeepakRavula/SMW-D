@@ -13,7 +13,7 @@ $this->title = 'Test Email';
 $this->params['breadcrumbs'][] = $this->title;
 ?> 
 <div class="student-index">  
-<?php yii\widgets\Pjax::begin(['id' => 'test-email']); ?>
+<?php yii\widgets\Pjax::begin(['id' => 'test-email-listing']); ?>
 <?php
 echo AdminLteGridView::widget([
     'dataProvider' => $dataProvider,
@@ -40,3 +40,28 @@ echo AdminLteGridView::widget([
 ?>
 <?php yii\widgets\Pjax::end(); ?>
     </div>
+<script>
+        $(document).on('click', '#test-email-listing  tbody > tr', function () {
+            var testEmailId = $(this).data('key');
+                var customUrl = '<?= Url::to(['test-email/update']); ?>?id=' + testEmailId;
+                var url = '<?= Url::to(['test-email/delete']); ?>?id=' + testEmailId;
+                $('#modal-delete').show();
+                $(".modal-delete").attr("action",url);
+            $.ajax({
+                url    : customUrl,
+                type   : 'get',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Blogs</h4>');
+                        $('#modal-content').html(response.data);
+                    }
+                }
+            });
+            return false;
+        });
+</script>

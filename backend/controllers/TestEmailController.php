@@ -42,9 +42,9 @@ class TestEmailController extends \common\components\controllers\BaseController
      */
     public function actionIndex()
     {
-        $emailTemplate = TestEmail::find();
+        $testEmail = TestEmail::find();
         $dataProvider = new ActiveDataProvider([
-            'query' => $emailTemplate,
+            'query' => $testEmail,
         ]);
         return $this->render('index', [
             'dataProvider' => $dataProvider,
@@ -58,12 +58,6 @@ class TestEmailController extends \common\components\controllers\BaseController
      *
      * @return mixed
      */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
     /**
      * Updates an existing EmailTemplate model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -98,6 +92,15 @@ class TestEmailController extends \common\components\controllers\BaseController
             ];
         }
     }
+    public function actionDelete($id)
+    {
+        $model = $this->findModel($id);
+        if ($model->delete()) {
+            return [
+                'status' => true,
+            ];
+        }
+    }
 
     /**
      * Finds the EmailTemplate model based on its primary key value.
@@ -111,7 +114,7 @@ class TestEmailController extends \common\components\controllers\BaseController
      */
     protected function findModel($id)
     {
-        if (($model = EmailTemplate::findOne($id)) !== null) {
+        if (($model = TestEmail::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
