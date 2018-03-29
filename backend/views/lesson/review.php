@@ -115,7 +115,7 @@ $teacherId = $courseModel->teacher->id;
 
     $(document).off('click', '#confirm-button').on('click', '#confirm-button', function () {
         $('#confirm-button').attr('disabled', true);
-        $('.btn-default').attr('disabled', true);
+        $('.review-cancel').attr('disabled', true);
         $('#enrolment-loader').show();
     });
     
