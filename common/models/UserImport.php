@@ -102,7 +102,6 @@ class UserImport extends Model
                 }
                 $student->customer_id = $user->id;
                 $student->status = Student::STATUS_ACTIVE;
-
                 if (!$student->validate(['birth_date'])) {
                     $student->birth_date = null;
                     $errors[] = 'Error on Line '.($i + 2).': Incorrect Date format. Skipping DOB for student named, "'.$student->first_name.'"';
