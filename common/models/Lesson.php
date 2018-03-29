@@ -917,6 +917,11 @@ class Lesson extends \yii\db\ActiveRecord
         return ($this->isCompleted() && $this->isScheduledOrRescheduled()) || $this->isExpired() || (!$this->isPresent);
     }
 
+    public function getLastChild()
+    {
+        return $this->children()->orderBy(['lesson.id' => SORT_DESC])->one();
+    }
+
     public function unschedule()
     {
         $this->status = self::STATUS_UNSCHEDULED;
@@ -936,7 +941,7 @@ class Lesson extends \yii\db\ActiveRecord
             $this->proFormaInvoice->makeInvoicePayment($this);
         }
         
-        return $this->proFormaInvoice;
+        return $this->paymentCycle->proFormaInvoice;
     }
     
     public static function instantiate($row)

@@ -457,8 +457,8 @@ class EnrolmentController extends BaseController
                 'message' => $message
             ];
         } else {
-            $response		 = [
-                'status' => false,
+            $response = [
+                'status' => false
             ];
         }
         return $response;
@@ -504,7 +504,9 @@ class EnrolmentController extends BaseController
                     'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
                 ]);
                 $newEndDate = Carbon::parse($course->endDate)->format('d-m-Y');
-                if ($endDate > $newEndDate) {
+                $lastLesson = $model->lastRootLesson;
+                $lastLessonDate = Carbon::parse($lastLesson->date)->format('d-m-Y');
+                if ($lastLessonDate > $newEndDate) {
                     $invoice = $model->shrink();
                     if (!$invoice) {
                         $credit = 0;
@@ -515,7 +517,7 @@ class EnrolmentController extends BaseController
                     $model->updateAttributes([
                         'isAutoRenew' => false
                     ]);
-                } else if ($endDate < $newEndDate) {
+                } else if ($lastLessonDate < $newEndDate) {
                     $model->extend();
                 }
                 if($message) {

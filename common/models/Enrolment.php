@@ -644,14 +644,19 @@ class Enrolment extends \yii\db\ActiveRecord
         return $amount;
     }
 
-    public function extend()
+    public function getLastRootLesson()
     {
-        $lastLesson = Lesson::find()
+        return Lesson::find()
             ->isConfirmed()
             ->roots()
             ->andWhere(['lesson.courseId' => $this->courseId])
             ->orderby(['lesson.date' => SORT_DESC])
             ->one();
+    }
+
+    public function extend()
+    {
+        $lastLesson = $this->lastRootLesson;
         $interval = new \DateInterval('P1D');
         $start = (new \DateTime($lastLesson->date))->modify('+1 day');
         $end = new \DateTime($this->course->endDate);

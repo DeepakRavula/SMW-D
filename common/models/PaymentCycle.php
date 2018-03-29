@@ -142,7 +142,6 @@ class PaymentCycle extends \yii\db\ActiveRecord
                     ->location($locationId)
                     ->andWhere(['courseId' => $this->enrolment->course->id])
                     ->notRescheduled()
-                    ->andWhere(['OR', ['status' => Lesson::STATUS_SCHEDULED], ['status' => Lesson::STATUS_UNSCHEDULED]])
                     ->between($startDate, $endDate)
                     ->all();
         foreach ($lessons as $lesson) {
@@ -150,6 +149,12 @@ class PaymentCycle extends \yii\db\ActiveRecord
             $paymentCycleLesson->paymentCycleId = $this->id;
             $paymentCycleLesson->lessonId       = $lesson->id;
             $paymentCycleLesson->save();
+            if ($lesson->lastChild) {
+                $paymentCycleLesson->id = null;
+                $paymentCycleLesson->isNewRecord = true;
+                $paymentCycleLesson->lessonId = $lesson->lastChild->id;
+                $paymentCycleLesson->save();
+            }
             if ($this->proFormaInvoice) {
                 $lesson->addPrivateLessonLineItem($this->proFormaInvoice);
                 $this->proFormaInvoice->save();

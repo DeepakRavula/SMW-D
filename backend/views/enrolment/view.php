@@ -33,6 +33,10 @@ $this->params['action-button'] = Html::a('<i class="fa fa-trash-o"></i>', [
         ?>
     </div>
 </div>
+<div id="enrolment-view-loader" class="spinner" style="display:none">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+</div>
     <div class="nav-tabs-custom">
 <?php
 
@@ -87,6 +91,7 @@ echo Tabs::widget([
             message: "Are you sure you want to delete this enrolment?",
             callback: function(result){
                 if(result) {
+                    $('#enrolment-view-loader').show();
                     $('.bootbox').modal('hide');
                     $.ajax({
                         url: '<?= Url::to(['enrolment/delete']); ?>?id=' + enrolmentId,
@@ -94,6 +99,7 @@ echo Tabs::widget([
                         data   : $(this).serialize(),
                         success: function (response)
                         {
+                            $('#enrolment-view-loader').hide();
                             if (response.status) {
                                 window.location.href = response.url;
                             } else {
