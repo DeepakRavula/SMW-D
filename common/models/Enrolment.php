@@ -684,17 +684,29 @@ class Enrolment extends \yii\db\ActiveRecord
                 ->where(['courseId' => $this->courseId])
                 ->isConfirmed()
                 ->all();
-        foreach ($lessons as $lesson) {
-            if ($lesson->hasInvoice()) {
-                $lesson->invoice->delete();
-            }
-            $lesson->delete();
-        }
         foreach ($this->paymentCycles as $paymentCycle) {
             if ($paymentCycle->hasProformaInvoice()) {
                 $paymentCycle->proFormaInvoice->delete();
             }
             $paymentCycle->delete();
+        }
+        foreach ($lessons as $lesson) {
+            if ($lesson->hasInvoice()) {
+                $lesson->invoice->delete();
+            }
+            if ($lesson->hasCreditUsed($this->id)) {
+                $payments = $lesson->getCreditUsedPayment($this->id);
+                if ($payments) {
+                    $payment = current($payments);
+                    $creditPayment = $payment->debitUsage->creditUsagePayment;
+                    if ($creditPayment->isInvoicePayment()) {
+                        if (!$creditPayment->invoice->isDeleted) {
+                            $creditPayment->invoice->delete();
+                        }
+                    }
+                }
+            }
+            $lesson->delete();
         }
         return $this->delete();
     }

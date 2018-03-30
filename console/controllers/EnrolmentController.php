@@ -12,6 +12,8 @@ use common\models\CourseProgramRate;
 
 class EnrolmentController extends Controller
 {
+    public $id;
+    
     public function init()
     {
         parent::init();
@@ -77,9 +79,9 @@ class EnrolmentController extends Controller
         }
     }
 
-    public function delete($id)
+    public function actionDelete()
     {
-        $model = Enrolment::findOne($id);
+        $model = Enrolment::findOne($this->id);
         return $model->deleteWithTransactionalData();
     }
 }

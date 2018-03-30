@@ -869,6 +869,11 @@ class Lesson extends \yii\db\ActiveRecord
                 ->notDeleted()
                 ->all();
     }
+
+    public function hasCreditUsed($enrolmentId)
+    {
+        return !empty($this->getCreditUsedPayment($enrolmentId));
+    }
     
     public function hasLessonCredit($enrolmentId)
     {
