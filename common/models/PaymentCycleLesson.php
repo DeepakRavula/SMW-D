@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use Yii;
 
 /**
@@ -41,6 +42,19 @@ class PaymentCycleLesson extends \yii\db\ActiveRecord
             'id' => 'ID',
             'paymentCycleId' => 'Payment Cycle ID',
             'lessonId' => 'Lesson ID',
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\models\log\InvoiceLog;
 use Yii;
 
@@ -57,6 +58,19 @@ class PaymentCycle extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+        ];
+    }
+
     /**
      * @inheritdoc
      * @return \common\models\query\PaymentCycleQuery the active query used by this AR class.
@@ -76,6 +90,14 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return $this->hasMany(Lesson::className(), ['id' => 'lessonId'])
                 ->via('paymentCycleLessons')
                 ->onCondition(['lesson.isDeleted' => false]);
+    }
+
+    public function beforeSoftDelete()
+    {
+        foreach ($this->paymentCycleLessons as $payemntCycleLesson) {
+            $payemntCycleLesson->delete();
+        }
+        return true;
     }
 
     public function getInvoiceItemPaymentCycleLessons()

@@ -672,4 +672,30 @@ class Enrolment extends \yii\db\ActiveRecord
         $invoice = $this->addCreditInvoice($startDate, $this->course->endDate);
         return $invoice;
     }
+
+    public function deleteWithOutTransactionalData()
+    {
+        return $this->delete();
+    }
+
+    public function deleteWithTransactionalData()
+    {
+        $lessons = Lesson::find()
+                ->where(['courseId' => $this->courseId])
+                ->isConfirmed()
+                ->all();
+        foreach ($lessons as $lesson) {
+            if ($lesson->hasInvoice()) {
+                $lesson->invoice->delete();
+            }
+            $lesson->delete();
+        }
+        foreach ($this->paymentCycles as $paymentCycle) {
+            if ($paymentCycle->hasProformaInvoice()) {
+                $paymentCycle->proFormaInvoice->delete();
+            }
+            $paymentCycle->delete();
+        }
+        return $this->delete();
+    }
 }

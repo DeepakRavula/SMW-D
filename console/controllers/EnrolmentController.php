@@ -12,11 +12,19 @@ use common\models\CourseProgramRate;
 
 class EnrolmentController extends Controller
 {
-    public function init() {
+    public function init()
+    {
         parent::init();
         $user = User::findByRole(User::ROLE_BOT);
         $botUser = end($user);
         Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
+    }
+
+    public function options($actionID)
+    {
+        return array_merge(parent::options($actionID),
+            $actionID == 'delete' ? ['id'] : []
+        );
     }
     
     public function actionAutoRenewal()
@@ -67,5 +75,11 @@ class EnrolmentController extends Controller
                 $course->enrolment->setPaymentCycle($renewalStartDate);
             }
         }
+    }
+
+    public function delete($id)
+    {
+        $model = Enrolment::findOne($id);
+        return $model->deleteWithTransactionalData();
     }
 }

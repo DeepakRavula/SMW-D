@@ -450,7 +450,7 @@ class EnrolmentController extends BaseController
             if ($invoice) {
                 $message = '$' . $invoice->balance . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
             }
-            $model->delete();
+            $model->deleteWithOutTransactionalData();
             $response = [
                 'status' => true,
                 'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
