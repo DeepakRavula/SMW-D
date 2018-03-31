@@ -39,7 +39,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ['id', 'validateCanRaisePFI', 'on' => self::SCENARIO_CAN_RAISE_PFI],
             [['enrolmentId', 'startDate', 'endDate'], 'required'],
             [['enrolmentId'], 'integer'],
-            [['startDate', 'endDate', 'validFrom', 'validThru'], 'safe'],
+            [['startDate', 'endDate', 'validFrom', 'validThru', 'isDeleted'], 'safe'],
         ];
     }
 
@@ -146,6 +146,14 @@ class PaymentCycle extends \yii\db\ActiveRecord
         }
         PaymentCycleLesson::deleteAll(['paymentCycleId' => $this->id]);
         return parent::beforeDelete();
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
     }
 
     public function afterSave($insert, $changedAttributes)

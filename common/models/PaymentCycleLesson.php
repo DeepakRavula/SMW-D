@@ -30,6 +30,7 @@ class PaymentCycleLesson extends \yii\db\ActiveRecord
         return [
             [['paymentCycleId', 'lessonId'], 'required'],
             [['paymentCycleId', 'lessonId'], 'integer'],
+            ['isDeleted', 'safe']
         ];
     }
 
@@ -95,5 +96,13 @@ class PaymentCycleLesson extends \yii\db\ActiveRecord
     public function getInvoiceItemPaymentCycleLessons()
     {
         return $this->hasMany(InvoiceItemPaymentCycleLesson::className(), ['paymentCycleLessonId' => 'id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
     }
 }
