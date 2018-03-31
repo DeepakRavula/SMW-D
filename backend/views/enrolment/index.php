@@ -111,7 +111,7 @@ $this->params['show-all'] = $this->render('_button', [
     [
         'attribute' => 'startdate',
         'label' => 'Start Date',
-        'format' => 'date',
+        //'format' => 'date',
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->course->startDate);
         },
@@ -135,7 +135,7 @@ $this->params['show-all'] = $this->render('_button', [
                         "moment().subtract(1, 'month').endOf('month')"],
                 ],
                 'locale' => [
-                    'format' => 'd-m-Y',
+                    'format' => 'M d,Y',
                 ],
                 'opens' => 'left',
             ],
