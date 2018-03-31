@@ -987,7 +987,7 @@ class Lesson extends \yii\db\ActiveRecord
     }
     public function dailyScheduleStatus() {
 	$status = $this->getStatus();
-	    if($status === 'Canceled') {
+	    if($this->status === self::STATUS_CANCELED) {
 		$status = "Rescheduled to " . Yii::$app->formatter->asDate($this->childLesson->date);    
 	    }    
 	return $status; 
