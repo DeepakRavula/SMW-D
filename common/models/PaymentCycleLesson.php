@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use Yii;
 
 /**
@@ -29,6 +30,7 @@ class PaymentCycleLesson extends \yii\db\ActiveRecord
         return [
             [['paymentCycleId', 'lessonId'], 'required'],
             [['paymentCycleId', 'lessonId'], 'integer'],
+            ['isDeleted', 'safe']
         ];
     }
 
@@ -41,6 +43,19 @@ class PaymentCycleLesson extends \yii\db\ActiveRecord
             'id' => 'ID',
             'paymentCycleId' => 'Payment Cycle ID',
             'lessonId' => 'Lesson ID',
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
         ];
     }
 
@@ -75,11 +90,20 @@ class PaymentCycleLesson extends \yii\db\ActiveRecord
 
     public function getPaymentCycle()
     {
-        return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId']);
+        return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
+            ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getInvoiceItemPaymentCycleLessons()
     {
         return $this->hasMany(InvoiceItemPaymentCycleLesson::className(), ['paymentCycleLessonId' => 'id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
     }
 }

@@ -24,7 +24,7 @@ use yii\widgets\ActiveForm;
 use common\models\User;
 use yii\filters\ContentNegotiator;
 use common\models\PaymentCycle;
-use common\models\lesson\BulkReschedule;
+use common\models\BulkRescheduleLesson;
 use common\models\log\StudentLog;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
@@ -527,6 +527,7 @@ class LessonController extends BaseController
             $endDate = new \DateTime($rescheduleEndDate);
             $oldLessons = Lesson::find()
                 ->where(['courseId' => $courseModel->id])
+                ->notDeleted()
                 ->isConfirmed()
                 ->scheduled()
                 ->between($startDate, $endDate)
@@ -556,6 +557,9 @@ class LessonController extends BaseController
             foreach ($lessons as $i => $lesson) {
                 $oldLesson = Lesson::findOne($oldLessonIds[$i]);
                 $oldLesson->rescheduleTo($lesson);
+                $bulkReschedule = new BulkRescheduleLesson();
+                $bulkReschedule->lessonId = $lesson->id;
+                $bulkReschedule->save();
             }
         }
         foreach ($lessons as $lesson) {

@@ -179,7 +179,8 @@ class Invoice extends \yii\db\ActiveRecord
     public function getProformaPaymentCycleLesson()
     {
         return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'paymentCycleLessonId'])
-            ->via('invoiceItemPaymentCycleLesson');
+            ->via('invoiceItemPaymentCycleLesson')
+            ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
 
     public function getProFormaLineItem()
@@ -192,13 +193,15 @@ class Invoice extends \yii\db\ActiveRecord
     public function getInvoiceItemPaymentCycleLesson()
     {
         return $this->hasOne(InvoiceItemPaymentCycleLesson::className(), ['invoiceLineItemId' => 'id'])
-                ->via('proFormaLineItem');
+                ->via('proFormaLineItem')
+                ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
                 
     public function getProformaPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
-                ->via('proformaPaymentCycleLesson');
+                ->via('proformaPaymentCycleLesson')
+                ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getProformaEnrolment()
@@ -415,7 +418,7 @@ class Invoice extends \yii\db\ActiveRecord
             ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
             ->sum('payment.amount');
 
-        return $invoicePaymentTotal;
+        return !empty($invoicePaymentTotal) ? $invoicePaymentTotal : 0.0000;
     }
 
     public function getProFormaPaymentTotal()
@@ -606,7 +609,7 @@ class Invoice extends \yii\db\ActiveRecord
             }
             $this->invoice_number = $invoiceNumber;
             $this->date           = (new \DateTime())->format('Y-m-d');
-            $this->status         = Invoice::STATUS_OWING;
+            $this->status         = Invoice::STATUS_PAID;
             $this->isSent         = false;
             $this->subTotal       = 0.00;
             $this->total          = 0.00;

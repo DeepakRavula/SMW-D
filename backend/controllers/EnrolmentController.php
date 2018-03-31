@@ -29,11 +29,13 @@ use common\models\UserLocation;
 use common\models\User;
 use common\models\UserProfile;
 use Carbon\Carbon;
+use common\models\CourseReschedule;
 use common\models\discount\EnrolmentDiscount;
 use backend\models\discount\MultiEnrolmentDiscount;
 use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\log\StudentLog;
 use common\models\log\DiscountLog;
+use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 
@@ -114,6 +116,7 @@ class EnrolmentController extends BaseController
        
         $paymentCycleDataProvider = new ActiveDataProvider([
             'query' => PaymentCycle::find()
+                ->notDeleted()
                 ->andWhere([
                     'enrolmentId' => $id,
                 ]),
@@ -400,7 +403,10 @@ class EnrolmentController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $courseReschedule = new CourseReschedule();
+        $courseReschedule->setModel($model->course);
         $data = $this->renderAjax('/enrolment/schedule/_form-update', [
+            'courseReschedule' => $courseReschedule,
             'course' => $model->course,
             'courseSchedule' => $model->course->courseSchedule,
             'model' => $model,
@@ -410,38 +416,25 @@ class EnrolmentController extends BaseController
             'data' => $data,
         ];
         $course = $model->course;
-        $courseSchedule = $model->courseSchedule;
-        $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
-        $courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');
         if (Yii::$app->request->isPost) {
-            $endDate = new \DateTime($course->endDate);
-            $startDate		 = new \DateTime($course->startDate);
-            Lesson::deleteAll([
-                'courseId' => $model->course->id,
-                'isConfirmed' => false,
-            ]);
-            $lessons		 = Lesson::find()
-                ->where(['courseId' => $model->course->id])
-                ->regular()
-                ->scheduled()
-                ->isConfirmed()
-                ->between($startDate, $endDate)
-                ->all();
-	   
-            $courseDay = $courseSchedule->day;
-            $day = $startDate->format('l');
-            if ($day !== $courseDay) {
-                $startDate		 = new \DateTime($course->startDate);
-                $startDate->modify('next '.$courseDay);
+            $courseReschedule->load(Yii::$app->request->post());
+            $endDate = new \DateTime($courseReschedule->rescheduleEndDate);
+            $startDate = new \DateTime($courseReschedule->rescheduleBeginDate);
+            if ($courseReschedule->validate()) {
+                $courseReschedule->reschdeule();
+                $rescheduleBeginDate = $startDate->format('d-m-Y');
+                $rescheduleEndDate = $endDate->format('d-m-Y');
+                $response = $this->redirect(['/lesson/review', 'courseId' => $course->id,
+                    'LessonSearch[showAllReviewLessons]' => false, 'Course[startDate]' => $rescheduleBeginDate,
+                    'Course[endDate]' => $rescheduleEndDate]);
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($courseReschedule)
+                ];
             }
-            $teacherId = $course->teacherId;
-            $course->generateLessons($lessons, $startDate, $teacherId);
-            $rescheduleBeginDate = (new \DateTime($course->startDate))->format('d-m-Y');
-            $rescheduleEndDate = (new \DateTime($course->endDate))->format('d-m-Y');
-            return $this->redirect(['/lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Course[startDate]' => $rescheduleBeginDate, 'Course[endDate]' => $rescheduleEndDate]);
-        } else {
-            return $response;
         }
+        return $response;
     }
 
     public function actionDelete($id)
@@ -458,15 +451,15 @@ class EnrolmentController extends BaseController
             if ($invoice) {
                 $message = '$' . $invoice->balance . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
             }
-            $model->delete();
+            $model->deleteWithOutTransactionalData();
             $response = [
                 'status' => true,
                 'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
                 'message' => $message
             ];
         } else {
-            $response		 = [
-                'status' => false,
+            $response = [
+                'status' => false
             ];
         }
         return $response;
@@ -506,31 +499,42 @@ class EnrolmentController extends BaseController
         $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
         $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
         if ($post) {
-            $message = '';
-            if ($endDate !== $course->endDate) {
-                $courseEndDate = Carbon::parse($course->endDate)->format('Y-m-d');
-                $course->updateAttributes([
-                    'endDate' => Carbon::parse($course->endDate)->format('Y-m-d H:i:s')
-                ]);
-                $startDate = null;
-                $invoice = $model->addCreditInvoice($startDate, $course->endDate);
-                if (!$invoice) {
-                    $credit = 0;
-                } else {
-                    $credit = abs($invoice->invoiceBalance);
+            $message = null;
+            $course->updateAttributes([
+                'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
+            ]);
+            $newEndDate = Carbon::parse($course->endDate);
+            if ($endDate !== $newEndDate) {
+                $lastLesson = $model->lastRootLesson;
+                $lastLessonDate = Carbon::parse($lastLesson->date);
+                if ($lastLessonDate > $newEndDate) {
+                    $invoice = $model->shrink();
+                    if (!$invoice) {
+                        $credit = 0;
+                    } else {
+                        $credit = abs($invoice->invoiceBalance);
+                        $message = '$' . $credit . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
+                    }
+                    $model->updateAttributes([
+                        'isAutoRenew' => false
+                    ]);
+                } else if ($lastLessonDate < $newEndDate) {
+                    $model->extend();
                 }
-                $message = '$' . $credit . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
+                if($message) {
+                    $message = 'Enrolment end date succesfully updated!';
+                }
             }
             $response = [
                 'status' => true,
                 'message' => $message,
             ];
-            return $response;
         } else {
-            return [
+            $response = [
                 'status' => true,
                 'data' => $data,
             ];
         }
+        return $response;
     }
 }
