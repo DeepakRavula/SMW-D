@@ -189,8 +189,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getLineItemPaymentCycleLessons()
     {
         return $this->hasMany(InvoiceItemPaymentCycleLesson::className(), ['paymentCycleLessonId' => 'id'])
-            ->via('paymentCycleLessons')
-            ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
+            ->via('paymentCycleLessons');
     }
 
     public function getProFormaInvoice()
