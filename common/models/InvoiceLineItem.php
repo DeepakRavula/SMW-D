@@ -106,13 +106,15 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function getPaymentCycleLesson()
     {
         return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'paymentCycleLessonId'])
-                ->via('lineItemPaymentCycleLesson');
+                ->via('lineItemPaymentCycleLesson')
+                ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
     
     public function getPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
-                ->via('paymentCycleLesson');
+                ->via('paymentCycleLesson')
+                ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getItemType()

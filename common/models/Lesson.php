@@ -313,7 +313,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function getPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
-                    ->via('paymentCycleLesson');
+                    ->via('paymentCycleLesson')
+                    ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getLessonPayments()
@@ -330,7 +331,8 @@ class Lesson extends \yii\db\ActiveRecord
         } else {
             $lesson = $this;
         }
-        return $lesson->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id']);
+        return $lesson->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id'])
+            ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
 
     public function getLessonSplitsUsage()

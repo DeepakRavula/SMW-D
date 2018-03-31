@@ -90,7 +90,8 @@ class PaymentCycleLesson extends \yii\db\ActiveRecord
 
     public function getPaymentCycle()
     {
-        return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId']);
+        return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
+            ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getInvoiceItemPaymentCycleLessons()

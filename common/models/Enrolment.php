@@ -142,7 +142,8 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getPaymentCycles()
     {
         return $this->hasMany(PaymentCycle::className(), ['enrolmentId' => 'id'])
-            ->orderBy(['payment_cycle.startDate' => SORT_ASC]);
+            ->orderBy(['payment_cycle.startDate' => SORT_ASC])
+            ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getVacation()
@@ -181,13 +182,15 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getPaymentCycleLessons()
     {
         return $this->hasMany(PaymentCycleLesson::className(), ['lessonId' => 'id'])
-            ->via('lessons');
+            ->via('lessons')
+            ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
     
     public function getLineItemPaymentCycleLessons()
     {
         return $this->hasMany(InvoiceItemPaymentCycleLesson::className(), ['paymentCycleLessonId' => 'id'])
-            ->via('paymentCycleLessons');
+            ->via('paymentCycleLessons')
+            ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
 
     public function getProFormaInvoice()
@@ -259,6 +262,7 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         $currentPaymentCycle = PaymentCycle::find()
             ->where(['enrolmentId' => $this->id])
+            ->notDeleted()
             ->andWhere(['AND',
                 ['<=', 'startDate', (new \DateTime())->format('Y-m-d')],
                 ['>=', 'endDate', (new \DateTime())->format('Y-m-d')]
@@ -268,7 +272,8 @@ class Enrolment extends \yii\db\ActiveRecord
             return $currentPaymentCycle;
         } else {
             return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
-                ->where(['>', 'startDate', (new \DateTime())->format('Y-m-d')]);
+                ->where(['>', 'startDate', (new \DateTime())->format('Y-m-d')])
+                ->onCondition(['payment_cycle.isDeleted' => false]);
         }
     }
 
@@ -276,7 +281,8 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         $currentPaymentCycleEndDate = new \DateTime($this->currentPaymentCycle->endDate);
         return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
-            ->where(['>', 'startDate', $currentPaymentCycleEndDate->format('Y-m-d')]);
+            ->where(['>', 'startDate', $currentPaymentCycleEndDate->format('Y-m-d')])
+            ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getFirstLesson()
@@ -365,7 +371,8 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getlastPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
-                ->orderBy(['endDate' => SORT_DESC]);
+                ->orderBy(['endDate' => SORT_DESC])
+                ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function isMonthlyPaymentFrequency()

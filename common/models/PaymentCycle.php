@@ -82,7 +82,8 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function getPaymentCycleLessons()
     {
-        return $this->hasMany(PaymentCycleLesson::className(), ['paymentCycleId' => 'id']);
+        return $this->hasMany(PaymentCycleLesson::className(), ['paymentCycleId' => 'id'])
+            ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
     
     public function getLessons()
@@ -253,6 +254,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
     {
         $firstPaymentCycle = self::find()
             ->where(['enrolmentId' => $this->enrolmentId])
+            ->notDeleted()
             ->orderBy(['startDate' => SORT_ASC])
             ->one();
 

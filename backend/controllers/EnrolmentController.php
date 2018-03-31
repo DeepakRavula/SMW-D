@@ -116,6 +116,7 @@ class EnrolmentController extends BaseController
        
         $paymentCycleDataProvider = new ActiveDataProvider([
             'query' => PaymentCycle::find()
+                ->notDeleted()
                 ->andWhere([
                     'enrolmentId' => $id,
                 ]),

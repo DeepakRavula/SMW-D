@@ -370,6 +370,7 @@ class InvoiceController extends BaseController
         $studentIds = ArrayHelper::getColumn($user->student, 'id');
         $paymentCycleDataProvider = new ActiveDataProvider([
             'query' => PaymentCycle::find()
+                ->notDeleted()
                 ->joinWith(['enrolment' => function ($query) use ($studentIds) {
                     $query->andWhere(['studentId' => $studentIds]);
                 }]),
