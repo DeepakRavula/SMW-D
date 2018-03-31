@@ -43,6 +43,7 @@ class LocationScheduleSearch extends Lesson
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 	$rescheduledLessons = Lesson::find()
 	    ->canceled()
+	    ->roots()
 	    ->andWhere(['DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')])
             ->isConfirmed()
             ->notDeleted()
@@ -50,7 +51,7 @@ class LocationScheduleSearch extends Lesson
 	    ->all();
 	$rootLessonIds = [];
 	foreach ($rescheduledLessons as $rescheduledLesson) {	
-		if(!empty($rescheduledLesson->childLesson ) && $rescheduledLesson->childLesson->isRescheduled()) {
+		if(!empty($rescheduledLesson->leaf ) && $rescheduledLesson->leaf->isRescheduled()) {
 		$rootLessonIds[] = $rescheduledLesson->id;
 	    }
 	}
