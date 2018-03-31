@@ -713,6 +713,9 @@ class Enrolment extends \yii\db\ActiveRecord
                     }
                 }
             }
+            if ($lesson->isExtra() && $lesson->hasProFormaInvoice()) {
+                $lesson->proFormaInvoice->delete();
+            }
             $lesson->delete();
         }
         return $this->delete();
