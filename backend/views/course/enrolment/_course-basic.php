@@ -149,27 +149,6 @@ use yii\web\View;
         </div>
         <div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
     </div>
-    <div class="row">
-        <div class="col-xs-6">
-            <label class="modal-form-label">Start Date</label>
-        </div>
-        <div class="col-xs-2 enrolment-dollar"></div>
-        <div class="col-xs-3">
-            <?= $form->field($model, 'startDate')->widget(DatePicker::classname(), [
-            'options' => [
-                'class' => 'form-control',
-            ],
-            'dateFormat' => 'php:M d, Y',
-            'clientOptions' => [
-                'defaultDate' => (new \DateTime($model->startDate))->format('M d, Y'),
-                'changeMonth' => true,
-                'yearRange' => '1500:3000',
-                'changeYear' => true,
-            ]
-        ])->label(false) ?>
-        </div>
-        <div class="col-xs-1 enrolment-text"></div>
-    </div>
 </div>
 
 <?php ActiveForm::end(); ?>
@@ -177,6 +156,7 @@ use yii\web\View;
 <script>
     $(document).ready(function () {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment Basic</h4>');
+        $('.modal-save').text('Next');
         $('#popup-modal .modal-dialog').css({'width': '600px'});
         $.fn.modal.Constructor.prototype.enforceFocus = function() {};
         enrolment.fetchProgram();

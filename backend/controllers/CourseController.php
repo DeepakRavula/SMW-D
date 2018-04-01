@@ -53,7 +53,7 @@ class CourseController extends BaseController
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => ['fetch-teacher-availability', 'fetch-lessons', 
                     'fetch-group', 'change', 'teachers', 'create-enrolment-basic',
-                    'create-enrolment-detail'
+                    'create-enrolment-detail', 'create-enrolment-date-detail'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -67,7 +67,7 @@ class CourseController extends BaseController
                         'actions' => ['index', 'view', 'fetch-teacher-availability',
                             'course-date', 'create', 'update', 'delete', 'teachers',
                             'fetch-group', 'change', 'create-enrolment-basic',
-                            'create-enrolment-detail'
+                            'create-enrolment-detail', 'create-enrolment-date-detail'
                         ],
                         'roles' => ['manageGroupLessons'],
                     ],
@@ -464,18 +464,11 @@ class CourseController extends BaseController
         
         if (Yii::$app->request->isPost) {
             if ($courseDetail->load(Yii::$app->request->post()) && $courseDetail->validate()) {
-                $courseDetail->setScenario(EnrolmentForm::SCENARIO_DETAILED);
-                $teachers = User::find()
-                    ->teachers([$courseDetail->programId], $locationId)
-                    ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
-                    ->notDeleted()
-                    ->orderBy(['user_profile.firstname' => SORT_ASC])
-                    ->all();
-                $courseData = $this->renderAjax('enrolment/_course-detail', [
+                $courseDetail->setScenario(EnrolmentForm::SCENARIO_DATE_DETAILED);
+                $courseData = $this->renderAjax('enrolment/_course-start-date', [
                     'model' => $courseDetail,
                     'student' => $student,
-                    'isReverse' => $isReverse,
-                    'teachers' => $teachers,
+                    'isReverse' => $isReverse
                 ]);
                 $response = [
                     'status' => true,
@@ -560,6 +553,63 @@ class CourseController extends BaseController
             $response = [
                 'status' => true,
                 'data' => $data
+            ];
+        }
+        return $response;
+    }
+
+    public function actionCreateEnrolmentDateDetail($studentId = null, $isReverse)
+    {
+        $courseDetailData = Yii::$app->request->get('EnrolmentForm');
+        $courseDetail = new EnrolmentForm();
+        if ($courseDetailData) {
+            $courseDetail->load(Yii::$app->request->get());
+        }
+        $courseDetail->setScenario(EnrolmentForm::SCENARIO_DATE_DETAILED);
+        if ($studentId) {
+            $student = Student::findOne($studentId);
+            $customerDiscount = $student->customer->hasDiscount() ? $student->customer->customerDiscount : null;
+        } else {
+            $student = null;
+            $customerDiscount = null;
+        }
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        if (Yii::$app->request->isPost) {
+            if ($courseDetail->load(Yii::$app->request->post()) && $courseDetail->validate()) {
+                $courseDetail->setScenario(EnrolmentForm::SCENARIO_DETAILED);
+                $teachers = User::find()
+                    ->teachers([$courseDetail->programId], $locationId)
+                    ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
+                    ->notDeleted()
+                    ->orderBy(['user_profile.firstname' => SORT_ASC])
+                    ->all();
+                $data = $this->renderAjax('enrolment/_course-detail', [
+                    'model' => $courseDetail,
+                    'student' => $student,
+                    'isReverse' => $isReverse,
+                    'teachers' => $teachers,
+                    'customerDiscount' => $customerDiscount
+                ]);
+                $response = [
+                    'status' => true,
+                    'data' => $data
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($courseDetail)
+                ];
+            }
+        } else {
+            $courseData = $this->renderAjax('enrolment/_course-start-date', [
+                'model' => $courseDetail,
+                'student' => $student,
+                'isReverse' => $isReverse
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $courseData,
+                'customerDiscount' => $customerDiscount
             ];
         }
         return $response;
