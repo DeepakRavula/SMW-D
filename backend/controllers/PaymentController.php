@@ -222,7 +222,8 @@ class PaymentController extends BaseController
                 $transaction->commit();
                 return [
                     'status' => true,
-                    'canPost' => $paymentModel->invoice->isPaid()
+                    'canPost' => $paymentModel->invoice->isPaid(),
+                    'invoiceType'=>$paymentModel->invoice->isProformaInvoice(),
                 ];
             } else {
                 $errors = ActiveForm::validate($paymentModel);
