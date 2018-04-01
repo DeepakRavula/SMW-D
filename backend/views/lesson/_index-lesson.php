@@ -4,9 +4,13 @@ use yii\helpers\Url;
 use common\models\Lesson;
 use backend\models\search\LessonSearch;
 use yii\widgets\Pjax;
-use kartik\grid\GridView;
 use kartik\daterange\DateRangePicker;
 use yii\bootstrap\Modal;
+use common\components\gridView\KartikGridView;
+use yii\helpers\ArrayHelper;
+use common\models\Program;
+use common\models\Location;
+use common\models\Student;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -30,6 +34,24 @@ $this->params['action-button'] = $this->render('_action-menu', [
                 'value' => function ($data) {
                     return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
                 },
+                'filterType'=>KartikGridView::FILTER_SELECT2,
+                'filter'=>ArrayHelper::map(Student::find()->orderBy(['first_name' => SORT_ASC])
+                ->joinWith(['enrolment' => function ($query) {
+                    $query->joinWith(['course' => function ($query) {
+                        $query->confirmed()
+                                ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
+                    }]);
+                }])
+                ->asArray()->all(), 'id', 'first_name'),
+                'filterWidgetOptions'=>[
+            'options' => [
+                'id' => 'student',
+            ],
+                    'pluginOptions'=>[
+                        'allowClear'=>true,
+            ],
+        ],
+                'filterInputOptions'=>['placeholder'=>'Student'],
             ],
             [
                 'label' => 'Program',
@@ -37,10 +59,29 @@ $this->params['action-button'] = $this->render('_action-menu', [
                 'value' => function ($data) {
                     return !empty($data->course->program->name) ? $data->course->program->name : null;
                 },
+                'filterType'=>KartikGridView::FILTER_SELECT2,
+                'filter'=>ArrayHelper::map(
+            Program::find()->orderBy(['name' => SORT_ASC])
+                ->joinWith(['course' => function ($query) {
+                    $query->joinWith(['enrolment'])
+                        ->confirmed()
+                        ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
+                }])
+                ->asArray()->all(),
+                    'id',
+                    'name'
+                ),
+                'filterInputOptions'=>['placeholder'=>'Program'],
+                'format'=>'raw',
+                'filterWidgetOptions'=>[
+                    'pluginOptions'=>[
+                        'allowClear'=>true,
+            ]
+        ],
             ],
             [
                 'label' => 'Teacher',
-		'attribute' => 'teacher',
+		        'attribute' => 'teacher',
                 'value' => function ($data) {
                     return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
                 },
@@ -123,7 +164,7 @@ $this->params['action-button'] = $this->render('_action-menu', [
         }
      ?>   
     <div class="box">
-    <?php echo GridView::widget([
+    <?php echo KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => false,
         'emptyText' => false,

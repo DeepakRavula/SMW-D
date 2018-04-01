@@ -349,7 +349,9 @@ $this->params['action-button'] = $this->render('_buttons', [
                 {
                     $('#menu-shown').hide();
                     $('#success-notification').html(response.message).fadeIn().delay(3000).fadeOut();
-                    $.pjax.reload({container: '#lesson-detail', timeout: 6000});
+                    $.pjax.reload({container: "#lesson-schedule-buttons", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: '#lesson-detail', replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#lesson-explode", replace: false, async: false, timeout: 6000});                    
                     $('#attendance-panel').hide();
                 } else {
                     $('#menu-shown').hide();

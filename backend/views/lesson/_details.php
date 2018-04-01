@@ -8,7 +8,8 @@ use kartik\color\ColorInput;
 
 ?>
 <?php Pjax::begin([
-    'id' => 'lesson-detail'
+    'id' => 'lesson-detail',
+    'timeout' => 6000,
 ]);?>
 <?php
 LteBox::begin([

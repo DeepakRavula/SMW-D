@@ -5,6 +5,10 @@ use yii\bootstrap\ActiveForm;
 use kartik\switchinput\SwitchInput;
 
 ?>
+<?php yii\widgets\Pjax::begin([
+    'id' => 'lesson-explode',
+    'timeout' => 6000,
+]) ?>
 <?php if ($model->isPrivate()) : ?>
     <?php if ($model->canExplode()) : ?>
         <?php echo Html::a(
@@ -33,3 +37,4 @@ use kartik\switchinput\SwitchInput;
     ])
     ?>	
 <?php endif; ?>
+<?php \yii\widgets\Pjax::end(); ?>

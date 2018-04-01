@@ -180,12 +180,12 @@ class StudentController extends BaseController
         if ($courseModel->save()) {
             $courseSchedule->courseId = $courseModel->id;
             if ($courseSchedule->save()) {
-                if (!empty($courseDetail->pfDiscount)) {
+                if (!empty($courseDetail->enrolmentDiscount)) {
                     $multipleEnrolmentDiscount->discount = $courseDetail->enrolmentDiscount;
                     $multipleEnrolmentDiscount->enrolmentId = $courseModel->enrolment->id;
                     $multipleEnrolmentDiscount->save();
                 }
-                if (!empty($courseDetail->enrolmentDiscount)) {
+                if (!empty($courseDetail->pfDiscount)) {
                     $paymentFrequencyDiscount->discount = $courseDetail->pfDiscount;
                     $paymentFrequencyDiscount->enrolmentId = $courseModel->enrolment->id;
                     $paymentFrequencyDiscount->save();
