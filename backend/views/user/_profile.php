@@ -27,6 +27,10 @@ $boxTools = array_merge($boxTools, $merge);
 		<dd><?= $model->publicIdentity; ?></dd>
 		<dt>Role</dt>
 		<dd><?= $role; ?></dd>
+		<?php if($model->isTeacher()) : ?>
+		<dt>Birth Date</dt>
+		<dd><?= Yii::$app->formatter->asDate($model->userProfile->birthDate); ?></dd>
+		<?php endif;?>
 	</dl>
 	<?php LteBox::end() ?>
 <?php Pjax::end(); ?>
