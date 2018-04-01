@@ -111,7 +111,6 @@ $this->params['show-all'] = $this->render('_button', [
     [
         'attribute' => 'startdate',
         'label' => 'Start Date',
-        //'format' => 'date',
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->course->startDate);
         },
