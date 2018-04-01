@@ -142,7 +142,8 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getPaymentCycles()
     {
         return $this->hasMany(PaymentCycle::className(), ['enrolmentId' => 'id'])
-            ->orderBy(['payment_cycle.startDate' => SORT_ASC]);
+            ->orderBy(['payment_cycle.startDate' => SORT_ASC])
+            ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getVacation()
@@ -181,7 +182,8 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getPaymentCycleLessons()
     {
         return $this->hasMany(PaymentCycleLesson::className(), ['lessonId' => 'id'])
-            ->via('lessons');
+            ->via('lessons')
+            ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
     
     public function getLineItemPaymentCycleLessons()
@@ -259,6 +261,7 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         $currentPaymentCycle = PaymentCycle::find()
             ->where(['enrolmentId' => $this->id])
+            ->notDeleted()
             ->andWhere(['AND',
                 ['<=', 'startDate', (new \DateTime())->format('Y-m-d')],
                 ['>=', 'endDate', (new \DateTime())->format('Y-m-d')]
@@ -268,7 +271,8 @@ class Enrolment extends \yii\db\ActiveRecord
             return $currentPaymentCycle;
         } else {
             return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
-                ->where(['>', 'startDate', (new \DateTime())->format('Y-m-d')]);
+                ->where(['>', 'startDate', (new \DateTime())->format('Y-m-d')])
+                ->onCondition(['payment_cycle.isDeleted' => false]);
         }
     }
 
@@ -276,7 +280,8 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         $currentPaymentCycleEndDate = new \DateTime($this->currentPaymentCycle->endDate);
         return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
-            ->where(['>', 'startDate', $currentPaymentCycleEndDate->format('Y-m-d')]);
+            ->where(['>', 'startDate', $currentPaymentCycleEndDate->format('Y-m-d')])
+            ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getFirstLesson()
@@ -365,7 +370,8 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getlastPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
-                ->orderBy(['endDate' => SORT_DESC]);
+                ->orderBy(['endDate' => SORT_DESC])
+                ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function isMonthlyPaymentFrequency()
@@ -644,14 +650,19 @@ class Enrolment extends \yii\db\ActiveRecord
         return $amount;
     }
 
-    public function extend()
+    public function getLastRootLesson()
     {
-        $lastLesson = Lesson::find()
+        return Lesson::find()
             ->isConfirmed()
             ->roots()
             ->andWhere(['lesson.courseId' => $this->courseId])
             ->orderby(['lesson.date' => SORT_DESC])
             ->one();
+    }
+
+    public function extend()
+    {
+        $lastLesson = $this->lastRootLesson;
         $interval = new \DateInterval('P1D');
         $start = (new \DateTime($lastLesson->date))->modify('+1 day');
         $end = new \DateTime($this->course->endDate);
@@ -666,5 +677,46 @@ class Enrolment extends \yii\db\ActiveRecord
         $startDate = null;
         $invoice = $this->addCreditInvoice($startDate, $this->course->endDate);
         return $invoice;
+    }
+
+    public function deleteWithOutTransactionalData()
+    {
+        return $this->delete();
+    }
+
+    public function deleteWithTransactionalData()
+    {
+        $lessons = Lesson::find()
+                ->where(['courseId' => $this->courseId])
+                ->isConfirmed()
+                ->all();
+        foreach ($this->paymentCycles as $paymentCycle) {
+            if ($paymentCycle->hasProformaInvoice()) {
+                $paymentCycle->proFormaInvoice->delete();
+            }
+            $paymentCycle->delete();
+        }
+        foreach ($lessons as $lesson) {
+            if ($lesson->hasInvoice()) {
+                $lesson->invoice->delete();
+            }
+            if ($lesson->hasCreditUsed($this->id)) {
+                $payments = $lesson->getCreditUsedPayment($this->id);
+                if ($payments) {
+                    $payment = current($payments);
+                    $creditPayment = $payment->debitUsage->creditUsagePayment;
+                    if ($creditPayment->isInvoicePayment()) {
+                        if (!$creditPayment->invoice->isDeleted) {
+                            $creditPayment->invoice->delete();
+                        }
+                    }
+                }
+            }
+            if ($lesson->isExtra() && $lesson->hasProFormaInvoice()) {
+                $lesson->proFormaInvoice->delete();
+            }
+            $lesson->delete();
+        }
+        return $this->delete();
     }
 }

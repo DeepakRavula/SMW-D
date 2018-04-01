@@ -179,7 +179,8 @@ class Invoice extends \yii\db\ActiveRecord
     public function getProformaPaymentCycleLesson()
     {
         return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'paymentCycleLessonId'])
-            ->via('invoiceItemPaymentCycleLesson');
+            ->via('invoiceItemPaymentCycleLesson')
+            ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
 
     public function getProFormaLineItem()
@@ -198,7 +199,8 @@ class Invoice extends \yii\db\ActiveRecord
     public function getProformaPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
-                ->via('proformaPaymentCycleLesson');
+                ->via('proformaPaymentCycleLesson')
+                ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getProformaEnrolment()

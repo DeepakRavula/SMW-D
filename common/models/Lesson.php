@@ -313,7 +313,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function getPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
-                    ->via('paymentCycleLesson');
+                    ->via('paymentCycleLesson')
+                    ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
     public function getLessonPayments()
@@ -330,7 +331,8 @@ class Lesson extends \yii\db\ActiveRecord
         } else {
             $lesson = $this;
         }
-        return $lesson->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id']);
+        return $lesson->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id'])
+            ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
 
     public function getLessonSplitsUsage()
@@ -869,6 +871,11 @@ class Lesson extends \yii\db\ActiveRecord
                 ->notDeleted()
                 ->all();
     }
+
+    public function hasCreditUsed($enrolmentId)
+    {
+        return !empty($this->getCreditUsedPayment($enrolmentId));
+    }
     
     public function hasLessonCredit($enrolmentId)
     {
@@ -917,6 +924,11 @@ class Lesson extends \yii\db\ActiveRecord
         return ($this->isCompleted() && $this->isScheduledOrRescheduled()) || $this->isExpired() || (!$this->isPresent);
     }
 
+    public function getLastChild()
+    {
+        return $this->children()->orderBy(['lesson.id' => SORT_DESC])->one();
+    }
+
     public function unschedule()
     {
         $this->status = self::STATUS_UNSCHEDULED;
@@ -936,7 +948,7 @@ class Lesson extends \yii\db\ActiveRecord
             $this->proFormaInvoice->makeInvoicePayment($this);
         }
         
-        return $this->proFormaInvoice;
+        return $this->paymentCycle->proFormaInvoice;
     }
     
     public static function instantiate($row)

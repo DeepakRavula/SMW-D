@@ -116,6 +116,7 @@ class EnrolmentController extends BaseController
        
         $paymentCycleDataProvider = new ActiveDataProvider([
             'query' => PaymentCycle::find()
+                ->notDeleted()
                 ->andWhere([
                     'enrolmentId' => $id,
                 ]),
@@ -450,15 +451,15 @@ class EnrolmentController extends BaseController
             if ($invoice) {
                 $message = '$' . $invoice->balance . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
             }
-            $model->delete();
+            $model->deleteWithOutTransactionalData();
             $response = [
                 'status' => true,
                 'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
                 'message' => $message
             ];
         } else {
-            $response		 = [
-                'status' => false,
+            $response = [
+                'status' => false
             ];
         }
         return $response;
@@ -499,12 +500,14 @@ class EnrolmentController extends BaseController
         $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
         if ($post) {
             $message = null;
-            if ($endDate !== $course->endDate) {
-                $course->updateAttributes([
-                    'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
-                ]);
-                $newEndDate = Carbon::parse($course->endDate)->format('d-m-Y');
-                if ($endDate > $newEndDate) {
+            $course->updateAttributes([
+                'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
+            ]);
+            $newEndDate = Carbon::parse($course->endDate);
+            if ($endDate !== $newEndDate) {
+                $lastLesson = $model->lastRootLesson;
+                $lastLessonDate = Carbon::parse($lastLesson->date);
+                if ($lastLessonDate > $newEndDate) {
                     $invoice = $model->shrink();
                     if (!$invoice) {
                         $credit = 0;
@@ -515,7 +518,7 @@ class EnrolmentController extends BaseController
                     $model->updateAttributes([
                         'isAutoRenew' => false
                     ]);
-                } else if ($endDate < $newEndDate) {
+                } else if ($lastLessonDate < $newEndDate) {
                     $model->extend();
                 }
                 if($message) {

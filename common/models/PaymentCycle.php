@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\models\log\InvoiceLog;
 use Yii;
 
@@ -38,7 +39,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ['id', 'validateCanRaisePFI', 'on' => self::SCENARIO_CAN_RAISE_PFI],
             [['enrolmentId', 'startDate', 'endDate'], 'required'],
             [['enrolmentId'], 'integer'],
-            [['startDate', 'endDate', 'validFrom', 'validThru'], 'safe'],
+            [['startDate', 'endDate', 'validFrom', 'validThru', 'isDeleted'], 'safe'],
         ];
     }
 
@@ -57,6 +58,19 @@ class PaymentCycle extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+        ];
+    }
+
     /**
      * @inheritdoc
      * @return \common\models\query\PaymentCycleQuery the active query used by this AR class.
@@ -68,7 +82,8 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function getPaymentCycleLessons()
     {
-        return $this->hasMany(PaymentCycleLesson::className(), ['paymentCycleId' => 'id']);
+        return $this->hasMany(PaymentCycleLesson::className(), ['paymentCycleId' => 'id'])
+            ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
     
     public function getLessons()
@@ -76,6 +91,14 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return $this->hasMany(Lesson::className(), ['id' => 'lessonId'])
                 ->via('paymentCycleLessons')
                 ->onCondition(['lesson.isDeleted' => false]);
+    }
+
+    public function beforeSoftDelete()
+    {
+        foreach ($this->paymentCycleLessons as $payemntCycleLesson) {
+            $payemntCycleLesson->delete();
+        }
+        return true;
     }
 
     public function getInvoiceItemPaymentCycleLessons()
@@ -126,6 +149,14 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return parent::beforeDelete();
     }
 
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
@@ -142,7 +173,6 @@ class PaymentCycle extends \yii\db\ActiveRecord
                     ->location($locationId)
                     ->andWhere(['courseId' => $this->enrolment->course->id])
                     ->notRescheduled()
-                    ->andWhere(['OR', ['status' => Lesson::STATUS_SCHEDULED], ['status' => Lesson::STATUS_UNSCHEDULED]])
                     ->between($startDate, $endDate)
                     ->all();
         foreach ($lessons as $lesson) {
@@ -150,6 +180,12 @@ class PaymentCycle extends \yii\db\ActiveRecord
             $paymentCycleLesson->paymentCycleId = $this->id;
             $paymentCycleLesson->lessonId       = $lesson->id;
             $paymentCycleLesson->save();
+            if ($lesson->lastChild) {
+                $paymentCycleLesson->id = null;
+                $paymentCycleLesson->isNewRecord = true;
+                $paymentCycleLesson->lessonId = $lesson->lastChild->id;
+                $paymentCycleLesson->save();
+            }
             if ($this->proFormaInvoice) {
                 $lesson->addPrivateLessonLineItem($this->proFormaInvoice);
                 $this->proFormaInvoice->save();
@@ -218,6 +254,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
     {
         $firstPaymentCycle = self::find()
             ->where(['enrolmentId' => $this->enrolmentId])
+            ->notDeleted()
             ->orderBy(['startDate' => SORT_ASC])
             ->one();
 

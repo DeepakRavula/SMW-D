@@ -109,6 +109,7 @@ class VacationController extends BaseController
                     $endDate]]);
             $paymentCyclesQuery = PaymentCycle::find()
                 ->where(['enrolmentId' => $enrolmentId])
+                ->notDeleted()
                 ->andWhere(['OR', ['between', "DATE(endDate)", $startDate, $endDate],
                 ['between', "DATE(startDate)", $startDate, $endDate]]);
 

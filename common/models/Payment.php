@@ -195,6 +195,11 @@ class Payment extends ActiveRecord
         return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'id']);
     }
 
+    public function isInvoicePayment()
+    {
+        return !empty($this->invoicePayment);
+    }
+
     public function getInvoicePayments()
     {
         return $this->hasMany(InvoicePayment::className(), ['payment_id' => 'id']);

@@ -77,6 +77,9 @@ class CourseReschedule extends Course
             ->between($startDate, $endDate)
             ->all();
         $course = Course::findOne($this->courseId);
+        $dayList = self::getWeekdaysList();
+        $day = $dayList[(new \DateTime($this->dayTime))->format('N')];
+        $startDate->modify('next ' . $day);
         $course->generateLessons($lessons, $startDate, $this->teacherId, $this->dayTime);
         return true;
     }

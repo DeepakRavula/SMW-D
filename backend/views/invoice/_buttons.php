@@ -43,10 +43,10 @@ use yii\widgets\Pjax;
             <?php else : ?>
             <li><a id="retract" href="#">Retract Funds From Lessons</a></li>
             <?php endif; ?>
-            <?php if (!$model->canUnpost() && !$loggedUser->isAdmin() && !$loggedUser->isOwner()) : ?>
-            <li><a class="multiselect-disable" href="#">Un-post</a></li>
-            <?php else : ?>
+            <?php if ($model->canUnpost() && ($loggedUser->isAdmin() || $loggedUser->isOwner())) : ?>
             <li><a id="un-post" href="#">Un-post</a></li>
+            <?php else : ?>
+            <li><a class="multiselect-disable" href="#">Un-post</a></li>
             <?php endif; ?>
         </ul>
     </div>

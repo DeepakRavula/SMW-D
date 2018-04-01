@@ -31,4 +31,9 @@ class PaymentCycleQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+    public function notDeleted()
+    {
+        return $this->andWhere(['payment_cycle.isDeleted' => false]);
+    }
 }
