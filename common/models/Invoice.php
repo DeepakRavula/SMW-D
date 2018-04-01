@@ -193,8 +193,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function getInvoiceItemPaymentCycleLesson()
     {
         return $this->hasOne(InvoiceItemPaymentCycleLesson::className(), ['invoiceLineItemId' => 'id'])
-                ->via('proFormaLineItem')
-                ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
+                ->via('proFormaLineItem');
     }
                 
     public function getProformaPaymentCycle()
