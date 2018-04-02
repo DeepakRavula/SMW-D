@@ -90,7 +90,8 @@ class Invoice extends \yii\db\ActiveRecord
         return [
             ['user_id', 'required'],
             [['isSent'], 'boolean'],
-            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
+            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 
+                'isDeleted', 'isCanceled', 'isVoid'], 'safe'],
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
             [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 'date',
@@ -285,11 +286,17 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function isLessonCredit()
     {
+        if (!$this->lineItem) {
+            return false;
+        }
         return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
     }
 
     public function isOpeningBalance()
     {
+        if (!$this->lineItem) {
+            return false;
+        }
         return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
     }
 
@@ -618,6 +625,7 @@ class Invoice extends \yii\db\ActiveRecord
             $this->balance = 0;
             $this->isDeleted = false;
             $this->isPosted = false;
+            $this->isVoid = false;
         } else {
             if ($this->isProformaPaymentFrequencyApplicable()) {
                 $this->createProformaPaymentFrequency();
@@ -626,7 +634,7 @@ class Invoice extends \yii\db\ActiveRecord
             if (empty($this->lineItems) || (!$this->isOpeningBalance() && !$this->isLessonCredit())) {
                 $this->subTotal = $this->netSubtotal;
                 if (!$this->isTaxAdjusted) {
-                    $this->tax      = $this->lineItemTax;
+                    $this->tax      = empty($this->lineItemTax) ? 0.0 : $this->lineItemTax;
                 }
                 $this->total    = $this->subTotal + $this->tax;
             }
@@ -774,5 +782,15 @@ class Invoice extends \yii\db\ActiveRecord
             $this->save();
             return $this->isSent;
         }
+    }
+
+    public function void()
+    {
+        if (!$this->isVoid) {
+            foreach ($this->lineItems as $lineItem) {
+                $lineItem->delete();
+            }
+        }
+        return true;
     }
 }
