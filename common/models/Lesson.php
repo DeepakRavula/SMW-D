@@ -1003,4 +1003,15 @@ class Lesson extends \yii\db\ActiveRecord
         $lessonRescheduleModel->rescheduledLessonId = $lesson->id;
         return $lessonRescheduleModel->save();
     }
+    public function getLeaf()
+    {
+        return self::find()->descendantsOf($this->id)->orderBy(['id' => SORT_DESC])->one();
+    }
+    public function dailyScheduleStatus() {
+	$status = $this->getStatus();
+	    if($this->status === self::STATUS_CANCELED) {
+		$status = "Rescheduled to " . Yii::$app->formatter->asDate($this->leaf->date);    
+	    }    
+	return $status; 
+    }
 }
