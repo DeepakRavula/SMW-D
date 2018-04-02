@@ -116,8 +116,8 @@ class InvoiceLineItemSearch extends InvoiceLineItem
             $query->groupBy(['invoice_line_item.id,item_id, DATE(invoice.date)']);
         }
         if ($this->groupByItemCategory && !$this->isCustomerReport) {
-            $query->joinWith('itemCategory')
-                ->groupBy(['invoice_line_item.id,item_category.id, DATE(invoice.date)']);
+            $query->joinWith('itemCategory');
+                $query->orderBy(['item_category.id' => SORT_ASC]);
         }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

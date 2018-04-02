@@ -49,7 +49,65 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'value' => function ($data) {
                     return $data->itemCategory->name;
                 },
+                'group' => true,
+                'groupedRow' => true,
+                'subGroupOf' => 0,
+                'groupFooter' => function ($model, $key, $index, $widget) {
+                    return [
+                        'mergeColumns' => [[1]],
+                        'content' => [
+                            2 => GridView::F_SUM,
+                        ],
+                        'contentFormats' => [
+                            2 => ['format' => 'number', 'decimals' => 2],
+                        ],
+                        'contentOptions' => [
+                            2 => ['style' => 'text-align:right'],
+                        ],
+                        'options' => ['style' => 'font-weight:bold;']
+                    ];
+                }
             ],
+                                [
+                'label' => 'Item Category',
+                'value' => function ($data) {
+                    return $data->itemCategory->name;
+                },
+                'group' => true,
+                'groupedRow' => true,
+                'subGroupOf' => 0,
+                'groupFooter' => function ($model, $key, $index, $widget) {
+                    return [
+                        'mergeColumns' => [[1]],
+                        'content' => [
+                            2 => GridView::F_SUM,
+                        ],
+                        'contentFormats' => [
+                            2 => ['format' => 'number', 'decimals' => 2],
+                        ],
+                        'contentOptions' => [
+                            2 => ['style' => 'text-align:right'],
+                        ],
+                        'options' => ['style' => 'font-weight:bold;']
+                    ];
+                }
+            ],
+                 [
+                'value' => function ($data) {
+                    return $data->invoice->getInvoiceNumber();
+                },
+
+            ],
+
+
+                [
+                'label' => 'Items',
+                'value' => function ($data) {
+                    return $data->description;
+                },
+                    'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
+            ],
+
                 [
                 'label' => 'Amount',
                 'format' => ['decimal', 2],
