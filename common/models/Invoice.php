@@ -622,11 +622,8 @@ class Invoice extends \yii\db\ActiveRecord
             if ($this->isProformaPaymentFrequencyApplicable()) {
                 $this->createProformaPaymentFrequency();
             }
-            if (empty($this->lineItems)) {
-                return parent::beforeSave($insert);
-            }
             $existingSubtotal = $this->subTotal;
-            if (!$this->isOpeningBalance() && !$this->isLessonCredit()) {
+            if (empty($this->lineItems) || (!$this->isOpeningBalance() && !$this->isLessonCredit())) {
                 $this->subTotal = $this->netSubtotal;
                 if (!$this->isTaxAdjusted) {
                     $this->tax      = $this->lineItemTax;
