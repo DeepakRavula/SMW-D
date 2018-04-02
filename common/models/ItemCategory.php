@@ -59,6 +59,7 @@ class ItemCategory extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
+            'groupByMethod' => 'Summaries Only',
         ];
     }
 

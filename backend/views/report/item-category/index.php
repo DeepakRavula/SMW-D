@@ -8,6 +8,9 @@ use yii\helpers\Url;
 
 $this->title = 'Item Category';
 $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class'=> 'btn btn-box-tool']);
+$this->params['show-all'] = $this->render('_button', [
+    'model' => $searchModel
+    ]);
 ?>
 
 <div class="payments-index p-10">
@@ -27,4 +30,23 @@ $("#print").on("click", function() {
         var url = '<?php echo Url::to(['item-category/print']); ?>?' + params;
         window.open(url,'_blank');
     });
+$(document).ready(function(){
+    $("#group-by-method").on("change", function() {
+        var groupByMethod = $(this).is(":checked");
+        var dateRange=$('#invoicelineitemsearch-daterange').val();
+        var params = $.param({ 'InvoiceLineItemSearch[dateRange]': dateRange,
+            'InvoiceLineItemSearch[groupByMethod]': (groupByMethod | 0) });
+        var url = '<?php echo Url::to(['report/item-category']); ?>?' + params;
+        $.pjax.reload({url:url,container:"#item-listing",replace:false,  timeout: 4000});  //Reload GridView
+    });
+    $("#print").on("click", function() {
+        var groupByMethod = $("#group-by-method").is(":checked");
+        var dateRange = $('#paymentsearch-daterange').val();
+        var params = $.param({ 'PaymentSearch[dateRange]': dateRange,
+            'PaymentSearch[groupByMethod]': (groupByMethod | 0) });
+        var url = '<?php echo Url::to(['payment/print']); ?>?' + params;
+        window.open(url,'_blank');
+    });
+});
+</script>
 </script>

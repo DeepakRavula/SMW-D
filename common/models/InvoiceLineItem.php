@@ -258,6 +258,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'tax' => 'Tax (%)',
             'itemCategoryId' => 'Item Category',
             'item_id' => 'Item',
+            'groupByMethod' => 'Summaries Only',
         ];
     }
 
