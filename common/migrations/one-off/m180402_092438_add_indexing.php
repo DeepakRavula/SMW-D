@@ -38,8 +38,6 @@ class m180402_092438_add_indexing extends Migration
 	    $this->createIndex('studentId', 'enrolment', 'studentId');
 	    $this->createIndex('paymentFrequencyId', 'enrolment', 'paymentFrequencyId');
 	    $this->createIndex('enrolmentId', 'enrolment_discount', 'enrolmentId');
-	    //$this->createIndex('enrolmentId', 'enrolment_program_rate', 'enrolmentId');
-	    $this->createIndex('programRate', 'enrolment_program_rate', 'programRate');
 	    $this->createIndex('programId', 'course', 'programId');
 	    $this->createIndex('teacherId', 'course', 'teacherId');
 	    $this->createIndex('locationId', 'course', 'locationId');
@@ -58,14 +56,10 @@ class m180402_092438_add_indexing extends Migration
 	    $this->createIndex('userContactId', 'user_phone', 'userContactId');
 	    $this->createIndex('user_id', 'user_token', 'user_id');
 	    $this->createIndex('customer_id', 'student', 'customer_id');
-	    $this->createIndex('enrolmentId', 'vacation', 'enrolmentId');
 	    $this->createIndex('studentId', 'exam_result', 'studentId');
 	    $this->createIndex('user_id', 'blog', 'user_id');
-	    $this->createIndex('bulkRescheduleId', 'bulk_reschedule_lesson', 'bulkRescheduleId');
-	    $this->createIndex('lessonId', 'bulk_reschedule_lesson', 'lessonId');
 	    $this->createIndex('province_id', 'city', 'province_id');
 	    $this->createIndex('locationId', 'classroom', 'locationId');
-	    $this->createIndex('classroomId', 'classroom_unavailability', 'classroomId');
 	    $this->createIndex('customerId', 'customer_discount', 'customerId');
 	    $this->createIndex('userId', 'customer_payment_preference', 'userId');
 	    $this->createIndex('paymentMethodId', 'customer_payment_preference', 'paymentMethodId');
@@ -73,9 +67,7 @@ class m180402_092438_add_indexing extends Migration
 	    $this->createIndex('debit_payment_id', 'credit_usage', 'debit_payment_id');
 	    $this->createIndex('itemCategoryId', 'item', 'itemCategoryId');
 	    $this->createIndex('locationId', 'item', 'locationId');
-	    $this->createIndex('courseId', 'lesson', 'courseId');
 	    $this->createIndex('classroomId', 'lesson', 'classroomId');
-	    $this->createIndex('teacherId', 'lesson', 'teacherId');
 	    $this->createIndex('lessonId', 'lesson_hierarchy', 'lessonId');
 	    $this->createIndex('childLessonId', 'lesson_hierarchy', 'childLessonId');
 	    $this->createIndex('lessonId', 'lesson_payment', 'lessonId');
@@ -130,10 +122,7 @@ class m180402_092438_add_indexing extends Migration
             $this->createIndex('timelineEventId', 'timeline_event_teacher', 'timelineEventId');
             $this->createIndex('teacherId', 'timeline_event_teacher', 'teacherId');
             $this->createIndex('timelineEventId', 'timeline_event_user', 'timelineEventId');
-            $this->createIndex('`userId', 'timeline_event_user', 'userId');
-	    $this->createIndex('instanceId', 'note', 'iinstanceId');
-	    $this->createIndex('instanceType', 'note', 'instanceType');
-
+            $this->createIndex('userId', 'timeline_event_user', 'userId');
     }
 
     /**
