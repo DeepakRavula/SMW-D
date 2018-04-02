@@ -26,77 +26,71 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     return null;
                 },
                 'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
+                
                 'group' => true,
                 'groupedRow' => true,
-                'groupFooter' => function ($model, $key, $index, $widget) {
-                    return [
-                        'mergeColumns' => [[1]],
-                        'content' => [
-                            2 => GridView::F_SUM,
-                        ],
-                        'contentFormats' => [
-                            2 => ['format' => 'number', 'decimals' => 2],
-                        ],
-                        'contentOptions' => [
-                            2 => ['style' => 'text-align:right'],
-                        ],
-                        'options' => ['style' => 'font-weight:bold;']
-                    ];
-                }
+                            'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
+                return [
+                    'mergeColumns'=>[[2, 3]], // columns to merge in summary
+                    'content'=>[              // content to show in each summary cell
+                       1=>'Summary',
+                       4=>GridView::F_SUM,
+
+                    ],
+                    'contentFormats'=>[      // content reformatting for each summary cell
+
+                        4=>['format'=>'number', 'decimals'=>2],
+
+                    ],
+                    'contentOptions'=>[      // content html attributes for each summary cell
+                        2=>['style' => 'text-align:left'],
+                        4=>['style'=>'text-align:right'],
+
+                    ],
+                    // html attributes for group summary row
+                    'options'=>['class'=>'success','style'=>'font-weight:bold;']
+                ];
+            },
+                
+                
             ],
                 [
                 'label' => 'Item Category',
                 'value' => function ($data) {
                     return $data->itemCategory->name;
                 },
+                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
                 'group' => true,
                 'groupedRow' => true,
                 'subGroupOf' => 0,
-                'groupFooter' => function ($model, $key, $index, $widget) {
-                    return [
-                        'mergeColumns' => [[1]],
-                        'content' => [
-                            2 => GridView::F_SUM,
-                        ],
-                        'contentFormats' => [
-                            2 => ['format' => 'number', 'decimals' => 2],
-                        ],
-                        'contentOptions' => [
-                            2 => ['style' => 'text-align:right'],
-                        ],
-                        'options' => ['style' => 'font-weight:bold;']
-                    ];
-                }
-            ],
-                                [
-                'label' => 'Item Category',
-                'value' => function ($data) {
-                    return $data->itemCategory->name;
-                },
-                'group' => true,
-                'groupedRow' => true,
-                'subGroupOf' => 0,
-                'groupFooter' => function ($model, $key, $index, $widget) {
-                    return [
-                        'mergeColumns' => [[1]],
-                        'content' => [
-                            2 => GridView::F_SUM,
-                        ],
-                        'contentFormats' => [
-                            2 => ['format' => 'number', 'decimals' => 2],
-                        ],
-                        'contentOptions' => [
-                            2 => ['style' => 'text-align:right'],
-                        ],
-                        'options' => ['style' => 'font-weight:bold;']
-                    ];
-                }
-            ],
+            'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
+                return [
+                    'mergeColumns'=>[[2, 3]], // columns to merge in summary
+                    'content'=>[              // content to show in each summary cell
+                       2=>'Summary',
+                       4=>GridView::F_SUM,
+                       
+                    ],
+                    'contentFormats'=>[      // content reformatting for each summary cell
+
+                        4=>['format'=>'number', 'decimals'=>2],
+                       
+                    ],
+                    'contentOptions'=>[      // content html attributes for each summary cell
+                        2=>['style' => 'text-align:left'],
+                        4=>['style'=>'text-align:right'],
+                        
+                    ],
+                    // html attributes for group summary row
+                    'options'=>['class'=>'success','style'=>'font-weight:bold;']
+                ];
+            },
+        ],
                  [
                 'value' => function ($data) {
                     return $data->invoice->getInvoiceNumber();
                 },
-
+                    'pageSummary' => 'Grand Total',
             ],
 
 
