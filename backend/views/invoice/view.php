@@ -237,6 +237,7 @@ Modal::begin([
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Line Item</h4>');
                         $('.modal-delete').attr('action', url);
                         $('#modal-content').html(response.data);
+                        $('.modal-delete').attr('message', response.deleteConfirmation);
                     } else {
                         $('#invoice-error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                     }

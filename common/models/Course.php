@@ -373,11 +373,7 @@ class Course extends \yii\db\ActiveRecord
             $isConfirmed = false;
         }
         $lesson = new Lesson();
-        if ($day < new \DateTime()) {
-            $status = Lesson::STATUS_UNSCHEDULED;
-        } else {
-            $status = Lesson::STATUS_SCHEDULED;
-        }
+        $status = Lesson::STATUS_SCHEDULED;
         $lesson->setAttributes([
             'courseId' => $this->id,
             'teacherId' => $this->teacherId,
