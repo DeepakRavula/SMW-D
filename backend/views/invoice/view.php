@@ -418,8 +418,8 @@ Modal::begin([
                             {
                                 $('#payment-add-spinner').hide();
                                 $('#payment-modal').modal('hide');
-                                if (response.canPost) {
-                                    invoice.postAfterPaid(response.invoiceType);
+                                if (response.canAlert) {
+                                    invoice.postAfterPaid();
                                 }
                                 invoice.reload();
                                 $('#add-payment-spinner').hide();
@@ -629,10 +629,8 @@ $(document).on("click", '.adjust-invoice-tax', function() {
             });
         },
         
-        postAfterPaid: function (invoiceType) {
+        postAfterPaid: function () {
             $('#invoice-spinner').show();
-            if(invoiceType)
-            {
             bootbox.confirm({
                 message: 'This PFI is now fully paid. Would you like to post this document and distribute the                                               payments received to the associated lessons?',
                 callback: function(result) {
@@ -642,7 +640,6 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                     }
                 }
             });
-        }
         },
 
         distribute: function() {
