@@ -2,6 +2,7 @@
 
 use yii\helpers\Url;
 use yii\helpers\Json;
+use common\models\Enrolment;
 use common\models\Location;
 use common\models\LocationAvailability;
 use yii\grid\GridView;
@@ -46,12 +47,24 @@ use yii\grid\GridView;
             ],
             [
                 'label' => 'Invoice Status',
-                'value' => function ($data) {
+                'value' => function ($data) use($model) {
                     $status = null;
-                    if (!empty($data->invoice)) {
-                        return $data->invoice->getStatus();
+                    if ($data->isPrivate()) {
+                        if (!empty($data->invoice)) {
+                            return $data->invoice->getStatus();
+                        } else {
+                            $status = 'Not Invoiced';
+                        }
                     } else {
-                        $status = 'Not Invoiced';
+                        $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
+                            ->andWhere(['courseId' => $data->courseId])
+                            ->andWhere(['studentId' => $model->id])->one();
+                        $invoice = $enrolment->getInvoice($data->id);
+                        if ($invoice) {
+                            return $invoice->getStatus();
+                        } else {
+                            $status = 'Not Invoiced';
+                        }
                     }
 
                     return $status;
@@ -65,12 +78,27 @@ use yii\grid\GridView;
             ],
             [
                 'label' => 'Prepaid?',
-                'value' => function ($data) {
-                    if (!empty($data->proFormaInvoice) && ($data->proFormaInvoice->isPaid() || $data->proFormaInvoice->hasCredit())) {
-                        return 'Yes';
+                'value' => function ($data) use($model) {
+                    $pfi = null;
+                    if ($data->isPrivate()) {
+                        if ($data->proFormaInvoice) {
+                            $pfi = $data->proFormaInvoice;
+                        }
+                    } else {
+                        $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
+                            ->andWhere(['courseId' => $data->courseId])
+                            ->andWhere(['studentId' => $model->id])->one();
+                        $hasItem = $data->hasGroupProFormaLineItem($enrolment);
+                        if ($hasItem) {
+                            $pfi = $data->getGroupProFormaLineItem($enrolment)->invoice;
+                        }
                     }
-
-                    return 'No';
+                    if ($pfi) {
+                        $status = $pfi->hasCreditUsed() ? 'Yes' : 'No';
+                    } else {
+                        $status = 'No';
+                    }
+                    return $status;
                 },
             ],
             [
