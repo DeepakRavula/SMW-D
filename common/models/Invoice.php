@@ -287,17 +287,19 @@ class Invoice extends \yii\db\ActiveRecord
     public function isLessonCredit()
     {
         if (!$this->lineItem) {
-            return false;
+            $status = false;
         }
-        return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
+        $status = (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
+        return $status;
     }
 
     public function isOpeningBalance()
     {
         if (!$this->lineItem) {
-            return false;
+            $status = false;
         }
-        return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
+        $status = (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
+        return $status;
     }
 
     public function isInvoice()
@@ -786,11 +788,14 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function void()
     {
+        $status = false;
         if (!$this->isVoid) {
             foreach ($this->lineItems as $lineItem) {
                 $lineItem->delete();
             }
+            $this->updateAttributes(['isVoid' => true]);
+            $status = true;
         }
-        return true;
+        return $status;
     }
 }

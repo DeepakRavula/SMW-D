@@ -753,7 +753,6 @@ class InvoiceController extends BaseController
     {
         $model = Invoice::findOne($id);
         if ($model->void()) {
-            $model->updateAttributes(['isVoid' => true]);
             $response = [
                 'status' => true
             ];
