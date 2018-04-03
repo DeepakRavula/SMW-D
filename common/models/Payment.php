@@ -69,8 +69,6 @@ class Payment extends ActiveRecord
             [['amount'], 'number'],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old',
                'sourceId', 'credit', 'isDeleted', 'transactionId','notes'], 'safe'],
-            ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
-                self::SCENARIO_CREDIT_USED, self::SCENARIO_CREDIT_USED_EDIT]],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
                 self::SCENARIO_CREDIT_USED_EDIT]],
         ];
