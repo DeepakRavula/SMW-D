@@ -371,7 +371,7 @@ class PrintController extends BaseController
 
         $invoiceTaxTotal = Invoice::find()
             ->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
-            ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+            ->andWhere(['between', 'date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->notDeleted()
             ->sum('tax');
 
@@ -381,7 +381,7 @@ class PrintController extends BaseController
             }])
             ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
             ->notDeleted()
-            ->andWhere(['between', 'payment.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+            ->andWhere(['between', 'payment.date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->sum('payment.amount');
 
         $royaltyPayment = InvoiceLineItem::find()
@@ -389,7 +389,7 @@ class PrintController extends BaseController
             ->joinWith(['invoice i' => function ($query) use ($locationId) {
                 $query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
             }])
-            ->andWhere(['between', 'i.date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+            ->andWhere(['between', 'i.date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->royaltyFree()
             ->sum('invoice_line_item.amount');
 
