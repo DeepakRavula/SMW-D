@@ -73,6 +73,7 @@ class UserProfile extends ActiveRecord
                     $query->andWhere(['not', ['id' => Yii::$app->user->getId()]]);
                 },
             ],
+            [['birthDate'], 'date', 'format' => 'php:M d,Y', 'message' => 'Date format shoule be in M d,Y format'],
         ];
     }
 
@@ -86,6 +87,7 @@ class UserProfile extends ActiveRecord
             'firstname' => Yii::t('common', 'First Name'),
             'lastname' => Yii::t('common', 'Last Name'),
             'picture' => Yii::t('common', 'Picture'),
+            'birthDate' => 'Birth Date',
         ];
     }
 
@@ -132,5 +134,14 @@ class UserProfile extends ActiveRecord
         return $this->avatar_path
             ? Yii::getAlias($this->avatar_base_url.'/'.$this->avatar_path)
             : $default;
+    }
+	public function beforeSave($insert)
+    {
+        if (!empty($this->birthDate)) {
+            $birthDate = new \DateTime($this->birthDate);
+            $this->birthDate = $birthDate->format('Y-m-d');
+        }
+        
+        return parent::beforeSave($insert);
     }
 }

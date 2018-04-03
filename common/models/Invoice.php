@@ -90,7 +90,8 @@ class Invoice extends \yii\db\ActiveRecord
         return [
             ['user_id', 'required'],
             [['isSent'], 'boolean'],
-            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 'isDeleted', 'isCanceled'], 'safe'],
+            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 
+                'isDeleted', 'isCanceled', 'isVoid'], 'safe'],
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
             [['hasEditable', 'dueDate', 'createdUsedId', 'updatedUserId', 'date',
@@ -285,12 +286,20 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function isLessonCredit()
     {
-        return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
+        if (!$this->lineItem) {
+            $status = false;
+        }
+        $status = (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
+        return $status;
     }
 
     public function isOpeningBalance()
     {
-        return (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
+        if (!$this->lineItem) {
+            $status = false;
+        }
+        $status = (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
+        return $status;
     }
 
     public function isInvoice()
@@ -618,18 +627,16 @@ class Invoice extends \yii\db\ActiveRecord
             $this->balance = 0;
             $this->isDeleted = false;
             $this->isPosted = false;
+            $this->isVoid = false;
         } else {
             if ($this->isProformaPaymentFrequencyApplicable()) {
                 $this->createProformaPaymentFrequency();
             }
-            if (empty($this->lineItems)) {
-                return parent::beforeSave($insert);
-            }
             $existingSubtotal = $this->subTotal;
-            if (!$this->isOpeningBalance() && !$this->isLessonCredit()) {
+            if (empty($this->lineItems) || (!$this->isOpeningBalance() && !$this->isLessonCredit())) {
                 $this->subTotal = $this->netSubtotal;
                 if (!$this->isTaxAdjusted) {
-                    $this->tax      = $this->lineItemTax;
+                    $this->tax      = empty($this->lineItemTax) ? 0.0 : $this->lineItemTax;
                 }
                 $this->total    = $this->subTotal + $this->tax;
             }
@@ -777,5 +784,18 @@ class Invoice extends \yii\db\ActiveRecord
             $this->save();
             return $this->isSent;
         }
+    }
+
+    public function void()
+    {
+        $status = false;
+        if (!$this->isVoid) {
+            foreach ($this->lineItems as $lineItem) {
+                $lineItem->delete();
+            }
+            $this->updateAttributes(['isVoid' => true]);
+            $status = true;
+        }
+        return $status;
     }
 }

@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use trntv\filekit\widget\Upload;
+use kartik\date\DatePicker;
 
 $loggedUser = User::findOne(Yii::$app->user->id);
 ?>
@@ -34,6 +35,23 @@ $loggedUser = User::findOne(Yii::$app->user->id);
         <div class="col-xs-6">
             <?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
         </div>
+		<?php if ($model->getModel()->isTeacher()) : ?>
+	        <div class="col-xs-6">
+				<?php
+				echo $form->field($userProfile, 'birthDate')->widget(DatePicker::classname(),
+					[
+						'options' => [
+							'value' => Yii::$app->formatter->asDate($userProfile->birthDate),
+						],
+					'type' => DatePicker::TYPE_INPUT,
+					'pluginOptions' => [
+						'autoclose' => true,
+						'format' => 'M dd,yyyy'
+					]
+				]);
+				?>
+			</div>
+		<?php endif; ?>
         <div class="col-xs-6">
         <?php if ($loggedUser->canManagePin()) : ?>
             <?php if ($model->getModel()->hasPin()) : ?>
@@ -72,7 +90,7 @@ $loggedUser = User::findOne(Yii::$app->user->id);
 
 <script>
     $(document).ready(function() {
-        var canLogin = <?= $model->canLogin ?>;
+		var canLogin = <?= $model->canLogin ?>;
         if (canLogin) {
             $('.can-login').show();
         } else {

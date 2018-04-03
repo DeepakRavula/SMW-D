@@ -237,6 +237,7 @@ Modal::begin([
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Line Item</h4>');
                         $('.modal-delete').attr('action', url);
                         $('#modal-content').html(response.data);
+                        $('.modal-delete').attr('message', response.deleteConfirmation);
                     } else {
                         $('#invoice-error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                     }
@@ -588,6 +589,11 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         return false;
     });
 
+    $(document).off('click', '#void').on('click', '#void', function () {
+        invoice.void();
+        return false;
+    });
+
     var invoice = {
         post: function() {
             $('#invoice-spinner').show();
@@ -595,10 +601,30 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                 url    : '<?= Url::to(['invoice/post', 'id' => $model->id]); ?>',
                 type   : 'post',
                 dataType: "json",
-                success: function()
+                success: function(response)
                 {
-                    invoice.reload();
-                    $('#success-notification').html('PFI posted succesfully!').fadeIn().delay(5000).fadeOut();
+                    if(response.status)
+                    {
+                        invoice.reload();
+                        $('#success-notification').html('PFI posted succesfully!').fadeIn().delay(5000).fadeOut();
+                    }
+                }
+            });
+        },
+
+        void: function() {
+            $('#invoice-spinner').show();
+            $.ajax({
+                url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>',
+                type   : 'post',
+                dataType: "json",
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        invoice.reload();
+                        $('#success-notification').html('Invoice voided succesfully!').fadeIn().delay(5000).fadeOut();
+                    }
                 }
             });
         },
@@ -625,10 +651,13 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                 url    : '<?= Url::to(['invoice/distribute', 'id' => $model->id]); ?>',
                 type   : 'post',
                 dataType: "json",
-                success: function()
+                success: function(response)
                 {
-                    invoice.reload();
-                    $('#success-notification').html('Funds distributed succesfully!').fadeIn().delay(5000).fadeOut();
+                    if(response.status)
+                    {
+                        invoice.reload();
+                        $('#success-notification').html('Funds distributed succesfully!').fadeIn().delay(5000).fadeOut();
+                    }
                 }
             });
         },
@@ -639,10 +668,13 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                 url    : '<?= Url::to(['invoice/post-distribute', 'id' => $model->id]); ?>',
                 type   : 'post',
                 dataType: "json",
-                success: function()
+                success: function(response)
                 {
-                    invoice.reload();
-                    $('#success-notification').html('Funds distributed succesfully!').fadeIn().delay(5000).fadeOut();
+                    if(response.status)
+                    {
+                        invoice.reload();
+                        $('#success-notification').html('Funds distributed succesfully!').fadeIn().delay(5000).fadeOut();
+                    }
                 }
             });
         },
@@ -653,10 +685,13 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                 url    : '<?= Url::to(['invoice/unpost', 'id' => $model->id]); ?>',
                 type   : 'post',
                 dataType: "json",
-                success: function()
+                success: function(response)
                 {
-                    invoice.reload();
-                    $('#success-notification').html('PFI has been un-posted succesfully!').fadeIn().delay(5000).fadeOut();
+                    if(response.status)
+                    {
+                        invoice.reload();
+                        $('#success-notification').html('PFI has been un-posted succesfully!').fadeIn().delay(5000).fadeOut();
+                    }
                 }
             });
         },
@@ -667,10 +702,13 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                 url    : '<?= Url::to(['invoice/retract-credits', 'id' => $model->id]); ?>',
                 type   : 'post',
                 dataType: "json",
-                success: function()
+                success: function(response)
                 {
-                    invoice.reload();
-                    $('#success-notification').html('Funds retracted succesfully!').fadeIn().delay(5000).fadeOut();
+                    if(response.status)
+                    {
+                        invoice.reload();
+                        $('#success-notification').html('Funds retracted succesfully!').fadeIn().delay(5000).fadeOut();
+                    }
                 }
             });
         },
