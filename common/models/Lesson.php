@@ -154,7 +154,6 @@ class Lesson extends \yii\db\ActiveRecord
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function ($model, $attribute) {
                     return $model->course->program->isPrivate();
                 }],
-            [['date'], PastDateValidator::className(), 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREATE, self::SCENARIO_CREATE_GROUP]],
             [['date'], TeacherSubstituteValidator::className(), 'on' => self::SCENARIO_SUBSTITUTE_TEACHER],
             [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]]
         ];

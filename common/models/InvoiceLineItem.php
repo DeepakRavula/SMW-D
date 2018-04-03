@@ -105,9 +105,15 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     
     public function getPaymentCycleLesson()
     {
-        return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'paymentCycleLessonId'])
-                ->via('lineItemPaymentCycleLesson')
-                ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
+        if ($this->isPaymentCycleLesson()) {
+            return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'paymentCycleLessonId'])
+                    ->via('lineItemPaymentCycleLesson')
+                    ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
+        } else {
+            return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'lessonId'])
+                    ->via('lineItemLesson')
+                    ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
+        }
     }
     
     public function getPaymentCycle()
@@ -273,6 +279,18 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $this->invoice->delete();
         }
         return $this->invoice->save();
+    }
+
+    public function beforeSoftDelete()
+    {
+        if ($this->invoice->isInvoice() && $this->isLessonItem()) {
+            $lessonCreditPayments = $this->lesson->getCreditUsedPayment($this->enrolment->id);
+            foreach ($lessonCreditPayments as $lessonCreditPayment) {
+                $lessonCreditPayment->delete();
+            }
+        }
+
+        return $this->lesson->unschedule();
     }
 
     public function isDefaultDiscountedItems()

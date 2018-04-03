@@ -71,6 +71,7 @@ Modal::begin([
         $('.modal-save').attr('disabled', false);
         $('#modal-delete').hide();
         $('.modal-save').text('Save');
+        $('.modal-save').attr('message', null);
         $(document).trigger("modal-close");
     });
 
@@ -81,8 +82,9 @@ Modal::begin([
     });
     
     $(document).off('click', '.modal-delete').on('click', '.modal-delete', function () {
+        var message = "Are you sure you want to delete this?";
         bootbox.confirm({
-        message: "Are you sure you want to delete this?",
+        message: !$.isEmptyObject($(this).attr('message')) ? $(this).attr('message') : message,
             callback: function(result){
                 if (result) {
                     $('.bootbox').modal('hide');
