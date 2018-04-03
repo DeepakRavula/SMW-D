@@ -737,4 +737,10 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $discount->value = InvoiceLineItemDiscount::FULL_DISCOUNT;
         return $discount->save();
     }
+     public static function getItemCategoryName($itemCategoryId)
+    {
+        $itemcategory= ItemCategory::findOne(['id'=>$itemCategoryId]);
+        print_r($itemcategory->name);
+        return $itemcategory->name;
+    }
 }

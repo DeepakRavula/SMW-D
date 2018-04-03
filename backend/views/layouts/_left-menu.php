@@ -155,7 +155,7 @@ echo Menu::widget([
                     'active' => Yii::$app->controller->action->id === 'items'
                 ],
                                 [
-                    'label' => Yii::t('backend', 'Item Category'),
+                    'label' => Yii::t('backend', 'Items Sold by Category'),
                     'icon' => '<i class="fa fa-cny"></i>',
                     'url' => ['/report/item-category'],
 					'visible' => Yii::$app->user->can('manageItemCategoryReport'),

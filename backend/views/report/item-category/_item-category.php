@@ -1,10 +1,10 @@
 <?php
 
-use kartik\grid\GridView;
+use yii\grid\GridView;
 use yii\helpers\Url;
 use common\models\InvoiceLineItem;
 use backend\assets\CustomGridAsset;
-
+use common\models\ItemCategory;
 CustomGridAsset::register($this);
 Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  /*
@@ -35,7 +35,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 return [
                     'mergeColumns'=>[[2, 3]], // columns to merge in summary
                     'content'=>[              // content to show in each summary cell
-                       2=>"Summary",
+                      
                        4=>GridView::F_SUM,
 
                     ],
@@ -62,31 +62,6 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     return $data->itemCategory->name;
                 },
                 'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
-                'group' => true,
-                'groupedRow' => true,
-                'subGroupOf' => 0,
-            'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
-                return [
-                    'mergeColumns'=>[[2, 3]], // columns to merge in summary
-                    'content'=>[              // content to show in each summary cell
-                        2=>'Summary',
-                       4=>GridView::F_SUM,
-
-                    ],
-                    'contentFormats'=>[      // content reformatting for each summary cell
-
-                        4=>['format'=>'number', 'decimals'=>2],
-
-                    ],
-                    'contentOptions'=>[      // content html attributes for each summary cell
-                        2=>['style' => 'text-align:left'],
-                        4=>['style'=>'text-align:right'],
-
-                    ],
-                    // html attributes for group summary row
-                    'options'=>['class'=>'success','style'=>'font-weight:bold;']
-                ];
-            },
         ],
  
 
@@ -118,16 +93,16 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 
                 'group' => true,
                 'groupedRow' => true,
-                            'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
+               'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
                 return [
                     'mergeColumns'=>[[2, 3]], // columns to merge in summary
                     'content'=>[              // content to show in each summary cell
-                       2=>"Summary",
+                       3=>"xxxxxxx",
                        4=>GridView::F_SUM,
 
                     ],
                     'contentFormats'=>[      // content reformatting for each summary cell
-
+                        2=>['format'=>'string'],
                         4=>['format'=>'number', 'decimals'=>2],
 
                     ],
@@ -151,22 +126,23 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
                 'group' => true,
                 'groupedRow' => true,
-                'subGroupOf' => 0,
+                'subGroupOf' => 1,
             'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
                 return [
-                    'mergeColumns'=>[[2, 3]], // columns to merge in summary
+                    'mergeColumns'=>[[2, 3]],// columns to merge in summary
                     'content'=>[              // content to show in each summary cell
-                        2=>'Summary',
+                       0=> $model->itemCategory->name,
                        4=>GridView::F_SUM,
                        
                     ],
                     'contentFormats'=>[      // content reformatting for each summary cell
-
+                        
                         4=>['format'=>'number', 'decimals'=>2],
                        
                     ],
-                    'contentOptions'=>[      // content html attributes for each summary cell
-                        2=>['style' => 'text-align:left'],
+                    'contentOptions'=>[
+                        2=>['style'=>'font-variant:small-caps'],// content html attributes for each summary cell
+                       // 2=>['style' => 'text-align:left'],
                         4=>['style'=>'text-align:right'],
                         
                     ],
