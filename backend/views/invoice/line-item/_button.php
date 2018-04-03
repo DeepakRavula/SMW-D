@@ -1,7 +1,9 @@
 <i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i>
 <ul class="dropdown-menu dropdown-menu-right">
     <?php if (!$model->lineItem) :?>
+        <?php if (!$model->isVoid) : ?>
         <li><a class="add-new-misc" href="#">Add Item...</a></li>
+        <?php endif; ?>
         <li><a class="edit-tax multiselect-disable" href="#">Edit Tax...</a></li>
         <li><a class = "apply-discount multiselect-disable" href="#">Edit Discount...</a></li>        
     <?php endif; ?>

@@ -47,7 +47,8 @@ class InvoiceController extends BaseController
                 'only' => [
                     'delete', 'note', 'get-payment-amount', 'update-customer', 'post',
                     'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax', 'mail',
-                    'post-distribute', 'retract-credits', 'unpost', 'distribute'
+                    'post-distribute', 'retract-credits', 'unpost', 'distribute',
+                    'void'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -62,7 +63,7 @@ class InvoiceController extends BaseController
                             'note', 'view', 'fetch-user', 'add-misc','fetch-summary-and-status',
                             'compute-tax', 'create', 'update', 'delete', 'update-mail-status',
                             'all-completed-lessons', 'adjust-tax', 'revert-invoice', 'enrolment',
-                            'invoice-payment-cycle', 'group-lesson','get-payment-amount',
+                            'invoice-payment-cycle', 'group-lesson','get-payment-amount', 'void',
                             'post-distribute', 'retract-credits', 'unpost', 'distribute', 'post'
                         ],
                         'roles' => [
@@ -745,6 +746,21 @@ class InvoiceController extends BaseController
         $response = [
             'status' => $model->save()
         ];
+        return $response;
+    }
+
+    public function actionVoid($id)
+    {
+        $model = Invoice::findOne($id);
+        if ($model->void()) {
+            $response = [
+                'status' => true
+            ];
+        } else {
+            $response = [
+                'status' => false
+            ];
+        }
         return $response;
     }
 }

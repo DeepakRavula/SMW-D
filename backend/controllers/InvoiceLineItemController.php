@@ -81,6 +81,10 @@ class InvoiceLineItemController extends BaseController
     public function actionUpdate($id)
     {
         $lineItem = $this->findModel($id);
+        $confirmationMessage = null;
+        if ($lineItem->isLessonItem() && $lineItem->invoice->isInvoice()) {
+            $confirmationMessage = 'Deleting line item will unschedule the lesson. Would you like to proceed?';
+        }
         if (!$lineItem->invoice->isPosted) {
             if ($lineItem->invoice->isReversedInvoice()) {
                 $lineItem->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
@@ -105,6 +109,7 @@ class InvoiceLineItemController extends BaseController
                 $response = [
                     'status' => true,
                     'data' => $data,
+                    'deleteConfirmation' => $confirmationMessage
                 ];
             }
         } else {
