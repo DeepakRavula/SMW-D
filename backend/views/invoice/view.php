@@ -418,7 +418,7 @@ Modal::begin([
                             {
                                 $('#payment-add-spinner').hide();
                                 $('#payment-modal').modal('hide');
-                                if (response.canPost) {
+                                if (response.canAlert) {
                                     invoice.postAfterPaid();
                                 }
                                 invoice.reload();
