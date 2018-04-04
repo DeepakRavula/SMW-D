@@ -41,7 +41,7 @@ $(document).ready(function() {
 $.fn.datepicker.noConflict();
 	$('#student-birth_date').datepicker({
 	   altField: '#student-birth_date',
-	   altFormat: 'dd-mm-yy',
+	   altFormat: 'M d,yy',
 	   changeMonth: true,
 	   changeYear: true,
 	   yearRange : '-70:today',
