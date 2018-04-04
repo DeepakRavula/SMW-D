@@ -285,6 +285,7 @@ class PaymentController extends BaseController
     public function getAvailableCredit($invoice)
     {
         $invoiceCredits = Invoice::find()
+                ->notDeleted()
                 ->invoiceCredit($invoice->user_id)
                 ->andWhere(['NOT', ['invoice.id' => $invoice->id]])
                 ->all();
