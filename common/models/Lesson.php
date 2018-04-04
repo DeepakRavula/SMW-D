@@ -943,6 +943,8 @@ class Lesson extends \yii\db\ActiveRecord
                 $this->addPrivateLessonLineItem($this->paymentCycle->proFormaInvoice);
                 $this->paymentCycle->proFormaInvoice->save();
             }
+        } else {
+            $this->proFormaInvoice->makeInvoicePayment($this);
         }
         
         return $this->paymentCycle->proFormaInvoice;
