@@ -5,6 +5,7 @@ namespace backend\models\search;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Payment;
+use common\models\Location;
 use Yii;
 use common\models\PaymentMethod;
 
@@ -44,7 +45,7 @@ class PaymentSearch extends Payment
      */
     public function search($params)
     {
-        $locationId          = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId          = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query               = Payment::find()
             ->location($locationId)
             ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY,PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])

@@ -19,7 +19,8 @@ use yii\widgets\Pjax;
 <?php endif; ?>
 <div class="m-b-10 pull-right">
     <?= $this->render('_more-option', [
-        'model' => $model
+        'model' => $model,
+        'loggedUser' => $loggedUser
     ]) ?>
 </div>
 <?php if ((int) $model->type === InvoiceSearch::TYPE_INVOICE): ?>
