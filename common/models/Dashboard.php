@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\Location;
 
 /**
  * This is the model class for table "dashboard".
@@ -55,11 +56,16 @@ class Dashboard extends \yii\db\ActiveRecord
         foreach ($datePeriod as $dates) {
             $fromDate = $dates->format('Y-m-d');
             $toDate = $dates->format('Y-m-t');
-            $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+            $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
             $revenue = Payment::find()
-                   ->joinWith(['invoice i' => function ($query) use ($locationId) {
-                       $query->where(['i.location_id' => $locationId]);
-                   }])
+                    ->notDeleted()
+                    ->exceptAutoPayments()
+                    ->joinWith(['invoicePayment' => function ($query) use ($locationId) {
+                        $query->joinWith(['invoice' => function ($query) use ($locationId) {
+                            $query->notDeleted()
+                                ->andWhere(['invoice.location_id' => $locationId]);
+                        }]);
+                    }])
                     ->andWhere(['between', 'payment.date', $fromDate, $toDate])
                     ->sum('payment.amount');
 
