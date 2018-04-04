@@ -716,6 +716,7 @@ $(document).on("click", '.adjust-invoice-tax', function() {
             $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-title", replace:false,async: false, timeout: 6000});
+            $.pjax.reload({container: "#invoice-view-tab-item", replace:false,async: false, timeout: 6000});
             $('#invoice-spinner').hide();
         }
     }

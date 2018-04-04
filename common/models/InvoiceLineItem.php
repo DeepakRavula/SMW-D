@@ -110,7 +110,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                     ->via('lineItemPaymentCycleLesson')
                     ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
         } else {
-            return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'lessonId'])
+            return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'lessonId'])
                     ->via('lineItemLesson')
                     ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
         }
