@@ -163,6 +163,7 @@ trait Payable
                     }
                     if ($this->hasProFormaCredit() && !empty($amount)) {
                         $splitLesson->addPayment($this, $amount);
+                        $this->makeInvoicePayment($splitLesson);
                     }
                 }
             } else {
@@ -175,6 +176,7 @@ trait Payable
                 }
                 if ($this->hasProFormaCredit() && !empty($amount)) {
                     $lesson->addPayment($this, $amount);
+                    $this->makeInvoicePayment($lesson);
                 }
             }
         }

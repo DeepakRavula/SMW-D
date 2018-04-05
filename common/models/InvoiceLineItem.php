@@ -110,7 +110,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                     ->via('lineItemPaymentCycleLesson')
                     ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
         } else {
-            return $this->hasOne(PaymentCycleLesson::className(), ['id' => 'lessonId'])
+            return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'lessonId'])
                     ->via('lineItemLesson')
                     ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
         }
@@ -284,13 +284,16 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function beforeSoftDelete()
     {
         if ($this->invoice->isInvoice() && $this->isLessonItem()) {
-            $lessonCreditPayments = $this->lesson->getCreditUsedPayment($this->enrolment->id);
-            foreach ($lessonCreditPayments as $lessonCreditPayment) {
-                $lessonCreditPayment->delete();
+            if ($this->lesson->hasCreditUsed($this->enrolment->id)) {
+                $lessonCreditPayments = $this->lesson->getCreditUsedPayment($this->enrolment->id);
+                foreach ($lessonCreditPayments as $lessonCreditPayment) {
+                    $lessonCreditPayment->delete();
+                }
             }
+            $this->lesson->unschedule();
         }
 
-        return $this->lesson->unschedule();
+        return true;
     }
 
     public function isDefaultDiscountedItems()
@@ -371,9 +374,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->hasOne(TaxType::className(), ['name' => 'tax_type']);
     }
 
-    public function isOtherLineItems()
+    public function isSpecialLineItems()
     {
-        return !$this->isOpeningBalance() && !$this->isLessonCredit();
+        return $this->isOpeningBalance() || $this->isLessonCredit();
     }
 
     public function isLessonCredit()

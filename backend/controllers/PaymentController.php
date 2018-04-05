@@ -140,7 +140,6 @@ class PaymentController extends BaseController
         } else {
             $response = [
                 'status' => true,
-                'canDelete' => $model->canDelete(),
                 'data' => $data,
             ];
         }
@@ -159,6 +158,9 @@ class PaymentController extends BaseController
     {
         $model        = $this->findModel($id);
         $model->setScenario(Payment::SCENARIO_DELETE);
+        if ($model->isCreditUsed()) {
+            $model->setScenario(Payment::SCENARIO_CREDIT_USED_DELETE);
+        }
         $modelInvoice = $model->invoice;
         if ($model->validate()) {
             $model->delete();
@@ -285,6 +287,7 @@ class PaymentController extends BaseController
     public function getAvailableCredit($invoice)
     {
         $invoiceCredits = Invoice::find()
+                ->notDeleted()
                 ->invoiceCredit($invoice->user_id)
                 ->andWhere(['NOT', ['invoice.id' => $invoice->id]])
                 ->all();

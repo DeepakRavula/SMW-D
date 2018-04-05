@@ -448,10 +448,8 @@ Modal::begin([
                     $('#popup-modal').modal('show');
                     $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Payment</h4>');
                     $('#popup-modal .modal-dialog').css({'width': '400px'});
-                    if (response.canDelete) {
-                        $('#modal-delete').show();
-                        $('.modal-delete').attr('action', url);
-                    }
+                    $('#modal-delete').show();
+                    $('.modal-delete').attr('action', url);
                 }
             }
         });
@@ -718,6 +716,7 @@ $(document).on("click", '.adjust-invoice-tax', function() {
             $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-title", replace:false,async: false, timeout: 6000});
+            $.pjax.reload({container: "#invoice-view-tab-item", replace:false,async: false, timeout: 6000});
             $('#invoice-spinner').hide();
         }
     }
