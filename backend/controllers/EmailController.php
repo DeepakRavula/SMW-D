@@ -54,12 +54,12 @@ class EmailController extends BaseController
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $location = Location::findOne(['id' => $locationId]);
         $model = new EmailForm();
-	if (YII_ENV_DEV) {
-		$model->to = TestEmail::find()->one()->email; 
-	}
         if ($model->load(Yii::$app->request->post())) {
             $content = [];
             foreach ($model->to as $email) {
+		if (YII_ENV_DEV) {
+			$email = TestEmail::find()->one()->email; 
+		}
                 $content[] = Yii::$app->mailer->compose('content', [
                     'content' => $model->content,
                 ])
@@ -68,6 +68,7 @@ class EmailController extends BaseController
                 ->setTo($email)
                 ->setSubject($model->subject);
             }
+		
             Yii::$app->mailer->sendMultiple($content);
             $data = null;
             if (!empty($model->invoiceId)) {
