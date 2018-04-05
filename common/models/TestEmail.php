@@ -39,10 +39,4 @@ class TestEmail extends \yii\db\ActiveRecord
             'email' => 'Email',
         ];
     }
-    public function testEmail()
-   {
-       if (YII_ENV_DEV) {
-           return $this->email;
-       }
-   }
 }
