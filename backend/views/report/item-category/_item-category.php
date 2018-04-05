@@ -126,7 +126,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
                 'group' => true,
                 'groupedRow' => true,
-                'subGroupOf' => 1,
+                'subGroupOf' => 0,
             'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
                 return [
                     'mergeColumns'=>[[2, 3]],// columns to merge in summary
