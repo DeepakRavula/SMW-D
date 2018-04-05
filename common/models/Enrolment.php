@@ -676,6 +676,7 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         $startDate = null;
         $invoice = $this->addCreditInvoice($startDate, $this->course->endDate);
+        $this->updateAttributes(['isAutoRenew' => false]);
         return $invoice;
     }
 
