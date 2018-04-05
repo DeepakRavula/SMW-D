@@ -117,6 +117,12 @@ class Payment extends ActiveRecord
         if ($this->invoice->isProFormaInvoice() && $this->invoice->hasCreditUsed() && !$this->isCreditUsed()) {
             $this->addError($attributes, "Can't delete payment before retract lesson credit");
         }
+        if ($this->invoice->isInvoice() && $this->isCreditUsed()) {
+            $appliedInvoice = $this->debitUsage->creditUsagePayment->invoice;
+            if ($appliedInvoice->isProFormaInvoice() && $appliedInvoice->hasCreditUsed()) {
+                $this->addError($attributes, "Can't delete payment before retract lesson credit");
+            }
+        }
     }
     /**
      * {@inheritdoc}
@@ -306,11 +312,6 @@ class Payment extends ActiveRecord
     public function isAutoPayments()
     {
         return $this->isCreditApplied() || $this->isCreditUsed();
-    }
-
-    public function canDelete()
-    {
-        return !$this->isAutoPayments();
     }
 
     public function afterSoftDelete()

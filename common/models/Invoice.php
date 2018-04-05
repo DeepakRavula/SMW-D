@@ -798,4 +798,13 @@ class Invoice extends \yii\db\ActiveRecord
         }
         return $status;
     }
+
+    public function canAddItem()
+    {
+        $status = false;
+        if ($this->lineItem) {
+            $status = !$this->lineItem->isSpecialLineItems() && !$this->lineItem->isLessonItem();
+        }
+        return $status;
+    }
 }

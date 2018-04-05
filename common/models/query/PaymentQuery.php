@@ -43,7 +43,7 @@ class PaymentQuery extends ActiveQuery
     {
         $this->joinWith(['invoicePayment ip' => function ($query) {
             $query->joinWith(['invoice i' => function ($query) {
-                $query->where(['i.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
+                $query->andWhere(['i.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
             }]);
         }]);
 
@@ -53,7 +53,7 @@ class PaymentQuery extends ActiveQuery
     public function location($locationId)
     {
         $this->joinWith('invoice')
-                    ->where(['location_id' => $locationId]);
+                    ->andWhere(['invoice.location_id' => $locationId]);
         return $this;
     }
 
@@ -62,6 +62,13 @@ class PaymentQuery extends ActiveQuery
         $this->andWhere(['payment.isDeleted' => false]);
 
         return $this;
+    }
+
+    public function exceptAutoPayments()
+    {
+        return $this->andWhere(['NOT', ['payment.payment_method_id' => [
+            PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED
+        ]]]);
     }
     
     public function creditUsed()
