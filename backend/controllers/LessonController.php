@@ -47,7 +47,7 @@ class LessonController extends BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => ['modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom',
-                    'payment', 'substitute','update','unschedule'],
+                    'payment', 'substitute','update','unschedule', 'credit-transfer'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -58,7 +58,7 @@ class LessonController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 
+                        'actions' => ['index', 'view', 'credit-transfer',
 							'validate-on-update', 
 							'fetch-duration','edit-classroom', 
 							'update', 'update-field', 'review',
@@ -712,6 +712,23 @@ class LessonController extends BaseController
             return [
                 'status' => false,
                 'message' => 'Lesson cannot be unscheduled',
+            ];
+        }
+    }
+
+    public function actionCreditTransfer($id)
+    {
+        $model = $this->findModel($id);
+        if ($model->hasInvoice()) {
+            $model->creditTransfer($model->invoice);
+            return [
+                'status' => true,
+                'message' => 'Lesson credits successfully transferd to invoice',
+            ];
+        } else {
+            return [
+                'status' => false,
+                'message' => 'Lesson not yet invoiced',
             ];
         }
     }

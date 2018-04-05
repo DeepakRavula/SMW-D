@@ -152,6 +152,13 @@ trait Invoiceable
         $invoice->save();
         $this->addPrivateLessonLineItem($invoice);
         $invoice->save();
+        $this->creditTransfer($invoice);
+
+        return $invoice;
+    }
+
+    public function creditTransfer($invoice)
+    {
         if ($this->hasLessonCredit($this->enrolment->id)) {
             $invoice->addPayment($this, $this->getLessonCreditAmount($this->enrolment->id), $this->enrolment);
         }
@@ -167,8 +174,7 @@ trait Invoiceable
                 }
             }
         }
-
-        return $invoice;
+        return true;
     }
 
     public function createGroupInvoice($enrolmentId)

@@ -836,7 +836,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return Payment::find()
                 ->joinWith('lessonCredit')
-                ->where(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
+                ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
                 ->notDeleted()
                 ->sum('amount');
     }
