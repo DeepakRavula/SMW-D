@@ -264,6 +264,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'tax' => 'Tax (%)',
             'itemCategoryId' => 'Item Category',
             'item_id' => 'Item',
+            'groupByMethod' => 'Summaries Only',
         ];
     }
 
@@ -756,5 +757,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $discount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_PERCENTAGE;
         $discount->value = InvoiceLineItemDiscount::FULL_DISCOUNT;
         return $discount->save();
+    }
+     public static function getItemCategoryName($itemCategoryId)
+    {
+        $itemcategory= ItemCategory::findOne(['id'=>$itemCategoryId]);
+        print_r($itemcategory->name);
+        return $itemcategory->name;
     }
 }

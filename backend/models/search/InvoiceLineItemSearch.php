@@ -16,6 +16,7 @@ class InvoiceLineItemSearch extends InvoiceLineItem
 {
     public $fromDate;
     public $toDate;
+    public $groupByMethod;
     public $groupByItem;
     public $groupByItemCategory;
     public $dateRange;
@@ -45,7 +46,7 @@ class InvoiceLineItemSearch extends InvoiceLineItem
     public function rules()
     {
         return [
-            [['groupByItem', 'groupByItemCategory', 'fromDate', 'toDate',
+            [['groupByItem', 'groupByItemCategory','groupByMethod', 'fromDate', 'toDate',
                 'dateRange', 'customerId', 'isCustomerReport'], 'safe'],
         ];
     }
@@ -116,9 +117,12 @@ class InvoiceLineItemSearch extends InvoiceLineItem
             $query->groupBy(['invoice_line_item.id,item_id, DATE(invoice.date)']);
         }
         if ($this->groupByItemCategory && !$this->isCustomerReport) {
-            $query->joinWith('itemCategory')
-                ->groupBy(['invoice_line_item.id,item_category.id, DATE(invoice.date)']);
+            $query->joinWith('itemCategory');
+                $query->orderBy(['item_category.id' => SORT_ASC]);
+        }if ($this->groupByMethod) {
+            $query->groupBy('DATE(invoice.date), item_category.id');
         }
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
