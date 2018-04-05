@@ -73,9 +73,9 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     
     public function privateProgram()
     {
-        $this->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM]);
-        
-        return $this;
+        return $this->joinWith(['course' => function ($query) {
+            $query->andWhere(['course.type' => Program::TYPE_PRIVATE_PROGRAM]);
+        }]);
     }
     
     public function location($locationId)

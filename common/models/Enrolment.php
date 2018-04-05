@@ -214,6 +214,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function canDeleted()
     {
         $completedLessons = Lesson::find()
+            ->notDeleted()
             ->joinWith(['course' => function ($query) {
                 $query->joinWith(['enrolment' =>function ($query) {
                     $query->andWhere(['enrolment.id' => $this->id]);
