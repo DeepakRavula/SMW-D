@@ -370,4 +370,27 @@ $this->params['action-button'] = $this->render('_buttons', [
         });
         return false;
     });
+
+    $(document).off('click', '#credit-transfer').on('click', '#credit-transfer', function () {
+        $('#loader').show();
+        $.ajax({
+            url: '<?= Url::to(['lesson/credit-transfer', 'id' => $model->id]); ?>',
+            type: 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                $('#loader').hide();
+                if (response.status)
+                {
+                    $('#success-notification').html(response.message).fadeIn().delay(3000).fadeOut();
+                    $.pjax.reload({container: "#invoice-payment-listing", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#lesson-schedule-buttons", replace: false, async: false, timeout: 6000});
+                } else {
+                    $('#error-notification').html(response.message).fadeIn().delay(3000).fadeOut();
+                }
+            }
+        });
+        return false;
+    });
 </script>

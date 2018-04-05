@@ -6,6 +6,10 @@ use yii\helpers\Url;
 use common\models\User;
 
 ?>
+<?php yii\widgets\Pjax::begin([
+    'id' => 'lesson-schedule-buttons',
+    'timeout' => 6000,
+]) ?>
 <?php
 $toolBoxHtml = $this->render('_button', [
     'model' => $model,
@@ -47,7 +51,7 @@ LteBox::begin([
 
 </dl>
 <?php LteBox::end() ?>
-
+<?php \yii\widgets\Pjax::end(); ?>
 <script>
     $(document).on('click', '.edit-lesson-schedule', function () {
         $.ajax({
