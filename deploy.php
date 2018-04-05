@@ -5,15 +5,21 @@ require 'recipe/yii2-app-advanced.php';
 require 'recipe/slack.php';
 
 $user = getenv('DEP_HOST_USER');
+$configFilePath = getenv('DEP_HOST_CONFIG');
+$hostKey = getenv('DEP_HOST_KEY');
+$branch = getenv('DEP_DEPLOY_BRANCH');
+
+$repo = getenv('DEP_REPO');
+
 // Hosts
 host('smw')
     ->user($user)
     ->port(22)
-    ->configFile('~/.ssh/config')
-    ->identityFile('~/.ssh/id_rsa')
+    ->configFile($configFilePath)
+    ->identityFile($hostKey)
     ->forwardAgent(true)
 	->set('deploy_path', '/home/arcadia/smw-dev')
-	->set('branch', 'master')
+	->set('branch', $branch)
 	->set('instance', 'Dev');
 
 set('user', function () {
@@ -21,19 +27,19 @@ set('user', function () {
 });
 
 set('slack_webhook', 'https://hooks.slack.com/services/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');
-set('slack_title', 'Studio Manager Web');
+set('slack_title', 'SMW');
 set('slack_text', 'Smw deployed to {{instance}} by {{user}}');
 set('slack_success_text', 'Deploy to {{instance}} instance successful');
 set('slack_failure_text', 'Deploy to {{instance}} instance failure');
 
 // Project name
-set('application', 'Studio Manager Web');
+set('application', 'SMW');
 
 // Project repository
-set('repository', 'smw-git:kristin-green-and-associates/smw.git');
+set('repository', 'git@github.com:kristin-green-and-associates/smw.git');
 
 // [Optional] Allocate tty for git clone. Default value is false.
-set('git_tty', true); 
+//set('git_tty', true);
 
 // Shared files/dirs between deploys 
 add('shared_files', ['.env']);
@@ -83,14 +89,17 @@ task('deploy:one-off', function() {
 
 task('deploy', [
     'deploy:prepare',
+	'deploy:release',
+	'deploy:update_code',
     'deploy:latest_code',
     'deploy:composer',
     'deploy:migration',
     'deploy:one-off',
 ]);
 
+
 before('deploy', 'slack:notify');
 // [Optional] if deploy fails automatically unlock.
-//after('deploy:failed', 'deploy:unlock');
+after('deploy:failed', 'deploy:unlock');
 after('success', 'slack:notify:success');
 after('deploy:failed', 'slack:notify:failure');
