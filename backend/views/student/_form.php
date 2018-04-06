@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Student;
 use yii\helpers\Url;
+use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -30,7 +31,17 @@ use yii\helpers\Url;
             $model->birth_date = !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null;
         ?>
             <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true, 'value' => $customerName]) ?>
-            <?php echo $form->field($model, 'birth_date')->textInput()?>
+            <?php echo $form->field($model, 'birth_date')->widget(DatePicker::classname(),
+					[
+                                            'options' => [
+							'value' => Yii::$app->formatter->asDate($model->birth_date),
+						],
+					'type' => DatePicker::TYPE_INPUT,
+					'pluginOptions' => [
+						'autoclose' => true,
+						'format' => 'M dd,yyyy'
+					]
+				]);?>
 				<?php if (!$model->isNewRecord) : ?>
 					<?php echo $form->field($model, 'status')->dropDownList(Student::statuses()) ?>
 				<?php endif; ?>
@@ -46,19 +57,3 @@ use yii\helpers\Url;
     </div>
 </div>
 
-<script>
-$(document).ready(function() {
-$.fn.datepicker.noConflict();
-$('#student-birth_date').datepicker({
-   altField: '#student-birth_date',
-   altFormat: 'M d,yy',
-   changeMonth: true,
-   changeYear: true,
-   yearRange : '-70:today',
-   onChangeMonthYear:function(y, m, i){
-       var d = i.selectedDay;
-       $(this).datepicker('setDate', new Date(y, m-1, d));
-   }
-});
-});
-</script>
