@@ -94,7 +94,7 @@ use kartik\time\TimePicker;
         <div class="col-md-4 lesson-date">
             <?php echo $form->field($model, 'date')->textInput([
                 'readOnly' => true, 
-                'id' => 'extra-lesson-date'
+                'id' => 'extra-lesson-date',
             ])?>
         </div>
         
@@ -111,7 +111,7 @@ use kartik\time\TimePicker;
                     ],
                     'pluginOptions' => [
                         'autoclose' => true,
-                        'format' => 'dd-mm-yyyy',
+                        'format' => 'M dd,yyyy',
                         'todayHighlight' => true
                     ]
             ]); ?>
