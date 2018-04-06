@@ -77,7 +77,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 
     $(document).on('after-date-set', function(event, params) {
         if (!$.isEmptyObject(params.date)) {
-            params.name.find('.lesson-time').find('.time').val(moment(params.date).format('DD-MM-YYYY h:mm A'));
+            params.name.find('.lesson-time').find('.time').val(moment(params.date).format('MMM D,YYYY h:mm A'));
             params.name.find('.lesson-day').find('.day').val(moment(params.date).format('dddd'));
         }
     });
