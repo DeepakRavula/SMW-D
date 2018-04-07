@@ -24,8 +24,10 @@ class LocationController extends BaseController
         return [
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
-               'only' => ['create', 'update', 'edit-availability', 'add-availability', 'render-events', 'check-availability', 'validate',
-                   'modify','validate-location-availability'],
+               'only' => ['create', 'update', 'edit-availability', 'add-availability', 
+                   'render-events', 'check-availability', 'validate', 'modify',
+                   'validate-availability', 'delete-availability'
+                ],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON
@@ -36,7 +38,10 @@ class LocationController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['update','view','validate-location-availability', 'add-availability', 'edit-availability', 'render-events', 'check-availability','modify', 'validate'],
+                        'actions' => ['update','view','validate-availability',
+                            'add-availability', 'edit-availability', 'render-events',
+                            'check-availability','modify', 'validate', 'delete-availability'
+                        ],
                         'roles' => ['manageLocations']
                     ],
                     [
@@ -111,7 +116,7 @@ class LocationController extends BaseController
             ];
         }
     }
-    public function actionValidateLocationAvailability($resourceId,$type,$startTime,$endTime)
+    public function actionValidateAvailability($resourceId,$type,$startTime,$endTime)
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
         $model    = LocationAvailability::find()
@@ -207,6 +212,17 @@ class LocationController extends BaseController
 
         return $this->redirect(['index', 'location' => $this->findModel(1)->slug]);
     }
+
+    public function actionDeleteAvailability($id, $type)
+    {
+        $this->findAvailabilityModel($id, $type)->delete();
+        $response = [
+            'status' => true
+        ];
+
+        return $response;
+    }
+
       public function actionModify($resourceId,$type,$startTime,$endTime)
     {
           
@@ -248,13 +264,14 @@ class LocationController extends BaseController
         } else {
             $response= [
                     'status' => false,
-                    'errors' =>$model->getErrors($attributes),
+                    'errors' =>$model->getErrors(),
                 ];
             }
         } else {
             $response= [
                 'status' => true,
-                'data' => $data
+                'data' => $data,
+                'canDelete' => !$model->isNewRecord
             ];
         }
         return $response;
@@ -272,6 +289,18 @@ class LocationController extends BaseController
     protected function findModel($id)
     {
         if (($model = Location::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    protected function findAvailabilityModel($id, $type)
+    {
+        $location = Location::findOne(['slug' => Yii::$app->location]);
+        if (($model = LocationAvailability::find()
+                       ->andWhere(['locationId' => $location->id, 'day' => $id,'type' => $type])
+                       ->one()) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
