@@ -24,7 +24,7 @@ use common\models\PaymentMethod;
         <div class="col-md-6">
     <?php echo $form->field($model, 'payment_method_id')->dropDownList(
  ArrayHelper::map(PaymentMethod::find()
-                ->where([
+                ->andWhere([
                     'active' => PaymentMethod::STATUS_ACTIVE,
                     'displayed' => 1,
                 ])

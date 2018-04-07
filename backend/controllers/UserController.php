@@ -159,7 +159,7 @@ class UserController extends BaseController
     {
         $query = TeacherAvailability::find()
                 ->joinWith('userLocation')
-                ->where(['user_id' => $id]);
+                ->andWhere(['user_id' => $id]);
         return new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -191,7 +191,7 @@ class UserController extends BaseController
     {
         $query = Location::find()
                 ->joinWith('userLocations')
-                ->where(['user_id' => $id]);
+                ->andWhere(['user_id' => $id]);
         return new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -201,7 +201,7 @@ class UserController extends BaseController
         $enrolmentQuery = Enrolment::find()
             ->location($locationId)
             ->joinWith(['student' => function ($query) use ($id) {
-                $query->where(['customer_id' => $id])
+                $query->andWhere(['customer_id' => $id])
                 ->active();
             }])
             ->notDeleted()
@@ -249,7 +249,7 @@ class UserController extends BaseController
     protected function getPfiDataProvider($id, $locationId)
     {
         $proFormaInvoiceQuery = Invoice::find()
-            ->where([
+            ->andWhere([
                 'invoice.user_id' => $id,
                 'invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE,
                 'invoice.location_id' => $locationId,
@@ -279,7 +279,7 @@ class UserController extends BaseController
     {
         return new ActiveDataProvider([
             'query' => Payment::find()
-                ->where(['user_id' => $id]),
+                ->andWhere(['user_id' => $id]),
         ]);
     }
     protected function getUnavailabilityDataProvider($id)
@@ -309,7 +309,7 @@ class UserController extends BaseController
         $teacherLessons = Lesson::find()
             ->innerJoinWith('enrolment')
             ->location($locationId)
-            ->where(['lesson.teacherId' => $id])
+            ->andWhere(['lesson.teacherId' => $id])
             ->notDeleted()
             ->scheduledOrRescheduled()
             ->isConfirmed()
@@ -344,7 +344,7 @@ class UserController extends BaseController
     protected function getNoteDataProvider($id)
     {
         $notes = Note::find()
-            ->where(['instanceId' => $id, 'instanceType' => Note::INSTANCE_TYPE_USER])
+            ->andWhere(['instanceId' => $id, 'instanceType' => Note::INSTANCE_TYPE_USER])
             ->orderBy(['createdOn' => SORT_DESC]);
 
         return new ActiveDataProvider([
@@ -355,11 +355,11 @@ class UserController extends BaseController
     {
         if (!$accountView) {
             $accountQuery = CompanyAccount::find()
-                        ->where(['userId' => $id])
+                        ->andWhere(['userId' => $id])
                         ->orderBy(['transactionId' => SORT_DESC]);
         } else {
             $accountQuery = CustomerAccount::find()
-                        ->where(['userId' => $id])
+                        ->andWhere(['userId' => $id])
                         ->orderBy(['transactionId' => SORT_DESC]);
         }
         return new ActiveDataProvider([
@@ -442,11 +442,11 @@ class UserController extends BaseController
         $request = Yii::$app->request;
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $locationAvailabilityMinTime = LocationAvailability::find()
-            ->where(['locationId' => $locationId])
+            ->andWhere(['locationId' => $locationId])
             ->orderBy(['fromTime' => SORT_ASC])
             ->one();
         $locationAvailabilityMaxTime = LocationAvailability::find()
-            ->where(['locationId' => $locationId])
+            ->andWhere(['locationId' => $locationId])
             ->orderBy(['toTime' => SORT_DESC])
             ->one();
         $minTime                     = $locationAvailabilityMinTime->fromTime;

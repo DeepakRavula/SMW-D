@@ -90,7 +90,7 @@ class NoteController extends BaseController
             $model->createdUserId = $userId;
             if ($model->save()) {
                 $notes = Note::find()
-                        ->where(['instanceId' => $model->instanceId, 'instanceType' => $model->instanceType]);
+                        ->andWhere(['instanceId' => $model->instanceId, 'instanceType' => $model->instanceType]);
                 $noteDataProvider = new ActiveDataProvider([
                         'query' => $notes,
                     ]);

@@ -77,7 +77,7 @@ class ItemCategoryController extends BaseController
         $locationId   = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $dataProvider = new ActiveDataProvider([
             'query'   => Item::find()
-                            ->where(['itemCategoryId' => $id])
+                            ->andWhere(['itemCategoryId' => $id])
                             ->location($locationId),
         ]);
 
@@ -193,7 +193,7 @@ class ItemCategoryController extends BaseController
         $itemCategoryId = $_POST['depdrop_parents'][0];
         $items          = Item::find()
                             ->notDeleted()
-                            ->where(['itemCategoryId' => $itemCategoryId])
+                            ->andWhere(['itemCategoryId' => $itemCategoryId])
                             ->location($locationId)
                             ->active()
                             ->all();

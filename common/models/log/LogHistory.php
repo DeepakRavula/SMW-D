@@ -77,7 +77,7 @@ class LogHistory extends \yii\db\ActiveRecord
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         return self::find()
 		->joinWith('log')
-		->Where(['log.locationId' => $locationId])
+		->andWhere(['log.locationId' => $locationId])
 		->today()
 		->count();
     }

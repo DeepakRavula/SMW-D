@@ -43,7 +43,7 @@ class StudentQuery extends ActiveQuery
     {
         $this->joinWith(['customer' => function ($query) use ($locationId) {
             $query->joinWith('userLocation')
-               ->where(['user_location.location_id' => $locationId]);
+               ->andWhere(['user_location.location_id' => $locationId]);
         }]);
 
         return $this;
@@ -85,7 +85,7 @@ class StudentQuery extends ActiveQuery
             ->select(['student.id', 'student.first_name', 'student.last_name'])
             ->innerjoinWith(['customer' => function ($query) use ($locationId) {
                 $query->innerjoinWith('userLocation')
-                    ->where(['user_location.location_id' => $locationId]);
+                    ->andWhere(['user_location.location_id' => $locationId]);
             }]);
 
         $enrolledStudents = Student::find()
@@ -101,7 +101,7 @@ class StudentQuery extends ActiveQuery
             ->notDeleted()
             ->select(['loc_student.id', 'loc_student.first_name', 'loc_student.last_name'])->from(['loc_student' => $studentLocation])
             ->leftJoin(['enrolled_student' => $enrolledStudents], 'loc_student.id = enrolled_student.id')
-            ->where(['enrolled_student.id' => null]);
+            ->andWhere(['enrolled_student.id' => null]);
 
         return $query;
     }

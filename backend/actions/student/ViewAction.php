@@ -94,7 +94,7 @@ class ViewAction extends Action
     protected function getExamResults($id)
     {
         $examResults = ExamResult::find()
-                ->where(['studentId' => $id]);
+                ->andWhere(['studentId' => $id]);
 
         return new ActiveDataProvider([
                 'query' => $examResults,
@@ -107,7 +107,7 @@ class ViewAction extends Action
     protected function getNotes($id)
     {
         $notes = Note::find()
-                ->where(['instanceId' => $id, 'instanceType' => Note::INSTANCE_TYPE_STUDENT])
+                ->andWhere(['instanceId' => $id, 'instanceType' => Note::INSTANCE_TYPE_STUDENT])
                 ->orderBy(['createdOn' => SORT_DESC]);
 
         return new ActiveDataProvider([
@@ -141,7 +141,7 @@ class ViewAction extends Action
         $model = Student::find()
             ->notDeleted()
             ->location($locationId)
-            ->where(['student.id' => $id])->one();
+            ->andWhere(['student.id' => $id])->one();
         return $model;
     }
 }

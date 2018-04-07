@@ -69,7 +69,7 @@ class CourseReschedule extends Course
         $endDate = new \DateTime($this->rescheduleEndDate);
         $startDate = new \DateTime($this->rescheduleBeginDate);
         $lessons = Lesson::find()
-            ->where(['courseId' => $this->courseId])
+            ->andWhere(['courseId' => $this->courseId])
             ->regular()
             ->notDeleted()
             ->scheduled()

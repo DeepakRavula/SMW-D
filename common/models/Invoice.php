@@ -366,7 +366,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $creditUsageTotal = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
             ->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_APPLIED])
             ->sum('payment.amount');
 
@@ -408,7 +408,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $paymentTotal = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->where(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
             ->andWhere(['payment.isDeleted' => false])
             ->andWhere(['NOT', ['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]])
             ->sum('payment.amount');
@@ -503,7 +503,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function getSumOfInvoice($customerId)
     {
         $sumOfInvoice = self::find()
-                ->where(['user_id' => $customerId, 'type' => self::TYPE_INVOICE, 'isDeleted' => false])
+                ->andWhere(['user_id' => $customerId, 'type' => self::TYPE_INVOICE, 'isDeleted' => false])
                 ->sum('invoice.total');
 
         return $sumOfInvoice;
@@ -512,7 +512,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function getSumOfAllInvoice($customerId)
     {
         $sumOfInvoice = self::find()
-                ->where(['user_id' => $customerId, 'isDeleted' => false])
+                ->andWhere(['user_id' => $customerId, 'isDeleted' => false])
                 ->sum('invoice.total');
 
         return $sumOfInvoice;
@@ -583,7 +583,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function lastInvoice()
     {
         return $query = Invoice::find()->alias('i')
-                    ->where(['i.location_id' => $this->location_id, 'i.type' => $this->type])
+                    ->andWhere(['i.location_id' => $this->location_id, 'i.type' => $this->type])
                     ->orderBy(['i.id' => SORT_DESC])
                     ->one();
     }

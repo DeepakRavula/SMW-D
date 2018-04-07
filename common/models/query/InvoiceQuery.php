@@ -88,7 +88,7 @@ class InvoiceQuery extends \yii\db\ActiveQuery
                 $query->joinWith(['lineItemEnrolment' => function ($query) use ($enrolmentId) {
                     $query->andWhere(['invoice_item_enrolment.enrolmentId' => $enrolmentId]);
                 }]);
-                $query->where(['invoice_item_lesson.lessonId' => $lessonId]);
+                $query->andWhere(['invoice_item_lesson.lessonId' => $lessonId]);
             }]);
         }]);
     }
@@ -107,12 +107,12 @@ class InvoiceQuery extends \yii\db\ActiveQuery
     public function proFormaCredit($lessonId)
     {
         $this->joinWith(['lineItems' => function ($query) use ($lessonId) {
-            $query->where(['item_id' => $lessonId]);
+            $query->andWhere(['item_id' => $lessonId]);
         }])
             ->joinWith(['invoicePayments' => function ($query) {
                 $query->joinWith('payment');
             }])
-            ->where(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
+            ->andWhere(['invoice.type' => Invoice::TYPE_PRO_FORMA_INVOICE]);
 
         return $this;
     }
@@ -123,9 +123,9 @@ class InvoiceQuery extends \yii\db\ActiveQuery
             $query->joinWith(['lesson l' => function ($query) use ($enrolmentId, $model) {
                 $query->joinWith(['enrolment' => function ($query) use ($enrolmentId, $model) {
                     $query->joinWith('student')
-                        ->where(['student.customer_id' => $model->customer->id, 'student.id' => $model->id]);
+                        ->andWhere(['student.customer_id' => $model->customer->id, 'student.id' => $model->id]);
                 }])
-                    ->where(['enrolment.id' => $enrolmentId]);
+                    ->andWhere(['enrolment.id' => $enrolmentId]);
             }]);
         }]);
 
@@ -139,7 +139,7 @@ class InvoiceQuery extends \yii\db\ActiveQuery
                 $query->joinWith(['payment p' => function ($query) use ($customerId) {
                 }]);
             }])
-            ->where(['i.type' => Invoice::TYPE_PRO_FORMA_INVOICE, 'i.user_id' => $customerId])
+            ->andWhere(['i.type' => Invoice::TYPE_PRO_FORMA_INVOICE, 'i.user_id' => $customerId])
             ->groupBy('i.id');
 
         return $this;
@@ -199,7 +199,7 @@ class InvoiceQuery extends \yii\db\ActiveQuery
     public function openingBalance()
     {
         return $this->joinWith(['lineItems' => function ($query) {
-            $query->where(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
+            $query->andWhere(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
         }]);
     }
     public function userLocation($locationId)

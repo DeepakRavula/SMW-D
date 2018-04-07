@@ -169,7 +169,7 @@ class EmailController extends BaseController
         }
         $invoicePayments                     = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                $query->where(['ip.invoice_id' => $model->id]);
+                $query->andWhere(['ip.invoice_id' => $model->id]);
             }])
             ->orderBy(['date' => SORT_DESC]);
         if ($model->isProFormaInvoice()) {

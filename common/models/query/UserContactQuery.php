@@ -39,7 +39,7 @@ class UserContactQuery extends \yii\db\ActiveQuery
     public function location($locationId)
     {
         $this->joinWith('userLocation')
-            ->where(['location_id' => $locationId]);
+            ->andWhere(['location_id' => $locationId]);
 
         return $this;
     }

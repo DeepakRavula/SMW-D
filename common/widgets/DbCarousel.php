@@ -47,7 +47,7 @@ class DbCarousel extends Carousel
             $items = [];
             $query = WidgetCarouselItem::find()
                 ->joinWith('carousel')
-                ->where([
+                ->andWhere([
                     '{{%widget_carousel_item}}.status' => 1,
                     '{{%widget_carousel}}.status' => WidgetCarousel::STATUS_ACTIVE,
                     '{{%widget_carousel}}.key' => $this->key,
