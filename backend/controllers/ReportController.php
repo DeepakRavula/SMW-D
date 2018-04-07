@@ -152,14 +152,14 @@ class ReportController extends BaseController
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         
         $invoiceTaxTotal = Invoice::find()
-            ->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
+            ->andWhere(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
             ->andWhere(['between', 'date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->notDeleted()
             ->sum('tax');
 
         $payments = Payment::find()
             ->joinWith(['invoice i' => function ($query) use ($locationId) {
-                $query->where(['i.location_id' => $locationId]);
+                $query->andWhere(['i.location_id' => $locationId]);
             }])
             ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
             ->notDeleted()
@@ -169,7 +169,7 @@ class ReportController extends BaseController
         $royaltyPayment = InvoiceLineItem::find()
                         ->notDeleted()
             ->joinWith(['invoice i' => function ($query) use ($locationId) {
-                $query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
+                $query->andWhere(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
             }])
             ->andWhere(['between', 'i.date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->royaltyFree()

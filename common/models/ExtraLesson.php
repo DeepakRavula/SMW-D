@@ -109,7 +109,7 @@ class ExtraLesson extends Lesson
                     ->notDeleted()
                 ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
                 ->joinWith(['lineItemLesson' => function ($query) use ($lessonId) {
-                    $query->where(['lessonId' => $lessonId]);
+                    $query->andWhere(['lessonId' => $lessonId]);
                 }])
                 ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_EXTRA_LESSON])
                 ->one();

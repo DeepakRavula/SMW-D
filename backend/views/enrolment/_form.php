@@ -23,7 +23,7 @@ $this->render('_view-enrolment', [
 <?php
     $query = TeacherAvailability::find()
                 ->joinWith('userLocation')
-                ->where(['user_id' => $model->teacherId]);
+                ->andWhere(['user_id' => $model->teacherId]);
         $teacherDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]); ?>

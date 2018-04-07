@@ -261,7 +261,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getCurrentPaymentCycle()
     {
         $currentPaymentCycle = PaymentCycle::find()
-            ->where(['enrolmentId' => $this->id])
+            ->andWhere(['enrolmentId' => $this->id])
             ->notDeleted()
             ->andWhere(['AND',
                 ['<=', 'startDate', (new \DateTime())->format('Y-m-d')],
@@ -272,7 +272,7 @@ class Enrolment extends \yii\db\ActiveRecord
             return $currentPaymentCycle;
         } else {
             return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
-                ->where(['>', 'startDate', (new \DateTime())->format('Y-m-d')])
+                ->andWhere(['>', 'startDate', (new \DateTime())->format('Y-m-d')])
                 ->onCondition(['payment_cycle.isDeleted' => false]);
         }
     }
@@ -281,7 +281,7 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         $currentPaymentCycleEndDate = new \DateTime($this->currentPaymentCycle->endDate);
         return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
-            ->where(['>', 'startDate', $currentPaymentCycleEndDate->format('Y-m-d')])
+            ->andWhere(['>', 'startDate', $currentPaymentCycleEndDate->format('Y-m-d')])
             ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
@@ -689,7 +689,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function deleteWithTransactionalData()
     {
         $lessons = Lesson::find()
-                ->where(['courseId' => $this->courseId])
+                ->andWhere(['courseId' => $this->courseId])
                 ->isConfirmed()
                 ->all();
         foreach ($this->paymentCycles as $paymentCycle) {

@@ -15,7 +15,7 @@ class TeacherAvailabilityQuery extends ActiveQuery
     public function teacher($teacherId)
     {
         $this->joinWith(['teacher' => function ($query) use ($teacherId) {
-            $query->where(['user.id' => $teacherId]);
+            $query->andWhere(['user.id' => $teacherId]);
         }]);
         return $this;
     }
@@ -64,7 +64,7 @@ class TeacherAvailabilityQuery extends ActiveQuery
     public function qualification($locationId, $programId)
     {
         $this->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
-            $query->where(['user_location.location_id' => $locationId]);
+            $query->andWhere(['user_location.location_id' => $locationId]);
             $query->joinWith(['qualifications'  => function ($query) use ($programId) {
                 $query->andWhere(['qualification.program_id' => $programId]);
             }]);

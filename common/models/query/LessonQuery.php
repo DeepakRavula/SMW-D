@@ -69,7 +69,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         $this ->joinWith(['course' => function ($query) use ($locationId, $studentId) {
             $query->joinWith(['enrolments' => function ($query) use ($studentId) {
-                $query->where(['enrolment.studentId' => $studentId])
+                $query->andWhere(['enrolment.studentId' => $studentId])
                                 ->isConfirmed();
             }])
             ->andWhere(['course.locationId' => $locationId]);
@@ -110,7 +110,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return $this->joinWith(['enrolment' => function ($query) use ($id) {
             $query->joinWith(['student' => function ($query) use ($id) {
-                $query->where(['customer_id' => $id])
+                $query->andWhere(['customer_id' => $id])
                 ->active();
             }]);
         }]);
@@ -127,7 +127,7 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->joinWith(['invoiceItemLessons' => function ($query) {
             $query->joinWith(['invoiceLineItem' => function ($query) {
                 $query->joinWith(['invoice' => function ($query) {
-                    $query->where(['invoice.id' => null]);
+                    $query->andWhere(['invoice.id' => null]);
                 }]);
             }]);
         }]);

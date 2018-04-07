@@ -48,10 +48,10 @@ class PrintController extends BaseController
         $model = Invoice::findOne(['id' => $id]);
         $invoiceLineItems = InvoiceLineItem::find()
                 ->notDeleted()
-                ->where(['invoice_id' => $id]);
+                ->andWhere(['invoice_id' => $id]);
         $invoicePayments                     = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                $query->where(['ip.invoice_id' => $model->id]);
+                $query->andWhere(['ip.invoice_id' => $model->id]);
             }])
             ->orderBy(['date' => SORT_DESC]);
         if ($model->isProFormaInvoice()) {
@@ -100,7 +100,7 @@ class PrintController extends BaseController
     public function actionEvaluation($studentId)
     {
         $studentModel = Student::findOne(['id' => $studentId]);
-        $examResults = ExamResult::find()->where(['studentId' => $studentId]);
+        $examResults = ExamResult::find()->andWhere(['studentId' => $studentId]);
         $examResultDataProvider = new ActiveDataProvider([
             'query' => $examResults,
         ]);
@@ -221,7 +221,7 @@ class PrintController extends BaseController
         $fromDate =  (new \DateTime($model->fromDate))->format('Y-m-d');
         $toDate =(new \DateTime($model->toDate))->format('Y-m-d');
         $invoiceQuery = Invoice::find()
-                ->where([
+                ->andWhere([
                     'invoice.user_id' => $model->id,
                     'invoice.type' => Invoice::TYPE_INVOICE,
                     'invoice.location_id' => $locationId,
@@ -251,11 +251,11 @@ class PrintController extends BaseController
         $model = User::findOne(['id' => $id]);
         if (!$accountView) {
             $accountQuery = CompanyAccount::find()
-                    ->where(['userId' => $id])
+                    ->andWhere(['userId' => $id])
                     ->orderBy(['transactionId' => SORT_ASC]);
         } else {
             $accountQuery = CustomerAccount::find()
-                    ->where(['userId' => $id])
+                    ->andWhere(['userId' => $id])
                     ->orderBy(['transactionId' => SORT_ASC]);
         }
         $accountDataProvider = new ActiveDataProvider([
@@ -370,14 +370,14 @@ class PrintController extends BaseController
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
 
         $invoiceTaxTotal = Invoice::find()
-            ->where(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
+            ->andWhere(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
             ->andWhere(['between', 'date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->notDeleted()
             ->sum('tax');
 
         $payments = Payment::find()
             ->joinWith(['invoice i' => function ($query) use ($locationId) {
-                $query->where(['i.location_id' => $locationId]);
+                $query->andWhere(['i.location_id' => $locationId]);
             }])
             ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
             ->notDeleted()
@@ -387,7 +387,7 @@ class PrintController extends BaseController
         $royaltyPayment = InvoiceLineItem::find()
                 ->notDeleted()
             ->joinWith(['invoice i' => function ($query) use ($locationId) {
-                $query->where(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
+                $query->andWhere(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
             }])
             ->andWhere(['between', 'i.date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->royaltyFree()

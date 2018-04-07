@@ -81,7 +81,7 @@ class TeacherUnavailability extends \yii\db\ActiveRecord
     {
         return new TeacherUnavailabilityQuery(
             get_called_class(),
-            parent::find()->where(['teacher_unavailability.isDeleted' => false])
+            parent::find()->andWhere(['teacher_unavailability.isDeleted' => false])
         );
     }
     public function beforeSave($insert)

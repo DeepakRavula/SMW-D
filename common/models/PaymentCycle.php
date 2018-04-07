@@ -253,7 +253,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
     public function isFirstPaymentCycle()
     {
         $firstPaymentCycle = self::find()
-            ->where(['enrolmentId' => $this->enrolmentId])
+            ->andWhere(['enrolmentId' => $this->enrolmentId])
             ->notDeleted()
             ->orderBy(['startDate' => SORT_ASC])
             ->one();

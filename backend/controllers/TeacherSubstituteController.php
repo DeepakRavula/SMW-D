@@ -135,7 +135,7 @@ class TeacherSubstituteController extends BaseController
         if (!$teacherId) {
             $query = Lesson::find()
                     ->notDeleted()
-                    ->where(['id' => $newLessonIds]);
+                    ->andWhere(['id' => $newLessonIds]);
         }
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,

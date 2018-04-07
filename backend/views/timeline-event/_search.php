@@ -30,7 +30,7 @@ use common\models\Location;
                     ->joinWith('userLocation ul')
                     ->join('LEFT JOIN', 'user_profile up','up.user_id = ul.user_id')
                     ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-                    ->where(['raa.item_name' => [User::ROLE_OWNER, User::ROLE_STAFFMEMBER]])
+                    ->andWhere(['raa.item_name' => [User::ROLE_OWNER, User::ROLE_STAFFMEMBER]])
                     ->andWhere(['ul.location_id' => $locationId])
                     ->orderBy('up.firstname')
                     ->notDeleted()

@@ -30,7 +30,7 @@ class CustomerDiscount extends \yii\db\ActiveRecord
 
     public static function find()
     {
-        return new CustomerDiscountQuery(get_called_class(), parent::find()->where(['customer_discount.isDeleted' => false]));
+        return new CustomerDiscountQuery(get_called_class(), parent::find()->andWhere(['customer_discount.isDeleted' => false]));
     }
 
     public function behaviors()

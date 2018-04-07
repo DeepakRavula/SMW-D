@@ -461,9 +461,9 @@ class Lesson extends \yii\db\ActiveRecord
         if ($this->hasInvoice()) {
             return InvoiceLineItem::find()
                 ->notDeleted()
-            ->where(['invoice_id' => $this->invoice->id])
+            ->andWhere(['invoice_id' => $this->invoice->id])
             ->joinWith(['lineItemLesson' => function ($query) use ($lessonId) {
-                $query->where(['lessonId' => $lessonId]);
+                $query->andWhere(['lessonId' => $lessonId]);
             }])
             ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON])
             ->one();
@@ -531,7 +531,7 @@ class Lesson extends \yii\db\ActiveRecord
                     ->andWhere(['invoice_id' => $lesson->proFormaInvoice->id])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
                     ->joinWith(['lineItemPaymentCycleLesson' => function ($query) use ($paymentCycleLessonId) {
-                        $query->where(['paymentCycleLessonId' => $paymentCycleLessonId]);
+                        $query->andWhere(['paymentCycleLessonId' => $paymentCycleLessonId]);
                     }])
                     ->one();
         } else {

@@ -29,7 +29,7 @@ class EnrolmentDateValidator extends Validator
         }
 
         $vacation = Vacation::find()
-            ->where(['AND', ['<=', 'fromDate', $fromDate], ['>=', 'toDate', $fromDate]])
+            ->andWhere(['AND', ['<=', 'fromDate', $fromDate], ['>=', 'toDate', $fromDate]])
             ->orWhere(['AND', ['<=', 'fromDate', $toDate], ['>=', 'toDate', $toDate]])
             ->orWhere(['AND', ['>', 'fromDate', $fromDate], ['<', 'toDate', $toDate]])
             ->andWhere(['enrolmentId' => $model->enrolmentId])

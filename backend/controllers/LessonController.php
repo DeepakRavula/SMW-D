@@ -280,7 +280,7 @@ class LessonController extends BaseController
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Lesson::find()->location($locationId)
-            ->where(['lesson.id' => $id, 'isDeleted' => false])->one();
+            ->andWhere(['lesson.id' => $id, 'isDeleted' => false])->one();
         if ($model !== null) {
             return $model;
         } else {
@@ -293,7 +293,7 @@ class LessonController extends BaseController
         $conflicts = [];
         $conflictedLessonIds = [];
         $draftLessons = Lesson::find()
-            ->where(['courseId' => $course->id])
+            ->andWhere(['courseId' => $course->id])
             ->notConfirmed()
             ->scheduled()
             ->all();
@@ -319,7 +319,7 @@ class LessonController extends BaseController
     {
         $conflictedLessons = $this->getConflicts($course);
         $lessons = Lesson::find()
-            ->where(['courseId' => $course->id])
+            ->andWhere(['courseId' => $course->id])
             ->notConfirmed()
             ->scheduled()
             ->all();
@@ -427,14 +427,14 @@ class LessonController extends BaseController
             ->count();
         $conflictedLessonIdsCount = count($conflictedLessons['lessonIds']);
         $unscheduledLessonCount = Lesson::find()
-            ->where(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED, 'isConfirmed' => false])
+            ->andWhere(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED, 'isConfirmed' => false])
             ->count();
         $query = Lesson::find()
             ->orderBy(['lesson.date' => SORT_ASC]);
         if (! $showAllReviewLessons) {
             $query->andWhere(['IN', 'lesson.id', $conflictedLessons['lessonIds']]);
         } else {
-            $query->where(['courseId' => $courseModel->id, 'isConfirmed' => false]);
+            $query->andWhere(['courseId' => $courseModel->id, 'isConfirmed' => false]);
         }
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -465,7 +465,7 @@ class LessonController extends BaseController
         $conflicts = [];
         $conflictedLessonIds = [];
         $draftLessons = Lesson::find()
-            ->where(['courseId' => $courseModel->id])
+            ->andWhere(['courseId' => $courseModel->id])
             ->notConfirmed()
             ->scheduled()
             ->all();
@@ -526,7 +526,7 @@ class LessonController extends BaseController
             $startDate = new \DateTime($rescheduleBeginDate);
             $endDate = new \DateTime($rescheduleEndDate);
             $oldLessons = Lesson::find()
-                ->where(['courseId' => $courseModel->id])
+                ->andWhere(['courseId' => $courseModel->id])
                 ->notDeleted()
                 ->isConfirmed()
                 ->scheduled()

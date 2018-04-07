@@ -108,7 +108,7 @@ class VacationController extends BaseController
                 ->andWhere(['AND', ['>=', 'DATE(date)', $startDate], ['<=', 'DATE(date)',
                     $endDate]]);
             $paymentCyclesQuery = PaymentCycle::find()
-                ->where(['enrolmentId' => $enrolmentId])
+                ->andWhere(['enrolmentId' => $enrolmentId])
                 ->notDeleted()
                 ->andWhere(['OR', ['between', "DATE(endDate)", $startDate, $endDate],
                 ['between', "DATE(startDate)", $startDate, $endDate]]);
@@ -139,7 +139,7 @@ class VacationController extends BaseController
                 }
             }
             $affectedPaymentCycles = PaymentCycle::find()
-                ->where(['id' => $affectedPaymentCycleIds]);
+                ->andWhere(['id' => $affectedPaymentCycleIds]);
             if ($affectedLessons) {
                 $lessonDataProvider = new ActiveDataProvider([
                     'query' => $lessonsQuery
