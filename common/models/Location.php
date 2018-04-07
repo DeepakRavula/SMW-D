@@ -198,14 +198,14 @@ class Location extends \yii\db\ActiveRecord
     public function getRevenue($fromDate, $toDate)
     {
         $invoiceTaxTotal = Invoice::find()
-            ->where(['location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE])
+            ->andWhere(['location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE])
             ->andWhere(['between', 'date', (new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d')])
             ->notDeleted()
             ->sum('tax');
 
         $payments = Payment::find()
             ->joinWith(['invoice i' => function ($query) {
-                $query->where(['i.location_id' => $this->id]);
+                $query->andWhere(['i.location_id' => $this->id]);
             }])
             ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
             ->notDeleted()
@@ -215,7 +215,7 @@ class Location extends \yii\db\ActiveRecord
         $royaltyPayment = InvoiceLineItem::find()
                 ->notDeleted()
             ->joinWith(['invoice i' => function ($query) {
-                $query->where(['i.location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE]);
+                $query->andWhere(['i.location_id' => $this->id, 'type' => Invoice::TYPE_INVOICE]);
             }])
             ->andWhere(['between', 'i.date', (new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d')])
             ->royaltyFree()

@@ -115,7 +115,7 @@ class LocationController extends BaseController
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
         $model    = LocationAvailability::find()
-                       ->where(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
+                       ->andWhere(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
                        ->one();
         if (empty($model)) { 
              $model=new LocationAvailability;
@@ -212,7 +212,7 @@ class LocationController extends BaseController
           
            $location = Location::findOne(['slug' => Yii::$app->location]);
            $model    = LocationAvailability::find()
-                       ->where(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
+                       ->andWhere(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
                        ->one();
            
          if (empty($model)) { 

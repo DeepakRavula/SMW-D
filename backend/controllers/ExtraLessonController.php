@@ -115,7 +115,7 @@ class ExtraLessonController extends BaseController
                    $query->andWhere(['course.programId' => $model->programId])
                            ->confirmed();
                }])
-                ->where(['studentId' => $studentId])
+                ->andWhere(['studentId' => $studentId])
                 ->one();
             $model->courseId = !empty($studentEnrolment) ? $studentEnrolment->courseId : null;
             $model->studentId = $studentId;
@@ -185,7 +185,7 @@ class ExtraLessonController extends BaseController
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Lesson::find()->location($locationId)
-            ->where(['lesson.id' => $id, 'isDeleted' => false])->one();
+            ->andWhere(['lesson.id' => $id, 'isDeleted' => false])->one();
         if ($model !== null) {
             return $model;
         } else {

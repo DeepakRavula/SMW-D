@@ -54,7 +54,7 @@ class DbManager extends \yii\rbac\DbManager
         $query = new Query;
         $parents = $query->select(['parent'])
             ->from($this->itemChildTable)
-            ->where(['child' => $itemName, 'location_id' => $locationId])
+            ->andWhere(['child' => $itemName, 'location_id' => $locationId])
             ->column($this->db);
         foreach ($parents as $parent) {
             if ($this->checkAccessRecursive($user, $parent, $params, $assignments)) {
@@ -69,7 +69,7 @@ class DbManager extends \yii\rbac\DbManager
     {
         $query = (new Query())
             ->from($this->itemTable)
-            ->where(['type' => $type, 'isLocationSpecific' => true]);
+            ->andWhere(['type' => $type, 'isLocationSpecific' => true]);
 
         $items = [];
         foreach ($query->all($this->db) as $row) {
@@ -180,7 +180,7 @@ class DbManager extends \yii\rbac\DbManager
         $query = (new Query)
             ->select(['name', 'type', 'description', 'rule_name', 'data', 'created_at', 'updated_at', 'location_id'])
             ->from([$this->itemTable, $this->itemChildTable])
-            ->where(['parent' => $name,
+            ->andWhere(['parent' => $name,
                 'name' => new Expression('[[child]]'),
                 'location_id' => $locationId]);
 

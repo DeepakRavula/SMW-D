@@ -38,7 +38,7 @@ class TeacherRoomQuery extends \yii\db\ActiveQuery
     {
         $this->joinWith(['teacherAvailability' => function ($query) use ($locationId) {
             $query->joinWith(['userLocation' => function ($query) use ($locationId) {
-                $query->where(['location_id' => $locationId]);
+                $query->andWhere(['location_id' => $locationId]);
             }]);
         }]);
 
@@ -48,7 +48,7 @@ class TeacherRoomQuery extends \yii\db\ActiveQuery
     public function day($day)
     {
         $this->joinWith(['teacherAvailability' => function ($query) use ($day) {
-            $query->where(['day' => $day]);
+            $query->andWhere(['day' => $day]);
         }]);
 
         return $this;

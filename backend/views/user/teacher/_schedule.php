@@ -14,11 +14,11 @@ use common\models\Location;
     <?php
     $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
     $minLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
+        ->andWhere(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])
         ->one();
     $maxLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
+        ->andWhere(['locationId' => $locationId])
         ->orderBy(['toTime' => SORT_DESC])
         ->one();
     $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
@@ -27,7 +27,7 @@ use common\models\Location;
     $teacherAvailabilityDays = TeacherAvailability::find()
         ->joinWith(['userLocation' => function ($query) use ($teacherId) {
             $query->joinWith(['userProfile' => function ($query) use ($teacherId) {
-                $query->where(['user_profile.user_id' => $teacherId]);
+                $query->andWhere(['user_profile.user_id' => $teacherId]);
             }]);
         }])
         ->all();
@@ -47,7 +47,7 @@ use common\models\Location;
             $query->andWhere(['locationId' => $locationId])
                     ->confirmed();
         }])
-        ->where(['lesson.teacherId' => $teacherId])
+        ->andWhere(['lesson.teacherId' => $teacherId])
         ->scheduledOrRescheduled()
         ->isConfirmed()
         ->notDeleted()

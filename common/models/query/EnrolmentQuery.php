@@ -81,7 +81,7 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     public function location($locationId)
     {
         $this->joinWith(['course' => function ($query) use ($locationId) {
-            $query->where(['locationId' => $locationId]);
+            $query->andWhere(['locationId' => $locationId]);
         }]);
 
         return $this;
@@ -90,7 +90,7 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     public function program($locationId, $currentDate)
     {
         $this->joinWith(['program' => function ($query) use ($locationId, $currentDate) {
-            $query->where(['course.locationId' => $locationId])
+            $query->andWhere(['course.locationId' => $locationId])
                 ->andWhere(['>=', 'course.endDate', $currentDate->format('Y-m-d')]);
         }]);
 

@@ -98,7 +98,7 @@ class ScheduleController extends BaseController
 
         $date = new \DateTime();
         $locationAvailabilities = LocationAvailability::find()
-            ->where(['locationId' => $locationId])
+            ->andWhere(['locationId' => $locationId])
             ->andWhere(['type' => LocationAvailability::TYPE_SCHEDULE_TIME])
             ->all();
         $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,'day' => $date->format('N'),'type' => LocationAvailability::TYPE_SCHEDULE_TIME]);

@@ -65,7 +65,7 @@ class InvoiceSearch extends Invoice
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Invoice::find()
-                ->where([
+                ->andWhere([
                     'invoice.location_id' => $locationId,
                 ])
                 ->notDeleted()

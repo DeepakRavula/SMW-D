@@ -69,9 +69,9 @@ class InvoiceLineItemController extends BaseController
         $locationModel = Location::findOne(['id' => $locationId]);
         $taxCode = TaxCode::find()
             ->joinWith(['taxStatus' => function ($query) use ($taxStatusId) {
-                $query->where(['tax_status.name' => $taxStatusId]);
+                $query->andWhere(['tax_status.name' => $taxStatusId]);
             }])
-            ->where(['<=', 'start_date', $today])
+            ->andWhere(['<=', 'start_date', $today])
             ->andWhere(['province_id' => $locationModel->province_id])
             ->orderBy('start_date DESC')
             ->one();
@@ -202,9 +202,9 @@ class InvoiceLineItemController extends BaseController
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = InvoiceLineItem::find()
                 ->joinWith(['invoice' => function ($query) use ($locationId) {
-                    $query->where(['location_id' => $locationId]);
+                    $query->andWhere(['location_id' => $locationId]);
                 }])
-                ->where([
+                ->andWhere([
                     'invoice_line_item.id' => $id,
                 ])
                 ->one();

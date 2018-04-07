@@ -73,7 +73,7 @@ class CustomerController extends UserController
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $model = User::find()->location($locationId)
-                ->where(['user.id' => $id])
+                ->andWhere(['user.id' => $id])
                 ->notDeleted()
                 ->one();
         if ($model !== null) {

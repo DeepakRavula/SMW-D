@@ -36,7 +36,7 @@ class InvoiceDiscount extends Model
     public function getDiscountModel()
     {
         $lineitemDiscount = InvoiceLineItemDiscount::find()
-                ->where(['invoiceLineItemId' => $this->invoiceLineItemId,
+                ->andWhere(['invoiceLineItemId' => $this->invoiceLineItemId,
                     'type' => $this->type])
                 ->one();
 

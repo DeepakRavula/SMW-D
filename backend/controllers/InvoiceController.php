@@ -230,16 +230,16 @@ class InvoiceController extends BaseController
         
         $customerInvoicePayments = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                $query->where(['ip.invoice_id' => $model->id]);
+                $query->andWhere(['ip.invoice_id' => $model->id]);
             }])
-            ->where(['user_id' => $model->user_id]);
+            ->andWhere(['user_id' => $model->user_id]);
 
         $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $customerInvoicePayments,
         ]);
         $invoicePayments                     = Payment::find()
             ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                $query->where(['ip.invoice_id' => $model->id]);
+                $query->andWhere(['ip.invoice_id' => $model->id]);
             }])
             ->orderBy(['date' => SORT_DESC]);
         if ($model->isProFormaInvoice()) {
@@ -250,7 +250,7 @@ class InvoiceController extends BaseController
         ]);
 
         $notes = Note::find()
-            ->where(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_INVOICE])
+            ->andWhere(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_INVOICE])
             ->orderBy(['createdOn' => SORT_DESC]);
 
         $noteDataProvider = new ActiveDataProvider([
@@ -265,7 +265,7 @@ class InvoiceController extends BaseController
             $userModel = UserProfile::findOne(['user_id' => $customer->id]);
             $userEmail = UserEmail::find()
                 ->joinWith(['userContact uc' => function ($query) use ($model) {
-                    $query->where(['uc.userId' => $model->user_id]);
+                    $query->andWhere(['uc.userId' => $model->user_id]);
                 }])
                 ->one();
         }
@@ -338,9 +338,9 @@ class InvoiceController extends BaseController
         $data = Json::decode($data, true);
         $taxCode = TaxCode::find()
             ->joinWith(['taxStatus' => function ($query) use ($data) {
-                $query->where(['tax_status.id' => $data['taxStatusId']]);
+                $query->andWhere(['tax_status.id' => $data['taxStatusId']]);
             }])
-            ->where(['<=', 'start_date', $today])
+            ->andWhere(['<=', 'start_date', $today])
             ->andWhere(['province_id' => $locationModel->province_id])
             ->orderBy('start_date DESC')
             ->one();
@@ -450,7 +450,7 @@ class InvoiceController extends BaseController
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Invoice::find()
-                ->where([
+                ->andWhere([
                     'invoice.id' => $id,
                     'location_id' => $locationId,
 		    'isDeleted'=>false,

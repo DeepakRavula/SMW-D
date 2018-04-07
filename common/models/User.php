@@ -490,7 +490,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return static::find()
             ->join('LEFT JOIN', 'rbac_auth_assignment', 'rbac_auth_assignment.user_id = id')
-            ->where(['rbac_auth_assignment.item_name' => $role])
+            ->andWhere(['rbac_auth_assignment.item_name' => $role])
             ->all();
     }
 
@@ -613,7 +613,7 @@ class User extends ActiveRecord implements IdentityInterface
         $teacherAvailabilities = TeacherAvailability::find()
         ->joinWith(['userLocation' => function ($query) use ($id) {
             $query->joinWith(['userProfile' => function ($query) use ($id) {
-                $query->where(['user_profile.user_id' => $id]);
+                $query->andWhere(['user_profile.user_id' => $id]);
             }]);
         }])
         ->all();
@@ -633,7 +633,7 @@ class User extends ActiveRecord implements IdentityInterface
                 $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id])
                         ->confirmed();
             }])
-            ->where(['lesson.teacherId' => $id])
+            ->andWhere(['lesson.teacherId' => $id])
             ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
             ->isConfirmed()
             ->all();

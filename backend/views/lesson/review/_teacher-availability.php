@@ -18,7 +18,7 @@ LteBox::begin([
     $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
     $query = TeacherAvailability::find()
     ->joinWith('userLocation')
-    ->where(['user_id' => $courseModel->teacherId, 'location_id' => $locationId]);
+    ->andWhere(['user_id' => $courseModel->teacherId, 'location_id' => $locationId]);
     $teacherAvailabilityDataProvider = new ActiveDataProvider([
     'query' => $query,
     ]);

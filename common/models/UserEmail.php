@@ -75,7 +75,7 @@ class UserEmail extends \yii\db\ActiveRecord
     public function validateUnique($attributes)
     {
         $query = self::find()
-                ->where(['email' => $this->email])
+                ->andWhere(['email' => $this->email])
                 ->joinWith(['userContact uc' => function ($query) {
                     $query->joinWith(['user u' => function ($query) {
                         $query->andWhere(['u.isDeleted' => false]);

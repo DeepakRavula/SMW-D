@@ -23,7 +23,7 @@ use kartik\select2\Select2;
             $query->joinWith('teacherAvailability');
         }])
         ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-        ->where(['raa.item_name' => 'teacher'])
+        ->andWhere(['raa.item_name' => 'teacher'])
         ->andWhere(['ul.location_id' => $locationId])
         ->notDeleted()
         ->all(),

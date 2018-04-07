@@ -71,7 +71,7 @@ class CompanyAccount extends \yii\db\ActiveRecord
     public function getBalance()
     {
         return self::find()
-                ->where(['userId' => $this->userId])
+                ->andWhere(['userId' => $this->userId])
                 ->andWhere(['<=', 'transactionId', $this->transactionId])
                 ->sum('credit+debit');
     }

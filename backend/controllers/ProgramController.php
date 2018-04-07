@@ -93,7 +93,7 @@ class ProgramController extends BaseController
                 ->notDeleted()
                 ->joinWith(['enrolment' => function ($query) use ($locationId, $id) {
                     $query->location($locationId)
-                    ->where(['course.programId' => $id])
+                    ->andWhere(['course.programId' => $id])
                     ->isConfirmed();
                 }])
             ->active();
@@ -104,10 +104,10 @@ class ProgramController extends BaseController
 
         $query = User::find()
             ->joinWith(['userLocation ul' => function ($query) use ($locationId) {
-                $query->where(['ul.location_id' => $locationId]);
+                $query->andWhere(['ul.location_id' => $locationId]);
             }])
             ->joinWith('qualification')
-            ->where(['program_id' => $id])
+            ->andWhere(['program_id' => $id])
             ->notDeleted();
         $teacherDataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -235,10 +235,10 @@ class ProgramController extends BaseController
                 $query->joinWith(['userLocation' => function ($query) use ($locationId) {
                     $query->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = user_location.user_id')
                     ->joinWith('teacherAvailability')
-                ->where(['location_id' => $locationId]);
+                ->andWhere(['location_id' => $locationId]);
                 }]);
             }])
-            ->where(['program_id' => $id])
+            ->andWhere(['program_id' => $id])
                         ->notDeleted()
             ->orderBy(['user_profile.firstname' => SORT_ASC])
                 ->all();

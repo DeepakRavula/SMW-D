@@ -240,7 +240,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function getOriginalInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
-                ->where(['invoice.type' => Invoice::TYPE_INVOICE]);
+                ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE]);
     }
     
     /**
@@ -335,9 +335,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $locationModel = Location::findOne(['id' => $locationId]);
         $taxCode = TaxCode::find()
             ->joinWith(['taxStatus' => function ($query) use ($taxStatus) {
-                $query->where(['tax_status.id' => $taxStatus]);
+                $query->andWhere(['tax_status.id' => $taxStatus]);
             }])
-            ->where(['<=', 'start_date', $today])
+            ->andWhere(['<=', 'start_date', $today])
             ->andWhere(['province_id' => $locationModel->province_id])
             ->orderBy('start_date DESC')
             ->one();

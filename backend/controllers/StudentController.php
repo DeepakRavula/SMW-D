@@ -208,7 +208,7 @@ class StudentController extends BaseController
         $model = Student::find()
             ->notDeleted()
             ->location($locationId)
-            ->where(['student.id' => $id])->one();
+            ->andWhere(['student.id' => $id])->one();
         return $model;
     }
 
