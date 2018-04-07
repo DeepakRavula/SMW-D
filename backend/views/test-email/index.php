@@ -44,9 +44,6 @@ echo AdminLteGridView::widget([
         $(document).on('click', '#test-email-listing  tbody > tr', function () {
             var testEmailId = $(this).data('key');
                 var customUrl = '<?= Url::to(['test-email/update']); ?>?id=' + testEmailId;
-                var url = '<?= Url::to(['test-email/delete']); ?>?id=' + testEmailId;
-                $('#modal-delete').show();
-                $(".modal-delete").attr("action",url);
             $.ajax({
                 url    : customUrl,
                 type   : 'get',
@@ -57,7 +54,7 @@ echo AdminLteGridView::widget([
                     if(response.status)
                     {
                         $('#popup-modal').modal('show');
-                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Blogs</h4>');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Test Email</h4>');
                         $('#modal-content').html(response.data);
                     }
                 }

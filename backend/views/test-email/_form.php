@@ -26,9 +26,4 @@ use common\models\TestEmail;
         $.pjax.reload({url: url, container: "#test-email-listing", replace: false, timeout: 4000});
         return false;
     });
-    $(document).on('modal-delete', function(event, params) {
-        var url = "<?php echo Url::to(['test-email/index']); ?>";
-+        $.pjax.reload({url: url, container: "#test-email-listing", replace: false, timeout: 4000});
-        return false;
-    });
 </script>
