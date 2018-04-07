@@ -35,8 +35,3 @@ use insolita\wgadminlte\LteConst;
             ]); ?>	
 	<?php LteBox::end() ?>
 <?php yii\widgets\Pjax::end(); ?>
-<script>
-	 $(document).on('modal-success', function(event, params) {
-$.pjax.reload({container: '#group-grid', replace:false,async: false, timeout: 6000});
-	});
-</script>

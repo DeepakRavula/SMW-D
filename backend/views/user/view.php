@@ -478,11 +478,10 @@ $this->params['action-button'] = $this->render('_action-button', [
         if (params.url) {
             window.location.href = params.url;
         }
-        $.pjax.reload({container: '#customer-student-listing', replace:false,async: false, timeout: 6000});
         $.pjax.reload({container: '#group-quali-list', replace:false,async: false, timeout: 6000});
         $.pjax.reload({container: '#private-quali-list', replace:false,async: false, timeout: 6000});
     });
-    
+
 	$('.availability').click(function () {
 		$('.teacher-availability-create').show();
 	});
