@@ -217,7 +217,7 @@ function showCalendars(id,type) {
             var params = $.param({ resourceId: event.resourceId,type: type,startTime:startTime,endTime:endTime});
             $.ajax({
                 url    : '<?= Url::to(['location/modify']) ?>?' + params,
-                type   : 'POST',
+                type   : 'get',
                 dataType: 'json',
                 success: function(response)
                 {
