@@ -43,10 +43,19 @@ $form = ActiveForm::begin([
    <div class="row">
 	   
         <div class="col-md-8">
-            <?= $form->field($model, 'program_id')->widget(Select2::classname(), [
-                'data' => ArrayHelper::map($programs, 'id', 'name'),
-                'disabled' => !$model->isNewRecord
-            ]); ?>
+            <?php if ($model->isNewRecord) : ?>
+                <?= $form->field($model, 'programs')->widget(Select2::classname(), [
+                    'data' => ArrayHelper::map($programs, 'id', 'name'),
+                    'options' => [
+                        'multiple' => true
+                    ]
+                ]); ?>
+            <?php else: ?>
+                <?= $form->field($model, 'program_id')->widget(Select2::classname(), [
+                    'data' => ArrayHelper::map($programs, 'id', 'name'),
+                    'disabled' => !$model->isNewRecord
+                ]); ?>
+            <?php endif; ?>
         </div>
 	   <?php if (Yii::$app->user->can('teacherQualificationRate')) : ?>
         <div class="col-md-4">

@@ -89,12 +89,17 @@ class QualificationController extends BaseController
         $model = new Qualification();
         $model->teacher_id = $id;
         $model->type = $type;
-        $model->isDeleted = false;
         $post = Yii::$app->request->post();
         if ($post) {
-            if ($model->load($post) && $model->save()) {
+            if ($model->load($post)) {
+                foreach ($model->programs as $program) {
+                    $model->isNewRecord = true;
+                    $model->id = null;
+                    $model->program_id = $program;
+                    $model->save();
+                }
                 $response = [
-                    'status' => true,
+                    'status' => true
                 ];
             } else {
                 $response = [

@@ -15,6 +15,7 @@ use common\models\query\QualificationQuery;
  */
 class Qualification extends \yii\db\ActiveRecord
 {
+    public $programs;
     const TYPE_HOURLY = 1;
     const TYPE_FIXED = 2;
     
@@ -32,7 +33,12 @@ class Qualification extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['program_id'], 'required'],
+            [['programs'], 'required', 'when' => function ($model) {
+                return $model->isNewRecord;
+            }],
+            [['program_id'], 'required', 'when' => function ($model) {
+                return !$model->isNewRecord;
+            }],
             [['teacher_id', 'program_id', 'type',], 'integer'],
             [['rate'], 'number', 'min' => 1.00, 'max' => 2000.00, 'message' => 'Invalid rate'],
             [['isDeleted'], 'safe']
@@ -83,5 +89,13 @@ class Qualification extends \yii\db\ActiveRecord
     public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'program_id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
     }
 }
