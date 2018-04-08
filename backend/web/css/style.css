@@ -147,6 +147,11 @@ a.desc:after {
 .m-t-25 {
     margin-top: 25px !important;
 }
+.schedule-visibility-action-button
+{
+  float:right;
+   margin-top: -45px; 
+}
 .p-t-10 {
     padding-top: 10px;
 }

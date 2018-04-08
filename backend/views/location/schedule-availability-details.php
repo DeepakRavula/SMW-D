@@ -6,12 +6,10 @@
  * and open the template in the editor.
  */
 ?>
-<div class="pull-right">
-    <div class="btn-group-sm">
-    <button class="btn dropdown-toggle" data-toggle="dropdown">More Action&nbsp;&nbsp;<span class="caret"></span></button>
-    <ul class="dropdown-menu dropdown-menu-right">
-        <li><a id="copy-availability" href="#">Copy From Operational Hours</a></li>
-    </ul>
+    <div class="btn-group schedule-visibility-action-button">
+        <button class="btn dropdown-toggle" data-toggle="dropdown">More Action&nbsp;&nbsp;<span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li><a id="copy-availability" href="#">Copy From Operational Hours</a></li>
+        </ul>
     </div>
-</div>
 <div id="scheduleCalendar"></div>
