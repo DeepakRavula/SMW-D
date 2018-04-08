@@ -1,7 +1,6 @@
 <?php
 
 use yii\helpers\Html;
-use common\models\User;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\helpers\Url;
@@ -96,11 +95,11 @@ $lastRole = end($roles);
                 [
                     'label' => 'Schedule Visibility',
                     'content' => $scheduleAvailability,
-                ],
-            ],
+                ]
+            ]
         ]);?>
 </div>
-
+            
 	</div>
 </div>
 
@@ -111,7 +110,7 @@ $lastRole = end($roles);
 <div id="location-edit-content"></div>
  <?php  Modal::end(); ?>
 <script>
-	$(document).ready(function(){
+$(document).ready(function(){
    var id = '#operationCalendar';
    var type = <?= LocationAvailability::TYPE_OPERATION_TIME ?>;
    showCalendars(id,type);
@@ -258,6 +257,21 @@ function showCalendars(id,type) {
     
     $(document).on('modal-delete', function(event, params) {
         availability.refechEvents();
+    });
+
+    $(document).off('click', '#copy-availability').on('click', '#copy-availability', function () {
+        $.ajax({
+            url    : '<?= Url::to(['location/copy-availability', 'id' => $model->id]) ?>',
+            type   : 'post',
+            dataType: "json",
+            success: function(response)
+            {
+                if(response.status) {
+                    $('#scheduleCalendar').fullCalendar("refetchEvents");
+                }
+            }
+        });
+        return false;
     });
 </script>
 <?php Pjax::end(); ?>
