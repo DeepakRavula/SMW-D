@@ -4,7 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
-use Carbon\Carbon;
+use yii\behaviors\TimestampBehavior;
 use common\models\discount\EnrolmentDiscount;
 
 /**
@@ -58,6 +58,12 @@ class Enrolment extends \yii\db\ActiveRecord
                 ],
                 'replaceRegularDelete' => true
             ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdAt',
+                'updatedAtAttribute' => 'updatedAt',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
         ];
     }
 
@@ -69,8 +75,8 @@ class Enrolment extends \yii\db\ActiveRecord
         return [
             [['courseId'], 'required'],
             [['courseId', 'studentId'], 'integer'],
-            [['paymentFrequencyId', 'isDeleted', 'isConfirmed',
-                'hasEditable', 'isAutoRenew', 'applyFullDiscount'], 'safe'],
+            [['paymentFrequencyId', 'isDeleted', 'isConfirmed', 'createdAt',
+                'hasEditable', 'isAutoRenew', 'applyFullDiscount', 'updatedAt'], 'safe'],
         ];
     }
 
