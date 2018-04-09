@@ -30,7 +30,7 @@ class CustomerPaymentPreference extends \yii\db\ActiveRecord
         return [
             [['userId', 'dayOfMonth', 'paymentMethodId'], 'required'],
             [['userId', 'dayOfMonth', 'paymentMethodId'], 'integer'],
-            ['dayOfMonth', 'compare', 'compareValue' => 31, 'operator' => '<=', 'type' => 'integer'],
+            ['dayOfMonth', 'integer', 'min' => 1, 'max' => 31],
             [['expiryDate'], 'safe']
         ];
     }
