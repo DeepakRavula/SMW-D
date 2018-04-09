@@ -1,5 +1,4 @@
 <?php
-use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
@@ -35,95 +34,46 @@ use insolita\wgadminlte\LteConst;
         <dd><?= $model->customerPaymentPreference->dayOfMonth ?></dd>
         <dt>Payment Method</dt>
         <dd><?= $model->customerPaymentPreference->getPaymentMethodName() ?></dd>
+        <dt>Expiry Date</dt>
+        <dd><?= Yii::$app->formatter->asDate($model->customerPaymentPreference->expiryDate); ?></dd>
     </dl>
 <?php endif;?>
 <?php LteBox::end() ?>
 <?php \yii\widgets\Pjax::end(); ?>
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Payment Preference</h4>',
-    'id' => 'payment-preference-modal',
-]);
-
-?>
-<div id="payment-preference-content"></div>
-<?php
-Modal::end();
-
-?>
 
 <script>
-    $(document).ready(function () {
-        $(document).on('click', '#payment-preference', function (e) {
-            modifyPaymentPreference();
-        });
-
-        $(document).on('click', '#cancel', function (e) {
-            $('#payment-preference-modal').modal('hide');
-            return false;
-        });
+    $(document).off('click', '#payment-preference').on('click', '#payment-preference', function () {
+        customer.modifyPaymentPreference();
     });
 
     $(document).on("click", "#payment-preference-grid tbody > tr", function () {
-        modifyPaymentPreference();
+        customer.modifyPaymentPreference();
     });
 
-    $(document).on("beforeSubmit", "#payment-preference-form", function () {
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'post',
-            dataType: "json",
-            data: $(this).serialize(),
-            success: function (response)
-            {
-                if (response.status)
-                {
-                    $('#payment-preference-modal').modal('hide');
-                    $.pjax.reload({container: '#payment-preference-listing', replace: false, timeout: 4000});
-                }
-            }
-        });
-        return false;
-    });
-
-    $(document).on("click", ".payment-preference-delete", function () {
-        var preferenceId = $(this).attr('preferenceId');
-        var status = confirm("Are you sure to delete this?");
-        var params = $.param({'id': preferenceId});
-        if (status) {
+    var customer = {
+        modifyPaymentPreference :function() {
             $.ajax({
-                url: '<?php echo Url::to(["customer-payment-preference/delete"]); ?>?' + params,
-                type: 'post',
+                url: '<?= Url::to(['customer-payment-preference/modify', 'id' => $model->id]); ?>',
+                type: 'get',
                 dataType: "json",
-                data: $(this).serialize(),
                 success: function (response)
                 {
                     if (response.status)
                     {
-                        $('#payment-preference-modal').modal('hide');
-                        $.pjax.reload({container: '#payment-preference-listing', replace: false, timeout: 4000});
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                        if (response.id) {
+                            var param = $.param({ id: response.id });
+                            var url = '<?= Url::to(['customer-payment-preference/delete']) ?>?' + param;
+                            $('#modal-delete').show();
+                            $(".modal-delete").attr("action", url);
+                        }
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Payment Preference</h4>');
+                        $('#popup-modal .modal-dialog').css({'width': '400px'});
                     }
                 }
             });
+            return false;
         }
-        return false;
-    });
-
-    function modifyPaymentPreference() {
-        $.ajax({
-            url: '<?= Url::to(['customer-payment-preference/modify', 'id' => $model->id]); ?>',
-            type: 'get',
-            dataType: "json",
-            success: function (response)
-            {
-                if (response.status)
-                {
-                    $('#payment-preference-content').html(response.data);
-                	$('#payment-preference-modal .modal-dialog').css({'width': '400px'});
-                    $('#payment-preference-modal').modal('show');
-                }
-            }
-        });
-        return false;
-    }
+    };
 </script>	

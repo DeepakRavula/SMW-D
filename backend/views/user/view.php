@@ -470,16 +470,28 @@ $this->params['action-button'] = $this->render('_action-button', [
     };
 
     $(document).on('modal-delete', function(event, params) {
-        $.pjax.reload({container: '#group-quali-list', replace:false,async: false, timeout: 6000});
-        $.pjax.reload({container: '#private-quali-list', replace:false,async: false, timeout: 6000});
+        if ($('#payment-preference-listing').length) {
+            $.pjax.reload({container: '#payment-preference-listing', replace:false, async: false, timeout: 6000});
+        }
+        if ($('#unavailability-list').length) {
+            $.pjax.reload({container: '#unavailability-list', replace:false, async: false, timeout: 6000});
+        }
+        $.pjax.reload({container: '#group-quali-list', replace:false, async: false, timeout: 6000});
+        $.pjax.reload({container: '#private-quali-list', replace:false, async: false, timeout: 6000});
     });
 
     $(document).on('modal-success', function(event, params) {
         if (params.url) {
             window.location.href = params.url;
         }
-        $.pjax.reload({container: '#group-quali-list', replace:false,async: false, timeout: 6000});
-        $.pjax.reload({container: '#private-quali-list', replace:false,async: false, timeout: 6000});
+        if ($('#unavailability-list').length) {
+            $.pjax.reload({container: '#unavailability-list', replace:false, async: false, timeout: 6000});
+        }
+        if ($('#payment-preference-listing').length) {
+            $.pjax.reload({container: '#payment-preference-listing', replace:false, async: false, timeout: 6000});
+        }
+        $.pjax.reload({container: '#group-quali-list', replace:false, async: false, timeout: 6000});
+        $.pjax.reload({container: '#private-quali-list', replace:false, async: false, timeout: 6000});
     });
 
 	$('.availability').click(function () {
