@@ -18,17 +18,17 @@ class LocationDropdown extends Dropdown
         $appLocation = Yii::$app->location;
         $params = $_GET;
         $this->_isError = $route === Yii::$app->errorHandler->errorAction;
-
         array_unshift($params, '/' . $route);
-
-        foreach (Yii::$app->urlManager->locations as $location) {
+	$locations = Yii::$app->urlManager->locations;
+	sort($locations);
+        foreach ($locations as $location) {
             $isWildcard = substr($location, -2) === '-*';
             if (
                 $location === $appLocation ||
                 // Also check for wildcard location
                 $isWildcard && substr($appLocation, 0, 2) === substr($location, 0, 2)
             ) {
-                continue;   // Exclude the current location
+                //continue;   // Exclude the current location
             }
             if ($isWildcard) {
                 $location = substr($location, 0, 2);
@@ -55,10 +55,9 @@ class LocationDropdown extends Dropdown
     public static function label($code)
     {
         if (self::$_labels === null) {
-            $locations = ArrayHelper::map(Location::find()->all(), 'slug', 'name');
+            $locations = ArrayHelper::map(Location::find()->orderBy(['name' => SORT_ASC])->all(), 'slug', 'name');
             self::$_labels = $locations;
         }
-
         return isset(self::$_labels[$code]) ? self::$_labels[$code] : null;
     }
 }
