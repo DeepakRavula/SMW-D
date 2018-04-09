@@ -18,10 +18,10 @@ class LocationDropdown extends Dropdown
         $appLocation = Yii::$app->location;
         $params = $_GET;
         $this->_isError = $route === Yii::$app->errorHandler->errorAction;
-
         array_unshift($params, '/' . $route);
-
-        foreach (Yii::$app->urlManager->locations as $location) {
+	$locations = Yii::$app->urlManager->locations;
+	sort($locations);
+        foreach ($locations as $location) {
             $isWildcard = substr($location, -2) === '-*';
             if (
                 $location === $appLocation ||
@@ -58,7 +58,6 @@ class LocationDropdown extends Dropdown
             $locations = ArrayHelper::map(Location::find()->all(), 'slug', 'name');
             self::$_labels = $locations;
         }
-
         return isset(self::$_labels[$code]) ? self::$_labels[$code] : null;
     }
 }
