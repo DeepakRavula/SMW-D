@@ -67,7 +67,7 @@ class CourseReschedule extends Course
             'isConfirmed' => false,
         ]);
         $endDate = new \DateTime($this->rescheduleEndDate);
-        $startDate = new \DateTime($this->rescheduleBeginDate);
+        $startDate = (new \DateTime($this->rescheduleBeginDate))->modify('-1 day');
         $lessons = Lesson::find()
             ->andWhere(['courseId' => $this->courseId])
             ->regular()
