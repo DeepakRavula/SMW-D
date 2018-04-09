@@ -278,6 +278,11 @@ echo Menu::widget([
                     'label' => Yii::t('backend', 'Email Template'),
                     'icon' => '<i class="fa fa-envelope"></i>',
                     'url' => ['/email-template/index'],
+                ],
+		[
+                    'label' => Yii::t('backend', 'Test Email'),
+                    'icon' => '<i class="fa fa-envelope"></i>',
+                    'url' => ['/test-email/index'],
                 ]
             ]
         ],

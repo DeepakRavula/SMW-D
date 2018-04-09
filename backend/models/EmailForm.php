@@ -15,7 +15,7 @@ class EmailForm extends Model
     public $subject;
     public $content;
     public $id;
-
+    const ENVIRONMENT_NAME = 'develoment';
     /**
      * {@inheritdoc}
      */
