@@ -2,7 +2,6 @@
 
 use kartik\date\DatePicker;
 use yii\helpers\Html;
-
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -26,8 +25,18 @@ use yii\helpers\Html;
 	<div class="col-xs-5">
         <label class="modal-customer-label">Birth Date</label>
     </div>
-		<div class="col-xs-7">
-		 <?php echo $form->field($model, 'birth_date')->textInput()->label(false)?>
+	<div class="col-xs-7">
+	    <?php echo $form->field($model, 'birth_date')->widget(DatePicker::classname(),
+		[
+                   'options' => [
+			'value' => Yii::$app->formatter->asDate($model->birth_date),
+			],
+			'type' => DatePicker::TYPE_INPUT,
+			'pluginOptions' => [
+				'autoclose' => true,
+				'format' => 'M dd,yyyy'
+			]
+		]);?>
         </div>
 	<div class="clearfix"></div>
 	<div class="pull-right">
@@ -38,19 +47,3 @@ use yii\helpers\Html;
 		<button class=" modal-form-label step4-back btn btn-info" type="button" >Back</button>
     </div>
 </div> <!-- ./container -->
-<script>
-$(document).ready(function() {
-$.fn.datepicker.noConflict();
-	$('#student-birth_date').datepicker({
-	   altField: '#student-birth_date',
-	   altFormat: 'M d,yy',
-	   changeMonth: true,
-	   changeYear: true,
-	   yearRange : '-70:today',
-	   onChangeMonthYear:function(y, m, i){
-		   var d = i.selectedDay;
-		   $(this).datepicker('setDate', new Date(y, m-1, d));
-	   }
-	});
-});
-</script>
