@@ -83,22 +83,24 @@ class CustomerPaymentPreferenceController extends BaseController
         ]);
         if (Yii::$app->request->post()) {
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                return [
+                $response = [
                     'status' => true
                 ];
             } else {
                 $errors = ActiveForm::validate($model);
-                return [
+                $response = [
                     'status' => false,
                     'errors' => $errors
                 ];
             }
         } else {
-            return [
+            $response = [
                 'status' => true,
                 'data' => $data,
+                'id' => $model->id
             ];
         }
+        return $response;
     }
 
     /**

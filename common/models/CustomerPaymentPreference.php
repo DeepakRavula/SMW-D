@@ -31,6 +31,7 @@ class CustomerPaymentPreference extends \yii\db\ActiveRecord
             [['userId', 'dayOfMonth', 'paymentMethodId'], 'required'],
             [['userId', 'dayOfMonth', 'paymentMethodId'], 'integer'],
             ['dayOfMonth', 'compare', 'compareValue' => 31, 'operator' => '<=', 'type' => 'integer'],
+            [['expiryDate'], 'safe']
         ];
     }
 
@@ -64,5 +65,13 @@ class CustomerPaymentPreference extends \yii\db\ActiveRecord
     public function getPaymentMethod()
     {
         return $this->hasOne(PaymentMethod::className(), ['id' => 'paymentMethodId']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if (!empty($this->expiryDate)) {
+            $this->expiryDate = (new \DateTime($this->expiryDate))->format('Y-m-d');
+        }
+        return parent::beforeSave($insert);
     }
 }
