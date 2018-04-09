@@ -285,15 +285,13 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function beforeSoftDelete()
     {
         if ($this->invoice->isInvoice() && $this->isLessonItem()) {
-            if ($this->lesson->isPrivate()) {
-                if ($this->lesson->hasCreditUsed($this->enrolment->id)) {
-                    $lessonCreditPayments = $this->lesson->getCreditUsedPayment($this->enrolment->id);
-                    foreach ($lessonCreditPayments as $lessonCreditPayment) {
-                        $lessonCreditPayment->delete();
-                    }
+            if ($this->lesson->hasCreditUsed($this->enrolment->id)) {
+                $lessonCreditPayments = $this->lesson->getCreditUsedPayment($this->enrolment->id);
+                foreach ($lessonCreditPayments as $lessonCreditPayment) {
+                    $lessonCreditPayment->delete();
                 }
-                $this->lesson->unschedule();
             }
+            $this->lesson->unschedule();
         }
 
         return true;
