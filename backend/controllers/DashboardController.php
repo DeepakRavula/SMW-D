@@ -53,6 +53,7 @@ public function behaviors()
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         
         $enrolments = Enrolment::find()
+            ->notDeleted()
             ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
                 $query->joinWith(['program' => function ($query) {
                     $query->privateProgram();
