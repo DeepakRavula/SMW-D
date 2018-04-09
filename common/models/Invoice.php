@@ -288,8 +288,9 @@ class Invoice extends \yii\db\ActiveRecord
     {
         if (!$this->lineItem) {
             $status = false;
+        } else {
+            $status = (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
         }
-        $status = (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
         return $status;
     }
 
@@ -297,8 +298,9 @@ class Invoice extends \yii\db\ActiveRecord
     {
         if (!$this->lineItem) {
             $status = false;
+        } else {
+            $status = (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
         }
-        $status = (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
         return $status;
     }
 
