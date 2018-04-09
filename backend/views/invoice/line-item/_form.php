@@ -37,6 +37,7 @@ use yii\helpers\Url;
             <dd><?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control', 
                 'id' => 'amount-line', 'value' => Yii::$app->formatter->asDecimal($model->amount, 2)])->label(false);?></dd>
             </div>
+            <?php if (!$model->isOpeningBalance()) : ?>
 			<?php if (Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')) :?>
             <div class="col-md-5 text-right">
                 <dl class="item-view">
@@ -58,6 +59,7 @@ use yii\helpers\Url;
                 <dd><?= $form->field($model, 'royaltyFree')->checkbox();?></dd>
             </div>
         </div>
+        <?php endif;?>
     </dl>
     <?php ActiveForm::end(); ?>
 </div>

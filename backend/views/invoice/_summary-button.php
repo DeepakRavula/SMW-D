@@ -3,6 +3,8 @@
     <?php if ($model->lineItem) : ?>
         <?php if (!$model->lineItem->isOpeningBalance()) : ?>
         <li><a class="adjust-invoice-tax" href="#">Adjust Tax</a></li>
+        <?php else: ?>
+        <li><a class="adjust-invoice-tax multiselect-disable" href="#">Adjust Tax</a></li>
         <?php endif; ?>
     <?php else: ?>
         <li><a class="adjust-invoice-tax multiselect-disable" href="#">Adjust Tax</a></li>
