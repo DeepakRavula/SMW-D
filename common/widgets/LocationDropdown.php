@@ -28,7 +28,7 @@ class LocationDropdown extends Dropdown
                 // Also check for wildcard location
                 $isWildcard && substr($appLocation, 0, 2) === substr($location, 0, 2)
             ) {
-                //continue;   // Exclude the current location
+                continue;   // Exclude the current location
             }
             if ($isWildcard) {
                 $location = substr($location, 0, 2);
