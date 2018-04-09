@@ -169,7 +169,7 @@ use yii\grid\GridView;
                 overlapEventsSeparate: true,
                 events: events,
                 select: function (start, end, allDay) {
-                    $('#extra-lesson-date').val(moment(start).format('YYYY-MM-DD hh:mm A')).trigger('change');
+                    $('#extra-lesson-date').val(moment(start).format('MMM D,YYYY hh:mm A')).trigger('change');
                     $('#lesson-calendar').fullCalendar('removeEvents', 'newEnrolment');
 					var duration = $.isEmptyObject($('#extralesson-duration').val()) ? '00:30' : $('#extralesson-duration').val();
 					var endtime = start.clone();
@@ -204,9 +204,9 @@ use yii\grid\GridView;
         refresh : function(){
             var events, availableHours;
             var teacherId = $('#lesson-teacher').val();
-            var date = moment($('#extra-lesson-go-to-date').val(), 'MMM DD,YYYY', true).format('YYYY-MM-DD');
+            var date = moment($('#extra-lesson-go-to-date').val(), 'MMM D,YYYY', true).format('YYYY-MM-DD');
             if (! moment(date).isValid()) {
-                var date = moment($('#extra-lesson-go-to-date').val(), 'MMM DD,YYYY hh:mm A', true).format('YYYY-MM-DD');
+                var date = moment($('#extra-lesson-go-to-date').val(), 'MMM D,YYYY hh:mm A', true).format('YYYY-MM-DD');
             }
             if (date === 'Invalid date') {
                 $('#lesson-calendar').fullCalendar('destroy');

@@ -46,8 +46,8 @@ class ExtraLesson extends Lesson
         $this->isConfirmed = true;
         $this->isDeleted = false;
         $this->type = Lesson::TYPE_EXTRA;
-        $lessonDate = \DateTime::createFromFormat('Y-m-d g:i A', $this->date);
-        $this->date = $lessonDate->format('Y-m-d H:i:s');
+	$lessonDate = $this->date;
+        $this->date = (new \DateTime($lessonDate))->format('Y-m-d H:i:s');
         return $this;
     }
     
