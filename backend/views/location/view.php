@@ -271,7 +271,6 @@ function showCalendars(id,type) {
                 }
             }
         });
-        return false;
     });
 </script>
 <?php Pjax::end(); ?>
