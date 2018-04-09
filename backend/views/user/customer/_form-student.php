@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Student;
 use yii\helpers\Url;
+use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -29,7 +30,14 @@ use yii\helpers\Url;
         $customerName = $model->isNewRecord ? $customer->userProfile->lastname : null;
     ?>
 		<?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true, 'value' => $customerName]) ?>
-		<?php echo $form->field($model, 'birth_date')->textInput()?>
+		<?php echo $form->field($model, 'birth_date')->widget(DatePicker::classname(),
+					[
+					'type' => DatePicker::TYPE_INPUT,
+					'pluginOptions' => [
+						'autoclose' => true,
+						'format' => 'M dd,yyyy'
+					]
+				]);?>
         </div>
 	<?php echo $form->field($customer, 'id')->hiddenInput()->label(false); ?>
 

@@ -90,7 +90,7 @@ class CourseController extends BaseController
     public function actionView($id)
     {
         $extraCourse = CourseExtra::find()
-                ->where(['courseId' => $id])
+                ->andWhere(['courseId' => $id])
                 ->all();
         $courseId = ArrayHelper::map($extraCourse, 'extraCourseId', 'extraCourseId');
         $courseId[] = $id;
@@ -128,7 +128,7 @@ class CourseController extends BaseController
     {
         $query = TeacherAvailability::find()
                 ->joinWith('userLocation')
-                ->where(['user_id' => $teacherId]);
+                ->andWhere(['user_id' => $teacherId]);
         $teacherDataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -229,7 +229,7 @@ class CourseController extends BaseController
             User::find()
                     ->joinWith('userLocation ul')
                     ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-                    ->where(['raa.item_name' => 'teacher'])
+                    ->andWhere(['raa.item_name' => 'teacher'])
                     ->andWhere(['ul.location_id' => Location::findOne(['slug' => \Yii::$app->location])->id])
                     ->notDeleted()
                     ->all(),
@@ -289,10 +289,10 @@ class CourseController extends BaseController
                 $query->joinWith(['userLocation' => function ($query) use ($location_id) {
                     $query->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = user_location.user_id')
                     ->joinWith('teacherAvailability')
-                ->where(['location_id' => $location_id]);
+                ->andWhere(['location_id' => $location_id]);
                 }]);
             }])
-            ->where(['program_id' => $programId])
+            ->andWhere(['program_id' => $programId])
                         ->notDeleted()
             ->orderBy(['user_profile.firstname' => SORT_ASC])
                 ->all();
@@ -320,7 +320,7 @@ class CourseController extends BaseController
                 $query->groupProgram($locationId)
                         ->confirmed();
             }])
-            ->where(['enrolment.studentId' => $studentId])
+            ->andWhere(['enrolment.studentId' => $studentId])
             ->isConfirmed();
         $groupCourses = Course::find()
             ->regular()

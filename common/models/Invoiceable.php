@@ -218,7 +218,7 @@ trait Invoiceable
                     ->all();
         $invoice = $this->addLessonsCredit($lessons);
         $paymentCycleQuery = PaymentCycle::find()
-                ->where(['enrolmentId' => $this->id])
+                ->andWhere(['enrolmentId' => $this->id])
                 ->notDeleted();
         if ($startDate) {
             $paymentCycleQuery->andWhere(['OR', ['between', "DATE(endDate)", $startDate, $endDate],

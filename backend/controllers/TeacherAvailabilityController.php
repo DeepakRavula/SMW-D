@@ -176,7 +176,7 @@ class TeacherAvailabilityController extends BaseController
         $teacherAvailabilities = TeacherAvailability::find()
         ->joinWith(['userLocation' => function ($query) use ($id) {
             $query->joinWith(['userProfile' => function ($query) use ($id) {
-                $query->where(['user_profile.user_id' => $id]);
+                $query->andWhere(['user_profile.user_id' => $id]);
             }]);
         }])
         ->all();
@@ -197,7 +197,7 @@ class TeacherAvailabilityController extends BaseController
                 $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id])
                         ->confirmed();
             }])
-            ->where(['lesson.teacherId' => $id])
+            ->andWhere(['lesson.teacherId' => $id])
             ->scheduledOrRescheduled()
             ->isConfirmed()
             ->notDeleted()
@@ -222,11 +222,11 @@ class TeacherAvailabilityController extends BaseController
         }
         unset($lesson);
         $minLocationAvailability = LocationAvailability::find()
-            ->where(['locationId' => $locationId])
+            ->andWhere(['locationId' => $locationId])
             ->orderBy(['fromTime' => SORT_ASC])
             ->one();
         $maxLocationAvailability = LocationAvailability::find()
-            ->where(['locationId' => $locationId])
+            ->andWhere(['locationId' => $locationId])
             ->orderBy(['toTime' => SORT_DESC])
             ->one();
         $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
@@ -323,7 +323,7 @@ class TeacherAvailabilityController extends BaseController
         }
         $teacherAvailabilities = TeacherAvailability::find()
                 ->joinWith('userLocation')
-                ->where(['user_id' => $id])
+                ->andWhere(['user_id' => $id])
                 ->all();
         foreach ($teacherAvailabilities as $teacherAvailability) {
             $title = null;

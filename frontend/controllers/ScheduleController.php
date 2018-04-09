@@ -127,7 +127,7 @@ class ScheduleController extends Controller
     {
         $teachersAvailabilities = TeacherAvailability::find()
             ->joinWith(['userLocation' => function ($query) use ($userId) {
-                $query->where(['user_location.user_id' => $userId]);
+                $query->andWhere(['user_location.user_id' => $userId]);
             }])
             ->all();
 

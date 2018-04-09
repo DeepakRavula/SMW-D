@@ -214,15 +214,21 @@ function showCalendars(id,type) {
         locationModify:function (event,type,id){
             var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
+            var deleteParams = $.param({ id: event.resourceId, type: type });
+            var deleteUrl = '<?= Url::to(['location/delete-availability']) ?>?' + deleteParams;
             var params = $.param({ resourceId: event.resourceId,type: type,startTime:startTime,endTime:endTime});
             $.ajax({
                 url    : '<?= Url::to(['location/modify']) ?>?' + params,
-                type   : 'POST',
+                type   : 'get',
                 dataType: 'json',
                 success: function(response)
                 {
                     if (response.status) {
                         $('#popup-modal').modal('show');
+                        if (response.canDelete) {
+                            $('#modal-delete').show();
+                            $('.modal-delete').attr('action', deleteUrl);
+                        }
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
                         $('#modal-content').html(response.data);
                         $(id).fullCalendar("refetchEvents");

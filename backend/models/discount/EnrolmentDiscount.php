@@ -35,7 +35,7 @@ class EnrolmentDiscount extends Model
     public function getDiscountModel()
     {
         $enrolmentDiscount = \common\models\discount\EnrolmentDiscount::find()
-                ->where(['enrolmentId' => $this->enrolmentId,
+                ->andWhere(['enrolmentId' => $this->enrolmentId,
                     'type' => $this->type])
                 ->one();
 

@@ -442,7 +442,7 @@ class EnrolmentController extends BaseController
         $model = $this->findModel($id);
         if ($model->course->program->isPrivate() && $model->canDeleted()) {
             $lessons = Lesson::find()
-                ->where(['courseId' => $model->courseId])
+                ->andWhere(['courseId' => $model->courseId])
                 ->isConfirmed()
                 ->notCanceled()
                 ->all();

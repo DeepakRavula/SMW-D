@@ -309,7 +309,7 @@ class UserContactController extends Controller
         $session = Yii::$app->session;
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = UserContact::find()->location($locationId)
-                ->where(['user_contact.id' => $id])
+                ->andWhere(['user_contact.id' => $id])
                 ->one();
         if ($model !== null) {
             return $model;

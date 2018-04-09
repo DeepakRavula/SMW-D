@@ -82,7 +82,7 @@ class LessonSearch extends Lesson
         }
         if (!empty($this->ids)) {
             $lessonQuery = Lesson::find()
-                    ->where(['id' => $this->ids]);
+                    ->andWhere(['id' => $this->ids]);
             $dataProvider = new ActiveDataProvider([
                 'query' => $lessonQuery,
             ]);

@@ -33,7 +33,7 @@ class PaymentQuery extends ActiveQuery
      */
     public function openingBalance($invoice)
     {
-        $this->where(['payment.user_id' => $invoice->user_id])
+        $this->andWhere(['payment.user_id' => $invoice->user_id])
             ->andWhere(['like', 'payment.amount', '-']);
 
         return $this;

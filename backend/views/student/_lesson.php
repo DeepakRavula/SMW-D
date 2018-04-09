@@ -117,11 +117,11 @@ use yii\grid\GridView;
 <?php
     $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
     $minLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
+        ->andWhere(['locationId' => $locationId])
         ->orderBy(['fromTime' => SORT_ASC])
         ->one();
     $maxLocationAvailability = LocationAvailability::find()
-        ->where(['locationId' => $locationId])
+        ->andWhere(['locationId' => $locationId])
         ->orderBy(['toTime' => SORT_DESC])
         ->one();
     $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
