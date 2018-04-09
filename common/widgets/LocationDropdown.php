@@ -55,7 +55,7 @@ class LocationDropdown extends Dropdown
     public static function label($code)
     {
         if (self::$_labels === null) {
-            $locations = ArrayHelper::map(Location::find()->orderBy(['name' => SORT_ASC])->all(), 'slug', 'name');
+            $locations = ArrayHelper::map(Location::find()->all(), 'slug', 'name');
             self::$_labels = $locations;
         }
         return isset(self::$_labels[$code]) ? self::$_labels[$code] : null;
