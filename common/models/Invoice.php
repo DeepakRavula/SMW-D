@@ -377,12 +377,22 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function isExtraLessonProformaInvoice()
     {
-        return $this->lineItem->isExtraLesson();
+        if ($this->lineItem) {
+            $status = $this->lineItem->isExtraLesson();
+        } else {
+            $status = false;
+        }
+        return $status;
     }
 
     public function isGroupLessonProformaInvoice()
     {
-        return $this->lineItem->isGroupLesson();
+        if ($this->lineItem) {
+            $status = $this->lineItem->isGroupLesson();
+        } else {
+            $status = false;
+        }
+        return $status;
     }
 
     public function isProformaPaymentFrequencyApplicable()
