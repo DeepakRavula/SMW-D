@@ -36,14 +36,4 @@ if (!empty($positiveOpeningBalanceModel)) {
 		<dd><?= Yii::$app->formatter->asCurrency($amount); ?></dd>
 	</dl>
 	<?php LteBox::end() ?>
-<?php Modal::begin([
-    'header' => '<h4>Opening Balance</h4>',
-    'id' => 'ob-modal',
-]); ?>
-<?php
-echo $this->render('_form-opening-balance', [
-    'model' => new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]),
-    'userModel' => $model,
-])
-?>
-<?php Modal::end(); ?>
+

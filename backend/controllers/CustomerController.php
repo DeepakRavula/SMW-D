@@ -4,19 +4,14 @@ namespace backend\controllers;
 
 use common\models\Payment;
 use Yii;
+use yii\helpers\Url;
 use common\models\Location;
 use common\models\User;
-use common\models\Item;
-use common\models\Invoice;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\Student;
-use common\models\InvoiceLineItem;
-use common\models\ItemType;
-use common\models\PaymentMethod;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
-use Carbon\Carbon;
 use yii\filters\AccessControl;
 
 /**
@@ -35,7 +30,7 @@ class CustomerController extends UserController
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['merge'],
+                'only' => ['merge', 'add-opening-balance'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -58,15 +53,30 @@ class CustomerController extends UserController
         $model = $this->findModel($id);
         $paymentModel = new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]);
         $paymentModel->user_id = $model->id;
-        if ($paymentModel->load(Yii::$app->request->post())) {
-            $invoice = $paymentModel->addOpeningBalance();
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Invoice has been created successfully',
-            ]);
-
-            return $this->redirect(['invoice/view', 'id' => $invoice->id]);
+        $data       = $this->renderAjax('/user/customer/_form-opening-balance', [
+            'userModel' => $model,
+            'model' => $paymentModel
+        ]);
+        $post = Yii::$app->request->post();
+        if ($post) {
+            if ($paymentModel->load($post) && $paymentModel->validate()) {
+                $invoice = $paymentModel->addOpeningBalance();
+                $response = [
+                    'status' => true,
+                    'url' => Url::to(['invoice/view', 'id' => $invoice->id])
+                ];
+            } else {
+                $response = [
+                    'status' => false
+                ];
+            }
+        } else {
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
         }
+        return $response;
     }
 
     protected function findModel($id)

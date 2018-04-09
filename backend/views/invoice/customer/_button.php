@@ -4,6 +4,7 @@ use yii\helpers\Url;
 use common\models\User;
 
 ?>
+<?php if (!$model->isOpeningBalance()) : ?>
 <i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i>
 <ul class="dropdown-menu dropdown-menu-right">
 	<?php if (empty($model->user)) : ?>
@@ -15,3 +16,4 @@ use common\models\User;
 		<li><a class="add-walkin" href="#">Edit Walk-in...</a></li>
 	<?php endif;?>
 </ul>
+<?php endif;?>

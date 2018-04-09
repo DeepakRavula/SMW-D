@@ -64,7 +64,7 @@ class Payment extends ActiveRecord
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
-            [['amount'], 'validateNegativeBalance'],
+            [['amount'], 'validateNegativeBalance', 'except' => self::SCENARIO_OPENING_BALANCE],
             [['amount'], 'validateNegativeBalanceOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'number'],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old',

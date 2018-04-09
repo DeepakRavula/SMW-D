@@ -526,15 +526,24 @@ $(document).ready(function(){
         $('#user-edit-modal').modal('show');
         return false;
     });
-	$(document).on('click', '.ob-cancel', function () {
-        $('#ob-modal').modal('hide');
+
+    $(document).off('click', '.ob-add-btn').on('click', '.ob-add-btn', function () {
+        $.ajax({
+            url    : '<?= Url::to(['customer/add-opening-balance', 'id' => $model->id]); ?>',
+            type   : 'get',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal .modal-dialog').css({'width': '300px'});
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Opening Balance</h4>');
+                    $('#modal-content').html(response.data);
+                }
+            }
+        });
         return false;
     });
-	$(document).on('click', '.ob-add-btn', function () {
-        $('#ob-modal').modal('show');
-        return false;
-    });
-	$(document).on('click', '.customer-discount-cancel', function () {
+    $(document).on('click', '.customer-discount-cancel', function () {
         $('#customer-discount-edit-modal').modal('hide');
         return false;
     });
