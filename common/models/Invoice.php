@@ -633,13 +633,11 @@ class Invoice extends \yii\db\ActiveRecord
                 $this->createProformaPaymentFrequency();
             }
             $existingSubtotal = $this->subTotal;
-            if (empty($this->lineItems) || (!$this->isLessonCredit())) {
-                $this->subTotal = $this->netSubtotal;
-                if (!$this->isTaxAdjusted) {
-                    $this->tax      = empty($this->lineItemTax) ? 0.0 : $this->lineItemTax;
-                }
-                $this->total    = $this->subTotal + $this->tax;
+            $this->subTotal = $this->netSubtotal;
+            if (!$this->isTaxAdjusted) {
+                $this->tax      = empty($this->lineItemTax) ? 0.0 : $this->lineItemTax;
             }
+            $this->total    = $this->subTotal + $this->tax;
             if ((float) $existingSubtotal === 0.0) {
                 $this->trigger(self::EVENT_GENERATE);
             }
