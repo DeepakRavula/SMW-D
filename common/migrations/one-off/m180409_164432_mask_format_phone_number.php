@@ -13,32 +13,19 @@ class m180409_164432_mask_format_phone_number extends Migration
     public function safeUp()
     {
 	$phoneNumbers = UserPhone::find()->all();
-	foreach($phoneNumbers as $phoneNumber) {
-		$phone_number = $phoneNumber->number;
-		//print_r($phone_number[3]);die();
-		//$slength = strlen($phone_number);
-		if($phone_number[3] == "-") {
-		$new = preg_replace("/[^A-Za-z0-9]/", "", $phone_number);
-//		print_r($new);die();
-		
-//		print_r($new);
-		if(is_numeric($phone_number) && is_numeric($new)) {
-			$newPhoneNumber = substr_replace($phone_number,"(",0).substr_replace($phone_number,")",3)." ".substr_replace(substr($phone_number,3),"-",3).substr($phone_number,6);
-			$phoneNumber->number = $newPhoneNumber;
-			$phoneNumber->save();
+	foreach ($phoneNumbers as $phoneNumber) {
+			if ($phoneNumber->number[3] == "-") {
+				$phone_number = preg_replace("/[^A-Za-z0-9]/", "", $phoneNumber->number);
+			} else {
+				$phone_number = $phoneNumber->number;
+			}
+			if (is_numeric($phone_number)) {
+				$newPhoneNumber = substr_replace($phone_number, "(", 0) . substr_replace($phone_number, ")", 3) . " " . substr_replace(substr($phone_number, 3), "-", 3) . substr($phone_number, 6);
+				$phoneNumber->number = $newPhoneNumber;
+				$phoneNumber->save();
+			}
 		}
-		}
-//		if($phone_number[3] == "-")// || $phone_number[3] == "-" || $phone_number[7] == "-"))
-//		 {
-//		$new = preg_replace("/[^A-Za-z0-9]/", "", $phone_number);
-//		print_r($new);die();
-//		//print_r($phone_number);die();
-//		$newPhoneNumber = substr_replace($phone_number,"(",0).substr_replace($phone_number,")",3)." ".substr_replace($phone_number,"-",4).substr($phone_number,6);
-////	$phoneNumber->number = $newPhoneNumber;
-////	$phoneNumber->save();
-//		}
 	}
-    }
 
     /**
      * {@inheritdoc}
