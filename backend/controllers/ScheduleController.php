@@ -98,8 +98,8 @@ class ScheduleController extends BaseController
 
         $date = new \DateTime();
         $locationAvailabilities = LocationAvailability::find()
-            ->andWhere(['locationId' => $locationId])
-            ->andWhere(['type' => LocationAvailability::TYPE_SCHEDULE_TIME])
+            ->location($locationId)
+            ->scheduleVisibilityHours()
             ->all();
         $locationAvailability = LocationAvailability::findOne(['locationId' => $locationId,'day' => $date->format('N'),'type' => LocationAvailability::TYPE_SCHEDULE_TIME]);
         if (empty($locationAvailability)) {
@@ -487,17 +487,23 @@ class ScheduleController extends BaseController
             ])
             ->all();
         $locationAvailability = LocationAvailability::find()
-            ->andWhere([
-                'locationId' => Location::findOne(['slug' => Yii::$app->location])->id,
-                'day' => $date->format('N')
-            ])
+            ->location(Location::findOne(['slug' => Yii::$app->location])->id)
+            ->day($date->format('N'))
+            ->scheduleVisibilityHours()
             ->one();
+        if (empty($locationAvailability)) {
+            $locationFromTime = LocationAvailability::DEFAULT_FROM_TIME;
+            $locationToTime = LocationAvailability::DEFAULT_TO_TIME;
+        } else {
+            $locationFromTime = $locationAvailability->fromTime;
+            $locationToTime = $locationAvailability->toTime;
+        }
         $events = [];
         foreach ($classroomUnavailabilities as $classroomUnavailability) {
-            list($fromTime['hours'], $fromTime['minutes'], $fromTime['seconds']) = explode(':', $locationAvailability->fromTime);
+            list($fromTime['hours'], $fromTime['minutes'], $fromTime['seconds']) = explode(':', $locationFromTime);
             $start = $date->setTime($fromTime['hours'], $fromTime['minutes'], $fromTime['seconds']);
             $end = clone $date;
-            list($toTime['hours'], $toTime['minutes'], $toTime['seconds']) = explode(':', $locationAvailability->toTime);
+            list($toTime['hours'], $toTime['minutes'], $toTime['seconds']) = explode(':', $locationToTime);
             $end = $end->setTime($toTime['hours'], $toTime['minutes'], $toTime['seconds']);
             $events[] = [
                 'resourceId' => $classroomUnavailability->classroomId,

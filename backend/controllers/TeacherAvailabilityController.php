@@ -222,15 +222,26 @@ class TeacherAvailabilityController extends BaseController
         }
         unset($lesson);
         $minLocationAvailability = LocationAvailability::find()
-            ->andWhere(['locationId' => $locationId])
+            ->location($locationId)
+            ->locationaAvailabilityHours()
             ->orderBy(['fromTime' => SORT_ASC])
             ->one();
         $maxLocationAvailability = LocationAvailability::find()
-            ->andWhere(['locationId' => $locationId])
+            ->location($locationId)
+            ->locationaAvailabilityHours()
             ->orderBy(['toTime' => SORT_DESC])
             ->one();
-        $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-        $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+        if (empty($minLocationAvailability)) {
+            $minTime = LocationAvailability::DEFAULT_FROM_TIME;
+        } else {
+            $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+        }
+        if (empty($maxLocationAvailability)) {
+            $maxTime = LocationAvailability::DEFAULT_TO_TIME;
+        } else {
+            $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+        }
+        
         return [
             'availableHours' => $availableHours,
             'events' => $events,

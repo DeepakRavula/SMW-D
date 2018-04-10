@@ -64,30 +64,45 @@ class ScheduleController extends Controller
         $locationId = $userLocation->location_id;
         $date = new \DateTime();
         $locationAvailability = LocationAvailability::find()
-                ->andWhere(['locationId' => $locationId])
-                ->andWhere(['day' => $date->format('N')])
-                ->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
+                ->location($locationId)
+                ->day($date->format('N'))
+                ->scheduleVisibilityHours()
 		->one();
-        $minAvailability = LocationAvailability::find()
-                ->andWhere(['locationId' => $locationId])
-		->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
-                ->orderBy(['fromTime' => SORT_ASC])
-                ->one();
-        $maxAvailability = LocationAvailability::find()
-                ->andWhere(['locationId' => $locationId])
-		->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
-		->orderBy(['toTime' => SORT_DESC])
-                ->one();
-	
-        $week_from_time = $minAvailability->fromTime;
-        $week_to_time   = $maxAvailability->toTime;
-        $from_time = $locationAvailability->fromTime;
-        $to_time = $locationAvailability->toTime;
+        if (empty($locationAvailability)) {
+            $minTime = LocationAvailability::DEFAULT_FROM_TIME;
+        } else {
+            $minTime = (new \DateTime($locationAvailability->fromTime))->format('H:i:s');
+        }
+        if (empty($locationAvailability)) {
+            $maxTime = LocationAvailability::DEFAULT_TO_TIME;
+        } else {
+            $maxTime = (new \DateTime($locationAvailability->toTime))->format('H:i:s');
+        }
+        $maxLocationAvailability = LocationAvailability::find()
+            ->location($locationId)
+            ->scheduleVisibilityHours()
+            ->orderBy(['toTime' => SORT_DESC])
+            ->one();
+        $minLocationAvailability = LocationAvailability::find()
+            ->location($locationId)
+            ->scheduleVisibilityHours()
+            ->orderBy(['fromTime' => SORT_ASC])
+            ->one();
+        if (empty($minLocationAvailability)) {
+            $weekMinTime = LocationAvailability::DEFAULT_FROM_TIME;
+        } else {
+            $weekMinTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+        }
+        if (empty($maxLocationAvailability)) {
+            $weekMaxTime = LocationAvailability::DEFAULT_TO_TIME;
+        } else {
+            $weekMaxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+        }
         return $this->render('index', [
-            'from_time'                => $from_time,
-            'to_time'                  => $to_time,
-	    'week_from_time'	       => $week_from_time,
-	    'week_to_time'	       => $week_to_time,
+            'from_time'                => $minTime,
+            'to_time'                  => $maxTime,
+	    'week_from_time'	       => $weekMinTime,
+	    'week_to_time'	       => $weekMaxTime,
         ]);
     }
 
@@ -213,18 +228,28 @@ class ScheduleController extends Controller
             $calendarTime['from_time'] = $locationAvailability->fromTime;
             $calendarTime['to_time'] = $locationAvailability->toTime;
         } else {
-            $minAvailability = LocationAvailability::find()
-                ->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
-                ->andWhere(['locationId' => $locationId])
-                ->orderBy(['fromTime' => SORT_ASC])
-                ->one();
-            $maxAvailability = LocationAvailability::find()
-                ->andWhere(['type' => LocationAvailability::TYPE_OPERATION_TIME])
-                ->andWhere(['locationId' => $locationId])
+            $maxLocationAvailability = LocationAvailability::find()
+                ->location($locationId)
+                ->scheduleVisibilityHours()
                 ->orderBy(['toTime' => SORT_DESC])
                 ->one();
-            $calendarTime['from_time'] = $minAvailability->fromTime;
-            $calendarTime['to_time'] = $maxAvailability->toTime;
+            $minLocationAvailability = LocationAvailability::find()
+                ->location($locationId)
+                ->scheduleVisibilityHours()
+                ->orderBy(['fromTime' => SORT_ASC])
+                ->one();
+            if (empty($minLocationAvailability)) {
+                $weekMinTime = LocationAvailability::DEFAULT_FROM_TIME;
+            } else {
+                $weekMinTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+            }
+            if (empty($maxLocationAvailability)) {
+                $weekMaxTime = LocationAvailability::DEFAULT_TO_TIME;
+            } else {
+                $weekMaxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+            }
+            $calendarTime['from_time'] = $weekMinTime;
+            $calendarTime['to_time'] = $weekMaxTime;
         }
 	return $calendarTime;
     }

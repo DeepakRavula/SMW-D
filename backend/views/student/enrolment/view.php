@@ -1,9 +1,6 @@
 <?php
 
-use yii\helpers\Url;
-use yii\helpers\Html;
 use yii\bootstrap\Modal;
-use common\models\LocationAvailability;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use common\models\Course;
@@ -34,19 +31,7 @@ use common\models\discount\EnrolmentDiscount;
    		<?php LteBox::end() ?> 
     </div>
     <?php \yii\widgets\Pjax::end(); ?>
-<?php
-    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-    $minLocationAvailability = LocationAvailability::find()
-        ->andWhere(['locationId' => $locationId])
-        ->orderBy(['fromTime' => SORT_ASC])
-        ->one();
-    $maxLocationAvailability = LocationAvailability::find()
-        ->andWhere(['locationId' => $locationId])
-        ->orderBy(['toTime' => SORT_DESC])
-        ->one();
-    $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-    $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-?>
+
 <?php
     Modal::begin([
         'header' => '<h4 class="m-0">Delete Enrolment Preview</h4>',

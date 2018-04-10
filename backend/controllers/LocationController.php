@@ -121,8 +121,10 @@ class LocationController extends BaseController
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
         $model    = LocationAvailability::find()
-                       ->andWhere(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
-                       ->one();
+                        ->location($location->id)
+                        ->day($resourceId)
+                        ->type($type)
+                        ->one();
         if (empty($model)) { 
              $model=new LocationAvailability;
              $model->locationId=$location->id;
@@ -176,7 +178,8 @@ class LocationController extends BaseController
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
         $availabilities= LocationAvailability::find()
-                ->andWhere(['locationId' => $location->id ,'type' => $type])
+                ->location($location->id)
+                ->type($type)
                 ->all();
         $events = [];
         foreach ($availabilities as $availability) {
@@ -229,8 +232,10 @@ class LocationController extends BaseController
           
            $location = Location::findOne(['slug' => Yii::$app->location]);
            $model    = LocationAvailability::find()
-                       ->andWhere(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
-                       ->one();
+                        ->location($location->id)
+                        ->day($resourceId)
+                        ->type($type)
+                        ->one();
            
          if (empty($model)) { 
              $model=new LocationAvailability;
@@ -300,8 +305,10 @@ class LocationController extends BaseController
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
         if (($model = LocationAvailability::find()
-                       ->andWhere(['locationId' => $location->id, 'day' => $id,'type' => $type])
-                       ->one()) !== null) {
+                        ->location($location->id)
+                        ->day($id)
+                        ->type($type)
+                        ->one()) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -314,8 +321,9 @@ class LocationController extends BaseController
         LocationAvailability::deleteAll(['locationId' => $location->id,
             'type' => LocationAvailability::TYPE_SCHEDULE_TIME]);
         $locationAvailabilities = LocationAvailability::find()
-                       ->andWhere(['locationId' => $location->id, 'type' => LocationAvailability::TYPE_OPERATION_TIME])
-                       ->all();
+                        ->location($location->id)
+                        ->locationaAvailabilityHours()
+                        ->all();
         foreach ($locationAvailabilities as $locationAvailability) {
             $model = clone $locationAvailability;
             $model->isNewRecord = true;

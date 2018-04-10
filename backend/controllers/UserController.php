@@ -441,16 +441,26 @@ class UserController extends BaseController
         $model = $this->findModel($id);
         $request = Yii::$app->request;
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $locationAvailabilityMinTime = LocationAvailability::find()
-            ->andWhere(['locationId' => $locationId])
+        $minLocationAvailability = LocationAvailability::find()
+            ->location($locationId)
+            ->locationaAvailabilityHours()
             ->orderBy(['fromTime' => SORT_ASC])
             ->one();
-        $locationAvailabilityMaxTime = LocationAvailability::find()
-            ->andWhere(['locationId' => $locationId])
+        $maxLocationAvailability = LocationAvailability::find()
+            ->location($locationId)
+            ->locationaAvailabilityHours()
             ->orderBy(['toTime' => SORT_DESC])
             ->one();
-        $minTime                     = $locationAvailabilityMinTime->fromTime;
-        $maxTime                     = $locationAvailabilityMaxTime->toTime;
+        if (empty($minLocationAvailability)) {
+            $minTime = LocationAvailability::DEFAULT_FROM_TIME;
+        } else {
+            $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+        }
+        if (empty($maxLocationAvailability)) {
+            $maxTime = LocationAvailability::DEFAULT_TO_TIME;
+        } else {
+            $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+        }
         $searchModel = new UserSearch();
         $searchModel->accountView = false;
         $db = $searchModel->search(Yii::$app->request->queryParams);

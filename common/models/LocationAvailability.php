@@ -27,6 +27,11 @@ class LocationAvailability extends \yii\db\ActiveRecord
         return 'location_availability';
     }
 
+    public static function find()
+    {
+        return new \common\models\query\LocationAvailabilityQuery(get_called_class());
+    }
+
     /**
      * @inheritdoc
      */
