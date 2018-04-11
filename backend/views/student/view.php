@@ -582,9 +582,21 @@ $(document).on('click', '.evaluation-delete', function () {
             });
             return false;
         });
-		$(document).on('click', '.student-profile-edit-button', function () {
-        	$('#student-profile-modal .modal-dialog').css({'width': '400px'});
+	$(document).on('click', '.student-profile-edit-button', function () {
+                 $.ajax({
+                url : '<?= Url::to(['student/update', 'id' => $model->id, 'userModel' =>$model->customer]); ?>',
+                type: 'post',
+                dataType: "json",
+                data: $(this).serialize(),
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#student-profile-content').html(response.data);
 			$('#student-profile-modal').modal('show');
+                    }
+                }
+                });
 			return false;
 		});
 		$(document).on('click', '.student-profile-cancel-button', function () {
