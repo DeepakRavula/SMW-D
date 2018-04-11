@@ -99,7 +99,8 @@ class StudentQuery extends ActiveQuery
 
         $query = Student::find()
             ->notDeleted()
-            ->select(['loc_student.id', 'loc_student.first_name', 'loc_student.last_name'])->from(['loc_student' => $studentLocation])
+            ->select(['loc_student.id', 'loc_student.first_name', 'loc_student.last_name'])
+            ->from(['loc_student' => $studentLocation])
             ->leftJoin(['enrolled_student' => $enrolledStudents], 'loc_student.id = enrolled_student.id')
             ->andWhere(['enrolled_student.id' => null]);
 

@@ -1,5 +1,5 @@
 <?php
-use common\models\LocationAvailability;
+
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
 use kartik\time\TimePicker;
@@ -96,149 +96,35 @@ use common\models\Location;
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div id="error" style="display:none;" class="alert-danger alert fade in"></div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div id="lesson-edit-calendar">
-                <div id="loadingspinner" class="spinner" style="" >
-                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-                    <span class="sr-only">Loading...</span>
-                </div>  
-            </div>
+            <div id="lesson-edit-calendar"></div>
         </div>
     </div>
         <?php ActiveForm::end(); ?>
 </div>
-<?php
-    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-    $minLocationAvailability = LocationAvailability::find()
-        ->location($locationId)
-        ->locationaAvailabilityHours()
-        ->orderBy(['fromTime' => SORT_ASC])
-        ->one();
-    $maxLocationAvailability = LocationAvailability::find()
-        ->location($locationId)
-        ->locationaAvailabilityHours()
-        ->orderBy(['toTime' => SORT_DESC])
-        ->one();
-    if (empty($minLocationAvailability)) {
-        $minTime = LocationAvailability::DEFAULT_FROM_TIME;
-    } else {
-        $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-    }
-    if (empty($maxLocationAvailability)) {
-        $maxTime = LocationAvailability::DEFAULT_TO_TIME;
-    } else {
-        $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-    }
-?>
 
 <script type="text/javascript">
-    var calendar = {
-        load: function (params, availableHours, date) {
-            $('#lesson-edit-calendar').fullCalendar('destroy');
-            $('#lesson-edit-calendar').fullCalendar({
-                schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-                defaultDate: date,
-                firstDay : 1,
-                nowIndicator: true,
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right:''
-                },
-                height: 500,
-                allDaySlot: false,
-                slotDuration: '00:15:00',
-                titleFormat: 'DD-MMM-YYYY, dddd',
-                defaultView: 'agendaWeek',
-                minTime: "<?php echo $minTime; ?>",
-                maxTime: "<?php echo $maxTime; ?>",
-                selectConstraint: {
-                    start: '00:01', // a start time (10am in this example)
-                    end: '24:00', // an end time (6pm in this example)
-                    dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-                },
-                eventConstraint: {
-                    start: '00:01', // a start time (10am in this example)
-                    end: '24:00', // an end time (6pm in this example)
-                    dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-                },
-                businessHours: availableHours,
-                overlapEvent: false,
-                overlapEventsSeparate: true,
-                events: {
-                    url: '<?= Url::to(['teacher-availability/show-lesson-event']) ?>?' + params,
-                    type: 'GET',
-                    error: function() {
-                        $("#calendar").fullCalendar("refetchEvents");
-                    }
-                },
-                select: function (start, end, allDay) {
-                    $('#lesson-date').val(moment(start).format('MMM D,YYYY hh:mm A')).trigger('change');
-                    $('#lesson-edit-calendar').fullCalendar('removeEvents', 'newEnrolment');
-                    var duration = $('#course-duration').val();
-                    var endtime = start.clone();
-                    var durationMinutes = moment.duration($.isEmptyObject(duration) ? '00:30' : duration).asMinutes();
-                    moment(endtime.add(durationMinutes, 'minutes'));
-
-                    $('#lesson-edit-calendar').fullCalendar('renderEvent',
-                            {
-                                id: 'newEnrolment',
-                                start: start,
-                                end: endtime,
-                                allDay: false
-                            },
-                            true // make the event "stick"
-                            );
-                    $('#lesson-edit-calendar').fullCalendar('unselect');
-                },
-                selectable: true,
-                selectHelper: true,
-                eventAfterAllRender: function () {
-                    $('.fc-short').removeClass('fc-short');
-                }
-            });
-        }
-    };
-    var refreshcalendar = {
-        refresh: function () {
-            var events, availableHours;
-            var teacherId = $('#lesson-teacherid').val();
-            var date = moment($('#lesson-date').val(), 'MMM D,YYYY h:mm A', true).format('YYYY-MM-DD');
-            $.ajax({
-                url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
-                type: 'get',
-                dataType: "json",
-                success: function (response)
-                {
-                    events = response.events;
-                    availableHours = response.availableHours;
-                    $('#loadingspinner').hide();
-                    var params = $.param({ teacherId: teacherId,
-                        lessonId: <?= $model->id; ?> });
-                    calendar.load(params,availableHours,date);
-                }
-            });
-        }
-    };
-    
-    $('#popup-modal').on('shown.bs.modal', function () {
-        refreshcalendar.refresh();
+    $(document).ready(function() {
+        var options = {
+            'renderId' : '#lesson-edit-calendar',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event', 'studentId' => $model->enrolment->studentId]) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
+            'changeId' : '#lesson-teacherid',
+            'durationId' : '#course-duration'
+        };
+        $.fn.calendarDayView(options);
     });
 
-    $(document).on('change', '#lesson-teacherid', function () {
-        refreshcalendar.refresh();
-    });
-    
-    $(document).on('click', '.glyphicon-remove', function () {
-        $('#lesson-date').val('').trigger('change');
-    });
-    
     $(document).on('modal-success', function(event, params) {
         window.location.href = params.url;
         return false;
+    });
+
+    $(document).on('week-view-calendar-select', function(event, params) {
+        $('#lesson-date').val(params.date).trigger('change');
+        return false;
+    });
+
+    $(document).on('click', '.glyphicon-remove', function () {
+        $('#lesson-date').val('').trigger('change');
     });
 </script>

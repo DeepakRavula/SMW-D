@@ -88,7 +88,7 @@ use common\models\Location;
     $(document).ready(function() {
         var options = {
             'renderId' : '#bulk-reschedule-calendar',
-            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event', 'studentId' => $model->studentId]) ?>',
             'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
             'changeId' : '#coursereschedule-teacherid',
             'durationId' : '#courseschedule-duration'

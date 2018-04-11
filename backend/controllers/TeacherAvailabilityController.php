@@ -355,24 +355,44 @@ class TeacherAvailabilityController extends BaseController
         return $events;
     }
 
-    public function actionShowLessonEvent($teacherId, $lessonId = null)
+    public function actionShowLessonEvent($studentId = null, $teacherId, $lessonId = null)
     {
-        $lessons = Lesson::find()
-            ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id])
-                    ->confirmed();
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $teacherLessons = Lesson::find()
+            ->joinWith(['course' => function ($query) use ($locationId) {
+                $query->location($locationId)
+                    ->confirmed()
+                    ->andWhere(['NOT', ['course.id' => null]]);
             }])
             ->andWhere(['lesson.teacherId' => $teacherId])
             ->scheduledOrRescheduled()
             ->isConfirmed()
             ->notDeleted()
-            ->andWhere(['NOT', ['lesson.id' => $lessonId]])
+            ->andWhere(['NOT', ['lesson.id' => $lessonId]]);
+        $lessons = Lesson::find()
+            ->joinWith(['course' => function ($query) use ($studentId, $locationId) {
+                $query->joinWith(['enrolments' => function ($query) use ($studentId) {
+                    if ($studentId) {
+                        $query->andWhere(['enrolment.studentId' => $studentId]);
+                    }
+                }]);
+                $query->location($locationId)
+                    ->confirmed()
+                    ->andWhere(['NOT', ['course.id' => null]]);
+            }])
+            ->scheduledOrRescheduled()
+            ->isConfirmed()
+            ->notDeleted()
+            ->union($teacherLessons)
             ->all();
         $events = [];
-        foreach ($lessons as &$lesson) {
+        foreach ($lessons as $lesson) {
             $toTime = new \DateTime($lesson->date);
             $length = explode(':', $lesson->fullDuration);
             $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
+            if (!empty($lesson->course)) {
+                print_r($lesson->id);die;
+            }
             if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
                 $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
             } else {

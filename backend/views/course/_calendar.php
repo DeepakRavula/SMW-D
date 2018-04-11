@@ -69,7 +69,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
                         },
                         minTime: '<?= $minTime; ?>',
                         maxTime: '<?= $maxTime; ?>',
-                        eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event']); ?>?teacherId=' + teacherId
+                        eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event']); ?>?studentId=null&teacherId=' + teacherId
                     };
                     $('#calendar-date-time-picker').calendarPicker(options);
                 }

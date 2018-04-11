@@ -1,5 +1,4 @@
 $.fn.calendarDayView = function(options) {
-    $("#fullcalendar-week-view").show();
     $("#fullcalendar-week-view").clone(true, true).contents().appendTo(options.renderId);
     $('#go-to-datepicker').datepicker({
         format: 'M-d-yyyy',
@@ -30,7 +29,7 @@ var calendar = {
             firstDay : 1,
             nowIndicator: true,
             header: {
-                left: 'prev,next today',
+                left: '',
                 center: 'title',
                 right: ''
             },
@@ -106,7 +105,7 @@ var calendar = {
                 calendarOptions.minTime = response.minTime;
                 calendarOptions.maxTime = response.maxTime;
                 calendarOptions.date = date;
-                calendarOptions.eventUrl = options.eventUrl + '?' + eventParams;
+                calendarOptions.eventUrl = options.eventUrl + '&' + eventParams;
                 calendar.showCalendar(calendarOptions);
             }
         });
