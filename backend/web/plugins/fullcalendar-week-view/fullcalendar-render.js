@@ -1,7 +1,7 @@
 $.fn.calendarDayView = function(options) {
     $("#fullcalendar-week-view").clone(true, true).contents().appendTo(options.renderId);
     $('#go-to-datepicker').datepicker({
-        format: 'M-d-yyyy',
+        format: 'M d, yyyy',
         autoclose: true,
         todayHighlight: true,
         orientation: "auto"
@@ -91,10 +91,10 @@ var calendar = {
     },
 
     render: function (options) {
-        var date = moment($('#fullcalendar-week-view-go-to-datepicker').val(), "MMM-DD-YYYY");
+        var date = $('#fullcalendar-week-view-go-to-datepicker').val();
         var teacherId = $(options.changeId).val();
         var params = $.param({ id: teacherId });
-        var eventParams = $.param({ teacherId: teacherId });
+        var eventParams = $.param({ teacherId: teacherId, date: date });
         $.ajax({
             url: options.availabilityUrl + '?' + params,
             type: 'get',
@@ -104,7 +104,7 @@ var calendar = {
                 calendarOptions.businessHours = response.availableHours;
                 calendarOptions.minTime = response.minTime;
                 calendarOptions.maxTime = response.maxTime;
-                calendarOptions.date = date;
+                calendarOptions.date = moment(date, "MMM-DD-YYYY");
                 calendarOptions.eventUrl = options.eventUrl + '&' + eventParams;
                 calendar.showCalendar(calendarOptions);
             }

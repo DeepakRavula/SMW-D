@@ -355,7 +355,7 @@ class TeacherAvailabilityController extends BaseController
         return $events;
     }
 
-    public function actionShowLessonEvent($studentId = null, $teacherId, $lessonId = null)
+    public function actionShowLessonEvent($studentId = null, $teacherId, $date = null, $lessonId = null)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $teacherLessons = Lesson::find()
@@ -369,7 +369,12 @@ class TeacherAvailabilityController extends BaseController
             ->isConfirmed()
             ->notDeleted()
             ->andWhere(['NOT', ['lesson.id' => $lessonId]]);
-        $lessons = Lesson::find()
+        if ($date) {
+            $fromDate = (new \DateTime($date))->modify('Monday this week');
+            $toDate = (new \DateTime($date))->modify('Sunday this week');
+            $teacherLessons->between($fromDate, $toDate);
+        }
+        $lessonsQuery = Lesson::find()
             ->joinWith(['course' => function ($query) use ($studentId, $locationId) {
                 $query->joinWith(['enrolments' => function ($query) use ($studentId) {
                     if ($studentId) {
@@ -383,16 +388,17 @@ class TeacherAvailabilityController extends BaseController
             ->scheduledOrRescheduled()
             ->isConfirmed()
             ->notDeleted()
-            ->union($teacherLessons)
-            ->all();
+            ->union($teacherLessons);
+        if ($date) {
+            $lessonsQuery->between($fromDate, $toDate);
+        }
+        $lessons = $lessonsQuery->all();
         $events = [];
         foreach ($lessons as $lesson) {
+            $lesson = Lesson::findOne($lesson->id);
             $toTime = new \DateTime($lesson->date);
             $length = explode(':', $lesson->fullDuration);
             $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
-            if (!empty($lesson->course)) {
-                print_r($lesson->id);die;
-            }
             if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
                 $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
             } else {
