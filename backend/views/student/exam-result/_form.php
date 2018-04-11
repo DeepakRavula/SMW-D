@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use kartik\date\DatePicker;
+use yii\jui\DatePicker;
 use yii\helpers\ArrayHelper;
 use common\models\User;
 use common\models\Program;
@@ -43,16 +43,16 @@ if ($model->isNewRecord) {
 ]); ?>
 <div class="row">
 	<div class="col-md-6">
-		<?=  $form->field($model, 'date')->widget(DatePicker::classname(), [
-                'options' => [
-                    'value' => !empty($model->date) ? Yii::$app->formatter->asDate($model->date) : Yii::$app->formatter->asDate(new \DateTime()),
-           ],
-            'type' => DatePicker::TYPE_COMPONENT_APPEND,
-            'pluginOptions' => [
-                'autoclose' => true,
-                'format' => 'M d,yyyy',
-            ],
-          ]);
+		<?php  //$form->field($model, 'date')->widget(DatePicker::classname(), [
+//                'options' => [
+//                    'value' => !empty($model->date) ? Yii::$app->formatter->asDate($model->date) : Yii::$app->formatter->asDate(new \DateTime()),
+//           ],
+//            'type' => DatePicker::TYPE_COMPONENT_APPEND,
+//            'pluginOptions' => [
+//                'autoclose' => true,
+//                'format' => 'M d,yyyy',
+//            ],
+//          ]);
         ?>
     </div>
 	<div class="col-md-6">

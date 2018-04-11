@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Student;
 use yii\helpers\Url;
-
+use yii\jui\DatePicker;
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -30,7 +30,20 @@ use yii\helpers\Url;
             $model->birth_date = !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null;
         ?>
             <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true, 'value' => $customerName]) ?>
-            <?php echo $form->field($model, 'birth_date')->textInput()?>
+            <?php //echo $form->field($model, 'birth_date')->textInput()?>
+        <?=
+           $form->field($model, 'birth_date')->widget(DatePicker::className(), [
+              // 'name' => 'date_of_birth',
+               //'language' => 'en-GB',
+              'dateFormat' => 'php:d-m-Y',
+               'clientOptions' => [
+                   'changeMonth' => true,
+                   'yearRange' => '1500:3000',
+                   'changeYear' => true,
+               ],
+           ])->textInput(['placeholder' => 'Select Date']);
+
+           ?>
 				<?php if (!$model->isNewRecord) : ?>
 					<?php echo $form->field($model, 'status')->dropDownList(Student::statuses()) ?>
 				<?php endif; ?>
@@ -45,19 +58,4 @@ use yii\helpers\Url;
     <?php ActiveForm::end(); ?>
     </div>
 </div>
-<script>
-$(document).ready(function() {
-//$.fn.datepicker.noConflict();
-$('#student-birth_date').datepicker({
-   altField: '#student-birth_date',
-   altFormat: 'M d,yy',
-   changeMonth: true,
-   changeYear: true,
-   yearRange : '-70:today',
-   onChangeMonthYear:function(y, m, i){
-       var d = i.selectedDay;
-       $(this).datepicker('setDate', new Date(y, m-1, d));
-   }
-});
-});
-</script>
+

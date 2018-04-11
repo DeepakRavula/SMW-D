@@ -8,12 +8,12 @@ use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use common\models\Note;
 use kartik\select2\Select2Asset;
-use kartik\daterange\DateRangePickerAsset;
+use yii\jui\DatePicker;
 use yii\widgets\Pjax;
 use common\models\LocationAvailability;
 
 Select2Asset::register($this);
-DateRangePickerAsset::register($this);
+//DateRangePickerAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */

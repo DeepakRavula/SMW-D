@@ -144,6 +144,9 @@ class StudentController extends BaseController
         ]);
         if ($model->load(Yii::$app->request->post())){
             if($model->save()) {
+              $birthdate="Apr,12 2017";
+              $newbirthdate=new\DateTime($birthdate);
+              print_r($newbirthdate);die('coming');
             if ((int)$model->status === Student::STATUS_INACTIVE) {
                 return $this->redirect(['/student/index', 'StudentSearch[showAllStudents]' => false]);
             }
