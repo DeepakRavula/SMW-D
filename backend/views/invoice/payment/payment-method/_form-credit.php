@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 
@@ -15,19 +14,25 @@ use yii\helpers\Url;
         'action' => Url::to(['payment/credit-payment', 'id' => $invoice->id]),
         'enableClientValidation' => false,
         'enableAjaxValidation' => true,
-        'validationUrl' => Url::to(['payment/validate-apply-credit', 'id' => $invoice->id]),
+        'validationUrl' => Url::to(['payment/validate-apply-credit']),
     ]); ?>
- 	<div class="row">
+    <div class="row">
         <div class="col-xs-4">
-    		<?php echo $form->field($model, 'credit')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Available Credit')?>
+            <?= $form->field($model, 'credit')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])
+                ->label('Available Credit');
+            ?>
         </div>
         <div class="col-xs-4">
-   			<?php echo $form->field($model, 'amountNeeded')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Amount Needed') ?>
+            <?= $form->field($model, 'amountNeeded')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])
+                ->label('Amount Needed');
+            ?>
         </div>
-		<div class="col-xs-4">
-   			<?php echo $form->field($model, 'amount')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])->label('Amount To Apply') ?>
+        <div class="col-xs-4">
+            <?= $form->field($model, 'amount')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])
+                ->label('Amount To Apply');
+            ?>
         </div>
-	</div>
+    </div>
 	<?php echo $form->field($model, 'sourceId')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
 </div>

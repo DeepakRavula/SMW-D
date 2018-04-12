@@ -355,9 +355,11 @@ class TeacherAvailabilityController extends BaseController
         return $events;
     }
 
-    public function actionShowLessonEvent($studentId = null, $teacherId, $date = null, $lessonId = null)
+    public function actionShowLessonEvent($studentId = null, $teacherId, $date, $lessonId = null)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $fromDate = (new \DateTime($date))->modify('Monday this week');
+        $toDate = (new \DateTime($date))->modify('Sunday this week');
         $teacherLessons = Lesson::find()
             ->joinWith(['course' => function ($query) use ($locationId) {
                 $query->location($locationId)
@@ -368,13 +370,9 @@ class TeacherAvailabilityController extends BaseController
             ->scheduledOrRescheduled()
             ->isConfirmed()
             ->notDeleted()
-            ->andWhere(['NOT', ['lesson.id' => $lessonId]]);
-        if ($date) {
-            $fromDate = (new \DateTime($date))->modify('Monday this week');
-            $toDate = (new \DateTime($date))->modify('Sunday this week');
-            $teacherLessons->between($fromDate, $toDate);
-        }
-        $lessonsQuery = Lesson::find()
+            ->andWhere(['NOT', ['lesson.id' => $lessonId]])
+            ->between($fromDate, $toDate);
+        $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) use ($studentId, $locationId) {
                 $query->joinWith(['enrolments' => function ($query) use ($studentId) {
                     if ($studentId) {
@@ -388,11 +386,9 @@ class TeacherAvailabilityController extends BaseController
             ->scheduledOrRescheduled()
             ->isConfirmed()
             ->notDeleted()
-            ->union($teacherLessons);
-        if ($date) {
-            $lessonsQuery->between($fromDate, $toDate);
-        }
-        $lessons = $lessonsQuery->all();
+            ->union($teacherLessons)
+            ->between($fromDate, $toDate)
+            ->all();
         $events = [];
         foreach ($lessons as $lesson) {
             $lesson = Lesson::findOne($lesson->id);
