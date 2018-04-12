@@ -22,11 +22,7 @@ class UserSearch extends User
     public $lastname;
     public $firstname;
     public $query;
-    public $showAllCustomers;
-    public $showAllTeachers;
-    public $showAllAdministrators;
-    public $showAllStaffMembers;
-    public $showAllOwners;
+    public $showAll;
     private $email;
     public $phone;
     
@@ -56,7 +52,7 @@ class UserSearch extends User
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at', 'accountView'], 'integer'],
             [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname',
-                'lastname', 'query','phone','showAllCustomers', 'showAllTeachers','showAllAdministrators','showAllOwners','showAllStaffMembers','accountView'], 'safe'],
+                'lastname', 'query','phone','showAll','accountView'], 'safe'],
         ];
     }
 
@@ -140,7 +136,7 @@ class UserSearch extends User
         }
 
         if ($this->role_name === USER::ROLE_CUSTOMER) {
-            if (!$this->showAllCustomers) {
+            if (!$this->showAll) {
                 $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
                 $query->joinWith(['student' => function ($query) use ($currentDate) {
                     $query->enrolled($currentDate);
@@ -150,7 +146,7 @@ class UserSearch extends User
            
         }
         if ($this->role_name === USER::ROLE_TEACHER) {
-            if (!$this->showAllTeachers) {
+            if (!$this->showAll) {
                 $query->joinWith(['userLocation' => function ($query) {
                     $query->joinWith('teacherAvailability');
                 }]);
@@ -158,7 +154,7 @@ class UserSearch extends User
             }
             
         }
-        if(!($this->showAllCustomers || $this->showAllTeachers||$this->showAllAdministrators || $this->showAllOwners || $this->showAllStaffMembers))
+        if(!($this->showAll))
         {
             $query->active();
           

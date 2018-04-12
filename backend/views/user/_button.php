@@ -20,21 +20,7 @@ $form = ActiveForm::begin([
 <div class="show-all-top">
 <div class="checkbox">
 <div id="show-all" class="checkbox-btn">
-	<?php if ($searchModel->role_name === User::ROLE_CUSTOMER):?>
-		<?= $form->field($searchModel, 'showAllCustomers')->checkbox(['data-pjax' => true]); ?>
-    <?php endif; ?>
-	 <?php if ($searchModel->role_name === User::ROLE_TEACHER):?>
-		<?= $form->field($searchModel, 'showAllTeachers')->checkbox(['data-pjax' => true]); ?>
-    <?php endif; ?>
-    <?php if ($searchModel->role_name === User::ROLE_ADMINISTRATOR):?>
-		<?= $form->field($searchModel, 'showAllAdministrators')->checkbox(['data-pjax' => true]); ?>
-    <?php endif; ?>
-    <?php if ($searchModel->role_name === User::ROLE_STAFFMEMBER):?>
-		<?= $form->field($searchModel, 'showAllStaffMembers')->checkbox(['data-pjax' => true]); ?>
-    <?php endif; ?>
-    <?php if ($searchModel->role_name === User::ROLE_OWNER):?>
-		<?= $form->field($searchModel, 'showAllOwners')->checkbox(['data-pjax' => true]); ?>
-    <?php endif; ?>
+		<?= $form->field($searchModel, 'showAll')->checkbox(['data-pjax' => true]); ?>
 </div>
 </div>
 </div>
