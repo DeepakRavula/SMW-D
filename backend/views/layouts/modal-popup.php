@@ -74,7 +74,7 @@ Modal::begin([
     $('#popup-modal').on('shown.bs.modal', function () {
 	    //alert("dmncdn");
 	    //alert($(this).parents("modal-form").attr("id").val());
-	$(this).find('input').first().focus()
+	$(this).find('input[type=text]').first().focus()
 	//$('#modal-form input[type=text]:enabled:first').focus();
         $('#modal-spinner').hide();
     });
