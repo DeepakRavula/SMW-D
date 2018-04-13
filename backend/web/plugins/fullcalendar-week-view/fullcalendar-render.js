@@ -1,14 +1,6 @@
 $.fn.calendarDayView = function(options) {
-    $("#fullcalendar-week-view").show();
-    $("#fullcalendar-week-view").clone(true, true).contents().appendTo(options.renderId);
-    $('#go-to-datepicker').datepicker({
-        format: 'M-d-yyyy',
-        autoclose: true,
-        todayHighlight: true,
-        orientation: "auto"
-    });
     $('#week-view-spinner').show();
-    calendar.render(options);
+    calendar.init(options);
     
     $(document).off('change', '#fullcalendar-week-view-go-to-datepicker').on('change', '#fullcalendar-week-view-go-to-datepicker', function () {
         $('#week-view-spinner').show();
@@ -92,22 +84,30 @@ var calendar = {
     },
 
     render: function (options) {
-        var date = moment($('#fullcalendar-week-view-go-to-datepicker').val(), "MMM-DD-YYYY");
+        var teacherId = $(options.changeId).val();
+        var dateValue = $('#fullcalendar-week-view-go-to-datepicker').val();
+        var date = moment(dateValue, "MMM-DD-YYYY");
+        var eventParams = $.param({ teacherId: teacherId });
+        var calendarOptions = options;
+        calendarOptions.date = date;
+        calendarOptions.eventUrl = options.eventUrl + '?' + eventParams;
+        calendar.showCalendar(calendarOptions);
+    },
+    
+    init: function(options) {
         var teacherId = $(options.changeId).val();
         var params = $.param({ id: teacherId });
-        var eventParams = $.param({ teacherId: teacherId });
         $.ajax({
             url: options.availabilityUrl + '?' + params,
             type: 'get',
             success: function (response)
             {
+                $(options.renderId).html(response.data);
                 var calendarOptions = options;
                 calendarOptions.businessHours = response.availableHours;
                 calendarOptions.minTime = response.minTime;
                 calendarOptions.maxTime = response.maxTime;
-                calendarOptions.date = date;
-                calendarOptions.eventUrl = options.eventUrl + '?' + eventParams;
-                calendar.showCalendar(calendarOptions);
+                calendar.render(calendarOptions);
             }
         });
     }

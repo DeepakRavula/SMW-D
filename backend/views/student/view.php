@@ -8,7 +8,6 @@ use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use common\models\Note;
 use kartik\select2\Select2Asset;
-use yii\jui\DatePicker;
 use yii\widgets\Pjax;
 use common\models\LocationAvailability;
 
@@ -29,8 +28,6 @@ $this->params['label'] = $this->render('_title', [
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
-<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
-<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <br>
 <div class="row">
 	<?php

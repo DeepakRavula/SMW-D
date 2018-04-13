@@ -2,8 +2,6 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\bootstrap\ActiveForm;
-use common\models\Course;
 use common\components\gridView\AdminLteGridView;
 use yii\bootstrap\Modal;
 
@@ -17,8 +15,6 @@ $this->params['show-all'] = $this->render('_button', [
     'searchModel' => $searchModel
 ]);
 ?>
-<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
-<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <div class="clearfix"></div>
     <div class="grid-row-open">  
     <?php yii\widgets\Pjax::begin(['id' => 'group-courses']) ?>
