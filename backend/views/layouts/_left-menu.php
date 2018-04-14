@@ -272,7 +272,7 @@ echo Menu::widget([
                     'label' => Yii::t('backend', 'Holidays'),
                     'icon' => '<i class="fa fa-car"></i>',
                     'url' => ['/holiday/index'],
-					'visible' => Yii::$app->user->can('manageHolidays'),
+		    'visible' => Yii::$app->user->can('manageHolidays'),
                 ],
                 [
                     'label' => Yii::t('backend', 'Email Template'),
@@ -283,6 +283,7 @@ echo Menu::widget([
                     'label' => Yii::t('backend', 'Test Email'),
                     'icon' => '<i class="fa fa-envelope"></i>',
                     'url' => ['/test-email/index'],
+		    'visible' => env('YII_ENV'),
                 ]
             ]
         ],
