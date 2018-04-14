@@ -141,29 +141,17 @@ $this->params['show-all'] = $this->render('_button', [
 
         ],
     ],
-    [
-        'class' => 'yii\grid\ActionColumn',
-        'contentOptions' => ['style' => 'width:50px'],
-        'template' => '{view}',
-        'buttons' => [
-            'view' => function ($url, $model) {
-                $url = Url::to(['enrolment/view', 'id' => $model->id]);
-                return Html::a('<i class="fa fa-eye"></i>', $url, [
-                        'title' => Yii::t('yii', 'View'),
-                        'class' => ['btn-primary btn-xs m-l-10']
-                ]);
-            },
-        ]
-    ],
+
     ]; ?>
 <?php
 echo KartikGridView::widget([
     'dataProvider' => $dataProvider,
     'summary' => false,
     'emptyText' => false,
-            'filterModel'=>$searchModel,
+    'filterModel'=>$searchModel,
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
+    'rowOptions' => ['class' => 'enrolment-index-click'],
     'columns' => $columns,
         'pjax'=>true,
     'pjaxSettings' => [
@@ -380,5 +368,10 @@ var enrolment = {
             var url = "<?php echo Url::to(['enrolment/index']); ?>?EnrolmentSearch[showAllEnrolments]=" + (showAllEnrolments | 0);
       $.pjax.reload({url:url,container:"#enrolment-listing",replace:false,  timeout: 4000});  //Reload GridView
         });
+   $(document).on('click', '.enrolment-index-click', function() {
+   var enrolmentId=$(this).attr('data-key');
+   var url = "<?=  Url::to(['enrolment/view']);?>?id=" + enrolmentId;
+   window.location.href=url;
+    });
     });
 </script>
