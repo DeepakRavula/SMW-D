@@ -21,12 +21,12 @@ use common\models\PaymentMethod;
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'options' => [
                     'id' => 'extra-lesson-date',
-                    'value' => Yii::$app->formatter->asDate((new \DateTime($model->date))->format('d-m-Y')),
+                    'value' => Yii::$app->formatter->asDate($model->date),
                 ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'dd-mm-yyyy',
+                    'format' => 'M d,yyyy',
                 ],
             ]);
             ?>
