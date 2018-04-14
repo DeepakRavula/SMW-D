@@ -668,7 +668,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
-            if ($this->isRescheduledByDate($changedAttributes) || $this->isRescheduledByTeacher($changedAttributes)) {
+            if ($this->isCanceled()) {
                 $this->trigger(self::EVENT_RESCHEDULE_ATTEMPTED);
             }
             if ($this->checkAsReschedule()) {
@@ -676,20 +676,20 @@ class Lesson extends \yii\db\ActiveRecord
                     $this->updateAttributes(['status' => self::STATUS_RESCHEDULED]);
                 }
             }
-			$options = [
-			   'cluster' => env('PUSHER_CLUSTER'),
-			   'encrypted' => true
-		    ];
-			$pusher = new \Pusher\Pusher(
-			   env('PUSHER_KEY'),
-			   env('PUSHER_SECRET'),
-			   env('PUSHER_APP_ID'),
-			   $options
-		   );
-			if(!isset($changedAttributes['isConfirmed']) && $this->isConfirmed) {
-				$pusher->trigger('lesson', 'lesson-edit', '');
-			}
-		}
+            $options = [
+                'cluster' => env('PUSHER_CLUSTER'),
+                'encrypted' => true
+            ];
+            $pusher = new \Pusher\Pusher(
+                env('PUSHER_KEY'),
+                env('PUSHER_SECRET'),
+                env('PUSHER_APP_ID'),
+                $options
+            );
+            if(!isset($changedAttributes['isConfirmed']) && $this->isConfirmed) {
+                $pusher->trigger('lesson', 'lesson-edit', '');
+            }
+        }
         
         return parent::afterSave($insert, $changedAttributes);
     }
