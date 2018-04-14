@@ -107,18 +107,11 @@ class LessonReschedule extends Model
         $rescheduleTeacher = (int)$teacherId !== (int)$oldLessonModel['teacherId'];
         if ($rescheduleDate) {
             $lessonModel->updateAttributes([
-                'date' => $fromDate->format('Y-m-d H:i:s'),
-                'status' => Lesson::STATUS_CANCELED,
+                'date' => $fromDate->format('Y-m-d H:i:s')
             ]);
-        } elseif ($rescheduleTeacher) {
+        }
+        if ($rescheduleTeacher) {
             $lessonModel->updateAttributes([
-                'status' => Lesson::STATUS_CANCELED,
-                'teacherId' => $oldLessonModel['teacherId']
-            ]);
-        } else {
-            $lessonModel->updateAttributes([
-                'status' => Lesson::STATUS_CANCELED,
-                'date' => $fromDate->format('Y-m-d H:i:s'),
                 'teacherId' => $oldLessonModel['teacherId']
             ]);
         }
@@ -130,10 +123,8 @@ class LessonReschedule extends Model
         $lessonModel->duration    = $duration;
         if ($rescheduleDate) {
             $lessonModel->date = $toDate->format('Y-m-d H:i:s');
-        } elseif ($rescheduleTeacher) {
-            $lessonModel->teacherId = $teacherId;
-        } else {
-            $lessonModel->date = $toDate->format('Y-m-d H:i:s');
+        }
+        if ($rescheduleTeacher) {
             $lessonModel->teacherId = $teacherId;
         }
 
