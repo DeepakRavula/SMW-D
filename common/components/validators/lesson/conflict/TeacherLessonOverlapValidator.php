@@ -19,11 +19,11 @@ class TeacherLessonOverlapValidator extends Validator
             $date->modify('-1 second');
             $lessonEndTime = $date->format('H:i:s');
             $teacherLessons = Lesson::find()
-                            ->teacherLessons($locationId, $model->teacherId)
+                ->teacherLessons($locationId, $model->teacherId)
                 ->andWhere(['NOT', ['lesson.id' => $model->id]])
                 ->isConfirmed()
                 ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
-                            ->all();
+                ->all();
             if ($teacherLessons) {
                 $this->addError($model, $attribute, 'Teacher occupied with another lesson');
             }

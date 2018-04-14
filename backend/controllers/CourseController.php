@@ -283,30 +283,45 @@ class CourseController extends BaseController
     public function actionTeachers()
     {
         $location_id = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $programId = $_POST['depdrop_parents'][0];
-        $qualifications = Qualification::find()
+        $programId = !empty($_POST['depdrop_parents'][0]) ? $_POST['depdrop_parents'][0] : null;
+        $program = Yii::$app->request->post('program');
+        $query = Qualification::find()
             ->joinWith(['teacher' => function ($query) use ($location_id) {
                 $query->joinWith(['userLocation' => function ($query) use ($location_id) {
                     $query->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = user_location.user_id')
-                    ->joinWith('teacherAvailability')
-                ->andWhere(['location_id' => $location_id]);
+                        ->joinWith('teacherAvailability')
+                        ->andWhere(['location_id' => $location_id]);
                 }]);
             }])
-            ->andWhere(['program_id' => $programId])
-                        ->notDeleted()
-            ->orderBy(['user_profile.firstname' => SORT_ASC])
-                ->all();
-        $result = [];
+            ->notDeleted()
+            ->groupBy('user_profile.user_id')
+            ->orderBy(['user_profile.firstname' => SORT_ASC]);
+        if ($programId) {
+            $query->andWhere(['program_id' => $programId]);
+            $value = 'name';
+        } else {
+            $value = 'text';
+            if ($program) {
+                $query->andWhere(['program_id' => $program]);
+            }
+        }
+        $qualifications = $query->all();
         $output = [];
-        foreach ($qualifications as  $qualification) {
+        foreach ($qualifications as  $i => $qualification) {
+            if ($i == 0 && !$programId) {
+                $output[] = [
+                    'id' => '',
+                    $value => ''
+                ];
+            }
             $output[] = [
                 'id' => $qualification->teacher->id,
-                'name' => $qualification->teacher->publicIdentity,
+                $value => $qualification->teacher->publicIdentity
             ];
         }
         $result = [
             'output' => $output,
-            'selected' => current($output)
+            'selected' => ''
         ];
 
         return $result;
