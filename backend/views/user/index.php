@@ -110,11 +110,12 @@ $(document).ready(function(){
     
    $("#usersearch-showall").on("change", function() {
       var showAll = $(this).is(":checked");
+      var role_name= "<?=$roleName?>";
       var firstname_search = $("input[name*='UserSearch[firstname]").val();
       var lastname_search  = $("input[name*='UserSearch[lastname]").val();
       var email_search     = $("input[name*='UserSearch[email]").val();
       var phone_search     = $("input[name*='UserSearch[phone]").val();
-      var params           = $.param({ 'UserSearch[showAll]': (showAll | 0),'UserSearch[firstname]':firstname_search,'UserSearch[lastname]':lastname_search,'UserSearch[email]':email_search,'UserSearch[phone]':phone_search });
+      var params           = $.param({'UserSearch[role_name]': role_name, 'UserSearch[showAll]': (showAll | 0),'UserSearch[firstname]':firstname_search,'UserSearch[lastname]':lastname_search,'UserSearch[email]':email_search,'UserSearch[phone]':phone_search });
      var url = "<?php echo Url::to(['user/index']); ?>?"+params;
       $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 6000});  //Reload GridView
     });
