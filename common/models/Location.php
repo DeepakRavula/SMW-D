@@ -185,7 +185,7 @@ class Location extends \yii\db\ActiveRecord
                 $query->joinWith(['course' => function ($query) use ($fromDate, $toDate) {
                     $query->joinWith(['location'])
                             ->confirmed()
-                            ->between($fromDate, $toDate);
+                            ->between((new \DateTime($fromDate)), (new \DateTime($toDate)));
                 }]);
             }])
             ->andWhere(['location.id' => $this->id])
