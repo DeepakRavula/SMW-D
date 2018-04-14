@@ -2,13 +2,10 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\jui\DatePicker;
 use yii\helpers\Url;
-use kartik\grid\GridView;
 use yii\bootstrap\Modal;
+use common\models\Location;
 use common\models\LocationAvailability;
-use common\models\Lesson;
-use common\models\Qualification;
 use kartik\daterange\DateRangePicker;
 
 ?>
@@ -66,17 +63,27 @@ use kartik\daterange\DateRangePicker;
 <div id="lesson-content"></div>
  <?php  Modal::end(); ?>
 <?php
-$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-$minLocationAvailability = LocationAvailability::find()
-    ->andWhere(['locationId' => $locationId])
-    ->orderBy(['fromTime' => SORT_ASC])
-    ->one();
-$maxLocationAvailability = LocationAvailability::find()
-    ->andWhere(['locationId' => $locationId])
-    ->orderBy(['toTime' => SORT_DESC])
-    ->one();
-$minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-$maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+    $minLocationAvailability = LocationAvailability::find()
+        ->location($locationId)
+        ->locationaAvailabilityHours()
+        ->orderBy(['fromTime' => SORT_ASC])
+        ->one();
+    $maxLocationAvailability = LocationAvailability::find()
+        ->location($locationId)
+        ->locationaAvailabilityHours()
+        ->orderBy(['toTime' => SORT_DESC])
+        ->one();
+    if (empty($minLocationAvailability)) {
+        $minTime = LocationAvailability::DEFAULT_FROM_TIME;
+    } else {
+        $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+    }
+    if (empty($maxLocationAvailability)) {
+        $maxTime = LocationAvailability::DEFAULT_TO_TIME;
+    } else {
+        $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+    }
 ?>
 
 <script>

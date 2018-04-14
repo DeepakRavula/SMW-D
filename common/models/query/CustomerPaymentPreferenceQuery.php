@@ -36,4 +36,12 @@ class CustomerPaymentPreferenceQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['dayOfMonth' => $currentDate->format('d')]);
     }
+
+    public function notExpired()
+    {
+        $currentDate = new \DateTime();
+        return $this->andWhere(['>=', 'customer_payment_preference.expiryDate', $currentDate->format('Y-m-d')])
+            ->orWhere(['customer_payment_preference.expiryDate' => null])
+            ->andWhere(['NOT', ['customer_payment_preference.id' => null]]);
+    }
 }

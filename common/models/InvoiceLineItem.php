@@ -68,21 +68,20 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         return [
             ['tax_status', 'required', 'on' => self::SCENARIO_EDIT],
-            [['unit', 'amount', 'item_id', 'description'],
-                'required', 'when' => function ($model, $attribute) {
-                    return (int) $model->item_type_id === ItemType::TYPE_MISC;
-                }],
-            [['amount'], 'number', 'when' => function ($model, $attribute) {
+            [['unit', 'item_id', 'description'], 'required', 'when' => function ($model) {
                 return (int) $model->item_type_id === ItemType::TYPE_MISC;
-            },
-            ],
+            }],
+            [['amount'], 'number', 'when' => function ($model) {
+                return (int) $model->item_type_id === ItemType::TYPE_MISC;
+            }],
             [['description'], 'trim'],
             ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
                 self::SCENARIO_NEGATIVE_VALUE_EDIT]],
-            [['unit'], 'number', 'when' => function ($model, $attribute) {
+            [['unit'], 'number', 'when' => function ($model) {
                 return (int) $model->item_type_id !== ItemType::TYPE_MISC;
             },
             ],
+            ['amount', 'default', 'value' => 0.0000],
             [['royaltyFree', 'invoice_id', 'item_id', 'item_type_id', 'tax_code',
                 'tax_status', 'tax_type', 'tax_rate', 'userName', 'cost', 'code', 'isDeleted'], 'safe'],
         ];
@@ -254,7 +253,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             'invoice_id' => 'Invoice ID',
             'lesson_id' => 'Lesson ID',
             'unit' => 'Quantity',
-            'amount' => 'Total',
+            'amount' => 'Amount',
             'discount' => 'Discount',
             'discountType' => 'Discount Type',
             'description' => 'Description',

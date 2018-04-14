@@ -182,16 +182,26 @@ echo KartikGridView::widget([
 <?php Modal::end(); ?>
 <?php
     $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-$minLocationAvailability = LocationAvailability::find()
-    ->andWhere(['locationId' => $locationId])
-    ->orderBy(['fromTime' => SORT_ASC])
-    ->one();
-$maxLocationAvailability = LocationAvailability::find()
-    ->andWhere(['locationId' => $locationId])
-    ->orderBy(['toTime' => SORT_DESC])
-    ->one();
-    $from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-    $to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+    $minLocationAvailability = LocationAvailability::find()
+            ->location($locationId)
+            ->locationaAvailabilityHours()
+            ->orderBy(['fromTime' => SORT_ASC])
+            ->one();
+    $maxLocationAvailability = LocationAvailability::find()
+        ->location($locationId)
+        ->locationaAvailabilityHours()
+        ->orderBy(['toTime' => SORT_DESC])
+        ->one();
+    if (empty($minLocationAvailability)) {
+        $minTime = LocationAvailability::DEFAULT_FROM_TIME;
+    } else {
+        $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
+    }
+    if (empty($maxLocationAvailability)) {
+        $maxTime = LocationAvailability::DEFAULT_TO_TIME;
+    } else {
+        $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
+    }
 ?>
 <script>
 $(document).ready(function(){
@@ -232,8 +242,8 @@ var enrolment = {
                 slotDuration: '00:15:00',
                 titleFormat: 'DD-MMM-YYYY, dddd',
                 defaultView: 'agendaWeek',
-                minTime: "<?php echo $from_time; ?>",
-                maxTime: "<?php echo $to_time; ?>",
+                minTime: "<?php echo $minTime; ?>",
+                maxTime: "<?php echo $maxTime; ?>",
                 selectConstraint: {
                     start: '00:01', // a start time (10am in this example)
                     end: '24:00', // an end time (6pm in this example)

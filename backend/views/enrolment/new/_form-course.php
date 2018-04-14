@@ -7,8 +7,6 @@ use common\models\PaymentFrequency;
 use yii\helpers\ArrayHelper;
 use kartik\time\TimePicker;
 use yii\helpers\Html;
-use common\models\LocationAvailability;
-use kartik\depdrop\DepDrop;
 
 ?>
 <div class="row user-create-form">
@@ -139,19 +137,7 @@ use kartik\depdrop\DepDrop;
 		<button class="step1-next btn btn-info pull-right" type="button" >Next</button>
     </div>
 </div>
-<?php
-$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-$minLocationAvailability = LocationAvailability::find()
-    ->andWhere(['locationId' => $locationId])
-    ->orderBy(['fromTime' => SORT_ASC])
-    ->one();
-$maxLocationAvailability = LocationAvailability::find()
-    ->andWhere(['locationId' => $locationId])
-    ->orderBy(['toTime' => SORT_DESC])
-    ->one();
-$from_time = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-$to_time = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-?>
+
 <script>
 	var enrolment = {
 		fetchProgram: function (duration, programId, paymentFrequencyDiscount, multiEnrolmentDiscount, programRate) {

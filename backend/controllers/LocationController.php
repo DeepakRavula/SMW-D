@@ -26,7 +26,7 @@ class LocationController extends BaseController
                'class' => ContentNegotiator::className(),
                'only' => ['create', 'update', 'edit-availability', 'add-availability', 
                    'render-events', 'check-availability', 'validate', 'modify',
-                   'validate-availability', 'delete-availability'
+                   'validate-availability', 'delete-availability', 'copy-availability'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -40,7 +40,8 @@ class LocationController extends BaseController
                         'allow' => true,
                         'actions' => ['update','view','validate-availability',
                             'add-availability', 'edit-availability', 'render-events',
-                            'check-availability','modify', 'validate', 'delete-availability'
+                            'check-availability','modify', 'validate', 'delete-availability',
+                            'copy-availability'
                         ],
                         'roles' => ['manageLocations']
                     ],
@@ -120,8 +121,10 @@ class LocationController extends BaseController
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
         $model    = LocationAvailability::find()
-                       ->andWhere(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
-                       ->one();
+                        ->location($location->id)
+                        ->day($resourceId)
+                        ->type($type)
+                        ->one();
         if (empty($model)) { 
              $model=new LocationAvailability;
              $model->locationId=$location->id;
@@ -175,7 +178,8 @@ class LocationController extends BaseController
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
         $availabilities= LocationAvailability::find()
-                ->andWhere(['locationId' => $location->id ,'type' => $type])
+                ->location($location->id)
+                ->type($type)
                 ->all();
         $events = [];
         foreach ($availabilities as $availability) {
@@ -228,8 +232,10 @@ class LocationController extends BaseController
           
            $location = Location::findOne(['slug' => Yii::$app->location]);
            $model    = LocationAvailability::find()
-                       ->andWhere(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
-                       ->one();
+                        ->location($location->id)
+                        ->day($resourceId)
+                        ->type($type)
+                        ->one();
            
          if (empty($model)) { 
              $model=new LocationAvailability;
@@ -299,11 +305,34 @@ class LocationController extends BaseController
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
         if (($model = LocationAvailability::find()
-                       ->andWhere(['locationId' => $location->id, 'day' => $id,'type' => $type])
-                       ->one()) !== null) {
+                        ->location($location->id)
+                        ->day($id)
+                        ->type($type)
+                        ->one()) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionCopyAvailability($id)
+    {
+        $location = Location::findOne($id);
+        LocationAvailability::deleteAll(['locationId' => $location->id,
+            'type' => LocationAvailability::TYPE_SCHEDULE_TIME]);
+        $locationAvailabilities = LocationAvailability::find()
+                        ->location($location->id)
+                        ->locationaAvailabilityHours()
+                        ->all();
+        foreach ($locationAvailabilities as $locationAvailability) {
+            $model = clone $locationAvailability;
+            $model->isNewRecord = true;
+            $model->id = null;
+            $model->type = LocationAvailability::TYPE_SCHEDULE_TIME;
+            $model->save();
+        }
+        return [
+            'status' => true
+        ];
     }
 }

@@ -288,8 +288,9 @@ class Invoice extends \yii\db\ActiveRecord
     {
         if (!$this->lineItem) {
             $status = false;
+        } else {
+            $status = (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
         }
-        $status = (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_LESSON_CREDIT;
         return $status;
     }
 
@@ -297,8 +298,9 @@ class Invoice extends \yii\db\ActiveRecord
     {
         if (!$this->lineItem) {
             $status = false;
+        } else {
+            $status = (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
         }
-        $status = (int) $this->lineItem->item_type_id === (int) ItemType::TYPE_OPENING_BALANCE;
         return $status;
     }
 
@@ -375,12 +377,22 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function isExtraLessonProformaInvoice()
     {
-        return $this->lineItem->isExtraLesson();
+        if ($this->lineItem) {
+            $status = $this->lineItem->isExtraLesson();
+        } else {
+            $status = false;
+        }
+        return $status;
     }
 
     public function isGroupLessonProformaInvoice()
     {
-        return $this->lineItem->isGroupLesson();
+        if ($this->lineItem) {
+            $status = $this->lineItem->isGroupLesson();
+        } else {
+            $status = false;
+        }
+        return $status;
     }
 
     public function isProformaPaymentFrequencyApplicable()
@@ -633,13 +645,11 @@ class Invoice extends \yii\db\ActiveRecord
                 $this->createProformaPaymentFrequency();
             }
             $existingSubtotal = $this->subTotal;
-            if (empty($this->lineItems) || (!$this->isOpeningBalance() && !$this->isLessonCredit())) {
-                $this->subTotal = $this->netSubtotal;
-                if (!$this->isTaxAdjusted) {
-                    $this->tax      = empty($this->lineItemTax) ? 0.0 : $this->lineItemTax;
-                }
-                $this->total    = $this->subTotal + $this->tax;
+            $this->subTotal = $this->netSubtotal;
+            if (!$this->isTaxAdjusted) {
+                $this->tax      = empty($this->lineItemTax) ? 0.0 : $this->lineItemTax;
             }
+            $this->total    = $this->subTotal + $this->tax;
             if ((float) $existingSubtotal === 0.0) {
                 $this->trigger(self::EVENT_GENERATE);
             }

@@ -88,11 +88,6 @@ $this->params['show-all'] = $this->render('_button', [
 </div>
 </div>
 <script>
-    $(document).on('modal-success', function(event, params) {
-        window.location.href = params.url;
-        return false;
-    });
-    
     $(document).on('click', '.add-user', function() {
         var params = $.param({ 'role_name': '<?= $searchModel->role_name ?>' });
         $.ajax({

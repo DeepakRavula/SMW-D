@@ -470,16 +470,28 @@ $this->params['action-button'] = $this->render('_action-button', [
     };
 
     $(document).on('modal-delete', function(event, params) {
-        $.pjax.reload({container: '#group-quali-list', replace:false,async: false, timeout: 6000});
-        $.pjax.reload({container: '#private-quali-list', replace:false,async: false, timeout: 6000});
+        if ($('#payment-preference-listing').length) {
+            $.pjax.reload({container: '#payment-preference-listing', replace:false, async: false, timeout: 6000});
+        }
+        if ($('#unavailability-list').length) {
+            $.pjax.reload({container: '#unavailability-list', replace:false, async: false, timeout: 6000});
+        }
+        $.pjax.reload({container: '#group-quali-list', replace:false, async: false, timeout: 6000});
+        $.pjax.reload({container: '#private-quali-list', replace:false, async: false, timeout: 6000});
     });
 
     $(document).on('modal-success', function(event, params) {
         if (params.url) {
             window.location.href = params.url;
         }
-        $.pjax.reload({container: '#group-quali-list', replace:false,async: false, timeout: 6000});
-        $.pjax.reload({container: '#private-quali-list', replace:false,async: false, timeout: 6000});
+        if ($('#unavailability-list').length) {
+            $.pjax.reload({container: '#unavailability-list', replace:false, async: false, timeout: 6000});
+        }
+        if ($('#payment-preference-listing').length) {
+            $.pjax.reload({container: '#payment-preference-listing', replace:false, async: false, timeout: 6000});
+        }
+        $.pjax.reload({container: '#group-quali-list', replace:false, async: false, timeout: 6000});
+        $.pjax.reload({container: '#private-quali-list', replace:false, async: false, timeout: 6000});
     });
 
 	$('.availability').click(function () {
@@ -526,15 +538,24 @@ $(document).ready(function(){
         $('#user-edit-modal').modal('show');
         return false;
     });
-	$(document).on('click', '.ob-cancel', function () {
-        $('#ob-modal').modal('hide');
+
+    $(document).off('click', '.ob-add-btn').on('click', '.ob-add-btn', function () {
+        $.ajax({
+            url    : '<?= Url::to(['customer/add-opening-balance', 'id' => $model->id]); ?>',
+            type   : 'get',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal .modal-dialog').css({'width': '300px'});
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Opening Balance</h4>');
+                    $('#modal-content').html(response.data);
+                }
+            }
+        });
         return false;
     });
-	$(document).on('click', '.ob-add-btn', function () {
-        $('#ob-modal').modal('show');
-        return false;
-    });
-	$(document).on('click', '.customer-discount-cancel', function () {
+    $(document).on('click', '.customer-discount-cancel', function () {
         $('#customer-discount-edit-modal').modal('hide');
         return false;
     });

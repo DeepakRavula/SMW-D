@@ -75,15 +75,7 @@ echo GridView::widget([
         return false;
     });
     
-    $(document).on('modal-success', function(event, params) {
-        $.pjax.reload({container: '#unavailability-list', timeout: 6000});
-    });
-
-    $(document).on('modal-delete', function(event, params) {
-        $.pjax.reload({container: '#unavailability-list', timeout: 6000});
-    });
-
-    $(document).on('click', '#unavailability-delete-button', function (e) {
+    $(document).off('click', '#unavailability-delete-button').on('click', '#unavailability-delete-button', function () {
         var unavailabilityId = $('#unavailability-list  tbody > tr').data('key');
         $.ajax({
             url    : '<?= Url::to(['teacher-unavailability/delete']); ?>?id=' + unavailabilityId,

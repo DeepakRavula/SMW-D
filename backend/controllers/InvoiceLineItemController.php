@@ -89,6 +89,9 @@ class InvoiceLineItemController extends BaseController
             if ($lineItem->invoice->isReversedInvoice()) {
                 $lineItem->setScenario(InvoiceLineItem::SCENARIO_NEGATIVE_VALUE_EDIT);
             }
+            if ($lineItem->isLessonCredit() || $lineItem->isOpeningBalance()) {
+                $lineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
+            }
             $data = $this->renderAjax('/invoice/line-item/_form', [
                 'model' => $lineItem
             ]);

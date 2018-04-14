@@ -20,7 +20,11 @@ trait Payable
     {
         if ($lesson->canInvoice()) {
             if (!$lesson->hasInvoice()) {
-                $invoice = $lesson->createPrivateLessonInvoice();
+                $lessonDate = new \DateTime($lesson->date);
+                $enrolmentDate = new \DateTime($lesson->enrolment->createdAt);
+                if ($enrolmentDate < $lessonDate) {
+                    $invoice = $lesson->createPrivateLessonInvoice();
+                }
             } elseif (!$lesson->invoice->isPaid()) {
                 if ($lesson->hasLessonCredit($lesson->enrolment->id)) {
                     $netPrice = $lesson->getLessonCreditAmount($lesson->enrolment->id);

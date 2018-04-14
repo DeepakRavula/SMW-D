@@ -62,7 +62,11 @@ class InvoiceController extends Controller
             }
         }
         foreach($privateLessons as $lesson) {
-            $lesson->createPrivateLessonInvoice();
+            $lessonDate = new \DateTime($lesson->date);
+            $enrolmentDate = new \DateTime($lesson->enrolment->createdAt);
+            if ($enrolmentDate < $lessonDate) {
+                $lesson->createPrivateLessonInvoice();
+            }
         }
 
         return true;
@@ -94,7 +98,8 @@ class InvoiceController extends Controller
         $currentDate = new \DateTime();
         $customers = User::find()
                 ->joinWith(['customerPaymentPreference' => function ($query) use ($currentDate) {
-                    $query->date($currentDate);
+                    $query->date($currentDate)
+                        ->notExpired();
                 }])
                 ->notDeleted()
                 ->all();
