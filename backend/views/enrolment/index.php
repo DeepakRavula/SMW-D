@@ -370,7 +370,13 @@ var enrolment = {
             return false;
         });
   $("#enrolmentsearch-showallenrolments").on("change", function() {
-            var showAllEnrolments = $(this).is(":checked");
+      var showAllEnrolments = $(this).is(":checked");
+      var program_search = $("input[name*='EnrolmentSearch[program]").val();
+      var student_search  = $("input[name*='EnrolmentSearch[student]").val();
+      var teacher_search     = $("input[name*='EnrolmentSearch[teacher]").val();
+      var params           = $.param({ 'EnrolmentSearch[showAllEnrolments]': (showAllEnrolments | 0),'EnrolmentSearch[program]':program_search,'EnrolmentSearch[student]':student_search,'EnrolmentSearch[teacher]':teacher_search});
+     var url = "<?php echo Url::to(['user/index']); ?>?"+params;
+      $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 6000});
             var url = "<?php echo Url::to(['enrolment/index']); ?>?EnrolmentSearch[showAllEnrolments]=" + (showAllEnrolments | 0);
       $.pjax.reload({url:url,container:"#enrolment-listing",replace:false,  timeout: 4000});  //Reload GridView
         });
