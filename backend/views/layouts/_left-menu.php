@@ -283,7 +283,7 @@ echo Menu::widget([
                     'label' => Yii::t('backend', 'Test Email'),
                     'icon' => '<i class="fa fa-envelope"></i>',
                     'url' => ['/test-email/index'],
-		    'visible' => env('YII_ENV'),
+		    'visible' => env('YII_ENV') === 'dev',
                 ]
             ]
         ],
