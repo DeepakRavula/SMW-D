@@ -69,3 +69,8 @@ $bundle = BackendAsset::register($this);
     </div><!-- ./wrapper -->
 
 <?php $this->endContent(); ?>
+    <script>
+        $(".filters").on("click", function() {
+        return false;
+    });
+    </script>
