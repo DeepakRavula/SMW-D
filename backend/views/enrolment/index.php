@@ -29,6 +29,7 @@ $this->params['show-all'] = $this->render('_button', [
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
 <script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<div class="grid-row-open">
 	<?php $columns = [
     [
         'attribute' => 'program',
@@ -151,7 +152,11 @@ echo KartikGridView::widget([
     'filterModel'=>$searchModel,
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
-    'rowOptions' => ['class' => 'enrolment-index-click'],
+     'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+        $url = Url::to(['enrolment/view', 'id' => $model->id]);
+        $data = ['data-url' => $url];
+        return $data;
+    },
     'columns' => $columns,
         'pjax'=>true,
     'pjaxSettings' => [
@@ -162,6 +167,7 @@ echo KartikGridView::widget([
     ],
 ]);
 ?>
+</div>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">New Enrolment</h4>',
     'id' => 'reverse-enrol-modal',
@@ -368,10 +374,5 @@ var enrolment = {
             var url = "<?php echo Url::to(['enrolment/index']); ?>?EnrolmentSearch[showAllEnrolments]=" + (showAllEnrolments | 0);
       $.pjax.reload({url:url,container:"#enrolment-listing",replace:false,  timeout: 4000});  //Reload GridView
         });
-   $(document).on('click', '.enrolment-index-click', function() {
-   var enrolmentId=$(this).attr('data-key');
-   var url = "<?=  Url::to(['enrolment/view']);?>?id=" + enrolmentId;
-   window.location.href=url;
-    });
     });
 </script>
