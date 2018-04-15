@@ -65,7 +65,9 @@ class LocationController extends BaseController
         $dataProvider = new ActiveDataProvider([
             'query' => Location::find(),
         ]);
-
+	$dataProvider->sort->defaultOrder = [
+            'name' => SORT_ASC,
+        ];
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);

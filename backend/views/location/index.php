@@ -26,10 +26,10 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
     ]); ?>
 <div id="location-content"></div>
  <?php  Modal::end(); ?>
+<div class="grid-row-open p-10">
 <?php Pjax::begin([
     'id' => 'location-listing',
 ]); ?>
-<div class="grid-row-open p-10">
     <?php echo AdminLteGridView::widget([
         'dataProvider' => $dataProvider,
         'summary' => false,
@@ -54,9 +54,8 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
             'email',
         ],
     ]); ?>
-
-</div>
 <?php Pjax::end(); ?>
+</div>
 <script>
 $(document).ready(function() {
 	$(document).on('click', '.add-location', function () {
