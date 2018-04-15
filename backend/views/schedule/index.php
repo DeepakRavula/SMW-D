@@ -4,7 +4,8 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\bootstrap\Tabs;
 use common\models\Holiday;
-use wbraganca\selectivity\SelectivityWidget;
+use kartik\select2\Select2;
+use common\models\User;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use yii\helpers\Html;
@@ -41,38 +42,53 @@ $this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class
 		</div>
 	</div>
         <div class="pull-right calendar-filter">
-		<span class="filter_by_calendar">Filter by</span>
-            <?=
-            SelectivityWidget::widget([
-                'name' => 'Program',
-                'id' => 'program-selector',
-                'pluginOptions' => [
-                    'items' => ArrayHelper::map(Program::find()->active()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
-                    'value' => null,
-                    'placeholder' => 'Program',
-                ],
-            ]);
-            ?>
-       
-        
-            <?=
-            SelectivityWidget::widget([
-                'name' => 'Teacher',
-                'id' => 'teacher-selector',
-                'pluginOptions' => [
-                    'items' => ArrayHelper::map($availableTeachersDetails, 'id', 'name'),
-                    'value' => null,
-                    'placeholder' => 'Teacher',
-                ],
-            ]);
-            ?>
+            <div class="row" style="width:600px">
+                <div class="col-md-2">
+                    <span class="filter_by_calendar">Filter by</span>
+                </div>
+                <div class="col-md-5">
+                    <?=
+                    Select2::widget([
+                        'name' => 'program',
+                        'data' => ArrayHelper::map(Program::find()
+                            ->active()
+                            ->orderBy(['name' => SORT_ASC])
+                            ->all(), 'id', 'name'),
+                        'options' => [
+                            'placeholder' => 'Program',
+                            'id' => 'program-selector'
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]);
+                    ?>
+                </div>
+                <div class="col-md-5">
+                    <?=
+                    Select2::widget([
+                        'name' => 'teacher',
+                        'data' => ArrayHelper::map(User::find()
+                            ->notDeleted()
+                            ->active()
+                            ->teachersInLocation($locationId)
+                            ->all(), 'id', 'publicIdentity'),
+                        'options' => [
+                            'placeholder' => 'Teacher',
+                            'id' => 'teacher-selector'
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]);
+                    ?>
+                </div>
+            </div>
        </div>
 <div class="nav-tabs-custom">
         <?php
 
-        $teacher = $this->render('_teacher-view', [
-            'availableTeachersDetails' => $availableTeachersDetails
-        ]);
+        $teacher = $this->render('_teacher-view');
 
         $classroom = $this->render('_classroom-view');
 
@@ -99,7 +115,6 @@ $this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class
 </div>
 
 <script type="text/javascript">
-var availableTeachersDetails = <?php echo Json::encode($availableTeachersDetails); ?>;
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
 $(document).ready(function() {
     $('#datepicker').datepicker ({
@@ -129,47 +144,38 @@ $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
         $('.calendar-filter').show();
     }
 });
-    
-function loadTeachers(program) {
-    var teachers = [];
-    if((program == 'undefined') || (program == null)) {
-        $.each( availableTeachersDetails, function( key, value ) {
-            value.text = value.name;
-            teachers.push(value);
-        });
-    }else {
-        $.each( availableTeachersDetails, function( key, value ) {
-            if ($.inArray(parseInt(program), value.programs) != -1) {
-                value.text= value.name;
-                teachers.push(value);
-            }
-        });
-    }
-    setTeachers(teachers);
-}
 
-function setTeachers(teachers){
-    $('#teacher-selector').selectivity('destroy');
-    $('#teacher-selector').selectivity({
-        items: teachers,
-        value: null,
-        placeholder: 'Select Teacher',
-        allowClear: true
+$(document).off('change', '#program-selector').on('change', '#program-selector', function(){
+    var data = {
+        program: $('#program-selector').val()
+    };
+    $.ajax({
+	url: '<?= Url::to(['course/teachers']); ?>',
+	type: 'post',
+	dataType: "json",
+        data: data,
+	success: function (response)
+	{
+            $("#teacher-selector").empty();
+            $("#teacher-selector").select2({
+                placeholder: 'Teacher',
+                allowClear: true,
+                data: response.output,
+                width: '100%',
+                theme: 'krajee'
+            });
+            var date = $('#calendar').fullCalendar('getDate');
+            refreshCalendar(moment(date));
+	}
     });
-}
-
-$(document).on('change', '#program-selector', function(e){
-    var date = $('#calendar').fullCalendar('getDate');
-    refreshCalendar(moment(date));
-    loadTeachers(e.value);
 });
-
-$(document).on('change', '#teacher-selector', function(){
+    
+$(document).off('change', '#teacher-selector').on('change', '#teacher-selector', function(){
     var date = $('#calendar').fullCalendar('getDate');
     refreshCalendar(moment(date));
 });
 
-$(document).on('change', '#datepicker', function(){
+$(document).off('change', '#datepicker').on('change', '#datepicker', function(){
     var date = $('#datepicker').datepicker("getDate");
     fetchHolidayName(moment(date));
     if ($('.nav-tabs .active').text() === 'Classroom View') {
@@ -263,11 +269,11 @@ function showclassroomCalendar(date) {
 
 function refreshCalendar(date, clearFilter) {
     if (clearFilter) {
-        var programId = '';
-        var teacherId = '';
+        var programId = null;
+        var teacherId = null;
     } else {
-        var programId = $('#program-selector').selectivity('value');
-        var teacherId = $('#teacher-selector').selectivity('value');
+        var programId = $('#program-selector').val();
+        var teacherId = $('#teacher-selector').val();
     }
     var params = $.param({ date: moment(date).format('YYYY-MM-DD'),
         programId: programId,

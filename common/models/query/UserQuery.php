@@ -53,6 +53,15 @@ class UserQuery extends ActiveQuery
         return $this;
     }
 
+    public function teachersInLocation($locationId)
+    {
+        return $this->joinWith(['userLocation ul' => function ($query) use ($locationId) {
+                $query->andWhere(['ul.location_id' => $locationId]);
+            }])
+            ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+            ->andWhere(['raa.item_name' => 'teacher']);
+    }
+
     public function customers($locationId)
     {
         $this->joinWith('userLocation ul')

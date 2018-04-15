@@ -15,7 +15,7 @@ use yii\filters\ContentNegotiator;
 use backend\models\search\InvoiceLineItemSearch;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
-
+use common\models\InvoiceLineItem;
 /**
  * ItemCategoryController implements the CRUD actions for ItemCategory model.
  */
@@ -43,7 +43,7 @@ class ItemCategoryController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'items', 'get-item-values', 'print'],
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'items', 'get-item-values', 'print','invoice-number'],
                         'roles' => ['manageItemCategory'],
                     ],
                 ],
@@ -253,5 +253,11 @@ class ItemCategoryController extends BaseController
                 'searchModel' => $searchModel,
         ]
         );
+    }
+    public function actionInvoiceNumber($lineItemId)
+    {
+       $invoiceLineItem= InvoiceLineItem::findOne(['id' => $lineItemId]);
+       $invoiceId=$invoiceLineItem->invoice->id;
+       return $invoiceId;
     }
 }
