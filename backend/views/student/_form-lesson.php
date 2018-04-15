@@ -92,30 +92,27 @@ use kartik\time\TimePicker;
             ?>
         </div>
         <div class="col-md-4 lesson-date">
-            <?php // echo $form->field($model, 'date')->textInput([
-               // 'readOnly' => true,
-                //'id' => 'extra-lesson-date',
-            //])?>
+            <?php echo $form->field($model, 'date')->textInput([
+               'readOnly' => true,
+                'id' => 'extra-lesson-date',
+            ])?>
         </div>
         
-<!--        <div class="col-md-12">
+        <div class="col-md-12">
             <div class="col-lg-2 pull-right">
-            <?php // echo '<label>Go to Date</label>'; ?>
-            <?php //echo DatePicker::widget([
-                    //'name' => 'selected-date',
-//                    'id' => 'extra-lesson-go-to-date',
-//                    'value' => Yii::$app->formatter->asDate((new DateTime())->format('d-m-Y')),
-//                    'type' => DatePicker::TYPE_INPUT,
-//                    'buttonOptions' => [
-//                        'removeButton' => true,
-//                    ],
-//                    'pluginOptions' => [
-//                        'autoclose' => true,
-//                        'format' => 'M dd,yyyy',
-//                        'todayHighlight' => true
-//                    ]
-            //]); ?>
-        </div>-->
+            <?php echo '<label>Go to Date</label>'; ?>
+            <?php echo DatePicker::widget([
+                    'name' => 'selected-date',
+                    'id' => 'extra-lesson-go-to-date',
+                    'value' => Yii::$app->formatter->asDate((new DateTime())->format('d-m-Y')),
+                    //'type' => DatePicker::TYPE_INPUT,
+                    'clientOptions' => [
+                        'changeMonth' => true,
+                    'yearRange' => '1500:3000',
+                    'changeYear' => true,
+                    ]
+            ]); ?>
+        </div>
             <div id="lesson-calendar">
                 <div id="spinner" class="spinner" style="" >
                     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>

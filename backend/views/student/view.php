@@ -184,10 +184,11 @@ $this->params['label'] = $this->render('_title', [
              
              if(teacherId!==null && teacherId!=="")
              {
-             var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+             var date = moment($('#course-startdate').val(), 'MMM DD,YYYY', true).format('YYYY-MM-DD');
 	     if (! moment(date).isValid()) {
                  var date = moment($('#course-startdate').val(), 'DD-MM-YYYY hh:mm A', true).format('YYYY-MM-DD');
              }
+
              $('#courseschedule-day').val(moment(date).format('dddd'));
  			
  			$('#enrolment-edit-modal .modal-dialog').css({'width': '1000px'});
@@ -208,6 +209,7 @@ $this->params['label'] = $this->render('_title', [
      };
      var enrolment = {
          refreshCalendar : function(availableHours, events, date){
+         alert(date);
              $('#enrolment-calendar').fullCalendar('destroy');
              $('#enrolment-calendar').fullCalendar({
              	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -241,7 +243,7 @@ $this->params['label'] = $this->render('_title', [
                  overlapEventsSeparate: true,
                  events: events,
                  select: function (start, end, allDay) {
-                     $('#course-startdate').val(moment(start).format('DD-MM-YYYY hh:mm A'));
+                     $('#course-startdate').val(moment(start).format('MMM DD,YYYY'));
                      $('#courseschedule-fromtime').val(moment(start).format('hh:mm A'));
                      $('#enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
  					$('#courseschedule-day').val(moment(start).format('dddd'));
