@@ -27,12 +27,11 @@ use yii\jui\DatePicker;
 <div class="col-md-4">
 	<?php
     echo $form->field($model, 'startDate')->widget(DatePicker::className(), [
-                'dateFormat' => 'M d, Y',
+                'dateFormat' => 'MMM dd,yyyy',
                 'clientOptions' => [
                     'changeMonth' => true,
                     'yearRange' => '1500:3000',
                     'changeYear' => true,
-                    'defaultDate' => date('Y-m-d'),
                 ],
             ])->textInput(['placeholder' => 'Select Date','value'=>date("M d,Y")]);
     ?>
