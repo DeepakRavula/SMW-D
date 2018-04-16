@@ -564,6 +564,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function getStatus()
     {
         $status = null;
+        
         switch ($this->status) {
             case self::STATUS_OWING:
                 $status = (int) $this->type === self::TYPE_INVOICE ? 'Owing' : 'Unpaid';
@@ -578,7 +579,9 @@ class Invoice extends \yii\db\ActiveRecord
                 $status = 'Cancel';
             break;
         }
-      
+        if ($this->isVoid) {
+            $status = 'Void';
+        }
         return $status;
     }
 
