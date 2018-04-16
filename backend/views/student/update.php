@@ -10,9 +10,9 @@ $this->params['breadcrumbs'][] = 'Edit';
 ?>
 <div class="student-update">
 
-    <?php echo $this->render('_form', [
-        'model' => $model,
-        'customer' => $model->customer,
-    ]) ?>
+    <?php // echo $this->render('_form', [
+        //'model' => $model,
+        //'customer' => $model->customer,
+    //]) ?>
 
 </div>

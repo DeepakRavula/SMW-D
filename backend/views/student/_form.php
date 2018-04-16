@@ -4,8 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use common\models\Student;
 use yii\helpers\Url;
-use kartik\date\DatePicker;
-
+use yii\jui\DatePicker;
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -31,17 +30,17 @@ use kartik\date\DatePicker;
             $model->birth_date = !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null;
         ?>
             <?php echo $form->field($model, 'last_name')->textInput(['maxlength' => true, 'value' => $customerName]) ?>
-            <?php echo $form->field($model, 'birth_date')->widget(DatePicker::classname(),
-					[
-                                            'options' => [
-							'value' => Yii::$app->formatter->asDate($model->birth_date),
-						],
-					'type' => DatePicker::TYPE_INPUT,
-					'pluginOptions' => [
-						'autoclose' => true,
-						'format' => 'M dd,yyyy'
-					]
-				]);?>
+            <?=
+            $form->field($model, 'birth_date')->widget(DatePicker::className(), [
+                'dateFormat' => 'php:M d, Y',
+                'clientOptions' => [
+                    'changeMonth' => true,
+                    'yearRange' => '1500:3000',
+                    'changeYear' => true,
+                ],
+            ])->textInput(['placeholder' => 'Select Date']);
+
+            ?>
 				<?php if (!$model->isNewRecord) : ?>
 					<?php echo $form->field($model, 'status')->dropDownList(Student::statuses()) ?>
 				<?php endif; ?>
@@ -56,4 +55,3 @@ use kartik\date\DatePicker;
     <?php ActiveForm::end(); ?>
     </div>
 </div>
-

@@ -3,10 +3,10 @@
 use yii\helpers\Url;
 use kartik\depdrop\DepDrop;
 use yii\helpers\Html;
-use kartik\date\DatePicker;
-use kartik\date\DatePickerAsset;
+use yii\jui\DatePicker;
+//use kartik\date\DatePickerAsset;
 
-DatePickerAsset::register($this);
+//DatePickerAsset::register($this);
 ?>
 <div class="row user-create-form">
 <div class="col-md-4">
@@ -26,16 +26,15 @@ DatePickerAsset::register($this);
 </div>
 <div class="col-md-4">
 	<?php
-    echo $form->field($model, 'startDate')->widget(DatePicker::classname(), [
-        'type' => DatePicker::TYPE_COMPONENT_APPEND,
-        'options' => [
-            'value' => (new \DateTime())->format('d-m-Y'),
-        ],
-        'pluginOptions' => [
-            'autoclose' => true,
-            'format' => 'dd-mm-yyyy',
-        ],
-    ]);
+    echo $form->field($model, 'startDate')->widget(DatePicker::className(), [
+                'dateFormat' => 'M d, Y',
+                'clientOptions' => [
+                    'changeMonth' => true,
+                    'yearRange' => '1500:3000',
+                    'changeYear' => true,
+                    'defaultDate' => date('Y-m-d'),
+                ],
+            ])->textInput(['placeholder' => 'Select Date','value'=>date("M d,Y")]);
     ?>
 </div>
 <div class="col-md-4">

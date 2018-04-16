@@ -66,10 +66,8 @@ Pjax::begin([
 Modal::begin([
     'header' => '<h4 class="m-0">Edit Student Profile</h4>',
     'id' => 'student-profile-modal',
-]);
-echo $this->render('_form', [
-    'model' => $model,
-    'customer' => $model->customer
-]);
-Modal::end();
+]);?>
+<div id="student-profile-content"></div>
+
+<?php Modal::end();
 ?>

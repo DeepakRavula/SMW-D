@@ -8,12 +8,11 @@ use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use common\models\Note;
 use kartik\select2\Select2Asset;
-use kartik\daterange\DateRangePickerAsset;
 use yii\widgets\Pjax;
 use common\models\LocationAvailability;
 
 Select2Asset::register($this);
-DateRangePickerAsset::register($this);
+//DateRangePickerAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -29,8 +28,6 @@ $this->params['label'] = $this->render('_title', [
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
-<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
-<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <br>
 <div class="row">
 	<?php
@@ -187,10 +184,11 @@ $this->params['label'] = $this->render('_title', [
              
              if(teacherId!==null && teacherId!=="")
              {
-             var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
+             var date = moment($('#course-startdate').val(), 'MMM DD,YYYY', true).format('YYYY-MM-DD');
 	     if (! moment(date).isValid()) {
                  var date = moment($('#course-startdate').val(), 'DD-MM-YYYY hh:mm A', true).format('YYYY-MM-DD');
              }
+
              $('#courseschedule-day').val(moment(date).format('dddd'));
  			
  			$('#enrolment-edit-modal .modal-dialog').css({'width': '1000px'});
@@ -211,6 +209,7 @@ $this->params['label'] = $this->render('_title', [
      };
      var enrolment = {
          refreshCalendar : function(availableHours, events, date){
+         alert(date);
              $('#enrolment-calendar').fullCalendar('destroy');
              $('#enrolment-calendar').fullCalendar({
              	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
@@ -244,7 +243,7 @@ $this->params['label'] = $this->render('_title', [
                  overlapEventsSeparate: true,
                  events: events,
                  select: function (start, end, allDay) {
-                     $('#course-startdate').val(moment(start).format('DD-MM-YYYY hh:mm A'));
+                     $('#course-startdate').val(moment(start).format('MMM DD,YYYY'));
                      $('#courseschedule-fromtime').val(moment(start).format('hh:mm A'));
                      $('#enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
  					$('#courseschedule-day').val(moment(start).format('dddd'));
@@ -582,9 +581,21 @@ $(document).on('click', '.evaluation-delete', function () {
             });
             return false;
         });
-		$(document).on('click', '.student-profile-edit-button', function () {
-        	$('#student-profile-modal .modal-dialog').css({'width': '400px'});
+	$(document).on('click', '.student-profile-edit-button', function () {
+                 $.ajax({
+                url : '<?= Url::to(['student/update', 'id' => $model->id, 'userModel' =>$model->customer]); ?>',
+                type: 'post',
+                dataType: "json",
+                data: $(this).serialize(),
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#student-profile-content').html(response.data);
 			$('#student-profile-modal').modal('show');
+                    }
+                }
+                });
 			return false;
 		});
 		$(document).on('click', '.student-profile-cancel-button', function () {

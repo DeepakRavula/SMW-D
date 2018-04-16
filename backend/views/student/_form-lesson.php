@@ -4,7 +4,7 @@ use kartik\select2\Select2;
 use common\models\User;
 use common\models\Location;
 use yii\bootstrap\ActiveForm;
-use kartik\date\DatePicker;
+use yii\jui\DatePicker;
 use kartik\depdrop\DepDrop;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
@@ -93,7 +93,7 @@ use kartik\time\TimePicker;
         </div>
         <div class="col-md-4 lesson-date">
             <?php echo $form->field($model, 'date')->textInput([
-                'readOnly' => true, 
+               'readOnly' => true,
                 'id' => 'extra-lesson-date',
             ])?>
         </div>
@@ -105,14 +105,11 @@ use kartik\time\TimePicker;
                     'name' => 'selected-date',
                     'id' => 'extra-lesson-go-to-date',
                     'value' => Yii::$app->formatter->asDate((new DateTime())->format('d-m-Y')),
-                    'type' => DatePicker::TYPE_INPUT,
-                    'buttonOptions' => [
-                        'removeButton' => true,
-                    ],
-                    'pluginOptions' => [
-                        'autoclose' => true,
-                        'format' => 'M dd,yyyy',
-                        'todayHighlight' => true
+                    //'type' => DatePicker::TYPE_INPUT,
+                    'clientOptions' => [
+                        'changeMonth' => true,
+                    'yearRange' => '1500:3000',
+                    'changeYear' => true,
                     ]
             ]); ?>
         </div>
