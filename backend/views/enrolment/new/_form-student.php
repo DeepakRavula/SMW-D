@@ -1,6 +1,6 @@
 <?php
 
-use kartik\date\DatePicker;
+use yii\jui\DatePicker;
 use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
@@ -26,17 +26,14 @@ use yii\helpers\Html;
         <label class="modal-customer-label">Birth Date</label>
     </div>
 	<div class="col-xs-7">
-	    <?php echo $form->field($model, 'birth_date')->widget(DatePicker::classname(),
-		[
-                   'options' => [
-			'value' => Yii::$app->formatter->asDate($model->birth_date),
-			],
-			'type' => DatePicker::TYPE_INPUT,
-			'pluginOptions' => [
-				'autoclose' => true,
-				'format' => 'M dd,yyyy'
-			]
-		]);?>
+	   <?php echo $form->field($model, 'birth_date')->widget(DatePicker::className(), [
+                'dateFormat' => 'php:M d, Y',
+                'clientOptions' => [
+                    'changeMonth' => true,
+                    'yearRange' => '1500:3000',
+                    'changeYear' => true,
+                ],
+            ])->textInput(['placeholder' => 'Select Date'])->label(false);?>
         </div>
 	<div class="clearfix"></div>
 	<div class="pull-right">

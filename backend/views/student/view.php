@@ -7,10 +7,8 @@ use yii\helpers\Url;
 use yii\bootstrap\Modal;
 use common\models\Note;
 use kartik\select2\Select2Asset;
-use kartik\daterange\DateRangePickerAsset;
 use yii\widgets\Pjax;
 Select2Asset::register($this);
-DateRangePickerAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */

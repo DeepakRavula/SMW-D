@@ -340,7 +340,7 @@ class EnrolmentController extends BaseController
             $student->customer_id = $user->id;
             $student->status = Student::STATUS_DRAFT;
             $student->save();
-            
+
             //save course
             $dayList = Course::getWeekdaysList();
             $course->locationId = $locationId;

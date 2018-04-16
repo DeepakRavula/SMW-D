@@ -41,8 +41,6 @@ $this->params['action-button'] = $this->render('_action-button', [
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
-<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
-<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <div id="discount-warning" style="display:none;" class="alert-warning alert fade in"></div>
 <div id="lesson-conflict" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>

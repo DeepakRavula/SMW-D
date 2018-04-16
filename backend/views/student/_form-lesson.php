@@ -92,7 +92,7 @@ use kartik\time\TimePicker;
         </div>
         <div class="col-md-3 lesson-date">
             <?php echo $form->field($model, 'date')->textInput([
-                'readOnly' => true, 
+               'readOnly' => true,
                 'id' => 'extra-lesson-date',
             ])?>
         </div>

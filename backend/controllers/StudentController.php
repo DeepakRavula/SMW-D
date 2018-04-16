@@ -137,22 +137,33 @@ class StudentController extends BaseController
         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
         $oldAttributes = $model->getOldAttributes();
         $model->on(Student::EVENT_AFTER_UPDATE, [new StudentLog(), 'edit'], ['loggedUser' => $loggedUser, 'oldAttributes' => $oldAttributes]);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $userModel=$model->customer;
+         $data = $this->renderAjax('_form', [
+            'model' => $model,
+	    'customer'=>$userModel,
+        ]);
+        if ($model->load(Yii::$app->request->post())){
+            if($model->save()) {
             if ((int)$model->status === Student::STATUS_INACTIVE) {
                 return $this->redirect(['/student/index', 'StudentSearch[showAllStudents]' => false]);
-            } else {
-                return  [
-                    'status' => true,
-                ];
             }
-        } else {
+            return['status'=>true,];
+            }
+            else {
             return  [
                 'status' => false,
                 'errors' => ActiveForm::validate($model),
             ];
         }
-    }
-
+        }
+            else {
+                return  [
+                    'status' => true,
+                    'data' =>$data,
+                ];
+            }
+        } 
+    
     public function actionEnrolment($id)
     {
         $model = $this->findModel($id);

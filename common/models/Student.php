@@ -51,7 +51,7 @@ class Student extends \yii\db\ActiveRecord
             [['first_name', 'last_name'], 'string', 'min' => 1, 'max' => 30],
             [['first_name', 'last_name'], 'trim'],
             [[ 'status'], 'integer'],
-            [['birth_date'], 'date', 'format' => 'php:M d,Y', 'message' => 'Date format shoule be in M d,Y format',
+            [['birth_date'], 'date', 'format' => 'M d,Y', 'message' => 'Date format shoule be in M d,Y format',
                 'except' => [self::SCENARIO_MERGE, self::SCENARIO_CUSTOMER_MERGE]],
             [['customer_id', 'isDeleted'], 'safe'],
         ];
