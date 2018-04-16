@@ -391,7 +391,7 @@ class Course extends \yii\db\ActiveRecord
         $enrolment->courseId           = $this->id;
         $enrolment->studentId          = $this->studentId;
         $enrolment->isConfirmed        = true;
-        $enrolment->paymentFrequencyId = false;
+        $enrolment->paymentFrequencyId = 0;
         $enrolment->save();
         return $enrolment;
     }
