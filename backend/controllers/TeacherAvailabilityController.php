@@ -35,8 +35,9 @@ class TeacherAvailabilityController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['modify', 'delete', 'events',
-                                    'show-lesson-event'],
+                'only' => ['modify', 'delete', 'events', 'show-lesson-event',
+                    'availability-with-events'
+                ],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -47,8 +48,8 @@ class TeacherAvailabilityController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'modify', 'events', 'show-lesson-event',
-						'availability-with-events'],
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 
+                            'modify', 'events', 'show-lesson-event', 'availability-with-events'],
                         'roles' => ['manageTeachers'],
                     ],
                 ],
@@ -170,16 +171,15 @@ class TeacherAvailabilityController extends BaseController
 
     public function actionAvailabilityWithEvents($id)
     {
-        $response = Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $teacherAvailabilities = TeacherAvailability::find()
-        ->joinWith(['userLocation' => function ($query) use ($id) {
-            $query->joinWith(['userProfile' => function ($query) use ($id) {
-                $query->andWhere(['user_profile.user_id' => $id]);
-            }]);
-        }])
-        ->all();
+            ->joinWith(['userLocation' => function ($query) use ($id) {
+                $query->joinWith(['userProfile' => function ($query) use ($id) {
+                    $query->andWhere(['user_profile.user_id' => $id]);
+                }]);
+            }])
+            ->all();
+        $data =  $this->renderAjax('/layouts/datepicker');
         $availableHours = [];
         foreach ($teacherAvailabilities as $teacherAvailability) {
             $availableHours[] = [
@@ -190,37 +190,6 @@ class TeacherAvailabilityController extends BaseController
                 'rendering' => 'background',
             ];
         }
-
-        $lessons = [];
-        $lessons = Lesson::find()
-            ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id])
-                        ->confirmed();
-            }])
-            ->andWhere(['lesson.teacherId' => $id])
-            ->scheduledOrRescheduled()
-            ->isConfirmed()
-            ->notDeleted()
-            ->all();
-        $events = [];
-        foreach ($lessons as &$lesson) {
-            $toTime = new \DateTime($lesson->date);
-            $length = explode(':', $lesson->fullDuration);
-            $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
-            if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
-                $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';
-            } else {
-                $title = $lesson->enrolment->student->fullName.' ( '.$lesson->course->program->name.' ) ';
-            }
-            $class = $lesson->class;
-            $events[] = [
-                'start' => $lesson->date,
-                'end' => $toTime->format('Y-m-d H:i:s'),
-                'className' => $class,
-                'title' => $title,
-            ];
-        }
-        unset($lesson);
         $minLocationAvailability = LocationAvailability::find()
             ->location($locationId)
             ->locationaAvailabilityHours()
@@ -244,9 +213,9 @@ class TeacherAvailabilityController extends BaseController
         
         return [
             'availableHours' => $availableHours,
-            'events' => $events,
             'minTime' => $minTime,
-            'maxTime' => $maxTime
+            'maxTime' => $maxTime,
+            'data' => $data
         ];
     }
     public function actionModify($id, $teacherId)

@@ -1,6 +1,5 @@
 <?php
 
-use common\models\Location;
 use yii\bootstrap\Tabs;
 use common\models\Vacation;
 use common\models\ExamResult;
@@ -10,8 +9,6 @@ use common\models\Note;
 use kartik\select2\Select2Asset;
 use kartik\daterange\DateRangePickerAsset;
 use yii\widgets\Pjax;
-use common\models\LocationAvailability;
-
 Select2Asset::register($this);
 DateRangePickerAsset::register($this);
 
@@ -24,13 +21,6 @@ $this->params['label'] = $this->render('_title', [
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
-<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
-<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <br>
 <div class="row">
 	<?php
@@ -153,466 +143,373 @@ $this->params['label'] = $this->render('_title', [
     'id' => 'student-merge-modal',
 ]); ?>
 <div id="student-merge-content"></div>
-<?php Modal::end(); ?>
-<?php
-    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-    $minLocationAvailability = LocationAvailability::find()
-        ->location($locationId)
-        ->locationaAvailabilityHours()
-        ->orderBy(['fromTime' => SORT_ASC])
-        ->one();
-    $maxLocationAvailability = LocationAvailability::find()
-        ->location($locationId)
-        ->locationaAvailabilityHours()
-        ->orderBy(['toTime' => SORT_DESC])
-        ->one();
-    if (empty($minLocationAvailability)) {
-        $minTime = LocationAvailability::DEFAULT_FROM_TIME;
-    } else {
-        $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-    }
-    if (empty($maxLocationAvailability)) {
-        $maxTime = LocationAvailability::DEFAULT_TO_TIME;
-    } else {
-        $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-    }
+<?php Modal::end(); 
     $customerDiscount = $model->customer->customerDiscount->value ?? null;
 ?>
+
 <script>
     $(document).ready(function () {
-	var calendar = {
-         refresh : function(){
-             var events, availableHours;
-             var teacherId = $('#course-teacherid').val();
-             
-             if(teacherId!==null && teacherId!=="")
-             {
-             var date = moment($('#course-startdate').val(), 'DD-MM-YYYY', true).format('YYYY-MM-DD');
-	     if (! moment(date).isValid()) {
-                 var date = moment($('#course-startdate').val(), 'DD-MM-YYYY hh:mm A', true).format('YYYY-MM-DD');
-             }
-             $('#courseschedule-day').val(moment(date).format('dddd'));
- 			
- 			$('#enrolment-edit-modal .modal-dialog').css({'width': '1000px'});
- 			$.ajax({
- 				url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
- 				type: 'get',
- 				dataType: "json",
- 				success: function (response)
- 				{
- 					events = response.events;
- 					availableHours = response.availableHours;
-                                        $('#private-enrolment-spinner').hide();
- 					enrolment.refreshCalendar(availableHours, events, date);
- 				}
- 			});
+        $('#step-2, #step-1').hide();
+    });
+    
+    $(document).on('click', '#add-private-enrol', function () {
+        var customerDiscount = '<?= $customerDiscount;?>';
+        $('#step-1').show();
+        $('#step-2').hide();
+        $('#customer-discount').val(customerDiscount);
+        $('#private-enrol-modal').modal('show');
+        $('#private-enrol-modal .modal-dialog').css({'width': '600px'});
+        return false;
+    });
+
+    $(document).on('click', '.step1-next', function () {
+	if($('#course-programid').val() == "") {
+            $('#enrolment-form').yiiActiveForm('updateAttribute', 'course-programid', ["Program cannot be blank"]);
+        } else {
+            $('#step-1').hide();
+            $('#step-2').show();
+            $('#courseschedule-day').val('');
+            var options = {
+                'renderId' : '#enrolment-create-calendar',
+                'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event', 'studentId' => $model->id]) ?>',
+                'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
+                'changeId' : '#course-teacherid',
+                'durationId' : '#courseschedule-duration'
+            };
+            $.fn.calendarDayView(options);
+            $('#private-enrol-modal .modal-dialog').css({'width': '1000px'});
+        }
+        return false;
+    });
+    
+    $(document).on('click', '.step2-back', function () {
+        $('#step-1').show();
+        $('#step-2').hide();
+        $('#private-enrol-modal .modal-dialog').css({'width': '600px'});
+        return false;
+    });
+
+    $(document).on('click', '#add-group-enrol', function () {
+        $.ajax({
+            url    : $(this).attr('href'),
+            type: 'get',
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $('#group-enrol-modal .modal-body').html(response.data);
+                    $('#group-enrol-modal').modal('show');
+                    $('#group-enrol-modal .modal-dialog').css({'width': '800px'});
+                } 
             }
-         }
-     };
-     var enrolment = {
-         refreshCalendar : function(availableHours, events, date){
-             $('#enrolment-calendar').fullCalendar('destroy');
-             $('#enrolment-calendar').fullCalendar({
-             	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-                 defaultDate: date,
-				firstDay : 1,
-	            nowIndicator: true,
-                 header: {
-                     left: 'prev,next today',
-                     center: 'title',
-                     right:'',
-                     },
-                 allDaySlot: false,
- 				height:500,
-                 slotDuration: '00:15:00',
-                 titleFormat: 'DD-MMM-YYYY, dddd',
-                 defaultView: 'agendaWeek',
-                 minTime: "<?php echo $minTime; ?>",
-                 maxTime: "<?php echo $maxTime; ?>",
-                 selectConstraint: {
-                    start: '00:01', // a start time (10am in this example)
-                    end: '24:00', // an end time (6pm in this example)
-                    dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-                },
-                eventConstraint: {
-                    start: '00:01', // a start time (10am in this example)
-                    end: '24:00', // an end time (6pm in this example)
-                    dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-                },
-                 businessHours: availableHours,
-                 overlapEvent: false,
-                 overlapEventsSeparate: true,
-                 events: events,
-                 select: function (start, end, allDay) {
-                     $('#course-startdate').val(moment(start).format('DD-MM-YYYY hh:mm A'));
-                     $('#courseschedule-fromtime').val(moment(start).format('hh:mm A'));
-                     $('#enrolment-calendar').fullCalendar('removeEvents', 'newEnrolment');
- 					$('#courseschedule-day').val(moment(start).format('dddd'));
- 					var endtime = start.clone();
-                 	var durationMinutes = moment.duration($('#courseschedule-duration').val()).asMinutes();
-                 	moment(endtime.add(durationMinutes, 'minutes'));
-                     $('#enrolment-calendar').fullCalendar('renderEvent',
-                         {
-                             id: 'newEnrolment',
-                             start: start,
-                             end: endtime,
-                             allDay: false
-                         },
-                     true // make the event "stick"
-                     );
-                     $('#enrolment-calendar').fullCalendar('unselect');
-                 },
-                 eventAfterAllRender: function (view) {
-                     $('.fc-short').removeClass('fc-short');
-                 },
-                 selectable: true,
-                 selectHelper: true,
-             });
-         }
-     };
- 	$(document).on('change', '#course-startdate', function () {
- 		calendar.refresh();
- 	});
-     $(document).on('change', '#course-teacherid', function() {
- 		$('#courseschedule-day').val('');
- 		calendar.refresh();
- 		return false;
- 	});
-		$('#step-2, #step-1').hide();
-        $(document).on('click', '#add-private-enrol', function () {
-			var customerDiscount = '<?= $customerDiscount;?>';
-			$('#step-1').show();
-			$('#step-2').hide();
-			$('#customer-discount').val(customerDiscount);
-            $('#private-enrol-modal').modal('show');
- 			$('#private-enrol-modal .modal-dialog').css({'width': '600px'});
-            return false;
-		});
-		$(document).on('click', '.step1-next', function () {
-			if($('#course-programid').val() == "") {
-				$('#enrolment-form').yiiActiveForm('updateAttribute', 'course-programid', ["Program cannot be blank"]);
-			} else {
-				$('#step-1').hide();
-				$('#step-2').show();
-				$('#courseschedule-day').val('');
-                                calendar.refresh();
-				$('#private-enrol-modal .modal-dialog').css({'width': '1000px'});
-				return false;
-			}
-		});
-		$(document).on('click', '.step2-back', function () {
-			$('#step-1').show();
-			$('#step-2').hide();
- 			$('#private-enrol-modal .modal-dialog').css({'width': '600px'});
-            return false;
-		});
-		$(document).on('click', '#add-group-enrol', function () {
-			$.ajax({
-                url    : $(this).attr('href'),
-                type: 'get',
-                dataType: "json",
-                success: function (response)
-                {
-                    if (response.status)
-                    {
-                        $('#group-enrol-modal .modal-body').html(response.data);
-                        $('#group-enrol-modal').modal('show');
-        				$('#group-enrol-modal .modal-dialog').css({'width': '800px'});
-                    } 
-                }
-            });
-            return false;
-		});
-		$(document).on('change keyup paste', '#course-name', function (e) {
-			var courseName = $(this).val();
-			var id = '<?= $model->id;?>';
-			var params = $.param({'studentId' : id, 'courseName' : courseName});
-			$.ajax({
-				url    : '<?= Url::to(['course/fetch-group']); ?>?' + params,
-				type   : 'get',
-				dataType: 'json',
-				success: function(response)
-				{
-				   if(response.status) {
-					    $('#group-enrol-modal .modal-body').html(response.data);
-				   }
-				}
-			});
-			return false;
-		});
-		$(document).on('click', '.private-enrol-cancel', function() {
-			$('#private-enrol-modal').modal('hide');
-			return false;
-		});
-        $(document).on('click', '.merge-cancel', function () {
-            $('#student-merge-modal').modal('hide');
-            return false;
         });
-        $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-        $(document).on('click', '#student-merge', function () {
-            $.ajax({
-                url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',
-                type   : 'get',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-                    if(response.status)
-                    {
-                        $('#student-merge-content').html(response.data);
-                        $('#student-merge-modal .modal-dialog').addClass('classroom-dialog');
-                        $('#student-merge-modal').modal('show');
-                    }
+        return false;
+    });
+
+    $(document).on('change keyup paste', '#course-name', function (e) {
+        var courseName = $(this).val();
+        var id = '<?= $model->id; ?>';
+        var params = $.param({'studentId' : id, 'courseName' : courseName});
+        $.ajax({
+            url    : '<?= Url::to(['course/fetch-group']); ?>?' + params,
+            type   : 'get',
+            dataType: 'json',
+            success: function(response)
+            {
+                if(response.status) {
+                    $('#group-enrol-modal .modal-body').html(response.data);
                 }
-            });
-            return false;
+            }
         });
-     $(document).on('click', '.group-enrol-btn', function() {
-         $('#course-spinner').show();
-         var courseId=$(this).attr('data-key');
-              var params = $.param({'courseId': courseId });
-         $.ajax({
-             url    : '<?= Url::to(['enrolment/group' ,'studentId' => $model->id]); ?>&' + params,
-             type: 'post',
-             success: function(response) {
-                 if (response.status) {
-                     $('#course-spinner').hide();
-                      $.pjax.reload({container: "#enrolment-grid", replace: false, async: false, timeout: 6000});
-                      $.pjax.reload({container: "#student-log", replace: false, async: false, timeout: 6000});
-                      $('#group-enrol-modal').modal('hide');
-                        $('#course-spinner').hide();
-                        $('#group-enrol-modal').modal('hide');
-                        window.location.href = response.url;
+        return false;
+    });
+
+    $(document).on('click', '.private-enrol-cancel', function() {
+        $('#private-enrol-modal').modal('hide');
+        return false;
+    });
+
+    $(document).on('click', '.merge-cancel', function () {
+        $('#student-merge-modal').modal('hide');
+        return false;
+    });
+
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+
+    $(document).on('click', '#student-merge', function () {
+        $.ajax({
+            url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#student-merge-content').html(response.data);
+                    $('#student-merge-modal .modal-dialog').addClass('classroom-dialog');
+                    $('#student-merge-modal').modal('show');
                 }
-             }
-         });
-         return false;
-     });
+            }
+        });
+        return false;
+    });
+
+    $(document).on('click', '.group-enrol-btn', function() {
+        $('#course-spinner').show();
+        var courseId = $(this).attr('data-key');
+        var params = $.param({'courseId': courseId });
+        $.ajax({
+            url    : '<?= Url::to(['enrolment/group', 'studentId' => $model->id]); ?>&' + params,
+            type: 'post',
+            success: function(response) {
+                if (response.status) {
+                    $('#course-spinner').hide();
+                    $.pjax.reload({container: "#enrolment-grid", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#student-log", replace: false, async: false, timeout: 6000});
+                    $('#group-enrol-modal').modal('hide');
+                    $('#course-spinner').hide();
+                    $('#group-enrol-modal').modal('hide');
+                    window.location.href = response.url;
+                }
+            }
+        });
+        return false;
+    });
  
     $(document).on('beforeSubmit', '#student-merge-form', function () {
-            $.ajax({
-                url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',
-                type   : 'post',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
-                {
-                    if(response.status) {
-                      $.pjax.reload({container: "#enrolment-grid",timeout: 6000, async:false});
-                      $.pjax.reload({container: "#student-lesson-listing",timeout: 6000, async:false});
-                      $.pjax.reload({container: "#student-log",timeout: 6000, async:false});
-                      $.pjax.reload({container: "#student-exam-result-listing",timeout: 6000, async:false});
-                      $.pjax.reload({container: "#student-note",timeout: 6000, async:false});
-                      $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
-                      $('#student-merge-modal').modal('hide');  
-                    }
-                }
-            });
-            return false;
-        });
-   
-        $(document).on('click', '.note-cancel-button', function (e) {
-            $('#student-note-modal').modal('hide');
-            return false;
-        });
-        $(document).on('click', '.student-note', function (e) {
-            $('#note-content').val('');
-            $('#student-note-modal').modal('show');
-            return false;
-        });
-        $(document).on('click', '.exam-result-cancel-button', function () {
-            $('#new-exam-result-modal').modal('hide');
-            return false;
-        });
-		$(document).on('click', '.extra-lesson-cancel-button', function () {
-            $('#new-lesson-modal').modal('hide');
-            return false;
-        });
-        $(document).on("click", ".add-new-exam-result,#student-exam-result-listing tbody > tr", function() {
-		var examResultId = $(this).data('key');
-        var studentId=<?= $model->id ?>;
-            if (examResultId === undefined) {
-                var customUrl = '<?= Url::to(['exam-result/create']); ?>?studentId='+studentId;
-            } else {
-                var customUrl = '<?= Url::to(['exam-result/update']); ?>?id=' + examResultId;
-            }
-            $.ajax({
-                url    : customUrl,
-                type: 'get',
-                dataType: "json",
-                success: function (response)
-                {
-                    if (response.status)
-                    {
-                        $('#new-exam-result-modal .modal-body').html(response.data);
-                        $('#new-exam-result-modal').modal('show');
-                    } else {
-                        $('#lesson-form').yiiActiveForm('updateMessages',
-                                response.errors
-                                , true);
-                    }
-                }
-            });
-            
-		return false;
-	});
-		
-$(document).on('click', '.evaluation-delete', function () {
-		var examResultId = $('#examresult-id').val();
-		 bootbox.confirm({ 
-  			message: "Are you sure you want to delete this evaluation?", 
-  			callback: function(result){
-				if(result) {
-					$('.bootbox').modal('hide');
-				$.ajax({
-					url: '<?= Url::to(['exam-result/delete']); ?>?id=' + examResultId,
-					type: 'post',
-					success: function (response)
-					{
-						if (response.status)
-						{
-                            $('#new-exam-result-modal').modal('hide');
-							$.pjax.reload({container: '#student-exam-result-listing', timeout: 6000, async:false});
-							$.pjax.reload({container: '#student-log', timeout: 6000, async:false});
-						} else {
-							$('#evaluation-delete').html('You are not allowed to delete this evaluation.').fadeIn().delay(3000).fadeOut();
-						}
-					}
-				});
-				return false;	
-			}
-			}
-		});	
-		return false;
-        });
-		$(document).on('click', '.enrolment-delete', function () {
-		var enrolmentId = $(this).parent().parent().data('key');
-		 bootbox.confirm({ 
-  			message: "Are you sure you want to delete this enrolment?", 
-  			callback: function(result){
-				if(result) {
-					$('.bootbox').modal('hide');
-				$.ajax({
-					url: '<?= Url::to(['enrolment/delete']); ?>?id=' + enrolmentId,
-					type: 'post',
-					success: function (response)
-					{
-						if (response.status)
-						{
-							$.pjax.reload({container: '#enrolment-grid', skipOuterContainers:true, timeout:6000});
-						} else {
-							$('#enrolment-delete').html('You are not allowed to delete this enrolment.').fadeIn().delay(3000).fadeOut();
-						}
-					}
-				});
-				return false;	
-			}
-			}
-		});	
-		return false;
-        });
-        $(document).on('beforeSubmit', '#lesson-form', function (e) {
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'post',
-                dataType: "json",
-                data: $(this).serialize(),
-                success: function (response)
-                {
-                    if (response.status)
-                    {
-                        $('#new-lesson-modal').modal('hide');
-                        window.location.href = response.url;
-                    }
-                }
-            });
-            return false;
-        });
-        $(document).on('beforeSubmit', '#exam-result-form', function (e) {
         $.ajax({
-                url    : $(this).attr('action'),
-                type: 'post',
-                dataType: "json",
-                data: $(this).serialize(),
-                success: function (response)
-                {
-                    if (response.status)
-                    {
-                        $.pjax.reload({container: '#student-exam-result-listing', timeout: 6000, async:false});
-                        $.pjax.reload({container: '#student-log', timeout: 6000, async:false});
-                        $('#new-exam-result-modal').modal('hide');
-                    } else
-                    {
-                        $('#exam-result-form').yiiActiveForm('updateMessages',
-                                response.errors
-                                , true);
-                    }
+            url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status) {
+                    $.pjax.reload({container: "#enrolment-grid",timeout: 6000, async:false});
+                    $.pjax.reload({container: "#student-lesson-listing",timeout: 6000, async:false});
+                    $.pjax.reload({container: "#student-log",timeout: 6000, async:false});
+                    $.pjax.reload({container: "#student-exam-result-listing",timeout: 6000, async:false});
+                    $.pjax.reload({container: "#student-note",timeout: 6000, async:false});
+                    $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
+                    $('#student-merge-modal').modal('hide');
                 }
-            });
-            return false;
+            }
         });
-        $(document).on('click', '#button', function () {
-            $.ajax({
-                url: $(this).attr('href'),
-                type: 'POST',
-                dataType: 'json',
-                success: function (response)
-                {
-                    if (response) {
-                        var url = response.url;
-                        $.pjax.reload({url: url, container: '#student-exam-result-listing', timeout: 6000});
-                    }
-                }
-            });
-            return false;
-        });
-        $(document).on('beforeSubmit', '#student-note-form', function (e) {
-            $.ajax({
-                url: '<?= Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_STUDENT]); ?>',
-                type: 'post',
-                dataType: "json",
-                data: $(this).serialize(),
-                success: function (response)
-                {
-                    if (response.status)
-                    {
-                        $('.student-note-content').html(response.data);
-                    }
-                }
-            });
-            return false;
-        });
-		$(document).on('click', '.student-profile-edit-button', function () {
-        	$('#student-profile-modal .modal-dialog').css({'width': '400px'});
-			$('#student-profile-modal').modal('show');
-			return false;
-		});
-		$(document).on('click', '.student-profile-cancel-button', function () {
-			$('#student-profile-modal').modal('hide');
-		});
-		
-		$(document).on('beforeSubmit', '#student-form', function (e) {
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'post',
-                dataType: "json",
-                data: $(this).serialize(),
-                success: function (response)
-                {
-                    if (response.status)
-                    {
-                        $.pjax.reload({container: '#student-profile', timeout: 6000, async:false});
-                        $.pjax.reload({container: '#student-log', timeout: 6000, async:false});
-                        $('#student-profile-modal').modal('hide');
-                    } else {
-						$('#student-form').yiiActiveForm('updateMessages',
-                            response.errors, true);	
-					}
-                }
-    	});
-		return false;
+        return false;
     });
-});
+   
+    $(document).on('click', '.note-cancel-button', function (e) {
+        $('#student-note-modal').modal('hide');
+        return false;
+    });
+
+    $(document).on('click', '.student-note', function (e) {
+        $('#note-content').val('');
+        $('#student-note-modal').modal('show');
+        return false;
+    });
+
+    $(document).on('click', '.exam-result-cancel-button', function () {
+        $('#new-exam-result-modal').modal('hide');
+        return false;
+    });
+
+    $(document).on('click', '.extra-lesson-cancel-button', function () {
+        $('#new-lesson-modal').modal('hide');
+        return false;
+    });
+    
+    $(document).on("click", ".add-new-exam-result,#student-exam-result-listing tbody > tr", function() {
+        var examResultId = $(this).data('key');
+        var studentId = <?= $model->id ?>;
+        if (examResultId === undefined) {
+            var customUrl = '<?= Url::to(['exam-result/create']); ?>?studentId='+studentId;
+        } else {
+            var customUrl = '<?= Url::to(['exam-result/update']); ?>?id=' + examResultId;
+        }
+        $.ajax({
+            url: customUrl,
+            type: 'get',
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $('#new-exam-result-modal .modal-body').html(response.data);
+                    $('#new-exam-result-modal').modal('show');
+                } else {
+                    $('#lesson-form').yiiActiveForm('updateMessages', response.errors, true);
+                }
+            }
+        });
+
+        return false;
+    });
+
+    $(document).on('click', '.evaluation-delete', function () {
+        var examResultId = $('#examresult-id').val();
+        bootbox.confirm({
+            message: "Are you sure you want to delete this evaluation?",
+                callback: function (result) {
+                    if (result) {
+                        $('.bootbox').modal('hide');
+                        $.ajax({
+                            url: '<?= Url::to(['exam-result/delete']); ?>?id=' + examResultId,
+                            type: 'post',
+                            success: function (response)
+                            {
+                                if (response.status)
+                                {
+                                    $('#new-exam-result-modal').modal('hide');
+                                    $.pjax.reload({container: '#student-exam-result-listing', timeout: 6000, async: false});
+                                    $.pjax.reload({container: '#student-log', timeout: 6000, async: false});
+                                } else {
+                                    $('#evaluation-delete').html('You are not allowed to delete this evaluation.').
+                                            fadeIn().delay(3000).fadeOut();
+                                }
+                            }
+                        });
+                        return false;
+                    }
+                }
+        });
+        return false;
+    });
+
+    $(document).on('click', '.enrolment-delete', function () {
+        var enrolmentId = $(this).parent().parent().data('key');
+        bootbox.confirm({
+            message: "Are you sure you want to delete this enrolment?",
+            callback: function (result) {
+                if (result) {
+                    $('.bootbox').modal('hide');
+                    $.ajax({
+                        url: '<?= Url::to(['enrolment/delete']); ?>?id=' + enrolmentId,
+                        type: 'post',
+                        success: function (response)
+                        {
+                            if (response.status)
+                            {
+                                $.pjax.reload({container: '#enrolment-grid', skipOuterContainers: true, timeout: 6000});
+                            } else {
+                                $('#enrolment-delete').html('You are not allowed to delete this enrolment.').
+                                        fadeIn().delay(3000).fadeOut();
+                            }
+                        }
+                    });
+                    return false;
+                }
+            }
+        });
+        return false;
+    });
+
+    $(document).on('beforeSubmit', '#lesson-form', function (e) {
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $('#new-lesson-modal').modal('hide');
+                    window.location.href = response.url;
+                }
+            }
+        });
+        return false;
+    });
+
+    $(document).on('beforeSubmit', '#exam-result-form', function (e) {
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $.pjax.reload({container: '#student-exam-result-listing', timeout: 6000, async: false});
+                    $.pjax.reload({container: '#student-log', timeout: 6000, async: false});
+                    $('#new-exam-result-modal').modal('hide');
+                } else
+                {
+                    $('#exam-result-form').yiiActiveForm('updateMessages', response.errors, true);
+                }
+            }
+        });
+        return false;
+    });
+    
+    $(document).on('click', '#button', function () {
+        $.ajax({
+            url: $(this).attr('href'),
+            type: 'POST',
+            dataType: 'json',
+            success: function (response)
+            {
+                if (response) {
+                    var url = response.url;
+                    $.pjax.reload({url: url, container: '#student-exam-result-listing', timeout: 6000});
+                }
+            }
+        });
+        return false;
+    });
+
+    $(document).on('beforeSubmit', '#student-note-form', function (e) {
+        $.ajax({
+            url: '<?= Url::to(['note/create', 'instanceId' => $model->id,
+                'instanceType' => Note::INSTANCE_TYPE_STUDENT]); ?>',
+            type: 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $('.student-note-content').html(response.data);
+                }
+            }
+        });
+        return false;
+    });
+    
+    $(document).on('click', '.student-profile-edit-button', function () {
+        $('#student-profile-modal .modal-dialog').css({'width': '400px'});
+        $('#student-profile-modal').modal('show');
+        return false;
+    });
+    
+    $(document).on('click', '.student-profile-cancel-button', function () {
+        $('#student-profile-modal').modal('hide');
+    });
+
+    $(document).on('beforeSubmit', '#student-form', function () {
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $.pjax.reload({container: '#student-profile', timeout: 6000, async: false});
+                    $.pjax.reload({container: '#student-log', timeout: 6000, async: false});
+                    $('#student-profile-modal').modal('hide');
+                } else {
+                    $('#student-form').yiiActiveForm('updateMessages', esponse.errors, true);
+                }
+            }
+        });
+        return false;
+    });
 
     $(document).off('click', '.enrolment-save-btn').on('click', '.enrolment-save-btn', function () {
         $('.enrolment-save-btn').attr('disabled', true);

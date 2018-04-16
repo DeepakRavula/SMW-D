@@ -1,22 +1,11 @@
 <?php
 
 use yii\helpers\Url;
-use yii\bootstrap\Modal;
-use common\models\Location;
-use common\models\LocationAvailability;
 use kartik\datetime\DateTimePickerAsset;
-
 DateTimePickerAsset::register($this);
-require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 $this->title = 'Review Lessons';
 ?>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
-<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
-<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+
 <div class="row">
     <div class="col-md-6">
         <?=
@@ -65,42 +54,12 @@ $this->render('review/_button', [
     'enrolmentType' => $enrolmentType,
 ]);
 ?>
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Edit Lesson</h4>',
-    'id' => 'review-lesson-modal',
-]);
-?>
-<div id="review-lesson-content"></div>
-<?php Modal::end(); ?>
+
 <div id="enrolment-loader" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>
 </div>
-<?php
-    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-    $minLocationAvailability = LocationAvailability::find()
-        ->location($locationId)
-        ->locationaAvailabilityHours()
-        ->orderBy(['fromTime' => SORT_ASC])
-        ->one();
-    $maxLocationAvailability = LocationAvailability::find()
-        ->location($locationId)
-        ->locationaAvailabilityHours()
-        ->orderBy(['toTime' => SORT_DESC])
-        ->one();
-    if (empty($minLocationAvailability)) {
-        $minTime = LocationAvailability::DEFAULT_FROM_TIME;
-    } else {
-        $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-    }
-    if (empty($maxLocationAvailability)) {
-        $maxTime = LocationAvailability::DEFAULT_TO_TIME;
-    } else {
-        $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-    }
-    $teacherId = $courseModel->teacher->id;
-?>
+
 <script>
     var review = {
         onEditableGridSuccess: function () {
@@ -133,171 +92,66 @@ Modal::begin([
         if ($('#confirm-button').attr('disabled')) {
             $('#confirm-button').bind('click', false);
         }
-        var calendar = {
-            load: function (events, availableHours, date) {
-                $('#lesson-edit-calendar').fullCalendar('destroy');
-                $('#lesson-edit-calendar').fullCalendar({
-                    schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-                    defaultDate: date,
-					firstDay : 1,
-	               nowIndicator: true,
-                   header: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right:'',
-                    },
-                    allDaySlot: false,
-                    slotDuration: '00:15:00',
-                    titleFormat: 'DD-MMM-YYYY, dddd',
-                    defaultView: 'agendaWeek',
-                    minTime: "<?php echo $minTime; ?>",
-                    maxTime: "<?php echo $maxTime; ?>",
-                    selectConstraint: {
-                        start: '00:01', // a start time (10am in this example)
-                        end: '24:00', // an end time (6pm in this example)
-                        dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-                    },
-                    eventConstraint: {
-                        start: '00:01', // a start time (10am in this example)
-                        end: '24:00', // an end time (6pm in this example)
-                        dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-                    },
-                    businessHours: availableHours,
-                    overlapEvent: false,
-                    overlapEventsSeparate: true,
-                    events: events,
-                    select: function (start, end, allDay) {
-                        $('#lesson-date').val(moment(start).format('DD-MM-YYYY hh:mm A'));
-                        $('#lesson-edit-calendar').fullCalendar('removeEvents', 'newEnrolment');
-                        var duration = $('#course-duration').val();
-                        var endtime = start.clone();
-                        var durationMinutes = moment.duration(duration).asMinutes();
-                        moment(endtime.add(durationMinutes, 'minutes'));
-
-                        $('#lesson-edit-calendar').fullCalendar('renderEvent',
-                                {
-                                    id: 'newEnrolment',
-                                    start: start,
-                                    end: endtime,
-                                    allDay: false
-                                },
-                                true // make the event "stick"
-                                );
-                        $('#lesson-edit-calendar').fullCalendar('unselect');
-                    },
-                    selectable: true,
-                    selectHelper: true,
-                    eventAfterAllRender: function () {
-                        $('.fc-short').removeClass('fc-short');
-                    },
-                });
-            }
-        };
-        var refreshcalendar = {
-            refresh: function () {
-                var events, availableHours;
-                var teacherId = <?= $teacherId ?>;
-                var date = moment($('#lesson-date').val(), 'MMM DD,YYYY h:mm A', true).format('YYYY-MM-DD');
-                if (!moment(date).isValid()) {
-                    var date = moment($('#lesson-date').val(), 'DD-MM-YYYY h:mm A', true).format('YYYY-MM-DD');
-                }
-                if (date === 'Invalid date') {
-                    alert('invalid');
-                    $('#lesson-calendar').fullCalendar('destroy');
-                    $('#review-lesson-modal .modal-dialog').css({'width': '600px'});
-                    $('.lesson-teacher').removeClass('col-md-4');
-                    $('.lesson-date').removeClass('col-md-4');
-                } else {
-                    $('.lesson-date').addClass('col-md-6');
-                    $('#review-lesson-modal .modal-dialog').css({'width': '1100px'});
-                    $.ajax({
-                        url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
-                        type: 'get',
-                        dataType: "json",
-                        success: function (response)
-                        {
-                            events = response.events;
-                            availableHours = response.availableHours;
-                            $('#loadingspinner').hide();
-                            calendar.load(events, availableHours, date);
-                        }
-                    });
-                }
-            }
-        };
-        $(document).on('change', '#lessonsearch-showallreviewlessons', function () {
-            var showAllReviewLessons = $(this).is(":checked");
-            var startDate = '<?= $rescheduleBeginDate; ?>';
-            var endDate = '<?= $rescheduleEndDate; ?>';
-            if (startDate && endDate) {
-                var params = $.param({
-                    'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-                    'Course[startDate]': startDate, 'Course[endDate]': endDate
-                });
-            } else {
-                var params = $.param({
-                    'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-                });
-            }
-            var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
-            $.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
-        });
-
-        $(document).on('click', '#lesson-review-cancel', function () {
-            $('#review-lesson-modal').modal('hide');
-            return false;
-        });
-        $(document).on('click', '.review-lesson-edit-button', function () {
-            $.ajax({
-                url: '<?= Url::to(['lesson/update-field']); ?>?id=' + $(this).parent().parent().data('key'),
-                type: 'get',
-                dataType: "json",
-                success: function (response)
-                {
-                    if (response.status)
-                    {
-                        $('#review-lesson-content').html(response.data);
-                        $('#review-lesson-modal').modal('show');
-                        refreshcalendar.refresh();
-                    }
-                }
+    });
+        
+    $(document).on('change', '#lessonsearch-showallreviewlessons', function () {
+        var showAllReviewLessons = $(this).is(":checked");
+        var startDate = '<?= $rescheduleBeginDate; ?>';
+        var endDate = '<?= $rescheduleEndDate; ?>';
+        if (startDate && endDate) {
+            var params = $.param({
+                'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
+                'Course[startDate]': startDate, 'Course[endDate]': endDate
             });
-            return false;
+        } else {
+            var params = $.param({
+                'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
+            });
+        }
+        var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
+        $.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
+    });
+
+    $(document).on('click', '.review-lesson-edit-button', function () {
+        $.ajax({
+            url: '<?= Url::to(['lesson/update-field']); ?>?id=' + $(this).parent().parent().data('key'),
+            type: 'get',
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal .modal-dialog').css({'width': '1000px'});
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Lesson edit</h4>');
+                    $('.modal-save').text('Apply');
+                    $('.modal-save-all').show();
+                }
+            }
         });
-		$(document).on('click','#lesson-review-apply, #lesson-review-apply-all',function() {
+        return false;
+    });
+
+    $(document).on('click','.modal-save, .modal-save-all',function() {
+        if ($('#lesson-applycontext').length !== 0) {
             $('#lesson-applycontext').val($(this).val());
-            $('#spinner').show();
-        });
-        $(document).on('beforeSubmit', '#lesson-review-form', function (e) {
-            e.preventDefault();
-            var lessonId = $('#lesson-id').val();
-            var showAllReviewLessons = $('#lessonsearch-showallreviewlessons').is(":checked");
-            var params = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0)});
-            var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
-            $.ajax({
-                url: '<?= Url::to(['lesson/update-field']); ?>?id=' + lessonId,
-                type: 'post',
-                dataType: "json",
-                data: $(this).serialize(),
-                success: function (response)
-                {
-                    if (response.status)
-                    {
-                        $('#spinner').hide();
-                        $.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000, async: false});
-                        if ($('#review-lesson-summary').length !== 0) {
-                            $.pjax.reload({url: url, container: "#review-lesson-summary", replace: false, timeout: 6000, async: false});
-                        }
-                        review.onEditableGridSuccess();
-                        $('#review-lesson-modal').modal('hide');
-                    } else {
-                        $('#spinner').hide();
-                        $('#lesson-review-form').yiiActiveForm('updateMessages',
-					   		response.errors	, true);
-                    }
-                }
-            });
-            return false;
-        });
+        }
+    });
+
+    $(document).on('modal-success', function(event, params) {
+        var showAllReviewLessons = $('#lessonsearch-showallreviewlessons').is(":checked");
+        var param = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0)});
+        var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + param;
+        if ($('#review-lesson-listing').length !== 0) {
+            $.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000, async: false});
+        }
+        if ($('#review-lesson-summary').length !== 0) {
+            $.pjax.reload({url: url, container: "#review-lesson-summary", replace: false, timeout: 6000, async: false});
+        }
+        if ($("#confirm-button").length !== 0) {
+            review.onEditableGridSuccess();
+        }
+        return false;
     });
 </script>

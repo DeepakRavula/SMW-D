@@ -1,22 +1,15 @@
 $.fn.calendarDayView = function(options) {
-    $("#fullcalendar-week-view").clone(true, true).contents().appendTo(options.renderId);
-    $('#go-to-datepicker').datepicker({
-        format: 'M d, yyyy',
-        autoclose: true,
-        todayHighlight: true,
-        orientation: "auto"
-    });
     $('#week-view-spinner').show();
-    calendar.render(options);
+    calendar.init(options);
     
     $(document).off('change', '#fullcalendar-week-view-go-to-datepicker').on('change', '#fullcalendar-week-view-go-to-datepicker', function () {
         $('#week-view-spinner').show();
         calendar.render(options);
     });
     
-    $(document).off('change', options.changeId).on('change', options.changeId, function () {
+    $(document).off('change', options.changeId).on('change', options.changeId, function () {debugger;
         $('#week-view-spinner').show();
-        calendar.render(options);
+        calendar.init(options);
     });
 };
 
@@ -91,22 +84,31 @@ var calendar = {
     },
 
     render: function (options) {
-        var date = $('#fullcalendar-week-view-go-to-datepicker').val();
+        var teacherId = $(options.changeId).val();
+        var now = moment(Date()).format('MMM D, YYYY');
+        var dateValue = $('#fullcalendar-week-view-go-to-datepicker').val();
+        var date = moment($.isEmptyObject(dateValue) ? now : dateValue).format('MMM D, YYYY');
+        var eventParams = $.param({ teacherId: teacherId, date: date, lessonId: options.lessonId });
+        var calendarOptions = options;
+        calendarOptions.date = date;
+        calendarOptions.eventUrl = options.eventUrl + '&' + eventParams;
+        calendar.showCalendar(calendarOptions);
+    },
+    
+    init: function(options) {
         var teacherId = $(options.changeId).val();
         var params = $.param({ id: teacherId });
-        var eventParams = $.param({ teacherId: teacherId, date: date });
         $.ajax({
             url: options.availabilityUrl + '?' + params,
             type: 'get',
             success: function (response)
             {
+                $(options.renderId).html(response.data);
                 var calendarOptions = options;
                 calendarOptions.businessHours = response.availableHours;
                 calendarOptions.minTime = response.minTime;
                 calendarOptions.maxTime = response.maxTime;
-                calendarOptions.date = moment(date, "MMM-DD-YYYY");
-                calendarOptions.eventUrl = options.eventUrl + '&' + eventParams;
-                calendar.showCalendar(calendarOptions);
+                calendar.render(calendarOptions);
             }
         });
     }
