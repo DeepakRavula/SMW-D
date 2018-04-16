@@ -209,7 +209,6 @@ $this->params['label'] = $this->render('_title', [
      };
      var enrolment = {
          refreshCalendar : function(availableHours, events, date){
-         alert(date);
              $('#enrolment-calendar').fullCalendar('destroy');
              $('#enrolment-calendar').fullCalendar({
              	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
