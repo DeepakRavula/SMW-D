@@ -239,6 +239,7 @@ class LessonController extends BaseController
             } else {
                 $model->setScenario(Lesson::SCENARIO_EDIT);
                 if ($model->validate()) {
+                    $model->status = Lesson::STATUS_CANCELED;
                     $duration = new \DateTime($model->duration);
                     $model->duration = $duration->format('H:i:s');
                     $lessonDate = new \DateTime($model->date);

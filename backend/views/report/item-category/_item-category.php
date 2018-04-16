@@ -158,7 +158,13 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 },
                     
             ],
+                                   [
+                     'label'=>'Customer',
+                'value' => function ($data) {
+                         return !empty($data->invoice->user->publicIdentity) ? $data->invoice->user->publicIdentity : null;
+                },
 
+            ],
 
                 [
                 'label' => 'Description',
@@ -192,6 +198,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'emptyText' => false,
         'showPageSummary' => true,
                 'headerRowOptions' => ['class' => 'bg-light-gray'],
+                'rowOptions'=>['class' => 'item-category-report-invoice-click'],
         'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
         'pjax' => true,
         'pjaxSettings' => [
@@ -203,3 +210,23 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         'columns' => $columns,
     ]);
     ?>
+<script>
+    $(document).ready(function(){
+ $(document).on('click', '.item-category-report-invoice-click', function(){
+     var invoiceLineItemId=$(this).attr('data-key');
+     var params = $.param({'lineItemId' : invoiceLineItemId});
+     		$.ajax({
+                    url    :'<?= Url::to(['item-category/invoice-number']); ?>?&' + params,
+                    type   : 'get',
+                    dataType: 'json',
+                    success: function(response)
+                    {
+                       if(response) {
+                        var url = '<?= Url::to(['invoice/view']); ?>?id='+response;
+                        window.location.href=url;
+			   }
+				}
+			});
+    });
+    });
+    </script>
