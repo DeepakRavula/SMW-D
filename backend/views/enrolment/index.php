@@ -139,29 +139,22 @@ $this->params['show-all'] = $this->render('_button', [
 
         ],
     ],
-    [
-        'class' => 'yii\grid\ActionColumn',
-        'contentOptions' => ['style' => 'width:50px'],
-        'template' => '{view}',
-        'buttons' => [
-            'view' => function ($url, $model) {
-                $url = Url::to(['enrolment/view', 'id' => $model->id]);
-                return Html::a('<i class="fa fa-eye"></i>', $url, [
-                        'title' => Yii::t('yii', 'View'),
-                        'class' => ['btn-primary btn-xs m-l-10']
-                ]);
-            },
-        ]
-    ],
+
     ]; ?>
+<div class="grid-row-open">
 <?php
 echo KartikGridView::widget([
     'dataProvider' => $dataProvider,
     'summary' => false,
     'emptyText' => false,
-            'filterModel'=>$searchModel,
+    'filterModel'=>$searchModel,
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
+     'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+        $url = Url::to(['enrolment/view', 'id' => $model->id]);
+        $data = ['data-url' => $url];
+        return $data;
+    },
     'columns' => $columns,
         'pjax'=>true,
     'pjaxSettings' => [
@@ -172,6 +165,7 @@ echo KartikGridView::widget([
     ],
 ]);
 ?>
+</div>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">New Enrolment</h4>',
     'id' => 'reverse-enrol-modal',
