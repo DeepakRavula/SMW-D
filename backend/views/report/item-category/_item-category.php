@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use common\models\InvoiceLineItem;
 use backend\assets\CustomGridAsset;
 use common\models\ItemCategory;
+use common\models\Invoice;
 CustomGridAsset::register($this);
 Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  /*
@@ -64,18 +65,38 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
         ],
  
-
-                [
+                        [
                 'label' => 'Amount',
                 'format' => ['decimal', 2],
-                'value' => function ($data) {
-                    return Yii::$app->formatter->asDecimal($data->itemTotal);
+                'value' => function ($data) use ($searchModel) {
+                    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+                    $amount = 0;
+                  $payments = InvoiceLineItem::find()
+                                 ->notDeleted()
+                                 ->joinWith(['invoice' => function ($query) use ($locationId) {
+                                 $query->notDeleted()
+                                ->notCanceled()
+                                ->notReturned()
+                                ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
+                                ->location($locationId);
+                     }])
+                      ->joinWith('itemCategory')
+                         ->andWhere([
+                            'item_category.id' => $data->itemCategory->id,
+                            'DATE(invoice.date)' => (new \DateTime($data->invoice->date))->format('Y-m-d')
+                        ])
+                        ->all();
+                    foreach ($payments as $payment) {
+                        $amount += $payment->itemTotal;
+                    }
+
+                    return Yii::$app->formatter->asDecimal($amount,2);
                 },
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
-            ],
+            ]
         ];
         ?>
 	<?php else : ?>
