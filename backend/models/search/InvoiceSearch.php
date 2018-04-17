@@ -43,7 +43,7 @@ class InvoiceSearch extends Invoice
             [['fromDate', 'toDate'], 'date', 'format' => 'php:M d,Y'],
             [['mailStatus', 'invoiceStatus'], 'integer'],
             [['type', 'query', 'toggleAdditionalColumns', 'dateRange','invoiceDateRange',
-                'customer', 'dueFromDate', 'dueToDate','number','phone','summariseReport','isPrint','dueDate','isWeb', 'isMail'], 'safe'],
+                'customer', 'dueFromDate', 'dueToDate','number','phone','summariseReport','isPrint','isWeb', 'isMail'], 'safe'],
         ];
     }
 
@@ -127,7 +127,7 @@ class InvoiceSearch extends Invoice
                     'asc' => ['invoice_number' => SORT_ASC],
                     'desc' => ['invoice_number' => SORT_DESC],
                 ],
-                'dueDate' => [
+                'dateRange' => [
                     'asc' => ['dueDate' => SORT_ASC],
                     'desc' => ['dueDate' => SORT_DESC],
                 ],
@@ -135,7 +135,7 @@ class InvoiceSearch extends Invoice
                     'asc' => ['user_profile.firstname' => SORT_ASC],
                     'desc' => ['user_profile.firstname' => SORT_DESC],
                 ],
-		'date' => [
+		'invoiceDateRange' => [
                     'asc' => ['date' => SORT_ASC],
                     'desc' => ['date' => SORT_DESC],
                 ],
