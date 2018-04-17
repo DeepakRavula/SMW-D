@@ -133,11 +133,12 @@ use common\models\Location;
     $('#popup-modal').on('shown.bs.modal', function () {
         var options = {
             'renderId' : '#lesson-edit-calendar',
-            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event', 'studentId' => $model->enrolment->studentId]) ?>',
-            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
             'changeId' : '#lesson-teacherid',
             'durationId' : '#course-duration',
-            'lessonId' : '<?= $model->id; ?>'
+            'lessonId' : '<?= $model->id; ?>',
+            'studentId' : '<?= $model->enrolment->studentId ?>'
         };
         $.fn.calendarDayView(options);
     });

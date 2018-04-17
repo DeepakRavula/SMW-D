@@ -169,10 +169,11 @@ $this->params['label'] = $this->render('_title', [
             $('#courseschedule-day').val('');
             var options = {
                 'renderId' : '#enrolment-create-calendar',
-                'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event', 'studentId' => $model->id]) ?>',
-                'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
+                'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+                'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
                 'changeId' : '#course-teacherid',
-                'durationId' : '#courseschedule-duration'
+                'durationId' : '#courseschedule-duration',
+                'studentId' : '<?= $model->id ?>'
             };
             $.fn.calendarDayView(options);
             $('#private-enrol-modal .modal-dialog').css({'width': '1000px'});
@@ -479,11 +480,23 @@ $this->params['label'] = $this->render('_title', [
     });
     
     $(document).on('click', '.student-profile-edit-button', function () {
-        $('#student-profile-modal .modal-dialog').css({'width': '400px'});
-        $('#student-profile-modal').modal('show');
+        $.ajax({
+            url : '<?= Url::to(['student/update', 'id' => $model->id, 'userModel' =>$model->customer]); ?>',
+            type: 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $('#student-profile-content').html(response.data);
+                    $('#student-profile-modal').modal('show');
+                }
+            }
+        });
         return false;
     });
-    
+
     $(document).on('click', '.student-profile-cancel-button', function () {
         $('#student-profile-modal').modal('hide');
     });
@@ -502,7 +515,7 @@ $this->params['label'] = $this->render('_title', [
                     $.pjax.reload({container: '#student-log', timeout: 6000, async: false});
                     $('#student-profile-modal').modal('hide');
                 } else {
-                    $('#student-form').yiiActiveForm('updateMessages', esponse.errors, true);
+                    $('#student-form').yiiActiveForm('updateMessages', response.errors, true);
                 }
             }
         });

@@ -1,7 +1,6 @@
 <?php
 
 use yii\bootstrap\ActiveForm;
-use yii\helpers\Url;
 use common\models\Course;
 use common\models\CourseSchedule;
 use common\models\discount\EnrolmentDiscount;

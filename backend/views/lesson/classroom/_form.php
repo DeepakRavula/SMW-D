@@ -7,8 +7,7 @@ use yii\helpers\Url;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use common\models\Classroom;
-
-require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
+use common\models\Location;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -27,7 +26,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
         ]
     ]); ?>
 	   <div class=" col-md-5">
-		   <?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id; ?>
+		   <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id; ?>
 		   <?=
            $form->field($model, 'classroomId')->widget(Select2::classname(), [
                'data' => ArrayHelper::map(Classroom::find()->orderBy(['name' => SORT_ASC])

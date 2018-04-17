@@ -15,13 +15,12 @@ use yii\helpers\Html;
                 ]
         ]); ?>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <?= $form->field($model, 'startDate')->textInput(['readOnly' => true])->label('Start Date');?>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-2">
         <?= $form->field($courseSchedule, 'day')->textInput(['readOnly' => true])->label('Day');?>
     </div>
-    <div class="clearfix"></div>
         <?= $form->field($courseSchedule, 'fromTime')->hiddenInput()->label(false);?>
     <div class="col-md-12">
         <div id="enrolment-create-calendar"></div>
@@ -42,7 +41,8 @@ use yii\helpers\Html;
 
     $(document).on('week-view-calendar-select', function(event, params) {
         $('#course-startdate').val(moment(params.date, "DD-MM-YYYY h:mm a").format('MMM D, Y hh:mm A')).trigger('change');
-        $('#courseschedule-day').val(moment(params.date, "DD-MM-YYYY h:mm a").format('DDD')).trigger('change');
+        $('#courseschedule-day').val(moment(params.date, "DD-MM-YYYY h:mm a").format('dddd')).trigger('change');
+        $('#courseschedule-fromtime').val(moment(params.date, "DD-MM-YYYY h:mm a").format('HH:mm:ss')).trigger('change');
         return false;
     });
 </script>

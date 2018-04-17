@@ -120,10 +120,11 @@ use kartik\time\TimePicker;
     $('#popup-modal').on('shown.bs.modal', function () {
         var options = {
             'renderId' : '#extra-lesson-calendar',
-            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event', 'studentId' => $studentModel->id]) ?>',
-            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
             'changeId' : '#lesson-teacher',
-            'durationId' : '#extralesson-duration'
+            'durationId' : '#extralesson-duration',
+            'studentId' : '<?= $studentModel->id ?>'
         };
         $.fn.calendarDayView(options);
     });

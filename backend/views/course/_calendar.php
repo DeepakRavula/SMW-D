@@ -44,37 +44,24 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
         var name = $(this).parent();
         var teacherId = $('#course-teacherid').val();
         var duration = $('#course-duration').val();
-        var params = $.param({ id: teacherId });
         if (!$.isEmptyObject(teacherId) && !$.isEmptyObject(duration)) {
-            $.ajax({
-                url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
-                type: 'get',
-                dataType: "json",
-                success: function (response)
-                {
-                    var options = {
-                        name: name,
-                        date: moment(new Date()),
-                        duration: duration,
-                        businessHours: response.availableHours,
-                        selectConstraint: {
-                            start: '00:01', // a start time (10am in this example)
-                            end: '24:00', // an end time (6pm in this example)
-                            dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-                        },
-                        eventConstraint: {
-                            start: '00:01', // a start time (10am in this example)
-                            end: '24:00', // an end time (6pm in this example)
-                            dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-                        },
-                        minTime: '<?= $minTime; ?>',
-                        maxTime: '<?= $maxTime; ?>',
-                        eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event']); ?>?studentId=null&teacherId=' + teacherId
-                    };
-                    $('#calendar-date-time-picker').calendarPicker(options);
-                }
-            });
-            return false;
+            var options = {
+                name: name,
+                date: moment(new Date()),
+                duration: duration,
+                selectConstraint: {
+                    start: '00:01', // a start time (10am in this example)
+                    end: '24:00', // an end time (6pm in this example)
+                    dow: [ 1, 2, 3, 4, 5, 6, 0 ]
+                },
+                eventConstraint: {
+                    start: '00:01', // a start time (10am in this example)
+                    end: '24:00', // an end time (6pm in this example)
+                    dow: [ 1, 2, 3, 4, 5, 6, 0 ]
+                },
+                teacherId: teacherId
+            };
+            $('#calendar-date-time-picker').calendarPicker(options);
         }
     });
 

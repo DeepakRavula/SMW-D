@@ -22,7 +22,7 @@ $.fn.calendarPicker = function(options) {
             
         }
         $('#calendar-date-time-picker-teacher').val(options.teacherId);
-        pickerCalendar.showCalendar(options);
+        pickerCalendar.renderCalendar(options);
     });
     
     $(document).off('change', '#calendar-date-time-picker-date').on('change', '#calendar-date-time-picker-date', function () {
@@ -66,7 +66,8 @@ $.fn.calendarPicker = function(options) {
         if (! moment(date).isValid()) {
             var date = moment($('#go-to-date').val(), 'YYYY-MM-DD hh:mm A', true).format('YYYY-MM-DD');
         }
-        pickerCalendar.teacherChange(options, date);
+        options.date = date;
+        pickerCalendar.renderCalendar(options);
     });
 
     $(document).off('change', '#go-to-date').on('change', '#go-to-date', function(){
@@ -141,32 +142,32 @@ var pickerCalendar = {
         });
     },
     
-    teacherChange: function (options, date) {
-        var teacherId = $('#calendar-date-time-picker-teacher').val();
-        if (teacherId != options.teacherId) {
-            var params = $.param({ id: teacherId });
-            $.ajax({
-                url: '/admin/teacher-availability/availability-with-events?' + params,
-                type: 'get',
-                success: function (response)
-                {
-                    var businessHours = response.availableHours;
-                    var calendarOptions = {
-                        duration: options.duration,
-                        selectConstraint: options.selectConstraint,
-                        eventConstraint: options.eventConstraint,
-                        teacherId: teacherId,
-                        date: date,
-                        businessHours: businessHours,
-                        minTime: options.minTime,
-                        maxTime: options.maxTime,
-                        eventUrl: '/admin/teacher-availability/show-lesson-event?teacherId=' + teacherId,
-                        validationUrl: options.validationUrl
-                    };
-                    pickerCalendar.showCalendar(calendarOptions);
-                }
-            });
-        }
+    renderCalendar: function (options) {
+        var teacherId = options.teacherId ? options.teacherId : $('#calendar-date-time-picker-teacher').val();
+        var params = $.param({ id: teacherId });
+        $.ajax({
+            url: '/admin/teacher-availability/availability?' + params,
+            type: 'get',
+            success: function (response)
+            {
+                var eventParams = $.param({ teacherId: teacherId, date: options.date, 
+                    studentId: options.studentId , lessonId: options.lessonId });
+                var calendarOptions = {
+                    duration: options.duration,
+                    selectConstraint: options.selectConstraint,
+                    eventConstraint: options.eventConstraint,
+                    teacherId: teacherId,
+                    date: options.date,
+                    businessHours: response.availableHours,
+                    minTime: response.minTime,
+                    maxTime: response.maxTime,
+                    eventUrl: '/admin/teacher-availability/show-lesson-event?' + eventParams,
+                    validationUrl: options.validationUrl
+                };
+                pickerCalendar.showCalendar(calendarOptions);
+            }
+        });
+        return false;
     }
 }
 

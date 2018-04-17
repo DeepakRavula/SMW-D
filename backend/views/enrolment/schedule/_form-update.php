@@ -88,10 +88,11 @@ use common\models\Location;
     $(document).ready(function() {
         var options = {
             'renderId' : '#bulk-reschedule-calendar',
-            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event', 'studentId' => $model->studentId]) ?>',
-            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
             'changeId' : '#coursereschedule-teacherid',
-            'durationId' : '#courseschedule-duration'
+            'durationId' : '#courseschedule-duration',
+            'studentId' : <?= $model->studentId ?>
         };
         $.fn.calendarDayView(options);
     });

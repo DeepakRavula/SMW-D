@@ -82,8 +82,8 @@ use kartik\time\TimePicker;
     $(document).ready(function() {
         var options = {
             'renderId' : '#lesson-calendar',
-            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event', 'studentId' => null]) ?>',
-            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
             'changeId' : '#teacher-change',
             'durationId' : '#extralesson-duration'
         };
