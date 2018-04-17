@@ -171,6 +171,7 @@ class UserController extends BaseController
                 ->student($id)
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
+		->orderBy(['lesson.date' => SORT_ASC])
                 ->notDeleted();
 
         return new ActiveDataProvider([
