@@ -9,7 +9,6 @@ use common\models\Student;
 use common\models\UserProfile;
 use common\components\gridView\KartikGridView;
 use yii\bootstrap\Modal;
-use common\models\LocationAvailability;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
