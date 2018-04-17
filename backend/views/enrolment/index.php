@@ -14,11 +14,12 @@ use yii\bootstrap\Modal;
 /* @var $searchModel backend\models\search\EnrolmentSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 $this->title = 'Enrolments';
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#', ['class' => 'new-enrol-btn']);
+$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#',
+    ['class' => 'new-enrol-btn']);
 
 $this->params['show-all'] = $this->render('_button', [
     'searchModel' => $searchModel
-    ]);
+]);
 ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 	<?php $columns = [

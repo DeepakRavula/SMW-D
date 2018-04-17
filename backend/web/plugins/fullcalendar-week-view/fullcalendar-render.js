@@ -7,11 +7,12 @@ $.fn.calendarDayView = function(options) {
         $('#week-view-spinner').show();
         calendar.render(options);
     });
-    
-    $(document).off('change', options.changeId).on('change', options.changeId, function () {
-        $('#week-view-spinner').show();
-        calendar.init(options);
-    });
+    if (options.changeId) {
+        $(document).off('change', options.changeId).on('change', options.changeId, function () {
+            $('#week-view-spinner').show();
+            calendar.init(options);
+        });
+    }
 };
 
 var calendar = {

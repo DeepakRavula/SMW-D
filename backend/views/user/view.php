@@ -743,10 +743,10 @@ $(document).ready(function(){
         }
         if (event.currentTarget.text === 'Schedule') {
             var options = {
-                'renderId' : '#teacher-schedule-calendar',
-                'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
-                'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
-                'teacherId' : <?= $model->id ?>,
+                'renderId': '#teacher-schedule-calendar',
+                'eventUrl': '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+                'availabilityUrl': '<?= Url::to(['teacher-availability/availability']) ?>',
+                'teacherId': <?= $model->id ?>,
                 'size': 'auto'
             };
             $.fn.calendarDayView(options);
