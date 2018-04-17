@@ -210,15 +210,19 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ];
         ?>
 <?php endif; ?>
+<div class="grid-row-open">
 	<?=
     GridView::widget([
         'dataProvider' => $dataProvider,
-        'options' => ['class' => ''],
+        'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+        $url = Url::to(['invoice/view', 'id' => $model->invoice->id]);
+        $data = ['data-url' => $url];
+        return $data;
+    },
                 'summary' => false,
                 'emptyText' => false,
         'showPageSummary' => true,
                 'headerRowOptions' => ['class' => 'bg-light-gray'],
-                'rowOptions'=>['class' => 'item-category-report-invoice-click'],
         'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
         'pjax' => true,
         'pjaxSettings' => [
@@ -230,23 +234,15 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         'columns' => $columns,
     ]);
     ?>
+</div>
 <script>
     $(document).ready(function(){
- $(document).on('click', '.item-category-report-invoice-click', function(){
-     var invoiceLineItemId=$(this).attr('data-key');
-     var params = $.param({'lineItemId' : invoiceLineItemId});
-     		$.ajax({
-                    url    :'<?= Url::to(['item-category/invoice-number']); ?>?&' + params,
-                    type   : 'get',
-                    dataType: 'json',
-                    success: function(response)
-                    {
-                       if(response) {
-                        var url = '<?= Url::to(['invoice/view']); ?>?id='+response;
-                        window.location.href=url;
-			   }
-				}
-			});
-    });
+        $("#group-by-method").on("change", function() {
+      var summariseReport = $(this).is(":checked");
+      if(summariseReport)
+      {
+       $('#item-listing').addClass("click-disable");
+      }
+          });
     });
     </script>

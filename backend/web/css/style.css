@@ -430,3 +430,6 @@ dl {
 .apply-credit-row {
 	background-color: antiquewhite;
 }
+.click-disable{
+     pointer-events:none;
+}
