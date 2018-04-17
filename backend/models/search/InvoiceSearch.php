@@ -43,7 +43,7 @@ class InvoiceSearch extends Invoice
             [['fromDate', 'toDate'], 'date', 'format' => 'php:M d,Y'],
             [['mailStatus', 'invoiceStatus'], 'integer'],
             [['type', 'query', 'toggleAdditionalColumns', 'dateRange','invoiceDateRange',
-                'customer', 'dueFromDate', 'dueToDate','number','phone','summariseReport','isPrint', 'isWeb', 'isMail'], 'safe'],
+                'customer', 'dueFromDate', 'dueToDate','number','phone','summariseReport','isPrint','dueDate','isWeb', 'isMail'], 'safe'],
         ];
     }
 

@@ -32,7 +32,7 @@ $this->params['action-button'] = $actionButton; ?>
                     },
                 ],
                 [
-		'attribute' => 'dateRange',
+		'attribute' => 'dueDate',
                     'label' => 'Due Date',
                     'value' => function ($data) {
                         $date = Yii::$app->formatter->asDate($data->dueDate);
@@ -143,7 +143,7 @@ $this->params['action-button'] = $actionButton; ?>
                     },
                 ],
                 [
-					'attribute' => 'invoiceDateRange',
+					'attribute' => 'date',
 					'label' => 'Date',
 					'filterType' => KartikGridView::FILTER_DATE_RANGE,
 			  'filterWidgetOptions' => [
