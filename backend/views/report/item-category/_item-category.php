@@ -214,6 +214,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 	<?=
     GridView::widget([
         'dataProvider' => $dataProvider,
+        'options' =>['class' => 'payment-table'],
         'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
         $url = Url::to(['invoice/view', 'id' => $model->invoice->id]);
         $data = ['data-url' => $url];
@@ -235,14 +236,3 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
     ]);
     ?>
 </div>
-<script>
-    $(document).ready(function(){
-        $("#group-by-method").on("change", function() {
-      var summariseReport = $(this).is(":checked");
-      if(summariseReport)
-      {
-       $('#item-listing').addClass("click-disable");
-      }
-          });
-    });
-    </script>
