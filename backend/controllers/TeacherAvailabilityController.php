@@ -36,7 +36,8 @@ class TeacherAvailabilityController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['modify', 'delete', 'events', 'show-lesson-event',
-                    'availability-with-events'],
+                    'availability'
+                ],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -47,9 +48,8 @@ class TeacherAvailabilityController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'view', 'delete',
-                            'create', 'modify', 'events', 'show-lesson-event',
-                            'availability-with-events'],
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 
+                            'modify', 'events', 'show-lesson-event', 'availability'],
                         'roles' => ['manageTeachers'],
                     ],
                 ],
@@ -96,7 +96,7 @@ class TeacherAvailabilityController extends BaseController
     public function actionCreate()
     {
         $model = new TeacherAvailability();
-        $model->location_id = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $model->location_id = Location::findOne(['slug' => \Yii::$app->location])->id;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -169,16 +169,19 @@ class TeacherAvailabilityController extends BaseController
         }
     }
 
-    public function actionAvailabilityWithEvents($id)
+    public function actionAvailability($id = null)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $teacherAvailabilities = TeacherAvailability::find()
-            ->joinWith(['userLocation' => function ($query) use ($id) {
-                $query->joinWith(['userProfile' => function ($query) use ($id) {
-                    $query->andWhere(['user_profile.user_id' => $id]);
-                }]);
-            }])
-            ->all();
+        $teacherAvailabilities = [];
+        if ($id) {
+            $teacherAvailabilities = TeacherAvailability::find()
+                ->joinWith(['userLocation' => function ($query) use ($id) {
+                    $query->joinWith(['userProfile' => function ($query) use ($id) {
+                        $query->andWhere(['user_profile.user_id' => $id]);
+                    }]);
+                }])
+                ->all();
+        }
         $data =  $this->renderAjax('/layouts/datepicker');
         $availableHours = [];
         foreach ($teacherAvailabilities as $teacherAvailability) {
@@ -324,21 +327,43 @@ class TeacherAvailabilityController extends BaseController
         return $events;
     }
 
-    public function actionShowLessonEvent($teacherId, $lessonId = null)
+    public function actionShowLessonEvent($teacherId = null, $date, $studentId = null, $lessonId = null)
     {
-        $lessons = Lesson::find()
-            ->joinWith(['course' => function ($query) {
-                $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id])
-                    ->confirmed();
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $fromDate = (new \DateTime($date))->modify('Monday this week');
+        $toDate = (new \DateTime($date))->modify('Sunday this week');
+        $teacherLessons = Lesson::find()
+            ->joinWith(['course' => function ($query) use ($locationId) {
+                $query->location($locationId)
+                    ->confirmed()
+                    ->andWhere(['NOT', ['course.id' => null]]);
             }])
-            ->andWhere(['lesson.teacherId' => $teacherId])
             ->scheduledOrRescheduled()
             ->isConfirmed()
             ->notDeleted()
             ->andWhere(['NOT', ['lesson.id' => $lessonId]])
+            ->between($fromDate, $toDate);
+        if ($teacherId) {
+            $teacherLessons->andWhere(['lesson.teacherId' => $teacherId]);
+        }
+        $lessons = Lesson::find()
+            ->joinWith(['course' => function ($query) use ($studentId, $locationId) {
+                $query->joinWith(['enrolments' => function ($query) use ($studentId) {
+                    $query->andWhere(['enrolment.studentId' => $studentId]);
+                }]);
+                $query->location($locationId)
+                    ->confirmed()
+                    ->andWhere(['NOT', ['course.id' => null]]);
+            }])
+            ->scheduledOrRescheduled()
+            ->isConfirmed()
+            ->notDeleted()
+            ->union($teacherLessons)
+            ->between($fromDate, $toDate)
             ->all();
         $events = [];
-        foreach ($lessons as &$lesson) {
+        foreach ($lessons as $lesson) {
+            $lesson = Lesson::findOne($lesson->id);
             $toTime = new \DateTime($lesson->date);
             $length = explode(':', $lesson->fullDuration);
             $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));

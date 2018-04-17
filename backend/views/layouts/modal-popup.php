@@ -46,6 +46,7 @@ Modal::begin([
 	$('.modal-save').attr('disabled', true);
         $('.modal-delete').attr('disabled', true);
         $('.modal-cancel').attr('disabled', true);
+        $('.modal-save-all').attr('disabled', true);
         $.ajax({
             url: $('#modal-form').attr('action'),
             type: 'post',
@@ -63,6 +64,7 @@ Modal::begin([
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
                     $(document).trigger("modal-error", response);
                     $('.modal-save').attr('disabled', false);
+                    $('.modal-save-all').attr('disabled', false);
                     $('.modal-delete').attr('disabled', false);
                     $('.modal-cancel').attr('disabled', false);
                 }
@@ -78,10 +80,12 @@ Modal::begin([
 
     $('#popup-modal').on('hidden.bs.modal', function () {
         $('.modal-save').attr('disabled', false);
+        $('.modal-save-all').attr('disabled', false);
         $('.modal-delete').attr('disabled', false);
         $('.modal-cancel').attr('disabled', false);
         $('#modal-delete').hide();
         $('.modal-save').text('Save');
+        $('.modal-save-all').hide();
         $('.modal-save').attr('message', null);
         $(document).trigger("modal-close");
     });

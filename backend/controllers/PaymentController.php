@@ -238,14 +238,10 @@ class PaymentController extends BaseController
 
     public function actionValidateApplyCredit($id)
     {
-        $model = Invoice::findOne(['id' => $id]);
         $paymentModel = new Payment(['scenario' => Payment::SCENARIO_APPLY_CREDIT]);
         $request = Yii::$app->request;
-        if ($paymentModel->load($request->post()) && !$paymentModel->validate()) {
-            return ActiveForm::validate($paymentModel);
-        } else {
-            return true;
-        }
+        $paymentModel->load($request->post());
+        return ActiveForm::validate($paymentModel);
     }
 
     public function actionCreditPayment($id)

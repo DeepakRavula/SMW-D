@@ -5,14 +5,10 @@ use yii\helpers\Url;
 use common\models\Note;
 use yii\bootstrap\Modal;
 use common\models\PrivateLesson;
-use kartik\date\DatePickerAsset;
 use kartik\time\TimePickerAsset;
 use kartik\select2\Select2Asset;
 Select2Asset::register($this);
 TimePickerAsset::register($this);
-DatePickerAsset::register($this);
-
-require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
 
@@ -25,11 +21,6 @@ $this->params['action-button'] = $this->render('_buttons', [
 ]);
 ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
-<link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
-<link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
-<script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <div id="view-danger-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>

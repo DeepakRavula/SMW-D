@@ -13,7 +13,7 @@
             'changeMonth' => true,
             'yearRange' => '1500:3000',
             'changeYear' => true
-        ],
+        ]
     ]); ?>
 </div>
 <div id="week-view-spinner" class="spinner" style="display:none">

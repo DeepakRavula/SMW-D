@@ -2,7 +2,6 @@
 
 use kartik\select2\Select2;
 use common\models\User;
-use common\models\LocationAvailability;
 use common\models\Location;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
@@ -84,7 +83,7 @@ use kartik\time\TimePicker;
         var options = {
             'renderId' : '#lesson-calendar',
             'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
-            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability-with-events']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
             'changeId' : '#teacher-change',
             'durationId' : '#extralesson-duration'
         };
