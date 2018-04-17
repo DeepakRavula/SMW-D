@@ -225,7 +225,7 @@ function showCalendars(id,type) {
                     if (response.status) {
                         $('#popup-modal').modal('show');
                         if (response.canDelete) {
-                            $('#modal-delete').show();
+                            $('.modal-delete').show();
                             $('.modal-delete').attr('action', deleteUrl);
                         }
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');

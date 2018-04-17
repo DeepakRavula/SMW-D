@@ -57,7 +57,7 @@ echo AdminLteGridView::widget([
             } else {
                 var customUrl = '<?= Url::to(['blog/update']); ?>?id=' + blogId;
                 var url = '<?= Url::to(['blog/delete']); ?>?id=' + blogId;
-                $('#modal-delete').show();
+                $('.modal-delete').show();
                 $(".modal-delete").attr("action",url);
             }
             $.ajax({
