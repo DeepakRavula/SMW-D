@@ -33,20 +33,20 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'groupedRow' => true,
                             'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
                 return [
-                    'mergeColumns'=>[[2, 3]], // columns to merge in summary
+                    'mergeColumns'=>[[2, 4]], // columns to merge in summary
                     'content'=>[              // content to show in each summary cell
                       
-                       4=>GridView::F_SUM,
+                       5=>GridView::F_SUM,
 
                     ],
                     'contentFormats'=>[      // content reformatting for each summary cell
 
-                        4=>['format'=>'number', 'decimals'=>2],
+                        5=>['format'=>'number', 'decimals'=>2],
 
                     ],
                     'contentOptions'=>[      // content html attributes for each summary cell
                         2=>['style' => 'text-align:left'],
-                        4=>['style'=>'text-align:right'],
+                        5=>['style'=>'text-align:right'],
 
                     ],
                     // html attributes for group summary row
@@ -95,20 +95,19 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'groupedRow' => true,
                'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
                 return [
-                    'mergeColumns'=>[[2, 3]], // columns to merge in summary
+                    'mergeColumns'=>[[2, 4]], // columns to merge in summary
                     'content'=>[              // content to show in each summary cell
-                       3=>"xxxxxxx",
-                       4=>GridView::F_SUM,
+                       5=>GridView::F_SUM,
 
                     ],
                     'contentFormats'=>[      // content reformatting for each summary cell
                         2=>['format'=>'string'],
-                        4=>['format'=>'number', 'decimals'=>2],
+                        5=>['format'=>'number', 'decimals'=>2],
 
                     ],
                     'contentOptions'=>[      // content html attributes for each summary cell
                         2=>['style' => 'text-align:left'],
-                        4=>['style'=>'text-align:right'],
+                        5=>['style'=>'text-align:right'],
 
                     ],
                     // html attributes for group summary row
@@ -129,21 +128,21 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'subGroupOf' => 0,
             'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
                 return [
-                    'mergeColumns'=>[[2, 3]],// columns to merge in summary
+                    'mergeColumns'=>[[2, 4]],// columns to merge in summary
                     'content'=>[              // content to show in each summary cell
-                       0=> $model->itemCategory->name,
-                       4=>GridView::F_SUM,
+                       
+                       5=>GridView::F_SUM,
                        
                     ],
                     'contentFormats'=>[      // content reformatting for each summary cell
                         
-                        4=>['format'=>'number', 'decimals'=>2],
+                        5=>['format'=>'number', 'decimals'=>2],
                        
                     ],
                     'contentOptions'=>[
                         2=>['style'=>'font-variant:small-caps'],// content html attributes for each summary cell
                        // 2=>['style' => 'text-align:left'],
-                        4=>['style'=>'text-align:right'],
+                        5=>['style'=>'text-align:right'],
                         
                     ],
                     // html attributes for group summary row
