@@ -14,7 +14,7 @@ use yii\helpers\Url;
         'action' => Url::to(['payment/credit-payment', 'id' => $invoice->id]),
         'enableClientValidation' => false,
         'enableAjaxValidation' => true,
-        'validationUrl' => Url::to(['payment/validate-apply-credit','id' => $invoice->id]),
+        'validationUrl' => Url::to(['payment/validate-apply-credit']),
     ]); ?>
     <div class="row">
         <div class="col-xs-4">
