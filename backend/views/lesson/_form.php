@@ -1,5 +1,4 @@
 <?php
-use common\models\LocationAvailability;
 use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 use kartik\time\TimePicker;
@@ -105,29 +104,6 @@ use common\models\Location;
     </div>
         <?php ActiveForm::end(); ?>
 </div>
-<?php
-    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-    $minLocationAvailability = LocationAvailability::find()
-        ->location($locationId)
-        ->locationaAvailabilityHours()
-        ->orderBy(['fromTime' => SORT_ASC])
-        ->one();
-    $maxLocationAvailability = LocationAvailability::find()
-        ->location($locationId)
-        ->locationaAvailabilityHours()
-        ->orderBy(['toTime' => SORT_DESC])
-        ->one();
-    if (empty($minLocationAvailability)) {
-        $minTime = LocationAvailability::DEFAULT_FROM_TIME;
-    } else {
-        $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-    }
-    if (empty($maxLocationAvailability)) {
-        $maxTime = LocationAvailability::DEFAULT_TO_TIME;
-    } else {
-        $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-    }
-?>
 
 <script type="text/javascript">
     $('#popup-modal').on('shown.bs.modal', function () {
@@ -138,7 +114,7 @@ use common\models\Location;
             'changeId' : '#lesson-teacherid',
             'durationId' : '#course-duration',
             'lessonId' : '<?= $model->id; ?>',
-            'studentId' : '<?= $model->enrolment->studentId ?>'
+            'studentId' : '<?= $model->enrolment ? $model->enrolment->studentId : ""?>'
         };
         $.fn.calendarDayView(options);
     });
