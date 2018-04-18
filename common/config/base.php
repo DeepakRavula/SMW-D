@@ -68,6 +68,9 @@ $config = [
                 'port' => env('SMTP_PORT'),
                 'encryption' => env('SMTP_ENCRYPTION'),
             ],
+	    'as catchAllEmail' => [
+           'class' => '\common\behaviors\CatchAllEmailBehavior',
+       ],
         ],
 
         'db' => [
