@@ -7,11 +7,11 @@ use kartik\select2\Select2;
 
 ?>
 
-<script type="text/javascript" src="/admin/plugins/fullcalendar-time-picker/fullcalendar-time-picker.js?v=4"></script>
+<script type="text/javascript" src="/admin/plugins/fullcalendar-time-picker/fullcalendar-time-picker.js?v=8"></script>
 <?php
     Modal::begin([
         'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
-        'id' => 'date-time-picker-modal',
+        'id' => 'calendar-date-time-picker-modal',
         'footer' => $this->render('/layouts/time-picker-footer')
     ]);
 ?>
@@ -39,7 +39,7 @@ use kartik\select2\Select2;
 
     <?php ActiveForm::end(); ?>
     <div class="col-lg-12">
-        <div id="calendar-date-time" ></div>
+        <div id="calendar-date-time-picker" ></div>
     </div>   
 </div>
 <?php Modal::end(); ?>

@@ -22,10 +22,11 @@ use yii\helpers\Url;
                 name: name,
                 date: moment(new Date()),
                 durationId: '#course-duration',
+                changeId: '#course-teacherid',
                 teacherId: teacherId,
                 parentPopUp: '#group-course-create-modal',
                 eventUrl : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
-                availabilityUrl : '<?= Url::to(['teacher-availability/availability']) ?>',
+                availabilityUrl : '<?= Url::to(['teacher-availability/availability']) ?>'
             };
             $.fn.calendarPicker(options);
         }

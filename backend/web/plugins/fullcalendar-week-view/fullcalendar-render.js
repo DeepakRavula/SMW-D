@@ -8,8 +8,9 @@ $.fn.calendarDayView = function(options) {
         calendar.render(options);
     });
     if (options.changeId) {
-        $(document).off('change', options.changeId).on('change', options.changeId, function () {
+        $(document).off('change', options.changeId).on('change', options.changeId, function () {debugger
             $('#week-view-spinner').show();
+            options.teacherId = null;
             calendar.init(options);
         });
     }
@@ -62,7 +63,7 @@ var calendar = {
                 };
                 $(document).trigger("week-view-calendar-select", response);
                 var endtime = start.clone();
-                var duration = $(calendarOptions.durationId).val();
+                var duration = calendarOptions.duration ? calendarOptions.duration : $(calendarOptions.durationId).val();
                 var durationMinutes = moment.duration($.isEmptyObject(duration) ? '00:30' : duration).asMinutes();
                 moment(endtime.add(durationMinutes, 'minutes'));
                 $('#week-view-calendar').fullCalendar('renderEvent',

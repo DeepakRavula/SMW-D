@@ -9,7 +9,7 @@ use kartik\select2\Select2Asset;
 use kartik\date\DatePickerAsset;
 DatePickerAsset::register($this);
 Select2Asset::register($this);
-
+require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup-with-teacher.php';
 /* @var $this yii\web\View */
 /* @var $model common\models\GroupCourse */
 $this->params['label'] = $this->render('_title', [

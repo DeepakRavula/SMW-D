@@ -433,3 +433,7 @@ dl {
 .click-disable{
      pointer-events:none;
 }
+.modal {
+
+    overflow-y: scroll;
+}

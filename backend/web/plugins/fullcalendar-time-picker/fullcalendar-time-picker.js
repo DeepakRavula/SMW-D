@@ -5,9 +5,18 @@ $.fn.calendarPicker = function(options) {
     
     $(document).off('shown.bs.modal', '#calendar-date-time-picker-modal').on('shown.bs.modal', 
         '#calendar-date-time-picker-modal', function () {
+        if (options.teacherData) {
+            $("#calendar-date-time-picker-teacher").empty();
+            $("#calendar-date-time-picker-teacher").off().select2({
+                data: options.teacherData,
+                width: '100%',
+                theme: 'krajee'
+            });
+        }
+        $('#calendar-date-time-picker-teacher').val(options.teacherId);
         pickerCalendar.renderCalendar(options);
     });
-
+    
     $(document).off('click', '.calendar-date-time-picker-cancel').on('click', 
         '.calendar-date-time-picker-cancel', function () {
         $('#calendar-date-time-picker-modal').modal('hide');
@@ -31,7 +40,7 @@ $.fn.calendarPicker = function(options) {
     });
     
     $(document).off('click', '.calendar-date-time-picker-save').on('click', '.calendar-date-time-picker-save', function () {
-        if (!$.isEmptyObject($('#week-view-calendar').fullCalendar('clientEvents', 'newEnrolment'))){
+        if (!$.isEmptyObject($('#week-view-calendar').fullCalendar('clientEvents', 'newEnrolment'))) {
             $('#calendar-date-time-picker-modal').modal('hide');
             var selecetdEvent = $('#week-view-calendar').fullCalendar('clientEvents', 'newEnrolment');
             var params = {
@@ -50,7 +59,6 @@ $.fn.calendarPicker = function(options) {
         renderCalendar: function (options) {
             var calendarOptions = options;
             calendarOptions.renderId = '#calendar-date-time-picker';
-            calendarOptions.changeId = '#course-teacherid';
             $.fn.calendarDayView(calendarOptions);
         }
     };

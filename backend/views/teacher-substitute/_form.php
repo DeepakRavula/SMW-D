@@ -5,8 +5,6 @@ use yii\bootstrap\Html;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
-use common\models\Location;
-use common\models\LocationAvailability;
 use kartik\grid\GridView;
 
 /*
@@ -149,29 +147,6 @@ Modal::begin([
 <div id="sub-review-lesson-content"></div>
 <?php Modal::end();?>	
 
-<?php
-    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-    $minLocationAvailability = LocationAvailability::find()
-        ->location($locationId)
-        ->locationaAvailabilityHours()
-        ->orderBy(['fromTime' => SORT_ASC])
-        ->one();
-    $maxLocationAvailability = LocationAvailability::find()
-        ->location($locationId)
-        ->locationaAvailabilityHours()
-        ->orderBy(['toTime' => SORT_DESC])
-        ->one();
-    if (empty($minLocationAvailability)) {
-        $minTime = LocationAvailability::DEFAULT_FROM_TIME;
-    } else {
-        $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-    }
-    if (empty($maxLocationAvailability)) {
-        $maxTime = LocationAvailability::DEFAULT_TO_TIME;
-    } else {
-        $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-    }
-?>
 <script>
     $(document).off('click', '#edit-button').on('click', '#edit-button', function () {
         var event = $(this);
@@ -184,43 +159,19 @@ Modal::begin([
                 if(response.status)
                 {
                     var teacherData = response.output;
-                    if ($('#teacher-substitute-modal').modal('hide')) {
-                        $('#spinner').show();
-                        var lessonId = event.attr('lessonid');
-                        var teacherId = response.selected;
-                        var params = $.param({ id: teacherId });
-                        $.ajax({
-                            url: '<?= Url::to(['teacher-availability/availability']); ?>?' + params,
-                            type: 'get',
-                            dataType: "json",
-                            success: function (response)
-                            {
-                                $('#spinner').hide();
-                                var options = {
-                                    selectConstraint: {
-                                        start: '00:01', // a start time (10am in this example)
-                                        end: '24:00', // an end time (6pm in this example)
-                                        dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-                                    },
-                                    eventConstraint: {
-                                        start: '00:01', // a start time (10am in this example)
-                                        end: '24:00', // an end time (6pm in this example)
-                                        dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-                                    },
-                                    teacherData: teacherData,
-                                    lessonId: lessonId,
-                                    date: moment(new Date()),
-                                    teacherId: teacherId,
-                                    duration: $('#edit-button').attr('duration'),
-                                    businessHours: response.availableHours,
-                                    minTime: '<?= $minTime; ?>',
-                                    maxTime: '<?= $maxTime; ?>',
-                                    eventUrl: '<?= Url::to(['teacher-availability/show-lesson-event']); ?>?teacherId=' + teacherId
-                                };
-                                $('#calendar-date-time-picker').calendarPicker(options);
-                            }
-                        });
-                    }
+                    var lessonId = event.attr('lessonid');
+                    var options = {
+                        teacherData: teacherData,
+                        lessonId: lessonId,
+                        changeId: '#calendar-date-time-picker-teacher',
+                        date: moment(new Date()),
+                        teacherId: $('#teacher-drop').val(),
+                        duration: $('#edit-button').attr('duration'),
+                        parentPopUp: '#teacher-substitute-modal',
+                        eventUrl : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+                        availabilityUrl : '<?= Url::to(['teacher-availability/availability']) ?>'
+                    };
+                    $.fn.calendarPicker(options);
                 }
             }
         });
@@ -275,6 +226,12 @@ Modal::begin([
             });
             return false;
         }
+    });
+
+    $(document).on('week-view-calendar-select', function(event, params) {
+        $('#calendar-date-time-picker-date').val(moment(params.date, "DD-MM-YYYY h:mm a").format('MMM D, Y hh:mm A'))
+            .trigger('change');
+        return false;
     });
     
     $(document).on('after-picker-close', function() {

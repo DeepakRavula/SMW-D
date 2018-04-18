@@ -237,7 +237,6 @@ echo KartikGridView::widget([
 
     $(document).on('click', '.step3-back', function() {
         $('#step-3, #step-1, #step-4').hide();
-        loadCalendar();
         $('#step-2').show();
         $('#reverse-enrol-modal .modal-dialog').css({'width': '1000px'});
         return false;
