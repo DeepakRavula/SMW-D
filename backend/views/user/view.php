@@ -422,7 +422,7 @@ $this->params['action-button'] = $this->render('_action-button', [
                         if (qualificationId !== undefined) {
                             var param = $.param({ id: qualificationId });
                             var url = '<?= Url::to(['qualification/delete']) ?>?' + param;
-                            $('#modal-delete').show();
+                            $('.modal-delete').show();
                             $(".modal-delete").attr("action", url);
                         }
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Qualification</h4>');

@@ -83,7 +83,7 @@ Modal::begin([
         $('.modal-save-all').attr('disabled', false);
         $('.modal-delete').attr('disabled', false);
         $('.modal-cancel').attr('disabled', false);
-        $('#modal-delete').hide();
+        $('.modal-delete').hide();
         $('.modal-save').text('Save');
         $('.modal-save-all').hide();
         $('.modal-save').attr('message', null);

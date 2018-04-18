@@ -68,7 +68,7 @@ Pjax::Begin([
             } else {
                 var customUrl = '<?= Url::to(['tax-code/update']); ?>?id=' + taxcodeId;
 		var url = '<?= Url::to(['tax-code/delete']); ?>?id=' + taxcodeId;
-		$('#modal-delete').show();
+		$('.modal-delete').show();
                 $(".modal-delete").attr("action",url);
             }
             $.ajax({

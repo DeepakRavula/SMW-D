@@ -65,7 +65,7 @@ use insolita\wgadminlte\LteConst;
                         if (response.id) {
                             var param = $.param({ id: response.id });
                             var url = '<?= Url::to(['customer-payment-preference/delete']) ?>?' + param;
-                            $('#modal-delete').show();
+                            $('.modal-delete').show();
                             $(".modal-delete").attr("action", url);
                         }
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Payment Preference</h4>');

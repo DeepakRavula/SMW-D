@@ -40,7 +40,7 @@ $this->params['action-button'] = $addButton;
             } else {
                 var customUrl = '<?= Url::to(['item-category/update']); ?>?id=' + itemId;
 		 var url = '<?= Url::to(['item-category/delete']); ?>?id=' + itemId;
-                $('#modal-delete').show();
+                $('.modal-delete').show();
                 $(".modal-delete").attr("action",url);
             }
             $.ajax({

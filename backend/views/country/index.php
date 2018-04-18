@@ -51,7 +51,7 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
             } else {
                 var customUrl = '<?= Url::to(['country/update']); ?>?id=' + countryId;
                 var url = '<?= Url::to(['country/delete']); ?>?id=' + countryId;
-                $('#modal-delete').show();
+                $('.modal-delete').show();
                 $(".modal-delete").attr("action",url);
             }
             $.ajax({

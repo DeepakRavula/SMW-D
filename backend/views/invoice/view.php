@@ -233,7 +233,7 @@ Modal::begin([
                     {
                         $('#popup-modal .modal-dialog').css({'width': '600px'});
                         $('#popup-modal').modal('show');
-                        $('#modal-delete').show();
+                        $('.modal-delete').show();
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Line Item</h4>');
                         $('.modal-delete').attr('action', url);
                         $('#modal-content').html(response.data);
@@ -448,7 +448,7 @@ Modal::begin([
                     $('#popup-modal').modal('show');
                     $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Payment</h4>');
                     $('#popup-modal .modal-dialog').css({'width': '400px'});
-                    $('#modal-delete').show();
+                    $('.modal-delete').show();
                     $('.modal-delete').attr('action', url);
                 }
             }
