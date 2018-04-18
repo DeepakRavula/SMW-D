@@ -236,7 +236,7 @@ class PaymentController extends BaseController
         }
     }
 
-    public function actionValidateApplyCredit($id)
+    public function actionValidateApplyCredit()
     {
         $paymentModel = new Payment(['scenario' => Payment::SCENARIO_APPLY_CREDIT]);
         $request = Yii::$app->request;

@@ -82,6 +82,8 @@ class StudentSearch extends Student
         ];	
         $query->andFilterWhere(['like', 'first_name', $this->first_name])
             ->andFilterWhere(['like', 'last_name', $this->last_name])
+	    ->andFilterWhere(['like', 'user_phone.number', trim($this->phone)])
+	    ->andFilterWhere(['or',['like', 'user_profile.firstname', trim($this->customer)],['like', 'user_profile.lastname', trim($this->customer)]])
             ->groupBy('student.id');
 
         if (!$this->showAllStudents) {
