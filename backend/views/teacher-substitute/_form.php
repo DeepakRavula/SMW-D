@@ -190,7 +190,7 @@ Modal::begin([
                         var teacherId = response.selected;
                         var params = $.param({ id: teacherId });
                         $.ajax({
-                            url: '<?= Url::to(['teacher-availability/availability-with-events']); ?>?' + params,
+                            url: '<?= Url::to(['teacher-availability/availability']); ?>?' + params,
                             type: 'get',
                             dataType: "json",
                             success: function (response)

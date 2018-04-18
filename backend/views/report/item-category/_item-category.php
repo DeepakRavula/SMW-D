@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use common\models\InvoiceLineItem;
 use backend\assets\CustomGridAsset;
 use common\models\ItemCategory;
+use common\models\Invoice;
 CustomGridAsset::register($this);
 Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  /*
@@ -33,20 +34,20 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'groupedRow' => true,
                             'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
                 return [
-                    'mergeColumns'=>[[2, 3]], // columns to merge in summary
+                    'mergeColumns'=>[[2, 4]], // columns to merge in summary
                     'content'=>[              // content to show in each summary cell
                       
-                       4=>GridView::F_SUM,
+                       5=>GridView::F_SUM,
 
                     ],
                     'contentFormats'=>[      // content reformatting for each summary cell
 
-                        4=>['format'=>'number', 'decimals'=>2],
+                        5=>['format'=>'number', 'decimals'=>2],
 
                     ],
                     'contentOptions'=>[      // content html attributes for each summary cell
                         2=>['style' => 'text-align:left'],
-                        4=>['style'=>'text-align:right'],
+                        5=>['style'=>'text-align:right'],
 
                     ],
                     // html attributes for group summary row
@@ -64,18 +65,38 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
         ],
  
-
-                [
+                        [
                 'label' => 'Amount',
                 'format' => ['decimal', 2],
-                'value' => function ($data) {
-                    return Yii::$app->formatter->asDecimal($data->itemTotal);
+                'value' => function ($data) use ($searchModel) {
+                    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+                    $amount = 0;
+                  $payments = InvoiceLineItem::find()
+                                 ->notDeleted()
+                                 ->joinWith(['invoice' => function ($query) use ($locationId) {
+                                 $query->notDeleted()
+                                ->notCanceled()
+                                ->notReturned()
+                                ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
+                                ->location($locationId);
+                     }])
+                      ->joinWith('itemCategory')
+                         ->andWhere([
+                            'item_category.id' => $data->itemCategory->id,
+                            'DATE(invoice.date)' => (new \DateTime($data->invoice->date))->format('Y-m-d')
+                        ])
+                        ->all();
+                    foreach ($payments as $payment) {
+                        $amount += $payment->itemTotal;
+                    }
+
+                    return Yii::$app->formatter->asDecimal($amount,2);
                 },
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM
-            ],
+            ]
         ];
         ?>
 	<?php else : ?>
@@ -95,20 +116,19 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'groupedRow' => true,
                'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
                 return [
-                    'mergeColumns'=>[[2, 3]], // columns to merge in summary
+                    'mergeColumns'=>[[2, 4]], // columns to merge in summary
                     'content'=>[              // content to show in each summary cell
-                       3=>"xxxxxxx",
-                       4=>GridView::F_SUM,
+                       5=>GridView::F_SUM,
 
                     ],
                     'contentFormats'=>[      // content reformatting for each summary cell
                         2=>['format'=>'string'],
-                        4=>['format'=>'number', 'decimals'=>2],
+                        5=>['format'=>'number', 'decimals'=>2],
 
                     ],
                     'contentOptions'=>[      // content html attributes for each summary cell
                         2=>['style' => 'text-align:left'],
-                        4=>['style'=>'text-align:right'],
+                        5=>['style'=>'text-align:right'],
 
                     ],
                     // html attributes for group summary row
@@ -129,21 +149,21 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'subGroupOf' => 0,
             'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
                 return [
-                    'mergeColumns'=>[[2, 3]],// columns to merge in summary
+                    'mergeColumns'=>[[2, 4]],// columns to merge in summary
                     'content'=>[              // content to show in each summary cell
-                       0=> $model->itemCategory->name,
-                       4=>GridView::F_SUM,
+                       
+                       5=>GridView::F_SUM,
                        
                     ],
                     'contentFormats'=>[      // content reformatting for each summary cell
                         
-                        4=>['format'=>'number', 'decimals'=>2],
+                        5=>['format'=>'number', 'decimals'=>2],
                        
                     ],
                     'contentOptions'=>[
                         2=>['style'=>'font-variant:small-caps'],// content html attributes for each summary cell
                        // 2=>['style' => 'text-align:left'],
-                        4=>['style'=>'text-align:right'],
+                        5=>['style'=>'text-align:right'],
                         
                     ],
                     // html attributes for group summary row
@@ -190,15 +210,20 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ];
         ?>
 <?php endif; ?>
+<div class="grid-row-open">
 	<?=
     GridView::widget([
         'dataProvider' => $dataProvider,
-        'options' => ['class' => ''],
+        'options' =>['class' => 'payment-table'],
+        'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+        $url = Url::to(['invoice/view', 'id' => $model->invoice->id]);
+        $data = ['data-url' => $url];
+        return $data;
+    },
                 'summary' => false,
                 'emptyText' => false,
         'showPageSummary' => true,
                 'headerRowOptions' => ['class' => 'bg-light-gray'],
-                'rowOptions'=>['class' => 'item-category-report-invoice-click'],
         'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
         'pjax' => true,
         'pjaxSettings' => [
@@ -210,23 +235,4 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         'columns' => $columns,
     ]);
     ?>
-<script>
-    $(document).ready(function(){
- $(document).on('click', '.item-category-report-invoice-click', function(){
-     var invoiceLineItemId=$(this).attr('data-key');
-     var params = $.param({'lineItemId' : invoiceLineItemId});
-     		$.ajax({
-                    url    :'<?= Url::to(['item-category/invoice-number']); ?>?&' + params,
-                    type   : 'get',
-                    dataType: 'json',
-                    success: function(response)
-                    {
-                       if(response) {
-                        var url = '<?= Url::to(['invoice/view']); ?>?id='+response;
-                        window.location.href=url;
-			   }
-				}
-			});
-    });
-    });
-    </script>
+</div>

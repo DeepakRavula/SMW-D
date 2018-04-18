@@ -104,7 +104,11 @@ $this->params['show-all'] = $this->render('_button', [
             }
         });
         return false;
+    });$(document).on('modal-success', function(event, params) {
+        window.location.href=params.url;
+        return false;
     });
+
 $(document).ready(function(){
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     

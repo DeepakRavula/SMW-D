@@ -4,7 +4,6 @@ use kartik\select2\Select2;
 use common\models\User;
 use common\models\Location;
 use yii\bootstrap\ActiveForm;
-use yii\jui\DatePicker;
 use kartik\depdrop\DepDrop;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
@@ -25,7 +24,7 @@ use kartik\time\TimePicker;
 ]); ?>
 <?php $this->render('/lesson/_color-code'); ?>
 <div class="row">
-        <div class="col-md-6 lesson-program">
+        <div class="col-md-3 lesson-program">
             <?php $query = Program::find()
                             ->active()
                             ->privateProgram();
@@ -51,7 +50,7 @@ use kartik\time\TimePicker;
                 'options' => ['placeholder' => 'Select program', 'id' => 'lesson-program']
             ])->label('Program - <a id="show-all">Click to show all</a>'); ?>
         </div>
-    	<div class="col-md-6 lesson-teacher">
+    	<div class="col-md-4 lesson-teacher">
         <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $teachers = ArrayHelper::map(
                     User::find()
@@ -78,7 +77,7 @@ use kartik\time\TimePicker;
             ]);
         ?>
         </div>
-		 <div class="col-md-4 lesson-duration">
+        <div class="col-md-2 lesson-duration">
             <?php
             echo $form->field($model, 'duration')->widget(
             TimePicker::classname(),
@@ -91,7 +90,7 @@ use kartik\time\TimePicker;
         );
             ?>
         </div>
-        <div class="col-md-4 lesson-date">
+        <div class="col-md-3 lesson-date">
             <?php echo $form->field($model, 'date')->textInput([
                'readOnly' => true,
                 'id' => 'extra-lesson-date',
@@ -99,26 +98,7 @@ use kartik\time\TimePicker;
         </div>
         
         <div class="col-md-12">
-            <div class="col-lg-2 pull-right">
-            <?php echo '<label>Go to Date</label>'; ?>
-            <?php echo DatePicker::widget([
-                    'name' => 'selected-date',
-                    'id' => 'extra-lesson-go-to-date',
-                    'value' => Yii::$app->formatter->asDate((new DateTime())->format('d-m-Y')),
-                    //'type' => DatePicker::TYPE_INPUT,
-                    'clientOptions' => [
-                        'changeMonth' => true,
-                    'yearRange' => '1500:3000',
-                    'changeYear' => true,
-                    ]
-            ]); ?>
-        </div>
-            <div id="lesson-calendar">
-                <div id="spinner" class="spinner" style="" >
-                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-                    <span class="sr-only">Loading...</span>
-                </div>  
-            </div>
+            <div id="extra-lesson-calendar"></div>
         </div>
 </div>
 <?php ActiveForm::end(); ?>
@@ -135,6 +115,23 @@ use kartik\time\TimePicker;
             });
             return false;
         });
+    });
+
+    $('#popup-modal').on('shown.bs.modal', function () {
+        var options = {
+            'renderId' : '#extra-lesson-calendar',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
+            'changeId' : '#lesson-teacher',
+            'durationId' : '#extralesson-duration',
+            'studentId' : '<?= $studentModel->id ?>'
+        };
+        $.fn.calendarDayView(options);
+    });
+
+    $(document).on('week-view-calendar-select', function(event, params) {
+        $('#extra-lesson-date').val(moment(params.date, "DD-MM-YYYY h:mm a").format('MMM D, Y hh:mm A')).trigger('change');
+        return false;
     });
     
     $(document).on('modal-success', function(event, params) {

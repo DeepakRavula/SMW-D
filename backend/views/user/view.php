@@ -383,7 +383,8 @@ $this->params['action-button'] = $this->render('_action-button', [
     'id' => 'address-modal',
 ]); ?>
 <div id="address-content"></div>
-<?php Modal::end(); ?>
+<?php Modal::end(); $studentId = null?>
+
 <script>
     var lesson = {
         update :function(params) {
@@ -741,7 +742,14 @@ $(document).ready(function(){
             $('#availability-calendar').fullCalendar('render');
         }
         if (event.currentTarget.text === 'Schedule') {
-            $('#calendar').fullCalendar('render');
+            var options = {
+                'renderId': '#teacher-schedule-calendar',
+                'eventUrl': '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+                'availabilityUrl': '<?= Url::to(['teacher-availability/availability']) ?>',
+                'teacherId': <?= $model->id ?>,
+                'size': 'auto'
+            };
+            $.fn.calendarDayView(options);
         }
 	});
     $(document).on('beforeSubmit', '#user-note-form', function (e) {

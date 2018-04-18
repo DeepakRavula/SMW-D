@@ -114,172 +114,36 @@ use yii\grid\GridView;
     <?php \yii\widgets\Pjax::end(); ?>    
 </div>
 
-<?php
-    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-    $minLocationAvailability = LocationAvailability::find()
-        ->location($locationId)
-        ->locationaAvailabilityHours()
-        ->orderBy(['fromTime' => SORT_ASC])
-        ->one();
-    $maxLocationAvailability = LocationAvailability::find()
-        ->location($locationId)
-        ->locationaAvailabilityHours()
-        ->orderBy(['toTime' => SORT_DESC])
-        ->one();
-    if (empty($minLocationAvailability)) {
-        $minTime = LocationAvailability::DEFAULT_FROM_TIME;
-    } else {
-        $minTime = (new \DateTime($minLocationAvailability->fromTime))->format('H:i:s');
-    }
-    if (empty($maxLocationAvailability)) {
-        $maxTime = LocationAvailability::DEFAULT_TO_TIME;
-    } else {
-        $maxTime = (new \DateTime($maxLocationAvailability->toTime))->format('H:i:s');
-    }
-?>
-
 <script>
-    $(document).ready(function () {
-        $(document).on('change', '#extra-lesson-go-to-date', function () {
-            calendar.refresh();
-        });
-
-    var extraLesson = {
-        refreshCalendar : function(availableHours, events, date){
-            $('#lesson-calendar').fullCalendar('destroy');
-            $('#lesson-calendar').fullCalendar({
-            	schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-                defaultDate: date,
-				firstDay : 1,
-            	nowIndicator: true,
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right:'',
-                       },
-                allDaySlot: false,
-                height:500,
-                slotDuration: '00:15:00',
-                titleFormat: 'DD-MMM-YYYY, dddd',
-                defaultView: 'agendaWeek',
-                minTime: "<?php echo $minTime; ?>",
-                maxTime: "<?php echo $maxTime; ?>",
-                selectConstraint: {
-                    start: '00:01', // a start time (10am in this example)
-                    end: '24:00', // an end time (6pm in this example)
-                    dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-                },
-                eventConstraint: {
-                    start: '00:01', // a start time (10am in this example)
-                    end: '24:00', // an end time (6pm in this example)
-                    dow: [ 1, 2, 3, 4, 5, 6, 0 ]
-                },
-                businessHours: availableHours,
-                overlapEvent: false,
-                overlapEventsSeparate: true,
-                events: events,
-                select: function (start, end, allDay) {
-                    $('#extra-lesson-date').val(moment(start).format('MMM D,YYYY hh:mm A')).trigger('change');
-                    $('#lesson-calendar').fullCalendar('removeEvents', 'newEnrolment');
-					var duration = $.isEmptyObject($('#extralesson-duration').val()) ? '00:30' : $('#extralesson-duration').val();
-					var endtime = start.clone();
-					var durationMinutes = moment.duration(duration).asMinutes();
-					moment(endtime.add(durationMinutes, 'minutes'));
-					
-                    $('#lesson-calendar').fullCalendar('renderEvent',
-                        {
-                            id: 'newEnrolment',
-                            start: start,
-                            end: endtime,
-                            allDay: false
-                        },
-                    true // make the event "stick"
-                    );
-                    $('#lesson-calendar').fullCalendar('unselect');
-                },
-                loading: function (bool) { 
-                        $('#spinner').show();                    
-                },
-                eventAfterAllRender: function (view) {
-                    $('#spinner').hide(); 
-                    $('.fc-short').removeClass('fc-short');
-                },
-                selectable: true,
-                selectHelper: true,
-            });
-        }
-    };
-
-    var calendar = {
-        refresh : function(){
-            var events, availableHours;
-            var teacherId = $('#lesson-teacher').val();
-            var date = moment($('#extra-lesson-go-to-date').val(), 'MMM D,YYYY', true).format('YYYY-MM-DD');
-            if (! moment(date).isValid()) {
-                var date = moment($('#extra-lesson-go-to-date').val(), 'MMM D,YYYY hh:mm A', true).format('YYYY-MM-DD');
+    $(document).on('depdrop.afterChange', '#lesson-teacher', function() {
+        var programs = <?php echo Json::encode($allEnrolments); ?>;
+        var selectedProgram = $('#lesson-program').val();
+        $.each(programs, function( index, value ) {
+            if (value.programId == selectedProgram) {
+                $('#lesson-teacher').val(value.teacherId).trigger('change.select2');
             }
-            if (date === 'Invalid date') {
-                $('#lesson-calendar').fullCalendar('destroy');
-            } else {
-                $('.lesson-program').addClass('col-md-3');
-                $('.lesson-teacher').addClass('col-md-4');
-                $('.lesson-duration').addClass('col-md-2');
-                $('.lesson-date').addClass('col-md-3');
-                $('#popup-modal .modal-dialog').css({'width': '1000px'});
-                $.ajax({
-                    url: '<?= Url::to(['/teacher-availability/availability-with-events']); ?>?id=' + teacherId,
-                    type: 'get',
-                    dataType: "json",
-                    success: function (response)
-                    {
-                        events = response.events;
-                        availableHours = response.availableHours;
-                        extraLesson.refreshCalendar(availableHours, events, date);
-                    }
-                });
-            }
-        }
-    };
-        $(document).on('depdrop.afterChange', '#lesson-teacher', function() {
-            var programs = <?php echo Json::encode($allEnrolments); ?>;
-            var selectedProgram = $('#lesson-program').val();
-            $.each(programs, function( index, value ) {
-                if (value.programId == selectedProgram) {
-                    $('#lesson-teacher').val(value.teacherId).trigger('change.select2');
-                }
-            });
-            calendar.refresh();
-            return false;
         });
-        $(document).on('change', '#lesson-teacher', function () {
-            calendar.refresh();
-            return false;
-        });
-        $(document).on('click', '#new-lesson', function (e) {
-            $.ajax({
-                url    : '<?= Url::to(['extra-lesson/create-private', 'studentId' => $model->id]); ?>',
-                type   : 'get',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
+        return false;
+    });
+
+    $(document).on('click', '#new-lesson', function () {
+        $.ajax({
+            url    : '<?= Url::to(['extra-lesson/create-private', 'studentId' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
                 {
-                   if(response.status)
-                   {
-                        $('#modal-content').html(response.data);
-                        $('#popup-modal').modal('show');
-                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Add Lesson</h4>');
-                        $('#popup-modal .modal-dialog').css({'width': '1000px'});
-                        var teacher = $('#lesson-teacher').val();
-                        if (!$.isEmptyObject(teacher)) {
-                            calendar.refresh();
-                        } else {
-                            $('#spinner').hide(); 
-                        }
-                    }
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Add Lesson</h4>');
+                    $('#popup-modal .modal-dialog').css({'width': '1000px'});
                 }
-            });
-            return false;
+            }
         });
+        return false;
     });
 </script>
 

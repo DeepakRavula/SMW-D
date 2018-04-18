@@ -117,6 +117,11 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
 
+    public function isPrivate()
+    {
+        return (int) $this->program->type === (int) Program::TYPE_PRIVATE_PROGRAM;
+    }
+
     public function getProgram()
     {
         return $this->hasOne(Program::className(), ['id' => 'programId']);

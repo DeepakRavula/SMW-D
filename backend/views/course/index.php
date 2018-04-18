@@ -5,6 +5,8 @@ use yii\helpers\Url;
 use common\components\gridView\AdminLteGridView;
 use yii\bootstrap\Modal;
 
+require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-popup.php';
+
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\GroupCourseSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */

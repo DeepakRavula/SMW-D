@@ -2,15 +2,17 @@ $.fn.calendarDayView = function(options) {
     $('#week-view-spinner').show();
     calendar.init(options);
     
-    $(document).off('change', '#fullcalendar-week-view-go-to-datepicker').on('change', '#fullcalendar-week-view-go-to-datepicker', function () {
+    $(document).off('change', '#fullcalendar-week-view-go-to-datepicker').
+            on('change', '#fullcalendar-week-view-go-to-datepicker', function () {
         $('#week-view-spinner').show();
         calendar.render(options);
     });
-    
-    $(document).off('change', options.changeId).on('change', options.changeId, function () {
-        $('#week-view-spinner').show();
-        calendar.render(options);
-    });
+    if (options.changeId) {
+        $(document).off('change', options.changeId).on('change', options.changeId, function () {
+            $('#week-view-spinner').show();
+            calendar.init(options);
+        });
+    }
 };
 
 var calendar = {
@@ -22,12 +24,12 @@ var calendar = {
             firstDay : 1,
             nowIndicator: true,
             header: {
-                left: 'prev,next today',
+                left: '',
                 center: 'title',
                 right: ''
             },
             allDaySlot: false,
-            height: 500,
+            contentHeight: calendarOptions.size ? calendarOptions.size : 450,
             slotDuration: '00:15:00',
             titleFormat: 'DD-MMM-YYYY, dddd',
             defaultView: 'agendaWeek',
@@ -47,7 +49,7 @@ var calendar = {
             allowCalEventOverlap: true,
             overlapEventsSeparate: true,
             events: {
-                url: calendarOptions.eventUrl,
+                url: calendarOptions.eventUrlFormatted,
                 type: 'GET',
                 error: function() {
                     $('#week-view-calendar').fullCalendar("refetchEvents");
@@ -84,21 +86,23 @@ var calendar = {
     },
 
     render: function (options) {
-        var teacherId = $(options.changeId).val();
+        var teacherId = options.teacherId ? options.teacherId : $(options.changeId).val();
+        var now = moment(Date()).format('MMM D, YYYY');
         var dateValue = $('#fullcalendar-week-view-go-to-datepicker').val();
-        var date = moment(dateValue, "MMM-DD-YYYY");
-        var eventParams = $.param({ teacherId: teacherId });
+        var date = moment($.isEmptyObject(dateValue) ? now : dateValue).format('MMM D, YYYY');
+        var eventParams = $.param({ teacherId: teacherId, date: date, studentId: options.studentId , lessonId: options.lessonId });
         var calendarOptions = options;
         calendarOptions.date = date;
-        calendarOptions.eventUrl = options.eventUrl + '?' + eventParams;
+        calendarOptions.eventUrlFormatted = options.eventUrl + '?' + eventParams;
         calendar.showCalendar(calendarOptions);
     },
     
     init: function(options) {
-        var teacherId = $(options.changeId).val();
+        var teacherId = options.teacherId ? options.teacherId : $(options.changeId).val();
         var params = $.param({ id: teacherId });
+        var url = teacherId ? options.availabilityUrl + '?' + params : options.availabilityUrl;
         $.ajax({
-            url: options.availabilityUrl + '?' + params,
+            url: url,
             type: 'get',
             success: function (response)
             {
