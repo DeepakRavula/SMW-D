@@ -23,7 +23,7 @@ Modal::begin([
 
 
 <script>
-    $(document).off('click', '.modal-save').on('click', '.modal-save', function () {debugger
+    $(document).off('click', '.modal-save').on('click', '.modal-save', function () {
         $('.modal-save').attr('disabled', true);
         $('.modal-save-all').attr('disabled', true);
         $('.modal-back').attr('disabled', true);
@@ -33,7 +33,7 @@ Modal::begin([
         return false;
     });
 
-    $(document).on('afterValidate', '#modal-form', function (event, messages, errorAttributes) {debugger
+    $(document).on('afterValidate', '#modal-form', function (event, messages, errorAttributes) {
         if (errorAttributes.length > 0) {
             $('.modal-save').attr('disabled', false);
             $('.modal-delete').attr('disabled', false);
@@ -61,19 +61,25 @@ Modal::begin([
                 if (response.status)
                 {
                     $('#modal-spinner').hide();
-                    $('#popup-modal').modal('hide');
-                    $(document).trigger("modal-success", response);
+                    if (response.data) {
+                        $('#modal-content').html(response.data);
+                        $('.modal-back').show();
+                        $(document).trigger("modal-next", response);
+                    } else {
+                        $('#popup-modal').modal('hide');
+                        $(document).trigger("modal-success", response);
+                    }
                 } else {
                     $('#modal-spinner').hide();
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
                     $(document).trigger("modal-error", response);
-                    $('.modal-save').attr('disabled', false);
-                    $('.modal-save-all').attr('disabled', false);
-                    $('.modal-delete').attr('disabled', false);
-                    $('.modal-cancel').attr('disabled', false);
-                    $('.modal-save-all').attr('disabled', false);
-                    $('.modal-back').attr('disabled', false);
                 }
+                $('.modal-save').attr('disabled', false);
+                $('.modal-save-all').attr('disabled', false);
+                $('.modal-delete').attr('disabled', false);
+                $('.modal-cancel').attr('disabled', false);
+                $('.modal-save-all').attr('disabled', false);
+                $('.modal-back').attr('disabled', false);
             }
         });
         return false;

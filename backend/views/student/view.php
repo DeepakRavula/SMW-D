@@ -42,7 +42,7 @@ $this->params['label'] = $this->render('_title', [
         'examResultDataProvider' => $examResultDataProvider
     ]); ?>
 </div>
-<?= \kartik\time\TimePicker::widget(['name' => 't5']); ?>
+
 <div class="nav-tabs-custom">
     <?php $lessonContent = $this->render('_lesson', [
             'lessonDataProvider' => $lessonDataProvider,
@@ -160,32 +160,20 @@ $this->params['label'] = $this->render('_title', [
         return false;
     });
 
-    $(document).on('click', '.step1-next', function () {
-	if($('#course-programid').val() == "") {
-            $('#enrolment-form').yiiActiveForm('updateAttribute', 'course-programid', ["Program cannot be blank"]);
-        } else {
-            $('#step-1').hide();
-            $('#step-2').show();
-            $('#courseschedule-day').val('');
-            var options = {
-                'renderId' : '#enrolment-create-calendar',
-                'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
-                'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
-                'changeId' : '#course-teacherid',
-                'durationId' : '#courseschedule-duration',
-                'studentId' : '<?= $model->id ?>'
-            };
-            $.fn.calendarDayView(options);
-            $('#private-enrol-modal .modal-dialog').css({'width': '1000px'});
-        }
-        return false;
-    });
-    
-    $(document).on('click', '.step2-back', function () {
-        $('#step-1').show();
-        $('#step-2').hide();
-        $('#private-enrol-modal .modal-dialog').css({'width': '600px'});
-        return false;
+    $(document).on('modal-next', function(event, params) {
+        $('.modal-save').text('Preview Lessons');
+        var options = {
+            'date' : $('#coursedetail-startdate').val(),
+            'renderId' : '#enrolment-create-calendar',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
+            'changeId' : '#coursedetail-teacherid',
+            'durationId' : '#coursedetail-duration',
+            'studentId' : '<?= $model->id ?>'
+        };
+        $.fn.calendarDayView(options);
+        $('#popup-modal .modal-dialog').css({'width': '1000px'});
+        $('#modal-spinner').hide();
     });
 
     $(document).on('click', '#add-group-enrol', function () {
@@ -221,11 +209,6 @@ $this->params['label'] = $this->render('_title', [
                 }
             }
         });
-        return false;
-    });
-
-    $(document).on('click', '.private-enrol-cancel', function() {
-        $('#private-enrol-modal').modal('hide');
         return false;
     });
 
@@ -518,22 +501,5 @@ $this->params['label'] = $this->render('_title', [
             }
         });
         return false;
-    });
-
-    $(document).off('click', '.enrolment-save-btn').on('click', '.enrolment-save-btn', function () {
-        $('.enrolment-save-btn').attr('disabled', true);
-        $('.step2-back').attr('disabled', true);
-        $('.private-enrol-cancel').attr('disabled', true);
-        $('#enrolment-form').submit();
-        return false;
-    });
-
-    $(document).on('afterValidate', '#enrolment-form', function (event, messages, errorAttributes) {
-        if (errorAttributes.length > 0) {
-            $('#private-enrolment-spinner').hide();
-            $('.enrolment-save-btn').attr('disabled', false);
-            $('.step2-back').attr('disabled', false);
-            $('.private-enrol-cancel').attr('disabled', false);
-        }
     });
 </script>

@@ -6,6 +6,7 @@ use common\models\PaymentFrequency;
 use yii\helpers\ArrayHelper;
 use kartik\time\TimePicker;
 use yii\bootstrap\ActiveForm;
+use yii\jui\DatePicker;
 use yii\helpers\Url;
 use yii\web\View;
 
@@ -15,9 +16,7 @@ use yii\web\View;
 <?php
     $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'enableAjaxValidation' => false,
-        'enableClientValidation' => true,
-        'action' => Url::to(['course/basic-detail', 'studentId' => $student->id, 'model' => $model]),
+        'action' => Url::to(['course/basic-detail', 'studentId' => $student->id])
     ]);
     $privatePrograms = ArrayHelper::map(Program::find()
             ->active()
@@ -142,16 +141,55 @@ use yii\web\View;
         </div>
         <div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
     </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Start Date</label>
+        </div>
+        <div class="col-xs-2 enrolment-dollar"></div>
+        <div class="col-xs-3">
+            <?= $form->field($model, 'startDate')->widget(DatePicker::classname(), [
+            'options' => [
+                'class' => 'form-control',
+            ],
+            'dateFormat' => 'php:M d, Y',
+            'clientOptions' => [
+                'defaultDate' => (new \DateTime($model->startDate))->format('M d, Y'),
+                'changeMonth' => true,
+                'yearRange' => '1500:3000',
+                'changeYear' => true,
+            ]
+        ])->label(false) ?>
+        </div>
+        <div class="col-xs-1 enrolment-text"></div>
+    </div>
 </div>
+<?= $form->field($model, 'teacherId')->hiddenInput()->label(false);?>
+<?= $form->field($model, 'day')->hiddenInput()->label(false);?>
+<?= $form->field($model, 'fromTime')->hiddenInput()->label(false);?>
 <?php ActiveForm::end(); ?>
 
 <script>
     $(document).ready(function () {
         $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+        enrolment.fetchProgram();
     });
 
     var enrolment = {
-        fetchProgram: function(options) {
+        fetchProgram: function() {
+            var duration = $('#coursebasicdetail-duration').val();
+            var programId = $('#coursebasicdetail-programid').val();
+            var paymentFrequencyDiscount = $('#coursebasicdetail-pfdiscount').val();
+            var multiEnrolmentDiscount = $('#coursebasicdetail-enrolmentdiscount').val();
+            var customerDiscount = $('#customer-discount').val();
+            var programRate = $('#coursebasicdetail-programrate').val();
+            var options = {
+                duration: duration,
+                programId: programId,
+                programRate: programRate,
+                customerDiscount: customerDiscount,
+                multiEnrolmentDiscount: multiEnrolmentDiscount,
+                paymentFrequencyDiscount: paymentFrequencyDiscount
+            };
             var params = $.param({duration: options.duration, id: options.programId,
                 paymentFrequencyDiscount: options.paymentFrequencyDiscount,
                 multiEnrolmentDiscount: options.multiEnrolmentDiscount,
@@ -181,6 +219,23 @@ use yii\web\View;
         $('.field-courseschedule-fromtime p').text('');
     });
 
+    $(document).on('click', '.modal-next', function(event, params) {
+        $('.modal-next').show();
+        $('.modal-next').text('Preview Lessons');
+        var options = {
+            'date' : $('#coursebasicdetail-startdate').val(),
+            'renderId' : '#enrolment-create-calendar',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
+            'changeId' : '#coursedetail-teacherid',
+            'durationId' : '#coursedetail-duration',
+            'studentId' : '<?= $student->id ?>'
+        };
+        $.fn.calendarDayView(options);
+        $('#popup-modal .modal-dialog').css({'width': '1000px'});
+        $('#modal-spinner').hide();
+    });
+
     $(document).on('beforeSubmit', '#enrolment-form', function(){
         $.ajax({
             url    : $(this).attr('action'),
@@ -193,24 +248,6 @@ use yii\web\View;
 
     $(document).on('change', '#coursebasicdetail-programid, #coursebasicdetail-duration, #coursebasicdetail-programrate, \n\
         #coursebasicdetail-pfdiscount, #coursebasicdetail-enrolmentdiscount', function(){
-        if ($(this).attr('id') != "coursebasicdetail-programid") {
-            var programRate = $('#coursebasicdetail-programrate').val();
-        } else {
-            var programRate = null;
-        }
-        var duration = $('#coursebasicdetail-duration').val();
-        var programId = $('#coursebasicdetail-programid').val();
-        var paymentFrequencyDiscount = $('#coursebasicdetail-pfdiscount').val();
-        var multiEnrolmentDiscount = $('#coursebasicdetail-enrolmentdiscount').val();
-        var customerDiscount = $('#customer-discount').val();
-        var options = {
-            duration: duration,
-            programId: programId,
-            programRate: programRate,
-            customerDiscount: customerDiscount,
-            multiEnrolmentDiscount: multiEnrolmentDiscount,
-            paymentFrequencyDiscount: paymentFrequencyDiscount
-        };
-        enrolment.fetchProgram(options);
+        enrolment.fetchProgram();
     });
 </script>

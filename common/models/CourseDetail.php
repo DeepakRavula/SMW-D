@@ -2,7 +2,9 @@
 
 namespace common\models;
 
+use Yii;
 use yii\base\Model;
+
 /**
  * This is the model class for table "course".
  *
@@ -15,18 +17,18 @@ use yii\base\Model;
  * @property string $startDate
  * @property string $endDate
  */
-class CourseBasicDetail extends Model
+class CourseDetail extends Model
 {
     public $programId;
+    public $teacherId;
+    public $day;
+    public $fromTime;
+    public $startDate;
     public $programRate;
     public $paymentFrequency;
     public $pfDiscount;
     public $enrolmentDiscount;
     public $duration;
-    public $startDate;
-    public $teacherId;
-    public $day;
-    public $fromTime;
 
     /**
      * {@inheritdoc}
@@ -35,8 +37,8 @@ class CourseBasicDetail extends Model
     {
         return [
             [['programId', 'paymentFrequency', 'duration', 'startDate'], 'required'],
-            [['programRate', 'enrolmentDiscount', 'pfDiscount', 'day', 'fromTime',
-                'teacherId'], 'safe']
+            [['programRate', 'enrolmentDiscount', 'pfDiscount'], 'required'],
+            [['fromTime', 'day', 'teacherId'], 'required']
         ];
     }
 

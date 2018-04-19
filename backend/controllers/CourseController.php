@@ -22,6 +22,7 @@ use backend\models\UserForm;
 use yii\base\Model;
 use common\models\CourseExtra;
 use common\models\CourseSchedule;
+use common\models\CourseDetail;
 use common\models\CourseBasicDetail;
 use yii\web\Response;
 use common\models\TeacherAvailability;
@@ -439,28 +440,47 @@ class CourseController extends BaseController
         return $response;
     }
 
-    public function actionBasicDetail($studentId, $model = null)
+    public function actionBasicDetail($studentId)
     {
-        if (!$model) {
-            $model = new CourseBasicDetail();
-        } else {
-            
+        $courseDetailData = Yii::$app->request->get('CourseDetail');
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $courseBasicDetail = new CourseBasicDetail();
+        if ($courseDetailData) {
+            $courseDetail = new CourseDetail();
+            $courseDetail->load($courseDetailData, '');
+            $courseBasicDetail->setModel($courseDetail);
         }
         $student = Student::findOne($studentId);
+        $customerDiscount = $student->customer->hasDiscount() ? $student->customer->customerDiscount : '';
         $data = $this->renderAjax('enrolment/_course-basic', [
-            'model' => $model,
-            'student' => $student
+            'model' => $courseBasicDetail,
+            'student' => $student,
+            'customerDiscount' => $customerDiscount
         ]);
         if (Yii::$app->request->post()) {
-            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($courseBasicDetail->load(Yii::$app->request->post()) && $courseBasicDetail->validate()) {
+                $courseDetail = new CourseDetail();
+                $courseDetail->setModel($courseBasicDetail);
+                $teachers = User::find()
+                    ->teachers([$courseBasicDetail->programId], $locationId)
+                    ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
+                    ->notDeleted()
+                    ->orderBy(['user_profile.firstname' => SORT_ASC])
+                    ->all();
+                $courseData = $this->renderAjax('enrolment/_course-detail', [
+                    'model' => $courseDetail,
+                    'student' => $student,
+                    'teachers' => $teachers
+                ]);
                 $response = [
                     'status' => true,
-                    'message' => 'Lessons successfuly changed'
+                    'data' => $courseData,
+                    'customerDiscount' => $customerDiscount
                 ];
             } else {
                 $response = [
                     'status' => false,
-                    'errors' => ActiveForm::validate($model)
+                    'errors' => ActiveForm::validate($courseBasicDetail)
                 ];
             }
         } else {
