@@ -111,6 +111,16 @@ class Course extends \yii\db\ActiveRecord
         ];
     }
 
+    public function setModel($model)
+    {
+        $this->programId = $model->programId;
+        $date = new \DateTime($model->startDate);
+        $duration = new \DateTime($model->fromTime);
+        $date->add(new \DateInterval('PT' . $duration->format('H') . 'H' . $duration->format('i') . 'M'));
+        $this->startDate = $date->format('Y-m-d H:i:s');
+        $this->teacherId = $model->teacherId;
+        return $this;
+    }
     
     public function getTeacher()
     {
@@ -220,6 +230,9 @@ class Course extends \yii\db\ActiveRecord
         }
         if (empty($this->isConfirmed)) {
             $this->isConfirmed = false;
+        }
+        if (empty($this->locationId)) {
+            $this->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         }
         if (empty($this->type)) {
             $this->type = self::TYPE_REGULAR;
