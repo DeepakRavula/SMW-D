@@ -335,7 +335,8 @@ Modal::begin([
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Apply Credit</h4>');
                         $('.modal-save').text('Pay now')
                     } else {
-                        $('#invoice-error-notification').html('No credits available!').fadeIn().delay(5000).fadeOut();
+                        alert(response.message);
+                        $('#invoice-error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                     }
                 }
             });
