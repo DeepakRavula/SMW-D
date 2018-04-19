@@ -114,7 +114,7 @@ use common\models\Location;
             'changeId' : '#lesson-teacherid',
             'durationId' : '#course-duration',
             'lessonId' : '<?= $model->id; ?>',
-            'studentId' : '<?= $model->enrolment ? $model->enrolment->studentId : ""?>'
+            'studentId' : '<?= $model->isPrivate() ? $model->enrolment->studentId : ""?>'
         };
         $.fn.calendarDayView(options);
     });

@@ -9,6 +9,8 @@ use common\models\Note;
 use kartik\select2\Select2Asset;
 use yii\widgets\Pjax;
 Select2Asset::register($this);
+use kartik\time\TimePickerAsset;
+TimePickerAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -21,35 +23,28 @@ $this->params['label'] = $this->render('_title', [
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <br>
 <div class="row">
-	<?php
-    echo $this->render('_profile', [
+    <?= $this->render('_profile', [
         'model' => $model,
-    ]);
-    ?>
+    ]); ?>
 </div>
 <div class="row">
 <?php Pjax::begin(['id' => 'enrolment-list']);?>
-	<?php
-    echo $this->render('enrolment/view', [
+    <?= $this->render('enrolment/view', [
         'model' => $model,
         'enrolmentDataProvider' => $enrolmentDataProvider,
-    ]);
-    ?>
+    ]); ?>
 <?php Pjax::end();?>
 </div>
 <div class="row">
-	<?php
-    echo $this->render('exam-result/view', [
+    <?= $this->render('exam-result/view', [
         'model' => new ExamResult(),
         'studentModel' => $model,
         'examResultDataProvider' => $examResultDataProvider
-    ]);
-    ?>
+    ]); ?>
 </div>
-
+<?= \kartik\time\TimePicker::widget(['name' => 't5']); ?>
 <div class="nav-tabs-custom">
-		<?php
-        $lessonContent = $this->render('_lesson', [
+    <?php $lessonContent = $this->render('_lesson', [
             'lessonDataProvider' => $lessonDataProvider,
             'model' => $model,
             'allEnrolments' => $allEnrolments
@@ -128,12 +123,9 @@ $this->params['label'] = $this->render('_title', [
             ]);
         }
         ?>
-		<?php
-        echo Tabs::widget([
+    <?= Tabs::widget([
         'items' => $items
-        ]);
-        ?>
-		<div class="clearfix"></div>
+    ]); ?>
 </div>
 
 <?php Modal::begin([
@@ -146,17 +138,25 @@ $this->params['label'] = $this->render('_title', [
 ?>
 
 <script>
-    $(document).ready(function () {
-        $('#step-2, #step-1').hide();
-    });
-    
     $(document).on('click', '#add-private-enrol', function () {
         var customerDiscount = '<?= $customerDiscount;?>';
-        $('#step-1').show();
-        $('#step-2').hide();
-        $('#customer-discount').val(customerDiscount);
-        $('#private-enrol-modal').modal('show');
-        $('#private-enrol-modal .modal-dialog').css({'width': '600px'});
+        $.ajax({
+            url    : '<?= Url::to(['course/basic-detail', 'studentId' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('.modal-save').text('Next');
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment</h4>');
+                    $('#popup-modal .modal-dialog').css({'width': '600px'});
+                    $('#customer-discount').val(customerDiscount);
+                }
+            }
+        });
         return false;
     });
 
@@ -233,8 +233,6 @@ $this->params['label'] = $this->render('_title', [
         $('#student-merge-modal').modal('hide');
         return false;
     });
-
-    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 
     $(document).on('click', '#student-merge', function () {
         $.ajax({

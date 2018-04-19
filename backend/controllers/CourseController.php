@@ -22,6 +22,7 @@ use backend\models\UserForm;
 use yii\base\Model;
 use common\models\CourseExtra;
 use common\models\CourseSchedule;
+use common\models\CourseBasicDetail;
 use yii\web\Response;
 use common\models\TeacherAvailability;
 use common\models\Enrolment;
@@ -46,17 +47,21 @@ class CourseController extends BaseController
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => ['fetch-teacher-availability', 'fetch-lessons', 
-                    'fetch-group', 'change', 'teachers'],
+                    'fetch-group', 'change', 'teachers', 'basic-detail'
+                ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-			'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'fetch-teacher-availability', 'course-date', 'create', 'update', 'delete', 'teachers', 'fetch-group', 'change'],
+                        'actions' => ['index', 'view', 'fetch-teacher-availability',
+                            'course-date', 'create', 'update', 'delete', 'teachers',
+                            'fetch-group', 'change', 'basic-detail'
+                        ],
                         'roles' => ['manageGroupLessons'],
                     ],
                 ],
@@ -426,6 +431,39 @@ class CourseController extends BaseController
                 'model' => $model,
                 'lessonIds' => $lessonIds
             ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
+    }
+
+    public function actionBasicDetail($studentId, $model = null)
+    {
+        if (!$model) {
+            $model = new CourseBasicDetail();
+        } else {
+            
+        }
+        $student = Student::findOne($studentId);
+        $data = $this->renderAjax('enrolment/_course-basic', [
+            'model' => $model,
+            'student' => $student
+        ]);
+        if (Yii::$app->request->post()) {
+            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+                $response = [
+                    'status' => true,
+                    'message' => 'Lessons successfuly changed'
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model)
+                ];
+            }
+        } else {
             $response = [
                 'status' => true,
                 'data' => $data
