@@ -5,10 +5,11 @@ $.fn.calendarDayView = function(options) {
     $(document).off('change', '#fullcalendar-week-view-go-to-datepicker').
             on('change', '#fullcalendar-week-view-go-to-datepicker', function () {
         $('#week-view-spinner').show();
+        options.date = null;
         calendar.render(options);
     });
     if (options.changeId) {
-        $(document).off('change', options.changeId).on('change', options.changeId, function () {debugger
+        $(document).off('change', options.changeId).on('change', options.changeId, function () {
             $('#week-view-spinner').show();
             options.teacherId = null;
             calendar.init(options);
@@ -87,10 +88,14 @@ var calendar = {
     },
 
     render: function (options) {
+        if (options.date) {
+            $('#fullcalendar-week-view-go-to-datepicker').val(moment(options.date).format('MMM D, YYYY'));
+            options.date = null;
+        }
         var teacherId = options.teacherId ? options.teacherId : $(options.changeId).val();
-        var now = moment(Date()).format('MMM D, YYYY');
+        var now = Date();
         var dateValue = $('#fullcalendar-week-view-go-to-datepicker').val();
-        var date = moment($.isEmptyObject(dateValue) ? now : dateValue).format('MMM D, YYYY');
+        var date = moment(dateValue ? dateValue : now).format('MMM D, YYYY');
         var eventParams = $.param({ teacherId: teacherId, date: date, studentId: options.studentId , lessonId: options.lessonId });
         var calendarOptions = options;
         calendarOptions.date = date;

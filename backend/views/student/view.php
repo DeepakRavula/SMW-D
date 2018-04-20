@@ -9,6 +9,8 @@ use common\models\Note;
 use kartik\select2\Select2Asset;
 use yii\widgets\Pjax;
 Select2Asset::register($this);
+use kartik\time\TimePickerAsset;
+TimePickerAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -21,35 +23,28 @@ $this->params['label'] = $this->render('_title', [
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <br>
 <div class="row">
-	<?php
-    echo $this->render('_profile', [
+    <?= $this->render('_profile', [
         'model' => $model,
-    ]);
-    ?>
+    ]); ?>
 </div>
 <div class="row">
 <?php Pjax::begin(['id' => 'enrolment-list']);?>
-	<?php
-    echo $this->render('enrolment/view', [
+    <?= $this->render('enrolment/view', [
         'model' => $model,
         'enrolmentDataProvider' => $enrolmentDataProvider,
-    ]);
-    ?>
+    ]); ?>
 <?php Pjax::end();?>
 </div>
 <div class="row">
-	<?php
-    echo $this->render('exam-result/view', [
+    <?= $this->render('exam-result/view', [
         'model' => new ExamResult(),
         'studentModel' => $model,
         'examResultDataProvider' => $examResultDataProvider
-    ]);
-    ?>
+    ]); ?>
 </div>
 
 <div class="nav-tabs-custom">
-		<?php
-        $lessonContent = $this->render('_lesson', [
+    <?php $lessonContent = $this->render('_lesson', [
             'lessonDataProvider' => $lessonDataProvider,
             'model' => $model,
             'allEnrolments' => $allEnrolments
@@ -128,12 +123,9 @@ $this->params['label'] = $this->render('_title', [
             ]);
         }
         ?>
-		<?php
-        echo Tabs::widget([
+    <?= Tabs::widget([
         'items' => $items
-        ]);
-        ?>
-		<div class="clearfix"></div>
+    ]); ?>
 </div>
 
 <?php Modal::begin([
@@ -146,46 +138,42 @@ $this->params['label'] = $this->render('_title', [
 ?>
 
 <script>
-    $(document).ready(function () {
-        $('#step-2, #step-1').hide();
-    });
-    
     $(document).on('click', '#add-private-enrol', function () {
         var customerDiscount = '<?= $customerDiscount;?>';
-        $('#step-1').show();
-        $('#step-2').hide();
-        $('#customer-discount').val(customerDiscount);
-        $('#private-enrol-modal').modal('show');
-        $('#private-enrol-modal .modal-dialog').css({'width': '600px'});
+        $.ajax({
+            url    : '<?= Url::to(['course/create-enrolment', 'studentId' => $model->id]); ?>',
+            type   : 'get',
+            dataType: "json",
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('.modal-save').text('Next');
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment</h4>');
+                    $('#popup-modal .modal-dialog').css({'width': '600px'});
+                    $('#customer-discount').val(customerDiscount);
+                }
+            }
+        });
         return false;
     });
 
-    $(document).on('click', '.step1-next', function () {
-	if($('#course-programid').val() == "") {
-            $('#enrolment-form').yiiActiveForm('updateAttribute', 'course-programid', ["Program cannot be blank"]);
-        } else {
-            $('#step-1').hide();
-            $('#step-2').show();
-            $('#courseschedule-day').val('');
-            var options = {
-                'renderId' : '#enrolment-create-calendar',
-                'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
-                'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
-                'changeId' : '#course-teacherid',
-                'durationId' : '#courseschedule-duration',
-                'studentId' : '<?= $model->id ?>'
-            };
-            $.fn.calendarDayView(options);
-            $('#private-enrol-modal .modal-dialog').css({'width': '1000px'});
-        }
-        return false;
-    });
-    
-    $(document).on('click', '.step2-back', function () {
-        $('#step-1').show();
-        $('#step-2').hide();
-        $('#private-enrol-modal .modal-dialog').css({'width': '600px'});
-        return false;
+    $(document).on('modal-next', function(event, params) {
+        $('.modal-save').text('Preview Lessons');
+        var options = {
+            'date' : $('#enrolmentform-startdate').val(),
+            'renderId' : '#enrolment-create-calendar',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
+            'changeId' : '#enrolmentform-teacherid',
+            'durationId' : '#enrolmentform-duration',
+            'studentId' : '<?= $model->id ?>'
+        };
+        $.fn.calendarDayView(options);
+        $('#popup-modal .modal-dialog').css({'width': '1000px'});
+        $('#modal-spinner').hide();
     });
 
     $(document).on('click', '#add-group-enrol', function () {
@@ -224,17 +212,10 @@ $this->params['label'] = $this->render('_title', [
         return false;
     });
 
-    $(document).on('click', '.private-enrol-cancel', function() {
-        $('#private-enrol-modal').modal('hide');
-        return false;
-    });
-
     $(document).on('click', '.merge-cancel', function () {
         $('#student-merge-modal').modal('hide');
         return false;
     });
-
-    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 
     $(document).on('click', '#student-merge', function () {
         $.ajax({
@@ -520,22 +501,5 @@ $this->params['label'] = $this->render('_title', [
             }
         });
         return false;
-    });
-
-    $(document).off('click', '.enrolment-save-btn').on('click', '.enrolment-save-btn', function () {
-        $('.enrolment-save-btn').attr('disabled', true);
-        $('.step2-back').attr('disabled', true);
-        $('.private-enrol-cancel').attr('disabled', true);
-        $('#enrolment-form').submit();
-        return false;
-    });
-
-    $(document).on('afterValidate', '#enrolment-form', function (event, messages, errorAttributes) {
-        if (errorAttributes.length > 0) {
-            $('#private-enrolment-spinner').hide();
-            $('.enrolment-save-btn').attr('disabled', false);
-            $('.step2-back').attr('disabled', false);
-            $('.private-enrol-cancel').attr('disabled', false);
-        }
     });
 </script>

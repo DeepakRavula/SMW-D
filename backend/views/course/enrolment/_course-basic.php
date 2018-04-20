@@ -1,0 +1,233 @@
+<?php
+
+use kartik\select2\Select2;
+use common\models\Program;
+use common\models\PaymentFrequency;
+use yii\helpers\ArrayHelper;
+use kartik\time\TimePicker;
+use yii\bootstrap\ActiveForm;
+use yii\jui\DatePicker;
+use yii\helpers\Url;
+use yii\web\View;
+
+?>
+
+
+<?php
+    $form = ActiveForm::begin([
+        'id' => 'modal-form',
+        'action' => Url::to(['course/create-enrolment', 'studentId' => $student->id])
+    ]);
+    $privatePrograms = ArrayHelper::map(Program::find()
+            ->active()
+            ->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM])
+            ->all(), 'id', 'name')
+?>
+<div class="user-create-form">
+    <div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Program</label>
+        </div>
+        <div class="col-xs-5">
+            <?= $form->field($model, 'programId')->widget(Select2::classname(), [
+                'data' => $privatePrograms,
+                'options' => ['placeholder' => 'Program'],
+                'hashVarLoadPosition' => View::POS_READY
+            ])->label(false)
+            ?>
+        </div>
+    </div>
+    <?php if (Yii::$app->user->identity->isAdmin()) : ?>
+    <div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Rate (per hour)</label>
+        </div>
+        <div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+        <div class="col-xs-3 enrolment-field">
+            <?= $form->field($model, 'programRate')->textInput(['class' => 'form-control'])->label(false); ?>
+        </div>
+        <div class="col-xs-1 enrolment-text"><label class="text-muted">/hr</label></div>
+    </div>
+    <?php endif; ?>
+    <div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Duration</label>
+        </div>
+        <div class="col-xs-2"></div>
+        <div class="col-xs-3">
+            <?= $form->field($model, 'duration')->widget(TimePicker::classname(), [
+                'hashVarLoadPosition' => View::POS_END,
+                'pluginOptions' => [
+                    'showMeridian' => false,
+                    'defaultTime' => (new \DateTime('00:30'))->format('H:i')
+                ]
+            ])->label(false);
+            ?>
+        </div>
+        <div class="col-xs-1 enrolment-text"><label class="text-muted">mins.</label></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Rate (per month)</label>
+        </div>
+        <div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+        <div class="col-xs-3">
+            <div class="form-group">
+            <div class="input-group">
+                <input type="text" readonly="true" id="rate-per-month" class="col-md-2 form-control" autocomplete="off" >
+            </div>
+            </div>
+        </div>
+        <div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Payment Frequency</label>
+        </div>
+        <div class="col-xs-5">
+            <?= $form->field($model, 'paymentFrequency')->widget(Select2::classname(), [
+                'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name'),
+                'hashVarLoadPosition' => View::POS_READY
+            ])->label(false) ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Payment Frequency Discount</label>
+        </div>
+        <div class="col-xs-2"></div>
+        <div class="col-xs-3">
+            <?= $form->field($model, 'pfDiscount')->textInput(['class' => 'form-control text-right'])->label(false); ?>
+        </div>
+        <div class="col-xs-1 enrolment-text"><label class="text-muted">%</label></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Multiple Enrol. Discount (per month)</label>
+        </div>
+        <div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+        <div class="col-xs-3">
+            <?= $form->field($model, 'enrolmentDiscount')->textInput(['class' => 'form-control text-right'])->label(false); ?>
+        </div>
+        <div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
+    </div>
+    <?php if($student->customer->hasDiscount()) : ?>
+    <div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Customer Discount</label>
+        </div>
+        <div class="col-xs-2 enrolment-dollar"></div>
+        <div class="col-xs-3">
+            <div class="form-group">
+            <div class="input-group">
+                <input type="text" readonly="true" id="customer-discount" class="text-right col-md-2 form-control"autocomplete="off" >
+            </div>
+            </div>
+        </div>
+        <div class="col-xs-1 enrolment-text"><label class="text-muted">%</label></div>
+    </div>
+    <?php endif;?>
+    <div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Discounted Rate (per month)</label>
+        </div>
+        <div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
+        <div class="col-xs-3">
+            <div class="form-group">
+            <div class="input-group">
+                <input type="text" readonly="true" id="discounted-rate-per-month" class="col-md-2 form-control" autocomplete="off">
+            </div>
+            </div>
+        </div>
+        <div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Start Date</label>
+        </div>
+        <div class="col-xs-2 enrolment-dollar"></div>
+        <div class="col-xs-3">
+            <?= $form->field($model, 'startDate')->widget(DatePicker::classname(), [
+            'options' => [
+                'class' => 'form-control',
+            ],
+            'dateFormat' => 'php:M d, Y',
+            'clientOptions' => [
+                'defaultDate' => (new \DateTime($model->startDate))->format('M d, Y'),
+                'changeMonth' => true,
+                'yearRange' => '1500:3000',
+                'changeYear' => true,
+            ]
+        ])->label(false) ?>
+        </div>
+        <div class="col-xs-1 enrolment-text"></div>
+    </div>
+</div>
+<?= $form->field($model, 'teacherId')->hiddenInput()->label(false);?>
+<?= $form->field($model, 'day')->hiddenInput()->label(false);?>
+<?= $form->field($model, 'fromTime')->hiddenInput()->label(false);?>
+<?php ActiveForm::end(); ?>
+
+<script>
+    $(document).ready(function () {
+        $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+        enrolment.fetchProgram();
+    });
+
+    var enrolment = {
+        fetchProgram: function() {
+            var duration = $('#enrolmentform-duration').val();
+            var programId = $('#enrolmentform-programid').val();
+            var paymentFrequencyDiscount = $('#enrolmentform-pfdiscount').val();
+            var multiEnrolmentDiscount = $('#enrolmentform-enrolmentdiscount').val();
+            var customerDiscount = $('#customer-discount').val();
+            var programRate = $('#enrolmentform-programrate').val();
+            var options = {
+                duration: duration,
+                programId: programId,
+                programRate: programRate,
+                customerDiscount: customerDiscount,
+                multiEnrolmentDiscount: multiEnrolmentDiscount,
+                paymentFrequencyDiscount: paymentFrequencyDiscount
+            };
+            var params = $.param({duration: options.duration, id: options.programId,
+                paymentFrequencyDiscount: options.paymentFrequencyDiscount,
+                multiEnrolmentDiscount: options.multiEnrolmentDiscount,
+                rate: options.programRate, customerDiscount : options.customerDiscount
+            });
+            $.ajax({
+                url: '<?= Url::to(['student/fetch-program-rate']); ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    $('#enrolmentform-programrate').val(response.rate);
+                    $('#rate-per-month').val(response.ratePerMonth);
+                    $('#discounted-rate-per-month').val(response.ratePerMonthWithDiscount);
+                }
+            });
+        }
+    };
+
+    $(document).on('click', '.modal-next', function(event, params) {
+        $('.modal-next').show();
+        $('.modal-next').text('Preview Lessons');
+        var options = {
+            'date' : $('#enrolmentform-startdate').val(),
+            'renderId' : '#enrolment-create-calendar',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
+            'changeId' : '#enrolmentform-teacherid',
+            'durationId' : '#enrolmentform-duration',
+            'studentId' : '<?= $student->id ?>'
+        };
+        $.fn.calendarDayView(options);
+        $('#popup-modal .modal-dialog').css({'width': '1000px'});
+        $('#modal-spinner').hide();
+    });
+
+    $(document).on('change', '#enrolmentform-programid, #enrolmentform-duration, #enrolmentform-programrate, \n\
+        #enrolmentform-pfdiscount, #enrolmentform-enrolmentdiscount', function(){
+        enrolment.fetchProgram();
+    });
+</script>
