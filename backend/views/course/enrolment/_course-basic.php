@@ -16,7 +16,7 @@ use yii\web\View;
 <?php
     $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['course/basic-detail', 'studentId' => $student->id])
+        'action' => Url::to(['course/create-enrolment', 'studentId' => $student->id])
     ]);
     $privatePrograms = ArrayHelper::map(Program::find()
             ->active()
@@ -176,12 +176,12 @@ use yii\web\View;
 
     var enrolment = {
         fetchProgram: function() {
-            var duration = $('#coursebasicdetail-duration').val();
-            var programId = $('#coursebasicdetail-programid').val();
-            var paymentFrequencyDiscount = $('#coursebasicdetail-pfdiscount').val();
-            var multiEnrolmentDiscount = $('#coursebasicdetail-enrolmentdiscount').val();
+            var duration = $('#enrolmentform-duration').val();
+            var programId = $('#enrolmentform-programid').val();
+            var paymentFrequencyDiscount = $('#enrolmentform-pfdiscount').val();
+            var multiEnrolmentDiscount = $('#enrolmentform-enrolmentdiscount').val();
             var customerDiscount = $('#customer-discount').val();
-            var programRate = $('#coursebasicdetail-programrate').val();
+            var programRate = $('#enrolmentform-programrate').val();
             var options = {
                 duration: duration,
                 programId: programId,
@@ -201,7 +201,7 @@ use yii\web\View;
                 dataType: "json",
                 success: function (response)
                 {
-                    $('#coursebasicdetail-programrate').val(response.rate);
+                    $('#enrolmentform-programrate').val(response.rate);
                     $('#rate-per-month').val(response.ratePerMonth);
                     $('#discounted-rate-per-month').val(response.ratePerMonthWithDiscount);
                 }
@@ -209,26 +209,16 @@ use yii\web\View;
         }
     };
 
-    $('#enrolment-form').on('afterValidate', function (event, messages) {
-        if($('#course-teacherid').val() == "") {
-            $('#enrolment-form').yiiActiveForm('updateAttribute', 'course-teacherid', ["Teacher cannot be blank"]);
-        } else if($('#courseschedule-day').val() == "") {
-            $('#error-notification').html('Please choose the date/time in the calendar').fadeIn().delay(3000).fadeOut();
-        }
-        $('#notification').remove();
-        $('.field-courseschedule-fromtime p').text('');
-    });
-
     $(document).on('click', '.modal-next', function(event, params) {
         $('.modal-next').show();
         $('.modal-next').text('Preview Lessons');
         var options = {
-            'date' : $('#coursebasicdetail-startdate').val(),
+            'date' : $('#enrolmentform-startdate').val(),
             'renderId' : '#enrolment-create-calendar',
             'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
             'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
-            'changeId' : '#coursedetail-teacherid',
-            'durationId' : '#coursedetail-duration',
+            'changeId' : '#enrolmentform-teacherid',
+            'durationId' : '#enrolmentform-duration',
             'studentId' : '<?= $student->id ?>'
         };
         $.fn.calendarDayView(options);
@@ -236,18 +226,8 @@ use yii\web\View;
         $('#modal-spinner').hide();
     });
 
-    $(document).on('beforeSubmit', '#enrolment-form', function(){
-        $.ajax({
-            url    : $(this).attr('action'),
-            type   : 'post',
-            dataType: "json",
-            data: $(this).serialize()
-        });
-        return false;
-    });
-
-    $(document).on('change', '#coursebasicdetail-programid, #coursebasicdetail-duration, #coursebasicdetail-programrate, \n\
-        #coursebasicdetail-pfdiscount, #coursebasicdetail-enrolmentdiscount', function(){
+    $(document).on('change', '#enrolmentform-programid, #enrolmentform-duration, #enrolmentform-programrate, \n\
+        #enrolmentform-pfdiscount, #enrolmentform-enrolmentdiscount', function(){
         enrolment.fetchProgram();
     });
 </script>

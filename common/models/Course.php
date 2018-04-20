@@ -31,6 +31,7 @@ class Course extends \yii\db\ActiveRecord
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA = 2;
 
+    public $programRate;
     public $lessonStatus;
     public $rescheduleBeginDate;
     public $weeksCount;
@@ -58,7 +59,7 @@ class Course extends \yii\db\ActiveRecord
                 return (int)$model->program->type === Program::TYPE_GROUP_PROGRAM;
             }, 'except' => self::SCENARIO_EXTRA_GROUP_COURSE],
             [['startDate'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
-            [['startDate', 'endDate'], 'safe'],
+            [['startDate', 'endDate', 'programRate'], 'safe'],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
             [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId','duration'], 'safe'],
@@ -119,6 +120,7 @@ class Course extends \yii\db\ActiveRecord
         $date->add(new \DateInterval('PT' . $duration->format('H') . 'H' . $duration->format('i') . 'M'));
         $this->startDate = $date->format('Y-m-d H:i:s');
         $this->teacherId = $model->teacherId;
+        $this->programRate = $model->programRate;
         return $this;
     }
     
@@ -262,7 +264,7 @@ class Course extends \yii\db\ActiveRecord
             $courseProgramRate->courseId = $this->id;
             $courseProgramRate->startDate  = (new Carbon($this->startDate))->format('Y-m-d');
             $courseProgramRate->endDate = (new Carbon($this->endDate))->format('Y-m-d');
-            $courseProgramRate->programRate = $this->program->rate;
+            $courseProgramRate->programRate = $this->programRate ? $this->programRate : $this->program->rate;
             $courseProgramRate->applyFullDiscount = false;
             $courseProgramRate->save();
         }

@@ -22,8 +22,7 @@ use backend\models\UserForm;
 use yii\base\Model;
 use common\models\CourseExtra;
 use common\models\CourseSchedule;
-use common\models\CourseDetail;
-use common\models\CourseBasicDetail;
+use common\models\EnrolmentForm;
 use yii\web\Response;
 use common\models\TeacherAvailability;
 use common\models\Enrolment;
@@ -48,7 +47,7 @@ class CourseController extends BaseController
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => ['fetch-teacher-availability', 'fetch-lessons', 
-                    'fetch-group', 'change', 'teachers', 'basic-detail'
+                    'fetch-group', 'change', 'teachers', 'create-enrolment'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -61,7 +60,7 @@ class CourseController extends BaseController
                         'allow' => true,
                         'actions' => ['index', 'view', 'fetch-teacher-availability',
                             'course-date', 'create', 'update', 'delete', 'teachers',
-                            'fetch-group', 'change', 'basic-detail'
+                            'fetch-group', 'change', 'create-enrolment'
                         ],
                         'roles' => ['manageGroupLessons'],
                     ],
@@ -440,29 +439,26 @@ class CourseController extends BaseController
         return $response;
     }
 
-    public function actionBasicDetail($studentId)
+    public function actionCreateEnrolment($studentId)
     {
-        $courseDetailData = Yii::$app->request->get('CourseDetail');
+        $courseDetailData = Yii::$app->request->get('EnrolmentForm');
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $courseBasicDetail = new CourseBasicDetail();
+        $courseDetail = new EnrolmentForm(['scenario' => EnrolmentForm::SCENARIO_BASIC]);
         if ($courseDetailData) {
-            $courseDetail = new CourseDetail();
-            $courseDetail->load($courseDetailData, '');
-            $courseBasicDetail->setModel($courseDetail);
+            $courseDetail->load(Yii::$app->request->get());
         }
         $student = Student::findOne($studentId);
-        $customerDiscount = $student->customer->hasDiscount() ? $student->customer->customerDiscount : '';
+        $customerDiscount = $student->customer->hasDiscount() ? $student->customer->customerDiscount : null;
         $data = $this->renderAjax('enrolment/_course-basic', [
-            'model' => $courseBasicDetail,
+            'model' => $courseDetail,
             'student' => $student,
             'customerDiscount' => $customerDiscount
         ]);
         if (Yii::$app->request->post()) {
-            if ($courseBasicDetail->load(Yii::$app->request->post()) && $courseBasicDetail->validate()) {
-                $courseDetail = new CourseDetail();
-                $courseDetail->setModel($courseBasicDetail);
+            if ($courseDetail->load(Yii::$app->request->post()) && $courseDetail->validate()) {
+                $courseDetail->setScenario(EnrolmentForm::SCENARIO_DETAILED);
                 $teachers = User::find()
-                    ->teachers([$courseBasicDetail->programId], $locationId)
+                    ->teachers([$courseDetail->programId], $locationId)
                     ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
                     ->notDeleted()
                     ->orderBy(['user_profile.firstname' => SORT_ASC])
@@ -480,7 +476,7 @@ class CourseController extends BaseController
             } else {
                 $response = [
                     'status' => false,
-                    'errors' => ActiveForm::validate($courseBasicDetail)
+                    'errors' => ActiveForm::validate($courseDetail)
                 ];
             }
         } else {

@@ -141,7 +141,7 @@ $this->params['label'] = $this->render('_title', [
     $(document).on('click', '#add-private-enrol', function () {
         var customerDiscount = '<?= $customerDiscount;?>';
         $.ajax({
-            url    : '<?= Url::to(['course/basic-detail', 'studentId' => $model->id]); ?>',
+            url    : '<?= Url::to(['course/create-enrolment', 'studentId' => $model->id]); ?>',
             type   : 'get',
             dataType: "json",
             success: function(response)
@@ -163,12 +163,12 @@ $this->params['label'] = $this->render('_title', [
     $(document).on('modal-next', function(event, params) {
         $('.modal-save').text('Preview Lessons');
         var options = {
-            'date' : $('#coursedetail-startdate').val(),
+            'date' : $('#enrolmentform-startdate').val(),
             'renderId' : '#enrolment-create-calendar',
             'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
             'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
-            'changeId' : '#coursedetail-teacherid',
-            'durationId' : '#coursedetail-duration',
+            'changeId' : '#enrolmentform-teacherid',
+            'durationId' : '#enrolmentform-duration',
             'studentId' : '<?= $model->id ?>'
         };
         $.fn.calendarDayView(options);

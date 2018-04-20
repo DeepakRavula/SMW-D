@@ -53,9 +53,9 @@ use kartik\select2\Select2;
 
 <script>
     $(document).on('week-view-calendar-select', function(event, params) {
-        $('#coursedetail-startdate').val(moment(params.date, "DD-MM-YYYY h:mm a").format('MMM D, Y')).trigger('change');
-        $('#coursedetail-day').val(moment(params.date, "DD-MM-YYYY h:mm a").format('dddd')).trigger('change');
-        $('#coursedetail-fromtime').val(moment(params.date, "DD-MM-YYYY h:mm a").format('HH:mm:ss')).trigger('change');
+        $('#enrolmentform-startdate').val(moment(params.date, "DD-MM-YYYY h:mm a").format('MMM D, Y')).trigger('change');
+        $('#enrolmentform-day').val(moment(params.date, "DD-MM-YYYY h:mm a").format('dddd')).trigger('change');
+        $('#enrolmentform-fromtime').val(moment(params.date, "DD-MM-YYYY h:mm a").format('HH:mm:ss')).trigger('change');
         return false;
     });
 
