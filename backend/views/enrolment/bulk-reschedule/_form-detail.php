@@ -1,7 +1,6 @@
 <?php
 
 use yii\bootstrap\ActiveForm;
-use kartik\date\DatePicker;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use common\models\User;
@@ -14,7 +13,7 @@ use common\models\Location;
 <div class="enrolment-form">
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['enrolment/update', 'id' => $model->id])
+        'action' => Url::to(['enrolment/reschedule', 'id' => $model->id])
     ]); ?>
     <div class="row">
         <div class="col-md-4">
@@ -39,7 +38,7 @@ use common\models\Location;
             ]);
             ?>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <?= $form->field($courseReschedule, 'dayTime')->textInput(['readOnly' => true]);?>
         </div>
         <div class="col-md-2">
@@ -51,42 +50,44 @@ use common\models\Location;
             ])->label('Duration');?>
         </div>
         <div class="col-md-2">
-            <?= $form->field($courseReschedule, 'rescheduleBeginDate')->widget(DatePicker::classname(),
-                [
-                'options' => [
-                    'value' => Yii::$app->formatter->asDate(new \DateTime()),
-                ],
-                'type' => DatePicker::TYPE_INPUT,
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'M d,yyyy'
-                ]
-            ]);?>
-        </div>
-        <div class="col-md-2">
-            <?= $form->field($courseReschedule, 'rescheduleEndDate')->widget(
-                DatePicker::classname(),
-                [
-                'options' => [
-                    'value' => Yii::$app->formatter->asDate($course->endDate),
-                ],
-                'type' => DatePicker::TYPE_INPUT,
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'M d,yyyy'
-                ]
-            ]); ?>
+            <?= $form->field($courseReschedule, 'rescheduleBeginDate')->textInput(['readOnly' => true]);?>
         </div>
         <div class="col-md-12">
             <div id="bulk-reschedule-calendar"></div>
         </div>
     </div>
+    <?= $form->field($courseReschedule, 'dateRangeToChangeSchedule')->hiddenInput()->label(false);?>
     <?php ActiveForm::end(); ?>
 </div>
 
 <script type="text/javascript">
+    $(document).on('click', '.modal-back', function () {
+        $('#modal-spinner').show();
+        $.ajax({
+            url: '<?= Url::to(['enrolment/update', 'id' => $model->id]) ?>',
+            type: 'get',
+            dataType: "json",
+            data: $('#modal-form').serialize(),
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $('.modal-back').hide();
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('.modal-save').text('Next');
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Enrolment Edit</h4>');
+                    $('#popup-modal .modal-dialog').css({'width': '500px'});
+                    $('#modal-spinner').hide();
+                }
+            }
+        });
+        return false;
+    });
+    
     $(document).ready(function() {
         var options = {
+            'date' : $('#coursereschedule-reschedulebegindate').val(),
             'renderId' : '#bulk-reschedule-calendar',
             'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
             'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
@@ -95,15 +96,11 @@ use common\models\Location;
             'studentId' : <?= $model->studentId ?>
         };
         $.fn.calendarDayView(options);
+        $('#modal-spinner').hide();
     });
 
     $(document).on('week-view-calendar-select', function(event, params) {
         $('#coursereschedule-daytime').val(moment(params.date, "DD-MM-YYYY h:mm a").format('dddd hh:mm A')).trigger('change');
-        return false;
-    });
-
-    $(document).on('modal-success', function(event, params) {
-        paymentFrequency.onEditableSuccess();
         return false;
     });
 </script>

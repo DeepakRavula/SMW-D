@@ -2,9 +2,7 @@
 
 namespace common\models;
 
-use common\components\validators\reschedule\CourseRescheduleBeginValidator;
-use common\components\validators\reschedule\CourseRescheduleEndValidator;
-
+use yii\base\Model;
 /**
  * This is the model class for table "course".
  *
@@ -17,21 +15,44 @@ use common\components\validators\reschedule\CourseRescheduleEndValidator;
  * @property string $startDate
  * @property string $endDate
  */
-class CourseReschedule extends Course
+class CourseReschedule extends Model
 {
+    public $fromDate;
+    public $toDate;
+    public $dateRangeToChangeSchedule;
     public $rescheduleBeginDate;
-    public $rescheduleEndDate;
     public $duration;
     public $dayTime;
     public $courseId;
     public $teacherId;
 
+
+    const SCENARIO_BASIC = 'reschedule-basic';
+    const SCENARIO_DETAILED = 'reschedule-detail';
+
+    public function setDateRangeToChangeSchedule($dateRangeToChangeSchedule)
+    {
+        list($fromDate, $toDate) = explode(' - ', $dateRangeToChangeSchedule);
+        $this->fromDate = \DateTime::createFromFormat('M d,Y', $fromDate);
+        $this->toDate = \DateTime::createFromFormat('M d,Y', $toDate);
+    }
+
     public function setModel($model)
     {
         $this->duration = $model->duration;
         $this->teacherId = $model->teacherId;
+        $this->dayTime = (new \DateTime($model->startDate))->format('l h:i A');
         $this->courseId = $model->id;
         return $this;
+    }
+
+    public function getDateRangeToChangeSchedule()
+    {
+        $fromDate = $this->fromDate->format('M d,Y');
+        $toDate = $this->toDate->format('M d,Y');
+        $this->dateRangeToChangeSchedule = $fromDate.' - '.$toDate;
+
+        return $this->dateRangeToChangeSchedule;
     }
     /**
      * {@inheritdoc}
@@ -39,10 +60,13 @@ class CourseReschedule extends Course
     public function rules()
     {
         return [
-            [['dayTime', 'teacherId', 'duration', 'rescheduleEndDate', 'rescheduleBeginDate'], 'required'],
-            [['courseId'], 'safe'],
-            [['rescheduleBeginDate'], CourseRescheduleBeginValidator::className()],
-            [['rescheduleEndDate'], CourseRescheduleEndValidator::className()]
+            [['dayTime', 'teacherId', 'duration'], 'required', 'on' => self::SCENARIO_DETAILED],
+            [['dateRangeToChangeSchedule', 'rescheduleBeginDate'], 'required', 'on' => self::SCENARIO_BASIC],
+            [['dayTime', 'teacherId', 'duration', 'dateRangeToChangeSchedule',
+                'rescheduleBeginDate'], 'required', 'except' => [self::SCENARIO_BASIC, self::SCENARIO_DETAILED]],
+            [['dayTime', 'teacherId', 'duration'], 'safe', 'on' => self::SCENARIO_BASIC],
+            [['dateRangeToChangeSchedule', 'rescheduleBeginDate'], 'safe', 'on' => self::SCENARIO_DETAILED],
+            [['courseId'], 'safe']
         ];
     }
 
@@ -54,8 +78,8 @@ class CourseReschedule extends Course
         return [
             'duration' => 'Duration',
             'teacherId' => 'Teacher',
-            'rescheduleBeginDate' => 'Reschedule start',
-            'rescheduleEndDate' => 'Reschedule End',
+            'rescheduleBeginDate' => 'Reschedule begin',
+            'dateRangeToChangeSchedule' => 'Date range',
             'dayTime' => 'Day & Time'
         ];
     }
@@ -66,21 +90,25 @@ class CourseReschedule extends Course
             'courseId' => $this->courseId,
             'isConfirmed' => false,
         ]);
-        $endDate = new \DateTime($this->rescheduleEndDate);
-        $startDate = (new \DateTime($this->rescheduleBeginDate))->modify('-1 day');
+        list($fromDate, $toDate) = explode(' - ', $this->dateRangeToChangeSchedule);
+        $startDate = new \DateTime($fromDate);
+        $endDate = new \DateTime($toDate);
+        $rescheduleStartDate = (new \DateTime($this->rescheduleBeginDate))->modify('-1 day');
         $lessons = Lesson::find()
             ->andWhere(['courseId' => $this->courseId])
             ->regular()
             ->notDeleted()
-            ->scheduled()
+            ->statusScheduled()
             ->isConfirmed()
             ->between($startDate, $endDate)
             ->all();
         $course = Course::findOne($this->courseId);
-        $dayList = self::getWeekdaysList();
+        $dayList = Course::getWeekdaysList();
         $day = $dayList[(new \DateTime($this->dayTime))->format('N')];
-        $startDate->modify('next ' . $day);
-        $course->generateLessons($lessons, $startDate, $this->teacherId, $this->dayTime);
-        return true;
+        $rescheduleStartDate->modify('next ' . $day);
+        $rescheduleLastdate = $course->generateLessons($lessons, $rescheduleStartDate, $this->teacherId, $this->dayTime);
+        $rescheduleBegindate = $rescheduleStartDate->format('M d,Y');
+        $rescheduleEnddate = (new \DateTime($rescheduleLastdate))->format('M d,Y');
+        return $rescheduleBegindate . ' - ' . $rescheduleEnddate;
     }
 }

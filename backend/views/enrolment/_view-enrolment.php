@@ -193,16 +193,4 @@ Modal::begin([
         });
         return false;
     });
-
-	var paymentFrequency = {
-		onEditableSuccess: function () {
-			var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"
-			$.pjax.reload({url: url, container: "#payment-cycle-listing", replace: false, async: false, timeout: 4000});
-			$.pjax.reload({url: url, container: "#enrolment-view", replace: false, async: false, timeout: 4000});
-                        $.pjax.reload({url: url, container: "#enrolment-pfi", replace: false, async: false, timeout: 4000});
-                        $.pjax.reload({url: url, container: "#lesson-index", replace: false, async: false, timeout: 4000});
-                        $.pjax.reload({url: url, container: "#enrolment-log", replace: false, async: false, timeout: 4000});
-                        $.pjax.reload({url: url, container: "#lesson-schedule", replace: false, async: false, timeout: 4000});
-		}
-	}
 </script>

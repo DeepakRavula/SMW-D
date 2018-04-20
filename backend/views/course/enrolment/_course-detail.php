@@ -70,6 +70,7 @@ use kartik\select2\Select2;
             {
                 if (response.status)
                 {
+                    $('.modal-back').hide();
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
                     $('.modal-save').text('Next');
