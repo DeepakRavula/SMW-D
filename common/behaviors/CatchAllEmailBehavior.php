@@ -25,10 +25,11 @@ class CatchAllEmailBehavior extends Behavior
     }
 
     public function addTestEmail($event) {
-		$model = new EmailForm();
-		if (YII_ENV_DEV) {
+	    $model = new EmailForm();
+		if (env('YII_ENV') === 'dev') {
 			$email = TestEmail::find()->one()->email;
 		} else {
+			$model->load(Yii::$app->request->post());
 			$email = $model->to;
 		}
 		return $event->message->setTo($email);
