@@ -31,12 +31,13 @@ class CatchAllEmailBehavior extends Behavior
 		if (env('YII_ENV') === 'dev') {
 			$email = TestEmail::find()->one()->email;
 		} else {
-			$model->load(Yii::$app->request->post());
-			$email = $model->to;
-			$passwordResetModel->load(Yii::$app->request->post());
-			$email = $passwordResetModel->email;
+			if ($model->load(Yii::$app->request->post())) {
+				$email = $model->to;
+			}
+			if ($passwordResetModel->load(Yii::$app->request->post())) {
+				$email = $passwordResetModel->email;
+			}
 		}
 		return $event->message->setTo($email);
 	}
-
 }
