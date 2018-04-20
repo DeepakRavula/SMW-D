@@ -3,8 +3,6 @@
 use yii\helpers\Url;
 use yii\helpers\Json;
 use common\models\Enrolment;
-use common\models\Location;
-use common\models\LocationAvailability;
 use yii\grid\GridView;
 
 ?>

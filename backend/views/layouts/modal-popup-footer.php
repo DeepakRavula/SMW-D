@@ -12,7 +12,7 @@ use common\models\Lesson;
             <?= Html::a('Delete', '', ['class' => 'btn btn-danger modal-delete']); ?>
         </div>
         <div class="pull-right">
-            <?= Html::a('Cancel', '', ['class' => 'btn btn-default modal-cancel']);?>    
+            <?= Html::a('Cancel', '', ['class' => 'btn btn-default modal-cancel']);?>
             <?= Html::submitButton(Yii::t('backend', 'Save'), [
                 'class' => 'btn btn-info modal-save',
                 'name' => 'signup-button',

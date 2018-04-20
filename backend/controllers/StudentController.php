@@ -11,12 +11,11 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\User;
 use yii\web\Response;
-use Carbon\Carbon;
 use common\models\CourseSchedule;
 use common\models\log\StudentLog;
 use backend\models\discount\MultiEnrolmentDiscount;
 use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
-use common\models\TeacherAvailability;
+use common\models\EnrolmentForm;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use yii\filters\AccessControl;
@@ -167,33 +166,28 @@ class StudentController extends BaseController
     public function actionEnrolment($id)
     {
         $model = $this->findModel($id);
-        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $request = Yii::$app->request;
-        $post = $request->post();
+        $post = Yii::$app->request->post();
+        $courseDetail = new EnrolmentForm(['scenario' => EnrolmentForm::SCENARIO_DETAILED]);
+        $courseDetail->load($post);
         $courseModel = new Course();
         $courseModel->studentId = $id;
         $courseSchedule = new CourseSchedule();
         $courseSchedule->studentId = $model->id;
         $multipleEnrolmentDiscount = new MultiEnrolmentDiscount();
         $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
-        $courseModel->load($post);
-        $courseSchedule->load($post);
-        
-        if (Yii::$app->request->isPost) {
-            $paymentFrequencyDiscount->load($post);
-            $multipleEnrolmentDiscount->load($post);
-            $courseModel->locationId = $locationId;
+        $courseModel->setModel($courseDetail);
+        $courseSchedule->setModel($courseDetail);
+        if ($post) {
             if ($courseModel->save()) {
                 $courseSchedule->courseId = $courseModel->id;
-                $dayList = TeacherAvailability::getWeekdaysList();
-                $courseSchedule->day = array_search($courseSchedule->day, $dayList);
-                $courseSchedule->save();
                 if ($courseSchedule->save()) {
-                    if (!empty($multipleEnrolmentDiscount->discount)) {
+                    if (!empty($courseDetail->pfDiscount)) {
+                        $multipleEnrolmentDiscount->discount = $courseDetail->enrolmentDiscount;
                         $multipleEnrolmentDiscount->enrolmentId = $courseModel->enrolment->id;
                         $multipleEnrolmentDiscount->save();
                     }
-                    if (!empty($paymentFrequencyDiscount->discount)) {
+                    if (!empty($courseDetail->enrolmentDiscount)) {
+                        $paymentFrequencyDiscount->discount = $courseDetail->pfDiscount;
                         $paymentFrequencyDiscount->enrolmentId = $courseModel->enrolment->id;
                         $paymentFrequencyDiscount->save();
                     }

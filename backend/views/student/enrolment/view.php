@@ -3,9 +3,6 @@
 use yii\bootstrap\Modal;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
-use common\models\Course;
-use common\models\CourseSchedule;
-use common\models\discount\EnrolmentDiscount;
 
 ?>
 
@@ -39,18 +36,7 @@ use common\models\discount\EnrolmentDiscount;
     ]);
     Modal::end();
 ?>
-<?php Modal::begin([
-    'header' => '<h4 class="m-0">New Enrolment</h4>',
-    'id' => 'private-enrol-modal',
-]); ?>
-<?= $this->render('_form-private', [
-        'model' => new Course(),
-        'courseSchedule' => new CourseSchedule(),
-        'paymentFrequencyDiscount' => new EnrolmentDiscount(),
-        'multipleEnrolmentDiscount' => new EnrolmentDiscount(),
-        'student' => $model
-    ]);?>
-<?php Modal::end(); ?>
+
 <?php Modal::begin([
     'header' => $this->render('_group-modal-header'),
     'id' => 'group-enrol-modal',

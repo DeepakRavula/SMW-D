@@ -25,20 +25,22 @@ Modal::begin([
 <script>
     $(document).off('click', '.modal-save').on('click', '.modal-save', function () {
         $('.modal-save').attr('disabled', true);
+        $('.modal-save-all').attr('disabled', true);
+        $('.modal-back').attr('disabled', true);
         $('.modal-delete').attr('disabled', true);
         $('.modal-cancel').attr('disabled', true);
         $('#modal-form').submit();
         return false;
     });
 
-    $(document).on('afterValidate', '#modal-form', function (event, messages) {
-        $.each( messages, function( key, value ) {
-            if (value) {
-                $('.modal-save').attr('disabled', false);
-                $('.modal-delete').attr('disabled', false);
-                $('.modal-cancel').attr('disabled', false);
-            }
-        });
+    $(document).on('afterValidate', '#modal-form', function (event, messages, errorAttributes) {
+        if (errorAttributes.length > 0) {
+            $('.modal-save').attr('disabled', false);
+            $('.modal-delete').attr('disabled', false);
+            $('.modal-cancel').attr('disabled', false);
+            $('.modal-save-all').attr('disabled', false);
+            $('.modal-back').attr('disabled', false);
+        }
     });
 
     $(document).off('beforeSubmit', '#modal-form').on('beforeSubmit', '#modal-form', function () {
@@ -47,6 +49,8 @@ Modal::begin([
         $('.modal-delete').attr('disabled', true);
         $('.modal-cancel').attr('disabled', true);
         $('.modal-save-all').attr('disabled', true);
+        $('.modal-save-all').attr('disabled', true);
+        $('.modal-back').attr('disabled', true);
         $.ajax({
             url: $('#modal-form').attr('action'),
             type: 'post',
@@ -57,17 +61,25 @@ Modal::begin([
                 if (response.status)
                 {
                     $('#modal-spinner').hide();
-                    $('#popup-modal').modal('hide');
-                    $(document).trigger("modal-success", response);
+                    if (response.data) {
+                        $('#modal-content').html(response.data);
+                        $('.modal-back').show();
+                        $(document).trigger("modal-next", response);
+                    } else {
+                        $('#popup-modal').modal('hide');
+                        $(document).trigger("modal-success", response);
+                    }
                 } else {
                     $('#modal-spinner').hide();
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
                     $(document).trigger("modal-error", response);
-                    $('.modal-save').attr('disabled', false);
-                    $('.modal-save-all').attr('disabled', false);
-                    $('.modal-delete').attr('disabled', false);
-                    $('.modal-cancel').attr('disabled', false);
                 }
+                $('.modal-save').attr('disabled', false);
+                $('.modal-save-all').attr('disabled', false);
+                $('.modal-delete').attr('disabled', false);
+                $('.modal-cancel').attr('disabled', false);
+                $('.modal-save-all').attr('disabled', false);
+                $('.modal-back').attr('disabled', false);
             }
         });
         return false;
@@ -81,11 +93,13 @@ Modal::begin([
     $('#popup-modal').on('hidden.bs.modal', function () {
         $('.modal-save').attr('disabled', false);
         $('.modal-save-all').attr('disabled', false);
+        $('.modal-back').attr('disabled', false);
         $('.modal-delete').attr('disabled', false);
         $('.modal-cancel').attr('disabled', false);
         $('.modal-delete').hide();
         $('.modal-save').text('Save');
         $('.modal-save-all').hide();
+        $('.modal-back').hide();
         $('.modal-save').attr('message', null);
         $(document).trigger("modal-close");
     });

@@ -110,4 +110,14 @@ class CourseSchedule extends \yii\db\ActiveRecord
         }
         return parent::afterSave($insert, $changedAttributes);
     }
+
+    public function setModel($model)
+    {
+        $dayList = TeacherAvailability::getWeekdaysList();
+        $this->day = array_search($model->day, $dayList);
+        $this->fromTime = $model->fromTime;
+        $this->duration = $model->duration;
+        $this->paymentFrequency = $model->paymentFrequency;
+        return $this;
+    }
 }

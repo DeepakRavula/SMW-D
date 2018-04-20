@@ -1,6 +1,5 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use common\models\Province;
