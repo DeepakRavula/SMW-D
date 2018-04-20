@@ -55,14 +55,14 @@ use kartik\select2\Select2;
     $(document).on('week-view-calendar-select', function(event, params) {
         $('#enrolmentform-startdate').val(moment(params.date, "DD-MM-YYYY h:mm a").format('MMM D, Y')).trigger('change');
         $('#enrolmentform-day').val(moment(params.date, "DD-MM-YYYY h:mm a").format('dddd')).trigger('change');
-        $('#enrolmentform-fromtime').val(moment(params.date, "DD-MM-YYYY h:mm a").format('HH:mm:ss')).trigger('change');
+        $('#enrolmentform-fromtime').val(moment(params.date, "DD-MM-YYYY h:mm a").format('h:mm a')).trigger('change');
         return false;
     });
 
     $(document).on('click', '.modal-back', function () {
         $('#modal-spinner').show();
         $.ajax({
-            url: '<?= Url::to(['course/basic-detail', 'studentId' => $student->id]) ?>',
+            url: '<?= Url::to(['course/create-enrolment', 'studentId' => $student->id]) ?>',
             type: 'get',
             dataType: "json",
             data: $('#modal-form').serialize(),
