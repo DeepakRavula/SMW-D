@@ -57,7 +57,7 @@ use kartik\select2\Select2;
     $(document).on('click', '.modal-back', function () {
         $('#modal-spinner').show();
         $.ajax({
-            url: '<?= Url::to(['course/create-enrolment', 'studentId' => $student->id, 'EnrolmentForm' => $model]) ?>',
+            url: '<?= Url::to(['course/create-enrolment', 'studentId' => $student->id]) ?>',
             type: 'get',
             dataType: "json",
             data: $('#modal-form').serialize(),
