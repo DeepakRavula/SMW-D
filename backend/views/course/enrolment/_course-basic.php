@@ -16,7 +16,7 @@ use yii\web\View;
 <?php
     $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['course/create-enrolment', 'studentId' => $student->id])
+        'action' => Url::to(['course/create-enrolment', 'studentId' => $student->id, 'EnrolmentForm' => $model])
     ]);
     $privatePrograms = ArrayHelper::map(Program::find()
             ->active()
