@@ -167,7 +167,9 @@ class StudentController extends BaseController
     {
         $model = $this->findModel($id);
         $post = Yii::$app->request->post();
-        $courseDetail = new EnrolmentForm(['scenario' => EnrolmentForm::SCENARIO_DETAILED]);
+        $courseDetail = new EnrolmentForm(['scenario' => EnrolmentForm::SCENARIO_BASIC]);
+        $courseDetail->load(Yii::$app->request->get());
+        $courseDetail->setScenario(EnrolmentForm::SCENARIO_DETAILED);
         $courseDetail->load($post);
         $courseModel = new Course();
         $courseModel->studentId = $id;

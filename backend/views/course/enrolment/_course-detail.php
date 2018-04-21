@@ -10,7 +10,7 @@ use kartik\select2\Select2;
 <?php
     $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['student/enrolment', 'id' => $student->id])
+        'action' => Url::to(['student/enrolment', 'id' => $student->id, 'EnrolmentForm' => $model])
     ]);
 ?>
 <div class="user-create-form">
@@ -43,12 +43,7 @@ use kartik\select2\Select2;
     </div>
     </div>
 </div>
-<?= $form->field($model, 'duration')->hiddenInput()->label(false);?>
-<?= $form->field($model, 'programId')->hiddenInput()->label(false);?>
-<?= $form->field($model, 'paymentFrequency')->hiddenInput()->label(false);?>
-<?= $form->field($model, 'enrolmentDiscount')->hiddenInput()->label(false);?>
-<?= $form->field($model, 'pfDiscount')->hiddenInput()->label(false);?>
-<?= $form->field($model, 'programRate')->hiddenInput()->label(false);?>
+
 <?php ActiveForm::end(); ?>
 
 <script>
@@ -62,7 +57,7 @@ use kartik\select2\Select2;
     $(document).on('click', '.modal-back', function () {
         $('#modal-spinner').show();
         $.ajax({
-            url: '<?= Url::to(['course/create-enrolment', 'studentId' => $student->id]) ?>',
+            url: '<?= Url::to(['course/create-enrolment', 'studentId' => $student->id, 'EnrolmentForm' => $model]) ?>',
             type: 'get',
             dataType: "json",
             data: $('#modal-form').serialize(),
