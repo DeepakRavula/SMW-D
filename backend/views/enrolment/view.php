@@ -112,10 +112,8 @@ echo Tabs::widget([
     });
 
     $(document).on('click', '.enrolment-edit', function () {
-        var enrolmentId = '<?php echo $model->id;?>';
-        var param = $.param({id: enrolmentId });
         $.ajax({
-            url    : '<?= Url::to(['enrolment/update']); ?>?' + param,
+            url    : '<?= Url::to(['enrolment/update', 'id' => $model->id]); ?>',
             type   : 'get',
             dataType: "json",
             success: function(response)
@@ -124,11 +122,32 @@ echo Tabs::widget([
                 {
                     $('#popup-modal').modal('show');
                     $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Enrolment Edit</h4>');
-                    $('.modal-save').text('Preview Lessons');
+                    $('.modal-save').text('Next');
                     $('#modal-content').html(response.data);
-                    $('#popup-modal .modal-dialog').css({'width': '1000px'});
+                    $('#popup-modal .modal-dialog').css({'width': '500px'});
                 }
             }
         });
+    });
+
+    var paymentFrequency = {
+        onEditableSuccess: function () {
+            var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"
+            $.pjax.reload({url: url, container: "#payment-cycle-listing", replace: false, async: false, timeout: 4000});
+            $.pjax.reload({url: url, container: "#enrolment-view", replace: false, async: false, timeout: 4000});
+            $.pjax.reload({url: url, container: "#enrolment-pfi", replace: false, async: false, timeout: 4000});
+            $.pjax.reload({url: url, container: "#lesson-index", replace: false, async: false, timeout: 4000});
+            $.pjax.reload({url: url, container: "#enrolment-log", replace: false, async: false, timeout: 4000});
+            $.pjax.reload({url: url, container: "#lesson-schedule", replace: false, async: false, timeout: 4000});
+        }
+    };
+
+    $(document).on('modal-success', function(event, params) {
+        if (params.url) {
+            window.location.href = params.url;
+        } else {
+            paymentFrequency.onEditableSuccess();
+        }
+        return false;
     });
 </script>

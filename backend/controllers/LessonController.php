@@ -530,7 +530,7 @@ class LessonController extends BaseController
                 ->andWhere(['courseId' => $courseModel->id])
                 ->notDeleted()
                 ->isConfirmed()
-                ->scheduled()
+                ->statusScheduled()
                 ->between($startDate, $endDate)
                 ->all();
             $oldLessonIds = [];

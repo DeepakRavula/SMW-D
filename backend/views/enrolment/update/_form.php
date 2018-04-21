@@ -5,7 +5,6 @@ use common\models\PaymentFrequency;
 use yii\helpers\Html;
 use kartik\select2\Select2;
 use yii\helpers\Url;
-use kartik\datetime\DateTimePicker;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

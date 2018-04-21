@@ -5,7 +5,6 @@ use yii\bootstrap\ActiveForm;
 use kartik\time\TimePicker;
 use kartik\date\DatePicker;
 use common\models\Course;
-use common\models\Enrolment;
 use common\models\TeacherAvailability;
 use yii\data\ActiveDataProvider;
 
