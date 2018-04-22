@@ -580,7 +580,7 @@ class Invoice extends \yii\db\ActiveRecord
             break;
         }
         if ($this->isVoid) {
-            $status = 'Void';
+            $status = 'Voided';
         }
         return $status;
     }
