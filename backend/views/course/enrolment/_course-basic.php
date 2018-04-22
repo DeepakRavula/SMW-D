@@ -16,7 +16,7 @@ use yii\web\View;
 <?php
     $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['course/create-enrolment', 'studentId' => $student->id])
+        'action' => Url::to(['course/create-enrolment', 'studentId' => $student->id, 'EnrolmentForm' => $model])
     ]);
     $privatePrograms = ArrayHelper::map(Program::find()
             ->active()
@@ -163,9 +163,7 @@ use yii\web\View;
         <div class="col-xs-1 enrolment-text"></div>
     </div>
 </div>
-<?= $form->field($model, 'teacherId')->hiddenInput()->label(false);?>
-<?= $form->field($model, 'day')->hiddenInput()->label(false);?>
-<?= $form->field($model, 'fromTime')->hiddenInput()->label(false);?>
+
 <?php ActiveForm::end(); ?>
 
 <script>
@@ -201,7 +199,7 @@ use yii\web\View;
                 dataType: "json",
                 success: function (response)
                 {
-                    $('#enrolmentform-programrate').val(response.rate);
+                    $('#enrolmentform-programrate').val(response.rate).trigger('change');
                     $('#rate-per-month').val(response.ratePerMonth);
                     $('#discounted-rate-per-month').val(response.ratePerMonthWithDiscount);
                 }
@@ -226,8 +224,18 @@ use yii\web\View;
         $('#modal-spinner').hide();
     });
 
+    $('#enrolmentform-programrate').on('focusin', function(){
+        $(this).data('val', $(this).val());
+    });
+
     $(document).on('change', '#enrolmentform-programid, #enrolmentform-duration, #enrolmentform-programrate, \n\
         #enrolmentform-pfdiscount, #enrolmentform-enrolmentdiscount', function(){
+        if ($(this).attr('id') == 'enrolmentform-programrate') {
+            $(this).data('val', $(this).val());
+            if ($(this).data('val') == $(this).val()) {
+                return false;
+            }
+        }
         enrolment.fetchProgram();
     });
 </script>

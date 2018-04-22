@@ -55,19 +55,23 @@ class EnrolmentController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['add', 'delete', 'edit','schedule',
-                        'group', 'update','edit-end-date', 'edit-program-rate'],
+                'only' => ['add', 'delete', 'edit', 'schedule', 'group', 'update',
+                    'edit-end-date', 'edit-program-rate', 'reschedule'
+                ],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-			'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'group', 'edit', 'edit-program-rate', 'create', 'add', 'confirm', 'update', 'delete', 'edit-end-date'],
+                        'actions' => ['index', 'view', 'group', 'edit', 'edit-program-rate', 
+                            'create', 'add', 'confirm', 'update', 'delete', 'edit-end-date',
+                            'reschedule'
+                        ],
                         'roles' => ['manageEnrolments'],
                     ],
                 ],
@@ -266,6 +270,7 @@ class EnrolmentController extends BaseController
             ]);
         }
     }
+
     public function createUserContact($userId, $labelId)
     {
         $userContact = new UserContact();
@@ -283,6 +288,7 @@ class EnrolmentController extends BaseController
         $userContact->save();
         return $userContact;
     }
+    
     public function actionAdd()
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -402,31 +408,66 @@ class EnrolmentController extends BaseController
      */
     public function actionUpdate($id)
     {
+        $courseDetailData = Yii::$app->request->get('CourseReschedule');
         $model = $this->findModel($id);
-        $courseReschedule = new CourseReschedule();
+        $courseReschedule = new CourseReschedule(['scenario' => CourseReschedule::SCENARIO_BASIC]);
+        if ($courseDetailData) {
+            $courseReschedule->load(Yii::$app->request->get());
+        }
         $courseReschedule->setModel($model->course);
-        $data = $this->renderAjax('/enrolment/schedule/_form-update', [
+        $data = $this->renderAjax('/enrolment/bulk-reschedule/_form-basic', [
             'courseReschedule' => $courseReschedule,
-            'course' => $model->course,
-            'courseSchedule' => $model->course->courseSchedule,
-            'model' => $model,
+            'model' => $model
         ]);
         $response = [
             'status' => true,
-            'data' => $data,
+            'data' => $data
         ];
+        if (Yii::$app->request->isPost) {
+            if ($courseReschedule->load(Yii::$app->request->post()) && $courseReschedule->validate()) {
+                $courseReschedule->setScenario($courseReschedule::SCENARIO_DETAILED);
+                $courseRescheduleData = $this->renderAjax('/enrolment/bulk-reschedule/_form-detail', [
+                    'courseReschedule' => $courseReschedule,
+                    'course' => $model->course,
+                    'courseSchedule' => $model->course->courseSchedule,
+                    'model' => $model
+                ]);
+                $response = [
+                    'status' => true,
+                    'data' => $courseRescheduleData
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($courseReschedule)
+                ];
+            }
+        }
+        return $response;
+    }
+
+    public function actionReschedule($id)
+    {
+        $model = $this->findModel($id);
+        $courseReschedule = new CourseReschedule();
         $course = $model->course;
+        $courseReschedule->setModel($course);
         if (Yii::$app->request->isPost) {
             $courseReschedule->load(Yii::$app->request->post());
-            $endDate = new \DateTime($courseReschedule->rescheduleEndDate);
-            $startDate = new \DateTime($courseReschedule->rescheduleBeginDate);
+            list($fromDate, $toDate) = explode(' - ', $courseReschedule->dateRangeToChangeSchedule);
+            $startDate = new \DateTime($fromDate);
+            $endDate = new \DateTime($toDate);
             if ($courseReschedule->validate()) {
                 $courseReschedule->reschdeule();
                 $rescheduleBeginDate = $startDate->format('d-m-Y');
                 $rescheduleEndDate = $endDate->format('d-m-Y');
-                $response = $this->redirect(['/lesson/review', 'courseId' => $course->id,
+                $url = Url::to(['/lesson/review', 'courseId' => $course->id,
                     'LessonSearch[showAllReviewLessons]' => false, 'Course[startDate]' => $rescheduleBeginDate,
                     'Course[endDate]' => $rescheduleEndDate]);
+                $response = [
+                    'status' => true,
+                    'url' => $url
+                ];
             } else {
                 $response = [
                     'status' => false,
