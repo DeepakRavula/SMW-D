@@ -3,12 +3,10 @@
 use yii\helpers\ArrayHelper;
 use common\models\UserEmail;
 
-    $body = null;
-    if ($lessonModel->getReschedule()) {
+   // $body = null;
         $body = $this->renderAjax('/lesson/mail/body', [
             'model' => $lessonModel,
         ]);
-    }
     $content = $this->renderAjax('/lesson/mail/content', [
         'content' => $body,
         'emailTemplate' => $emailTemplate
