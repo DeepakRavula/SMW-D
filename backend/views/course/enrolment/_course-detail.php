@@ -10,7 +10,7 @@ use kartik\select2\Select2;
 <?php
     $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['student/enrolment', 'id' => $student->id, 'EnrolmentForm' => $model])
+        'action' => !empty($action) ? $action : Url::to(['student/enrolment', 'id' => $student->id, 'EnrolmentForm' => $model])
     ]);
 ?>
 <div class="user-create-form">
