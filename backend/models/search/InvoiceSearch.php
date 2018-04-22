@@ -98,6 +98,14 @@ class InvoiceSearch extends Invoice
                     (new \DateTime($this->dueToDate))->format('Y-m-d')]);
             }
         } else {
+	    if ((int) $this->invoiceStatus === Invoice::STATUS_OWING) {
+                $query->unpaid()->invoice();
+            } elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
+                $query->paid()->invoice()->andWhere(['isVoid'=>false]);
+            }
+	    elseif ((int) $this->invoiceStatus === Invoice::STATUS_VOID) {
+                $query->andWhere(['isVoid'=>true]);
+            }
             if (!empty($this->invoiceDateRange)) {
                 list($this->fromDate, $this->toDate) = explode(' - ', $this->invoiceDateRange);
                 $query->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($this->fromDate))->format('Y-m-d'),
@@ -147,12 +155,21 @@ class InvoiceSearch extends Invoice
         return $dataProvider;
     }
 
-    public static function invoiceStatuses()
+    public static function proFormInvoiceStatuses()
     {
         return [
             self::STATUS_ALL => 'All',
             Invoice::STATUS_OWING => 'Unpaid',
             Invoice::STATUS_PAID => 'Paid',
+        ];
+    }
+     public static function invoiceStatuses()
+    {
+        return [
+            self::STATUS_ALL => 'All',
+            Invoice::STATUS_OWING => 'owing',
+            Invoice::STATUS_PAID => 'Paid',
+	    Invoice::STATUS_VOID => 'void',
         ];
     }
     public static function mailStatuses()

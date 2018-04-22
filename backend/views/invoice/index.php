@@ -84,14 +84,14 @@ $this->params['action-button'] = $actionButton; ?>
                 ],
                 [
                     'label' => 'Paid?',
-					'attribute' => 'invoiceStatus',
-					'filter'=> InvoiceSearch::invoiceStatuses(),
                        'value' => function ($data) {
                            return $data->isPaid() ? 'Yes' : 'No';
                        },
                 ],
                    [
                     'label' => 'Status',
+		    'attribute' => 'invoiceStatus',
+		    'filter'=> InvoiceSearch::proFormInvoiceStatuses(),
                     'value' => function ($data) {
                         return $data->getStatus();
                     },
@@ -188,6 +188,8 @@ $this->params['action-button'] = $actionButton; ?>
                 ],
                 [
                     'label' => 'Status',
+		    'attribute' => 'invoiceStatus',
+		    'filter'=> InvoiceSearch::invoiceStatuses(),
                     'value' => function ($data) {
                         return $data->getStatus();
                     },
