@@ -269,7 +269,7 @@ function showCalendars(id,type) {
             {
                 if(response.status) {
                     $('#scheduleCalendar').fullCalendar("refetchEvents");
-		    $('#copy-operation-hours').text("Successfully copy the operation hours").fadeIn().delay(3000).fadeOut();
+		    $('#copy-operation-hours').text("Successfully copy the operation hours availability").fadeIn().delay(3000).fadeOut();
                 }
             }
         });
