@@ -25,6 +25,7 @@ $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 ?>
 <div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
+<div id="copy-operation-hours" style="display: none;" class="alert-success alert fade in"></div>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
@@ -268,6 +269,7 @@ function showCalendars(id,type) {
             {
                 if(response.status) {
                     $('#scheduleCalendar').fullCalendar("refetchEvents");
+		    $('#copy-operation-hours').text("Successfully copy the operation hours").fadeIn().delay(3000).fadeOut();
                 }
             }
         });
