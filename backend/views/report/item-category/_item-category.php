@@ -28,11 +28,11 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
                     return null;
                 },
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
+                'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
 
                 'group' => true,
                 'groupedRow' => true,
-                            'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
+                'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
                 return [
                     'mergeColumns'=>[[2, 4]], // columns to merge in summary
                     'content'=>[              // content to show in each summary cell
@@ -46,7 +46,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
                     ],
                     'contentOptions'=>[      // content html attributes for each summary cell
-                        2=>['style' => 'text-align:left'],
+                        2=>['style' => 'text-align:left;'],
                         5=>['style'=>'text-align:right'],
 
                     ],
@@ -62,7 +62,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'value' => function ($data) {
                     return $data->itemCategory->name;
                 },
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
+                'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
         ],
  
                         [
@@ -110,7 +110,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
                     return null;
                 },
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
+                'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
                 
                 'group' => true,
                 'groupedRow' => true,
@@ -143,7 +143,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'value' => function ($data) {
                     return $data->itemCategory->name;
                 },
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
+                'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
                 'group' => true,
                 'groupedRow' => true,
                 'subGroupOf' => 0,
