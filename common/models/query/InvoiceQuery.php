@@ -173,6 +173,13 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         ]);
     }
 
+    public function credit()
+    {
+        return $this->andFilterWhere([
+            'invoice.status' => Invoice::STATUS_CREDIT,
+        ]);
+    }
+    
     public function mailSent()
     {
         return $this->andFilterWhere([

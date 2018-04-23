@@ -90,7 +90,7 @@ $this->params['action-button'] = $actionButton; ?>
                 ],
                    [
                     'label' => 'Status',
-		    'attribute' => 'invoiceStatus',
+		    'attribute' => 'proFormaInvoiceStatus',
 		    'filter'=> InvoiceSearch::proFormInvoiceStatuses(),
                     'value' => function ($data) {
                         return $data->getStatus();

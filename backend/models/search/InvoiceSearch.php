@@ -15,7 +15,7 @@ class InvoiceSearch extends Invoice
 {
     const STATUS_MAIL_SENT = 1;
     const STATUS_MAIL_NOT_SENT = 2;
-    const STATUS_ALL = 3;
+    const STATUS_ALL = 6;
     public $toggleAdditionalColumns;
     public $isPrint;
     public $isMail;
@@ -33,7 +33,8 @@ class InvoiceSearch extends Invoice
     public $phone;
     public $summariseReport = false;
     public $number;
-	public $customer;
+    public $customer;
+    public $proFormaInvoiceStatus;
     /**
      * {@inheritdoc}
      */
@@ -41,7 +42,7 @@ class InvoiceSearch extends Invoice
     {
         return [
             [['fromDate', 'toDate'], 'date', 'format' => 'php:M d,Y'],
-            [['mailStatus', 'invoiceStatus'], 'integer'],
+            [['mailStatus', 'invoiceStatus','proFormaInvoiceStatus'], 'integer'],
             [['type', 'query', 'toggleAdditionalColumns', 'dateRange','invoiceDateRange',
                 'customer', 'dueFromDate', 'dueToDate','number','phone','summariseReport','isPrint', 'isWeb', 'isMail'], 'safe'],
         ];
@@ -86,9 +87,9 @@ class InvoiceSearch extends Invoice
             } elseif ((int) $this->mailStatus === self::STATUS_MAIL_NOT_SENT) {
                 $query->mailNotSent();
             }
-            if ((int) $this->invoiceStatus === Invoice::STATUS_OWING) {
+            if ((int) $this->proFormaInvoiceStatus === Invoice::STATUS_OWING) {
                 $query->unpaid()->proFormaInvoice();
-            } elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
+            } elseif ((int) $this->proFormaInvoiceStatus === Invoice::STATUS_PAID) {
                 $query->paid()->proFormaInvoice();
             }
             if (!empty($this->dateRange)) {
@@ -105,6 +106,9 @@ class InvoiceSearch extends Invoice
             }
 	    elseif ((int) $this->invoiceStatus === Invoice::STATUS_VOID) {
                 $query->andWhere(['isVoid'=>true]);
+            }
+	    elseif ((int) $this->invoiceStatus === Invoice::STATUS_CREDIT) {
+                $query->credit()->invoice();
             }
             if (!empty($this->invoiceDateRange)) {
                 list($this->fromDate, $this->toDate) = explode(' - ', $this->invoiceDateRange);
@@ -167,6 +171,7 @@ class InvoiceSearch extends Invoice
     {
         return [
             self::STATUS_ALL => 'All',
+	    Invoice::STATUS_CREDIT => 'credit',
             Invoice::STATUS_OWING => 'owing',
             Invoice::STATUS_PAID => 'Paid',
 	    Invoice::STATUS_VOID => 'void',
