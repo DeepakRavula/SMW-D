@@ -16,7 +16,8 @@ use yii\web\View;
 <?php
     $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['course/create-enrolment', 'studentId' => $student->id, 'EnrolmentForm' => $model])
+        'action' => Url::to(['course/create-enrolment-basic', 'studentId' => $student ? $student->id : null,
+            'isReverse' => $isReverse, 'EnrolmentForm' => $model])
     ]);
     $privatePrograms = ArrayHelper::map(Program::find()
             ->active()
@@ -111,6 +112,7 @@ use yii\web\View;
         </div>
         <div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
     </div>
+    <?php if($student) : ?>
     <?php if($student->customer->hasDiscount()) : ?>
     <div class="row">
         <div class="col-xs-6">
@@ -126,6 +128,7 @@ use yii\web\View;
         </div>
         <div class="col-xs-1 enrolment-text"><label class="text-muted">%</label></div>
     </div>
+    <?php endif;?>
     <?php endif;?>
     <div class="row">
         <div class="col-xs-6">
@@ -168,6 +171,8 @@ use yii\web\View;
 
 <script>
     $(document).ready(function () {
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment Basic</h4>');
+        $('#popup-modal .modal-dialog').css({'width': '600px'});
         $.fn.modal.Constructor.prototype.enforceFocus = function() {};
         enrolment.fetchProgram();
     });
@@ -207,29 +212,14 @@ use yii\web\View;
         }
     };
 
-    $(document).on('click', '.modal-next', function(event, params) {
-        $('.modal-next').show();
-        $('.modal-next').text('Preview Lessons');
-        var options = {
-            'date' : $('#enrolmentform-startdate').val(),
-            'renderId' : '#enrolment-create-calendar',
-            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
-            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
-            'changeId' : '#enrolmentform-teacherid',
-            'durationId' : '#enrolmentform-duration',
-            'studentId' : '<?= $student->id ?>'
-        };
-        $.fn.calendarDayView(options);
-        $('#popup-modal .modal-dialog').css({'width': '1000px'});
-        $('#modal-spinner').hide();
-    });
-
     $('#enrolmentform-programrate').on('focusin', function(){
         $(this).data('val', $(this).val());
     });
 
-    $(document).on('change', '#enrolmentform-programid, #enrolmentform-duration, #enrolmentform-programrate, \n\
-        #enrolmentform-pfdiscount, #enrolmentform-enrolmentdiscount', function(){
+    $(document).off('change', '#enrolmentform-programid, #enrolmentform-duration, #enrolmentform-programrate, \n\
+        #enrolmentform-pfdiscount, #enrolmentform-enrolmentdiscount').on('change', '#enrolmentform-programid, \n\
+        #enrolmentform-duration, #enrolmentform-programrate, #enrolmentform-pfdiscount, \n\
+        #enrolmentform-enrolmentdiscount', function(){
         if ($(this).attr('id') == 'enrolmentform-programrate') {
             $(this).data('val', $(this).val());
             if ($(this).data('val') == $(this).val()) {

@@ -39,7 +39,7 @@ class UserPhone extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['userContactId', 'number'], 'required'],
+            [['number', 'labelId'], 'required'],
             [['userContactId', 'extension'], 'integer'],
             [['number'], 'string', 'max' => 15],
             [['labelId'], 'safe']
@@ -67,6 +67,15 @@ class UserPhone extends \yii\db\ActiveRecord
     {
         return new \common\models\query\UserPhoneQuery(get_called_class());
     }
+
+    public function setModel($model)
+    {
+        $this->number = $model->number;
+        $this->labelId = $model->phoneLabelId;
+        $this->extension = $model->extension;
+        return $this;
+    }
+    
     public function getUserContact()
     {
         return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);

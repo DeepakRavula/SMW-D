@@ -44,7 +44,9 @@ class StudentController extends BaseController
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['create', 'update', 'merge', 'fetch-program-rate','validate'],
+                'only' => [
+                    'create', 'update', 'merge', 'fetch-program-rate', 'validate'
+                ],
                 'formats' => [
                         'application/json' => Response::FORMAT_JSON,
                 ],
@@ -165,38 +167,32 @@ class StudentController extends BaseController
     
     public function actionEnrolment($id)
     {
-        $model = $this->findModel($id);
-        $post = Yii::$app->request->post();
-        $courseDetail = new EnrolmentForm(['scenario' => EnrolmentForm::SCENARIO_BASIC]);
+        $courseDetail = new EnrolmentForm();
         $courseDetail->load(Yii::$app->request->get());
-        $courseDetail->setScenario(EnrolmentForm::SCENARIO_DETAILED);
-        $courseDetail->load($post);
         $courseModel = new Course();
         $courseModel->studentId = $id;
         $courseSchedule = new CourseSchedule();
-        $courseSchedule->studentId = $model->id;
+        $courseSchedule->studentId = $id;
         $multipleEnrolmentDiscount = new MultiEnrolmentDiscount();
         $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
         $courseModel->setModel($courseDetail);
         $courseSchedule->setModel($courseDetail);
-        if ($post) {
-            if ($courseModel->save()) {
-                $courseSchedule->courseId = $courseModel->id;
-                if ($courseSchedule->save()) {
-                    if (!empty($courseDetail->pfDiscount)) {
-                        $multipleEnrolmentDiscount->discount = $courseDetail->enrolmentDiscount;
-                        $multipleEnrolmentDiscount->enrolmentId = $courseModel->enrolment->id;
-                        $multipleEnrolmentDiscount->save();
-                    }
-                    if (!empty($courseDetail->enrolmentDiscount)) {
-                        $paymentFrequencyDiscount->discount = $courseDetail->pfDiscount;
-                        $paymentFrequencyDiscount->enrolmentId = $courseModel->enrolment->id;
-                        $paymentFrequencyDiscount->save();
-                    }
+        if ($courseModel->save()) {
+            $courseSchedule->courseId = $courseModel->id;
+            if ($courseSchedule->save()) {
+                if (!empty($courseDetail->pfDiscount)) {
+                    $multipleEnrolmentDiscount->discount = $courseDetail->enrolmentDiscount;
+                    $multipleEnrolmentDiscount->enrolmentId = $courseModel->enrolment->id;
+                    $multipleEnrolmentDiscount->save();
+                }
+                if (!empty($courseDetail->enrolmentDiscount)) {
+                    $paymentFrequencyDiscount->discount = $courseDetail->pfDiscount;
+                    $paymentFrequencyDiscount->enrolmentId = $courseModel->enrolment->id;
+                    $paymentFrequencyDiscount->save();
                 }
             }
-            return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
         }
+        return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
     }
 
     /**

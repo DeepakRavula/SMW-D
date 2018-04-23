@@ -59,7 +59,7 @@ class UserProfile extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'firstname', 'lastname'], 'required'],
+            [['firstname', 'lastname'], 'required'],
             [['user_id'], 'integer'],
             [['firstname', 'lastname', 'avatar_path', 'avatar_base_url'], 'string', 'max' => 255],
             [['firstname', 'lastname'], 'trim'],
@@ -135,7 +135,8 @@ class UserProfile extends ActiveRecord
             ? Yii::getAlias($this->avatar_base_url.'/'.$this->avatar_path)
             : $default;
     }
-	public function beforeSave($insert)
+    
+    public function beforeSave($insert)
     {
         if (!empty($this->birthDate)) {
             $birthDate = new \DateTime($this->birthDate);
@@ -143,5 +144,12 @@ class UserProfile extends ActiveRecord
         }
         
         return parent::beforeSave($insert);
+    }
+
+    public function setModel($model)
+    {
+        $this->firstname = $model->firstname;
+        $this->lastname = $model->lastname;
+        return $this;
     }
 }

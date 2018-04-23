@@ -580,6 +580,9 @@ class LessonController extends BaseController
                 $message = 'Future lessons have been changed successfully';
                 $link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
             } else {
+                if ($courseModel->enrolment->student->isDraft()) {
+                    $courseModel->enrolment->student->updateAttributes(['status' => Student::STATUS_ACTIVE]);
+                }
                 $invoice = $courseModel->enrolment->firstPaymentCycle->createProFormaInvoice();
                 $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
                 return $this->redirect(['/invoice/view', 'id' => $invoice->id]);

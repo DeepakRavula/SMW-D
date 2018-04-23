@@ -21,6 +21,8 @@ class EnrolmentForm extends Model
 {
     const SCENARIO_BASIC = 'enrollment-basic';
     const SCENARIO_DETAILED = 'enrolment-detail';
+    const SCENARIO_CUSTOMER = 'enrollment-customer';
+    const SCENARIO_STUDENT = 'enrolment-student';
     
     public $programId;
     public $teacherId;
@@ -32,6 +34,24 @@ class EnrolmentForm extends Model
     public $pfDiscount;
     public $enrolmentDiscount;
     public $duration;
+    
+    public $firstname;
+    public $lastname;
+    public $email;
+    public $labelId;
+    public $number;
+    public $extension;
+    public $phoneLabelId;
+    public $addressLabelId;
+    public $address;
+    public $cityId;
+    public $provinceId;
+    public $countryId;
+    public $postalCode;
+
+    public $first_name;
+    public $last_name;
+    public $birth_date;
 
     /**
      * {@inheritdoc}
@@ -40,12 +60,20 @@ class EnrolmentForm extends Model
     {
         return [
             [['programId', 'paymentFrequency', 'duration', 'startDate', 'programRate'],
-                'required', 'on' => self::SCENARIO_BASIC],
+                'safe'],
+            [['fromTime', 'day', 'teacherId'], 'safe'],
             [['programId', 'paymentFrequency', 'duration', 'startDate', 'programRate'],
-                'safe', 'on' => self::SCENARIO_DETAILED],
+                'required', 'on' => self::SCENARIO_BASIC],
             [['enrolmentDiscount', 'pfDiscount'], 'safe'],
-            [['fromTime', 'day', 'teacherId'], 'safe', 'on' => self::SCENARIO_BASIC],
-            [['fromTime', 'day', 'teacherId'], 'required', 'on' => self::SCENARIO_DETAILED]
+            [['fromTime', 'day', 'teacherId'], 'required', 'on' => self::SCENARIO_DETAILED],
+            [['first_name', 'last_name', 'birth_date'], 'required', 'on' => self::SCENARIO_STUDENT],
+            [['firstname', 'lastname', 'email', 'labelId', 'number', 'phoneLabelId',
+                'addressLabelId', 'address', 'cityId', 'countryId', 'provinceId'],
+                'required', 'on' => self::SCENARIO_CUSTOMER],
+            [['firstname', 'lastname', 'email', 'labelId', 'number', 'phoneLabelId',
+                'addressLabelId', 'address', 'cityId', 'countryId', 'provinceId'],
+                'safe'],
+            [['postalCode', 'extension', 'first_name', 'last_name', 'birth_date'], 'safe'],
         ];
     }
 }
