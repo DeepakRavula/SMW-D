@@ -212,7 +212,7 @@ trait Invoiceable
             $startDate = (new \DateTime($startDate))->format('Y-m-d');
             $query->andWhere(['AND', ['>=', 'DATE(date)', $startDate], ['<=', 'DATE(date)', $endDate]]);
         } else {
-            $query->andWhere(['>=', 'DATE(date)', $endDate]);
+             $query->andWhere(['>', 'DATE(date)', $endDate]);
         }
         $lessons = $query->andWhere(['courseId' => $this->courseId])
                     ->all();
