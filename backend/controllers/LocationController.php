@@ -25,8 +25,7 @@ class LocationController extends BaseController
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
                'only' => ['create', 'update', 'edit-availability', 'add-availability', 
-                   'render-events', 'check-availability', 'validate', 'modify',
-                   'validate-availability', 'delete-availability', 'copy-availability'
+                   'render-events', 'check-availability', 'validate','delete-availability', 'copy-availability'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -38,9 +37,9 @@ class LocationController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['update','view','validate-availability',
+                        'actions' => ['update','view',
                             'add-availability', 'edit-availability', 'render-events',
-                            'check-availability','modify', 'validate', 'delete-availability',
+                            'check-availability', 'validate', 'delete-availability',
                             'copy-availability'
                         ],
                         'roles' => ['manageLocations']
@@ -119,27 +118,6 @@ class LocationController extends BaseController
             ];
         }
     }
-    public function actionValidateAvailability($resourceId,$type,$startTime,$endTime)
-    {
-        $location = Location::findOne(['slug' => Yii::$app->location]);
-        $model    = LocationAvailability::find()
-                        ->location($location->id)
-                        ->day($resourceId)
-                        ->type($type)
-                        ->one();
-        if (empty($model)) { 
-             $model=new LocationAvailability;
-             $model->locationId=$location->id;
-             $model->day=$resourceId;
-             $model->fromTime=(new \DateTime($startTime))->format('g:i a');
-             $model->toTime=(new \DateTime($endTime))->format('g:i a');
-             $model->type=$type;
-         }
-        $request = Yii::$app->request;
-        if ($model->load($request->post())) {
-            return  ActiveForm::validate($model);
-        }
-    }
 
     /**
      * Updates an existing Location model.
@@ -175,7 +153,37 @@ class LocationController extends BaseController
         }
     }
     
+    public function actionEditAvailability($resourceId, $type,$startTime, $endTime)
+    {
+        $location = Location::findOne(['slug' => Yii::$app->location]);
+        $availabilityModel = LocationAvailability::find()
+            ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
+            ->one();
+        $availabilityModel->fromTime = $startTime;
+        $availabilityModel->toTime = $endTime;
+        return $availabilityModel->save();
+    }
     
+    public function actionDeleteAvailability($resourceId,$type)
+     {
+         $location = Location::findOne(['slug' => Yii::$app->location]);
+         $availabilityModel = LocationAvailability::find()
+             ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
+             ->one();
+        return $availabilityModel->delete();
+    }
+
+    public function actionAddAvailability($resourceId,$type,$startTime, $endTime)
+    {
+        $location = Location::findOne(['slug' => Yii::$app->location]);
+        $model = new LocationAvailability();
+        $model->locationId = $location->id;
+        $model->day = $resourceId;
+        $model->type = $type;
+        $model->fromTime = $startTime;
+        $model->toTime = $endTime;
+        return $model->save();
+    }
     public function actionRenderEvents($type)
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
@@ -219,71 +227,15 @@ class LocationController extends BaseController
         return $this->redirect(['index', 'location' => $this->findModel(1)->slug]);
     }
 
-    public function actionDeleteAvailability($id, $type)
-    {
-        $this->findAvailabilityModel($id, $type)->delete();
-        $response = [
-            'status' => true
-        ];
-
-        return $response;
-    }
-
-      public function actionModify($resourceId,$type,$startTime,$endTime)
-    {
-          
-           $location = Location::findOne(['slug' => Yii::$app->location]);
-           $model    = LocationAvailability::find()
-                        ->location($location->id)
-                        ->day($resourceId)
-                        ->type($type)
-                        ->one();
-           
-         if (empty($model)) { 
-             $model=new LocationAvailability;
-             $model->locationId=$location->id;
-             $model->day=$resourceId;
-             $model->fromTime=(new \DateTime($startTime))->format('g:i a');
-             $model->toTime=(new \DateTime($endTime))->format('g:i a');
-             $model->type=$type;
-         }
-         $model->fromTime=(new \DateTime($startTime))->format('g:i a');
-         $model->toTime=(new \DateTime($endTime))->format('g:i a');
-        $data =  $this->renderAjax('/location/_form-location-availability', [
-            'model' => $model,
-        ]);
-        if (Yii::$app->request->post()) {   
-        if($model->load(Yii::$app->request->post())) {
-            $model->fromTime = (new \DateTime($model->fromTime))->format('H:i:s');
-            $model->toTime   = (new \DateTime($model->toTime))->format('H:i:s');
-            if($model->save())
-            {
-            $response=[
-                'status' => true,
-            ];
-            }
-            else
-            {
-               $response= [
-                    'status' => false,
-                    'errors' =>$model->getErrors(),
-                ]; 
-            }
-        } else {
-            $response= [
-                    'status' => false,
-                    'errors' =>$model->getErrors(),
-                ];
-            }
-        } else {
-            $response= [
-                'status' => true,
-                'data' => $data,
-                'canDelete' => !$model->isNewRecord
-            ];
-        }
-        return $response;
-    }
+//    public function actionDeleteAvailability($id, $type)
+//    {
+//        $this->findAvailabilityModel($id, $type)->delete();
+//        $response = [
+//            'status' => true
+//        ];
+//
+//        return $response;
+//    }
     /**
      * Finds the Location model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -294,6 +246,24 @@ class LocationController extends BaseController
      *
      * @throws NotFoundHttpException if the model cannot be found
      */
+    public function actionCheckAvailability($resourceId,$type)
+    {
+        $location = Location::findOne(['slug' => Yii::$app->location]);
+        $availabilityModel = LocationAvailability::find()
+            ->where(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
+            ->one();
+        $response = [
+            'status' => true,
+        ];
+        if (!empty($availabilityModel)) {
+            $response = [
+                'status' => false,
+            ];
+        }
+ 
+        return $response;
+    }
+    
     protected function findModel($id)
     {
         if (($model = Location::findOne($id)) !== null) {

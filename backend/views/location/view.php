@@ -169,7 +169,7 @@ function showCalendars(id,type) {
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
         header: false,
         defaultView: 'agendaDay',
-	firstDay : 1,
+		firstDay : 1,
         nowIndicator: true,
         minTime: "00:00:00",
         maxTime: "23:59:59",
@@ -188,77 +188,101 @@ function showCalendars(id,type) {
                 $(id).fullCalendar("refetchEvents");
             }
         },
+        eventRender: function(event, element) {
+            availability.modifyEventRender(event,element,type,id);
+        },
         eventClick: function(event) {
-            availability.locationModify(event,type,id);
+            availability.clickEvent(event,type,id);
         },
         eventResize: function(event) {
-            availability.locationModify(event,type,id);
+            availability.eventResize(event,type,id);
         },
         eventDrop: function(event) {
-            availability.locationModify(event,type,id);
+            availability.eventDrop(event,type,id);
         },
         select: function( start, end, jsEvent, view, resourceObj ) {
-            var event = {
-                start: start,
-                end: end,
-                resourceId: resourceObj.id
-            };
-            var id = [];
-            availability.locationModify(event,type,id);
+            availability.eventSelect(start, end, jsEvent, view, resourceObj,type,id);
         }
     });
    }
-   
-    var availability = {
-        locationModify:function (event,type,id){
-            var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+ var availability = {
+        modifyEventRender : function (event, element,type,id) {
+             element.find("div.fc-content").prepend("<i  class='fa fa-close pull-right text-danger'></i>");
+        },
+        clickEvent : function (event,type,id) {
+            var params = $.param({ resourceId: event.resourceId, type: type });
+            $(".fa-close").click(function() {
+                var status = confirm("Are you sure to delete availability?");
+                if (status) {
+                    $.ajax({
+                        url    : '<?= Url::to(['location/delete-availability']) ?>?' + params,
+                        type   : 'POST',
+                        dataType: 'json',
+                        success: function()
+                        {
+                            $(id).fullCalendar("refetchEvents");
+                        }
+                    });
+                }
+            });
+        },
+        eventResize : function (event,type,id) {
+         var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
             var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
-            var deleteParams = $.param({ id: event.resourceId, type: type });
-            var deleteUrl = '<?= Url::to(['location/delete-availability']) ?>?' + deleteParams;
-            var params = $.param({ resourceId: event.resourceId,type: type,startTime:startTime,endTime:endTime});
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime, type: type });
             $.ajax({
-                url    : '<?= Url::to(['location/modify']) ?>?' + params,
-                type   : 'get',
+                url    : '<?= Url::to(['location/edit-availability']) ?>?' + params,
+                type   : 'POST',
+                dataType: 'json',
+                success: function()
+                {
+                    $(id).fullCalendar("refetchEvents");
+                }
+            });
+        },
+        eventDrop : function (event,type,id) {
+        var endTime = moment(event.end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(event.start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: event.resourceId, startTime: startTime, endTime: endTime, type: type });
+            $.ajax({
+                url    : '<?= Url::to(['location/edit-availability']) ?>?' + params,
+                type   : 'POST',
+                dataType: 'json',
+                success: function()
+                {
+                    $(id).fullCalendar("refetchEvents");
+                }
+            });
+        },
+        eventSelect :function(start, end, jsEvent, view, resourceObj,type,id) {
+            var endTime = moment(end).format('YYYY-MM-DD HH:mm:ss');
+            var startTime = moment(start).format('YYYY-MM-DD HH:mm:ss');
+            var params = $.param({ resourceId: resourceObj.id, startTime: startTime, endTime: endTime, type: type });
+            var availabilityCheckParams = $.param({ resourceId: resourceObj.id, type: type});
+            $.ajax({
+                url    : '<?= Url::to(['location/check-availability']) ?>?' + availabilityCheckParams,
+                type   : 'POST',
                 dataType: 'json',
                 success: function(response)
                 {
-                    if (response.status) {
-                        $('#popup-modal').modal('show');
-                        if (response.canDelete) {
-                            $('.modal-delete').show();
-                            $('.modal-delete').attr('action', deleteUrl);
-                        }
-                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Location Availability</h4>');
-                        $('#modal-content').html(response.data);
-                        $(id).fullCalendar("refetchEvents");
+                    if(response.status)
+                    {
+                        $.ajax({
+                            url    : '<?= Url::to(['location/add-availability']) ?>?' + params,
+                            type   : 'POST',
+                            dataType: 'json',
+                            success: function()
+                            {
+                                $(id).fullCalendar("refetchEvents");
+                            }
+                        });
                     } else {
                         $('#flash-danger').text("You are not allowed to set more than one availability for a day!").fadeIn().delay(3000).fadeOut();
                     }
                 }
             });
-         },        
-        clickEvent : function (event,type,id) {
-            availability.locationModify(event,type,id);
-        },
-        refechEvents: function () {
-            var activeTab = $('.nav-tabs .active > a').text();
-            var id = "#operationCalendar";
-            if (activeTab === "Schedule Visibility") {
-                var id = '#scheduleCalendar';
-            } 
-            $(id).fullCalendar("refetchEvents");
-            return false;
         }
-    }
-    
-    $(document).on('modal-success', function(event, params) {
-        availability.refechEvents();
-    });
-    
-    $(document).on('modal-delete', function(event, params) {
-        availability.refechEvents();
-    });
-
+ }
     $(document).off('click', '#copy-availability').on('click', '#copy-availability', function () {
         $.ajax({
             url    : '<?= Url::to(['location/copy-availability', 'id' => $model->id]) ?>',
