@@ -26,6 +26,7 @@ use common\models\PaymentMethod;
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
+		    'showOnFocus' =>false,
                     'format' => 'M d,yyyy',
                 ],
             ]);
