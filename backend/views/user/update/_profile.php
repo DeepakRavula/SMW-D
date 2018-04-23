@@ -5,7 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use trntv\filekit\widget\Upload;
-use kartik\date\DatePicker;
+use yii\jui\DatePicker;
 
 $loggedUser = User::findOne(Yii::$app->user->id);
 ?>
@@ -40,15 +40,14 @@ $loggedUser = User::findOne(Yii::$app->user->id);
 				<?php
 				echo $form->field($userProfile, 'birthDate')->widget(DatePicker::classname(),
 					[
-						'options' => [
-							'value' => Yii::$app->formatter->asDate($userProfile->birthDate),
-						],
-					'type' => DatePicker::TYPE_INPUT,
-					'pluginOptions' => [
-						'autoclose' => true,
-						'format' => 'M dd,yyyy'
-					]
-				]);
+						'dateFormat' => 'php:M d, Y',
+            'clientOptions' => [
+                'defaultDate' => (new \DateTime($userProfile->birthDate))->format('M d, Y'),
+                'changeMonth' => true,
+                'yearRange' => '-70:today',
+                'changeYear' => true,
+                ],
+				])->textInput(['placeholder' => 'Select Date'])->label('Birth Date');
 				?>
 			</div>
 		<?php endif; ?>
