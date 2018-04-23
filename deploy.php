@@ -3,53 +3,44 @@ namespace Deployer;
 
 require 'recipe/yii2-app-advanced.php';
 require 'recipe/slack.php';
-
-$user = getenv('DEP_HOST_USER');
-$configFilePath = getenv('DEP_HOST_CONFIG');
-$hostKey = getenv('DEP_HOST_KEY');
-$branch = getenv('DEP_DEPLOY_BRANCH');
-
-$repo = getenv('DEP_REPO');
+require __DIR__.'/common/env.php';
 
 // Hosts
-host('smw')
-    ->user($user)
+host(getenv('DEP_HOST_NAME'))
+    ->user(getenv('DEP_HOST_USER'))
     ->port(22)
-    ->configFile($configFilePath)
-    ->identityFile($hostKey)
+    ->configFile(getenv('DEP_IDENTITY_FILE'))
+    ->identityFile(getenv('DEP_IDENTITY_KEY'))
     ->forwardAgent(true)
-	->set('deploy_path', '/home/arcadia/smw-dev')
-	->set('branch', $branch)
+	->set('branch', getenv('DEP_DEPLOY_BRANCH'))
 	->set('instance', 'Dev');
 
-set('user', function () {
-    return runLocally('git config --get user.name');
-});
+set('user', getenv('DEP_USER'));
 
-set('slack_webhook', 'https://hooks.slack.com/services/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');
+set('slack_webhook', getenv('DEP_SLACK_HOOK'));
 set('slack_title', 'SMW');
-set('slack_text', 'Smw deployed to {{instance}} by {{user}}');
-set('slack_success_text', 'Deploy to {{instance}} instance successful');
-set('slack_failure_text', 'Deploy to {{instance}} instance failure');
+
 
 // Project name
 set('application', 'SMW');
 
 // Project repository
-set('repository', 'git@github.com:kristin-green-and-associates/smw.git');
-
-// [Optional] Allocate tty for git clone. Default value is false.
-//set('git_tty', true);
-
-// Shared files/dirs between deploys 
-add('shared_files', ['.env']);
-add('shared_dirs', []);
+set('repository', getenv('DEP_REPO'));
 
 // Writable dirs by web server 
 add('writable_dirs', []);
 
 
 // Tasks
+task('deploy:set-dev', function() {
+	set('deploy_path', getenv('DEP_DEV_PATH'));
+});
+
+task('deploy:set-prod', function() {
+	set('deploy_path', getenv('DEP_PROD_PATH'));
+	set('instance', 'Prod');
+});
+
 task('deploy:latest_code', function() {
     writeln('<info>Pulling code....</info>');
     $deployPath = get('deploy_path');
@@ -87,19 +78,35 @@ task('deploy:one-off', function() {
     writeln('<info>One off migration is done.</info>');
 });
 
-task('deploy', [
+task('deploy:dev', [
+	'deploy:set-dev',
     'deploy:prepare',
-	'deploy:release',
-	'deploy:update_code',
     'deploy:latest_code',
     'deploy:composer',
     'deploy:migration',
     'deploy:one-off',
 ]);
 
+task('deploy:prod', [
+	'deploy:set-prod',
+    'deploy:prepare',
+    'deploy:latest_code',
+    'deploy:composer',
+    'deploy:migration',
+    'deploy:one-off',
+]);
 
-before('deploy', 'slack:notify');
-// [Optional] if deploy fails automatically unlock.
-after('deploy:failed', 'deploy:unlock');
+set('slack_text', 'Smw deployed to {{instance}} by {{user}}');
+set('slack_success_text', 'Deploy to {{instance}} instance successful');
+set('slack_failure_text', 'Deploy to {{instance}} instance failure');
+
+before('deploy:dev', 'slack:notify');
+after('deploy:dev', 'success');
+
+before('deploy:prod', 'slack:notify');
+after('deploy:prod', 'success');
+
 after('success', 'slack:notify:success');
 after('deploy:failed', 'slack:notify:failure');
+
+after('deploy:failed', 'deploy:unlock');
