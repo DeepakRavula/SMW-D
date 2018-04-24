@@ -15,7 +15,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use common\models\Label;
-use common\models\EnrolmentForm;
+use backend\models\EnrolmentForm;
 use common\models\Student;
 use yii\filters\ContentNegotiator;
 use common\models\log\LogHistory;
@@ -341,7 +341,7 @@ class EnrolmentController extends BaseController
             $student->save();
 
             //save course
-            return $this->redirect(['student/enrolment', 'id' => $student->id, 'EnrolmentForm' => $courseDetail]);
+            return $this->redirect(['student/create-enrolment', 'id' => $student->id, 'EnrolmentForm' => $courseDetail]);
         }
     }
 

@@ -5,7 +5,7 @@ namespace backend\controllers;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Response;
-use common\models\EnrolmentForm;
+use backend\models\EnrolmentForm;
 use yii\filters\ContentNegotiator;
 use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;

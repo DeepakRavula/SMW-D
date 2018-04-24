@@ -27,7 +27,7 @@ use backend\models\UserForm;
 use yii\base\Model;
 use common\models\CourseExtra;
 use common\models\CourseSchedule;
-use common\models\EnrolmentForm;
+use backend\models\EnrolmentForm;
 use yii\web\Response;
 use common\models\TeacherAvailability;
 use common\models\Enrolment;
@@ -540,7 +540,7 @@ class CourseController extends BaseController
                 $response = [
                     'status' => true,
                     'data' => $courseData,
-                    'url' => !$isReverse ? Url::to(['student/enrolment', 'id' => $student->id,
+                    'url' => !$isReverse ? Url::to(['student/create-enrolment', 'id' => $student->id,
                         'EnrolmentForm' => $courseDetail]) : null
                 ];
             } else {

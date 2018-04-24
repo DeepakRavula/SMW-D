@@ -15,7 +15,7 @@ use common\models\CourseSchedule;
 use common\models\log\StudentLog;
 use backend\models\discount\MultiEnrolmentDiscount;
 use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
-use common\models\EnrolmentForm;
+use backend\models\EnrolmentForm;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use yii\filters\AccessControl;
@@ -165,7 +165,7 @@ class StudentController extends BaseController
             }
         } 
     
-    public function actionEnrolment($id)
+    public function actionCreateEnrolment($id)
     {
         $courseDetail = new EnrolmentForm();
         $courseDetail->load(Yii::$app->request->get());
