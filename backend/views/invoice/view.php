@@ -611,28 +611,33 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         },
 
         void: function() {
-        var options=['1'];
-             bootbox.prompt({
-        title: "What's your IDE",
-        inputType: "checkbox",
-        inputOptions: options,
-        callback: function(result) {
-            showResult(result);
-        }
-    });
-            $.ajax({
-                url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>',
-                type   : 'post',
-                dataType: "json",
-                success: function(response)
-                {
-                    if(response.status)
-                    {
-                        invoice.reload();
-                        $('#success-notification').html('Invoice voided succesfully!').fadeIn().delay(5000).fadeOut();
-                    }
-                }
-            });
+        
+    bootbox.prompt({
+    title: "Do you want to unschedule lesson",
+    inputType: 'checkbox',
+    inputOptions: [
+        {
+            text: 'Unschedule Lesson',
+            value: '1',
+        },
+    ],
+    callback: function (result) {
+        console.log(result);
+    }
+});
+//            $.ajax({
+//                url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>',
+//                type   : 'post',
+//                dataType: "json",
+//                success: function(response)
+//                {
+//                    if(response.status)
+//                    {
+//                        invoice.reload();
+//                        $('#success-notification').html('Invoice voided succesfully!').fadeIn().delay(5000).fadeOut();
+//                    }
+//                }
+//            });
         },
         
         postAfterPaid: function () {
