@@ -618,26 +618,31 @@ $(document).on("click", '.adjust-invoice-tax', function() {
     inputOptions: [
         {
             text: 'Unschedule Lesson',
-            value: '1',
+            value: 'unschedule',
         },
     ],
     callback: function (result) {
-        console.log(result);
+         alert(result);
+      if(result==='unschedule')
+      {
+        $.ajax({
+               url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>',
+                type   : 'post',
+                dataType: "json",
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        invoice.reload();
+                        $('#success-notification').html('Invoice voided succesfully!').fadeIn().delay(5000).fadeOut();
+                    }
+                }
+            });
+      }
+
     }
 });
-//            $.ajax({
-//                url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>',
-//                type   : 'post',
-//                dataType: "json",
-//                success: function(response)
-//                {
-//                    if(response.status)
-//                    {
-//                        invoice.reload();
-//                        $('#success-notification').html('Invoice voided succesfully!').fadeIn().delay(5000).fadeOut();
-//                    }
-//                }
-//            });
+//           
         },
         
         postAfterPaid: function () {
