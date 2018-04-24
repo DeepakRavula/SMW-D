@@ -611,7 +611,15 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         },
 
         void: function() {
-            $('#invoice-spinner').show();
+        var options=['1'];
+             bootbox.prompt({
+        title: "What's your IDE",
+        inputType: "checkbox",
+        inputOptions: options,
+        callback: function(result) {
+            showResult(result);
+        }
+    });
             $.ajax({
                 url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>',
                 type   : 'post',
