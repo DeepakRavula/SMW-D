@@ -6,15 +6,6 @@ use common\models\Lesson;
 
 <?php $originalLesson=Lesson::findOne(['lesson.id' => $model->id]);?>
 <table>
-    <tr>
-        <td>Student Name</td>
-        <td><?=$originalLesson->enrolment->student->fullname;?></td>
-    </tr>
-    <tr>
-        <td>Customer</td>
-        <td><?=$originalLesson->enrolment->student->customer->publicIdentity;?></td>
-    </tr>
-    <tr>
         <td>Teacher</td>
         <td><?=$originalLesson->teacher->publicIdentity;?></td>
     </tr>
@@ -36,10 +27,21 @@ $lessonDuration = ($duration->format('H') * 60) + $duration->format('i');?>
         <td>Duration</td>
         <td><?=$lessonDuration.'   minutes';?></td>
     </tr>
+    <?php if($originalLesson->isPrivate()):?>
+        <tr>
+        <td>Student Name</td>
+        <td><?=$originalLesson->enrolment->student->fullname;?></td>
+    </tr>
     <tr>
+        <td>Customer</td>
+        <td><?=$originalLesson->enrolment->student->customer->publicIdentity;?></td>
+    </tr>
+    <tr>
+   <tr>
         <td>Expiry Date</td>
         <td><?=Yii::$app->formatter->asDate($originalLesson->privateLesson->expiryDate);?></td>
     </tr>
+    <?php endif; ?>
 </table>
 <?php if (!empty($model->reschedule) && !empty($model->enrolment)) : ?>
 <?php 
