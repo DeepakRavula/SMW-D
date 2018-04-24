@@ -57,6 +57,14 @@ class Student extends \yii\db\ActiveRecord
         ];
     }
 
+    public function setModel($model)
+    {
+        $this->first_name = $model->first_name;
+        $this->last_name = $model->last_name;
+        $this->birth_date = $model->birth_date;
+        return $this;
+    }
+
     public function behaviors()
     {
         return [
@@ -208,6 +216,12 @@ class Student extends \yii\db\ActiveRecord
             self::STATUS_INACTIVE => Yii::t('common', 'Inactive'),
         ];
     }
+
+    public function isDraft()
+    {
+        return (int) $this->status === (int) self::STATUS_DRAFT;
+    }
+
     public static function count()
     {
         $currentDate = (new \DateTime())->format('Y-m-d H:i:s');

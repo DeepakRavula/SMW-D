@@ -61,7 +61,7 @@ Modal::begin([
                 if (response.status)
                 {
                     $('#modal-spinner').hide();
-                    if (response.data) {
+                    if (!$.isEmptyObject(response.data)) {
                         $('#modal-content').html(response.data);
                         $('.modal-back').show();
                         $(document).trigger("modal-next", response);

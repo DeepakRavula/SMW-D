@@ -133,9 +133,4 @@ use kartik\time\TimePicker;
         $('#extra-lesson-date').val(moment(params.date, "DD-MM-YYYY h:mm a").format('MMM D, Y hh:mm A')).trigger('change');
         return false;
     });
-    
-    $(document).on('modal-success', function(event, params) {
-        window.location.href = params.url;
-        return false;
-    });
 </script>

@@ -47,7 +47,7 @@ class UserEmail extends \yii\db\ActiveRecord
             ['email', 'required', 'on' => self::SCENARIO_USER_CREATE],
             [['email'], 'string', 'max' => 255],
             [['email'], 'email'],
-            [['labelId'], 'safe'],
+            [['labelId'], 'required'],
             [['email'], 'trim'],
             ['email', 'validateUnique'],
         ];
@@ -120,5 +120,12 @@ class UserEmail extends \yii\db\ActiveRecord
     public function makePrimary()
     {
         return $this->userContact->makePrimary();
+    }
+
+    public function setModel($model)
+    {
+        $this->email = $model->email;
+        $this->labelId = $model->labelId;
+        return $this;
     }
 }

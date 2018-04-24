@@ -10,7 +10,8 @@ use kartik\select2\Select2;
 <?php
     $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => !empty($action) ? $action : Url::to(['student/enrolment', 'id' => $student->id, 'EnrolmentForm' => $model])
+        'action' => Url::to(['course/create-enrolment-detail', 'studentId' => $student ? $student->id : null, 
+            'isReverse' => $isReverse, 'EnrolmentForm' => $model])
     ]);
 ?>
 <div class="user-create-form">
@@ -54,10 +55,11 @@ use kartik\select2\Select2;
         return false;
     });
 
-    $(document).on('click', '.modal-back', function () {
+    $(document).off('click', '.course-detail-back').on('click', '.course-detail-back', function () {
         $('#modal-spinner').show();
         $.ajax({
-            url: '<?= Url::to(['course/create-enrolment', 'studentId' => $student->id, 'EnrolmentForm' => $model]) ?>',
+            url: '<?= Url::to(['course/create-enrolment-basic', 'studentId' => !empty($student) ? $student->id : null,
+                'isReverse' => $isReverse, 'EnrolmentForm' => $model]) ?>',
             type: 'get',
             dataType: "json",
             data: $('#modal-form').serialize(),
@@ -67,15 +69,35 @@ use kartik\select2\Select2;
                 {
                     $('.modal-back').hide();
                     $('#modal-content').html(response.data);
-                    $('#popup-modal').modal('show');
-                    $('.modal-save').text('Next');
-                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment</h4>');
-                    $('#popup-modal .modal-dialog').css({'width': '600px'});
                     $('#customer-discount').val(response.customerDiscount);
                     $('#modal-spinner').hide();
                 }
             }
         });
         return false;
+    });
+
+    $(document).ready(function () {
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment Detail</h4>');
+        var isReverse = <?= $isReverse ?>;
+        if (isReverse == 1) {
+            $('.modal-save').text('Next');
+        } else {
+            $('.modal-save').text('Preview Lessons');
+        }
+        $('#popup-modal .modal-dialog').css({'width': '1000px'});
+        var options = {
+            'date' : $('#enrolmentform-startdate').val(),
+            'renderId' : '#enrolment-create-calendar',
+            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
+            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
+            'changeId' : '#enrolmentform-teacherid',
+            'durationId' : '#enrolmentform-duration',
+            'studentId' : '<?= $student ? $student->id : null ?>'
+        };
+        $.fn.calendarDayView(options);
+        $('#modal-spinner').hide();
+        $('.modal-back').removeClass("add-customer-back");
+        $('.modal-back').addClass('course-detail-back');
     });
 </script>

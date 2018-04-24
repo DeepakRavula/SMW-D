@@ -6,7 +6,8 @@ use common\models\Province;
 use yii\helpers\ArrayHelper;
 use common\models\Label;
 use kartik\select2\Select2;
-use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+use yii\helpers\Url;
 use yii\widgets\MaskedInput;
 
 /* @var $this yii\web\View */
@@ -14,126 +15,155 @@ use yii\widgets\MaskedInput;
 /* @var $form yii\bootstrap\ActiveForm */
 
 ?>
+<?php
+    $form = ActiveForm::begin([
+        'id' => 'modal-form',
+        'action' => Url::to(['reverse-enrolment/add-customer', 'EnrolmentForm' => $courseDetail])
+    ]);
+?>
 <div class="user-create-form">
-	<div class="row">
-		<div class="col-xs-3">
-			<label class="modal-form-label">Name</label>
-		</div>
-		<div class="col-xs-4">
-			<?php echo $form->field($userProfile, 'firstname')->textInput(['placeholder' => 'First Name'])->label(false); ?>
-		</div>
-		<div class="col-xs-5">
-			<?php echo $form->field($userProfile, 'lastname')->textInput(['placeholder' => 'Last Name'])->label(false); ?>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-xs-3">
-			<label class="modal-form-label">Email</label>
-		</div>	
-		<div class="col-xs-4">
-			<?= $form->field($userEmail, "email")->textInput(['placeholder' => 'Email', 'maxlength' => true])->label(false) ?>	
-		</div>
-		<div class="col-xs-5">
-			<?=
-                $form->field($userEmail, "labelId")->widget(Select2::classname(), [
-                    'data' => ArrayHelper::map(Label::find()
-                            ->andWhere(['userAdded' => false])
-                            ->all(), 'id', 'name'),
-                    'pluginOptions' => [
-                        'tags' => true,
-                    ],
-                ])->label(false);
-                ?>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-xs-3">
-			<label class="modal-form-label">Phone Number</label>
-		</div>	
-		<div class="col-xs-4">
-		 <?= $form->field($phoneModel, 'number')->widget(MaskedInput::className(), [
-         'mask' => '(999) 999-9999',
-        ])->label(false); ?>
-		</div>
-		<div class="col-xs-2">
-			<?= $form->field($phoneModel, 'extension')->textInput(['placeholder' => 'Ext'])->label(false); ?>
-		</div>
-		<div class="col-xs-3">
-	<?=
-    $form->field($phoneModel, "labelId")->widget(Select2::classname(), [
-        'data' => ArrayHelper::map(Label::find()
-                ->andWhere(['userAdded' => false])
-                ->all(), 'id', 'name'),
-        'options' => [
-            'id' => 'phone-label',
-        ],
-        'pluginOptions' => [
-            'tags' => true,
-        ],
-    ])->label(false);
-    ?>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-xs-3">
-        	<label class="modal-form-label">Address</label>
-		</div>	
-		<div class="col-xs-4">
-	<?=
-    $form->field($addressModel, "labelId")->widget(Select2::classname(), [
-        'data' => ArrayHelper::map(Label::find()
-                ->andWhere(['userAdded' => false])
-                ->all(), 'id', 'name'),
-        'options' => [
-            'id' => 'address-label',
-        ],
-        'pluginOptions' => [
-            'tags' => true,
-        ],
-    ])->label(false);
-    ?>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-xs-3"></div>
-		<div class="col-xs-9">
-	<?= $form->field($addressModel, 'address')->textInput(['placeholder' => 'Street Address'])->label(false); ?>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-xs-3"></div>
-		<div class="col-xs-4">
-	<?= $form->field($addressModel, 'cityId')->dropDownList(
-        ArrayHelper::map(City::find()->all(), 'id', 'name')
-    )->label(false);
-    ?>
-		</div>
-		<div class="col-xs-5">
-			<?= $form->field($addressModel, 'provinceId')->dropDownList(
-                ArrayHelper::map(Province::find()->all(), 'id', 'name')
-    )->label(false);
+    <div class="row">
+        <div class="col-xs-3">
+            <label class="modal-form-label">Customer Name</label>
+        </div>
+        <div class="col-xs-4">
+            <?= $form->field($courseDetail, 'firstname')->textInput(['placeholder' => 'First Name'])->label(false); ?>
+        </div>
+        <div class="col-xs-5">
+            <?= $form->field($courseDetail, 'lastname')->textInput(['placeholder' => 'Last Name'])->label(false); ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <label class="modal-form-label">Customer Email</label>
+        </div>
+        <div class="col-xs-4">
+            <?= $form->field($courseDetail, "email")->textInput(['placeholder' => 'Email', 'maxlength' => true])->label(false) ?>
+        </div>
+        <div class="col-xs-5">
+            <?= $form->field($courseDetail, "labelId")->widget(Select2::classname(), [
+                'data' => ArrayHelper::map(Label::find()
+                        ->andWhere(['userAdded' => false])
+                        ->all(), 'id', 'name'),
+                'pluginOptions' => [
+                    'tags' => true,
+                ],
+            ])->label(false);
             ?>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-xs-3"></div>
-		<div class="col-xs-4">
-			<?= $form->field($addressModel, 'countryId')->dropDownList(
-                ArrayHelper::map(Country::find()->all(), 'id', 'name')
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <label class="modal-form-label">Customer Phone</label>
+        </div>
+        <div class="col-xs-4">
+            <?= $form->field($courseDetail, 'number')->widget(MaskedInput::className(), [
+                'mask' => '(999) 999-9999',
+                'options' => [
+                    'placeholder' => 'number',
+                    'class' => 'form-control'
+                ]
+               ])->label(false);
+            ?>
+        </div>
+        <div class="col-xs-2">
+            <?= $form->field($courseDetail, 'extension')->textInput(['placeholder' => 'Ext'])->label(false); ?>
+        </div>
+        <div class="col-xs-3">
+            <?= $form->field($courseDetail, "phoneLabelId")->widget(Select2::classname(), [
+                'data' => ArrayHelper::map(Label::find()
+                        ->andWhere(['userAdded' => false])
+                        ->all(), 'id', 'name'),
+                'options' => [
+                    'id' => 'phone-label',
+                ],
+                'pluginOptions' => [
+                    'tags' => true,
+                ],
+                ])->label(false);
+            ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <label class="modal-form-label">Customer Address</label>
+        </div>
+        <div class="col-xs-4">
+            <?= $form->field($courseDetail, "addressLabelId")->widget(Select2::classname(), [
+                'data' => ArrayHelper::map(Label::find()
+                        ->andWhere(['userAdded' => false])
+                        ->all(), 'id', 'name'),
+                'options' => [
+                    'id' => 'address-label',
+                ],
+                'pluginOptions' => [
+                    'tags' => true,
+                ],
+            ])->label(false);
+            ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3"></div>
+        <div class="col-xs-9">
+            <?= $form->field($courseDetail, 'address')->textInput(['placeholder' => 'Street Address'])->label(false); ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3"></div>
+        <div class="col-xs-4">
+            <?= $form->field($courseDetail, 'cityId')->dropDownList(
+                ArrayHelper::map(City::find()->all(), 'id', 'name')
             )->label(false);
             ?>
-		</div>
-		<div class="col-xs-5">
-	<?= $form->field($addressModel, 'postalCode')->textInput(['placeholder' => 'Postal Code'])->label(false); ?>
-		</div>
-	</div>
-	<div class="row">
-		<div class="form-group pull-right">
-			<?= Html::a('Cancel', '#', ['class' => 'm-r-10 btn btn-default new-enrol-cancel']); ?>
-			<button class="step3-next btn btn-info pull-right" type="button" >Next</button>
-		</div>
-		<div class="form-group pull-left">
-			<button class="step3-back btn btn-info" type="button" >Back</button>
-		</div>
-	</div>
-</div>    
+        </div>
+        <div class="col-xs-5">
+            <?= $form->field($courseDetail, 'provinceId')->dropDownList(
+                ArrayHelper::map(Province::find()->all(), 'id', 'name'))->label(false);
+            ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3"></div>
+        <div class="col-xs-4">
+            <?= $form->field($courseDetail, 'countryId')->dropDownList(
+                ArrayHelper::map(Country::find()->all(), 'id', 'name'))->label(false);
+            ?>
+        </div>
+        <div class="col-xs-5">
+            <?= $form->field($courseDetail, 'postalCode')->textInput(['placeholder' => 'Postal Code'])->label(false); ?>
+        </div>
+    </div>
+</div>
+<?php ActiveForm::end(); ?>
+
+<script>
+    $(document).ready(function () {
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Customer Details</h4>');
+        $('.modal-save').text('Next');
+        $('#popup-modal .modal-dialog').css({'width': '600px'});
+        $('#modal-spinner').hide();
+        $('.modal-back').removeClass("course-detail-back");
+        $('.modal-back').addClass('add-customer-back');
+    });
+
+    $(document).off('click', '.add-customer-back').on('click', '.add-customer-back', function () {
+        $('#modal-spinner').show();
+        $.ajax({
+            url: '<?= Url::to(['course/create-enrolment-detail', 'studentId' => !empty($student) ? $student->id : null,
+                'isReverse' => true, 'EnrolmentForm' => $courseDetail]) ?>',
+            type: 'get',
+            dataType: "json",
+            data: $('#modal-form').serialize(),
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $('#modal-content').html(response.data);
+                    $('#modal-spinner').hide();
+                }
+            }
+        });
+        return false;
+    });
+</script>
