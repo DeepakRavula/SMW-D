@@ -611,7 +611,6 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         },
 
         void: function() {
-        
     bootbox.prompt({
     title: "Do you want to unschedule lesson",
     inputType: 'checkbox',
@@ -622,11 +621,17 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         },
     ],
     callback: function (result) {
-         alert(result);
-      if(result==='unschedule')
+        var canbeUnscheduled="";
+      if(result =='unschedule')
       {
-        $.ajax({
-               url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>',
+          canbeUnscheduled=true;
+      }
+      else{
+         canbeUnscheduled=false;
+      }
+      var params = $.param({'canbeUnscheduled': canbeUnscheduled });
+       $.ajax({
+               url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>&'+params,
                 type   : 'post',
                 dataType: "json",
                 success: function(response)
@@ -638,8 +643,6 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                     }
                 }
             });
-      }
-
     }
 });
 //           

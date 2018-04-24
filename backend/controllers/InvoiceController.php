@@ -749,24 +749,10 @@ class InvoiceController extends BaseController
         return $response;
     }
 
-    public function actionVoid($id)
+    public function actionVoid($id,$canbeUnscheduled)
     {
         $model = Invoice::findOne($id);
-        if ($model->void()) {
-            $response = [
-                'status' => true
-            ];
-        } else {
-            $response = [
-                'status' => false
-            ];
-        }
-        return $response;
-    }
-       public function actionBeforeVoid($id)
-    {
-        $model = Invoice::findOne($id);
-        if ($model->void()) {
+        if ($model->void($canbeUnscheduled)) {
             $response = [
                 'status' => true
             ];
