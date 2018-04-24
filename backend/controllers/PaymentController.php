@@ -261,10 +261,12 @@ class PaymentController extends BaseController
             } else {
                 $response = [
                     'status' => false,
-                    'errors' => ActiveForm::validate($paymentModel)
+                    'errors' => ActiveForm::validate($paymentModel),
+                    'message'=>'No credits available!',
                 ];
             }
         } else {
+             
             $creditDataProvider = $this->getAvailableCredit($model);
             $data = $this->renderAjax('/invoice/payment/payment-method/_apply-credit', [
                 'invoice' => $model,
@@ -276,6 +278,13 @@ class PaymentController extends BaseController
                 'hasCredit' => $creditDataProvider->totalCount > 0,
                 'data' => $data
             ];
+            if($model->balance<=0)
+                {
+                  $response = [
+                    'status' => false,
+                    'message' => 'Can\'t Over Pay!',
+                ];
+                }
         }
         return $response;
     }
