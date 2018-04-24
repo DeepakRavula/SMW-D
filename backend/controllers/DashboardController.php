@@ -86,15 +86,16 @@ public function behaviors()
         
         $students = Student::find()
             ->notDeleted()
-            ->joinWith(['enrolment' => function ($query) use ($locationId, $searchModel) {
-                $query->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+            ->joinWith(['enrolment' => function ($query) use ($locationId,$searchModel) {
+                $query->joinWith(['course' => function ($query) use ($locationId,$searchModel) {
                     $query->confirmed()
-                    ->location($locationId)
-                    ->between($searchModel->fromDate, $searchModel->toDate);
-                }]);
+			  ->andWhere(['AND', ['<=', 'startDate', $searchModel->fromDate->format('Y-m-d')], ['>=', 'endDate', $searchModel->fromDate->format('Y-m-d')]])
+		          ->orWhere(['AND', ['<=', 'startDate', $searchModel->toDate->format('Y-m-d')], ['>=', 'endDate', $searchModel->toDate->format('Y-m-d')]])
+		          ->orWhere(['AND',['AND', ['>', 'startDate', $searchModel->fromDate->format('Y-m-d')], ['<', 'endDate', $searchModel->toDate->format('Y-m-d')]],['>=','endDate',$searchModel->fromDate->format('Y-m-d')]])
+		          ->location($locationId);
+                }]);                  
             }])
             ->active()
-            ->distinct(['enrolment.studentId'])
             ->count();
 
         $completedPrograms = [];
