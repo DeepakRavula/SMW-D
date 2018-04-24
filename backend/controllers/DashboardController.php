@@ -89,7 +89,7 @@ public function behaviors()
             ->joinWith(['enrolment' => function ($query) use ($locationId,$searchModel) {
                 $query->joinWith(['course' => function ($query) use ($locationId,$searchModel) {
                     $query->confirmed()
-			  ->andWhere(['AND', ['<=', 'startDate', $searchModel->fromDate->format('Y-m-d')], ['>=', 'endDate', $searchModel->fromDate->format('Y-m-d')]])
+			  ->orWhere(['AND', ['<=', 'starttDate', $searchModel->fromDate->format('Y-m-d')], ['>=', 'endDate', $searchModel->fromDate->format('Y-m-d')]])
 		          ->orWhere(['AND', ['<=', 'startDate', $searchModel->toDate->format('Y-m-d')], ['>=', 'endDate', $searchModel->toDate->format('Y-m-d')]])
 		          ->orWhere(['AND',['AND', ['>', 'startDate', $searchModel->fromDate->format('Y-m-d')], ['<', 'endDate', $searchModel->toDate->format('Y-m-d')]],['>=','endDate',$searchModel->fromDate->format('Y-m-d')]])
 		          ->location($locationId);
