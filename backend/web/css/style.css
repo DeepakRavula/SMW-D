@@ -437,3 +437,18 @@ dl {
 
     overflow-y: scroll;
 }
+@media (min-width: 768px) {
+    .end-date-adjustment dt {
+      float: left;
+      width: 160px;
+      overflow: hidden;
+      clear: left;
+      text-align: right;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .end-date-adjustment dd {
+      margin-left: 180px;
+      width: 150px
+    }
+  }

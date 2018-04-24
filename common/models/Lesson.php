@@ -434,10 +434,17 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasMany(Enrolment::className(), ['courseId' => 'courseId'])
             ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);
     }
+
+    public function getPayment()
+    {
+        return $this->hasMany(Payment::className(), ['id' => 'paymentId'])
+            ->onCondition(['payment.isDeleted' => false]);
+    }
     
     public function getLessonCredit()
     {
-        return $this->hasMany(LessonPayment::className(), ['lessonId' => 'id']);
+        return $this->hasMany(LessonPayment::className(), ['lessonId' => 'id'])
+            ->via('payment');
     }
 
     public function hasGroupInvoice()

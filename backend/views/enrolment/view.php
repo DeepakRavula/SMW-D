@@ -113,7 +113,7 @@ echo Tabs::widget([
 
     $(document).on('click', '.enrolment-edit', function () {
         $.ajax({
-            url    : '<?= Url::to(['enrolment/update', 'id' => $model->id]); ?>',
+            url    : '<?= Url::to(['enrolment/update', 'id' => $model->id, 'preview' => false]); ?>',
             type   : 'get',
             dataType: "json",
             success: function(response)

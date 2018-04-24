@@ -556,19 +556,16 @@ class EnrolmentController extends BaseController
                         $credit = abs($invoice->invoiceBalance);
                         $message = '$' . $credit . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
                     }
-                    $model->updateAttributes([
-                        'isAutoRenew' => false
-                    ]);
                 } else if ($lastLessonDate < $newEndDate) {
                     $model->extend();
                 }
-                if($message) {
+                if ($message) {
                     $message = 'Enrolment end date succesfully updated!';
                 }
             }
             $response = [
                 'status' => true,
-                'message' => $message,
+                'message' => $message
             ];
         } else {
             $response = [
