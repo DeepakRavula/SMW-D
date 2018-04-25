@@ -32,6 +32,7 @@ $this->params['label'] = $this->render('_title', [
     <?= $this->render('enrolment/view', [
         'model' => $model,
         'enrolmentDataProvider' => $enrolmentDataProvider,
+        'enrolmentSearchModel'=>$enrolmentSearchModel,
     ]); ?>
 <?php Pjax::end();?>
 </div>

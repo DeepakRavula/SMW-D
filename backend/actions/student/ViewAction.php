@@ -11,7 +11,7 @@ use common\models\ExamResult;
 use common\models\Note;
 use common\models\Location;
 use common\models\log\LogHistory;
-
+use backend\models\search\EnrolmentSearch;
 /**
  * List of models.
  */
@@ -22,6 +22,8 @@ class ViewAction extends Action
         $model = $this->findModel($id);
         if ($model) {
             $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+            $currentdate= $currentDate = new \DateTime();
+            $currentDate = $currentdate->format('Y-m-d');
             $enrolments = Enrolment::find()
                     ->joinWith(['course' => function ($query) {
                         $query->isConfirmed();
@@ -30,6 +32,7 @@ class ViewAction extends Action
                     ->notDeleted()
                     ->isConfirmed()
                     ->andWhere(['studentId' => $model->id])
+                    ->andWhere(['course.endDate'=> $currentDate])
                     ->all();
             $allEnrolments = [];
             foreach ($enrolments as $enrolment) {
@@ -38,6 +41,7 @@ class ViewAction extends Action
                         'programId' => $enrolment->course->programId
                 ];
             }
+            $enrolmentSearchModel=new EnrolmentSearch();
             return $this->controller->render('view', [
                     'model' => $model,
                     'allEnrolments' => $allEnrolments,
@@ -46,7 +50,8 @@ class ViewAction extends Action
                     'unscheduledLessonDataProvider' => $this->getUnscheduledLessons($id, $locationId),
                     'examResultDataProvider' => $this->getExamResults($id),
                     'noteDataProvider' => $this->getNotes($id),
-                    'logs' => $this->getLogs($id)
+                    'logs' => $this->getLogs($id),
+                    'enrolmentSearchModel'=> $enrolmentSearchModel,
                     ]);
         } else {
             $this->controller->redirect(['index', 'StudentSearch[showAllStudents]' => false]);

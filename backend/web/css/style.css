@@ -132,6 +132,12 @@ a.desc:after {
 .m-r-20 {
 	margin-right:10px;
 }
+.m-r-25 {
+	margin-right:25px;
+}
+.m-t-n-35 {
+	margin-top:-35px;
+}
 .m-l-10 {
 	margin-left:10px;
 }
@@ -151,6 +157,11 @@ a.desc:after {
 {
   float:right;
    margin-top: -45px; 
+}
+.student-enrolment-menu-option
+{
+  float:right;
+  margin-top: -35px; 
 }
 .p-t-10 {
     padding-top: 10px;

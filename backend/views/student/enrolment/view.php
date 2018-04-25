@@ -10,11 +10,12 @@ use insolita\wgadminlte\LteConst;
     'id' => 'enrolment-grid',
     'timeout' => 6000,
 ]) ?>	
-<div class="col-md-12">	
+<div class="col-md-12">
 <?php
     $toolBoxHtml = $this->render('_button', [
         'model' => $model,
-    ]);
+         'enrolmentSearchModel'=>$enrolmentSearchModel,
+     ]);
         LteBox::begin([
             'type' => LteConst::TYPE_DEFAULT,
             'boxTools' => $toolBoxHtml,
