@@ -621,15 +621,16 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         },
     ],
     callback: function (result) {
-        var canbeUnscheduled="";
+        var canbeUnscheduled=0;
       if(result =='unschedule')
       {
-          canbeUnscheduled=true;
+          canbeUnscheduled=1;
       }
       else{
-         canbeUnscheduled=false;
+         canbeUnscheduled=0;
       }
       var params = $.param({'canbeUnscheduled': canbeUnscheduled });
+       $('#invoice-spinner').show();
        $.ajax({
                url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>&'+params,
                 type   : 'post',

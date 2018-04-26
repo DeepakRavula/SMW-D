@@ -39,7 +39,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public $userName;
     public $price;
     public $tax;
-    public $lessonCanBeUnscheduled;
+    public $lessonCanBeUnscheduled = true;
     
     /**
      * {@inheritdoc}
