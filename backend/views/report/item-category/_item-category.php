@@ -15,6 +15,11 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  * and open the template in the editor.
  */
 ?>
+<style>
+  .table > tbody > tr.success > td ,.table > tbody > tr.kv-grid-group-row > td{
+	background-color: white !important;
+}
+</style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 <?php if ($searchModel->groupByMethod) : ?>
 		<?php
