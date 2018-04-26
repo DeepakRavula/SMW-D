@@ -22,8 +22,6 @@ class ViewAction extends Action
         $model = $this->findModel($id);
         if ($model) {
             $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-            $currentdate= $currentDate = new \DateTime();
-            $currentDate = $currentdate->format('Y-m-d');
             $enrolments = Enrolment::find()
                     ->joinWith(['course' => function ($query) {
                         $query->isConfirmed();
@@ -32,7 +30,6 @@ class ViewAction extends Action
                     ->notDeleted()
                     ->isConfirmed()
                     ->andWhere(['studentId' => $model->id])
-                    ->andWhere(['course.endDate'=> $currentDate])
                     ->all();
             $allEnrolments = [];
             foreach ($enrolments as $enrolment) {
@@ -122,22 +119,14 @@ class ViewAction extends Action
 
     protected function getEnrolments($id, $locationId)
     {
-        $query = Enrolment::find()
-                ->joinWith(['course' => function ($query) {
-                    $query->isConfirmed();
-                }])
-                ->location($locationId)
-                ->notDeleted()
-                ->isConfirmed()
-                ->andWhere(['studentId' => $id])
-                ->isRegular();
-
-        return new ActiveDataProvider([
-                'query' => $query,
-                'pagination' => [
-                        'pageSize' => 5
-                ]
-        ]);
+       $currentdate= $currentDate = new \DateTime();
+       $currentDate = $currentdate->format('Y-m-d');
+       $searchModel = new EnrolmentSearch();
+       $queryParams=Yii::$app->request->queryParams;
+       $param="EnrolmentSearch['student']=>".$id;
+       array_push($queryParams,"EnrolmentSearch['student']",$id);
+       $dataProvider = $searchModel->search($queryParams);
+        return $dataProvider;
     }
     
     protected function findModel($id)

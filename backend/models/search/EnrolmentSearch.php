@@ -52,6 +52,7 @@ class EnrolmentSearch extends Enrolment
      */
     public function search($params)
     {
+        print_r($params);die('coming');
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Enrolment::find()
             ->joinWith(['course' => function ($query) use ($locationId) {
@@ -60,7 +61,7 @@ class EnrolmentSearch extends Enrolment
             }])
             ->notDeleted()
             ->isConfirmed()
-                        ->isRegular();
+            ->isRegular();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -103,6 +104,9 @@ class EnrolmentSearch extends Enrolment
             $query->andWhere(['between', 'DATE(course.startDate)',
                     (new \DateTime($this->startBeginDate))->format('Y-m-d'),
                     (new \DateTime($this->startEndDate))->format('Y-m-d')]);
+        }
+        if (!empty($this->student)) {
+            $query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')]);
         }
         if (! $this->showAllEnrolments) {
             $query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])

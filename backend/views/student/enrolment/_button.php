@@ -6,8 +6,8 @@ use yii\widgets\ActiveForm;
 
 <?php
 $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
+       'action' => Url::to(['student/view', 'id' => $model->id]),
+        'method' => 'post',
     'fieldConfig' => [
         'options' => [
             'tag' => false,

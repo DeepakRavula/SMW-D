@@ -3,7 +3,7 @@
 use yii\bootstrap\Modal;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
-
+use yii\helpers\Url;
 ?>
 
 <?php yii\widgets\Pjax::begin([
@@ -14,7 +14,7 @@ use insolita\wgadminlte\LteConst;
 <?php
     $toolBoxHtml = $this->render('_button', [
         'model' => $model,
-         'enrolmentSearchModel'=>$enrolmentSearchModel,
+        'enrolmentSearchModel'=>$enrolmentSearchModel,
      ]);
         LteBox::begin([
             'type' => LteConst::TYPE_DEFAULT,
@@ -46,3 +46,13 @@ use insolita\wgadminlte\LteConst;
 <div id="group-course-content"></div>
 
 <?php Modal::end(); ?>
+<script>
+$(document).ready(function(){
+  $("#enrolmentsearch-showallenrolments").on("change", function() {
+      var showAllEnrolments = $(this).is(":checked");
+       var params = $.param({ 'EnrolmentSearch[showAllEnrolments]': (showAllEnrolments | 0) });
+      var url = "<?php echo Url::to(['student/view', 'id' => $model->id]); ?>?"+params;
+              $.pjax.reload({url: url, container: "#enrolment-grid", replace: false, timeout: 4000});  //Reload GridView
+          });
+});
+  </script>
