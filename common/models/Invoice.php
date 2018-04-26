@@ -27,7 +27,7 @@ class Invoice extends \yii\db\ActiveRecord
     const STATUS_PAID = 2;
     const STATUS_CREDIT = 3;
     const STATUS_CANCEL = 4;
-
+    const STATUS_VOID = 5;
     const TYPE_PRO_FORMA_INVOICE = 1;
     const TYPE_INVOICE = 2;
     const ITEM_TYPE_MISC = 1;
