@@ -621,6 +621,7 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         },
     ],
     callback: function (result) {
+        if (typeof result !== "undefined" && result !== null) {
         var canbeUnscheduled=0;
       if(result =='unschedule')
       {
@@ -644,6 +645,7 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                     }
                 }
             });
+    }
     }
 });
 //           
