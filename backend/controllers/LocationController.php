@@ -226,16 +226,6 @@ class LocationController extends BaseController
 
         return $this->redirect(['index', 'location' => $this->findModel(1)->slug]);
     }
-
-//    public function actionDeleteAvailability($id, $type)
-//    {
-//        $this->findAvailabilityModel($id, $type)->delete();
-//        $response = [
-//            'status' => true
-//        ];
-//
-//        return $response;
-//    }
     /**
      * Finds the Location model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
