@@ -38,18 +38,23 @@ use yii\web\View;
             ?>
         </div>
     </div>
-    <?php if (Yii::$app->user->identity->isAdmin()) : ?>
+
     <div class="row">
         <div class="col-xs-6">
             <label class="modal-form-label">Rate (per hour)</label>
         </div>
         <div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
         <div class="col-xs-3 enrolment-field">
+            <?php if (Yii::$app->user->identity->isAdmin()) : ?>
             <?= $form->field($model, 'programRate')->textInput(['class' => 'form-control'])->label(false); ?>
+             <?php else : ?>
+              <?= $form->field($model, 'programRate')->textInput(['class' => 'form-control','readOnly' => true])->label(false); ?>
+    <?php endif; ?>
         </div>
         <div class="col-xs-1 enrolment-text"><label class="text-muted">/hr</label></div>
     </div>
-    <?php endif; ?>
+
+
     <div class="row">
         <div class="col-xs-6">
             <label class="modal-form-label">Duration</label>
