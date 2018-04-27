@@ -70,6 +70,7 @@ class UserContactController extends BaseController
             }
             if ($contact->save()) {
                 $email->userContactId = $contact->id;
+                $email->labelId = $contact->labelId;
                 if ($email->save()) {
                     return [
                     'status' => true,
