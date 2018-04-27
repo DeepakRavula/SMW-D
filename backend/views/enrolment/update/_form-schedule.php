@@ -43,32 +43,34 @@ use kartik\grid\GridView;
 ]) ?>
 
 <?php if ($action === 'shrink') : ?>
+    <label>Preview</label>
     <div class="row">
         <div class="col-lg-12">
-            <label>Lessons will be deleted within the date daterange <?= $dateRange ?> due to enrollment end</label>
+            <p>Lessons will be deleted within the date daterange <?= $dateRange ?> due to enrollment end</p>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-12">
-            <label>Payment cycles will be deleted within the date daterange <?= $dateRange ?> due to enrollment end</label>
+            <p>Payment cycles will be deleted within the date daterange <?= $dateRange ?> due to enrollment end</p>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-12">
-            <label>PFIs will be deleted within the date daterange <?= $dateRange ?> due to enrollment end</label>
+            <p>PFIs will be deleted within the date daterange <?= $dateRange ?> due to enrollment end</p>
         </div>
     </div>
 <?php endif; ?>
 
 <?php if ($action === 'extend') : ?>
+    <label>Preview</label>
     <div class="row">
         <div class="col-lg-12">
-            <label>New lessons will be created within the date daterange <?= $dateRange ?> due to extend end date</label>
+            <p>New lessons will be created within the date daterange <?= $dateRange ?> due to extend end date</p>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-12">
-            <label>New payment cycles will be created within the date daterange <?= $dateRange ?> due to extend end date</label>
+            <p>New payment cycles will be created within the date daterange <?= $dateRange ?> due to extend end date</p>
         </div>
     </div>
 <?php endif; ?>

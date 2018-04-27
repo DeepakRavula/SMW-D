@@ -506,11 +506,11 @@ class EnrolmentController extends BaseController
         $model = $this->findModel($id);
         $lastLesson = $model->lastRootLesson;
         $lastLessonDate = Carbon::parse($lastLesson->date);
-        $deletableLessonDataProvider = null;
-        $deletablePaymentCyclesDataProvider = null;
-        $deletablePfiDataProvider = null;
+        $action = null;
+        $dateRange = null;
         if ($changedEndDate) {
             $date = Carbon::parse($changedEndDate);
+            $dateRange = $date->format('M d, Y') . ' - ' . $lastLessonDate->format('M d, Y');
             if ($lastLessonDate > $date) {
                 $action = 'shrink';
             } else if ($lastLessonDate < $date) {
@@ -521,16 +521,13 @@ class EnrolmentController extends BaseController
         $course = $model->course;
         $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
         $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
-        $dateRange = null;
         if ($post) {
             $message = null;
             $course->updateAttributes([
                 'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
             ]);
             $newEndDate = Carbon::parse($course->endDate);
-            $action = null;
             if ($endDate !== $newEndDate) {
-                $dateRange = $lastLesson->format('M d, Y') . ' - ' . $newEndDate->format('M d, Y');
                 if ($lastLessonDate > $newEndDate) {
                     $invoice = $model->shrink();
                     if (!$invoice) {
@@ -540,7 +537,6 @@ class EnrolmentController extends BaseController
                         $message = '$' . $credit . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
                     }
                 } else if ($lastLessonDate < $newEndDate) {
-                    $action = 'extend';
                     $model->extend();
                 }
                 if ($message) {
@@ -556,10 +552,7 @@ class EnrolmentController extends BaseController
                 'model' => $model,
                 'action' => $action,
                 'dateRange' => $dateRange,
-                'course' => $model->course,
-                'deletablePfiDataProvider' => $deletablePfiDataProvider,
-                'deletableLessonDataProvider' => $deletableLessonDataProvider,
-                'deletablePaymentCyclesDataProvider' => $deletablePaymentCyclesDataProvider
+                'course' => $model->course
             ]);
             $response = [
                 'status' => true,
