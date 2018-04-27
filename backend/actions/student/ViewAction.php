@@ -119,14 +119,17 @@ class ViewAction extends Action
 
     protected function getEnrolments($id, $locationId)
     {
-       $currentdate= $currentDate = new \DateTime();
-       $currentDate = $currentdate->format('Y-m-d');
        $searchModel = new EnrolmentSearch();
-       $queryParams=Yii::$app->request->queryParams;
-       $param="EnrolmentSearch['student']=>".$id;
-       array_push($queryParams,"EnrolmentSearch['student']",$id);
-       $dataProvider = $searchModel->search($queryParams);
-        return $dataProvider;
+       $request = Yii::$app->request;
+       $searchModel->studentView=true;
+       $searchModel->studentId=$id;
+        if ($searchModel->load($request->get())) {
+            $enrolmentRequest = $request->get('EnrolmentSearch');
+            $searchModel->showAllEnrolments = $enrolmentRequest['showAllEnrolments'];
+        }
+       
+       $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+       return $dataProvider;
     }
     
     protected function findModel($id)

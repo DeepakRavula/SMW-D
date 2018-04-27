@@ -8,7 +8,7 @@ use yii\helpers\Url;
 <div class="grid-row-open"> 
 <?php
 echo GridView::widget([
-    'id' => 'enrolment-grid',
+    'id' => 'student-enrolment-grid',
     'dataProvider' => $enrolmentDataProvider,
     'summary' => false,
         'emptyText' => false,
