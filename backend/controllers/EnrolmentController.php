@@ -504,57 +504,33 @@ class EnrolmentController extends BaseController
     {
         $changedEndDate = Yii::$app->request->get('endDate');
         $model = $this->findModel($id);
+        $lastLesson = $model->lastRootLesson;
+        $lastLessonDate = Carbon::parse($lastLesson->date);
         $deletableLessonDataProvider = null;
         $deletablePaymentCyclesDataProvider = null;
         $deletablePfiDataProvider = null;
         if ($changedEndDate) {
-            $date = Carbon::parse($changedEndDate)->format('Y-m-d');
-            $lessonsToBeDelete = Lesson::find()
-                        ->notDeleted()
-                        ->notCanceled()
-                        ->isConfirmed()
-                        ->andWhere(['>', 'DATE(date)', $date])
-                        ->andWhere(['courseId' => $model->courseId])
-                        ->all();
-            $paymentCyclesToBeDelete = PaymentCycle::find()
-                        ->notDeleted()
-                        ->andWhere(['>', 'startDate', $date])
-                        ->andWhere(['enrolmentId' => $model->id])
-                        ->all();
-            $results = [];
-            if ($paymentCyclesToBeDelete) {
-                foreach ($paymentCyclesToBeDelete as $paymentCycle) {
-                    if ($paymentCycle->hasProFormaInvoice()) {
-                        $pfi = $paymentCycle->proFormaInvoice;
-                        if (!$pfi->hasCreditUsed()) {
-                            $results[] = [
-                                'invoice_number' => $pfi->getInvoiceNumber(),
-                                'due_date' => (new \DateTime($pfi->dueDate))->format('M d, Y')
-                            ];
-                        }
-                    }
-                }
+            $date = Carbon::parse($changedEndDate);
+            if ($lastLessonDate > $date) {
+                $action = 'shrink';
+            } else if ($lastLessonDate < $date) {
+                $action = 'extend';
             }
-            $deletablePfiDataProvider = new ArrayDataProvider([
-                'allModels' => $results,
-                'sort' => [
-                    'attributes' => ['invoice_number', 'due_date'],
-                ],
-            ]);
         }
         $post = Yii::$app->request->post();
         $course = $model->course;
         $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
         $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
+        $dateRange = null;
         if ($post) {
             $message = null;
             $course->updateAttributes([
                 'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
             ]);
             $newEndDate = Carbon::parse($course->endDate);
+            $action = null;
             if ($endDate !== $newEndDate) {
-                $lastLesson = $model->lastRootLesson;
-                $lastLessonDate = Carbon::parse($lastLesson->date);
+                $dateRange = $lastLesson->format('M d, Y') . ' - ' . $newEndDate->format('M d, Y');
                 if ($lastLessonDate > $newEndDate) {
                     $invoice = $model->shrink();
                     if (!$invoice) {
@@ -564,6 +540,7 @@ class EnrolmentController extends BaseController
                         $message = '$' . $credit . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
                     }
                 } else if ($lastLessonDate < $newEndDate) {
+                    $action = 'extend';
                     $model->extend();
                 }
                 if ($message) {
@@ -577,6 +554,8 @@ class EnrolmentController extends BaseController
         } else {
             $data = $this->renderAjax('update/_form-schedule', [
                 'model' => $model,
+                'action' => $action,
+                'dateRange' => $dateRange,
                 'course' => $model->course,
                 'deletablePfiDataProvider' => $deletablePfiDataProvider,
                 'deletableLessonDataProvider' => $deletableLessonDataProvider,

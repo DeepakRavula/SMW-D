@@ -41,94 +41,34 @@ use kartik\grid\GridView;
     'id' => 'after-end-date-changed-listing',
     'timeout' => 6000,
 ]) ?>
-    
-<?php $lessonColumns = [
-    [
-        'label' => 'Date/Time',
-        'value' => function ($model, $key, $index, $widget) {
-            return (new \DateTime($model->date))->format('M d, Y H:i A');
-        },
-        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-        'contentOptions' => ['class' => 'kv-sticky-column', 'style' => 'width:150px;'],
-    ],
-    [
-        'label' => 'Duration',
-        'value' => function ($model, $key, $index, $widget) {
-            return (new \DateTime($model->duration))->format('H:i');
-        },
-        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-        'contentOptions' => ['class' => 'kv-sticky-column', 'style' => 'width:80px;'],
-    
-    ]
-]; 
 
-$paymentcycleColumns = [
-    [
-        'label' => 'Start Date',
-        'value' => function ($model, $key, $index, $widget) {
-            return (new \DateTime($model->startDate))->format('M d, Y');
-        },
-        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-        'contentOptions' => ['class' => 'kv-sticky-column'],
-    ],
-    [
-        'label' => 'End Date',
-        'value' => function ($model, $key, $index, $widget) {
-            return (new \DateTime($model->endDate))->format('M d, Y');
-        },
-        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-        'contentOptions' => ['class' => 'kv-sticky-column'],
-    ]
-];
-
-$pfiColumns = [
-    [
-        'label' => 'Invoice Number',
-        'attribute' => 'invoice_number',
-        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-        'contentOptions' => ['class' => 'kv-sticky-column'],
-    ],
-    [
-        'label' => 'Due Date',
-        'attribute' => 'due_date',
-        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
-        'contentOptions' => ['class' => 'kv-sticky-column'],
-    ]
-];
-?>
-
-<?php if ($deletableLessonDataProvider) : ?>
+<?php if ($action === 'shrink') : ?>
     <div class="row">
         <div class="col-lg-12">
-            <label>Afftected Lessons (to delete)</label>
-            <?= GridView::widget([
-                'dataProvider' => $deletableLessonDataProvider,
-                'columns' => $lessonColumns,
-                'summary' => false,
-                'emptyText' => 'No lessons afftected!'
-            ]); ?>
+            <label>Lessons will be deleted within the date daterange <?= $dateRange ?> due to enrollment end</label>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-12">
-            <label>Afftected Payment Cycles (to delete)</label>
-            <?= GridView::widget([
-                'dataProvider' => $deletablePaymentCyclesDataProvider,
-                'columns' => $paymentcycleColumns,
-                'summary' => false,
-                'emptyText' => 'No payment cycles afftected!'
-            ]); ?>
+            <label>Payment cycles will be deleted within the date daterange <?= $dateRange ?> due to enrollment end</label>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-12">
-            <label>Afftected PFIs (to delete)</label>
-            <?= GridView::widget([
-                'dataProvider' => $deletablePfiDataProvider,
-                'columns' => $pfiColumns,
-                'summary' => false,
-                'emptyText' => 'No PFIs afftected!'
-            ]); ?>
+            <label>PFIs will be deleted within the date daterange <?= $dateRange ?> due to enrollment end</label>
+        </div>
+    </div>
+<?php endif; ?>
+
+<?php if ($action === 'extend') : ?>
+    <div class="row">
+        <div class="col-lg-12">
+            <label>New lessons will be created within the date daterange <?= $dateRange ?> due to extend end date</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <label>New payment cycles will be created within the date daterange <?= $dateRange ?> due to extend end date</label>
         </div>
     </div>
 <?php endif; ?>
