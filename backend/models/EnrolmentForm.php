@@ -23,7 +23,7 @@ class EnrolmentForm extends Model
     const SCENARIO_DETAILED = 'enrolment-detail';
     const SCENARIO_CUSTOMER = 'enrollment-customer';
     const SCENARIO_STUDENT = 'enrolment-student';
-    
+
     public $programId;
     public $teacherId;
     public $day;
@@ -34,7 +34,7 @@ class EnrolmentForm extends Model
     public $pfDiscount;
     public $enrolmentDiscount;
     public $duration;
-    
+
     public $firstname;
     public $lastname;
     public $email;
@@ -66,7 +66,7 @@ class EnrolmentForm extends Model
                 'required', 'on' => self::SCENARIO_BASIC],
             [['enrolmentDiscount', 'pfDiscount'], 'safe'],
             [['fromTime', 'day', 'teacherId'], 'required', 'on' => self::SCENARIO_DETAILED],
-            [['first_name', 'last_name', 'birth_date'], 'required', 'on' => self::SCENARIO_STUDENT],
+            [['first_name', 'last_name'], 'required', 'on' => self::SCENARIO_STUDENT],
             [['firstname', 'lastname', 'email', 'labelId', 'number', 'phoneLabelId',
                 'addressLabelId', 'address', 'cityId', 'countryId', 'provinceId'],
                 'required', 'on' => self::SCENARIO_CUSTOMER],
