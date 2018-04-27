@@ -230,8 +230,6 @@ class UserContactController extends BaseController
             'userModel' => $model->user,
         ]);
         if ($emailModel->load(Yii::$app->request->post()) && $model->load(Yii::$app->request->post())) {
-            $emailModel->save();
-
             if (!is_numeric($model->labelId)) {
                 $label = new Label();
                 $label->name = $model->labelId;
@@ -239,7 +237,9 @@ class UserContactController extends BaseController
                 $label->save();
                 $model->labelId = $label->id;
             }
+            $emailModel->labelId = $model->labelId;
             $model->save();
+            $emailModel->save();
             return [
                 'status' => true,
             ];
@@ -347,12 +347,15 @@ class UserContactController extends BaseController
     public function actionValidate($id = null)
     {
         if(!empty($id)) {
+            $contactModel = UserContact::findOne($id);
             $model = UserEmail::findOne(['userContactId' => $id]);
         } else {
+            $contactModel = new UserContact();
             $model = new UserEmail();
         }
         $request = Yii::$app->request;
-        if ($model->load($request->post())) {
+        if ($model->load($request->post()) && $contactModel->load($request->post())) {
+            $model->labelId = $contactModel->labelId;
             return  ActiveForm::validate($model);
         }
     }
