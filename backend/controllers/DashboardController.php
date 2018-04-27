@@ -83,22 +83,23 @@ public function behaviors()
             ->andWhere(['NOT IN', 'lesson.status', Lesson::STATUS_CANCELED])
             ->between($searchModel->fromDate, $searchModel->toDate)
             ->count();
-        
+        $fromDate = $searchModel->fromDate;
+        $from = $fromDate->format('Y-m-d');
+	$toDate = $searchModel->toDate;
+        $to = $toDate->format('Y-m-d');
         $students = Student::find()
-            ->notDeleted()
-            ->joinWith(['enrolment' => function ($query) use ($locationId,$searchModel) {
-                $query->joinWith(['course' => function ($query) use ($locationId,$searchModel) {
-                    $query->confirmed()
-			  ->orWhere(['AND', ['<=', 'starttDate', $searchModel->fromDate->format('Y-m-d')], ['>=', 'endDate', $searchModel->fromDate->format('Y-m-d')]])
-		          ->orWhere(['AND', ['<=', 'startDate', $searchModel->toDate->format('Y-m-d')], ['>=', 'endDate', $searchModel->toDate->format('Y-m-d')]])
-		          ->orWhere(['AND',['AND', ['>', 'startDate', $searchModel->fromDate->format('Y-m-d')], ['<', 'endDate', $searchModel->toDate->format('Y-m-d')]],['>=','endDate',$searchModel->fromDate->format('Y-m-d')]])
-		          ->location($locationId);
-                }]);                  
-            }])
-            ->active()
-            ->count();
+			->notDeleted()
+			->joinWith(['enrolment' => function ($query) use ($locationId, $from, $to) {
+				    $query->joinWith(['course' => function ($query) use ($locationId, $from, $to) {
+						$query->confirmed()
+						->overlap($from, $to)
+						->location($locationId);
+					}]);
+			    }])
+			->active()
+			->count();
 
-        $completedPrograms = [];
+		$completedPrograms = [];
         $programs = Lesson::find()
                     ->select(['sum(course_schedule.duration) as hours, program.name as program_name, lesson.type'])
                     ->joinWith(['course' => function ($query) use ($locationId) {
