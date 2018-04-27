@@ -99,7 +99,7 @@ public function behaviors()
 			->active()
 			->count();
 
-		$completedPrograms = [];
+        $completedPrograms = [];
         $programs = Lesson::find()
                     ->select(['sum(course_schedule.duration) as hours, program.name as program_name, lesson.type'])
                     ->joinWith(['course' => function ($query) use ($locationId) {
