@@ -452,3 +452,7 @@ dl {
       width: 150px
     }
   }
+.modal-body {
+    max-height: calc(100vh - 143px);
+    overflow-y: auto; 
+}

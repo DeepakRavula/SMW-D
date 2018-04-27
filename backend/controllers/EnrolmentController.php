@@ -310,7 +310,7 @@ class EnrolmentController extends BaseController
         $userEmail->setModel($courseDetail);
         $student->setModel($courseDetail);
         $user->status = User::STATUS_DRAFT;
-	$user->canLogin=true;
+	    $user->canLogin = true;
         if ($user->save()) {
             $auth = Yii::$app->authManager;
             $authManager = Yii::$app->authManager;
@@ -502,11 +502,46 @@ class EnrolmentController extends BaseController
 
     public function actionEditEndDate($id)
     {
+        $changedEndDate = Yii::$app->request->get('endDate');
         $model = $this->findModel($id);
-        $data = $this->renderAjax('update/_form-schedule', [
-            'model' => $model,
-            'course' => $model->course
-        ]);
+        $deletableLessonDataProvider = null;
+        $deletablePaymentCyclesDataProvider = null;
+        $deletablePfiDataProvider = null;
+        if ($changedEndDate) {
+            $date = Carbon::parse($changedEndDate)->format('Y-m-d');
+            $lessonsToBeDelete = Lesson::find()
+                        ->notDeleted()
+                        ->notCanceled()
+                        ->isConfirmed()
+                        ->andWhere(['>', 'DATE(date)', $date])
+                        ->andWhere(['courseId' => $model->courseId])
+                        ->all();
+            $paymentCyclesToBeDelete = PaymentCycle::find()
+                        ->notDeleted()
+                        ->andWhere(['>', 'startDate', $date])
+                        ->andWhere(['enrolmentId' => $model->id])
+                        ->all();
+            $results = [];
+            if ($paymentCyclesToBeDelete) {
+                foreach ($paymentCyclesToBeDelete as $paymentCycle) {
+                    if ($paymentCycle->hasProFormaInvoice()) {
+                        $pfi = $paymentCycle->proFormaInvoice;
+                        if (!$pfi->hasCreditUsed()) {
+                            $results[] = [
+                                'invoice_number' => $pfi->getInvoiceNumber(),
+                                'due_date' => (new \DateTime($pfi->dueDate))->format('M d, Y')
+                            ];
+                        }
+                    }
+                }
+            }
+            $deletablePfiDataProvider = new ArrayDataProvider([
+                'allModels' => $results,
+                'sort' => [
+                    'attributes' => ['invoice_number', 'due_date'],
+                ],
+            ]);
+        }
         $post = Yii::$app->request->post();
         $course = $model->course;
         $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
@@ -540,6 +575,13 @@ class EnrolmentController extends BaseController
                 'message' => $message
             ];
         } else {
+            $data = $this->renderAjax('update/_form-schedule', [
+                'model' => $model,
+                'course' => $model->course,
+                'deletablePfiDataProvider' => $deletablePfiDataProvider,
+                'deletableLessonDataProvider' => $deletableLessonDataProvider,
+                'deletablePaymentCyclesDataProvider' => $deletablePaymentCyclesDataProvider
+            ]);
             $response = [
                 'status' => true,
                 'data' => $data,
