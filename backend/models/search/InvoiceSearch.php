@@ -100,7 +100,7 @@ class InvoiceSearch extends Invoice
             }
         } else {
 	    if ((int) $this->invoiceStatus === Invoice::STATUS_OWING) {
-                $query->unpaid()->invoice();
+                $query->unpaid()->invoice()->andWhere(['isVoid'=>false]);
             } elseif ((int) $this->invoiceStatus === Invoice::STATUS_PAID) {
                 $query->paid()->invoice()->andWhere(['isVoid'=>false]);
             }
@@ -108,7 +108,7 @@ class InvoiceSearch extends Invoice
                 $query->andWhere(['isVoid'=>true]);
             }
 	    elseif ((int) $this->invoiceStatus === Invoice::STATUS_CREDIT) {
-                $query->credit()->invoice();
+                $query->credit()->invoice()->andWhere(['isVoid'=>false]);
             }
             if (!empty($this->invoiceDateRange)) {
                 list($this->fromDate, $this->toDate) = explode(' - ', $this->invoiceDateRange);
@@ -174,7 +174,7 @@ class InvoiceSearch extends Invoice
 	    Invoice::STATUS_CREDIT => 'credit',
             Invoice::STATUS_OWING => 'owing',
             Invoice::STATUS_PAID => 'Paid',
-	    Invoice::STATUS_VOID => 'void',
+	    Invoice::STATUS_VOID => 'voided',
         ];
     }
     public static function mailStatuses()
