@@ -190,13 +190,13 @@ echo KartikGridView::widget([
 
     $(document).on('change', '#enrolmentsearch-showallenrolments', function(){
         var showAllEnrolments = $(this).is(":checked");
-        var program_search = $("input[name*='EnrolmentSearch[program]").val();
-        var student_search = $("input[name*='EnrolmentSearch[student]").val();
+        var program_search = $("#enrolmentsearch-program").select2("val");
+        var student_search = $("#student").val();
         var teacher_search = $("input[name*='EnrolmentSearch[teacher]").val();
         var params = $.param({ 'EnrolmentSearch[showAllEnrolments]': (showAllEnrolments | 0),
             'EnrolmentSearch[program]':program_search,'EnrolmentSearch[student]':student_search,
             'EnrolmentSearch[teacher]':teacher_search});
-        var url = "<?php echo Url::to(['enrolment/index']); ?>?EnrolmentSearch[showAllEnrolments]=" + (showAllEnrolments | 0);
+        var url = "<?php echo Url::to(['enrolment/index']); ?>?" + params;
         $.pjax.reload({url:url,container:"#enrolment-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
 </script>
