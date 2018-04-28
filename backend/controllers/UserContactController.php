@@ -49,7 +49,7 @@ class UserContactController extends BaseController
     public function actionCreateEmail($id)
     {
         $user = User::findOne(['id' => $id]);
-        $email = new UserEmail();
+        $email = new UserEmail(['scenario' => UserEmail::SCENARIO_USER_CREATE]);
         
         $contact = new UserContact();
         $data = $this->renderAjax('/user/contact/form/_email', [
@@ -223,6 +223,7 @@ class UserContactController extends BaseController
     {
         $model = $this->findModel($id);
         $emailModel = $model->email;
+        $emailModel->setScenario(UserEmail::SCENARIO_USER_CREATE);
         $data = $this->renderAjax('/user/contact/form/_email', [
             'emailModel' => $emailModel,
             'model' => $model,
