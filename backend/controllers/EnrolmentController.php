@@ -35,6 +35,7 @@ use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\log\StudentLog;
 use common\models\log\DiscountLog;
 use yii\widgets\ActiveForm;
+use yii\data\ArrayDataProvider;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 
@@ -508,14 +509,39 @@ class EnrolmentController extends BaseController
         $lastLessonDate = Carbon::parse($lastLesson->date);
         $action = null;
         $dateRange = null;
+        $previewDataProvider = null;
         if ($changedEndDate) {
             $date = Carbon::parse($changedEndDate);
-            $dateRange = $date->format('M d, Y') . ' - ' . $lastLessonDate->format('M d, Y');
+            $objects = ['Lessons', 'Payment Cycles'];
+            $results = [];
             if ($lastLessonDate > $date) {
+                $dateRange = $date->format('M d, Y') . ' - ' . $lastLessonDate->format('M d, Y');
                 $action = 'shrink';
+                array_push($objects, 'PFIs');
+                foreach ($objects as $value) {
+                    $results[] = [
+                        'objects' => $value,
+                        'action' => 'will be deleted',
+                        'date_range' => 'within ' . $dateRange
+                    ]; 
+                }
             } else if ($lastLessonDate < $date) {
+                $dateRange = $lastLessonDate->format('M d, Y') . ' - ' . $date->format('M d, Y');
                 $action = 'extend';
+                foreach ($objects as $value) {
+                    $results[] = [
+                        'objects' => $value,
+                        'action' => 'will be created',
+                        'date_range' => 'within ' . $dateRange
+                    ]; 
+                }
             }
+            $previewDataProvider = new ArrayDataProvider([
+                'allModels' => $results,
+                'sort' => [
+                    'attributes' => ['objects', 'action', 'date_range'],
+                ],
+            ]);
         }
         $post = Yii::$app->request->post();
         $course = $model->course;
@@ -552,7 +578,8 @@ class EnrolmentController extends BaseController
                 'model' => $model,
                 'action' => $action,
                 'dateRange' => $dateRange,
-                'course' => $model->course
+                'course' => $model->course,
+                'previewDataProvider' => $previewDataProvider
             ]);
             $response = [
                 'status' => true,

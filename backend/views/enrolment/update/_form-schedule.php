@@ -40,37 +40,54 @@ use kartik\grid\GridView;
 <?php yii\widgets\Pjax::begin([
     'id' => 'after-end-date-changed-listing',
     'timeout' => 6000,
-]) ?>
+]); ?>
+<?php
+$columns = [
+    [
+        'label' => 'Objects',
+        'attribute' => 'objects',
+        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+    ],
+    [
+        'label' => 'Action',
+        'attribute' => 'action',
+        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+    ],
+    [
+        'label' => 'Date Range',
+        'attribute' => 'date_range',
+        'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+    ]
+];
+?>
 
 <?php if ($action === 'shrink') : ?>
-    <label>Preview</label>
+    <label>Enrolment End Preview</label>
     <div class="row">
         <div class="col-lg-12">
-            <p>Lessons will be deleted within the date daterange <?= $dateRange ?> due to enrollment end</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <p>Payment cycles will be deleted within the date daterange <?= $dateRange ?> due to enrollment end</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <p>PFIs will be deleted within the date daterange <?= $dateRange ?> due to enrollment end</p>
+            <?= GridView::widget([
+                'dataProvider' => $previewDataProvider,
+                'columns' => $columns,
+                'summary' => false,
+                'emptyText' => false
+            ]); ?>
         </div>
     </div>
 <?php endif; ?>
 
 <?php if ($action === 'extend') : ?>
-    <label>Preview</label>
+    <label>Enrolment Extend Preview</label>
     <div class="row">
         <div class="col-lg-12">
-            <p>New lessons will be created within the date daterange <?= $dateRange ?> due to extend end date</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <p>New payment cycles will be created within the date daterange <?= $dateRange ?> due to extend end date</p>
+            <?= GridView::widget([
+                'dataProvider' => $previewDataProvider,
+                'columns' => $columns,
+                'summary' => false,
+                'emptyText' => false
+            ]); ?>        
         </div>
     </div>
 <?php endif; ?>
@@ -85,9 +102,14 @@ use kartik\grid\GridView;
     });
 
     $(document).on('change', '#course-enddate', function () {
+        $('#modal-spinner').show();
         var endDate = $(this).val();
         var url = '<?= Url::to(['enrolment/edit-end-date', 'id' => $model->id]); ?>&endDate=' + endDate;
         $.pjax.reload({url: url, container: "#after-end-date-changed-listing", replace: false, async: false, timeout: 4000});
         return false;
+    });
+
+    $(document).on('pjax:complete', function(event) {
+        $('#modal-spinner').hide();
     });
 </script>
