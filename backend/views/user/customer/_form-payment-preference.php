@@ -33,7 +33,7 @@ use yii\jui\DatePicker;
                 'clientOptions' => [
                      'defaultDate' => (new \DateTime($model->expiryDate))->format('M d, Y'),
                     'changeMonth' => true,
-                    'yearRange' => '-70:today',
+                    'yearRange' => '-10:+20',
                     'changeYear' => true,
                    
                 ],
