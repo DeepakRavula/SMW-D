@@ -278,7 +278,9 @@ class User extends ActiveRecord implements IdentityInterface
     
     public function getTeacherLessons()
     {
-        return $this->hasMany(Lesson::className(), ['teacherId' => 'id']);
+        return $this->hasMany(Lesson::className(), ['teacherId' => 'id'])
+            ->onCondition(['lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED], 
+                'lesson.isDeleted' => false, 'lesson.isConfirmed' => true]);
     }
 
     /**
