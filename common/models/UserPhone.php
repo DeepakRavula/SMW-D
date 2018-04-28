@@ -39,7 +39,7 @@ class UserPhone extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['number', 'labelId'], 'required'],
+            [['number'], 'required'],
             [['userContactId', 'extension'], 'integer'],
             [['number'], 'string', 'max' => 15],
             [['labelId'], 'safe']

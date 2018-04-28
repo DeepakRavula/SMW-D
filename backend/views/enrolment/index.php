@@ -196,8 +196,6 @@ echo KartikGridView::widget([
         var params = $.param({ 'EnrolmentSearch[showAllEnrolments]': (showAllEnrolments | 0),
             'EnrolmentSearch[program]':program_search,'EnrolmentSearch[student]':student_search,
             'EnrolmentSearch[teacher]':teacher_search});
-        var url = "<?php echo Url::to(['user/index']); ?>?"+params;
-        $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 6000});
         var url = "<?php echo Url::to(['enrolment/index']); ?>?EnrolmentSearch[showAllEnrolments]=" + (showAllEnrolments | 0);
         $.pjax.reload({url:url,container:"#enrolment-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
