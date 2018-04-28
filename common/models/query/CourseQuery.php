@@ -113,7 +113,7 @@ class CourseQuery extends \yii\db\ActiveQuery
 		return $this->andWhere(['OR',
 			    ['AND', ['<=', 'DATE(startDate)', $from], ['>=', 'DATE(endDate)', $from]],
 			    ['AND', ['<=', 'DATE(startDate)', $to], ['>=', 'DATE(endDate)', $to]],
-			    ['AND', ['>', 'DATE(startDate)', $from], ['<', 'DATE(endDate)', $to], ['>', 'DATE(endDate)', $from]]
+			    ['AND', ['>', 'DATE(startDate)', $from], ['<', 'DATE(endDate)', $to], ['>=', 'DATE(endDate)', $from]]
 		]);
 	}
 

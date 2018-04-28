@@ -85,17 +85,21 @@ public function behaviors()
             ->count();
         $fromDate = $searchModel->fromDate;
         $from = $fromDate->format('Y-m-d');
-	$toDate = $searchModel->toDate;
+	    $toDate = $searchModel->toDate;
         $to = $toDate->format('Y-m-d');
         $students = Student::find()
 			->notDeleted()
 			->joinWith(['enrolment' => function ($query) use ($locationId, $from, $to) {
 				    $query->joinWith(['course' => function ($query) use ($locationId, $from, $to) {
-						$query->confirmed()
+                          $query->joinWith(['lessons' => function ($query) {
+                              $query->andWhere(['lesson.isDeleted' => false]);
+                          }])
+						->confirmed()
 						->overlap($from, $to)
 						->location($locationId);
 					}]);
-			    }])
+                }])
+            ->groupBy('student.id')
 			->active()
 			->count();
 
