@@ -171,10 +171,10 @@ class InvoiceSearch extends Invoice
     {
         return [
             self::STATUS_ALL => 'All',
-	    Invoice::STATUS_CREDIT => 'credit',
-            Invoice::STATUS_OWING => 'owing',
+	    Invoice::STATUS_CREDIT => 'Credit',
+            Invoice::STATUS_OWING => 'Owing',
             Invoice::STATUS_PAID => 'Paid',
-	    Invoice::STATUS_VOID => 'voided',
+	    Invoice::STATUS_VOID => 'Voided',
         ];
     }
     public static function mailStatuses()
