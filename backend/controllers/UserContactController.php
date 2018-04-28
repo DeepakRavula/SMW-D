@@ -346,15 +346,12 @@ class UserContactController extends BaseController
     public function actionValidate($id = null)
     {
         if(!empty($id)) {
-            $contactModel = UserContact::findOne($id);
             $model = UserEmail::findOne(['userContactId' => $id]);
         } else {
-            $contactModel = new UserContact();
             $model = new UserEmail();
         }
         $request = Yii::$app->request;
-        if ($model->load($request->post()) && $contactModel->load($request->post())) {
-            $model->labelId = $contactModel->labelId;
+        if ($model->load($request->post())) {
             return  ActiveForm::validate($model);
         }
     }
