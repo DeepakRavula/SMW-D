@@ -43,7 +43,10 @@ class ScheduleController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'render-day-events', 'render-classroom-events','render-resources', 'render-classroom-resources', 'fetch-holiday-name'],
+                        'actions' => [
+                            'index', 'render-day-events', 'render-classroom-events', 
+                            'render-resources', 'render-classroom-resources', 'fetch-holiday-name'
+                        ],
                         'roles' => ['manageSchedule'],
                     ],
                 ],
@@ -147,49 +150,18 @@ class ScheduleController extends BaseController
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
         $formatedDate = $date->format('Y-m-d');
         $formatedDay = $date->format('N');
+        $resources = [];
         $query = User::find()
-                ->notDeleted()
-                ->active()
-                ->joinWith(['teacherLessons' => function ($query) use ($formatedDate) {
-                    $query->isConfirmed()->notDeleted()->scheduledOrRescheduled()
-                        ->andWhere(['DATE(lesson.date)' => $formatedDate]);
-                }]);
-        if (empty($teacherId) && empty($programId)) {
-            $teachersAvailabilities = TeacherAvailability::find()
-                        ->joinWith(['userLocation' => function ($query) use ($locationId) {
-                            $query->andWhere(['user_location.location_id' => $locationId]);
-                        }])
-                        ->andWhere(['day' => $date->format('N')])
+                ->teachers($programId, $locationId)
+                ->joinWith('teacherLessons')
+                ->joinWith('availabilities')
+                ->andWhere(['OR', ['DATE(lesson.date)' => $formatedDate], 
+                    ['teacher_availability_day.day' => $formatedDay]]);
+        if (!empty($teacherId)) {
+            $teachers = $query->andWhere(['user.id' => $teacherId])
                         ->all();
-            if (!empty($teachersAvailabilities)) {
-                foreach ($teachersAvailabilities as $teachersAvailability) {
-                    $resources[] = [
-                        'id'    => $teachersAvailability->teacher->id,
-                        'title' => $teachersAvailability->teacher->getPublicIdentity(),
-                    ];
-                }
-            } else {
-                $resources[] = [
-                    'id'    => '0',
-                    'title' => 'No Teacher Available Today'
-                ];
-            }
-            $query->allTeachers()->location($locationId);
-        } else if (!empty($teacherId)) {
-            $teachersAvailabilities = TeacherAvailability::find()
-                    ->joinWith(['userLocation' => function ($query) use ($teacherId) {
-                        $query->andWhere(['user_location.user_id' => $teacherId]);
-                    }])
-                    ->andWhere(['day' => $date->format('N')])
-                    ->groupBy(['teacher_availability_day.id','teacher_location_id'])
-                    ->all();
-            if (!empty($teachersAvailabilities)) {
-                foreach ($teachersAvailabilities as $teachersAvailability) {
-                    $resources[] = [
-                        'id'    => $teachersAvailability->teacher->id,
-                        'title' => $teachersAvailability->teacher->getPublicIdentity(),
-                    ];
-                }
+            if (!empty($teachers)) {
+                $resources = $this->setresources($teachers);
             } else {
                 $resources[] = [
                     'id'    => '0',
@@ -197,27 +169,23 @@ class ScheduleController extends BaseController
                 ];
             }
         } else if (!empty($programId)) {
-            $teachersAvailabilities = TeacherAvailability::find()
-                    ->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
-                        $query->andWhere(['user_location.location_id' => $locationId]);
-                        $query->joinWith(['qualifications'  => function ($query) use ($programId) {
-                            $query->andWhere(['qualification.program_id' => $programId]);
-                        }]);
-                    }])
-                    ->andWhere(['day' => $date->format('N')])
-                    ->groupBy(['teacher_availability_day.id','teacher_location_id'])
-                    ->all();
-            if (!empty($teachersAvailabilities)) {
-                foreach ($teachersAvailabilities as $teachersAvailability) {
-                    $resources[] = [
-                        'id'    => $teachersAvailability->teacher->id,
-                        'title' => $teachersAvailability->teacher->getPublicIdentity(),
-                    ];
-                }
+            $teachers = $query->all();
+            if (!empty($teachers)) {
+                $resources = $this->setresources($teachers);
             } else {
                 $resources[] = [
                     'id'    => '0',
-                    'title' => 'No Teacher Available Today for the Selected Program'
+                    'title' => 'No teacher available today for the selected program'
+                ];
+            }
+        } else if (empty($teacherId) && empty($programId)) {
+            $teachers = $query->all();
+            if (!empty($teachers)) {
+                $resources = $this->setResources($teachers);
+            } else {
+                $resources[] = [
+                    'id'    => '0',
+                    'title' => 'No teacher available today'
                 ];
             }
         }
@@ -317,39 +285,8 @@ class ScheduleController extends BaseController
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $date = Carbon::parse($date);
         $events = [];
-        if (empty($teacherId) && empty($programId)) {
-            $teachersAvailabilities = TeacherAvailability::find()
-                ->joinWith(['userLocation' => function ($query) use ($locationId) {
-                    $query->andWhere(['user_location.location_id' => $locationId]);
-                }])
-                ->andWhere(['day' => $date->dayOfWeek])
-                ->all();
-            foreach ($teachersAvailabilities as $teachersAvailability) {
-                $unavailability = $this->getTeacherUnavailability($teachersAvailability, $date);
-                if (!empty($unavailability)) {
-                    if (empty($unavailability->fromTime) && empty($unavailability->toTime)) {
-                        continue;
-                    } else {
-                        $events = array_merge($events, $this->getTeacherAvailabilityEvents($teachersAvailability, $unavailability, $date));
-                    }
-                } else {
-                    $startTime = Carbon::parse($teachersAvailability->from_time);
-                    $start = $date->setTime($startTime->hour, $startTime->minute, $startTime->second);
-                    $endTime = Carbon::parse($teachersAvailability->to_time);
-                    $end = clone $date;
-                    $end = $end->setTime($endTime->hour, $endTime->minute, $endTime->second);
-                    $events[] = [
-                        'resourceId' => $teachersAvailability->teacher->id,
-                        'title'      => '',
-                        'start'      => $start->format('Y-m-d H:i:s'),
-                        'end'        => $end->format('Y-m-d H:i:s'),
-                        'rendering'  => 'background',
-                    ];
-                }
-            }
-        } else if (!empty($teacherId)) {
+        if (!empty($teacherId)) {
             $teachersAvailabilities = $this->getTeacherAvailability($teacherId, $date);
-
             foreach ($teachersAvailabilities as $teachersAvailability) {
                 $unavailability = $this->getTeacherUnavailability($teachersAvailability, $date);
                 if (!empty($unavailability)) {
@@ -373,6 +310,36 @@ class ScheduleController extends BaseController
                 ->andWhere(['day' => $date->format('N')])
                 ->all();
 
+            foreach ($teachersAvailabilities as $teachersAvailability) {
+                $unavailability = $this->getTeacherUnavailability($teachersAvailability, $date);
+                if (!empty($unavailability)) {
+                    if (empty($unavailability->fromTime) && empty($unavailability->toTime)) {
+                        continue;
+                    } else {
+                        $events = array_merge($events, $this->getTeacherAvailabilityEvents($teachersAvailability, $unavailability, $date));
+                    }
+                } else {
+                    $startTime = Carbon::parse($teachersAvailability->from_time);
+                    $start = $date->setTime($startTime->hour, $startTime->minute, $startTime->second);
+                    $endTime = Carbon::parse($teachersAvailability->to_time);
+                    $end = clone $date;
+                    $end = $end->setTime($endTime->hour, $endTime->minute, $endTime->second);
+                    $events[] = [
+                        'resourceId' => $teachersAvailability->teacher->id,
+                        'title'      => '',
+                        'start'      => $start->format('Y-m-d H:i:s'),
+                        'end'        => $end->format('Y-m-d H:i:s'),
+                        'rendering'  => 'background',
+                    ];
+                }
+            }
+        } else if (empty($teacherId) && empty($programId)) {
+            $teachersAvailabilities = TeacherAvailability::find()
+                ->joinWith(['userLocation' => function ($query) use ($locationId) {
+                    $query->andWhere(['user_location.location_id' => $locationId]);
+                }])
+                ->andWhere(['day' => $date->dayOfWeek])
+                ->all();
             foreach ($teachersAvailabilities as $teachersAvailability) {
                 $unavailability = $this->getTeacherUnavailability($teachersAvailability, $date);
                 if (!empty($unavailability)) {
@@ -510,5 +477,17 @@ class ScheduleController extends BaseController
         }
         unset($lesson);
         return $events;
+    }
+
+    public function setResources($teachers) 
+    {
+        $resources = [];
+        foreach ($teachers as $teacher) {
+            $resources[] = [
+                'id'    => $teacher->id,
+                'title' => $teacher->getPublicIdentity(),
+            ];
+        }
+        return $resources;
     }
 }
