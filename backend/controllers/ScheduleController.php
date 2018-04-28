@@ -175,7 +175,7 @@ class ScheduleController extends BaseController
             } else {
                 $resources[] = [
                     'id'    => '0',
-                    'title' => 'No Teacher Available Today for the Selected Program'
+                    'title' => 'No teacher available today for the selected program'
                 ];
             }
         } else if (empty($teacherId) && empty($programId)) {
@@ -185,7 +185,7 @@ class ScheduleController extends BaseController
             } else {
                 $resources[] = [
                     'id'    => '0',
-                    'title' => 'No Teacher Available Today'
+                    'title' => 'No teacher available today'
                 ];
             }
         }
