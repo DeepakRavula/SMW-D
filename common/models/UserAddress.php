@@ -59,10 +59,12 @@ class UserAddress extends \yii\db\ActiveRecord
             'countryId' => 'Country'
         ];
     }
+    
     public function getUserContact()
     {
         return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);
     }
+
     public function getCity()
     {
         return $this->hasOne(City::className(), ['id' => 'cityId']);
@@ -84,5 +86,16 @@ class UserAddress extends \yii\db\ActiveRecord
             $this->userContact->delete();
         }
         return parent::beforeDelete();
+    }
+
+    public function setModel($model)
+    {
+        $this->address = $model->address;
+        $this->labelId = $model->addressLabelId;
+        $this->cityId = $model->cityId;
+        $this->provinceId = $model->provinceId;
+        $this->countryId = $model->countryId;
+        $this->postalCode = $model->postalCode;
+        return $this;
     }
 }

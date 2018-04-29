@@ -15,7 +15,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use common\models\Label;
-use common\models\CourseSchedule;
+use backend\models\EnrolmentForm;
 use common\models\Student;
 use yii\filters\ContentNegotiator;
 use common\models\log\LogHistory;
@@ -30,7 +30,6 @@ use common\models\User;
 use common\models\UserProfile;
 use Carbon\Carbon;
 use common\models\CourseReschedule;
-use common\models\discount\EnrolmentDiscount;
 use backend\models\discount\MultiEnrolmentDiscount;
 use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\log\StudentLog;
@@ -291,10 +290,12 @@ class EnrolmentController extends BaseController
     
     public function actionAdd()
     {
+        $courseDetailData = Yii::$app->request->get('EnrolmentForm');
+        $courseDetail = new EnrolmentForm();
+        if ($courseDetailData) {
+            $courseDetail->load(Yii::$app->request->get());
+        }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $request = Yii::$app->request;
-        $course = new Course();
-        $courseSchedule = new CourseSchedule();
         $user = new User();
         $userProfile = new UserProfile();
         $phoneNumber = new UserPhone();
@@ -302,20 +303,12 @@ class EnrolmentController extends BaseController
         $userEmail = new UserEmail();
         $userLocation = new UserLocation();
         $student = new Student();
-        $multipleEnrolmentDiscount = new EnrolmentDiscount();
-        $paymentFrequencyDiscount = new EnrolmentDiscount();
             
-        $post = $request->post();
-        $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
-        $user->load(Yii::$app->getRequest()->getBodyParams(), 'User');
-        $userProfile->load(Yii::$app->getRequest()->getBodyParams(), 'UserProfile');
-        $phoneNumber->load(Yii::$app->getRequest()->getBodyParams(), 'UserPhone');
-        $address->load(Yii::$app->getRequest()->getBodyParams(), 'UserAddress');
-        $userEmail->load(Yii::$app->getRequest()->getBodyParams(), 'UserEmail');
-        $student->load(Yii::$app->getRequest()->getBodyParams(), 'Student');
-        $courseSchedule->load(Yii::$app->getRequest()->getBodyParams(), 'CourseSchedule');
-        $paymentFrequencyDiscount->load($post['PaymentFrequencyDiscount'], '');
-        $multipleEnrolmentDiscount->load($post['MultipleEnrolmentDiscount'], '');
+        $userProfile->setModel($courseDetail);
+        $phoneNumber->setModel($courseDetail);
+        $address->setModel($courseDetail);
+        $userEmail->setModel($courseDetail);
+        $student->setModel($courseDetail);
         $user->status = User::STATUS_DRAFT;
 	$user->canLogin=true;
         if ($user->save()) {
@@ -348,28 +341,7 @@ class EnrolmentController extends BaseController
             $student->save();
 
             //save course
-            $dayList = Course::getWeekdaysList();
-            $course->locationId = $locationId;
-            $courseSchedule->day = array_search($courseSchedule->day, $dayList);
-            $courseSchedule->studentId = $student->id;
-            if ($course->save()) {
-                $courseSchedule->courseId = $course->id;
-                $courseSchedule->save();
-                    
-                if (!empty($multipleEnrolmentDiscount->discount)) {
-                    $multipleEnrolmentDiscount->enrolmentId = $course->enrolment->id;
-                    $multipleEnrolmentDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_PERCENTAGE;
-                    $multipleEnrolmentDiscount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
-                    $multipleEnrolmentDiscount->save();
-                }
-                if (!empty($paymentFrequencyDiscount->discount)) {
-                    $paymentFrequencyDiscount->enrolmentId = $course->enrolment->id;
-                    $paymentFrequencyDiscount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLLAR;
-                    $paymentFrequencyDiscount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
-                    $paymentFrequencyDiscount->save();
-                }
-            }
-            return $this->redirect(['lesson/review', 'courseId' => $course->id, 'LessonSearch[showAllReviewLessons]' => false, 'Enrolment[type]' => Enrolment::TYPE_REVERSE]);
+            return $this->redirect(['student/create-enrolment', 'id' => $student->id, 'EnrolmentForm' => $courseDetail]);
         }
     }
 

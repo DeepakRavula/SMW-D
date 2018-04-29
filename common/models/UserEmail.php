@@ -121,4 +121,11 @@ class UserEmail extends \yii\db\ActiveRecord
     {
         return $this->userContact->makePrimary();
     }
+
+    public function setModel($model)
+    {
+        $this->email = $model->email;
+        $this->labelId = $model->labelId;
+        return $this;
+    }
 }

@@ -7,31 +7,14 @@ use yii\grid\GridView;
 
 ?>
 
-<div class="">
-    <div class="pull-right m-r-10">
+
+
+<div class="private-lesson-index">
+<div class="pull-right m-r-10">
     	<a href="#"  title="Add" id="new-lesson" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
     </div>
-	
-    <div class="grid-row-open">
-    <?php yii\widgets\Pjax::begin([
-        'id' => 'student-lesson-listing',
-        'timeout' => 6000,
-    ]) ?>
-    <?php
-    echo GridView::widget([
-        'dataProvider' => $lessonDataProvider,
-        'summary' => false,
-        'emptyText' => false,
-        'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::to(['lesson/view', 'id' => $model->id]);
-
-            return ['data-url' => $url];
-        },
-        'options' => ['class' => 'col-md-12', 'id' => 'student-lesson-grid'],
-        'tableOptions' => ['class' => 'table table-bordered'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'columns' => [
-            [
+    <?php $columns = [
+             [
                 'label' => 'Program Name',
                 'value' => function ($data) {
                     return !empty($data->course->program->name) ? $data->course->program->name : null;
@@ -105,11 +88,27 @@ use yii\grid\GridView;
                     return $data->getPresent();
                 },
             ],
-        ],
-    ]);
+        ];
+
     ?>
+    <div class="grid-row-open">
+        <?php yii\widgets\Pjax::begin(['id' => 'lesson-index', 'timeout' => 6000,]); ?>
+    <?php echo GridView::widget([
+        'dataProvider' => $lessonDataProvider,
+        'options' => ['id' => 'unschedule-lesson-index'],
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $url = Url::to(['lesson/view', 'id' => $model->id]);
+
+            return ['data-url' => $url];
+        },
+        'tableOptions' => ['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'summary' => false,
+        'emptyText' => false,
+        'columns' => $columns,
+    ]); ?>
+	<?php yii\widgets\Pjax::end(); ?>
     </div>
-    <?php \yii\widgets\Pjax::end(); ?>    
 </div>
 
 <script>

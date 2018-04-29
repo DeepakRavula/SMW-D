@@ -8,7 +8,6 @@ use common\models\Program;
 use common\models\Student;
 use common\models\UserProfile;
 use common\components\gridView\KartikGridView;
-use yii\bootstrap\Modal;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
@@ -161,128 +160,43 @@ echo KartikGridView::widget([
 ]);
 ?>
 </div>
-<?php Modal::begin([
-    'header' => '<h4 class="m-0">New Enrolment</h4>',
-    'id' => 'reverse-enrol-modal',
-]); ?>
-<?= $this->render('_index');?>
-<?php Modal::end(); ?>
 
 <script>
-    $(document).on('click', '.step1-next', function() {
-            if($('#course-programid').val() == "") {
-            $('#new-enrolment-form').yiiActiveForm('updateAttribute', 'course-programid', ["Program cannot be blank"]);
-        } else {
-            $('#step-1, #step-3, #step-4').hide();
-            $('#reverse-enrol-modal .modal-dialog').css({'width': '1000px'});
-            $('#step-2').show();
-            var options = {
-                'renderId' : '#reverse-enrolment-calendar',
-                'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
-                'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
-                'changeId' : '#course-teacherid',
-                'durationId' : '#courseschedule-duration'
-            };
-            $.fn.calendarDayView(options);
-        }
-        return false;
-    });
-
-    $(document).on('week-view-calendar-select', function(event, params) {
-        $('#course-startdate').val(moment(params.date, "DD-MM-YYYY h:mm a").format('MMM D, Y hh:mm A')).trigger('change');
-        $('#courseschedule-day').val(moment(params.date, "DD-MM-YYYY h:mm a").format('dddd')).trigger('change');
-        $('#courseschedule-fromtime').val(moment(params.date, "DD-MM-YYYY h:mm a").format('HH:mm:ss')).trigger('change');
-        return false;
-    });
-
-    $(document).on('click', '.step2-next', function() {
-            if($('#course-teacherid').val() == "") {
-            $('#new-enrolment-form').yiiActiveForm('updateAttribute', 'course-teacherid', ["Teacher cannot be blank"]);
-
-            }else if($('#courseschedule-day').val() == "") {
-            $('#error-notification').html('Please choose the date/time in the calendar').fadeIn().delay(3000).fadeOut();
-        } else {
-            $('#step-1, #step-2, #step-4').hide();
-            $('#step-3').show();
-            $('#reverse-enrol-modal .modal-dialog').css({'width': '600px'});
-        }
-        return false;
-    });
-
-    $(document).on('click', '.step2-back', function() {
-        $('#step-3, #step-2, #step-4').hide();
-        $('#step-1').show();
-        $('#reverse-enrol-modal .modal-dialog').css({'width': '600px'});
-        return false;
-    });
-
-    $(document).on('click', '.step3-next', function() {
-            if($('#userprofile-firstname').val() == "") {
-            $('#new-enrolment-form').yiiActiveForm('updateAttribute', 'userprofile-firstname', ["Firstname cannot be blank"]);
-            } else if($('#userprofile-lastname').val() == "") {
-            $('#new-enrolment-form').yiiActiveForm('updateAttribute', 'userprofile-lastname', ["Lastname cannot be blank"]);
-            } else if($('#userphone-number').val() == "") {
-            $('#new-enrolment-form').yiiActiveForm('updateAttribute', 'userphone-number', ["Number cannot be blank"]);
-            } else if($('#useraddress-address').val() == "") {
-            $('#new-enrolment-form').yiiActiveForm('updateAttribute', 'useraddress-address', ["Address cannot be blank"]);
-        } else {
-            $('#step-1, #step-2, #step-3').hide();
-            $('#step-4').show();
-            $('#reverse-enrol-modal .modal-dialog').css({'width': '400px'});
-            var lastName = $('#userprofile-lastname').val();
-            $('#student-last_name').val(lastName);
-        }
-        return false;
-    });
-
-    $(document).on('click', '.step3-back', function() {
-        $('#step-3, #step-1, #step-4').hide();
-        $('#step-2').show();
-        $('#reverse-enrol-modal .modal-dialog').css({'width': '1000px'});
-        return false;
-    });
-
-    $(document).on('click', '.step4-back', function() {
-        $('#step-2, #step-3, #step-4').hide();
-        $('#step-3').show();
-        $('#reverse-enrol-modal .modal-dialog').css({'width': '600px'});
-        return false;
-    });
-
     $(document).on('click', '.new-enrol-btn', function() {
-        $('#step-2,#step-3, #step-4').hide();
-        $('#step-1').show();
-        $('#reverse-enrol-modal .modal-dialog').css({'width': '600px'});
-        $('#reverse-enrol-modal').modal('show');
-        return false;
-    });
-
-    $(document).on('click', '.new-enrol-cancel', function() {
-        $('#reverse-enrol-modal').modal('hide');
-        return false;
-    });
-
-    $(document).on('beforeSubmit', '#new-enrolment-form', function(){
         $.ajax({
-            url    : '<?= Url::to(['enrolment/add']); ?>',
-            type   : 'post',
+            url    : '<?= Url::to(['course/create-enrolment-basic', 'studentId' => null, 'isReverse' => true]); ?>',
+            type   : 'get',
             dataType: "json",
-            data: $(this).serialize()
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('.modal-save').text('Next');
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment Basic</h4>');
+                    $('#popup-modal .modal-dialog').css({'width': '600px'});
+                }
+            }
         });
         return false;
     });
 
+    $(document).on('modal-success', function(event, params) {
+        if (params.url) {
+            window.location.href = params.url;
+        }
+    });
+
     $(document).on('change', '#enrolmentsearch-showallenrolments', function(){
         var showAllEnrolments = $(this).is(":checked");
-        var program_search = $("input[name*='EnrolmentSearch[program]").val();
-        var student_search = $("input[name*='EnrolmentSearch[student]").val();
+        var program_search = $("#enrolmentsearch-program").select2("val");
+        var student_search = $("#student").val();
         var teacher_search = $("input[name*='EnrolmentSearch[teacher]").val();
         var params = $.param({ 'EnrolmentSearch[showAllEnrolments]': (showAllEnrolments | 0),
             'EnrolmentSearch[program]':program_search,'EnrolmentSearch[student]':student_search,
             'EnrolmentSearch[teacher]':teacher_search});
-        var url = "<?php echo Url::to(['user/index']); ?>?"+params;
-        $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 6000});
-        var url = "<?php echo Url::to(['enrolment/index']); ?>?EnrolmentSearch[showAllEnrolments]=" + (showAllEnrolments | 0);
+        var url = "<?php echo Url::to(['enrolment/index']); ?>?" + params;
         $.pjax.reload({url:url,container:"#enrolment-listing",replace:false,  timeout: 4000});  //Reload GridView
     });
 </script>

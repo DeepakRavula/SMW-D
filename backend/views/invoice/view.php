@@ -335,7 +335,7 @@ Modal::begin([
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Apply Credit</h4>');
                         $('.modal-save').text('Pay now')
                     } else {
-                        $('#invoice-error-notification').html('No credits available!').fadeIn().delay(5000).fadeOut();
+                        $('#invoice-error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                     }
                 }
             });
@@ -709,6 +709,7 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         },
 
         reload: function() {
+            $.pjax.reload({container: "#invoice-details", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});

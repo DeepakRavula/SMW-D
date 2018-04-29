@@ -15,6 +15,11 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use common\models\User;
+use common\models\UserProfile;
+use common\models\UserPhone;
+use common\models\UserEmail;
+use common\models\UserAddress;
+use yii\helpers\Url;
 use common\models\Student;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
@@ -22,7 +27,7 @@ use backend\models\UserForm;
 use yii\base\Model;
 use common\models\CourseExtra;
 use common\models\CourseSchedule;
-use common\models\EnrolmentForm;
+use backend\models\EnrolmentForm;
 use yii\web\Response;
 use common\models\TeacherAvailability;
 use common\models\Enrolment;
@@ -47,7 +52,8 @@ class CourseController extends BaseController
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => ['fetch-teacher-availability', 'fetch-lessons', 
-                    'fetch-group', 'change', 'teachers', 'create-enrolment'
+                    'fetch-group', 'change', 'teachers', 'create-enrolment-basic',
+                    'create-enrolment-detail'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -60,7 +66,8 @@ class CourseController extends BaseController
                         'allow' => true,
                         'actions' => ['index', 'view', 'fetch-teacher-availability',
                             'course-date', 'create', 'update', 'delete', 'teachers',
-                            'fetch-group', 'change', 'create-enrolment'
+                            'fetch-group', 'change', 'create-enrolment-basic',
+                            'create-enrolment-detail'
                         ],
                         'roles' => ['manageGroupLessons'],
                     ],
@@ -439,7 +446,7 @@ class CourseController extends BaseController
         return $response;
     }
 
-    public function actionCreateEnrolment($studentId)
+    public function actionCreateEnrolmentBasic($studentId = null, $isReverse)
     {
         $courseDetailData = Yii::$app->request->get('EnrolmentForm');
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -447,14 +454,15 @@ class CourseController extends BaseController
         if ($courseDetailData) {
             $courseDetail->load(Yii::$app->request->get());
         }
-        $student = Student::findOne($studentId);
-        $customerDiscount = $student->customer->hasDiscount() ? $student->customer->customerDiscount : null;
-        $data = $this->renderAjax('enrolment/_course-basic', [
-            'model' => $courseDetail,
-            'student' => $student,
-            'customerDiscount' => $customerDiscount
-        ]);
-        if (Yii::$app->request->post()) {
+        if ($studentId) {
+            $student = Student::findOne($studentId);
+            $customerDiscount = $student->customer->hasDiscount() ? $student->customer->customerDiscount : null;
+        } else {
+            $student = null;
+            $customerDiscount = null;
+        }
+        
+        if (Yii::$app->request->isPost) {
             if ($courseDetail->load(Yii::$app->request->post()) && $courseDetail->validate()) {
                 $courseDetail->setScenario(EnrolmentForm::SCENARIO_DETAILED);
                 $teachers = User::find()
@@ -466,7 +474,8 @@ class CourseController extends BaseController
                 $courseData = $this->renderAjax('enrolment/_course-detail', [
                     'model' => $courseDetail,
                     'student' => $student,
-                    'teachers' => $teachers
+                    'isReverse' => $isReverse,
+                    'teachers' => $teachers,
                 ]);
                 $response = [
                     'status' => true,
@@ -480,6 +489,74 @@ class CourseController extends BaseController
                 ];
             }
         } else {
+            $data = $this->renderAjax('enrolment/_course-basic', [
+                'model' => $courseDetail,
+                'student' => $student,
+                'isReverse' => $isReverse,
+                'customerDiscount' => $customerDiscount
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
+    }
+
+    public function actionCreateEnrolmentDetail($studentId = null, $isReverse)
+    {
+        $courseDetailData = Yii::$app->request->get('EnrolmentForm');
+        $courseDetail = new EnrolmentForm();
+        if ($courseDetailData) {
+            $courseDetail->load(Yii::$app->request->get());
+        }
+        $courseDetail->setScenario(EnrolmentForm::SCENARIO_DETAILED);
+        if ($studentId) {
+            $student = Student::findOne($studentId);
+            $customerDiscount = $student->customer->hasDiscount() ? $student->customer->customerDiscount : null;
+        } else {
+            $student = null;
+            $customerDiscount = null;
+        }
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $teachers = User::find()
+                    ->teachers([$courseDetail->programId], $locationId)
+                    ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
+                    ->notDeleted()
+                    ->orderBy(['user_profile.firstname' => SORT_ASC])
+                    ->all();
+        if (Yii::$app->request->isPost) {
+            if ($courseDetail->load(Yii::$app->request->post()) && $courseDetail->validate()) {
+                if ($isReverse) {
+                    $courseDetail->setScenario(EnrolmentForm::SCENARIO_CUSTOMER);
+                    $courseData = $this->renderAjax('/enrolment/new/_form-customer', [
+                        'student' => $student,
+                        'isReverse' => $isReverse,
+                        'courseDetail' => $courseDetail,
+                    ]);
+                } else {
+                    $courseData = null;
+                }
+                $response = [
+                    'status' => true,
+                    'data' => $courseData,
+                    'url' => !$isReverse ? Url::to(['student/create-enrolment', 'id' => $student->id,
+                        'EnrolmentForm' => $courseDetail]) : null
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($courseDetail)
+                ];
+            }
+        } else {
+            $data = $this->renderAjax('enrolment/_course-detail', [
+                'model' => $courseDetail,
+                'student' => $student,
+                'isReverse' => $isReverse,
+                'teachers' => $teachers,
+                'customerDiscount' => $customerDiscount
+            ]);
             $response = [
                 'status' => true,
                 'data' => $data

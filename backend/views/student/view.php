@@ -138,10 +138,17 @@ $this->params['label'] = $this->render('_title', [
 ?>
 
 <script>
+    $(document).on('modal-success', function(event, params) {
+        if (!$.isEmptyObject(params.url)) {
+            window.location.href = params.url;
+        }
+        return false;
+    });
+    
     $(document).on('click', '#add-private-enrol', function () {
         var customerDiscount = '<?= $customerDiscount;?>';
         $.ajax({
-            url    : '<?= Url::to(['course/create-enrolment', 'studentId' => $model->id]); ?>',
+            url    : '<?= Url::to(['course/create-enrolment-basic', 'studentId' => $model->id, 'isReverse' => false]); ?>',
             type   : 'get',
             dataType: "json",
             success: function(response)
@@ -151,29 +158,13 @@ $this->params['label'] = $this->render('_title', [
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
                     $('.modal-save').text('Next');
-                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment</h4>');
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment Basic</h4>');
                     $('#popup-modal .modal-dialog').css({'width': '600px'});
                     $('#customer-discount').val(customerDiscount);
                 }
             }
         });
         return false;
-    });
-
-    $(document).on('modal-next', function(event, params) {
-        $('.modal-save').text('Preview Lessons');
-        var options = {
-            'date' : $('#enrolmentform-startdate').val(),
-            'renderId' : '#enrolment-create-calendar',
-            'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
-            'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
-            'changeId' : '#enrolmentform-teacherid',
-            'durationId' : '#enrolmentform-duration',
-            'studentId' : '<?= $model->id ?>'
-        };
-        $.fn.calendarDayView(options);
-        $('#popup-modal .modal-dialog').css({'width': '1000px'});
-        $('#modal-spinner').hide();
     });
 
     $(document).on('click', '#add-group-enrol', function () {

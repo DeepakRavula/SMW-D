@@ -15,7 +15,7 @@ use common\models\CourseSchedule;
 use common\models\log\StudentLog;
 use backend\models\discount\MultiEnrolmentDiscount;
 use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
-use common\models\EnrolmentForm;
+use backend\models\EnrolmentForm;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use yii\filters\AccessControl;
@@ -44,7 +44,9 @@ class StudentController extends BaseController
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['create', 'update', 'merge', 'fetch-program-rate','validate'],
+                'only' => [
+                    'create', 'update', 'merge', 'fetch-program-rate', 'validate'
+                ],
                 'formats' => [
                         'application/json' => Response::FORMAT_JSON,
                 ],
@@ -55,7 +57,7 @@ class StudentController extends BaseController
                     [
                         'allow' => true,
                         'actions' => ['index', 'create', 'update', 'merge', 'fetch-program-rate',
-                            'enrolment', 'validate', 'print', 'view'],
+                            'create-enrolment', 'validate', 'print', 'view'],
                         'roles' => ['manageStudents'],
                     ],
                 ],
@@ -163,40 +165,34 @@ class StudentController extends BaseController
             }
         } 
     
-    public function actionEnrolment($id)
+    public function actionCreateEnrolment($id)
     {
-        $model = $this->findModel($id);
-        $post = Yii::$app->request->post();
-        $courseDetail = new EnrolmentForm(['scenario' => EnrolmentForm::SCENARIO_BASIC]);
+        $courseDetail = new EnrolmentForm();
         $courseDetail->load(Yii::$app->request->get());
-        $courseDetail->setScenario(EnrolmentForm::SCENARIO_DETAILED);
-        $courseDetail->load($post);
         $courseModel = new Course();
         $courseModel->studentId = $id;
         $courseSchedule = new CourseSchedule();
-        $courseSchedule->studentId = $model->id;
+        $courseSchedule->studentId = $id;
         $multipleEnrolmentDiscount = new MultiEnrolmentDiscount();
         $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
         $courseModel->setModel($courseDetail);
         $courseSchedule->setModel($courseDetail);
-        if ($post) {
-            if ($courseModel->save()) {
-                $courseSchedule->courseId = $courseModel->id;
-                if ($courseSchedule->save()) {
-                    if (!empty($courseDetail->pfDiscount)) {
-                        $multipleEnrolmentDiscount->discount = $courseDetail->enrolmentDiscount;
-                        $multipleEnrolmentDiscount->enrolmentId = $courseModel->enrolment->id;
-                        $multipleEnrolmentDiscount->save();
-                    }
-                    if (!empty($courseDetail->enrolmentDiscount)) {
-                        $paymentFrequencyDiscount->discount = $courseDetail->pfDiscount;
-                        $paymentFrequencyDiscount->enrolmentId = $courseModel->enrolment->id;
-                        $paymentFrequencyDiscount->save();
-                    }
+        if ($courseModel->save()) {
+            $courseSchedule->courseId = $courseModel->id;
+            if ($courseSchedule->save()) {
+                if (!empty($courseDetail->pfDiscount)) {
+                    $multipleEnrolmentDiscount->discount = $courseDetail->enrolmentDiscount;
+                    $multipleEnrolmentDiscount->enrolmentId = $courseModel->enrolment->id;
+                    $multipleEnrolmentDiscount->save();
+                }
+                if (!empty($courseDetail->enrolmentDiscount)) {
+                    $paymentFrequencyDiscount->discount = $courseDetail->pfDiscount;
+                    $paymentFrequencyDiscount->enrolmentId = $courseModel->enrolment->id;
+                    $paymentFrequencyDiscount->save();
                 }
             }
-            return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
         }
+        return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
     }
 
     /**

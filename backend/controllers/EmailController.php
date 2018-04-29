@@ -63,19 +63,14 @@ class EmailController extends BaseController
                 ->setReplyTo($location->email)
                 ->setSubject($model->subject);
             Yii::$app->mailer->sendMultiple($content);
-            $data = null;
             if (!empty($model->invoiceId)) {
                 $invoice = Invoice::findOne(['id' => $model->invoiceId]);
                 $invoice->isSent = true;
                 $invoice->save();
-                $data = $this->renderAjax('/invoice/_show-all', [
-                    'model' => $invoice,
-                ]);
             }
             return [
                 'status' => true,
                 'message' => 'Mail has been sent successfully',
-                'data' => $data
             ];
         }
     }
