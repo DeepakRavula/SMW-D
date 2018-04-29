@@ -54,7 +54,6 @@ class EnrolmentSearch extends Enrolment
      */
     public function search($params)
     {
-      //  print_r($params);
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
          $currentdate= $currentDate = new \DateTime();
        $currentDate = $currentdate->format('Y-m-d');
@@ -67,15 +66,9 @@ class EnrolmentSearch extends Enrolment
             ->isConfirmed()
             ->isRegular();
              if ($this->studentView) {
-         // print_r($this->showAllEnrolments);die('cominggggggggggggggg');
                  if (!$this->showAllEnrolments) {
-                     //print_r('inside if');die('coming');
                 $query->andWhere(['>=', 'course.endDate', $currentDate]);
-            } else {
-
-                // print_r('ssss');die('coming');
-                $query->andWhere(['<=', 'course.endDate', $currentDate]);
-            }
+            } 
             $query->andWhere(['enrolment.studentId' => $this->studentId]);
         }
         $dataProvider = new ActiveDataProvider([

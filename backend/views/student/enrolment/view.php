@@ -9,6 +9,7 @@ use yii\helpers\Url;
 <?php yii\widgets\Pjax::begin([
     'id' => 'enrolment-list-student',
     'timeout' => 6000,
+    'enablePushState'=>false,
 ]) ?>	
 <div class="col-md-12">
 <?php
@@ -48,12 +49,11 @@ use yii\helpers\Url;
 <?php Modal::end(); ?>
 <script>
 $(document).ready(function(){
-  $("#enrolmentsearch-showallenrolments").on("change", function() {
-      alert('sucess');
+  $("#enrolmentsearch-showallenrolments").on("click", function() {
       var showAllEnrolments = $(this).is(":checked");
        var params=$.param({ 'EnrolmentSearch[showAllEnrolments]':(showAllEnrolments | 0),'EnrolmentSearch[studentView]':1,'EnrolmentSearch[studentId]':<?= $model->id ?>,});
       var url = "<?php echo Url::to(['student/view', 'id' => $model->id]); ?>&"+params;
-              $.pjax.reload({url: url, container: "#enrolment-grid", replace: false, timeout: 4000});  //Reload GridView //Reload GridView
+       $.pjax.reload({url: url,container: "#student-enrolment-list", replace: false, timeout: 6000});  //Reload GridView //Reload GridView
           });
 });
   </script>
