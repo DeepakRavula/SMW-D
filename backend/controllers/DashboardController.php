@@ -92,7 +92,7 @@ public function behaviors()
 			->joinWith(['enrolment' => function ($query) use ($locationId, $from, $to) {
 				    $query->joinWith(['course' => function ($query) use ($locationId, $from, $to) {
                           $query->joinWith(['lessons' => function ($query) {
-                              $query->andWhere(['lesson.isDeleted' => false]);
+                              $query->notDeleted();
                           }])
 						->confirmed()
 						->overlap($from, $to)
