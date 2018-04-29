@@ -15,6 +15,11 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  * and open the template in the editor.
  */
 ?>
+<style>
+  .table > tbody > tr.success > td ,.table > tbody > tr.kv-grid-group-row > td{
+	background-color: white !important;
+}
+</style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 <?php if ($searchModel->groupByMethod) : ?>
 		<?php
@@ -28,26 +33,26 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
                     return null;
                 },
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
+                'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
 
                 'group' => true,
                 'groupedRow' => true,
-                            'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
+                'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
                 return [
-                    'mergeColumns'=>[[2, 4]], // columns to merge in summary
+                    'mergeColumns'=>[[1]], // columns to merge in summary
                     'content'=>[              // content to show in each summary cell
-                      
-                       5=>GridView::F_SUM,
+                        1=> "Total for   ".\DateTime::createFromFormat('Y-m-d H:i:s', $model->invoice->date)->format('l, F jS, Y'),
+                       2=>GridView::F_SUM,
 
                     ],
                     'contentFormats'=>[      // content reformatting for each summary cell
 
-                        5=>['format'=>'number', 'decimals'=>2],
+                        2=>['format'=>'number', 'decimals'=>2],
 
                     ],
                     'contentOptions'=>[      // content html attributes for each summary cell
-                        2=>['style' => 'text-align:left'],
-                        5=>['style'=>'text-align:right'],
+                        1=>['style' => 'text-align:left;'],
+                        2=>['style'=>'text-align:right'],
 
                     ],
                     // html attributes for group summary row
@@ -62,7 +67,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'value' => function ($data) {
                     return $data->itemCategory->name;
                 },
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
+                'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
         ],
  
                         [
@@ -110,24 +115,25 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
                     return null;
                 },
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
+                'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
                 
                 'group' => true,
                 'groupedRow' => true,
                'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
                 return [
                     'mergeColumns'=>[[2, 4]], // columns to merge in summary
-                    'content'=>[              // content to show in each summary cell
+                    'content'=>[  
+                        // content to show in each summary cell
+                       2=> "Total for   ".\DateTime::createFromFormat('Y-m-d H:i:s', $model->invoice->date)->format('l, F jS, Y'),
                        5=>GridView::F_SUM,
 
                     ],
                     'contentFormats'=>[      // content reformatting for each summary cell
-                        2=>['format'=>'string'],
                         5=>['format'=>'number', 'decimals'=>2],
 
                     ],
                     'contentOptions'=>[      // content html attributes for each summary cell
-                        2=>['style' => 'text-align:left'],
+                        2=>['style' => 'text-align:left;font-style:italic'],
                         5=>['style'=>'text-align:right'],
 
                     ],
@@ -143,7 +149,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'value' => function ($data) {
                     return $data->itemCategory->name;
                 },
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
+                'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
                 'group' => true,
                 'groupedRow' => true,
                 'subGroupOf' => 0,
@@ -151,7 +157,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 return [
                     'mergeColumns'=>[[2, 4]],// columns to merge in summary
                     'content'=>[              // content to show in each summary cell
-                       
+                       2=> "Total for   ".$model->itemCategory->name,
                        5=>GridView::F_SUM,
                        
                     ],
@@ -161,8 +167,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                        
                     ],
                     'contentOptions'=>[
-                        2=>['style'=>'font-variant:small-caps'],// content html attributes for each summary cell
-                       // 2=>['style' => 'text-align:left'],
+                        2=>['style'=>'font-style:italic'],// content html attributes for each summary cell
                         5=>['style'=>'text-align:right'],
                         
                     ],

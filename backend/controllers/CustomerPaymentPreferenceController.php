@@ -76,6 +76,7 @@ class CustomerPaymentPreferenceController extends BaseController
             $model->userId = $id;
         } else {
             $model = $userModel->customerPaymentPreference;
+            $model->expiryDate= (new \DateTime($model->expiryDate))->format('M d,Y');
         }
         $data = $this->renderAjax('/user/customer/_form-payment-preference', [
             'model' => $model,

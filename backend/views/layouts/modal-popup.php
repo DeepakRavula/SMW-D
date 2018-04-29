@@ -45,7 +45,7 @@ Modal::begin([
 
     $(document).off('beforeSubmit', '#modal-form').on('beforeSubmit', '#modal-form', function () {
         $('#modal-spinner').show();
-	$('.modal-save').attr('disabled', true);
+	    $('.modal-save').attr('disabled', true);
         $('.modal-delete').attr('disabled', true);
         $('.modal-cancel').attr('disabled', true);
         $('.modal-save-all').attr('disabled', true);

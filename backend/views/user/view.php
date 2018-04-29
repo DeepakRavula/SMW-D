@@ -489,8 +489,13 @@ $this->params['action-button'] = $this->render('_action-button', [
         if ($('#payment-preference-listing').length) {
             $.pjax.reload({container: '#payment-preference-listing', replace:false, async: false, timeout: 6000});
         }
-        $.pjax.reload({container: '#group-quali-list', replace:false, async: false, timeout: 6000});
-        $.pjax.reload({container: '#private-quali-list', replace:false, async: false, timeout: 6000});
+        if ($('#private-quali-list').length) {
+            $.pjax.reload({container: '#private-quali-list', replace:false, async: false, timeout: 6000});
+        }
+        if ($('#group-quali-list').length) {
+            $.pjax.reload({container: '#group-quali-list', replace:false, async: false, timeout: 6000});
+        }
+        return false;
     });
 
 	$('.availability').click(function () {

@@ -273,18 +273,19 @@ class PaymentController extends BaseController
                 'paymentModel' => $paymentModel,
                 'creditDataProvider' => $creditDataProvider
             ]);
-            $response = [
-                'status' => true,
-                'hasCredit' => $creditDataProvider->totalCount > 0,
-                'data' => $data
-            ];
-            if($model->balance<=0)
+             if($model->balance<=0 && $model->isProFormaInvoice())
                 {
                   $response = [
                     'status' => false,
                     'message' => 'Can\'t Over Pay!',
                 ];
                 }
+            $response = [
+                'status' => true,
+                'hasCredit' => $creditDataProvider->totalCount > 0,
+                'data' => $data
+            ];
+           
         }
         return $response;
     }

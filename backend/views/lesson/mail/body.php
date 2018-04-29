@@ -27,6 +27,10 @@ $lessonDuration = ($duration->format('H') * 60) + $duration->format('i');?>
         <td>Duration</td>
         <td><?=$lessonDuration.'   minutes';?></td>
     </tr>
+       <tr>
+        <td>Status</td>
+        <td><?=$originalLesson->getStatus();?></td>
+    </tr>
     <?php if($originalLesson->isPrivate()):?>
         <tr>
         <td>Student Name</td>

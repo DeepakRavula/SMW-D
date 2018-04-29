@@ -539,7 +539,7 @@ class UserController extends BaseController
                     $userContact->labelId = Label::LABEL_WORK;
                     $userContact->isPrimary = true;
                     $userContact->save();
-
+                    $emailModel->labelId = $userContact->labelId;
                     $emailModel->userContactId = $userContact->id;
                     $emailModel->save();
                 }
