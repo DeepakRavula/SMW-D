@@ -210,7 +210,7 @@ trait Invoiceable
                     ->isConfirmed();
         if ($startDate) {
             $startDate = (new \DateTime($startDate))->format('Y-m-d');
-            $query->andWhere(['between', "DATE(date)", $startDate, $endDate]);
+            $query->andWhere(['AND', ['>=', 'DATE(date)', $startDate], ['<=', 'DATE(date)', $endDate]]);
         } else {
              $query->andWhere(['>', 'DATE(date)', $endDate]);
         }
