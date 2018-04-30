@@ -611,44 +611,34 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         },
 
         void: function() {
-    bootbox.prompt({
-    title: "Do you want to unschedule lesson",
-    inputType: 'checkbox',
-    inputOptions: [
-        {
-            text: 'Unschedule Lesson',
-            value: 'unschedule',
-        },
-    ],
-    callback: function (result) {
-        if (typeof result !== "undefined" && result !== null) {
-        var canbeUnscheduled=0;
-      if(result =='unschedule')
-      {
-          canbeUnscheduled=1;
-      }
-      else{
-         canbeUnscheduled=0;
-      }
-      var params = $.param({'canbeUnscheduled': canbeUnscheduled });
-       $('#invoice-spinner').show();
-       $.ajax({
-               url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>&'+params,
-                type   : 'post',
-                dataType: "json",
-                success: function(response)
-                {
-                    if(response.status)
+            bootbox.prompt({
+                title: "Do you want to unschedule lesson",
+                inputType: 'checkbox',
+                inputOptions: [
                     {
-                        invoice.reload();
-                        $('#success-notification').html('Invoice voided succesfully!').fadeIn().delay(5000).fadeOut();
-                    }
+                        text: 'Unschedule Lesson',
+                        value: 'unschedule',
+                    },
+                ],
+                callback: function (result) {
+                    var isChecked = $('.bootbox-input-checkbox').is(':checked');
+                    var params = $.param({'canbeUnscheduled': isChecked | 0 });
+                    $('#invoice-spinner').show();
+                    $.ajax({
+                        url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>&'+params,
+                        type   : 'post',
+                        dataType: "json",
+                        success: function(response)
+                        {
+                            if(response.status)
+                            {
+                                invoice.reload();
+                                $('#success-notification').html('Invoice voided succesfully!').fadeIn().delay(5000).fadeOut();
+                            }
+                        }
+                    });
                 }
             });
-    }
-    }
-});
-//           
         },
         
         postAfterPaid: function () {
