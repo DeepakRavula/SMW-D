@@ -83,19 +83,25 @@ public function behaviors()
             ->andWhere(['NOT IN', 'lesson.status', Lesson::STATUS_CANCELED])
             ->between($searchModel->fromDate, $searchModel->toDate)
             ->count();
-        
+        $fromDate = $searchModel->fromDate;
+        $from = $fromDate->format('Y-m-d');
+	    $toDate = $searchModel->toDate;
+        $to = $toDate->format('Y-m-d');
         $students = Student::find()
-            ->notDeleted()
-            ->joinWith(['enrolment' => function ($query) use ($locationId, $searchModel) {
-                $query->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
-                    $query->confirmed()
-                    ->location($locationId)
-                    ->between($searchModel->fromDate, $searchModel->toDate);
-                }]);
-            }])
-            ->active()
-            ->distinct(['enrolment.studentId'])
-            ->count();
+			->notDeleted()
+			->joinWith(['enrolment' => function ($query) use ($locationId, $from, $to) {
+				    $query->joinWith(['course' => function ($query) use ($locationId, $from, $to) {
+                          $query->joinWith(['lessons' => function ($query) {
+                             $query->andWhere(['NOT',['lesson.id'=>null]]);
+                          }])
+						->confirmed()
+						->overlap($from, $to)
+						->location($locationId);
+					}]);
+                }])
+            ->groupBy('student.id')
+			->active()
+			->count();
 
         $completedPrograms = [];
         $programs = Lesson::find()
