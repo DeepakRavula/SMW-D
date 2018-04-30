@@ -283,7 +283,8 @@ class PaymentController extends BaseController
             $response = [
                 'status' => true,
                 'hasCredit' => $creditDataProvider->totalCount > 0,
-                'data' => $data
+                'data' => $data,
+                'message'=>$creditDataProvider->totalCount ==0 ? "No credits Available!" :"",
             ];
            
         }
