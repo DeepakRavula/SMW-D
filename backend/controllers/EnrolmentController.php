@@ -35,6 +35,7 @@ use backend\models\discount\PaymentFrequencyEnrolmentDiscount;
 use common\models\log\StudentLog;
 use common\models\log\DiscountLog;
 use yii\widgets\ActiveForm;
+use yii\data\ArrayDataProvider;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 
@@ -310,7 +311,7 @@ class EnrolmentController extends BaseController
         $userEmail->setModel($courseDetail);
         $student->setModel($courseDetail);
         $user->status = User::STATUS_DRAFT;
-	$user->canLogin=true;
+	    $user->canLogin = true;
         if ($user->save()) {
             $auth = Yii::$app->authManager;
             $authManager = Yii::$app->authManager;
@@ -502,11 +503,46 @@ class EnrolmentController extends BaseController
 
     public function actionEditEndDate($id)
     {
+        $changedEndDate = Yii::$app->request->get('endDate');
         $model = $this->findModel($id);
-        $data = $this->renderAjax('update/_form-schedule', [
-            'model' => $model,
-            'course' => $model->course
-        ]);
+        $lastLesson = $model->lastRootLesson;
+        $lastLessonDate = Carbon::parse($lastLesson->date);
+        $action = null;
+        $dateRange = null;
+        $previewDataProvider = null;
+        if ($changedEndDate) {
+            $date = Carbon::parse($changedEndDate);
+            $objects = ['Lessons', 'Payment Cycles'];
+            $results = [];
+            if ($lastLessonDate > $date) {
+                $dateRange = $date->format('M d, Y') . ' - ' . $lastLessonDate->format('M d, Y');
+                $action = 'shrink';
+                array_push($objects, 'PFIs');
+                foreach ($objects as $value) {
+                    $results[] = [
+                        'objects' => $value,
+                        'action' => 'will be deleted',
+                        'date_range' => 'within ' . $dateRange
+                    ]; 
+                }
+            } else if ($lastLessonDate < $date) {
+                $dateRange = $lastLessonDate->format('M d, Y') . ' - ' . $date->format('M d, Y');
+                $action = 'extend';
+                foreach ($objects as $value) {
+                    $results[] = [
+                        'objects' => $value,
+                        'action' => 'will be created',
+                        'date_range' => 'within ' . $dateRange
+                    ]; 
+                }
+            }
+            $previewDataProvider = new ArrayDataProvider([
+                'allModels' => $results,
+                'sort' => [
+                    'attributes' => ['objects', 'action', 'date_range'],
+                ],
+            ]);
+        }
         $post = Yii::$app->request->post();
         $course = $model->course;
         $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
@@ -518,8 +554,6 @@ class EnrolmentController extends BaseController
             ]);
             $newEndDate = Carbon::parse($course->endDate);
             if ($endDate !== $newEndDate) {
-                $lastLesson = $model->lastRootLesson;
-                $lastLessonDate = Carbon::parse($lastLesson->date);
                 if ($lastLessonDate > $newEndDate) {
                     $invoice = $model->shrink();
                     if (!$invoice) {
@@ -528,21 +562,25 @@ class EnrolmentController extends BaseController
                         $credit = abs($invoice->invoiceBalance);
                         $message = '$' . $credit . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
                     }
-                    $model->updateAttributes([
-                        'isAutoRenew' => false
-                    ]);
                 } else if ($lastLessonDate < $newEndDate) {
                     $model->extend();
                 }
-                if($message) {
+                if ($message) {
                     $message = 'Enrolment end date succesfully updated!';
                 }
             }
             $response = [
                 'status' => true,
-                'message' => $message,
+                'message' => $message
             ];
         } else {
+            $data = $this->renderAjax('update/_form-schedule', [
+                'model' => $model,
+                'action' => $action,
+                'dateRange' => $dateRange,
+                'course' => $model->course,
+                'previewDataProvider' => $previewDataProvider
+            ]);
             $response = [
                 'status' => true,
                 'data' => $data,

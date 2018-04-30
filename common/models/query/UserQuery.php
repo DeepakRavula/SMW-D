@@ -44,11 +44,12 @@ class UserQuery extends ActiveQuery
                 $query->andWhere(['ul.location_id' => $locationId]);
             }])
             ->joinWith(['qualifications' => function ($query) use ($programId) {
-                $query->andWhere(['qualification.program_id' => $programId])
-                    ->notDeleted();
+                if ($programId) {
+                    $query->andWhere(['qualification.program_id' => $programId])
+                        ->notDeleted();
+                }
             }])
-            ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-            ->andWhere(['raa.item_name' => 'teacher']);
+            ->allTeachers();
 
         return $this;
     }
@@ -58,8 +59,7 @@ class UserQuery extends ActiveQuery
         return $this->joinWith(['userLocation ul' => function ($query) use ($locationId) {
                 $query->andWhere(['ul.location_id' => $locationId]);
             }])
-            ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-            ->andWhere(['raa.item_name' => 'teacher']);
+            ->allTeachers();
     }
 
     public function customers($locationId)

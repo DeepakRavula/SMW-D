@@ -50,16 +50,3 @@ use yii\jui\DatePicker;
     </div>
     <?php ActiveForm::end(); ?>
 </div>
-<script src="//code.jquery.com/jquery.js"></script>
-<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
-<script>
-    $('#customerpaymentpreference-expirydate').datepicker({
-        altField: '#customerpaymentpreference-expirydate',
-        altFormat: 'dd-mm-yy',
-        changeMonth: true,
-        changeYear: true,
-        yearRange: '-70:today',
-     onSelect: function(dateText) {
-    alert("Selected date: " + dateText + "; input's current value: " + this.value);
-  }
-    });

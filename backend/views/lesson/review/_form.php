@@ -97,7 +97,7 @@ use yii\helpers\Url;
             'changeId' : '#lesson-teacherid',
             'durationId' : '#course-duration',
             'lessonId' : '<?= $model->id; ?>',
-            'studentId' : '<?= $model->enrolment->studentId ?>'
+            'studentId' : '<?= $model->isGroup() ? null : $model->enrolment->studentId ?>'
         };
         $.fn.calendarDayView(options);
     });

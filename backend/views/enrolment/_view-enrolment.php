@@ -60,14 +60,6 @@ Modal::begin([
 ]);?>
 <?php Modal::end(); ?>
 
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Enrolment Edit</h4>',
-    'id' => 'enrolment-edit-enddate-modal',
-]);
-?>
-<div id="enrolment-edit-enddate"></div>
-<?php Modal::end(); ?>
 <script>
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     
@@ -75,20 +67,16 @@ Modal::begin([
         $('#enrolment-edit-modal').modal('hide');
         return false;
     });
+
     $(document).on('click', '.enrolment-rate-cancel', function(){
         $('#enrolment-rate-edit-modal').modal('hide');
         return false;
     });
- $(document).on('click', '#enrolment-edit-save-btn', function(){
+    
+    $(document).on('click', '#enrolment-edit-save-btn', function(){
        $('#spinner').show();
-    });  
-        $(document).on('click', '.enrolment-enddate-cancel', function(){
-        $('#enrolment-edit-enddate-modal').modal('hide');
-        return false;
     });
- $(document).on('click', '#enrolment-enddate-save-btn', function(){
-       $('#loader').show();
-    });  
+
     $(document).on('beforeSubmit', '#enrolment-rate-form', function(){
         $.ajax({
             url    : '<?= Url::to(['enrolment/edit-program-rate', 'id' => $model->id]); ?>',
@@ -109,11 +97,13 @@ Modal::begin([
         });
         return false;
     });
+    
     $(document).on('click', '.edit-enrolment-rate', function() {                  
         $('#spinner').hide(); 
-		$('#enrolment-rate-edit-modal').modal('show');
+        $('#enrolment-rate-edit-modal').modal('show');
         return false;
     });
+
     $(document).on('click', '.edit-enrolment', function(){
         $.ajax({
             url    : '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',
@@ -135,6 +125,7 @@ Modal::begin([
         });
         return false;
     });
+    
     $(document).on('click', '.edit-enrolment-enddate', function(){
         $.ajax({
             url    : '<?= Url::to(['enrolment/edit-end-date', 'id' => $model->id]); ?>',
@@ -144,34 +135,13 @@ Modal::begin([
             {
                 if(response.status)
                 {
-                    $('#enrolment-edit-enddate').html(response.data);
-                    $('#enrolment-edit-enddate-modal').modal('show');
-                     }
+                    $('#popup-modal').modal('show');
+                    $('#modal-content').html(response.data);
+                }
             }
         });
         return false;
     });
-    $(document).on('beforeSubmit', '#enrolment-enddate-form', function(){
-        $.ajax({
-            url    : '<?= Url::to(['enrolment/edit-end-date', 'id' => $model->id]); ?>',
-            type   : 'post',
-            dataType: "json",
-            data: $(this).serialize(),
-            success: function(response)
-            {
-               $('#loader').hide(); 
-                if(response.status)
-                {
-                    $('#enrolment-edit-enddate-modal').modal('hide');
-                    paymentFrequency.onEditableSuccess();
-                    if(response.message) {
-                        $('#enrolment-enddate-alert').html(response.message).fadeIn().delay(5000).fadeOut();
-                    }
-                }
-            }
-        });
-            return false;
-	});
 
     $(document).on('beforeSubmit', '#enrolment-update-form', function(){
         $.ajax({
