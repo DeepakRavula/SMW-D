@@ -7,7 +7,7 @@ use common\models\Lesson;
 <table>
    <?php if($model->isPrivate()):?>
         <tr>
-        <td>Student Name</td>
+        <td>Student</td>
         <td><?=$model->enrolment->student->fullname;?></td>
     </tr>
     <tr>
