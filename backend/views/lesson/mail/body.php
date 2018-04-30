@@ -49,6 +49,10 @@ use common\models\Lesson;
     <td>Duration</td>
     <td><?= (new \DateTime($model->duration))->format('H:i'); ?></td>
     </tr>
+    <tr>
+    <td>Status</td>
+	<td><?= $model->getStatus(); ?></td>
+    </tr>
 <?php if ($model->privateLesson) : ?>
     <tr>
     <td>Expiry Date</td>
