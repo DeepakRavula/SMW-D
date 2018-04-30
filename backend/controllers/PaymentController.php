@@ -89,7 +89,7 @@ class PaymentController extends BaseController
      */
     public function actionCreate()
     {
-        $model = new Payment();
+        $model = new Payment(['scenario' => Payment::SCENARIO_CREATE]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -213,7 +213,7 @@ class PaymentController extends BaseController
 
     public function actionInvoicePayment($id)
     {
-        $paymentModel = new Payment();
+        $paymentModel = new Payment(['scenario' => Payment::SCENARIO_CREATE]);
         $db = \Yii::$app->db;
         $transaction = $db->beginTransaction();
         $request = Yii::$app->request;

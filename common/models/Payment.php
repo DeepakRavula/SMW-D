@@ -31,6 +31,7 @@ class Payment extends ActiveRecord
     public $userName;
     
     const TYPE_OPENING_BALANCE_CREDIT = 1;
+    const SCENARIO_CREATE = 'scenario-create';
     const SCENARIO_EDIT = 'edit';
     const SCENARIO_DELETE = 'delete';
     const SCENARIO_CREDIT_USED_DELETE = 'credit-used-delete';
@@ -67,6 +68,8 @@ class Payment extends ActiveRecord
             [['amount'], 'validateNegativeBalance', 'except' => self::SCENARIO_OPENING_BALANCE],
             [['amount'], 'validateNegativeBalanceOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'number'],
+            ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE,
+                self::SCENARIO_APPLY_CREDIT]],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old',
                'sourceId', 'credit', 'isDeleted', 'transactionId','notes'], 'safe'],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
@@ -84,6 +87,13 @@ class Payment extends ActiveRecord
             if ((float) $this->amount > (float) $invoice->balance && !$invoice->isInvoice()) {
                 $this->addError($attributes, "Can't over pay");
             }
+        }
+    }
+
+    public function validateNonZero($attributes)
+    {
+        if ((float) $this->amount === (float) 0) {
+            $this->addError($attributes, "Amount can't be 0");
         }
     }
 

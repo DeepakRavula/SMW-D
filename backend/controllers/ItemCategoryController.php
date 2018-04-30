@@ -43,8 +43,14 @@ class ItemCategoryController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'items', 'get-item-values', 'print','invoice-number'],
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'items', 
+                            'get-item-values', 'print','invoice-number'],
                         'roles' => ['manageItemCategory'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['print'],
+                        'roles' => ['owner'],
                     ],
                 ],
             ],  
