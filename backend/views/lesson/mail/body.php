@@ -4,48 +4,58 @@ use common\models\Lesson;
 
 ?>
 
-<?php $originalLesson=Lesson::findOne(['lesson.id' => $model->id]);?>
 <table>
-        <td>Teacher</td>
-        <td><?=$originalLesson->teacher->publicIdentity;?></td>
-    </tr>
-    <tr>
-        <td>Program</td>
-        <td><?=$originalLesson->course->program->name;?></td>
-    </tr>
-    <tr>
-        <td>Day & Date</td>
-        <td><?=Yii::$app->formatter->asDate($originalLesson->date);?></td>
-    </tr>
-    <tr>
-        <td>Time</td>
-        <td><?=Yii::$app->formatter->asTime($originalLesson->date);?></td>
-    </tr>
-    <tr>
-       <?php  $duration = \DateTime::createFromFormat('H:i:s', $originalLesson->duration);
-$lessonDuration = ($duration->format('H') * 60) + $duration->format('i');?>
-        <td>Duration</td>
-        <td><?=$lessonDuration.'   minutes';?></td>
-    </tr>
-       <tr>
-        <td>Status</td>
-        <td><?=$originalLesson->getStatus();?></td>
-    </tr>
-    <?php if($originalLesson->isPrivate()):?>
+   <?php if($model->isPrivate()):?>
         <tr>
         <td>Student Name</td>
-        <td><?=$originalLesson->enrolment->student->fullname;?></td>
+        <td><?=$model->enrolment->student->fullname;?></td>
     </tr>
     <tr>
         <td>Customer</td>
-        <td><?=$originalLesson->enrolment->student->customer->publicIdentity;?></td>
+        <td><?=$model->enrolment->student->customer->publicIdentity;?></td>
     </tr>
     <tr>
-   <tr>
-        <td>Expiry Date</td>
-        <td><?=Yii::$app->formatter->asDate($originalLesson->privateLesson->expiryDate);?></td>
+        <?php endif;?>
+    <?php if ($model->hasSubstituteByTeacher()) : ?>
+        <?php $teacher = $model->rootLesson->teacher->publicIdentity  ; ?>
+    <tr>
+        <td>Original Teacher</td>
+        <td><?= $teacher ?></td>
     </tr>
     <?php endif; ?>
+    <tr>
+        <td>Teacher</td>
+        <td><?= $model->teacher->publicIdentity ?>
+        </td>
+    </tr>
+    <?php if ($model->isRescheduled() || $model->isUnscheduled()) : ?>
+        <?php $date = $model->rootLesson ? $model->rootLesson->date : $model->date ; ?>
+    <tr>
+        <td>Original Date</td>
+        <td><?= (new \DateTime($date))->format('l, F jS, Y'); ?></td>
+    </tr>
+    <?php endif; ?>
+    <?php if (!($model->isUnscheduled())) : ?>
+    <tr>
+        <td>Scheduled Date</td>
+        <td><?= (new \DateTime($model->date))->format('l, F jS, Y'); ?></td>
+    </tr>
+    <?php endif; ?>
+    <tr>
+    <td>Time</td>
+    <td><?= Yii::$app->formatter->asTime($model->date); ?></td>
+    </tr>
+    <tr>
+    <td>Duration</td>
+    <td><?= (new \DateTime($model->duration))->format('H:i'); ?></td>
+    </tr>
+<?php if ($model->privateLesson) : ?>
+    <tr>
+    <td>Expiry Date</td>
+    <td><?= Yii::$app->formatter->asDate($model->privateLesson->expiryDate); ?></td>
+    </tr>
+<?php endif; ?>
+
 </table>
 <?php if (!empty($model->reschedule) && !empty($model->enrolment)) : ?>
 <?php 
