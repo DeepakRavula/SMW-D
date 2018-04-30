@@ -316,11 +316,9 @@ class Lesson extends \yii\db\ActiveRecord
                     ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
-    public function getLessonPayments()
+    public function getPayments()
     {
-        return $this->hasMany(LessonPayment::className(), ['lessonId' => 'id'])
-            ->viaTable('payment', ['id' => 'paymentId'])
-                ->onCondition(['payment.isDeleted' => false]);
+        return $this->hasMany(LessonPayment::className(), ['lessonId' => 'id']);
     }
 
     public function getPaymentCycleLesson()
@@ -434,10 +432,12 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasMany(Enrolment::className(), ['courseId' => 'courseId'])
             ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);
     }
-    
+
     public function getLessonCredit()
     {
-        return $this->hasMany(LessonPayment::className(), ['lessonId' => 'id']);
+        return $this->hasMany(Payment::className(), ['id' => 'paymentId'])
+            ->via('payments')
+            ->onCondition(['payment.isDeleted' => false]);
     }
 
     public function hasGroupInvoice()
