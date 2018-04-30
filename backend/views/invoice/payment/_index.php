@@ -22,6 +22,8 @@ Modal::end(); ?>
 <?php $boxTools = null;?>
 <?php if (!$print): ?>
 <?php $boxTools = '<i title="Add" class="fa fa-plus add-payment m-r-10"></i>' ?>
+<?php $boxTools=$boxTools.$this->render('_button', [
+    ]);?>
 <?php $attributeAmount='amount';?>
 <?php else : $attributeAmount='';?>
 <?php endif; ?>
@@ -33,12 +35,6 @@ Modal::end(); ?>
         'withBorder' => true,
     ])
     ?>
-
-<?php if (!$print): ?>
-<div style="margin-bottom: 10px">   
-<?= Html::a(Yii::t('backend', 'Apply Credit'), ['#'], ['class' => 'btn btn-primary btn-sm apply-credit']);?>
-</div>
- <?php endif; ?>
 <div>
     		<?=
         $this->render('/invoice/payment/_payment-list', [
