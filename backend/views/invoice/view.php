@@ -621,22 +621,24 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                     },
                 ],
                 callback: function (result) {
-                    var isChecked = $('.bootbox-input-checkbox').is(':checked');
-                    var params = $.param({'canbeUnscheduled': isChecked | 0 });
-                    $('#invoice-spinner').show();
-                    $.ajax({
-                        url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>&'+params,
-                        type   : 'post',
-                        dataType: "json",
-                        success: function(response)
-                        {
-                            if(response.status)
+                    if (result) {
+                        var isChecked = $('.bootbox-input-checkbox').is(':checked');
+                        var params = $.param({'canbeUnscheduled': isChecked | 0 });
+                        $('#invoice-spinner').show();
+                        $.ajax({
+                            url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>&'+params,
+                            type   : 'post',
+                            dataType: "json",
+                            success: function(response)
                             {
-                                invoice.reload();
-                                $('#success-notification').html('Invoice voided succesfully!').fadeIn().delay(5000).fadeOut();
+                                if(response.status)
+                                {
+                                    invoice.reload();
+                                    $('#success-notification').html('Invoice voided succesfully!').fadeIn().delay(5000).fadeOut();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             });
         },
