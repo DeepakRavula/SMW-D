@@ -155,8 +155,12 @@ a.desc:after {
 .p-t-10 {
     padding-top: 10px;
 }
-.f-s-18 {
-	font-size:18px;
+.apply-credit-error-alert {
+    font-size:18px;
+    color:red;
+}
+.text-center{
+    text-align: center;
 }
 .f-s-24 {
 	font-size:24px;

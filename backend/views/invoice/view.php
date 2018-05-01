@@ -337,7 +337,7 @@ Modal::begin([
                     } else {
 bootbox.alert({
 title: 'Apply Credit',
-message: "<div style='text-align: center;'><span class='fa fa-warning f-s-24'style='color:red;'>  "+
+message: "<div class='text-center'><span class='fa fa-warning apply-credit-error-alert'>  "+
        response.message +
    "   </span></div>",
 class: "small",
