@@ -85,9 +85,7 @@ class EmailController extends BaseController
                 ->isConfirmed()
                 ->notDeleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
-                'pagination' => [
-                    'pageSize' => 60
-                ],
+                'pagination' => false,
         ]);
         $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_COURSE]);
         $body = $emailTemplate->header ?? 'Please find the lesson schedule for the program you enrolled on ' . 
