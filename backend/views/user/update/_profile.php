@@ -44,7 +44,7 @@ $loggedUser = User::findOne(Yii::$app->user->id);
             'clientOptions' => [
                 'defaultDate' => (new \DateTime($userProfile->birthDate))->format('M d, Y'),
                 'changeMonth' => true,
-                'yearRange' => '-70:today',
+                'yearRange' => '-150:-4',
                 'changeYear' => true,
                 ],
 				])->textInput(['placeholder' => 'Select Date'])->label('Birth Date');

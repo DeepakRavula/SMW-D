@@ -34,7 +34,7 @@ use yii\jui\DatePicker;
                 'dateFormat' => 'php:M d, Y',
                 'clientOptions' => [
                     'changeMonth' => true,
-                    'yearRange' => '1500:3000',
+                    'yearRange' => '-150:-4',
                     'changeYear' => true,
                 ],
             ])->textInput(['placeholder' => 'Select Date']);
