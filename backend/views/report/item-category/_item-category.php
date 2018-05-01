@@ -19,6 +19,13 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
   .table > tbody > tr.success > td ,.table > tbody > tr.kv-grid-group-row > td{
 	background-color: white !important;
 }
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: white !important;
+}
+.table > thead:first-child > tr:first-child > th{
+    border-top: 0;
+    color : blue;
+}
 </style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 <?php if ($searchModel->groupByMethod) : ?>
