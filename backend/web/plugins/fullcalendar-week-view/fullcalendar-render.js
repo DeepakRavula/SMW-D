@@ -59,6 +59,7 @@ var calendar = {
             },
             select: function (start) {
                 $('#week-view-calendar').fullCalendar('removeEvents', 'newEnrolment');
+                $('#week-view-calendar').fullCalendar('removeEvents', 'newEvent');
                 var response = {
                     'date': moment(start).format('DD-MM-YYYY h:mm A')
                 };
@@ -81,6 +82,7 @@ var calendar = {
             eventAfterAllRender: function () {
                 $('.fc-short').removeClass('fc-short');
                 $('#week-view-spinner').hide();
+                $(document).trigger("week-calendar-after-render");
             },
             selectable: true,
             selectHelper: true

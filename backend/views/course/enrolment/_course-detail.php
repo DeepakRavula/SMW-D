@@ -86,24 +86,6 @@ use kartik\select2\Select2;
             $('.modal-save').text('Preview Lessons');
         }
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
-        if ($('#enrolmentform-fromtime').val()) {
-            $('#week-view-calendar').fullCalendar('removeEvents', 'newEnrolment');
-            var duration = '<?= $model->duration; ?>';
-            var durationMinutes = moment.duration(duration).asMinutes();
-            var start = moment($('#enrolmentform-startdate').val() + ' ' + $('#enrolmentform-fromtime').val());
-            var endtime = start.clone();
-            moment(endtime.add(durationMinutes, 'minutes'));
-            $('#week-view-calendar').fullCalendar('renderEvent',
-                {
-                    id: 'newEnrolment',
-                    start: start,
-                    end: endtime,
-                    allDay: false
-                },
-            true // make the event "stick"
-            );
-            $('#week-view-calendar').fullCalendar('unselect');
-        }
         var options = {
             'date' : $('#enrolmentform-startdate').val(),
             'renderId' : '#enrolment-create-calendar',
@@ -118,5 +100,26 @@ use kartik\select2\Select2;
         $('.modal-back').removeClass("add-customer-back");
         $('.modal-back').removeClass("course-date-detail-back");
         $('.modal-back').addClass('course-detail-back');
+    });
+
+    $(document).on('week-calendar-after-render', function(event, params) {
+        var event = $('#week-view-calendar').fullCalendar('clientEvents', 'newEnrolment');
+        if ($.isEmptyObject(event)) {
+            var duration = '<?= $model->duration; ?>';
+            var durationMinutes = moment.duration(duration).asMinutes();
+            var start = moment($('#enrolmentform-startdate').val() + ' ' + $('#enrolmentform-fromtime').val());
+            var endtime = start.clone();
+            var end = moment(endtime.add(durationMinutes, 'minutes'));
+            $('#week-view-calendar').fullCalendar('renderEvent',
+                {
+                    id: 'newEvent',
+                    start: start,
+                    end: end,
+                    allDay: false
+                },
+            true // make the event "stick"
+            );
+            $('#week-view-calendar').fullCalendar('unselect');
+        }
     });
 </script>
