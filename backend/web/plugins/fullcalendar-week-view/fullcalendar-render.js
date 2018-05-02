@@ -78,6 +78,9 @@ var calendar = {
                 );
                 $('#week-view-calendar').fullCalendar('unselect');
             },
+            eventAfterRender: function () {
+                //$(document).trigger("week-calendar-after-render");
+            },
             eventAfterAllRender: function () {
                 $('.fc-short').removeClass('fc-short');
                 $('#week-view-spinner').hide();
