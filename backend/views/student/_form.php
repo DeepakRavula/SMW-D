@@ -32,7 +32,7 @@ use yii\jui\DatePicker;
             'clientOptions' => [
                 'defaultDate' => (new \DateTime($model->birth_date))->format('M d, Y'),
                 'changeMonth' => true,
-                'yearRange' => '-150:-4',
+                'yearRange' => '-70:-4',
                 'changeYear' => true,
             ],
             ])->textInput(['placeholder' => 'Select Date']);
