@@ -29,6 +29,7 @@ class LessonSearch extends Lesson
     public $summariseReport = false;
     public $student;
     public $program;
+    public $teacher;
     public $ids;
     public $attendanceStatus;
     public $rate;
@@ -41,7 +42,7 @@ class LessonSearch extends Lesson
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
             [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId',
-                'invoiceType','dateRange', 'rate','student', 'program'], 'safe'],
+                'invoiceType','dateRange', 'rate','student', 'program', 'teacher'], 'safe'],
         ];
     }
     

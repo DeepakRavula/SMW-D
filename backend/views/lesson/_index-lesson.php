@@ -40,7 +40,7 @@ $this->params['action-button'] = $this->render('_action-menu', [
             ],
             [
                 'label' => 'Teacher',
-		'attribute' => 'teacher',
+		        'attribute' => 'teacher',
                 'value' => function ($data) {
                     return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
                 },
