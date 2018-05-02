@@ -335,7 +335,13 @@ Modal::begin([
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Apply Credit</h4>');
                         $('.modal-save').text('Pay now')
                     } else {
-                        $('#invoice-error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+bootbox.alert({
+title: 'Apply Credit',
+message: "<div class='text-center'><span class='fa fa-warning apply-credit-error-alert'>  "+
+       response.message +
+   "   </span></div>",
+class: "small",
+});
                     }
                 }
             });
