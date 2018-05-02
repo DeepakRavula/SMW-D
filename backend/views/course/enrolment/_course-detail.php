@@ -58,7 +58,7 @@ use kartik\select2\Select2;
     $(document).off('click', '.course-detail-back').on('click', '.course-detail-back', function () {
         $('#modal-spinner').show();
         $.ajax({
-            url: '<?= Url::to(['course/create-enrolment-basic', 'studentId' => !empty($student) ? $student->id : null,
+            url: '<?= Url::to(['course/create-enrolment-date-detail', 'studentId' => !empty($student) ? $student->id : null,
                 'isReverse' => $isReverse, 'EnrolmentForm' => $model]) ?>',
             type: 'get',
             dataType: "json",
@@ -86,6 +86,24 @@ use kartik\select2\Select2;
             $('.modal-save').text('Preview Lessons');
         }
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
+        if ($('#enrolmentform-fromtime').val()) {
+            $('#week-view-calendar').fullCalendar('removeEvents', 'newEnrolment');
+            var duration = '<?= $model->duration; ?>';
+            var durationMinutes = moment.duration(duration).asMinutes();
+            var start = moment($('#enrolmentform-startdate').val() + ' ' + $('#enrolmentform-fromtime').val());
+            var endtime = start.clone();
+            moment(endtime.add(durationMinutes, 'minutes'));
+            $('#week-view-calendar').fullCalendar('renderEvent',
+                {
+                    id: 'newEnrolment',
+                    start: start,
+                    end: endtime,
+                    allDay: false
+                },
+            true // make the event "stick"
+            );
+            $('#week-view-calendar').fullCalendar('unselect');
+        }
         var options = {
             'date' : $('#enrolmentform-startdate').val(),
             'renderId' : '#enrolment-create-calendar',
@@ -98,6 +116,7 @@ use kartik\select2\Select2;
         $.fn.calendarDayView(options);
         $('#modal-spinner').hide();
         $('.modal-back').removeClass("add-customer-back");
+        $('.modal-back').removeClass("course-date-detail-back");
         $('.modal-back').addClass('course-detail-back');
     });
 </script>
