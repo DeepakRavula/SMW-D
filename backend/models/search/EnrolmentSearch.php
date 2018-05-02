@@ -22,6 +22,8 @@ class EnrolmentSearch extends Enrolment
     public $startdate;
     public $startBeginDate;
     public $startEndDate;
+    public $studentView;
+    public $studentId;
     /**
      * {@inheritdoc}
      */
@@ -30,7 +32,7 @@ class EnrolmentSearch extends Enrolment
         return [
             [['id', 'courseId', 'studentId', 'isDeleted'], 'integer'],
             [['showAllEnrolments','program','course','student','startdate','teacher','startBeginDate',
-                            'startEndDate'], 'safe']
+                            'startEndDate','studentView','studentId'], 'safe']
         ];
     }
 
@@ -53,6 +55,8 @@ class EnrolmentSearch extends Enrolment
     public function search($params)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+         $currentdate= $currentDate = new \DateTime();
+       $currentDate = $currentdate->format('Y-m-d');
         $query = Enrolment::find()
             ->joinWith(['course' => function ($query) use ($locationId) {
                 $query->location($locationId)
@@ -60,8 +64,13 @@ class EnrolmentSearch extends Enrolment
             }])
             ->notDeleted()
             ->isConfirmed()
-                        ->isRegular();
-
+            ->isRegular();
+             if ($this->studentView) {
+                 if (!$this->showAllEnrolments) {
+                $query->andWhere(['>=', 'course.endDate', $currentDate]);
+            } 
+            $query->andWhere(['enrolment.studentId' => $this->studentId]);
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -104,6 +113,7 @@ class EnrolmentSearch extends Enrolment
                     (new \DateTime($this->startBeginDate))->format('Y-m-d'),
                     (new \DateTime($this->startEndDate))->format('Y-m-d')]);
         }
+       
         if (! $this->showAllEnrolments) {
             $query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
                 ->isConfirmed()
