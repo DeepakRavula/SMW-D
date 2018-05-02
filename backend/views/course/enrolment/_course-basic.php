@@ -38,7 +38,7 @@ use yii\web\View;
             ?>
         </div>
     </div>
-
+    
     <div class="row">
         <div class="col-xs-6">
             <label class="modal-form-label">Rate (per hour)</label>
@@ -53,8 +53,8 @@ use yii\web\View;
         </div>
         <div class="col-xs-1 enrolment-text"><label class="text-muted">/hr</label></div>
     </div>
-
-
+   
+   
     <div class="row">
         <div class="col-xs-6">
             <label class="modal-form-label">Duration</label>

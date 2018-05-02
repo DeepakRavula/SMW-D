@@ -5,10 +5,15 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 ?>
+<?php yii\widgets\Pjax::begin([
+    'id' => 'student-enrolment-list',
+    'timeout' => 6000,
+    'enablePushState'=>false,
+]) ?>
 <div class="grid-row-open"> 
 <?php
 echo GridView::widget([
-    'id' => 'enrolment-grid',
+    'id' => 'student-enrolment-grid',
     'dataProvider' => $enrolmentDataProvider,
     'summary' => false,
         'emptyText' => false,
@@ -76,3 +81,4 @@ echo GridView::widget([
 ]);
 ?>
 </div>
+ <?php \yii\widgets\Pjax::end(); ?>

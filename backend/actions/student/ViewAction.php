@@ -11,7 +11,7 @@ use common\models\ExamResult;
 use common\models\Note;
 use common\models\Location;
 use common\models\log\LogHistory;
-
+use backend\models\search\EnrolmentSearch;
 /**
  * List of models.
  */
@@ -38,6 +38,7 @@ class ViewAction extends Action
                         'programId' => $enrolment->course->programId
                 ];
             }
+            $enrolmentSearchModel=new EnrolmentSearch();
             return $this->controller->render('view', [
                     'model' => $model,
                     'allEnrolments' => $allEnrolments,
@@ -46,7 +47,8 @@ class ViewAction extends Action
                     'unscheduledLessonDataProvider' => $this->getUnscheduledLessons($id, $locationId),
                     'examResultDataProvider' => $this->getExamResults($id),
                     'noteDataProvider' => $this->getNotes($id),
-                    'logs' => $this->getLogs($id)
+                    'logs' => $this->getLogs($id),
+                    'enrolmentSearchModel'=> $enrolmentSearchModel,
                     ]);
         } else {
             $this->controller->redirect(['index', 'StudentSearch[showAllStudents]' => false]);
@@ -117,22 +119,17 @@ class ViewAction extends Action
 
     protected function getEnrolments($id, $locationId)
     {
-        $query = Enrolment::find()
-                ->joinWith(['course' => function ($query) {
-                    $query->isConfirmed();
-                }])
-                ->location($locationId)
-                ->notDeleted()
-                ->isConfirmed()
-                ->andWhere(['studentId' => $id])
-                ->isRegular();
-
-        return new ActiveDataProvider([
-                'query' => $query,
-                'pagination' => [
-                        'pageSize' => 5
-                ]
-        ]);
+       $searchModel = new EnrolmentSearch();
+       $request = Yii::$app->request;
+       $searchModel->studentView=true;
+       $searchModel->studentId=$id;
+        if ($searchModel->load($request->get())) {
+            $enrolmentRequest = $request->get('EnrolmentSearch');
+            $searchModel->showAllEnrolments = $enrolmentRequest['showAllEnrolments'];
+        }
+       
+       $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+       return $dataProvider;
     }
     
     protected function findModel($id)
