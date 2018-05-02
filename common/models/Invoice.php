@@ -799,11 +799,13 @@ class Invoice extends \yii\db\ActiveRecord
         }
     }
 
-    public function void()
+    public function void($canbeUnscheduled)
     {
+       // print_r($canbeUnscheduled);die('coming');
         $status = false;
         if (!$this->isVoid) {
             foreach ($this->lineItems as $lineItem) {
+                $lineItem->lessonCanBeUnscheduled=$canbeUnscheduled;
                 $lineItem->delete();
             }
             $this->updateAttributes(['isVoid' => true]);
