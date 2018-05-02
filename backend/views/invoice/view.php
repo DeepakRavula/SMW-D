@@ -335,7 +335,13 @@ Modal::begin([
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Apply Credit</h4>');
                         $('.modal-save').text('Pay now')
                     } else {
-                        $('#invoice-error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+bootbox.alert({
+title: 'Apply Credit',
+message: "<div class='text-center'><span class='fa fa-warning apply-credit-error-alert'>  "+
+       response.message +
+   "   </span></div>",
+class: "small",
+});
                     }
                 }
             });
@@ -611,9 +617,29 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         },
 
         void: function() {
-            $('#invoice-spinner').show();
-            $.ajax({
-                url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>',
+    bootbox.prompt({
+    title: "Do you want to unschedule lesson",
+    inputType: 'checkbox',
+    inputOptions: [
+        {
+            text: 'Unschedule Lesson',
+            value: 'unschedule',
+        },
+    ],
+    callback: function (result) {
+        if (typeof result !== "undefined" && result !== null) {
+        var canbeUnscheduled=0;
+      if(result =='unschedule')
+      {
+          canbeUnscheduled=1;
+      }
+      else{
+         canbeUnscheduled=0;
+      }
+      var params = $.param({'canbeUnscheduled': canbeUnscheduled });
+       $('#invoice-spinner').show();
+       $.ajax({
+               url    : '<?= Url::to(['invoice/void', 'id' => $model->id]); ?>&'+params,
                 type   : 'post',
                 dataType: "json",
                 success: function(response)
@@ -625,6 +651,10 @@ $(document).on("click", '.adjust-invoice-tax', function() {
                     }
                 }
             });
+    }
+    }
+});
+//           
         },
         
         postAfterPaid: function () {

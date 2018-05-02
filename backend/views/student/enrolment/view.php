@@ -3,18 +3,20 @@
 use yii\bootstrap\Modal;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
-
+use yii\helpers\Url;
 ?>
 
 <?php yii\widgets\Pjax::begin([
-    'id' => 'enrolment-grid',
+    'id' => 'enrolment-list-student',
     'timeout' => 6000,
+    'enablePushState'=>false,
 ]) ?>	
-<div class="col-md-12">	
+<div class="col-md-12">
 <?php
     $toolBoxHtml = $this->render('_button', [
         'model' => $model,
-    ]);
+        'enrolmentSearchModel'=>$enrolmentSearchModel,
+     ]);
         LteBox::begin([
             'type' => LteConst::TYPE_DEFAULT,
             'boxTools' => $toolBoxHtml,
@@ -45,3 +47,13 @@ use insolita\wgadminlte\LteConst;
 <div id="group-course-content"></div>
 
 <?php Modal::end(); ?>
+<script>
+$(document).ready(function(){
+  $("#enrolmentsearch-showallenrolments").on("click", function() {
+      var showAllEnrolments = $(this).is(":checked");
+       var params=$.param({ 'EnrolmentSearch[showAllEnrolments]':(showAllEnrolments | 0),'EnrolmentSearch[studentView]':1,'EnrolmentSearch[studentId]':<?= $model->id ?>,});
+      var url = "<?php echo Url::to(['student/view', 'id' => $model->id]); ?>&"+params;
+       $.pjax.reload({url: url,container: "#student-enrolment-list", replace: false, timeout: 6000});  //Reload GridView //Reload GridView
+          });
+});
+  </script>
