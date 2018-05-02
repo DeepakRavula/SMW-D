@@ -104,7 +104,9 @@ use kartik\select2\Select2;
 
     $(document).on('week-calendar-after-render', function(event, params) {
         var event = $('#week-view-calendar').fullCalendar('clientEvents', 'newEnrolment');
-        if ($.isEmptyObject(event)) {
+        var newevent = $('#week-view-calendar').fullCalendar('clientEvents', 3);
+        var time = $('#enrolmentform-fromtime').val();
+        if ($.isEmptyObject(event) && $.isEmptyObject(newevent) && !$.isEmptyObject(time)) {debugger
             var duration = '<?= $model->duration; ?>';
             var durationMinutes = moment.duration(duration).asMinutes();
             var start = moment($('#enrolmentform-startdate').val() + ' ' + $('#enrolmentform-fromtime').val());
@@ -112,7 +114,7 @@ use kartik\select2\Select2;
             var end = moment(endtime.add(durationMinutes, 'minutes'));
             $('#week-view-calendar').fullCalendar('renderEvent',
                 {
-                    id: 'newEvent',
+                    id: 3,
                     start: start,
                     end: end,
                     allDay: false

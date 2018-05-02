@@ -101,6 +101,7 @@ class CourseReschedule extends Model
             ->statusScheduled()
             ->isConfirmed()
             ->between($startDate, $endDate)
+            ->orderBy(['lesson.date' => SORT_ASC])
             ->all();
         $course = Course::findOne($this->courseId);
         $dayList = Course::getWeekdaysList();
