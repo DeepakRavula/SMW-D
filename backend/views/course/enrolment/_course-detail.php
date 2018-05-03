@@ -58,7 +58,7 @@ use kartik\select2\Select2;
     $(document).off('click', '.course-detail-back').on('click', '.course-detail-back', function () {
         $('#modal-spinner').show();
         $.ajax({
-            url: '<?= Url::to(['course/create-enrolment-basic', 'studentId' => !empty($student) ? $student->id : null,
+            url: '<?= Url::to(['course/create-enrolment-date-detail', 'studentId' => !empty($student) ? $student->id : null,
                 'isReverse' => $isReverse, 'EnrolmentForm' => $model]) ?>',
             type: 'get',
             dataType: "json",
@@ -98,6 +98,30 @@ use kartik\select2\Select2;
         $.fn.calendarDayView(options);
         $('#modal-spinner').hide();
         $('.modal-back').removeClass("add-customer-back");
+        $('.modal-back').removeClass("course-date-detail-back");
         $('.modal-back').addClass('course-detail-back');
+    });
+
+    $(document).on('week-calendar-after-render', function(event, params) {
+        var event = $('#week-view-calendar').fullCalendar('clientEvents', 'newEnrolment');
+        var newevent = $('#week-view-calendar').fullCalendar('clientEvents', 3);
+        var time = $('#enrolmentform-fromtime').val();
+        if ($.isEmptyObject(event) && $.isEmptyObject(newevent) && !$.isEmptyObject(time)) {debugger
+            var duration = '<?= $model->duration; ?>';
+            var durationMinutes = moment.duration(duration).asMinutes();
+            var start = moment($('#enrolmentform-startdate').val() + ' ' + $('#enrolmentform-fromtime').val());
+            var endtime = start.clone();
+            var end = moment(endtime.add(durationMinutes, 'minutes'));
+            $('#week-view-calendar').fullCalendar('renderEvent',
+                {
+                    id: 3,
+                    start: start,
+                    end: end,
+                    allDay: false
+                },
+            true // make the event "stick"
+            );
+            $('#week-view-calendar').fullCalendar('unselect');
+        }
     });
 </script>
