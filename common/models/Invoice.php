@@ -331,7 +331,12 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function hasPayments()
     {
-        return $this->invoicePaymentTotal != 0;
+        $payments = Payment::find()
+            ->joinWith('invoicePayment ip')
+            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere(['payment.isDeleted' => false])
+            ->all();
+        return $payments ? true : false;
     }
 
     public function isDeleted()

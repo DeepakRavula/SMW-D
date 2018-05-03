@@ -93,14 +93,6 @@ class PaymentCycle extends \yii\db\ActiveRecord
                 ->onCondition(['lesson.isDeleted' => false]);
     }
 
-    public function beforeSoftDelete()
-    {
-        foreach ($this->paymentCycleLessons as $payemntCycleLesson) {
-            $payemntCycleLesson->delete();
-        }
-        return true;
-    }
-
     public function getInvoiceItemPaymentCycleLessons()
     {
         return $this->hasMany(InvoiceItemPaymentCycleLesson::className(), ['paymentCycleLessonId' => 'id'])
@@ -141,11 +133,10 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function beforeDelete()
     {
-        if ($this->proFormaInvoice && !$this->proFormaInvoice->isPaid()) {
+        if ($this->proFormaInvoice && !$this->proFormaInvoice->hasPayments()) {
             $this->proFormaInvoice->trigger(Invoice::EVENT_DELETE);
             $this->proFormaInvoice->delete();
         }
-        PaymentCycleLesson::deleteAll(['paymentCycleId' => $this->id]);
         return parent::beforeDelete();
     }
 
