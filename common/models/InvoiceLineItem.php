@@ -282,7 +282,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function afterSoftDelete()
     {
-        if (!$this->invoice->hasLineItem() && !$this->invoice->isInvoice()) {
+        if (!$this->invoice->hasLineItem() && !$this->invoice->isInvoice() && !$this->hasPayments()) {
             $this->invoice->delete();
         }
         return $this->invoice->save();
