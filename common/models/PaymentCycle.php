@@ -85,6 +85,12 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return $this->hasMany(PaymentCycleLesson::className(), ['paymentCycleId' => 'id'])
             ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
+
+    public function getPaymentCycleLesson()
+    {
+        return $this->hasOne(PaymentCycleLesson::className(), ['paymentCycleId' => 'id'])
+            ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
+    }
     
     public function getLessons()
     {
@@ -156,6 +162,12 @@ class PaymentCycle extends \yii\db\ActiveRecord
         if (!$insert) {
             return parent::afterSave($insert, $changedAttributes);
         }
+        $this->createPaymentcycleLesson();
+        return parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function createPaymentCycleLesson()
+    {
         $locationId = $this->enrolment->course->locationId;
         $startDate  = new \DateTime($this->startDate);
         $endDate    = new \DateTime($this->endDate);
@@ -185,7 +197,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
                 $this->proFormaInvoice->save();
             }
         }
-        return parent::afterSave($insert, $changedAttributes);
+        return true;
     }
 
     public function createProFormaInvoice()

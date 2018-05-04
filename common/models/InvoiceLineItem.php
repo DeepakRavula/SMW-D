@@ -298,10 +298,9 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                         $lessonCreditPayment->delete();
                     }
                 }
-              
                 if($this->lessonCanBeUnscheduled)
                 {
-                $this->lesson->unschedule();
+                    $this->lesson->unschedule();
                 }
             }
         }
