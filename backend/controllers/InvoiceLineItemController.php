@@ -185,7 +185,7 @@ class InvoiceLineItemController extends BaseController
         if (!$model->invoice->isPosted) {
             $invoiceModel = $model->invoice;
             if ($model->delete()) {
-                $invoiceModel->save();
+               // $invoiceModel->save();
             }
             $response = [
                 'status' => true,
