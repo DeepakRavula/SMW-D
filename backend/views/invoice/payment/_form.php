@@ -4,6 +4,7 @@ use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
 use yii\helpers\Url;
 use common\models\PaymentMethod;
+use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -40,7 +41,7 @@ use common\models\PaymentMethod;
         </div>
    </div>
 <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-7">
         <?php if ($model->payment_method_id === PaymentMethod::TYPE_CHEQUE) : ?>
             <?php $label = 'Cheque Number'; ?>
         <?php else : ?>
@@ -48,6 +49,18 @@ use common\models\PaymentMethod;
         <?php endif; ?>
         
             <?= $form->field($model, 'reference')->textInput()->label($label); ?>
+        </div>
+        <div class="col-md-5">
+        <?php echo $form->field($model, 'payment_method_id')->dropDownList(
+ ArrayHelper::map(PaymentMethod::find()
+                ->andWhere([
+                    'active' => PaymentMethod::STATUS_ACTIVE,
+                    'displayed' => 1,
+                ])
+                  ->orderBy(['sortOrder' => SORT_ASC])->all(), 'id', 'name')
+);
+            ?>
+        </div>
         </div>
     </div>
    <div class="row">
