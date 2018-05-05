@@ -3,7 +3,6 @@
 namespace backend\controllers;
 
 use Yii;
-use yii\helpers\ArrayHelper;
 use yii\web\Response;
 use yii\filters\ContentNegotiator;
 use common\models\Lesson;

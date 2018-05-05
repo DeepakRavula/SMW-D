@@ -36,4 +36,9 @@ class PaymentCycleLessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['payment_cycle_lesson.isDeleted' => false]);
     }
+
+    public function deleted()
+    {
+        return $this->andWhere(['payment_cycle_lesson.isDeleted' => true]);
+    }
 }
