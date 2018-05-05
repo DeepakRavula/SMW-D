@@ -181,8 +181,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ];
         ?>
 	<?php endif; ?>
-
-            <?=
+    <div class="grid-row-open">
+        <?=
             GridView::widget([
                 'dataProvider' => $dataProvider,
                 'summary' => false,
@@ -190,6 +190,13 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'options' => ['class' => ''],
                 'showPageSummary' => true,
                 'headerRowOptions' => ['class' => 'bg-light-gray'],
+                'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+                    if(! $searchModel->groupByMethod) {
+                        $url = Url::to(['invoice/view', 'id' => $model->invoice->id]);
+                        $data = ['data-url' => $url];
+                        return $data;
+                    }
+                },
                 'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
                 'pjax' => true,
                 'pjaxSettings' => [
@@ -201,3 +208,4 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'columns' => $columns,
             ]);
             ?>
+    </div>
