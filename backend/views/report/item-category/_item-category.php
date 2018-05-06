@@ -16,8 +16,9 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  */
 ?>
 <style>
-  .table > tbody > tr.success > td ,.table > tbody > tr.kv-grid-group-row > td{
-	background-color: white !important;
+  .table > tbody > tr.success > td ,.table > tbody > tr.kv-grid-group-row > td,.table > tbody > tr.kv-page-summary > td{
+    background-color: white !important;
+    pointer-events:none;
 }
 </style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
