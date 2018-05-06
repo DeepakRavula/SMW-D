@@ -21,6 +21,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 }
 </style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
+<?php $totalReportValue = ItemCategory::getTotal($dataProvider->query->all()); ?>
 <?php if ($searchModel->groupByMethod) : ?>
 		<?php
        $columns = [
@@ -230,7 +231,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'emptyText' => false,
         'showPageSummary' => true,
                 'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
+        'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed table-itemcategory-report', 'id' => 'payment'],
         'pjax' => true,
         'pjaxSettings' => [
             'neverTimeout' => true,
@@ -253,24 +254,23 @@ $(document).ready(function(){
 function addNewRow()
 {
     var newSummaryContainer=$("<tbody>");
-    var newRow = $("<tr class='report-footer-grandtotal'>");
+    var newRow = $("<tr class='report-footer-grandtotal f-s-18'>");
         var cols = "";
         var totalReportValue=<?= Yii::$app->formatter->asDecimal($totalReportValue, 2) ?>;
         var groupByMethod = $("#group-by-method").is(":checked");
         colSpanValue=3;
         if(groupByMethod)
         {
-        colSpanValue=2;
+        colSpanValue=1;
         }
        
-        cols += '<td colspan=colSpanValue>Grand Total</td>';
-        cols += '<td>'+totalReportValue+'</td>';
+        cols += '<td colspan='+colSpanValue+'>Grand Total</td>';
+        cols += '<td class="text-right">'+totalReportValue+'</td>';
         
         newRow.append(cols);
         newSummaryContainer.append(newRow);
         $("table.table-itemcategory-report").append(newSummaryContainer);
 
 }
-    });
 });
   </script>
