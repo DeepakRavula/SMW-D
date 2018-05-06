@@ -67,6 +67,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'value' => function ($data) {
                     return $data->itemCategory->name;
                 },
+                'pageSummary'=>'Page Total',
                 'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
         ],
  
@@ -197,7 +198,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     return $data->description;
                 },
                     
-                    'pageSummary' => 'Grand Total',
+                    'pageSummary' => 'Page Total',
                     'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
             ],
 
@@ -241,3 +242,35 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
     ]);
     ?>
 </div>
+<script>
+$(document).ready(function(){
+    addNewRow();
+    $(document).on('pjax:success', function() {
+    // Your code goes here ...
+    addNewRow();
+   
+});
+function addNewRow()
+{
+    var newSummaryContainer=$("<tbody>");
+    var newRow = $("<tr class='report-footer-grandtotal'>");
+        var cols = "";
+        var totalReportValue=<?= Yii::$app->formatter->asDecimal($totalReportValue, 2) ?>;
+        var groupByMethod = $("#group-by-method").is(":checked");
+        colSpanValue=3;
+        if(groupByMethod)
+        {
+        colSpanValue=2;
+        }
+       
+        cols += '<td colspan=colSpanValue>Grand Total</td>';
+        cols += '<td>'+totalReportValue+'</td>';
+        
+        newRow.append(cols);
+        newSummaryContainer.append(newRow);
+        $("table.table-itemcategory-report").append(newSummaryContainer);
+
+}
+    });
+});
+  </script>
