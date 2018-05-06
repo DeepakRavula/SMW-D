@@ -474,3 +474,7 @@ dl {
     max-height: calc(100vh - 143px);
     overflow-y: auto; 
 }
+  .table > tbody > tr.success > td ,.table > tbody > tr.kv-grid-group-row > td,.table > tbody > tr.kv-page-summary > td{
+    background-color: white !important;
+    pointer-events:none;
+}
