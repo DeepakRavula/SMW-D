@@ -180,6 +180,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ],
                  [
                      'label'=>'ID',
+                     'pageSummary' => 'Page Total',
                 'value' => function ($data) {
                     return $data->invoice->getInvoiceNumber();
                 },
@@ -199,7 +200,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     return $data->description;
                 },
                     
-                    'pageSummary' => 'Page Total',
+                    
                     'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
             ],
 
