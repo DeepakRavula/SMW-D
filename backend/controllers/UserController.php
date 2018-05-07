@@ -199,12 +199,19 @@ class UserController extends BaseController
     }
     protected function getEnrolmentDataProvider($id, $locationId)
     {
+        $currentdate = new \DateTime();
+        $currentDate = $currentdate->format('Y-m-d');
         $enrolmentQuery = Enrolment::find()
             ->location($locationId)
+            ->joinWith(['course' => function ($query) use ($locationId) {
+                $query->location($locationId)
+                        ->confirmed();
+            }])
             ->joinWith(['student' => function ($query) use ($id) {
                 $query->andWhere(['customer_id' => $id])
                 ->active();
             }])
+            ->andWhere(['>=', 'course.endDate', $currentDate])
             ->notDeleted()
             ->isConfirmed()
             ->isRegular();
