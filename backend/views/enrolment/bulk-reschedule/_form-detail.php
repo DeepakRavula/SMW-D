@@ -92,7 +92,7 @@ use common\models\Location;
             'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
             'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
             'changeId' : '#coursereschedule-teacherid',
-            'durationId' : '#courseschedule-duration',
+            'durationId' : '#coursereschedule-duration',
             'studentId' : <?= $model->studentId ?>
         };
         $.fn.calendarDayView(options);
