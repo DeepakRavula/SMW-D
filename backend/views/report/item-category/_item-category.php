@@ -66,7 +66,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
                     ],
                     // html attributes for group summary row
-                    'options'=>['class'=>'success','style'=>'font-weight:bold;']
+                    'options'=>['class'=>'success']
                 ];
             },
 
@@ -161,7 +161,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'value' => function ($data) {
                     return $data->itemCategory->name;
                 },
-                'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
+                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
                 'group' => true,
                 'groupedRow' => true,
                 'subGroupOf' => 0,
@@ -169,7 +169,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 return [
                     'mergeColumns'=>[[2, 4]],// columns to merge in summary
                     'content'=>[              // content to show in each summary cell
-                       2=> "Total for   ".$model->itemCategory->name,
+                       2=> "Total   ".$model->itemCategory->name,
                        5=>GridView::F_SUM,
                        
                     ],
@@ -179,7 +179,6 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                        
                     ],
                     'contentOptions'=>[
-                        2=>['style'=>'font-style:italic'],// content html attributes for each summary cell
                         5=>['style'=>'text-align:right'],
                         
                     ],
@@ -194,7 +193,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     return $data->invoice->getInvoiceNumber();
                 },
                 'pageSummary' => 'Page Total',
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
+                'contentOptions' => ['style' => 'font-size:14px;text-align:left'],
                     
             ],
                                    [
