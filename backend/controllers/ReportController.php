@@ -336,7 +336,6 @@ class ReportController extends BaseController
             $searchModel->dateRange = $invoiceLineItemRequest['dateRange'];
         }
         $dataProvider                     = $searchModel->search(Yii::$app->request->queryParams);
-
         return $this->render(
             'item-category/index',
                 [

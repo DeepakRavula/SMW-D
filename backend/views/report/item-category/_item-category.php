@@ -19,6 +19,16 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
   .table > tbody > tr.success > td ,.table > tbody > tr.kv-grid-group-row > td{
 	background-color: white !important;
 }
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: white !important;
+}
+.table > thead:first-child > tr:first-child > th{
+    color : black;
+    background-color : lightgray;
+}
+.table > tbody >tr.warning >td {
+    font-size:17px;
+}
 </style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 <?php if ($searchModel->groupByMethod) : ?>
@@ -68,7 +78,9 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     return $data->itemCategory->name;
                 },
                 'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
-        ],
+                'pageSummary' => 'Page Total',
+                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
+            ],
  
                         [
                 'label' => 'Amount',
@@ -181,6 +193,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'value' => function ($data) {
                     return $data->invoice->getInvoiceNumber();
                 },
+                'pageSummary' => 'Page Total',
+                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
                     
             ],
                                    [
@@ -196,9 +210,6 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'value' => function ($data) {
                     return $data->description;
                 },
-                    
-                    'pageSummary' => 'Grand Total',
-                    'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
             ],
 
                 [
