@@ -13,8 +13,7 @@ use yii\helpers\Url;
         <?= Html::a('<i class="fa fa-print"></i> ', ['print/course', 'id' => $model->course->id], ['class' => 'm-r-10', 'target' => '_blank']) ?>  
         <?= Html::a('<i class="fa fa-envelope-o"></i> ', '#', [
         'id' => 'schedule-mail-button',
-        'class' => '']) ?> 
-        <strong class="m-r-10"><?= 'Duration' ?></strong> </h4></p>
+        'class' => '']) ?> </h4></p>
     </div>
     <div class="clearfix"></div>
     <?php Pjax::begin(['id' => 'lesson-index']); ?>
@@ -28,14 +27,10 @@ use yii\helpers\Url;
 	[
 	    'value' => function ($data) {
 		    $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-		    $date = $lessonDate->format('l, F jS, Y @ g:i a');
-		    return !empty($date) ? $date : null;
-	    },
-	],
-	[
-	    'value' => function ($data) {
 		    $lessonDuration = (new \DateTime($data->duration))->format('H:i');
-		    return !empty($lessonDuration) ? $lessonDuration : null;
+		    $duration = substr($lessonDuration,3);
+		    $date = $lessonDate->format('l, F jS, Y @ g:i a');
+		    return $date ." , " . $duration."mins";
 	    },
 	],
     ],
