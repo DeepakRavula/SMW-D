@@ -27,13 +27,21 @@ use common\models\PaymentMethod;
                  'clientOptions' => [
                      'defaultDate' => (new \DateTime($model->date))->format('M d, Y'),
                      'changeMonth' => true,
-                     'yearRange' => '1500:3000',
+                     'yearRange' => '-10:+20',
                      'changeYear' => true,
                  ],
             ])->textInput()->label('Date');
             ?>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
+            <?= $form->field($model, 'amount')->textInput(['class' => 'right-align payment-amount form-control']);?>
+        </div>
+    </div>
+    <div class="row">
+    <div class="reference col-md-7">
+        <?= $form->field($model, 'reference')->textInput()->label('Reference'); ?>
+    </div>
+        <div class="col-md-5">
     <?php echo $form->field($model, 'payment_method_id')->dropDownList(
  ArrayHelper::map(PaymentMethod::find()
                 ->andWhere([
@@ -44,18 +52,11 @@ use common\models\PaymentMethod;
 );
             ?>
         </div>
-        <div class="col-md-6">
-            <?= $form->field($model, 'amount')->textInput(['class' => 'right-align payment-amount form-control']);?>
-        </div>
-    </div>
-    <div class="reference">
-        <?= $form->field($model, 'reference')->textInput()->label('Reference'); ?>
     </div>
     <div id="add-payment-spinner" class="spinner" style="display:none">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
         <span class="sr-only">Loading...</span>
     </div>
-
     <div class="row">
         <div class="col-md-12">
          <?= $form->field($model, 'notes')->textArea(['class' => 'form-control'])->label('Notes'); ?>
