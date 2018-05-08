@@ -246,14 +246,14 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 </div>
 <script>
 $(document).ready(function(){
-    addNewRow();
+    report.addNewRow();
     $(document).on('pjax:success', function() {
-    // Your code goes here ...
-    addNewRow();
+    report.addNewRow();
    
 });
-function addNewRow()
-{
+});
+var report = {
+        addNewRow: function () {
     var newSummaryContainer=$("<tbody>");
     var newRow = $("<tr class='report-footer-grandtotal f-s-18'>");
         var cols = "";
@@ -273,5 +273,6 @@ function addNewRow()
         $("table.table-itemcategory-report").append(newSummaryContainer);
 
 }
-});
+};
+
   </script>
