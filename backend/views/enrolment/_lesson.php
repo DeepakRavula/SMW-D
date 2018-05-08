@@ -30,7 +30,7 @@ use yii\helpers\Url;
 		    $lessonDuration = (new \DateTime($data->duration))->format('H:i');
 		    $duration = substr($lessonDuration,3);
 		    $date = $lessonDate->format('l, F jS, Y @ g:i a');
-		    return $date ." , " . $duration."mins";
+		    return $date .", " . $duration."mins";
 	    },
 	],
     ],
