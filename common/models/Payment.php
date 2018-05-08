@@ -37,7 +37,6 @@ class Payment extends ActiveRecord
     const SCENARIO_CREDIT_USED_DELETE = 'credit-used-delete';
     const SCENARIO_APPLY_CREDIT = 'apply-credit';
     const SCENARIO_CREDIT_APPLIED = 'credit-applied';
-    const SCENARIO_OPENING_BALANCE = 'allow-negative-payments';
     const SCENARIO_CREDIT_USED = 'credit-used';
     const SCENARIO_CREDIT_USED_EDIT = 'credit-used-edit';
     const SCENARIO_ACCOUNT_ENTRY = 'account-entry';
