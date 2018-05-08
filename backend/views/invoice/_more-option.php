@@ -7,7 +7,7 @@
             <?php else : ?>
                 <li><a class="multiselect-disable" href="#">Post</a></li>
             <?php endif; ?>
-            <?php if ($model->canPost() && $model->canDistributeCredits()) : ?>
+            <?php if ($model->canPostDistributeCredits()) : ?>
                 <li><a id="post-distriute" href="#">Post & Distribute</a></li>
             <?php else : ?>
                 <li><a class="multiselect-disable" href="#">Post & Distribute</a></li>

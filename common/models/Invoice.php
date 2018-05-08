@@ -346,7 +346,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function canDistributeCreditsToLesson()
     {
-        return $this->isPosted && !$this->hasCreditUsed();
+        return $this->isPosted && !$this->hasLessonCreditUsedPayment();
     }
 
     public function canPost()
@@ -421,13 +421,80 @@ class Invoice extends \yii\db\ActiveRecord
         $model->save();
     }
 
-    public function getPaymentTotal()
+    public function getCreditUsedPayment()
+    {
+        return Payment::find()
+            ->joinWith('invoicePayment ip')
+            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->creditUsed()
+            ->all();
+    }
+
+    public function getLessonCreditUsedPayment()
+    {
+        return Payment::find()
+            ->joinWith('invoicePayment ip')
+            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->creditUsed()
+            ->lessonCreditUsed()
+            ->all();
+    }
+
+    public function getNonLessonCreditUsedPayment()
+    {
+        return Payment::find()
+            ->joinWith('invoicePayment ip')
+            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->creditUsed()
+            ->notLessonCreditUsed()
+            ->all();
+    }
+
+    public function hasCreditUsedPayment()
+    {
+        return !empty($this->getCreditUsedPayment());
+    }
+
+    public function hasLessonCreditUsedPayment()
+    {
+        return !empty($this->getLessonCreditUsedPayment());
+    }
+
+    public function hasNonLessonCreditUsedPayment()
+    {
+        return !empty($this->getNonLessonCreditUsedPayment());
+    }
+
+    public function getCreditUsedPaymentTotal()
     {
         $paymentTotal = Payment::find()
             ->joinWith('invoicePayment ip')
             ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
-            ->andWhere(['payment.isDeleted' => false])
-            ->andWhere(['NOT', ['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]])
+            ->creditUsed()
+            ->sum('payment.amount');
+
+        return !empty($paymentTotal) ? $paymentTotal : 0.0000;
+    }
+
+    public function getNotLessonCreditUsedPaymentTotal()
+    {
+        $paymentTotal = Payment::find()
+            ->joinWith('invoicePayment ip')
+            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->creditUsed()
+            ->notLessonCreditUsed()
+            ->sum('payment.amount');
+
+        return !empty($paymentTotal) ? $paymentTotal : 0.0000;
+    }
+
+    public function getLessonCreditUsedPaymentTotal()
+    {
+        $paymentTotal = Payment::find()
+            ->joinWith('invoicePayment ip')
+            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->creditUsed()
+            ->lessonCreditUsed()
             ->sum('payment.amount');
 
         return !empty($paymentTotal) ? $paymentTotal : 0.0000;
@@ -435,13 +502,13 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getInvoicePaymentTotal()
     {
-        if ($this->isProFormaInvoice()) {
-            return $this->paymentTotal;
-        }
-        $invoicePaymentTotal = Payment::find()
+        $paymentTotal = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
-            ->sum('payment.amount');
+            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id]);
+        if ($this->isProFormaInvoice()) {
+            $paymentTotal->notCreditUsed();
+        }
+        $invoicePaymentTotal = $paymentTotal->sum('payment.amount');
 
         return !empty($invoicePaymentTotal) ? $invoicePaymentTotal : 0.0000;
     }
@@ -477,12 +544,8 @@ class Invoice extends \yii\db\ActiveRecord
     
     public function getInvoiceBalance()
     {
-        if ((int) $this->type === self::TYPE_INVOICE) {
-            $balance = $this->total - $this->invoicePaymentTotal;
-        } else {
-            $balance = $this->total - $this->paymentTotal;
-        }
-        return $balance;
+        return $this->isInvoice() ? $this->total - $this->invoicePaymentTotal : 
+            ($this->invoicePaymentTotal === 0.0000 ? $this->total : - ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal));
     }
 
     public function getLineItemsDiscount()
@@ -715,7 +778,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function canRetractCredits()
     {
-        $canRetractcredits = $this->hasCreditUsed();
+        $canRetractcredits = $this->hasLessonCreditUsedPayment();
         foreach ($this->lineItems as $item) {
             if ($item->isGroupLesson()) {
                 $enrolment = $item->enrolment;
@@ -739,12 +802,17 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function canDistributeCredits()
     {
-        return !$this->hasCreditUsed() && $this->isPosted && $this->isPaid();
+        return $this->isPosted && $this->isPaid() && !$this->hasLessonCreditUsedPayment();
+    }
+
+    public function canPostDistributeCredits()
+    {
+        return !$this->isPosted && $this->isPaid() && !$this->hasLessonCreditUsedPayment();
     }
 
     public function canUnpost()
     {
-        return !$this->hasCreditUsed() && $this->isPosted;
+        return !$this->hasLessonCreditUsedPayment() && $this->isPosted;
     }
 
     public function retractCreditsFromLessons()

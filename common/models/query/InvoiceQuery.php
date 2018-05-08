@@ -96,8 +96,7 @@ class InvoiceQuery extends \yii\db\ActiveQuery
     public function invoiceCredit($userId)
     {
         $this->andWhere([
-            'user_id' => $userId,
-            'type' => Invoice::TYPE_INVOICE,
+            'user_id' => $userId
         ])
         ->andWhere(['<', 'balance', 0]);
 

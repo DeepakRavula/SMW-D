@@ -75,6 +75,27 @@ class PaymentQuery extends ActiveQuery
     {
         return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
     }
+
+    public function notLessonCreditUsed()
+    {
+        return $this->joinWith(['debitPayment dp' => function ($query) {
+            $query->joinWith(['lessonCredit' => function ($query) {
+                $query->andWhere(['lesson_payment.id' => null]);
+            }])
+            ->where(['OR', ['dp.id' => null], ['NOT', ['dp.id' => null]]]);
+        }]);
+    }
+
+    public function lessonCreditUsed()
+    {
+        return $this->joinWith(['debitPayment dp' => function ($query) {
+            $query->joinWith(['lessonCredit' => function ($query) {
+                $query->andWhere(['NOT', ['lesson_payment.id' => null]]);
+            }])
+            ->where(['NOT', ['dp.id' => null]])
+            ->andWhere(['dp.isDeleted' => false]);
+        }]);
+    }
     
     public function notCreditUsed()
     {

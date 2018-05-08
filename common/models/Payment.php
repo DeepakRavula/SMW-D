@@ -65,8 +65,6 @@ class Payment extends ActiveRecord
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
-            [['amount'], 'validateNegativeBalance', 'except' => self::SCENARIO_OPENING_BALANCE],
-            [['amount'], 'validateNegativeBalanceOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'number'],
             ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE,
                 self::SCENARIO_APPLY_CREDIT]],
@@ -77,19 +75,6 @@ class Payment extends ActiveRecord
         ];
     }
 
-    public function validateNegativeBalance($attributes)
-    {
-        if (!empty($this->invoiceId) && !$this->isCreditUsed()) {
-            $invoice = Invoice::findOne($this->invoiceId);
-            if (round(abs($invoice->balance), 2) === round(abs($this->amount), 2)) {
-                $this->amount = abs($invoice->balance);
-            }
-            if ((float) $this->amount > (float) $invoice->balance && !$invoice->isInvoice()) {
-                $this->addError($attributes, "Can't over pay");
-            }
-        }
-    }
-
     public function validateNonZero($attributes)
     {
         if ((float) $this->amount === (float) 0) {
@@ -97,18 +82,10 @@ class Payment extends ActiveRecord
         }
     }
 
-    public function validateNegativeBalanceOnEdit($attributes)
-    {
-        if ((float) round($this->amount, 2) > (float) round($this->invoice->balance + $this->old['amount'], 2) &&
-                !$this->invoice->isInvoice()) {
-            $this->addError($attributes, "Can't over pay");
-        }
-    }
-
     public function validateOnApplyCredit($attributes)
     {
         $invoiceModel = Invoice::findOne(['id' => $this->sourceId]);
-        if (round(abs($invoiceModel->balance), 2) < round(abs($this->amount), 2)) {
+        if (round(abs($this->credit), 2) < round(abs($this->amount), 2)) {
             $this->addError($attributes, "Insufficient credt");
         }
     }
@@ -202,6 +179,12 @@ class Payment extends ActiveRecord
     public function getDebitUsage()
     {
         return $this->hasOne(CreditUsage::className(), ['debit_payment_id' => 'id']);
+    }
+
+    public function getDebitPayment()
+    {
+        return $this->hasOne(self::className(), ['id' => 'credit_payment_id'])
+        ->viaTable('credit_usage', ['debit_payment_id' => 'id']);
     }
 
     public function getInvoicePayment()

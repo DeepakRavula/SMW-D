@@ -34,6 +34,7 @@ use common\models\Enrolment;
 use common\models\log\LogHistory;
 use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
+use common\models\Payment;
 
 /**
  * CourseController implements the CRUD actions for Course model.
@@ -396,6 +397,7 @@ class CourseController extends BaseController
                     $newLesson->setScenario(Lesson::SCENARIO_CREATE);
                     $newLesson->addPrivate(Lesson::STATUS_UNSCHEDULED);
                     $hasCreditInvoice = false;
+                    $payment = new Payment();
                     if ($newLesson->save()) {
                         $newLesson->makeAsRoot();
                         $invoice = $newLesson->takePayment();
@@ -406,12 +408,14 @@ class CourseController extends BaseController
                                     $creditInvoice = $lesson->addLessonCreditInvoice();
                                     $creditInvoice->save();
                                 }
-                                $creditInvoice->addPayment($lesson, $lesson->getLessonCreditAmount($enrolmentId) - $amount);
+                                $payment->amount = $lesson->getLessonCreditAmount($enrolmentId) - $amount;
+                                $creditInvoice->addPayment($lesson, $payment);
                                 $hasCreditInvoice = true;
                             } else {
                                 $amount = $lesson->getLessonCreditAmount($enrolmentId);
                             }
-                            $invoice->addPayment($lesson, $amount);
+                            $payment->amount = $amount;
+                            $invoice->addPayment($lesson, $payment);
                         }
                         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                         $newLesson->on(
