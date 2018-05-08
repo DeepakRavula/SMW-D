@@ -1,7 +1,7 @@
 <?php
 
 use yii\bootstrap\ActiveForm;
-use kartik\date\DatePicker;
+use yii\jui\DatePicker;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
@@ -21,7 +21,27 @@ use common\models\PaymentMethod;
         <span class="sr-only">Loading...</span>
     </div>
     <div class="row">
-        <div class="col-md-6">
+    <div class="col-md-7">
+            <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
+                 'dateFormat' => 'php:M d, Y',
+                 'clientOptions' => [
+                     'defaultDate' => (new \DateTime($model->date))->format('M d, Y'),
+                     'changeMonth' => true,
+                     'yearRange' => '-10:+20',
+                     'changeYear' => true,
+                 ],
+            ])->textInput()->label('Date');
+            ?>
+        </div>
+        <div class="col-md-5">
+            <?= $form->field($model, 'amount')->textInput(['class' => 'right-align payment-amount form-control']);?>
+        </div>
+    </div>
+    <div class="row">
+    <div class="reference col-md-7">
+        <?= $form->field($model, 'reference')->textInput()->label('Reference'); ?>
+    </div>
+        <div class="col-md-5">
     <?php echo $form->field($model, 'payment_method_id')->dropDownList(
  ArrayHelper::map(PaymentMethod::find()
                 ->andWhere([
@@ -32,32 +52,11 @@ use common\models\PaymentMethod;
 );
             ?>
         </div>
-        <div class="col-md-6">
-            <?= $form->field($model, 'amount')->textInput(['class' => 'right-align payment-amount form-control']);?>
-        </div>
-    </div>
-    <div class="reference">
-        <?= $form->field($model, 'reference')->textInput()->label('Reference'); ?>
     </div>
     <div id="add-payment-spinner" class="spinner" style="display:none">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
         <span class="sr-only">Loading...</span>
     </div>
-	   	<div class="cheque-date">
-   			<?php
-            $currentDate = (new \DateTime())->format('d-m-Y');
-            echo $form->field($model, 'date')->widget(DatePicker::classname(), [
-                'type' => DatePicker::TYPE_COMPONENT_APPEND,
-                'options' => [
-                    'value' => $currentDate,
-                ],
-                'pluginOptions' => [
-                    'format' => 'dd-mm-yyyy',
-                    'todayHighlight' => true,
-                    'autoclose' => true,
-                ],
-            ])->label('Cheque Date'); ?>
-   </div>
     <div class="row">
         <div class="col-md-12">
          <?= $form->field($model, 'notes')->textArea(['class' => 'form-control'])->label('Notes'); ?>
