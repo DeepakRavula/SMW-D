@@ -544,8 +544,15 @@ class Invoice extends \yii\db\ActiveRecord
     
     public function getInvoiceBalance()
     {
-        return $this->isInvoice() ? $this->total - $this->invoicePaymentTotal : 
-            ($this->invoicePaymentTotal === 0.0000 ? $this->total : - ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal));
+        if ($this->isInvoice()) {
+            $balance = $this->total - $this->invoicePaymentTotal;
+        } else {
+            $balance = $this->invoicePaymentTotal === 0.0000 ? $this->total : 
+            ($this->invoicePaymentTotal < $this->total ? $this->total - $this->invoicePaymentTotal : 
+            ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal > $this->total ? - ($this->invoicePaymentTotal - $this->total) :
+            - ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal)));
+        }
+        return $balance;
     }
 
     public function getLineItemsDiscount()

@@ -98,7 +98,7 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         $this->andWhere([
             'user_id' => $userId
         ])
-        ->andWhere(['<', 'balance', 0]);
+        ->andWhere(['<', 'balance', 0.00]);
 
         return $this;
     }
