@@ -38,6 +38,7 @@ use yii\widgets\ActiveForm;
 use yii\data\ArrayDataProvider;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
+use backend\models\search\EnrolmentPaymentSearch;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -55,7 +56,7 @@ class EnrolmentController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['add', 'delete', 'edit', 'schedule', 'group', 'update',
+                'only' => ['add', 'delete', 'edit', 'schedule', 'group', 'update', 'full-delete',
                     'edit-end-date', 'edit-program-rate', 'reschedule'
                 ],
                 'formatParam' => '_format',
@@ -73,6 +74,13 @@ class EnrolmentController extends BaseController
                             'reschedule'
                         ],
                         'roles' => ['manageEnrolments'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => [
+                            'full-delete'
+                        ],
+                        'roles' => ['administrator'],
                     ],
                 ],
             ], 
@@ -474,6 +482,56 @@ class EnrolmentController extends BaseController
         } else {
             $response = [
                 'status' => false
+            ];
+        }
+        return $response;
+    }
+
+    public function actionFullDelete($id)
+    {
+        $model = $this->findModel($id);
+        if (Yii::$app->request->isPost) {
+            if ($model->course->program->isPrivate()) {
+                $model->deleteWithTransactionalData();
+                $response = [
+                    'status' => true,
+                    'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false])
+                ];
+            } else {
+                $response = [
+                    'status' => false
+                ];
+            }
+        } else {
+            $startDate = Carbon::parse($model->course->startDate);
+            $endDate = Carbon::parse($model->course->endDate);
+            $objects = ['Lessons', 'Payment Cycles', 'PFIs', 'Invoices'];
+            $results = [];
+            $dateRange = $startDate->format('M d, Y') . ' - ' . $endDate->format('M d, Y');
+            foreach ($objects as $value) {
+                $results[] = [
+                    'objects' => $value,
+                    'action' => 'will be deleted',
+                    'date_range' => 'within ' . $dateRange
+                ]; 
+            }
+            $previewDataProvider = new ArrayDataProvider([
+                'allModels' => $results,
+                'sort' => [
+                    'attributes' => ['objects', 'action', 'date_range']
+                ]
+            ]);
+            $searchModel = new EnrolmentPaymentSearch();
+            $searchModel->enrolmentId = $model->id;
+            $paymentsDataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            $data = $this->renderAjax('_delete-preview', [
+                'model' => $model,
+                'paymentsDataProvider' => $paymentsDataProvider,
+                'previewDataProvider' => $previewDataProvider
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
             ];
         }
         return $response;

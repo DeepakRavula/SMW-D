@@ -63,4 +63,9 @@ class InvoiceItemLesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(InvoiceItemEnrolment::className(), ['invoiceLineItemId' => 'invoiceLineItemId']);
     }
+
+    public function getLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
+    }
 }
