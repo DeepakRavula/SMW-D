@@ -37,6 +37,7 @@ use kartik\select2\Select2;
     <div class="col-md-2">
         <?= $form->field($model, 'fromTime')->textInput(['readOnly' => true])->label('Start Time');?>
     </div>
+	<?= $form->field($model, 'duration')->hiddenInput()->label(false);?>
     </div>
     <div class="row">
     <div class="col-md-12">
