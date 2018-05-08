@@ -71,22 +71,10 @@ use common\models\PaymentMethod;
 </div>
 </div>
 <script>
-    var paymentMethods = {
-        'cheque' : '5'
-    };
-    
     $(document).ready(function() {
-        $('.cheque-date').hide();
-    });	
-    
-    $(document).on('change', '#payment-payment_method_id', function() {
-        var paymentMethod = $('#payment-payment_method_id').val();
-        if(paymentMethod == paymentMethods.cheque) {
-            $('.reference').find('label').text('Cheque Number');
-            $('.cheque-date').show();	
-        } else {
-            $('.reference').find('label').text('Reference');
-            $('.cheque-date').hide();	
-        }
+	var now = new Date();
+        var today = (now.getMonth() + 1)  + '/' + now.getDate() + '/' + now.getFullYear();
+	var currentDate = moment(today).format('MMM D, YYYY');
+        $('#payment-date').val(currentDate);
     });	
 </script>
