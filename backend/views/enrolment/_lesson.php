@@ -24,16 +24,17 @@ use yii\helpers\Url;
                 'tableOptions' => ['class' => 'table table-bordered'],
                 'showHeader' => false,
                 'columns' => [
-                    [
-                        'value' => function ($data) {
-                            $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
-                            $date = $lessonDate->format('l, F jS, Y @ g:i a');
-
-                            return !empty($date) ? $date : null;
-                        },
-                    ],
-                ],
-        ]); ?>
+	[
+	    'value' => function ($data) {
+		    $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
+		    $lessonDuration = (new \DateTime($data->duration))->format('H:i');
+		    $duration = substr($lessonDuration,3);
+		    $date = $lessonDate->format('l, F jS, Y @ g:i a');
+		    return $date .", " . $duration."mins";
+	    },
+	],
+    ],
+]); ?>
     <?php Pjax::end(); ?> 
 </div>
 
