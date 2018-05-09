@@ -550,10 +550,11 @@ class Invoice extends \yii\db\ActiveRecord
         if ($this->isInvoice()) {
             $balance = $this->total - $this->invoicePaymentTotal;
         } else {
+          //  echo $this->invoicePaymentTotal+$this->creditUsedPaymentTotal>$this->total;die;
             $balance = $this->invoicePaymentTotal === 0.0000 ? $this->total : 
             ($this->invoicePaymentTotal < $this->total ? $this->total - $this->invoicePaymentTotal : 
-            ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal > $this->total ? - ($this->invoicePaymentTotal - $this->total) :
-            - ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal)));
+            ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal > $this->total ? - ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal) :
+            - ($this->invoicePaymentTotal - $this->total)));
         }
         return $balance;
     }
