@@ -22,6 +22,7 @@ use common\models\PaymentMethod;
     </div>
     <div class="row">
     <div class="col-md-7">
+	    <?php $model->date = Yii::$app->formatter->asDate(new \DateTime()); ?>
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                  'dateFormat' => 'php:M d, Y',
                  'clientOptions' => [
@@ -70,23 +71,3 @@ use common\models\PaymentMethod;
 	<?php ActiveForm::end(); ?>
 </div>
 </div>
-<script>
-    var paymentMethods = {
-        'cheque' : '5'
-    };
-    
-    $(document).ready(function() {
-        $('.cheque-date').hide();
-    });	
-    
-    $(document).on('change', '#payment-payment_method_id', function() {
-        var paymentMethod = $('#payment-payment_method_id').val();
-        if(paymentMethod == paymentMethods.cheque) {
-            $('.reference').find('label').text('Cheque Number');
-            $('.cheque-date').show();	
-        } else {
-            $('.reference').find('label').text('Reference');
-            $('.cheque-date').hide();	
-        }
-    });	
-</script>
