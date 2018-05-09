@@ -719,7 +719,9 @@ class InvoiceController extends BaseController
     {
         $model = Invoice::findOne($id);
         if ($model->canDistributeCreditsToLesson()) {
-            $model->distributeCreditsToLesson();
+            if ($model->distributeCreditsToLesson()) {
+                $model->save();
+            }
             $response = [
                 'status' => true
             ];

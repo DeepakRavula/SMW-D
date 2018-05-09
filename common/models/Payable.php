@@ -213,6 +213,7 @@ trait Payable
                 }
             }
         }
+        return true;
     }
 
     public function distributeCreditsToLesson()
