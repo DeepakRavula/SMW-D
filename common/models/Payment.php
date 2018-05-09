@@ -92,7 +92,7 @@ class Payment extends ActiveRecord
     public function validateOnEdit($attributes)
     {
         if (round($this->old['amount'], 2) !== round($this->amount, 2)) {
-            if ($this->invoice->isProFormaInvoice() && $this->invoice->hasCreditUsed()) {
+            if ($this->invoice->isProFormaInvoice() && $this->invoice->hasLessonCreditUsedPayment()) {
                 $this->addError($attributes, "Can't adjust payment before retract lesson credit");
             }
         }
@@ -100,12 +100,12 @@ class Payment extends ActiveRecord
 
     public function validateOnDelete($attributes)
     {
-        if ($this->invoice->isProFormaInvoice() && $this->invoice->hasCreditUsed() && !$this->isCreditUsed()) {
+        if ($this->invoice->isProFormaInvoice() && $this->invoice->hasLessonCreditUsedPayment() && !$this->isCreditUsed()) {
             $this->addError($attributes, "Can't delete payment before retract lesson credit");
         }
         if ($this->invoice->isInvoice() && $this->isCreditUsed()) {
             $appliedInvoice = $this->debitUsage->creditUsagePayment->invoice;
-            if ($appliedInvoice->isProFormaInvoice() && $appliedInvoice->hasCreditUsed()) {
+            if ($appliedInvoice->isProFormaInvoice() && $appliedInvoice->hasLessonCreditUsedPayment()) {
                 $this->addError($attributes, "Can't delete payment before retract lesson credit");
             }
         }

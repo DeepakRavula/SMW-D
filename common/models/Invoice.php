@@ -427,6 +427,7 @@ class Invoice extends \yii\db\ActiveRecord
             ->joinWith('invoicePayment ip')
             ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
             ->creditUsed()
+            ->notDeleted()
             ->all();
     }
 
@@ -437,6 +438,7 @@ class Invoice extends \yii\db\ActiveRecord
             ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
             ->creditUsed()
             ->lessonCreditUsed()
+            ->notDeleted()
             ->all();
     }
 
@@ -447,6 +449,7 @@ class Invoice extends \yii\db\ActiveRecord
             ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
             ->creditUsed()
             ->notLessonCreditUsed()
+            ->notDeleted()
             ->all();
     }
 
