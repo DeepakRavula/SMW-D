@@ -476,7 +476,7 @@ class Invoice extends \yii\db\ActiveRecord
             ->creditUsed()
             ->sum('payment.amount');
 
-        return !empty($paymentTotal) ? $paymentTotal : 0.0000;
+        return empty($paymentTotal) ? 0.0000 : $paymentTotal;
     }
 
     public function getNotLessonCreditUsedPaymentTotal()
@@ -488,7 +488,7 @@ class Invoice extends \yii\db\ActiveRecord
             ->notLessonCreditUsed()
             ->sum('payment.amount');
 
-        return !empty($paymentTotal) ? $paymentTotal : 0.0000;
+        return empty($paymentTotal) ? 0.0000 : $paymentTotal;
     }
 
     public function getLessonCreditUsedPaymentTotal()
@@ -500,7 +500,7 @@ class Invoice extends \yii\db\ActiveRecord
             ->lessonCreditUsed()
             ->sum('payment.amount');
 
-        return !empty($paymentTotal) ? $paymentTotal : 0.0000;
+        return empty($paymentTotal) ? 0.0000 : $paymentTotal;
     }
 
     public function getInvoicePaymentTotal()
@@ -513,7 +513,7 @@ class Invoice extends \yii\db\ActiveRecord
         }
         $invoicePaymentTotal = $paymentTotal->sum('payment.amount');
 
-        return !empty($invoicePaymentTotal) ? $invoicePaymentTotal : 0.0000;
+        return empty($invoicePaymentTotal) ? 0.0000 : $invoicePaymentTotal;
     }
 
     public function getProFormaPaymentTotal()
@@ -550,9 +550,8 @@ class Invoice extends \yii\db\ActiveRecord
         if ($this->isInvoice()) {
             $balance = $this->total - $this->invoicePaymentTotal;
         } else {
-          //  echo $this->invoicePaymentTotal+$this->creditUsedPaymentTotal>$this->total;die;
             $balance = $this->invoicePaymentTotal === 0.0000 ? $this->total : 
-            ($this->invoicePaymentTotal < $this->total ? $this->total - $this->invoicePaymentTotal : 
+            ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal < $this->total ? $this->total - $this->invoicePaymentTotal : 
             ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal > $this->total ? - ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal) :
             - ($this->invoicePaymentTotal - $this->total)));
         }
@@ -885,7 +884,6 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function void($canbeUnscheduled)
     {
-       // print_r($canbeUnscheduled);die('coming');
         $status = false;
         if (!$this->isVoid) {
             foreach ($this->lineItems as $lineItem) {
