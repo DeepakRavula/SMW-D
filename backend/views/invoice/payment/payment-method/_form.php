@@ -22,6 +22,7 @@ use common\models\PaymentMethod;
     </div>
     <div class="row">
     <div class="col-md-7">
+	    <?php $model->date = Yii::$app->formatter->asDate(new \DateTime()); ?>
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                  'dateFormat' => 'php:M d, Y',
                  'clientOptions' => [
@@ -70,11 +71,3 @@ use common\models\PaymentMethod;
 	<?php ActiveForm::end(); ?>
 </div>
 </div>
-<script>
-    $(document).ready(function() {
-	var now = new Date();
-        var today = (now.getMonth() + 1)  + '/' + now.getDate() + '/' + now.getFullYear();
-	var currentDate = moment(today).format('MMM D, YYYY');
-        $('#payment-date').val(currentDate);
-    });	
-</script>
