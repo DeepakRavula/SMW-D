@@ -108,6 +108,7 @@ use common\models\Location;
 <script type="text/javascript">
     $('#popup-modal').on('shown.bs.modal', function () {
         var options = {
+            'date' : $('#lesson-date').val(),
             'renderId' : '#lesson-edit-calendar',
             'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
             'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
