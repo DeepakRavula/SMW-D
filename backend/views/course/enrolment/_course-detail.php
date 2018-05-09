@@ -96,7 +96,9 @@ use kartik\select2\Select2;
             'durationId' : '#enrolmentform-duration',
             'studentId' : '<?= $student ? $student->id : null ?>'
         };
+	$(document).off('change', options.changeId).on('change', options.changeId, function () {
         $.fn.calendarDayView(options);
+	});
         $('#modal-spinner').hide();
         $('.modal-back').removeClass("add-customer-back");
         $('.modal-back').removeClass("course-date-detail-back");
