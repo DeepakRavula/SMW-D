@@ -308,9 +308,6 @@ class PaymentController extends BaseController
                     $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->date);
                 }
                 $amount = abs($invoiceCredit->balance);
-                if (!$invoiceCredit->isInvoice()) {
-                    $amount = abs(($invoiceCredit->invoicePaymentTotal + $invoiceCredit->notLessonCreditUsedPaymentTotal) - $invoiceCredit->total);
-                }
                 $results[] = [
                     'id' => $invoiceCredit->id,
                     'invoice_number' => $invoiceCredit->getInvoiceNumber(),

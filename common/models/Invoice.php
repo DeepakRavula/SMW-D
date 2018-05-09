@@ -334,7 +334,18 @@ class Invoice extends \yii\db\ActiveRecord
         $payments = Payment::find()
             ->joinWith('invoicePayment ip')
             ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
-            ->andWhere(['payment.isDeleted' => false])
+            ->notDeleted()
+            ->all();
+        return $payments ? true : false;
+    }
+
+    public function hasDebitPayments()
+    {
+        $payments = Payment::find()
+            ->joinWith('invoicePayment ip')
+            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->notDeleted()
+            ->andWhere(['NOT', ['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]])
             ->all();
         return $payments ? true : false;
     }
@@ -547,13 +558,21 @@ class Invoice extends \yii\db\ActiveRecord
     
     public function getInvoiceBalance()
     {
+        $balance = 0.0000;
         if ($this->isInvoice()) {
             $balance = $this->total - $this->invoicePaymentTotal;
         } else {
-            $balance = $this->invoicePaymentTotal === 0.0000 ? $this->total : 
-            ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal < $this->total ? $this->total - $this->invoicePaymentTotal : 
-            ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal > $this->total ? - ($this->invoicePaymentTotal + $this->creditUsedPaymentTotal) :
-            - ($this->invoicePaymentTotal - $this->total)));
+            if (!$this->hasDebitPayments()) {
+                $balance = $this->total + $this->notLessonCreditUsedPaymentTotal;
+            } else if (round($this->total, 2) == round($this->invoicePaymentTotal + $this->creditUsedPaymentTotal, 2)) {
+                $balance = 0.0000;
+            } else if (round($this->total, 2) > round($this->invoicePaymentTotal - $this->notLessonCreditUsedPaymentTotal, 2)) {
+                $balance = $this->total - ($this->invoicePaymentTotal + $this->notLessonCreditUsedPaymentTotal);
+            } else if (round($this->total, 2) < round($this->invoicePaymentTotal + $this->notLessonCreditUsedPaymentTotal, 2)) {
+                $balance = -(($this->invoicePaymentTotal + $this->notLessonCreditUsedPaymentTotal) - $this->total);
+            } else if ($this->total - $this->notLessonCreditUsedPaymentTotal > $this->invoicePaymentTotal) {
+                $balance = ($this->total - $this->notLessonCreditUsedPaymentTotal) - $this->invoicePaymentTotal;
+            }
         }
         return $balance;
     }
@@ -828,7 +847,7 @@ class Invoice extends \yii\db\ActiveRecord
     public function retractCreditsFromLessons()
     {
         if ($this->canRetractCredits()) {
-            foreach ($this->creditUsedPayments as $credit) {
+            foreach ($this->lessonCreditUsedPayment as $credit) {
                 $credit->delete();
             }
         }
