@@ -308,7 +308,7 @@ class Course extends \yii\db\ActiveRecord
     public function isProfessionalDevelopmentDay($startDate)
     {
         $dayList = self::getWeekdaysList();
-        $day = $dayList[$this->courseSchedule->day];
+        $day = $dayList[$startDate->format('N')];
         $isProfessionalDevelopmentDay = false;
         $professionalDevelopmentDay = clone $startDate;
         $professionalDevelopmentDay->modify('last day of previous month');
