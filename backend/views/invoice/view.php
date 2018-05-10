@@ -143,7 +143,14 @@ if (!empty($lineItem)) {
     'model' => $model,
 ]); ?>
 <?php Modal::end();?>
-
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Details</h4>',
+    'id' => 'invoice-detail-modal',
+]); ?>
+<?= $this->render('_detail-form', [
+    'model' => $model,
+]); ?>
+<?php Modal::end();?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Add Walk-in</h4>',
     'id' => 'walkin-modal',
@@ -278,6 +285,10 @@ Modal::begin([
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 	$(document).on('click', '.add-customer', function (e) {
 		$('#customer-modal').modal('show');
+		return false;
+  	});
+    $(document).on('click', '#invoice-detail', function (e) {
+		$('#invoice-detail-modal').modal('show');
 		return false;
   	});
 	$(document).on('click', '.add-customer-cancel', function (e) {
