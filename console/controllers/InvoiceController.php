@@ -64,9 +64,7 @@ class InvoiceController extends Controller
         foreach($privateLessons as $lesson) {
             $lessonDate = new \DateTime($lesson->date);
             $enrolmentDate = new \DateTime($lesson->enrolment->createdAt);
-            if ($enrolmentDate < $lessonDate) {
                 $lesson->createPrivateLessonInvoice();
-            }
         }
 
         return true;
