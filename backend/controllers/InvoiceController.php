@@ -749,7 +749,7 @@ class InvoiceController extends BaseController
         return $response;
     }
 
-    public function actionVoid($id,$canbeUnscheduled)
+    public function actionVoid($id, $canbeUnscheduled)
     {
         $model = Invoice::findOne($id);
         if ($model->void($canbeUnscheduled)) {
@@ -761,6 +761,7 @@ class InvoiceController extends BaseController
                 'status' => false
             ];
         }
+        $model->save();
         return $response;
     }
 }

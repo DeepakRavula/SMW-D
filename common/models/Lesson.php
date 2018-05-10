@@ -931,7 +931,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function unschedule()
     {
         $this->status = self::STATUS_UNSCHEDULED;
-        return $this->save();
+        $this->save();
+        return true;
     }
     
     public function takePayment()

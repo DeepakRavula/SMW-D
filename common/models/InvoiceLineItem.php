@@ -279,22 +279,16 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
 
     public function afterSoftDelete()
     {
-        $invoiceModel=$this->invoice;
+        $invoiceModel = $this->invoice;
         if (!$invoiceModel->hasLineItem() && !$invoiceModel->isInvoice()) {
-            $this->invoice->setScenario(Invoice::SCENARIO_DELETE);
-
+            $invoiceModel->setScenario(Invoice::SCENARIO_DELETE);
             if ($invoiceModel->validate()) {
-            $invoiceModel->delete();
+                $invoiceModel->delete();
             }
         }
-        return true;
-    }
-    public function afterDelete()
-    {
-        return $this->invoice->save();
+        return $invoiceModel->save();
     }
     
-
     public function beforeSoftDelete()
     {
         if ($this->invoice->isInvoice() && $this->isLessonItem()) {
@@ -305,21 +299,14 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                         $lessonCreditPayment->delete();
                     }
                 }
-              
                 if ($this->lessonCanBeUnscheduled) {
                     $this->lesson->unschedule();
                 }
             }
         }
-
         return true;
     }
-    public function beforeDelete()
-    {
-       
 
-        return true;
-    }
     public function isDefaultDiscountedItems()
     {
         return $this->isLessonItem() || $this->isMisc() || $this->isOpeningBalance();
