@@ -48,7 +48,7 @@ class InvoiceController extends BaseController
                     'delete', 'note', 'get-payment-amount', 'update-customer', 'post',
                     'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax', 'mail',
                     'post-distribute', 'retract-credits', 'unpost', 'distribute',
-                    'void'
+                    'void','update'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -395,17 +395,16 @@ class InvoiceController extends BaseController
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'Invoice has been updated successfully',
-            ]);
-
-            return $this->redirect(['view', 'id' => $model->id]);
+            $response = [
+                'status' => true,
+            ];
         } else {
-            return $this->render('update', [
-                        'model' => $model,
-            ]);
+            $response = [
+                'status' => false,
+                'errors' => ActiveForm::validate($model),
+            ];
         }
+        return $response;
     }
 
     /**
@@ -753,7 +752,7 @@ class InvoiceController extends BaseController
         return $response;
     }
 
-    public function actionVoid($id,$canbeUnscheduled)
+    public function actionVoid($id, $canbeUnscheduled)
     {
         $model = Invoice::findOne($id);
         if ($model->void($canbeUnscheduled)) {
@@ -765,6 +764,7 @@ class InvoiceController extends BaseController
                 'status' => false
             ];
         }
+        $model->save();
         return $response;
     }
 }

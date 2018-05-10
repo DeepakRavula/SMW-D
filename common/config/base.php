@@ -36,8 +36,8 @@ $config = [
 
         'formatter' => [
             'class' => 'yii\i18n\Formatter',
-            'dateFormat' => 'php:M d,Y',
-            'datetimeFormat' => 'php:M d,Y g:i a',
+            'dateFormat' => 'php:M d, Y',
+            'datetimeFormat' => 'php:M d, Y g:i a',
             'timeFormat' => 'php:h:i a',
             'currencyCode' => 'USD',
             'nullDisplay' => '',

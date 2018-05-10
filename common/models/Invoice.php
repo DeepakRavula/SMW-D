@@ -741,6 +741,7 @@ class Invoice extends \yii\db\ActiveRecord
             $this->isPosted = false;
             $this->isVoid = false;
         } else {
+            $this->date           = (new \DateTime($this->date))->format('Y-m-d');
             if ($this->isProformaPaymentFrequencyApplicable()) {
                 $this->createProformaPaymentFrequency();
             }
@@ -906,7 +907,7 @@ class Invoice extends \yii\db\ActiveRecord
         $status = false;
         if (!$this->isVoid) {
             foreach ($this->lineItems as $lineItem) {
-                $lineItem->lessonCanBeUnscheduled=$canbeUnscheduled;
+                $lineItem->lessonCanBeUnscheduled = $canbeUnscheduled;
                 $lineItem->delete();
             }
             $this->updateAttributes(['isVoid' => true]);
