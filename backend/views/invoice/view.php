@@ -115,7 +115,16 @@ if (!empty($lineItem)) {
     <?php Pjax::end(); ?>
 </div>
 <div class="row">
-	<div class="col-md-6">
+<?php Pjax::Begin(['id' => 'invoice-message-panel', 'timeout' => 6000]); ?>
+   <div class="col-md-3">
+		<?=
+         $this->render('_message', [
+            'model' => $model,
+        ]);
+        ?>
+	</div>
+    <?php Pjax::end(); ?>
+	<div class="col-md-4">
 		<?=
          $this->render('note/view', [
             'model' => new Note(),
@@ -124,7 +133,7 @@ if (!empty($lineItem)) {
         ?>
 	</div>
 	<?php Pjax::Begin(['id' => 'invoice-user-history', 'timeout' => 6000]); ?>
-	<div class="col-md-6">
+	<div class="col-md-5">
 		<?=
         $this->render('log', [
             'model' => $model,
@@ -413,7 +422,7 @@ class: "small",
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container: '#invoice-view', replace:false, timeout: 6000});
+					$.pjax.reload({container: '#invoice-message-panel', replace:false, timeout: 6000});
 					$('#message-modal').modal('hide');
 				}
 			}
