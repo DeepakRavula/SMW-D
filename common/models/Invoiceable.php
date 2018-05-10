@@ -159,8 +159,10 @@ trait Invoiceable
 
     public function creditTransfer($invoice)
     {
+        $payment = new Payment();
         if ($this->hasLessonCredit($this->enrolment->id)) {
-            $invoice->addPayment($this, $this->getLessonCreditAmount($this->enrolment->id), $this->enrolment);
+            $payment->amount = $this->getLessonCreditAmount($this->enrolment->id);
+            $invoice->addPayment($this, $payment, $this->enrolment);
         }
         if (!empty($this->extendedLessons)) {
             foreach ($this->extendedLessons as $extendedLesson) {
@@ -170,7 +172,8 @@ trait Invoiceable
                     if ($amount > $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id)) {
                         $amount = $extendedLesson->lesson->getLessonCreditAmount($this->enrolment->id);
                     }
-                    $invoice->addPayment($extendedLesson->lesson, $amount, $this->enrolment);
+                    $payment->amount = $amount;
+                    $invoice->addPayment($extendedLesson->lesson, $payment, $this->enrolment);
                 }
             }
         }
@@ -194,8 +197,9 @@ trait Invoiceable
         $this->addGroupLessonLineItem($invoice);
         $invoice->save();
         if ($this->hasLessonCredit($enrolmentId)) {
-            $netPrice = $this->getLessonCreditAmount($enrolmentId);
-            $invoice->addPayment($this, $netPrice, $enrolment);
+            $payment = new Payment();
+            $payment->amount = $this->getLessonCreditAmount($enrolmentId);
+            $invoice->addPayment($this, $payment, $enrolment);
         }
 
         return $invoice;
@@ -253,7 +257,9 @@ trait Invoiceable
                 if ($hasCredit) {
                     $invoice->save();
                 }
-                $invoice->addPayment($lesson, $lesson->getLessonCreditAmount($this->id), $this);
+                $payment = new Payment();
+                $payment->amount = $lesson->getLessonCreditAmount($this->id);
+                $invoice->addPayment($lesson, $payment, $this);
             }
             $lesson->cancel();
             $lesson->delete();

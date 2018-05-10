@@ -59,7 +59,9 @@ class LessonReschedule extends Model
                 } else {
                     $amount = $oldLesson->getLessonCreditAmount($oldLesson->enrolment->id);
                 }
-                $rescheduledLesson->addPayment($oldLesson, $amount);
+                $payment = new Payment();
+                $payment->amount = $amount;
+                $rescheduledLesson->addPayment($oldLesson, $payment);
             }
             if ($oldLesson->isExtra() && $oldLesson->proFormaLineItem) {
                 $lineItemLesson = $oldLesson->proFormaLineItem->lineItemLesson;
@@ -87,7 +89,9 @@ class LessonReschedule extends Model
                     $pfli->lineItemLesson->save();
                 }
                 if ($oldLesson->hasLessonCredit($enrolment->id)) {
-                    $rescheduledLesson->addPayment($oldLesson, $oldLesson->getLessonCreditAmount($enrolment->id));
+                    $payment = new Payment();
+                    $payment->amount = $oldLesson->getLessonCreditAmount($enrolment->id);
+                    $rescheduledLesson->addPayment($oldLesson, $payment);
                 }
             }
         }

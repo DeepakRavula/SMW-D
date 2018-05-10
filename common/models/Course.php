@@ -302,7 +302,7 @@ class Course extends \yii\db\ActiveRecord
             $lesson->save();
             $startDate->modify('next ' . $day);
         }
-        return $lesson->date;
+        return true;
     }
 
     public function isProfessionalDevelopmentDay($startDate)

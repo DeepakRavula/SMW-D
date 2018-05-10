@@ -33,6 +33,6 @@ use yii\helpers\Url;
             ?>
         </div>
     </div>
-	<?php echo $form->field($model, 'sourceId')->hiddenInput()->label(false); ?>
+	<?= $form->field($model, 'sourceId')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
 </div>

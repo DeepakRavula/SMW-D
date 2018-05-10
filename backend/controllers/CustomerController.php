@@ -51,7 +51,7 @@ class CustomerController extends UserController
     public function actionAddOpeningBalance($id)
     {
         $model = $this->findModel($id);
-        $paymentModel = new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]);
+        $paymentModel = new Payment();
         $paymentModel->user_id = $model->id;
         $data       = $this->renderAjax('/user/customer/_form-opening-balance', [
             'userModel' => $model,

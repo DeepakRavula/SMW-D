@@ -76,7 +76,9 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
                     if ($amount > $this->lesson->getLessonCreditAmount($this->lesson->enrolment->id)) {
                         $amount = $this->lesson->getLessonCreditAmount($this->lesson->enrolment->id);
                     }
-                    $invoice->addPayment($this->lesson, $amount, $this->lesson->enrolment);
+                    $payment = new Payment();
+                    $payment->amount = $amount;
+                    $invoice->addPayment($this->lesson, $payment, $this->lesson->enrolment);
                 }
             }
         }

@@ -227,6 +227,7 @@ class PaymentController extends BaseController
                     'canAlert' => $paymentModel->invoice->isPaid() && $paymentModel->invoice->isProformaInvoice()
                 ];
             } else {
+                $transaction->rollBack();
                 $errors = ActiveForm::validate($paymentModel);
                 return [
                     'status' => false,
@@ -248,11 +249,12 @@ class PaymentController extends BaseController
     {
         $model = Invoice::findOne(['id' => $id]);
         $paymentModel = new Payment(['scenario' => Payment::SCENARIO_APPLY_CREDIT]);
+        $paymentModel->invoiceId = $model->id;
         $request = Yii::$app->request;
         if ($request->post()) {
             if ($paymentModel->load($request->post()) && $paymentModel->validate()) {
                 $invoiceModel = Invoice::findOne(['id' => $paymentModel->sourceId]);
-                $model->addPayment($invoiceModel, $paymentModel->amount);
+                $model->addPayment($invoiceModel, $paymentModel);
                 $invoiceModel->save();
                 $response = [
                     'status' => true,
@@ -262,7 +264,7 @@ class PaymentController extends BaseController
                 $response = [
                     'status' => false,
                     'errors' => ActiveForm::validate($paymentModel),
-                    'message'=>'No credits available!',
+                    'message' => 'No credits available!',
                 ];
             }
         } else {
@@ -273,18 +275,11 @@ class PaymentController extends BaseController
                 'paymentModel' => $paymentModel,
                 'creditDataProvider' => $creditDataProvider
             ]);
-             if($model->balance<=0 && $model->isProFormaInvoice())
-                {
-                  $response = [
-                    'status' => false,
-                    'message' => 'Can\'t Over Pay!',
-                ];
-                }
             $response = [
                 'status' => true,
                 'hasCredit' => $creditDataProvider->totalCount > 0,
                 'data' => $data,
-                'message'=>$creditDataProvider->totalCount ==0 ? "No credits Available!" :"",
+                'message' => $creditDataProvider->totalCount == 0 ? "No credits Available!" : "",
             ];
            
         }
@@ -312,11 +307,12 @@ class PaymentController extends BaseController
                 if (!empty($lastInvoicePayment)) {
                     $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->date);
                 }
+                $amount = abs($invoiceCredit->balance);
                 $results[] = [
                     'id' => $invoiceCredit->id,
                     'invoice_number' => $invoiceCredit->getInvoiceNumber(),
                     'date' => $paymentDate->format('d-m-Y'),
-                    'amount' => abs($invoiceCredit->balance)
+                    'amount' => $amount
                 ];
             }
         }

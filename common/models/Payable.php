@@ -32,7 +32,9 @@ trait Payable
                         $netPrice = $lesson->getSplitedAmount() - $lesson->
                                 getCreditUsedAmount($lesson->enrolment->id);
                     }
-                    $lesson->invoice->addPayment($lesson, $netPrice, $lesson->enrolment);
+                    $payment = new Payment();
+                    $payment->amount = $netPrice;
+                    $lesson->invoice->addPayment($lesson, $payment, $lesson->enrolment);
                 }
             }
         }
@@ -46,9 +48,11 @@ trait Payable
             } elseif (!$enrolment->getInvoice($lesson->id)->isPaid()) {
                 if ($lesson->hasLessonCredit($enrolment->id)) {
                     $netPrice = $lesson->getLessonCreditAmount($enrolment->id);
+                    $payment = new Payment();
+                    $payment->amount = $netPrice;
                     $enrolment->getInvoice($lesson->id)->addPayment(
                         $lesson,
-                        $netPrice,
+                        $payment,
                         $enrolment
                     );
                 }
@@ -61,16 +65,19 @@ trait Payable
         $creditUsageModel = new CreditUsage();
         $creditUsageModel->credit_payment_id = $creditPaymentId;
         $creditUsageModel->debit_payment_id = $debitPaymentId;
-        $creditUsageModel->save();
+        return $creditUsageModel->save();
     }
     
-    public function addPayment($from, $amount, $enrolment = null)
+    public function addPayment($from, $payment, $enrolment = null)
     {
-        if (round($amount, 2) < round(0.00, 2)) {
+        if (round($payment->amount, 2) < round(0.00, 2)) {
             return true;
         }
+        $db = \Yii::$app->db;
+        $transaction = $db->beginTransaction();
         $paymentModel = new Payment();
-        $paymentModel->amount = $amount;
+        $paymentModel->sourceId = $payment->sourceId;
+        $paymentModel->amount = $payment->amount;
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
         if ($this->tableName() === 'invoice') {
             $paymentModel->invoiceId = $this->id;
@@ -82,42 +89,59 @@ trait Payable
         } else {
             $paymentModel->reference = $from->getInvoiceNumber();
         }
-        $paymentModel->save();
-        $creditPaymentId = $paymentModel->id;
-        if ($this->tableName() === 'lesson') {
-            if (!$enrolment) {
-                $enrolment = $this->enrolment;
+        if ($paymentModel->save()) {
+            $creditPaymentId = $paymentModel->id;
+            if ($this->tableName() === 'lesson') {
+                if (!$enrolment) {
+                    $enrolment = $this->enrolment;
+                }
+                $lessonPayment = $this->addLessonPayment($creditPaymentId, $enrolment->id);
+                if (!$lessonPayment) {
+                    $transaction->rollBack();
+                }
             }
-            $this->addLessonPayment($creditPaymentId, $enrolment->id);
-        }
-        
-        $paymentModel->id = null;
-        $paymentModel->isNewRecord = true;
-        $paymentModel->setScenario(Payment::SCENARIO_CREDIT_USED);
-        $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-        if ($from->tableName() === 'invoice') {
-            $paymentModel->invoiceId = $from->id;
-            $paymentModel->lessonId = null;
-        } else {
-            $paymentModel->lessonId = $from->id;
-            $paymentModel->invoiceId = null;
-        }
-        if ($this->tableName() === 'invoice') {
-            $paymentModel->reference = $this->getInvoiceNumber();
-        } else {
-            $paymentModel->reference = $this->getLessonNumber();
-        }
-        $paymentModel->amount = -abs($paymentModel->amount);
-        $paymentModel->save();
-
-        $debitPaymentId = $paymentModel->id;
-        if ($from->tableName() === 'lesson') {
-            if (!$enrolment) {
-                $enrolment = $from->enrolment;
+            
+            $paymentModel->id = null;
+            $paymentModel->isNewRecord = true;
+            $paymentModel->setScenario(Payment::SCENARIO_CREDIT_USED);
+            $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
+            if ($from->tableName() === 'invoice') {
+                $paymentModel->invoiceId = $from->id;
+                $paymentModel->lessonId = null;
+            } else {
+                $paymentModel->lessonId = $from->id;
+                $paymentModel->invoiceId = null;
             }
-            $from->addLessonPayment($debitPaymentId, $enrolment->id);
+            if ($this->tableName() === 'invoice') {
+                $paymentModel->reference = $this->getInvoiceNumber();
+            } else {
+                $paymentModel->reference = $this->getLessonNumber();
+            }
+            $paymentModel->amount = -abs($paymentModel->amount);
+            if ($paymentModel->save()) {
+                $debitPaymentId = $paymentModel->id;
+                if ($from->tableName() === 'lesson') {
+                    if (!$enrolment) {
+                        $enrolment = $from->enrolment;
+                    }
+                    $lessonPayment = $from->addLessonPayment($debitPaymentId, $enrolment->id);
+                    if (!$lessonPayment) {
+                        $transaction->rollBack();
+                    }
+                }
+                $creditMapping = $this->createCreditUsage($creditPaymentId, $debitPaymentId);
+                if ($creditMapping) {
+                    $transaction->commit();
+                } else {
+                    $transaction->rollBack();
+                }
+            } else {
+                $transaction->rollBack();
+            }
+        } else {
+            $transaction->rollBack();
         }
-        $this->createCreditUsage($creditPaymentId, $debitPaymentId);
+        return true;
     }
 
     public function addGroupLessonCredit()
@@ -138,7 +162,9 @@ trait Payable
                 $amount = $this->proFormaCredit;
             }
             if ($this->hasProFormaCredit() && !empty($amount)) {
-                $lesson->addPayment($this, $amount, $enrolment);
+                $payment = new Payment();
+                $payment->amount = $amount;
+                $lesson->addPayment($this, $payment, $enrolment);
                 $this->makeGroupInvoicePayment($lesson, $enrolment);
             }
         }
@@ -146,6 +172,7 @@ trait Payable
     
     public function addPrivateLessonCredit()
     {
+        $payment = new Payment();
         foreach ($this->lineItems as $lineItem) {
             $lesson = Lesson::find()
                         ->descendantsOf($lineItem->proFormaLesson->id)
@@ -166,7 +193,8 @@ trait Payable
                         $amount = $this->proFormaCredit;
                     }
                     if ($this->hasProFormaCredit() && !empty($amount)) {
-                        $splitLesson->addPayment($this, $amount);
+                        $payment->amount = $amount;
+                        $splitLesson->addPayment($this, $payment);
                         $this->makeInvoicePayment($splitLesson);
                     }
                 }
@@ -179,11 +207,13 @@ trait Payable
                     $amount = $this->proFormaCredit;
                 }
                 if ($this->hasProFormaCredit() && !empty($amount)) {
-                    $lesson->addPayment($this, $amount);
+                    $payment->amount = $amount;
+                    $lesson->addPayment($this, $payment);
                     $this->makeInvoicePayment($lesson);
                 }
             }
         }
+        return true;
     }
 
     public function distributeCreditsToLesson()
@@ -204,6 +234,6 @@ trait Payable
         $lessonCredit->lessonId = $this->id;
         $lessonCredit->paymentId = $paymentId;
         $lessonCredit->enrolmentId = $enrolmentId;
-        $lessonCredit->save();
+        return $lessonCredit->save();
     }
 }

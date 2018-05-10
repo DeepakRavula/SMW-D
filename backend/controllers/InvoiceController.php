@@ -243,7 +243,7 @@ class InvoiceController extends BaseController
             }])
             ->orderBy(['date' => SORT_DESC]);
         if ($model->isProFormaInvoice()) {
-            $invoicePayments->notCreditUsed();
+            $invoicePayments->notLessonCreditUsed();
         }
         $invoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $invoicePayments,
@@ -533,7 +533,9 @@ class InvoiceController extends BaseController
             } else {
                 $amount = $invoice->balance;
             }
-            $invoice->addPayment($creditInvoice, $amount);
+            $payment = new Payment();
+            $payment->amount = $amount;
+            $invoice->addPayment($creditInvoice, $payment);
             $creditInvoice->save();
         }
         $invoice->isCanceled = true;
@@ -716,7 +718,9 @@ class InvoiceController extends BaseController
     {
         $model = Invoice::findOne($id);
         if ($model->canDistributeCreditsToLesson()) {
-            $model->distributeCreditsToLesson();
+            if ($model->distributeCreditsToLesson()) {
+                $model->save();
+            }
             $response = [
                 'status' => true
             ];
