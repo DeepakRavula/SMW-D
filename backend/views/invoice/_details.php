@@ -12,6 +12,7 @@ LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
     'title' => 'Details',
 	'withBorder' => true,
+	'boxTools' => '<i title="Edit" class="fa fa-pencil invoice-detail"></i>',
 ])
 ?>
 

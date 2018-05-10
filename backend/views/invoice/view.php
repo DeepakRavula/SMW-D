@@ -296,10 +296,15 @@ Modal::begin([
 		$('#customer-modal').modal('show');
 		return false;
   	});
-    $(document).on('click', '#invoice-detail', function (e) {
+    $(document).on('click', '.invoice-detail', function (e) {
 		$('#invoice-detail-modal').modal('show');
+        $('#invoice-detail-modal .modal-dialog').css({'width': '400px'});
 		return false;
   	});
+    $(document).on('click', '.invoice-detail-cancel', function (e) {
+		$('#invoice-detail-modal').modal('hide');
+		return false;
+  	})
 	$(document).on('click', '.add-customer-cancel', function (e) {
 		$('#customer-modal').modal('hide');
 		return false;
@@ -575,7 +580,27 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         }
     });
 });
-
+$(document).on('beforeSubmit', '#invoice-detail-form', function (e) {
+    $.ajax({
+        url    : $(this).attr('action'),
+        type   : 'post',
+        dataType: "json",
+        data   : $(this).serialize(),
+        success: function(response)
+        {
+        if(response.status)
+        {
+            $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
+            $('#invoice-detail-modal').modal('hide');
+            $('#success-notification').html('Invoice has been updated successfully').fadeIn().delay(5000).fadeOut();
+        } else
+        {
+            $('#invoice-detail-form').yiiActiveForm('updateMessages',response.errors, true);
+        }
+    }
+    });
+       return false;
+    });
     $(document).off('click', '.create-payment').on('click', '.create-payment', function () {
         $('.create-payment').attr('disabled', true);
         $('#payment-form').submit();

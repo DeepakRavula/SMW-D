@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\date\DatePicker;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
@@ -10,9 +11,14 @@ use kartik\date\DatePicker;
 ?>
 
 <div class="payments-form p-l-20">
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin([
+        'id' => 'invoice-detail-form',
+        'action' => Url::to(['invoice/update', 'id' => $model->id]),
+        'enableClientValidation' => false,
+        'enableAjaxValidation' => true
+    ]); ?>
  	<div class="row">
-        <div class="col-xs-5">
+        <div class="col-xs-7">
         <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'options' => [
                     'value' => Yii::$app->formatter->asDate($model->date),
@@ -21,24 +27,19 @@ use kartik\date\DatePicker;
                 'pluginOptions' => [
                     'autoclose' => true,
 		            'showOnFocus' =>false,
-                    'format' => 'M d,yyyy',
+                    'format' => 'M d, yyyy',
                 ],
             ]);
             ?>
         </div>
 	</div>
     <div class="row">
-    <div class="col-md-12">
-        <div class="pull-right">
-       <?php echo Html::submitButton(Yii::t('backend', 'Pay Now'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-			<?php 
-            if (!$model->isNewRecord) {
-                echo Html::a('Cancel', ['view', 'id' => $model->id], ['class' => 'btn btn-default']);
-            }
-        ?>
+    <div class="form-group pull-right">
+    <?php echo Html::a('Cancel', '', ['class' => 'm-r-10 btn btn-default invoice-detail-cancel']) ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'm-r-10 btn btn-info', 'name' => 'signup-button']) ?>
     </div>
     </div>
     </div>
-    <?php ActiveForm::end(); ?>
 
+    <?php ActiveForm::end(); ?>
 </div>
