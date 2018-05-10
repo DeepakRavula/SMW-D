@@ -649,6 +649,7 @@ class Invoice extends \yii\db\ActiveRecord
             $this->isPosted = false;
             $this->isVoid = false;
         } else {
+            $this->date           = (new \DateTime($this->date))->format('Y-m-d');
             if ($this->isProformaPaymentFrequencyApplicable()) {
                 $this->createProformaPaymentFrequency();
             }

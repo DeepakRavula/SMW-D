@@ -115,7 +115,16 @@ if (!empty($lineItem)) {
     <?php Pjax::end(); ?>
 </div>
 <div class="row">
-	<div class="col-md-6">
+<?php Pjax::Begin(['id' => 'invoice-message-panel', 'timeout' => 6000]); ?>
+   <div class="col-md-3">
+		<?=
+         $this->render('_message', [
+            'model' => $model,
+        ]);
+        ?>
+	</div>
+    <?php Pjax::end(); ?>
+	<div class="col-md-4">
 		<?=
          $this->render('note/view', [
             'model' => new Note(),
@@ -124,7 +133,7 @@ if (!empty($lineItem)) {
         ?>
 	</div>
 	<?php Pjax::Begin(['id' => 'invoice-user-history', 'timeout' => 6000]); ?>
-	<div class="col-md-6">
+	<div class="col-md-5">
 		<?=
         $this->render('log', [
             'model' => $model,
@@ -143,7 +152,14 @@ if (!empty($lineItem)) {
     'model' => $model,
 ]); ?>
 <?php Modal::end();?>
-
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Details</h4>',
+    'id' => 'invoice-detail-modal',
+]); ?>
+<?= $this->render('_detail-form', [
+    'model' => $model,
+]); ?>
+<?php Modal::end();?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Add Walk-in</h4>',
     'id' => 'walkin-modal',
@@ -280,6 +296,15 @@ Modal::begin([
 		$('#customer-modal').modal('show');
 		return false;
   	});
+    $(document).on('click', '.invoice-detail', function (e) {
+		$('#invoice-detail-modal').modal('show');
+        $('#invoice-detail-modal .modal-dialog').css({'width': '400px'});
+		return false;
+  	});
+    $(document).on('click', '.invoice-detail-cancel', function (e) {
+		$('#invoice-detail-modal').modal('hide');
+		return false;
+  	})
 	$(document).on('click', '.add-customer-cancel', function (e) {
 		$('#customer-modal').modal('hide');
 		return false;
@@ -402,7 +427,7 @@ class: "small",
 			{
 			   if(response.status)
 			   {
-					$.pjax.reload({container: '#invoice-view', replace:false, timeout: 6000});
+					$.pjax.reload({container: '#invoice-message-panel', replace:false, timeout: 6000});
 					$('#message-modal').modal('hide');
 				}
 			}
@@ -555,7 +580,27 @@ $(document).on("click", '.adjust-invoice-tax', function() {
         }
     });
 });
-
+$(document).on('beforeSubmit', '#invoice-detail-form', function (e) {
+    $.ajax({
+        url    : $(this).attr('action'),
+        type   : 'post',
+        dataType: "json",
+        data   : $(this).serialize(),
+        success: function(response)
+        {
+        if(response.status)
+        {
+            $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
+            $('#invoice-detail-modal').modal('hide');
+            $('#success-notification').html('Invoice has been updated successfully').fadeIn().delay(5000).fadeOut();
+        } else
+        {
+            $('#invoice-detail-form').yiiActiveForm('updateMessages',response.errors, true);
+        }
+    }
+    });
+       return false;
+    });
     $(document).off('click', '.create-payment').on('click', '.create-payment', function () {
         $('.create-payment').attr('disabled', true);
         $('#payment-form').submit();
