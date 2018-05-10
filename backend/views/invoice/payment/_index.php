@@ -70,14 +70,14 @@ Modal::end(); ?>
         var id = $(this).data('id');
         var amountNeeded = <?= $amount; ?>;
         if(amount > amountNeeded) {
-            $('input[name="Payment[amount]"]').val((amountNeeded).toFixed(2));          
+            $('#apply-credit-payment').val((amountNeeded).toFixed(2));          
         } else {
-            $('input[name="Payment[amount]"]').val((amount).toFixed(2));          
+            $('#apply-credit-payment').val((amount).toFixed(2));          
         }
-        $('input[name="Payment[amountNeeded]"]').val((amountNeeded).toFixed(2));          
+        $('#payment-amountneeded').val((amountNeeded).toFixed(2));          
         $('#payment-credit').val((amount).toFixed(2));
         $('#payment-sourceid').val(id);
-        $('input[name="Payment[amount]"]').attr('readonly', false);
+        $('#apply-credit-payment').attr('readonly', false);
         return false;
     });
 </script>

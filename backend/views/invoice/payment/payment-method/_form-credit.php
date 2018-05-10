@@ -28,7 +28,8 @@ use yii\helpers\Url;
             ?>
         </div>
         <div class="col-xs-4">
-            <?= $form->field($model, 'amount')->textInput(['readOnly' => true, 'class' => 'text-right form-control'])
+            <?= $form->field($model, 'amount')->textInput(['readOnly' => true, 'id' => 'apply-credit-payment',
+                'class' => 'text-right form-control'])
                 ->label('Amount To Apply');
             ?>
         </div>
