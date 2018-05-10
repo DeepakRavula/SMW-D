@@ -50,6 +50,15 @@ class PaymentQuery extends ActiveQuery
         return $this;
     }
 
+    public function invoice()
+    {
+        return $this->joinWith(['invoicePayment ip' => function ($query) {
+            $query->joinWith(['invoice i' => function ($query) {
+                $query->andWhere(['i.type' => Invoice::TYPE_INVOICE]);
+            }]);
+        }]);
+    }
+
     public function location($locationId)
     {
         $this->joinWith('invoice')

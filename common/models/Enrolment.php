@@ -700,13 +700,25 @@ class Enrolment extends \yii\db\ActiveRecord
                 ->all();
         foreach ($this->paymentCycles as $paymentCycle) {
             if ($paymentCycle->hasProformaInvoice()) {
+                $pfi = $paymentCycle->proFormaInvoice;
+                if ($pfi->hasPayments()) {
+                    foreach ($pfi->payments as $payment) {
+                        $payment->delete();
+                    }
+                }
                 $paymentCycle->proFormaInvoice->delete();
             }
             $paymentCycle->delete();
         }
         foreach ($lessons as $lesson) {
             if ($lesson->hasInvoice()) {
-                $lesson->invoice->delete();
+                $invoice = $lesson->invoice;
+                if ($invoice->hasPayments()) {
+                    foreach ($invoice->payments as $payment) {
+                        $payment->delete();
+                    }
+                }
+                $invoice->delete();
             }
             if ($lesson->hasCreditUsed($this->id)) {
                 $payments = $lesson->getCreditUsedPayment($this->id);
@@ -721,7 +733,13 @@ class Enrolment extends \yii\db\ActiveRecord
                 }
             }
             if ($lesson->isExtra() && $lesson->hasProFormaInvoice()) {
-                $lesson->proFormaInvoice->delete();
+                $pfi = $lesson->proFormaInvoice;
+                if ($pfi->hasPayments()) {
+                    foreach ($pfi->payments as $payment) {
+                        $payment->delete();
+                    }
+                }
+                $pfi->delete();
             }
             $lesson->delete();
         }
