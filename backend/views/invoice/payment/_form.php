@@ -41,6 +41,7 @@ use yii\helpers\ArrayHelper;
         </div>
    </div>
 <div class="row">
+
         <div class="col-md-7">
         <?php if ($model->payment_method_id === PaymentMethod::TYPE_CHEQUE) : ?>
             <?php $label = 'Cheque Number'; ?>
@@ -50,6 +51,7 @@ use yii\helpers\ArrayHelper;
         
             <?= $form->field($model, 'reference')->textInput()->label($label); ?>
         </div>
+        <?php if (!($model->isCreditApplied()||$model->isCreditUsed())) : ?>
         <div class="col-md-5">
         <?php echo $form->field($model, 'payment_method_id')->dropDownList(
  ArrayHelper::map(PaymentMethod::find()
@@ -61,6 +63,7 @@ use yii\helpers\ArrayHelper;
 );
             ?>
         </div>
+        <?php endif; ?>
         </div>
     </div>
    <div class="row">
