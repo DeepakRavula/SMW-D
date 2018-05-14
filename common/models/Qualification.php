@@ -83,6 +83,11 @@ class Qualification extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'teacher_id']);
     }
 
+    public function getTeacherLocation()
+    {
+        return $this->hasOne(UserLocation::className(), ['user_id' => 'teacher_id']);
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
