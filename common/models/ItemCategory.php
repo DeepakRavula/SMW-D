@@ -122,4 +122,11 @@ class ItemCategory extends \yii\db\ActiveRecord
 
         return $amount;
     }
+public static function getTotal($provider) {
+    $total = 0;
+    foreach ($provider as $item) {
+        $total += $item->itemTotal;
+    }
+    return $total;
+}
 }
