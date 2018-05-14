@@ -29,19 +29,4 @@ class m180514_103511_add_gift_card extends Migration
 
         return false;
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m180514_103511_add_gift_card cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }
