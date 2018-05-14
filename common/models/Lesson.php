@@ -450,6 +450,14 @@ class Lesson extends \yii\db\ActiveRecord
         return !empty($this->enrolments);
     }
 
+    public function getTeacherCost()
+    {
+        $qualification = Qualification::find()
+            ->andWhere(['teacher_id' => $this->teacherId, 'program_id' => $this->course->programId])
+            ->one();
+        return !empty($qualification->rate) ? $qualification->rate : 0.00;
+    }
+
     public function getReschedule()
     {
         return $this->hasOne(LessonHierarchy::className(), ['childLessonId' => 'id']);

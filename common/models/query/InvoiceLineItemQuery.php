@@ -4,6 +4,7 @@ namespace common\models\query;
 
 use common\models\InvoiceLineItem;
 use common\models\Invoice;
+use common\models\ItemType;
 
 /**
  * This is the ActiveQuery class for [[InvoiceLineItem]].
@@ -57,6 +58,7 @@ class InvoiceLineItemQuery extends \yii\db\ActiveQuery
 
         return $this;
     }
+
     public function taxRateSummary($date, $locationId)
     {
         $this->joinWith(['invoice' => function ($query) use ($date, $locationId) {
@@ -71,14 +73,24 @@ class InvoiceLineItemQuery extends \yii\db\ActiveQuery
 
         return $this;
     }
+
     public function royaltyFree()
     {
         $this->andWhere(['invoice_line_item.royaltyFree' => true]);
         return $this;
     }
+
     public function royalty()
     {
         $this->andWhere(['invoice_line_item.royaltyFree' => false]);
         return $this;
+    }
+
+    public function lessonItem()
+    {
+        return $this->andWhere(['invoice_line_item.item_type_id' => [
+            ItemType::TYPE_EXTRA_LESSON, ItemType::TYPE_GROUP_LESSON, ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON,
+            ItemType::TYPE_PRIVATE_LESSON, ItemType::TYPE_LESSON_SPLIT
+        ]]);
     }
 }
