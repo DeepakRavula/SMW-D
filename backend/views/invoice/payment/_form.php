@@ -16,33 +16,27 @@ use yii\helpers\ArrayHelper;
     'action' => Url::to(['payment/update', 'id' => $model->id]),
     'enableClientValidation' => true
 ]); ?>
-  <?php if ($model->isCreditUsed() || $model->isCreditApplied()) : ?>
-            <?php $paymentMethods=ArrayHelper::map(PaymentMethod::find()
-                ->andWhere([
-                    'active' => PaymentMethod::STATUS_ACTIVE,
-                ])
-                  ->orderBy(['sortOrder' => SORT_ASC])->all(), 'id', 'name'); ?>
-        <?php else : ?>
-        <?php $paymentMethods=ArrayHelper::map(PaymentMethod::find()
-                ->andWhere([
-                    'active' => PaymentMethod::STATUS_ACTIVE,
-                    'displayed'=>1,
-                ])
-                  ->orderBy(['sortOrder' => SORT_ASC])->all(), 'id', 'name'); ?>
-        <?php endif; ?>
-
+ <?php $query=PaymentMethod::find()->andWhere(['active'=> PaymentMethod::STATUS_ACTIVE]);
+ if (!($model->isCreditUsed() || $model->isCreditApplied())) : 
+    $query->andWhere(['displayed' => 1]); 
+        endif; 
+     $query->orderBy(['sortOrder' => SORT_ASC]);
+    $paymentMethods=$query->all();  ?>
     <div class="row">
 	   <div class="col-md-7">
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'options' => [
                     'id' => 'extra-lesson-date',
                     'value' => Yii::$app->formatter->asDate($model->date),
+                    'disabled' => $model->isCreditUsed() ||
+                    $model->isCreditApplied(),                   
                 ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
                 'pluginOptions' => [
                     'autoclose' => true,
 		    'showOnFocus' =>false,
                     'format' => 'M d,yyyy',
+                   
                 ],
             ]);
             ?>
@@ -63,11 +57,12 @@ use yii\helpers\ArrayHelper;
             <?php $label = 'Reference'; ?>
         <?php endif; ?>
         
-            <?= $form->field($model, 'reference')->textInput()->label($label); ?>
+            <?= $form->field($model, 'reference')->textInput(['readOnly' => $model->isCreditUsed() ||
+$model->isCreditApplied()]);?>
         </div>
         <div class="col-md-5">
         <?php echo $form->field($model, 'payment_method_id')->dropDownList(
- $paymentMethods,
+ ArrayHelper::map($paymentMethods, 'id', 'name'),
 ['disabled' => $model->isCreditUsed() ||
 $model->isCreditApplied()]);
             ?>
