@@ -51,19 +51,18 @@ use yii\helpers\ArrayHelper;
         
             <?= $form->field($model, 'reference')->textInput()->label($label); ?>
         </div>
-        <?php if (!($model->isCreditApplied()||$model->isCreditUsed())) : ?>
         <div class="col-md-5">
         <?php echo $form->field($model, 'payment_method_id')->dropDownList(
  ArrayHelper::map(PaymentMethod::find()
                 ->andWhere([
                     'active' => PaymentMethod::STATUS_ACTIVE,
-                    'displayed' => 1,
+                   // 'displayed' => 1,
                 ])
-                  ->orderBy(['sortOrder' => SORT_ASC])->all(), 'id', 'name')
-);
+                  ->orderBy(['sortOrder' => SORT_ASC])->all(), 'id', 'name'),
+['disabled' => $model->isCreditUsed() ||
+$model->isCreditApplied()]);
             ?>
         </div>
-        <?php endif; ?>
         </div>
     </div>
    <div class="row">
