@@ -16,7 +16,7 @@ use yii\helpers\ArrayHelper;
     'action' => Url::to(['payment/update', 'id' => $model->id]),
     'enableClientValidation' => true
 ]); ?>
- <?php $query=PaymentMethod::find()->andWhere(['active'=> PaymentMethod::STATUS_ACTIVE]);
+ <?php $query = PaymentMethod::find()->andWhere(['active'=> PaymentMethod::STATUS_ACTIVE]);
  if (!($model->isCreditUsed() || $model->isCreditApplied())) : 
     $query->andWhere(['displayed' => 1]); 
         endif; 
