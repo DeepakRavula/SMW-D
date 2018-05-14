@@ -16,6 +16,20 @@ use yii\helpers\ArrayHelper;
     'action' => Url::to(['payment/update', 'id' => $model->id]),
     'enableClientValidation' => true
 ]); ?>
+  <?php if ($model->isCreditUsed() || $model->isCreditApplied()) : ?>
+            <?php $paymentMethods=ArrayHelper::map(PaymentMethod::find()
+                ->andWhere([
+                    'active' => PaymentMethod::STATUS_ACTIVE,
+                ])
+                  ->orderBy(['sortOrder' => SORT_ASC])->all(), 'id', 'name'); ?>
+        <?php else : ?>
+        <?php $paymentMethods=ArrayHelper::map(PaymentMethod::find()
+                ->andWhere([
+                    'active' => PaymentMethod::STATUS_ACTIVE,
+                    'displayed'=>1,
+                ])
+                  ->orderBy(['sortOrder' => SORT_ASC])->all(), 'id', 'name'); ?>
+        <?php endif; ?>
 
     <div class="row">
 	   <div class="col-md-7">
@@ -53,12 +67,7 @@ use yii\helpers\ArrayHelper;
         </div>
         <div class="col-md-5">
         <?php echo $form->field($model, 'payment_method_id')->dropDownList(
- ArrayHelper::map(PaymentMethod::find()
-                ->andWhere([
-                    'active' => PaymentMethod::STATUS_ACTIVE,
-                   // 'displayed' => 1,
-                ])
-                  ->orderBy(['sortOrder' => SORT_ASC])->all(), 'id', 'name'),
+ $paymentMethods,
 ['disabled' => $model->isCreditUsed() ||
 $model->isCreditApplied()]);
             ?>
