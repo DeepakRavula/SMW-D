@@ -564,13 +564,17 @@ class Invoice extends \yii\db\ActiveRecord
         } else {
             if (!$this->hasDebitPayments()) {
                 $balance = $this->total + $this->notLessonCreditUsedPaymentTotal;
-            } else if (round($this->total, 2) == round($this->invoicePaymentTotal + $this->creditUsedPaymentTotal, 2)) {
+            }
+            if (round($this->total, 2) == round($this->invoicePaymentTotal + $this->creditUsedPaymentTotal, 2)) {
                 $balance = 0.0000;
-            } else if (round($this->total, 2) > round($this->invoicePaymentTotal - $this->notLessonCreditUsedPaymentTotal, 2)) {
+            }
+            if (round($this->total, 2) > round($this->invoicePaymentTotal - $this->notLessonCreditUsedPaymentTotal, 2)) {
                 $balance = $this->total - ($this->invoicePaymentTotal + $this->notLessonCreditUsedPaymentTotal);
-            } else if (round($this->total, 2) < round($this->invoicePaymentTotal + $this->notLessonCreditUsedPaymentTotal, 2)) {
+            }
+            if (round($this->total, 2) < round($this->invoicePaymentTotal + $this->notLessonCreditUsedPaymentTotal, 2)) {
                 $balance = -(($this->invoicePaymentTotal + $this->notLessonCreditUsedPaymentTotal) - $this->total);
-            } else if ($this->total - $this->notLessonCreditUsedPaymentTotal > $this->invoicePaymentTotal) {
+            }
+            if ($this->total - $this->notLessonCreditUsedPaymentTotal > $this->invoicePaymentTotal) {
                 $balance = ($this->total - $this->notLessonCreditUsedPaymentTotal) - $this->invoicePaymentTotal;
             }
         }
