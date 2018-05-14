@@ -233,7 +233,10 @@ class UserController extends BaseController
 
         return new ActiveDataProvider([
             'query' => $invoiceQuery,
-            'sort' => ['defaultOrder' => ['date' => SORT_DESC]]
+            'sort' => ['defaultOrder' => ['date' => SORT_DESC]],
+            'pagination' => [
+                'pageSize' => 10,
+            ],
         ]);
     }
     protected function getPfiDataProvider($id, $locationId)
