@@ -21,7 +21,7 @@ use yii\helpers\ArrayHelper;
     $query->andWhere(['displayed' => 1]); 
         endif; 
      $query->orderBy(['sortOrder' => SORT_ASC]);
-    $paymentMethods=$query->all();  ?>
+    $paymentMethods = $query->all();  ?>
     <div class="row">
 	   <div class="col-md-7">
             <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
@@ -62,8 +62,7 @@ $model->isCreditApplied()]);?>
         </div>
         <div class="col-md-5">
         <?php echo $form->field($model, 'payment_method_id')->dropDownList(
- ArrayHelper::map($paymentMethods, 'id', 'name'),
-['disabled' => $model->isCreditUsed() ||
+ ArrayHelper::map($paymentMethods, 'id', 'name'),['disabled' => $model->isCreditUsed() ||
 $model->isCreditApplied()]);
             ?>
         </div>
