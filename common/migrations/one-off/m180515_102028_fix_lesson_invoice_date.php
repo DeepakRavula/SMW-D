@@ -25,11 +25,9 @@ class m180515_102028_fix_lesson_invoice_date extends Migration
             }])
             ->all();
         foreach ($invoices as $invoice) {
-            //if ($invoice->lineItem->lesson) {
-                $invoice->updateAttributes([
-                    'date' => (new \DateTime($invoice->lineItem->lesson->date))->format('Y-m-d H:i:s')
-                ]);
-            //}
+            $invoice->updateAttributes([
+                'date' => (new \DateTime($invoice->lineItem->lesson->date))->format('Y-m-d H:i:s')
+            ]);
         }
     }
 
