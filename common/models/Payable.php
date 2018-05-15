@@ -218,13 +218,14 @@ trait Payable
 
     public function distributeCreditsToLesson()
     {
-	if ($this->lineItem && $this->canDistributeCreditsToLesson()) {
+	    if ($this->lineItem && $this->canDistributeCreditsToLesson()) {
             if ($this->lineItem->isGroupLesson()) {
                 $this->addGroupLessonCredit();
             } else {
                 $this->addPrivateLessonCredit();
             }
         }
+        $this->save();
         return true;
     }
     

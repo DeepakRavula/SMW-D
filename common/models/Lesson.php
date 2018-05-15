@@ -660,7 +660,7 @@ class Lesson extends \yii\db\ActiveRecord
         return parent::beforeSave($insert);
     }
     
-    public function beforeSoftDelete()
+    public function afterSoftDelete()
     {
         if (!$this->lessonCredit && $this->proFormaLineItem) {
             $this->proFormaLineItem->delete();
