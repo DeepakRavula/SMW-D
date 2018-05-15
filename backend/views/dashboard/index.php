@@ -70,7 +70,7 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
             <!-- /.box-header -->
             <div class="box-body no-padding">
 				<div class="row">
-					<div class="col-md-12 col-sm-8">
+                <div class="col-md-12 col-sm-12">
 						<div class="pad">
 							<!-- Map will be created here -->
 							<?=
