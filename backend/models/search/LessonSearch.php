@@ -121,7 +121,9 @@ class LessonSearch extends Lesson
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_SCHEDULED) {
             $query->scheduled();
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_RESCHEDULED) {
-            $query->rescheduled();
+            $query->rescheduled()
+		  ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
+;
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_UNSCHEDULED) {
             $query->unscheduled();
         }
@@ -144,15 +146,8 @@ class LessonSearch extends Lesson
             if ((int) $this->invoiceType !== Invoice::TYPE_INVOICE) {
                 $query->andWhere(['between', 'DATE(lesson.date)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
             }
-        } else {
-            $this->fromDate = \DateTime::createFromFormat('M d,Y', $this->fromDate);
-            $this->toDate = \DateTime::createFromFormat('M d,Y', $this->toDate);
-
-            if ((int) $this->invoiceType !== Invoice::TYPE_INVOICE) {
-                $query->andWhere(['between', 'DATE(lesson.date)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
-            }
         }
-        
+ 
         $query->joinWith('teacherProfile');
 	$dataProvider->setSort([
             'attributes' => [
