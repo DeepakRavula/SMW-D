@@ -11,13 +11,23 @@ use common\models\Lesson;
 
 class InvoiceController extends Controller
 {
+    public $locationId;
 
-	public function init() {
+    public function init() 
+    {
         parent::init();
 		$user = User::findByRole(User::ROLE_BOT);
 		$botUser = end($user);
         Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
     }
+
+    public function options($actionID)
+    {
+        return array_merge(parent::options($actionID),
+            $actionID == 'trigger-save' ? ['locationId'] : []
+        );
+    }
+
     public function actionGenerateInvoice()
     {
         /**
@@ -114,5 +124,17 @@ class InvoiceController extends Controller
         }
 
         return true;
+    }
+
+    public function actionTriggerSave()
+    {
+        $locationId = $this->locationId;
+        $invoices = Invoice::find()
+                    ->notDeleted()
+                    ->location($locationId)
+                    ->all();
+        foreach ($invoices as $invoice) {
+            $invoice->save();
+        }
     }
 }

@@ -30,8 +30,12 @@ class QualificationQuery extends ActiveQuery
     
     public function notDeleted()
     {
-        $this->andWhere(['qualification.isDeleted' => false]);
+        return $this->andWhere(['qualification.isDeleted' => false]);
+    }
 
-        return $this;
+    public function location($locationId)
+    {
+        return $this->joinWith('teacherLocation')
+            ->andWhere(['user_location.location_id' => $locationId]);
     }
 }
