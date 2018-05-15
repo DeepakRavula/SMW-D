@@ -1,6 +1,8 @@
 <?php
 
 use yii\db\Migration;
+use common\models\ItemType;
+use common\models\Invoice;
 
 /**
  * Class m180515_102028_fix_lesson_invoice_date
@@ -12,7 +14,23 @@ class m180515_102028_fix_lesson_invoice_date extends Migration
      */
     public function safeUp()
     {
-
+        $invoices = Invoice::find()
+            ->notDeleted()
+            ->invoice()
+            ->location([14, 15])
+            ->joinWith(['lineItem' => function ($query) {
+                $query->andWhere(['invoice_line_item.item_type_id' => [ItemType::TYPE_EXTRA_LESSON,
+                    ItemType::TYPE_GROUP_LESSON, ItemType::TYPE_PRIVATE_LESSON]
+                ]);
+            }])
+            ->all();
+        foreach ($invoices as $invoice) {
+            //if ($invoice->lineItem->lesson) {
+                $invoice->updateAttributes([
+                    'date' => (new \DateTime($invoice->lineItem->lesson->date))->format('Y-m-d H:i:s')
+                ]);
+            //}
+        }
     }
 
     /**
