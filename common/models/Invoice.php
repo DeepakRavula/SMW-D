@@ -732,7 +732,9 @@ class Invoice extends \yii\db\ActiveRecord
                 $invoiceNumber = $lastInvoice->invoice_number + 1;
             }
             $this->invoice_number = $invoiceNumber;
-            $this->date           = (new \DateTime())->format('Y-m-d');
+            if (empty($this->date)) {
+                $this->date = (new \DateTime())->format('Y-m-d');
+            }
             $this->status         = Invoice::STATUS_PAID;
             $this->isSent         = false;
             $this->subTotal       = 0.00;
