@@ -241,41 +241,168 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function isPastPaymentCycle()
     {
-        return new \DateTime($this->endDate) <= new \DateTime();
+        return new \DateTime($this->endDate) < new \DateTime();
     }
 
     public function isCurrentPaymentCycle()
     {
-        if (new \DateTime($this->startDate) <= new \DateTime() &&
-            new \DateTime($this->endDate) >= new \DateTime()) {
-            return true;
-        } elseif ($this->isFirstPaymentCycle()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->id === $this->currentPaymentCycle->id;
+    }
+
+    public function hasUpcommimgPaymentCycle()
+    {
+        $currentPaymentCycle = self::find()
+            ->andWhere(['enrolmentId' => $this->enrolmentId])
+            ->notDeleted()
+            ->andWhere(['AND',
+                ['<=', 'startDate', (new \DateTime())->format('Y-m-d')],
+                ['>=', 'endDate', (new \DateTime())->format('Y-m-d')]
+            ])
+            ->one();
+        return !empty($currentPaymentCycle);
     }
 
     public function isFirstPaymentCycle()
+    {
+        if ($this->hasFirstPaymentCycle()) {
+            return $this->id === $this->firstPaymentCycle->id;
+        }
+        return false;
+    }
+
+    public function hasFirstPaymentCycle()
     {
         $firstPaymentCycle = self::find()
             ->andWhere(['enrolmentId' => $this->enrolmentId])
             ->notDeleted()
             ->orderBy(['startDate' => SORT_ASC])
             ->one();
+        return !empty($firstPaymentCycle);
+    }
 
-        return $this->id === $firstPaymentCycle->id;
+    public function getFirstPaymentCycle()
+    {
+        return self::find()
+            ->andWhere(['enrolmentId' => $this->enrolmentId])
+            ->notDeleted()
+            ->orderBy(['startDate' => SORT_ASC])
+            ->one();
+    }
+
+    public function getCurrentPaymentCycle()
+    {
+        $paymentCycle = self::find()
+            ->andWhere(['enrolmentId' => $this->enrolmentId])
+            ->notDeleted()
+            ->andWhere(['AND',
+                ['<=', 'startDate', (new \DateTime())->format('Y-m-d')],
+                ['>=', 'endDate', (new \DateTime())->format('Y-m-d')]
+            ])
+            ->one();
+        if (empty($paymentCycle)) {
+            $paymentCycle = self::find()
+                ->andWhere(['enrolmentId' => $this->enrolmentId])
+                ->notDeleted()
+                ->andWhere(['>', 'startDate', (new \DateTime())->format('Y-m-d')])
+                ->orderBy(['startDate' => SORT_ASC])
+                ->one();
+        }
+        return $paymentCycle;
+    }
+
+    public function hasCurrentPaymentCycle()
+    {
+        $paymentCycle = self::find()
+            ->andWhere(['enrolmentId' => $this->enrolmentId])
+            ->notDeleted()
+            ->andWhere(['AND',
+                ['<=', 'startDate', (new \DateTime())->format('Y-m-d')],
+                ['>=', 'endDate', (new \DateTime())->format('Y-m-d')]
+            ])
+            ->one();
+        if (empty($paymentCycle)) {
+            $paymentCycle = self::find()
+                ->andWhere(['enrolmentId' => $this->enrolmentId])
+                ->notDeleted()
+                ->andWhere(['>', 'startDate', (new \DateTime())->format('Y-m-d')])
+                ->orderBy(['startDate' => SORT_ASC])
+                ->one();
+        }
+        return !empty($paymentCycle);
+    }
+
+    public function getSecondPaymentCycle()
+    {
+        return self::find()
+            ->andWhere(['enrolmentId' => $this->enrolmentId])
+            ->andWhere(['NOT', ['id' => $this->firstPaymentCycle->id]])
+            ->notDeleted()
+            ->orderBy(['startDate' => SORT_ASC])
+            ->one();
+    }
+
+    public function hasSecondPaymentCycle()
+    {
+        if ($this->hasFirstPaymentCycle()) {
+            $secondPaymentCycle = self::find()
+                ->andWhere(['enrolmentId' => $this->enrolmentId])
+                ->andWhere(['NOT', ['id' => $this->firstPaymentCycle->id]])
+                ->notDeleted()
+                ->orderBy(['startDate' => SORT_ASC])
+                ->one();
+            return !empty($secondPaymentCycle);
+        }
+        return false;
+    }
+
+    public function isSecondPaymentCycle()
+    {
+        if ($this->hasFirstPaymentCycle()) {
+            if ($this->hasFirstPaymentCycle()) {
+                return $this->id === $this->secondPaymentCycle->id;
+            }
+        }
+        return false;
+    }
+
+    public function hasNextPaymentCycle()
+    {
+        if ($this->hasCurrentPaymentCycle()) {
+            $nextPaymentCycle = self::find()
+                ->andWhere(['enrolmentId' => $this->enrolmentId])
+                ->andWhere(['>', 'startDate', $this->currentPaymentCycle->endDate])
+                ->notDeleted()
+                ->orderBy(['startDate' => SORT_ASC])
+                ->one();
+            return !empty($nextPaymentCycle);
+        }
+        return false;
+    }
+
+    public function getNextPaymentCycle()
+    {
+        return self::find()
+                ->andWhere(['enrolmentId' => $this->enrolmentId])
+                ->andWhere(['>', 'startDate', $this->currentPaymentCycle->endDate])
+                ->notDeleted()
+                ->orderBy(['startDate' => SORT_ASC])
+                ->one();
     }
 
     public function isNextPaymentCycle()
     {
-        return $this->enrolment->nextPaymentCycle->id === $this->id;
+        if ($this->hasCurrentPaymentCycle()) {
+            if ($this->hasNextPaymentCycle()) {
+                return $this->id === $this->nextPaymentCycle->id;
+            }
+        }
+        return false;
     }
 
     public function canRaiseProformaInvoice()
     {
-        return $this->isPastPaymentCycle() || $this->isCurrentPaymentCycle() ||
-            $this->isNextPaymentCycle();
+        return $this->isPastPaymentCycle() || $this->isCurrentPaymentCycle() || $this->isFirstPaymentCycle() ||
+            $this->isNextPaymentCycle() || $this->isSecondPaymentCycle();
     }
 
     public function validateCanRaisePFI($attribute)
