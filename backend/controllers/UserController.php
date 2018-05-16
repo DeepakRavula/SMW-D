@@ -223,35 +223,20 @@ class UserController extends BaseController
     protected function getInvoiceDataProvider($model, $locationId)
     {
         $request = Yii::$app->request;
-        $currentDate = new \DateTime();
-        $model->fromDate = $currentDate->format('M d,Y');
-        $model->toDate = $currentDate->format('M d,Y');
-        $model->dateRange = $model->fromDate.' - '.$model->toDate;
-        $userRequest = $request->get('User');
-        if (!empty($userRequest)) {
-            list($model->fromDate, $model->toDate) = explode(' - ', $userRequest['dateRange']);
-            $invoiceStatus = $userRequest['invoiceStatus'];
-            $studentId = $userRequest['studentId'];
-        }
-        $fromDate =  (new \DateTime($model->fromDate))->format('Y-m-d');
-        $toDate =(new \DateTime($model->toDate))->format('Y-m-d');
         $invoiceQuery = Invoice::find()
                 ->andWhere([
                     'invoice.user_id' => $model->id,
                     'invoice.type' => Invoice::TYPE_INVOICE,
                     'invoice.location_id' => $locationId,
                 ])
-                ->notDeleted()
-                ->between($fromDate, $toDate);
-        if (!empty($invoiceStatus) && (int)$invoiceStatus !== UserSearch::STATUS_ALL) {
-            $invoiceQuery->andWhere(['invoice.status' => $invoiceStatus]);
-        }
-        if (!empty($studentId)) {
-            $invoiceQuery->student($studentId);
-        }
+                ->notDeleted();
 
         return new ActiveDataProvider([
             'query' => $invoiceQuery,
+            'sort' => ['defaultOrder' => ['date' => SORT_DESC]],
+            'pagination' => [
+                'pageSize' => 10,
+            ],
         ]);
     }
     protected function getPfiDataProvider($id, $locationId)
