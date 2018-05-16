@@ -73,6 +73,17 @@ $boxTools = $this->render('_invoice-buttons', [
                 return Yii::$app->formatter->asDecimal($data->total);
             },
         ],
+		   [
+            'attribute' => 'balance',
+            'label' => 'Balance',
+            'format' => 'currency',
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right'],
+            'enableSorting' => false,
+            'value' => function ($data) {
+                return $data->getBalance();
+            },
+        ],
     ],
 ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
