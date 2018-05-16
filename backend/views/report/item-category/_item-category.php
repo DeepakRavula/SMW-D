@@ -268,7 +268,7 @@ $(document).ready(function(){
 var report = {
         addNewRow: function () {
     var newSummaryContainer=$("<tbody>");
-    var newRow = $("<tr class='report-footer-grandtotal f-s-18'>");
+    var newRow = $("<tr class='report-footer-grandtotal click-disable'>");
         var cols = "";
         var totalReportValue=<?= Yii::$app->formatter->asDecimal($totalReportValue, 2) ?>;
         var groupByMethod = $("#group-by-method").is(":checked");

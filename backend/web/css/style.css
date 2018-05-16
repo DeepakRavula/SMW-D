@@ -83,6 +83,10 @@ a.desc:after {
 	background-color: #3c8dbc;
     color: white;
 }
+.report-footer-grandtotal{
+    font-size: 18px;
+    font-weight: bold;
+}
 .spinner {
     position: fixed;
     top: 50%;
@@ -454,6 +458,9 @@ dl {
 .modal {
 
     overflow-y: scroll;
+}
+.f-s-20{
+    font-size:20px;
 }
 @media (min-width: 768px) {
     .end-date-adjustment dt {
