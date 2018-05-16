@@ -62,9 +62,7 @@ task('deploy:composer', function() {
 task('deploy:migration', function() {
     writeln('<info>Run Migration...</info>');
     $deployPath = get('deploy_path');
-
-    cd($deployPath);
-    run("php console/yii migrate/up");
+    run('cd {{deploy_path}} && php console/yii migrate/up');
 
     writeln('<info>Data migration is done.</info>');
 });
