@@ -96,7 +96,11 @@ $this->params['action-button'] = $this->render('_action-button', [
         ?>
             <?=$this->render('customer/_payment-preference', [
                 'model' => $model,
-            ]);
+            ]); ?>
+            <?= $this->render('customer/_invoice', [
+            'invoiceDataProvider' => $invoiceDataProvider,
+            'userModel' => $model,
+        ]);
         ?>
     <?php endif;?>
 		
@@ -136,11 +140,6 @@ $this->params['action-button'] = $this->render('_action-button', [
 
         $enrolmentContent = $this->render('customer/_enrolment', [
             'enrolmentDataProvider' => $enrolmentDataProvider,
-        ]);
-
-        $invoiceContent = $this->render('customer/_invoice', [
-            'invoiceDataProvider' => $invoiceDataProvider,
-            'userModel' => $model,
         ]);
 
         $proFormaInvoiceContent = $this->render('customer/_pro-forma-invoice', [
@@ -289,13 +288,6 @@ $this->params['action-button'] = $this->render('_action-button', [
                 'content' => $lessonContent,
                 'options' => [
                     'id' => 'lesson',
-                ],
-            ],
-            [
-                'label' => 'Invoices',
-                'content' => $invoiceContent,
-                'options' => [
-                    'id' => 'invoice',
                 ],
             ],
             [
