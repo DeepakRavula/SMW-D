@@ -17,7 +17,7 @@ if (!empty($holiday)) {
     $holidayResource = ' (' . $holiday->description. ')';
 }
 $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holidayResource;
-$this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class' => 'tv-icon']);
+$this->params['action-button'] = $this->render('_button');
 ?>
 
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
@@ -133,6 +133,7 @@ $(document).on('click', '.tv-icon', function(e){
     var date = moment($('#datepicker').datepicker("getDate")).format('DD-MM-YYYY');
     var url = "<?= Url::to(['daily-schedule/index']);?>?date=" + date; 
     window.open(url, '_blank');
+    return false;
 });
 
 $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
@@ -141,10 +142,13 @@ $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
     if (tab === "Classroom View") {
         showclassroomCalendar(moment(date));
         $('.calendar-filter').hide();
+        $('#show-all').hide();
     } else {
         refreshCalendar(moment(date));
         $('.calendar-filter').show();
+        $('#show-all').show();
     }
+    return false;
 });
 
 $(document).off('change', '#program-selector').on('change', '#program-selector', function(){
@@ -170,9 +174,16 @@ $(document).off('change', '#program-selector').on('change', '#program-selector',
             refreshCalendar(moment(date));
 	}
     });
+    return false;
 });
     
 $(document).off('change', '#teacher-selector').on('change', '#teacher-selector', function(){
+    var date = $('#calendar').fullCalendar('getDate');
+    refreshCalendar(moment(date));
+    return false;
+});
+
+$(document).off('change', '#schedule-show-all').on('change', '#schedule-show-all', function(){
     var date = $('#calendar').fullCalendar('getDate');
     refreshCalendar(moment(date));
 });
@@ -185,6 +196,7 @@ $(document).off('change', '#datepicker').on('change', '#datepicker', function(){
     } else {
         refreshCalendar(moment(date));
     }
+    return false;
 });
 
 
@@ -277,9 +289,13 @@ function refreshCalendar(date, clearFilter) {
         var programId = $('#program-selector').val();
         var teacherId = $('#teacher-selector').val();
     }
-    var params = $.param({ date: moment(date).format('YYYY-MM-DD'),
+    var showAll = $('#schedule-show-all').is(":checked");
+    var params = $.param({ 
+        date: moment(date).format('YYYY-MM-DD'),
+        showAll: showAll | 0,
         programId: programId,
-        teacherId: teacherId });
+        teacherId: teacherId 
+    });
     var minTime = "09:00:00";
     var maxTime = "17:00:00";
     var day     = moment(date).day();
