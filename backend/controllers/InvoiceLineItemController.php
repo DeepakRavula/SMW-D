@@ -92,6 +92,9 @@ class InvoiceLineItemController extends BaseController
             if ($lineItem->isLessonCredit() || $lineItem->isOpeningBalance()) {
                 $lineItem->setScenario(InvoiceLineItem::SCENARIO_OPENING_BALANCE);
             }
+            if ($lineItem->isMisc()) {
+                $lineItem->setScenario(InvoiceLineItem::SCENARIO_MISC);
+            }
             $data = $this->renderAjax('/invoice/line-item/_form', [
                 'model' => $lineItem
             ]);
