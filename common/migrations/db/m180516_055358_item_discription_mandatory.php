@@ -12,7 +12,7 @@ class m180516_055358_item_discription_mandatory extends Migration
      */
     public function safeUp()
     {
-        $this->alterColumn('item', 'description', 'VARCHAR(500) NOT NULL');
+        $this->alterColumn('item', 'description', 'TEXT NOT NULL');
     }
 
     /**
