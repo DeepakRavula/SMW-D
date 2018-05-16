@@ -64,7 +64,7 @@ task('deploy:migration', function() {
     $deployPath = get('deploy_path');
 
     cd($deployPath);
-    run("php {{deploy_path}} console/yii migrate/up");
+    run("php console/yii migrate/up");
 
     writeln('<info>Data migration is done.</info>');
 });
