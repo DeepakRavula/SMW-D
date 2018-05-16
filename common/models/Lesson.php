@@ -154,9 +154,17 @@ class Lesson extends \yii\db\ActiveRecord
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function ($model, $attribute) {
                     return $model->course->program->isPrivate();
                 }],
+            ['date', 'validateOnInvoiced', 'on' => self::SCENARIO_EDIT],
             [['date'], TeacherSubstituteValidator::className(), 'on' => self::SCENARIO_SUBSTITUTE_TEACHER],
             [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]]
         ];
+    }
+
+    public function validateOnInvoiced($attribute)
+    {
+        if ($this->hasInvoice()) {
+            $this->addError($attribute, "Lesson can't be edited once its invoiced");
+        }
     }
 
     /**
