@@ -18,15 +18,23 @@
     margin-left:-30px;
 }
 .highcharts-root {
-    max-height: 240px;
+    max-height: 350px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: block;
+    overflow-x: auto !important;
 }
 .highcharts-container {
     max-width: 2150px;
+    width:100% !important;
+    overflow: auto !important;
 }
 .highcharts-background {
-    max-width: 2150px;
+    max-width: 1200px;
 }
 #w4 {
     max-width: 2150px;
-    max-height: 250px;
+    max-height: 350px;
+    width:100% !important;
+    /*overflow-x: auto !important;*/
 }
