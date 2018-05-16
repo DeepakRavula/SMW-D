@@ -99,6 +99,7 @@ $this->params['action-button'] = $this->render('_action-button', [
             ]); ?>
             <?= $this->render('customer/_invoice', [
             'invoiceDataProvider' => $invoiceDataProvider,
+            'count' => $invoiceCount,
             'userModel' => $model,
         ]);
         ?>

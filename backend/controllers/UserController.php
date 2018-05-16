@@ -229,15 +229,26 @@ class UserController extends BaseController
                     'invoice.type' => Invoice::TYPE_INVOICE,
                     'invoice.location_id' => $locationId,
                 ])
+		->limit(10)
                 ->notDeleted();
-
         return new ActiveDataProvider([
             'query' => $invoiceQuery,
             'sort' => ['defaultOrder' => ['date' => SORT_DESC]],
-            'pagination' => [
-                'pageSize' => 10,
-            ],
+            'pagination' => false,
         ]);
+    }
+    
+    protected function getInvoiceCount($model, $locationId) {
+	    $request = Yii::$app->request;
+	    $invoiceCount = Invoice::find()
+                ->andWhere([
+                    'invoice.user_id' => $model->id,
+                    'invoice.type' => Invoice::TYPE_INVOICE,
+                    'invoice.location_id' => $locationId,
+                ])
+                ->notDeleted()
+		->count();
+	    return $invoiceCount;
     }
     protected function getPfiDataProvider($id, $locationId)
     {
@@ -500,6 +511,7 @@ class UserController extends BaseController
             'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate, $invoiceSearchModel->summariseReport),
             'unavailability' => $this->getUnavailabilityDataProvider($id),
             'logDataProvider' => $this->getLogDataProvider($id),
+	    'invoiceCount' => $this->getInvoiceCount($model, $locationId),
         ]);
     }
 
