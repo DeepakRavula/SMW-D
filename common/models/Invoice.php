@@ -732,7 +732,9 @@ class Invoice extends \yii\db\ActiveRecord
                 $invoiceNumber = $lastInvoice->invoice_number + 1;
             }
             $this->invoice_number = $invoiceNumber;
-            $this->date           = (new \DateTime())->format('Y-m-d');
+            if (empty($this->date)) {
+                $this->date = (new \DateTime())->format('Y-m-d');
+            }
             $this->status         = Invoice::STATUS_PAID;
             $this->isSent         = false;
             $this->subTotal       = 0.00;
@@ -769,10 +771,13 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return $this->lineItem && !$this->isReversedInvoice() && !$this->isInvoiceReversed() && !$this->isOpeningBalance();
     }
-	public function getReminderNotes() {
+
+    public function getReminderNotes() 
+    {
 		$reminderNote =  ReminderNote::find()->one();
 		return $reminderNote->notes;
-	}
+    }
+    
     public function getNetSubtotal()
     {
         $subtotal = 0.0;
@@ -885,6 +890,7 @@ class Invoice extends \yii\db\ActiveRecord
         $payment->amount = $this->balance;
         return $payment->save();
     }
+
     public function sendEmail()
     {
         if (!empty($this->toEmailAddress)) {
@@ -908,16 +914,14 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function void($canbeUnscheduled)
     {
-        $status = false;
         if (!$this->isVoid) {
             foreach ($this->lineItems as $lineItem) {
                 $lineItem->lessonCanBeUnscheduled = $canbeUnscheduled;
                 $lineItem->delete();
             }
             $this->updateAttributes(['isVoid' => true]);
-            $status = true;
         }
-        return $status;
+        return true;
     }
 
     public function canAddItem()

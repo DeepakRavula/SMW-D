@@ -149,6 +149,7 @@ trait Invoiceable
         $invoice->userName = $loggedUser->userProfile->fullName;
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $location_id;
+        $invoice->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
         $invoice->save();
         $this->addPrivateLessonLineItem($invoice);
         $invoice->save();
@@ -192,6 +193,7 @@ trait Invoiceable
         $invoice->userName = $user->publicIdentity;
         $invoice->user_id = $enrolment->student->customer->id;
         $invoice->location_id = $location_id;
+        $invoice->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
         $invoice->save();
         $this->enrolmentId = $enrolmentId;
         $this->addGroupLessonLineItem($invoice);

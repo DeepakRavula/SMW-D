@@ -214,7 +214,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 },
                     
                     
-                    'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
+                    'contentOptions' => ['style' => 'font-size:14px;text-align:left'],
             ],
 
                 [
