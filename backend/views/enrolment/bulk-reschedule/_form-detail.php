@@ -99,6 +99,12 @@ use common\models\Location;
         $('#modal-spinner').hide();
     });
 
+    $(document).off('change', '#coursereschedule-teacherid, #coursereschedule-duration').
+        on('change', '#coursereschedule-teacherid, #coursereschedule-duration', function () {
+            $('#coursereschedule-daytime').val('');
+            $('#week-view-calendar').fullCalendar('removeEvents', 'newEnrolment');
+    });
+
     $(document).on('week-view-calendar-select', function(event, params) {
         $('#coursereschedule-daytime').val(moment(params.date, "DD-MM-YYYY h:mm a").format('dddd hh:mm A')).trigger('change');
         return false;
