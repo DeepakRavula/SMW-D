@@ -239,7 +239,6 @@ class UserController extends BaseController
     }
     
     protected function getInvoiceCount($model, $locationId) {
-	    $request = Yii::$app->request;
 	    $invoiceCount = Invoice::find()
                 ->andWhere([
                     'invoice.user_id' => $model->id,
