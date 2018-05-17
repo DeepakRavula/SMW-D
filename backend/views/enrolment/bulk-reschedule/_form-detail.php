@@ -93,10 +93,17 @@ use common\models\Location;
             'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
             'changeId' : '#coursereschedule-teacherid',
             'durationId' : '#coursereschedule-duration',
-            'studentId' : <?= $model->studentId ?>
+            'studentId' : <?= $model->studentId ?>,
+            'enrolmentId' : <?= $model->id ?>
         };
         $.fn.calendarDayView(options);
         $('#modal-spinner').hide();
+    });
+
+    $(document).off('change', '#coursereschedule-teacherid, #coursereschedule-duration').
+        on('change', '#coursereschedule-teacherid, #coursereschedule-duration', function () {
+            $('#coursereschedule-daytime').val('');
+            $('#week-view-calendar').fullCalendar('removeEvents', 'newEnrolment');
     });
 
     $(document).on('week-view-calendar-select', function(event, params) {

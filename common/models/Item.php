@@ -52,7 +52,8 @@ class Item extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['itemCategoryId', 'locationId', 'code', 'royaltyFree', 'taxStatusId', 'status'], 'required'],
+            [['itemCategoryId', 'locationId', 'code', 'royaltyFree', 'taxStatusId', 'status', 
+                'description'], 'required'],
             [['itemCategoryId', 'locationId', 'royaltyFree', 'taxStatusId', 'status'], 'integer'],
             [['price'], 'number'],
             [['description', 'code'], 'trim'],
@@ -268,7 +269,7 @@ class Item extends \yii\db\ActiveRecord
             }
         }
         if (!$invoiceLineItemModel) {
-            $invoiceLineItemModel = new InvoiceLineItem();
+            $invoiceLineItemModel = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_MISC]);
             $invoiceLineItemModel->invoice_id = $invoice->id;
             $invoiceLineItemModel->item_id = $this->id;
             $invoiceLineItemModel->unit = true;
