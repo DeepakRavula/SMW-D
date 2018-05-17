@@ -99,7 +99,13 @@ var calendar = {
         var now = Date();
         var dateValue = $('#fullcalendar-week-view-go-to-datepicker').val();
         var date = moment(dateValue ? dateValue : now).format('MMM D, YYYY');
-        var eventParams = $.param({ teacherId: teacherId, date: date, studentId: options.studentId , lessonId: options.lessonId });
+        var eventParams = $.param({ 
+            'LessonSearch[teacherId]': teacherId, 
+            'LessonSearch[date]': date, 
+            'LessonSearch[studentId]': options.studentId, 
+            'LessonSearch[lessonId]': options.lessonId,
+            'LessonSearch[enrolmentId]': options.enrolmentId 
+        });
         var calendarOptions = options;
         calendarOptions.date = date;
         calendarOptions.eventUrlFormatted = options.eventUrl + '?' + eventParams;

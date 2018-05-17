@@ -107,7 +107,7 @@ class CourseReschedule extends Model
         $dayList = Course::getWeekdaysList();
         $day = $dayList[(new \DateTime($this->dayTime))->format('N')];
         $rescheduleStartDate->modify('next ' . $day);
-        $course->generateLessons($lessons, $rescheduleStartDate, $this->teacherId, $this->dayTime);
+        $course->generateLessons($lessons, $rescheduleStartDate, $this->teacherId, $this->dayTime, $this->duration);
         return true;
     }
 }
