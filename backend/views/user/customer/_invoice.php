@@ -81,7 +81,7 @@ $boxTools = $this->render('_invoice-buttons', [
             'contentOptions' => ['class' => 'text-right'],
             'enableSorting' => false,
             'value' => function ($data) {
-                return $data->getBalance();
+                return $data->balance;
             },
         ],
     ],

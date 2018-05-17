@@ -932,11 +932,4 @@ class Invoice extends \yii\db\ActiveRecord
         }
         return $status;
     }
-    public function getBalance() {
-		$balance = $this->balance;
-		if ($this->isPaid()) {
-			$balance = 0.00;
-		}
-		return $balance;
-	}
 }
