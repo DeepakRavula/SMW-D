@@ -76,7 +76,7 @@ class PaymentQuery extends ActiveQuery
     public function exceptAutoPayments()
     {
         return $this->andWhere(['NOT', ['payment.payment_method_id' => [
-            PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED, PaymentMethod::TYPE_GIFT_CARD
+            PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED
         ]]]);
     }
     
