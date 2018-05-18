@@ -220,9 +220,9 @@ trait Payable
     {
 	    if ($this->lineItem && $this->canDistributeCreditsToLesson()) {
             if ($this->lineItem->isGroupLesson()) {
-                $this->addGroupLessonCredit();
+                $status = $this->addGroupLessonCredit();
             } else {
-                $this->addPrivateLessonCredit();
+                $status = $this->addPrivateLessonCredit();
             }
         }
         $this->save();

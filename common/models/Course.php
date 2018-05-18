@@ -278,7 +278,7 @@ class Course extends \yii\db\ActiveRecord
         return parent::afterSave($insert, $changedAttributes);
     }
 
-    public function generateLessons($lessons, $startDate, $teacherId, $dayTime)
+    public function generateLessons($lessons, $startDate, $teacherId, $dayTime, $duration)
     {
         $hour = (new \DateTime($dayTime))->format('H');
         $minute = (new \DateTime($dayTime))->format('i');
@@ -290,6 +290,7 @@ class Course extends \yii\db\ActiveRecord
             $lesson->id = null;
             $lesson->isNewRecord = true;
             $lesson->teacherId = $teacherId;
+            $lesson->duration = (new \DateTime($duration))->format('H:i:s');;
             $lesson->status = Lesson::STATUS_SCHEDULED;
             $nextWeekScheduledDate->setTime($hour, $minute, $second);
             $lesson->date = $nextWeekScheduledDate->format('Y-m-d H:i:s');

@@ -62,9 +62,7 @@ task('deploy:composer', function() {
 task('deploy:migration', function() {
     writeln('<info>Run Migration...</info>');
     $deployPath = get('deploy_path');
-
-    cd($deployPath);
-    run("php {{deploy_path}} console/yii migrate/up");
+    run('cd {{deploy_path}} && php console/yii migrate/up');
 
     writeln('<info>Data migration is done.</info>');
 });
@@ -96,14 +94,11 @@ task('deploy:prod', [
     'deploy:one-off',
 ]);
 
-set('slack_text', 'Smw deployed to {{instance}} by {{user}}');
-set('slack_success_text', 'Deploy to {{instance}} instance successful');
-set('slack_failure_text', 'Deploy to {{instance}} instance failure');
+set('slack_success_text', '{{user}} deployed to {{instance}} instance.');
+set('slack_failure_text', '{{user}} deployed to {{instance}} instance.');
 
-before('deploy:dev', 'slack:notify');
 after('deploy:dev', 'success');
 
-before('deploy:prod', 'slack:notify');
 after('deploy:prod', 'success');
 
 after('success', 'slack:notify:success');

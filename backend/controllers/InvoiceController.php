@@ -685,8 +685,8 @@ class InvoiceController extends BaseController
         $model = Invoice::findOne($id);
         if ($model->canPost()) {
             $model->isPosted = true;
+            $status = $model->distributeCreditsToLesson();
             $model->save();
-            $model->distributeCreditsToLesson();
             $response = [
                 'status' => true
             ];
@@ -718,7 +718,7 @@ class InvoiceController extends BaseController
     {
         $model = Invoice::findOne($id);
         if ($model->canDistributeCreditsToLesson()) {
-            $model->distributeCreditsToLesson();
+            $status = $model->distributeCreditsToLesson();
             $response = [
                 'status' => true
             ];
@@ -743,9 +743,9 @@ class InvoiceController extends BaseController
     public function actionRetractCredits($id)
     {
         $model = Invoice::findOne($id);
-        $model->retractCreditsFromLessons();
+        $status = $model->retractCreditsFromLessons();
         $response = [
-            'status' => $model->save()
+            'status' => true
         ];
         return $response;
     }

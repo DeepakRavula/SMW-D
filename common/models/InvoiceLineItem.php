@@ -23,6 +23,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 class InvoiceLineItem extends \yii\db\ActiveRecord
 {
     const SCENARIO_OPENING_BALANCE = 'allow-negative-line-item-amount';
+    const SCENARIO_MISC = 'misc-item';
     const SCENARIO_EDIT = 'edit';
     const SCENARIO_NEGATIVE_VALUE_EDIT = 'negative-value-edit';
     const DISCOUNT_FLAT            = 0;
@@ -77,7 +78,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             }],
             [['description'], 'trim'],
             ['amount', 'compare', 'operator' => '>', 'compareValue' => 0, 'except' => [self::SCENARIO_OPENING_BALANCE,
-                self::SCENARIO_NEGATIVE_VALUE_EDIT]],
+                self::SCENARIO_NEGATIVE_VALUE_EDIT, self::SCENARIO_MISC]],
             [['unit'], 'number', 'when' => function ($model) {
                 return (int) $model->item_type_id !== ItemType::TYPE_MISC;
             },

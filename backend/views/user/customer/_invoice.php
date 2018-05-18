@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use common\models\Student;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+use common\models\User;
 
 ?>
 <?php
@@ -73,8 +74,37 @@ $boxTools = $this->render('_invoice-buttons', [
                 return Yii::$app->formatter->asDecimal($data->total);
             },
         ],
+		   [
+            'attribute' => 'balance',
+            'label' => 'Balance',
+            'format' => 'currency',
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right'],
+            'enableSorting' => false,
+            'value' => function ($data) {
+                return $data->balance;
+            },
+        ],
     ],
 ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
 </div>
+<div class="more-invoice pull-right" id = "admin-login" style = "display:none">
+    <a class = "see-more" href = "">See More</a>
+</div>
 <?php LteBox::end() ?>
+<script>
+	$(document).ready(function() {
+	 var invoice_count = '<?= $count; ?>' ;
+		if(invoice_count > 10) {
+			$(".more-invoice").show();
+			var dateRange = "";
+			var customer = '<?= $userModel->userProfile->firstname; ?>' ;
+			var type = <?= Invoice::TYPE_INVOICE; ?>;
+			var params = $.param({ 'InvoiceSearch[customer]': customer, 'InvoiceSearch[type]': type, 'InvoiceSearch[invoiceDateRange]': dateRange });
+			var url = '<?= Url::to(['invoice/index']); ?>?' + params;
+			$('.see-more').attr("href", url);
+		}
+	});
+</script>
+	

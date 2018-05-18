@@ -327,13 +327,45 @@ class TeacherAvailabilityController extends BaseController
         return $events;
     }
 
-    public function actionShowLessonEvent($teacherId = null, $date, $studentId = null, $lessonId = null)
+    public function actionShowLessonEvent()
     {
+        $lessonRequest = Yii::$app->request->get('LessonSearch');
+        $teacherId = $lessonRequest['teacherId'];
+        $studentId = $lessonRequest['studentId'];
+        $lessonId = $lessonRequest['lessonId'];
+        $enrolmentId = $lessonRequest['enrolmentId'];
+        $date = $lessonRequest['date'];
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $fromDate = (new \DateTime($date))->modify('Monday this week');
         $toDate = (new \DateTime($date))->modify('Sunday this week');
-        $teacherLessons = Lesson::find()
-            ->joinWith(['course' => function ($query) use ($locationId) {
+        if ($teacherId) {
+            $teacherLessons = Lesson::find()
+                ->joinWith(['course' => function ($query) use ($locationId, $enrolmentId) {
+                    $query->location($locationId)
+                        ->confirmed()
+                        ->andWhere(['NOT', ['course.id' => null]]);
+                    if ($enrolmentId) {
+                        $query->joinWith(['enrolments' => function ($query) use ($enrolmentId) {
+                            $query->andWhere(['NOT', ['enrolment.id' => $enrolmentId]]);
+                        }]);
+                    }
+                }])
+                ->scheduledOrRescheduled()
+                ->isConfirmed()
+                ->notDeleted()
+                ->between($fromDate, $toDate)
+                ->andWhere(['lesson.teacherId' => $teacherId]);
+        }
+        $lessonQuery = Lesson::find()
+            ->joinWith(['course' => function ($query) use ($studentId, $locationId, $enrolmentId) {
+                $query->joinWith(['enrolments' => function ($query) use ($studentId, $enrolmentId) {
+                    if ($studentId) {
+                        $query->andWhere(['enrolment.studentId' => $studentId]);
+                    }
+                    if ($enrolmentId) {
+                        $query->andWhere(['NOT', ['enrolment.id' => $enrolmentId]]);
+                    }
+                }]);
                 $query->location($locationId)
                     ->confirmed()
                     ->andWhere(['NOT', ['course.id' => null]]);
@@ -343,24 +375,10 @@ class TeacherAvailabilityController extends BaseController
             ->notDeleted()
             ->andWhere(['NOT', ['lesson.id' => $lessonId]])
             ->between($fromDate, $toDate);
-        if ($teacherId) {
-            $teacherLessons->andWhere(['lesson.teacherId' => $teacherId]);
-        }
-        $lessons = Lesson::find()
-            ->joinWith(['course' => function ($query) use ($studentId, $locationId) {
-                $query->joinWith(['enrolments' => function ($query) use ($studentId) {
-                    $query->andWhere(['enrolment.studentId' => $studentId]);
-                }]);
-                $query->location($locationId)
-                    ->confirmed()
-                    ->andWhere(['NOT', ['course.id' => null]]);
-            }])
-            ->scheduledOrRescheduled()
-            ->isConfirmed()
-            ->notDeleted()
-            ->union($teacherLessons)
-            ->between($fromDate, $toDate)
-            ->all();
+            if ($teacherId) {
+                $lessonQuery->union($teacherLessons);
+            }
+            $lessons = $lessonQuery->all();
         $events = [];
         foreach ($lessons as $lesson) {
             $lesson = Lesson::findOne($lesson->id);
