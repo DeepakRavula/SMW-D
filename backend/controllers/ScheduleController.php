@@ -110,7 +110,7 @@ class ScheduleController extends BaseController
         return $data;
     }
 
-    public function getLessons($date, $teacherId)
+    public function getLessons($date, $teacherId = null)
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $query = Lesson::find()
@@ -229,14 +229,29 @@ class ScheduleController extends BaseController
     {
         $unavailability = TeacherUnavailability::find()
             ->andWhere(['teacherId' => $teacherAvailability->teacher->id])
-            ->overlap($teacherAvailability, $date)
+            ->overlap($date)
             ->one();
         return $unavailability;
     }
 
-    public function getTeacherAvailabilityEvents($teachersAvailability, $unavailability, $date)
+    public function getTeacherAvailabilityEvents($teachersAvailabilities, $date)
     {
-        $events = [];
+        foreach ($teachersAvailabilities as $teachersAvailability) {
+            $unavailability = $this->getTeacherUnavailability($teachersAvailability, $date);
+            if (!empty($unavailability)) {
+                if (empty($unavailability->fromTime) && empty($unavailability->toTime)) {
+                    continue;
+                } else {
+                    $events = array_merge($events, $this->getAvailabilityEvents($teachersAvailability, $unavailability, $date));
+                }
+            } else {
+                $events = $this->getRegularAvailability($teachersAvailability, $date);
+            }
+        }
+    }
+
+    public function getAvailabilityEvents($teachersAvailability, $unavailability, $date)
+    {
         $availabilityStart = Carbon::parse($teachersAvailability->from_time);
         $availabilityEnd = Carbon::parse($teachersAvailability->to_time);
         $availabilityDiff = $availabilityStart->diff($availabilityEnd);
@@ -310,20 +325,8 @@ class ScheduleController extends BaseController
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $date = Carbon::parse($date);
         $formatedDate = $date->format('Y-m-d');
-        $events = [];
         $teachersAvailabilities = $this->getTeacherAvailability($teacherId, $programId, $showAll, $date);
-        foreach ($teachersAvailabilities as $teachersAvailability) {
-            $unavailability = $this->getTeacherUnavailability($teachersAvailability, $date);
-            if (!empty($unavailability)) {
-                if (empty($unavailability->fromTime) && empty($unavailability->toTime)) {
-                    continue;
-                } else {
-                    $events = array_merge($events, $this->getTeacherAvailabilityEvents($teachersAvailability, $unavailability, $date));
-                }
-            } else {
-                $events = $this->getRegularAvailability($teachersAvailability, $date);
-            }
-        }
+        $events = $this->getTeacherAvailabilityEvents($teachersAvailabilities, $date);
         $lessons = $this->getLessons($date, $teacherId);
         foreach ($lessons as &$lesson) {
             $toTime = new \DateTime($lesson->date);
@@ -397,8 +400,7 @@ class ScheduleController extends BaseController
                 'rendering'  => 'background',
             ];
         }
-        $teacherId = null;
-        $lessons = $this->getLessons($date, $teacherId);
+        $lessons = $this->getLessons($date);
         foreach ($lessons as &$lesson) {
             if (! empty($lesson->classroomId)) {
                 $toTime = new \DateTime($lesson->date);

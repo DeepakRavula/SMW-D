@@ -11,7 +11,7 @@ use yii\db\ActiveQuery;
  */
 class TeacherUnavailabilityQuery extends ActiveQuery
 {
-    public function overlap($teacherAvailability, $date)
+    public function overlap($date)
     {
         $this->andWhere(['AND',
             [
