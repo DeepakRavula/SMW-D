@@ -89,8 +89,8 @@ $boxTools = $this->render('_invoice-buttons', [
 ]); ?>
 <?php \yii\widgets\Pjax::end(); ?>
 </div>
-<div class="more-invoice" style = "display:none">
-    <a class = "see-more" href = "">seemore</a>
+<div class="more-invoice pull-right" id = "admin-login" style = "display:none">
+    <a class = "see-more" href = "">See More...</a>
 </div>
 <?php LteBox::end() ?>
 <script>
