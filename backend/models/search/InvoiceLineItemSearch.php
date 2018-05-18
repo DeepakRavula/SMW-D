@@ -103,7 +103,7 @@ class InvoiceLineItemSearch extends InvoiceLineItem
                     ->between((new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d'));
                 if (!$this->isCustomerReport) {
                     $query->orderBy([
-                            'DATE(invoice.date)' => SORT_DESC,
+                            'DATE(invoice.date)' => SORT_ASC,
                         ]);
                 }
             }]);
