@@ -31,8 +31,11 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
     font-size:17px;
 }
 .kv-page-summary {
-    border-top: 4px #ddd;
+    border-top:none;
     font-weight: bold;
+}
+.table > tbody + tbody {
+     border-top: none;
 }
 </style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
