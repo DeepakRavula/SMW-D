@@ -250,7 +250,6 @@ GridView::widget([
         return $data;
     },
     'summary' => false,
-    'emptyText' => false,
     'showPageSummary' => true,
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed table-itemcategory-report', 'id' => 'payment'],
