@@ -60,6 +60,7 @@ class Dashboard extends \yii\db\ActiveRecord
             $revenue = Payment::find()
                     ->notDeleted()
                     ->exceptAutoPayments()
+		    ->exceptGiftCard()
                     ->joinWith(['invoicePayment' => function ($query) use ($locationId) {
                         $query->joinWith(['invoice' => function ($query) use ($locationId) {
                             $query->notDeleted()
