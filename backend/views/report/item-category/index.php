@@ -23,13 +23,6 @@ $this->params['show-all'] = $this->render('_button', [
 </div>
 
 <script>
-$("#print").on("click", function() {
-       var dateRange=$('#invoicelineitemsearch-daterange').val();
-        var params = $.param({ 'InvoiceLineItemSearch[dateRange]': dateRange,
-             });
-        var url = '<?php echo Url::to(['item-category/print']); ?>?' + params;
-        window.open(url,'_blank');
-    });
 $(document).ready(function(){
     $("#group-by-method").on("change", function() {
         var groupByMethod = $(this).is(":checked");
@@ -41,10 +34,10 @@ $(document).ready(function(){
     });
     $("#print").on("click", function() {
         var groupByMethod = $("#group-by-method").is(":checked");
-        var dateRange = $('#paymentsearch-daterange').val();
-        var params = $.param({ 'PaymentSearch[dateRange]': dateRange,
-            'PaymentSearch[groupByMethod]': (groupByMethod | 0) });
-        var url = '<?php echo Url::to(['payment/print']); ?>?' + params;
+        var dateRange=$('#invoicelineitemsearch-daterange').val();
+        var params = $.param({ 'InvoiceLineItemSearch[dateRange]': dateRange,
+            'InvoiceLineItemSearch[groupByMethod]': (groupByMethod | 0) });
+        var url = '<?php echo Url::to(['item-category/print']); ?>?' + params;
         window.open(url,'_blank');
     });
 });
