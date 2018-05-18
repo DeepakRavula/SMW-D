@@ -26,10 +26,7 @@ Pjax::begin([
 		<?php
         LteBox::begin([
             'type' => LteConst::TYPE_DEFAULT,
-            'boxTools' => [
-                '<i title="Edit" class="fa fa-pencil student-profile-edit-button m-r-10"></i>',
-                '<i title="Merge" id="student-merge" class="fa fa-chain"></i>'
-            ],
+            'boxTools' => $this->render('_details-button'),
             'title' => 'Details',
             'withBorder' => true,
         ])

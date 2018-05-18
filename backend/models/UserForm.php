@@ -20,6 +20,7 @@ class UserForm extends Model
     const SCENARIO_CREATE = 'create';
 
     public $canLogin;
+    public $canMerge;
     public $pin;
     public $username;
     public $status;
@@ -48,7 +49,7 @@ class UserForm extends Model
             ['pin', 'validatePin'],
             [['status'], 'integer'],
             ['roles', 'required'],
-            [['locations', 'pin', 'canLogin'], 'safe'],
+            [['locations', 'pin', 'canLogin', 'canMerge'], 'safe'],
             [['password', 'confirmPassword'], 'string', 'min' => 6],
             ['confirmPassword', 'compare', 'compareAttribute' => 'password', 'message' => "Confirm Password doesn't match with the password"],
         ];
@@ -99,6 +100,7 @@ class UserForm extends Model
     {
         $this->username = $model->username;
         $this->canLogin = $model->canLogin;
+        $this->canMerge = $model->canMerge;
         $this->status = $model->status;
         $this->model = $model;
         $this->roles = ArrayHelper::getColumn(
@@ -164,6 +166,7 @@ class UserForm extends Model
             $lastname = $this->lastname;
             $firstname = $this->firstname;
             $model->canLogin = $this->canLogin;
+            $model->canMerge = $this->canMerge;
             if (!$model->save()) {
                 throw new Exception('Model not saved');
             }
