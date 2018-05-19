@@ -62,7 +62,8 @@ task('deploy:composer', function() {
 task('deploy:migration', function() {
     writeln('<info>Run Migration...</info>');
     $deployPath = get('deploy_path');
-    run('cd {{deploy_path}} && php console/yii migrate/up');
+    cd($deployPath);
+    run('php console/yii migrate/up --interactive=0');
 
     writeln('<info>Data migration is done.</info>');
 });
@@ -71,7 +72,7 @@ task('deploy:one-off', function() {
     $deployPath = get('deploy_path');
 
     cd($deployPath);
-    run("php {{deploy_path}} console/yii one-off");
+    run("php console/yii one-off --interactive=0");
 
     writeln('<info>One off migration is done.</info>');
 });
