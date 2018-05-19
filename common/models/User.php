@@ -317,6 +317,8 @@ class User extends ActiveRecord implements IdentityInterface
         if ($insert) {
             if (empty($this->canLogin)) {
                 $this->canLogin = false;
+            }
+            if (empty($this->canMerge)) {
                 $this->canMerge = false;
             }
             $this->isDeleted = false;
