@@ -88,10 +88,14 @@ class UserQuery extends ActiveQuery
     
     public function adminOrOwner()
     {
-        $this->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+        return $this->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
             ->andWhere(['OR', ['raa.item_name' => ['owner', 'administrator']]]);
+    }
 
-        return $this;
+    public function admin()
+    {
+        return $this->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+            ->andWhere(['raa.item_name' => 'administrator']);
     }
     
     public function backendUsers()
