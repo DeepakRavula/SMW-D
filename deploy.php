@@ -72,7 +72,7 @@ task('deploy:one-off', function() {
     $deployPath = get('deploy_path');
 
     cd($deployPath);
-    run("php {{deploy_path}} console/yii one-off/up --interactive=0");
+    run("php console/yii one-off --interactive=0");
 
     writeln('<info>One off migration is done.</info>');
 });
