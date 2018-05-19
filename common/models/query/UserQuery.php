@@ -103,6 +103,12 @@ class UserQuery extends ActiveQuery
         return $this->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
             ->andWhere(['OR', ['raa.item_name' => ['owner', 'administrator', 'staffmember']]]);
     }
+    public function adminWithLocation($locationId)
+    {
+        return $this->joinWith('userLocation')
+            ->join('INNER JOIN', 'rbac_auth_assignment raa_new', 'raa_new.user_id = user.id')
+            ->andWhere(['OR', ['raa_new.item_name' => 'administrator'], ['location_id' => $locationId]]);
+    }
     
     public function canLogin()
     {

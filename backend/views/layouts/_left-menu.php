@@ -332,16 +332,17 @@ echo Menu::widget([
                     'url' => ['/user/import'],
 					'visible' => Yii::$app->user->can('manageImport'),
                 ],
-		[
-		    
-					'label' => Yii::t('backend', 'Timeline'),
-					'icon' => '<i class="fa fa-bell"></i>',
-					'url' => ['/timeline-event/index'],
-					'badge' => LogHistory::logsCount(),
-					'badgeBgClass' => 'label-default'
-				],
+	
 
             ],
+        ],
+        [
+		    
+            'label' => Yii::t('backend', 'Timeline'),
+            'icon' => '<i class="fa fa-bell"></i>',
+            'url' => ['/timeline-event/index'],
+            'badge' => LogHistory::logsCount(),
+            'badgeBgClass' => 'label-default'
         ]
     ]
 ])
