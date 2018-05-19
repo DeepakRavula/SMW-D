@@ -5,13 +5,11 @@ use yii\widgets\ActiveForm;
 
 ?>
 
-<div class="pull-left">
-    <div id="show-all" class="checkbox-btn">
-        <label>
-            <input type="checkbox" id="schedule-show-all" name="Schedule[showAll]" value="1"> 
-            Show All
-        </label>
-    </div>
+<div id="show-all" class="pull-left">
+    <label>
+        <input type="checkbox" id="schedule-show-all" name="Schedule[showAll]"> 
+        Show All
+    </label>
 </div>
 
 <div class="pull-right">

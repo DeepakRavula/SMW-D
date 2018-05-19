@@ -107,8 +107,8 @@ class UserQuery extends ActiveQuery
 
     public function location($locationId)
     {
-        $this->joinWith('userLocation')
-            ->andWhere(['location_id' => $locationId]);
+        $this->joinWith('userLocation uslo')
+            ->andWhere(['uslo.location_id' => $locationId]);
 
         return $this;
     }

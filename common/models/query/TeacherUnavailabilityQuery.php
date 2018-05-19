@@ -13,14 +13,21 @@ class TeacherUnavailabilityQuery extends ActiveQuery
 {
     public function overlap($date)
     {
-        $this->andWhere(['AND',
+        return $this->andWhere(['OR', 
+            ['AND',
+                [
+                    '<', 'DATE(fromDate)', $date->format('Y-m-d')
+                ],
+                [
+                    '>', 'DATE(toDate)', $date->format('Y-m-d')
+                ]
+            ], 
             [
-                '<=', 'DATE(fromDate)', $date->format('Y-m-d')
+                'DATE(fromDate)' => $date->format('Y-m-d')
             ],
             [
-                '>=', 'DATE(toDate)', $date->format('Y-m-d')
+                'DATE(toDate)' => $date->format('Y-m-d')
             ]
         ]);
-        return $this;
     }
 }

@@ -19,6 +19,14 @@ class TeacherAvailabilityQuery extends ActiveQuery
         }]);
         return $this;
     }
+
+    public function location($locationId)
+    {
+        return $this->joinWith(['userLocation taul' => function ($query) use ($locationId) {
+            $query->andWhere(['taul.location_id' => $locationId]);
+        }]);
+    }
+
     public function day($day)
     {
         $this->andWhere(['teacher_availability_day.day' => $day]);

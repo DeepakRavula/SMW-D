@@ -118,6 +118,7 @@ $this->params['action-button'] = $this->render('_button');
 
 <script type="text/javascript">
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
+var scheduleVisibilities   = <?php echo Json::encode($scheduleVisibilities); ?>;
 $(document).ready(function() {
     $('#datepicker').datepicker ({
         format: 'M d,yyyy',
@@ -202,16 +203,21 @@ $(document).off('change', '#datepicker').on('change', '#datepicker', function(){
 
 function fetchHolidayName(date)
 {
-    var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
+    var params = $.param({ date: moment(date).format('YYYY-MM-DD') });
     $.ajax({
-	url: '<?= Url::to(['schedule/fetch-holiday-name']); ?>?' + params,
-	type: 'get',
-	dataType: "json",
-	success: function (response)
-	{
+        url: '<?= Url::to(['schedule/fetch-holiday-name']); ?>?' + params,
+        type: 'get',
+        dataType: "json",
+        success: function (response)
+        {
+            var showAll = $('#schedule-show-all').is(":checked");
             $(".content-header").html(response);
-	}
-    });	
+            if (showAll) {
+                $('#schedule-show-all').prop("checked", true);
+            }
+        }
+    });
+    return false;
 }
 
 function showclassroomCalendar(date) {
@@ -299,7 +305,12 @@ function refreshCalendar(date, clearFilter) {
     var minTime = "09:00:00";
     var maxTime = "17:00:00";
     var day     = moment(date).day();
-    $.each( locationAvailabilities, function( key, value ) {
+    if (showAll) {
+        var availabilitites = locationAvailabilities;
+    } else {
+        var availabilitites = scheduleVisibilities;
+    }
+    $.each(availabilitites , function( key, value ) {
         if (day === 0) {
             day = 7;
         }
