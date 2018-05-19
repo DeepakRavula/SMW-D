@@ -71,7 +71,7 @@ class TimelineEventSearch extends Log
 	    
 	$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 	$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-        $query = LogHistory::find();
+        $query = LogHistory::find()->orderBy(['log.createdOn' => SORT_DESC]);
 	$query->joinWith(['log' => function ($query) {
                     $query->joinWith(['logObject']);
 		}]);
@@ -79,6 +79,7 @@ class TimelineEventSearch extends Log
 	$dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+        
         if (!($this->load($params) && $this->validate())) {
             $query->today();
             return $dataProvider;

@@ -36,9 +36,9 @@ $usersList = ArrayHelper::map($users, 'id','publicIdentity');?>
 <?php $columns = [
 	    [
 			'attribute' => 'created_at',
-			'label' => 'Created At',
+			'label' => 'Date',
 			'value' => function ($data) {
-				return Yii::$app->formatter->asDate($data->log->createdOn);
+				return Yii::$app->formatter->asDateTime($data->log->createdOn);
 			},
 			'contentOptions' => ['style' => 'width:200px'],
 			'filterType' => KartikGridView::FILTER_DATE_RANGE,
