@@ -490,12 +490,13 @@ class EnrolmentController extends BaseController
     public function actionFullDelete($id)
     {
         $model = $this->findModel($id);
+        $studentId = $model->studentId;
         if (Yii::$app->request->isPost) {
             if ($model->course->program->isPrivate()) {
                 $model->deleteWithTransactionalData();
                 $response = [
                     'status' => true,
-                    'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false])
+                    'url' => Url::to(['student/view', 'id' => $studentId])
                 ];
             } else {
                 $response = [
