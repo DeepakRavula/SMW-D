@@ -257,7 +257,7 @@ GridView::widget([
     ],
     'columns' => $columns,
 ]);
-?>'//';kk</div>
+?></div>
 <script>
 $(document).ready(function(){
 var recordCount= '<?= $dataProvider->getCount(); ?>';
