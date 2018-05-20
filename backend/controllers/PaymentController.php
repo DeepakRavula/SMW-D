@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Payment;
+use backend\models\search\PaymentReportSearch;
 use backend\models\search\PaymentSearch;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -62,8 +63,8 @@ class PaymentController extends BaseController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -200,7 +201,7 @@ class PaymentController extends BaseController
 
     public function actionPrint()
     {
-        $searchModel = new PaymentSearch();
+        $searchModel = new PaymentReportSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         
         $this->layout = '/print';
