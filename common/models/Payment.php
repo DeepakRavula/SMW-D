@@ -29,6 +29,7 @@ class Payment extends ActiveRecord
     public $paymentMethodName;
     public $invoiceNumber;
     public $userName;
+    public $isCredit;
     
     const TYPE_OPENING_BALANCE_CREDIT = 1;
     const SCENARIO_CREATE = 'scenario-create';
@@ -41,6 +42,7 @@ class Payment extends ActiveRecord
     const SCENARIO_CREDIT_USED_EDIT = 'credit-used-edit';
     const SCENARIO_ACCOUNT_ENTRY = 'account-entry';
     const SCENARIO_LESSON_CREDIT = 'lesson-credit';
+    const SCENARIO_OPENING_BALANCE = 'opening-balance';
     
     const EVENT_CREATE = 'create';
     const EVENT_EDIT = 'edit';
@@ -64,11 +66,11 @@ class Payment extends ActiveRecord
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
+            [['amount'], 'number', 'min' => 0, 'on' => self::SCENARIO_OPENING_BALANCE],
             [['amount'], 'number'],
-            ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE,
-                self::SCENARIO_APPLY_CREDIT]],
-            [['payment_method_id', 'user_id', 'reference', 'date', 'old',
-               'sourceId', 'credit', 'isDeleted', 'transactionId','notes'], 'safe'],
+            ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_APPLY_CREDIT]],
+            [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'isCredit', 'sourceId', 'credit', 
+                'isDeleted', 'transactionId', 'notes'], 'safe'],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
                 self::SCENARIO_CREDIT_USED_EDIT]],
         ];
@@ -347,28 +349,18 @@ class Payment extends ActiveRecord
         $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
         $invoiceLineItem->description = $item->description;
         $invoiceLineItem->unit = 1;
-        $invoiceLineItem->amount = 0;
+        if ($this->isCredit) {
+            $invoiceLineItem->unit = -1;
+        }
+        $invoiceLineItem->amount = $this->amount;
         $invoiceLineItem->code = $invoiceLineItem->getItemCode();
         $invoiceLineItem->cost = 0;
-        if ($this->amount > 0) {
-            $invoiceLineItem->amount = $this->amount;
-            $invoice->subTotal = $invoiceLineItem->amount;
-        } else {
-            $invoice->subTotal = 0.00;
-        }
         $invoiceLineItem->save();
         $invoice->tax = $invoiceLineItem->tax_rate;
         $invoice->total = $invoice->subTotal + $invoice->tax;
         if (!empty($invoice->location->conversionDate)) {
             $date = Carbon::parse($invoice->location->conversionDate);
             $invoice->date = $date->subDay(1);
-        }
-        if ($this->amount < 0) {
-            $this->date = (new \DateTime($invoice->date))->format('Y-m-d H:i:s');
-            $this->invoiceId = $invoice->id;
-            $this->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
-            $this->amount = abs($this->amount);
-            $this->save();
         }
         $invoice->save();
         return $invoice;
