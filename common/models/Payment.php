@@ -29,7 +29,6 @@ class Payment extends ActiveRecord
     public $paymentMethodName;
     public $invoiceNumber;
     public $userName;
-    public $isCredit;
     
     const TYPE_OPENING_BALANCE_CREDIT = 1;
     const SCENARIO_CREATE = 'scenario-create';
@@ -42,7 +41,6 @@ class Payment extends ActiveRecord
     const SCENARIO_CREDIT_USED_EDIT = 'credit-used-edit';
     const SCENARIO_ACCOUNT_ENTRY = 'account-entry';
     const SCENARIO_LESSON_CREDIT = 'lesson-credit';
-    const SCENARIO_OPENING_BALANCE = 'opening-balance';
     
     const EVENT_CREATE = 'create';
     const EVENT_EDIT = 'edit';
@@ -66,10 +64,9 @@ class Payment extends ActiveRecord
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
-            [['amount'], 'number', 'min' => 0, 'on' => self::SCENARIO_OPENING_BALANCE],
             [['amount'], 'number'],
             ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_APPLY_CREDIT]],
-            [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'isCredit', 'sourceId', 'credit', 
+            [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'sourceId', 'credit', 
                 'isDeleted', 'transactionId', 'notes'], 'safe'],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
                 self::SCENARIO_CREDIT_USED_EDIT]],
@@ -331,38 +328,5 @@ class Payment extends ActiveRecord
             $this->invoice->save();
         }
         return true;
-    }
-
-    public function addOpeningBalance()
-    {
-        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $invoice = new Invoice();
-        $invoice->user_id = $this->user_id;
-        $invoice->location_id = $locationId;
-        $invoice->type = Invoice::TYPE_INVOICE;
-        $invoice->save();
-
-        $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
-        $invoiceLineItem->invoice_id = $invoice->id;
-        $item = Item::findOne(['code' => Item::OPENING_BALANCE_ITEM]);
-        $invoiceLineItem->item_id = $item->id;
-        $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
-        $invoiceLineItem->description = $item->description;
-        $invoiceLineItem->unit = 1;
-        if ($this->isCredit) {
-            $invoiceLineItem->unit = -1;
-        }
-        $invoiceLineItem->amount = $this->amount;
-        $invoiceLineItem->code = $invoiceLineItem->getItemCode();
-        $invoiceLineItem->cost = 0;
-        $invoiceLineItem->save();
-        $invoice->tax = $invoiceLineItem->tax_rate;
-        $invoice->total = $invoice->subTotal + $invoice->tax;
-        if (!empty($invoice->location->conversionDate)) {
-            $date = Carbon::parse($invoice->location->conversionDate);
-            $invoice->date = $date->subDay(1);
-        }
-        $invoice->save();
-        return $invoice;
     }
 }

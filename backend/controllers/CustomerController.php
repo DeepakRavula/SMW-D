@@ -13,6 +13,7 @@ use common\models\Student;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
+use common\models\OpeningBalance;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -51,16 +52,16 @@ class CustomerController extends UserController
     public function actionAddOpeningBalance($id)
     {
         $model = $this->findModel($id);
-        $paymentModel = new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]);
-        $paymentModel->user_id = $model->id;
+        $openingBalanceModel = new OpeningBalance();
+        $openingBalanceModel->user_id = $model->id;
         $data       = $this->renderAjax('/user/customer/_form-opening-balance', [
             'userModel' => $model,
-            'model' => $paymentModel
+            'model' => $openingBalanceModel
         ]);
         $post = Yii::$app->request->post();
         if ($post) {
-            if ($paymentModel->load($post) && $paymentModel->validate()) {
-                $invoice = $paymentModel->addOpeningBalance();
+            if ($openingBalanceModel->load($post) && $openingBalanceModel->validate()) {
+                $invoice = $openingBalanceModel->addOpeningBalance();
                 $response = [
                     'status' => true,
                     'url' => Url::to(['invoice/view', 'id' => $invoice->id])
