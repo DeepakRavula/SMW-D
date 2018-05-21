@@ -68,6 +68,30 @@ class TeacherAvailabilityQuery extends ActiveQuery
             ]
         ]);
     }
+     public function between($fromTime, $toTime)
+    {
+        $this->andWhere(['OR',
+            [
+                'between', 'from_time', (new \DateTime($fromTime))->format('H:i:s'),
+                (new \DateTime($toTime))->format('H:i:s')
+            ],
+            [
+                'between', 'DATE_SUB(to_time, INTERVAL 1 SECOND)', (new \DateTime($fromTime))->format('H:i:s'),
+                (new \DateTime($toTime))->format('H:i:s')
+            ],
+            [
+                'AND',
+                [
+                    '<=', 'from_time', (new \DateTime($fromTime))->format('H:i:s')
+                ],
+                [
+                    '>=', 'DATE_SUB(to_time, INTERVAL 1 SECOND)', (new \DateTime($toTime))->format('H:i:s')
+                ]
+
+            ]
+        ]);
+        return $this;
+    }
     public function qualification($locationId, $programId)
     {
         $this->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
