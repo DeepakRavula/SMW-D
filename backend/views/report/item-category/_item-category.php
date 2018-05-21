@@ -199,11 +199,9 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ],
         [
             'label' => 'ID',
-            'pageSummary' => 'Page Total',
             'value' => function ($data) {
                 return $data->invoice->getInvoiceNumber();
             },
-            'pageSummary' => 'Page Total',
             'contentOptions' => ['style' => 'font-size:14px;text-align:left'],
 
         ],
@@ -233,8 +231,6 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             },
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
         ],
     ];
     ?>
@@ -250,7 +246,6 @@ GridView::widget([
         return $data;
     },
     'summary' => false,
-    'showPageSummary' => true,
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed table-itemcategory-report', 'id' => 'payment'],
     'pjax' => true,
@@ -262,8 +257,7 @@ GridView::widget([
     ],
     'columns' => $columns,
 ]);
-?>
-</div>
+?></div>
 <script>
 $(document).ready(function(){
 var recordCount= '<?= $dataProvider->getCount(); ?>';
