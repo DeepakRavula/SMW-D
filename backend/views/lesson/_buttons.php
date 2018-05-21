@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\switchinput\SwitchInput;
-
+use common\Models\User;
 ?>
 <?php yii\widgets\Pjax::begin([
     'id' => 'lesson-explode',
@@ -19,7 +19,8 @@ use kartik\switchinput\SwitchInput;
         ]
 ) ?>
     <?php endif; ?>
-    <?php if ($model->canMerge()) : ?>
+    <?php $loggedUser = User::findOne(Yii::$app->user->id); ?>
+    <?php if ($model->canMerge() && $loggedUser->canMerge) : ?>
         <?php echo Html::a('<i title="Merge" class="fa fa-chain"></i>', '#', [
             'id' => 'merge-lesson',
             'class' => 'm-r-20 btn btn-box-tool',
