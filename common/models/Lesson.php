@@ -676,6 +676,12 @@ class Lesson extends \yii\db\ActiveRecord
         return true;
     }
 
+    public function getAvailabilities()
+    {
+        return $this->hasMany(TeacherAvailability::className(), ['teacher_location_id' => 'id'])
+          ->viaTable('user_location', ['user_id' => 'teacherId']);
+    }
+
     public function checkAsReschedule()
     {
         return $this->isConfirmed && $this->isScheduled() && $this->rootLesson && !$this->bulkRescheduleLesson;
