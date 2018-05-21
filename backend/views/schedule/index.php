@@ -9,6 +9,8 @@ use common\models\User;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+use yii\jui\DatePicker;
 
 /* @var $this yii\web\View */
 $holiday = Holiday::findOne(['DATE(date)' => (new \DateTime())->format('Y-m-d')]);
@@ -22,8 +24,6 @@ $this->params['action-button'] = $this->render('_button');
 
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
-<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
-<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
@@ -35,14 +35,30 @@ $this->params['action-button'] = $this->render('_button');
    .fc-resource-cell{width:150px;}
    .fc-view.fc-agendaDay-view{overflow-x:scroll;}
 </style>
+
+<?php $form = ActiveForm::begin([
+    'id' => 'schedule-form'
+]); ?>
 	<div class="col-md-2 schedule-picker">
-		<div id="datepicker" class="input-group date">
-			<input type="text" class="form-control" value="<?= Yii::$app->formatter->asDate(new \DateTime())?>">
-			<div class="input-group-addon">
-				<span class="glyphicon glyphicon-calendar"></span>
-			</div>
-		</div>
-	</div>
+        <?= $form->field($searchModel, 'goToDate', [
+            'inputTemplate' => '<div class="input-group">{input}<span class="input-group-addon glyphicon glyphicon-calendar"></span></div>',
+            ])->widget(DatePicker::classname(), [
+                'options' => [
+                    'class' => 'form-control',
+                    'id' => 'schedule-go-to-datepicker',
+                    'readOnly' => true
+                ],
+                'dateFormat' => 'php:M d, Y',
+                'clientOptions' => [
+                    'defaultDate' => Yii::$app->formatter->asDate(new \DateTime()),
+                    'changeMonth' => true,
+                    'yearRange' => '-20:100',
+                    'changeYear' => true,
+                ]
+            ])->label(false);
+        ?>
+    </div>
+<?php ActiveForm::end(); ?>
         <div class="pull-right calendar-filter">
             <div class="row" style="width:600px">
                 <div class="col-md-2">
@@ -120,18 +136,13 @@ $this->params['action-button'] = $this->render('_button');
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
 var scheduleVisibilities   = <?php echo Json::encode($scheduleVisibilities); ?>;
 $(document).ready(function() {
-    $('#datepicker').datepicker ({
-        format: 'M d,yyyy',
-        autoclose: true,
-        todayHighlight: true
-    });
     var date = Date();
     refreshCalendar(moment(date), true);
 });
 
 $(document).on('click', '.tv-icon', function(e){ 
     e.preventDefault(); 
-    var date = moment($('#datepicker').datepicker("getDate")).format('DD-MM-YYYY');
+    var date = moment($('#schedule-go-to-datepicker').val()).format('DD-MM-YYYY');
     var url = "<?= Url::to(['daily-schedule/index']);?>?date=" + date; 
     window.open(url, '_blank');
     return false;
@@ -139,7 +150,7 @@ $(document).on('click', '.tv-icon', function(e){
 
 $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
     var tab  = e.target.text;
-    var date = $('#datepicker').datepicker("getDate");
+    var date = $('#schedule-go-to-datepicker').val();
     if (tab === "Classroom View") {
         showclassroomCalendar(moment(date));
         $('.calendar-filter').hide();
@@ -189,8 +200,8 @@ $(document).off('change', '#schedule-show-all').on('change', '#schedule-show-all
     refreshCalendar(moment(date));
 });
 
-$(document).off('change', '#datepicker').on('change', '#datepicker', function(){
-    var date = $('#datepicker').datepicker("getDate");
+$(document).off('change', '#schedule-go-to-datepicker').on('change', '#schedule-go-to-datepicker', function(){
+    var date = $('#schedule-go-to-datepicker').val();
     fetchHolidayName(moment(date));
     if ($('.nav-tabs .active').text() === 'Classroom View') {
         showclassroomCalendar(moment(date));
@@ -211,9 +222,13 @@ function fetchHolidayName(date)
         success: function (response)
         {
             var showAll = $('#schedule-show-all').is(":checked");
-            $(".content-header").html(response);
-            if (showAll) {
-                $('#schedule-show-all').prop("checked", true);
+            if ($(".content-header").html(response)) {
+                if ($('.nav-tabs .active').text() === 'Classroom View') {
+                    $('#show-all').hide();
+                }
+                if (showAll) {
+                    $('#schedule-show-all').prop("checked", true);
+                }
             }
         }
     });

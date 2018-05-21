@@ -22,6 +22,7 @@ use Carbon\Carbon;
 use common\models\User;
 use common\components\controllers\BaseController;
 use Carbon\CarbonInterval;
+use backend\models\search\ScheduleSearch;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -69,7 +70,9 @@ class ScheduleController extends BaseController
      */
     public function actionIndex()
     {
-        $locationId             = Location::findOne(['slug' => Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $searchModel = new ScheduleSearch();
+        $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
         $date = new \DateTime();
         $scheduleVisibilities = LocationAvailability::find()
             ->location($locationId)
@@ -93,7 +96,8 @@ class ScheduleController extends BaseController
         return $this->render('index', [
             'locationAvailabilities'   => $locationAvailabilities,
             'scheduleVisibilities'     => $scheduleVisibilities,
-            'locationId'               => $locationId
+            'locationId'               => $locationId,
+            'searchModel' => $searchModel
         ]);
     }
 
