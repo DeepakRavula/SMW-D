@@ -36,7 +36,7 @@ $loggedUser = User::findOne(Yii::$app->user->id);
             <?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
         </div>
 		<?php if ($model->getModel()->isTeacher()) : ?>
-	        <div class="col-xs-6">
+	        <div class="col-xs-4">
 				<?php
 				echo $form->field($userProfile, 'birthDate')->widget(DatePicker::classname(),
 					[
@@ -51,7 +51,7 @@ $loggedUser = User::findOne(Yii::$app->user->id);
 				?>
 			</div>
 		<?php endif; ?>
-        <div class="col-xs-6">
+        <div class="col-xs-4">
         <?php if ($loggedUser->canManagePin()) : ?>
             <?php if ($model->getModel()->hasPin()) : ?>
                     <?php echo $form->field($model, 'pin')->passwordInput() ?>
@@ -59,6 +59,15 @@ $loggedUser = User::findOne(Yii::$app->user->id);
         <?php endif; ?>
             </div>
     </div>
+    <?php if ($loggedUser->isAdmin()) : ?>
+        <?php if ($model->getModel()->isOwner()) : ?>
+            <div class="row">
+                <div class="col-xs-6">
+                    <?= $form->field($model, 'canMerge')->checkbox() ?>
+                </div>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
     <div class="row">
         <?php if ($loggedUser->canManagePin()) : ?>
         <?php if ($model->getModel()->isStaff()) : ?>

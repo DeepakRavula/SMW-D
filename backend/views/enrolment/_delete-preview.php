@@ -92,4 +92,9 @@ $paymentColumns = [
         var url = "<?= Url::to(['enrolment/full-delete', 'id' => $model->id]); ?>";
         $('.modal-delete').attr('action', url);
     });
+    $(document).on('modal-delete', function(event, params) {
+        if (params.url) {
+            window.location.href = params.url;
+        }
+    });
 </script>

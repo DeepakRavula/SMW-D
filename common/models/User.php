@@ -155,9 +155,9 @@ class User extends ActiveRecord implements IdentityInterface
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['username'], 'filter', 'filter' => '\yii\helpers\Html::encode'],
             [['customerIds'], 'required', 'on' => self::SCENARIO_MERGE],
-            ['customerIds', 'canMerge', 'on' => self::SCENARIO_MERGE],
+            ['customerIds', 'validateCanMerge', 'on' => self::SCENARIO_MERGE],
             [['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate',
-                'customerId', 'isDeleted', 'pin_hash', 'canLogin'], 'safe']
+                'customerId', 'isDeleted', 'pin_hash', 'canLogin', 'canMerge'], 'safe']
         ];
     }
 
@@ -209,7 +209,7 @@ class User extends ActiveRecord implements IdentityInterface
         }
     }
 
-    public function canMerge($attribute)
+    public function validateCanMerge($attribute)
     {
         foreach ($this->customerIds as $customerId) {
             $customer = self::findOne($customerId);
@@ -317,6 +317,9 @@ class User extends ActiveRecord implements IdentityInterface
         if ($insert) {
             if (empty($this->canLogin)) {
                 $this->canLogin = false;
+            }
+            if (empty($this->canMerge)) {
+                $this->canMerge = false;
             }
             $this->isDeleted = false;
         }

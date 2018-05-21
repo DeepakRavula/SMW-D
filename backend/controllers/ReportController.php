@@ -162,6 +162,7 @@ class ReportController extends BaseController
                 $query->andWhere(['i.location_id' => $locationId]);
             }])
             ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
+            ->exceptGiftCard()
             ->notDeleted()
             ->andWhere(['between', 'payment.date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->sum('payment.amount');

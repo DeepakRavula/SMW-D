@@ -145,7 +145,7 @@ $this->params['label'] = $this->render('_title', [
         }
         return false;
     });
-    
+
     $(document).on('click', '#add-private-enrol', function () {
         var customerDiscount = '<?= $customerDiscount;?>';
         $.ajax({
@@ -238,7 +238,7 @@ $this->params['label'] = $this->render('_title', [
             success: function(response) {
                 if (response.status) {
                     $('#course-spinner').hide();
-                    $.pjax.reload({container: "#enrolment-grid", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#enrolment-list", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#student-log", replace: false, async: false, timeout: 6000});
                     $('#group-enrol-modal').modal('hide');
                     $('#course-spinner').hide();
@@ -259,8 +259,8 @@ $this->params['label'] = $this->render('_title', [
             success: function(response)
             {
                 if(response.status) {
-                    $.pjax.reload({container: "#enrolment-grid",timeout: 6000, async:false});
-                    $.pjax.reload({container: "#student-lesson-listing",timeout: 6000, async:false});
+                    $.pjax.reload({container: "#enrolment-list",timeout: 6000, async:false});
+                    $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
                     $.pjax.reload({container: "#student-log",timeout: 6000, async:false});
                     $.pjax.reload({container: "#student-exam-result-listing",timeout: 6000, async:false});
                     $.pjax.reload({container: "#student-note",timeout: 6000, async:false});

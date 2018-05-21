@@ -1,5 +1,6 @@
 <?php
 namespace common\models\log;
+use common\models\User;
 
 use Yii;
 
@@ -68,5 +69,9 @@ class Log extends \yii\db\ActiveRecord
     public function getLogObject()
     {
         return $this->hasMany(LogObject::className(), ['id' => 'logObjectId']);
+    }
+    public function getCreatedUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'createdUserId']);
     }
 }

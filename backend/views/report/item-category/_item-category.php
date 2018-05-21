@@ -6,6 +6,7 @@ use common\models\InvoiceLineItem;
 use backend\assets\CustomGridAsset;
 use common\models\ItemCategory;
 use common\models\Invoice;
+
 CustomGridAsset::register($this);
 Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  /*
@@ -29,237 +30,246 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 .table > tbody >tr.warning >td {
     font-size:17px;
 }
+.kv-page-summary {
+    border-top:none;
+    font-weight: bold;
+}
+.table > tbody + tbody {
+     border-top: none;
+}
 </style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 <?php $totalReportValue = ItemCategory::getTotal($dataProvider->query->all()); ?>
 <?php if ($searchModel->groupByMethod) : ?>
 		<?php
-       $columns = [
-                [
-                'value' => function ($data) {
-                    if (!empty($data->invoice->date)) {
-                        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->invoice->date);
-                        return $lessonDate->format('l, F jS, Y');
-                    }
+    $columns = [
+        [
+            'value' => function ($data) {
+                if (!empty($data->invoice->date)) {
+                    $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->invoice->date);
+                    return $lessonDate->format('l, F jS, Y');
+                }
 
-                    return null;
-                },
-                'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
+                return null;
+            },
+            'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left', 'class' => 'main-group'],
 
-                'group' => true,
-                'groupedRow' => true,
-                'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
+            'group' => true,
+            'groupedRow' => true,
+            'groupFooter' => function ($model, $key, $index, $widget) { // Closure method
                 return [
-                    'mergeColumns'=>[[1]], // columns to merge in summary
-                    'content'=>[              // content to show in each summary cell
-                        1=> "Total for   ".\DateTime::createFromFormat('Y-m-d H:i:s', $model->invoice->date)->format('l, F jS, Y'),
-                       2=>GridView::F_SUM,
+                    'mergeColumns' => [[1]], // columns to merge in summary
+                    'content' => [              // content to show in each summary cell
+                        1 => "Total for   " . \DateTime::createFromFormat('Y-m-d H:i:s', $model->invoice->date)->format('l, F jS, Y'),
+                        2 => GridView::F_SUM,
 
                     ],
-                    'contentFormats'=>[      // content reformatting for each summary cell
+                    'contentFormats' => [      // content reformatting for each summary cell
 
-                        2=>['format'=>'number', 'decimals'=>2],
+                        2 => ['format' => 'number', 'decimals' => 2],
 
                     ],
-                    'contentOptions'=>[      // content html attributes for each summary cell
-                        1=>['style' => 'text-align:left;'],
-                        2=>['style'=>'text-align:right'],
+                    'contentOptions' => [      // content html attributes for each summary cell
+                        1 => ['style' => 'text-align:left;'],
+                        2 => ['style' => 'text-align:right'],
 
                     ],
                     // html attributes for group summary row
-                    'options'=>['class'=>'success']
+                    'options' => ['class' => 'success']
                 ];
             },
 
 
-            ],
-                [
-                'label' => 'Item Category',
-                'value' => function ($data) {
-                    return $data->itemCategory->name;
-                },
-                'pageSummary'=>'Page Total',
-                'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
-                'pageSummary' => 'Page Total',
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
-            ],
- 
-                        [
-                'label' => 'Amount',
-                'format' => ['decimal', 2],
-                'value' => function ($data) use ($searchModel) {
-                    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-                    $amount = 0;
-                  $payments = InvoiceLineItem::find()
-                                 ->notDeleted()
-                                 ->joinWith(['invoice' => function ($query) use ($locationId) {
-                                 $query->notDeleted()
-                                ->notCanceled()
-                                ->notReturned()
-                                ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
-                                ->location($locationId);
-                     }])
-                      ->joinWith('itemCategory')
-                         ->andWhere([
-                            'item_category.id' => $data->itemCategory->id,
-                            'DATE(invoice.date)' => (new \DateTime($data->invoice->date))->format('Y-m-d')
-                        ])
-                        ->all();
-                    foreach ($payments as $payment) {
-                        $amount += $payment->itemTotal;
-                    }
+        ],
+        [
+            'label' => 'Item Category',
+            'value' => function ($data) {
+                return $data->itemCategory->name;
+            },
+            'pageSummary' => 'Page Total',
+            'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left', 'class' => 'main-group'],
+            'pageSummary' => 'Page Total',
+            'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
+        ],
 
-                    return Yii::$app->formatter->asDecimal($amount,2);
-                },
-                'contentOptions' => ['class' => 'text-right'],
-                'hAlign' => 'right',
-                'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM
-            ]
-        ];
-        ?>
+        [
+            'label' => 'Amount',
+            'format' => ['decimal', 2],
+            'value' => function ($data) use ($searchModel) {
+                $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+                $amount = 0;
+                $payments = InvoiceLineItem::find()
+                    ->notDeleted()
+                    ->joinWith(['invoice' => function ($query) use ($locationId) {
+                        $query->notDeleted()
+                            ->notCanceled()
+                            ->notReturned()
+                            ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
+                            ->location($locationId);
+                    }])
+                    ->joinWith('itemCategory')
+                    ->andWhere([
+                        'item_category.id' => $data->itemCategory->id,
+                        'DATE(invoice.date)' => (new \DateTime($data->invoice->date))->format('Y-m-d')
+                    ])
+                    ->all();
+                foreach ($payments as $payment) {
+                    $amount += $payment->itemTotal;
+                }
+
+                return Yii::$app->formatter->asDecimal($amount, 2);
+            },
+            'contentOptions' => ['class' => 'text-right'],
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
+        ]
+    ];
+    ?>
 	<?php else : ?>
     <?php $columns = [
-                [
-                'value' => function ($data) {
-                    if (!empty($data->invoice->date)) {
-                        $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->invoice->date);
-                        return $lessonDate->format('l, F jS, Y');
-                    }
+        [
+            'value' => function ($data) {
+                if (!empty($data->invoice->date)) {
+                    $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->invoice->date);
+                    return $lessonDate->format('l, F jS, Y');
+                }
 
-                    return null;
-                },
-                'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left','class'=>'main-group'],
-                
-                'group' => true,
-                'groupedRow' => true,
-               'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
+                return null;
+            },
+            'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left', 'class' => 'main-group'],
+
+            'group' => true,
+            'groupedRow' => true,
+            'groupFooter' => function ($model, $key, $index, $widget) { // Closure method
                 return [
-                    'mergeColumns'=>[[2, 4]], // columns to merge in summary
-                    'content'=>[  
+                    'mergeColumns' => [[2, 4]], // columns to merge in summary
+                    'content' => [  
                         // content to show in each summary cell
-                       2=> "Total for   ".\DateTime::createFromFormat('Y-m-d H:i:s', $model->invoice->date)->format('l, F jS, Y'),
-                       5=>GridView::F_SUM,
+                        2 => "Total for   " . \DateTime::createFromFormat('Y-m-d H:i:s', $model->invoice->date)->format('l, F jS, Y'),
+                        5 => GridView::F_SUM,
 
                     ],
-                    'contentFormats'=>[      // content reformatting for each summary cell
-                        5=>['format'=>'number', 'decimals'=>2],
+                    'contentFormats' => [      // content reformatting for each summary cell
+                        5 => ['format' => 'number', 'decimals' => 2],
 
                     ],
-                    'contentOptions'=>[      // content html attributes for each summary cell
-                        2=>['style' => 'text-align:left;font-style:italic'],
-                        5=>['style'=>'text-align:right'],
+                    'contentOptions' => [      // content html attributes for each summary cell
+                        2 => ['style' => 'text-align:left;font-style:italic'],
+                        5 => ['style' => 'text-align:right'],
 
                     ],
                     // html attributes for group summary row
-                    'options'=>['class'=>'success','style'=>'font-weight:bold;']
+                    'options' => ['class' => 'success', 'style' => 'font-weight:bold;']
                 ];
             },
-                
-                
-            ],
-                [
-                'label' => 'Item Category',
-                'value' => function ($data) {
-                    return $data->itemCategory->name;
-                },
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
-                'group' => true,
-                'groupedRow' => true,
-                'subGroupOf' => 0,
-            'groupFooter'=>function ($model, $key, $index, $widget) { // Closure method
+
+
+        ],
+        [
+            'label' => 'Item Category',
+            'value' => function ($data) {
+                return $data->itemCategory->name;
+            },
+            'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left', 'class' => 'main-group'],
+            'group' => true,
+            'groupedRow' => true,
+            'subGroupOf' => 0,
+            'groupFooter' => function ($model, $key, $index, $widget) { // Closure method
                 return [
-                    'mergeColumns'=>[[2, 4]],// columns to merge in summary
-                    'content'=>[              // content to show in each summary cell
-                       2=> "Total   ".$model->itemCategory->name,
-                       5=>GridView::F_SUM,
-                       
+                    'mergeColumns' => [[2, 4]],// columns to merge in summary
+                    'content' => [              // content to show in each summary cell
+                        2 => "Total   " . $model->itemCategory->name,
+                        5 => GridView::F_SUM,
+
                     ],
-                    'contentFormats'=>[      // content reformatting for each summary cell
-                        
-                        5=>['format'=>'number', 'decimals'=>2],
-                       
+                    'contentFormats' => [      // content reformatting for each summary cell
+
+                        5 => ['format' => 'number', 'decimals' => 2],
+
                     ],
-                    'contentOptions'=>[
-                        5=>['style'=>'text-align:right'],
-                        
+                    'contentOptions' => [
+                        5 => ['style' => 'text-align:right'],
+
                     ],
                     // html attributes for group summary row
-                    'options'=>['class'=>'success','style'=>'font-weight:bold;']
+                    'options' => ['class' => 'success', 'style' => 'font-weight:bold;']
                 ];
             },
         ],
-                 [
-                     'label'=>'ID',
-                     'pageSummary' => 'Page Total',
-                'value' => function ($data) {
-                    return $data->invoice->getInvoiceNumber();
-                },
-                'pageSummary' => 'Page Total',
-                'contentOptions' => ['style' => 'font-size:14px;text-align:left'],
-                    
-            ],
-                                   [
-                     'label'=>'Customer',
-                'value' => function ($data) {
-                         return !empty($data->invoice->user->publicIdentity) ? $data->invoice->user->publicIdentity : null;
-                },
+        [
+            'label' => 'ID',
+            'pageSummary' => 'Page Total',
+            'value' => function ($data) {
+                return $data->invoice->getInvoiceNumber();
+            },
+            'pageSummary' => 'Page Total',
+            'contentOptions' => ['style' => 'font-size:14px;text-align:left'],
 
-            ],
+        ],
+        [
+            'label' => 'Customer',
+            'value' => function ($data) {
+                return !empty($data->invoice->user->publicIdentity) ? $data->invoice->user->publicIdentity : null;
+            },
 
-                [
-                'label' => 'Description',
-                'value' => function ($data) {
-                    return $data->description;
-                },
-                    
-                    
-                    'contentOptions' => ['style' => 'font-size:14px;text-align:left'],
-            ],
+        ],
 
-                [
-                'label' => 'Amount',
-                'format' => ['decimal', 2],
-                'value' => function ($data) {
-                    return Yii::$app->formatter->asDecimal($data->itemTotal);
-                },
-                'contentOptions' => ['class' => 'text-right'],
-                'hAlign' => 'right',
-                'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM
-            ],
-        ];
-        ?>
+        [
+            'label' => 'Description',
+            'value' => function ($data) {
+                return $data->description;
+            },
+
+
+            'contentOptions' => ['style' => 'font-size:14px;text-align:left'],
+        ],
+
+        [
+            'label' => 'Amount',
+            'format' => ['decimal', 2],
+            'value' => function ($data) {
+                return Yii::$app->formatter->asDecimal($data->itemTotal);
+            },
+            'contentOptions' => ['class' => 'text-right'],
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
+        ],
+    ];
+    ?>
 <?php endif; ?>
 <div class="grid-row-open">
 	<?=
-    GridView::widget([
-        'dataProvider' => $dataProvider,
-        'options' =>['class' => 'payment-table'],
-        'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+GridView::widget([
+    'dataProvider' => $dataProvider,
+    'options' => ['class' => 'payment-table'],
+    'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
         $url = Url::to(['invoice/view', 'id' => $model->invoice->id]);
         $data = ['data-url' => $url];
         return $data;
     },
-                'summary' => false,
-                'emptyText' => false,
-        'showPageSummary' => true,
-                'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed table-itemcategory-report', 'id' => 'payment'],
-        'pjax' => true,
-        'pjaxSettings' => [
-            'neverTimeout' => true,
-            'options' => [
-                'id' => 'item-listing',
-            ],
+    'summary' => false,
+    'showPageSummary' => true,
+    'headerRowOptions' => ['class' => 'bg-light-gray'],
+    'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed table-itemcategory-report', 'id' => 'payment'],
+    'pjax' => true,
+    'pjaxSettings' => [
+        'neverTimeout' => true,
+        'options' => [
+            'id' => 'item-listing',
         ],
-        'columns' => $columns,
-    ]);
-    ?>
+    ],
+    'columns' => $columns,
+]);
+?>
 </div>
 <script>
 $(document).ready(function(){
+var recordCount= '<?= $dataProvider->getCount(); ?>';
+if(recordCount>0){
     report.addNewRow();
+}
     $(document).on('pjax:success', function() {
     report.addNewRow();
    
@@ -268,13 +278,12 @@ $(document).ready(function(){
 var report = {
         addNewRow: function () {
     var newSummaryContainer=$("<tbody>");
-    var newRow = $("<tr class='report-footer-grandtotal f-s-18'>");
+    var newRow = $("<tr class='report-footer-grandtotal click-disable'>");
         var cols = "";
         var totalReportValue=<?= Yii::$app->formatter->asDecimal($totalReportValue, 2) ?>;
         var groupByMethod = $("#group-by-method").is(":checked");
         colSpanValue=3;
-        if(groupByMethod)
-        {
+        if(groupByMethod) {
         colSpanValue=1;
         }
        
