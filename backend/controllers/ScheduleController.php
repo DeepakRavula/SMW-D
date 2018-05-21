@@ -254,7 +254,7 @@ class ScheduleController extends BaseController
                     $teachersAvailability->from_time && $unavailability->toTime === $teachersAvailability->to_time) {
                     continue;
                 } else {
-                    $events[] = $this->getAvailabilityEvents($teachersAvailability, $unavailability, $date);
+                    $events = array_merge($events, $this->getAvailabilityEvents($teachersAvailability, $unavailability, $date));
                 }
             } else {
                 $events[] = $this->getRegularAvailability($teachersAvailability, $date);
@@ -265,27 +265,52 @@ class ScheduleController extends BaseController
 
     public function getAvailabilityEvents($teachersAvailability, $unavailability, $date)
     {
-        $overlapedAvailability = TeacherAvailability::find()
-            ->andWhere(['id' => $teachersAvailability->id])
-            ->overlap($unavailability->fromTime, $unavailability->toTime)
-            ->one();
-        if ($overlapedAvailability) {
-            if ($overlapedAvailability->from_time < $unavailability->fromTime) {
-                $start = (new \DateTime($overlapedAvailability->from_time))->format('H:i:s');
-                if ($overlapedAvailability->to_time < $unavailability->fromTime || $overlapedAvailability->to_time === 
-                    $unavailability->fromTime) {
-                    $end = (new \DateTime($overlapedAvailability->to_time))->format('H:i:s');
+        $availabilityStart = Carbon::parse($teachersAvailability->from_time);
+        $availabilityEnd = Carbon::parse($teachersAvailability->to_time);
+        $availabilityDiff = $availabilityStart->diff($availabilityEnd);
+        $availabilityInterval = CarbonInterval::hour($availabilityDiff->h)->minutes($availabilityDiff->i)->seconds($availabilityDiff->s);
+        
+        $unavailabilityStart = Carbon::parse($unavailability->fromTime);
+        $unavailabilityEnd = Carbon::parse($unavailability->toTime);
+        $unavailabilityDiff = $unavailabilityStart->diff($unavailabilityEnd);
+        $unavailabilityInterval = CarbonInterval::hour($unavailabilityDiff->h)->minutes($unavailabilityDiff->i)->seconds($unavailabilityDiff->s);
+            
+        $availabilityPeriods = Period::createFromDuration(
+            $teachersAvailability->from_time,
+            
+            $availabilityInterval
+            
+        );
+        $unavailabilityPeriods  = Period::createFromDuration(
+            $unavailability->fromTime,
+    
+            $unavailabilityInterval
+    
+        );
+        
+        $overlapPeriod = $availabilityPeriods->overlaps($unavailabilityPeriods);
+        if ($overlapPeriod) {
+            $events = [];
+            $availabilities = $availabilityPeriods->diff($unavailabilityPeriods);
+            foreach ($availabilities as $availability) {
+                if ($availability->getStartDate()->format('H:i:s') >= $teachersAvailability->from_time &&
+                    $availability->getEndDate()->format('H:i:s') <= $teachersAvailability->to_time) {
+                    $startTime = $availability->getStartDate()->format('Y-m-d H:i:s');
+                    $startTime = Carbon::parse($startTime);
+                    $start = $date->setTime($startTime->hour, $startTime->minute, $startTime->second);
+                    $endTime = $availability->getEndDate()->format('Y-m-d H:i:s');
+                    $endTime = Carbon::parse($endTime);
+                    $end = clone $date;
+                    $end = $end->setTime($endTime->hour, $endTime->minute, $endTime->second);
+                    $events[] = [
+                        'resourceId' => $teachersAvailability->teacher->id,
+                        'title'      => '',
+                        'start'      => $start->format('Y-m-d H:i:s'),
+                        'end'        => $end->format('Y-m-d H:i:s'),
+                        'rendering'  => 'background',
+                    ];
                 }
-            } else {
-                $start = (new \DateTime($unavailability->toTime))->format('H:i:s');
             }
-            $events = [
-                'resourceId' => $teachersAvailability->teacher->id,
-                'title'      => '',
-                'start'      => $start,
-                'end'        => $end,
-                'rendering'  => 'background',
-            ];
         } else {
             $events = $this->getRegularAvailability($teachersAvailability, $date);
         }
