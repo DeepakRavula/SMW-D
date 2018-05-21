@@ -159,17 +159,16 @@ class ScheduleController extends BaseController
             $availableUserQuery = User::find()
                 ->joinWith(['availabilities a' => function ($query) use ($formatedDay) {
                     $query->andWhere(['a.day' => $formatedDay]);
-                }]);
-            if (!$programId) {
-                $availableUserQuery->location($locationId);
-            }
+                }])
+                ->location($locationId);
             $query->union($availableUserQuery);
         }
         if (!$programId) {
             $query->location($locationId);
         }
         if (!empty($teacherId)) {
-            $query->andWhere(['user.id' => $teacherId]);
+            $query->andWhere(['user.id' => $teacherId])
+                ->location($locationId);
         } else if (!empty($programId)) {
             $query->teachers($programId, $locationId);
         }
