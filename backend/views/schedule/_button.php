@@ -13,5 +13,5 @@ use yii\widgets\ActiveForm;
 </div>
 
 <div class="pull-right">
-    <?= Html::a('<i class="fa fa-tv"></i>', '', ['class' => 'tv-icon']) ?>
+    <?= Html::a('<i class="fa fa-tv m-l-10"></i>', '', ['class' => 'tv-icon']) ?>
 </div>
