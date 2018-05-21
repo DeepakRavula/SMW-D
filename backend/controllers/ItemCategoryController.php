@@ -245,6 +245,7 @@ class ItemCategoryController extends BaseController
         $request = Yii::$app->request;
         if ($searchModel->load($request->get())) {
             $invoiceLineItemRequest = $request->get('InvoiceLineItemSearch');
+	    $searchModel->groupByMethod = $invoiceLineItemRequest['groupByMethod'];
             $searchModel->dateRange = $invoiceLineItemRequest['dateRange'];
         }
         $searchModel->groupByItemCategory = true;
