@@ -44,7 +44,7 @@ $this->params['show-all'] = $this->render('_button', [
                 'headerOptions' => ['class' => 'text-right'],
                 'format' => 'currency',
                 'value' => function ($data) {
-                    return $data->price;
+                    return !empty($data->price) ? $data->price : '0.00';
                 },
             ],
             [
