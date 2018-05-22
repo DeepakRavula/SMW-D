@@ -148,9 +148,14 @@ class ScheduleController extends BaseController
         return $resources;
     }
 
-    public function actionRenderResources($date, $showAll, $programId, $teacherId)
+    public function actionRenderResources()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $scheduleRequest = Yii::$app->request->get('ScheduleSearch');
+        $teacherId = $scheduleRequest['teacherId'];
+        $showAll = $scheduleRequest['showAll'];
+        $programId = $scheduleRequest['programId'];
+        $date = $scheduleRequest['date'];
         $date       = \DateTime::createFromFormat('Y-m-d', $date);
         $formatedDate = $date->format('Y-m-d');
         $formatedDay = $date->format('N');
@@ -337,10 +342,15 @@ class ScheduleController extends BaseController
         ];
     }
     
-    public function actionRenderDayEvents($date, $showAll, $programId, $teacherId)
+    public function actionRenderDayEvents()
     {
         $events = [];
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $scheduleRequest = Yii::$app->request->get('ScheduleSearch');
+        $teacherId = $scheduleRequest['teacherId'];
+        $showAll = $scheduleRequest['showAll'];
+        $programId = $scheduleRequest['programId'];
+        $date = $scheduleRequest['date'];
         $date = Carbon::parse($date);
         $formatedDate = $date->format('Y-m-d');
         $teachersAvailabilities = $this->getTeacherAvailability($teacherId, $programId, $showAll, $date);

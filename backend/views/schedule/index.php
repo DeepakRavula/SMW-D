@@ -312,10 +312,10 @@ function refreshCalendar(date, clearFilter) {
     }
     var showAll = $('#schedule-show-all').is(":checked");
     var params = $.param({ 
-        date: moment(date).format('YYYY-MM-DD'),
-        showAll: showAll | 0,
-        programId: programId,
-        teacherId: teacherId 
+        'ScheduleSearch[date]': moment(date).format('YYYY-MM-DD'),
+        'ScheduleSearch[showAll]': showAll | 0,
+        'ScheduleSearch[programId]': programId,
+        'ScheduleSearch[teacherId]': teacherId 
     });
     var minTime = "09:00:00";
     var maxTime = "17:00:00";
@@ -354,7 +354,7 @@ function refreshCalendar(date, clearFilter) {
             url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
             type: 'GET',
             error: function() {
-                $("#calendar").fullCalendar("refetchResources");
+                //$("#calendar").fullCalendar("refetchResources");
             }
         },
         resourceRender: function() {
@@ -365,7 +365,7 @@ function refreshCalendar(date, clearFilter) {
             url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
             type: 'GET',
             error: function() {
-                $("#calendar").fullCalendar("refetchEvents");
+                //$("#calendar").fullCalendar("refetchEvents");
             }
         },
         eventRender: function(event, element) {
