@@ -156,7 +156,7 @@ class ScheduleController extends BaseController
         $showAll = $scheduleRequest['showAll'];
         $programId = $scheduleRequest['programId'];
         $date = $scheduleRequest['date'];
-        $date       = \DateTime::createFromFormat('Y-m-d', $date);
+        $date       = new \DateTime($date);
         $formatedDate = $date->format('Y-m-d');
         $formatedDay = $date->format('N');
         $resources = [];
@@ -394,7 +394,7 @@ class ScheduleController extends BaseController
 
     public function actionRenderClassroomEvents($date)
     {
-        $date = \DateTime::createFromFormat('Y-m-d', $date);
+        $date = new \DateTime($date);
         $classroomUnavailabilities = ClassroomUnavailability::find()
             ->andWhere(['AND',
                 ['<=', 'DATE(fromDate)', $date->format('Y-m-d')],
