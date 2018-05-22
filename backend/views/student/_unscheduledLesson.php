@@ -74,7 +74,7 @@ use yii\helpers\Url;
 </div>
 
 <script>
-    $(document).on('click', '#change-program-teacher', function(){
+    $(document).off('click', '#change-program-teacher').on('click', '#change-program-teacher', function(){
         var lessonIds = $('#unschedule-lesson-index').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(lessonIds)) {
             $('#enrolment-delete').html("Choose any lessons").fadeIn().delay(5000).fadeOut();
