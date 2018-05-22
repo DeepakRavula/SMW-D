@@ -53,7 +53,7 @@ class Item extends \yii\db\ActiveRecord
     {
         return [
             [['itemCategoryId', 'locationId', 'code', 'royaltyFree', 'taxStatusId', 'status', 
-                'description'], 'required'],
+                'description','price'], 'required'],
             [['itemCategoryId', 'locationId', 'royaltyFree', 'taxStatusId', 'status'], 'integer'],
             [['price'], 'number'],
             [['description', 'code'], 'trim'],
