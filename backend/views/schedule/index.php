@@ -52,7 +52,7 @@ $this->params['action-button'] = $this->render('_button');
                 'clientOptions' => [
                     'defaultDate' => Yii::$app->formatter->asDate(new \DateTime()),
                     'changeMonth' => true,
-                    'yearRange' => '-20:100',
+                    'yearRange' => '-20:+100',
                     'changeYear' => true,
                 ]
             ])->label(false);

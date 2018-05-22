@@ -2,14 +2,20 @@
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
-
+use common\Models\User;
 ?>
 <?php 
 $boxTools = ['<i title="Edit" class="fa fa-pencil user-edit-button m-r-10"></i>'];?>
+<?php $loggedUser = User::findOne(Yii::$app->user->id); ?>
+
 <?php if ($model->isCustomer()) : ?>
-<?php $merge[] = '<i title="Merge" id="customer-merge" class="fa fa-chain"></i>';
-$boxTools = array_merge($boxTools, $merge);
-?>
+    <?php if ($loggedUser->canMerge) : ?>
+        <?php $merge[]  = '<i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i><ul class="dropdown-menu dropdown-menu-right" id="menu-shown">
+        <li><a id="customer-merge" href="#">Merge</a></li>
+    </ul>'; ?>
+        <?php $boxTools = array_merge($boxTools, $merge); ?>
+    <?php endif; ?>
+
 <?php endif;?>
 <?php Pjax::begin([
     'id' => 'user-profile'
