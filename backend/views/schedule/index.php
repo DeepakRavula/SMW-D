@@ -41,7 +41,7 @@ $this->params['action-button'] = $this->render('_button');
 ]); ?>
 	<div class="col-md-2 schedule-picker">
         <?= $form->field($searchModel, 'goToDate', [
-            'inputTemplate' => '<div class="input-group">{input}<span class="input-group-addon glyphicon glyphicon-calendar"></span></div>',
+            'inputTemplate' => '<div class="input-group m-r-45">{input}</div>',
             ])->widget(DatePicker::classname(), [
                 'options' => [
                     'class' => 'form-control',
@@ -52,7 +52,7 @@ $this->params['action-button'] = $this->render('_button');
                 'clientOptions' => [
                     'defaultDate' => Yii::$app->formatter->asDate(new \DateTime()),
                     'changeMonth' => true,
-                    'yearRange' => '-20:100',
+                    'yearRange' => '-20:+100',
                     'changeYear' => true,
                 ]
             ])->label(false);
