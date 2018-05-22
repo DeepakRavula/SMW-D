@@ -95,7 +95,7 @@ use yii\grid\GridView;
         <?php yii\widgets\Pjax::begin(['id' => 'lesson-index', 'timeout' => 6000,]); ?>
     <?php echo GridView::widget([
         'dataProvider' => $lessonDataProvider,
-        'options' => ['id' => 'unschedule-lesson-index'],
+        'options' => ['id' => 'student-lesson-grid'],
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['lesson/view', 'id' => $model->id]);
 
