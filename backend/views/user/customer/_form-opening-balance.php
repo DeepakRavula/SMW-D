@@ -1,7 +1,7 @@
 <?php
 
-use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
@@ -14,7 +14,13 @@ use yii\helpers\Url;
 ]); ?>
 <div class="row">
     <div class="col-md-8">
-        <?php echo $form->field($model, 'amount')->textInput(['class' => 'right-align form-control']); ?>
+        <?= $form->field($model, 'amount')->textInput(['class' => 'right-align form-control']); ?>
+    </div>
+</div>
+<?php $list = [0 => 'Owing', 1 => 'Credit']; ?>
+<div class="row">
+    <div class="col-md-8">
+        <?= $form->field($model, 'isCredit')->radioList($list)->label(false); ?>
     </div>
 </div>
 
