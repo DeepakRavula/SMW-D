@@ -78,8 +78,10 @@ task('deploy:one-off', function() {
 });
 
 task('deploy:git-log', function() {
-    $commit = run('git log -1');
-    run("echo $commit");
+    $deployPath = get('deploy_path');
+    cd($deployPath);
+    $commit = run('git log');
+    wrintln($commit);
 });
 
 task('deploy:dev', [
