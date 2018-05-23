@@ -43,6 +43,11 @@ class InvoiceLineItemQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['invoice_line_item.isDeleted' => false]);
     }
 
+    public function openingBalance()
+    {
+        return $this->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
+    }
+
     public function taxRate($date, $locationId)
     {
         $this->joinWith(['invoice' => function ($query) use ($date, $locationId) {
