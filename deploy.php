@@ -77,11 +77,6 @@ task('deploy:one-off', function() {
     writeln('<info>One off migration is done.</info>');
 });
 
-task('deploy:git-log', function() {
-    $commit = run('git log -1');
-    run("echo $commit");
-});
-
 task('deploy:dev', [
 	'deploy:set-dev',
     'deploy:prepare',
