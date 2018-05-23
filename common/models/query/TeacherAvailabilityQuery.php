@@ -19,6 +19,14 @@ class TeacherAvailabilityQuery extends ActiveQuery
         }]);
         return $this;
     }
+
+    public function location($locationId)
+    {
+        return $this->joinWith(['userLocation taul' => function ($query) use ($locationId) {
+            $query->andWhere(['taul.location_id' => $locationId]);
+        }]);
+    }
+
     public function day($day)
     {
         $this->andWhere(['teacher_availability_day.day' => $day]);
@@ -37,7 +45,30 @@ class TeacherAvailabilityQuery extends ActiveQuery
         return $this;
     }
   
-    public function between($fromTime, $toTime)
+    public function overlap($fromTime, $toTime)
+    {
+        return $this->andWhere(['OR',
+            [
+                'between', 'from_time', (new \DateTime($fromTime))->format('H:i:s'),
+                (new \DateTime($toTime))->format('H:i:s')
+            ],
+            [
+                'between', 'to_time', (new \DateTime($fromTime))->format('H:i:s'),
+                (new \DateTime($toTime))->format('H:i:s')
+            ],
+            [
+                'AND',
+                [
+                    '<=', 'from_time', (new \DateTime($fromTime))->format('H:i:s')
+                ],
+                [
+                    '>=', 'to_time', (new \DateTime($toTime))->format('H:i:s')
+                ]
+
+            ]
+        ]);
+    }
+     public function between($fromTime, $toTime)
     {
         $this->andWhere(['OR',
             [

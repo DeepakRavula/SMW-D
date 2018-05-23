@@ -376,6 +376,7 @@ class TeacherAvailabilityController extends BaseController
             ->andWhere(['NOT', ['lesson.id' => $lessonId]])
             ->between($fromDate, $toDate);
             if ($teacherId) {
+                $lessonQuery->andWhere(['lesson.teacherId' => $teacherId]);
                 $lessonQuery->union($teacherLessons);
             }
             $lessons = $lessonQuery->all();

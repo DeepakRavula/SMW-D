@@ -22,6 +22,7 @@ use Carbon\Carbon;
 use common\models\User;
 use common\components\controllers\BaseController;
 use Carbon\CarbonInterval;
+use backend\models\search\ScheduleSearch;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
@@ -69,30 +70,34 @@ class ScheduleController extends BaseController
      */
     public function actionIndex()
     {
-        $locationId             = Location::findOne(['slug' => Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $searchModel = new ScheduleSearch();
+        $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
         $date = new \DateTime();
-        $locationAvailabilities = LocationAvailability::find()
+        $scheduleVisibilities = LocationAvailability::find()
             ->location($locationId)
             ->scheduleVisibilityHours()
             ->all();
-        $locationAvailability = LocationAvailability::find()
+        $scheduleVisibility = LocationAvailability::find()
             ->location($locationId)
             ->day($date->format('N'))
             ->scheduleVisibilityHours()
             ->one();
-        if (empty($locationAvailability)) {
-            $from_time = LocationAvailability::DEFAULT_FROM_TIME;
-            $to_time   = LocationAvailability::DEFAULT_TO_TIME;
-        } else {
-            $from_time = $locationAvailability->fromTime;
-            $to_time   = $locationAvailability->toTime;
-        }
+        $locationAvailabilities = LocationAvailability::find()
+            ->location($locationId)
+            ->locationaAvailabilityHours()
+            ->all();
+        $locationAvailability = LocationAvailability::find()
+            ->location($locationId)
+            ->day($date->format('N'))
+            ->locationaAvailabilityHours()
+            ->one();
 
         return $this->render('index', [
             'locationAvailabilities'   => $locationAvailabilities,
-            'from_time'                => $from_time,
-            'to_time'                  => $to_time,
-            'locationId'               => $locationId
+            'scheduleVisibilities'     => $scheduleVisibilities,
+            'locationId'               => $locationId,
+            'searchModel' => $searchModel
         ]);
     }
 
@@ -110,7 +115,7 @@ class ScheduleController extends BaseController
         return $data;
     }
 
-    public function getLessons($date, $teacherId)
+    public function getLessons($date, $teacherId = null)
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $query = Lesson::find()
@@ -143,45 +148,53 @@ class ScheduleController extends BaseController
         return $resources;
     }
 
-    public function actionRenderResources($date, $programId, $teacherId)
+    public function actionRenderResources()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $date       = \DateTime::createFromFormat('Y-m-d', $date);
+        $scheduleRequest = Yii::$app->request->get('ScheduleSearch');
+        $teacherId = $scheduleRequest['teacherId'];
+        $showAll = $scheduleRequest['showAll'];
+        $programId = $scheduleRequest['programId'];
+        $date = $scheduleRequest['date'];
+        $date       = new \DateTime($date);
         $formatedDate = $date->format('Y-m-d');
         $formatedDay = $date->format('N');
         $resources = [];
         $query = User::find()
-                ->teachers($programId, $locationId)
-                ->joinWith('teacherLessons')
-                ->joinWith('availabilities')
-                ->andWhere(['OR', ['DATE(lesson.date)' => $formatedDate], 
-                    ['teacher_availability_day.day' => $formatedDay]]);
+            ->joinWith(['teacherLessons' => function ($query) use ($formatedDate) {
+                $query->andWhere(['DATE(lesson.date)' => $formatedDate]);
+            }]);
+        if ($showAll) {
+            $availableUserQuery = User::find()
+                ->joinWith(['availabilities a' => function ($query) use ($formatedDay) {
+                    $query->andWhere(['a.day' => $formatedDay]);
+                }])
+                ->location($locationId);
+            $query->union($availableUserQuery);
+        }
+        if (!$programId) {
+            $query->location($locationId);
+        }
         if (!empty($teacherId)) {
-            $teachers = $query->andWhere(['user.id' => $teacherId])
-                        ->all();
-            if (!empty($teachers)) {
-                $resources = $this->setresources($teachers);
-            } else {
+            $query->andWhere(['user.id' => $teacherId])
+                ->location($locationId);
+        } else if (!empty($programId)) {
+            $query->teachers($programId, $locationId);
+        }
+        $teachers = $query->groupBy('user.id')->all();
+        $resources = $this->setResources($teachers);
+        if (empty($resources)) {
+            if (!empty($teacherId)) {
                 $resources[] = [
                     'id'    => '0',
                     'title' => 'Teacher not available today'
                 ];
-            }
-        } else if (!empty($programId)) {
-            $teachers = $query->all();
-            if (!empty($teachers)) {
-                $resources = $this->setresources($teachers);
-            } else {
+            } else if (!empty($programId)) {
                 $resources[] = [
                     'id'    => '0',
                     'title' => 'No teacher available today for the selected program'
                 ];
-            }
-        } else if (empty($teacherId) && empty($programId)) {
-            $teachers = $query->all();
-            if (!empty($teachers)) {
-                $resources = $this->setResources($teachers);
-            } else {
+            } else if (empty($teacherId) && empty($programId)) {
                 $resources[] = [
                     'id'    => '0',
                     'title' => 'No teacher available today'
@@ -191,28 +204,75 @@ class ScheduleController extends BaseController
         return $resources;
     }
     
-    public function getTeacherAvailability($teacherId, $date)
+    public function getTeacherAvailability($teacherId, $programId, $showAll, $date)
     {
-        $availabilities = TeacherAvailability::find()
-            ->joinWith(['userLocation' => function ($query) use ($teacherId) {
-                $query->andWhere(['user_location.user_id' => $teacherId]);
-            }])
-            ->andWhere(['day' => $date->format('N')])
-            ->all();
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $formatedDate = $date->format('Y-m-d');
+        $availabilityQuery = TeacherAvailability::find()
+            ->andWhere(['day' => $date->format('N')]);
+        if ($showAll) {
+            $availabilityDayQuery = TeacherAvailability::find()
+                ->location($locationId)
+                ->andWhere(['day' => $date->format('N')]);
+            $availabilityQuery->union($availabilityDayQuery);
+        } else {
+            $availabilityQuery->joinWith(['teacher' => function ($query) use ($formatedDate) {
+                $query->joinWith(['teacherLessons' => function ($query) use ($formatedDate) {
+                    $query->andWhere(['DATE(lesson.date)' => $formatedDate]);
+                }]);
+            }]);
+        }
+        if ($teacherId) {
+            $availabilityQuery->joinWith(['userLocation ul' => function ($query) use ($teacherId) {
+                $query->andWhere(['ul.user_id' => $teacherId]);
+            }]);
+        }
+        if ($programId) {
+            $availabilityQuery->joinWith(['userLocation ulo' => function ($query) use ($locationId, $programId) {
+                $query->andWhere(['ulo.location_id' => $locationId]);
+                $query->joinWith(['qualifications'  => function ($query) use ($programId) {
+                    $query->andWhere(['qualification.program_id' => $programId]);
+                }]);
+            }]);
+        } else {
+            $availabilityQuery->location($locationId);
+        }
+        
+        $availabilities = $availabilityQuery->groupBy('teacher_availability_day.teacher_location_id')->all();
         return $availabilities;
     }
     
     public function getTeacherUnavailability($teacherAvailability, $date)
     {
+        $availability = TeacherAvailability::findOne($teacherAvailability->id);
         $unavailability = TeacherUnavailability::find()
-            ->andWhere(['teacherId' => $teacherAvailability->teacher->id])
-            ->overlap($teacherAvailability, $date)
+            ->andWhere(['teacherId' => $availability->teacher->id])
+            ->overlap($date)
             ->one();
         return $unavailability;
     }
-    public function getTeacherAvailabilityEvents($teachersAvailability, $unavailability, $date)
+
+    public function getTeacherAvailabilityEvents($teachersAvailabilities, $date)
     {
         $events = [];
+        foreach ($teachersAvailabilities as $teachersAvailability) {
+            $unavailability = $this->getTeacherUnavailability($teachersAvailability, $date);
+            if (!empty($unavailability)) {
+                if (empty($unavailability->fromTime) && empty($unavailability->toTime) || $unavailability->fromTime === 
+                    $teachersAvailability->from_time && $unavailability->toTime === $teachersAvailability->to_time) {
+                    continue;
+                } else {
+                    $events = array_merge($events, $this->getAvailabilityEvents($teachersAvailability, $unavailability, $date));
+                }
+            } else {
+                $events[] = $this->getRegularAvailability($teachersAvailability, $date);
+            }
+        }
+        return $events;
+    }
+
+    public function getAvailabilityEvents($teachersAvailability, $unavailability, $date)
+    {
         $availabilityStart = Carbon::parse($teachersAvailability->from_time);
         $availabilityEnd = Carbon::parse($teachersAvailability->to_time);
         $availabilityDiff = $availabilityStart->diff($availabilityEnd);
@@ -238,6 +298,7 @@ class ScheduleController extends BaseController
         
         $overlapPeriod = $availabilityPeriods->overlaps($unavailabilityPeriods);
         if ($overlapPeriod) {
+            $events = [];
             $availabilities = $availabilityPeriods->diff($unavailabilityPeriods);
             foreach ($availabilities as $availability) {
                 if ($availability->getStartDate()->format('H:i:s') >= $teachersAvailability->from_time &&
@@ -263,6 +324,7 @@ class ScheduleController extends BaseController
         }
         return $events;
     }
+
     public function getRegularAvailability($teachersAvailability, $date)
     {
         $startTime = Carbon::parse($teachersAvailability->from_time);
@@ -270,99 +332,29 @@ class ScheduleController extends BaseController
         $endTime = Carbon::parse($teachersAvailability->to_time);
         $end = clone $date;
         $end = $end->setTime($endTime->hour, $endTime->minute, $endTime->second);
-        $events[] = [
-            'resourceId' => $teachersAvailability->teacher->id,
+        $availability = TeacherAvailability::findOne($teachersAvailability->id);
+        return [
+            'resourceId' => $availability->teacher->id,
             'title'      => '',
             'start'      => $start->format('Y-m-d H:i:s'),
             'end'        => $end->format('Y-m-d H:i:s'),
             'rendering'  => 'background',
         ];
-        return $events;
     }
-    public function actionRenderDayEvents($date, $programId, $teacherId)
+    
+    public function actionRenderDayEvents()
     {
-        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $date = Carbon::parse($date);
         $events = [];
-        if (!empty($teacherId)) {
-            $teachersAvailabilities = $this->getTeacherAvailability($teacherId, $date);
-            foreach ($teachersAvailabilities as $teachersAvailability) {
-                $unavailability = $this->getTeacherUnavailability($teachersAvailability, $date);
-                if (!empty($unavailability)) {
-                    if (empty($unavailability->fromTime) && empty($unavailability->toTime)) {
-                        continue;
-                    } else {
-                        $events = array_merge($events, $this->getTeacherAvailabilityEvents($teachersAvailability, $unavailability, $date));
-                    }
-                } else {
-                    $events = $this->getRegularAvailability($teachersAvailability, $date);
-                }
-            }
-        } else if (!empty($programId)) {
-            $teachersAvailabilities = TeacherAvailability::find()
-                ->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
-                    $query->andWhere(['user_location.location_id' => $locationId]);
-                    $query->joinWith(['qualifications'  => function ($query) use ($programId) {
-                        $query->andWhere(['qualification.program_id' => $programId]);
-                    }]);
-                }])
-                ->andWhere(['day' => $date->format('N')])
-                ->all();
-
-            foreach ($teachersAvailabilities as $teachersAvailability) {
-                $unavailability = $this->getTeacherUnavailability($teachersAvailability, $date);
-                if (!empty($unavailability)) {
-                    if (empty($unavailability->fromTime) && empty($unavailability->toTime)) {
-                        continue;
-                    } else {
-                        $events = array_merge($events, $this->getTeacherAvailabilityEvents($teachersAvailability, $unavailability, $date));
-                    }
-                } else {
-                    $startTime = Carbon::parse($teachersAvailability->from_time);
-                    $start = $date->setTime($startTime->hour, $startTime->minute, $startTime->second);
-                    $endTime = Carbon::parse($teachersAvailability->to_time);
-                    $end = clone $date;
-                    $end = $end->setTime($endTime->hour, $endTime->minute, $endTime->second);
-                    $events[] = [
-                        'resourceId' => $teachersAvailability->teacher->id,
-                        'title'      => '',
-                        'start'      => $start->format('Y-m-d H:i:s'),
-                        'end'        => $end->format('Y-m-d H:i:s'),
-                        'rendering'  => 'background',
-                    ];
-                }
-            }
-        } else if (empty($teacherId) && empty($programId)) {
-            $teachersAvailabilities = TeacherAvailability::find()
-                ->joinWith(['userLocation' => function ($query) use ($locationId) {
-                    $query->andWhere(['user_location.location_id' => $locationId]);
-                }])
-                ->andWhere(['day' => $date->dayOfWeek])
-                ->all();
-            foreach ($teachersAvailabilities as $teachersAvailability) {
-                $unavailability = $this->getTeacherUnavailability($teachersAvailability, $date);
-                if (!empty($unavailability)) {
-                    if (empty($unavailability->fromTime) && empty($unavailability->toTime)) {
-                        continue;
-                    } else {
-                        $events = array_merge($events, $this->getTeacherAvailabilityEvents($teachersAvailability, $unavailability, $date));
-                    }
-                } else {
-                    $startTime = Carbon::parse($teachersAvailability->from_time);
-                    $start = $date->setTime($startTime->hour, $startTime->minute, $startTime->second);
-                    $endTime = Carbon::parse($teachersAvailability->to_time);
-                    $end = clone $date;
-                    $end = $end->setTime($endTime->hour, $endTime->minute, $endTime->second);
-                    $events[] = [
-                        'resourceId' => $teachersAvailability->teacher->id,
-                        'title'      => '',
-                        'start'      => $start->format('Y-m-d H:i:s'),
-                        'end'        => $end->format('Y-m-d H:i:s'),
-                        'rendering'  => 'background',
-                    ];
-                }
-            }
-        }
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $scheduleRequest = Yii::$app->request->get('ScheduleSearch');
+        $teacherId = $scheduleRequest['teacherId'];
+        $showAll = $scheduleRequest['showAll'];
+        $programId = $scheduleRequest['programId'];
+        $date = $scheduleRequest['date'];
+        $date = Carbon::parse($date);
+        $formatedDate = $date->format('Y-m-d');
+        $teachersAvailabilities = $this->getTeacherAvailability($teacherId, $programId, $showAll, $date);
+        $events = $this->getTeacherAvailabilityEvents($teachersAvailabilities, $date);
         $lessons = $this->getLessons($date, $teacherId);
         foreach ($lessons as &$lesson) {
             $toTime = new \DateTime($lesson->date);
@@ -402,7 +394,7 @@ class ScheduleController extends BaseController
 
     public function actionRenderClassroomEvents($date)
     {
-        $date = \DateTime::createFromFormat('Y-m-d', $date);
+        $date = new \DateTime($date);
         $classroomUnavailabilities = ClassroomUnavailability::find()
             ->andWhere(['AND',
                 ['<=', 'DATE(fromDate)', $date->format('Y-m-d')],
@@ -436,8 +428,7 @@ class ScheduleController extends BaseController
                 'rendering'  => 'background',
             ];
         }
-        $teacherId = null;
-        $lessons = $this->getLessons($date, $teacherId);
+        $lessons = $this->getLessons($date);
         foreach ($lessons as &$lesson) {
             if (! empty($lesson->classroomId)) {
                 $toTime = new \DateTime($lesson->date);

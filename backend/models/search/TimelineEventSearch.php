@@ -23,7 +23,11 @@ class TimelineEventSearch extends Log
 	private $fromDate;
 	private $toDate;
 	public $category;
-	public $student;
+    public $student;
+    public $createdUser;
+    public $created_at;
+    public $message;
+    public $date;
 
 	public function init()
     {
@@ -42,7 +46,7 @@ class TimelineEventSearch extends Log
     public function rules()
     {
         return [
-            [['dateRange', 'category', 'created_at', 'createdUserId', 'student'], 'safe'],
+            [['dateRange', 'category', 'created_at', 'createdUserId','createdUser', 'student','message' ], 'safe'],
         ];
     }
 
@@ -67,7 +71,7 @@ class TimelineEventSearch extends Log
 	    
 	$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 	$loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-        $query = LogHistory::find()->today();
+        $query = LogHistory::find()->orderBy(['log.createdOn' => SORT_DESC]);
 	$query->joinWith(['log' => function ($query) {
                     $query->joinWith(['logObject']);
 		}]);
@@ -75,52 +79,34 @@ class TimelineEventSearch extends Log
 	$dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+        
         if (!($this->load($params) && $this->validate())) {
+            $query->today();
             return $dataProvider;
         }
 	
-	if(empty($this->createdUserId))
+   
+	$dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        if (!($this->load($params) && $this->validate())) {
+            return $dataProvider;
+        }
+        $query->location($locationId);
+	if(!empty($this->createdUser))
 	{
-	$query->andFilterWhere(['log.createdUserId' => $loggedUser->id]);
+	$query->andFilterWhere(['log.createdUserId' => $this->createdUser]);
 	
 	}
-	if(empty($this->dateRange))
+	if(!empty($this->created_at))
 	{
-	$query->andWhere(['between', 'DATE(log.createdOn)', (new \DateTime())->format('Y-m-d'), (new \DateTime())->format('Y-m-d')]);
-	}
-        
-	if(!empty($this->createdUserId))
-	{
-	$query->andFilterWhere(['log.createdUserId' => $this->createdUserId])
-		->orFilterWhere(['log.createdUserId' => $loggedUser->id]);
-	}
-	if(!empty($this->dateRange))
-	{
+        list($this->fromDate, $this->toDate) = explode(' - ', $this->created_at);
 		$query->andWhere(['between', 'DATE(log.createdOn)', (new \DateTime($this->fromDate))->format('Y-m-d'), (new \DateTime($this->toDate))->format('Y-m-d')]);
-		
-	}
+    }
+    if(!empty($this->message))
+	{
+		$query->andWhere(['like', 'log.message',$this->message]);
+    }
         return $dataProvider;
-    }
-	public static function categories()
-    {
-        return [
-           	self::ALL  => 'All',
-            self::CATEGORY_LESSON => 'Lesson',
-			self::CATEGORY_ENROLMENT => 'Enrolment',
-			self::CATEGORY_INVOICE => 'Invoice',
-			self::CATEGORY_PAYMENT => 'Payment',
-        ];
-    }
-	
-	public function setDateRange($dateRange)
-    {
-        list($fromDate, $toDate) = explode(" - ", $dateRange);
-        $this->fromDate = $fromDate;
-        $this->toDate   = $toDate;
-    }
-
-    public function getDateRange()
-    {
-        return $this->fromDate . ' - ' . $this->toDate;
-    }
+    } 
 }

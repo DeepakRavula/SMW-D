@@ -44,6 +44,10 @@ class TimelineEventController extends BaseController
     public function actionIndex()
     {
         $searchModel = new TimelineEventSearch();
+        $currentDate = new \DateTime();
+        $fromDate = Yii::$app->formatter->asDate($currentDate);
+        $toDate = Yii::$app->formatter->asDate($currentDate);
+        $searchModel->created_at = $fromDate . ' - ' . $toDate;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

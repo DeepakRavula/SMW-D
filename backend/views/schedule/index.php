@@ -9,6 +9,8 @@ use common\models\User;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+use yii\jui\DatePicker;
 
 /* @var $this yii\web\View */
 $holiday = Holiday::findOne(['DATE(date)' => (new \DateTime())->format('Y-m-d')]);
@@ -17,13 +19,11 @@ if (!empty($holiday)) {
     $holidayResource = ' (' . $holiday->description. ')';
 }
 $this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holidayResource;
-$this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class' => 'tv-icon']);
+$this->params['action-button'] = $this->render('_button');
 ?>
 
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
-<link type="text/css" href="/plugins/bootstrap-datepicker/bootstrap-datepicker.css" rel='stylesheet' />
-<script type="text/javascript" src="/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.js"></script>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
@@ -35,14 +35,30 @@ $this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class
    .fc-resource-cell{width:150px;}
    .fc-view.fc-agendaDay-view{overflow-x:scroll;}
 </style>
+
+<?php $form = ActiveForm::begin([
+    'id' => 'schedule-form'
+]); ?>
 	<div class="col-md-2 schedule-picker">
-		<div id="datepicker" class="input-group date">
-			<input type="text" class="form-control" value="<?= Yii::$app->formatter->asDate(new \DateTime())?>">
-			<div class="input-group-addon">
-				<span class="glyphicon glyphicon-calendar"></span>
-			</div>
-		</div>
-	</div>
+        <?= $form->field($searchModel, 'goToDate', [
+            'inputTemplate' => '<div class="input-group m-r-45">{input}</div>',
+            ])->widget(DatePicker::classname(), [
+                'options' => [
+                    'class' => 'form-control',
+                    'id' => 'schedule-go-to-datepicker',
+                    'readOnly' => true
+                ],
+                'dateFormat' => 'php:M d, Y',
+                'clientOptions' => [
+                    'defaultDate' => Yii::$app->formatter->asDate(new \DateTime()),
+                    'changeMonth' => true,
+                    'yearRange' => '-20:+100',
+                    'changeYear' => true,
+                ]
+            ])->label(false);
+        ?>
+    </div>
+<?php ActiveForm::end(); ?>
         <div class="pull-right calendar-filter">
             <div class="row" style="width:600px">
                 <div class="col-md-2">
@@ -118,33 +134,33 @@ $this->params['action-button'] = Html::a('<i class="fa fa-tv"></i>', '', ['class
 
 <script type="text/javascript">
 var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities); ?>;
+var scheduleVisibilities   = <?php echo Json::encode($scheduleVisibilities); ?>;
 $(document).ready(function() {
-    $('#datepicker').datepicker ({
-        format: 'M d,yyyy',
-        autoclose: true,
-        todayHighlight: true
-    });
     var date = Date();
     refreshCalendar(moment(date), true);
 });
 
 $(document).on('click', '.tv-icon', function(e){ 
     e.preventDefault(); 
-    var date = moment($('#datepicker').datepicker("getDate")).format('DD-MM-YYYY');
+    var date = moment($('#schedule-go-to-datepicker').val()).format('DD-MM-YYYY');
     var url = "<?= Url::to(['daily-schedule/index']);?>?date=" + date; 
     window.open(url, '_blank');
+    return false;
 });
 
 $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
     var tab  = e.target.text;
-    var date = $('#datepicker').datepicker("getDate");
+    var date = $('#schedule-go-to-datepicker').val();
     if (tab === "Classroom View") {
         showclassroomCalendar(moment(date));
         $('.calendar-filter').hide();
+        $('#show-all').hide();
     } else {
         refreshCalendar(moment(date));
         $('.calendar-filter').show();
+        $('#show-all').show();
     }
+    return false;
 });
 
 $(document).off('change', '#program-selector').on('change', '#program-selector', function(){
@@ -170,36 +186,53 @@ $(document).off('change', '#program-selector').on('change', '#program-selector',
             refreshCalendar(moment(date));
 	}
     });
+    return false;
 });
     
 $(document).off('change', '#teacher-selector').on('change', '#teacher-selector', function(){
     var date = $('#calendar').fullCalendar('getDate');
     refreshCalendar(moment(date));
+    return false;
 });
 
-$(document).off('change', '#datepicker').on('change', '#datepicker', function(){
-    var date = $('#datepicker').datepicker("getDate");
+$(document).off('change', '#schedule-show-all').on('change', '#schedule-show-all', function(){
+    var date = $('#calendar').fullCalendar('getDate');
+    refreshCalendar(moment(date));
+});
+
+$(document).off('change', '#schedule-go-to-datepicker').on('change', '#schedule-go-to-datepicker', function(){
+    var date = $('#schedule-go-to-datepicker').val();
     fetchHolidayName(moment(date));
     if ($('.nav-tabs .active').text() === 'Classroom View') {
         showclassroomCalendar(moment(date));
     } else {
         refreshCalendar(moment(date));
     }
+    return false;
 });
 
 
 function fetchHolidayName(date)
 {
-    var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
+    var params = $.param({ date: moment(date).format('YYYY-MM-DD') });
     $.ajax({
-	url: '<?= Url::to(['schedule/fetch-holiday-name']); ?>?' + params,
-	type: 'get',
-	dataType: "json",
-	success: function (response)
-	{
-            $(".content-header").html(response);
-	}
-    });	
+        url: '<?= Url::to(['schedule/fetch-holiday-name']); ?>?' + params,
+        type: 'get',
+        dataType: "json",
+        success: function (response)
+        {
+            var showAll = $('#schedule-show-all').is(":checked");
+            if ($(".content-header").html(response)) {
+                if ($('.nav-tabs .active').text() === 'Classroom View') {
+                    $('#show-all').hide();
+                }
+                if (showAll) {
+                    $('#schedule-show-all').prop("checked", true);
+                }
+            }
+        }
+    });
+    return false;
 }
 
 function showclassroomCalendar(date) {
@@ -277,13 +310,22 @@ function refreshCalendar(date, clearFilter) {
         var programId = $('#program-selector').val();
         var teacherId = $('#teacher-selector').val();
     }
-    var params = $.param({ date: moment(date).format('YYYY-MM-DD'),
-        programId: programId,
-        teacherId: teacherId });
+    var showAll = $('#schedule-show-all').is(":checked");
+    var params = $.param({ 
+        'ScheduleSearch[date]': moment(date).format('YYYY-MM-DD'),
+        'ScheduleSearch[showAll]': showAll | 0,
+        'ScheduleSearch[programId]': programId,
+        'ScheduleSearch[teacherId]': teacherId 
+    });
     var minTime = "09:00:00";
     var maxTime = "17:00:00";
     var day     = moment(date).day();
-    $.each( locationAvailabilities, function( key, value ) {
+    if (showAll) {
+        var availabilitites = locationAvailabilities;
+    } else {
+        var availabilitites = scheduleVisibilities;
+    }
+    $.each(availabilitites , function( key, value ) {
         if (day === 0) {
             day = 7;
         }
@@ -312,7 +354,7 @@ function refreshCalendar(date, clearFilter) {
             url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
             type: 'GET',
             error: function() {
-                $("#calendar").fullCalendar("refetchResources");
+                //$("#calendar").fullCalendar("refetchResources");
             }
         },
         resourceRender: function() {
@@ -323,7 +365,7 @@ function refreshCalendar(date, clearFilter) {
             url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
             type: 'GET',
             error: function() {
-                $("#calendar").fullCalendar("refetchEvents");
+                //$("#calendar").fullCalendar("refetchEvents");
             }
         },
         eventRender: function(event, element) {
