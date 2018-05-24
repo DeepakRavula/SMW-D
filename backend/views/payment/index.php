@@ -7,6 +7,7 @@ use kartik\grid\GridView;
 use common\components\gridView\KartikGridView;
 use yii\helpers\ArrayHelper;
 use common\models\PaymentMethod;
+use common\models\User;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -14,10 +15,11 @@ use common\models\PaymentMethod;
 $this->title = 'Payments';
 ?>
 <?php
+$locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $columns = [
                 [
                     'label' => 'Date',
-                    'attribute' => 'date',
+                    'attribute' => 'dateRange',
                 'value' => function ($data) {
                     if (!empty($data->date)) {
                         $lessonDate = Yii::$app->formatter->asDate($data->date);
@@ -26,7 +28,31 @@ $this->title = 'Payments';
 
                     return null;
                 },
-                'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
+                'filterType' => KartikGridView::FILTER_DATE_RANGE,
+        'filterWidgetOptions' => [
+            'id' => 'enrolment-startdate-search',
+            'convertFormat' => true,
+            'initRangeExpr' => true,
+            'pluginOptions' => [
+                'autoApply' => true,
+                'allowClear' => true,
+                'ranges' => [
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')",
+                        'moment()'],
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')",
+                        'moment()'],
+                    Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')",
+                        "moment().endOf('month')"],
+                    Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')",
+                        "moment().subtract(1, 'month').endOf('month')"],
+                ],
+                'locale' => [
+                    'format' => 'M d, Y',
+                ],
+                'opens' => 'right',
+            ],
+
+        ],
                 
             ],
             [
@@ -36,6 +62,17 @@ $this->title = 'Payments';
                     return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                 },
                 'contentOptions' => ['style' => 'font-size:14px'],
+                'filterType'=>KartikGridView::FILTER_SELECT2,
+                'filter'=> ArrayHelper::map(User::find()->customers($locationId)->notDeleted()->active()
+                ->all(), 'id', 'publicIdentity'),
+                'filterWidgetOptions'=>[
+                    'pluginOptions'=>[
+                        'allowClear'=>true,
+            ],
+
+        ],
+                'filterInputOptions'=>['placeholder'=>'Customer'],
+                'format'=>'raw'
                 
             ],
                 [

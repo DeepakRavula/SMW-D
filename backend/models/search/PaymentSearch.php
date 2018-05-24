@@ -14,19 +14,18 @@ use common\models\PaymentMethod;
  */
 class PaymentSearch extends Payment
 {
-    public $fromDate;
-    public $toDate;
-    public $query;
-    public $dateRange;
     public $customer;
     public $paymentMethod;
+    public $startDate;
+    public $endDate;
+    public $dateRange;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['fromDate', 'toDate', 'customer', 'date', 'amount', 'user_id', 'dateRange', 'paymentMethod'], 'safe'],
+            [['startDate', 'endDate', 'customer', 'dateRange', 'amount', 'user_id', 'paymentMethod'], 'safe'],
         ];
     }
 
@@ -50,23 +49,29 @@ class PaymentSearch extends Payment
         $query               = Payment::find()
             ->location($locationId)
             ->notDeleted();
-
+           
         $query->joinWith('userProfile');
         $query->joinWith('paymentMethod');
         $dataProvider        = new ActiveDataProvider([
             'query' => $query,
         ]);
           
+        if(!empty($this->dateRange)) {
+            list($this->startDate, $this->endDate) = explode(' - ', $this->dateRange);
+            $query->andWhere(['between', 'DATE(payment.date)',
+                    (new \DateTime($this->startDate))->format('Y-m-d'),
+                    (new \DateTime($this->endDate))->format('Y-m-d')]);  
+        }
         $dataProvider->setSort([
             'attributes' => [
                 'customer' => [
                     'asc' => ['user_profile.firstname' => SORT_ASC],
                     'desc' => ['user_profile.firstname' => SORT_DESC],
                 ],
-                'date' => [
-                    'asc' => ['date' => SORT_ASC],
-                    'desc' => ['date' => SORT_DESC],
-                ], 
+                'dateRange' => [
+                    'asc' => ['payment.date' => SORT_ASC],
+                    'desc' => ['payment.date' => SORT_DESC],
+                ],
                 'paymentMethod' => [
                     'asc' => ['payment_method.name' => SORT_ASC],
                     'desc' => ['payment_method.name' => SORT_DESC],
@@ -78,15 +83,22 @@ class PaymentSearch extends Payment
             ]
         ]);
         $dataProvider->sort->defaultOrder = [
-            'date' => SORT_DESC,
+            'dateRange' => SORT_DESC,
         ];
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
+        if(!empty($this->dateRange)) {
+            list($this->startDate, $this->endDate) = explode(' - ', $this->dateRange);
+            $query->andWhere(['between', 'DATE(payment.date)',
+                (new \DateTime($this->startDate))->format('Y-m-d'),
+                (new \DateTime($this->endDate))->format('Y-m-d')]); 
+        }
 
         $query->andFilterWhere(['like', 'payment_method.name', $this->paymentMethod]);
         $query->andFilterWhere(['like', 'amount', $this->amount]);
-       
+        $query->andFilterWhere(['user_profile.user_id' => $this->customer]);
+        
         return $dataProvider;
     }
 }

@@ -78,7 +78,7 @@ class InvoiceSearch extends Invoice
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-
+        
         $this->fromDate = \DateTime::createFromFormat('M d,Y', $this->fromDate);
         $this->toDate = \DateTime::createFromFormat('M d,Y', $this->toDate);
         if ((int) $this->type === Invoice::TYPE_PRO_FORMA_INVOICE) {
