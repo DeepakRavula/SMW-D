@@ -18,7 +18,7 @@ $holidayResource = '';
 if (!empty($holiday)) {
     $holidayResource = ' (' . $holiday->description. ')';
 }
-$this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holidayResource;
+$this->title = 'Schedule';
 $this->params['action-button'] = $this->render('_button');
 ?>
 
@@ -137,6 +137,7 @@ var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities);
 var scheduleVisibilities   = <?php echo Json::encode($scheduleVisibilities); ?>;
 $(document).ready(function() {
     var date = Date();
+    fetchHolidayName(moment(date));
     refreshCalendar(moment(date), true);
 });
 
