@@ -104,7 +104,7 @@ $this->params['action-button'] = $this->render('_action-menu', [
                             Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
                         ],
                         'locale' => [
-                            'format' => 'M d,Y',
+                            'format' => 'M d, Y',
                         ],
                         'opens' => 'left'
                     ],

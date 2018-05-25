@@ -38,8 +38,8 @@ public function behaviors()
         }
         $searchModel = new DashboardSearch();
         $currentDate = new \DateTime();
-        $searchModel->fromDate = $currentDate->format('M 1,Y');
-        $searchModel->toDate = $currentDate->format('M t,Y');
+        $searchModel->fromDate = $currentDate->format('M 1, Y');
+        $searchModel->toDate = $currentDate->format('M t, Y');
         $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
         $request = Yii::$app->request;
         if ($searchModel->load($request->get())) {

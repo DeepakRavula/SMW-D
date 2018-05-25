@@ -35,7 +35,7 @@ use yii\helpers\Url;
                             ]
                         ],
                         'locale' => [
-                            'format' => 'M d,Y'
+                            'format' => 'M d, Y'
                         ],
                         'opens' => 'right'
                     ]

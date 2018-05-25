@@ -126,7 +126,7 @@ $this->params['show-all'] = $this->render('_button', [
                         "moment().subtract(1, 'month').endOf('month')"],
                 ],
                 'locale' => [
-                    'format' => 'M d,Y',
+                    'format' => 'M d, Y',
                 ],
                 'opens' => 'left',
             ],
