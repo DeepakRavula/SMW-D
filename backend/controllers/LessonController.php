@@ -507,7 +507,10 @@ class LessonController extends BaseController
                 'status' => Lesson::STATUS_UNSCHEDULED
             ]);
         }
-        $lessons = Lesson::findAll(['courseId' => $courseModel->id, 'isConfirmed' => false]);
+        $lessons = Lesson::find()
+            ->andWhere(['courseId' => $courseModel->id, 'isConfirmed' => false])
+            ->orderBy(['lesson.date' => SORT_ASC])
+            ->all();
         $lesson = end($lessons);
         $request = Yii::$app->request;
         $courseRequest = $request->get('Course');
@@ -531,7 +534,8 @@ class LessonController extends BaseController
                 ->notDeleted()
                 ->isConfirmed()
                 ->statusScheduled()
-                ->between($startDate, $endDate)
+                ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
+                ->orderBy(['lesson.date' => SORT_ASC])
                 ->all();
             $oldLessonIds = [];
             foreach ($oldLessons as $oldLesson) {

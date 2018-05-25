@@ -269,7 +269,7 @@ function showclassroomCalendar(date) {
             url: '<?= Url::to(['schedule/render-classroom-resources']) ?>',
             type: 'GET',
             error: function() {
-                $("#classroom-calendar").fullCalendar("refetchResources");
+                //$("#classroom-calendar").fullCalendar("refetchResources");
             }
         },
         resourceRender: function(resourceObj, labelTds, bodyTds,element) {
@@ -289,7 +289,7 @@ function showclassroomCalendar(date) {
             url: '<?= Url::to(['schedule/render-classroom-events']) ?>?' + params,
             type: 'GET',
             error: function() {
-                $("#classroom-calendar").fullCalendar("refetchEvents");
+                //$("#classroom-calendar").fullCalendar("refetchEvents");
             }
         },
         eventRender: function(event, element) {
