@@ -10,6 +10,7 @@ use yii\bootstrap\Tabs;
 use common\models\LocationAvailability;
 use kartik\date\DatePickerAsset;
 use kartik\time\TimePickerAsset;
+use common\models\User;
 TimePickerAsset::register($this);
 DatePickerAsset::register($this);
 
@@ -20,9 +21,12 @@ $this->title = $model->name;
 $this->params['label'] = $this->render('_title', [
     'model' => $model,
 ]);
-$this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i>', '#', ['class' => 'f-s-18 edit-location']);
+
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
+if ($lastRole === User::ROLE_ADMINISTRATOR) {
+    $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i>', '#', ['class' => 'f-s-18 edit-location']);
+}
 ?>
 <div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="copy-operation-hours" style="display: none;" class="alert-success alert fade in"></div>
