@@ -95,9 +95,10 @@ class LessonSearch extends Lesson
 	
         if (!empty($this->teacher)) {
             $query->joinWith(['teacherProfile' => function ($query) {
-                $query->andFilterWhere([
-                            'LIKE', "CONCAT(user_profile.firstname, ' ', user_profile.lastname)", $this->teacher
+		    $query->joinWith(['user' => function($query) {
+                $query->andFilterWhere(['user.id' => $this->teacher
                         ]);
+		}]);
             }]);
         }
         if (!empty($this->customerId)) {
