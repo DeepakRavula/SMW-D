@@ -171,6 +171,8 @@ class TeacherAvailabilityController extends BaseController
 
     public function actionAvailability($id = null)
     {
+        $scheduleRequest = Yii::$app->request->get('ScheduleSearch');
+        $locationVisibility = $scheduleRequest['locationVisibility'];
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $teacherAvailabilities = [];
         if ($id) {
@@ -182,7 +184,7 @@ class TeacherAvailabilityController extends BaseController
                 }])
                 ->all();
         }
-        $data =  $this->renderAjax('/layouts/datepicker');
+        $data =  $this->renderAjax('/layouts/datepicker', ['isShowAllChecked' => $locationVisibility]);
         $availableHours = [];
         foreach ($teacherAvailabilities as $teacherAvailability) {
             $availableHours[] = [
@@ -193,15 +195,16 @@ class TeacherAvailabilityController extends BaseController
                 'rendering' => 'background',
             ];
         }
-        $minLocationAvailability = LocationAvailability::find()
-            ->location($locationId)
-            ->locationaAvailabilityHours()
-            ->orderBy(['fromTime' => SORT_ASC])
+        $query = LocationAvailability::find()
+            ->location($locationId);
+        if (!$locationVisibility) {
+            $query->scheduleVisibilityHours();
+        } else {
+            $query->locationaAvailabilityHours();
+        }
+        $minLocationAvailability = $query->orderBy(['fromTime' => SORT_ASC])
             ->one();
-        $maxLocationAvailability = LocationAvailability::find()
-            ->location($locationId)
-            ->locationaAvailabilityHours()
-            ->orderBy(['toTime' => SORT_DESC])
+        $maxLocationAvailability = $query->orderBy(['toTime' => SORT_DESC])
             ->one();
         if (empty($minLocationAvailability)) {
             $minTime = LocationAvailability::DEFAULT_FROM_TIME;
