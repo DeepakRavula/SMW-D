@@ -8,7 +8,6 @@ use kartik\select2\Select2;
 use common\models\User;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 

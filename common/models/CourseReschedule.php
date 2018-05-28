@@ -19,7 +19,7 @@ class CourseReschedule extends Model
 {
     public $fromDate;
     public $toDate;
-    public $dateRangeToChangeSchedule;
+    public $dateToChangeSchedule;
     public $rescheduleBeginDate;
     public $duration;
     public $dayTime;
@@ -30,13 +30,6 @@ class CourseReschedule extends Model
     const SCENARIO_BASIC = 'reschedule-basic';
     const SCENARIO_DETAILED = 'reschedule-detail';
 
-    public function setDateRangeToChangeSchedule($dateRangeToChangeSchedule)
-    {
-        list($fromDate, $toDate) = explode(' - ', $dateRangeToChangeSchedule);
-        $this->fromDate = \DateTime::createFromFormat('M d,Y', $fromDate);
-        $this->toDate = \DateTime::createFromFormat('M d,Y', $toDate);
-    }
-
     public function setModel($model)
     {
         $this->duration = $model->duration;
@@ -46,26 +39,16 @@ class CourseReschedule extends Model
         return $this;
     }
 
-    public function getDateRangeToChangeSchedule()
-    {
-        $fromDate = $this->fromDate->format('M d,Y');
-        $toDate = $this->toDate->format('M d,Y');
-        $this->dateRangeToChangeSchedule = $fromDate.' - '.$toDate;
-
-        return $this->dateRangeToChangeSchedule;
-    }
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['dayTime', 'teacherId', 'duration'], 'required', 'on' => self::SCENARIO_DETAILED],
-            [['dateRangeToChangeSchedule', 'rescheduleBeginDate'], 'required', 'on' => self::SCENARIO_BASIC],
-            [['dayTime', 'teacherId', 'duration', 'dateRangeToChangeSchedule',
-                'rescheduleBeginDate'], 'required', 'except' => [self::SCENARIO_BASIC, self::SCENARIO_DETAILED]],
-            [['dayTime', 'teacherId', 'duration'], 'safe', 'on' => self::SCENARIO_BASIC],
-            [['dateRangeToChangeSchedule', 'rescheduleBeginDate'], 'safe', 'on' => self::SCENARIO_DETAILED],
+            [['dayTime', 'teacherId', 'duration', 'rescheduleBeginDate'], 'required', 'on' => self::SCENARIO_DETAILED],
+            [['dateToChangeSchedule'], 'required', 'on' => self::SCENARIO_BASIC],
+            [['dayTime', 'teacherId', 'duration'], 'safe'],
+            [['dateToChangeSchedule', 'rescheduleBeginDate'], 'safe'],
             [['courseId'], 'safe']
         ];
     }
@@ -79,7 +62,7 @@ class CourseReschedule extends Model
             'duration' => 'Duration',
             'teacherId' => 'Teacher',
             'rescheduleBeginDate' => 'Reschedule begin',
-            'dateRangeToChangeSchedule' => 'Date range',
+            'dateToChangeSchedule' => 'Date to change schedule',
             'dayTime' => 'Day & Time'
         ];
     }
@@ -90,9 +73,6 @@ class CourseReschedule extends Model
             'courseId' => $this->courseId,
             'isConfirmed' => false,
         ]);
-        list($fromDate, $toDate) = explode(' - ', $this->dateRangeToChangeSchedule);
-        $startDate = new \DateTime($fromDate);
-        $endDate = new \DateTime($toDate);
         $rescheduleStartDate = (new \DateTime($this->rescheduleBeginDate))->modify('-1 day');
         $lessons = Lesson::find()
             ->andWhere(['courseId' => $this->courseId])
@@ -100,14 +80,14 @@ class CourseReschedule extends Model
             ->notDeleted()
             ->statusScheduled()
             ->isConfirmed()
-            ->between($startDate, $endDate)
+            ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime($this->dateToChangeSchedule))->format('Y-m-d')])
             ->orderBy(['lesson.date' => SORT_ASC])
             ->all();
         $course = Course::findOne($this->courseId);
         $dayList = Course::getWeekdaysList();
         $day = $dayList[(new \DateTime($this->dayTime))->format('N')];
         $rescheduleStartDate->modify('next ' . $day);
-        $course->generateLessons($lessons, $rescheduleStartDate, $this->teacherId, $this->dayTime, $this->duration);
-        return true;
+        $lastLessonDate = $course->generateLessons($lessons, $rescheduleStartDate, $this->teacherId, $this->dayTime, $this->duration);
+        return $lastLessonDate;
     }
 }

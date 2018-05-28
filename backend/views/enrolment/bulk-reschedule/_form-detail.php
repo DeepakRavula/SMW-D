@@ -56,7 +56,7 @@ use common\models\Location;
             <div id="bulk-reschedule-calendar"></div>
         </div>
     </div>
-    <?= $form->field($courseReschedule, 'dateRangeToChangeSchedule')->hiddenInput()->label(false);?>
+    <?= $form->field($courseReschedule, 'dateToChangeSchedule')->hiddenInput()->label(false);?>
     <?php ActiveForm::end(); ?>
 </div>
 
@@ -86,8 +86,12 @@ use common\models\Location;
     });
     
     $(document).ready(function() {
+        var selectedDate = $('#coursereschedule-reschedulebegindate').val();
+        if ($.isEmptyObject(selectedDate)) {
+            selectedDate = $('#coursereschedule-datetochangeschedule').val();
+        }
         var options = {
-            'date' : $('#coursereschedule-reschedulebegindate').val(),
+            'date' : selectedDate,
             'renderId' : '#bulk-reschedule-calendar',
             'eventUrl' : '<?= Url::to(['teacher-availability/show-lesson-event']) ?>',
             'availabilityUrl' : '<?= Url::to(['teacher-availability/availability']) ?>',
@@ -108,6 +112,7 @@ use common\models\Location;
 
     $(document).on('week-view-calendar-select', function(event, params) {
         $('#coursereschedule-daytime').val(moment(params.date, "DD-MM-YYYY h:mm a").format('dddd hh:mm A')).trigger('change');
+        $('#coursereschedule-reschedulebegindate').val(moment(params.date, "DD-MM-YYYY h:mm a").format('MMM D, Y')).trigger('change');
         return false;
     });
 </script>
