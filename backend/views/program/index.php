@@ -29,17 +29,6 @@ $this->params['show-all'] = $this->render('_button', [
         ?>
     </div>
 </div>
-<div>
-<div>
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Program</h4>',
-    'id' => 'program-modal',
-]);
-?>
-<div id="program-content"></div>
-<?php Modal::end(); ?>
-</div>
 <?php echo Html::hiddenInput('name',Program::TYPE_PRIVATE_PROGRAM,array('id'=>'program-type')); ?>
 <script>
 	$(document).on('click', '.action-button,#program-listing  tbody > tr', function () {
@@ -64,7 +53,7 @@ Modal::begin([
                     if(response.status)
                     {
                         $('#popup-modal').modal('show');
-                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Country</h4>');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Program</h4>');
                         $('#modal-content').html(response.data);
                     }
                 }
