@@ -69,9 +69,6 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
                 ])->label(false);
             ?>
         </div>
-        <div class="pull-left">
-            <button type="button" class="btn btn-secondary btn-sm">Today</button>
-        </div>
         <div id="title" class="pull-center">
             <h2>
                 Schedule for <?= (new \DateTime())->format('l, F jS, Y') . ' ' . $name; ?>
@@ -124,7 +121,11 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
             $('#calendar').unbind().removeData().fullCalendar({
                 nowIndicator: true,
                 schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-                header: false,
+                header: {
+                    left: 'today',
+                    center: '',
+                    right: ''
+                },
                 firstDay : 1,
                 defaultDate: date,
                 defaultView: 'agendaDay',
@@ -135,7 +136,6 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
                 editable: true,
                 eventDurationEditable: false,
                 contentHeight: "auto",
-                nowIndicator: true,
                 events: {
                     url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
                     type: 'GET',
@@ -156,8 +156,15 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
                             return event.description;
                         }
                     });
-                },
-                allDaySlot: false
+                }
+            });
+            
+            $('.fc-today-button').click(function(){
+                var date = Date();
+                $('#schedule-go-to-datepicker').val(moment(date).format('MMM D, Y'));
+                schedule.fetchHolidayName(moment(date));
+                schedule.loadCalendar(date);
+                return false;
             });
         },
 
@@ -188,14 +195,6 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
         schedule.loadCalendar(date);
     });
     
-    $(document).off('click', '.fc-left fc-today-button').on('click', '.fc-left fc-today-button', function () {debugger
-        var date = Date();
-        $('#schedule-go-to-datepicker').val(moment(date).format('MMM D, Y'));
-        schedule.fetchHolidayName(moment(date));
-        schedule.loadCalendar(date);
-        return false;
-    });
-
     $(document).off('change', '#schedule-show-all').on('change', '#schedule-show-all', function(){
         var date = $('#calendar').fullCalendar('getDate');
         schedule.fetchHolidayName(moment(date));
