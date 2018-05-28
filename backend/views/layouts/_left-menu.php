@@ -80,6 +80,13 @@ echo Menu::widget([
             'visible' => Yii::$app->user->can('manageGroupLessons'),
             'active' => (isset(Yii::$app->request->queryParams['CourseSearch']['type']) && Yii::$app->request->queryParams['CourseSearch']['type'] == Lesson::TYPE_GROUP_LESSON) ? true : false,
         ],
+	[
+            'label' => Yii::t('backend', 'Unscheduled Lessons'),
+            'url' => ['/course/index', 'CourseSearch[type]' => Lesson::TYPE_GROUP_LESSON],
+            'icon' => '<i class="fa fa-music"></i>',
+            'visible' => Yii::$app->user->can('manageGroupLessons'),
+            'active' => (isset(Yii::$app->request->queryParams['CourseSearch']['type']) && Yii::$app->request->queryParams['CourseSearch']['type'] == Lesson::TYPE_GROUP_LESSON) ? true : false,
+        ],
             [
             'label' => Yii::t('backend', 'Proforma Invoices'),
             'icon' => '<i class="fa  fa-dollar"></i>',
