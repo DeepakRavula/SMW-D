@@ -32,10 +32,9 @@ $this->params['show-all'] = $this->render('_button', [
 <?php echo Html::hiddenInput('name',Program::TYPE_PRIVATE_PROGRAM,array('id'=>'program-type')); ?>
 <script>
 	$(document).on('click', '.action-button,#program-listing  tbody > tr', function () {
-	    $('#popup-modal .modal-dialog').css({'width': '400px'});
 	    var type=$('#program-type').val();
             var programId = $(this).data('key');
-            if (programId === undefined) {
+            if (!programId) {
                     var customUrl = '<?= Url::to(['program/create']); ?>?type=' + type;
             } else {
                 var customUrl = '<?= Url::to(['program/update']); ?>?id=' + programId;

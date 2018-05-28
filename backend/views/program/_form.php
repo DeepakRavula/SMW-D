@@ -95,6 +95,7 @@ $("#program-rate").on('change keyup paste', function() {
 		var ratePerMonth60 = ((rate60) * 4).toFixed(2);
 		$('#rate-month-60-min').text(ratePerMonth60);
 	});
+	$('#popup-modal .modal-dialog').css({'width': '500px'});
 });
 $(document).on('modal-success', function(event, params) {
 	    var type=$('#program-type').val();
