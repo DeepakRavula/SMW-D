@@ -45,7 +45,7 @@ $this->params['action-button'] = $actionButton; ?>
                         'allowClear'=>true,
             ],
         ],
-                'filterInputOptions'=>['placeholder'=>'PFI Number'],
+                'filterInputOptions'=>['placeholder'=>'Number'],
                 ],
                 [
 		'attribute' => 'dateRange',
@@ -188,7 +188,7 @@ $this->params['action-button'] = $actionButton; ?>
             ],    
 		      
         ],
-                'filterInputOptions'=>['placeholder'=>'PFI Number'],
+                'filterInputOptions'=>['placeholder'=>'Number'],
                 ],
                 [
 					'attribute' => 'invoiceDateRange',
