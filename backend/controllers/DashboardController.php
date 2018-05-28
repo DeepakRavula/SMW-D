@@ -52,28 +52,33 @@ public function behaviors()
         }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         
+	 $fromDate = $searchModel->fromDate;
+        $from = $fromDate->format('Y-m-d');
+	    $toDate = $searchModel->toDate;
+        $to = $toDate->format('Y-m-d');
         $enrolments = Enrolment::find()
             ->notDeleted()
-            ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+            ->joinWith(['course' => function ($query) use ($locationId, $searchModel,$from,$to) {
                 $query->joinWith(['program' => function ($query) {
                     $query->privateProgram();
                 }])
                 ->confirmed()
+	        ->overlap($from, $to)
                 ->andWhere(['course.type' => Course::TYPE_REGULAR])
-                ->location($locationId)
-                ->between($searchModel->fromDate, $searchModel->toDate);
+                ->location($locationId);
             }])
             ->count('studentId');
 
+	    
         $groupEnrolments = Enrolment::find()
-            ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+            ->joinWith(['course' => function ($query) use ($locationId, $searchModel,$from,$to) {
                 $query->joinWith(['program' => function ($query) {
                     $query->group();
                 }])
                 ->confirmed()
+		->overlap($from, $to)
                 ->andWhere(['course.type' => Course::TYPE_REGULAR])
-                ->location($locationId)
-                ->between($searchModel->fromDate, $searchModel->toDate);
+                ->location($locationId);
             }])
             ->count('studentId');
         $lessonsCount = Lesson::find()
@@ -83,18 +88,14 @@ public function behaviors()
             ->andWhere(['NOT IN', 'lesson.status', Lesson::STATUS_CANCELED])
             ->between($searchModel->fromDate, $searchModel->toDate)
             ->count();
-        $fromDate = $searchModel->fromDate;
-        $from = $fromDate->format('Y-m-d');
-	    $toDate = $searchModel->toDate;
-        $to = $toDate->format('Y-m-d');
         $students = Student::find()
 			->notDeleted()
 			->joinWith(['enrolment' => function ($query) use ($locationId, $from, $to) {
 				    $query->joinWith(['course' => function ($query) use ($locationId, $from, $to) {
                           $query->joinWith(['lessons' => function ($query) {
-                             $query->andWhere(['NOT',['lesson.id'=>null]]);
+                             $query->andWhere(['NOT',['lesson.id' => null]]);
                           }])
-						->confirmed()
+			 			->confirmed()
 						->overlap($from, $to)
 						->location($locationId);
 					}]);
