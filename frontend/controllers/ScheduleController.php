@@ -149,13 +149,12 @@ class ScheduleController extends Controller
     public function getTeacherAvailability($teacherId, $date)
     {
         $formatedDate = $date->format('Y-m-d');
-        $availabilityQuery = TeacherAvailability::find()
+        $availabilities = TeacherAvailability::find()
             ->andWhere(['day' => $date->format('N')])
             ->joinWith(['userLocation ul' => function ($query) use ($teacherId) {
                 $query->andWhere(['ul.user_id' => $teacherId]);
-            }]);
-        
-        $availabilities = $availabilityQuery->groupBy('teacher_availability_day.teacher_location_id')->all();
+            }])
+            ->all();
         return $availabilities;
     }
 
@@ -248,23 +247,6 @@ class ScheduleController extends Controller
         $userId = $scheduleRequest['userId'];
         $showAll = $scheduleRequest['showAll'];
         $date = new \DateTime($scheduleRequest['date']);
-        $teachersAvailabilities = TeacherAvailability::find()
-            ->joinWith(['userLocation' => function ($query) use ($userId) {
-                $query->andWhere(['user_location.user_id' => $userId]);
-            }])
-            ->all();
-
-        foreach ($teachersAvailabilities as $teachersAvailability) {
-            $start = $teachersAvailability->from_time;
-            $end   = $teachersAvailability->to_time;
-            $events[] = [
-                'resourceId' => $teachersAvailability->teacher->id,
-                'title'      => '',
-                'start'      => $start,
-                'end'        => $end,
-                'rendering'  => 'background',
-            ];
-        }
         $teachersAvailabilities = $this->getTeacherAvailability($userId, $date);
         $events = $this->getTeacherAvailabilityEvents($teachersAvailabilities, $date);
         $lessons = $this->getLessons($userId, $date);
