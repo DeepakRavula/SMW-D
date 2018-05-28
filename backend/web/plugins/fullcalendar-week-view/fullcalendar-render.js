@@ -54,7 +54,7 @@ var calendar = {
                 url: calendarOptions.eventUrlFormatted,
                 type: 'GET',
                 error: function() {
-                    $('#week-view-calendar').fullCalendar("refetchEvents");
+                    //$('#week-view-calendar').fullCalendar("refetchEvents");
                 }
             },
             select: function (start) {
