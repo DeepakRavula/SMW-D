@@ -29,84 +29,34 @@ $this->params['show-all'] = $this->render('_button', [
         ?>
     </div>
 </div>
-<div>
-<div>
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Program</h4>',
-    'id' => 'program-modal',
-]);
-?>
-<div id="program-content"></div>
-<?php Modal::end(); ?>
-</div>
 <?php echo Html::hiddenInput('name',Program::TYPE_PRIVATE_PROGRAM,array('id'=>'program-type')); ?>
 <script>
-    $(document).ready(function () {
-        $(document).on('click', '.action-button',function () {
-            var type=$('#program-type').val();
-            var customUrl = '<?= Url::to(['program/create']); ?>?type=' + type;
-            $.ajax({
-                url: customUrl,
-                type: 'post',
-                dataType: "json",
-                data: $(this).serialize(),
-                success: function (response)
-                {
-                    if (response.status)
-                    {
-                        $('#program-content').html(response.data);
-                        $('#program-modal .modal-dialog').css({'width': '500px'});
-                        $('#program-modal').modal('show');
-                    }
-                }
-            });
-        });
-        $(document).on('click', '#program-listing tbody > tr',function () {
-                var programId = $(this).data('key');
+	$(document).on('click', '.action-button,#program-listing  tbody > tr', function () {
+	    var type=$('#program-type').val();
+            var programId = $(this).data('key');
+            if (!programId) {
+                    var customUrl = '<?= Url::to(['program/create']); ?>?type=' + type;
+            } else {
                 var customUrl = '<?= Url::to(['program/update']); ?>?id=' + programId;
+                var url = '<?= Url::to(['program/delete']); ?>?id=' + programId;
+                $('.modal-delete').show();
+                $(".modal-delete").attr("action",url);
+            }
             $.ajax({
-                url: customUrl,
-                type: 'post',
+                url    : customUrl,
+                type   : 'get',
                 dataType: "json",
-                data: $(this).serialize(),
-                success: function (response)
+                data   : $(this).serialize(),
+                success: function(response)
                 {
-                    if (response.status)
+                    if(response.status)
                     {
-                        $('#program-content').html(response.data);
-                        $('#program-modal').modal('show');
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Program</h4>');
+                        $('#modal-content').html(response.data);
                     }
                 }
             });
-        return false;
-        });
-        $(document).on('beforeSubmit', '#program-form', function () {
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'post',
-                dataType: "json",
-                data: $(this).serialize(),
-                success: function (response)
-                {
-                    if (response.status) {
-                        var showAllPrograms = $("#programsearch-showallprograms").is(":checked");
-                        var type=$('#program-type').val();
-                        var params = $.param({'ProgramSearch[type]': type, 'ProgramSearch[showAllPrograms]': showAllPrograms | 0});
-                        var url = "<?php echo Url::to(['program/index']); ?>?" + params;
-                        $.pjax.reload({url: url, container: "#program-listing", replace: false, timeout: 4000});
-                        $('#program-modal').modal('hide');
-                    } else {
-                        $('#error-notification').html(response.message).fadeIn().delay(8000).fadeOut();
-                        $('#program-modal').modal('hide');
-                    }
-
-                }
-            });
-            return false;
-        });
-        $(document).on('click', '.program-cancel', function () {
-            $('#program-modal').modal('hide');
             return false;
         });
 	    $(document).on('click', '.private', function() {
@@ -137,5 +87,4 @@ Modal::begin([
            $.pjax.reload({url: url, container: "#program-listing", replace: false, timeout: 4000});  //Reload GridView
             return false;
        });
-    });
 </script>
