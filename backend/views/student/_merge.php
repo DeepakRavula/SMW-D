@@ -32,3 +32,10 @@ use yii\helpers\Url;
     </div>
 	<?php ActiveForm::end(); ?>
 </div>
+<script>
+    $(document).ready(function () {
+        $('.modal-save').text('Merge');
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Student Merge</h4>');
+        $('#popup-modal .modal-dialog').css({'width': '400px'});
+    });
+</script>

@@ -213,11 +213,6 @@ $this->params['label'] = $this->render('_title', [
         return false;
     });
 
-    $(document).on('click', '.merge-cancel', function () {
-        $('#student-merge-modal').modal('hide');
-        return false;
-    });
-
     $(document).on('click', '#student-merge', function () {
         $.ajax({
             url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',
@@ -230,7 +225,6 @@ $this->params['label'] = $this->render('_title', [
                 {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
-                    $('.modal-save').text('Merge');
                 }
             }
         });
