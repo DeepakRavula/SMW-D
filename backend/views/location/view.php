@@ -36,6 +36,7 @@ if ($lastRole === User::ROLE_ADMINISTRATOR) {
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <br>
+<?php $loggedUser = User::findOne(Yii::$app->user->id); ?>
 <?php Pjax::begin([
     'id' => 'location-view']) ; ?>
 <div class="row">
@@ -51,13 +52,15 @@ if ($lastRole === User::ROLE_ADMINISTRATOR) {
 			<dt>Email</dt>
 			<dd><?= $model->email; ?></dd>
 			<dt>Phone</dt>
-			<dd><?= !empty($model->phone_number) ? $model->phone_number : null; ?></dd>
+            <dd><?= !empty($model->phone_number) ? $model->phone_number : null; ?></dd>
+        <?php if ($loggedUser->isAdmin()) : ?>
 			<dt>Royalty</dt>
 			<dd><?= !empty($model->royalty->value) ? $model->royalty->value . '%' : null; ?></dd>
 			<dt>Advertisement</dt>
 			<dd><?= !empty($model->advertisement->value) ?  $model->advertisement->value . '%' : null; ?></dd>
 			<dt>Conversion Date</dt>
-			<dd><?= !empty($model->conversionDate) ?  Yii::$app->formatter->asDate($model->conversionDate) : null; ?></dd>
+            <dd><?= !empty($model->conversionDate) ?  Yii::$app->formatter->asDate($model->conversionDate) : null; ?></dd>
+        <?php endif; ?>
 		</dl>
 		<?php LteBox::end() ?>
 		</div> 
