@@ -5,7 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Json;
 
-$this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
+$this->title = 'Schedule ';
 ?>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
@@ -41,7 +41,7 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
 	    padding:0 .4em;
 	}
 	#calendar .fc-toolbar{
-	    padding: -10px 0;
+	    padding: 10px 0;
 	}
     }
 
