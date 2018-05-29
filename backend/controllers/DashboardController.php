@@ -12,6 +12,7 @@ use common\models\Student;
 use common\components\controllers\BaseController;
 use backend\models\search\DashboardSearch;
 use common\models\User;
+use Carbon\Carbon;
 
 class DashboardController extends BaseController
 {
@@ -43,6 +44,7 @@ public function behaviors()
         $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
         $request = Yii::$app->request;
         if ($searchModel->load($request->get())) {
+		list($searchModel->fromDate, $searchModel->toDate) = explode(' - ', $searchModel->dateRange);
             $dashboardRequest = $request->get('DashboardSearch');
             $searchModel->dateRange = $dashboardRequest['dateRange'];
         }
@@ -51,10 +53,9 @@ public function behaviors()
             $toDate = $currentDate;
         }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        
-	 $fromDate = $searchModel->fromDate;
+	$fromDate = Carbon::parse($searchModel->fromDate);	 
         $from = $fromDate->format('Y-m-d');
-	    $toDate = $searchModel->toDate;
+	$toDate = Carbon::parse($searchModel->toDate);
         $to = $toDate->format('Y-m-d');
         $enrolments = Enrolment::find()
             ->notDeleted()
@@ -86,7 +87,7 @@ public function behaviors()
             ->notDeleted()
             ->location($locationId)
             ->andWhere(['NOT IN', 'lesson.status', Lesson::STATUS_CANCELED])
-            ->between($searchModel->fromDate, $searchModel->toDate)
+            ->between($fromDate, $toDate)
             ->count();
         $students = Student::find()
 			->notDeleted()
@@ -113,7 +114,7 @@ public function behaviors()
                             ->andWhere(['course.locationId' => $locationId])
                             ->confirmed();
                     }])
-                    ->andWhere(['between', 'lesson.date', $searchModel->fromDate->format('Y-m-d'), $toDate->format('Y-m-d')])
+                    ->andWhere(['between', 'lesson.date', $from, $to])
                     ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
                     ->isConfirmed()
                     ->notDeleted()
@@ -130,12 +131,12 @@ public function behaviors()
         $enrolmentGains = [];
         $allEnrolments = Enrolment::find()
             ->select(['COUNT(enrolment.id) as enrolmentCount, program.name as programName'])
-            ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+            ->joinWith(['course' => function ($query) use ($locationId, $fromDate, $toDate) {
                 $query->joinWith(['program' => function ($query) {
                 }])
                 ->confirmed()
                 ->location($locationId)
-                ->between($searchModel->fromDate, $searchModel->toDate);
+                ->between($fromDate, $toDate);
             }])
             ->groupBy(['course.programId'])
             ->all();
@@ -148,12 +149,12 @@ public function behaviors()
         $enrolmentLosses = [];
         $allLossEnrolments = Enrolment::find()
             ->select(['COUNT(enrolment.id) as enrolmentCount, program.name as programName'])
-            ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+            ->joinWith(['course' => function ($query) use ($locationId, $fromDate, $toDate) {
                 $query->joinWith(['program' => function ($query) {
                 }])
                 ->confirmed()
                 ->location($locationId)
-                ->betweenEndDate($searchModel->fromDate, $searchModel->toDate);
+                ->betweenEndDate($fromDate, $toDate);
             }])
             ->groupBy(['course.programId'])
             ->all();
@@ -165,21 +166,21 @@ public function behaviors()
         }
 
         $enrolmentGainCount = Enrolment::find()
-            ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+            ->joinWith(['course' => function ($query) use ($locationId, $fromDate, $toDate) {
                 $query->joinWith(['program' => function ($query) {
                 }])
                 ->confirmed()
                 ->location($locationId)
-                ->between($searchModel->fromDate, $searchModel->toDate);
+                ->between($fromDate, $toDate);
             }])
             ->count();
         $enrolmentLossCount = Enrolment::find()
-            ->joinWith(['course' => function ($query) use ($locationId, $searchModel) {
+            ->joinWith(['course' => function ($query) use ($locationId, $fromDate, $toDate) {
                 $query->joinWith(['program' => function ($query) {
                 }])
                 ->confirmed()
                 ->location($locationId)
-                ->betweenEndDate($searchModel->fromDate, $searchModel->toDate);
+                ->betweenEndDate($fromDate, $toDate);
             }])
             ->count();
         return $this->render('index', [
