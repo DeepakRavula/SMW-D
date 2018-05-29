@@ -164,7 +164,7 @@ class ScheduleController extends BaseController
             ->joinWith(['teacherLessons' => function ($query) use ($formatedDate) {
                 $query->andWhere(['DATE(lesson.date)' => $formatedDate]);
             }]);
-        if ($showAll) {
+        if ($showAll && empty($teacherId) && empty($programId)) {
             $availableUserQuery = User::find()
                 ->joinWith(['availabilities a' => function ($query) use ($formatedDay) {
                     $query->andWhere(['a.day' => $formatedDay]);
@@ -210,7 +210,7 @@ class ScheduleController extends BaseController
         $formatedDate = $date->format('Y-m-d');
         $availabilityQuery = TeacherAvailability::find()
             ->andWhere(['day' => $date->format('N')]);
-        if ($showAll) {
+        if ($showAll && empty($teacherId) && empty($programId)) {
             $availabilityDayQuery = TeacherAvailability::find()
                 ->location($locationId)
                 ->andWhere(['day' => $date->format('N')]);
@@ -238,7 +238,7 @@ class ScheduleController extends BaseController
             $availabilityQuery->location($locationId);
         }
         
-        $availabilities = $availabilityQuery->groupBy('teacher_availability_day.teacher_location_id')->all();
+        $availabilities = $availabilityQuery->all();
         return $availabilities;
     }
     
