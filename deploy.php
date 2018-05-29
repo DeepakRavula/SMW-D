@@ -84,7 +84,6 @@ task('deploy:dev', [
     'deploy:composer',
     'deploy:migration',
     'deploy:one-off',
-    'deploy:git-log',
 ]);
 
 task('deploy:prod', [
