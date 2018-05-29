@@ -41,7 +41,7 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
 	    padding:0 .4em;
 	}
 	#calendar .fc-toolbar{
-	    padding: 10px 0;
+	    padding: -10px 0;
 	}
     }
 
@@ -69,19 +69,19 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
                 ])->label(false);
             ?>
         </div>
-        <div id="title" class="pull-center">
+        <div id="admin-login" class="pull-center">
             <h2>
                 Schedule for <?= (new \DateTime())->format('l, F jS, Y') . ' ' . $name; ?>
             </h2>
         </div>
-        <div id="show-all" class="pull-right">
+        <div id="show-all" class="m-t-35 pull-right">
             <label>
                 <input type="checkbox" id="schedule-show-all" name="Schedule[showAll]"> 
                 Show All
             </label>
         </div>
     <?php ActiveForm::end(); ?>
-    <div id='calendar'></div>
+    <div id='calendar' class='m-t-25'></div>
 </div>
 
 <?php $userId = Yii::$app->user->id; ?>
