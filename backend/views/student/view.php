@@ -219,9 +219,9 @@ $this->params['label'] = $this->render('_title', [
             {
                 if(response.status)
                 {
-                    $('#student-merge-content').html(response.data);
-                    $('#student-merge-modal .modal-dialog').addClass('classroom-dialog');
-                    $('#student-merge-modal').modal('show');
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('.modal-save').text('Merge');
                 }
             }
         });
