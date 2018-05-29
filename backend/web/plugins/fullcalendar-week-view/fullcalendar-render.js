@@ -15,6 +15,10 @@ $.fn.calendarDayView = function(options) {
             calendar.init(options);
         });
     }
+    $(document).off('change', '#week-calendar-show-all').on('change', '#week-calendar-show-all', function () {
+        $('#week-view-spinner').show();
+        calendar.init(options);
+    });
 };
 
 var calendar = {
@@ -114,7 +118,7 @@ var calendar = {
     
     init: function(options) {
         var teacherId = options.teacherId ? options.teacherId : $(options.changeId).val();
-        var params = $.param({ id: teacherId });
+        var params = $.param({ id: teacherId , 'ScheduleSearch[locationVisibility]': $('#week-calendar-show-all').is(":checked") | 0 });
         var url = teacherId ? options.availabilityUrl + '?' + params : options.availabilityUrl;
         $.ajax({
             url: url,
