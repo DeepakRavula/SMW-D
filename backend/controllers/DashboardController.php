@@ -44,9 +44,9 @@ public function behaviors()
         $searchModel->dateRange = $searchModel->fromDate.' - '.$searchModel->toDate;
         $request = Yii::$app->request;
         if ($searchModel->load($request->get())) {
-		list($searchModel->fromDate, $searchModel->toDate) = explode(' - ', $searchModel->dateRange);
             $dashboardRequest = $request->get('DashboardSearch');
             $searchModel->dateRange = $dashboardRequest['dateRange'];
+	    list($searchModel->fromDate, $searchModel->toDate) = explode(' - ', $searchModel->dateRange);
         }
         $toDate = $searchModel->toDate;
         if ($toDate > $currentDate) {
