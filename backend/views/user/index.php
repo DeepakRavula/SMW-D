@@ -1,6 +1,8 @@
 <?php
 
 use common\models\User;
+use common\models\UserProfile;
+use common\models\Location;
 use common\models\Invoice;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -8,6 +10,7 @@ use yii\widgets\Pjax;
 use yii\helpers\ArrayHelper;
 use common\components\gridView\AdminLteGridView;
 use kartik\select2\Select2Asset;
+use common\components\gridView\KartikGridView;
 
 Select2Asset::register($this);
 
@@ -29,6 +32,55 @@ $this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus
 $this->params['show-all'] = $this->render('_button', [
     'searchModel' => $searchModel
 ]);
+$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+$user = User::findOne(['id' => Yii::$app->user->id]);
+$first_name = UserProfile::find()->orderBy('firstname')
+	->joinWith(['user' => function($first_name) use ($roleName,$locationId) {	
+if($roleName == User::ROLE_ADMINISTRATOR) {
+	$first_name->admin();
+}
+elseif($roleName == User::ROLE_OWNER) {
+	$first_name->owner()
+		->location($locationId);
+}
+elseif($roleName == User::ROLE_STAFFMEMBER) {
+	$first_name->staffs()
+		->location($locationId);
+}
+elseif($roleName == User::ROLE_CUSTOMER) {
+	$first_name->customers($locationId);
+}
+else {
+	$first_name->allTeachers()
+		->location($locationId);
+}
+}])
+->all();
+$first_names = ArrayHelper::map($first_name, 'user_id','firstname');
+
+$last_name = UserProfile::find()->orderBy('lastname')
+	->joinWith(['user' => function($last_name) use ($roleName,$locationId) {	
+if($roleName == User::ROLE_ADMINISTRATOR) {
+	$last_name->admin();
+}
+elseif($roleName == User::ROLE_OWNER) {
+	$last_name->owner()
+		->location($locationId);
+}
+elseif($roleName == User::ROLE_STAFFMEMBER) {
+	$last_name->staffs()
+		->location($locationId);
+}
+elseif($roleName == User::ROLE_CUSTOMER) {
+	$last_name->customers($locationId);
+}
+else {
+	$last_name->allTeachers()
+		->location($locationId);
+}
+}]) 
+	->all();
+$last_names = ArrayHelper::map($last_name, 'user_id','lastname');
 ?>
  
 
@@ -39,7 +91,7 @@ $this->params['show-all'] = $this->render('_button', [
         'id' => 'user-index',
         'timeout' => 6000
     ]); ?>
-        <?= AdminLteGridView::widget([
+        <?= KartikGridView::widget([
             'dataProvider' => $dataProvider,
             'summary' => false,
             'emptyText' => false,
@@ -66,6 +118,18 @@ $this->params['show-all'] = $this->render('_button', [
                 'value' => function ($data) {
                     return !empty($data->userProfile->firstname) ? $data->userProfile->firstname : null;
                 },
+		'filterType'=>KartikGridView::FILTER_SELECT2,
+                'filter'=> $first_names,
+                'filterWidgetOptions'=>[
+            'options' => [
+                'id' => 'firstname',
+            ],
+                    'pluginOptions'=>[
+                        'allowClear'=>true,
+            ],
+        ],
+                'filterInputOptions'=>['placeholder'=>'firstname'],
+                'format'=>'raw'
             ],
             [
                 'attribute' => 'lastname',
@@ -73,6 +137,18 @@ $this->params['show-all'] = $this->render('_button', [
                 'value' => function ($data) {
                     return !empty($data->userProfile->lastname) ? $data->userProfile->lastname : null;
                 },
+		'filterType'=>KartikGridView::FILTER_SELECT2,
+                'filter'=> $last_names,
+                'filterWidgetOptions'=>[
+            'options' => [
+                'id' => 'lastname',
+            ],
+                    'pluginOptions'=>[
+                        'allowClear'=>true,
+            ],
+        ],
+                'filterInputOptions'=>['placeholder'=>'lastname'],
+                'format'=>'raw'
             ],
             'email',
             [
