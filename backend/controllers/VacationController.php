@@ -98,8 +98,8 @@ class VacationController extends BaseController
         if ($dateRange) {
             list($fromDate, $toDate) = explode(' - ', $dateRange);
 
-            $startDate          = \DateTime::createFromFormat('M d,Y', $fromDate)->format('Y-m-d');
-            $endDate            = \DateTime::createFromFormat('M d,Y', $toDate)->format('Y-m-d');
+            $startDate          = (new \DateTime($fromDate))->format('Y-m-d');
+            $endDate            = (new \DateTime($toDate))->format('Y-m-d');
             $lessonsQuery       = Lesson::find()
                 ->notDeleted()
                 ->isConfirmed()

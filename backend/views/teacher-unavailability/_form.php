@@ -35,7 +35,7 @@ use kartik\daterange\DateRangePicker;
                     'pluginOptions' => [
                         'autoApply' => true,
                         'locale' => [
-                            'format' => 'M d,Y',
+                            'format' => 'M d, Y',
                         ],
                         'opens' => 'right',
                     ],
