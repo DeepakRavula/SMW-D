@@ -3,6 +3,7 @@ use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 ?>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
@@ -11,7 +12,8 @@ use yii\helpers\Html;
 <div>
     
     <?php $form = ActiveForm::begin([
-            'id' => 'student-merge-form',
+            'id' => 'modal-form',
+            'action' => Url::to(['student/merge', 'id' => $model->id]),
     ]); ?>
     <div class="row">
         <div class="col-md-8">

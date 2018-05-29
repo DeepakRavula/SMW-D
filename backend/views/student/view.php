@@ -143,6 +143,15 @@ $this->params['label'] = $this->render('_title', [
         if (!$.isEmptyObject(params.url)) {
             window.location.href = params.url;
         }
+        else
+        {
+                    $.pjax.reload({container: "#enrolment-list",timeout: 6000, async:false});
+                    $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
+                    $.pjax.reload({container: "#student-log",timeout: 6000, async:false});
+                    $.pjax.reload({container: "#student-exam-result-listing",timeout: 6000, async:false});
+                    $.pjax.reload({container: "#student-note",timeout: 6000, async:false});
+                    $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
+        }
         return false;
     });
 
@@ -250,27 +259,7 @@ $this->params['label'] = $this->render('_title', [
         return false;
     });
  
-    $(document).on('beforeSubmit', '#student-merge-form', function () {
-        $.ajax({
-            url    : '<?= Url::to(['student/merge', 'id' => $model->id]); ?>',
-            type   : 'post',
-            dataType: "json",
-            data   : $(this).serialize(),
-            success: function(response)
-            {
-                if(response.status) {
-                    $.pjax.reload({container: "#enrolment-list",timeout: 6000, async:false});
-                    $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
-                    $.pjax.reload({container: "#student-log",timeout: 6000, async:false});
-                    $.pjax.reload({container: "#student-exam-result-listing",timeout: 6000, async:false});
-                    $.pjax.reload({container: "#student-note",timeout: 6000, async:false});
-                    $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
-                    $('#student-merge-modal').modal('hide');
-                }
-            }
-        });
-        return false;
-    });
+
    
     $(document).on('click', '.note-cancel-button', function (e) {
         $('#student-note-modal').modal('hide');
