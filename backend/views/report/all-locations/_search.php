@@ -25,6 +25,10 @@ use kartik\grid\GridView;
             'id'=>'birthday-search' ,
             'convertFormat' => true,
             'initRangeExpr' => true,
+	       'options' => [
+                    'class' => 'form-control',
+                    'readOnly' => true
+                ],
             'pluginOptions' => [
                 'autoApply' => true,
                 'ranges' => [

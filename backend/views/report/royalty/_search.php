@@ -25,6 +25,10 @@ $form = ActiveForm::begin([
         'attribute' => 'dateRange',
         'convertFormat' => true,
         'initRangeExpr' => true,
+	'options' => [
+                    'class' => 'form-control',
+                    'readOnly' => true
+                ],
         'pluginOptions' => [
             'autoApply' => true,
             'ranges' => [
