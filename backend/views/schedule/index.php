@@ -8,7 +8,6 @@ use kartik\select2\Select2;
 use common\models\User;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 
@@ -18,7 +17,7 @@ $holidayResource = '';
 if (!empty($holiday)) {
     $holidayResource = ' (' . $holiday->description. ')';
 }
-$this->title = 'Schedule for ' .(new \DateTime())->format('l, F jS, Y') . $holidayResource;
+$this->title = 'Schedule';
 $this->params['action-button'] = $this->render('_button');
 ?>
 
@@ -137,7 +136,8 @@ var locationAvailabilities   = <?php echo Json::encode($locationAvailabilities);
 var scheduleVisibilities   = <?php echo Json::encode($scheduleVisibilities); ?>;
 $(document).ready(function() {
     var date = Date();
-    refreshCalendar(moment(date), true);
+    schedule.fetchHolidayName(date);
+    schedule.refreshCalendar(moment(date), true);
 });
 
 $(document).on('click', '.tv-icon', function(e){ 
@@ -152,11 +152,11 @@ $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
     var tab  = e.target.text;
     var date = $('#schedule-go-to-datepicker').val();
     if (tab === "Classroom View") {
-        showclassroomCalendar(moment(date));
+        schedule.showclassroomCalendar(moment(date));
         $('.calendar-filter').hide();
         $('#show-all').hide();
     } else {
-        refreshCalendar(moment(date));
+        schedule.refreshCalendar(moment(date));
         $('.calendar-filter').show();
         $('#show-all').show();
     }
@@ -183,7 +183,7 @@ $(document).off('change', '#program-selector').on('change', '#program-selector',
                 theme: 'krajee'
             });
             var date = $('#calendar').fullCalendar('getDate');
-            refreshCalendar(moment(date));
+            schedule.refreshCalendar(moment(date));
 	}
     });
     return false;
@@ -191,196 +191,194 @@ $(document).off('change', '#program-selector').on('change', '#program-selector',
     
 $(document).off('change', '#teacher-selector').on('change', '#teacher-selector', function(){
     var date = $('#calendar').fullCalendar('getDate');
-    refreshCalendar(moment(date));
+    schedule.refreshCalendar(moment(date));
     return false;
 });
 
 $(document).off('change', '#schedule-show-all').on('change', '#schedule-show-all', function(){
     var date = $('#calendar').fullCalendar('getDate');
-    refreshCalendar(moment(date));
+    schedule.refreshCalendar(moment(date));
 });
 
 $(document).off('change', '#schedule-go-to-datepicker').on('change', '#schedule-go-to-datepicker', function(){
     var date = $('#schedule-go-to-datepicker').val();
-    fetchHolidayName(moment(date));
+    schedule.fetchHolidayName(moment(date));
     if ($('.nav-tabs .active').text() === 'Classroom View') {
-        showclassroomCalendar(moment(date));
+        schedule.showclassroomCalendar(moment(date));
     } else {
-        refreshCalendar(moment(date));
+        schedule.refreshCalendar(moment(date));
     }
     return false;
 });
 
-
-function fetchHolidayName(date)
-{
-    var params = $.param({ date: moment(date).format('YYYY-MM-DD') });
-    $.ajax({
-        url: '<?= Url::to(['schedule/fetch-holiday-name']); ?>?' + params,
-        type: 'get',
-        dataType: "json",
-        success: function (response)
-        {
-            var showAll = $('#schedule-show-all').is(":checked");
-            if ($(".content-header").html(response)) {
-                if ($('.nav-tabs .active').text() === 'Classroom View') {
-                    $('#show-all').hide();
-                }
-                if (showAll) {
-                    $('#schedule-show-all').prop("checked", true);
-                }
-            }
-        }
-    });
-    return false;
-}
-
-function showclassroomCalendar(date) {
-    var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
-    var fromTime = "09:00:00";
-    var toTime   = "17:00:00";
-    var day      = moment(date).day();
-    $.each( locationAvailabilities, function( key, value ) {
-        if (day === 0) {
-            day = 7;
-        }
-        if (day === value.day) {
-            fromTime = value.fromTime;
-            toTime   = value.toTime;
-        }
-    });
-    $('#classroom-calendar').html('');
-    $('#classroom-calendar').unbind().removeData().fullCalendar({
-        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-        header: false,
-		firstDay : 1,
-        nowIndicator: true,
-        contentHeight: "auto",
-        defaultDate: date,
-        titleFormat: 'DD-MMM-YYYY, dddd',
-        defaultView: 'agendaDay',
-        minTime: fromTime,
-        maxTime: toTime,
-        slotDuration: "00:15:00",
-        allDaySlot:false,
-        editable: true,
-        eventDurationEditable: false,
-        resources: {
-            url: '<?= Url::to(['schedule/render-classroom-resources']) ?>',
-            type: 'GET',
-            error: function() {
-                $("#classroom-calendar").fullCalendar("refetchResources");
-            }
-        },
-        resourceRender: function(resourceObj, labelTds, bodyTds,element) {
-	    var selector = '#classroom-calendar';
-            schedule.modifyResourceRender(selector);
-            if(resourceObj.description !== "")
-            {
-             labelTds.on('mouseover', function(){
-               $('#classroom-title-description').html(resourceObj.description).fadeIn().delay(500).fadeOut();});
-             labelTds.on('mousemove', function(event){
-               $('#classroom-title-description').css('top', event.pageY + 10);
-               $('#classroom-title-description').css('left', event.pageX + 20);
-            });
-        }
-        },
-        events: {
-            url: '<?= Url::to(['schedule/render-classroom-events']) ?>?' + params,
-            type: 'GET',
-            error: function() {
-                $("#classroom-calendar").fullCalendar("refetchEvents");
-            }
-        },
-        eventRender: function(event, element) {
-            schedule.modifyEventRender(event, element);
-        },
-        eventDrop: function(event) {
-            $('.tip-yellowsimple').hide();
-            schedule.modifyClassroom(event);
-        }
-    });
-}
-
-function refreshCalendar(date, clearFilter) {
-    if (clearFilter) {
-        var programId = null;
-        var teacherId = null;
-    } else {
-        var programId = $('#program-selector').val();
-        var teacherId = $('#teacher-selector').val();
-    }
-    var showAll = $('#schedule-show-all').is(":checked");
-    var params = $.param({ 
-        'ScheduleSearch[date]': moment(date).format('YYYY-MM-DD'),
-        'ScheduleSearch[showAll]': showAll | 0,
-        'ScheduleSearch[programId]': programId,
-        'ScheduleSearch[teacherId]': teacherId 
-    });
-    var minTime = "09:00:00";
-    var maxTime = "17:00:00";
-    var day     = moment(date).day();
-    if (showAll) {
-        var availabilitites = locationAvailabilities;
-    } else {
-        var availabilitites = scheduleVisibilities;
-    }
-    $.each(availabilitites , function( key, value ) {
-        if (day === 0) {
-            day = 7;
-        }
-        if (day === value.day) {
-            minTime = value.fromTime;
-            maxTime = value.toTime;
-        }
-    });
-    $('#calendar').html('');
-    $('#calendar').unbind().removeData().fullCalendar({
-        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-		firstDay : 1,
-        nowIndicator: true,
-        header: false,
-        contentHeight: "auto",
-        defaultDate: date,
-        titleFormat: 'DD-MMM-YYYY, dddd',
-        defaultView: 'agendaDay',
-        minTime: minTime,
-        maxTime: maxTime,
-        slotDuration: "00:15:00",
-        allDaySlot:false,
-        editable: true,
-        droppable: false,
-        resources: {
-            url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
-            type: 'GET',
-            error: function() {
-                //$("#calendar").fullCalendar("refetchResources");
-            }
-        },
-        resourceRender: function() {
-			var selector = '#calendar';
-            schedule.modifyResourceRender(selector);
-        },
-        events: {
-            url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
-            type: 'GET',
-            error: function() {
-                //$("#calendar").fullCalendar("refetchEvents");
-            }
-        },
-        eventRender: function(event, element) {
-            schedule.modifyEventRender(event, element);
-        },
-        eventDrop: function(event) {
-            schedule.eventDrop(event);
-        },
-        eventResize: function(event) {
-            schedule.eventResize(event);
-        }
-    });
-}
-
 var schedule = {
+    fetchHolidayName : function(date) {
+        var params = $.param({ date: moment(date).format('YYYY-MM-DD') });
+        $.ajax({
+            url: '<?= Url::to(['schedule/fetch-holiday-name']); ?>?' + params,
+            type: 'get',
+            dataType: "json",
+            success: function (response)
+            {
+                var showAll = $('#schedule-show-all').is(":checked");
+                if ($(".content-header").html(response)) {
+                    if ($('.nav-tabs .active').text() === 'Classroom View') {
+                        $('#show-all').hide();
+                    }
+                    if (showAll) {
+                        $('#schedule-show-all').prop("checked", true);
+                    }
+                }
+            }
+        });
+        return false;
+    },
+
+    showclassroomCalendar : function(date) {
+        var params   = $.param({ date: moment(date).format('YYYY-MM-DD') });
+        var fromTime = "09:00:00";
+        var toTime   = "17:00:00";
+        var day      = moment(date).day();
+        $.each( locationAvailabilities, function( key, value ) {
+            if (day === 0) {
+                day = 7;
+            }
+            if (day === value.day) {
+                fromTime = value.fromTime;
+                toTime   = value.toTime;
+            }
+        });
+        $('#classroom-calendar').html('');
+        $('#classroom-calendar').unbind().removeData().fullCalendar({
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+            header: false,
+            firstDay : 1,
+            nowIndicator: true,
+            contentHeight: "auto",
+            defaultDate: date,
+            titleFormat: 'DD-MMM-YYYY, dddd',
+            defaultView: 'agendaDay',
+            minTime: fromTime,
+            maxTime: toTime,
+            slotDuration: "00:15:00",
+            allDaySlot:false,
+            editable: true,
+            eventDurationEditable: false,
+            resources: {
+                url: '<?= Url::to(['schedule/render-classroom-resources']) ?>',
+                type: 'GET',
+                error: function() {
+                    alert("Resources can't be rendered!");
+                }
+            },
+            resourceRender: function(resourceObj, labelTds, bodyTds,element) {
+            var selector = '#classroom-calendar';
+                schedule.modifyResourceRender(selector);
+                if(resourceObj.description !== "")
+                {
+                labelTds.on('mouseover', function(){
+                $('#classroom-title-description').html(resourceObj.description).fadeIn().delay(500).fadeOut();});
+                labelTds.on('mousemove', function(event){
+                $('#classroom-title-description').css('top', event.pageY + 10);
+                $('#classroom-title-description').css('left', event.pageX + 20);
+                });
+            }
+            },
+            events: {
+                url: '<?= Url::to(['schedule/render-classroom-events']) ?>?' + params,
+                type: 'GET',
+                error: function() {
+                    alert("Events can't be rendered!");
+                }
+            },
+            eventRender: function(event, element) {
+                schedule.modifyEventRender(event, element);
+            },
+            eventDrop: function(event) {
+                $('.tip-yellowsimple').hide();
+                schedule.modifyClassroom(event);
+            }
+        });
+    },
+
+    refreshCalendar : function(date, clearFilter) {
+        if (clearFilter) {
+            var programId = null;
+            var teacherId = null;
+        } else {
+            var programId = $('#program-selector').val();
+            var teacherId = $('#teacher-selector').val();
+        }
+        var showAll = $('#schedule-show-all').is(":checked");
+        var params = $.param({ 
+            'ScheduleSearch[date]': moment(date).format('YYYY-MM-DD'),
+            'ScheduleSearch[showAll]': showAll | 0,
+            'ScheduleSearch[programId]': programId,
+            'ScheduleSearch[teacherId]': teacherId 
+        });
+        var minTime = "09:00:00";
+        var maxTime = "17:00:00";
+        var day     = moment(date).day();
+        if (showAll) {
+            var availabilitites = locationAvailabilities;
+        } else {
+            var availabilitites = scheduleVisibilities;
+        }
+        $.each(availabilitites , function( key, value ) {
+            if (day === 0) {
+                day = 7;
+            }
+            if (day === value.day) {
+                minTime = value.fromTime;
+                maxTime = value.toTime;
+            }
+        });
+        $('#calendar').html('');
+        $('#calendar').unbind().removeData().fullCalendar({
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+            firstDay : 1,
+            nowIndicator: true,
+            header: false,
+            contentHeight: "auto",
+            defaultDate: date,
+            titleFormat: 'DD-MMM-YYYY, dddd',
+            defaultView: 'agendaDay',
+            minTime: minTime,
+            maxTime: maxTime,
+            slotDuration: "00:15:00",
+            allDaySlot:false,
+            editable: true,
+            droppable: false,
+            resources: {
+                url: '<?= Url::to(['schedule/render-resources']) ?>?' + params,
+                type: 'GET',
+                error: function() {
+                    alert("Resources can't be rendered!");
+                }
+            },
+            resourceRender: function() {
+                var selector = '#calendar';
+                schedule.modifyResourceRender(selector);
+            },
+            events: {
+                url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
+                type: 'GET',
+                error: function() {
+                    alert("Events can't be rendered!");
+                }
+            },
+            eventRender: function(event, element) {
+                schedule.modifyEventRender(event, element);
+            },
+            eventDrop: function(event) {
+                schedule.eventDrop(event);
+            },
+            eventResize: function(event) {
+                schedule.eventResize(event);
+            }
+        });
+    },
+
     eventDrop : function(event) {
         $('.tip-yellowsimple').hide();
         schedule.modifyLesson(event);
@@ -416,6 +414,7 @@ var schedule = {
             }
         });
     }, 
+
     modifyClassroom : function(event) {
         var params = $.param({
             id: event.id,
@@ -437,6 +436,7 @@ var schedule = {
             }
         });
     }, 
+
     modifyEventRender : function (event, element) {
         element.poshytip({
             className: 'tip-yellowsimple',
@@ -451,6 +451,7 @@ var schedule = {
             }
         });
     }, 
+
     modifyResourceRender : function (selector) {
         var resourceCount = $(selector).find('.fc-view .fc-row tr th').length;
         if(resourceCount <= 8) {
@@ -461,5 +462,5 @@ var schedule = {
         var theadWidth = $(selector).find('.fc-widget-header table thead').width();
         $(selector).find('table').width(theadWidth);
     }
-}
+};
 </script>

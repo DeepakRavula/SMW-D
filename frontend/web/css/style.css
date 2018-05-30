@@ -135,3 +135,18 @@ a.desc:after {
 .primary dd {
 	font-weight:bold;
 }
+.m-t-35{
+  margin-top:-35px;
+}
+#show-all label{
+	font-weight: normal;
+	font-size: 17px;
+}
+#admin-login {
+	text-align:center;
+	font-weight :bold;
+	font-size : 18px;
+}
+#calendar .m-t-25{
+  margin-top:-25px;
+}

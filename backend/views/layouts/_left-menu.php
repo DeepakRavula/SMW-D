@@ -301,7 +301,7 @@ echo Menu::widget([
                     'visible' => Yii::$app->user->can('managePrivileges'),
                     'active' => Yii::$app->controller->id === 'permission',
                 ],
-                    [
+                [
                     'label' => Yii::t('backend', 'Staff Members'),
                     'icon' => '<i class="fa fa-users"></i>',
                     'url' => ['/user/index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER],
@@ -310,7 +310,7 @@ echo Menu::widget([
                     'badge' => User::staffCount(),
                     'badgeBgClass' => 'label-default'
                 ],
-                    [
+                [
                     'label' => Yii::t('backend', 'Owners'),
                     'icon' => '<i class="fa fa-user"></i>',
                     'url' => ['/user/index', 'UserSearch[role_name]' => User::ROLE_OWNER],
@@ -320,20 +320,24 @@ echo Menu::widget([
                     'badgeBgClass' => 'label-default'
                 ],
 
-                    [
+                [
                     'label' => Yii::t('backend', 'Classrooms'),
                     'icon' => '<i class="fa fa-home"></i>',
                     'url' => ['/classroom/index'],
 					'visible' => Yii::$app->user->can('manageClassrooms'),
                 ],
-                    [
+                [
                     'label' => Yii::t('backend', 'Import'),
                     'icon' => '<i class="fa  fa-upload"></i>',
                     'url' => ['/user/import'],
 					'visible' => Yii::$app->user->can('manageImport'),
                 ],
-	
-
+                [
+                    'label' => Yii::t('backend', 'Location Settings'),
+                    'icon' => '<i class="fa  fa-upload"></i>',
+                    'url' => ['/location-view'],
+                    'visible' => Yii::$app->user->can('manageLocations'),
+                ]
             ],
         ],
         [

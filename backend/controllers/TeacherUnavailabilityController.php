@@ -136,9 +136,12 @@ class TeacherUnavailabilityController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $model->dateRange = (new \DateTime($model->fromDate))->format('M d,Y') . ' - ' . (new \DateTime($model->toDate))->format('M d,Y');
+	        $teacher = User::findOne(['id' => $id]);
+
+        $model->dateRange = (new \DateTime($model->fromDate))->format('M d, Y') . ' - ' . (new \DateTime($model->toDate))->format('M d, Y');
         $data = $this->renderAjax('_form', [
             'model' => $model,
+	    'teacher' => $teacher
         ]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return [

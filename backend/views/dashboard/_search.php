@@ -27,6 +27,10 @@ use kartik\daterange\DateRangePicker;
             'attribute' => 'dateRange',
             'convertFormat' => true,
             'initRangeExpr' => true,
+	       'options' => [
+                    'class' => 'form-control',
+                    'readOnly' => true
+                ],
             'pluginOptions' => [
                 'autoApply' => true,
                 'ranges' => [
@@ -36,7 +40,7 @@ use kartik\daterange\DateRangePicker;
                     Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
                 ],
                 'locale' => [
-                    'format' => 'M d,Y',
+                    'format' => 'M d, Y',
                 ],
                 'opens' => 'left',
                 ],

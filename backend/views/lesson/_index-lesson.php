@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use common\models\Program;
 use common\models\Location;
 use common\models\Student;
+use common\models\UserProfile;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -42,7 +43,7 @@ $this->params['action-button'] = $this->render('_action-menu', [
                                 ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
                     }]);
                 }])
-                ->asArray()->all(), 'id', 'first_name'),
+                ->all(), 'id', 'fullName'),
                 'filterWidgetOptions'=>[
             'options' => [
                 'id' => 'student',
@@ -85,7 +86,25 @@ $this->params['action-button'] = $this->render('_action-menu', [
                 'value' => function ($data) {
                     return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
                 },
+			'filterType'=>KartikGridView::FILTER_SELECT2,
+                'filter'=>ArrayHelper::map(UserProfile::find()->orderBy(['firstname' => SORT_ASC])
+                ->joinWith(['courses' => function ($query) {
+                    $query->joinWith('enrolment')
+                        ->confirmed()
+                        ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
+                }])
+                ->all(), 'user_id', 'fullName'),
+                'filterWidgetOptions'=>[
+            'options' => [
+                'id' => 'teacher',
             ],
+                    'pluginOptions'=>[
+                        'allowClear'=>true,
+            ],
+			 ],
+                'filterInputOptions'=>['placeholder'=>'Teacher'],
+                'format'=>'raw'
+    ],
             [
                 'label' => 'Date',
                 'attribute' => 'dateRange',
@@ -104,7 +123,7 @@ $this->params['action-button'] = $this->render('_action-menu', [
                             Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
                         ],
                         'locale' => [
-                            'format' => 'M d,Y',
+                            'format' => 'M d, Y',
                         ],
                         'opens' => 'left'
                     ],

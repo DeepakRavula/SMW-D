@@ -1,8 +1,11 @@
 <?php
 
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
+use yii\jui\DatePicker;
+use yii\helpers\Json;
 
-$this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
+$this->title = 'Schedule ';
 ?>
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.min.css" rel='stylesheet' />
 <link type="text/css" href="/plugins/fullcalendar-scheduler/lib/fullcalendar.print.min.css" rel='stylesheet' media='print' />
@@ -44,131 +47,164 @@ $this->title = 'Schedule for ' . (new \DateTime())->format('l, F jS, Y');
 
 </style>
 <?php $this->render('_color-code'); ?>
-<div class="clearfix"></div>
-<div id='calendar'></div>
+<div class="clearfix">
+    <?php $form = ActiveForm::begin([
+        'id' => 'schedule-form'
+    ]); ?>
+        <div class="col-md-2 pull-right">
+            <?= $form->field($searchModel, 'goToDate'
+                )->widget(DatePicker::classname(), [
+                    'options' => [
+                        'class' => 'form-control',
+                        'id' => 'schedule-go-to-datepicker',
+                        'readOnly' => true
+                    ],
+                    'dateFormat' => 'php:M d, Y',
+                    'clientOptions' => [
+                        'defaultDate' => Yii::$app->formatter->asDate(new \DateTime()),
+                        'changeMonth' => true,
+                        'yearRange' => '-20:+100',
+                        'changeYear' => true,
+                    ]
+                ])->label(false);
+            ?>
+        </div>
+        <div id="admin-login" class="pull-center">
+            <h2>
+                Schedule for <?= (new \DateTime())->format('l, F jS, Y') . ' ' . $name; ?>
+            </h2>
+        </div>
+        <div id="show-all" class="m-t-35 pull-right">
+            <label>
+                <input type="checkbox" id="schedule-show-all" name="Schedule[showAll]"> 
+                Show All
+            </label>
+        </div>
+    <?php ActiveForm::end(); ?>
+    <div id='calendar' class='m-t-25'></div>
+</div>
+
 <?php $userId = Yii::$app->user->id; ?>
+
+
 <script type="text/javascript">
-    var userId = '<?php echo $userId; ?>';
-    var params = $.param({userId: userId});
+    var locationAvailabilities   = <?= Json::encode($locationAvailabilities); ?>;
+    var scheduleVisibilities   = <?= Json::encode($scheduleVisibilities); ?>;
+    var userId = '<?= $userId; ?>';
     
-    function loadCalendar(date, from_time, to_time, view)
-    {
-        $('#calendar').fullCalendar('destroy');
-        $('#calendar').unbind().removeData().fullCalendar({
-            nowIndicator: true,
-            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-            header: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'agendaWeek, agendaDay'
-            },
-            titleFormat: 'DD-MMM-YYYY, dddd',
-	    defaultDate: date,
-            defaultView: view,
-            minTime: from_time,
-            maxTime: to_time,
-            slotDuration: "00:15:00",
-            editable: false,
-            droppable: false,
-            events: {
-                url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
-                type: 'GET',
-                error: function () {
-                    $("#calendar").fullCalendar("refetchEvents");
-                }
-            },
-            eventRender: function (event, element) {
-                element.poshytip({
-                    className: 'tip-yellowsimple',
-                    alignTo: 'cursor',
-                    alignX: 'center',
-                    alignY: 'top',
-                    offsetY: 5,
-                    followCursor: false,
-                    slide: false,
-                    content: function (updateCallback) {
-                        return event.description;
-                    }
-                });
-            },
-            allDaySlot: false
-        });
-	$(".fc-today-button").click(function() {
-	renderCalendar();
-        return false;
-});
-    };
-
-    function getDay(date) {
-        var day = moment(date).day();
-        if (day === 0) {
-            day = 7;
-        }
-        return day;
-    };
-
-    function renderCalendar() {
-        var date = $('#calendar').fullCalendar('getDate');
-        var day  = getDay(date);
-        var view = $('#calendar').fullCalendar('getView').name;
-        getCalendarTime(date, day, view);
-        return false;
-    };
-
-    function getCalendarTime(date,day, view) {
-	var params   = $.param({ day: day, view: view });
-        $.ajax({
-            url: '<?= Url::to(['/schedule/render-calendar-time']); ?>?' + params ,
-            type: 'get',
-            dataType: "json",
-            success: function (response)
-            {   
-                var from_time = response.from_time;
-                var to_time = response.to_time;
-                loadCalendar(date, from_time, to_time, view);
+    var schedule = {
+        loadCalendar : function(date) {
+            var showAll = $('#schedule-show-all').is(":checked");
+            var params = $.param({ 
+                'ScheduleSearch[date]': moment(date).format('YYYY-MM-DD'),
+                'ScheduleSearch[showAll]': showAll | 0,
+                'ScheduleSearch[userId]': userId 
+            });
+            var minTime = "09:00:00";
+            var maxTime = "17:00:00";
+            var day     = moment(date).day();
+            if (showAll) {
+                var availabilitites = locationAvailabilities;
+            } else {
+                var availabilitites = scheduleVisibilities;
             }
-        });
-        return false;
+            $.each(availabilitites , function( key, value ) {
+                if (day === 0) {
+                    day = 7;
+                }
+                if (day === value.day) {
+                    minTime = value.fromTime;
+                    maxTime = value.toTime;
+                }
+            });
+            $('#calendar').fullCalendar('destroy');
+            $('#calendar').unbind().removeData().fullCalendar({
+                nowIndicator: true,
+                schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+                header: {
+                    left: 'today',
+                    center: '',
+                    right: ''
+                },
+                firstDay : 1,
+                defaultDate: date,
+                defaultView: 'agendaDay',
+                minTime: minTime,
+                maxTime: maxTime,
+                slotDuration: "00:15:00",
+                allDaySlot:false,
+                editable: true,
+                eventDurationEditable: false,
+                contentHeight: "auto",
+                events: {
+                    url: '<?= Url::to(['schedule/render-day-events']) ?>?' + params,
+                    type: 'GET',
+                    error: function () {
+                        alert("Events can't be rendered!");
+                    }
+                },
+                eventRender: function (event, element) {
+                    element.poshytip({
+                        className: 'tip-yellowsimple',
+                        alignTo: 'cursor',
+                        alignX: 'center',
+                        alignY: 'top',
+                        offsetY: 5,
+                        followCursor: false,
+                        slide: false,
+                        content: function (updateCallback) {
+                            return event.description;
+                        }
+                    });
+                }
+            });
+            
+            $('.fc-today-button').click(function(){
+                var date = Date();
+                $('#schedule-go-to-datepicker').val(moment(date).format('MMM D, Y'));
+                schedule.fetchHolidayName(moment(date));
+                schedule.loadCalendar(date);
+                return false;
+            });
+        },
+
+        fetchHolidayName : function(date) {
+            var params = $.param({ date: moment(date).format('YYYY-MM-DD') });
+            $.ajax({
+                url: '<?= Url::to(['schedule/fetch-holiday-name']); ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    var showAll = $('#schedule-show-all').is(":checked");
+                    if ($("#title h2").text(response)) {
+                        if (showAll) {
+                            $('#schedule-show-all').prop("checked", true);
+                        }
+                    }
+                }
+            });
+            return false;
+        },
     };
-    
+
     $(document).ready(function () {
-        var from_time = '<?= $from_time ?>';
-        var to_time = '<?= $to_time ?>';
-        var view = 'agendaDay';
-	var date = $('#calendar').fullCalendar('getDate');
-        loadCalendar(date, from_time, to_time, view);
+        var date = Date();
+        schedule.fetchHolidayName(moment(date));
+        $('#schedule-go-to-datepicker').val(moment(date).format('MMM D, Y'));
+        schedule.loadCalendar(date);
     });
     
-    $(document).off('click', '.fc-prev-button, .fc-next-button')
-        .on('click', '.fc-prev-button, .fc-next-button', function () {
+    $(document).off('change', '#schedule-show-all').on('change', '#schedule-show-all', function(){
         var date = $('#calendar').fullCalendar('getDate');
-        var day  = getDay(date);
-        var view = $('#calendar').fullCalendar('getView').name;
-        getCalendarTime(date, day, view);
-        return false;
+        schedule.fetchHolidayName(moment(date));
+        schedule.loadCalendar(date);
     });
 
-    $(document).off('click', '.fc-agendaWeek-button').on('click', '.fc-agendaWeek-button', function () {
-        var date = $('#calendar').fullCalendar('getDate');
-        var day  = getDay(date);
-        var view = 'agendaWeek';
-        getCalendarTime(date, day, view);
-        return false;
-    });
-
-    $(document).off('click', '.fc-agendaDay-button').on('click', '.fc-agendaDay-button', function () {
-        var date = $('#calendar').fullCalendar('getDate');
-        var day  = getDay(date);
-        var view = 'agendaDay';
-        getCalendarTime(date, day, view);
-        return false;
-    });
-
-    $(document).off('click', '.fc-today-button').on('click', '.fc-today-button', function () {
-        var date = Date();
-        var day  = getDay(date);
-        var view = $('#calendar').fullCalendar('getView').name;
-        getCalendarTime(date, day, view);
+    $(document).off('change', '#schedule-go-to-datepicker').on('change', '#schedule-go-to-datepicker', function(){
+        var date = $('#schedule-go-to-datepicker').val();
+        schedule.fetchHolidayName(moment(date));
+        schedule.loadCalendar(date);
         return false;
     });
 </script>

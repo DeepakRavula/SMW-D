@@ -19,6 +19,10 @@ use kartik\daterange\DateRangePicker;
             'attribute' => 'dateRange',
             'convertFormat' => true,
             'initRangeExpr' => true,
+	    'options' => [
+                    'class' => 'form-control',
+                    'readOnly' => true
+                ],
             'pluginOptions' => [
                 'autoApply' => true,
                 'ranges' => [

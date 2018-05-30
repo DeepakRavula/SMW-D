@@ -36,7 +36,7 @@ use yii\grid\GridView;
                     'pluginOptions' => [
                         'autoApply' => true,
                         'locale' => [
-                            'format' => 'M d,Y',
+                            'format' => 'M d, Y',
                         ],
                         'opens' => 'bottom',
                     ],
