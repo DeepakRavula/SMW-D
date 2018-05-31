@@ -37,14 +37,17 @@ $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])
                 'autoApply' => true,
                 'allowClear' => true,
                 'ranges' => [
-                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')",
-                        'moment()'],
-                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')",
-                        'moment()'],
+                    Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')",
+                    "moment().subtract(1, 'month').endOf('month')"],
+                    Yii::t('kvdrp', 'Last Week') => ["moment().subtract(1, 'week').startOf('week')",
+                    "moment().subtract(1, 'week').endOf('week')"],
+                    Yii::t('kvdrp', "Yesterday") => ["moment().startOf('day').subtract(1,'days')", "moment().endOf('day').subtract(1,'days')"],
+                    Yii::t('kvdrp', "Today") => ["moment().startOf('day')", "moment()"],
+                        Yii::t('kvdrp', 'This Week') => ["moment().startOf('week')",
+                        "moment().endOf('week')"],
                     Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')",
                         "moment().endOf('month')"],
-                    Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')",
-                        "moment().subtract(1, 'month').endOf('month')"],
+                   
                 ],
                 'locale' => [
                     'format' => 'M d, Y',
