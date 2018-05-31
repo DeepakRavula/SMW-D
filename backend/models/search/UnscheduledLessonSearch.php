@@ -13,7 +13,7 @@ use common\models\Lesson;
 /**
  * LessonSearch represents the model behind the search form about `common\models\Lesson`.
  */
-class UnscheduledLessonSearch
+class UnscheduledLessonSearch extends Lesson
 {
    
     /**
