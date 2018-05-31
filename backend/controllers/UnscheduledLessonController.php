@@ -8,11 +8,12 @@ use backend\models\search\SystemLogSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use backend\models\search\UnscheduledLessonSearch;
 
 /**
  * LogController implements the CRUD actions for SystemLog model.
  */
-class UnscheduleLessonController extends \common\components\controllers\BaseController
+class UnscheduledLessonController extends \common\components\controllers\BaseController
 {
     
 
@@ -23,7 +24,7 @@ class UnscheduleLessonController extends \common\components\controllers\BaseCont
      */
     public function actionIndex()
     {
-        $searchModel = new UnscheduleLessonSearch();
+        $searchModel = new UnscheduledLessonSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('index', [
             'searchModel' => $searchModel,

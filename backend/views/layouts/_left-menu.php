@@ -82,10 +82,10 @@ echo Menu::widget([
         ],
 	[
             'label' => Yii::t('backend', 'Unscheduled Lessons'),
-            'url' => ['/course/index', 'CourseSearch[type]' => Lesson::TYPE_GROUP_LESSON],
+            'url' => ['unscheduled-lesson/index'],
             'icon' => '<i class="fa fa-music"></i>',
-            'visible' => Yii::$app->user->can('manageGroupLessons'),
-            'active' => (isset(Yii::$app->request->queryParams['CourseSearch']['type']) && Yii::$app->request->queryParams['CourseSearch']['type'] == Lesson::TYPE_GROUP_LESSON) ? true : false,
+//            'visible' => Yii::$app->user->can('manageGroupLessons'),
+//	    'active' => (Yii::$app->controller->id === 'unscheduled-lesson') ? true : false,
         ],
             [
             'label' => Yii::t('backend', 'Proforma Invoices'),

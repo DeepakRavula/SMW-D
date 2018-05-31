@@ -1,5 +1,3 @@
-
-
 <?php
 
 namespace backend\models\search;
@@ -7,25 +5,24 @@ namespace backend\models\search;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Lesson;
+use common\models\UnscheduledLesson;
 use common\models\Invoice;
 use common\models\Location;
+use common\models\Lesson;
 
 /**
  * LessonSearch represents the model behind the search form about `common\models\Lesson`.
  */
-class UnscheduleLessonSearch extends Lesson
+class UnscheduledLessonSearch
 {
+   
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
-            [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
-            [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId',
-                'invoiceType','dateRange', 'rate','student', 'program', 'teacher'], 'safe'],
+           
         ];
     }
     
@@ -52,8 +49,7 @@ class UnscheduleLessonSearch extends Lesson
             ->isConfirmed()
             ->notDeleted()
             ->location($locationId)
-	    ->unscheduled()
-            ->activePrivateLessons();
+            ->unscheduled();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -61,6 +57,7 @@ class UnscheduleLessonSearch extends Lesson
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-          return $dataProvider;
+        
+        return $dataProvider;
     }
 }
