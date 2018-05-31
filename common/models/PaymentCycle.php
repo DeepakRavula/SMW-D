@@ -289,6 +289,35 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ->one();
     }
 
+    public function getLastProformaInvoicedPaymentCycle()
+    {
+        return self::find()
+            ->joinWith(['paymentCycleLessons' => function ($query) {
+                $query->joinWith(['invoiceItemPaymentCycleLessons' => function ($query) {
+                    $query->joinWith(['invoiceLineItem' => function ($query) {
+                        $query->joinWith(['invoice' => function ($query) {
+                            $query->andWhere(['invoice.isDeleted' => false])
+                                ->andWhere(['NOT', ['invoice.id' => null]]);
+                        }]);
+                        $query->andWhere(['invoice_line_item.isDeleted' => false])
+                            ->andWhere(['NOT', ['invoice_line_item.id' => null]]);
+                    }])
+                    ->andWhere(['NOT', ['invoice_item_payment_cycle_lesson.id' => null]]);
+                }])
+                ->andWhere(['NOT', ['payment_cycle_lesson.id' => null]]);
+            }])
+            ->andWhere(['enrolmentId' => $this->enrolmentId])
+            ->notDeleted()
+            ->orderBy(['startDate' => SORT_DESC])
+            ->one();
+    }
+
+    public function isNextPaymentCycleUninvoiced()
+    {
+        return $this->lastProformaInvoicedPaymentCycle ? $this->id === 
+            $this->lastProformaInvoicedPaymentCycle->nextPaymentCycleUninvoiced->id : false;
+    }
+
     public function getCurrentPaymentCycle()
     {
         $paymentCycle = self::find()
@@ -389,6 +418,16 @@ class PaymentCycle extends \yii\db\ActiveRecord
                 ->one();
     }
 
+    public function getNextPaymentCycleUninvoiced()
+    {
+        return self::find()
+                ->andWhere(['enrolmentId' => $this->enrolmentId])
+                ->andWhere(['>', 'startDate', $this->endDate])
+                ->notDeleted()
+                ->orderBy(['startDate' => SORT_ASC])
+                ->one();
+    }
+
     public function isNextPaymentCycle()
     {
         if ($this->hasCurrentPaymentCycle()) {
@@ -402,7 +441,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
     public function canRaiseProformaInvoice()
     {
         return $this->isPastPaymentCycle() || $this->isCurrentPaymentCycle() || $this->isFirstPaymentCycle() ||
-            $this->isNextPaymentCycle() || $this->isSecondPaymentCycle();
+            $this->isNextPaymentCycle() || $this->isSecondPaymentCycle() || $this->isNextPaymentCycleUninvoiced();
     }
 
     public function validateCanRaisePFI($attribute)
