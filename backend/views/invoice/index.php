@@ -3,10 +3,12 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\Invoice;
+use common\models\Location;
+use common\models\User;
 use common\components\gridView\KartikGridView;
 use backend\models\search\InvoiceSearch;
 use kartik\daterange\DateRangePicker;
-
+use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -21,6 +23,7 @@ $this->params['action-button'] = $actionButton; ?>
 <div class="clearfix"></div>
 <div class="grid-row-open">
 	<?php
+	$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         if ((int) $searchModel->type === (int) Invoice::TYPE_PRO_FORMA_INVOICE) {
             $columns = [
                 [
@@ -30,6 +33,19 @@ $this->params['action-button'] = $actionButton; ?>
                     'value' => function ($data) {
                         return $data->getInvoiceNumber();
                     },
+	'filterType'=>KartikGridView::FILTER_SELECT2,
+                'filter'=>ArrayHelper::map(Invoice::find()->proFormaInvoice()
+			->location($locationId)->orderBy(['invoice_number' => SORT_ASC])
+                ->all(), 'id', 'invoiceNumber'),
+                'filterWidgetOptions'=>[
+            'options' => [
+                'id' => 'proformainvoice',
+            ],
+                    'pluginOptions'=>[
+                        'allowClear'=>true,
+            ],
+        ],
+                'filterInputOptions'=>['placeholder'=>'Number'],
                 ],
                 [
 		'attribute' => 'dateRange',
@@ -54,7 +70,7 @@ $this->params['action-button'] = $actionButton; ?>
                             Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
                         ],
                         'locale' => [
-                            'format' => 'M d,Y',
+                            'format' => 'M d, Y',
                         ],
                         'opens' => 'right'
                     ],
@@ -66,6 +82,24 @@ $this->params['action-button'] = $actionButton; ?>
                     'value' => function ($data) {
                         return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                     },
+			    'filterType'=> KartikGridView::FILTER_SELECT2,
+            'filter' => ArrayHelper::map(User::find()
+			    ->customers($locationId)
+			    ->joinWith(['userProfile' => function ($query) {
+					$query->orderBy('firstname');
+				}])
+			    ->all(), 'id', 'publicIdentity'),
+	    'filterWidgetOptions'=>[
+        'options' => [
+            'id' => 'customer',
+        ],
+                'pluginOptions'=>[
+                    'allowClear'=>true,
+        ],
+
+    ],
+            'filterInputOptions'=>['placeholder'=>'Customer'],
+            'format'=>'raw'
                 ],
                 [
 					'attribute' => 'phone',
@@ -141,6 +175,20 @@ $this->params['action-button'] = $actionButton; ?>
                     'value' => function ($data) {
                         return $data->getInvoiceNumber();
                     },
+			'filterType'=>KartikGridView::FILTER_SELECT2,
+                'filter'=>ArrayHelper::map(Invoice::find()->invoice()
+			->location($locationId)->orderBy(['invoice_number' => SORT_ASC])
+                ->all(), 'id', 'invoiceNumber'),
+                'filterWidgetOptions'=>[
+            'options' => [
+                'id' => 'proformainvoice',
+            ],
+                    'pluginOptions'=>[
+                        'allowClear'=>true,
+            ],    
+		      
+        ],
+                'filterInputOptions'=>['placeholder'=>'Number'],
                 ],
                 [
 					'attribute' => 'invoiceDateRange',
@@ -161,7 +209,7 @@ $this->params['action-button'] = $actionButton; ?>
                             Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
                         ],
                         'locale' => [
-                            'format' => 'M d,Y',
+                            'format' => 'M d, Y',
                         ],
                         'opens' => 'right'
                     ],
@@ -178,6 +226,24 @@ $this->params['action-button'] = $actionButton; ?>
                     'value' => function ($data) {
                         return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                     },
+			       'filterType'=> KartikGridView::FILTER_SELECT2,
+            'filter' => ArrayHelper::map(User::find()
+			    ->customers($locationId)
+			    ->joinWith(['userProfile' => function ($query) {
+					$query->orderBy('firstname');
+				}])
+			    ->all(), 'id', 'publicIdentity'),
+	    'filterWidgetOptions'=>[
+        'options' => [
+            'id' => 'customer',
+        ],
+                'pluginOptions'=>[
+                    'allowClear'=>true,
+        ],
+
+    ],
+            'filterInputOptions'=>['placeholder'=>'Customer'],
+            'format'=>'raw'
                 ],
                 [
 		    'attribute' => 'phone',

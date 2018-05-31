@@ -64,8 +64,8 @@ class LessonSearch extends Lesson
      */
     public function search($params)
     {
-        $this->fromDate = (new \DateTime())->format('M d,Y');
-        $this->toDate = (new \DateTime())->format('M d,Y');
+        $this->fromDate = (new \DateTime())->format('M d, Y');
+        $this->toDate = (new \DateTime())->format('M d, Y');
         $this->dateRange = $this->fromDate.' - '.$this->toDate;
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Lesson::find()
@@ -95,9 +95,10 @@ class LessonSearch extends Lesson
 	
         if (!empty($this->teacher)) {
             $query->joinWith(['teacherProfile' => function ($query) {
-                $query->andFilterWhere([
-                            'LIKE', "CONCAT(user_profile.firstname, ' ', user_profile.lastname)", $this->teacher
+		    $query->joinWith(['user' => function($query) {
+                $query->andFilterWhere(['user.id' => $this->teacher
                         ]);
+		}]);
             }]);
         }
         if (!empty($this->customerId)) {
@@ -140,8 +141,8 @@ class LessonSearch extends Lesson
         if (!empty($this->dateRange)) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
 
-            $this->fromDate = \DateTime::createFromFormat('M d,Y', $this->fromDate);
-            $this->toDate = \DateTime::createFromFormat('M d,Y', $this->toDate);
+            $this->fromDate = new \DateTime($this->fromDate);
+            $this->toDate = new \DateTime($this->toDate);
 
             if ((int) $this->invoiceType !== Invoice::TYPE_INVOICE) {
                 $query->andWhere(['between', 'DATE(lesson.date)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);

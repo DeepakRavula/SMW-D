@@ -37,8 +37,7 @@ class LocationController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['update','view',
-                            'add-availability', 'edit-availability', 'render-events',
+                        'actions' => ['view', 'add-availability', 'edit-availability', 'render-events',
                             'check-availability', 'validate', 'delete-availability',
                             'copy-availability'
                         ],
@@ -46,7 +45,7 @@ class LocationController extends BaseController
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['index', 'delete', 'create'],
+                        'actions' => ['index', 'delete', 'create', 'update'],
                         'roles' => ['administrator']
                     ]
                 ]

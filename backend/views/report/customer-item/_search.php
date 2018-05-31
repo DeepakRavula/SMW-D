@@ -25,6 +25,10 @@ use common\models\User;
                 'attribute' => 'dateRange',
                 'convertFormat' => true,
                 'initRangeExpr' => true,
+		'options' => [
+                    'class' => 'form-control',
+                    'readOnly' => true
+                ],
                 'pluginOptions' => [
                     'autoApply' => true,
                     'ranges' => [

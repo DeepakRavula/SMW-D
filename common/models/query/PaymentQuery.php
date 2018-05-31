@@ -91,6 +91,11 @@ class PaymentQuery extends ActiveQuery
         return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
     }
 
+    public function accountEntry()
+    {
+        return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_ACCOUNT_ENTRY]);
+    }
+
     public function notLessonCreditUsed()
     {
         return $this->joinWith(['debitPayment dp' => function ($query) {

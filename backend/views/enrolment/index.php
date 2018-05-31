@@ -62,7 +62,7 @@ $this->params['show-all'] = $this->render('_button', [
                                 ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
                     }]);
                 }])
-                ->asArray()->all(), 'id', 'first_name'),
+                ->all(), 'id', 'fullName'),
                 'filterWidgetOptions'=>[
             'options' => [
                 'id' => 'student',
@@ -87,7 +87,7 @@ $this->params['show-all'] = $this->render('_button', [
                         ->confirmed()
                         ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
                 }])
-                ->asArray()->all(), 'user_id', 'firstname'),
+                ->all(), 'user_id', 'fullName'),
                 'filterWidgetOptions'=>[
             'options' => [
                 'id' => 'teacher',
@@ -126,7 +126,7 @@ $this->params['show-all'] = $this->render('_button', [
                         "moment().subtract(1, 'month').endOf('month')"],
                 ],
                 'locale' => [
-                    'format' => 'M d,Y',
+                    'format' => 'M d, Y',
                 ],
                 'opens' => 'left',
             ],

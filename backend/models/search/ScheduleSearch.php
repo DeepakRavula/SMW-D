@@ -12,13 +12,14 @@ use common\models\City;
 class ScheduleSearch extends Model
 {
     public $goToDate;
+    public$showAll;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['goToDate'], 'safe']
+            [['goToDate', 'showAll'], 'safe']
         ];
     }
 

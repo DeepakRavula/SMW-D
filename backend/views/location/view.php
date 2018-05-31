@@ -10,6 +10,7 @@ use yii\bootstrap\Tabs;
 use common\models\LocationAvailability;
 use kartik\date\DatePickerAsset;
 use kartik\time\TimePickerAsset;
+use common\models\User;
 TimePickerAsset::register($this);
 DatePickerAsset::register($this);
 
@@ -20,9 +21,12 @@ $this->title = $model->name;
 $this->params['label'] = $this->render('_title', [
     'model' => $model,
 ]);
-$this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i>', '#', ['class' => 'f-s-18 edit-location']);
+
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
+if ($lastRole === User::ROLE_ADMINISTRATOR) {
+    $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i>', '#', ['class' => 'f-s-18 edit-location']);
+}
 ?>
 <div id="flash-danger" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="copy-operation-hours" style="display: none;" class="alert-success alert fade in"></div>
@@ -32,6 +36,7 @@ $lastRole = end($roles);
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <br>
+<?php $loggedUser = User::findOne(Yii::$app->user->id); ?>
 <?php Pjax::begin([
     'id' => 'location-view']) ; ?>
 <div class="row">
@@ -47,13 +52,15 @@ $lastRole = end($roles);
 			<dt>Email</dt>
 			<dd><?= $model->email; ?></dd>
 			<dt>Phone</dt>
-			<dd><?= !empty($model->phone_number) ? $model->phone_number : null; ?></dd>
+            <dd><?= !empty($model->phone_number) ? $model->phone_number : null; ?></dd>
+        <?php if ($loggedUser->isAdmin()) : ?>
 			<dt>Royalty</dt>
 			<dd><?= !empty($model->royalty->value) ? $model->royalty->value . '%' : null; ?></dd>
 			<dt>Advertisement</dt>
 			<dd><?= !empty($model->advertisement->value) ?  $model->advertisement->value . '%' : null; ?></dd>
 			<dt>Conversion Date</dt>
-			<dd><?= !empty($model->conversionDate) ?  Yii::$app->formatter->asDate($model->conversionDate) : null; ?></dd>
+            <dd><?= !empty($model->conversionDate) ?  Yii::$app->formatter->asDate($model->conversionDate) : null; ?></dd>
+        <?php endif; ?>
 		</dl>
 		<?php LteBox::end() ?>
 		</div> 

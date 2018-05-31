@@ -148,10 +148,15 @@ class ScheduleController extends BaseController
         return $resources;
     }
 
-    public function actionRenderResources($date, $showAll, $programId, $teacherId)
+    public function actionRenderResources()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $date       = \DateTime::createFromFormat('Y-m-d', $date);
+        $scheduleRequest = Yii::$app->request->get('ScheduleSearch');
+        $teacherId = $scheduleRequest['teacherId'];
+        $showAll = $scheduleRequest['showAll'];
+        $programId = $scheduleRequest['programId'];
+        $date = $scheduleRequest['date'];
+        $date       = new \DateTime($date);
         $formatedDate = $date->format('Y-m-d');
         $formatedDay = $date->format('N');
         $resources = [];
@@ -159,7 +164,7 @@ class ScheduleController extends BaseController
             ->joinWith(['teacherLessons' => function ($query) use ($formatedDate) {
                 $query->andWhere(['DATE(lesson.date)' => $formatedDate]);
             }]);
-        if ($showAll) {
+        if ($showAll && empty($teacherId) && empty($programId)) {
             $availableUserQuery = User::find()
                 ->joinWith(['availabilities a' => function ($query) use ($formatedDay) {
                     $query->andWhere(['a.day' => $formatedDay]);
@@ -205,7 +210,7 @@ class ScheduleController extends BaseController
         $formatedDate = $date->format('Y-m-d');
         $availabilityQuery = TeacherAvailability::find()
             ->andWhere(['day' => $date->format('N')]);
-        if ($showAll) {
+        if ($showAll && empty($teacherId) && empty($programId)) {
             $availabilityDayQuery = TeacherAvailability::find()
                 ->location($locationId)
                 ->andWhere(['day' => $date->format('N')]);
@@ -233,7 +238,7 @@ class ScheduleController extends BaseController
             $availabilityQuery->location($locationId);
         }
         
-        $availabilities = $availabilityQuery->groupBy('teacher_availability_day.teacher_location_id')->all();
+        $availabilities = $availabilityQuery->all();
         return $availabilities;
     }
     
@@ -337,10 +342,15 @@ class ScheduleController extends BaseController
         ];
     }
     
-    public function actionRenderDayEvents($date, $showAll, $programId, $teacherId)
+    public function actionRenderDayEvents()
     {
         $events = [];
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $scheduleRequest = Yii::$app->request->get('ScheduleSearch');
+        $teacherId = $scheduleRequest['teacherId'];
+        $showAll = $scheduleRequest['showAll'];
+        $programId = $scheduleRequest['programId'];
+        $date = $scheduleRequest['date'];
         $date = Carbon::parse($date);
         $formatedDate = $date->format('Y-m-d');
         $teachersAvailabilities = $this->getTeacherAvailability($teacherId, $programId, $showAll, $date);
@@ -384,7 +394,7 @@ class ScheduleController extends BaseController
 
     public function actionRenderClassroomEvents($date)
     {
-        $date = \DateTime::createFromFormat('Y-m-d', $date);
+        $date = new \DateTime($date);
         $classroomUnavailabilities = ClassroomUnavailability::find()
             ->andWhere(['AND',
                 ['<=', 'DATE(fromDate)', $date->format('Y-m-d')],

@@ -510,7 +510,7 @@ class UserController extends BaseController
             'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate, $invoiceSearchModel->summariseReport),
             'unavailability' => $this->getUnavailabilityDataProvider($id),
             'logDataProvider' => $this->getLogDataProvider($id),
-	    'invoiceCount' => $this->getInvoiceCount($model, $locationId),
+	        'invoiceCount' => $this->getInvoiceCount($model, $locationId),
         ]);
     }
 
