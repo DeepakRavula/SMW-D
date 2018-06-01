@@ -185,8 +185,6 @@ $this->params['action-button'] = $this->render('_action-menu', [
     <div class="box">
     <?php echo KartikGridView::widget([
         'dataProvider' => $dataProvider,
-        'summary' => false,
-        'emptyText' => false,
         'options' => ['id' => 'lesson-index-1'],
         'filterModel' => $searchModel,
         'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true]),
