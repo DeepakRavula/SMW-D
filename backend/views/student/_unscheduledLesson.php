@@ -34,6 +34,14 @@ use yii\helpers\Url;
                 },
             ],
             [
+                'label' => 'Duration',
+                'headerOptions' => ['style' => 'text-align:right'],
+                'contentOptions' => ['style' => 'text-align:right'],
+                'value' => function ($data) {
+                    return !empty($data->duration) ? (new \DateTime($data->duration))->format('H:i') : null;
+                },
+            ],
+            [
                 'label' => 'Date',
                 'value' => function ($data) {
                     $date = Yii::$app->formatter->asDate($data->date);

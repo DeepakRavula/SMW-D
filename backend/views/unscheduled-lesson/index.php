@@ -41,6 +41,14 @@ $this->title = 'Unscheduled Lessons';
                     return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
                 },
             ],
+			[
+                'label' => 'Duration',
+                'headerOptions' => ['style' => 'text-align:right'],
+                'contentOptions' => ['style' => 'text-align:right'],
+                'value' => function ($data) {
+                    return !empty($data->duration) ? (new \DateTime($data->duration))->format('H:i') : null;
+                },
+            ],
             [
                 'label' => 'Date',
                
@@ -49,17 +57,6 @@ $this->title = 'Unscheduled Lessons';
                     $lessonTime = (new \DateTime($data->date))->format('H:i:s');
 
                     return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
-                },
-            ],
-            [
-                'label' => 'Status',
-                'value' => function ($data) {
-                    $status = null;
-                    if (!empty($data->status)) {
-                        return $data->getStatus();
-                    }
-
-                    return $status;
                 },
             ],
         ];
