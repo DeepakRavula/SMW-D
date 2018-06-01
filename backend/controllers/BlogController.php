@@ -59,7 +59,7 @@ class BlogController extends \common\components\controllers\BaseController
      */
    public function actionIndex()
     {
-        $blog = Blog::find();
+        $blog = Blog::find()->orderBy(['date' => SORT_DESC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $blog,
         ]);
