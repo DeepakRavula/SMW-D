@@ -14,6 +14,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\AccessControl;
 use yii\data\ArrayDataProvider;
 use common\components\controllers\BaseController;
+use backend\models\PaymentForm;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -324,5 +325,27 @@ class PaymentController extends BaseController
             ],
         ]);
         return $creditDataProvider;
+    }
+
+    public function receive()
+    {
+        $model = new PaymentForm();
+        $paymentData = Yii::$app->request->get('PaymentForm');
+        if ($paymentData) {
+            $model->load(Yii::$app->request->get());
+        }
+        $request = Yii::$app->request;
+        if ($request->post()) {
+            
+        } else {
+            $data = $this->renderAjax('receive-payment/_form', [
+                'model' => $model
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
     }
 }
