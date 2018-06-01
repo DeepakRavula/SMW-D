@@ -3,6 +3,7 @@ use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 ?>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
@@ -11,7 +12,8 @@ use yii\helpers\Html;
 <div>
     
     <?php $form = ActiveForm::begin([
-            'id' => 'student-merge-form',
+            'id' => 'modal-form',
+            'action' => Url::to(['student/merge', 'id' => $model->id]),
     ]); ?>
     <div class="row">
         <div class="col-md-8">
@@ -27,14 +29,13 @@ use yii\helpers\Html;
             ]); ?>
         </div>
         </div>
-    <div class="row">
-        <div class="col-md-12">
-        <div class="pull-right">
-            <?= Html::a('Cancel', '', ['class' => 'btn btn-default merge-cancel']);?>
-            <?= Html::submitButton(Yii::t('backend', 'Merge'), ['class' => 'btn btn-info', 'name' => 'button']) ?>
-        </div>
-        </div>
-    </div>
     </div>
 	<?php ActiveForm::end(); ?>
 </div>
+<script>
+    $(document).ready(function () {
+        $('.modal-save').text('Merge');
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Student Merge</h4>');
+        $('#popup-modal .modal-dialog').css({'width': '400px'});
+    });
+</script>
