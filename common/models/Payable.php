@@ -188,12 +188,15 @@ trait Payable
                         ->orderBy(['id' => SORT_DESC])
                         ->all();
                 foreach ($splitLessons as $splitLesson) {
-                    $amount = $splitLesson->getSplitedAmount() - $splitLesson->getCreditAppliedAmount($splitLesson->enrolment->id);
+                    $amount = $splitLesson->getSplitedAmount();
                     if ($amount > $this->proFormaCredit) {
                         $amount = $this->proFormaCredit;
                     }
+                    $payment->amount = $amount;
                     if ($this->hasProFormaCredit() && !empty($amount)) {
-                        $payment->amount = $amount;
+                        if ($splitLesson->hasMerged()) {
+                            $splitLesson = $splitLesson->extendedLesson;
+                        }
                         $splitLesson->addPayment($this, $payment);
                         $this->makeInvoicePayment($splitLesson);
                     }
@@ -202,7 +205,7 @@ trait Payable
                 if ($this->isExtraLessonProformaInvoice()) {
                     $lesson = Lesson::findOne($this->lineItem->lesson->id);
                 }
-                $amount = $lesson->proFormaLineItem->itemTotal - $lesson->getCreditAppliedAmount($lesson->enrolment->id);
+                $amount = $lesson->proFormaLineItem->itemTotal;
                 if ($amount > $this->proFormaCredit) {
                     $amount = $this->proFormaCredit;
                 }

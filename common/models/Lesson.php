@@ -248,7 +248,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function getFullDuration()
     {
         $duration = $this->duration;
-        foreach ($this->extendedLessons as $extendedLesson) {
+        foreach ($this->usedLessonSplits as $extendedLesson) {
             $additionalDuration = new \DateTime($extendedLesson->lesson->duration);
             $lessonDuration = new \DateTime($duration);
             $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
@@ -265,9 +265,8 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function canExplode()
     {
-        return false;
         return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded
-            && !$this->isExpired() && !$this->isExtra();
+            && !$this->isExpired() && !$this->isExtra() && !$this->hasInvoice();
     }
 
     public function getEnrolment()
@@ -293,9 +292,15 @@ class Lesson extends \yii\db\ActiveRecord
             ->via('enrolment');
     }
 
-    public function getExtendedLessons()
+    public function getExtendedLesson()
     {
-        return $this->hasMany(LessonSplitUsage::className(), ['extendedLessonId' => 'id']);
+        return $this->hasOne(Lesson::className(), ['id' => 'extendedLessonId'])
+            ->via('lessonSplitUsage');
+    }
+
+    public function isExtendedLesson()
+    {
+        return !empty($this->usedLessonSplits);
     }
 
     public function getCourse()
@@ -341,9 +346,14 @@ class Lesson extends \yii\db\ActiveRecord
             ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
 
-    public function getLessonSplitsUsage()
+    public function getLessonSplitUsage()
     {
-        return $this->hasMany(LessonSplitUsage::className(), ['lessonId' => 'id']);
+        return $this->hasOne(LessonSplitUsage::className(), ['lessonId' => 'id']);
+    }
+
+    public function getUsedLessonSplits()
+    {
+        return $this->hasMany(LessonSplitUsage::className(), ['extendedLessonId' => 'id']);
     }
 
     public function getBulkRescheduleLesson()
@@ -465,6 +475,11 @@ class Lesson extends \yii\db\ActiveRecord
             ->andWhere(['teacher_id' => $this->teacherId, 'program_id' => $this->course->programId])
             ->one();
         return !empty($qualification->rate) ? $qualification->rate : 0.00;
+    }
+
+    public function hasMerged()
+    {
+        return !empty($this->lessonSplitUsage);
     }
 
     public function getReschedule()
@@ -719,8 +734,7 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function canMerge()
     {
-        return false;
-        if ($this->enrolment->hasExplodedLesson() && !$this->isExploded && !$this->isExtra()) {
+        if ($this->enrolment->hasExplodedLesson() && !$this->isExploded && !$this->isExtra() && !$this->hasInvoice()) {
             $lessonDuration = new \DateTime($this->duration);
             $date = new \DateTime($this->date);
             $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
@@ -845,7 +859,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getUnit()
     {
-        if ($this->extendedLessons) {
+        if ($this->usedLessonSplits) {
             $unit = $this->fullDuration;
         } else {
             $unit = $this->duration;
@@ -902,7 +916,7 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function hasLessonCredit($enrolmentId)
     {
-        return $this->getLessonCreditAmount($enrolmentId) > 0;
+        return $this->getLessonCreditAmount($enrolmentId) > 0.01;
     }
 
     public function hasProFormaInvoice()

@@ -63,6 +63,11 @@ class LessonReschedule extends Model
                 $payment->amount = $amount;
                 $rescheduledLesson->addPayment($oldLesson, $payment);
             }
+            if ($oldLesson->usedLessonSplits) {
+                foreach ($oldLesson->usedLessonSplits as $extended) {
+                    $extended->updateAttributes(['extendedLessonId' => $rescheduledLesson->id]);
+                }
+            }
             if ($oldLesson->isExtra() && $oldLesson->proFormaLineItem) {
                 $lineItemLesson = $oldLesson->proFormaLineItem->lineItemLesson;
                 $lineItemLesson->lessonId = $this->rescheduledLessonId;

@@ -67,7 +67,6 @@ class PrivateLesson extends \yii\db\ActiveRecord
     
     public function split()
     {
-        return true;
         $model = $this->lesson;
         $lessonDurationSec = $model->durationSec;
         for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
@@ -90,7 +89,6 @@ class PrivateLesson extends \yii\db\ActiveRecord
     
     public function merge($model)
     {
-        return true;
         $lessonSplitUsage = new LessonSplitUsage();
         $lessonSplitUsage->lessonId = $this->lessonId;
         $lessonSplitUsage->extendedLessonId = $model->id;
