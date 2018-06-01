@@ -2,6 +2,7 @@
 
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use common\models\Lesson;
 
     if ($searchModel->isWeb) {
         $tableOption = ['class' => 'table table-condensed'];
@@ -80,11 +81,19 @@ use yii\widgets\Pjax;
             'label' => 'Payment',
             'format' => 'currency',
             'value' => function ($data) {
+                $amount = 0;
                 if (!$data->isGroupLesson()) {
-                    if ($data->invoice->isDeleted() && !$data->proFormaLesson) {
-                        $amount = 0;
-                    } else {
-                        $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                    if (!$data->invoice->isDeleted() && $data->proFormaLesson) {
+                        if ($data->proFormaLesson->isCanceled()) {
+                            $lessons = Lesson::find()
+                                ->descendantsOf($data->proFormaLesson->id)
+                                ->all();
+                            foreach ($lessons as $lesson) {
+                                $amount += $lesson->getCreditAppliedAmount($lesson->enrolment->id);
+                            }
+                        } else {
+                            $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                        }
                     }
                 } else {
                     $amount = $data->lesson->getCreditAppliedAmount($data->enrolment->id) ?? 0;

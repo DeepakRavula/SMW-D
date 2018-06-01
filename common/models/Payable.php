@@ -194,11 +194,13 @@ trait Payable
                     }
                     $payment->amount = $amount;
                     if ($this->hasProFormaCredit() && !empty($amount)) {
-                        if ($splitLesson->hasMerged()) {
-                            $splitLesson = $splitLesson->extendedLesson;
-                        }
                         $splitLesson->addPayment($this, $payment);
                         $this->makeInvoicePayment($splitLesson);
+                        if ($splitLesson->hasMerged()) {
+                            $extendedLesson = $splitLesson->extendedLesson;
+                            $extendedLesson->addPayment($splitLesson, $payment);
+                            $this->makeInvoicePayment($extendedLesson);
+                        }
                     }
                 }
             } else {
