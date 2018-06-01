@@ -268,7 +268,7 @@ class UserController extends BaseController
             ->enrolled()
             ->isConfirmed()
             ->joinWith(['privateLesson'])
-            ->orderBy(['private_lesson.expiryDate' => SORT_DESC])
+            ->orderBy(['private_lesson.expiryDate' => SORT_ASC])
             ->andWhere(['lesson.teacherId' => $id])
             ->unscheduled()
             ->notDeleted()
