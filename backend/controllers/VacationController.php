@@ -176,8 +176,6 @@ class VacationController extends BaseController
             $model->enrolmentId = $enrolmentId;
             if ($model->save()) {
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-                $model->on(Vacation::EVENT_AFTER_INSERT, [new EnrolmentLog(), 'vacationCreate'], ['loggedUser' => $loggedUser]);
-                $model->trigger(Vacation::EVENT_AFTER_INSERT);
                 return [
                     'status' => true
                 ];
@@ -228,8 +226,6 @@ class VacationController extends BaseController
         $model = $this->findModel($id);
         $model->delete();
         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-        $model->on(Vacation::EVENT_AFTER_DELETE, [new EnrolmentLog(), 'vacationDelete'], ['loggedUser' => $loggedUser]);
-        $model->trigger(Vacation::EVENT_AFTER_DELETE);
         return [
             'status' => true,
         ];
