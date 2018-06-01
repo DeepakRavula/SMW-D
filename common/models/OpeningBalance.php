@@ -30,7 +30,8 @@ class OpeningBalance extends ActiveRecord
     public function rules()
     {
         return [
-            [['amount'], 'number', 'min' => 0],
+	    ['amount','required'],
+            [['amount'], 'number', 'min' => 1],
             [['isCredit', 'user_id'], 'safe']
         ];
     }
