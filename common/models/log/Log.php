@@ -66,6 +66,26 @@ class Log extends \yii\db\ActiveRecord
         return $this->hasMany(LogLink::className(), ['logId' => 'id'])
             ->onCondition(['log_link.index' => $index]);
     }
+    public function beforeDelete() 
+    {
+        if ($this->logLinks) {
+        foreach ($this->logLinks as $logLink) {
+            $logLink->delete();
+        }
+    }
+    if ($this->logHistory) {
+        $this->logHistory->delete();
+    }
+        return parent::beforeDelete();
+    }
+    public function getLogLinks()
+    {
+        return $this->hasMany(LogLink::className(), ['logId' => 'id']);
+    }
+    public function getLogHistory()
+    {
+        return $this->hasOne(LogHistory::className(), ['logId' => 'id']);
+    }
     public function getLogObject()
     {
         return $this->hasMany(LogObject::className(), ['id' => 'logObjectId']);

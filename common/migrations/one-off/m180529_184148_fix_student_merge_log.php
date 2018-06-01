@@ -13,15 +13,21 @@ class m180529_184148_fix_student_merge_log extends Migration
      */
     public function safeUp()
     {
-        $logs=Log::find()
+        $messages=Log::find()
         ->select(['message', "count('*') as messageCount"])
         ->groupBy('message')
         ->having([ '>','messageCount', 1])
         ->all();
-        foreach($logs as $log){
-            print_r($log->id);
+        foreach($messages as $message){
+            $logs=Log::find()->andWhere(['message'=> $message->message])->all();
+            foreach($logs as $i => $log){
+                if($i!=0)
+                {
+                   $log->delete();
+                }
+            }
+            
         }
-        die('coming');
     }
 
     /**
