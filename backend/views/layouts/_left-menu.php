@@ -84,8 +84,7 @@ echo Menu::widget([
             'label' => Yii::t('backend', 'Unscheduled Lessons'),
             'url' => ['unscheduled-lesson/index'],
             'icon' => '<i class="fa fa-music"></i>',
-//            'visible' => Yii::$app->user->can('manageGroupLessons'),
-//	    'active' => (Yii::$app->controller->id === 'unscheduled-lesson') ? true : false,
+	    'active' => (Yii::$app->controller->id === 'unscheduled-lesson') ? true : false,
         ],
             [
             'label' => Yii::t('backend', 'Proforma Invoices'),
