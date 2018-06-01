@@ -49,7 +49,8 @@ class UnscheduledLessonSearch extends Lesson
             ->isConfirmed()
             ->notDeleted()
             ->location($locationId)
-            ->unscheduled();
+            ->unscheduled()
+	    ->notExpired();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
