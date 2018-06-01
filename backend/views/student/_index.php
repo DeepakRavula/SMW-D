@@ -68,7 +68,7 @@ echo KartikGridView::widget([
                         'allowClear'=>true,
             ],
         ],
-                'filterInputOptions'=>['placeholder'=>'Student'],
+                'filterInputOptions'=>['placeholder'=>'First Name'],
             ],
         [
             'label' => 'Last Name',
@@ -93,7 +93,7 @@ echo KartikGridView::widget([
                     'allowClear'=>true,
         ],
     ],
-            'filterInputOptions'=>['placeholder'=>'Student'],
+            'filterInputOptions'=>['placeholder'=>'Last Name'],
         ],
             [
             'label' => 'Customer',
