@@ -337,12 +337,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getPaymentCycleLesson()
     {
-        if ($this->isExploded) {
-            $lesson = $this->parent()->one();
-        } else {
-            $lesson = $this;
-        }
-        return $lesson->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id'])
+        return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id'])
             ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
 
@@ -411,6 +406,11 @@ class Lesson extends \yii\db\ActiveRecord
     public function getRootLesson()
     {
         return self::find()->ancestorsOf($this->id)->orderBy(['id' => SORT_ASC])->one();
+    }
+
+    public function hasRootLesson()
+    {
+        return !empty($this->rootLesson);
     }
  
     public function getProFormaInvoice()
@@ -888,6 +888,16 @@ class Lesson extends \yii\db\ActiveRecord
                 ->notDeleted()
                 ->sum('amount');
     }
+
+    public function getCreditAppliedPayment($enrolmentId)
+    {
+        return Payment::find()
+                ->joinWith('lessonCredit')
+                ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
+                ->creditApplied()
+                ->notDeleted()
+                ->all();
+    }
     
     public function getCreditUsedAmount($enrolmentId)
     {
@@ -912,6 +922,16 @@ class Lesson extends \yii\db\ActiveRecord
     public function hasCreditUsed($enrolmentId)
     {
         return !empty($this->getCreditUsedPayment($enrolmentId));
+    }
+
+    public function hasCreditApplied($enrolmentId)
+    {
+        return !empty($this->getCreditAppliedPayment($enrolmentId));
+    }
+
+    public function hasPaymentCycleLesson()
+    {
+        return !empty($this->paymentCycleLesson);
     }
     
     public function hasLessonCredit($enrolmentId)
