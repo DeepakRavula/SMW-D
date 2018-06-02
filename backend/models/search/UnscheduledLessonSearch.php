@@ -15,6 +15,9 @@ use common\models\Lesson;
  */
 class UnscheduledLessonSearch extends Lesson
 {
+	public $program;
+    public $teacher;
+    public $student;
    
     /**
      * {@inheritdoc}
@@ -22,6 +25,7 @@ class UnscheduledLessonSearch extends Lesson
     public function rules()
     {
         return [
+            [['student', 'program', 'teacher'], 'safe'],
            
         ];
     }
@@ -50,7 +54,9 @@ class UnscheduledLessonSearch extends Lesson
             ->notDeleted()
             ->location($locationId)
             ->unscheduled()
-	    ->notExpired();
+			->notExpired()
+			->joinWith(['privateLesson'])
+            ->orderBy(['private_lesson.expiryDate' => SORT_ASC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -59,6 +65,20 @@ class UnscheduledLessonSearch extends Lesson
             return $dataProvider;
         }
         
+
+		$query->joinWith('student');
+		$query->joinWith('program');
+		$query->andFilterWhere(['student.id' => $this->student]);
+        $query->andFilterWhere(['program.id' => $this->program]);
+
+        if (!empty($this->teacher)) {
+            $query->joinWith(['teacherProfile' => function ($query) {
+		    $query->joinWith(['user' => function($query) {
+                $query->andFilterWhere(['user.id' => $this->teacher
+                        ]);
+		}]);
+            }]);
+        }
         return $dataProvider;
     }
 }

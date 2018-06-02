@@ -308,6 +308,12 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(Course::className(), ['id' => 'courseId']);
     }
 
+	public function getProgram()
+    {
+        return $this->hasOne(Program::className(), ['id' => 'programId'])
+			->via('course');
+    }
+
     public function getPrivateLesson()
     {
         return $this->hasOne(PrivateLesson::className(), ['lessonId' => 'id']);
