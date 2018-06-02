@@ -69,7 +69,7 @@ class ViewAction extends Action
                 ->isConfirmed()
                 ->joinWith(['privateLesson'])
                 ->andWhere(['NOT', ['private_lesson.lessonId' => null]])
-                ->orderBy(['private_lesson.expiryDate' => SORT_DESC])
+                ->orderBy(['private_lesson.expiryDate' => SORT_ASC])
                 ->unscheduled()
                 ->notRescheduled()
                 ->notDeleted();

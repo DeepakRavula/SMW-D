@@ -266,6 +266,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function canExplode()
     {
+        return false;
         return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded
             && !$this->isExpired() && !$this->isExtra();
     }
@@ -301,6 +302,12 @@ class Lesson extends \yii\db\ActiveRecord
     public function getCourse()
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId']);
+    }
+
+	public function getProgram()
+    {
+        return $this->hasOne(Program::className(), ['id' => 'programId'])
+			->via('course');
     }
 
     public function getPrivateLesson()
@@ -722,6 +729,7 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function canMerge()
     {
+        return false;
         if ($this->enrolment->hasExplodedLesson() && !$this->isExploded && !$this->isExtra()) {
             $lessonDuration = new \DateTime($this->duration);
             $date = new \DateTime($this->date);

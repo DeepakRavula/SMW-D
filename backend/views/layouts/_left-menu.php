@@ -80,6 +80,12 @@ echo Menu::widget([
             'visible' => Yii::$app->user->can('manageGroupLessons'),
             'active' => (isset(Yii::$app->request->queryParams['CourseSearch']['type']) && Yii::$app->request->queryParams['CourseSearch']['type'] == Lesson::TYPE_GROUP_LESSON) ? true : false,
         ],
+	[
+            'label' => Yii::t('backend', 'Unscheduled Lessons'),
+            'url' => ['unscheduled-lesson/index'],
+            'icon' => '<i class="fa fa-music"></i>',
+	    'active' => (Yii::$app->controller->id === 'unscheduled-lesson') ? true : false,
+        ],
             [
             'label' => Yii::t('backend', 'Proforma Invoices'),
             'icon' => '<i class="fa  fa-dollar"></i>',
@@ -301,7 +307,7 @@ echo Menu::widget([
                     'visible' => Yii::$app->user->can('managePrivileges'),
                     'active' => Yii::$app->controller->id === 'permission',
                 ],
-                    [
+                [
                     'label' => Yii::t('backend', 'Staff Members'),
                     'icon' => '<i class="fa fa-users"></i>',
                     'url' => ['/user/index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER],
@@ -310,7 +316,7 @@ echo Menu::widget([
                     'badge' => User::staffCount(),
                     'badgeBgClass' => 'label-default'
                 ],
-                    [
+                [
                     'label' => Yii::t('backend', 'Owners'),
                     'icon' => '<i class="fa fa-user"></i>',
                     'url' => ['/user/index', 'UserSearch[role_name]' => User::ROLE_OWNER],
@@ -320,20 +326,24 @@ echo Menu::widget([
                     'badgeBgClass' => 'label-default'
                 ],
 
-                    [
+                [
                     'label' => Yii::t('backend', 'Classrooms'),
                     'icon' => '<i class="fa fa-home"></i>',
                     'url' => ['/classroom/index'],
 					'visible' => Yii::$app->user->can('manageClassrooms'),
                 ],
-                    [
+                [
                     'label' => Yii::t('backend', 'Import'),
                     'icon' => '<i class="fa  fa-upload"></i>',
                     'url' => ['/user/import'],
 					'visible' => Yii::$app->user->can('manageImport'),
                 ],
-	
-
+                [
+                    'label' => Yii::t('backend', 'Location Settings'),
+                    'icon' => '<i class="fa  fa-upload"></i>',
+                    'url' => ['/location-view'],
+                    'visible' => Yii::$app->user->can('manageLocations'),
+                ]
             ],
         ],
         [
@@ -341,8 +351,6 @@ echo Menu::widget([
             'label' => Yii::t('backend', 'Timeline'),
             'icon' => '<i class="fa fa-bell"></i>',
             'url' => ['/timeline-event/index'],
-            'badge' => LogHistory::logsCount(),
-            'badgeBgClass' => 'label-default'
         ]
     ]
 ])

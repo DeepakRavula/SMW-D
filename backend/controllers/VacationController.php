@@ -98,8 +98,8 @@ class VacationController extends BaseController
         if ($dateRange) {
             list($fromDate, $toDate) = explode(' - ', $dateRange);
 
-            $startDate          = \DateTime::createFromFormat('M d,Y', $fromDate)->format('Y-m-d');
-            $endDate            = \DateTime::createFromFormat('M d,Y', $toDate)->format('Y-m-d');
+            $startDate          = (new \DateTime($fromDate))->format('Y-m-d');
+            $endDate            = (new \DateTime($toDate))->format('Y-m-d');
             $lessonsQuery       = Lesson::find()
                 ->notDeleted()
                 ->isConfirmed()
@@ -176,8 +176,6 @@ class VacationController extends BaseController
             $model->enrolmentId = $enrolmentId;
             if ($model->save()) {
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-                $model->on(Vacation::EVENT_AFTER_INSERT, [new EnrolmentLog(), 'vacationCreate'], ['loggedUser' => $loggedUser]);
-                $model->trigger(Vacation::EVENT_AFTER_INSERT);
                 return [
                     'status' => true
                 ];
@@ -228,8 +226,6 @@ class VacationController extends BaseController
         $model = $this->findModel($id);
         $model->delete();
         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-        $model->on(Vacation::EVENT_AFTER_DELETE, [new EnrolmentLog(), 'vacationDelete'], ['loggedUser' => $loggedUser]);
-        $model->trigger(Vacation::EVENT_AFTER_DELETE);
         return [
             'status' => true,
         ];

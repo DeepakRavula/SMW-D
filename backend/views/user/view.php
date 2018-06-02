@@ -48,71 +48,71 @@ $this->params['action-button'] = $this->render('_action-button', [
 <div id="flash-success" style="display: none;" class="alert-success alert fade in"></div>
 <br>
 <div class="row">
-	<div class="col-md-6">	
-		<?php
+    <div class="col-md-6">  
+        <?php
         echo $this->render('_profile', [
             'model' => $model,
             'role' => $roleName,
         ]);
         ?>
         <?php if ($searchModel->role_name === User::ROLE_TEACHER):?>
-			<?php Pjax::Begin([
+            <?php Pjax::Begin([
             'id' => 'private-quali-list'
         ]) ?> 
-		<?= $this->render('teacher/_private-qualification', [
+        <?= $this->render('teacher/_private-qualification', [
             'privateQualificationDataProvider' => $privateQualificationDataProvider,
             'groupQualificationDataProvider' => $groupQualificationDataProvider,
             'model' => $model,
             'searchModel' => $searchModel,
         ]);
         ?>
-		<?php Pjax::end() ?> 	
-			<?php Pjax::Begin([
+        <?php Pjax::end() ?>    
+            <?php Pjax::Begin([
             'id' => 'group-quali-list'
         ]) ?> 
-		<?= $this->render('teacher/_group-qualification', [
+        <?= $this->render('teacher/_group-qualification', [
             'privateQualificationDataProvider' => $privateQualificationDataProvider,
             'groupQualificationDataProvider' => $groupQualificationDataProvider,
             'model' => $model,
             'searchModel' => $searchModel,
         ]);
         ?>
-		<?php Pjax::end() ?> 
-		<?php endif;?>
+        <?php Pjax::end() ?> 
+        <?php endif;?>
         <?php if ($searchModel->role_name == 'customer'):?>
-		<?php Pjax::Begin([
+        <?php Pjax::Begin([
             'id' => 'discount-customer'
         ]) ?> 
-		<?= $this->render('customer/_discount', [
+        <?= $this->render('customer/_discount', [
             'model' => $model,
         ]);
         ?>
-		<?php Pjax::end() ?> 
-		<?= $this->render('customer/_opening-balance', [
+        <?php Pjax::end() ?> 
+        <?= $this->render('customer/_opening-balance', [
             'model' => $model,
             'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
             'openingBalanceCredit' => $openingBalanceCredit
         ]);
         ?>
-            <?=$this->render('customer/_payment-preference', [
-                'model' => $model,
-            ]); ?>
-            <?= $this->render('customer/_invoice', [
+        <?=$this->render('customer/_payment-preference', [
+            'model' => $model,
+        ]); ?>
+        <?= $this->render('customer/_invoice', [
             'invoiceDataProvider' => $invoiceDataProvider,
             'count' => $invoiceCount,
             'userModel' => $model,
         ]);
         ?>
     <?php endif;?>
-		
-	</div> 
-	<div class="col-md-6">	
+        
+    </div> 
+    <div class="col-md-6">  
             <?php
         echo $this->render('_email', [
             'model' => $model,
         ]);
         ?>
-		<?php
+        <?php
         echo $this->render('_phone', [
             'model' => $model,
         ]);
@@ -121,87 +121,21 @@ $this->params['action-button'] = $this->render('_action-button', [
             'model' => $model,
         ]);
         ?>
-	</div> 
+    </div> 
 </div>
     <div class="nav-tabs-custom">
-		<?php $roles = Yii::$app->authManager->getRolesByUser($model->id);
-        $role = end($roles); ?>
-		<?php
-
-        $studentContent = $this->render('customer/_student', [
-                'model' => $model,
-                'dataProvider' => $dataProvider,
-                'student' => $student,
-        ]);
-
-        $lessonContent = $this->render('customer/_lesson', [
-            'model' => $model,
-            'lessonDataProvider' => $lessonDataProvider,
-        ]);
-
-        $enrolmentContent = $this->render('customer/_enrolment', [
-            'enrolmentDataProvider' => $enrolmentDataProvider,
-        ]);
-
-        $proFormaInvoiceContent = $this->render('customer/_pro-forma-invoice', [
-            'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
-            'userModel' => $model,
-        ]);
-
-        $paymentContent = $this->render('customer/_account', [
-            'model' => $model,
-            'accountDataProvider' => $accountDataProvider,
-            'userModel'=>$model,
-            'searchModel' => $searchModel,
-        ]);
-
-        $teacherAvailabilityContent = $this->render('teacher/_availability-calendar', [
-            'model' => $model,
-            'minTime' => $minTime,
-            'maxTime' => $maxTime,
-            'roomModel' => new TeacherRoom(),
-        ]);
-
-        $teacherStudentContent = $this->render('teacher/_student', [
-            'studentDataProvider' => $studentDataProvider,
-        ]);
-        $unavailabilityContent = $this->render('teacher/_unavailability', [
-            'unavailabilityDataProvider' => $unavailability,
-            'model' => $model,
-        ]);
-       
-        $unscheduledLessonContent = $this->render('teacher/_unscheduled-lesson', [
-            'dataProvider' => $unscheduledLessonDataProvider,
-            'model' => $model,
-        ]);
-
-        $teacherScheduleContent = $this->render('teacher/_schedule', [
-            'teacherId' => $model->id,
-        ]);
-        $teacherLessonContent = $this->render('teacher/_view-lesson', [
-            'teacherLessonDataProvider' => $teacherLessonDataProvider,
-            'searchModel' => $lessonSearchModel,
-            'model' => $model,
-        ]);
+        <?php $roles = Yii::$app->authManager->getRolesByUser($model->id); $role = end($roles); ?>
+        <?php
         $noteContent = $this->render('note/view', [
             'model' => new Note(),
             'noteDataProvider' => $noteDataProvider
         ]);
         
-        $discountContent = $this->render('customer/_discount', [
-            'model' => $model,
-        ]);
         $logContent = $this->render('log', [
             'model' => $model,
-                        'logDataProvider'=>$logDataProvider,
+            'logDataProvider' => $logDataProvider,
         ]);
-        $timeVoucherContent = $this->render('teacher/_time-voucher', [
-            'timeVoucherDataProvider' => $timeVoucherDataProvider,
-            'searchModel' => $invoiceSearchModel,
-            'model' => $model,
-        ]);
-        ?>
-		<?php
+        
         $items = [
             [
                 'label' => 'History',
@@ -211,122 +145,178 @@ $this->params['action-button'] = $this->render('_action-button', [
                 ],
             ],
         ];
-        $teacherItems = [
-            [
-                'label' => 'Availability',
-                'content' => $teacherAvailabilityContent,
-                'options' => [
-                    'id' => 'availability',
-                ],
-            ],
-            [
-                'label' => 'Unavailabilities',
-                'content' => $unavailabilityContent,
-                'options' => [
-                    'id' => 'unavailability',
-                ],
-            ],
-            [
-                'label' => 'Students',
-                'content' => $teacherStudentContent,
-                'options' => [
-                    'id' => 'student',
-                ],
-            ],
-            [
-                'label' => 'Schedule',
-                'content' => $teacherScheduleContent,
-                'options' => [
-                    'id' => 'calendar',
-                ],
-            ],
-            [
-                'label' => 'Lessons',
-                'content' => $timeVoucherContent,
-                'options' => [
-                    'id' => 'lesson',
-                ],
-            ],
-            [
-                'label' => 'Unscheduled Lesson',
-                'content' => $unscheduledLessonContent,
-                'options' => [
-                    'id' => 'unscheduled',
-                ],
-            ],
-            [
-                'label' => 'Time Voucher',
-                'content' => $teacherLessonContent,
-                'options' => [
-                    'id' => 'time-voucher',
-                ],
-            ],
-            [
-                'label' => 'Comments',
-                'content' => $noteContent,
-                'options' => [
-                    'id' => 'comment',
-                ],
-            ],
-        ];
-        $customerItems = [
-            [
-                'label' => 'Students',
-                'content' => $studentContent,
-                'options' => [
-                    'id' => 'student',
-                ],
-            ],
-            [
-                'label' => 'Enrolments',
-                'content' => $enrolmentContent,
-                'options' => [
-                    'id' => 'enrolment',
-                ],
-            ],
-            [
-                'label' => 'Lessons',
-                'content' => $lessonContent,
-                'options' => [
-                    'id' => 'lesson',
-                ],
-            ],
-            [
-                'label' => 'Pro-forma Invoices',
-                'content' => $proFormaInvoiceContent,
-                'options' => [
-                    'id' => 'pro-forma-invoice',
-                ],
-            ],
-            [
-                'label' => 'Accounts',
-                'content' => $paymentContent,
-                'options' => [
-                    'id' => 'account',
-                ],
-            ],
-            [
-                'label' => 'Comments',
-                'content' => $noteContent,
-                'options' => [
-                    'id' => 'comments',
-                ],
-               ],
-          ];
         
         if (in_array($role->name, ['teacher'])) {
+            $timeVoucherContent = $this->render('teacher/_time-voucher', [
+                'timeVoucherDataProvider' => $timeVoucherDataProvider,
+                'searchModel' => $invoiceSearchModel,
+                'model' => $model,
+            ]);
+            $teacherAvailabilityContent = $this->render('teacher/_availability-calendar', [
+                'model' => $model,
+                'minTime' => $minTime,
+                'maxTime' => $maxTime,
+                'roomModel' => new TeacherRoom(),
+            ]);
+            $teacherStudentContent = $this->render('teacher/_student', [
+                'studentDataProvider' => $studentDataProvider,
+            ]);
+            $unavailabilityContent = $this->render('teacher/_unavailability', [
+                'unavailabilityDataProvider' => $unavailability,
+                'model' => $model,
+            ]);
+            $unscheduledLessonContent = $this->render('teacher/_unscheduled-lesson', [
+                'dataProvider' => $unscheduledLessonDataProvider,
+                'model' => $model,
+            ]);
+            $teacherScheduleContent = $this->render('teacher/_schedule', [
+                'teacherId' => $model->id,
+            ]);
+            $teacherLessonContent = $this->render('teacher/_view-lesson', [
+                'teacherLessonDataProvider' => $teacherLessonDataProvider,
+                'searchModel' => $lessonSearchModel,
+                'model' => $model,
+            ]);
+            $teacherItems = [
+                [
+                    'label' => 'Availability',
+                    'content' => $teacherAvailabilityContent,
+                    'options' => [
+                        'id' => 'availability',
+                    ],
+                ],
+                [
+                    'label' => 'Unavailabilities',
+                    'content' => $unavailabilityContent,
+                    'options' => [
+                        'id' => 'unavailability',
+                    ],
+                ],
+                [
+                    'label' => 'Students',
+                    'content' => $teacherStudentContent,
+                    'options' => [
+                        'id' => 'student',
+                    ],
+                ],
+                [
+                    'label' => 'Schedule',
+                    'content' => $teacherScheduleContent,
+                    'options' => [
+                        'id' => 'calendar',
+                    ],
+                ],
+                [
+                    'label' => 'Lessons',
+                    'content' => $timeVoucherContent,
+                    'options' => [
+                        'id' => 'lesson',
+                    ],
+                ],
+                [
+                    'label' => 'Unscheduled Lesson',
+                    'content' => $unscheduledLessonContent,
+                    'options' => [
+                        'id' => 'unscheduled',
+                    ],
+                ],
+                [
+                    'label' => 'Time Voucher',
+                    'content' => $teacherLessonContent,
+                    'options' => [
+                        'id' => 'time-voucher',
+                    ],
+                ],
+                [
+                    'label' => 'Comments',
+                    'content' => $noteContent,
+                    'options' => [
+                        'id' => 'comment',
+                    ],
+                ],
+            ];
             $items = array_merge($teacherItems, $items);
         }
         if (in_array($role->name, ['customer'])) {
+            $studentContent = $this->render('customer/_student', [
+                    'model' => $model,
+                    'dataProvider' => $dataProvider,
+                    'student' => $student,
+            ]);
+
+            $lessonContent = $this->render('customer/_lesson', [
+                'model' => $model,
+                'lessonDataProvider' => $lessonDataProvider,
+            ]);
+
+            $enrolmentContent = $this->render('customer/_enrolment', [
+                'enrolmentDataProvider' => $enrolmentDataProvider,
+            ]);
+
+            $proFormaInvoiceContent = $this->render('customer/_pro-forma-invoice', [
+                'proFormaInvoiceDataProvider' => $proFormaInvoiceDataProvider,
+                'userModel' => $model,
+            ]);
+
+            $paymentContent = $this->render('customer/_account', [
+                'model' => $model,
+                'accountDataProvider' => $accountDataProvider,
+                'userModel' => $model,
+                'searchModel' => $searchModel,
+            ]);
+            $customerItems = [
+                [
+                    'label' => 'Students',
+                    'content' => $studentContent,
+                    'options' => [
+                        'id' => 'student',
+                    ],
+                ],
+                [
+                    'label' => 'Enrolments',
+                    'content' => $enrolmentContent,
+                    'options' => [
+                        'id' => 'enrolment',
+                    ],
+                ],
+                [
+                    'label' => 'Lessons',
+                    'content' => $lessonContent,
+                    'options' => [
+                        'id' => 'lesson',
+                    ],
+                ],
+                [
+                    'label' => 'Pro-forma Invoices',
+                    'content' => $proFormaInvoiceContent,
+                    'options' => [
+                        'id' => 'pro-forma-invoice',
+                    ],
+                ],
+                [
+                    'label' => 'Accounts',
+                    'content' => $paymentContent,
+                    'options' => [
+                        'id' => 'account',
+                    ],
+                ],
+                [
+                    'label' => 'Comments',
+                    'content' => $noteContent,
+                    'options' => [
+                        'id' => 'comments',
+                    ],
+                ],
+            ];
             $items = array_merge($customerItems, $items);
         }
         ?>
-		<?php
+        <?php
         echo Tabs::widget([
             'items' => $items,
         ]);
         ?>
-		<div class="clearfix"></div>
+        <div class="clearfix"></div>
 </div>
 
 <?php Modal::begin([
@@ -382,21 +372,21 @@ $this->params['action-button'] = $this->render('_action-button', [
     var lesson = {
         update :function(params) {
             $.ajax({
-                    url: '<?= Url::to(['lesson/update']); ?>?' + params,
-                    type: 'get',
-                    dataType: "json",
-                    success: function (response)
+                url: '<?= Url::to(['lesson/update']); ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
                     {
-                        if (response.status)
-                        {
-                            $('#modal-content').html(response.data);
-                            $('#popup-modal').modal('show');
-                            $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit schedule</h4>');
-                            $('#popup-modal .modal-dialog').css({'width': '1000px'});
-                        }
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit schedule</h4>');
+                        $('#popup-modal .modal-dialog').css({'width': '1000px'});
                     }
-                });
-                return false;
+                }
+            });
+            return false;
         }
     };
 
@@ -491,16 +481,20 @@ $this->params['action-button'] = $this->render('_action-button', [
         return false;
     });
 
-	$('.availability').click(function () {
-		$('.teacher-availability-create').show();
-	});
-	$('#add-misc-item').click(function(){
-		$('#invoice-line-item-modal').modal('show');
-  	});
-$(document).ready(function(){
-	$.fn.modal.Constructor.prototype.enforceFocus = function() {};
-	$(document).on('click', '.add-new-student', function () {
-	 $.ajax({
+    $(document).on('click', '.availability', function () {
+        $('.teacher-availability-create').show();
+    });
+
+    $(document).on('click', '#add-misc-item', function () {
+        $('#invoice-line-item-modal').modal('show');
+    });
+
+    $(document).ready(function() {
+        $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+    });
+
+    $(document).on('click', '.add-new-student', function () {
+        $.ajax({
             url    : '<?= Url::to(['student/create', 'userId' => $model->id]); ?>',
             type   : 'get',
             success: function(response)
@@ -514,24 +508,29 @@ $(document).ready(function(){
             }
         });
         return false;
-	});
-	$(document).on('click', '.address-cancel-btn', function () {
-		$('#address-modal').modal('hide');
+    });
+
+    $(document).on('click', '.address-cancel-btn', function () {
+        $('#address-modal').modal('hide');
         return false;
-	});
-	$(document).on('click', '.phone-cancel-btn', function () {
-		$('#phone-modal').modal('hide');
+    });
+
+    $(document).on('click', '.phone-cancel-btn', function () {
+        $('#phone-modal').modal('hide');
         return false;
-	});
+    });
+
     $(document).on('click', '.student-profile-cancel-button', function () {
         $('#student-create-modal').modal('hide');
         return false;
     });
-	$(document).on('click', '.customer-merge-cancel', function () {
+
+    $(document).on('click', '.customer-merge-cancel', function () {
         $('#customer-merge-modal').modal('hide');
         return false;
     });
-	$(document).on('click', '.user-edit-button', function () {
+
+    $(document).on('click', '.user-edit-button', function () {
         $('#user-edit-modal').modal('show');
         return false;
     });
@@ -552,10 +551,12 @@ $(document).ready(function(){
         });
         return false;
     });
+
     $(document).on('click', '.customer-discount-cancel', function () {
         $('#customer-discount-edit-modal').modal('hide');
         return false;
     });
+
     $(document).on('click', '.customer-discount-button', function () {
         $('#customer-discount-edit-modal').modal('show');
          $('#warning-notification').html('You have entered a \n\
@@ -565,38 +566,39 @@ $(document).ready(function(){
                     of your agreement.').fadeIn();
         return false;
     });
+
     $(document).on('click', '.email-cancel-btn', function () {
         $('#email-modal').modal('hide');
         return false;
     });
-	$(document).on('click', '.user-delete-button', function () {
-		var id = '<?= $model->id;?>';
-		 bootbox.confirm({ 
-  			message: "Are you sure you want to delete this user?", 
-  			callback: function(result){
-				if(result) {
-					$('.bootbox').modal('hide');
-				$.ajax({
-					url: '<?= Url::to(['user/delete']); ?>?id=' + id,
-					type: 'post',
-					success: function (response)
-					{
-						if (response.status)
-						{
-                            window.location.href = response.url;
-						} else {
-							$('#lesson-conflict').html(response.message).fadeIn().delay(5000).fadeOut();
 
-						}
-					}
-				});
-				return false;	
-			}
-			}
-		});	
-		return false;
+    $(document).on('click', '.user-delete-button', function () {
+        var id = '<?= $model->id;?>';
+        bootbox.confirm({ 
+            message: "Are you sure you want to delete this user?", 
+            callback: function(result){
+                if(result) {
+                    $('.bootbox').modal('hide');
+                    $.ajax({
+                        url: '<?= Url::to(['user/delete']); ?>?id=' + id,
+                        type: 'post',
+                        success: function (response)
+                        {
+                            if (response.status) {
+                                window.location.href = response.url;
+                            } else {
+                                $('#lesson-conflict').html(response.message).fadeIn().delay(5000).fadeOut();
+                            }
+                        }
+                    });
+                    return false;   
+                }
+            }
+        }); 
+        return false;
     });
-	$(document).on('beforeSubmit', '#address-form', function () {
+
+    $(document).on('beforeSubmit', '#address-form', function () {
         $.ajax({
             url    : $(this).attr('action'),
             type   : 'post',
@@ -605,21 +607,21 @@ $(document).ready(function(){
             success: function(response)
             {
                 if(response.status) {
-        			$('#address-modal').modal('hide');
-        			$.pjax.reload({container:"#user-address",replace:false,  timeout: 4000});
-                    
+                    $('#address-modal').modal('hide');
+                    $.pjax.reload({container:"#user-address",replace:false,  timeout: 4000});
                 } else {
-					$('#address-form').yiiActiveForm('updateMessages', response.errors
-					, true);
-				}
+                    $('#address-form').yiiActiveForm('updateMessages', response.errors , true);
+                }
             }
         });
         return false;
     });
-	$(document).on('click', '#user-cancel-btn', function () {
+
+    $(document).on('click', '#user-cancel-btn', function () {
         $('#user-edit-modal').modal('hide');
         return false;
     });
+
     $(document).on('click', '#customer-merge', function () {
         $.ajax({
             url    : '<?= Url::to(['customer/merge', 'id' => $model->id]); ?>',
@@ -639,7 +641,8 @@ $(document).ready(function(){
         });
         return false;
     });
-	$(document).on('click', '#customer-discount-delete', function () {
+
+    $(document).on('click', '#customer-discount-delete', function () {
         $.ajax({
             url    : '<?= Url::to(['customer-discount/delete', 'id' => $model->id]); ?>',
             type   : 'get',
@@ -650,15 +653,16 @@ $(document).ready(function(){
                 if(response.status)
                 {
                     $('#customer-discount-edit-modal').modal('hide');
-        			$.pjax.reload({container: '#discount-customer', timeout: 4000}).done(function () {
-    					$.pjax.reload({container: '#customer-discount-pjax', timeout: 6000});
-					});
+                    $.pjax.reload({container: '#discount-customer', timeout: 4000}).done(function () {
+                        $.pjax.reload({container: '#customer-discount-pjax', timeout: 6000});
+                    });
                 }
             }
         });
         return false;
     });
-	$(document).on('beforeSubmit', '#user-update-form', function () {
+
+    $(document).on('beforeSubmit', '#user-update-form', function () {
         $.ajax({
             url    : $(this).attr('action'),
             type   : 'post',
@@ -667,10 +671,10 @@ $(document).ready(function(){
             success: function(response)
             {
                 if(response.status) {
-        			$('#user-edit-modal').modal('hide');
-        			$.pjax.reload({container:"#user-profile",replace:false,  timeout: 6000}).done(function () {
-    					$.pjax.reload({container: '#user-header', timeout: 6000});
-					});
+                    $('#user-edit-modal').modal('hide');
+                    $.pjax.reload({container:"#user-profile",replace:false,  timeout: 6000}).done(function () {
+                        $.pjax.reload({container: '#user-header', timeout: 6000});
+                    });
                 } else {
                   $('#user-update-form').yiiActiveForm('updateMessages', response.errors, true); 
                 }
@@ -688,18 +692,17 @@ $(document).ready(function(){
             success: function(response)
             {
                 if(response.status) {
-        			$('#email-modal').modal('hide');
-        			$.pjax.reload({container:"#user-email",replace:false,  timeout: 4000});
-                    
+                    $('#email-modal').modal('hide');
+                    $.pjax.reload({container:"#user-email",replace:false,  timeout: 4000});
                 } else {
-					$('#email-form').yiiActiveForm('updateMessages', response.errors
-					, true);
-				}
+                    $('#email-form').yiiActiveForm('updateMessages', response.errors , true);
+                }
             }
         });
         return false;
     });
-	$(document).on('beforeSubmit', '#phone-form', function () {
+
+    $(document).on('beforeSubmit', '#phone-form', function () {
         $.ajax({
             url    : $(this).attr('action'),
             type   : 'post',
@@ -708,16 +711,16 @@ $(document).ready(function(){
             success: function(response)
             {
                 if(response.status) {
-        			$('#phone-modal').modal('hide');
-        			$.pjax.reload({container:"#user-phone",replace:false,  timeout: 6000});
+                    $('#phone-modal').modal('hide');
+                    $.pjax.reload({container:"#user-phone",replace:false,  timeout: 6000});
                 } else {
-					$('#phone-form').yiiActiveForm('updateMessages', response.errors
-					, true);
-				}
+                    $('#phone-form').yiiActiveForm('updateMessages', response.errors , true);
+                }
             }
         });
         return false;
     });
+
     $(document).on('beforeSubmit', '#customer-merge-form', function () {
         $.ajax({
             url    : '<?= Url::to(['customer/merge', 'id' => $model->id]); ?>',
@@ -735,7 +738,8 @@ $(document).ready(function(){
         });
         return false;
     });
-	$('a[data-toggle="tab"]').on('shown.bs.tab', function (event) {
+
+    $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (event) {
         if(event.currentTarget.text === 'Availability') {
             $('#availability-calendar').fullCalendar('render');
         }
@@ -749,49 +753,46 @@ $(document).ready(function(){
             };
             $.fn.calendarDayView(options);
         }
-	});
+    });
+
     $(document).on('beforeSubmit', '#user-note-form', function (e) {
-		$.ajax({
-			url    : '<?= Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_USER]); ?>',
-			type   : 'post',
-			dataType: "json",
-			data   : $(this).serialize(),
-			success: function(response)
-			{
-			   if(response.status)
-			   {
-					$('.user-note-content').html(response.data);
+        $.ajax({
+            url    : '<?= Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_USER]); ?>',
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status) {
+                    $('.user-note-content').html(response.data);
                     $.pjax.reload({container:"#user-note-listing",replace:false,  timeout: 4000});
-				}else
-				{
-				 $('#user-note-form').yiiActiveForm('updateMessages',
-					   response.errors
-					, true);
-				}
-			}
-		});
-		return false;
-	});
-	$(document).on('beforeSubmit', '#student-form', function (e) {
-		$.ajax({
-			url: $(this).attr('action'),
-			type: 'post',
-			dataType: "json",
-			data: $(this).serialize(),
-			success: function (response)
-			{
-				if(response.status) {
-                	window.location.href = response.url;
-				}
-				else {
-					$('#student-form').yiiActiveForm('updateMessages',
-						response.errors, true);	
-				}
-			}
-		});
-		return false;
-	});
-	$(document).on('beforeSubmit', '#customer-discount', function () {
+                } else {
+                    $('#user-note-form').yiiActiveForm('updateMessages', esponse.errors , true);
+                }
+            }
+        });
+        return false;
+    });
+
+    $(document).on('beforeSubmit', '#student-form', function (e) {
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'post',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                if(response.status) {
+                    window.location.href = response.url;
+                } else {
+                    $('#student-form').yiiActiveForm('updateMessages', response.errors, true); 
+                }
+            }
+        });
+        return false;
+    });
+
+    $(document).on('beforeSubmit', '#customer-discount', function () {
         $.ajax({
             url    : $(this).attr('action'),
             type   : 'post',
@@ -799,11 +800,11 @@ $(document).ready(function(){
             data   : $(this).serialize(),
             success: function(response)
             {
-                if(response.status) {
-        			$('#customer-discount-edit-modal').modal('hide');
-					$.pjax.reload({container: '#discount-customer', timeout: 4000}).done(function () {
-    					$.pjax.reload({container: '#customer-discount-pjax', timeout: 6000});
-					});
+                if (response.status) {
+                    $('#customer-discount-edit-modal').modal('hide');
+                    $.pjax.reload({container: '#discount-customer', timeout: 4000}).done(function () {
+                        $.pjax.reload({container: '#customer-discount-pjax', timeout: 6000});
+                    });
                 } else {
                     $('#error-notification').html(response.errors).fadeIn().delay(5000).fadeOut();
                 }
@@ -811,122 +812,124 @@ $(document).ready(function(){
         });
         return false;
     });
+
     $(document).on('click', '.user-contact-delete', function () {
         var isPrimary = parseInt($(this).attr('isPrimary'));
         if (isPrimary) {
             $('#email-error').html('Primary email cannot be deleted').fadeIn().delay(5000).fadeOut();
            return false; 
         }
-		var contactId = $(this).attr('id') ;
-		 bootbox.confirm({ 
-  			message: "Are you sure you want to delete?", 
-  			callback: function(result){
-				if(result) {
-					$('.bootbox').modal('hide');
-				$.ajax({
-					url: '<?= Url::to(['user-contact/delete']); ?>?id=' + contactId,
-					type: 'post',
-					success: function (response)
-					{
-						if (response.status)
-						{
-							if(response.type == contactTypes.email) {
-	                    		$('#email-modal').modal('hide');
-                            	$.pjax.reload({container: '#user-email', timeout: 6000});
-							} else if (response.type == contactTypes.phone) {
-								$('#phone-modal').modal('hide');
-								$.pjax.reload({container: '#user-phone', timeout: 6000});
-							} else {
-								$('#address-modal').modal('hide');
-								$.pjax.reload({container: '#user-address', timeout: 6000});
-							};
-						} 
-					}
-				});
-				return false;	
-			}
-			}
-		});	
-		return false;
+        var contactId = $(this).attr('id') ;
+        bootbox.confirm({ 
+            message: "Are you sure you want to delete?", 
+            callback: function(result){
+                if(result) {
+                    $('.bootbox').modal('hide');
+                    $.ajax({
+                        url: '<?= Url::to(['user-contact/delete']); ?>?id=' + contactId,
+                        type: 'post',
+                        success: function (response)
+                        {
+                            if (response.status)
+                            {
+                                if(response.type == contactTypes.email) {
+                                    $('#email-modal').modal('hide');
+                                    $.pjax.reload({container: '#user-email', timeout: 6000});
+                                } else if (response.type == contactTypes.phone) {
+                                    $('#phone-modal').modal('hide');
+                                    $.pjax.reload({container: '#user-phone', timeout: 6000});
+                                } else {
+                                    $('#address-modal').modal('hide');
+                                    $.pjax.reload({container: '#user-address', timeout: 6000});
+                                };
+                            } 
+                        }
+                    });
+                    return false;   
+                }
+            }
+        }); 
+        return false;
         });
-	$(document).on('click', '.add-email, .user-email-edit', function () {
- 		var userId = '<?= $model->id;?>';
- 		var contactId = $(this).attr('id') ;
- 		if (contactId === undefined) {
- 			var customUrl = '<?= Url::to(['user-contact/create-email']); ?>?id=' + userId;
- 		} else {
- 			var customUrl = '<?= Url::to(['user-contact/edit-email']); ?>?id=' + contactId;
- 		}
- 	  	$.ajax({
- 			url    : customUrl,
- 			type   : 'post',
- 			dataType: "json",
- 			data   : $(this).serialize(),
- 			success: function(response)
- 			{
- 				if(response.status)
- 				{
- 					$('#email-content').html(response.data);
- 			        $('#email-modal .modal-dialog').css({'width': '400px'});
- 					$('#email-modal').modal('show');
- 				}
- 			}
- 		});
- 		return false;
-  	});
 
- 	$(document).on('click', '.add-address-btn, .user-address-edit', function () {
- 		var userId = '<?= $model->id;?>';
-  		var contactId = $(this).attr('id') ;
+    $(document).on('click', '.add-email, .user-email-edit', function () {
+        var userId = '<?= $model->id;?>';
+        var contactId = $(this).attr('id') ;
+        if (contactId === undefined) {
+            var customUrl = '<?= Url::to(['user-contact/create-email']); ?>?id=' + userId;
+        } else {
+            var customUrl = '<?= Url::to(['user-contact/edit-email']); ?>?id=' + contactId;
+        }
+        $.ajax({
+            url    : customUrl,
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#email-content').html(response.data);
+                    $('#email-modal .modal-dialog').css({'width': '400px'});
+                    $('#email-modal').modal('show');
+                }
+            }
+        });
+        return false;
+    });
+
+    $(document).on('click', '.add-address-btn, .user-address-edit', function () {
+        var userId = '<?= $model->id;?>';
+        var contactId = $(this).attr('id') ;
  
- 		if (contactId === undefined) {
- 			var customUrl = '<?= Url::to(['user-contact/create-address']); ?>?id=' + userId;
- 		} else {
- 			var customUrl = '<?= Url::to(['user-contact/edit-address']); ?>?id=' + contactId;
- 		}
- 	  	$.ajax({
- 			url    : customUrl,
- 			type   : 'post',
- 			dataType: "json",
- 			data   : $(this).serialize(),
- 			success: function(response)
- 			{
- 				if(response.status)
- 				{
- 					$('#address-content').html(response.data);
- 			        $('#address-modal .modal-dialog').css({'width': '400px'});
- 					$('#address-modal').modal('show');
- 				}
- 			}
- 		});
-  		return false;
-  	});
+        if (contactId === undefined) {
+            var customUrl = '<?= Url::to(['user-contact/create-address']); ?>?id=' + userId;
+        } else {
+            var customUrl = '<?= Url::to(['user-contact/edit-address']); ?>?id=' + contactId;
+        }
+        $.ajax({
+            url    : customUrl,
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#address-content').html(response.data);
+                    $('#address-modal .modal-dialog').css({'width': '400px'});
+                    $('#address-modal').modal('show');
+                }
+            }
+        });
+        return false;
+    });
 
- 	$(document).on('click', '.add-phone-btn, .user-phone-edit', function () {
- 		var userId = '<?= $model->id;?>';
- 		var contactId = $(this).attr('id') ;
- 		if (contactId === undefined) {
- 			var customUrl = '<?= Url::to(['user-contact/create-phone']); ?>?id=' + userId;
- 		} else {
- 			var customUrl = '<?= Url::to(['user-contact/edit-phone']); ?>?id=' + contactId;
- 		}
- 	  	$.ajax({
- 			url    : customUrl,
- 			type   : 'post',
- 			dataType: "json",
- 			data   : $(this).serialize(),
- 			success: function(response)
- 			{
- 				if(response.status)
- 				{
- 					$('#phone-content').html(response.data);
- 			        $('#phone-modal .modal-dialog').css({'width': '400px'});
- 					$('#phone-modal').modal('show');
- 				}
- 			}
- 		});
- 		return false;
-  	});
+    $(document).on('click', '.add-phone-btn, .user-phone-edit', function () {
+        var userId = '<?= $model->id;?>';
+        var contactId = $(this).attr('id') ;
+        if (contactId === undefined) {
+            var customUrl = '<?= Url::to(['user-contact/create-phone']); ?>?id=' + userId;
+        } else {
+            var customUrl = '<?= Url::to(['user-contact/edit-phone']); ?>?id=' + contactId;
+        }
+        $.ajax({
+            url    : customUrl,
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#phone-content').html(response.data);
+                    $('#phone-modal .modal-dialog').css({'width': '400px'});
+                    $('#phone-modal').modal('show');
+                }
+            }
+        });
+        return false;
+    });
         
     $(document).off('click', '#qualification-grid tbody > tr').on('click', '#qualification-grid tbody > tr', function () {
         var qualificationId = $(this).data('key');
@@ -947,7 +950,7 @@ $(document).ready(function(){
         var url = '<?= Url::to(['qualification/create']); ?>?id=' + teacherId + '&type=' + type;
         qualification.modify(url);
     });
-});
+
     $(document).on('keyup', '.select2-search__field', function () {
         var searchText = $('.select2-results__option').first().text();
         var tagId = $('.select2-results__option').attr('id');

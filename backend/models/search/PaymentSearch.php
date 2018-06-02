@@ -49,7 +49,8 @@ class PaymentSearch extends Payment
         $query               = Payment::find()
             ->location($locationId)
             ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY,PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED, PaymentMethod::TYPE_GIFT_CARD]]])
-            ->notDeleted();
+            ->notDeleted()
+            ->andWhere(['invoice.isDeleted' => false]);
         $dataProvider        = new ActiveDataProvider([
             'query' => $query,
             'pagination' => false,
