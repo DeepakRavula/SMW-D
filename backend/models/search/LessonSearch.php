@@ -126,7 +126,7 @@ class LessonSearch extends Lesson
 		  ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
 ;
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_UNSCHEDULED) {
-            $query->unscheduled();
+            $query->unscheduled()->notExpired();
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_EXPIRED){
             $query->expired()->unscheduled()->andWhere(['isExploded'=>false])->groupBy('lesson.id');
         }
