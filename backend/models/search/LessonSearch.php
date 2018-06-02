@@ -127,7 +127,7 @@ class LessonSearch extends Lesson
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_UNSCHEDULED) {
             $query->unscheduled();
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_EXPIRED){
-            $query->expired()->unscheduled()->andWhere(['isExploded'=>false]);
+            $query->expired()->unscheduled()->andWhere(['isExploded'=>false])->groupBy('lesson.id');
         }
         if ($this->attendanceStatus === Lesson::STATUS_PRESENT) {
             $query->andFilterWhere(['lesson.isPresent' => true]);
