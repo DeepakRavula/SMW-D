@@ -32,6 +32,7 @@ class OpeningBalance extends ActiveRecord
         return [
 	    ['amount','required'],
             [['amount'], 'number', 'min' => 1],
+	    [['amount'],'number','numberPattern' => '/^\d+(.\d{1,2})?$/', 'message' => 'Only 2 decimal spaces allowed.'],
             [['isCredit', 'user_id'], 'safe']
         ];
     }
