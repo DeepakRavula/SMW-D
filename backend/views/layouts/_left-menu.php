@@ -340,7 +340,7 @@ echo Menu::widget([
                 ],
                 [
                     'label' => Yii::t('backend', 'Location Settings'),
-                    'icon' => '<i class="fa  fa-upload"></i>',
+                    'icon' => '<i class="fa  fa-map-marker"></i>',
                     'url' => ['/location-view'],
                     'visible' => Yii::$app->user->can('manageLocations'),
                 ]
