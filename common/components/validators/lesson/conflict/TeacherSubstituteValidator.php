@@ -28,6 +28,7 @@ class TeacherSubstituteValidator extends Validator
             ->teacherLessons($locationId, $model->teacherId)
             ->andWhere(['NOT', ['lesson.id' => $model->id]])
             ->isConfirmed()
+            ->present()
             ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
             ->all();
         if ($teacherLessons) {
