@@ -4,6 +4,7 @@ namespace common\models\query;
 
 use common\models\Student;
 use yii\db\ActiveQuery;
+use common\models\Course;
 
 /**
  * This is the ActiveQuery class for [[\common\models\Student]].
@@ -55,6 +56,7 @@ class StudentQuery extends ActiveQuery
             $query->joinWith(['course' => function ($query) use ($currentDate) {
                 $query->andWhere(['>=', 'course.endDate', $currentDate])
 		      ->andWhere(['<=', 'course.startDate', $currentDate])
+		      ->andWhere(['course.type' => Course::TYPE_REGULAR])
                     ->confirmed();
             }])
             ->notDeleted()
