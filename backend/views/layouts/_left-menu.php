@@ -80,6 +80,12 @@ echo Menu::widget([
             'visible' => Yii::$app->user->can('manageGroupLessons'),
             'active' => (isset(Yii::$app->request->queryParams['CourseSearch']['type']) && Yii::$app->request->queryParams['CourseSearch']['type'] == Lesson::TYPE_GROUP_LESSON) ? true : false,
         ],
+	[
+            'label' => Yii::t('backend', 'Unscheduled Lessons'),
+            'url' => ['unscheduled-lesson/index'],
+            'icon' => '<i class="fa fa-music"></i>',
+	    'active' => (Yii::$app->controller->id === 'unscheduled-lesson') ? true : false,
+        ],
             [
             'label' => Yii::t('backend', 'Proforma Invoices'),
             'icon' => '<i class="fa  fa-dollar"></i>',
@@ -97,6 +103,13 @@ echo Menu::widget([
             'active' => (isset(Yii::$app->request->queryParams['InvoiceSearch']['type']) && Yii::$app->request->queryParams['InvoiceSearch']['type'] == Invoice::TYPE_INVOICE) ? true : false,
             'badge' => Invoice::invoiceCount(),
             'badgeBgClass' => 'label-default'
+        ],
+        [
+            'label' => Yii::t('backend', 'Payments'),
+            'icon' => '<i class="fa  fa-dollar"></i>',
+            'url' => ['/payment/index'],
+            'visible' => Yii::$app->user->can('manageInvoices'),
+            'active' => (Yii::$app->controller->id === 'payment') ? true : false,
         ],
             [
             'label' => Yii::t('backend', 'Reports'),
@@ -334,7 +347,7 @@ echo Menu::widget([
                 ],
                 [
                     'label' => Yii::t('backend', 'Location Settings'),
-                    'icon' => '<i class="fa  fa-upload"></i>',
+                    'icon' => '<i class="fa  fa-map-marker"></i>',
                     'url' => ['/location-view'],
                     'visible' => Yii::$app->user->can('manageLocations'),
                 ]
@@ -345,8 +358,6 @@ echo Menu::widget([
             'label' => Yii::t('backend', 'Timeline'),
             'icon' => '<i class="fa fa-bell"></i>',
             'url' => ['/timeline-event/index'],
-            'badge' => LogHistory::logsCount(),
-            'badgeBgClass' => 'label-default'
         ]
     ]
 ])

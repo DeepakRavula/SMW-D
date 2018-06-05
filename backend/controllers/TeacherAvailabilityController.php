@@ -355,6 +355,7 @@ class TeacherAvailabilityController extends BaseController
                 }])
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
+                ->present()
                 ->notDeleted()
                 ->between($fromDate, $toDate)
                 ->andWhere(['lesson.teacherId' => $teacherId]);
@@ -375,6 +376,7 @@ class TeacherAvailabilityController extends BaseController
             }])
             ->scheduledOrRescheduled()
             ->isConfirmed()
+            ->present()
             ->notDeleted()
             ->andWhere(['NOT', ['lesson.id' => $lessonId]])
             ->between($fromDate, $toDate);

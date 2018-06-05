@@ -199,8 +199,6 @@ class UserForm extends Model
             $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
             $roles = Yii::$app->authManager->getRolesByUser($userProfileModel->user_id);
             $role=end($roles);
-            $userProfileModel->on(UserProfile::EVENT_AFTER_INSERT, [new UserLog(), 'create'], ['loggedUser' => $loggedUser,'role' => $role->name]);
-            $userProfileModel->trigger(UserProfile::EVENT_AFTER_INSERT);
             return !$model->hasErrors();
         }
 

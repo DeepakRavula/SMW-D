@@ -148,6 +148,11 @@ class Payment extends ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
+    public function getUserProfile()
+    {
+        return $this->hasOne(UserProfile::className(), ['user_id' => 'id'])
+            ->via('user');
+    }
     public function getLessonCredit()
     {
         return $this->hasOne(LessonPayment::className(), ['paymentId' => 'id']);

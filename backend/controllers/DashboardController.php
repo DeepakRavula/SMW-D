@@ -98,6 +98,7 @@ public function behaviors()
                           }])
 			 			->confirmed()
 						->overlap($from, $to)
+				  ->andWhere(['course.type' => Course::TYPE_REGULAR])
 						->location($locationId);
 					}]);
                 }])

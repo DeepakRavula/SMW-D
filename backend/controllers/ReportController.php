@@ -4,7 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Payment;
-use backend\models\search\PaymentSearch;
+use backend\models\search\PaymentReportSearch;
 use backend\models\search\ReportSearch;
 use backend\models\search\StudentBirthdaySearch;
 use backend\models\search\InvoiceLineItemSearch;
@@ -115,14 +115,14 @@ class ReportController extends BaseController
     }
     public function actionPayment()
     {
-        $searchModel = new PaymentSearch();
+        $searchModel = new PaymentReportSearch();
         $currentDate = new \DateTime();
         $searchModel->fromDate = $currentDate->format('M d,Y');
         $searchModel->toDate = $currentDate->format('M d,Y');
         $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         $request = Yii::$app->request;
         if ($searchModel->load($request->get())) {
-            $paymentRequest = $request->get('PaymentSearch');
+            $paymentRequest = $request->get('PaymentReportSearch');
             $searchModel->dateRange = $paymentRequest['dateRange'];
         }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);

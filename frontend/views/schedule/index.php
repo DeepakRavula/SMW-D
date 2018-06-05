@@ -160,8 +160,8 @@ $this->title = 'Schedule ';
             });
             
             $('.fc-today-button').click(function(){
-                var date = Date();
-                $('#schedule-go-to-datepicker').val(moment(date).format('MMM D, Y'));
+                $('#schedule-go-to-datepicker').val(moment(Date()).format('MMM D, Y'));
+                var date = $('#schedule-go-to-datepicker').val();
                 schedule.fetchHolidayName(moment(date));
                 schedule.loadCalendar(date);
                 return false;

@@ -36,7 +36,7 @@ use yii\helpers\Url;
     <div class="row">
     <div class="form-group pull-right">
     <?php echo Html::a('Cancel', '', ['class' => 'm-r-10 btn btn-default invoice-detail-cancel']) ?>
-        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'm-r-10 btn btn-info', 'name' => 'signup-button']) ?>
+        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'm-r-10 btn btn-info', 'name' => 'invoice-detail-button']) ?>
     </div>
     </div>
     </div>

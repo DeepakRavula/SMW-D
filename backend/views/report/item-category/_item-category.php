@@ -241,8 +241,12 @@ GridView::widget([
     'dataProvider' => $dataProvider,
     'options' => ['class' => 'payment-table'],
     'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+        
         $url = Url::to(['invoice/view', 'id' => $model->invoice->id]);
         $data = ['data-url' => $url];
+        if ($searchModel->groupByMethod) {
+            $data = array_merge($data, ['class' => 'click-disable']);
+    }
         return $data;
     },
     'summary' => false,

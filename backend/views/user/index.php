@@ -128,7 +128,7 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
                         'allowClear'=>true,
             ],
         ],
-                'filterInputOptions'=>['placeholder'=>'firstname'],
+                'filterInputOptions'=>['placeholder'=>'First Name'],
                 'format'=>'raw'
             ],
             [
@@ -147,7 +147,7 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
                         'allowClear'=>true,
             ],
         ],
-                'filterInputOptions'=>['placeholder'=>'lastname'],
+                'filterInputOptions'=>['placeholder'=>'Last Name'],
                 'format'=>'raw'
             ],
             'email',
