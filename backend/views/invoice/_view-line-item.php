@@ -84,16 +84,7 @@ use common\models\Lesson;
                 $amount = 0;
                 if (!$data->isGroupLesson()) {
                     if (!$data->invoice->isDeleted() && $data->proFormaLesson) {
-                        if ($data->proFormaLesson->isCanceled()) {
-                            $lessons = Lesson::find()
-                                ->descendantsOf($data->proFormaLesson->id)
-                                ->all();
-                            foreach ($lessons as $lesson) {
-                                $amount += $lesson->getCreditAppliedAmount($lesson->enrolment->id);
-                            }
-                        } else {
-                            $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
-                        }
+                        $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
                     }
                 } else {
                     $amount = $data->lesson->getCreditAppliedAmount($data->enrolment->id) ?? 0;

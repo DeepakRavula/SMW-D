@@ -59,6 +59,11 @@ class LessonQuery extends \yii\db\ActiveQuery
 
         return $this;
     }
+
+    public function deleted()
+    {
+        return $this->andWhere(['lesson.isDeleted' => true]);
+    }
     
     public function notConfirmed()
     {

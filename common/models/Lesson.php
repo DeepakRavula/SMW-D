@@ -232,6 +232,31 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return (int) $this->status === self::STATUS_CANCELED;
     }
+
+    public function getLeafs()
+    {
+        $leafIds = [];
+        $childrens = self::find()->childrenOf($this->id)->all();
+        $lessons = self::find()->where(['id' => $this->id])->all();
+        if ($childrens) {
+            $leafIds = $this->getNestedLeafs($childrens, $leafIds);
+            $lessons = self::find()->where(['id' => $leafIds])->all();
+        }
+        return $lessons;
+    }
+
+    public function getNestedLeafs($childrens, $leafIds)
+    {
+        foreach ($childrens as $parent) {
+            $children = self::find()->childrenOf($parent->id)->all();
+            if (!$children) {
+                $leafIds[] = $parent->id;
+            } else {
+                $leafIds = $this->getNestedLeafs($children, $leafIds);
+            }
+        }
+        return $leafIds;
+    }
     
     public function cancel()
     {
@@ -261,6 +286,11 @@ class Lesson extends \yii\db\ActiveRecord
     public function isDeletable()
     {
         return !$this->isDeleted;
+    }
+
+    public function getLastHierarchy()
+    {
+        return $this->hasOne(LessonHierarchy::className(), ['lessonId' => 'id'])->orderBy(['depth' => SORT_DESC]);
     }
 
     public function canExplode()
@@ -558,17 +588,12 @@ class Lesson extends \yii\db\ActiveRecord
     public function getProFormaLineItem()
     {
         if ($this->hasProFormaInvoice()) {
-            if ($this->isExploded) {
-                $lesson = $this->parent()->one();
-            } else {
-                $lesson = $this;
-            }
-            $paymentCycleLessonId = $lesson->paymentCycleLesson->id;
+            $paymentCycleLessonId = $this->paymentCycleLesson->id;
             return InvoiceLineItem::find()
                     ->notDeleted()
-                    ->andWhere(['invoice_id' => $lesson->proFormaInvoice->id])
+                    ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
-                    ->joinWith(['lineItemPaymentCycleLesson' => function ($query) use ($paymentCycleLessonId) {
+                    ->joinWith(['lineItemPaymentCycleLessons' => function ($query) use ($paymentCycleLessonId) {
                         $query->andWhere(['paymentCycleLessonId' => $paymentCycleLessonId]);
                     }])
                     ->one();
@@ -693,7 +718,12 @@ class Lesson extends \yii\db\ActiveRecord
     public function afterSoftDelete()
     {
         if (!$this->lessonCredit && $this->proFormaLineItem) {
-            $this->proFormaLineItem->delete();
+            if ($this->isExploded) {
+                $this->proFormaLineItem->unit = $this->proFormaLineItem->unit - $this->unit;
+                $this->proFormaLineItem->save();
+            } else {
+                $this->proFormaLineItem->delete();
+            }
         }
         return true;
     }
@@ -975,11 +1005,11 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getSplitedAmount()
     {
-        $parentLesson = $this->parent()->one();
-        $spiltParts = self::find()
-                ->descendantsOf($parentLesson->id)
-                ->all();
-        return $parentLesson->proFormaLineItem->itemTotal / count($spiltParts);
+        $rootLesson = $this->rootLesson;
+        if (!$rootLesson->proFormaLineItem) {
+            echo $rootLesson->id;die;
+        }
+        return $rootLesson->proFormaLineItem->itemTotal / ($rootLesson->durationSec / self::DEFAULT_EXPLODE_DURATION_SEC);
     }
 
     public function canInvoice()

@@ -53,7 +53,7 @@ class LessonReschedule extends Model
         $oldLesson->makeAsChild($rescheduledLesson);
         if ($oldLesson->isPrivate()) {
             if ($oldLesson->hasLessonCredit($oldLesson->enrolment->id)) {
-                if ($rescheduledLesson->isExploded) {
+                if ($rescheduledLesson->isExploded && !$oldLesson->isExploded) {
                     $amount = $oldLesson->getCreditAppliedAmount($oldLesson->enrolment->id) /
                         ($oldLesson->durationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC);
                 } else {
@@ -72,7 +72,8 @@ class LessonReschedule extends Model
                 $lineItemLesson = $oldLesson->proFormaLineItem->lineItemLesson;
                 $lineItemLesson->lessonId = $this->rescheduledLessonId;
                 $lineItemLesson->save();
-            } else if (!$rescheduledLesson->isExploded) {
+            }
+            if (!$oldLesson->isExtra()) {
                 $paymentCycleLesson = new PaymentCycleLesson();
                 $oldPaymentCycleLesson = PaymentCycleLesson::findOne(['lessonId' => $this->lessonId]);
                 if ($oldPaymentCycleLesson) {
@@ -80,9 +81,11 @@ class LessonReschedule extends Model
                     $paymentCycleLesson->lessonId = $this->rescheduledLessonId;
                     $paymentCycleLesson->save();
                     if ($oldLesson->proFormaLineItem) {
-                        $lineItemPaymentCycleLesson = $oldLesson->proFormaLineItem->lineItemPaymentCycleLesson;
-                        $lineItemPaymentCycleLesson->paymentCycleLessonId = $paymentCycleLesson->id;
-                        $lineItemPaymentCycleLesson->save();
+                        if (($oldLesson->isExploded && $rescheduledLesson->isExploded) || (!$oldLesson->isExploded && !$rescheduledLesson->isExploded)) {
+                            $lineItemPaymentCycleLesson = $oldLesson->proFormaLineItem->lineItemPaymentCycleLesson;
+                            $lineItemPaymentCycleLesson->paymentCycleLessonId = $paymentCycleLesson->id;
+                            $lineItemPaymentCycleLesson->save();
+                        }
                     }
                 }
             }

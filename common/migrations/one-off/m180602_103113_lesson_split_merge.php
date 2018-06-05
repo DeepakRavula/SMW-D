@@ -4,6 +4,7 @@ use yii\db\Migration;
 use common\models\Lesson;
 use common\models\PaymentCycleLesson;
 use common\models\InvoiceItemPaymentCycleLesson;
+use common\models\Invoice;
 
 /**
  * Class m180602_103113_lesson_split_merge
@@ -15,35 +16,26 @@ class m180602_103113_lesson_split_merge extends Migration
      */
     public function safeUp()
     {
+        $ids = [7235, 7236, 7237, 7238, 7240, 7241, 7744, 7745, 7913, 7914];
+        $pfis = Invoice::find()
+            ->andWhere(['id' => $ids])
+            ->all();
+        foreach ($pfis as $pfi) {
+            $pfi->delete();
+        }
         $lessons = Lesson::find()
             ->location([15, 14])
             ->isConfirmed()
             ->unmergedSplit()
             ->all();
         foreach ($lessons as $lesson) {
-            if ($lesson->hasRotLesson()) {
-                $rootLesson = $lesson->rootLessson;
+            if ($lesson->hasRootLesson()) {
+                $rootLesson = $lesson->rootLesson;
                 if (!$lesson->hasPaymentCycleLesson()) {
                     $pclesson = new PaymentCycleLesson();
                     $pclesson->lessonId = $lesson->id;
-                    $pclesson->paymentCycleId = $rootLessson->paymentCycle->id;
+                    $pclesson->paymentCycleId = $rootLesson->paymentCycle->id;
                     $pclesson->save();
-                }
-                if ($rootLesson->hasProformaInvoice()) {
-                    $lipclesson = new InvoiceItemPaymentCycleLesson();
-                    $lipclesson->invoiceLineItemId = $rootLesson->proformaLineItem->id;
-                    $lipclesson->paymentCycleLessonId = $lesson->paymentCycleLesson->id;
-                    $lipclesson->save();
-                }
-            }
-            if ($rootLesson->hasCreditApplied($rootLesson->enrolment->id) && !$lesson->hasCreditApplied($lesson->enrolment->id)) {
-                $leafs = Lesson::find()
-                    ->descendantsOf($rootLesson->id)
-                    ->all();
-                foreach ($leafs as $leaf) {
-                    if (!$leaf->hasCreditApplied($leaf->enrolment->id)) {
-                        
-                    }
                 }
             }
         }
