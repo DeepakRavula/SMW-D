@@ -37,7 +37,7 @@ $boxTools = $this->render('_invoice-buttons', [
     'options' => ['class' => 'col-md-12'],
     'summary' => false,
     'emptyText' => false,
-    'tableOptions' => ['class' => 'table table-bordered'],
+    'tableOptions' => ['class' => 'table table-bordered table table-condensed'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'rowOptions' => function ($model, $key, $index, $grid) {
         $url = Url::to(['invoice/view', 'id' => $model->id]);
@@ -99,7 +99,7 @@ $boxTools = $this->render('_invoice-buttons', [
 		if(invoice_count > 10) {
 			$(".more-invoice").show();
 			var dateRange = "";
-			var customer = '<?= $userModel->userProfile->firstname; ?>' ;
+			var customer = '<?= $userModel->id; ?>' ;
 			var type = <?= Invoice::TYPE_INVOICE; ?>;
 			var params = $.param({ 'InvoiceSearch[customer]': customer, 'InvoiceSearch[type]': type, 'InvoiceSearch[invoiceDateRange]': dateRange });
 			var url = '<?= Url::to(['invoice/index']); ?>?' + params;
