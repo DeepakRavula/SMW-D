@@ -1,8 +1,7 @@
 <?php
 
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
-
+use yii\bootstrap\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */

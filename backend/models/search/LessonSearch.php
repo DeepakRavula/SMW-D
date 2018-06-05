@@ -126,7 +126,9 @@ class LessonSearch extends Lesson
 		  ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
 ;
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_UNSCHEDULED) {
-            $query->unscheduled();
+            $query->unscheduled()->notExpired();
+        } elseif ((int)$this->lessonStatus === Lesson::STATUS_EXPIRED){
+            $query->expired()->unscheduled()->groupBy('lesson.id');
         }
         if ($this->attendanceStatus === Lesson::STATUS_PRESENT) {
             $query->andFilterWhere(['lesson.isPresent' => true]);
@@ -182,7 +184,8 @@ class LessonSearch extends Lesson
             Lesson::STATUS_COMPLETED => 'Completed',
             Lesson::STATUS_SCHEDULED => 'Scheduled',
             Lesson::STATUS_RESCHEDULED => 'Rescheduled',
-            Lesson::STATUS_UNSCHEDULED => 'Unscheduled'
+            Lesson::STATUS_UNSCHEDULED => 'Unscheduled',
+	    Lesson::STATUS_EXPIRED => 'Expired'
         ];
     }
     public static function invoiceStatuses()

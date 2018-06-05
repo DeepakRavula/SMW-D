@@ -104,6 +104,13 @@ echo Menu::widget([
             'badge' => Invoice::invoiceCount(),
             'badgeBgClass' => 'label-default'
         ],
+        [
+            'label' => Yii::t('backend', 'Payments'),
+            'icon' => '<i class="fa  fa-dollar"></i>',
+            'url' => ['/payment/index'],
+            'visible' => Yii::$app->user->can('manageInvoices'),
+            'active' => (Yii::$app->controller->id === 'payment') ? true : false,
+        ],
             [
             'label' => Yii::t('backend', 'Reports'),
             'url' => '#',
@@ -340,7 +347,7 @@ echo Menu::widget([
                 ],
                 [
                     'label' => Yii::t('backend', 'Location Settings'),
-                    'icon' => '<i class="fa  fa-upload"></i>',
+                    'icon' => '<i class="fa  fa-map-marker"></i>',
                     'url' => ['/location-view'],
                     'visible' => Yii::$app->user->can('manageLocations'),
                 ]

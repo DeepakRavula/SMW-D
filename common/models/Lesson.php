@@ -38,6 +38,7 @@ class Lesson extends \yii\db\ActiveRecord
     const STATUS_COMPLETED = 3;
     const STATUS_CANCELED = 4;
     const STATUS_UNSCHEDULED = 5;
+    const STATUS_EXPIRED = 10;
     const DEFAULT_MERGE_DURATION = '00:15:00';
     const DEFAULT_LESSON_DURATION = '00:15:00';
     const DEFAULT_EXPLODE_DURATION_SEC = 900;
@@ -605,7 +606,10 @@ class Lesson extends \yii\db\ActiveRecord
     public function getStatus()
     {
         $status = null;
-        switch ($this->status) {
+	 if ($this->isExpired()) {
+		$status = 'Expired';
+		}
+		switch ($this->status) {
             case self::STATUS_SCHEDULED:
                 if (!$this->isCompleted()) {
                     $status = 'Scheduled';
@@ -624,12 +628,12 @@ class Lesson extends \yii\db\ActiveRecord
                 }
             break;
             case self::STATUS_UNSCHEDULED:
-                $status = 'Unscheduled';
+		 if (!$this->isExpired()) {
+                $status = 'Unscheduled';	    
                 if ($this->isExploded) {
                     $status .= ' (Exploded)';
-                } elseif ($this->isExpired()) {
-                    $status .= ' (Expired)';
-                }
+                } 
+		    }
             break;
         }
 
