@@ -725,7 +725,7 @@ class Lesson extends \yii\db\ActiveRecord
             if (!$this->hasCreditApplied($this->enrolment->id)) {
                 $this->proFormaLineItem->delete();
             } else if (!$this->hasCreditUsed($this->enrolment->id)) {
-                $this->addLessonCreditInvoice();
+                $invoice = $this->addLessonCreditInvoice();
                 $payment = new Payment();
                 $payment->amount = $this->getLessonCreditAmount($this->enrolment->id);
                 $invoice->addPayment($this, $payment, $this->enrolment);
