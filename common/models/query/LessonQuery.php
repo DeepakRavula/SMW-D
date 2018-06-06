@@ -59,6 +59,11 @@ class LessonQuery extends \yii\db\ActiveQuery
 
         return $this;
     }
+
+    public function deleted()
+    {
+        return $this->andWhere(['lesson.isDeleted' => true]);
+    }
     
     public function notConfirmed()
     {
@@ -91,16 +96,34 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['lesson.isExploded' => true]);
     }
 
+    public function unmergedSplit()
+    {
+        return $this->andWhere(['lesson.isExploded' => true])
+            ->joinWith(['lessonSplitUsage' => function ($query) {
+            $query->andFilterWhere(['lesson_split_usage.id' => null]);
+        }]);
+    }
+
+    public function mergedSplit()
+    {
+        return $this->andWhere(['lesson.isExploded' => true])
+            ->joinWith(['lessonSplitUsage' => function ($query) {
+            $query->andWhere(['NOT', ['lesson_split_usage.id' => null]]);
+        }]);
+    }
+
     public function unscheduled()
     {
         return $this->andWhere(['lesson.status' => Lesson::STATUS_UNSCHEDULED]);
     }
+
     public function expired()
     {
         return $this->joinWith(['privateLesson' => function ($query) {
             $query->andWhere(['<', 'DATE(expiryDate)', (new \DateTime())->format('Y-m-d')]);
         }]);
     }
+
     public function notRescheduled()
     {
         return $this->andWhere(['NOT', ['lesson.status' => Lesson::STATUS_RESCHEDULED]]);
@@ -274,10 +297,12 @@ class LessonQuery extends \yii\db\ActiveQuery
             ->notDeleted();
         return $this;
     }
+
     public function isConfirmed()
     {
         return $this->andWhere(['lesson.isConfirmed' => true]);
     }
+
     public function enrolled()
     {
         $this->joinWith(['course' => function ($query) {
@@ -381,7 +406,7 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['DATE(lesson.date)' => $date]);
     }
     
-     public function notExpired()
+    public function notExpired()
     {
         return $this->joinWith(['privateLesson' => function ($query) {
             $query->andWhere(['>', 'DATE(expiryDate)', (new \DateTime())->format('Y-m-d')]);

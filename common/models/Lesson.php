@@ -233,6 +233,31 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return (int) $this->status === self::STATUS_CANCELED;
     }
+
+    public function getLeafs()
+    {
+        $leafIds = [];
+        $childrens = self::find()->childrenOf($this->id)->all();
+        $lessons = self::find()->where(['id' => $this->id])->all();
+        if ($childrens) {
+            $leafIds = $this->getNestedLeafs($childrens, $leafIds);
+            $lessons = self::find()->where(['id' => $leafIds])->all();
+        }
+        return $lessons;
+    }
+
+    public function getNestedLeafs($childrens, $leafIds)
+    {
+        foreach ($childrens as $parent) {
+            $children = self::find()->childrenOf($parent->id)->all();
+            if (!$children) {
+                $leafIds[] = $parent->id;
+            } else {
+                $leafIds = $this->getNestedLeafs($children, $leafIds);
+            }
+        }
+        return $leafIds;
+    }
     
     public function cancel()
     {
@@ -249,7 +274,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function getFullDuration()
     {
         $duration = $this->duration;
-        foreach ($this->extendedLessons as $extendedLesson) {
+        foreach ($this->usedLessonSplits as $extendedLesson) {
             $additionalDuration = new \DateTime($extendedLesson->lesson->duration);
             $lessonDuration = new \DateTime($duration);
             $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
@@ -261,14 +286,18 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isDeletable()
     {
-        return !$this->isDeleted;
+        return !$this->isDeleted && !$this->hasInvoice() && $this->isPrivate();
+    }
+
+    public function getLastHierarchy()
+    {
+        return $this->hasOne(LessonHierarchy::className(), ['lessonId' => 'id'])->orderBy(['depth' => SORT_DESC]);
     }
 
     public function canExplode()
     {
-        return false;
         return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded
-            && !$this->isExpired() && !$this->isExtra();
+            && !$this->isExpired() && !$this->isExtra() && !$this->hasInvoice();
     }
 
     public function getEnrolment()
@@ -294,9 +323,15 @@ class Lesson extends \yii\db\ActiveRecord
             ->via('enrolment');
     }
 
-    public function getExtendedLessons()
+    public function getExtendedLesson()
     {
-        return $this->hasMany(LessonSplitUsage::className(), ['extendedLessonId' => 'id']);
+        return $this->hasOne(Lesson::className(), ['id' => 'extendedLessonId'])
+            ->via('lessonSplitUsage');
+    }
+
+    public function isExtendedLesson()
+    {
+        return !empty($this->usedLessonSplits);
     }
 
     public function getCourse()
@@ -339,18 +374,18 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getPaymentCycleLesson()
     {
-        if ($this->isExploded) {
-            $lesson = $this->parent()->one();
-        } else {
-            $lesson = $this;
-        }
-        return $lesson->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id'])
+        return $this->hasOne(PaymentCycleLesson::className(), ['lessonId' => 'id'])
             ->onCondition(['payment_cycle_lesson.isDeleted' => false]);
     }
 
-    public function getLessonSplitsUsage()
+    public function getLessonSplitUsage()
     {
-        return $this->hasMany(LessonSplitUsage::className(), ['lessonId' => 'id']);
+        return $this->hasOne(LessonSplitUsage::className(), ['lessonId' => 'id']);
+    }
+
+    public function getUsedLessonSplits()
+    {
+        return $this->hasMany(LessonSplitUsage::className(), ['extendedLessonId' => 'id']);
     }
 
     public function getBulkRescheduleLesson()
@@ -408,6 +443,11 @@ class Lesson extends \yii\db\ActiveRecord
     public function getRootLesson()
     {
         return self::find()->ancestorsOf($this->id)->orderBy(['id' => SORT_ASC])->one();
+    }
+
+    public function hasRootLesson()
+    {
+        return !empty($this->rootLesson);
     }
  
     public function getProFormaInvoice()
@@ -472,6 +512,11 @@ class Lesson extends \yii\db\ActiveRecord
             ->andWhere(['teacher_id' => $this->teacherId, 'program_id' => $this->course->programId])
             ->one();
         return !empty($qualification->rate) ? $qualification->rate : 0.00;
+    }
+
+    public function hasMerged()
+    {
+        return !empty($this->lessonSplitUsage);
     }
 
     public function getReschedule()
@@ -544,17 +589,12 @@ class Lesson extends \yii\db\ActiveRecord
     public function getProFormaLineItem()
     {
         if ($this->hasProFormaInvoice()) {
-            if ($this->isExploded) {
-                $lesson = $this->parent()->one();
-            } else {
-                $lesson = $this;
-            }
-            $paymentCycleLessonId = $lesson->paymentCycleLesson->id;
+            $paymentCycleLessonId = $this->paymentCycleLesson->id;
             return InvoiceLineItem::find()
                     ->notDeleted()
-                    ->andWhere(['invoice_id' => $lesson->proFormaInvoice->id])
+                    ->andWhere(['invoice_id' => $this->proFormaInvoice->id])
                     ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
-                    ->joinWith(['lineItemPaymentCycleLesson' => function ($query) use ($paymentCycleLessonId) {
+                    ->joinWith(['lineItemPaymentCycleLessons' => function ($query) use ($paymentCycleLessonId) {
                         $query->andWhere(['paymentCycleLessonId' => $paymentCycleLessonId]);
                     }])
                     ->one();
@@ -681,8 +721,15 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function afterSoftDelete()
     {
-        if (!$this->lessonCredit && $this->proFormaLineItem) {
-            $this->proFormaLineItem->delete();
+        if ($this->isPrivate() && $this->proFormaLineItem) {
+            if (!$this->hasCreditApplied($this->enrolment->id)) {
+                $this->proFormaLineItem->delete();
+            } else if (!$this->hasCreditUsed($this->enrolment->id)) {
+                $this->addLessonCreditInvoice();
+                $payment = new Payment();
+                $payment->amount = $this->getLessonCreditAmount($this->enrolment->id);
+                $invoice->addPayment($this, $payment, $this->enrolment);
+            }
         }
         return true;
     }
@@ -729,8 +776,7 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function canMerge()
     {
-        return false;
-        if ($this->enrolment->hasExplodedLesson() && !$this->isExploded && !$this->isExtra()) {
+        if ($this->enrolment->hasExplodedLesson() && !$this->isExploded && !$this->isExtra() && !$this->hasInvoice() && !$this->isCanceled() && !$this->isUnscheduled()) {
             $lessonDuration = new \DateTime($this->duration);
             $date = new \DateTime($this->date);
             $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
@@ -855,7 +901,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getUnit()
     {
-        if ($this->extendedLessons) {
+        if ($this->usedLessonSplits) {
             $unit = $this->fullDuration;
         } else {
             $unit = $this->duration;
@@ -884,6 +930,16 @@ class Lesson extends \yii\db\ActiveRecord
                 ->notDeleted()
                 ->sum('amount');
     }
+
+    public function getCreditAppliedPayment($enrolmentId)
+    {
+        return Payment::find()
+                ->joinWith('lessonCredit')
+                ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
+                ->creditApplied()
+                ->notDeleted()
+                ->all();
+    }
     
     public function getCreditUsedAmount($enrolmentId)
     {
@@ -909,10 +965,20 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return !empty($this->getCreditUsedPayment($enrolmentId));
     }
+
+    public function hasCreditApplied($enrolmentId)
+    {
+        return !empty($this->getCreditAppliedPayment($enrolmentId));
+    }
+
+    public function hasPaymentCycleLesson()
+    {
+        return !empty($this->paymentCycleLesson);
+    }
     
     public function hasLessonCredit($enrolmentId)
     {
-        return $this->getLessonCreditAmount($enrolmentId) > 0;
+        return $this->getLessonCreditAmount($enrolmentId) > 0.01;
     }
 
     public function hasProFormaInvoice()
@@ -945,11 +1011,11 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getSplitedAmount()
     {
-        $parentLesson = $this->parent()->one();
-        $spiltParts = self::find()
-                ->descendantsOf($parentLesson->id)
-                ->all();
-        return $parentLesson->proFormaLineItem->itemTotal / count($spiltParts);
+        $rootLesson = $this->rootLesson;
+        if (!$rootLesson->proFormaLineItem) {
+            echo $rootLesson->id;die;
+        }
+        return $rootLesson->proFormaLineItem->itemTotal / ($rootLesson->durationSec / self::DEFAULT_EXPLODE_DURATION_SEC);
     }
 
     public function canInvoice()
@@ -971,12 +1037,12 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function takePayment()
     {
-        if(!$this->hasProFormaInvoice()) {
+        if (!$this->hasProFormaInvoice()) {
             if (!$this->paymentCycle->hasProFormaInvoice()) {
                 $this->paymentCycle->createProFormaInvoice();
             } else {
-                $this->addPrivateLessonLineItem($this->paymentCycle->proFormaInvoice);
-                $this->paymentCycle->proFormaInvoice->save();
+                $lineItem = $this->addPrivateLessonLineItem($this->paymentCycle->proFormaInvoice);
+                $lineItem->invoice->save();
             }
         } else {
             $this->proFormaInvoice->makeInvoicePayment($this);

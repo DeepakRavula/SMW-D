@@ -551,10 +551,10 @@ class InvoiceController extends BaseController
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         if ($paymentCycle->canRaiseProformaInvoice()) {
-	    $invoice = $paymentCycle->createProFormaInvoice();
+            $invoice = $paymentCycle->createProFormaInvoice();
             if ($invoice) {
-		return $this->redirect(['view', 'id' => $invoice->id]);
-	    }
+                return $this->redirect(['view', 'id' => $invoice->id]);
+            }
         } else {
             Yii::$app->session->setFlash('alert', [
                 'options' => ['class' => 'alert-danger'],
