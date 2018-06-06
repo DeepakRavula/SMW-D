@@ -5,7 +5,6 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 
 ?>
-<?php if (!$searchModel->summarizeResults) : ?>
     <?php
     $columns = [
             [
@@ -84,47 +83,6 @@ use yii\helpers\Html;
     ];
 
     ?>   
-<?php else : ?>
-    <?php
-    $columns = [
-        'invoice.date:date',
-            [
-            'label' => 'Subtotal',
-            'value' => function ($data) {
-                return $data->getTaxLineItemAmount($data->invoice->date);
-            },
-            'format' => ['decimal', 2],
-            'contentOptions' => ['class' => 'text-right'],
-            'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
-        ],
-            [
-            'label' => 'Tax',
-            'value' => function ($data) {
-                return $data->getTaxLineItemTotal($data->invoice->date);
-            },
-            'format' => ['decimal', 2],
-            'contentOptions' => ['class' => 'text-right'],
-            'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
-        ],
-            [
-            'label' => 'Total',
-            'value' => function ($data) {
-                return $data->getTotal($data->invoice->date);
-            },
-            'format' => ['decimal', 2],
-            'contentOptions' => ['class' => 'text-right'],
-            'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
-        ],
-    ];
-
-    ?>
-    <?php endif; ?>
 <div class="box">
     <?php
     echo GridView::widget([
