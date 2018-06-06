@@ -169,7 +169,6 @@ class PrintController extends BaseController
         if (!empty($invoiceSearch)) {
             $invoiceSearchModel->dateRange = $invoiceSearch['dateRange'];
             list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
-            $invoiceSearchModel->summariseReport = $invoiceSearch['summariseReport'];
         }
         $timeVoucher = InvoiceLineItem::find()
                         ->notDeleted()
@@ -179,12 +178,8 @@ class PrintController extends BaseController
             }])
             ->joinWith(['lesson' => function ($query) use ($model) {
                 $query->andWhere(['lesson.teacherId' => $model->id]);
-            }]);
-        if ($invoiceSearchModel->summariseReport) {
-            $timeVoucher->groupBy(['invoice.id','DATE(invoice.date)']);
-        } else {
-            $timeVoucher->orderBy(['invoice.date' => SORT_ASC]);
-        }
+            }])
+			->orderBy(['invoice.date' => SORT_ASC]);
             
         $timeVoucherDataProvider = new ActiveDataProvider([
             'query' => $timeVoucher,

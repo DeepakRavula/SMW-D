@@ -393,7 +393,7 @@ class UserController extends BaseController
             'query' => $groupPrograms,
         ]);
     }
-    protected function getTimeVoucherDataProvider($id, $fromDate, $toDate, $summariseReport)
+    protected function getTimeVoucherDataProvider($id, $fromDate, $toDate)
     {
         $timeVoucher = InvoiceLineItem::find()
                                         ->notDeleted()
@@ -403,12 +403,8 @@ class UserController extends BaseController
             }])
             ->joinWith(['lesson' => function ($query) use ($id) {
                 $query->andWhere(['lesson.teacherId' => $id]);
-            }]);
-        if ($summariseReport) {
-            $timeVoucher->groupBy(['invoice.id','invoice.invoice_number']);
-        } else {
-            $timeVoucher->orderBy(['invoice.date' => SORT_ASC]);
-        }
+            }])
+           ->orderBy(['invoice.date' => SORT_ASC]);
             
         return new ActiveDataProvider([
             'query' => $timeVoucher,
@@ -478,7 +474,6 @@ class UserController extends BaseController
         if (!empty($invoiceSearch)) {
             $invoiceSearchModel->dateRange = $invoiceSearch['dateRange'];
             list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
-            $invoiceSearchModel->summariseReport = $invoiceSearch['summariseReport'];
         }
 
         return $this->render('view', [
@@ -507,7 +502,7 @@ class UserController extends BaseController
             'teachersAvailabilities' => $this->getTeacherAvailabilities($id, $locationId),
             'privateQualificationDataProvider' => $this->getPrivateQualificationDataProvider($id),
             'groupQualificationDataProvider' => $this->getGroupQualificationDataProvider($id),
-            'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate, $invoiceSearchModel->summariseReport),
+            'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate),
             'unavailability' => $this->getUnavailabilityDataProvider($id),
             'logDataProvider' => $this->getLogDataProvider($id),
 	        'invoiceCount' => $this->getInvoiceCount($model, $locationId),
