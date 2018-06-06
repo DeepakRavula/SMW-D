@@ -1037,12 +1037,12 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function takePayment()
     {
-        if(!$this->hasProFormaInvoice()) {
+        if (!$this->hasProFormaInvoice()) {
             if (!$this->paymentCycle->hasProFormaInvoice()) {
                 $this->paymentCycle->createProFormaInvoice();
             } else {
-                $this->addPrivateLessonLineItem($this->paymentCycle->proFormaInvoice);
-                $this->paymentCycle->proFormaInvoice->save();
+                $lineItem = $this->addPrivateLessonLineItem($this->paymentCycle->proFormaInvoice);
+                $lineItem->invoice->save();
             }
         } else {
             $this->proFormaInvoice->makeInvoicePayment($this);
