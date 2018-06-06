@@ -38,7 +38,9 @@ class m180605_121246_lesson_credit_maping extends Migration
                         $amount = $leaf->getLessonCreditAmount($leaf->enrolment->id);
                     }
                     $payment->amount = $amount;
-                    $leaf->addPayment($lesson, $payment);
+                    if ($leaf->id != $lesson->id) {
+                        $leaf->addPayment($lesson, $payment);
+                    }
                 }
             }
         }
