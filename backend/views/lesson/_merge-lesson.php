@@ -13,6 +13,8 @@ $enrolmentId = $model->enrolment->id;
 $locationId = $model->course->locationId;
 $lessons = Lesson::find()
         ->split()
+        ->notCanceled()
+        ->notDeleted()
         ->unscheduled()
         ->enrolment($enrolmentId);
 $splitLessonDataProvider = new ActiveDataProvider([
