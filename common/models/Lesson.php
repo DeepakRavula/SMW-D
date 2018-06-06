@@ -286,7 +286,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isDeletable()
     {
-        return !$this->isDeleted;
+        return !$this->isDeleted && !$this->hasInvoice() && $this->isPrivate();
     }
 
     public function getLastHierarchy()

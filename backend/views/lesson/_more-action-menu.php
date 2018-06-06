@@ -18,10 +18,11 @@ use yii\helpers\Url;
                 <?php if ($model->canMerge() && $loggedUser->canMerge) : ?>
                     <li><a id="merge-lesson" href="#">Merge</a></li>
                 <?php endif; ?>
+                <?php if ($model->isDeletable()) : ?>
+                    <li><a id="lesson-delete" href="#">Delete</a></li>
+                <?php endif; ?>
             <?php endif; ?>
-            <?php if ($model->isDeletable()) : ?>
-                <li><a id="lesson-delete" href="#">Delete</a></li>
-            <?php endif; ?>
+            
         </ul>
     </div>
 </div>

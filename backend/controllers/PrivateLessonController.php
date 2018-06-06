@@ -129,17 +129,21 @@ class PrivateLessonController extends BaseController
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        if (($model->hasProFormaInvoice() && $model->proFormaInvoice->hasPayments()) || ($model->hasInvoice() && $model->invoice->hasPayments())) {
+        if (!$model->isDeletable()) {
             $response = [
                 'status' => false,
-                'message' => 'Lesson has payments. You can\'t delete this lesson.',
+                'message' => 'You can\'t delete this lesson.',
             ];
         } else {
+            $message = 'Lesson has been deleted successfully!';
+            if ($model->hasLessonCredit($model->enrolment->id)) {
+                $message .= ' Lesson credits transfered to new credit invoice';
+            }
             $model->delete();
             $response = [
                 'status' => true,
                 'url' => Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]),
-                'message' => 'Lesson has been deleted successfully',
+                'message' => $message
             ];
         }
 
