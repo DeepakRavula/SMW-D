@@ -76,25 +76,7 @@ use common\models\Lesson;
             }
         ]);
     }
-    if ($model->isProformaInvoice()) {
-        array_push($columns, [
-            'label' => 'Payment',
-            'format' => 'currency',
-            'value' => function ($data) {
-                $amount = 0;
-                if (!$data->isGroupLesson()) {
-                    if (!$data->invoice->isDeleted() && $data->proFormaLesson) {
-                        $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
-                    }
-                } else {
-                    $amount = $data->lesson->getCreditAppliedAmount($data->enrolment->id) ?? 0;
-                }
-                return Yii::$app->formatter->asDecimal($amount);
-            },
-            'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;']
-        ]);
-    }
+
     array_push($columns, [
         'label' => 'Price',
         'format' => 'currency',
