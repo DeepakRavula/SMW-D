@@ -16,7 +16,7 @@ $this->title = $model->course->program->name;
 $this->params['label'] = $this->render('_title', [
     'model' => $model,
 ]);
-$this->params['action-button'] = $this->render('_buttons', [
+$this->params['action-button'] = $this->render('_more-action-menu', [
     'model' => $model,
 ]);
 ?>

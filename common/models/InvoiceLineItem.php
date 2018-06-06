@@ -224,6 +224,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceItemPaymentCycleLesson::className(), ['invoiceLineItemId' => 'id']);
     }
 
+    public function getLineItemPaymentCycleLessons()
+    {
+        return $this->hasMany(InvoiceItemPaymentCycleLesson::className(), ['invoiceLineItemId' => 'id']);
+    }
+
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
@@ -607,7 +612,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                         null, $proFormaLineItem->multiEnrolmentDiscount);
                 }
             }
-            if (!$lesson->isExploded && !$this->invoice->isInvoice()) {
+            if (!$this->invoice->isInvoice()) {
                 if ($this->canAddEnrolmentPaymentFrequencyDiscount($lesson)) {
                     $this->addEnrolmentPaymentFrequencyDiscount($lesson->enrolment);
                 }
@@ -698,11 +703,8 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $invoiceLineItemDiscount->value     = $enrolment->multipleEnrolmentDiscount->discountPerLesson;
         }
         if ($this->lesson->isExploded) {
-            $parentLesson = $this->lesson->parent()->one();
-            $spiltParts = Lesson::find()
-                ->descendantsOf($parentLesson->id)
-                ->all();
-            $invoiceLineItemDiscount->value = $invoiceLineItemDiscount->value / count($spiltParts);
+            $rootLesson = $this->lesson->rootLesson;
+            $invoiceLineItemDiscount->value = $invoiceLineItemDiscount->value / ($rootLesson->durationSec / $this->lesson->durationSec);
         }
         $invoiceLineItemDiscount->valueType = InvoiceLineItemDiscount::VALUE_TYPE_DOLLAR;
         $invoiceLineItemDiscount->type      = InvoiceLineItemDiscount::TYPE_MULTIPLE_ENROLMENT;

@@ -181,36 +181,22 @@ trait Payable
             if (!$lesson) {
                 $lesson = Lesson::findOne($lineItem->proFormaLesson->id);
             }
-            if ($lesson->isExploded) {
-                $parentLesson = $lesson->parent()->one();
-                $splitLessons = Lesson::find()
-                        ->descendantsOf($parentLesson->id)
-                        ->orderBy(['id' => SORT_DESC])
-                        ->all();
-                foreach ($splitLessons as $splitLesson) {
-                    $amount = $splitLesson->getSplitedAmount() - $splitLesson->getCreditAppliedAmount($splitLesson->enrolment->id);
-                    if ($amount > $this->proFormaCredit) {
-                        $amount = $this->proFormaCredit;
-                    }
-                    if ($this->hasProFormaCredit() && !empty($amount)) {
-                        $payment->amount = $amount;
-                        $splitLesson->addPayment($this, $payment);
-                        $this->makeInvoicePayment($splitLesson);
-                    }
-                }
-            } else {
-                if ($this->isExtraLessonProformaInvoice()) {
-                    $lesson = Lesson::findOne($this->lineItem->lesson->id);
-                }
-                $amount = $lesson->proFormaLineItem->itemTotal - $lesson->getCreditAppliedAmount($lesson->enrolment->id);
-                if ($amount > $this->proFormaCredit) {
-                    $amount = $this->proFormaCredit;
-                }
-                if ($this->hasProFormaCredit() && !empty($amount)) {
-                    $payment->amount = $amount;
-                    $lesson->addPayment($this, $payment);
-                    $this->makeInvoicePayment($lesson);
-                }
+            if ($this->isExtraLessonProformaInvoice()) {
+                $lesson = Lesson::findOne($this->lineItem->lesson->id);
+            }
+            $amount = $lesson->proFormaLineItem->itemTotal;
+            if ($amount > $this->proFormaCredit) {
+                $amount = $this->proFormaCredit;
+            }
+            if ($this->hasProFormaCredit() && !empty($amount)) {
+                $payment->amount = $amount;
+                $lesson->addPayment($this, $payment);
+                $this->makeInvoicePayment($lesson);
+            }
+            if ($lesson->hasMerged()) {
+                $extendedLesson = $lesson->extendedLesson;
+                $extendedLesson->addPayment($lesson, $payment);
+                $this->makeInvoicePayment($extendedLesson);
             }
         }
         return true;

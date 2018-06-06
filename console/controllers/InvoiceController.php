@@ -8,6 +8,7 @@ use yii\helpers\Console;
 use common\models\Invoice;
 use common\models\User;
 use common\models\Lesson;
+use common\models\PaymentCycle;
 
 class InvoiceController extends Controller
 {
@@ -28,7 +29,7 @@ class InvoiceController extends Controller
         );
     }
 
-    public function actionGenerateInvoice()
+    public function actionGenerateProforma()
     {
         /**
          * 1. Get the date 15 days prior from today
@@ -39,20 +40,21 @@ class InvoiceController extends Controller
          * 6. Set the invoice sent flag as true
          */
         $priorDate             = (new \DateTime())->modify('+15 day');
-        $matchedLessons        = Lesson::find()
-            ->privateLessons()
-            ->regular()
-            ->unInvoicedProForma()
-            ->isConfirmed()
-            ->notCanceled()
-            ->between($priorDate, $priorDate)
-            ->notDeleted()
+        $paymentCycles       = PaymentCycle::find()
+        ->joinWith(['enrolment' => function ($query)  {
+            $query->joinWith(['course' => function ($query)  {
+                $query->location([14,15]);
+            }]);
+            $query->notDeleted();
+        }])
+        ->andWhere(['<=','payment_cycle.startDate',$priorDate->format('Y-m-d')])
+        ->andWhere(['payment_cycle.isDeleted'=> false])
             ->all();
-        if (!empty($matchedLessons)) {
-            foreach ($matchedLessons as $matchedLesson) {
-                $invoice = $matchedLesson->paymentCycle->createProFormaInvoice();
-                $invoice->on(Invoice::EVENT_GENERATE, $invoice->sendEmail());
-            }
+        foreach($paymentCycles as $paymentCycle){
+         if(!$paymentCycle->hasProformaInvoice() && $paymentCycle->lessons ){
+               $invoice = $paymentCycle->createProFormaInvoice();
+               $invoice->on(Invoice::EVENT_GENERATE, $invoice->sendEmail());
+        }
         }
         return true;
     }
