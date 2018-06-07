@@ -35,4 +35,20 @@ use common\Models\User;
         });
         return false;
     });
+
+    $(document).on('click', '#receive-payment', function () {
+        $.ajax({
+            url    : '<?= Url::to(['payment/receive', 'PaymentForm[lessonId]' => $model->id]); ?>',
+            type   : 'get',
+            dataType: 'json',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                }
+            }
+        });
+        return false;
+    });
 </script>

@@ -33,7 +33,10 @@ class PaymentController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['invoice-payment', 'credit-payment', 'update', 'delete', 'validate-apply-credit'],
+                'only' => [
+                    'invoice-payment', 'credit-payment', 'update', 'delete', 'receive',
+                    'validate-apply-credit'
+                ],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -44,8 +47,10 @@ class PaymentController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'print', 
-                            'invoice-payment', 'credit-payment', 'validate-apply-credit'],
+                        'actions' => [
+                            'index', 'update', 'view', 'delete', 'create', 'print', 'receive',
+                            'invoice-payment', 'credit-payment', 'validate-apply-credit'
+                        ],
                         'roles' => ['managePfi', 'manageInvoices'],
                     ],
                 ],
@@ -337,7 +342,7 @@ class PaymentController extends BaseController
         return $creditDataProvider;
     }
 
-    public function receive()
+    public function actionReceive()
     {
         $model = new PaymentForm();
         $paymentData = Yii::$app->request->get('PaymentForm');
@@ -348,7 +353,7 @@ class PaymentController extends BaseController
         if ($request->post()) {
             
         } else {
-            $data = $this->renderAjax('receive-payment/_form', [
+            $data = $this->renderAjax('/receive-payment/_form', [
                 'model' => $model
             ]);
             $response = [
