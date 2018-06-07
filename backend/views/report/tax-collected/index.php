@@ -8,7 +8,6 @@ use yii\helpers\Html;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Tax Collected';
-$this->params['show-all'] = $this->render('_button', ['model' => $searchModel]);
 $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class' => 'btn btn-box-tool']);
 
 ?>

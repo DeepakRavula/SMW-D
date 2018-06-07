@@ -1,6 +1,6 @@
 <?php
 
-use yii\helpers\Html;
+use yii\helpers\Url;
 use common\Models\User;
 ?>
 
@@ -18,10 +18,21 @@ use common\Models\User;
                 <?php if ($model->canMerge() && $loggedUser->canMerge) : ?>
                     <li><a id="merge-lesson" href="#">Merge</a></li>
                 <?php endif; ?>
-            <?php endif; ?>
-            <?php if ($model->isDeletable()) : ?>
-                <li><a id="lesson-delete" href="#">Delete</a></li>
+                <?php if ($model->isDeletable()) : ?>
+                    <li><a id="lesson-delete" href="#">Delete</a></li>
+                <?php endif; ?>
             <?php endif; ?>
         </ul>
     </div>
 </div>
+
+<script>
+    $(document).on('click', '#split-lesson', function () {
+        $.ajax({
+            url    : '<?= Url::to(['private-lesson/split', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: 'json'
+        });
+        return false;
+    });
+</script>

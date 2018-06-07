@@ -169,7 +169,6 @@ class PrintController extends BaseController
         if (!empty($invoiceSearch)) {
             $invoiceSearchModel->dateRange = $invoiceSearch['dateRange'];
             list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
-            $invoiceSearchModel->summariseReport = $invoiceSearch['summariseReport'];
         }
         $timeVoucher = InvoiceLineItem::find()
                         ->notDeleted()
@@ -179,12 +178,8 @@ class PrintController extends BaseController
             }])
             ->joinWith(['lesson' => function ($query) use ($model) {
                 $query->andWhere(['lesson.teacherId' => $model->id]);
-            }]);
-        if ($invoiceSearchModel->summariseReport) {
-            $timeVoucher->groupBy(['invoice.id','DATE(invoice.date)']);
-        } else {
-            $timeVoucher->orderBy(['invoice.date' => SORT_ASC]);
-        }
+            }])
+			->orderBy(['invoice.date' => SORT_ASC]);
             
         $timeVoucherDataProvider = new ActiveDataProvider([
             'query' => $timeVoucher,
@@ -332,15 +327,11 @@ class PrintController extends BaseController
                         'location_id' => $locationId,
                         'type' => Invoice::TYPE_INVOICE,
                     ])
-                    ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                    ->andWhere(['between', 'date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
                     ->notDeleted();
             }])
-            ->andWhere(['>', 'tax_rate', 0]);
-        if ($searchModel->summarizeResults) {
-            $invoiceTaxes ->groupBy(['invoice.id','DATE(invoice.date)']);
-        } else {
-            $invoiceTaxes->orderBy(['invoice.date' => SORT_ASC]);
-        }
+            ->andWhere(['>', 'tax_rate', 0])
+				->orderBy(['invoice.date' => SORT_ASC]);
 
         $taxDataProvider = new ActiveDataProvider([
             'query' => $invoiceTaxes,

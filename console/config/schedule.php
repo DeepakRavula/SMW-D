@@ -6,7 +6,7 @@
 // Place here all of your cron jobs
 
 // This command will execute console command of your application every 00:01am
-$schedule->command('invoice/generate-invoice')->dailyAt('00:01');
+$schedule->command('invoice/generate-proforma')->dailyAt('00:01');
 $schedule->command('enrolment/auto-renewal')->dailyAt('00:01');
 
 // This command will execute console command of your application every 11pm

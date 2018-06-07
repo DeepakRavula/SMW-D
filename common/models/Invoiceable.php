@@ -165,8 +165,8 @@ trait Invoiceable
             $payment->amount = $this->getLessonCreditAmount($this->enrolment->id);
             $invoice->addPayment($this, $payment, $this->enrolment);
         }
-        if (!empty($this->extendedLessons)) {
-            foreach ($this->extendedLessons as $extendedLesson) {
+        if (!empty($this->usedLessonSplits)) {
+            foreach ($this->usedLessonSplits as $extendedLesson) {
                 $invoice->save();
                 if ($extendedLesson->lesson->hasLessonCredit($this->enrolment->id)) {
                     $amount = $extendedLesson->lesson->getSplitedAmount();

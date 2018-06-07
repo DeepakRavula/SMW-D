@@ -9,53 +9,6 @@ $this->title = 'Dashboard';
 $this->params['action-button'] = $this->render('_search', ['model' => $searchModel]); ?>
 <?php yii\widgets\Pjax::begin(['id' => 'dashboard']); ?>
 
-<div class="row">
-	<div class="col-md-3 col-sm-6 col-xs-12">
-		<?php
-        echo \insolita\wgadminlte\LteInfoBox::widget([
-            'bgIconColor' => '',
-            'bgColor' => 'blue',
-            'number' => $enrolments,
-            'text' => 'Private Enrolments',
-            'icon' => 'fa fa-graduation-cap',
-        ])
-        ?>
-	</div>
-	<div class="col-md-3 col-sm-6 col-xs-12">
-		<?php
-        echo \insolita\wgadminlte\LteInfoBox::widget([
-            'bgIconColor' => '',
-            'bgColor' => 'gray',
-            'number' => $groupEnrolments,
-            'text' => 'Group Enrolments',
-            'icon' => 'fa fa-users',
-        ])
-        ?>
-	</div>
-	<div class="col-md-3 col-sm-6 col-xs-12">
-		<?php
-        echo \insolita\wgadminlte\LteInfoBox::widget([
-            'bgIconColor' => '',
-            'bgColor' => 'orange',
-            'number' => $students,
-            'text' => 'Active Students',
-            'icon' => 'fa fa-child',
-        ])
-        ?>
-	</div>
-	<div class="col-md-3 col-sm-6 col-xs-12">
-		<?php
-        echo \insolita\wgadminlte\LteInfoBox::widget([
-            'bgIconColor' => '',
-            'bgColor' => 'green',
-            'number' => $lessonsCount,
-            'text' => 'Lessons',
-            'icon' => 'fa fa-music',
-        ])
-        ?>
-	</div>
-</div>
-
 <?php if (Yii::$app->user->can('manageMonthlyRevenue')) : ?>
 <div class="row">
 	<div class="col-md-12">
