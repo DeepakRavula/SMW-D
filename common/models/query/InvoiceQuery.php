@@ -164,6 +164,14 @@ class InvoiceQuery extends \yii\db\ActiveQuery
             'invoice.type' => Invoice::TYPE_INVOICE
         ]);
     }
+
+    public function lessonInvoice()
+    {
+        return $this->invoice()
+            ->joinWith(['lineItem' => function ($query) {
+            $query->andWhere(['invoice_line_item.item_type_id' => [ItemType::TYPE_PRIVATE_LESSON, ItemType::TYPE_EXTRA_LESSON]]);
+        }]);
+    }
     
     public function paid()
     {
