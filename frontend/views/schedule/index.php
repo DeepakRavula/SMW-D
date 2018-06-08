@@ -133,7 +133,7 @@ $this->title = 'Schedule ';
                 maxTime: maxTime,
                 slotDuration: "00:15:00",
                 allDaySlot:false,
-                editable: true,
+                editable: false,
                 eventDurationEditable: false,
                 contentHeight: "auto",
                 events: {
