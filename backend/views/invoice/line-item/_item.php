@@ -21,7 +21,7 @@ use yii\widgets\Pjax;
     LteBox::begin([
         'type' => LteConst::TYPE_DEFAULT,
         'boxTools' => $boxTools,
-        'title' => 'Items',
+        'title' => 'Lessons',
         'withBorder' => true,
     ])
     ?>

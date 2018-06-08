@@ -96,13 +96,7 @@ if (!empty($lineItem)) {
 </div>
 <div class="row">
 	<div class="col-md-9">     
-        <?= $this->render('payment/_index', [
-            'model' => $model,
-            'searchModel' => $searchModel,
-            'invoicePayments' => $invoicePayments,
-            'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
-            'print'=>false,        
-        ]);?>
+        
 	</div>
 	<?php Pjax::Begin(['id' => 'invoice-bottom-summary', 'timeout' => 6000]); ?>
 	<div class="col-md-3">
