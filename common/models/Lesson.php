@@ -734,6 +734,11 @@ class Lesson extends \yii\db\ActiveRecord
         return true;
     }
 
+    public function getAmount()
+    {
+        return $this->courseProgramRate->programRate * $this->unit;
+    }
+
     public function getAvailabilities()
     {
         return $this->hasMany(TeacherAvailability::className(), ['teacher_location_id' => 'id'])

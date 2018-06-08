@@ -47,7 +47,19 @@ use yii\helpers\ArrayHelper;
         <div class="col-xs-3">
             <?= $form->field($model, 'amount')->textInput()->label('Amount Received');; ?>
         </div>
-    </div>    
+    </div>
+    
+    <?= $this->render('/receive-payment/_lesson-line-item', [
+        'model' => $model,
+        'form' => $form,
+        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider
+    ]);
+    ?>
+    <?= $this->render('/receive-payment/_invoice-line-item', [
+        'model' => $model,
+        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
+    ]);
+    ?>
     <?php ActiveForm::end(); ?>
 
 </div>
@@ -55,7 +67,7 @@ use yii\helpers\ArrayHelper;
 <script>
     $(document).ready(function () {
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
-        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Recevie Payment</h4>');
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Receive Payment</h4>');
         $('.modal-save').text('Pay');
     });
 </script>

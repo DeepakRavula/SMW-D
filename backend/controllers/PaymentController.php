@@ -16,6 +16,9 @@ use yii\filters\AccessControl;
 use yii\data\ArrayDataProvider;
 use common\components\controllers\BaseController;
 use backend\models\PaymentForm;
+use common\models\Lesson;
+use yii\data\ActiveDataProvider;
+use common\models\Location;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -344,17 +347,51 @@ class PaymentController extends BaseController
 
     public function actionReceive()
     {
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $model = new PaymentForm();
+        $currentDate = new \DateTime();
+        $model->fromDate = $currentDate->format('M 1,Y');
+        $model->toDate = $currentDate->format('M t,Y');
+        $fromDate = new \DateTime($model->fromDate);
+        $toDate = new \DateTime($model->toDate);
+        $model->dateRange = $model->fromDate . ' - ' . $model->toDate;
         $paymentData = Yii::$app->request->get('PaymentForm');
         if ($paymentData) {
             $model->load(Yii::$app->request->get());
+            if ($model->lessonId) {
+                $lesson = Lesson::findOne($model->lessonId);
+                $model->user_id = $lesson->customer->id;
+            }
         }
+        $lessonsQuery = Lesson::find()
+            ->notDeleted()
+            ->between($fromDate, $toDate)
+            ->privateLessons()
+            ->customer($model->user_id)
+            ->isConfirmed()
+            ->notCanceled()
+            ->unInvoiced()
+            ->location($locationId);
+        $lessonLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $lessonsQuery
+        ]);
+        $invoicesQuery = Invoice::find()
+            ->notDeleted()
+            ->lessonInvoice()
+            ->location($locationId)
+            ->customer($model->user_id)
+            ->unpaid();
+        $invoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $invoicesQuery
+        ]);
         $request = Yii::$app->request;
         if ($request->post()) {
             
         } else {
             $data = $this->renderAjax('/receive-payment/_form', [
-                'model' => $model
+                'model' => $model,
+                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider
             ]);
             $response = [
                 'status' => true,

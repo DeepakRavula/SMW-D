@@ -27,6 +27,8 @@ class PaymentForm extends Model
 
     public $date;
     public $dateRange;
+    public $toDate;
+    public $fromDate;
     public $payment_method_id;
     public $amount;
     public $amountNeeded;
@@ -39,7 +41,7 @@ class PaymentForm extends Model
     {
         return [
             [['payment_method_id', 'user_id', 'amount'], 'required'],
-            [['date', 'amountNeeded', 'dateRange', 'lessonId'], 'safe']
+            [['date', 'amountNeeded', 'dateRange', 'lessonId', 'fromDate', 'toDate'], 'safe']
         ];
     }
 }
