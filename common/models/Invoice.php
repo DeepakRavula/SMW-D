@@ -376,17 +376,6 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return (bool) $this->isDeleted;
     }
-
-    public function canDistributeCreditsToLesson()
-    {
-        return $this->isPosted && !$this->hasLessonCreditUsedPayment();
-    }
-
-    public function canPost()
-    {
-        return $this->isProFormaInvoice() && !$this->isPosted;
-    }
-
     public function hasCredit()
     {
         return (int) $this->status === (int) self::STATUS_CREDIT;
@@ -837,53 +826,9 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->getCustomerAccountBalance($this->user_id);
     }
 
-    public function canRetractCredits()
-    {
-        $canRetractcredits = $this->hasLessonCreditUsedPayment();
-        foreach ($this->lineItems as $item) {
-            if ($item->isGroupLesson()) {
-                $enrolment = $item->enrolment;
-                $lesson = $item->lesson;
-            } else {
-                $enrolment = $item->proFormaLesson->enrolment;
-                $lesson = $item->proFormaLesson;
-            }
-            if (!$lesson->hasLessonCredit($enrolment->id)) {
-                $canRetractcredits = false;
-                break;
-            }
-        }
-        return $canRetractcredits;
-    }
-
     public function hasCreditUsed()
     {
         return !empty($this->creditUsedPayments);
-    }
-
-    public function canDistributeCredits()
-    {
-        return $this->isPosted && $this->isPaid() && !$this->hasLessonCreditUsedPayment();
-    }
-
-    public function canPostDistributeCredits()
-    {
-        return !$this->isPosted && $this->isPaid() && !$this->hasLessonCreditUsedPayment();
-    }
-
-    public function canUnpost()
-    {
-        return !$this->hasLessonCreditUsedPayment() && $this->isPosted;
-    }
-
-    public function retractCreditsFromLessons()
-    {
-        if ($this->canRetractCredits()) {
-            foreach ($this->lessonCreditUsedPayment as $credit) {
-                $credit->delete();
-            }
-        }
-        return true;
     }
 
     public function getStudentProgramName()
