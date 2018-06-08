@@ -238,7 +238,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $leafIds = [];
         $childrens = self::find()->childrenOf($this->id)->all();
-        $lessons = self::find()->where(['id' => $this->id])->all();
+        $lessons = null;
         if ($childrens) {
             $leafIds = $this->getNestedLeafs($childrens, $leafIds);
             $lessons = self::find()->where(['id' => $leafIds])->all();
