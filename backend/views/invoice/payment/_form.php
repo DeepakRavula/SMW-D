@@ -51,11 +51,6 @@ use yii\helpers\ArrayHelper;
 <div class="row">
 
         <div class="col-md-7">
-        <?php if ($model->payment_method_id === PaymentMethod::TYPE_CHEQUE) : ?>
-            <?php $label = 'Cheque Number'; ?>
-        <?php else : ?>
-            <?php $label = 'Reference'; ?>
-        <?php endif; ?>
         
             <?= $form->field($model, 'reference')->textInput(['readOnly' => $model->isCreditUsed() ||
 $model->isCreditApplied()]);?>

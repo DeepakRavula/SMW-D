@@ -15,6 +15,7 @@ use yii\filters\ContentNegotiator;
 use yii\filters\AccessControl;
 use yii\data\ArrayDataProvider;
 use common\components\controllers\BaseController;
+use backend\models\PaymentForm;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -32,7 +33,10 @@ class PaymentController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['invoice-payment', 'credit-payment', 'update', 'delete', 'validate-apply-credit'],
+                'only' => [
+                    'invoice-payment', 'credit-payment', 'update', 'delete', 'receive',
+                    'validate-apply-credit'
+                ],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -43,8 +47,10 @@ class PaymentController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'print', 
-                            'invoice-payment', 'credit-payment', 'validate-apply-credit'],
+                        'actions' => [
+                            'index', 'update', 'view', 'delete', 'create', 'print', 'receive',
+                            'invoice-payment', 'credit-payment', 'validate-apply-credit'
+                        ],
                         'roles' => ['managePfi', 'manageInvoices'],
                     ],
                 ],
@@ -334,5 +340,27 @@ class PaymentController extends BaseController
             ],
         ]);
         return $creditDataProvider;
+    }
+
+    public function actionReceive()
+    {
+        $model = new PaymentForm();
+        $paymentData = Yii::$app->request->get('PaymentForm');
+        if ($paymentData) {
+            $model->load(Yii::$app->request->get());
+        }
+        $request = Yii::$app->request;
+        if ($request->post()) {
+            
+        } else {
+            $data = $this->renderAjax('/receive-payment/_form', [
+                'model' => $model
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
     }
 }
