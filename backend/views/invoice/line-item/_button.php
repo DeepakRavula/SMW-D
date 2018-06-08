@@ -1,6 +1,7 @@
+<?php use common\models\Invoice ?>
 <i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i>
 <ul class="dropdown-menu dropdown-menu-right">
-<?php if ($model->type == common\models\Invoice::TYPE_INVOICE) :?>
+<?php if ($model->type == Invoice::TYPE_INVOICE) :?>
     <?php if (!$model->lineItem) :?>
         <?php if (!$model->isVoid) : ?>
             <li><a class="add-new-misc" href="#">Add Item...</a></li>
