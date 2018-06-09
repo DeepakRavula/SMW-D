@@ -35,12 +35,13 @@ class m180609_055058_new_pfi_schema_changes_ extends Migration
                 'id' => $this->primaryKey(),
                 'userId' => $this->integer()->notNull(),
                 'locationId' => $this->integer()->notNull(),
+		'date' => $this->date(),
                 'total' => $this->integer()->notNull()
             ]);
         }
-        $Pfi_Line_Item = Yii::$app->db->schema->getTableSchema('pfi_line_item');
+        $Pfi_Line_Item = Yii::$app->db->schema->getTableSchema('proforma_line_item');
         if ($Pfi_Line_Item == null) {
-            $this->createTable('pfi_line_item', [
+            $this->createTable('proforma_line_item', [
                 'id' => $this->primaryKey(),
                 'invoice_id' => $this->integer()->notNull(),
             ]);
