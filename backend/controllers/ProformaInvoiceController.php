@@ -90,7 +90,7 @@ if(!empty($lessons)){
                 $proformaItemLesson->save();
             }
         }
-        if(!empty($lessons)){
+        if(!empty($invoices)){
             foreach($invoices as $invoice)
             {
                 $proformaLineItem=new ProformaLineItem();
