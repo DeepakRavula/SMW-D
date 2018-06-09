@@ -109,11 +109,9 @@ use yii\helpers\Url;
                 success: function(response)
                 {
                     if (response.status) {
-                        $('#teacher-substitute-modal').modal('show');
-                        $('#teacher-substitute-modal .modal-dialog').css({'width': '1000px'});
-                        $('#teacher-substitute-content').html(response.data);
+                       
                     } else {
-                        $('#index-error-notification').html("Choose lessons with same teacher").fadeIn().delay(5000).fadeOut();
+                        //$('#index-error-notification').html("Choose lessons with same teacher").fadeIn().delay(5000).fadeOut();
                     }
                 }
             });

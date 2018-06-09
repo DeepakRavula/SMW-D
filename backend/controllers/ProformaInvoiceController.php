@@ -15,6 +15,9 @@ use yii\filters\AccessControl;
 use common\models\Lesson;
 use common\models\Invoice;
 use common\models\ProformaInvoice;
+use common\models\proformaLineItem;
+use common\models\ProformaItemLesson;
+use common\models\ProformaItemInvoice;
 use common\components\controllers\BaseController;
 /**
  * ProformaInvoiceController implements the CRUD actions for ProformaInvoice model.
@@ -59,10 +62,45 @@ class ProformaInvoiceController extends BaseController
         $invoiceIds = Yii::$app->request->get('invoiceIds');
         $lessons = Lesson::findAll($lessonIds);
         $invoices= Invoice::findAll($invoiceIds);
+        $endLesson=end($lessons);
+        $endInvoice=end($invoices);
+        if(!empty($lessons)){
+        $user=$endLesson->customer;
+        }
+        if(empty($user)){
+            $user=$endInvoice->user;
+        }
+       
+        
         if(!empty($lessonIds) || !empty($invoiceIds))
         {
             $proformaInvoice=new ProformaInvoice();
-            $proformaInvoice->user
+            $proformaInvoice->userId=$user->id;
+            $proformaInvoice->locationId = $user->userLocation->location_id;
+            $proformaInvoice->save();
+            
+if(!empty($lessons)){
+            foreach($lessons as $lesson)
+            {
+                $proformaLineItem=new ProformaLineItem();
+                $proformaLineItem->invoice_id=$proformaInvoice->id;
+                $proformaLineItem->save();
+                $proformaItemLesson= new ProformaItemLesson();                
+                $proformaItemLesson->lesson_id=$lesson->id;
+                $proformaItemLesson->save();
+            }
+        }
+        if(!empty($lessons)){
+            foreach($invoices as $invoice)
+            {
+                $proformaLineItem=new ProformaLineItem();
+                $proformaLineItem->invoice_id=$proformaInvoice->id;
+                $proformaLineItem->save();
+                $proformaItemInvoice= new ProformaItemInvoice();
+                $proformaItemInvoice->invoice_id=$invoice->id;
+                $proformaItemInvoice->save();
+            }
+        }
 
         }
     

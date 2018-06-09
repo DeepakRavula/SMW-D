@@ -15,7 +15,7 @@ use Yii;
  * @property string $date
  * @property int $status
  */
-class ProformaInvoice extends \yii\db\ActiveRecord
+class ProformaLineItem extends \yii\db\ActiveRecord
 {
     
     /**
@@ -23,7 +23,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'proforma_invoice';
+        return 'proforma_line_item';
     }
     
     /**
@@ -32,7 +32,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['userId','locationId'], 'required'],
+            [['invoice_id'], 'required'],
 
         ];
     }
@@ -44,10 +44,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'invoice_number' => 'Invoice Number',
-            'date' => 'Date',
-            'userId' => 'Customer Name',
-            'locationId' =>'location',
+            'invoice_id' => 'Invoice',
             
         ];
     }
@@ -57,9 +54,5 @@ class ProformaInvoice extends \yii\db\ActiveRecord
      *
      * @return InvoiceQuery the active query used by this AR class
      */
-    public static function find()
-    {
-        return new ProformaInvoiceQuery(get_called_class());
-    }
-
+   
 }
