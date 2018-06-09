@@ -348,8 +348,10 @@ class PaymentController extends BaseController
     public function actionReceive()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $amount = 0;
         $model = new PaymentForm();
         $currentDate = new \DateTime();
+        $model->date = $currentDate->format('M d,Y');
         $model->fromDate = $currentDate->format('M 1,Y');
         $model->toDate = $currentDate->format('M t,Y');
         $fromDate = new \DateTime($model->fromDate);
@@ -372,6 +374,10 @@ class PaymentController extends BaseController
             ->notCanceled()
             ->unInvoiced()
             ->location($locationId);
+        $lessons = clone $lessonsQuery;
+        foreach ($lessons->all() as $lesson) {
+            $amount += $lesson->amount;
+        }
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery
         ]);
@@ -381,9 +387,12 @@ class PaymentController extends BaseController
             ->location($locationId)
             ->customer($model->user_id)
             ->unpaid();
+        $invoices = clone $invoicesQuery;
+        $amount += $invoices->sum('total');    
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoicesQuery
         ]);
+        $model->amount = $amount;
         $request = Yii::$app->request;
         if ($request->post()) {
             

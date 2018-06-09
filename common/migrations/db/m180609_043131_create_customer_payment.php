@@ -3,23 +3,20 @@
 use yii\db\Migration;
 
 /**
- * Class m180329_051558_test_email
+ * Class m180609_043131_create_customer_payment
  */
-class m180329_051558_test_email extends Migration
+class m180609_043131_create_customer_payment extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('test_email', [
+        $this->createTable('customer_payment', [
             'id' => $this->primaryKey(),
-            'email' => $this->string()->notNull(),
+            'userId' => $this->integer()->notNull(),
+            'paymentId' => $this->integer()->notNull(),
         ]);
-	    $this->insert('test_email', [
-            'email' => 'senguttuvang@example.com',
-        ]);
-
     }
 
     /**
@@ -27,7 +24,7 @@ class m180329_051558_test_email extends Migration
      */
     public function safeDown()
     {
-        echo "m180329_051558_test_email cannot be reverted.\n";
+        echo "m180609_043131_create_customer_payment cannot be reverted.\n";
 
         return false;
     }
@@ -41,7 +38,7 @@ class m180329_051558_test_email extends Migration
 
     public function down()
     {
-        echo "m180329_051558_test_email cannot be reverted.\n";
+        echo "m180609_043131_create_customer_payment cannot be reverted.\n";
 
         return false;
     }
