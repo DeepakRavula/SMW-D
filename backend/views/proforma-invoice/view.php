@@ -16,4 +16,3 @@ Select2Asset::register($this);
 /* @var $model common\models\Invoice */
 
 ?>
-<div>veera</div>
