@@ -1,0 +1,73 @@
+<?php
+
+use yii\db\Migration;
+
+/**
+ * Class m180609_055058_new_pfi_schema_changes_
+ */
+class m180609_055058_new_pfi_schema_changes_ extends Migration
+{
+    /**
+     * {@inheritdoc}
+     */
+    // public function safeUp()
+    // {
+
+    // }
+
+    // /**
+    //  * {@inheritdoc}
+    //  */
+    // public function safeDown()
+    // {
+    //     echo "m180609_055058_new_pfi_schema_changes_ cannot be reverted.\n";
+
+    //     return false;
+    // }
+
+    
+    // Use up()/down() to run migration code without a transaction.
+    public function up()
+    {
+        $tableSchema = Yii::$app->db->schema->getTableSchema('proforma_invoice');
+        if ($tableSchema == null) {
+            $this->createTable('proforma_invoice', [
+                'id' => $this->primaryKey(),
+                'userId' => $this->integer()->notNull(),
+                'locationId' => $this->integer()->notNull(),
+                'total' => $this->integer()->notNull()
+            ]);
+        }
+        $Pfi_Line_Items = Yii::$app->db->schema->getTableSchema('pfi_line_items');
+        if ($Pfi_Line_Items == null) {
+            $this->createTable('pfi_line_items', [
+                'id' => $this->primaryKey(),
+                'invoice_id' => $this->integer()->notNull(),
+            ]);
+        }
+        $proforma_item_lesson = Yii::$app->db->schema->getTableSchema('proforma_item_lesson');
+        if ($proforma_item_lesson == null) {
+            $this->createTable('proforma_item_lesson', [
+                'id' => $this->primaryKey(),
+                'lesson_id' => $this->integer()->notNull(),
+            ]);
+        }
+        $proforma_item_invoice = Yii::$app->db->schema->getTableSchema('proforma_item_invoice');
+        if ($proforma_item_lesson == null) {
+            $this->createTable('proforma_item_invoice', [
+                'id' => $this->primaryKey(),
+                'invoice_id' => $this->integer()->notNull(),
+            ]);
+        }
+ 
+
+    }
+
+    public function down()
+    {
+        echo "m180609_055058_new_pfi_schema_changes_ cannot be reverted.\n";
+
+        return false;
+    }
+
+}
