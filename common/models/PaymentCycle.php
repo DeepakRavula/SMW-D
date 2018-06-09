@@ -235,13 +235,13 @@ class PaymentCycle extends \yii\db\ActiveRecord
             $lesson->studentFullName = $this->enrolment->student->fullName;
             if ($lesson->leafs) {
                 foreach ($lesson->leafs as $leaf) {
-                    if (!$leaf->isDeleted()) {
+                    if (!$leaf->isDeleted) {
                         $leaf->studentFullName = $this->enrolment->student->fullName;
                         $leaf->addPrivateLessonLineItem($invoice);
                     }
                 }
             } else {
-                if (!$lesson->isDeleted()) {
+                if (!$lesson->isDeleted) {
                     $lesson->addPrivateLessonLineItem($invoice);
                 }
             }
