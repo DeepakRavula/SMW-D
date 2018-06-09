@@ -147,7 +147,7 @@ $this->params['action-button'] = $this->render('_action-menu', [
 		'label' => 'Price',
 		'attribute' => 'price',
 		'value' => function ($data) {
-			return Yii::$app->formatter->asDecimal($data->amount);
+			return Yii::$app->formatter->asCurrency($data->amount);
 		},
 	    ],
     [
