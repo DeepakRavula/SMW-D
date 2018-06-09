@@ -511,6 +511,8 @@ class UserController extends BaseController
 
     public function actionCreate()
     {
+
+        
         $model = new UserForm(['scenario' => UserForm::SCENARIO_CREATE]);
         $emailModel = new UserEmail();
         $model->roles = Yii::$app->request->queryParams['role_name'];

@@ -86,7 +86,7 @@ use kartik\daterange\DateRangePicker;
 ?>
 <?php Pjax::Begin(['id' => 'lesson-lineitem-listing', 'timeout' => 6000]); ?>
     <?= GridView::widget([
-        'id' => 'line-item-grid',
+        'id' => 'lesson-line-item-grid',
         'dataProvider' => $lessonLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,
