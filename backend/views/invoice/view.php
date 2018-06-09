@@ -12,6 +12,7 @@ use yii\imperavi\TableImperaviRedactorPluginAsset;
 TableImperaviRedactorPluginAsset::register($this);
 use kartik\select2\Select2Asset;
 Select2Asset::register($this);
+use common\models\Invoice;
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
 
@@ -95,8 +96,16 @@ if (!empty($lineItem)) {
 	</div>
 </div>
 <div class="row">
-	<div class="col-md-9">     
-        
+	<div class="col-md-9"> 
+	    <?php if ($model->type == Invoice::TYPE_INVOICE): ?>
+        <?= $this->render('payment/_index', [
+            'model' => $model,
+            'searchModel' => $searchModel,
+            'invoicePayments' => $invoicePayments,
+            'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
+            'print'=>false,        
+        ]);?>
+	    <?php endif; ?>
 	</div>
 	<?php Pjax::Begin(['id' => 'invoice-bottom-summary', 'timeout' => 6000]); ?>
 	<div class="col-md-3">
