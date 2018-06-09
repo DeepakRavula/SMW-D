@@ -25,7 +25,7 @@ use yii\helpers\Url;
 
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['payment/receive', 'InvoiceLineItem[ids]' => $lineItemIds]),
+        //'action' => Url::to(['payment/receive', 'InvoiceLineItem[ids]' => $lineItemIds]),
     ]); ?>
 
     <div class="row">
@@ -51,21 +51,30 @@ use yii\helpers\Url;
         </div>    
         <?php Pjax::Begin(['id' => 'payment-amount', 'timeout' => 6000]); ?>
         <div class="col-xs-3">
-            <?= $form->field($model, 'amount')->textInput()->label('Amount Received');; ?>
+            <?= $form->field($model, 'amount')->textInput()->label('Amount Received'); ?>
         </div>
         <?php Pjax::end(); ?>
     </div>
-    
+    <div class = "row">
+	<div class="col-md-12">
+    <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
     <?= $this->render('/receive-payment/_lesson-line-item', [
         'model' => $model,
         'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider
     ]);
     ?>
+	</div>
+    </div>
+    <div class = "row">
+	<div class="col-md-12">
+    <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
     <?= $this->render('/receive-payment/_invoice-line-item', [
         'model' => $model,
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
     ]);
     ?>
+	</div>
+    </div>
     <?php ActiveForm::end(); ?>
 
 </div>
