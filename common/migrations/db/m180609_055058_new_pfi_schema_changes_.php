@@ -38,9 +38,9 @@ class m180609_055058_new_pfi_schema_changes_ extends Migration
                 'total' => $this->integer()->notNull()
             ]);
         }
-        $Pfi_Line_Items = Yii::$app->db->schema->getTableSchema('pfi_line_items');
-        if ($Pfi_Line_Items == null) {
-            $this->createTable('pfi_line_items', [
+        $Pfi_Line_Item = Yii::$app->db->schema->getTableSchema('pfi_line_item');
+        if ($Pfi_Line_Item == null) {
+            $this->createTable('pfi_line_item', [
                 'id' => $this->primaryKey(),
                 'invoice_id' => $this->integer()->notNull(),
             ]);
