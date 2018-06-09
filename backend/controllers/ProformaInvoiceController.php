@@ -1,0 +1,114 @@
+<?php
+
+namespace backend\controllers;
+
+use Yii;
+
+use yii\helpers\ArrayHelper;
+use yii\data\ActiveDataProvider;
+use yii\web\NotFoundHttpException;
+use yii\helpers\Json;
+use yii\web\Response;
+use yii\helpers\Url;
+use yii\widgets\ActiveForm;
+use yii\filters\AccessControl;
+use common\models\Lesson;
+use common\models\Invoice;
+use common\models\ProformaInvoice;
+use common\models\proformaLineItem;
+use common\models\ProformaItemLesson;
+use common\models\ProformaItemInvoice;
+use common\components\controllers\BaseController;
+/**
+ * ProformaInvoiceController implements the CRUD actions for ProformaInvoice model.
+ */
+class ProformaInvoiceController extends BaseController
+{
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => 'yii\filters\ContentNegotiator',
+                'only' => [
+                    'create'
+                ],
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['create'],
+                        'roles' => [
+                             'managePfi'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * Lists all Invoice models.
+     *
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $lessonIds = Yii::$app->request->get('lessonIds');
+        $invoiceIds = Yii::$app->request->get('invoiceIds');
+        $lessons = Lesson::findAll($lessonIds);
+        $invoices= Invoice::findAll($invoiceIds);
+        $endLesson=end($lessons);
+        $endInvoice=end($invoices);
+        if(!empty($lessons)){
+        $user=$endLesson->customer;
+        }
+        if(empty($user)){
+            $user=$endInvoice->user;
+        }
+       
+        
+        if(!empty($lessonIds) || !empty($invoiceIds))
+        {
+            $proformaInvoice=new ProformaInvoice();
+            $proformaInvoice->userId=$user->id;
+            $proformaInvoice->locationId = $user->userLocation->location_id;
+            $proformaInvoice->save();
+            
+if(!empty($lessons)){
+            foreach($lessons as $lesson)
+            {
+                $proformaLineItem=new ProformaLineItem();
+                $proformaLineItem->invoice_id=$proformaInvoice->id;
+                $proformaLineItem->lessonId=$lesson->id;
+                $proformaLineItem->save();
+            }
+        }
+        if(!empty($invoices)){
+            foreach($invoices as $invoice)
+            {
+                $proformaLineItem = new ProformaLineItem();
+                $proformaLineItem->invoice_id = $proformaInvoice->id;
+                $proformaLineItem->invoiceId = $invoice->id;
+                $proformaLineItem->save();
+                
+            }
+        }
+
+        }
+    
+        
+    }
+
+    /**
+     * Displays a single Invoice model.
+     *
+     * @param int $id
+     *
+     * @return mixed
+     */
+    }
