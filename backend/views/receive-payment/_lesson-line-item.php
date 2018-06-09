@@ -47,7 +47,7 @@ use kartik\daterange\DateRangePicker;
             'contentOptions' => ['class' => 'text-left'],
             'label' => 'Date',
             'value' => function ($data) {
-                return $data->date;
+                return Yii::$app->formatter->asDateTime($data->date);
             }
         ],
         [
@@ -69,7 +69,7 @@ use kartik\daterange\DateRangePicker;
         [
             'label' => 'Amount',
             'value' => function ($data) {
-                return $data->amount;
+                return Yii::$app->formatter->asCurrency($data->amount);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -77,7 +77,7 @@ use kartik\daterange\DateRangePicker;
         [
             'label' => 'Payment',
             'value' => function ($data) {
-                return $data->amount;
+                return Yii::$app->formatter->asCurrency($data->amount);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']

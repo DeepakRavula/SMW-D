@@ -20,7 +20,7 @@ use common\models\Lesson;
             'contentOptions' => ['class' => 'text-left'],
             'label' => 'Date',
             'value' => function ($data) {
-                return $data->lineItem->lesson->date;
+                return Yii::$app->formatter->asDateTime($data->lineItem->lesson->date);
             }
         ],
         [
@@ -42,7 +42,7 @@ use common\models\Lesson;
         [
             'label' => 'Amount',
             'value' => function ($data) {
-                return $data->lineItem->lesson->amount;
+                return Yii::$app->formatter->asCurrency($data->lineItem->lesson->amount);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -50,7 +50,7 @@ use common\models\Lesson;
         [
             'label' => 'Payment',
             'value' => function ($data) {
-                return $data->lineItem->lesson->amount;
+                return Yii::$app->formatter->asCurrency($data->lineItem->lesson->amount);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
