@@ -25,7 +25,7 @@ use yii\helpers\Url;
 
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        //'action' => Url::to(['payment/receive', 'InvoiceLineItem[ids]' => $lineItemIds]),
+        'action' => Url::to(['payment/receive', 'InvoiceLineItem[ids]' => $lineItemIds]),
     ]); ?>
 
     <div class="row">
