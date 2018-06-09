@@ -138,6 +138,15 @@ class LessonQuery extends \yii\db\ActiveQuery
             }]);
         }]);
     }
+
+    public function customer($id)
+    {
+        return $this->joinWith(['enrolment' => function ($query) use ($id) {
+            $query->joinWith(['student' => function ($query) use ($id) {
+                $query->andWhere(['customer_id' => $id]);
+            }]);
+        }]);
+    }
     
     public function invoicableLessons()
     {
@@ -150,8 +159,9 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->joinWith(['invoiceItemLessons' => function ($query) {
             $query->joinWith(['invoiceLineItem' => function ($query) {
                 $query->joinWith(['invoice' => function ($query) {
-                    $query->andWhere(['invoice.id' => null]);
-                }]);
+                    $query->andWhere(['OR', ['invoice.id' => null], ['invoice.isDeleted' => true]]);
+                }])
+                ->andWhere(['OR', ['invoice_line_item.id' => null], ['invoice_line_item.isDeleted' => true]]);
             }]);
         }]);
     }
