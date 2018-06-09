@@ -135,7 +135,22 @@ $this->params['action-button'] = $this->render('_action-menu', [
                     return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
                 },
             ],
-            [
+	    [
+                'label' => 'Duration',
+                'attribute' => 'duration',
+                'value' => function ($data) {
+                    $lessonDuration = (new \DateTime($data->duration))->format('H:i');
+                    return $lessonDuration;
+                },
+            ],
+	    [
+		'label' => 'Price',
+		'attribute' => 'price',
+		'value' => function ($data) {
+			return Yii::$app->formatter->asCurrency($data->amount);
+		},
+	    ],
+    [
                 'label' => 'Status',
                 'attribute' => 'lessonStatus',
                 'filter' => LessonSearch::lessonStatuses(),
