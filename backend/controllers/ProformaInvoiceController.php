@@ -14,6 +14,7 @@ use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
 use common\models\Lesson;
 use common\models\Invoice;
+use common\models\ProformaInvoice;
 use common\components\controllers\BaseController;
 /**
  * ProformaInvoiceController implements the CRUD actions for ProformaInvoice model.
@@ -58,9 +59,11 @@ class ProformaInvoiceController extends BaseController
         $invoiceIds = Yii::$app->request->get('invoiceIds');
         $lessons = Lesson::findAll($lessonIds);
         $invoices= Invoice::findAll($invoiceIds);
-        if(!empty($lessons))
+        if(!empty($lessonIds) || !empty($invoiceIds))
         {
-            
+            $proformaInvoice=new ProformaInvoice();
+            $proformaInvoice->user
+
         }
     
         
