@@ -10,7 +10,10 @@ use common\models\Lesson;
     $columns = [
         [
             'class' => 'yii\grid\CheckboxColumn',
-            'contentOptions' => ['style' => 'width:30px;']
+            'contentOptions' => ['style' => 'width:30px;'],
+            'checkboxOptions' => function($model, $key, $index, $column) {
+                return ['checked' => true];
+            }
         ],
         [
             'headerOptions' => ['class' => 'text-left'],
@@ -54,7 +57,8 @@ use common\models\Lesson;
         ]
     ];
 ?>
-<?php Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
+<?php Pjax::Begin(['id' => 'invoice-lineitem-listing', 'timeout' => 6000]); ?>
+    <label>Invoices</label>
     <?= GridView::widget([
         'id' => 'invoice-line-item-grid',
         'dataProvider' => $invoiceLineItemsDataProvider,
@@ -66,18 +70,3 @@ use common\models\Lesson;
     ]); ?>
 <?php Pjax::end(); ?>
 
-<script>
-    $(document).on("click", "input[type='checkbox']", function(event) {
-        event.stopPropagation();
-    });
-    $(document).off("change", "input[type='checkbox']").on("change", "input[type='checkbox']", function() {
-        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
-        if (selectedRows.length >= 2) {
-            $('.apply-discount').text('Edit Discounts...');
-            $('.edit-tax').text('Edit Taxes...');
-        } else {
-            $('.apply-discount').text('Edit Discount...');
-            $('.edit-tax').text('Edit Tax...');
-        }
-    });
-</script>
