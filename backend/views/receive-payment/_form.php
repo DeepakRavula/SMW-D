@@ -5,6 +5,8 @@ use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 use common\models\PaymentMethod;
 use yii\helpers\ArrayHelper;
+use yii\widgets\Pjax;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\PaymentMethods */
@@ -21,7 +23,10 @@ use yii\helpers\ArrayHelper;
 
 <div class="receive-payment-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin([
+        'id' => 'modal-form',
+        'action' => Url::to(['payment/receive', 'InvoiceLineItem[ids]' => $lineItemIds]),
+    ]); ?>
 
     <div class="row">
         <div class="col-xs-3">
@@ -44,14 +49,15 @@ use yii\helpers\ArrayHelper;
         </div>
         <div class="col-xs-2">
         </div>    
+        <?php Pjax::Begin(['id' => 'payment-amount', 'timeout' => 6000]); ?>
         <div class="col-xs-3">
             <?= $form->field($model, 'amount')->textInput()->label('Amount Received');; ?>
         </div>
+        <?php Pjax::end(); ?>
     </div>
     
     <?= $this->render('/receive-payment/_lesson-line-item', [
         'model' => $model,
-        'form' => $form,
         'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider
     ]);
     ?>
@@ -69,5 +75,13 @@ use yii\helpers\ArrayHelper;
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Receive Payment</h4>');
         $('.modal-save').text('Pay');
+    });
+
+    $(document).on('change', '#paymentform-daterange', function () {
+        var dateRange = $('#paymentform-daterange').val();
+        var params = $.param({ 'PaymentForm[dateRange]': dateRange });
+        var url = '<?= Url::to(['payment/receive']) ?>?' + params;
+        $.pjax.reload({url: url, container: '#lesson-lineitem-listing', timeout: 6000});
+        $.pjax.reload({url: url, container: '#payment-amount', timeout: 6000});
     });
 </script>

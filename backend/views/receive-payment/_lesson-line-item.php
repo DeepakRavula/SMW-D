@@ -8,6 +8,7 @@ use kartik\daterange\DateRangePicker;
 ?>
 
 <div class="pull-right">
+    <label>Date Range</label>
     <?= DateRangePicker::widget([
         'model' => $model,
         'attribute' => 'dateRange',
@@ -36,7 +37,10 @@ use kartik\daterange\DateRangePicker;
     $columns = [
         [
             'class' => 'yii\grid\CheckboxColumn',
-            'contentOptions' => ['style' => 'width:30px;']
+            'contentOptions' => ['style' => 'width:30px;'],
+            'checkboxOptions' => function($model, $key, $index, $column) {
+                return ['checked' => true];
+            }
         ],
         [
             'headerOptions' => ['class' => 'text-left'],
@@ -80,7 +84,8 @@ use kartik\daterange\DateRangePicker;
         ]
     ];
 ?>
-<?php Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
+<?php Pjax::Begin(['id' => 'lesson-lineitem-listing', 'timeout' => 6000]); ?>
+    <label>Lessons</label>
     <?= GridView::widget([
         'id' => 'line-item-grid',
         'dataProvider' => $lessonLineItemsDataProvider,
@@ -88,23 +93,7 @@ use kartik\daterange\DateRangePicker;
         'summary' => false,
         'emptyText' => false,
         'options' => ['class' => 'col-md-12'],
-        //'tableOptions' => $tableOption,
         'headerRowOptions' => ['class' => 'bg-light-gray'],
     ]); ?>
 <?php Pjax::end(); ?>
 
-<script>
-    $(document).on("click", "input[type='checkbox']", function(event) {
-        event.stopPropagation();
-    });
-    $(document).off("change", "input[type='checkbox']").on("change", "input[type='checkbox']", function() {
-        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
-        if (selectedRows.length >= 2) {
-            $('.apply-discount').text('Edit Discounts...');
-            $('.edit-tax').text('Edit Taxes...');
-        } else {
-            $('.apply-discount').text('Edit Discount...');
-            $('.edit-tax').text('Edit Tax...');
-        }
-    });
-</script>
