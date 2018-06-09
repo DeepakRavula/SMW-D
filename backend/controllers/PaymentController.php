@@ -19,6 +19,7 @@ use backend\models\PaymentForm;
 use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use common\models\Location;
+use common\models\User;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -365,15 +366,22 @@ class PaymentController extends BaseController
                 $model->user_id = $lesson->customer->id;
             }
         }
-        $lessonsQuery = Lesson::find()
-            ->notDeleted()
-            ->between($fromDate, $toDate)
-            ->privateLessons()
-            ->customer($model->user_id)
-            ->isConfirmed()
-            ->notCanceled()
-            ->unInvoiced()
-            ->location($locationId);
+        $lessonsQuery = Lesson::find();
+        if ($model->lessonIds) {
+            $lessonsQuery->andWhere(['id' => $model->lessonIds]);
+        } else {
+            $lessonsQuery->notDeleted()
+                ->between($fromDate, $toDate)
+                ->privateLessons()
+                ->customer($model->user_id)
+                ->isConfirmed()
+                ->notCanceled()
+                ->unInvoiced()
+                // ->joinWith(['lessonPayments' => function ($query) {
+                //     $query->andWhere(['payment.id' => null]);
+                // }])
+                ->location($locationId);
+        }
         $lessons = clone $lessonsQuery;
         foreach ($lessons->all() as $lesson) {
             $amount += $lesson->amount;
@@ -381,12 +389,16 @@ class PaymentController extends BaseController
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery
         ]);
-        $invoicesQuery = Invoice::find()
-            ->notDeleted()
-            ->lessonInvoice()
-            ->location($locationId)
-            ->customer($model->user_id)
-            ->unpaid();
+        $invoicesQuery = Invoice::find();
+        if ($model->invoiceIds) {
+            $invoicesQuery->andWhere(['id' => $model->invoiceIds]);
+        } else {
+            $invoicesQuery->notDeleted()
+                ->lessonInvoice()
+                ->location($locationId)
+                ->customer($model->user_id)
+                ->unpaid();
+        }
         $invoices = clone $invoicesQuery;
         $amount += $invoices->sum('total');    
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
@@ -395,7 +407,28 @@ class PaymentController extends BaseController
         $model->amount = $amount;
         $request = Yii::$app->request;
         if ($request->post()) {
-            
+            $model->load($request->post());
+            $payment = new Payment();
+            $payment->amount = $model->amount;
+            $payment->user_id = $model->user_id;
+            $payment->payment_method_id = $model->payment_method_id;
+            $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+            $payment->save();
+            $customer = User::findOne($model->user_id);
+            foreach ($invoicesQuery->all() as $invoice) {
+                $paymentModel = new Payment();
+                $paymentModel->amount = $invoice->total;
+                $invoice->addPayment($customer, $paymentModel);
+            }
+            foreach ($lessonsQuery->all() as $lesson) {
+                $paymentModel = new Payment();
+                $paymentModel->amount = $lesson->amount;
+                $lesson->addPayment($customer, $paymentModel);
+            }
+            $response = [
+                'status' => true,
+                'message' => 'Payment added succesfully'
+            ];
         } else {
             $data = $this->renderAjax('/receive-payment/_form', [
                 'model' => $model,

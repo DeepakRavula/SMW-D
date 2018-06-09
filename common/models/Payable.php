@@ -86,7 +86,7 @@ trait Payable
         }
         if ($from->tableName() === 'lesson') {
             $paymentModel->reference = $from->getLessonNumber();
-        } else {
+        } else if ($from->tableName() === 'invoice') {
             $paymentModel->reference = $from->getInvoiceNumber();
         }
         if ($paymentModel->save()) {
@@ -108,9 +108,15 @@ trait Payable
             if ($from->tableName() === 'invoice') {
                 $paymentModel->invoiceId = $from->id;
                 $paymentModel->lessonId = null;
+                $paymentModel->user_id = null;
+            } else if ($from->tableName() === 'user') {
+                $paymentModel->invoiceId = null;
+                $paymentModel->lessonId = null;
+                $paymentModel->user_id = $from->id;
             } else {
                 $paymentModel->lessonId = $from->id;
                 $paymentModel->invoiceId = null;
+                $paymentModel->user_id = null;
             }
             if ($this->tableName() === 'invoice') {
                 $paymentModel->reference = $this->getInvoiceNumber();

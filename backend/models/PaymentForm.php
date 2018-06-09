@@ -34,6 +34,8 @@ class PaymentForm extends Model
     public $amountNeeded;
     public $user_id;
     public $lessonId;
+    public $lessonIds;
+    public $invoiceIds;
     /**
      * {@inheritdoc}
      */
@@ -41,7 +43,8 @@ class PaymentForm extends Model
     {
         return [
             [['payment_method_id', 'user_id', 'amount'], 'required'],
-            [['date', 'amountNeeded', 'dateRange', 'lessonId', 'fromDate', 'toDate'], 'safe']
+            [['date', 'amountNeeded', 'dateRange', 'lessonId', 'fromDate', 'toDate',
+                'lessonIds', 'invoiceIds'], 'safe']
         ];
     }
 }

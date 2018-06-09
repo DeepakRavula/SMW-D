@@ -29,6 +29,7 @@ class Payment extends ActiveRecord
     public $paymentMethodName;
     public $invoiceNumber;
     public $userName;
+    public $user_id;
     
     const TYPE_OPENING_BALANCE_CREDIT = 1;
     const SCENARIO_CREATE = 'scenario-create';
@@ -239,13 +240,6 @@ class Payment extends ActiveRecord
         $transaction = new Transaction();
         $transaction->save();
         $this->transactionId = $transaction->id;
-        if (!empty($this->invoiceId)) {
-            $model = Invoice::findOne(['id' => $this->invoiceId]);
-            $this->user_id = $model->user_id;
-        } elseif (!empty($this->lessonId)) {
-            $model = Lesson::findOne(['id' => $this->lessonId]);
-            $this->user_id = $model->enrolment->student->customer->id;
-        }
         $this->isDeleted = false;
         if (empty($this->date)) {
             $this->date = (new \DateTime())->format('Y-m-d H:i:s');
@@ -268,6 +262,12 @@ class Payment extends ActiveRecord
             $invoicePaymentModel->payment_id = $this->id;
             $invoicePaymentModel->save();
             $this->invoice->save();
+        }
+        if (!empty($this->user_id)) {
+            $customerPayment = new CustomerPayment();
+            $customerPayment->userId = $this->user_id;
+            $customerPayment->paymentId = $this->id;
+            $customerPayment->save();
         }
         $this->trigger(self::EVENT_CREATE);
         

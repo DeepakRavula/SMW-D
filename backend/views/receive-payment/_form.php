@@ -24,8 +24,7 @@ use yii\helpers\Url;
 <div class="receive-payment-form">
 
     <?php $form = ActiveForm::begin([
-        'id' => 'modal-form',
-       // 'action' => Url::to(['payment/receive', 'InvoiceLineItem[ids]' => $lineItemIds]),
+        'id' => 'modal-form'
     ]); ?>
 
     <div class="row">
@@ -84,6 +83,7 @@ use yii\helpers\Url;
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Receive Payment</h4>');
         $('.modal-save').text('Pay');
+        $('.modal-save').removeClass('modal-save').addClass('modal-save-replaced');
         $('.modal-save-all').text('Create PFI');
         $('.modal-save-all').show();
         
@@ -96,13 +96,39 @@ use yii\helpers\Url;
         $.pjax.reload({url: url, container: '#lesson-lineitem-listing', timeout: 6000});
         $.pjax.reload({url: url, container: '#payment-amount', timeout: 6000});
     });
-    $(document).on('click', '.modal-save-all', function(){
+
+    $(document).off('click', '.modal-save-replaced').on('click', '.modal-save-replaced', function() {
+        var lessonId = '<?= $model->lessonId ?>';
         var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
         var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-        if ($.isEmptyObject(lessonIds)&& ($.isEmptyObject(invoiceIds) )) {
+        if ($.isEmptyObject(lessonIds) && $.isEmptyObject(invoiceIds)) {
             $('#index-error-notification').html("Choose any lessons to create PFI").fadeIn().delay(5000).fadeOut();
         } else {
-            var params = $.param({ lessonIds: lessonIds,invoiceIds: invoiceIds });
+            var params = $.param({ 'PaymentForm[lessonId]': lessonId, 'PaymentForm[lessonIds]': lessonIds, 'PaymentForm[invoiceIds]': invoiceIds });
+            $.ajax({
+                url    : '<?= Url::to(['payment/receive']) ?>?' +params,
+                type   : 'post',
+                dataType: "json",
+                data: $('#modal-form').serialize(),
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#popup-modal').modal('hide');
+                        $('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+                    }
+                }
+            });
+        }
+        return false;
+    });
+
+    $(document).on('click', '.modal-save-all', function() {
+        var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
+        var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(lessonIds) && $.isEmptyObject(invoiceIds)) {
+            $('#index-error-notification').html("Choose any lessons to create PFI").fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ lessonIds: lessonIds, invoiceIds: invoiceIds });
             $.ajax({
                 url    : '<?= Url::to(['proforma-invoice/create']) ?>?' +params,
                 type   : 'get',

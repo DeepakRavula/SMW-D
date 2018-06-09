@@ -42,6 +42,10 @@ class LessonPayment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
     }
+    public function getPayment()
+    {
+        return $this->hasOne(Payment::className(), ['id' => 'paymentId']);
+    }
     public function getCreditUsage()
     {
         return $this->hasOne(CreditUsage::className(), ['credit_payment_id' => 'paymentId']);

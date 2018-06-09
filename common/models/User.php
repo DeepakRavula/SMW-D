@@ -36,6 +36,8 @@ use common\models\Label;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
+    use Payable;
+    
     const STATUS_NOT_ACTIVE = 1;
     const STATUS_ACTIVE = 2;
     const STATUS_DRAFT = 3;
