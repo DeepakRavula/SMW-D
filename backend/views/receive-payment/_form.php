@@ -69,5 +69,14 @@ use yii\helpers\ArrayHelper;
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Receive Payment</h4>');
         $('.modal-save').text('Pay');
+        $('.modal-save-all').text('Create PFI');
+        $('.modal-save-all').show();
+        
     });
+    $(document).on('click', '.modal-save-all', function(){
+        var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
+        var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');           
+        
+         return false;
+       });
 </script>

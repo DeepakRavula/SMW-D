@@ -56,7 +56,7 @@ use common\models\Lesson;
 ?>
 <?php Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
     <?= GridView::widget([
-        'id' => 'line-item-grid',
+        'id' => 'invoice-line-item-grid',
         'dataProvider' => $invoiceLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,
