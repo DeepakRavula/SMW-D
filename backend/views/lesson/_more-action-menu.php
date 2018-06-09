@@ -46,6 +46,8 @@ use common\Models\User;
                 if (response.status) {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
+                    $('.modal-save-all').text("Create PFI");
+                    $('.modal-save-all').show();
                 }
             }
         });

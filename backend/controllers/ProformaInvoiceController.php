@@ -12,6 +12,8 @@ use yii\web\Response;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
+use common\models\Lesson;
+use common\models\Invoice;
 use common\components\controllers\BaseController;
 /**
  * ProformaInvoiceController implements the CRUD actions for ProformaInvoice model.
@@ -52,11 +54,15 @@ class ProformaInvoiceController extends BaseController
      */
     public function actionCreate()
     {
-        $lessonIds = Yii::$app->request->get('ids');
-        $invoiceIds = Yii::$app->request->get('teacherId');
+        $lessonIds = Yii::$app->request->get('lessonIds');
+        $invoiceIds = Yii::$app->request->get('invoiceIds');
         $lessons = Lesson::findAll($lessonIds);
-        $invoices= ProformaInvoice::findAll($invoiceIds);
-
+        $invoices= Invoice::findAll($invoiceIds);
+        if(!empty($lessons))
+        {
+            
+        }
+    
         
     }
 

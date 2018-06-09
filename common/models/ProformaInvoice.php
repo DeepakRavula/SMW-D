@@ -1,0 +1,64 @@
+<?php
+
+namespace common\models;
+
+use Yii;
+
+
+/**
+ * This is the model class for table "proforma_invoice".
+ *
+ * @property int $id
+ * @property int $lesson_id
+ * @property int $type
+ * @property string $amount
+ * @property string $date
+ * @property int $status
+ */
+class ProformaInvoice extends \yii\db\ActiveRecord
+{
+    
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return 'proforma_invoice';
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            ['userId','locationId','date', 'required'],
+
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'invoice_number' => 'Invoice Number',
+            'date' => 'Date',
+            'user_id' => 'Customer Name',
+            
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return InvoiceQuery the active query used by this AR class
+     */
+    public static function find()
+    {
+        return new ProformaInvoiceQuery(get_called_class());
+    }
+
+}

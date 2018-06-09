@@ -90,12 +90,12 @@ use yii\helpers\Url;
     $(document).on('click', '.modal-save-all', function(){
         var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
         var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-        if ($.isEmptyObject(lessonIds)&& ($.isEmptyObject(invoiceIds) ) {
+        if ($.isEmptyObject(lessonIds)&& ($.isEmptyObject(invoiceIds) )) {
             $('#index-error-notification').html("Choose any lessons to create PFI").fadeIn().delay(5000).fadeOut();
         } else {
-            var params = $.param({ ids: lessonIds });
+            var params = $.param({ lessonIds: lessonIds,invoiceIds: invoiceIds });
             $.ajax({
-                url    : '<?= Url::to(['teacher-substitute/index']) ?>?' +params,
+                url    : '<?= Url::to(['proforma-invoice/create']) ?>?' +params,
                 type   : 'get',
                 success: function(response)
                 {
@@ -108,10 +108,7 @@ use yii\helpers\Url;
                     }
                 }
             });
+                }
             return false;
-        }
-
-            return false;
-    
-    });
+        });
 </script>
