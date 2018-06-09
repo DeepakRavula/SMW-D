@@ -45,5 +45,9 @@ class ProformaItemLesson extends \yii\db\ActiveRecord
      *
      * @return InvoiceQuery the active query used by this AR class
      */
+    public function getProformaLineItem()
+    {
+        return $this->hasOne(ProformaLineItem::className(), ['id' => 'lessonId']);
+    }
    
 }

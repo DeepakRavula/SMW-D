@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use common\models\ProformaItemInvoice;
+use common\models\ProformaItemLesson;
 
 
 /**
@@ -17,7 +19,9 @@ use Yii;
  */
 class ProformaLineItem extends \yii\db\ActiveRecord
 {
-    
+    public $lessonId;
+    public $invoiceId;
+
     /**
      * {@inheritdoc}
      */
@@ -54,5 +58,24 @@ class ProformaLineItem extends \yii\db\ActiveRecord
      *
      * @return InvoiceQuery the active query used by this AR class
      */
-   
+    public function afterSave($insert, $changedAttributes)
+    {
+        if($this->lessonId) {
+            $proformaLessonItem=new ProformaItemLesson();
+            $proformaLessonItem->lesson_id=$this->lessonId;
+            $proformaLessonItem->save();
+        }
+        if($this->invoiceId) {
+            $proformaInvoiceItem=new ProformaItemInvoice();
+            $proformaInvoiceItem->invoice_id=$this->invoiceId;
+            $proformaInvoiceItem->save();
+        }
+        
+
+        return parent::afterSave($insert, $changedAttributes);
+    }
+    public function getProfromaInvoice()
+    {
+        return $this->hasOne(ProformaInvoice::className(), ['id' => 'invoice_id']);
+    }
 }

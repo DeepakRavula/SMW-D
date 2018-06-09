@@ -108,8 +108,9 @@ use yii\helpers\Url;
                 type   : 'get',
                 success: function(response)
                 {
+                    alert(response.status);
                     if (response.status) {
-                       
+                        window.location.href = response.url;
                     } else {
                         //$('#index-error-notification').html("Choose lessons with same teacher").fadeIn().delay(5000).fadeOut();
                     }
