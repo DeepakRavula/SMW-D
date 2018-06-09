@@ -84,21 +84,18 @@ if(!empty($lessons)){
             {
                 $proformaLineItem=new ProformaLineItem();
                 $proformaLineItem->invoice_id=$proformaInvoice->id;
+                $proformaLineItem->lessonId=$lesson->id;
                 $proformaLineItem->save();
-                $proformaItemLesson= new ProformaItemLesson();                
-                $proformaItemLesson->lesson_id=$lesson->id;
-                $proformaItemLesson->save();
             }
         }
         if(!empty($invoices)){
             foreach($invoices as $invoice)
             {
-                $proformaLineItem=new ProformaLineItem();
-                $proformaLineItem->invoice_id=$proformaInvoice->id;
+                $proformaLineItem = new ProformaLineItem();
+                $proformaLineItem->invoice_id = $proformaInvoice->id;
+                $proformaLineItem->invoiceId = $invoice->id;
                 $proformaLineItem->save();
-                $proformaItemInvoice= new ProformaItemInvoice();
-                $proformaItemInvoice->invoice_id=$invoice->id;
-                $proformaItemInvoice->save();
+                
             }
         }
 
