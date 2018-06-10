@@ -1,18 +1,11 @@
 <?php
-
-use backend\models\search\InvoiceSearch;
-use common\models\InvoiceLineItem;
-use common\models\Note;
-use yii\helpers\Url;
-use yii\bootstrap\Modal;
-use yii\widgets\Pjax;
-use common\models\UserProfile;
-use common\models\UserEmail;
-use yii\imperavi\TableImperaviRedactorPluginAsset;
-TableImperaviRedactorPluginAsset::register($this);
-use kartik\select2\Select2Asset;
-Select2Asset::register($this);
+//print_r($model->id);die;
 /* @var $this yii\web\View */
 /* @var $model common\models\Invoice */
-
-?>
+$this->title = 'Proforma Invoice';
+$this->params['label'] = $this->render('_title', [
+    'model' => $model,
+]);
+$this->params['action-button'] = $this->render('_buttons', [
+    'model' => $model,
+]); ?>
