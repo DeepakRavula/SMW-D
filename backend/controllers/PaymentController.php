@@ -377,14 +377,20 @@ class PaymentController extends BaseController
                 ->isConfirmed()
                 ->notCanceled()
                 ->unInvoiced()
-                // ->joinWith(['lessonPayments' => function ($query) {
-                //     $query->andWhere(['payment.id' => null]);
-                // }])
                 ->location($locationId);
+            $allLessons = $lessonsQuery->all();
+            $lessonIds = [];
+            foreach ($allLessons as $lesson) {
+                if ($lesson->isOwing($lesson->enrolment->id)) {
+                    $lessonIds[] = $lesson->id;
+                }
+            }
+            $lessonsQuery = Lesson::find()
+                ->andWhere(['id' => $lessonIds]);
         }
         $lessons = clone $lessonsQuery;
         foreach ($lessons->all() as $lesson) {
-            $amount += $lesson->amount;
+            $amount += $lesson->getOwingAmount($lesson->enrolment->id);
         }
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery
@@ -417,12 +423,12 @@ class PaymentController extends BaseController
             $customer = User::findOne($model->user_id);
             foreach ($invoicesQuery->all() as $invoice) {
                 $paymentModel = new Payment();
-                $paymentModel->amount = $invoice->total;
+                $paymentModel->amount = $invoice->balance;
                 $invoice->addPayment($customer, $paymentModel);
             }
             foreach ($lessonsQuery->all() as $lesson) {
                 $paymentModel = new Payment();
-                $paymentModel->amount = $lesson->amount;
+                $paymentModel->amount = $lesson->owingAmount;
                 $lesson->addPayment($customer, $paymentModel);
             }
             $response = [

@@ -87,7 +87,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function tableName()
     {
-        return '{{%user}}';
+        return 'user';
     }
 
     /**
@@ -861,5 +861,13 @@ class User extends ActiveRecord implements IdentityInterface
     public function hasPrimaryEmail()
     {
         return !empty($this->primaryEmail);
+    }
+
+    public function addPayment($paymentId)
+    {
+        $customerPayment = new CustomerPayment();
+        $customerPayment->userId = $this->is;
+        $customerPayment->paymentId = $paymentId;
+        return $customerPayment->save();
     }
 }

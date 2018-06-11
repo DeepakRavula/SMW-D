@@ -86,7 +86,9 @@ use yii\helpers\Url;
         $('.modal-save').removeClass('modal-save').addClass('modal-save-replaced');
         $('.modal-save-all').text('Create PFI');
         $('.modal-save-all').show();
-        
+        $('.select-on-check-all').prop('checked', true);
+        $('#invoice-line-item-grid .select-on-check-all').prop('disabled', true);
+        $('#invoice-line-item-grid input[name="selection[]"]').prop('disabled', true);
     });
 
     $(document).on('change', '#paymentform-daterange', function () {

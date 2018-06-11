@@ -3,6 +3,7 @@
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use common\models\Lesson;
+use yii\helpers\Html;
 
 ?>
 
@@ -10,6 +11,9 @@ use common\models\Lesson;
     $columns = [
         [
             'class' => 'yii\grid\CheckboxColumn',
+            'header' => Html::checkBox('selection_all', false, [
+                'class' => 'select-on-check-all'
+            ]),
             'contentOptions' => ['style' => 'width:30px;'],
             'checkboxOptions' => function($model, $key, $index, $column) {
                 return ['checked' => true];
@@ -42,7 +46,7 @@ use common\models\Lesson;
         [
             'label' => 'Amount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->lineItem->lesson->amount);
+                return Yii::$app->formatter->asCurrency($data->balance);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -50,7 +54,7 @@ use common\models\Lesson;
         [
             'label' => 'Payment',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->lineItem->lesson->amount);
+                return Yii::$app->formatter->asCurrency($data->balance);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']

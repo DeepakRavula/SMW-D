@@ -69,7 +69,7 @@ use kartik\daterange\DateRangePicker;
         [
             'label' => 'Amount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->amount);
+                return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -77,7 +77,7 @@ use kartik\daterange\DateRangePicker;
         [
             'label' => 'Payment',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->amount);
+                return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
