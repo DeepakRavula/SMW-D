@@ -7,12 +7,12 @@ use common\models\PaymentMethod;
 use yii\helpers\ArrayHelper;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
+use kartik\daterange\DateRangePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\PaymentMethods */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-
 <?php 
     $paymentMethods = PaymentMethod::find()
         ->andWhere(['active'=> PaymentMethod::STATUS_ACTIVE])
@@ -54,12 +54,39 @@ use yii\helpers\Url;
         </div>
         <?php Pjax::end(); ?>
     </div>
+    <div class="pull-right">
+    <label>Date Range</label>
+    <?= DateRangePicker::widget([
+        'model' => $model,
+        'attribute' => 'dateRange',
+        'convertFormat' => true,
+        'initRangeExpr' => true,
+        'options' => [
+            'class' => 'form-control',
+            'readOnly' => true
+        ],
+        'pluginOptions' => [
+            'autoApply' => true,
+            'ranges' => [
+                Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')", 'moment()'],
+                Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')", 'moment()'],
+                Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
+                Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
+            ],
+            'locale' => [
+                'format' => 'M d,Y'
+            ],
+            'opens' => 'right'
+        ]
+    ]); ?>
+</div>
     <div class = "row">
 	<div class="col-md-12">
     <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
     <?= $this->render('/receive-payment/_lesson-line-item', [
         'model' => $model,
-        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider
+        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+        'searchModel'=>$searchModel,
     ]);
     ?>
 	</div>
@@ -69,7 +96,8 @@ use yii\helpers\Url;
     <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
     <?= $this->render('/receive-payment/_invoice-line-item', [
         'model' => $model,
-        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
+        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+        'searchModel'=>$searchModel,
     ]);
     ?>
 	</div>
@@ -86,15 +114,18 @@ use yii\helpers\Url;
         $('.modal-save').removeClass('modal-save').addClass('modal-save-replaced');
         $('.modal-save-all').text('Create PFI');
         $('.modal-save-all').show();
-        
+        $('.select-on-check-all').prop('checked', true);
+        $('#invoice-line-item-grid .select-on-check-all').prop('disabled', true);
+        $('#invoice-line-item-grid input[name="selection[]"]').prop('disabled', true);
     });
 
     $(document).on('change', '#paymentform-daterange', function () {
         var dateRange = $('#paymentform-daterange').val();
-        var params = $.param({ 'PaymentForm[dateRange]': dateRange });
+	var lessonId = <?= $model->lessonId ?>;
+        var params = $.param({ 'PaymentForm[dateRange]': dateRange, 'PaymentForm[lessonId]' : lessonId });
         var url = '<?= Url::to(['payment/receive']) ?>?' + params;
-        $.pjax.reload({url: url, container: '#lesson-lineitem-listing', timeout: 6000});
-        $.pjax.reload({url: url, container: '#payment-amount', timeout: 6000});
+	$.pjax.reload({url:url, container: "#lesson-lineitem-listing", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({url:url, container: "#payment-amount", replace: false, async: false, timeout: 6000});
     });
 
     $(document).off('click', '.modal-save-replaced').on('click', '.modal-save-replaced', function() {

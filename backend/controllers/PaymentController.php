@@ -20,6 +20,7 @@ use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use common\models\Location;
 use common\models\User;
+use backend\models\search\ProformaInvoiceSearch;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -350,22 +351,25 @@ class PaymentController extends BaseController
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $amount = 0;
+        $searchModel= new ProformaInvoiceSearch();
+        $searchModel->showCheckBox = true;
         $model = new PaymentForm();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d,Y');
         $model->fromDate = $currentDate->format('M 1,Y');
-        $model->toDate = $currentDate->format('M t,Y');
-        $fromDate = new \DateTime($model->fromDate);
-        $toDate = new \DateTime($model->toDate);
+        $model->toDate = $currentDate->format('M t,Y'); 
         $model->dateRange = $model->fromDate . ' - ' . $model->toDate;
         $paymentData = Yii::$app->request->get('PaymentForm');
         if ($paymentData) {
             $model->load(Yii::$app->request->get());
+	    list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
             if ($model->lessonId) {
                 $lesson = Lesson::findOne($model->lessonId);
                 $model->user_id = $lesson->customer->id;
             }
         }
+	$fromDate = new \DateTime($model->fromDate);
+        $toDate = new \DateTime($model->toDate);
         $lessonsQuery = Lesson::find();
         if ($model->lessonIds) {
             $lessonsQuery->andWhere(['id' => $model->lessonIds]);
@@ -377,14 +381,20 @@ class PaymentController extends BaseController
                 ->isConfirmed()
                 ->notCanceled()
                 ->unInvoiced()
-                // ->joinWith(['lessonPayments' => function ($query) {
-                //     $query->andWhere(['payment.id' => null]);
-                // }])
                 ->location($locationId);
+            $allLessons = $lessonsQuery->all();
+            $lessonIds = [];
+            foreach ($allLessons as $lesson) {
+                if ($lesson->isOwing($lesson->enrolment->id)) {
+                    $lessonIds[] = $lesson->id;
+                }
+            }
+            $lessonsQuery = Lesson::find()
+                ->andWhere(['id' => $lessonIds]);
         }
         $lessons = clone $lessonsQuery;
         foreach ($lessons->all() as $lesson) {
-            $amount += $lesson->amount;
+            $amount += $lesson->getOwingAmount($lesson->enrolment->id);
         }
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery
@@ -417,13 +427,27 @@ class PaymentController extends BaseController
             $customer = User::findOne($model->user_id);
             foreach ($invoicesQuery->all() as $invoice) {
                 $paymentModel = new Payment();
-                $paymentModel->amount = $invoice->total;
-                $invoice->addPayment($customer, $paymentModel);
+                $paymentModel->amount = $invoice->balance;
+                if ($customer->hasCustomerCredit()) {
+                    if ($paymentModel->amount > $customer->creditAmount) {
+                        $paymentModel->amount = $customer->creditAmount;
+                    }
+                    $invoice->addPayment($customer, $paymentModel);
+                } else {
+                    break;
+                }
             }
             foreach ($lessonsQuery->all() as $lesson) {
                 $paymentModel = new Payment();
-                $paymentModel->amount = $lesson->amount;
-                $lesson->addPayment($customer, $paymentModel);
+                $paymentModel->amount = $lesson->getOwingAmount($lesson->enrolment->id);
+                if ($customer->hasCustomerCredit()) {
+                    if ($paymentModel->amount > $customer->creditAmount) {
+                        $paymentModel->amount = $customer->creditAmount;
+                    }
+                    $lesson->addPayment($customer, $paymentModel);
+                } else {
+                    break;
+                }
             }
             $response = [
                 'status' => true,
@@ -433,7 +457,8 @@ class PaymentController extends BaseController
             $data = $this->renderAjax('/receive-payment/_form', [
                 'model' => $model,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider
+                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                'searchModel'=> $searchModel,
             ]);
             $response = [
                 'status' => true,
