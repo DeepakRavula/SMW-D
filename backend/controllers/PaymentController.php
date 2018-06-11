@@ -358,16 +358,13 @@ class PaymentController extends BaseController
         $paymentData = Yii::$app->request->get('PaymentForm');	
 	if ($paymentData) {
 			$model->load(Yii::$app->request->get());
-			if (!empty($paymentData['dateRange'])) {
-				$model->dateRange = $paymentData['dateRange'];
 				list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
-			}
 			if ($model->lessonId) {
 				$lesson = Lesson::findOne($model->lessonId);
 				$model->user_id = $lesson->customer->id;
 			}
 		}
-		$fromDate = new \DateTime($model->fromDate);
+	$fromDate = new \DateTime($model->fromDate);
         $toDate = new \DateTime($model->toDate);
         $lessonsQuery = Lesson::find()
             ->notDeleted()
@@ -385,12 +382,9 @@ class PaymentController extends BaseController
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery
         ]);
-	$from = $fromDate->format('Y-m-d');
-	$to = $toDate->format('Y-m-d');
         $invoicesQuery = Invoice::find()
             ->notDeleted()
             ->lessonInvoice()
-	    ->between($from, $to)
             ->location($locationId)
             ->customer($model->user_id)
             ->unpaid();

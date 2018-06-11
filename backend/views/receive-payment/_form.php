@@ -95,7 +95,6 @@ use yii\helpers\Url;
         var params = $.param({ 'PaymentForm[dateRange]': dateRange, 'PaymentForm[lessonId]' : lessonId });
         var url = '<?= Url::to(['payment/receive']) ?>?' + params;
 	$.pjax.reload({url:url, container: "#lesson-lineitem-listing", replace: false, async: false, timeout: 6000});
-                $.pjax.reload({url:url, container: "#invoice-lineitem-listing", replace: false, async: false, timeout: 6000});
                 $.pjax.reload({url:url, container: "#payment-amount", replace: false, async: false, timeout: 6000});
     });
     $(document).on('click', '.modal-save-all', function(){
