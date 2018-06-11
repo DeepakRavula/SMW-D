@@ -23,7 +23,7 @@ class ProformaItemLesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            ['lesson_id', 'safe'],
+            ['lessonId', 'safe'],
 
         ];
     }
@@ -35,7 +35,7 @@ class ProformaItemLesson extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'lesson_id' => 'Lesson',
+            'lessonId' => 'Lesson',
             
         ];
     }
@@ -49,14 +49,16 @@ class ProformaItemLesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(ProformaLineItem::className(), ['id' => 'proformaLineItemId']);
     }
+
     public function getProformaInvoice()
     {
-        return $this->hasOne(ProformaInvoice::className(), ['id' => 'invoice_id'])
-        ->via('proformaLineItem');
+        return $this->hasOne(ProformaInvoice::className(), ['id' => 'proformaInvoiceId'])
+            ->via('proformaLineItem');
     }
+
     public function getLesson()
     {
-        return $this->hasOne(Lesson::className(), ['id' => 'lesson_id']);
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
     }
    
 }

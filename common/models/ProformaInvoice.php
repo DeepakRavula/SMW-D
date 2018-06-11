@@ -17,7 +17,8 @@ use common\models\query\ProformaInvoiceQuery;
  */
 class ProformaInvoice extends \yii\db\ActiveRecord
 {
-    
+    public $lessonIds;
+    public $invoiceIds;
     /**
      * {@inheritdoc}
      */
@@ -32,8 +33,8 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['userId','locationId'], 'required'],
-
+            [['userId', 'locationId'], 'required'],
+            [['lessonIds', 'invoiceIds'], 'safe']
         ];
     }
 
@@ -61,30 +62,32 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     {
         return new ProformaInvoiceQuery(get_called_class());
     }
-    public function getTotal($invoiceId)
+
+    public function getTotal()
     {
-        $lessonTotal=0;
-        $invoiceTotal=0;
-        $lessonLineItems=Lesson::find()
-        ->joinWith(['proformaLessonItem' => function ($query) use($invoiceId){
-                $query->joinWith(['proformaLineItem' => function ($query) use($invoiceId) {
-                    $query->andWhere(['proforma_line_item.invoice_id'=>$invoiceId]);
-            }]);
-        }])
-        ->all();
-        foreach($lessonLineItems as $lessonLineItem){
-            $lessonTotal+=$lessonLineItem->amount;
+        $lessonTotal = 0;
+        $invoiceTotal = 0;
+        $invoiceId = $this->id;
+        $lessonLineItems = Lesson::find()
+            ->joinWith(['proformaLessonItem' => function ($query) use ($invoiceId) {
+                $query->joinWith(['proformaLineItem' => function ($query) use ($invoiceId) {
+                    $query->andWhere(['proforma_line_item.proformaInvoiceId' => $invoiceId]);
+                }]);
+            }])
+            ->all();
+        foreach ($lessonLineItems as $lessonLineItem) {
+            $lessonTotal += $lessonLineItem->amount;
         }
-        $invoiceLineItems=Invoice::find()
-        ->joinWith(['proformaInvoiceItem' => function ($query) use($invoiceId) {
-            $query->joinWith(['proformaLineItem' => function ($query) use($invoiceId){
-                $query->andWhere(['proforma_line_item.invoice_id'=>$invoiceId]);
-        }]);
-    }])
-    ->all();
-    foreach($invoiceLineItems as $invoiceLineItem){
-        $invoiceTotal+=$invoiceLineItem->balance;
-    }
-        return $lessonTotal+$invoiceTotal;
+        $invoiceLineItems = Invoice::find()
+            ->joinWith(['proformaInvoiceItem' => function ($query) use ($invoiceId) {
+                $query->joinWith(['proformaLineItem' => function ($query) use ($invoiceId){
+                    $query->andWhere(['proforma_line_item.proformaInvoiceId' => $invoiceId]);
+                }]);
+            }])
+            ->all();
+        foreach ($invoiceLineItems as $invoiceLineItem) {
+            $invoiceTotal += $invoiceLineItem->balance;
+        }
+        return $lessonTotal + $invoiceTotal;
     }
 }

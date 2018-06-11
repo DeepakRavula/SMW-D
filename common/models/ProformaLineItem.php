@@ -36,7 +36,7 @@ class ProformaLineItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['invoice_id'], 'required'],
+            [['proformaInvoiceId'], 'required'],
             [['proformaLineItemId'], 'safe'],
 
 
@@ -50,7 +50,7 @@ class ProformaLineItem extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'invoice_id' => 'Invoice',
+            'proformaInvoiceId' => 'Invoice',
             
         ];
     }
@@ -62,24 +62,23 @@ class ProformaLineItem extends \yii\db\ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
-        if($this->lessonId) {
-            $proformaLessonItem=new ProformaItemLesson();
-            $proformaLessonItem->lesson_id=$this->lessonId;
-            $proformaLessonItem->proformaLineItemId=$this->id;
+        if ($this->lessonId) {
+            $proformaLessonItem = new ProformaItemLesson();
+            $proformaLessonItem->lessonId = $this->lessonId;
+            $proformaLessonItem->proformaLineItemId = $this->id;
             $proformaLessonItem->save();
         }
-        if($this->invoiceId) {
-            $proformaInvoiceItem=new ProformaItemInvoice();
-            $proformaInvoiceItem->invoice_id=$this->invoiceId;
-            $proformaInvoiceItem->proformaLineItemId=$this->id;
+        if ($this->invoiceId) {
+            $proformaInvoiceItem = new ProformaItemInvoice();
+            $proformaInvoiceItem->invoiceId = $this->invoiceId;
+            $proformaInvoiceItem->proformaLineItemId = $this->id;
             $proformaInvoiceItem->save();
         }
-        
-
         return parent::afterSave($insert, $changedAttributes);
     }
+
     public function getProfromaInvoice()
     {
-        return $this->hasOne(ProformaInvoice::className(), ['id' => 'invoice_id']);
+        return $this->hasOne(ProformaInvoice::className(), ['id' => 'proformaInvoiceId']);
     }
 }

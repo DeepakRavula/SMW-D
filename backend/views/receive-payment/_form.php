@@ -173,7 +173,7 @@ use kartik\daterange\DateRangePicker;
         } else {
             $('.modal-save-all').attr('disabled', true);
             $('.modal-save-replaced').attr('disabled', true);
-            var params = $.param({ lessonIds: lessonIds, invoiceIds: invoiceIds });
+            var params = $.param({ 'ProformaInvoice[lessonIds]': lessonIds, 'ProformaInvoice[invoiceIds]': invoiceIds });
             $.ajax({
                 url    : '<?= Url::to(['proforma-invoice/create']) ?>?' +params,
                 type   : 'get',

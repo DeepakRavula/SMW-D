@@ -984,7 +984,7 @@ class Lesson extends \yii\db\ActiveRecord
     }
     public function getProformaLessonItem()
     {
-        return $this->hasOne(ProformaItemLesson::className(), ['lesson_id' => 'id']);
+        return $this->hasOne(ProformaItemLesson::className(), ['lessonId' => 'id']);
     }
 
     public function hasCreditUsed($enrolmentId)

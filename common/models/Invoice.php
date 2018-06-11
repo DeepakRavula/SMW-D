@@ -500,10 +500,12 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return !empty($this->getNonLessonCreditUsedPayment());
     }
+
     public function getProformaInvoiceItem()
     {
-        return $this->hasOne(ProformaItemInvoice::className(), ['invoice_id' => 'id']);
+        return $this->hasOne(ProformaItemInvoice::className(), ['invoiceId' => 'id']);
     }
+    
     public function getCreditUsedPaymentTotal()
     {
         $paymentTotal = Payment::find()

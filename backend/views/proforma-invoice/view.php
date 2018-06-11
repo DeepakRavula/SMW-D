@@ -46,7 +46,7 @@ $this->params['action-button'] = $this->render('_buttons', [
         $this->render('/receive-payment/_lesson-line-item', [
             'model' => $model,
             'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-            'searchModel'=>$searchModel,
+            'searchModel' => $searchModel,
         ]);
         ?>
         <?php LteBox::end()?>
@@ -66,7 +66,7 @@ $this->params['action-button'] = $this->render('_buttons', [
         $this->render('/receive-payment/_invoice-line-item', [
             'model' => $model,
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-            'searchModel'=>$searchModel,
+            'searchModel' => $searchModel,
         ]);
         ?>
          <?php LteBox::end()?>
