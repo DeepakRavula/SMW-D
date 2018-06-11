@@ -85,7 +85,9 @@ $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])
                     return $data->paymentMethod->name;
                 },
                 'filterType' => KartikGridView::FILTER_SELECT2,
-                'filter' => ArrayHelper::map(PaymentMethod::find()->orderBy(['name' => SORT_ASC])
+                'filter' => ArrayHelper::map(PaymentMethod::find()
+                ->andWhere(['displayed' => true])
+                ->orderBy(['name' => SORT_ASC])
                 ->asArray()->all(), 'name', 'name'),
                 'filterWidgetOptions'=>[
            
