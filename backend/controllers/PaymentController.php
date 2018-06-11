@@ -357,9 +357,7 @@ class PaymentController extends BaseController
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d,Y');
         $model->fromDate = $currentDate->format('M 1,Y');
-        $model->toDate = $currentDate->format('M t,Y');
-        $fromDate = new \DateTime($model->fromDate);
-        $toDate = new \DateTime($model->toDate);
+        $model->toDate = $currentDate->format('M t,Y'); 
         $model->dateRange = $model->fromDate . ' - ' . $model->toDate;
         $paymentData = Yii::$app->request->get('PaymentForm');
         if ($paymentData) {
@@ -380,14 +378,20 @@ class PaymentController extends BaseController
                 ->isConfirmed()
                 ->notCanceled()
                 ->unInvoiced()
-                // ->joinWith(['lessonPayments' => function ($query) {
-                //     $query->andWhere(['payment.id' => null]);
-                // }])
                 ->location($locationId);
+            $allLessons = $lessonsQuery->all();
+            $lessonIds = [];
+            foreach ($allLessons as $lesson) {
+                if ($lesson->isOwing($lesson->enrolment->id)) {
+                    $lessonIds[] = $lesson->id;
+                }
+            }
+            $lessonsQuery = Lesson::find()
+                ->andWhere(['id' => $lessonIds]);
         }
         $lessons = clone $lessonsQuery;
         foreach ($lessons->all() as $lesson) {
-            $amount += $lesson->amount;
+            $amount += $lesson->getOwingAmount($lesson->enrolment->id);
         }
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery
@@ -420,13 +424,27 @@ class PaymentController extends BaseController
             $customer = User::findOne($model->user_id);
             foreach ($invoicesQuery->all() as $invoice) {
                 $paymentModel = new Payment();
-                $paymentModel->amount = $invoice->total;
-                $invoice->addPayment($customer, $paymentModel);
+                $paymentModel->amount = $invoice->balance;
+                if ($customer->hasCustomerCredit()) {
+                    if ($paymentModel->amount > $customer->creditAmount) {
+                        $paymentModel->amount = $customer->creditAmount;
+                    }
+                    $invoice->addPayment($customer, $paymentModel);
+                } else {
+                    break;
+                }
             }
             foreach ($lessonsQuery->all() as $lesson) {
                 $paymentModel = new Payment();
-                $paymentModel->amount = $lesson->amount;
-                $lesson->addPayment($customer, $paymentModel);
+                $paymentModel->amount = $lesson->getOwingAmount($lesson->enrolment->id);
+                if ($customer->hasCustomerCredit()) {
+                    if ($paymentModel->amount > $customer->creditAmount) {
+                        $paymentModel->amount = $customer->creditAmount;
+                    }
+                    $lesson->addPayment($customer, $paymentModel);
+                } else {
+                    break;
+                }
             }
             $response = [
                 'status' => true,

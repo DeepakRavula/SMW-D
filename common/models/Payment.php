@@ -21,6 +21,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 class Payment extends ActiveRecord
 {
     public $invoiceId;
+    public $enrolmentId;
     public $lessonId;
     public $old;
     public $credit;
@@ -68,7 +69,7 @@ class Payment extends ActiveRecord
             [['amount'], 'number'],
             ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_APPLY_CREDIT]],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'sourceId', 'credit', 
-                'isDeleted', 'transactionId', 'notes'], 'safe'],
+                'isDeleted', 'transactionId', 'notes', 'enrolmentId'], 'safe'],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
                 self::SCENARIO_CREDIT_USED_EDIT]],
         ];
@@ -157,6 +158,11 @@ class Payment extends ActiveRecord
     public function getLessonCredit()
     {
         return $this->hasOne(LessonPayment::className(), ['paymentId' => 'id']);
+    }
+
+    public function getCustomerCredit()
+    {
+        return $this->hasOne(CustomerPayment::className(), ['paymentId' => 'id']);
     }
     
     public function getInvoice()
@@ -268,6 +274,15 @@ class Payment extends ActiveRecord
             $customerPayment->userId = $this->user_id;
             $customerPayment->paymentId = $this->id;
             $customerPayment->save();
+        }
+        if (!empty($this->lessonId) && !empty($this->enrolmentId)) {
+            $lessonPayment = new LessonPayment();
+            $lessonPayment->lessonId = $this->lessonId;
+            $lessonPayment->paymentId = $this->id;
+            $lessonPayment->enrolmentId = $this->enrolmentId;
+            if (!$lessonPayment->save()) {
+                print_r($lessonPayment->getErrors());die;
+            }
         }
         $this->trigger(self::EVENT_CREATE);
         

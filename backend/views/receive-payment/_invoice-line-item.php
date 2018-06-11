@@ -3,6 +3,7 @@
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use common\models\Lesson;
+use yii\helpers\Html;
 
 ?>
 <?php
@@ -47,7 +48,7 @@ use common\models\Lesson;
         array_push($columns,[
             'label' => 'Amount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->lineItem->lesson->amount);
+                return Yii::$app->formatter->asCurrency($data->total);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -55,7 +56,7 @@ use common\models\Lesson;
         array_push($columns,[
             'label' => 'Balance',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->lineItem->lesson->amount);
+                return Yii::$app->formatter->asCurrency($data->balance);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']

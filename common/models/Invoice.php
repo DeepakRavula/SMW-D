@@ -508,7 +508,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $paymentTotal = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere(['ip.invoice_id' => $this->id])
             ->creditUsed()
             ->sum('payment.amount');
 
@@ -519,7 +519,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $paymentTotal = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere(['ip.invoice_id' => $this->id])
             ->creditUsed()
             ->notLessonCreditUsed()
             ->sum('payment.amount');
@@ -531,7 +531,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $paymentTotal = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere(['ip.invoice_id' => $this->id])
             ->creditUsed()
             ->lessonCreditUsed()
             ->sum('payment.amount');
@@ -543,7 +543,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $paymentTotal = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id]);
+            ->andWhere(['ip.invoice_id' => $this->id]);
         if ($this->isProFormaInvoice()) {
             $paymentTotal->notCreditUsed();
         }
@@ -557,8 +557,7 @@ class Invoice extends \yii\db\ActiveRecord
         $invoicePaymentTotal = Payment::find()
             ->joinWith('invoicePayment ip')
             ->andWhere([
-                'ip.invoice_id' => $this->id,
-                'payment.user_id' => $this->user_id,
+                'ip.invoice_id' => $this->id
             ])
             ->andWhere(['NOT IN', 'payment.payment_method_id', [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]])
             ->sum('payment.amount');
@@ -575,7 +574,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $creditTotal = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->andWhere([ 'ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere([ 'ip.invoice_id' => $this->id])
             ->sum('payment.amount');
 
         return $creditTotal;

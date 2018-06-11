@@ -87,7 +87,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function tableName()
     {
-        return '{{%user}}';
+        return 'user';
     }
 
     /**
@@ -346,6 +346,20 @@ class User extends ActiveRecord implements IdentityInterface
             $phone->delete();
         }
         return parent::beforeDelete();
+    }
+
+    public function getCreditAmount()
+    {
+        return Payment::find()
+                ->joinWith('customerCredit')
+                ->andWhere(['customer_payment.userId' => $this->id])
+                ->notDeleted()
+                ->sum('amount');
+    }
+
+    public function hasCustomerCredit()
+    {
+        return $this->creditAmount > 0.01;
     }
 
     public function getCustomerPaymentPreference()
@@ -861,5 +875,13 @@ class User extends ActiveRecord implements IdentityInterface
     public function hasPrimaryEmail()
     {
         return !empty($this->primaryEmail);
+    }
+
+    public function addPayment($paymentId)
+    {
+        $customerPayment = new CustomerPayment();
+        $customerPayment->userId = $this->is;
+        $customerPayment->paymentId = $paymentId;
+        return $customerPayment->save();
     }
 }

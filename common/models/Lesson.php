@@ -360,6 +360,16 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(Classroom::className(), ['id' => 'classroomId']);
     }
 
+    public function isOwing($enrolmentId)
+    {
+        return $this->getCreditAppliedAmount($enrolmentId) < $this->amount;
+    }
+
+    public function getOwingAmount($enrolmentId)
+    {
+        return $this->amount - $this->getCreditAppliedAmount($enrolmentId);
+    }
+
     public function getPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['id' => 'paymentCycleId'])
@@ -367,14 +377,21 @@ class Lesson extends \yii\db\ActiveRecord
                     ->onCondition(['payment_cycle.isDeleted' => false]);
     }
 
-    public function getPayments()
+    public function getLessonPayments()
     {
         return $this->hasMany(LessonPayment::className(), ['lessonId' => 'id']);
     }
 
-    public function getLessonPayments()
+    public function getPayments()
     {
         return $this->hasMany(Payment::className(), ['id' => 'paymentId'])
+            ->viaTable('lesson_payment', ['lessonId' => 'id'])
+            ->onCondition(['payment.isDeleted' => false]);
+    }
+
+    public function getPayment()
+    {
+        return $this->hasOne(Payment::className(), ['id' => 'paymentId'])
             ->viaTable('lesson_payment', ['lessonId' => 'id'])
             ->onCondition(['payment.isDeleted' => false]);
     }
@@ -494,13 +511,6 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Enrolment::className(), ['courseId' => 'courseId'])
             ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);
-    }
-
-    public function getLessonCredit()
-    {
-        return $this->hasMany(Payment::className(), ['id' => 'paymentId'])
-            ->via('payments')
-            ->onCondition(['payment.isDeleted' => false]);
     }
 
     public function hasGroupInvoice()
