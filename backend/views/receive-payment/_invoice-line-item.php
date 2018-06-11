@@ -6,28 +6,30 @@ use common\models\Lesson;
 use yii\helpers\Html;
 
 ?>
-
 <?php
+  if ($searchModel->showCheckBox) {
     $columns = [
         [
-            'class' => 'yii\grid\CheckboxColumn',
-            'header' => Html::checkBox('selection_all', false, [
-                'class' => 'select-on-check-all'
-            ]),
-            'contentOptions' => ['style' => 'width:30px;'],
-            'checkboxOptions' => function($model, $key, $index, $column) {
-                return ['checked' => true];
-            }
-        ],
-        [
+        'class' => 'yii\grid\CheckboxColumn',
+        'contentOptions' => ['style' => 'width:30px;'],
+        'checkboxOptions' => function($model, $key, $index, $column) {
+            return ['checked' => true];
+        }
+        ]
+    ];
+} else {
+    $columns = [];
+       
+}
+    array_push($columns,[
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left'],
             'label' => 'Date',
             'value' => function ($data) {
                 return Yii::$app->formatter->asDateTime($data->lineItem->lesson->date);
             }
-        ],
-        [
+        ]);
+        array_push($columns,[
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left'],
             'attribute' => 'royaltyFree',
@@ -35,31 +37,30 @@ use yii\helpers\Html;
             'value' => function ($model) {
                 return $model->lineItem->lesson->course->program->name;
             }
-        ],
-        [
+        ]);
+        array_push($columns,[
             'headerOptions' => ['class' => 'text-left'],
             'label' => 'Teacher',
             'value' => function ($data) {
                 return $data->lineItem->lesson->teacher->publicIdentity;
             }
-        ],
-        [
+        ]);
+        array_push($columns,[
             'label' => 'Amount',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency($data->amount);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
-        ],
-        [
+        ]);
+        array_push($columns,[
             'label' => 'Payment',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency($data->balance);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
-        ]
-    ];
+        ]);
 ?>
 <?php Pjax::Begin(['id' => 'invoice-lineitem-listing', 'timeout' => 6000]); ?>
     <?= GridView::widget([

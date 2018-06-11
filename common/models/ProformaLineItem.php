@@ -37,6 +37,8 @@ class ProformaLineItem extends \yii\db\ActiveRecord
     {
         return [
             [['invoice_id'], 'required'],
+            [['proformaLineItemId'], 'safe'],
+
 
         ];
     }
@@ -63,11 +65,13 @@ class ProformaLineItem extends \yii\db\ActiveRecord
         if($this->lessonId) {
             $proformaLessonItem=new ProformaItemLesson();
             $proformaLessonItem->lesson_id=$this->lessonId;
+            $proformaLessonItem->proformaLineItemId=$this->id;
             $proformaLessonItem->save();
         }
         if($this->invoiceId) {
             $proformaInvoiceItem=new ProformaItemInvoice();
             $proformaInvoiceItem->invoice_id=$this->invoiceId;
+            $proformaInvoiceItem->proformaLineItemId=$this->id;
             $proformaInvoiceItem->save();
         }
         
