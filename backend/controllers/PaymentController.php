@@ -425,12 +425,26 @@ class PaymentController extends BaseController
             foreach ($invoicesQuery->all() as $invoice) {
                 $paymentModel = new Payment();
                 $paymentModel->amount = $invoice->balance;
-                $invoice->addPayment($customer, $paymentModel);
+                if ($customer->hasCustomerCredit()) {
+                    if ($paymentModel->amount > $customer->creditAmount) {
+                        $paymentModel->amount = $customer->creditAmount;
+                    }
+                    $invoice->addPayment($customer, $paymentModel);
+                } else {
+                    break;
+                }
             }
             foreach ($lessonsQuery->all() as $lesson) {
                 $paymentModel = new Payment();
-                $paymentModel->amount = $lesson->owingAmount;
-                $lesson->addPayment($customer, $paymentModel);
+                $paymentModel->amount = $lesson->getOwingAmount($lesson->enrolment->id);
+                if ($customer->hasCustomerCredit()) {
+                    if ($paymentModel->amount > $customer->creditAmount) {
+                        $paymentModel->amount = $customer->creditAmount;
+                    }
+                    $lesson->addPayment($customer, $paymentModel);
+                } else {
+                    break;
+                }
             }
             $response = [
                 'status' => true,
