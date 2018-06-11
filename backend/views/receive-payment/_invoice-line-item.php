@@ -53,7 +53,7 @@ use common\models\Lesson;
             'contentOptions' => ['class' => 'text-right']
         ]);
         array_push($columns,[
-            'label' => 'Payment',
+            'label' => 'Balance',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency($data->lineItem->lesson->amount);
             },
