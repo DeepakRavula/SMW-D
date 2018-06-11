@@ -46,7 +46,7 @@ use yii\helpers\Html;
         [
             'label' => 'Amount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->balance);
+                return Yii::$app->formatter->asCurrency($data->amount);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
