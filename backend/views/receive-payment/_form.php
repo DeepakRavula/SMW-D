@@ -91,10 +91,12 @@ use yii\helpers\Url;
 
     $(document).on('change', '#paymentform-daterange', function () {
         var dateRange = $('#paymentform-daterange').val();
-        var params = $.param({ 'PaymentForm[dateRange]': dateRange });
+	var lessonId = <?= $model->lessonId ?>;
+        var params = $.param({ 'PaymentForm[dateRange]': dateRange, 'PaymentForm[lessonId]' : lessonId });
         var url = '<?= Url::to(['payment/receive']) ?>?' + params;
-        $.pjax.reload({url: url, container: '#lesson-lineitem-listing', timeout: 6000});
-        $.pjax.reload({url: url, container: '#payment-amount', timeout: 6000});
+	$.pjax.reload({url:url, container: "#lesson-lineitem-listing", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({url:url, container: "#invoice-lineitem-listing", replace: false, async: false, timeout: 6000});
+                $.pjax.reload({url:url, container: "#payment-amount", replace: false, async: false, timeout: 6000});
     });
     $(document).on('click', '.modal-save-all', function(){
         var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');

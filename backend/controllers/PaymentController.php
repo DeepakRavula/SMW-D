@@ -353,26 +353,30 @@ class PaymentController extends BaseController
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d,Y');
         $model->fromDate = $currentDate->format('M 1,Y');
-        $model->toDate = $currentDate->format('M t,Y');
-        $fromDate = new \DateTime($model->fromDate);
-        $toDate = new \DateTime($model->toDate);
+        $model->toDate = $currentDate->format('M t,Y'); 
         $model->dateRange = $model->fromDate . ' - ' . $model->toDate;
-        $paymentData = Yii::$app->request->get('PaymentForm');
-        if ($paymentData) {
-            $model->load(Yii::$app->request->get());
-            if ($model->lessonId) {
-                $lesson = Lesson::findOne($model->lessonId);
-                $model->user_id = $lesson->customer->id;
-            }
-        }
+        $paymentData = Yii::$app->request->get('PaymentForm');	
+	if ($paymentData) {
+			$model->load(Yii::$app->request->get());
+			if (!empty($paymentData['dateRange'])) {
+				$model->dateRange = $paymentData['dateRange'];
+				list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
+			}
+			if ($model->lessonId) {
+				$lesson = Lesson::findOne($model->lessonId);
+				$model->user_id = $lesson->customer->id;
+			}
+		}
+		$fromDate = new \DateTime($model->fromDate);
+        $toDate = new \DateTime($model->toDate);
         $lessonsQuery = Lesson::find()
             ->notDeleted()
-            ->between($fromDate, $toDate)
             ->privateLessons()
             ->customer($model->user_id)
             ->isConfirmed()
             ->notCanceled()
             ->unInvoiced()
+	    ->between($fromDate, $toDate)
             ->location($locationId);
         $lessons = clone $lessonsQuery;
         foreach ($lessons->all() as $lesson) {
@@ -381,9 +385,12 @@ class PaymentController extends BaseController
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery
         ]);
+	$from = $fromDate->format('Y-m-d');
+	$to = $toDate->format('Y-m-d');
         $invoicesQuery = Invoice::find()
             ->notDeleted()
             ->lessonInvoice()
+	    ->between($from, $to)
             ->location($locationId)
             ->customer($model->user_id)
             ->unpaid();
