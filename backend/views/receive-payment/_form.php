@@ -54,8 +54,8 @@ use kartik\daterange\DateRangePicker;
         </div>
         <?php Pjax::end(); ?>
     </div>
-    <div class="pull-right">
-    <label>Date Range</label>
+    <div class="pull-right col-md-3">
+    <label>Date Range To Filter Lessons</label>
     <?= DateRangePicker::widget([
         'model' => $model,
         'attribute' => 'dateRange',
@@ -76,7 +76,7 @@ use kartik\daterange\DateRangePicker;
             'locale' => [
                 'format' => 'M d,Y'
             ],
-            'opens' => 'right'
+            'opens' => 'left'
         ]
     ]); ?>
 </div>
@@ -114,27 +114,37 @@ use kartik\daterange\DateRangePicker;
         $('.modal-save').removeClass('modal-save').addClass('modal-save-replaced');
         $('.modal-save-all').text('Create PFI');
         $('.modal-save-all').show();
+        $('.modal-save-replaced').attr('disabled', false);
+        $('.modal-save-all').attr('disabled', false);
         $('.select-on-check-all').prop('checked', true);
         $('#invoice-line-item-grid .select-on-check-all').prop('disabled', true);
         $('#invoice-line-item-grid input[name="selection[]"]').prop('disabled', true);
     });
 
-    $(document).on('change', '#paymentform-daterange', function () {
+    $(document).off('change', '#paymentform-daterange').on('change', '#paymentform-daterange', function () {
+        $('#modal-spinner').show();
         var dateRange = $('#paymentform-daterange').val();
-	var lessonId = <?= $model->lessonId ?>;
+	    var lessonId = <?= $model->lessonId ?>;
         var params = $.param({ 'PaymentForm[dateRange]': dateRange, 'PaymentForm[lessonId]' : lessonId });
         var url = '<?= Url::to(['payment/receive']) ?>?' + params;
-	$.pjax.reload({url:url, container: "#lesson-lineitem-listing", replace: false, async: false, timeout: 6000});
-                $.pjax.reload({url:url, container: "#payment-amount", replace: false, async: false, timeout: 6000});
+	    $.pjax.reload({url:url, container: "#lesson-lineitem-listing", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({url:url, container: "#payment-amount", replace: false, async: false, timeout: 6000});
+        $('.select-on-check-all').prop('checked', true);
+        $('#modal-spinner').hide();
+        return false;
     });
 
     $(document).off('click', '.modal-save-replaced').on('click', '.modal-save-replaced', function() {
+        $('#modal-spinner').show();
         var lessonId = '<?= $model->lessonId ?>';
         var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
         var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(lessonIds) && $.isEmptyObject(invoiceIds)) {
-            $('#index-error-notification').html("Choose any lessons to create PFI").fadeIn().delay(5000).fadeOut();
+            $('#modal-spinner').hide();
+            $('#index-error-notification').html("Choose any lessons to pay").fadeIn().delay(5000).fadeOut();
         } else {
+            $('.modal-save-replaced').attr('disabled', true);
+            $('.modal-save-all').attr('disabled', true);
             var params = $.param({ 'PaymentForm[lessonId]': lessonId, 'PaymentForm[lessonIds]': lessonIds, 'PaymentForm[invoiceIds]': invoiceIds });
             $.ajax({
                 url    : '<?= Url::to(['payment/receive']) ?>?' +params,
@@ -153,12 +163,16 @@ use kartik\daterange\DateRangePicker;
         return false;
     });
 
-    $(document).on('click', '.modal-save-all', function() {
+    $(document).off('click', '.modal-save-all').on('click', '.modal-save-all', function() {
+        $('#modal-spinner').show();
         var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
         var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(lessonIds) && $.isEmptyObject(invoiceIds)) {
+            $('#modal-spinner').hide();
             $('#index-error-notification').html("Choose any lessons to create PFI").fadeIn().delay(5000).fadeOut();
         } else {
+            $('.modal-save-all').attr('disabled', true);
+            $('.modal-save-replaced').attr('disabled', true);
             var params = $.param({ lessonIds: lessonIds, invoiceIds: invoiceIds });
             $.ajax({
                 url    : '<?= Url::to(['proforma-invoice/create']) ?>?' +params,
@@ -168,12 +182,10 @@ use kartik\daterange\DateRangePicker;
                     alert(response.status);
                     if (response.status) {
                         window.location.href = response.url;
-                    } else {
-                        //$('#index-error-notification').html("Choose lessons with same teacher").fadeIn().delay(5000).fadeOut();
                     }
                 }
             });
-                }
-            return false;
-        });
+        }
+        return false;
+    });
 </script>
