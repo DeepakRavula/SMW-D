@@ -357,9 +357,7 @@ class PaymentController extends BaseController
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d,Y');
         $model->fromDate = $currentDate->format('M 1,Y');
-        $model->toDate = $currentDate->format('M t,Y');
-        $fromDate = new \DateTime($model->fromDate);
-        $toDate = new \DateTime($model->toDate);
+        $model->toDate = $currentDate->format('M t,Y'); 
         $model->dateRange = $model->fromDate . ' - ' . $model->toDate;
         $paymentData = Yii::$app->request->get('PaymentForm');
         if ($paymentData) {
