@@ -37,7 +37,7 @@ class ProformaLineItem extends \yii\db\ActiveRecord
     {
         return [
             [['proformaInvoiceId'], 'required'],
-            [['proformaLineItemId'], 'safe'],
+            [['proformaLineItemId','lessonId','$invoiceId'], 'safe'],
 
 
         ];

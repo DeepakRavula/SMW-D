@@ -23,7 +23,7 @@ class ProformaItemInvoice extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['proformaInvoiceId'], 'required'],
+            [['invoiceId'], 'required'],
 
         ];
     }
@@ -35,7 +35,7 @@ class ProformaItemInvoice extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'proformaInvoiceId' => 'Invoice',
+            'invoiceId' => 'Invoice',
             
         ];
     }
@@ -52,7 +52,7 @@ class ProformaItemInvoice extends \yii\db\ActiveRecord
 
     public function getProformaInvoice()
     {
-        return $this->hasOne(ProformaInvoice::className(), ['id' => 'proformaInvoiceId'])
+        return $this->hasOne(ProformaInvoice::className(), ['id' => 'invoiceId'])
             ->via('proformaLineItem');
     }
 
