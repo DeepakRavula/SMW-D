@@ -362,11 +362,14 @@ class PaymentController extends BaseController
         $paymentData = Yii::$app->request->get('PaymentForm');
         if ($paymentData) {
             $model->load(Yii::$app->request->get());
+	    list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
             if ($model->lessonId) {
                 $lesson = Lesson::findOne($model->lessonId);
                 $model->user_id = $lesson->customer->id;
             }
         }
+	$fromDate = new \DateTime($model->fromDate);
+        $toDate = new \DateTime($model->toDate);
         $lessonsQuery = Lesson::find();
         if ($model->lessonIds) {
             $lessonsQuery->andWhere(['id' => $model->lessonIds]);
