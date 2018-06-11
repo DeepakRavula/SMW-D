@@ -7,12 +7,12 @@ use common\models\PaymentMethod;
 use yii\helpers\ArrayHelper;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
+use kartik\daterange\DateRangePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\PaymentMethods */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-
 <?php 
     $paymentMethods = PaymentMethod::find()
         ->andWhere(['active'=> PaymentMethod::STATUS_ACTIVE])
@@ -54,12 +54,39 @@ use yii\helpers\Url;
         </div>
         <?php Pjax::end(); ?>
     </div>
+    <div class="pull-right">
+    <label>Date Range</label>
+    <?= DateRangePicker::widget([
+        'model' => $model,
+        'attribute' => 'dateRange',
+        'convertFormat' => true,
+        'initRangeExpr' => true,
+        'options' => [
+            'class' => 'form-control',
+            'readOnly' => true
+        ],
+        'pluginOptions' => [
+            'autoApply' => true,
+            'ranges' => [
+                Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')", 'moment()'],
+                Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')", 'moment()'],
+                Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
+                Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
+            ],
+            'locale' => [
+                'format' => 'M d,Y'
+            ],
+            'opens' => 'right'
+        ]
+    ]); ?>
+</div>
     <div class = "row">
 	<div class="col-md-12">
     <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
     <?= $this->render('/receive-payment/_lesson-line-item', [
         'model' => $model,
-        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider
+        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+        'searchModel'=>$searchModel,
     ]);
     ?>
 	</div>
@@ -69,7 +96,8 @@ use yii\helpers\Url;
     <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
     <?= $this->render('/receive-payment/_invoice-line-item', [
         'model' => $model,
-        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider
+        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+        'searchModel'=>$searchModel,
     ]);
     ?>
 	</div>

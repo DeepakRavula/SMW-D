@@ -7,50 +7,31 @@ use kartik\daterange\DateRangePicker;
 
 ?>
 
-<div class="pull-right">
-    <label>Date Range</label>
-    <?= DateRangePicker::widget([
-        'model' => $model,
-        'attribute' => 'dateRange',
-        'convertFormat' => true,
-        'initRangeExpr' => true,
-        'options' => [
-            'class' => 'form-control',
-            'readOnly' => true
-        ],
-        'pluginOptions' => [
-            'autoApply' => true,
-            'ranges' => [
-                Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')", 'moment()'],
-                Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')", 'moment()'],
-                Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
-                Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
-            ],
-            'locale' => [
-                'format' => 'M d,Y'
-            ],
-            'opens' => 'right'
-        ]
-    ]); ?>
-</div>
+
 <?php 
+   if ($searchModel->showCheckBox) {
     $columns = [
         [
-            'class' => 'yii\grid\CheckboxColumn',
-            'contentOptions' => ['style' => 'width:30px;'],
-            'checkboxOptions' => function($model, $key, $index, $column) {
-                return ['checked' => true];
-            }
-        ],
-        [
+        'class' => 'yii\grid\CheckboxColumn',
+        'contentOptions' => ['style' => 'width:30px;'],
+        'checkboxOptions' => function($model, $key, $index, $column) {
+            return ['checked' => true];
+        }
+        ]
+    ];
+} else {
+    $columns = [];
+       
+}
+        array_push($columns,[
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left'],
             'label' => 'Date',
             'value' => function ($data) {
                 return Yii::$app->formatter->asDateTime($data->date);
             }
-        ],
-        [
+        ]);
+        array_push($columns,[
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left'],
             'attribute' => 'royaltyFree',
@@ -58,31 +39,30 @@ use kartik\daterange\DateRangePicker;
             'value' => function ($model) {
                 return $model->course->program->name;
             }
-        ],
-        [
+        ]);
+        array_push($columns,[
             'headerOptions' => ['class' => 'text-left'],
             'label' => 'Teacher',
             'value' => function ($data) {
                 return $data->teacher->publicIdentity;
             }
-        ],
-        [
+        ]);
+        array_push($columns,[
             'label' => 'Amount',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency($data->amount);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
-        ],
-        [
+        ]);
+        array_push($columns,[
             'label' => 'Payment',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency($data->amount);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
-        ]
-    ];
+        ]);
 ?>
 <?php Pjax::Begin(['id' => 'lesson-lineitem-listing', 'timeout' => 6000]); ?>
     <?= GridView::widget([

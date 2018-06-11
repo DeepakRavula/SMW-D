@@ -20,6 +20,7 @@ use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use common\models\Location;
 use common\models\User;
+use backend\models\search\ProformaInvoiceSearch;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -350,6 +351,8 @@ class PaymentController extends BaseController
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $amount = 0;
+        $searchModel= new ProformaInvoiceSearch();
+        $searchModel->showCheckBox = true;
         $model = new PaymentForm();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d,Y');
@@ -433,7 +436,8 @@ class PaymentController extends BaseController
             $data = $this->renderAjax('/receive-payment/_form', [
                 'model' => $model,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider
+                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                'searchModel'=> $searchModel,
             ]);
             $response = [
                 'status' => true,

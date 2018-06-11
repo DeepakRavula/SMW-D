@@ -233,7 +233,10 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
     }
-
+    public function getProformaInvoiceItem()
+    {
+        return $this->hasOne(ProformaItemInvoice::className(), ['invoice_id' => 'id']);
+    }
     public function getProFormaLesson()
     {
         if (!$this->isExtraLesson()) {
