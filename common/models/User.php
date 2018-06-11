@@ -348,6 +348,20 @@ class User extends ActiveRecord implements IdentityInterface
         return parent::beforeDelete();
     }
 
+    public function getCreditAmount()
+    {
+        return Payment::find()
+                ->joinWith('customerCredit')
+                ->andWhere(['customer_payment.userId' => $this->id])
+                ->notDeleted()
+                ->sum('amount');
+    }
+
+    public function hasCustomerCredit()
+    {
+        return $this->creditAmount > 0.01;
+    }
+
     public function getCustomerPaymentPreference()
     {
         return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'id']);
