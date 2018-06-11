@@ -48,7 +48,7 @@ use yii\helpers\Html;
         array_push($columns,[
             'label' => 'Amount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->amount);
+                return Yii::$app->formatter->asCurrency($data->total);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
