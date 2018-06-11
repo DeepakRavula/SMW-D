@@ -54,7 +54,7 @@ use yii\helpers\Html;
             'contentOptions' => ['class' => 'text-right']
         ]);
         array_push($columns,[
-            'label' => 'Payment',
+            'label' => 'Balance',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency($data->balance);
             },
