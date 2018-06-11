@@ -61,5 +61,24 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     {
         return new ProformaInvoiceQuery(get_called_class());
     }
-
+    public function getTotal()
+    {
+        $lessonLineItems=Lesson::find()
+        ->joinWith(['proformaLessonItem' => function ($query) use ($model) {
+                $query->joinWith(['proformaLineItem' => function ($query) use ($model) {
+                    $query->andWhere(['proforma_line_item.invoice_id'=>$model->id]);
+            }]);
+        }])
+        ->all();
+        foreach($lessonLineItems as $lessonLineItem){
+            $lessonTotal+=$lessonLineItem->amount();
+        }
+        $invoiceLineItems=Invoice::find()
+        ->joinWith(['proformaInvoiceItem' => function ($query) use ($model) {
+            $query->joinWith(['proformaLineItem' => function ($query) use ($model) {
+                $query->andWhere(['proforma_line_item.invoice_id'=>$model->id]);
+        }]);
+    }]);
+        return $proformaInvoiceTotal;
+    }
 }
