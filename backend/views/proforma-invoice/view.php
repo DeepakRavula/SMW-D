@@ -101,7 +101,7 @@ $this->render('note/view', [
 			{
 			   if(response.status)
 			   {
-                   alert('sucess');
+                   
 					$('.invoice-note-content').html(response.data);
 					$('#invoice-note-modal').modal('hide');
 				}else
