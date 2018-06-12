@@ -65,7 +65,9 @@ class ProformaInvoiceController extends BaseController
     public function actionCreate()
     {
         $proformaInvoice = new ProformaInvoice();
+        print_r(Yii::$app->request->get());die;
         $proformaInvoice->load(Yii::$app->request->get());
+
         $lessons = Lesson::findAll($proformaInvoice->lessonIds);
         $invoices = Invoice::findAll($proformaInvoice->invoiceIds);
         $endLesson = end($lessons);
