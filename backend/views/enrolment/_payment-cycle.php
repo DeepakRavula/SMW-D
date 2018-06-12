@@ -47,30 +47,6 @@ use yii\grid\GridView;
                 }
 
             ],
-            ['class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {create}',
-                'buttons' => [
-                    'create' => function ($url, $model) {
-                        $url = Url::to(['invoice/invoice-payment-cycle', 'id' => $model->id]);
-                        if ($model->canRaiseProformaInvoice() && !$model->hasProFormaInvoice()) {
-                            return Html::a('Create PFI', $url, [
-                                'class' => ['btn-success btn-xs']
-                            ]);
-                        } else {
-                            return null;
-                        }
-                    },
-                    'view' => function ($url, $model) {
-                        if (!$model->hasProFormaInvoice()) {
-                            return null;
-                        }
-                        $url = Url::to(['invoice/view', 'id' => $model->proFormaInvoice->id]);
-                        return Html::a('View PFI', $url, [
-                            'class' => ['btn-info btn-xs']
-                        ]);
-                    }
-                ]
-            ],
         ],
     ]); ?>
 <?php yii\widgets\Pjax::end(); ?>
