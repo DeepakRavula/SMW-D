@@ -62,10 +62,9 @@ class ProformaInvoiceController extends BaseController
      *
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($lessonId=null)
     {
         $proformaInvoice = new ProformaInvoice();
-        print_r(Yii::$app->request->get());die;
         $proformaInvoice->load(Yii::$app->request->get());
 
         $lessons = Lesson::findAll($proformaInvoice->lessonIds);
