@@ -587,7 +587,6 @@ class LessonController extends BaseController
                 if ($courseModel->enrolment->student->isDraft()) {
                     $courseModel->enrolment->student->updateAttributes(['status' => Student::STATUS_ACTIVE]);
                 }
-               // $invoice = $courseModel->enrolment->firstPaymentCycle->createProFormaInvoice();
                 $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
                 return $this->redirect(['/enrolment/view', 'id' => $enrolmentModel->id]);
             }
