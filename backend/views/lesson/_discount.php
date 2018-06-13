@@ -3,8 +3,13 @@
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use common\models\Course;
+use yii\widgets\Pjax;
 
 ?>
+<?php Pjax::begin([
+    'id' => 'lesson-discount',
+    'timeout' => 6000,
+]) ?>
 <?php
 LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
@@ -26,3 +31,4 @@ LteBox::begin([
 	<dd><?= $model->hasMultiEnrolmentDiscount() ? '$ '. $model->multiEnrolmentDiscount->value : null; ?></dd>
 </dl>
 <?php LteBox::end()?>
+<?php Pjax::end(); ?>

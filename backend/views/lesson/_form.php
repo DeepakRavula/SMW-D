@@ -128,9 +128,4 @@ use common\models\Location;
     $(document).on('click', '.glyphicon-remove', function () {
         $('#lesson-date').val('').trigger('change');
     });
-
-    $(document).on('modal-success', function(event, params) {
-        window.location.href = params.url;
-        return false;
-    });
 </script>

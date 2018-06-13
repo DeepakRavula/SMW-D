@@ -105,6 +105,7 @@ Modal::begin([
         $('.modal-save-all').hide();
         $('.modal-back').hide();
         $('.modal-save').attr('message', null);
+        $('#modal-popup-warning-notification').fadeOut();
         $(document).trigger("modal-close");
     });
 

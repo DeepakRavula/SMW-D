@@ -109,8 +109,6 @@ use yii\helpers\Url;
     });
 
     $(document).ready(function() {
-        var message = 'Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.';
-        $('#modal-popup-warning-notification').text(message).fadeIn();
         $('#popup-modal .modal-dialog').css({'width': '600px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit discount</h4>');
         var button = '<?= $lineItemDiscount->valueType;?>';

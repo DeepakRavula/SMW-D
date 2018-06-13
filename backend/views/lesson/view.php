@@ -283,6 +283,16 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         $('#merge-lesson-modal').modal('show');
         return false;
     });
+
+    $(document).on('modal-success', function(event, params) {
+        if (params.url) {
+            window.location.href = params.url;
+        }
+        if ($('#lesson-discount').length) {
+            $.pjax.reload({container: "#lesson-discount", replace: false, async: false, timeout: 6000});
+        }
+        return false;
+    });
     
     $(document).on('beforeSubmit', '#merge-lesson-form', function (e) {
         $.ajax({
@@ -397,6 +407,8 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     });
 
     $(document).off('click', '#lesson-discount').on('click', '#lesson-discount', function(){
+        var message = 'Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.';
+        $('#modal-popup-warning-notification').text(message).fadeIn();
         var lessonId = '<?= $model->id; ?>';
         var lessonIds = [lessonId];
         var params = $.param({ 'PrivateLesson[ids]': lessonIds });
