@@ -77,7 +77,7 @@ class ProformaLineItem extends \yii\db\ActiveRecord
         return parent::afterSave($insert, $changedAttributes);
     }
 
-    public function getProfromaInvoice()
+    public function getProformaInvoice()
     {
         return $this->hasOne(ProformaInvoice::className(), ['id' => 'proformaInvoiceId']);
     }

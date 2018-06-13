@@ -12,30 +12,63 @@ use kartik\daterange\DateRangePicker;
 /* @var $model common\models\PaymentMethods */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-    <div class = "row">
-	<div class="col-md-12">
-    <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_lesson-line-item', [
-        'model' => $model,
-        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-        'searchModel'=>$searchModel,
-    ]);
-    ?>
-	</div>
-    </div>
-    <div class = "row">
-	<div class="col-md-12">
-    <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_invoice-line-item', [
-        'model' => $model,
-        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-        'searchModel'=>$searchModel,
-    ]);
-    ?>
-	</div>
+
+<?php $form = ActiveForm::begin([
+    'id' => 'modal-form',
+    'action' => Url::to(['proforma-invoice/create']),
+]); ?>
+
+    <div class="pull-right col-md-3">
+        <label>Date Range To Filter Lessons</label>
+        <?= DateRangePicker::widget([
+            'model' => $model,
+            'attribute' => 'dateRange',
+            'convertFormat' => true,
+            'initRangeExpr' => true,
+            'options' => [
+                'class' => 'form-control',
+                'readOnly' => true
+            ],
+            'pluginOptions' => [
+                'autoApply' => true,
+                'ranges' => [
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')", 'moment()'],
+                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')", 'moment()'],
+                    Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
+                    Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
+                ],
+                'locale' => [
+                    'format' => 'M d,Y'
+                ],
+                'opens' => 'left'
+            ]
+        ]); ?>
     </div>
 
-</div>
+<?php ActiveForm::end(); ?>
+
+    <div class = "row">
+        <div class="col-md-12">
+            <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
+            <?= $this->render('/receive-payment/_lesson-line-item', [
+                'model' => $model,
+                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                'searchModel' => $searchModel,
+            ]);
+            ?>
+        </div>
+    </div>
+    <div class = "row">
+        <div class="col-md-12">
+            <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
+            <?= $this->render('/receive-payment/_invoice-line-item', [
+                'model' => $model,
+                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                'searchModel' => $searchModel,
+            ]);
+            ?>
+        </div>
+    </div>
 
 <script>
     var createPFI = {
@@ -45,14 +78,13 @@ use kartik\daterange\DateRangePicker;
             var params = $.param({ 'ProformaInvoice[lessonIds]': lessonIds, 'ProformaInvoice[invoiceIds]': invoiceIds });
             var url = '<?= Url::to(['proforma-invoice/create']) ?>?' + params;
             $('#modal-form').attr('action', url);
-            alert($('#modal-form').attr('action'));
             return false;
         }
     };
 
     $(document).ready(function () {
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
-        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Receive Payment</h4>');
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Create PFI</h4>');
         $('.modal-save').text('Create-PFI');
         $('.select-on-check-all').prop('checked', true);
         $('#invoice-line-item-grid .select-on-check-all').prop('disabled', true);
@@ -60,32 +92,28 @@ use kartik\daterange\DateRangePicker;
         createPFI.setAction();
     });
 
-    $(document).off('change', '#paymentform-daterange').on('change', '#paymentform-daterange', function () {
+    $(document).off('change', '#proformainvoice-daterange').on('change', '#proformainvoice-daterange', function () {
         $('#modal-spinner').show();
-        var dateRange = $('#paymentform-daterange').val();
-	    var lessonId = <?= $model->lessonId ?>;
-        var params = $.param({ 'PaymentForm[dateRange]': dateRange, 'PaymentForm[lessonId]' : lessonId });
-        var url = '<?= Url::to(['payment/receive']) ?>?' + params;
+        var dateRange = $('#proformainvoice-daterange').val();
+	    var lessonId = '<?= $model->lessonId ?>';
+        var params = $.param({ 'ProformaInvoice[dateRange]': dateRange, 'ProformaInvoice[lessonId]' : lessonId });
+        var url = '<?= Url::to(['proforma-invoice/create']) ?>?' + params;
 	    $.pjax.reload({url:url, container: "#lesson-lineitem-listing", replace: false, async: false, timeout: 6000});
-        $.pjax.reload({url:url, container: "#payment-amount", replace: false, async: false, timeout: 6000});
         $('.select-on-check-all').prop('checked', true);
         $('#modal-spinner').hide();
-        receivePayment.setAction();
+        createPFI.setAction();
         return false;
     });
 
     $(document).off('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
-        receivePayment.setAction();
+        createPFI.setAction();
         return false;
     });
 
     $(document).on('modal-success', function(event, params) {
-        $('#success-notification').html(params.message).fadeIn().delay(5000).fadeOut();
-        if ($('#invoice-payment-listing').length) {
-            $.pjax.reload({container: "#invoice-payment-listing", replace: false, async: false, timeout: 6000});
+        if (params.url) {
+            window.location.href = params.url;
         }
         return false;
     });
-
-    
 </script>

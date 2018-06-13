@@ -206,6 +206,17 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this->andFilterWhere(['between', 'DATE(invoice.date)', $fromDate, $toDate]);
     }
 
+    public function nonPfi()
+    {
+        return $this->joinWith(['proformaInvoiceItem' => function ($query) {
+            $query->joinWith(['proformaLineItem' => function ($query) {
+                $query->joinWith(['proformaInvoice' => function ($query) {
+                    $query->andWhere(['proforma_invoice.id' => null]);
+                }]);
+            }]);
+        }]);
+    }
+
     public function customer($customerId)
     {
         return $this->andFilterWhere(['invoice.user_id' => $customerId]);
@@ -216,6 +227,7 @@ class InvoiceQuery extends \yii\db\ActiveQuery
             $query->andWhere(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
         }]);
     }
+
     public function userLocation($locationId)
     {
         $this->joinWith(['user' => function ($query) use ($locationId) {

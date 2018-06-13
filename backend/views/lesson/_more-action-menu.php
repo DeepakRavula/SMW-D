@@ -37,7 +37,7 @@ use common\Models\User;
         return false;
     });
 
-    $(document).on('click', '#receive-payment', function () {
+    $(document).off('click', '#receive-payment').on('click', '#receive-payment', function () {
         $.ajax({
             url    : '<?= Url::to(['payment/receive', 'PaymentForm[lessonId]' => $model->id]); ?>',
             type   : 'get',
@@ -52,9 +52,9 @@ use common\Models\User;
         });
         return false;
     });
-    $(document).on('click', '#create-pfi', function () {
+    $(document).off('click', '#create-pfi').on('click', '#create-pfi', function () {
         $.ajax({
-            url    : '<?= Url::to(['proforma-invoice/create', 'lessonId' => $model->id]); ?>',
+            url    : '<?= Url::to(['proforma-invoice/create', 'ProformaInvoice[lessonId]' => $model->id]); ?>',
             type   : 'get',
             dataType: 'json',
             success: function(response)

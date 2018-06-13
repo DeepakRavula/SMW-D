@@ -415,6 +415,17 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['DATE(lesson.date)' => $date]);
     }
+
+    public function nonPfi()
+    {
+        return $this->joinWith(['proformaLessonItem' => function ($query) {
+            $query->joinWith(['proformaLineItem' => function ($query) {
+                $query->joinWith(['proformaInvoice' => function ($query) {
+                    $query->andWhere(['proforma_invoice.id' => null]);
+                }]);
+            }]);
+        }]);
+    }
     
     public function notExpired()
     {

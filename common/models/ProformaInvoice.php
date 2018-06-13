@@ -20,7 +20,6 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     public $lessonIds;
     public $invoiceIds;
     public $lessonId;
-    public $user_id;
     public $fromDate;
     public $toDate;
     public $dateRange;
@@ -40,7 +39,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     {
         return [
             [['userId', 'locationId'], 'required'],
-            [['lessonIds', 'invoiceIds'], 'safe']
+            [['lessonIds', 'invoiceIds', 'dateRange', 'fromDate', 'toDate', 'lessonId'], 'safe']
         ];
     }
 
@@ -95,5 +94,13 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             $invoiceTotal += $invoiceLineItem->balance;
         }
         return $lessonTotal + $invoiceTotal;
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->date = (new \DateTime())->format('Y-m-d');
+        }
+        return parent::beforeSave($insert);
     }
 }

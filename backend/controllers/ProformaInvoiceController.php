@@ -63,92 +63,119 @@ class ProformaInvoiceController extends BaseController
      *
      * @return mixed
      */
-    public function actionCreate($lessonId=null)
+    public function actionCreate()
     {
-        $proformaInvoice = new ProformaInvoice();
-        $proformaInvoice->lessonId = $lessonId;
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $user="";
-        if ($proformaInvoice->lessonId) {
-            $searchModel= new ProformaInvoiceSearch();
-            $searchModel->showCheckBox = true;
-         // print_r($proformaInvoice->lessonId);die;
-            $lesson = Lesson::findOne($lessonId);
-            $proformaInvoice->user_id = $lesson->customer->id;
-            $user = $lesson->customer;
-            $currentDate = new \DateTime();
-            $proformaInvoice->fromDate = $currentDate->format('M 1,Y');
-            $proformaInvoice->toDate = $currentDate->format('M t,Y'); 
-            $proformaInvoice->dateRange = $proformaInvoice->fromDate . ' - ' . $proformaInvoice->toDate;
-            $fromDate = new \DateTime($proformaInvoice->fromDate);
-            $toDate = new \DateTime($proformaInvoice->toDate);
+        $searchModel = new ProformaInvoiceSearch();
+        $searchModel->showCheckBox = true;
+        $model = new ProformaInvoice();
+        $currentDate = new \DateTime();
+        $model->date = $currentDate->format('M d,Y');
+        $model->fromDate = $currentDate->format('M 1,Y');
+        $model->toDate = $currentDate->format('M t,Y'); 
+        $model->dateRange = $model->fromDate . ' - ' . $model->toDate;
+        $proformaInvoiceData = Yii::$app->request->get('ProformaInvoice');
+        if ($proformaInvoiceData) {
+            $model->load(Yii::$app->request->get());
+            list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
+            if ($model->lessonId) {
+                $lesson = Lesson::findOne($model->lessonId);
+                $model->userId = $lesson->customer->id;
+            }
+        }
+	    $fromDate = new \DateTime($model->fromDate);
+        $toDate = new \DateTime($model->toDate);
+        $lessonsQuery = Lesson::find();
+        if ($model->lessonIds) {
+            $lessonsQuery->andWhere(['id' => $model->lessonIds]);
+        } else {
+            $lessonsQuery->notDeleted()
+                ->between($fromDate, $toDate)
+                ->privateLessons()
+                ->customer($model->userId)
+                ->isConfirmed()
+                ->notCanceled()
+                ->unInvoiced()
+                ->nonPfi()
+                ->location($locationId);
+            $allLessons = $lessonsQuery->all();
+            $lessonIds = [];
+            foreach ($allLessons as $lesson) {
+                if ($lesson->isOwing($lesson->enrolment->id)) {
+                    $lessonIds[] = $lesson->id;
+                }
+            }
             $lessonsQuery = Lesson::find()
-                    ->notDeleted()
-                    ->between($fromDate, $toDate)
-                    ->privateLessons()
-                    ->customer($proformaInvoice->user_id)
-                    ->isConfirmed()
-                    ->notCanceled()
-                    ->unInvoiced()
-                    ->location($locationId);
-            $lessonLineItemsDataProvider = new ActiveDataProvider([
-                        'query' => $lessonsQuery
-                    ]);
-            $invoicesQuery = Invoice::find();
+                ->andWhere(['id' => $lessonIds]);
+        }
+        $lessonLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $lessonsQuery
+        ]);
+        $invoicesQuery = Invoice::find();
+        if ($model->invoiceIds) {
+            $invoicesQuery->andWhere(['id' => $model->invoiceIds]);
+        } else {
             $invoicesQuery->notDeleted()
                 ->lessonInvoice()
                 ->location($locationId)
-                ->customer($proformaInvoice->user_id)
+                ->customer($model->userId)
+                ->nonPfi()
                 ->unpaid();
+        }
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoicesQuery
-        ]);        
-                    $data = $this->renderAjax('/receive-payment/_create-pfi', [
-                        'model' => $proformaInvoice,
-                        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-                        'searchModel'=> $searchModel,
-                    ]);
-                    $response = [
-                        'status' => true,
-                        'data' => $data
-                    ];
-                    return $response;
-        }
-        if($proformaInvoice->lessonIds || $proformaInvoice->invoiceIds)
-        {
-        $lessons = Lesson::findAll($proformaInvoice->lessonIds);
-        $invoices = Invoice::findAll($proformaInvoice->invoiceIds);
-        $endLesson = end($lessons);
-        $endInvoice = end($invoices);
-        if ($lessons) {
-            $user = $endLesson->customer;
-        }
-        if (!$user) {
-            $user = $endInvoice->user;
-        }
-        $proformaInvoice = new ProformaInvoice();
-        $proformaInvoice->userId = $user->id;
-        $proformaInvoice->locationId = $user->userLocation->location_id;
-        $proformaInvoice->save();
-        if ($lessons) {
-            foreach ($lessons as $lesson) {
-                $proformaLineItem = new ProformaLineItem();
-                $proformaLineItem->proformaInvoiceId = $proformaInvoice->id;
-                $proformaLineItem->lessonId = $lesson->id;
-                $proformaLineItem->save();
+        ]);
+        $request = Yii::$app->request;
+        if ($request->post()) {
+            $model->load($request->post());
+            if($model->lessonIds || $model->invoiceIds) {
+                $lessons = Lesson::findAll($model->lessonIds);
+                $invoices = Invoice::findAll($model->invoiceIds);
+                $endLesson = end($lessons);
+                $endInvoice = end($invoices);
+                if ($lessons) {
+                    $user = $endLesson->customer;
+                }
+                if (!$user) {
+                    $user = $endInvoice->user;
+                }
+                $model->userId = $user->id;
+                $model->locationId = $user->userLocation->location_id;
+                $model->save();
+                if ($lessons) {
+                    foreach ($lessons as $lesson) {
+                        $proformaLineItem = new ProformaLineItem();
+                        $proformaLineItem->proformaInvoiceId = $model->id;
+                        $proformaLineItem->lessonId = $lesson->id;
+                        $proformaLineItem->save();
+                    }
+                }
+                if ($invoices) {
+                    foreach ($invoices as $invoice) {
+                        $proformaLineItem = new ProformaLineItem();
+                        $proformaLineItem->proformaInvoiceId = $model->id;
+                        $proformaLineItem->invoiceId = $invoice->id;
+                        $proformaLineItem->save();
+                    }
+                }
             }
+            $response = [
+                'status' => true,
+                'url' => Url::to(['proforma-invoice/view', 'id' => $model->id])
+            ];
+        } else {
+            $data = $this->renderAjax('/receive-payment/_create-pfi', [
+                'model' => $model,
+                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                'searchModel'=> $searchModel,
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
         }
-        if ($invoices) {
-            foreach ($invoices as $invoice) {
-                $proformaLineItem = new ProformaLineItem();
-                $proformaLineItem->proformaInvoiceId = $proformaInvoice->id;
-                $proformaLineItem->invoiceId = $invoice->id;
-                $proformaLineItem->save();
-            }
-        }
-    }
-        return $this->redirect(['view', 'id' => $proformaInvoice->id]);
+        return $response;
     }
 
     public function actionView($id)
