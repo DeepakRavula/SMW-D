@@ -21,6 +21,10 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     public $invoiceIds;
     public $lessonId;
     public $user_id;
+    public $fromDate;
+    public $toDate;
+    public $dateRange;
+    
     /**
      * {@inheritdoc}
      */

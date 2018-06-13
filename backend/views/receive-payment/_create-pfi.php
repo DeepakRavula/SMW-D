@@ -1,0 +1,91 @@
+<?php
+
+use yii\helpers\Html;
+use yii\bootstrap\ActiveForm;
+use yii\jui\DatePicker;
+use yii\helpers\ArrayHelper;
+use yii\widgets\Pjax;
+use yii\helpers\Url;
+use kartik\daterange\DateRangePicker;
+
+/* @var $this yii\web\View */
+/* @var $model common\models\PaymentMethods */
+/* @var $form yii\bootstrap\ActiveForm */
+?>
+    <div class = "row">
+	<div class="col-md-12">
+    <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
+    <?= $this->render('/receive-payment/_lesson-line-item', [
+        'model' => $model,
+        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+        'searchModel'=>$searchModel,
+    ]);
+    ?>
+	</div>
+    </div>
+    <div class = "row">
+	<div class="col-md-12">
+    <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
+    <?= $this->render('/receive-payment/_invoice-line-item', [
+        'model' => $model,
+        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+        'searchModel'=>$searchModel,
+    ]);
+    ?>
+	</div>
+    </div>
+
+</div>
+
+<script>
+    var createPFI = {
+        setAction: function() {
+            var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
+            var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
+            var params = $.param({ 'ProformaInvoice[lessonIds]': lessonIds, 'ProformaInvoice[invoiceIds]': invoiceIds });
+            var url = '<?= Url::to(['proforma-invoice/create']) ?>?' + params;
+            $('#modal-form').attr('action', url);
+            alert($('#modal-form').attr('action'));
+            return false;
+        }
+    };
+
+    $(document).ready(function () {
+        $('#popup-modal .modal-dialog').css({'width': '1000px'});
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Receive Payment</h4>');
+        $('.modal-save').text('Create-PFI');
+        $('.select-on-check-all').prop('checked', true);
+        $('#invoice-line-item-grid .select-on-check-all').prop('disabled', true);
+        $('#invoice-line-item-grid input[name="selection[]"]').prop('disabled', true);
+        createPFI.setAction();
+    });
+
+    $(document).off('change', '#paymentform-daterange').on('change', '#paymentform-daterange', function () {
+        $('#modal-spinner').show();
+        var dateRange = $('#paymentform-daterange').val();
+	    var lessonId = <?= $model->lessonId ?>;
+        var params = $.param({ 'PaymentForm[dateRange]': dateRange, 'PaymentForm[lessonId]' : lessonId });
+        var url = '<?= Url::to(['payment/receive']) ?>?' + params;
+	    $.pjax.reload({url:url, container: "#lesson-lineitem-listing", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({url:url, container: "#payment-amount", replace: false, async: false, timeout: 6000});
+        $('.select-on-check-all').prop('checked', true);
+        $('#modal-spinner').hide();
+        receivePayment.setAction();
+        return false;
+    });
+
+    $(document).off('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
+        receivePayment.setAction();
+        return false;
+    });
+
+    $(document).on('modal-success', function(event, params) {
+        $('#success-notification').html(params.message).fadeIn().delay(5000).fadeOut();
+        if ($('#invoice-payment-listing').length) {
+            $.pjax.reload({container: "#invoice-payment-listing", replace: false, async: false, timeout: 6000});
+        }
+        return false;
+    });
+
+    
+</script>
