@@ -66,8 +66,57 @@ class ProformaInvoiceController extends BaseController
     public function actionCreate($lessonId=null)
     {
         $proformaInvoice = new ProformaInvoice();
-        $proformaInvoice->load(Yii::$app->request->get());
-
+        $proformaInvoice->lessonId = $lessonId;
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $user="";
+        if ($proformaInvoice->lessonId) {
+            $searchModel= new ProformaInvoiceSearch();
+            $searchModel->showCheckBox = true;
+         // print_r($proformaInvoice->lessonId);die;
+            $lesson = Lesson::findOne($lessonId);
+            $proformaInvoice->user_id = $lesson->customer->id;
+            $user = $lesson->customer;
+            $currentDate = new \DateTime();
+            $proformaInvoice->fromDate = $currentDate->format('M 1,Y');
+            $proformaInvoice->toDate = $currentDate->format('M t,Y'); 
+            $proformaInvoice->dateRange = $proformaInvoice->fromDate . ' - ' . $proformaInvoice->toDate;
+            $fromDate = new \DateTime($proformaInvoice->fromDate);
+            $toDate = new \DateTime($proformaInvoice->toDate);
+            $lessonsQuery = Lesson::find()
+                    ->notDeleted()
+                    ->between($fromDate, $toDate)
+                    ->privateLessons()
+                    ->customer($proformaInvoice->user_id)
+                    ->isConfirmed()
+                    ->notCanceled()
+                    ->unInvoiced()
+                    ->location($locationId);
+            $lessonLineItemsDataProvider = new ActiveDataProvider([
+                        'query' => $lessonsQuery
+                    ]);
+            $invoicesQuery = Invoice::find();
+            $invoicesQuery->notDeleted()
+                ->lessonInvoice()
+                ->location($locationId)
+                ->customer($proformaInvoice->user_id)
+                ->unpaid();
+        $invoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $invoicesQuery
+        ]);        
+                    $data = $this->renderAjax('/receive-payment/_create-pfi', [
+                        'model' => $proformaInvoice,
+                        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                        'searchModel'=> $searchModel,
+                    ]);
+                    $response = [
+                        'status' => true,
+                        'data' => $data
+                    ];
+                    return $response;
+        }
+        if($proformaInvoice->lessonIds || $proformaInvoice->invoiceIds)
+        {
         $lessons = Lesson::findAll($proformaInvoice->lessonIds);
         $invoices = Invoice::findAll($proformaInvoice->invoiceIds);
         $endLesson = end($lessons);
@@ -98,6 +147,7 @@ class ProformaInvoiceController extends BaseController
                 $proformaLineItem->save();
             }
         }
+    }
         return $this->redirect(['view', 'id' => $proformaInvoice->id]);
     }
 
