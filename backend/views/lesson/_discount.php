@@ -8,7 +8,9 @@ use common\models\Course;
 <?php
 LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
-    'boxTools' => '<i class="fa fa-pencil edit-enrolment"></i>',
+    'boxTools' => $this->render('_discount-action-menu', [
+        'model' => $model,
+    ]),
     'title' => 'Discounts',
     'withBorder' => true,
 ])

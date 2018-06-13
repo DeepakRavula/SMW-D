@@ -32,29 +32,42 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
             'model' => $model,
         ]);
         ?>
-		<?php if (!$model->isGroup()): ?>
+	</div>
+    <div class="col-md-6">
 		<?=
-        $this->render('_student', [
+        $this->render('schedule/_view', [
             'model' => $model,
         ]);
         ?>
-		<?php endif;?>
-	</div>
-	<div class="col-md-6">
-		<?= $this->render('_discount', [
-            'model' => $model,
-        ]); ?>
-    <?php if ($model->isPrivate() && !$model->isUnscheduled()): ?>
-        <div id="attendance-panel">
-		<?=
-        $this->render('attendance/_view', [
-            'model' => $model,
-        ]);
-        ?>	
-        </div>
-    <?php endif; ?>
-	</div>
+    </div>
 </div>
+    <?php if (!$model->isGroup()): ?>
+    <div class="row">
+	    <div class="col-md-6">
+            <?= $this->render('_student', [
+                'model' => $model,
+            ]); ?>
+        </div>
+        <div class="col-md-6">
+            <?= $this->render('_discount', [
+                'model' => $model,
+            ]); ?>
+        </div>
+    </div>
+    <?php endif; ?>
+    <div class="row">
+        <div class="col-md-6">
+        <?php if ($model->isPrivate() && !$model->isUnscheduled()): ?>
+            <div id="attendance-panel">
+            <?=
+            $this->render('attendance/_view', [
+                'model' => $model,
+            ]);
+            ?>	
+            </div>
+        <?php endif; ?>
+        </div>
+    </div>
 <div class="row">
 	<div class="col-md-12">
 		<div class="nav-tabs-custom">
