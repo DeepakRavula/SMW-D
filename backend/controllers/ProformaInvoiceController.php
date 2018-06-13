@@ -66,7 +66,16 @@ class ProformaInvoiceController extends BaseController
     {
         $proformaInvoice = new ProformaInvoice();
         $proformaInvoice->load(Yii::$app->request->get());
+        $user="";
+        if ($proformaInvoice->lessonId) {
+            $lesson = Lesson::findOne($model->lessonId);
+            $proformaInvoice->user_id = $lesson->customer->id;
+            $user = $lesson->customer;
 
+            
+        }
+        if($proformaInvoice->lessonIds || $proformaInvoice->invoiceIds)
+        {
         $lessons = Lesson::findAll($proformaInvoice->lessonIds);
         $invoices = Invoice::findAll($proformaInvoice->invoiceIds);
         $endLesson = end($lessons);
@@ -97,6 +106,7 @@ class ProformaInvoiceController extends BaseController
                 $proformaLineItem->save();
             }
         }
+    }
         return $this->redirect(['view', 'id' => $proformaInvoice->id]);
     }
 
