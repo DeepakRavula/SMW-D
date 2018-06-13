@@ -86,7 +86,10 @@ Modal::begin([
     });
 
     $('#popup-modal').on('shown.bs.modal', function () {
+        var isDatePicker = $('#modal-form').find('input[type=text],textarea,select').filter(':visible:first').attr('class');
+        if(isDatePicker != 'form-control hasDatepicker'){
 	$('#modal-form').find('input[type=text],textarea,select').filter(':visible:first').focus();
+        }
         $('#modal-spinner').hide();
     });
 
