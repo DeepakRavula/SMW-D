@@ -21,6 +21,7 @@ use common\Models\User;
                 <?php if ($model->isDeletable()) : ?>
                     <li><a id="lesson-delete" href="#">Delete</a></li>
                 <?php endif; ?>
+                <li><a id="lesson-discount" href="#">Edit Discount</a></li>
             <?php endif; ?>
         </ul>
     </div>

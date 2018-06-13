@@ -16,6 +16,7 @@ Modal::begin([
 </div>
 <div id="modal-popup-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="modal-popup-success-notification" style="display: none;" class="alert-success alert fade in"></div>
+<div id="modal-popup-warning-notification" style="display: none;" class="alert-warning alert fade in"></div>
 
 <div id="modal-content"></div>
 

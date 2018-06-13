@@ -76,7 +76,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             }])
             ->all();
         foreach ($lessonLineItems as $lessonLineItem) {
-            $lessonTotal += $lessonLineItem->amount;
+            $lessonTotal += $lessonLineItem->netPrice;
         }
         $invoiceLineItems = Invoice::find()
             ->joinWith(['proformaInvoiceItem' => function ($query) use ($invoiceId) {

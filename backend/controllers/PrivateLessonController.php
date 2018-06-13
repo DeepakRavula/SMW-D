@@ -14,6 +14,7 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
+use backend\models\lesson\discount\LessonMultiDiscount;
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
@@ -29,7 +30,9 @@ class PrivateLessonController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['merge', 'update-attendance', 'delete'],
+                'only' => [
+                    'merge', 'update-attendance', 'delete', 'apply-discount'
+                ],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -40,7 +43,10 @@ class PrivateLessonController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance'],
+                        'actions' => [
+                            'index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance',
+                                'apply-discount'
+                        ],
                         'roles' => ['managePrivateLessons'],
                     ],
                 ],
@@ -216,5 +222,51 @@ class PrivateLessonController extends BaseController
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionApplyDiscount()
+    {
+        $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
+        $lessonId = end($lessonIds);
+        $model = $this->findModel($lessonId);
+        $lineItemDiscount = LessonMultiDiscount::loadLineItemDiscount($lessonIds);
+        $paymentFrequencyDiscount = LessonMultiDiscount::loadPaymentFrequencyDiscount($lessonIds);
+        $customerDiscount = LessonMultiDiscount::loadCustomerDiscount($lessonIds);
+        $multiEnrolmentDiscount = LessonMultiDiscount::loadEnrolmentDiscount($lessonIds);
+        $data = $this->renderAjax('_form-apply-discount', [
+            'lessonIds' => $lessonIds,
+            'model' => $model,
+            'customerDiscount' => $customerDiscount,
+            'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
+            'lineItemDiscount' => $lineItemDiscount,
+            'multiEnrolmentDiscount' => $multiEnrolmentDiscount
+        ]);
+        $post = Yii::$app->request->post();
+        if ($post) {
+            foreach ($lessonIds as $lessonId) {
+                $model = $this->findModel($lessonId);
+                $lineItemDiscount = LessonMultiDiscount::loadLineItemDiscount([$lessonId]);
+                $customerDiscount = LessonMultiDiscount::loadCustomerDiscount([$lessonId]);
+                $lineItemDiscount->load($post);
+                $customerDiscount->load($post);
+                $lineItemDiscount->save();
+                $customerDiscount->save();
+                $paymentFrequencyDiscount = LessonMultiDiscount::loadPaymentFrequencyDiscount([$lessonId]);
+                $multiEnrolmentDiscount = LessonMultiDiscount::loadEnrolmentDiscount([$lessonId]);
+                $paymentFrequencyDiscount->load($post);
+                $multiEnrolmentDiscount->load($post);
+                $paymentFrequencyDiscount->save();
+                $multiEnrolmentDiscount->save();
+            }
+            $response = [
+                'status' => true
+            ];
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
     }
 }

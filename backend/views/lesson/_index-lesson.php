@@ -247,5 +247,26 @@ $this->params['action-button'] = $this->render('_action-menu', [
             return false;
         }
     });
+
+    $(document).off('click', '#lesson-discount').on('click', '#lesson-discount', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(lessonIds)) {
+            $('#index-error-notification').html("Choose any lessons to edit discount").fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ 'PrivateLesson[ids]': lessonIds });
+            $.ajax({
+                url    : '<?= Url::to(['private-lesson/apply-discount']) ?>?' +params,
+                type   : 'get',
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                    }
+                }
+            });
+            return false;
+        }
+    });
 </script>
 
