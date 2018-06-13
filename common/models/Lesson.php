@@ -15,6 +15,11 @@ use common\components\validators\lesson\conflict\TeacherLessonOverlapValidator;
 use common\components\validators\lesson\conflict\StudentValidator;
 use common\components\validators\lesson\conflict\IntraEnrolledLessonValidator;
 use common\components\validators\lesson\conflict\TeacherSubstituteValidator;
+use backend\models\lesson\discount\CustomerLessonDiscount;
+use backend\models\lesson\discount\LineItemLessonDiscount;
+use backend\models\lesson\discount\EnrolmentLessonDiscount;
+use backend\models\lesson\discount\PaymentFrequencyLessonDiscount;
+use common\models\discount\LessonDiscount;
 
 /**
  * This is the model class for table "lesson".
@@ -445,6 +450,30 @@ class Lesson extends \yii\db\ActiveRecord
         }
     }
 
+    public function getLineItemDiscount()
+    {
+        return $this->hasOne(LessonDiscount::className(), ['lessonId' => 'id'])
+            ->onCondition(['lesson_discount.type' => LessonDiscount::TYPE_LINE_ITEM]);
+    }
+
+    public function getCustomerDiscount()
+    {
+        return $this->hasOne(LessonDiscount::className(), ['lessonId' => 'id'])
+            ->onCondition(['lesson_discount.type' => LessonDiscount::TYPE_CUSTOMER]);
+    }
+
+    public function getEnrolmentPaymentFrequencyDiscount()
+    {
+        return $this->hasOne(LessonDiscount::className(), ['lessonId' => 'id'])
+            ->onCondition(['lesson_discount.type' => LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY]);
+    }
+
+    public function getMultiEnrolmentDiscount()
+    {
+        return $this->hasOne(LessonDiscount::className(), ['lessonId' => 'id'])
+            ->onCondition(['lesson_discount.type' => LessonDiscount::TYPE_MULTIPLE_ENROLMENT]);
+    }
+
     public function getInvoiceItemsEnrolment()
     {
         return $this->hasMany(InvoiceItemEnrolment::className(), ['enrolmentId' => 'enrolmentId'])
@@ -521,6 +550,26 @@ class Lesson extends \yii\db\ActiveRecord
             }
         }
         return !empty($this->enrolments);
+    }
+
+    public function hasLineItemDiscount()
+    {
+        return !empty($this->lineItemDiscount);
+    }
+
+    public function hasCustomerDiscount()
+    {
+        return !empty($this->customerDiscount);
+    }
+
+    public function hasEnrolmentPaymentFrequencyDiscount()
+    {
+        return !empty($this->enrolmentPaymentFrequencyDiscount);
+    }
+
+    public function hasMultiEnrolmentDiscount()
+    {
+        return !empty($this->multiEnrolmentDiscount);
     }
 
     public function getTeacherCost()
@@ -753,7 +802,8 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getAmount()
     {
-        return $this->courseProgramRate->programRate * $this->unit;
+        return $this->isGroup() ? $this->courseProgramRate->programRate / count($this->course->lessons) : 
+            $this->courseProgramRate->programRate * $this->unit;
     }
 
     public function getAvailabilities()
@@ -1129,15 +1179,112 @@ class Lesson extends \yii\db\ActiveRecord
         $lessonRescheduleModel->rescheduledLessonId = $lesson->id;
         return $lessonRescheduleModel->save();
     }
+
     public function getLeaf()
     {
         return self::find()->descendantsOf($this->id)->orderBy(['id' => SORT_DESC])->one();
     }
-    public function dailyScheduleStatus() {
-	$status = $this->getStatus();
+
+    public function dailyScheduleStatus() 
+    {
+	    $status = $this->getStatus();
 	    if($this->status === self::STATUS_CANCELED) {
-		$status = "Rescheduled to " . Yii::$app->formatter->asDate($this->leaf->date);    
+		    $status = "Rescheduled to " . Yii::$app->formatter->asDate($this->leaf->date);    
 	    }    
-	return $status; 
+	    return $status; 
+    }
+
+    public function getLineItemDiscountValue()
+    {
+        return $this->lineItemDiscount->valueType ? $this->lineItemDiscount->value . ' %' : '$ ' . $this->lineItemDiscount->value;
+    }
+
+    public function loadCustomerDiscount($value = null)
+    {
+        $lesson = self::findOne($this->id);
+        $customerDiscount = new CustomerLessonDiscount();
+        if ($lesson->hasCustomerDiscount()) {
+            $customerDiscount = $customerDiscount->setModel($lesson->customerDiscount, $value);
+        }
+        $customerDiscount->lessonId = $this->id;
+        return $customerDiscount;
+    }
+    
+    public function loadPaymentFrequencyDiscount($value = null)
+    {
+        $lesson = self::findOne($this->id);
+        $paymentFrequencyDiscount = new PaymentFrequencyLessonDiscount();
+        if ($lesson->hasEnrolmentPaymentFrequencyDiscount()) {
+            $paymentFrequencyDiscount = $paymentFrequencyDiscount->setModel(
+                    $lesson->enrolmentPaymentFrequencyDiscount,
+                $value
+            );
+        }
+        $paymentFrequencyDiscount->lessonId = $this->id;
+        return $paymentFrequencyDiscount;
+    }
+    
+    public function loadLineItemDiscount($value = null)
+    {
+        $lesson = self::findOne($this->id);
+        $lineItemDiscount = new LineItemLessonDiscount();
+        if ($lesson->hasLineItemDiscount()) {
+            $lineItemDiscount = $lineItemDiscount->setModel($lesson->lineItemDiscount, $value);
+        }
+        $lineItemDiscount->lessonId = $this->id;
+        return $lineItemDiscount;
+    }
+    
+    public function loadMultiEnrolmentDiscount($value = null)
+    {
+        $lesson = self::findOne($this->id);
+        $multiEnrolmentDiscount = new EnrolmentLessonDiscount();
+        if ($lesson->hasMultiEnrolmentDiscount()) {
+            $multiEnrolmentDiscount = $multiEnrolmentDiscount->setModel(
+                    $lesson->multiEnrolmentDiscount,
+                $value
+            );
+        }
+        $multiEnrolmentDiscount->lessonId = $this->id;
+        return $multiEnrolmentDiscount;
+    }
+
+    public function getNetPrice()
+    {
+        return $this->grossPrice - $this->discount;
+    }
+    
+    public function getGrossPrice()
+    {
+        return round($this->amount, 4);
+    }
+
+    public function getDiscount()
+    {
+        $discount = 0.0;
+        $lessonPrice = $this->grossPrice;
+        if ($this->hasMultiEnrolmentDiscount()) {
+            $discount += $lessonPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :
+                $this->multiEnrolmentDiscount->value;
+            $lessonPrice = $this->grossPrice - $discount;
+        }
+        if ($this->hasLineItemDiscount()) {
+            if ((int) $this->lineItemDiscount->valueType) {
+                $discount += ($this->lineItemDiscount->value / 100) * $lessonPrice;
+            } else {
+                $discount += $lessonPrice < 0 ? - ($this->lineItemDiscount->value) :
+                    $this->lineItemDiscount->value;
+            }
+            $lessonPrice = $this->grossPrice - $discount;
+        }
+        if ($this->hasCustomerDiscount()) {
+            $discount += ($this->customerDiscount->value / 100) * $lessonPrice;
+            $lessonPrice = $this->grossPrice - $discount;
+        }
+        if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
+            $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $lessonPrice;
+        }
+        
+        return round($discount, 4);
     }
 }

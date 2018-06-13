@@ -32,31 +32,42 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
             'model' => $model,
         ]);
         ?>
-		<?php if (!$model->isGroup()): ?>
-		<?=
-        $this->render('_student', [
-            'model' => $model,
-        ]);
-        ?>
-		<?php endif;?>
 	</div>
-	<div class="col-md-6">
+    <div class="col-md-6">
 		<?=
         $this->render('schedule/_view', [
             'model' => $model,
         ]);
         ?>
-    <?php if ($model->isPrivate() && !$model->isUnscheduled()): ?>
-        <div id="attendance-panel">
-		<?=
-        $this->render('attendance/_view', [
-            'model' => $model,
-        ]);
-        ?>	
-        </div>
-    <?php endif; ?>
-	</div>
+    </div>
 </div>
+    <?php if (!$model->isGroup()): ?>
+    <div class="row">
+	    <div class="col-md-6">
+            <?= $this->render('_student', [
+                'model' => $model,
+            ]); ?>
+        </div>
+        <div class="col-md-6">
+            <?= $this->render('_discount', [
+                'model' => $model,
+            ]); ?>
+        </div>
+    </div>
+    <?php endif; ?>
+    <div class="row">
+        <div class="col-md-6">
+        <?php if ($model->isPrivate() && !$model->isUnscheduled()): ?>
+            <div id="attendance-panel">
+            <?=
+            $this->render('attendance/_view', [
+                'model' => $model,
+            ]);
+            ?>	
+            </div>
+        <?php endif; ?>
+        </div>
+    </div>
 <div class="row">
 	<div class="col-md-12">
 		<div class="nav-tabs-custom">
@@ -379,6 +390,24 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                     $.pjax.reload({container: "#lesson-schedule-buttons", replace: false, async: false, timeout: 6000});
                 } else {
                     $('#error-notification').html(response.message).fadeIn().delay(3000).fadeOut();
+                }
+            }
+        });
+        return false;
+    });
+
+    $(document).off('click', '#lesson-discount').on('click', '#lesson-discount', function(){
+        var lessonId = '<?= $model->id; ?>';
+        var lessonIds = [lessonId];
+        var params = $.param({ 'PrivateLesson[ids]': lessonIds });
+        $.ajax({
+            url    : '<?= Url::to(['private-lesson/apply-discount']) ?>?' + params,
+            type   : 'get',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
                 }
             }
         });

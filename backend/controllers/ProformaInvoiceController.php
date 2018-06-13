@@ -24,6 +24,7 @@ use common\models\InvoiceLineItem;
 use common\models\User;
 use common\models\UserProfile;
 use common\models\UserEmail;
+use common\models\Note;
 use backend\models\search\ProformaInvoiceSearch;
 /**
  * ProformaInvoiceController implements the CRUD actions for ProformaInvoice model.
@@ -132,11 +133,19 @@ class ProformaInvoiceController extends BaseController
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoiceLineItems,
         ]);
+        $notes = Note::find()
+        ->andWhere(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_PROFORMA])
+        ->orderBy(['createdOn' => SORT_DESC]);
+
+    $noteDataProvider = new ActiveDataProvider([
+        'query' => $notes,
+    ]);
         return $this->render('view', [
             'model' => $model,
             'customer' => $customer,
             'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+            'noteDataProvider'=>$noteDataProvider,
             'searchModel' => $searchModel,
         ]);
     }
@@ -154,6 +163,15 @@ class ProformaInvoiceController extends BaseController
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+    public function actionNote($id)
+    {
+        $model = $this->findModel($id);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return [
+                'status' => true,
+            ];
         }
     }
 }

@@ -259,6 +259,7 @@ $this->params['action-button'] = $this->render('_action-button', [
             ]);
 
             $paymentContent = $this->render('customer/_account', [
+                'isCustomerView' => $isCustomerView,
                 'model' => $model,
                 'accountDataProvider' => $accountDataProvider,
                 'userModel' => $model,

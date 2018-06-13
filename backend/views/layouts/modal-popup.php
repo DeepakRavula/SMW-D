@@ -16,6 +16,7 @@ Modal::begin([
 </div>
 <div id="modal-popup-error-notification" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="modal-popup-success-notification" style="display: none;" class="alert-success alert fade in"></div>
+<div id="modal-popup-warning-notification" style="display: none;" class="alert-warning alert fade in"></div>
 
 <div id="modal-content"></div>
 
@@ -86,7 +87,10 @@ Modal::begin([
     });
 
     $('#popup-modal').on('shown.bs.modal', function () {
+        var isDatePicker = $('#modal-form').find('input[type=text],textarea,select').filter(':visible:first').attr('class');
+        if(isDatePicker != 'form-control hasDatepicker'){
 	$('#modal-form').find('input[type=text],textarea,select').filter(':visible:first').focus();
+        }
         $('#modal-spinner').hide();
     });
 

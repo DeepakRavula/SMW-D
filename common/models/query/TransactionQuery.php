@@ -31,4 +31,24 @@ class TransactionQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+    public function manualPayments($userId)
+    {
+        return $this->joinWith(['payment' => function ($query) use ($userId) {
+            $query->joinWith(['customerCredit' => function ($query) use ($userId) {
+                $query->andWhere(['customer_payment.userId' => $userId]);
+            }])
+            ->notDeleted()
+            ->exceptAutoPayments();
+        }]);
+    }
+
+    public function invoices($userId)
+    {
+        return $this->joinWith(['invoice' => function ($query) use ($userId) {
+            $query->notDeleted()
+                ->invoice()
+                ->customer($userId);
+        }]);
+    }
 }

@@ -59,32 +59,6 @@ echo AdminLteGridView::widget([
                 return $result;
             }
         ],
-            ['class' => 'yii\grid\ActionColumn',
-            'template' => '{view} {create}',
-            'buttons' => [
-                'create' => function ($url, $model) {
-                    $url = Url::to(['invoice/invoice-payment-cycle', 'id' => $model->id]);
-                    if ($model->canRaiseProformaInvoice() && !$model->hasProFormaInvoice()) {
-                        return Html::a('Create PFI', $url, [
-                                'title' => Yii::t('yii', 'Create PFI'),
-                                'class' => ['btn-success btn-sm']
-                        ]);
-                    } else {
-                        return null;
-                    }
-                },
-                'view' => function ($url, $model) {
-                    if (!$model->hasProFormaInvoice()) {
-                        return null;
-                    }
-                    $url = Url::to(['invoice/view', 'id' => $model->proFormaInvoice->id]);
-                    return Html::a('View PFI', $url, [
-                            'title' => Yii::t('yii', 'View PFI'),
-                            'class' => ['btn-info btn-sm']
-                    ]);
-                }
-            ]
-        ],
     ],
 ]);
 ?>
