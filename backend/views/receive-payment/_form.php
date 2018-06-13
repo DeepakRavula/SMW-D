@@ -24,7 +24,8 @@ use kartik\daterange\DateRangePicker;
 <div class="receive-payment-form">
 
     <?php $form = ActiveForm::begin([
-        'id' => 'modal-form'
+        'id' => 'modal-form',
+        'action' => Url::to(['payment/receive']),
     ]); ?>
 
     <div class="row">
@@ -107,18 +108,26 @@ use kartik\daterange\DateRangePicker;
 </div>
 
 <script>
+    var receivePayment = {
+        setAction: function() {
+            var lessonId = <?= $model->lessonId ?>;
+            var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
+            var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
+            var params = $.param({ 'PaymentForm[lessonId]' : lessonId, 'PaymentForm[lessonIds]': lessonIds, 'PaymentForm[invoiceIds]': invoiceIds });
+            var url = '<?= Url::to(['payment/receive']) ?>?' + params;
+            $('#modal-form').attr('action', url);
+            return false;
+        }
+    };
+
     $(document).ready(function () {
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Receive Payment</h4>');
         $('.modal-save').text('Pay');
-        $('.modal-save').removeClass('modal-save').addClass('modal-save-replaced');
-        $('.modal-save-all').text('Create PFI');
-        $('.modal-save-all').show();
-        $('.modal-save-replaced').attr('disabled', false);
-        $('.modal-save-all').attr('disabled', false);
         $('.select-on-check-all').prop('checked', true);
         $('#invoice-line-item-grid .select-on-check-all').prop('disabled', true);
         $('#invoice-line-item-grid input[name="selection[]"]').prop('disabled', true);
+        receivePayment.setAction();
     });
 
     $(document).off('change', '#paymentform-daterange').on('change', '#paymentform-daterange', function () {
@@ -131,34 +140,19 @@ use kartik\daterange\DateRangePicker;
         $.pjax.reload({url:url, container: "#payment-amount", replace: false, async: false, timeout: 6000});
         $('.select-on-check-all').prop('checked', true);
         $('#modal-spinner').hide();
+        receivePayment.setAction();
         return false;
     });
 
-    $(document).off('click', '.modal-save-replaced').on('click', '.modal-save-replaced', function() {
-        $('#modal-spinner').show();
-        var lessonId = '<?= $model->lessonId ?>';
-        var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
-        var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-        if ($.isEmptyObject(lessonIds) && $.isEmptyObject(invoiceIds)) {
-            $('#modal-spinner').hide();
-            $('#index-error-notification').html("Choose any lessons to pay").fadeIn().delay(5000).fadeOut();
-        } else {
-            $('.modal-save-replaced').attr('disabled', true);
-            $('.modal-save-all').attr('disabled', true);
-            var params = $.param({ 'PaymentForm[lessonId]': lessonId, 'PaymentForm[lessonIds]': lessonIds, 'PaymentForm[invoiceIds]': invoiceIds });
-            $.ajax({
-                url    : '<?= Url::to(['payment/receive']) ?>?' +params,
-                type   : 'post',
-                dataType: "json",
-                data: $('#modal-form').serialize(),
-                success: function(response)
-                {
-                    if (response.status) {
-                        $('#popup-modal').modal('hide');
-                        $('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
-                    }
-                }
-            });
+    $(document).off('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
+        receivePayment.setAction();
+        return false;
+    });
+
+    $(document).on('modal-success', function(event, params) {
+        $('#success-notification').html(params.message).fadeIn().delay(5000).fadeOut();
+        if ($('#invoice-payment-listing').length) {
+            $.pjax.reload({container: "#invoice-payment-listing", replace: false, async: false, timeout: 6000});
         }
         return false;
     });

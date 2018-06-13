@@ -42,7 +42,7 @@ class PaymentForm extends Model
     public function rules()
     {
         return [
-            [['payment_method_id', 'user_id', 'amount'], 'required'],
+            [['payment_method_id', 'user_id', 'amount', 'date'], 'required'],
             [['date', 'amountNeeded', 'dateRange', 'lessonId', 'fromDate', 'toDate',
                 'lessonIds', 'invoiceIds'], 'safe']
         ];
