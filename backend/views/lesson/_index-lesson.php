@@ -224,6 +224,10 @@ $this->params['action-button'] = $this->render('_action-menu', [
 </div>
 
 <script>
+    $(document).ready(function () {
+        bulkAction.setAction();
+    });
+
     $(document).on('click', '#substitute-teacher', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(lessonIds)) {
@@ -268,6 +272,23 @@ $this->params['action-button'] = $this->render('_action-menu', [
             return false;
         }
     });
+
+    $(document).off('change', '#lesson-index-1 .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-index-1 .select-on-check-all, input[name="selection[]"]', function () {
+        bulkAction.setAction();
+        return false;
+    });
+
+    var bulkAction = {
+        setAction: function() {
+            var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+            if ($.isEmptyObject(lessonIds)) {
+                $('#bulk-action-menu').hide();
+            } else {
+                $('#bulk-action-menu').show();
+            }
+            return false;
+        }
+    };
 
     $(document).off('click', '#lesson-delete').on('click', '#lesson-delete', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
