@@ -311,6 +311,10 @@ $this->params['action-button'] = $this->render('_action-menu', [
                                         $('#index-success-notification').text(response.message).fadeIn().delay(5000).fadeOut();
                                         $.pjax.reload({container: "#lesson-index", replace: false, async: false, timeout: 6000});
                                     }
+                                } else {
+                                    if (response.message) {
+                                        $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                    }
                                 }
                             }
                         });
