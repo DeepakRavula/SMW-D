@@ -787,14 +787,11 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function afterSoftDelete()
     {
-        if ($this->isPrivate() && $this->proFormaLineItem) {
-            if (!$this->hasCreditApplied($this->enrolment->id)) {
-                $this->proFormaLineItem->delete();
-            } else if (!$this->hasCreditUsed($this->enrolment->id)) {
-                $invoice = $this->addLessonCreditInvoice();
+        if ($this->isPrivate()) {
+            if ($this->hasLessonCredit($this->enrolment->id)) {
                 $payment = new Payment();
                 $payment->amount = $this->getLessonCreditAmount($this->enrolment->id);
-                $invoice->addPayment($this, $payment, $this->enrolment);
+                $this->customer->addPayment($this, $payment, $this->enrolment);
             }
         }
         return true;

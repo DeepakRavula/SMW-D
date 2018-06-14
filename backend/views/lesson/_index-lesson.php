@@ -224,6 +224,10 @@ $this->params['action-button'] = $this->render('_action-menu', [
 </div>
 
 <script>
+    $(document).ready(function () {
+        bulkAction.setAction();
+    });
+
     $(document).on('click', '#substitute-teacher', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(lessonIds)) {
@@ -267,6 +271,54 @@ $this->params['action-button'] = $this->render('_action-menu', [
             });
             return false;
         }
+    });
+
+    $(document).off('change', '#lesson-index-1 .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-index-1 .select-on-check-all, input[name="selection[]"]', function () {
+        bulkAction.setAction();
+        return false;
+    });
+
+    var bulkAction = {
+        setAction: function() {
+            var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+            if ($.isEmptyObject(lessonIds)) {
+                $('#bulk-action-menu').hide();
+            } else {
+                $('#bulk-action-menu').show();
+            }
+            return false;
+        }
+    };
+
+    $(document).off('click', '#lesson-delete').on('click', '#lesson-delete', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(lessonIds)) {
+            $('#index-error-notification').html("Choose any lessons to delete").fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ 'PrivateLesson[ids]': lessonIds, 'PrivateLesson[isBulk]': true });
+            bootbox.confirm({ 
+                message: "Are you sure you want to delete this lesson?", 
+                callback: function(result) {
+                    if(result) {
+                        $('.bootbox').modal('hide');
+                        $.ajax({
+                            url    : '<?= Url::to(['private-lesson/delete']) ?>?' +params,
+                            type   : 'post',
+                            success: function(response)
+                            {
+                                if (response.status) {
+                                    if (response.message) {
+                                        $('#index-success-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                        $.pjax.reload({container: "#lesson-index", replace: false, async: false, timeout: 6000});
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            });	
+        }
+        return false;
     });
 </script>
 

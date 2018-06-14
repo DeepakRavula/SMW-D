@@ -132,23 +132,28 @@ class PrivateLessonController extends BaseController
      *
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionDelete()
     {
-        $model = $this->findModel($id);
-        if (!$model->isDeletable()) {
-            $response = [
-                'status' => false,
-                'message' => 'You can\'t delete this lesson.',
-            ];
-        } else {
-            $message = 'Lesson has been deleted successfully!';
-            if ($model->hasLessonCredit($model->enrolment->id)) {
-                $message .= ' Lesson credits transfered to new credit invoice';
+        $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
+        $isBulk = Yii::$app->request->get('PrivateLesson')['isBulk'];
+        $lessons = Lesson::findAll($lessonIds);
+        foreach ($lessons as $lesson) {
+            if (!$lesson->isDeletable()) {
+                return [
+                    'status' => false,
+                    'message' => 'You can\'t delete this lesson.',
+                ];
             }
-            $model->delete();
+        }
+        foreach ($lessons as $lesson) {
+            $message = 'Lesson has been deleted successfully!';
+            if ($lesson->hasLessonCredit($lesson->enrolment->id)) {
+                $message .= ' Lesson credits transfered to customer account';
+            }
+            $lesson->delete();
             $response = [
                 'status' => true,
-                'url' => Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]),
+                'url' => $isBulk ? null : Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]),
                 'message' => $message
             ];
         }
