@@ -10,15 +10,6 @@ use yii\widgets\Pjax;
 <?php Pjax::Begin(['id' => 'invoice-header-summary']) ?>
 <div id="invoice-header">
 
-	<?= Html::a('<i title="Delete" class="fa fa-trash"></i>', ['#', 'id' => $model->id], [
-            'class' => 'm-r-10 btn btn-box-tool',
-            'id' => 'proforma-invoice-delete-button',
-        ])?>
-
-<?= Html::a('<i title="Mail" class="fa fa-envelope-o"></i>', '#', [
-    'id' => 'invoice-mail-button',
-    'class' => 'm-r-10 btn btn-box-tool']) ?>
-<?= Html::a('<i class="fa fa-print m-r-10"></i>', ['#'], ['class' => 'm-r-10 btn btn-box-tool','id'=>'print-btn']) ?>
 <?= Yii::$app->formatter->format($model->getTotal($model->id), ['currency', 'USD', [
     \NumberFormatter::MIN_FRACTION_DIGITS => 2,
     \NumberFormatter::MAX_FRACTION_DIGITS => 2,

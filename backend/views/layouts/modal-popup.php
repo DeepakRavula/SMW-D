@@ -71,6 +71,7 @@ Modal::begin([
                         $(document).trigger("modal-success", response);
                     }
                 } else {
+                    //alert('sucess');
                     $('#modal-spinner').hide();
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
                     $(document).trigger("modal-error", response);
