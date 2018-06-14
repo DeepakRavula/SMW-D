@@ -27,39 +27,26 @@ use yii\helpers\Html;
             'label' => 'Date',
             'value' => function ($data) {
                 return Yii::$app->formatter->asDateTime($data->lineItem->lesson->date);
-            }
+            },
+	    'contentOptions' => ['style' => 'width:300px'],
         ]);
         array_push($columns,[
-            'headerOptions' => ['class' => 'text-left'],
+	    'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left'],
-            'attribute' => 'royaltyFree',
-            'label' => 'Program',
-            'value' => function ($model) {
-                return $model->lineItem->lesson->course->program->name;
-            }
-        ]);
-        array_push($columns,[
-            'headerOptions' => ['class' => 'text-left'],
-            'label' => 'Teacher',
-            'value' => function ($data) {
-                return $data->lineItem->lesson->teacher->publicIdentity;
-            }
-        ]);
-        array_push($columns,[
             'label' => 'Amount',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency($data->total);
             },
-            'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right']
+		'contentOptions' => ['style' => 'width:300px'],
         ]);
         array_push($columns,[
+	     'headerOptions' => ['class' => 'text-left'],
+            'contentOptions' => ['class' => 'text-left'],
             'label' => 'Balance',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency($data->balance);
             },
-            'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right']
+		'contentOptions' => ['style' => 'width:300px'],
         ]);
 ?>
 <?php Pjax::Begin(['id' => 'invoice-lineitem-listing', 'timeout' => 6000]); ?>
