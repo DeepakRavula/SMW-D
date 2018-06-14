@@ -1137,15 +1137,17 @@ class Lesson extends \yii\db\ActiveRecord
     public function makeAsRoot()
     {
         if ($this->markAsRoot()) {
-            return $this->setExpiry();
+            $this->setExpiry();
         }
+        return true;
     }
     
     public function makeAsChild($lesson)
     {
-        if ($this->append($lesson)) {
-            return $lesson->setExpiry();
+        if ($this->append($lesson) && $lesson->setExpiry()) {
+            $lesson->copyRootDiscount();
         }
+        return true;
     }
 
     public function setExpiry()
@@ -1165,8 +1167,8 @@ class Lesson extends \yii\db\ActiveRecord
             $privateLessonModel->lessonId = $this->id;
             $privateLessonModel->expiryDate = $expiryDate->format('Y-m-d H:i:s');
             $privateLessonModel->save();
-            return $privateLessonModel;
         }
+        return true;
     }
     
     public function rescheduleTo($lesson)
@@ -1283,5 +1285,93 @@ class Lesson extends \yii\db\ActiveRecord
         }
         
         return round($discount, 4);
+    }
+
+    public function addCustomerDiscount($discount = null)
+    {
+        $lessonDiscount = new LessonDiscount();
+        if ($discount) {
+            $lessonDiscount = clone $discount;
+        }
+        $lessonDiscount->lessonId = $this->id;
+        if (empty($discount)) {
+            $lessonDiscount->type = LessonDiscount::TYPE_CUSTOMER;
+            $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_PERCENTAGE;
+            $lessonDiscount->value = $this->customer->customerDiscount->value;
+        }
+        return $lessonDiscount->save();
+    }
+
+    public function addPFDiscount($discount = null)
+    {
+        $lessonDiscount = new LessonDiscount();
+        if ($discount) {
+            $lessonDiscount = clone $discount;
+        }
+        $lessonDiscount->lessonId = $this->id;
+        if (!$discount) {
+            $lessonDiscount->type = LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
+            $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_PERCENTAGE;
+            $lessonDiscount->value = $this->enrolment->paymentFrequencyDiscount->discount;
+        }
+        return $lessonDiscount->save();
+    }
+
+    public function addEnrolmentDiscount($discount = null)
+    {
+        $lessonDiscount = new LessonDiscount();
+        if ($discount) {
+            $lessonDiscount = clone $discount;
+        }
+        $lessonDiscount->lessonId = $this->id;
+        if (!$discount) {
+            $lessonDiscount->type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
+            $lessonDiscount->valueType = $this->enrolment->multipleEnrolmentDiscount->discountType;
+            $lessonDiscount->value = $this->enrolment->multipleEnrolmentDiscount->discount;
+        }
+        return $lessonDiscount->save();
+    }
+
+    public function addLineItemDiscount($discount = null)
+    {
+        $lessonDiscount = new LessonDiscount();
+        $lessonDiscount = clone $discount;
+        $lessonDiscount->lessonId = $this->id;
+        return $lessonDiscount->save();
+    }
+
+    public function setDiscount()
+    {
+        if ($this->isPrivate()) {
+            if ($this->customer->hasDiscount()) {
+                $this->addCustomerDiscount();
+            }
+            if ($this->enrolment->hasPaymentFrequencyDiscount()) {
+                $this->addPFDiscount();
+            }
+            if ($this->enrolment->hasMultiEnrolmentDiscount()) {
+                $this->addEnrolmentDiscount();
+            }
+        }
+        return true;
+    }
+
+    public function copyRootDiscount()
+    {
+        if ($this->isPrivate()) {
+            if ($this->rootLesson->hasCustomerDiscount()) {
+                $this->addCustomerDiscount($this->rootLesson->customerDiscount);
+            }
+            if ($this->rootLesson->hasEnrolmentPaymentFrequencyDiscount()) {
+                $this->addPFDiscount($this->rootLesson->enrolmentPaymentFrequencyDiscount);
+            }
+            if ($this->rootLesson->hasMultiEnrolmentDiscount()) {
+                $this->addEnrolmentDiscount($this->rootLesson->multiEnrolmentDiscount);
+            }
+            if ($this->rootLesson->hasLineItemDiscount()) {
+                $this->addLineItemDiscount($this->rootLesson->lineItemDiscount);
+            }
+        }
+        return true;
     }
 }

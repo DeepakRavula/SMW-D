@@ -28,6 +28,7 @@ use common\models\BulkRescheduleLesson;
 use common\models\log\StudentLog;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
+use common\models\LessonHierarchy;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -562,6 +563,7 @@ class LessonController extends BaseController
             foreach ($lessons as $i => $lesson) {
                 $oldLesson = Lesson::findOne($oldLessonIds[$i]);
                 $oldLesson->rescheduleTo($lesson);
+                LessonHierarchy::deleteAll($oldLesson->id);
                 $bulkReschedule = new BulkRescheduleLesson();
                 $bulkReschedule->lessonId = $lesson->id;
                 $bulkReschedule->save();
@@ -570,6 +572,7 @@ class LessonController extends BaseController
         foreach ($lessons as $lesson) {
             $lesson->isConfirmed = true;
             $lesson->save();
+            $lesson->setDiscount();
         }
         if (!empty($courseModel->enrolment) && empty($courseRequest)) {
             $enrolmentModel              = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
