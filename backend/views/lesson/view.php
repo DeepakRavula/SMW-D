@@ -332,13 +332,14 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     
     $(document).on('click', '#lesson-delete', function () {
         var id = '<?= $model->id;?>';
+        var params = $.param({ 'PrivateLesson[ids]': [id], 'PrivateLesson[isBulk]': false });
         bootbox.confirm({ 
             message: "Are you sure you want to delete this lesson?", 
             callback: function(result){
                 if(result) {
                     $('.bootbox').modal('hide');
                     $.ajax({
-                        url: '<?= Url::to(['private-lesson/delete']); ?>?id=' + id,
+                        url: '<?= Url::to(['private-lesson/delete']); ?>?' + params,
                         type: 'post',
                         success: function (response)
                         {

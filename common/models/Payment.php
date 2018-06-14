@@ -280,9 +280,7 @@ class Payment extends ActiveRecord
             $lessonPayment->lessonId = $this->lessonId;
             $lessonPayment->paymentId = $this->id;
             $lessonPayment->enrolmentId = $this->enrolmentId;
-            if (!$lessonPayment->save()) {
-                print_r($lessonPayment->getErrors());die;
-            }
+            $lessonPayment->save();
         }
         $this->trigger(self::EVENT_CREATE);
         

@@ -87,6 +87,8 @@ trait Payable
                 $enrolment = $this->enrolment;
             }
             $paymentModel->enrolmentId = $enrolment->id;
+        } else if ($this->tableName() === 'user') {
+            $paymentModel->user_id = $this->id;
         }
         if ($from->tableName() === 'lesson') {
             $paymentModel->reference = $from->getLessonNumber();
@@ -103,6 +105,7 @@ trait Payable
             $paymentModel->sourceId = null;
             $paymentModel->lessonId = null;
             $paymentModel->user_id = null;
+            $paymentModel->reference = null;
             if ($from->tableName() === 'invoice') {
                 $paymentModel->invoiceId = $from->id;
             } else if ($from->tableName() === 'user') {
@@ -117,7 +120,7 @@ trait Payable
             
             if ($this->tableName() === 'invoice') {
                 $paymentModel->reference = $this->getInvoiceNumber();
-            } else {
+            } else if ($this->tableName() === 'lesson') {
                 $paymentModel->reference = $this->getLessonNumber();
             }
             $paymentModel->amount = -abs($paymentModel->amount);

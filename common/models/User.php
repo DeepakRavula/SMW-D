@@ -876,12 +876,4 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return !empty($this->primaryEmail);
     }
-
-    public function addPayment($paymentId)
-    {
-        $customerPayment = new CustomerPayment();
-        $customerPayment->userId = $this->is;
-        $customerPayment->paymentId = $paymentId;
-        return $customerPayment->save();
-    }
 }

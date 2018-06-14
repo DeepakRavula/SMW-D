@@ -4,6 +4,7 @@
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a id="substitute-teacher" href="#">Substitute Teacher</a></li>
             <li><a id="lesson-discount" href="#">Edit Discount</a></li>
+            <li><a id="lesson-delete" href="#">Delete</a></li>
         </ul>
     </div>
 </div>
