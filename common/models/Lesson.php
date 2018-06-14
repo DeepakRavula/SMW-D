@@ -214,8 +214,8 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function isScheduledOrRescheduled()
     {
-        return (int) $this->status === self::STATUS_SCHEDULED || 
-                (int) $this->status === self::STATUS_RESCHEDULED;
+        return (int) $this->status === self::STATUS_SCHEDULED ||
+            (int) $this->status === self::STATUS_RESCHEDULED;
     }
     
     public function isResolveSingleLesson()

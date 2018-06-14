@@ -68,34 +68,8 @@ class LessonReschedule extends Model
                     $extended->updateAttributes(['extendedLessonId' => $rescheduledLesson->id]);
                 }
             }
-            if ($oldLesson->isExtra() && $oldLesson->proFormaLineItem) {
-                $lineItemLesson = $oldLesson->proFormaLineItem->lineItemLesson;
-                $lineItemLesson->lessonId = $this->rescheduledLessonId;
-                $lineItemLesson->save();
-            }
-            if (!$oldLesson->isExtra()) {
-                $paymentCycleLesson = new PaymentCycleLesson();
-                $oldPaymentCycleLesson = PaymentCycleLesson::findOne(['lessonId' => $this->lessonId]);
-                if ($oldPaymentCycleLesson) {
-                    $paymentCycleLesson->paymentCycleId = $oldPaymentCycleLesson->paymentCycleId;
-                    $paymentCycleLesson->lessonId = $this->rescheduledLessonId;
-                    $paymentCycleLesson->save();
-                    if ($oldLesson->proFormaLineItem) {
-                        if (($oldLesson->isExploded && $rescheduledLesson->isExploded) || (!$oldLesson->isExploded && !$rescheduledLesson->isExploded)) {
-                            $lineItemPaymentCycleLesson = $oldLesson->proFormaLineItem->lineItemPaymentCycleLesson;
-                            $lineItemPaymentCycleLesson->paymentCycleLessonId = $paymentCycleLesson->id;
-                            $lineItemPaymentCycleLesson->save();
-                        }
-                    }
-                }
-            }
         } else {
             foreach ($oldLesson->course->enrolments as $enrolment) {
-                if ($oldLesson->hasGroupProFormaLineItem($enrolment)) {
-                    $pfli = $oldLesson->getGroupProFormaLineItem($enrolment);
-                    $pfli->lineItemLesson->lessonId = $this->rescheduledLessonId;
-                    $pfli->lineItemLesson->save();
-                }
                 if ($oldLesson->hasLessonCredit($enrolment->id)) {
                     $payment = new Payment();
                     $payment->amount = $oldLesson->getLessonCreditAmount($enrolment->id);
