@@ -4,12 +4,12 @@ use yii\helpers\Url;
 use common\Models\User;
 ?>
 
-<div class="m-b-10 pull-right">
+<div class="pull-right">
     <div class="btn-group">
         <button class="btn dropdown-toggle" data-toggle="dropdown">More Action&nbsp;&nbsp;<span class="caret"></span></button>
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a id="receive-payment" href="#">Receive Payment</a></li>
-            <li><a id="create-pfi" href="#">Create-PFI</a></li>
+            <li><a id="create-pfi" href="#">Create PFI</a></li>
             <li><a id="lesson-mail-button" href="#">Mail</a></li>
             <?php if ($model->isPrivate()) : ?>
                 <?php if ($model->canExplode()) : ?>
@@ -26,7 +26,6 @@ use common\Models\User;
         </ul>
     </div>
 </div>
-
 <script>
     $(document).on('click', '#split-lesson', function () {
         $.ajax({
