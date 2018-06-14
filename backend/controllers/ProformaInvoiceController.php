@@ -109,7 +109,8 @@ class ProformaInvoiceController extends BaseController
                 ->andWhere(['id' => $lessonIds]);
         }
         $lessonLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $lessonsQuery
+            'query' => $lessonsQuery,
+            'pagination' => false 
         ]);
         $invoicesQuery = Invoice::find();
         if ($model->invoiceIds) {
@@ -123,7 +124,8 @@ class ProformaInvoiceController extends BaseController
                 ->unpaid();
         }
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $invoicesQuery
+            'query' => $invoicesQuery,
+            'pagination' => false 
         ]);
         $request = Yii::$app->request;
         if ($request->post()) {

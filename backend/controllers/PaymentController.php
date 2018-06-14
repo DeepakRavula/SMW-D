@@ -397,7 +397,8 @@ class PaymentController extends BaseController
             $amount += $lesson->getOwingAmount($lesson->enrolment->id);
         }
         $lessonLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $lessonsQuery
+            'query' => $lessonsQuery,
+            'pagination' => false 
         ]);
         $invoicesQuery = Invoice::find();
         if ($model->invoiceIds) {
@@ -410,9 +411,10 @@ class PaymentController extends BaseController
                 ->unpaid();
         }
         $invoices = clone $invoicesQuery;
-        $amount += $invoices->sum('total');    
+        $amount += $invoices->sum('balance');    
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $invoicesQuery
+            'query' => $invoicesQuery,
+            'pagination' => false 
         ]);
         $model->amount = $amount;
         $request = Yii::$app->request;
