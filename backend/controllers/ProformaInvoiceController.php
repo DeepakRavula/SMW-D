@@ -96,7 +96,6 @@ class ProformaInvoiceController extends BaseController
                 ->isConfirmed()
                 ->notCanceled()
                 ->unInvoiced()
-                ->nonPfi()
                 ->location($locationId);
             $allLessons = $lessonsQuery->all();
             $lessonIds = [];
@@ -120,7 +119,6 @@ class ProformaInvoiceController extends BaseController
                 ->lessonInvoice()
                 ->location($locationId)
                 ->customer($model->userId)
-                ->nonPfi()
                 ->unpaid();
         }
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
@@ -130,7 +128,7 @@ class ProformaInvoiceController extends BaseController
         $request = Yii::$app->request;
         if ($request->post()) {
             $model->load($request->post());
-            if($model->lessonIds || $model->invoiceIds) {
+            if(!empty($model->lessonIds) || !empty($model->invoiceIds)) {
                 $lessons = Lesson::findAll($model->lessonIds);
                 $invoices = Invoice::findAll($model->invoiceIds);
                 $endLesson = end($lessons);
@@ -160,11 +158,18 @@ class ProformaInvoiceController extends BaseController
                         $proformaLineItem->save();
                     }
                 }
+                $response = [
+                    'status' => true,
+                    'url' => Url::to(['proforma-invoice/view', 'id' => $model->id])
+                ];
             }
+            else{
             $response = [
-                'status' => true,
-                'url' => Url::to(['proforma-invoice/view', 'id' => $model->id])
+                'status' => false,
+                'errors' => 'Select any lesson or invoice to create PFI',
             ];
+        }
+           
         } else {
             $data = $this->renderAjax('/receive-payment/_create-pfi', [
                 'model' => $model,

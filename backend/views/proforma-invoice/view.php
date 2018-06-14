@@ -79,6 +79,15 @@ $this->render('/receive-payment/_invoice-line-item', [
 </div>
 
 <div class="row">
+<?php Pjax::Begin(['id' => 'invoice-message-panel', 'timeout' => 6000]); ?>
+   <div class="col-md-3">
+		<?=
+         $this->render('_message', [
+            'model' => $model,
+        ]);
+        ?>
+	</div>
+    <?php Pjax::end(); ?>
 	<div class="col-md-4">
 		<?=
 $this->render('note/view', [
@@ -87,9 +96,16 @@ $this->render('note/view', [
 ]);
 ?>
 	</div>
-
+<?php Pjax::Begin(['id' => 'invoice-user-history', 'timeout' => 6000]); ?>
+	<div class="col-md-5">
+		<?=
+        $this->render('log', [
+            'model' => $model,
+        ]);
+        ?>	
+	</div>
+	<?php Pjax::end(); ?>
 </div>
-
 <script>
       	$(document).on('beforeSubmit', '#invoice-note-form', function (e) {
 		$.ajax({

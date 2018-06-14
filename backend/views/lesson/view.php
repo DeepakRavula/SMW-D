@@ -25,13 +25,16 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
 <br>
+<div class="m-b-10"> </div>
 <div class="row">
 	<div class="col-md-6">
+   
 		<?=
         $this->render('_details', [
             'model' => $model,
         ]);
         ?>
+       
 	</div>
     <div class="col-md-6">
 		<?=
