@@ -88,7 +88,7 @@ Modal::begin([
 
     $('#popup-modal').on('shown.bs.modal', function () {
         var isDatePicker = $('#modal-form').find('input[type=text],textarea,select').filter(':visible:first').attr('class');
-        if(isDatePicker != 'form-control hasDatepicker'){
+        if(isDatePicker != 'form-control hasDatepicker' && isDatePicker != 'form-control no-focus'){
 	$('#modal-form').find('input[type=text],textarea,select').filter(':visible:first').focus();
         }
         $('#modal-spinner').hide();

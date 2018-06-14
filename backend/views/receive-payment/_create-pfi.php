@@ -26,7 +26,7 @@ use kartik\daterange\DateRangePicker;
             'convertFormat' => true,
             'initRangeExpr' => true,
             'options' => [
-                'class' => 'form-control',
+                'class' => 'form-control no-focus',
                 'readOnly' => true
             ],
             'pluginOptions' => [
