@@ -16,4 +16,13 @@ class ProformaInvoiceQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+    public function location($locationId)
+    {
+      
+               $this->andWhere(['proforma_invoice.locationId' => $locationId]);
+        
+
+        return $this;
+    }
+
 }

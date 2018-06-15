@@ -48,7 +48,7 @@ class ProformaInvoiceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create','view'],
+                        'actions' => ['index','create','view'],
                         'roles' => [
                              'managePfi'
                         ]
@@ -57,7 +57,16 @@ class ProformaInvoiceController extends BaseController
             ]
         ];
     }
+    public function actionIndex()
+    {
+        $searchModel = new ProformaInvoiceSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        return $this->render('index', [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+        ]);
+    }
     /**
      * Lists all Invoice models.
      *

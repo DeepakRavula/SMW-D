@@ -39,5 +39,20 @@ class ProformaInvoiceSearch extends ProformaInvoice
      *
      * @return ActiveDataProvider
      */
- 
+    public function search($params)
+    {
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $query = ProformaInvoice::find()
+                ->location($locationId);
+       
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        if (!empty($params) && !($this->load($params) && $this->validate())) {
+            return $dataProvider;
+        }
+       
+        return $dataProvider;
+    }
 }

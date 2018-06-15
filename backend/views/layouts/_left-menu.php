@@ -95,6 +95,14 @@ echo Menu::widget([
             'badge' => Invoice::pfiCount(),
             'badgeBgClass' => 'label-default'
         ],
+        
+        [
+            'label' => Yii::t('backend', 'New Proforma Invoices'),
+            'icon' => '<i class="fa  fa-dollar"></i>',
+            'url' => ['/proforma-invoice/index'],
+            'visible' => Yii::$app->user->can('managePfi'),
+            'active' => (Yii::$app->controller->id === 'proforma-invoice') ? true : false,
+        ],
             [
             'label' => Yii::t('backend', 'Invoices'),
             'icon' => '<i class="fa  fa-dollar"></i>',

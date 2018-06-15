@@ -21,13 +21,15 @@ LteBox::begin([
 ])
 ?>
 <dl class="dl-horizontal lesson-discount">
-	<dt>Customer Discount</dt>
+	<dt class="m-r-10">Customer Discount</dt>
 	<dd><?= $model->hasCustomerDiscount() ? $model->customerDiscount->value . ' %' : null; ?></dd>
-	<dt>Line Item Discount</dt>
+	<dt class="m-r-10">Line Item Discount</dt>
     <dd><?= $model->hasLineItemDiscount() ? $model->getLineItemDiscountValue() : null; ?></dd>
-    <dt>Payment Frequency Discount</dt>
+    <dt class="m-r-10">Payment Frequency</dt>
+    <dt> Discount</dt>
 	<dd><?= $model->hasEnrolmentPaymentFrequencyDiscount() ? $model->enrolmentPaymentFrequencyDiscount->value . ' %' : null; ?></dd>
-	<dt>Multiple Enrolment Discount</dt>
+	<dt class="m-r-10">Multiple Enrolment</dt>
+    <dt> Discount</dt>
 	<dd><?= $model->hasMultiEnrolmentDiscount() ? '$ '. $model->multiEnrolmentDiscount->value : null; ?></dd>
 </dl>
 <?php LteBox::end()?>
