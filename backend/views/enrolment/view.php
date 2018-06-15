@@ -18,15 +18,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 <?= $this->render('_view-enrolment', [
     'model' => $model,
 ]);?>
-<div class="row">
-    <div class="col-md-6">
-        <?=
-        $this->render('_student', [
-            'model' => $model,
-        ]);
-        ?>
-    </div>
-</div>
+
 <div id="enrolment-view-loader" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>

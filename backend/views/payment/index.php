@@ -62,7 +62,7 @@ $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])
                 'label' => 'Customer',
                 'attribute' => 'customer',
                 'value' => function ($data) {
-                    return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
+                    return $data->invoice->user->publicIdentity ?? null;
                 },
                 'contentOptions' => ['style' => 'font-size:14px'],
                 'filterType'=>KartikGridView::FILTER_SELECT2,

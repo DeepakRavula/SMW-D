@@ -103,6 +103,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
         $lesson = Lesson::findOne($this->lessonId);
         $lesson->cancel();
     }
+
     public function afterSave($insert, $changedAttributes)
     {
         if($this->lesson->rootLesson) {
@@ -112,5 +113,5 @@ class PrivateLesson extends \yii\db\ActiveRecord
         }
 
         return parent::afterSave($insert, $changedAttributes);
-    }
+    }   
 }
