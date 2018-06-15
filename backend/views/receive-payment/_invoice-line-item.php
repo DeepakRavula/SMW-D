@@ -26,7 +26,7 @@ use yii\helpers\Html;
             'contentOptions' => ['class' => 'text-left'],
             'label' => 'Date',
             'value' => function ($data) {
-                return Yii::$app->formatter->asDateTime($data->lineItem->lesson->date);
+                return  !empty($data->lineItem->lesson->date) ? Yii::$app->formatter->asDateTime($data->lineItem->lesson->date): null;
             },
 	    'contentOptions' => ['style' => 'width:300px'],
         ]);
@@ -35,7 +35,7 @@ use yii\helpers\Html;
             'contentOptions' => ['class' => 'text-left'],
             'label' => 'Amount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->total);
+                return !empty($data->total) ? Yii::$app->formatter->asCurrency($data->total) : null;;
             },
 		'contentOptions' => ['style' => 'width:300px'],
         ]);
