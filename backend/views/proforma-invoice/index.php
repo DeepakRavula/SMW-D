@@ -26,7 +26,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'summary' => false,
         'emptyText' => false,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            [
+                'attribute' => 'number',
+                'label' => 'Number',
+                'contentOptions' => ['style' => 'width:100px'],
+                'value' => function ($data) {
+                    return 'P-000'.$data->id;
+                },
+            ],
 
             [
                 'attribute' => 'customer',
