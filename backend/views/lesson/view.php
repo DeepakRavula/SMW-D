@@ -29,48 +29,51 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 <div class="row">
 	<div class="col-md-6">
    
-		<?=
-        $this->render('_details', [
+		<?= $this->render('_details', [
             'model' => $model,
-        ]);
-        ?>
+        ]); ?>
        
-	</div>
-    <div class="col-md-6">
-		<?=
-        $this->render('schedule/_view', [
-            'model' => $model,
-        ]);
-        ?>
-    </div>
-</div>
-    <?php if (!$model->isGroup()): ?>
-    <div class="row">
-	    <div class="col-md-6">
+        <?php if (!$model->isGroup()): ?>
+        
             <?= $this->render('_student', [
                 'model' => $model,
             ]); ?>
-        </div>
-        <div class="col-md-6">
+
+            <?php if ($model->isPrivate() && !$model->isUnscheduled()): ?>
+                <div id="attendance-panel">
+                    <?= $this->render('attendance/_view', [
+                        'model' => $model,
+                    ]); ?>	
+                </div>
+            <?php endif; ?>
+            
+        <?php endif; ?>
+
+    </div>
+
+    <div class="col-md-6">  
+        
+        <?= $this->render('schedule/_view', [
+            'model' => $model,
+        ]); ?>
+
+
+        <?= $this->render('_price-details', [
+            'model' => $model,
+        ]); ?>
+        
+        <?php if (!$model->isGroup()): ?>
+
             <?= $this->render('_discount', [
                 'model' => $model,
             ]); ?>
-        </div>
-    </div>
-    <?php endif; ?>
-    <div class="row">
-        <div class="col-md-6">
-        <?php if ($model->isPrivate() && !$model->isUnscheduled()): ?>
-            <div id="attendance-panel">
-            <?=
-            $this->render('attendance/_view', [
-                'model' => $model,
-            ]);
-            ?>	
-            </div>
+
         <?php endif; ?>
-        </div>
+
     </div>
+
+</div>
+
 <div class="row">
 	<div class="col-md-12">
 		<div class="nav-tabs-custom">
@@ -294,6 +297,9 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         if ($('#lesson-discount').length) {
             $.pjax.reload({container: "#lesson-discount", replace: false, async: false, timeout: 6000});
         }
+        if ($('#lesson-price-details').length) {
+            $.pjax.reload({container: "#lesson-price-details", replace: false, async: false, timeout: 6000});
+        }
         return false;
     });
     
@@ -418,6 +424,21 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         var params = $.param({ 'PrivateLesson[ids]': lessonIds });
         $.ajax({
             url    : '<?= Url::to(['private-lesson/apply-discount']) ?>?' + params,
+            type   : 'get',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                }
+            }
+        });
+        return false;
+    });
+
+    $(document).off('click', '#lesson-price').on('click', '#lesson-price', function(){
+        $.ajax({
+            url    : '<?= Url::to(['lesson/edit-price', 'id' => $model->id]) ?>',
             type   : 'get',
             success: function(response)
             {

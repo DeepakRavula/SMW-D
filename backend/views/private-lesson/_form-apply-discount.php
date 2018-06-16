@@ -110,7 +110,7 @@ use yii\helpers\Url;
 
     $(document).ready(function() {
         $('#popup-modal .modal-dialog').css({'width': '600px'});
-        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit discount</h4>');
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Discount</h4>');
         var button = '<?= $lineItemDiscount->valueType;?>';
         if (button == '1') {
             $('#on').addClass('btn-info');

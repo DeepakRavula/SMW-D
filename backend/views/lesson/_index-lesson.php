@@ -147,7 +147,7 @@ $this->params['action-button'] = $this->render('_action-menu', [
 		'label' => 'Price',
 		'attribute' => 'price',
 		'value' => function ($data) {
-			return Yii::$app->formatter->asCurrency($data->amount);
+			return Yii::$app->formatter->asCurrency($data->netPrice);
 		},
 	    ],
     [
@@ -282,9 +282,13 @@ $this->params['action-button'] = $this->render('_action-menu', [
         setAction: function() {
             var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
             if ($.isEmptyObject(lessonIds)) {
-                $('#bulk-action-menu').hide();
+                $('#substitute-teacher').addClass('multiselect-disable');
+                $('#lesson-discount').addClass('multiselect-disable');
+                $('#lesson-delete').addClass('multiselect-disable');
             } else {
-                $('#bulk-action-menu').show();
+                $('#substitute-teacher').removeClass('multiselect-disable');
+                $('#lesson-discount').removeClass('multiselect-disable');
+                $('#lesson-delete').removeClass('multiselect-disable');
             }
             return false;
         }

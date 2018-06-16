@@ -37,30 +37,16 @@ trait Invoiceable
             'Y-m-d H:i:s',
                 $this->date
         );
-        if ($this->proFormaLineItem) {
-            $invoiceLineItem->amount = $this->proFormaLineItem->amount;
+        $invoiceLineItem->amount = $this->programRate;
+        $invoiceLineItem->unit   = $this->unit;
+        $invoiceLineItem->unit   = $this->unit;
+        if ($this->isUnscheduled()) {
+            $invoiceLineItem->cost       = 0;
         } else {
-            $invoiceLineItem->amount = $this->courseProgramRate ? $this->courseProgramRate->programRate
-                    : $this->enrolment->program->rate;
-            $invoiceLineItem->unit   = $this->unit;
-        }
-        if ($invoice->isProFormaInvoice()) {
-            if ($this->isExtra()) {
-                $invoiceLineItem->item_type_id = ItemType::TYPE_EXTRA_LESSON;
-            } elseif ($this->isPrivate()) {
-                $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
-            }
             $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
-        } else {
-            $invoiceLineItem->unit   = $this->unit;
-            if ($this->isUnscheduled()) {
-                $invoiceLineItem->cost       = 0;
-            } else {
-                $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
-            }
-            $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
-            $invoiceLineItem->rate = $rate;
         }
+        $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
+        $invoiceLineItem->rate = $this->teacherRate;
         $studentFullName               = $this->enrolment->student->fullName;
         $description                  = $this->enrolment->program->name.' for '.$studentFullName.' with '
             . $this->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');

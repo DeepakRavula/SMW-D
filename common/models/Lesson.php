@@ -92,7 +92,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $userName;
     public $applyContext;
     public $locationId;
-    public $programRate;
+    public $program_rate;
     public $applyFullDiscount;
 
     /**
@@ -138,9 +138,11 @@ class Lesson extends \yii\db\ActiveRecord
                 return $model->type !== self::TYPE_EXTRA;
             }],
             [['courseId', 'status', 'type'], 'integer'],
-            ['programRate', 'required', 'on' => self::SCENARIO_CREATE_GROUP],
+            [['programRate', 'teacherRate'], 'number'],
+            ['program_rate', 'required', 'on' => self::SCENARIO_CREATE_GROUP],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyFullDiscount',
-                'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId', 'isPresent'], 'safe'],
+                'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId',
+                 'isPresent', 'programRate', 'teacherRate'], 'safe'],
             [['classroomId'], ClassroomValidator::className(),
                 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),
@@ -367,12 +369,12 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isOwing($enrolmentId)
     {
-        return $this->getCreditAppliedAmount($enrolmentId) < $this->amount;
+        return $this->getCreditAppliedAmount($enrolmentId) < $this->netPrice;
     }
 
     public function getOwingAmount($enrolmentId)
     {
-        return $this->amount - $this->getCreditAppliedAmount($enrolmentId);
+        return $this->netPrice - $this->getCreditAppliedAmount($enrolmentId);
     }
 
     public function getPaymentCycle()
@@ -776,6 +778,14 @@ class Lesson extends \yii\db\ActiveRecord
             if (empty($this->isExploded)) {
                 $this->isExploded = false;
             }
+            if (empty($this->programRate)) {
+                $this->programRate = $this->courseProgramRate->programRate;
+            }
+            if (empty($this->teacherRate)) {
+                $qualification = Qualification::findOne(['teacher_id' => $this->teacherId,
+                    'program_id' => $this->course->program->id]);
+                $this->teacherRate = !empty($qualification->rate) ? $qualification->rate : 0;
+            }
             if (empty($this->type)) {
                 $this->type = Lesson::TYPE_REGULAR;
             }
@@ -795,12 +805,6 @@ class Lesson extends \yii\db\ActiveRecord
             }
         }
         return true;
-    }
-
-    public function getAmount()
-    {
-        return $this->isGroup() ? $this->courseProgramRate->programRate / count($this->course->lessons) : 
-            $this->courseProgramRate->programRate * $this->unit;
     }
 
     public function getAvailabilities()
@@ -1252,10 +1256,17 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->grossPrice - $this->discount;
     }
+
+    public function getNetCost()
+    {
+        return $this->teacherRate * $this->unit;
+    }
     
     public function getGrossPrice()
     {
-        return round($this->amount, 4);
+        $grossPrice = $this->isGroup() ? $this->programRate / count($this->course->lessons) : 
+            $this->programRate * $this->unit;
+        return round($grossPrice, 4);
     }
 
     public function getDiscount()

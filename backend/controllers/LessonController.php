@@ -48,7 +48,9 @@ class LessonController extends BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => ['modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom',
-                    'payment', 'substitute','update','unschedule', 'credit-transfer'],
+                    'payment', 'substitute','update','unschedule', 'credit-transfer',
+                    'edit-price'
+                ],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -60,7 +62,7 @@ class LessonController extends BaseController
                     [
                         'allow' => true,
                         'actions' => ['index', 'view', 'credit-transfer',
-							'validate-on-update', 
+							'validate-on-update', 'edit-price',
 							'fetch-duration','edit-classroom', 
 							'update', 'update-field', 'review',
 							'fetch-conflict', 'confirm',
@@ -204,6 +206,7 @@ class LessonController extends BaseController
             }
         }
     }
+
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
@@ -741,5 +744,34 @@ class LessonController extends BaseController
                 'message' => 'Lesson not yet invoiced',
             ];
         }
+    }
+    
+    public function actionEditPrice($id)
+    {
+        $request = Yii::$app->request;
+        $model = $this->findModel($id);
+        if ($request->isPost) {
+            if ($model->load($request->post())) {
+                if ($model->save()) {
+                    $response = [
+                        'status' => true
+                    ];
+                } else {
+                    $response = [
+                        'status' => false,
+                        'errors' => ActiveForm::validate($model)
+                    ];
+                }
+            }
+        } else {
+            $data = $this->renderAjax('_price-form', [
+                'model' => $model
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
     }
 }

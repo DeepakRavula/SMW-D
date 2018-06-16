@@ -26,10 +26,19 @@ use yii\helpers\Html;
             'contentOptions' => ['class' => 'text-left'],
             'label' => 'Date',
             'value' => function ($data) {
-                return  !empty($data->lineItem->lesson->date) ? Yii::$app->formatter->asDateTime($data->lineItem->lesson->date): null;
+                return  !empty($data->date) ? Yii::$app->formatter->asDateTime($data->date): null;
             },
 	    'contentOptions' => ['style' => 'width:300px'],
         ]);
+        array_push($columns,[
+            'headerOptions' => ['class' => 'text-left'],
+                'contentOptions' => ['class' => 'text-left'],
+                'label' => 'Number',
+                'value' => function ($data) {
+                    return $data->invoiceNumber;
+                },
+            'contentOptions' => ['style' => 'width:300px'],
+            ]);
         array_push($columns,[
 	    'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left'],
