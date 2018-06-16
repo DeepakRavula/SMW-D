@@ -18,6 +18,7 @@ class m180616_055504_lesson_progra_rate extends Migration
             ->notDeleted()
             ->isConfirmed()
             ->notCanceled()
+            ->location([14, 15])
             ->all();
         foreach ($lessons as $lesson) {
             $lesson->updateAttributes(['programRate' => $lesson->courseProgramRate->programRate]);
