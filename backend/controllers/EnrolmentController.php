@@ -467,8 +467,11 @@ class EnrolmentController extends BaseController
                 ->isConfirmed()
                 ->notCanceled()
                 ->all();
+            foreach ($lessons as $lesson) {
+                $lesson->cancel();
+                $lesson->delete();
+            }
             $message = null;
-            $invoice = $model->addLessonsCredit($lessons);
             if ($invoice) {
                 $message = '$' . $invoice->balance . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
             }

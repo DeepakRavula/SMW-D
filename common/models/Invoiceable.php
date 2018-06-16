@@ -215,7 +215,10 @@ trait Invoiceable
         }
         $lessons = $query->andWhere(['courseId' => $this->courseId])
                     ->all();
-        $invoice = $this->addLessonsCredit($lessons);
+        foreach ($lessons as $lesson) {
+            $lesson->cancel();
+            $lesson->delete();
+        }
         $paymentCycleQuery = PaymentCycle::find()
                 ->andWhere(['enrolmentId' => $this->id])
                 ->notDeleted();
@@ -234,32 +237,6 @@ trait Invoiceable
             }
         }
         return !empty($invoice) ? $invoice : null;
-    }
-
-    public function addLessonsCredit($lessons)
-    {
-        $hasCredit = false;
-        foreach ($lessons as $lesson) {
-            if ($lesson->hasLessonCredit($this->id)) {
-                $hasCredit = true;
-            }
-        }
-        if ($hasCredit) {
-            $invoice = $this->addLessonCreditInvoice();
-        }
-        foreach ($lessons as $lesson) {
-            if ($lesson->hasLessonCredit($this->id)) {
-                if ($hasCredit) {
-                    $invoice->save();
-                }
-                $payment = new Payment();
-                $payment->amount = $lesson->getLessonCreditAmount($this->id);
-                $invoice->addPayment($lesson, $payment, $this);
-            }
-            $lesson->cancel();
-            $lesson->delete();
-        }
-        return $hasCredit ? $invoice : null;
     }
 
     public function createProFormaInvoice()

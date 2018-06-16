@@ -682,9 +682,9 @@ class Enrolment extends \yii\db\ActiveRecord
     public function shrink()
     {
         $startDate = null;
-        $invoice = $this->addCreditInvoice($startDate, $this->course->endDate);
+        $this->addCreditInvoice($startDate, $this->course->endDate);
         $this->updateAttributes(['isAutoRenew' => false]);
-        return $invoice;
+        return true;
     }
 
     public function deleteWithOutTransactionalData()
