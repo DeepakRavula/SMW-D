@@ -1089,9 +1089,6 @@ class Lesson extends \yii\db\ActiveRecord
     public function getSplitedAmount()
     {
         $rootLesson = $this->rootLesson;
-        if (!$rootLesson->proFormaLineItem) {
-            echo $rootLesson->id;die;
-        }
         return $rootLesson->proFormaLineItem->itemTotal / ($rootLesson->durationSec / self::DEFAULT_EXPLODE_DURATION_SEC);
     }
 

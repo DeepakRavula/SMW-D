@@ -29,36 +29,6 @@ class InvoiceController extends Controller
         );
     }
 
-    public function actionGenerateProforma()
-    {
-        /**
-         * 1. Get the date 15 days prior from today
-         * 2. Check if any unpaid lesson start on that day.
-         * 3. If yes, get the associated enrolment's payment frequency (assume monthly for now)
-         * 4. Generated invoice for all the lessons for that month
-         * 5. Send invoice to that customer
-         * 6. Set the invoice sent flag as true
-         */
-        $priorDate             = (new \DateTime())->modify('+15 day');
-        $paymentCycles       = PaymentCycle::find()
-        ->joinWith(['enrolment' => function ($query)  {
-            $query->joinWith(['course' => function ($query)  {
-                $query->location([14,15]);
-            }]);
-            $query->notDeleted();
-        }])
-        ->andWhere(['<=','payment_cycle.startDate',$priorDate->format('Y-m-d')])
-        ->andWhere(['payment_cycle.isDeleted'=> false])
-            ->all();
-        foreach($paymentCycles as $paymentCycle){
-         if(!$paymentCycle->hasProformaInvoice() && $paymentCycle->lessons ){
-               $invoice = $paymentCycle->createProFormaInvoice();
-               $invoice->on(Invoice::EVENT_GENERATE, $invoice->sendEmail());
-        }
-        }
-        return true;
-    }
-	
     public function actionAllCompletedLessons()
     {
         $query = Lesson::find()
@@ -124,7 +94,7 @@ class InvoiceController extends Controller
                 $invoice->addPreferredPayment($customer->customerPaymentPreference->paymentMethodId);
             }
         }
-
+        
         return true;
     }
 
