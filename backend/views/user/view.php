@@ -258,12 +258,12 @@ $this->params['action-button'] = $this->render('_action-button', [
                 'userModel' => $model,
             ]);
 
-            $paymentContent = $this->render('customer/_account', [
-                'model' => $model,
-                'accountDataProvider' => $accountDataProvider,
-                'userModel' => $model,
-                'searchModel' => $searchModel,
-            ]);
+            // $paymentContent = $this->render('customer/_account', [
+            //     'model' => $model,
+            //     'accountDataProvider' => $accountDataProvider,
+            //     'userModel' => $model,
+            //     'searchModel' => $searchModel,
+            // ]);
             $customerItems = [
                 [
                     'label' => 'Students',
@@ -293,13 +293,13 @@ $this->params['action-button'] = $this->render('_action-button', [
                         'id' => 'pro-forma-invoice',
                     ],
                 ],
-                [
-                    'label' => 'Accounts',
-                    'content' => $paymentContent,
-                    'options' => [
-                        'id' => 'account',
-                    ],
-                ],
+                // [
+                //     'label' => 'Accounts',
+                //     'content' => $paymentContent,
+                //     'options' => [
+                //         'id' => 'account',
+                //     ],
+                // ],
                 [
                     'label' => 'Comments',
                     'content' => $noteContent,
