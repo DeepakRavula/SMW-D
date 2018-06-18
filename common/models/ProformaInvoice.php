@@ -39,7 +39,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     {
         return [
             [['userId', 'locationId'], 'required'],
-            [['lessonIds', 'invoiceIds', 'dateRange', 'fromDate', 'toDate', 'lessonId'], 'safe']
+            [['lessonIds', 'invoiceIds', 'dateRange', 'fromDate', 'toDate', 'lessonId','notes'], 'safe']
         ];
     }
 
@@ -54,6 +54,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             'date' => 'Date',
             'userId' => 'Customer Name',
             'locationId' =>'location',
+            'notes'  =>'Message',
             
         ];
     }

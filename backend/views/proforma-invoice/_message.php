@@ -21,5 +21,5 @@ LteBox::begin([
     'boxTools' => $boxTools,
 ])
 ?>
-<php ?>
+<?= $model->notes;?>
 <?php LteBox::end() ?>

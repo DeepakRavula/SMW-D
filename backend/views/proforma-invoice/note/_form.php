@@ -11,6 +11,7 @@ use yii\helpers\Url;
 <div class="lesson-form">
 <?php $form = ActiveForm::begin([
     'id' => 'invoice-message-form',
+    'action' => Url::to(['proforma-invoice/note', 'id' => $model->id])
 ]); ?>
 <div class="row">
 	<div class="col-md-12">

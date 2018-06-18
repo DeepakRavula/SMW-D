@@ -141,4 +141,21 @@ $this->render('note/view', [
 		$('#message-modal').modal('show');
 		return false;
   	});
+	  $(document).on('beforeSubmit', '#invoice-message-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$.pjax.reload({container: '#invoice-message-panel', replace:false, timeout: 6000});
+					$('#message-modal').modal('hide');
+				}
+			}
+		});
+		return false;
+	});
 </script>
