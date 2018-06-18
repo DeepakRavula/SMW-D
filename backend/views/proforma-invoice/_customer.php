@@ -18,7 +18,11 @@ LteBox::begin([
 ?>
 <dl class="dl-horizontal">
         <dt>Name</dt>
-		<dd><?= $customer->publicIdentity; ?></dd>
+		<dd>
+		<a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id]) ?>">
+	<?= $customer->publicIdentity?>
+	</a>
+	</dd>
     <?php if (!empty($customer->primaryAddress)) : ?>
 		<dt>Address</dt>
 		<dd><?= $customer->primaryAddress->address; ?></dd>
