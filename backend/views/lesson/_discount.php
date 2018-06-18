@@ -22,15 +22,15 @@ LteBox::begin([
 ?>
 <dl class="dl-horizontal lesson-discount">
 	<dt class="m-r-10">Customer Discount</dt>
-	<dd><?= $model->hasCustomerDiscount() ? $model->customerDiscount->value . ' %' : null; ?></dd>
+	<dd><?= $model->hasCustomerDiscount() ? Yii::$app->formatter->asDecimal($model->customerDiscount->value).'%' : null; ?></dd>
 	<dt class="m-r-10">Line Item Discount</dt>
-    <dd><?= $model->hasLineItemDiscount() ? $model->getLineItemDiscountValue() : null; ?></dd>
+    <dd><?= $model->hasLineItemDiscount() ? Yii::$app->formatter->asCurrency($model->getLineItemDiscountValues()) : null; ?></dd>
     <dt class="m-r-10">Payment Frequency</dt>
     <dt> Discount</dt>
-	<dd><?= $model->hasEnrolmentPaymentFrequencyDiscount() ? $model->enrolmentPaymentFrequencyDiscount->value . ' %' : null; ?></dd>
+	<dd><?= $model->hasEnrolmentPaymentFrequencyDiscount() ? Yii::$app->formatter->asDecimal($model->enrolmentPaymentFrequencyDiscount->value) . '%' : null; ?></dd>
 	<dt class="m-r-10">Multiple Enrolment</dt>
     <dt> Discount</dt>
-	<dd><?= $model->hasMultiEnrolmentDiscount() ? '$ '. $model->multiEnrolmentDiscount->value : null; ?></dd>
+	<dd><?= $model->hasMultiEnrolmentDiscount() ?  Yii::$app->formatter->asCurrency($model->multiEnrolmentDiscount->value) : null; ?></dd>
 </dl>
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>
