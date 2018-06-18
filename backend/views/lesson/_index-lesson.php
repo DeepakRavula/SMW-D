@@ -285,10 +285,12 @@ $this->params['action-button'] = $this->render('_action-menu', [
                 $('#substitute-teacher').addClass('multiselect-disable');
                 $('#lesson-discount').addClass('multiselect-disable');
                 $('#lesson-delete').addClass('multiselect-disable');
+                $('#lesson-duration-edit').addClass('multiselect-disable');
             } else {
                 $('#substitute-teacher').removeClass('multiselect-disable');
                 $('#lesson-discount').removeClass('multiselect-disable');
                 $('#lesson-delete').removeClass('multiselect-disable');
+                $('#lesson-duration-edit').removeClass('multiselect-disable');
             }
             return false;
         }
@@ -325,6 +327,33 @@ $this->params['action-button'] = $this->render('_action-menu', [
                     }
                 }
             });	
+        }
+        return false;
+    });
+    $(document).off('click', '#lesson-duration-edit').on('click', '#lesson-duration-edit', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(lessonIds)) {
+            $('#index-error-notification').html("Choose any lessons to delete").fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ 'PrivateLesson[ids]': lessonIds, 'PrivateLesson[isBulk]': true });
+                        $.ajax({
+                            url    : '<?= Url::to(['private-lesson/edit-duration']) ?>?' +params,
+                            type   : 'post',
+                            success: function(response)
+                            {
+                                if (response.status) {
+                                    if (response.message) {
+                                        $('#index-success-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                        $.pjax.reload({container: "#lesson-index", replace: false, async: false, timeout: 6000});
+                                    }
+                                } else {
+                                    if (response.message) {
+                                        $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                    }
+                                }
+                            }
+                        });
+                   
         }
         return false;
     });

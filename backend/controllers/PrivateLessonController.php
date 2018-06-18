@@ -160,6 +160,34 @@ class PrivateLessonController extends BaseController
 
         return $response;
     }
+    public function actionEditDuration()
+    {
+        $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
+        $isBulk = Yii::$app->request->get('PrivateLesson')['isBulk'];
+        $lessons = Lesson::findAll($lessonIds);
+        foreach ($lessons as $lesson) {
+            if (!$lesson->isDeletable()) {
+                return [
+                    'status' => false,
+                    'message' => 'You can\'t delete this lesson.',
+                ];
+            }
+        }
+        foreach ($lessons as $lesson) {
+            $message = 'Lesson has been deleted successfully!';
+            if ($lesson->hasLessonCredit($lesson->enrolment->id)) {
+                $message .= ' Lesson credits transfered to customer account';
+            }
+            $lesson->delete();
+            $response = [
+                'status' => true,
+                'url' => $isBulk ? null : Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]),
+                'message' => $message
+            ];
+        }
+
+        return $response;
+    }
 
     public function actionSplit($id)
     {
