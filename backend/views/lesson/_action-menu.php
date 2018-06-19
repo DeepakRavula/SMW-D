@@ -4,6 +4,7 @@
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a class="multiselect-disable" id="substitute-teacher" href="#">Substitute Teacher</a></li>
             <li><a class="multiselect-disable" id="lesson-discount" href="#">Edit Discount</a></li>
+            <li><a class="multiselect-disable" id="lesson-duration-edit" href="#">Edit Duration</a></li>
             <li><a class="multiselect-disable" id="lesson-delete" href="#">Delete</a></li>
         </ul>
     </div>
