@@ -108,6 +108,9 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         if (!empty($lastInvoice)) {
             $proformaInvoiceNumber = $lastInvoice->proforma_invoice_number + 1;
         }
+        else{
+            $proformaInvoiceNumber=1;
+        }
         $this->proforma_invoice_number = $proformaInvoiceNumber;
         if ($insert) {
             $this->date = (new \DateTime())->format('Y-m-d');
