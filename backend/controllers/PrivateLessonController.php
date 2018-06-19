@@ -153,7 +153,7 @@ class PrivateLessonController extends BaseController
             $lesson->delete();
             $response = [
                 'status' => true,
-                'url' => $isBulk ? null : Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]),
+                'url' => Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]),
                 'message' => $message
             ];
         }
