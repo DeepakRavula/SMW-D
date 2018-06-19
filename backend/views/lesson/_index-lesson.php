@@ -333,7 +333,7 @@ $this->params['action-button'] = $this->render('_action-menu', [
     $(document).off('click', '#lesson-duration-edit').on('click', '#lesson-duration-edit', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(lessonIds)) {
-            $('#index-error-notification').html("Choose any lessons to delete").fadeIn().delay(5000).fadeOut();
+            $('#index-error-notification').html("Choose any lessons to edit duration").fadeIn().delay(5000).fadeOut();
         } else {
             var params = $.param({ 'PrivateLesson[ids]': lessonIds, 'PrivateLesson[isBulk]': true });
                         $.ajax({
@@ -341,11 +341,18 @@ $this->params['action-button'] = $this->render('_action-menu', [
                             type   : 'post',
                             success: function(response)
                             {
+                                //alert(lessonIds);
                                 if (response.status) {
+                                    alert(response.message);
                                     if (response.message) {
-                                        $('#index-success-notification').text(response.message).fadeIn().delay(5000).fadeOut();
-                                        $.pjax.reload({container: "#lesson-index", replace: false, async: false, timeout: 6000});
+                                       // $('#index-success-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                        $.pjax.reload({container: "#lesson-index-1", replace: false, async: false, timeout: 6000});
                                     }
+                                    else{
+                                        $('#modal-content').html(response.data);
+                                        $('#popup-modal').modal('show');
+                                    }
+
                                 } else {
                                     if (response.message) {
                                         $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
