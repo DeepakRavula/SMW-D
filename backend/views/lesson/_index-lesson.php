@@ -340,20 +340,13 @@ $this->params['action-button'] = $this->render('_action-menu', [
                             url    : '<?= Url::to(['private-lesson/edit-duration']) ?>?' +params,
                             type   : 'post',
                             success: function(response)
-                            {
-                                //alert(lessonIds);
+                            {    
                                 if (response.status) {
-                                    alert(response.message);
-                                    if (response.message) {
-                                       // $('#index-success-notification').text(response.message).fadeIn().delay(5000).fadeOut();
-                                        $.pjax.reload({container: "#lesson-index-1", replace: false, async: false, timeout: 6000});
-                                    }
-                                    else{
                                         $('#modal-content').html(response.data);
                                         $('#popup-modal').modal('show');
                                     }
 
-                                } else {
+                                else {
                                     if (response.message) {
                                         $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
                                     }
@@ -361,6 +354,17 @@ $this->params['action-button'] = $this->render('_action-menu', [
                             }
                         });
                    
+        }
+        return false;
+    });
+    $(document).on('modal-success', function(event, params) {
+        if (!$.isEmptyObject(params.url)) {
+            window.location.href = params.url;
+        }
+        else {
+            if(params.status){
+             $.pjax.reload({container: "#lesson-index-1",timeout: 6000, async:false});
+            }
         }
         return false;
     });
