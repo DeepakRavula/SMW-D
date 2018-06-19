@@ -295,6 +295,10 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return !$this->isDeleted && !$this->hasInvoice() && $this->isPrivate();
     }
+    public function isEditable()
+    {
+        return !$this->isExpired() && !$this->hasInvoice() && $this->isPrivate() && !$this->isExtendedLesson();
+    }
 
     public function getLastHierarchy()
     {
@@ -1381,5 +1385,9 @@ class Lesson extends \yii\db\ActiveRecord
             }
         }
         return true;
+    }
+    public function getLineItemDiscountValues()
+    {
+        return $this->lineItemDiscount->valueType ? $this->lineItemDiscount->value : $this->lineItemDiscount->value;
     }
 }

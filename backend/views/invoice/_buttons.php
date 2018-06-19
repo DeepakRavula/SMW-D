@@ -17,12 +17,6 @@ use yii\widgets\Pjax;
         ])?>
     <?php endif; ?>
 <?php endif; ?>
-<div class="m-b-10 pull-right">
-    <?= $this->render('_more-option', [
-        'model' => $model,
-        'loggedUser' => $loggedUser
-    ]) ?>
-</div>
 <?php if ((int) $model->type === InvoiceSearch::TYPE_INVOICE): ?>
     <?php if ($model->canRevert()): ?>
         <?=	Html::a(

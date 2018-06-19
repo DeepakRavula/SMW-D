@@ -84,7 +84,7 @@ class PaymentSearch extends Payment
             ]
         ]);
         $dataProvider->sort->defaultOrder = [
-            'dateRange' => SORT_DESC,
+            'dateRange' => SORT_ASC,
         ];
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;

@@ -39,7 +39,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     {
         return [
             [['userId', 'locationId'], 'required'],
-            [['lessonIds', 'invoiceIds', 'dateRange', 'fromDate', 'toDate', 'lessonId'], 'safe']
+            [['lessonIds', 'invoiceIds', 'dateRange', 'fromDate', 'toDate', 'lessonId','notes'], 'safe']
         ];
     }
 
@@ -54,6 +54,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             'date' => 'Date',
             'userId' => 'Customer Name',
             'locationId' =>'location',
+            'notes'  =>'Message',
             
         ];
     }
@@ -95,9 +96,22 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         }
         return $lessonTotal + $invoiceTotal;
     }
-
+    public function getProformaInvoiceNumber()
+    {
+        $proformaInvoiceNumber = str_pad($this->proforma_invoice_number, 5, 0, STR_PAD_LEFT);
+            return 'P-'.$proformaInvoiceNumber;
+    }
     public function beforeSave($insert)
     {
+        $lastInvoice   = $this->lastInvoice();
+        $invoiceNumber = 1;
+        if (!empty($lastInvoice)) {
+            $proformaInvoiceNumber = $lastInvoice->proforma_invoice_number + 1;
+        }
+        else{
+            $proformaInvoiceNumber=1;
+        }
+        $this->proforma_invoice_number = $proformaInvoiceNumber;
         if ($insert) {
             $this->date = (new \DateTime())->format('Y-m-d');
         }
@@ -105,5 +119,12 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     }
     public function getUser(){
         return $this->hasOne(User::className(), ['id' => 'userId']);
+    }
+    public function lastInvoice()
+    {
+        return $query = ProformaInvoice::find()->alias('i')
+                    ->andWhere(['i.locationId' => $this->locationId])
+                    ->orderBy(['i.id' => SORT_DESC])
+                    ->one();
     }
 }

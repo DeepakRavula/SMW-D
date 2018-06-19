@@ -16,8 +16,15 @@ $this->params['label'] = $this->render('_title', [
 $this->params['action-button'] = $this->render('_buttons', [
     'model' => $model,
 ]);?>
-
-<div class="row">
+<?php Modal::begin([
+    'header' => '<h4 class="m-0">Message</h4>',
+    'id' => 'message-modal',
+]); ?>
+<?= $this->render('note/_form', [
+    'model' => $model,
+]); ?>
+<?php Modal::end();?>
+<div class="row m-t-25">
 	<div class="col-md-6">
 		<?=
 $this->render('_details', [
@@ -109,7 +116,7 @@ $this->render('note/view', [
 <script>
       	$(document).on('beforeSubmit', '#invoice-note-form', function (e) {
 		$.ajax({
-			url    : '<?=Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_PROFORMA]);?>',
+			url    : '<?=Url::to(['proforma-invoice/note']);?>',
 			type   : 'post',
 			dataType: "json",
 			data   : $(this).serialize(),
@@ -125,6 +132,27 @@ $this->render('note/view', [
 				 $('#invoice-note-form').yiiActiveForm('updateMessages',
 					   response.errors
 					, true);
+				}
+			}
+		});
+		return false;
+	});
+	$(document).on('click', '.add-invoice-note', function (e) {
+		$('#message-modal').modal('show');
+		return false;
+  	});
+	  $(document).on('beforeSubmit', '#invoice-message-form', function (e) {
+		$.ajax({
+			url    : $(this).attr('action'),
+			type   : 'post',
+			dataType: "json",
+			data   : $(this).serialize(),
+			success: function(response)
+			{
+			   if(response.status)
+			   {
+					$.pjax.reload({container: '#invoice-message-panel', replace:false, timeout: 6000});
+					$('#message-modal').modal('hide');
 				}
 			}
 		});

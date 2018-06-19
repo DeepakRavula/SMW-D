@@ -37,7 +37,7 @@ class ProformaInvoiceController extends BaseController
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => [
-                    'create',
+                    'create','note',
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -48,7 +48,7 @@ class ProformaInvoiceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index','create','view'],
+                        'actions' => ['index','create','view','note'],
                         'roles' => [
                              'managePfi'
                         ]
@@ -145,11 +145,12 @@ class ProformaInvoiceController extends BaseController
                 if ($lessons) {
                     $user = $endLesson->customer;
                 }
-                if (!$user) {
+                if (empty($user)) {
                     $user = $endInvoice->user;
                 }
                 $model->userId = $user->id;
                 $model->locationId = $user->userLocation->location_id;
+                $model->proforma_invoice_number=$model->getProformaInvoiceNumber();
                 $model->save();
                 if ($lessons) {
                     foreach ($lessons as $lesson) {

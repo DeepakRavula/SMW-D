@@ -40,8 +40,8 @@ use yii\helpers\Html;
             'contentOptions' => ['style' => 'width:300px'],
             ]);
         array_push($columns,[
-	    'headerOptions' => ['class' => 'text-left'],
-            'contentOptions' => ['class' => 'text-left'],
+	    'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right'],
             'label' => 'Amount',
             'value' => function ($data) {
                 return !empty($data->total) ? Yii::$app->formatter->asCurrency($data->total) : null;;
@@ -49,8 +49,8 @@ use yii\helpers\Html;
 		'contentOptions' => ['style' => 'width:300px'],
         ]);
         array_push($columns,[
-	     'headerOptions' => ['class' => 'text-left'],
-            'contentOptions' => ['class' => 'text-left'],
+	     'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right'],
             'label' => 'Balance',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency($data->balance);
