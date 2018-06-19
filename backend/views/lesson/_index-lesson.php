@@ -285,10 +285,12 @@ $this->params['action-button'] = $this->render('_action-menu', [
                 $('#substitute-teacher').addClass('multiselect-disable');
                 $('#lesson-discount').addClass('multiselect-disable');
                 $('#lesson-delete').addClass('multiselect-disable');
+                $('#lesson-duration-edit').addClass('multiselect-disable');
             } else {
                 $('#substitute-teacher').removeClass('multiselect-disable');
                 $('#lesson-discount').removeClass('multiselect-disable');
                 $('#lesson-delete').removeClass('multiselect-disable');
+                $('#lesson-duration-edit').removeClass('multiselect-disable');
             }
             return false;
         }
@@ -325,6 +327,44 @@ $this->params['action-button'] = $this->render('_action-menu', [
                     }
                 }
             });	
+        }
+        return false;
+    });
+    $(document).off('click', '#lesson-duration-edit').on('click', '#lesson-duration-edit', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(lessonIds)) {
+            $('#index-error-notification').html("Choose any lessons to edit duration").fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ 'PrivateLesson[ids]': lessonIds, 'PrivateLesson[isBulk]': true });
+                        $.ajax({
+                            url    : '<?= Url::to(['private-lesson/edit-duration']) ?>?' +params,
+                            type   : 'post',
+                            success: function(response)
+                            {    
+                                if (response.status) {
+                                        $('#modal-content').html(response.data);
+                                        $('#popup-modal').modal('show');
+                                    }
+
+                                else {
+                                    if (response.message) {
+                                        $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                    }
+                                }
+                            }
+                        });
+                   
+        }
+        return false;
+    });
+    $(document).on('modal-success', function(event, params) {
+        if (!$.isEmptyObject(params.url)) {
+            window.location.href = params.url;
+        }
+        else {
+            if(params.status){
+             $.pjax.reload({container: "#lesson-index-1",timeout: 6000, async:false});
+            }
         }
         return false;
     });

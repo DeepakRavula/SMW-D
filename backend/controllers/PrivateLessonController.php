@@ -31,7 +31,7 @@ class PrivateLessonController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'merge', 'update-attendance', 'delete', 'apply-discount'
+                    'merge', 'update-attendance', 'delete', 'apply-discount','edit-duration',
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -45,7 +45,7 @@ class PrivateLessonController extends BaseController
                         'allow' => true,
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance',
-                                'apply-discount'
+                                'apply-discount','edit-duration'
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
@@ -158,6 +158,44 @@ class PrivateLessonController extends BaseController
             ];
         }
 
+        return $response;
+    }
+    public function actionEditDuration()
+    {
+        $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
+        $lessonId = end($lessonIds);
+        $model = $this->findModel($lessonId);
+        foreach ($lessonIds as $lessonId) {
+            $model = $this->findModel($lessonId);
+            if(!$model->isEditable()){
+                return [
+                    'status' => false,
+                    'message' => 'You can\'t edit this lesson.',
+                ]; 
+            }
+        }
+        $data = $this->renderAjax('_form-edit-duration', [
+            'lessonIds' => $lessonIds,
+            'model' => $model,
+            
+        ]);
+        $post = Yii::$app->request->post();
+        if ($post) {
+            foreach ($lessonIds as $lessonId) {
+                $model = $this->findModel($lessonId);
+                $model->load($post);
+                $model->save();
+            }
+            $response = [
+                'status' => true,
+                'message' => 'Lesson Duration Edited Sucessfully',
+            ];
+        } else {
+              $response = [
+                'status' => true,
+                'data' => $data
+            ];
+        }
         return $response;
     }
 
