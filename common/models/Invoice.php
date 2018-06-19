@@ -221,6 +221,11 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceReverse::className(), ['reversedInvoiceId' => 'id']);
     }
 
+    public function getTransaction()
+    {
+        return $this->hasOne(Transaction::className(), ['transactionId' => 'id']);
+    }
+
     public function getInvoiceReverse()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoiceId'])
@@ -333,7 +338,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $payments = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere(['ip.invoice_id' => $this->id])
             ->notDeleted()
             ->all();
         return $payments ? true : false;
@@ -343,7 +348,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $payments = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere(['ip.invoice_id' => $this->id])
             ->accountEntry()
             ->notDeleted()
             ->all();
@@ -354,7 +359,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $payment = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere(['ip.invoice_id' => $this->id])
             ->accountEntry()
             ->notDeleted()
             ->one();

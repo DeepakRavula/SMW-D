@@ -54,6 +54,11 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['invoice.isCanceled' => false]);
     }
 
+    public function canceled()
+    {
+        return $this->andWhere(['invoice.isCanceled' => true]);
+    }
+
     public function notReturned()
     {
         return $this->joinWith(['reverseInvoice' => function ($query) {
@@ -61,10 +66,16 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         }]);
     }
 
+    public function returned()
+    {
+        return $this->joinWith(['reverseInvoice' => function ($query) {
+            $query->andWhere(['NOT', ['invoice_reverse.id' => null]]);
+        }]);
+    }
+
     public function location($locationId)
     {
-        $this->andWhere(['invoice.location_id' => $locationId]);
-        return $this;
+        return $this->andWhere(['invoice.location_id' => $locationId]);
     }
     
     public function student($id)
@@ -221,10 +232,18 @@ class InvoiceQuery extends \yii\db\ActiveQuery
     {
         return $this->andFilterWhere(['invoice.user_id' => $customerId]);
     }
+    
     public function openingBalance()
     {
-        return $this->joinWith(['lineItems' => function ($query) {
-            $query->andWhere(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
+        return $this->joinWith(['lineItem' => function ($query) {
+            $query->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
+        }]);
+    }
+
+    public function nonLessonCredit()
+    {
+        return $this->joinWith(['lineItem' => function ($query) {
+            $query->andWhere(['NOT', ['invoice_line_item.item_type_id' => ItemType::TYPE_LESSON_CREDIT]]);
         }]);
     }
 

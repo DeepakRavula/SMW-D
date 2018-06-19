@@ -76,6 +76,7 @@ trait Payable
         $db = \Yii::$app->db;
         $transaction = $db->beginTransaction();
         $paymentModel = new Payment();
+        $paymentModel->date = $payment->date;
         $paymentModel->sourceId = $payment->sourceId;
         $paymentModel->amount = $payment->amount;
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
@@ -88,7 +89,7 @@ trait Payable
             }
             $paymentModel->enrolmentId = $enrolment->id;
         } else if ($this->tableName() === 'user') {
-            $paymentModel->user_id = $this->id;
+            $paymentModel->userId = $this->id;
         }
         if ($from->tableName() === 'lesson') {
             $paymentModel->reference = $from->getLessonNumber();
@@ -104,12 +105,12 @@ trait Payable
             $paymentModel->invoiceId = null;
             $paymentModel->sourceId = null;
             $paymentModel->lessonId = null;
-            $paymentModel->user_id = null;
+            $paymentModel->userId = null;
             $paymentModel->reference = null;
             if ($from->tableName() === 'invoice') {
                 $paymentModel->invoiceId = $from->id;
             } else if ($from->tableName() === 'user') {
-                $paymentModel->user_id = $from->id;
+                $paymentModel->userId = $from->id;
             } else if ($from->tableName() === 'lesson') {
                 if (!$enrolment) {
                     $enrolment = $from->enrolment;
