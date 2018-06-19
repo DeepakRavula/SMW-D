@@ -51,7 +51,7 @@ use kartik\daterange\DateRangePicker;
         </div>    
         <?php Pjax::Begin(['id' => 'payment-amount', 'timeout' => 6000]); ?>
         <div class="col-xs-3">
-            <?= $form->field($model, 'amount')->textInput()->label('Amount Received'); ?>
+            <?= $form->field($model, 'amount', ['inputOptions' => ['value' => Yii::$app->formatter->asDecimal($model->amount)]])->textInput()->label('Amount Received'); ?>
         </div>
         <?php Pjax::end(); ?>
     </div>
@@ -75,7 +75,7 @@ use kartik\daterange\DateRangePicker;
                 Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
             ],
             'locale' => [
-                'format' => 'M d,Y'
+                'format' => 'M d, Y'
             ],
             'opens' => 'left'
         ]
