@@ -13,7 +13,7 @@ use yii\helpers\Html;
         'class' => 'yii\grid\CheckboxColumn',
         'contentOptions' => ['style' => 'width:30px;'],
         'checkboxOptions' => function($model, $key, $index, $column) {
-            return ['checked' => true];
+            return ['checked' => true, 'class' =>'check-checkbox'];
         }
         ]
     ];
@@ -44,7 +44,7 @@ use yii\helpers\Html;
             'contentOptions' => ['class' => 'text-left'],
             'label' => 'Amount',
             'value' => function ($data) {
-                return !empty($data->total) ? Yii::$app->formatter->asCurrency($data->total) : null;;
+                return !empty($data->total) ? Yii::$app->formatter->asCurrency($data->total) : null;
             },
 		'contentOptions' => ['style' => 'width:300px'],
         ]);
@@ -53,9 +53,9 @@ use yii\helpers\Html;
             'contentOptions' => ['class' => 'text-left'],
             'label' => 'Balance',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->balance);
+                return $data->balance;
             },
-		'contentOptions' => ['style' => 'width:300px'],
+		'contentOptions' => ['style' => 'width:300px','class'=>'invoice-value'],
         ]);
 ?>
 <?php Pjax::Begin(['id' => 'invoice-lineitem-listing', 'timeout' => 6000]); ?>
@@ -67,6 +67,7 @@ use yii\helpers\Html;
         'emptyText' => false,
         'options' => ['class' => 'col-md-12'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'rowOptions' => ['class' => 'line-items-value']
     ]); ?>
 <?php Pjax::end(); ?>
 

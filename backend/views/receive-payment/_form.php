@@ -43,18 +43,28 @@ use kartik\daterange\DateRangePicker;
                 ]
             ])->label('Date'); ?>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-3">
             <?= $form->field($model, 'payment_method_id')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))
                 ->label('Payment Method'); ?>
         </div>
-        <div class="col-xs-2">
-        </div>    
         <?php Pjax::Begin(['id' => 'payment-amount', 'timeout' => 6000]); ?>
-        <div class="col-xs-3">
+        <div class="col-xs-2">
             <?= $form->field($model, 'amount')->textInput()->label('Amount Received'); ?>
         </div>
         <?php Pjax::end(); ?>
+        <div class ="col-xs-4">
+        <div class ="m-b-10"></div>
+        <div class = "col-xs-6">
+        <?= Html::label('Amount Needed', 'xxx');?>
+        <?= Html::label('Credit Amount', 'xxx'); ?>
+        </div>
+        <div class = "col-xs-6">
+        <?= Html::label('','amount-need-to-pay',['class' =>'amount-needed']); ?>
+        <?= Html::label('','amount-to-credited',['class' =>'amount-credit']); ?>
+        </div>
+       </div>
     </div>
+     
     <div class="pull-right col-md-3">
     <label>Date Range To Filter Lessons</label>
     <?= DateRangePicker::widget([
@@ -104,7 +114,16 @@ use kartik\daterange\DateRangePicker;
 	</div>
     </div>
     <?php ActiveForm::end(); ?>
-
+    <div class = "row">
+	<div class="col-md-12">
+    <?= Html::label('Credits', ['class' => 'admin-login']) ?>
+    <?= $this->render('/receive-payment/_credits-available', [
+        'model' => $model,
+        'creditsAvailable' => $creditsAvailable,
+    ]);
+    ?>
+	</div>
+    </div>
 </div>
 
 <script>
@@ -117,10 +136,39 @@ use kartik\daterange\DateRangePicker;
             var url = '<?= Url::to(['payment/receive']) ?>?' + params;
             $('#modal-form').attr('action', url);
             return false;
-        }
+        },
+        calcAmountNeeded : function() {
+            var amount=parseFloat('0.00');
+            $('.line-items-value').each(function() {
+                if($(this).find('.check-checkbox').is(":checked")){
+                amount = parseFloat(amount) + parseFloat($(this).find('.invoice-value').text());  
+                }
+    });
+    alert(amount);
+    var creditAmount = 0.00;
+                if($('.apply-credit-checkbox').is(":checked")){
+                amount = amount - parseFloat($('.credits-available-amount').text());
+                alert(amount);
+                if(amount < 0){
+                    creditAmount = Math.abs(amount);
+                    amount ='0.00';
+                }
+                }
+    $('.amount-needed').text(amount);
+    $('.amount-credit').text(creditAmount);
+    receivePayment.updateCreditAmount();
+            return false;
+        },
+        updateCreditAmount : function() {
+            var amountNeeded = $('.amount-needed').val();
+            var amountReceived = $('#paymentform-amount').val();
+            alert(amountNeeded);
+            alert(amountReceived);
+            $('.credits-available-amount').text('');
+        },
     };
 
-    $(document).ready(function () {
+    $(document).ready(function () {    
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Receive Payment</h4>');
         $('.modal-save').text('Pay');
@@ -128,6 +176,7 @@ use kartik\daterange\DateRangePicker;
         $('#invoice-line-item-grid .select-on-check-all').prop('disabled', true);
         $('#invoice-line-item-grid input[name="selection[]"]').prop('disabled', true);
         receivePayment.setAction();
+        receivePayment.calcAmountNeeded();
     });
 
     $(document).off('change', '#paymentform-daterange').on('change', '#paymentform-daterange', function () {
@@ -146,6 +195,7 @@ use kartik\daterange\DateRangePicker;
 
     $(document).off('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
         receivePayment.setAction();
+        receivePayment.calcAmountNeeded();
         return false;
     });
 

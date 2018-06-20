@@ -416,6 +416,11 @@ class PaymentController extends BaseController
             'query' => $invoicesQuery,
             'pagination' => false 
         ]);
+        $userModel = User::findOne(['id' => $model->user_id]);
+        $creditsAvailable = $userModel->getCreditAmount();
+        if(empty($creditsAvailable)){
+            $creditsAvailable = 30;
+        }
         $model->amount = $amount;
         $request = Yii::$app->request;
         if ($request->post()) {
@@ -460,6 +465,7 @@ class PaymentController extends BaseController
                 'model' => $model,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                 'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                'creditsAvailable' => $creditsAvailable,
                 'searchModel'=> $searchModel,
             ]);
             $response = [

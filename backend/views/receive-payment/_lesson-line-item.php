@@ -15,7 +15,7 @@ use kartik\daterange\DateRangePicker;
         'class' => 'yii\grid\CheckboxColumn',
         'contentOptions' => ['style' => 'width:30px;'],
         'checkboxOptions' => function($model, $key, $index, $column) {
-            return ['checked' => true];
+            return ['checked' => true,'class' =>'check-checkbox'];
         }
         ]
     ];
@@ -58,10 +58,10 @@ use kartik\daterange\DateRangePicker;
         array_push($columns,[
             'label' => 'Balance',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
+                return $data->getOwingAmount($data->enrolment->id);
             },
             'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right']
+            'contentOptions' => ['class' => 'text-right invoice-value']
         ]);
 ?>
 <?php Pjax::Begin(['id' => 'lesson-lineitem-listing', 'timeout' => 6000]); ?>
@@ -73,6 +73,7 @@ use kartik\daterange\DateRangePicker;
         'emptyText' => false,
         'options' => ['class' => 'col-md-12'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'rowOptions' => ['class' => 'line-items-value']
     ]); ?>
 <?php Pjax::end(); ?>
 
