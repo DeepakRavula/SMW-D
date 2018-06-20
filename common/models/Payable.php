@@ -82,20 +82,25 @@ trait Payable
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
         if ($this->tableName() === 'invoice') {
             $paymentModel->invoiceId = $this->id;
+            $user = $this->user;
         } else if ($this->tableName() === 'lesson') {
+            $user = $this->customer;
             $paymentModel->lessonId = $this->id;
             if (!$enrolment) {
                 $enrolment = $this->enrolment;
             }
             $paymentModel->enrolmentId = $enrolment->id;
         } else if ($this->tableName() === 'user') {
-            $paymentModel->userId = $this->id;
+            $paymentModel->customerId = $this->id;
+            $user = $this;
         }
         if ($from->tableName() === 'lesson') {
             $paymentModel->reference = $from->getLessonNumber();
         } else if ($from->tableName() === 'invoice') {
             $paymentModel->reference = $from->getInvoiceNumber();
         }
+        $paymentModel->user_id = $user->id;
+        $paymentModel->customerId = $user->id;
         if ($paymentModel->save()) {
             $creditPaymentId = $paymentModel->id;
             $paymentModel->id = null;
@@ -105,12 +110,12 @@ trait Payable
             $paymentModel->invoiceId = null;
             $paymentModel->sourceId = null;
             $paymentModel->lessonId = null;
-            $paymentModel->userId = null;
+            $paymentModel->customerId = null;
             $paymentModel->reference = null;
             if ($from->tableName() === 'invoice') {
                 $paymentModel->invoiceId = $from->id;
             } else if ($from->tableName() === 'user') {
-                $paymentModel->userId = $from->id;
+                $paymentModel->customerId = $from->id;
             } else if ($from->tableName() === 'lesson') {
                 if (!$enrolment) {
                     $enrolment = $from->enrolment;

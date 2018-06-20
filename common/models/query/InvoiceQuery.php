@@ -247,6 +247,13 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         }]);
     }
 
+    public function lessonCredit()
+    {
+        return $this->joinWith(['lineItem' => function ($query) {
+            $query->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_LESSON_CREDIT]);
+        }]);
+    }
+
     public function userLocation($locationId)
     {
         $this->joinWith(['user' => function ($query) use ($locationId) {

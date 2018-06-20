@@ -30,7 +30,7 @@ class Payment extends ActiveRecord
     public $paymentMethodName;
     public $invoiceNumber;
     public $userName;
-    public $userId;
+    public $customerId;
     
     const TYPE_OPENING_BALANCE_CREDIT = 1;
     const SCENARIO_CREATE = 'scenario-create';
@@ -69,7 +69,7 @@ class Payment extends ActiveRecord
             [['amount'], 'number'],
             ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_APPLY_CREDIT]],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'sourceId', 'credit', 
-                'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'userId'], 'safe'],
+                'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId'], 'safe'],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
                 self::SCENARIO_CREDIT_USED_EDIT]],
         ];
@@ -286,9 +286,9 @@ class Payment extends ActiveRecord
             $invoicePaymentModel->save();
             $this->invoice->save();
         }
-        if (!empty($this->userId)) {
+        if (!empty($this->customerId)) {
             $customerPayment = new CustomerPayment();
-            $customerPayment->userId = $this->userId;
+            $customerPayment->userId = $this->customerId;
             $customerPayment->paymentId = $this->id;
             $customerPayment->save();
         }

@@ -55,7 +55,8 @@ class m180616_113552_pfi_refactor extends Migration
                 if ($invoice->isInvoice()) {
                     if ($invoice->isOpeningBalance()) {
                         $payment = new Payment();
-                        $payment->userId = $invoice->user_id;
+                        $payment->user_id = $invoice->user_id;
+                        $payment->customerId = $invoice->user_id;
                         $payment->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
                         $payment->date = $invoice->date;
                         $payment->amount = $invoice->total;
@@ -81,9 +82,7 @@ class m180616_113552_pfi_refactor extends Migration
                         $customerPayment = new CustomerPayment();
                         $customerPayment->userId = $payment->user_id;
                         $customerPayment->paymentId = $payment->id;
-                        if (!$customerPayment->save()) {
-                            echo $payment->id . ', ';
-                        }
+                        $customerPayment->save();
                         if ($payment->invoice->isInvoice()) {
                             $paymentModel = new Payment();
                             $paymentModel->amount = $payment->amount;
@@ -118,6 +117,21 @@ class m180616_113552_pfi_refactor extends Migration
             }
         }
 
+        $lessonCreditInvoices = Invoice::find()
+            ->notDeleted()
+            ->notCanceled()
+            ->andWhere(['NOT', ['invoice.user_id' => 0]])
+            ->location([14, 15])
+            ->notReturned()
+            ->invoice()
+            ->lessonCredit()
+            ->all();
+        foreach ($lessonCreditInvoices as $lessonCreditInvoice) {
+            foreach ($lessonCreditInvoice->payments as $payment) {
+                $payment->delete();
+            }
+            $lessonCreditInvoice->delete();
+        }
         $realInvoices = Invoice::find()
             ->notDeleted()
             ->notCanceled()
@@ -129,18 +143,17 @@ class m180616_113552_pfi_refactor extends Migration
         foreach ($realInvoices as $realInvoice) {
             $realInvoice->save();
         }
-        $realCreditInvoices = Invoice::find()
+        $openingBalnceInvoices = Invoice::find()
             ->notDeleted()
             ->notCanceled()
             ->andWhere(['NOT', ['invoice.user_id' => 0]])
             ->location([14, 15])
             ->notReturned()
             ->invoice()
-            ->nonLessonCredit()
-            ->andWhere(['<', 'balance', 0])
+            ->openingBalance()
             ->all();
-        foreach ($realCreditInvoices as $realCreditInvoice) {
-            echo $realCreditInvoice->id . ', ';
+        foreach ($openingBalnceInvoices as $openingBalnceInvoice) {
+            $openingBalnceInvoice->delete();
         }
     }
 

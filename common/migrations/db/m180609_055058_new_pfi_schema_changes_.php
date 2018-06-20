@@ -38,7 +38,9 @@ class m180609_055058_new_pfi_schema_changes_ extends Migration
                 'id' => $this->primaryKey(),
                 'userId' => $this->integer()->notNull(),
                 'locationId' => $this->integer()->notNull(),
-		        'date' => $this->date()
+                'date' => $this->date(),
+                'proforma_invoice_number' => $this->integer()->notNull(),
+                'notes' => $this->text()
             ]);
         }
         $Pfi_Line_Item = Yii::$app->db->schema->getTableSchema('proforma_line_item');
