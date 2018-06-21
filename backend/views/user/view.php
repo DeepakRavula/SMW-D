@@ -88,12 +88,16 @@ $this->params['action-button'] = $this->render('_action-button', [
         ]);
         ?>
         <?php Pjax::end() ?> 
+    <?php Pjax::Begin([
+        'id' => 'customer-ob'
+    ]) ?> 
         <?= $this->render('customer/_opening-balance', [
             'model' => $model,
             'positiveOpeningBalanceModel' => $positiveOpeningBalanceModel,
             'openingBalanceCredit' => $openingBalanceCredit
         ]);
         ?>
+    <?php Pjax::end() ?>
         <?=$this->render('customer/_payment-preference', [
             'model' => $model,
         ]); ?>
@@ -472,6 +476,9 @@ $this->params['action-button'] = $this->render('_action-button', [
         }
         if ($('#payment-preference-listing').length) {
             $.pjax.reload({container: '#payment-preference-listing', replace:false, async: false, timeout: 6000});
+        }
+        if ($('#customer-ob').length) {
+            $.pjax.reload({container: '#customer-ob', replace:false, async: false, timeout: 6000});
         }
         if ($('#private-quali-list').length) {
             $.pjax.reload({container: '#private-quali-list', replace:false, async: false, timeout: 6000});

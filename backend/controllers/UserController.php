@@ -329,20 +329,20 @@ class UserController extends BaseController
     }
     protected function getOpeningBalanceCredit($id)
     {
-        return Invoice::find()
+        return Payment::find()
             ->openingBalance()
-            ->customer($id)
-            ->andWhere(['<', 'invoice.balance', 0])
             ->notDeleted()
+            ->andWhere(['<', 'payment.amount', 0])
+            ->customer($id)
             ->one();
     }
     protected function getPositiveOpeningBalance($id)
     {
-        return Invoice::find()
+        return Payment::find()
             ->openingBalance()
-            ->customer($id)
-            ->andWhere(['>', 'invoice.balance', 0])
             ->notDeleted()
+            ->andWhere(['>', 'payment.amount', 0])
+            ->customer($id)
             ->one();
     }
     protected function getNoteDataProvider($id)

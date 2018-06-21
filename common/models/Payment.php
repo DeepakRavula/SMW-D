@@ -30,7 +30,7 @@ class Payment extends ActiveRecord
     public $paymentMethodName;
     public $invoiceNumber;
     public $userName;
-    public $user_id;
+    public $customerId;
     
     const TYPE_OPENING_BALANCE_CREDIT = 1;
     const SCENARIO_CREATE = 'scenario-create';
@@ -69,7 +69,7 @@ class Payment extends ActiveRecord
             [['amount'], 'number'],
             ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_APPLY_CREDIT]],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'sourceId', 'credit', 
-                'isDeleted', 'transactionId', 'notes', 'enrolmentId'], 'safe'],
+                'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId'], 'safe'],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
                 self::SCENARIO_CREDIT_USED_EDIT]],
         ];
@@ -145,6 +145,11 @@ class Payment extends ActiveRecord
         return new PaymentQuery(get_called_class(), parent::find()->andWhere(['payment.isDeleted' => false]));
     }
 
+    public function getTransaction()
+    {
+        return $this->hasOne(Transaction::className(), ['transactionId' => 'id']);
+    }
+
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
@@ -171,6 +176,18 @@ class Payment extends ActiveRecord
                 ->viaTable('invoice_payment', ['payment_id' => 'id']);
     }
 
+    public function getCustomer()
+    {
+        return $this->hasOne(User::className(), ['id' => 'userId'])
+                ->viaTable('customer_payment', ['payment_id' => 'id']);
+    }
+
+    public function getLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+                ->viaTable('lesson_payment', ['paymentId' => 'id']);
+    }
+
     public function getPaymentMethod()
     {
         return $this->hasOne(PaymentMethod::className(), ['id' => 'payment_method_id']);
@@ -194,7 +211,7 @@ class Payment extends ActiveRecord
     public function getDebitPayment()
     {
         return $this->hasOne(self::className(), ['id' => 'credit_payment_id'])
-        ->viaTable('credit_usage', ['debit_payment_id' => 'id']);
+            ->viaTable('credit_usage', ['debit_payment_id' => 'id']);
     }
 
     public function getInvoicePayment()
@@ -269,9 +286,9 @@ class Payment extends ActiveRecord
             $invoicePaymentModel->save();
             $this->invoice->save();
         }
-        if (!empty($this->user_id)) {
+        if (!empty($this->customerId)) {
             $customerPayment = new CustomerPayment();
-            $customerPayment->userId = $this->user_id;
+            $customerPayment->userId = $this->customerId;
             $customerPayment->paymentId = $this->id;
             $customerPayment->save();
         }
@@ -320,7 +337,7 @@ class Payment extends ActiveRecord
 
     public function isAutoPayments()
     {
-        return $this->isCreditApplied() || $this->isCreditUsed();
+        return $this->isCreditApplied() || $this->isCreditUsed() || $this->isAccountEntry();
     }
 
     public function afterSoftDelete()

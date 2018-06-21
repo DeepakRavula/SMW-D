@@ -61,10 +61,9 @@ class CustomerController extends UserController
         $post = Yii::$app->request->post();
         if ($post) {
             if ($openingBalanceModel->load($post) && $openingBalanceModel->validate()) {
-                $invoice = $openingBalanceModel->addOpeningBalance();
+                $openingBalanceModel->addOpeningBalance();
                 $response = [
-                    'status' => true,
-                    'url' => Url::to(['invoice/view', 'id' => $invoice->id])
+                    'status' => true
                 ];
             } else {
                 $response = [

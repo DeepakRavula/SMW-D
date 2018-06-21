@@ -28,4 +28,9 @@ class CustomerPayment extends \yii\db\ActiveRecord
             [['userId', 'paymentId', 'id'], 'integer'],
         ];
     }
+
+    public function getCustomer()
+    {
+        return $this->hasOne(User::className(), ['id' => 'userId']);
+    }
 }

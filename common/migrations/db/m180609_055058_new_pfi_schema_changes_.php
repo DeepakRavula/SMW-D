@@ -34,15 +34,23 @@ class m180609_055058_new_pfi_schema_changes_ extends Migration
         //$this->dropTable('proforma_item_lesson');
         //$this->dropTable('proforma_item_invoice');
         $tableSchema = Yii::$app->db->schema->getTableSchema('proforma_invoice');
+        if ($tableSchema) {
+            $this->dropTable('proforma_invoice');
+        }
         if ($tableSchema == null) {
             $this->createTable('proforma_invoice', [
                 'id' => $this->primaryKey(),
                 'userId' => $this->integer()->notNull(),
                 'locationId' => $this->integer()->notNull(),
-		        'date' => $this->date()
+                'date' => $this->date(),
+                'proforma_invoice_number' => $this->integer()->notNull(),
+                'notes' => $this->text()
             ]);
         }
         $Pfi_Line_Item = Yii::$app->db->schema->getTableSchema('proforma_line_item');
+        if ($Pfi_Line_Item) {
+            $this->dropTable('proforma_line_item');
+        }
         if ($Pfi_Line_Item == null) {
             $this->createTable('proforma_line_item', [
                 'id' => $this->primaryKey(),
@@ -50,6 +58,9 @@ class m180609_055058_new_pfi_schema_changes_ extends Migration
             ]);
         }
         $proforma_item_lesson = Yii::$app->db->schema->getTableSchema('proforma_item_lesson');
+        if ($proforma_item_lesson) {
+            $this->dropTable('proforma_item_lesson');
+        }
         if ($proforma_item_lesson == null) {
             $this->createTable('proforma_item_lesson', [
                 'id' => $this->primaryKey(),
@@ -58,6 +69,9 @@ class m180609_055058_new_pfi_schema_changes_ extends Migration
             ]);
         }
         $proforma_item_invoice = Yii::$app->db->schema->getTableSchema('proforma_item_invoice');
+        if ($proforma_item_invoice) {
+            $this->dropTable('proforma_item_invoice');
+        }
         if ($proforma_item_lesson == null) {
             $this->createTable('proforma_item_invoice', [
                 'id' => $this->primaryKey(),
