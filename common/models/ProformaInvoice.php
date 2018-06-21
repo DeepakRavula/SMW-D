@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\Location;
 use common\models\query\ProformaInvoiceQuery;
 
 /**
@@ -126,5 +127,9 @@ class ProformaInvoice extends \yii\db\ActiveRecord
                     ->andWhere(['i.locationId' => $this->locationId])
                     ->orderBy(['i.id' => SORT_DESC])
                     ->one();
+    }
+    public function getLocation()
+    {
+        return $this->hasOne(Location::className(), ['id' => 'location_id']);
     }
 }

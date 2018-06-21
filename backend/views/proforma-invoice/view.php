@@ -176,4 +176,9 @@ $this->render('note/view', [
             });
             return false;
   	});
+	$(document).on("click", '#proforma-print-btn', function() {
+        var url = '<?= Url::to(['print/proforma-invoice' ,'id' => $model->id]); ?>';
+        window.open(url,'_blank');
+        return false;
+    });
 </script>
