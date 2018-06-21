@@ -158,4 +158,27 @@ $this->render('note/view', [
 		});
 		return false;
 	});
+	$(document).on('click', '#proforma-invoice-mail-button', function (e) {
+            $.ajax({
+                url    : '<?= Url::to(['email/proforma-invoice', 'id' => $model->id]); ?>',
+                type   : 'get',
+                dataType: 'json',
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal .modal-dialog').css({'width': '1000px'});
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
+                        $('.modal-save').text('Send');
+                    }
+                }
+            });
+            return false;
+  	});
+	$(document).on("click", '#proforma-print-btn', function() {
+        var url = '<?= Url::to(['print/proforma-invoice' ,'id' => $model->id]); ?>';
+        window.open(url,'_blank');
+        return false;
+    });
 </script>

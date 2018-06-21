@@ -15,13 +15,14 @@ class ProformaInvoiceSearch extends ProformaInvoice
 {
     
     public $showCheckBox;
+    public $isPrint;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['showCheckBox'], 'safe'],
+            [['showCheckBox','isPrint'], 'safe'],
         ];
     }
 
