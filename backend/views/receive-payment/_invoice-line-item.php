@@ -46,7 +46,7 @@ use yii\helpers\Html;
             'value' => function ($data) {
                 return !empty($data->total) ? Yii::$app->formatter->asCurrency($data->total) : null;;
             },
-		'contentOptions' => ['style' => 'width:300px'],
+		'contentOptions' => ['class' => 'text-right', 'style' => 'width:300px'],
         ]);
         array_push($columns,[
 	     'headerOptions' => ['class' => 'text-right'],
@@ -55,7 +55,7 @@ use yii\helpers\Html;
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency($data->balance);
             },
-		'contentOptions' => ['style' => 'width:300px'],
+		'contentOptions' => ['class' => 'text-right', 'style' => 'width:300px'],
         ]);
 ?>
 <?php Pjax::Begin(['id' => 'invoice-lineitem-listing', 'timeout' => 6000]); ?>
