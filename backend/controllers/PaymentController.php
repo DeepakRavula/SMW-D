@@ -423,7 +423,7 @@ class PaymentController extends BaseController
             $payment = new Payment();
             $payment->amount = $model->amount;
             $payment->user_id = $model->user_id;
-            $payment->userId = $model->user_id;
+            $payment->customerId = $model->user_id;
             $payment->payment_method_id = $model->payment_method_id;
             $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $payment->save();
