@@ -25,26 +25,21 @@ class PaymentForm extends Model
     const SCENARIO_STUDENT = 'enrolment-student';
     const SCENARIO_DATE_DETAILED = 'enrolment-start-date';
 
+    public $invoiceIds;
     public $date;
-    public $dateRange;
-    public $toDate;
-    public $fromDate;
     public $payment_method_id;
     public $amount;
     public $amountNeeded;
-    public $user_id;
-    public $lessonId;
-    public $lessonIds;
-    public $invoiceIds;
+    public $userId;
+    
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['payment_method_id', 'user_id', 'amount', 'date'], 'required'],
-            [['date', 'amountNeeded', 'dateRange', 'lessonId', 'fromDate', 'toDate',
-                'lessonIds', 'invoiceIds'], 'safe']
+            [['payment_method_id', 'userId', 'amount', 'date'], 'required'],
+            [['date', 'amountNeeded', 'invoiceIds'], 'safe']
         ];
     }
 }

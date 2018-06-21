@@ -13,69 +13,28 @@ use kartik\daterange\DateRangePicker;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<?php $form = ActiveForm::begin([
-    'id' => 'modal-form',
-    'action' => Url::to(['proforma-invoice/create']),
-]); ?>
+    <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
+    <?= $this->render('/receive-payment/_lesson-line-item', [
+        'model' => $model,
+        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+        'searchModel' => $searchModel,
+    ]);
+    ?>
 
-    <div class="pull-right col-md-3">
-        <label>Date Range To Filter Lessons</label>
-        <?= DateRangePicker::widget([
-            'model' => $model,
-            'attribute' => 'dateRange',
-            'convertFormat' => true,
-            'initRangeExpr' => true,
-            'options' => [
-                'class' => 'form-control no-focus',
-                'readOnly' => true
-            ],
-            'pluginOptions' => [
-                'autoApply' => true,
-                'ranges' => [
-                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 7]) => ["moment().startOf('day').subtract(6, 'days')", 'moment()'],
-                    Yii::t('kvdrp', 'Last {n} Days', ['n' => 30]) => ["moment().startOf('day').subtract(29, 'days')", 'moment()'],
-                    Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
-                    Yii::t('kvdrp', 'Last Month') => ["moment().subtract(1, 'month').startOf('month')", "moment().subtract(1, 'month').endOf('month')"],
-                ],
-                'locale' => [
-                    'format' => 'M d,Y'
-                ],
-                'opens' => 'left'
-            ]
-        ]); ?>
-    </div>
-
-<?php ActiveForm::end(); ?>
-
-    <div class = "row">
-        <div class="col-md-12">
-            <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
-            <?= $this->render('/receive-payment/_lesson-line-item', [
-                'model' => $model,
-                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-                'searchModel' => $searchModel,
-            ]);
-            ?>
-        </div>
-    </div>
-    <div class = "row">
-        <div class="col-md-12">
-            <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
-            <?= $this->render('/receive-payment/_invoice-line-item', [
-                'model' => $model,
-                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                'searchModel' => $searchModel,
-            ]);
-            ?>
-        </div>
-    </div>
+    <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
+    <?= $this->render('/receive-payment/_invoice-line-item', [
+        'model' => $model,
+        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+        'searchModel' => $searchModel,
+    ]);
+    ?>
 
 <script>
     var createPFI = {
         setAction: function() {
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-            var params = $.param({ 'ProformaInvoice[lessonIds]': lessonIds, 'ProformaInvoice[invoiceIds]': invoiceIds });
+            var params = $.param({ 'PaymentFormLessonSearch[lessonIds]': lessonIds, 'PaymentFormLessonSearch[invoiceIds]': invoiceIds });
             var url = '<?= Url::to(['proforma-invoice/create']) ?>?' + params;
             $('#modal-form').attr('action', url);
             return false;
@@ -90,19 +49,6 @@ use kartik\daterange\DateRangePicker;
         $('#invoice-line-item-grid .select-on-check-all').prop('disabled', true);
         $('#invoice-line-item-grid input[name="selection[]"]').prop('disabled', true);
         createPFI.setAction();
-    });
-
-    $(document).off('change', '#proformainvoice-daterange').on('change', '#proformainvoice-daterange', function () {
-        $('#modal-spinner').show();
-        var dateRange = $('#proformainvoice-daterange').val();
-	    var lessonId = '<?= $model->lessonId ?>';
-        var params = $.param({ 'ProformaInvoice[dateRange]': dateRange, 'ProformaInvoice[lessonId]' : lessonId });
-        var url = '<?= Url::to(['proforma-invoice/create']) ?>?' + params;
-	    $.pjax.reload({url:url, container: "#lesson-lineitem-listing", replace: false, async: false, timeout: 6000});
-        $('.select-on-check-all').prop('checked', true);
-        $('#modal-spinner').hide();
-        createPFI.setAction();
-        return false;
     });
 
     $(document).off('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {

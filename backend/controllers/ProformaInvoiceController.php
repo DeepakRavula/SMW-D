@@ -26,6 +26,7 @@ use common\models\UserProfile;
 use common\models\UserEmail;
 use common\models\Note;
 use backend\models\search\ProformaInvoiceSearch;
+use backend\models\search\PaymentFormLessonSearch;
 /**
  * ProformaInvoiceController implements the CRUD actions for ProformaInvoice model.
  */
@@ -75,46 +76,21 @@ class ProformaInvoiceController extends BaseController
     public function actionCreate()
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $searchModel = new ProformaInvoiceSearch();
+        $searchModel = new PaymentFormLessonSearch();
         $searchModel->showCheckBox = true;
         $model = new ProformaInvoice();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d,Y');
-        $model->fromDate = $currentDate->format('M 1,Y');
-        $model->toDate = $currentDate->format('M t,Y'); 
-        $model->dateRange = $model->fromDate . ' - ' . $model->toDate;
+        $searchModel->fromDate = $currentDate->format('M 1,Y');
+        $searchModel->toDate = $currentDate->format('M t,Y'); 
+        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         $proformaInvoiceData = Yii::$app->request->get('ProformaInvoice');
-        if ($proformaInvoiceData) {
-            $model->load(Yii::$app->request->get());
-            list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
-            if ($model->lessonId) {
-                $lesson = Lesson::findOne($model->lessonId);
-                $model->userId = $lesson->customer->id;
-            }
-        }
-	    $fromDate = new \DateTime($model->fromDate);
-        $toDate = new \DateTime($model->toDate);
-        $lessonsQuery = Lesson::find();
-        if ($model->lessonIds) {
-            $lessonsQuery->andWhere(['id' => $model->lessonIds]);
-        } else {
-            $lessonsQuery->notDeleted()
-                ->between($fromDate, $toDate)
-                ->privateLessons()
-                ->customer($model->userId)
-                ->isConfirmed()
-                ->notCanceled()
-                ->unInvoiced()
-                ->location($locationId);
-            $allLessons = $lessonsQuery->all();
-            $lessonIds = [];
-            foreach ($allLessons as $lesson) {
-                if ($lesson->isOwing($lesson->enrolment->id)) {
-                    $lessonIds[] = $lesson->id;
-                }
-            }
-            $lessonsQuery = Lesson::find()
-                ->andWhere(['id' => $lessonIds]);
+        $model->load(Yii::$app->request->get());
+        $searchModel->load(Yii::$app->request->get());
+        $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
+        if ($searchModel->lessonId) {
+            $lesson = Lesson::findOne($searchModel->lessonId);
+            $model->userId = $lesson->customer->id;
         }
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery,
