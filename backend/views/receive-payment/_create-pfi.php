@@ -13,6 +13,11 @@ use kartik\daterange\DateRangePicker;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
+    <?php $form = ActiveForm::begin([
+        'id' => 'modal-form',
+        'action' => Url::to(['proforma-invoice/create']),
+    ]); ?>
+    <?php ActiveForm::end(); ?>
     <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
     <?= $this->render('/receive-payment/_lesson-line-item', [
         'model' => $model,
@@ -34,7 +39,7 @@ use kartik\daterange\DateRangePicker;
         setAction: function() {
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-            var params = $.param({ 'PaymentFormLessonSearch[lessonIds]': lessonIds, 'PaymentFormLessonSearch[invoiceIds]': invoiceIds });
+            var params = $.param({ 'PaymentFormLessonSearch[lessonIds]': lessonIds, 'ProformaInvoice[invoiceIds]': invoiceIds });
             var url = '<?= Url::to(['proforma-invoice/create']) ?>?' + params;
             $('#modal-form').attr('action', url);
             return false;

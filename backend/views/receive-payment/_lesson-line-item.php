@@ -126,7 +126,7 @@ use common\models\Student;
             'contentOptions' => ['class' => 'text-right invoice-value']
         ]);
     ?>
-
+<?php if ($searchModel->showCheckBox) : ?>
     <?= GridView::widget([
         'options' => ['id' => 'lesson-line-item-grid'],
         'dataProvider' => $lessonLineItemsDataProvider,
@@ -136,4 +136,13 @@ use common\models\Student;
         'summary' => false,
         'emptyText' => false
     ]); ?>
+<?php else: ?>
+<?= GridView::widget([
+        'options' => ['id' => 'lesson-line-item-grid'],
+        'dataProvider' => $lessonLineItemsDataProvider,
+        'columns' => $columns,
+        'summary' => false,
+        'emptyText' => false
+    ]); ?>
+<?php endif; ?>
 <?php Pjax::end(); ?>

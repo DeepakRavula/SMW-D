@@ -111,10 +111,11 @@ class ProformaInvoiceController extends BaseController
             'pagination' => false 
         ]);
         $request = Yii::$app->request;
-        if ($request->post()) {
+        if ($request->isPost) {
             $model->load($request->post());
-            if(!empty($model->lessonIds) || !empty($model->invoiceIds)) {
-                $lessons = Lesson::findAll($model->lessonIds);
+            $searchModel->load($request->post());
+            if (!empty($searchModel->lessonIds) || !empty($model->invoiceIds)) {
+                $lessons = Lesson::findAll($searchModel->lessonIds);
                 $invoices = Invoice::findAll($model->invoiceIds);
                 $endLesson = end($lessons);
                 $endInvoice = end($invoices);
@@ -126,7 +127,7 @@ class ProformaInvoiceController extends BaseController
                 }
                 $model->userId = $user->id;
                 $model->locationId = $user->userLocation->location_id;
-                $model->proforma_invoice_number=$model->getProformaInvoiceNumber();
+                $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
                 $model->save();
                 if ($lessons) {
                     foreach ($lessons as $lesson) {
@@ -148,14 +149,12 @@ class ProformaInvoiceController extends BaseController
                     'status' => true,
                     'url' => Url::to(['proforma-invoice/view', 'id' => $model->id])
                 ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => 'Select any lesson or invoice to create PFI',
+                ];
             }
-            else{
-            $response = [
-                'status' => false,
-                'errors' => 'Select any lesson or invoice to create PFI',
-            ];
-        }
-           
         } else {
             $data = $this->renderAjax('/receive-payment/_create-pfi', [
                 'model' => $model,
@@ -174,7 +173,7 @@ class ProformaInvoiceController extends BaseController
     public function actionView($id)
     {
         $model = $this->findModel($id);
-        $searchModel = new ProformaInvoiceSearch();
+        $searchModel = new PaymentFormLessonSearch();
         $searchModel->showCheckBox = false;
         if (!empty($model->userId)) {
             $customer  = User::findOne(['id' => $model->userId]);
