@@ -366,6 +366,11 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'id']);
     }
+
+    public function getCustomerCredit()
+    {
+        return $this->hasOne(CustomerPayment::className(), ['userId' => 'id']);
+    }
     
     public function getPhoneNumbers()
     {

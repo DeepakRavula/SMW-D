@@ -120,7 +120,7 @@ use common\models\Student;
             'attribute' => 'balance',
             'label' => 'Balance',
             'value' => function ($data) {
-                return $data->getOwingAmount($data->enrolment->id);
+                return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']
@@ -134,6 +134,7 @@ use common\models\Student;
         'filterUrl' => Url::to(['payment/receive', 'PaymentFormLessonSearch[lessonId]' => $searchModel->lessonId]),
         'columns' => $columns,
         'summary' => false,
+        'rowOptions' => ['class' => 'line-items-value'],
         'emptyText' => false
     ]); ?>
 <?php else: ?>

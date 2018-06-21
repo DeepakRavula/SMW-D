@@ -307,41 +307,35 @@ class PaymentController extends BaseController
         return $response;
     }
 
-    public function getAvailableCredit($invoice)
+    public function getAvailableCredit($customerId)
     {
         $invoiceCredits = Invoice::find()
                 ->notDeleted()
-                ->invoiceCredit($invoice->user_id)
-                ->andWhere(['NOT', ['invoice.id' => $invoice->id]])
+                ->notCanceled()
+                ->invoiceCredit($customerId)
                 ->all();
 
         $results = [];
         if (!empty($invoiceCredits)) {
             foreach ($invoiceCredits as $invoiceCredit) {
-                if ($invoiceCredit->isReversedInvoice()) {
-                    $lastInvoicePayment = $invoiceCredit;
-                } else {
-                    $lastInvoicePayments = $invoiceCredit->payments;
-                    $lastInvoicePayment = end($lastInvoicePayments);
-                }
-                $paymentDate = new \DateTime();
-                if (!empty($lastInvoicePayment)) {
-                    $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->date);
-                }
-                $amount = abs($invoiceCredit->balance);
-                $results[] = [
-                    'id' => $invoiceCredit->id,
-                    'invoice_number' => $invoiceCredit->getInvoiceNumber(),
-                    'date' => $paymentDate->format('d-m-Y'),
-                    'amount' => $amount
-                ];
+                $amount += abs($invoiceCredit->balance);
             }
+            $results[] = [
+                'type' => 'Invoice Credit',
+                'amount' => $amount
+            ];
         }
-
+        $customer = User::findOne($customerId);
+        if ($customer->hasCustomerCredit()) {
+            $results[] = [
+                'type' => 'Customer Credit',
+                'amount' => $customer->creditAmount
+            ];
+        }
         $creditDataProvider = new ArrayDataProvider([
             'allModels' => $results,
             'sort' => [
-                'attributes' => ['id', 'invoice_number', 'date', 'amount'],
+                'attributes' => ['type', 'amount'],
             ],
         ]);
         return $creditDataProvider;
@@ -372,7 +366,7 @@ class PaymentController extends BaseController
         }
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery,
-            'pagination' => false 
+            'pagination' => false
         ]);
         $invoicesQuery = Invoice::find();
         if ($model->invoiceIds) {
@@ -384,25 +378,20 @@ class PaymentController extends BaseController
                 ->customer($model->userId)
                 ->unpaid();
         }
-        $invoices = clone $invoicesQuery;
-        $amount += $invoices->sum('balance');    
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoicesQuery,
             'pagination' => false 
         ]);
+        $creditDataProvider = $this->getAvailableCredit($model->userId);
         $userModel = User::findOne(['id' => $model->userId]);
-        $creditsAvailable = $userModel->getCreditAmount();
-        if(empty($creditsAvailable)){
-            $creditsAvailable = 30;
-        }
-        $model->amount = $amount;
+        $model->availableCredits = $userModel->getCreditAmount();
         $request = Yii::$app->request;
         if ($request->post()) {
             $model->load($request->post());
             $payment = new Payment();
             $payment->amount = $model->amount;
-            $payment->user_id = $model->user_id;
-            $payment->customerId = $model->user_id;
+            $payment->user_id = $model->userId;
+            $payment->customerId = $model->userId;
             $payment->payment_method_id = $model->payment_method_id;
             $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $payment->save();
@@ -438,10 +427,10 @@ class PaymentController extends BaseController
         } else {
             $data = $this->renderAjax('/receive-payment/_form', [
                 'model' => $model,
+                'creditDataProvider' => $creditDataProvider,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                 'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-                'creditsAvailable' => $creditsAvailable,
-                'searchModel'=> $searchModel,
+                'searchModel' => $searchModel
             ]);
             $response = [
                 'status' => true,

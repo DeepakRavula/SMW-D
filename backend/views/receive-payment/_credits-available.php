@@ -1,15 +1,43 @@
 <?php
 
+use yii\grid\GridView;
 use yii\widgets\Pjax;
-use yii\Helpers\HTML;
 
 ?>
-<?php Pjax::Begin(['id' => 'invoice-lineitem-listing', 'timeout' => 6000]); ?>
-    <div class = "row">
-        <div class = "col-md-12">
-        <span class ="m-r-10"> <?=  Html::checkbox('apply-credit', true, ['label' => '', 'class' => 'apply-credit-checkbox']) ?>  <?=  Html::Label('Customer Credits
-        ', 'customer-credit'); ?>  </span>
-        <span class ="m-r-10 credits-available-amount" id="credit-available-amount-id" ><?= $creditsAvailable; ?> </span>
-        </div>
-    </div>
+<?php
+    $columns = [];
+    array_push($columns, [
+        'class' => 'yii\grid\CheckboxColumn',
+        'contentOptions' => ['style' => 'width:30px;'],
+        'checkboxOptions' => function($model, $key, $index, $column) {
+            return ['checked' => true, 'class' =>'check-checkbox'];
+        }
+    ]);
+
+    array_push($columns, [
+        'headerOptions' => ['class' => 'text-left'],
+        'contentOptions' => ['class' => 'text-left'],
+        'label' => 'Type',
+        'value' => 'type',
+    ]);
+
+    array_push($columns, [
+        'format' => 'currency',
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right credit-value'],
+        'label' => 'Amount',
+        'value' => 'amount'
+    ]);
+?>
+
+<?php Pjax::Begin(['id' => 'credit-lineitem-listing', 'timeout' => 6000]); ?>
+    <?= GridView::widget([
+        'id' => 'credit-line-item-grid',
+        'dataProvider' => $creditDataProvider,
+        'columns' => $columns,
+        'summary' => false,
+        'rowOptions' => ['class' => 'credit-items-value'],
+        'emptyText' => false
+    ]); ?>
 <?php Pjax::end(); ?>
+

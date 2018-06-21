@@ -48,19 +48,8 @@ use kartik\daterange\DateRangePicker;
                 ->label('Payment Method'); ?>
         </div>
         <div class="col-xs-2">
-            <?= $form->field($model, 'amount')->textInput()->label('Amount Received'); ?>
+            <?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control'])->label('Amount Received'); ?>
         </div>
-        <div class ="col-xs-4">
-        <div class ="m-b-10"></div>
-        <div class = "col-xs-6">
-        <?= Html::label('Amount Needed', 'xxx'); ?>
-        <?= Html::label('Credit Amount', 'xxx'); ?>
-        </div>
-        <div class = "col-xs-6">
-        <?= Html::label('','amount-need-to-pay',['class' =>'amount-needed']); ?>
-        <?= Html::label('','amount-to-credited',['class' =>'amount-credit']); ?>
-        </div>
-       </div>
     </div>
      
     <?php ActiveForm::end(); ?>
@@ -84,7 +73,7 @@ use kartik\daterange\DateRangePicker;
     <?= Html::label('Credits', ['class' => 'admin-login']) ?>
     <?= $this->render('/receive-payment/_credits-available', [
         'model' => $model,
-        'creditsAvailable' => $creditsAvailable
+        'creditDataProvider' => $creditDataProvider,
     ]);
     ?>
     
@@ -104,33 +93,33 @@ use kartik\daterange\DateRangePicker;
         calcAmountNeeded : function() {
             var amount = parseFloat('0.00');
             $('.line-items-value').each(function() {
-                if($(this).find('.check-checkbox').is(":checked")){
-                    amount = parseFloat(amount) + parseFloat($(this).find('.invoice-value').text());  
+                if ($(this).find('.check-checkbox').is(":checked")){
+                    var balance = $(this).find('.invoice-value').text();
+                    balance = balance.replace('$', '');
+                    amount = parseFloat(amount) + parseFloat(balance);
                 }
             });
-            var creditAmount = 0.00;
-            if ($('.apply-credit-checkbox').is(":checked")) {
-                amount = amount - parseFloat($('.credits-available-amount').text());
-                if (amount < 0) {
-                    creditAmount = Math.abs(amount);
-                    amount ='0.00';
+            var creditAmount = parseFloat('0.00');
+            $('.credit-items-value').each(function() {
+                if ($(this).find('.check-checkbox').is(":checked")){
+                    var balance = $(this).find('.credit-value').text();
+                    balance = balance.replace('$', '');
+                    creditAmount = parseFloat(creditAmount) + parseFloat(balance);
                 }
+            });
+            amount -= parseFloat(creditAmount);
+            if (amount < 0) {
+                amount = parseFloat('0.00');
             }
-            $('.amount-needed').text(amount);
-            $('.amount-credit').text(creditAmount);
-            receivePayment.updateCreditAmount();
+            $('.amount-needed-value').text((amount).toFixed(2));
             return false;
-        },
-        updateCreditAmount : function() {
-            var amountNeeded = $('.amount-needed').val();
-            var amountReceived = $('#paymentform-amount').val();
-            $('.credits-available-amount').text('');
-        },
+        }
     };
 
-    $(document).ready(function () {    
+    $(document).ready(function () {
+        var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Receive Payment</h4> </div> <div class="col-md-6"> <h4 class="amount-needed pull-right">Amount Needed $<span class="amount-needed-value">0.00</span></h4> </div> </div>'; 
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
-        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Receive Payment</h4>');
+        $('#popup-modal').find('.modal-header').html(header);
         $('.modal-save').text('Pay');
         $('.select-on-check-all').prop('checked', true);
         $('#invoice-line-item-grid .select-on-check-all').prop('disabled', true);
@@ -140,6 +129,17 @@ use kartik\daterange\DateRangePicker;
     });
 
     $(document).off('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
+        receivePayment.setAction();
+        receivePayment.calcAmountNeeded();
+        return false;
+    });
+
+    $(document).off('change', '#credit-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#credit-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
+        receivePayment.calcAmountNeeded();
+        return false;
+    });
+
+    $(document).off('pjax:success', '#lesson-line-item-listing').on('pjax:success', '#lesson-line-item-listing', function () {
         receivePayment.setAction();
         receivePayment.calcAmountNeeded();
         return false;

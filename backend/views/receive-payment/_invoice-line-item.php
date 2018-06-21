@@ -45,7 +45,7 @@ use yii\widgets\Pjax;
 
     array_push($columns, [
         'headerOptions' => ['class' => 'text-right'],
-        'contentOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right invoice-value'],
         'label' => 'Balance',
         'value' => function ($data) {
             return !empty($data->balance) ? Yii::$app->formatter->asCurrency($data->balance) : null;
@@ -59,6 +59,7 @@ use yii\widgets\Pjax;
         'dataProvider' => $invoiceLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,
+        'rowOptions' => ['class' => 'line-items-value'],
         'emptyText' => false
     ]); ?>
 <?php Pjax::end(); ?>

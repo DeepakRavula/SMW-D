@@ -31,6 +31,7 @@ class PaymentForm extends Model
     public $amount;
     public $amountNeeded;
     public $userId;
+    public $availableCredits;
     
     /**
      * {@inheritdoc}
@@ -39,7 +40,7 @@ class PaymentForm extends Model
     {
         return [
             [['payment_method_id', 'userId', 'amount', 'date'], 'required'],
-            [['date', 'amountNeeded', 'invoiceIds'], 'safe']
+            [['date', 'amountNeeded', 'invoiceIds', 'availableCredits'], 'safe']
         ];
     }
 }
