@@ -221,6 +221,11 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceReverse::className(), ['reversedInvoiceId' => 'id']);
     }
 
+    public function getTransaction()
+    {
+        return $this->hasOne(Transaction::className(), ['transactionId' => 'id']);
+    }
+
     public function getInvoiceReverse()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoiceId'])
@@ -333,7 +338,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $payments = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere(['ip.invoice_id' => $this->id])
             ->notDeleted()
             ->all();
         return $payments ? true : false;
@@ -343,7 +348,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $payments = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere(['ip.invoice_id' => $this->id])
             ->accountEntry()
             ->notDeleted()
             ->all();
@@ -354,7 +359,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $payment = Payment::find()
             ->joinWith('invoicePayment ip')
-            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
+            ->andWhere(['ip.invoice_id' => $this->id])
             ->accountEntry()
             ->notDeleted()
             ->one();
@@ -575,7 +580,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $balance = 0.0000;
         if ($this->isInvoice()) {
-            $balance = $this->total - $this->invoicePaymentTotal;
+            $balance = $this->total - (round($this->invoicePaymentTotal, 2) == round($this->total, 2) ? $this->total : $this->invoicePaymentTotal);
         } else {
             if (!$this->hasDebitPayments()) {
                 $balance = $this->total + $this->notLessonCreditUsedPaymentTotal;

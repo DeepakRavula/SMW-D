@@ -2,8 +2,6 @@
 
 use yii\grid\GridView;
 use yii\widgets\Pjax;
-use common\models\Lesson;
-use yii\helpers\Html;
 
 ?>
 <?php

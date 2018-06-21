@@ -12,6 +12,10 @@ class m180609_043131_create_customer_payment extends Migration
      */
     public function safeUp()
     {
+        $customerPayment = Yii::$app->db->schema->getTableSchema('customer_payment');
+        if ($customerPayment) {
+            $this->dropTable('customer_payment');
+        }
         $this->createTable('customer_payment', [
             'id' => $this->primaryKey(),
             'userId' => $this->integer()->notNull(),

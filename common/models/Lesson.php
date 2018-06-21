@@ -1386,4 +1386,8 @@ class Lesson extends \yii\db\ActiveRecord
         }
         return true;
     }
+    public function getLineItemDiscountValues()
+    {
+        return $this->lineItemDiscount->valueType ? $this->lineItemDiscount->value : $this->lineItemDiscount->value;
+    }
 }

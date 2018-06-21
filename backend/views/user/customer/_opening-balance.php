@@ -10,17 +10,14 @@ use yii\helpers\Url;
 ?>
 <?php 
 $amount = 0;
+$boxTools = [];
 if (!empty($openingBalanceCredit)) {
-    $amount = $openingBalanceCredit->balance;
-    $invoiceId = $openingBalanceCredit->id;
+    $amount = $openingBalanceCredit->amount;
 }
 if (!empty($positiveOpeningBalanceModel)) {
-    $amount = $positiveOpeningBalanceModel->total;
-    $invoiceId = $positiveOpeningBalanceModel->id;
+    $amount = $positiveOpeningBalanceModel->amount;
 } ?>
-<?php if (!empty($openingBalanceCredit) || !empty($positiveOpeningBalanceModel)) : ?>
-<?php $boxTools = Html::a('<i title="View" class="fa fa-eye"></i>', Url::to(['invoice/view', 'id' => $invoiceId])); ?> 
-<?php else : ?>
+<?php if (empty($openingBalanceCredit) && empty($positiveOpeningBalanceModel)) : ?>
 <?php $boxTools = '<i title="Add" class="fa fa-plus ob-add-btn m-r-10"></i>';?>
 <?php endif;?>
 	<?php

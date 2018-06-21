@@ -20,7 +20,6 @@ use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use common\models\Location;
 use common\models\User;
-use backend\models\search\ProformaInvoiceSearch;
 use backend\models\search\PaymentFormLessonSearch;
 
 /**
@@ -402,7 +401,8 @@ class PaymentController extends BaseController
             $model->load($request->post());
             $payment = new Payment();
             $payment->amount = $model->amount;
-            $payment->user_id = $model->userId;
+            $payment->user_id = $model->user_id;
+            $payment->customerId = $model->user_id;
             $payment->payment_method_id = $model->payment_method_id;
             $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $payment->save();

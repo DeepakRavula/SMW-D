@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Number',
                 'contentOptions' => ['style' => 'width:100px'],
                 'value' => function ($data) {
-                    return 'P-000'.$data->id;
+                    return $data->getProformaInvoiceNumber();
                 },
             ],
 

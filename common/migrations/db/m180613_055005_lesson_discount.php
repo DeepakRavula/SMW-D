@@ -17,7 +17,7 @@ class m180613_055005_lesson_discount extends Migration
             $this->createTable('lesson_discount', [
                 'id' => $this->primaryKey(),
                 'lessonId' => $this->integer()->notNull(),
-                'value' => $this->double()->null(),
+                'value' => $this->decimal(10,4)->null(),
                 'valueType' => $this->boolean()->notNull(),
                 'type' => $this->integer()->notNull()
             ]);

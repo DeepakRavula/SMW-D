@@ -31,14 +31,6 @@ class PaymentQuery extends ActiveQuery
     /**
      * @return $this
      */
-    public function openingBalance($invoice)
-    {
-        $this->andWhere(['payment.user_id' => $invoice->user_id])
-            ->andWhere(['like', 'payment.amount', '-']);
-
-        return $this;
-    }
-
     public function proFormaInvoice()
     {
         $this->joinWith(['invoicePayment ip' => function ($query) {
@@ -48,6 +40,11 @@ class PaymentQuery extends ActiveQuery
         }]);
 
         return $this;
+    }
+
+    public function customer($customerId)
+    {
+        return $this->andWhere(['payment.user_id' => $customerId]);
     }
 
     public function invoice()
@@ -61,9 +58,11 @@ class PaymentQuery extends ActiveQuery
 
     public function location($locationId)
     {
-        $this->joinWith('invoice')
-                    ->andWhere(['invoice.location_id' => $locationId]);
-        return $this;
+        return $this->joinWith(['user' => function ($query) use ($locationId) {
+            $query->joinWith(['userLocation' => function ($query) use ($locationId) {
+                $query->andWhere(['user_location.location_id' => $locationId]);
+            }]);
+        }]);
     }
 
     public function notDeleted()
@@ -91,7 +90,7 @@ class PaymentQuery extends ActiveQuery
         return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
     }
 
-    public function accountEntry()
+    public function openingBalance()
     {
         return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_ACCOUNT_ENTRY]);
     }

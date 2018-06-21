@@ -39,34 +39,14 @@ class OpeningBalance extends ActiveRecord
 
     public function addOpeningBalance()
     {
-        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $invoice = new Invoice();
-        $invoice->user_id = $this->user_id;
-        $invoice->location_id = $locationId;
-        $invoice->type = Invoice::TYPE_INVOICE;
-        $invoice->save();
-
-        $invoiceLineItem = new InvoiceLineItem(['scenario' => InvoiceLineItem::SCENARIO_OPENING_BALANCE]);
-        $invoiceLineItem->invoice_id = $invoice->id;
-        $item = Item::findOne(['code' => Item::OPENING_BALANCE_ITEM]);
-        $invoiceLineItem->item_id = $item->id;
-        $invoiceLineItem->item_type_id = ItemType::TYPE_OPENING_BALANCE;
-        $invoiceLineItem->description = $item->description;
-        $invoiceLineItem->unit = 1;
+        $payment = new Payment();
+        $payment->user_id = $this->user_id;
+        $payment->payment_method_id = PaymentMethod::TYPE_ACCOUNT_ENTRY;
         if ($this->isCredit) {
-            $invoiceLineItem->unit = -1;
+            $this->amount *= -1;
         }
-        $invoiceLineItem->amount = $this->amount;
-        $invoiceLineItem->code = $invoiceLineItem->getItemCode();
-        $invoiceLineItem->cost = 0;
-        $invoiceLineItem->save();
-        $invoice->tax = $invoiceLineItem->tax_rate;
-        $invoice->total = $invoice->subTotal + $invoice->tax;
-        if (!empty($invoice->location->conversionDate)) {
-            $date = Carbon::parse($invoice->location->conversionDate);
-            $invoice->date = $date->subDay(1);
-        }
-        $invoice->save();
-        return $invoice;
+        $payment->amount = $this->amount;
+        $payment->save();
+        return $payment;
     }
 }
