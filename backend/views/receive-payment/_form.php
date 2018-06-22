@@ -111,10 +111,10 @@ use kartik\daterange\DateRangePicker;
 <script>
     var receivePayment = {
         setAction: function() {
-            var lessonId = <?= $model->lessonId ?>;
+            var customerId = <?= $model->customerId ?>;
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-            var params = $.param({ 'PaymentForm[lessonId]' : lessonId, 'PaymentForm[lessonIds]': lessonIds, 'PaymentForm[invoiceIds]': invoiceIds });
+            var params = $.param({ 'PaymentForm[customerId]' : customerId, 'PaymentForm[lessonIds]': lessonIds, 'PaymentForm[invoiceIds]': invoiceIds });
             var url = '<?= Url::to(['payment/receive']) ?>?' + params;
             $('#modal-form').attr('action', url);
             return false;
@@ -134,8 +134,8 @@ use kartik\daterange\DateRangePicker;
     $(document).off('change', '#paymentform-daterange').on('change', '#paymentform-daterange', function () {
         $('#modal-spinner').show();
         var dateRange = $('#paymentform-daterange').val();
-	    var lessonId = <?= $model->lessonId ?>;
-        var params = $.param({ 'PaymentForm[dateRange]': dateRange, 'PaymentForm[lessonId]' : lessonId });
+	    var customerId = <?= $model->customerId ?>;
+        var params = $.param({ 'PaymentForm[dateRange]': dateRange, 'PaymentForm[customerId]' : customerId });
         var url = '<?= Url::to(['payment/receive']) ?>?' + params;
 	    $.pjax.reload({url:url, container: "#lesson-lineitem-listing", replace: false, async: false, timeout: 6000});
         $.pjax.reload({url:url, container: "#payment-amount", replace: false, async: false, timeout: 6000});

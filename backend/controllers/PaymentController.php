@@ -363,9 +363,8 @@ class PaymentController extends BaseController
         if ($paymentData) {
             $model->load(Yii::$app->request->get());
 	        list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
-            if ($model->lessonId) {
-                $lesson = Lesson::findOne($model->lessonId);
-                $model->user_id = $lesson->customer->id;
+            if ($model->customerId) {
+                $lesson = Lesson::findOne($model->customerId);
             }
         }
 	    $fromDate = new \DateTime($model->fromDate);
@@ -377,7 +376,7 @@ class PaymentController extends BaseController
             $lessonsQuery->notDeleted()
                 ->between($fromDate, $toDate)
                 ->privateLessons()
-                ->customer($model->user_id)
+                ->customer($model->customerId)
                 ->isConfirmed()
                 ->notCanceled()
                 ->unInvoiced()
@@ -407,7 +406,7 @@ class PaymentController extends BaseController
             $invoicesQuery->notDeleted()
                 ->lessonInvoice()
                 ->location($locationId)
-                ->customer($model->user_id)
+                ->customer($model->customerId)
                 ->unpaid();
         }
         $invoices = clone $invoicesQuery;
@@ -422,12 +421,12 @@ class PaymentController extends BaseController
             $model->load($request->post());
             $payment = new Payment();
             $payment->amount = $model->amount;
-            $payment->user_id = $model->user_id;
-            $payment->customerId = $model->user_id;
+            $payment->user_id = $model->customerId;
+            $payment->customerId = $model->customerId;
             $payment->payment_method_id = $model->payment_method_id;
             $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $payment->save();
-            $customer = User::findOne($model->user_id);
+            $customer = User::findOne($model->customerId);
             foreach ($invoicesQuery->all() as $invoice) {
                 $paymentModel = new Payment();
                 $paymentModel->amount = $invoice->balance;
