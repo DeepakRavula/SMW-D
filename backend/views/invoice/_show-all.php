@@ -2,6 +2,7 @@
 
 use yii\widgets\ActiveForm;
 use kartik\switchinput\SwitchInput;
+use backend\models\search\InvoiceSearch;
 
 ?>
 <?php
@@ -15,6 +16,7 @@ $form = ActiveForm::begin([
     ],
     ]);
 ?>
+<?php if ((int) $model->type === InvoiceSearch::TYPE_INVOICE): ?>
 <?php yii\widgets\Pjax::begin() ?>
 <div id="show-all" class="m-r-10 mail-flag">
 <?=
@@ -32,4 +34,5 @@ $form = ActiveForm::begin([
     )->label(false);?>
 </div>
 <?php \yii\widgets\Pjax::end(); ?>
+    <?php endif; ?>
 <?php ActiveForm::end(); ?>

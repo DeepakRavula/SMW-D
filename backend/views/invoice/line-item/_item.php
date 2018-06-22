@@ -20,7 +20,8 @@ use yii\widgets\Pjax;
 ]);?>
 <?php
 	if($model->type == Invoice::TYPE_PRO_FORMA_INVOICE) {
-		$panelName = 'Lessons';
+        $panelName = 'Lessons';
+        $boxTools = '';
 	} else {
 		$panelName = 'Items';
 	}

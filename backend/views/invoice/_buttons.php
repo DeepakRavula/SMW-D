@@ -9,20 +9,14 @@ use yii\widgets\Pjax;
 <?php $loggedUser = User::findOne(Yii::$app->user->id); ?>
 <?php Pjax::Begin(['id' => 'invoice-header-summary']) ?>
 <div id="invoice-header">
-<?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
-    <?php if ((bool) !$model->isDeleted()): ?>
-	<?= Html::a('<i title="Delete" class="fa fa-trash"></i>', ['delete', 'id' => $model->id], [
-            'class' => 'm-r-10 btn btn-box-tool',
-            'id' => 'invoice-delete-button',
-        ])?>
-    <?php endif; ?>
-<?php endif; ?>
+<?php if ((int) $model->type === InvoiceSearch::TYPE_INVOICE): ?>
     <div class="m-b-10 pull-right">
     <?= $this->render('_more-option', [
         'model' => $model,
         'loggedUser' => $loggedUser
     ]) ?>
 </div>
+    <?php endif;?>
 <?php if ((int) $model->type === InvoiceSearch::TYPE_INVOICE): ?>
     <?php if ($model->canRevert()): ?>
         <?=	Html::a(
@@ -42,14 +36,17 @@ use yii\widgets\Pjax;
         <span class="return-invoice m-r-10"></span>
     <?php endif; ?>
 <?php endif; ?>
+<?php if ((int) $model->type === InvoiceSearch::TYPE_INVOICE): ?>
 <?= Html::a('<i title="Mail" class="fa fa-envelope-o"></i>', '#', [
     'id' => 'invoice-mail-button',
     'class' => 'm-r-10 btn btn-box-tool']) ?>
 <?= Html::a('<i class="fa fa-print m-r-10"></i>', ['#'], ['class' => 'm-r-10 btn btn-box-tool','id'=>'print-btn']) ?>
 <?= strtoupper($model->getStatus()) . ' '?>
+<?php endif; ?>
 <?= Yii::$app->formatter->format($model->total, ['currency', 'USD', [
     \NumberFormatter::MIN_FRACTION_DIGITS => 2,
     \NumberFormatter::MAX_FRACTION_DIGITS => 2,
 ]]); ?> &nbsp;&nbsp;
 </div>
+
 <?php Pjax::end();?>
