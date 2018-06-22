@@ -130,6 +130,6 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     }
     public function getLocation()
     {
-        return $this->hasOne(Location::className(), ['id' => 'location_id']);
+        return $this->hasOne(Location::className(), ['id' => 'locationId']);
     }
 }

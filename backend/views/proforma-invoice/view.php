@@ -168,9 +168,6 @@ $this->render('note/view', [
                     if (response.status) {
                         $('#modal-content').html(response.data);
                         $('#popup-modal').modal('show');
-                        $('#popup-modal .modal-dialog').css({'width': '1000px'});
-                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
-                        $('.modal-save').text('Send');
                     }
                 }
             });
