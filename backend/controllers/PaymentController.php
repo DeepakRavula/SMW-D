@@ -352,7 +352,6 @@ class PaymentController extends BaseController
     public function actionReceive()
     {
         $request = Yii::$app->request;
-        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $searchModel = new PaymentFormLessonSearch();
         $searchModel->showCheckBox = true;
         $model = new PaymentForm();

@@ -31,18 +31,5 @@ use yii\helpers\Url;
                     <a id="credit-transfer" href="#">Transfer Credits to Invoice</a>
                 </li>
             <?php endif; ?>
-            <?php if (!$model->proFormaInvoice): ?>
-                <li>
-                    <a href= "<?= Url::to(['lesson/take-payment', 'id' => $model->id]) ?>">
-                        Generate PFI
-                    </a>
-                </li>
-            <?php elseif (!$model->proFormaInvoice->isPaid()) : ?>
-                <li>
-                    <a href= "<?= Url::to(['lesson/take-payment', 'id' => $model->id]) ?>">
-                        View PFI
-                    </a>
-                </li>
-            <?php endif; ?>
         <?php endif; ?>
     </ul>

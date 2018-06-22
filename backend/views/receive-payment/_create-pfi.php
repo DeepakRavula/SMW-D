@@ -49,7 +49,7 @@ use kartik\daterange\DateRangePicker;
     $(document).ready(function () {
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Create PFI</h4>');
-        $('.modal-save').text('Create-PFI');
+        $('.modal-save').text('Create PFI');
         $('.select-on-check-all').prop('checked', true);
         $('#invoice-line-item-grid .select-on-check-all').prop('disabled', true);
         $('#invoice-line-item-grid input[name="selection[]"]').prop('disabled', true);
