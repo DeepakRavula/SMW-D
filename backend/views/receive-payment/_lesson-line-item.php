@@ -12,7 +12,7 @@ use common\models\Student;
 
 ?>
 
-<?php Pjax::begin(['id' => 'lesson-line-item-listing','timeout' => 6000,]); ?>
+<?php Pjax::begin(['enablePushState' => false, 'id' => 'lesson-line-item-listing','timeout' => 6000,]); ?>
     <?php  
         $columns = [];
         if ($searchModel->showCheckBox) {
@@ -135,7 +135,7 @@ use common\models\Student;
         'columns' => $columns,
         'summary' => false,
         'rowOptions' => ['class' => 'line-items-value'],
-        'emptyText' => false
+        'emptyText' => 'No Lessons Available!'
     ]); ?>
 <?php else: ?>
 <?= GridView::widget([
@@ -143,7 +143,7 @@ use common\models\Student;
         'dataProvider' => $lessonLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,
-        'emptyText' => false
+        'emptyText' => 'No Lessons Available!'
     ]); ?>
 <?php endif; ?>
 <?php Pjax::end(); ?>

@@ -26,6 +26,8 @@ use kartik\daterange\DateRangePicker;
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
         'action' => Url::to(['payment/receive']),
+        // 'enableAjaxValidation' => true,
+        // 'validationUrl' => Url::to(['payment/validate-receive'])
     ]); ?>
 
     <div class="row">
@@ -51,7 +53,10 @@ use kartik\daterange\DateRangePicker;
             <?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control'])->label('Amount Received'); ?>
         </div>
     </div>
-     
+
+    <?= $form->field($model, 'amountNeeded')->hiddenInput(['id' => 'amount-needed-value'])->label(false); ?>
+    <?= $form->field($model, 'selectedCreditValue')->hiddenInput(['id' => 'selected-credit-value'])->label(false); ?>
+
     <?php ActiveForm::end(); ?>
 
     <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
@@ -76,7 +81,7 @@ use kartik\daterange\DateRangePicker;
         'creditDataProvider' => $creditDataProvider,
     ]);
     ?>
-    
+    <h4 class="pull-right amount-needed">Available Credits $<span class="credit-available">0.00</span></h4>
 </div>
 
 <script>
@@ -85,7 +90,22 @@ use kartik\daterange\DateRangePicker;
             var lessonId = <?= $searchModel->lessonId ?>;
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-            var params = $.param({ 'PaymentFormLessonSearch[lessonId]' : lessonId, 'PaymentFormLessonSearch[lessonIds]': lessonIds, 'PaymentForm[invoiceIds]': invoiceIds });
+            var creditIds = $('#credit-line-item-grid').yiiGridView('getSelectedRows');
+            var canUseCustomerCredits = 0;
+            var canUseInvoiceCredits = 0;
+            $('.credit-items-value').each(function() {
+                if ($(this).find('.check-checkbox').is(":checked")){
+                    var creditType = $(this).find('.credit-type').text();
+                    if (creditType == 'Invoice Credit') {
+                        canUseInvoiceCredits = 1;
+                    } else if (creditType == 'Customer Credit') {
+                        canUseCustomerCredits = 1;
+                    }
+                }
+            });
+            var params = $.param({ 'PaymentFormLessonSearch[lessonId]' : lessonId, 'PaymentFormLessonSearch[lessonIds]': lessonIds, 
+                'PaymentForm[invoiceIds]': invoiceIds, 'PaymentForm[canUseCustomerCredits]': canUseCustomerCredits, 
+                'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[creditIds]': creditIds });
             var url = '<?= Url::to(['payment/receive']) ?>?' + params;
             $('#modal-form').attr('action', url);
             return false;
@@ -107,11 +127,19 @@ use kartik\daterange\DateRangePicker;
                     creditAmount = parseFloat(creditAmount) + parseFloat(balance);
                 }
             });
-            amount -= parseFloat(creditAmount);
-            if (amount < 0) {
-                amount = parseFloat('0.00');
-            }
+            $('#selected-credit-value').val((creditAmount).toFixed(2));
+            $('#amount-needed-value').val((amount).toFixed(2));
             $('.amount-needed-value').text((amount).toFixed(2));
+            return false;
+        },
+        setAvailableCredits : function() {
+            var creditAmount = parseFloat('0.00');
+            $('.credit-items-value').each(function() {
+                var balance = $(this).find('.credit-value').text();
+                balance = balance.replace('$', '');
+                creditAmount = parseFloat(creditAmount) + parseFloat(balance);
+            });
+            $('.credit-available').text((creditAmount).toFixed(2));
             return false;
         }
     };
@@ -122,19 +150,13 @@ use kartik\daterange\DateRangePicker;
         $('#popup-modal').find('.modal-header').html(header);
         $('.modal-save').text('Pay');
         $('.select-on-check-all').prop('checked', true);
-        $('#invoice-line-item-grid .select-on-check-all').prop('disabled', true);
-        $('#invoice-line-item-grid input[name="selection[]"]').prop('disabled', true);
         receivePayment.setAction();
         receivePayment.calcAmountNeeded();
+        receivePayment.setAvailableCredits();
     });
 
-    $(document).off('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
+    $(document).off('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
         receivePayment.setAction();
-        receivePayment.calcAmountNeeded();
-        return false;
-    });
-
-    $(document).off('change', '#credit-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#credit-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
         receivePayment.calcAmountNeeded();
         return false;
     });

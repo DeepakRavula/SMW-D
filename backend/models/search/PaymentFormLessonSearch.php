@@ -48,9 +48,11 @@ class PaymentFormLessonSearch extends Lesson
     public function search($params)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
-        $fromDate = new \DateTime($this->fromDate);
-        $toDate = new \DateTime($this->toDate);
+        if ($this->dateRange) {
+            list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
+            $fromDate = new \DateTime($this->fromDate);
+            $toDate = new \DateTime($this->toDate);
+        }
         if ($this->lessonId) {
             $lesson = Lesson::findOne($this->lessonId);
             $userId = $lesson->customer->id;
@@ -58,7 +60,7 @@ class PaymentFormLessonSearch extends Lesson
         $lessonsQuery = Lesson::find();
         if ($this->lessonIds) {
             $lessonsQuery->andWhere(['id' => $this->lessonIds]);
-        } else {
+        } else if ($this->dateRange) {
             $query = Lesson::find()
                 ->notDeleted()
                 ->isConfirmed()

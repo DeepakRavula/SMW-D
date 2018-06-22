@@ -21,6 +21,7 @@ use yii\data\ActiveDataProvider;
 use common\models\Location;
 use common\models\User;
 use backend\models\search\PaymentFormLessonSearch;
+use League\Uri\Components\Query;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -307,20 +308,26 @@ class PaymentController extends BaseController
         return $response;
     }
 
+    public function getCustomerCreditInvoices($customerId)
+    {
+        return Invoice::find()
+            ->notDeleted()
+            ->notCanceled()
+            ->invoiceCredit($customerId)
+            ->all();
+    }
+
     public function getAvailableCredit($customerId)
     {
-        $invoiceCredits = Invoice::find()
-                ->notDeleted()
-                ->notCanceled()
-                ->invoiceCredit($customerId)
-                ->all();
-
+        $invoiceCredits = $this->getCustomerCreditInvoices($customerId);
         $results = [];
+        $amount = 0;
         if (!empty($invoiceCredits)) {
             foreach ($invoiceCredits as $invoiceCredit) {
                 $amount += abs($invoiceCredit->balance);
             }
             $results[] = [
+                'id' => 0,
                 'type' => 'Invoice Credit',
                 'amount' => $amount
             ];
@@ -328,6 +335,7 @@ class PaymentController extends BaseController
         $customer = User::findOne($customerId);
         if ($customer->hasCustomerCredit()) {
             $results[] = [
+                'id' => 1,
                 'type' => 'Customer Credit',
                 'amount' => $customer->creditAmount
             ];
@@ -343,26 +351,24 @@ class PaymentController extends BaseController
 
     public function actionReceive()
     {
+        $request = Yii::$app->request;
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $amount = 0;
         $searchModel = new PaymentFormLessonSearch();
         $searchModel->showCheckBox = true;
         $model = new PaymentForm();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d, Y');
-        $searchModel->fromDate = $currentDate->format('M 1, Y');
-        $searchModel->toDate = $currentDate->format('M t, Y'); 
-        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
-        $model->load(Yii::$app->request->get());
+        if (!$request->post()) {
+            $searchModel->fromDate = $currentDate->format('M 1, Y');
+            $searchModel->toDate = $currentDate->format('M t, Y'); 
+            $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+        }
         $searchModel->load(Yii::$app->request->get());
         $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
+        $model->load(Yii::$app->request->get());
         if ($searchModel->lessonId) {
             $lesson = Lesson::findOne($searchModel->lessonId);
             $model->userId = $lesson->customer->id;
-        }
-        $lessons = clone $lessonsQuery;
-        foreach ($lessons->all() as $lesson) {
-            $amount += $lesson->getOwingAmount($lesson->enrolment->id);
         }
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery,
@@ -373,8 +379,6 @@ class PaymentController extends BaseController
             $invoicesQuery->andWhere(['id' => $model->invoiceIds]);
         } else {
             $invoicesQuery->notDeleted()
-                ->lessonInvoice()
-                ->location($locationId)
                 ->customer($model->userId)
                 ->unpaid();
         }
@@ -383,9 +387,6 @@ class PaymentController extends BaseController
             'pagination' => false 
         ]);
         $creditDataProvider = $this->getAvailableCredit($model->userId);
-        $userModel = User::findOne(['id' => $model->userId]);
-        $model->availableCredits = $userModel->getCreditAmount();
-        $request = Yii::$app->request;
         if ($request->post()) {
             $model->load($request->post());
             $payment = new Payment();
@@ -395,31 +396,8 @@ class PaymentController extends BaseController
             $payment->payment_method_id = $model->payment_method_id;
             $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $payment->save();
-            $customer = User::findOne($model->userId);
-            foreach ($invoicesQuery->all() as $invoice) {
-                $paymentModel = new Payment();
-                $paymentModel->amount = $invoice->balance;
-                if ($customer->hasCustomerCredit()) {
-                    if ($paymentModel->amount > $customer->creditAmount) {
-                        $paymentModel->amount = $customer->creditAmount;
-                    }
-                    $invoice->addPayment($customer, $paymentModel);
-                } else {
-                    break;
-                }
-            }
-            foreach ($lessonsQuery->all() as $lesson) {
-                $paymentModel = new Payment();
-                $paymentModel->amount = $lesson->getOwingAmount($lesson->enrolment->id);
-                if ($customer->hasCustomerCredit()) {
-                    if ($paymentModel->amount > $customer->creditAmount) {
-                        $paymentModel->amount = $customer->creditAmount;
-                    }
-                    $lesson->addPayment($customer, $paymentModel);
-                } else {
-                    break;
-                }
-            }
+            $model->lessonIds = $searchModel->lessonIds;
+            $model->save();
             $response = [
                 'status' => true,
                 'message' => 'Payment added succesfully'

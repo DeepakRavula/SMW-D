@@ -60,7 +60,7 @@ use yii\widgets\Pjax;
         'columns' => $columns,
         'summary' => false,
         'rowOptions' => ['class' => 'line-items-value'],
-        'emptyText' => false
+        'emptyText' => 'No Invoices Available!'
     ]); ?>
 <?php Pjax::end(); ?>
 

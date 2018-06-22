@@ -49,7 +49,6 @@ use common\Models\User;
                 }
             }
         });
-        return false;
     });
     $(document).off('click', '#create-pfi').on('click', '#create-pfi', function () {
         $.ajax({

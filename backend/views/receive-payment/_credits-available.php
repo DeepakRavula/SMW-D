@@ -4,6 +4,7 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 
 ?>
+
 <?php
     $columns = [];
     array_push($columns, [
@@ -16,7 +17,7 @@ use yii\widgets\Pjax;
 
     array_push($columns, [
         'headerOptions' => ['class' => 'text-left'],
-        'contentOptions' => ['class' => 'text-left'],
+        'contentOptions' => ['class' => 'text-left credit-type'],
         'label' => 'Type',
         'value' => 'type',
     ]);
@@ -37,7 +38,7 @@ use yii\widgets\Pjax;
         'columns' => $columns,
         'summary' => false,
         'rowOptions' => ['class' => 'credit-items-value'],
-        'emptyText' => false
+        'emptyText' => 'No Credits Available!'
     ]); ?>
 <?php Pjax::end(); ?>
 
