@@ -350,10 +350,12 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getCreditAmount()
     {
+        $id = $this->id;
         return Payment::find()
-                ->joinWith('customerCredit')
-                ->andWhere(['customer_payment.userId' => $this->id])
                 ->notDeleted()
+                ->joinWith(['customerCredit' => function ($query) use ($id) {
+                    $query->andWhere(['customer_payment.userId' => $id]);
+                }])
                 ->sum('amount');
     }
 
@@ -365,6 +367,11 @@ class User extends ActiveRecord implements IdentityInterface
     public function getCustomerPaymentPreference()
     {
         return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'id']);
+    }
+
+    public function getCustomerCredit()
+    {
+        return $this->hasOne(CustomerPayment::className(), ['userId' => 'id']);
     }
     
     public function getPhoneNumbers()

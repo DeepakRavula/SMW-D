@@ -4,28 +4,23 @@ namespace backend\controllers;
 
 use Yii;
 
-use yii\helpers\ArrayHelper;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
-use yii\helpers\Json;
 use yii\web\Response;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
 use common\models\Lesson;
 use common\models\Invoice;
 use common\models\ProformaInvoice;
 use common\models\ProformaLineItem;
-use common\models\ProformaItemLesson;
-use common\models\ProformaItemInvoice;
 use common\components\controllers\BaseController;
 use common\models\Location;
-use common\models\InvoiceLineItem;
 use common\models\User;
 use common\models\UserProfile;
 use common\models\UserEmail;
 use common\models\Note;
 use backend\models\search\ProformaInvoiceSearch;
+use backend\models\search\PaymentFormLessonSearch;
 /**
  * ProformaInvoiceController implements the CRUD actions for ProformaInvoice model.
  */
@@ -74,47 +69,23 @@ class ProformaInvoiceController extends BaseController
      */
     public function actionCreate()
     {
-        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $searchModel = new ProformaInvoiceSearch();
+        $request = Yii::$app->request;
+        $searchModel = new PaymentFormLessonSearch();
         $searchModel->showCheckBox = true;
         $model = new ProformaInvoice();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d,Y');
-        $model->fromDate = $currentDate->format('M 1,Y');
-        $model->toDate = $currentDate->format('M t,Y'); 
-        $model->dateRange = $model->fromDate . ' - ' . $model->toDate;
-        $proformaInvoiceData = Yii::$app->request->get('ProformaInvoice');
-        if ($proformaInvoiceData) {
-            $model->load(Yii::$app->request->get());
-            list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
-            if ($model->lessonId) {
-                $lesson = Lesson::findOne($model->lessonId);
-                $model->userId = $lesson->customer->id;
-            }
+        if (!$request->post()) {
+            $searchModel->fromDate = $currentDate->format('M 1, Y');
+            $searchModel->toDate = $currentDate->format('M t, Y'); 
+            $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         }
-	    $fromDate = new \DateTime($model->fromDate);
-        $toDate = new \DateTime($model->toDate);
-        $lessonsQuery = Lesson::find();
-        if ($model->lessonIds) {
-            $lessonsQuery->andWhere(['id' => $model->lessonIds]);
-        } else {
-            $lessonsQuery->notDeleted()
-                ->between($fromDate, $toDate)
-                ->privateLessons()
-                ->customer($model->userId)
-                ->isConfirmed()
-                ->notCanceled()
-                ->unInvoiced()
-                ->location($locationId);
-            $allLessons = $lessonsQuery->all();
-            $lessonIds = [];
-            foreach ($allLessons as $lesson) {
-                if ($lesson->isOwing($lesson->enrolment->id)) {
-                    $lessonIds[] = $lesson->id;
-                }
-            }
-            $lessonsQuery = Lesson::find()
-                ->andWhere(['id' => $lessonIds]);
+        $model->load(Yii::$app->request->get());
+        $searchModel->load(Yii::$app->request->get());
+        $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
+        if ($searchModel->lessonId) {
+            $lesson = Lesson::findOne($searchModel->lessonId);
+            $model->userId = $lesson->customer->id;
         }
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery,
@@ -125,8 +96,6 @@ class ProformaInvoiceController extends BaseController
             $invoicesQuery->andWhere(['id' => $model->invoiceIds]);
         } else {
             $invoicesQuery->notDeleted()
-                ->lessonInvoice()
-                ->location($locationId)
                 ->customer($model->userId)
                 ->unpaid();
         }
@@ -134,11 +103,12 @@ class ProformaInvoiceController extends BaseController
             'query' => $invoicesQuery,
             'pagination' => false 
         ]);
-        $request = Yii::$app->request;
-        if ($request->post()) {
+        
+        if ($request->isPost) {
             $model->load($request->post());
-            if(!empty($model->lessonIds) || !empty($model->invoiceIds)) {
-                $lessons = Lesson::findAll($model->lessonIds);
+            $searchModel->load($request->post());
+            if (!empty($searchModel->lessonIds) || !empty($model->invoiceIds)) {
+                $lessons = Lesson::findAll($searchModel->lessonIds);
                 $invoices = Invoice::findAll($model->invoiceIds);
                 $endLesson = end($lessons);
                 $endInvoice = end($invoices);
@@ -150,7 +120,7 @@ class ProformaInvoiceController extends BaseController
                 }
                 $model->userId = $user->id;
                 $model->locationId = $user->userLocation->location_id;
-                $model->proforma_invoice_number=$model->getProformaInvoiceNumber();
+                $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
                 $model->save();
                 if ($lessons) {
                     foreach ($lessons as $lesson) {
@@ -172,14 +142,12 @@ class ProformaInvoiceController extends BaseController
                     'status' => true,
                     'url' => Url::to(['proforma-invoice/view', 'id' => $model->id])
                 ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => 'Select any lesson or invoice to create PFI',
+                ];
             }
-            else{
-            $response = [
-                'status' => false,
-                'errors' => 'Select any lesson or invoice to create PFI',
-            ];
-        }
-           
         } else {
             $data = $this->renderAjax('/receive-payment/_create-pfi', [
                 'model' => $model,
@@ -198,7 +166,7 @@ class ProformaInvoiceController extends BaseController
     public function actionView($id)
     {
         $model = $this->findModel($id);
-        $searchModel = new ProformaInvoiceSearch();
+        $searchModel = new PaymentFormLessonSearch();
         $searchModel->showCheckBox = false;
         if (!empty($model->userId)) {
             $customer  = User::findOne(['id' => $model->userId]);
