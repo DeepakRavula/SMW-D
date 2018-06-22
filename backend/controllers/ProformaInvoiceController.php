@@ -4,23 +4,17 @@ namespace backend\controllers;
 
 use Yii;
 
-use yii\helpers\ArrayHelper;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
-use yii\helpers\Json;
 use yii\web\Response;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
 use common\models\Lesson;
 use common\models\Invoice;
 use common\models\ProformaInvoice;
 use common\models\ProformaLineItem;
-use common\models\ProformaItemLesson;
-use common\models\ProformaItemInvoice;
 use common\components\controllers\BaseController;
 use common\models\Location;
-use common\models\InvoiceLineItem;
 use common\models\User;
 use common\models\UserProfile;
 use common\models\UserEmail;
@@ -75,16 +69,17 @@ class ProformaInvoiceController extends BaseController
      */
     public function actionCreate()
     {
-        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $request = Yii::$app->request;
         $searchModel = new PaymentFormLessonSearch();
         $searchModel->showCheckBox = true;
         $model = new ProformaInvoice();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d,Y');
-        $searchModel->fromDate = $currentDate->format('M 1,Y');
-        $searchModel->toDate = $currentDate->format('M t,Y'); 
-        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
-        $proformaInvoiceData = Yii::$app->request->get('ProformaInvoice');
+        if (!$request->post()) {
+            $searchModel->fromDate = $currentDate->format('M 1, Y');
+            $searchModel->toDate = $currentDate->format('M t, Y'); 
+            $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
+        }
         $model->load(Yii::$app->request->get());
         $searchModel->load(Yii::$app->request->get());
         $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
@@ -101,8 +96,6 @@ class ProformaInvoiceController extends BaseController
             $invoicesQuery->andWhere(['id' => $model->invoiceIds]);
         } else {
             $invoicesQuery->notDeleted()
-                ->lessonInvoice()
-                ->location($locationId)
                 ->customer($model->userId)
                 ->unpaid();
         }
@@ -110,7 +103,7 @@ class ProformaInvoiceController extends BaseController
             'query' => $invoicesQuery,
             'pagination' => false 
         ]);
-        $request = Yii::$app->request;
+        
         if ($request->isPost) {
             $model->load($request->post());
             $searchModel->load($request->post());

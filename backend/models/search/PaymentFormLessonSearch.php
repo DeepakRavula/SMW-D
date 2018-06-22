@@ -47,7 +47,6 @@ class PaymentFormLessonSearch extends Lesson
      */
     public function search($params)
     {
-        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         if ($this->dateRange) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
             $fromDate = new \DateTime($this->fromDate);

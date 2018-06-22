@@ -2,11 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use yii\jui\DatePicker;
-use yii\helpers\ArrayHelper;
-use yii\widgets\Pjax;
 use yii\helpers\Url;
-use kartik\daterange\DateRangePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\PaymentMethods */
@@ -15,7 +11,7 @@ use kartik\daterange\DateRangePicker;
 
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['proforma-invoice/create']),
+        'action' => Url::to(['proforma-invoice/create', 'ProformaInvoice[lessonId]' => $searchModel->lessonId]),
     ]); ?>
     <?php ActiveForm::end(); ?>
     <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
@@ -37,9 +33,11 @@ use kartik\daterange\DateRangePicker;
 <script>
     var createPFI = {
         setAction: function() {
+            var lessonId = '<?= $searchModel->lessonId ?>';
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-            var params = $.param({ 'PaymentFormLessonSearch[lessonIds]': lessonIds, 'ProformaInvoice[invoiceIds]': invoiceIds });
+            var params = $.param({ 'PaymentFormLessonSearch[lessonId]': lessonId, 'PaymentFormLessonSearch[lessonIds]': lessonIds, 
+                'ProformaInvoice[invoiceIds]': invoiceIds });
             var url = '<?= Url::to(['proforma-invoice/create']) ?>?' + params;
             $('#modal-form').attr('action', url);
             return false;
@@ -51,12 +49,10 @@ use kartik\daterange\DateRangePicker;
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Create PFI</h4>');
         $('.modal-save').text('Create PFI');
         $('.select-on-check-all').prop('checked', true);
-        $('#invoice-line-item-grid .select-on-check-all').prop('disabled', true);
-        $('#invoice-line-item-grid input[name="selection[]"]').prop('disabled', true);
         createPFI.setAction();
     });
 
-    $(document).off('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
+    $(document).off('change', '#lesson-line-item-grid, #invoice-line-item-grid, .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-line-item-grid, #invoice-line-item-grid, .select-on-check-all, input[name="selection[]"]', function () {
         createPFI.setAction();
         return false;
     });

@@ -2,8 +2,6 @@
 
 use common\components\gridView\KartikGridView;
 use yii\widgets\Pjax;
-use common\models\Lesson;
-use kartik\daterange\DateRangePicker;
 use yii\helpers\Url;
 use kartik\grid\GridView;
 use common\models\Location;

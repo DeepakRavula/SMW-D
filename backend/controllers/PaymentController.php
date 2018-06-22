@@ -18,10 +18,8 @@ use common\components\controllers\BaseController;
 use backend\models\PaymentForm;
 use common\models\Lesson;
 use yii\data\ActiveDataProvider;
-use common\models\Location;
 use common\models\User;
 use backend\models\search\PaymentFormLessonSearch;
-use League\Uri\Components\Query;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.

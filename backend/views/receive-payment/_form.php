@@ -5,9 +5,7 @@ use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 use common\models\PaymentMethod;
 use yii\helpers\ArrayHelper;
-use yii\widgets\Pjax;
 use yii\helpers\Url;
-use kartik\daterange\DateRangePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\PaymentMethods */
