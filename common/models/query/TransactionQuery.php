@@ -39,7 +39,7 @@ class TransactionQuery extends \yii\db\ActiveQuery
                 $query->andWhere(['customer_payment.userId' => $userId]);
             }])
             ->notDeleted()
-            ->exceptAutoPayments();
+            ->notCreditUsed();
         }]);
     }
 

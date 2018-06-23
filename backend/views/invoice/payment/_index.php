@@ -20,12 +20,8 @@ Modal::end(); ?>
 
  <?php Pjax::Begin(['id' => 'invoice-view-payment-tab', 'timeout' => 6000]); ?> 
 <?php $boxTools = null;?>
-<?php if (!$print): ?>
-<?php $boxTools = $this->render('_button', [
-    ]);?>
-<?php $attributeAmount='amount';?>
-<?php else : $attributeAmount='';?>
-<?php endif; ?>
+
+
 <?php
     LteBox::begin([
         'type' => LteConst::TYPE_DEFAULT,
