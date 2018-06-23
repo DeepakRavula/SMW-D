@@ -51,7 +51,7 @@ class PaymentForm extends Model
             [['payment_method_id', 'date'], 'required'],
             ['amount', 'validateAmount'],
             [['date', 'amountNeeded', 'invoiceIds', 'canUseInvoiceCredits', 'selectedCreditValue',
-                'lessonIds', 'canUseCustomerCredits', 'creditIds', 'amount', 'userId','customerId'], 'safe']
+                'lessonIds', 'canUseCustomerCredits', 'creditIds', 'amount', 'userId'], 'safe']
         ];
     }
 
