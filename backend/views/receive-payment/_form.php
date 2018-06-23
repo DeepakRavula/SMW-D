@@ -99,7 +99,7 @@ use yii\jui\Accordion;
 <script>
     var receivePayment = {
         setAction: function() {
-            var lessonId = <?= $searchModel->lessonId ?>;
+            var userId = <?= $searchModel->userId ?>;
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
             var creditIds = $('#credit-line-item-grid').yiiGridView('getSelectedRows');
@@ -115,7 +115,7 @@ use yii\jui\Accordion;
                     }
                 }
             });
-            var params = $.param({ 'PaymentFormLessonSearch[lessonId]' : lessonId, 'PaymentFormLessonSearch[lessonIds]': lessonIds, 
+            var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId, 'PaymentFormLessonSearch[lessonIds]': lessonIds, 
                 'PaymentForm[invoiceIds]': invoiceIds, 'PaymentForm[canUseCustomerCredits]': canUseCustomerCredits, 
                 'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[creditIds]': creditIds });
             var url = '<?= Url::to(['payment/receive']) ?>?' + params;

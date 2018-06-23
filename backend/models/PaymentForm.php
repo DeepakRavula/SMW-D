@@ -34,6 +34,7 @@ class PaymentForm extends Model
     public $payment_method_id;
     public $amount;
     public $amountNeeded;
+    public $lessonId;
     public $userId;
     public $lessonIds;
     public $creditIds;
@@ -50,7 +51,7 @@ class PaymentForm extends Model
             [['payment_method_id', 'date'], 'required'],
             ['amount', 'validateAmount'],
             [['date', 'amountNeeded', 'invoiceIds', 'canUseInvoiceCredits', 'selectedCreditValue',
-                'lessonIds', 'canUseCustomerCredits', 'creditIds', 'amount', 'userId'], 'safe']
+                'lessonIds', 'canUseCustomerCredits', 'creditIds', 'amount', 'userId','customerId'], 'safe']
         ];
     }
 

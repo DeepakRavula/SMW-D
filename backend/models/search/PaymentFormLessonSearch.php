@@ -20,6 +20,7 @@ class PaymentFormLessonSearch extends Lesson
     public $lessonId;
     public $lessonIds;
     public $showCheckBox;
+    public $userId;
     /**
      * {@inheritdoc}
      */
@@ -27,7 +28,7 @@ class PaymentFormLessonSearch extends Lesson
     {
         return [
             [['showCheckBox', 'dateRange', 'lessonId', 'fromDate', 'toDate',
-                'lessonIds', 'student'], 'safe'],
+                'lessonIds', 'student','userId'], 'safe'],
         ];
     }
 
@@ -66,7 +67,7 @@ class PaymentFormLessonSearch extends Lesson
                 ->notCanceled()
                 ->between($fromDate, $toDate)
                 ->privateLessons()
-                ->customer($userId)
+                ->customer($this->userId)
                 ->unInvoiced();
             if ($this->student) {
                 $query->student($this->student);

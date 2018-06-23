@@ -38,7 +38,7 @@ use common\Models\User;
 
     $(document).off('click', '#receive-payment').on('click', '#receive-payment', function () {
         $.ajax({
-            url    : '<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[lessonId]' => $model->id]); ?>',
+            url    : '<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->customer->id]); ?>',
             type   : 'get',
             dataType: 'json',
             success: function(response)
