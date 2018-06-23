@@ -363,9 +363,6 @@ class PaymentController extends BaseController
         if ($paymentData) {
             $model->load(Yii::$app->request->get());
 	        list($model->fromDate, $model->toDate) = explode(' - ', $model->dateRange);
-            if ($model->customerId) {
-                $lesson = Lesson::findOne($model->customerId);
-            }
         }
 	    $fromDate = new \DateTime($model->fromDate);
         $toDate = new \DateTime($model->toDate);
