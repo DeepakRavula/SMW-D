@@ -34,6 +34,7 @@ class PaymentForm extends Model
     public $payment_method_id;
     public $amount;
     public $amountNeeded;
+    public $lessonId;
     public $userId;
     public $lessonIds;
     public $creditIds;

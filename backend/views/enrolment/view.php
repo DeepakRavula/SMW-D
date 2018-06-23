@@ -10,11 +10,12 @@ $this->params['label'] = $this->render('_title', [
 ]);
 $this->params['action-button'] = $this->render('_action-button', [
     'model' => $model,
-]); ?>
+]);  ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <div id="enrolment-enddate-alert" style="display: none;" class="alert-info alert fade in"></div>
+
 <?= $this->render('_view-enrolment', [
     'model' => $model,
 ]);?>

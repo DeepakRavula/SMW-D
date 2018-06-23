@@ -362,12 +362,10 @@ class PaymentController extends BaseController
             $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         }
         $searchModel->load(Yii::$app->request->get());
+	$customerRequest = Yii::$app->request->get('PaymentFormLessonSearch');
+        $searchModel->userId = $customerRequest['userId'];
         $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
         $model->load(Yii::$app->request->get());
-        if ($searchModel->lessonId) {
-            $lesson = Lesson::findOne($searchModel->lessonId);
-            $model->userId = $lesson->customer->id;
-        }
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery,
             'pagination' => false
@@ -377,20 +375,20 @@ class PaymentController extends BaseController
             $invoicesQuery->andWhere(['id' => $model->invoiceIds]);
         } else {
             $invoicesQuery->notDeleted()
-                ->customer($model->userId)
+                ->customer($searchModel->userId)
                 ->unpaid();
         }
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoicesQuery,
             'pagination' => false 
         ]);
-        $creditDataProvider = $this->getAvailableCredit($model->userId);
+        $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
         if ($request->post()) {
             $model->load($request->post());
             $payment = new Payment();
             $payment->amount = $model->amount;
-            $payment->user_id = $model->userId;
-            $payment->customerId = $model->userId;
+            $payment->user_id = $searchModel->userId;
+            $payment->customerId = $searchModel->userId;
             $payment->payment_method_id = $model->payment_method_id;
             $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $payment->save();

@@ -129,7 +129,7 @@ use common\models\Student;
         'options' => ['id' => 'lesson-line-item-grid'],
         'dataProvider' => $lessonLineItemsDataProvider,
         'filterModel' => $searchModel,
-        'filterUrl' => Url::to(['payment/receive', 'PaymentFormLessonSearch[lessonId]' => $searchModel->lessonId]),
+        'filterUrl' => Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $searchModel->userId]),
         'columns' => $columns,
         'summary' => false,
         'rowOptions' => ['class' => 'line-items-value'],
