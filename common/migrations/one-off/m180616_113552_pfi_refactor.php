@@ -116,6 +116,16 @@ class m180616_113552_pfi_refactor extends Migration
         foreach ($realInvoices as $realInvoice) {
             $realInvoice->save();
         }
+
+        $transactions = Transaction::find()
+            ->joinWith('payment')
+            ->joinWith('invoice')
+            ->andWhere(['AND', ['invoice.transactionId' => null], ['payment.transactionId' => null]])
+            ->all();
+
+        foreach ($transactions as $transaction) {
+            $transaction->delete();
+        }
     }
     /**
      * {@inheritdoc}
