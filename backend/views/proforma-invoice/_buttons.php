@@ -13,7 +13,6 @@ use yii\helpers\Url;
     <div class="btn-group-sm">
     <button class="btn dropdown-toggle" data-toggle="dropdown">More Action&nbsp;&nbsp;<span class="caret"></span></button>
     <ul class="dropdown-menu dropdown-menu-right">
-	<li><a id="proforma-receive-payment" href="#">Receive Payment</a></li>
 	<li><a id="proforma-invoice-mail-button" href="#">Mail</a></li>
 	<li><a id="proforma-print-btn" href="#">Print</a></li>
     </ul>
