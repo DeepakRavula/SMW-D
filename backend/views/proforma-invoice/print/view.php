@@ -33,6 +33,11 @@ echo $this->render('/receive-payment/_lesson-line-item', [
             ]);?>
 	</div>
 </div>
+ <div style="clear:both; margin-top: 20px; position: relative;">
+        <?php if (!empty($model->notes)):?>
+        <strong> Notes: </strong><?php echo $model->notes; ?>
+		<?php endif;?>
+    </div>
     <script>
         $(document).ready(function() {
             window.print();
