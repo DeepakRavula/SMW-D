@@ -43,3 +43,10 @@ use dosamigos\ckeditor\CKEditor;
     </div>
     <?php ActiveForm::end(); ?>
 </div>
+<script>
+	$(document).ready(function(){
+		$('#popup-modal .modal-dialog').css({'width': '1000px'});
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
+                        $('.modal-save').text('Send');
+	});
+	</script>
