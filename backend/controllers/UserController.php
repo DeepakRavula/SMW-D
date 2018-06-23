@@ -4,13 +4,11 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\User;
-use common\models\CompanyAccount;
 use common\models\TeacherAvailability;
 use common\models\Qualification;
 use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
-use common\models\CustomerAccount;
 use backend\models\search\LessonSearch;
 use common\models\Note;
 use common\models\Location;
@@ -329,20 +327,20 @@ class UserController extends BaseController
     }
     protected function getOpeningBalanceCredit($id)
     {
-        return Payment::find()
+        return Invoice::find()
             ->openingBalance()
-            ->notDeleted()
-            ->andWhere(['<', 'payment.amount', 0])
             ->customer($id)
+            ->andWhere(['<', 'invoice.balance', 0])
+            ->notDeleted()
             ->one();
     }
     protected function getPositiveOpeningBalance($id)
     {
-        return Payment::find()
+        return Invoice::find()
             ->openingBalance()
-            ->notDeleted()
-            ->andWhere(['>', 'payment.amount', 0])
             ->customer($id)
+            ->andWhere(['>', 'invoice.balance', 0])
+            ->notDeleted()
             ->one();
     }
     protected function getNoteDataProvider($id)

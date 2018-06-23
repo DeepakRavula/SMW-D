@@ -39,7 +39,7 @@ class PaymentController extends BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => [
                     'invoice-payment', 'credit-payment', 'update', 'delete', 'receive',
-                    'validate-apply-credit'
+                    'validate-apply-credit', 'validate-receive'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -53,7 +53,8 @@ class PaymentController extends BaseController
                         'allow' => true,
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'print', 'receive',
-                            'invoice-payment', 'credit-payment', 'validate-apply-credit'
+                            'invoice-payment', 'credit-payment', 'validate-apply-credit',
+                            'validate-receive'
                         ],
                         'roles' => ['managePfi', 'manageInvoices'],
                     ],
@@ -413,5 +414,16 @@ class PaymentController extends BaseController
             ];
         }
         return $response;
+    }
+
+    public function actionValidateReceive()
+    {
+        $request = Yii::$app->request;
+        $model = new PaymentForm();
+        $model->load($request->post());
+        if (!$model->amount) {
+            $model->amount = 0.0;
+        }
+        return ActiveForm::validate($model);
     }
 }

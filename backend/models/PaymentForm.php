@@ -47,10 +47,10 @@ class PaymentForm extends Model
     public function rules()
     {
         return [
-            [['payment_method_id', 'userId', 'date'], 'required'],
-            //['amount', 'validateAmount'],
+            [['payment_method_id', 'date'], 'required'],
+            ['amount', 'validateAmount'],
             [['date', 'amountNeeded', 'invoiceIds', 'canUseInvoiceCredits', 'selectedCreditValue',
-                'lessonIds', 'canUseCustomerCredits', 'creditIds', 'amount'], 'safe']
+                'lessonIds', 'canUseCustomerCredits', 'creditIds', 'amount', 'userId'], 'safe']
         ];
     }
 
@@ -186,8 +186,8 @@ class PaymentForm extends Model
 
     public function validateAmount($attributes)
     {
-        if (!$this->amount) {
-            if ((float) $this->amountNeeded > (float) $this->amount + $this->selectedCreditValue) {
+        if ($this->amount < 0.01 && $this->selectedCreditValue < 0.01) {
+            if ($this->amountNeeded > 0.01) {
                 $this->addError($attributes, "Amount can't be empty");
             }
         }

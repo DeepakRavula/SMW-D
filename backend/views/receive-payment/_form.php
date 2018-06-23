@@ -6,6 +6,7 @@ use yii\jui\DatePicker;
 use common\models\PaymentMethod;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yii\jui\Accordion;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\PaymentMethods */
@@ -24,8 +25,8 @@ use yii\helpers\Url;
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
         'action' => Url::to(['payment/receive']),
-        // 'enableAjaxValidation' => true,
-        // 'validationUrl' => Url::to(['payment/validate-receive'])
+        'enableAjaxValidation' => true,
+        'validationUrl' => Url::to(['payment/validate-receive'])
     ]); ?>
 
     <div class="row">
@@ -56,29 +57,42 @@ use yii\helpers\Url;
     <?= $form->field($model, 'selectedCreditValue')->hiddenInput(['id' => 'selected-credit-value'])->label(false); ?>
 
     <?php ActiveForm::end(); ?>
+    <?= Accordion::widget([
+        'items' => [
+            [
+                'header' => 'Lessons',
+                'content' => $this->render('/receive-payment/_lesson-line-item', [
+                    'model' => $model,
+                    'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                    'searchModel' => $searchModel
+                ]),
+            ],
+            [
+                'header' => 'Invoices',
+                'headerOptions' => ['tag' => 'h3'],
+                'content' => $this->render('/receive-payment/_invoice-line-item', [
+                    'model' => $model,
+                    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                    'searchModel' => $searchModel
+                ]),
+                'options' => ['tag' => 'div'],
+            ],
+            [
+                'header' => 'Credits',
+                'headerOptions' => ['tag' => 'h3'],
+                'content' => $this->render('/receive-payment/_credits-available', [
+                    'model' => $model,
+                    'creditDataProvider' => $creditDataProvider,
+                ]),
+                'options' => ['tag' => 'div'],
+            ]
+        ],
+        'options' => ['tag' => 'div'],
+        'itemOptions' => ['tag' => 'div'],
+        'headerOptions' => ['tag' => 'h3'],
+        'clientOptions' => ['collapsible' => true],
+    ]); ?>
 
-    <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_lesson-line-item', [
-        'model' => $model,
-        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-        'searchModel' => $searchModel
-    ]);
-    ?>
-    
-    <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_invoice-line-item', [
-        'model' => $model,
-        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-        'searchModel' => $searchModel
-    ]);
-    ?>
-    
-    <?= Html::label('Credits', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_credits-available', [
-        'model' => $model,
-        'creditDataProvider' => $creditDataProvider,
-    ]);
-    ?>
     <h4 class="pull-right amount-needed">Available Credits $<span class="credit-available">0.00</span></h4>
 </div>
 
@@ -128,6 +142,10 @@ use yii\helpers\Url;
             $('#selected-credit-value').val((creditAmount).toFixed(2));
             $('#amount-needed-value').val((amount).toFixed(2));
             $('.amount-needed-value').text((amount).toFixed(2));
+            var amount = $('#paymentform-amount').val();
+            $('#paymentform-amount').val(amount).trigger('change');
+            $('#paymentform-amount').focus();
+            $('#paymentform-amount').blur();
             return false;
         },
         setAvailableCredits : function() {

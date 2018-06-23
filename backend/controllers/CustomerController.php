@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use common\models\Payment;
 use Yii;
 use yii\helpers\Url;
 use common\models\Location;
@@ -61,9 +60,10 @@ class CustomerController extends UserController
         $post = Yii::$app->request->post();
         if ($post) {
             if ($openingBalanceModel->load($post) && $openingBalanceModel->validate()) {
-                $openingBalanceModel->addOpeningBalance();
+                $invoice = $openingBalanceModel->addOpeningBalance();
                 $response = [
-                    'status' => true
+                    'status' => true,
+                    'url' => Url::to(['invoice/view', 'id' => $invoice->id])
                 ];
             } else {
                 $response = [
