@@ -5,9 +5,8 @@ use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 use common\models\PaymentMethod;
 use yii\helpers\ArrayHelper;
-use yii\widgets\Pjax;
 use yii\helpers\Url;
-use kartik\daterange\DateRangePicker;
+use yii\jui\Accordion;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\PaymentMethods */
@@ -26,6 +25,8 @@ use kartik\daterange\DateRangePicker;
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
         'action' => Url::to(['payment/receive']),
+        'enableAjaxValidation' => true,
+        'validationUrl' => Url::to(['payment/validate-receive'])
     ]); ?>
 
     <div class="row">
@@ -43,110 +44,142 @@ use kartik\daterange\DateRangePicker;
                 ]
             ])->label('Date'); ?>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-3">
             <?= $form->field($model, 'payment_method_id')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))
                 ->label('Payment Method'); ?>
         </div>
         <div class="col-xs-2">
-        </div>    
-        <?php Pjax::Begin(['id' => 'payment-amount', 'timeout' => 6000]); ?>
-        <div class="col-xs-3">
-            <?= $form->field($model, 'amount', ['inputOptions' => ['value' => Yii::$app->formatter->asDecimal($model->amount)]])->textInput()->label('Amount Received'); ?>
+            <?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control'])->label('Amount Received'); ?>
         </div>
-        <?php Pjax::end(); ?>
     </div>
-    <div class="pull-right col-md-3">
-    <label>Date Range To Filter Lessons</label>
-    <?= DateRangePicker::widget([
-        'model' => $model,
-        'attribute' => 'dateRange',
-        'convertFormat' => true,
-        'initRangeExpr' => true,
-        'options' => [
-            'class' => 'form-control',
-            'readOnly' => true
-        ],
-        'pluginOptions' => [
-            'autoApply' => true,
-            'ranges' => [
-		 Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
-		Yii::t('kvdrp', 'Next Month') => ["moment().add(1, 'month').startOf('month')", "moment().add(1, 'month').endOf('month')"],
-		Yii::t('kvdrp', 'Next 3 Months') => ["moment().add(1, 'month').startOf('month')", "moment().add(3, 'month').endOf('month')"],
-		Yii::t('kvdrp', 'Next 6 Months') => ["moment().add(1, 'month').startOf('month')", "moment().add(6, 'month').endOf('month')"],
-		Yii::t('kvdrp', 'Next 12 Months') => ["moment().add(1, 'month').startOf('month')", "moment().add(12, 'month').endOf('month')"],
-            ],
-            'locale' => [
-                'format' => 'M d, Y'
-            ],
-            'opens' => 'left'
-        ]
-    ]); ?>
-</div>
-    <div class = "row">
-	<div class="col-md-12">
-    <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_lesson-line-item', [
-        'model' => $model,
-        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-        'searchModel'=>$searchModel,
-    ]);
-    ?>
-	</div>
-    </div>
-    <div class = "row">
-	<div class="col-md-12">
-    <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_invoice-line-item', [
-        'model' => $model,
-        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-        'searchModel'=>$searchModel,
-    ]);
-    ?>
-	</div>
-    </div>
-    <?php ActiveForm::end(); ?>
 
+    <?= $form->field($model, 'amountNeeded')->hiddenInput(['id' => 'amount-needed-value'])->label(false); ?>
+    <?= $form->field($model, 'selectedCreditValue')->hiddenInput(['id' => 'selected-credit-value'])->label(false); ?>
+
+    <?php ActiveForm::end(); ?>
+    <?= Accordion::widget([
+        'items' => [
+            [
+                'header' => 'Lessons',
+                'content' => $this->render('/receive-payment/_lesson-line-item', [
+                    'model' => $model,
+                    'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                    'searchModel' => $searchModel
+                ]),
+            ],
+            [
+                'header' => 'Invoices',
+                'headerOptions' => ['tag' => 'h3'],
+                'content' => $this->render('/receive-payment/_invoice-line-item', [
+                    'model' => $model,
+                    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                    'searchModel' => $searchModel
+                ]),
+                'options' => ['tag' => 'div'],
+            ],
+            [
+                'header' => 'Credits',
+                'headerOptions' => ['tag' => 'h3'],
+                'content' => $this->render('/receive-payment/_credits-available', [
+                    'model' => $model,
+                    'creditDataProvider' => $creditDataProvider,
+                ]),
+                'options' => ['tag' => 'div'],
+            ]
+        ],
+        'options' => ['tag' => 'div'],
+        'itemOptions' => ['tag' => 'div'],
+        'headerOptions' => ['tag' => 'h3'],
+        'clientOptions' => ['collapsible' => true],
+    ]); ?>
+
+    <h4 class="pull-right amount-needed">Available Credits $<span class="credit-available">0.00</span></h4>
 </div>
 
 <script>
     var receivePayment = {
         setAction: function() {
-            var customerId = <?= $model->customerId ?>;
+            var lessonId = <?= $searchModel->lessonId ?>;
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-            var params = $.param({ 'PaymentForm[customerId]' : customerId, 'PaymentForm[lessonIds]': lessonIds, 'PaymentForm[invoiceIds]': invoiceIds });
+            var creditIds = $('#credit-line-item-grid').yiiGridView('getSelectedRows');
+            var canUseCustomerCredits = 0;
+            var canUseInvoiceCredits = 0;
+            $('.credit-items-value').each(function() {
+                if ($(this).find('.check-checkbox').is(":checked")){
+                    var creditType = $(this).find('.credit-type').text();
+                    if (creditType == 'Invoice Credit') {
+                        canUseInvoiceCredits = 1;
+                    } else if (creditType == 'Customer Credit') {
+                        canUseCustomerCredits = 1;
+                    }
+                }
+            });
+            var params = $.param({ 'PaymentFormLessonSearch[lessonId]' : lessonId, 'PaymentFormLessonSearch[lessonIds]': lessonIds, 
+                'PaymentForm[invoiceIds]': invoiceIds, 'PaymentForm[canUseCustomerCredits]': canUseCustomerCredits, 
+                'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[creditIds]': creditIds });
             var url = '<?= Url::to(['payment/receive']) ?>?' + params;
             $('#modal-form').attr('action', url);
+            return false;
+        },
+        calcAmountNeeded : function() {
+            var amount = parseFloat('0.00');
+            $('.line-items-value').each(function() {
+                if ($(this).find('.check-checkbox').is(":checked")){
+                    var balance = $(this).find('.invoice-value').text();
+                    balance = balance.replace('$', '');
+                    amount = parseFloat(amount) + parseFloat(balance);
+                }
+            });
+            var creditAmount = parseFloat('0.00');
+            $('.credit-items-value').each(function() {
+                if ($(this).find('.check-checkbox').is(":checked")){
+                    var balance = $(this).find('.credit-value').text();
+                    balance = balance.replace('$', '');
+                    creditAmount = parseFloat(creditAmount) + parseFloat(balance);
+                }
+            });
+            $('#selected-credit-value').val((creditAmount).toFixed(2));
+            $('#amount-needed-value').val((amount).toFixed(2));
+            $('.amount-needed-value').text((amount).toFixed(2));
+            var amount = $('#paymentform-amount').val();
+            $('#paymentform-amount').val(amount).trigger('change');
+            $('#paymentform-amount').focus();
+            $('#paymentform-amount').blur();
+            return false;
+        },
+        setAvailableCredits : function() {
+            var creditAmount = parseFloat('0.00');
+            $('.credit-items-value').each(function() {
+                var balance = $(this).find('.credit-value').text();
+                balance = balance.replace('$', '');
+                creditAmount = parseFloat(creditAmount) + parseFloat(balance);
+            });
+            $('.credit-available').text((creditAmount).toFixed(2));
             return false;
         }
     };
 
     $(document).ready(function () {
+        var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Receive Payment</h4> </div> <div class="col-md-6"> <h4 class="amount-needed pull-right">Amount Needed $<span class="amount-needed-value">0.00</span></h4> </div> </div>'; 
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
-        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Receive Payment</h4>');
+        $('#popup-modal').find('.modal-header').html(header);
         $('.modal-save').text('Pay');
         $('.select-on-check-all').prop('checked', true);
-        $('#invoice-line-item-grid .select-on-check-all').prop('disabled', true);
-        $('#invoice-line-item-grid input[name="selection[]"]').prop('disabled', true);
         receivePayment.setAction();
+        receivePayment.calcAmountNeeded();
+        receivePayment.setAvailableCredits();
     });
 
-    $(document).off('change', '#paymentform-daterange').on('change', '#paymentform-daterange', function () {
-        $('#modal-spinner').show();
-        var dateRange = $('#paymentform-daterange').val();
-	    var customerId = <?= $model->customerId ?>;
-        var params = $.param({ 'PaymentForm[dateRange]': dateRange, 'PaymentForm[customerId]' : customerId });
-        var url = '<?= Url::to(['payment/receive']) ?>?' + params;
-	    $.pjax.reload({url:url, container: "#lesson-lineitem-listing", replace: false, async: false, timeout: 6000});
-        $.pjax.reload({url:url, container: "#payment-amount", replace: false, async: false, timeout: 6000});
-        $('.select-on-check-all').prop('checked', true);
-        $('#modal-spinner').hide();
+    $(document).off('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
         receivePayment.setAction();
+        receivePayment.calcAmountNeeded();
         return false;
     });
 
-    $(document).off('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
+    $(document).off('pjax:success', '#lesson-line-item-listing').on('pjax:success', '#lesson-line-item-listing', function () {
         receivePayment.setAction();
+        receivePayment.calcAmountNeeded();
         return false;
     });
 

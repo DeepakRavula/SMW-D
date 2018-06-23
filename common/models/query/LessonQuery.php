@@ -133,8 +133,7 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return $this->joinWith(['enrolment' => function ($query) use ($id) {
             $query->joinWith(['student' => function ($query) use ($id) {
-                $query->andWhere(['customer_id' => $id])
-                ->active();
+                $query->andWhere(['student.id' => $id]);
             }]);
         }]);
     }
@@ -222,8 +221,9 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function privateLessons()
     {
         $this->joinWith(['course' => function ($query) {
-            $query->joinWith('program')
-                ->andWhere(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+            $query->joinWith(['program' => function ($query) {
+                $query->andWhere(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
+            }]);
         }]);
 
         return $this;
@@ -248,8 +248,9 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function groupLessons()
     {
         $this->joinWith(['course' => function ($query) {
-            $query->joinWith('program')
-                ->andWhere(['program.type' => Program::TYPE_GROUP_PROGRAM]);
+            $query->joinWith(['program' => function ($query) {
+                $query->andWhere(['program.type' => Program::TYPE_GROUP_PROGRAM]);
+            }]);
         }]);
 
         return $this;

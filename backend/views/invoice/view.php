@@ -26,6 +26,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 <?php if ((int) $model->type === InvoiceSearch::TYPE_PRO_FORMA_INVOICE): ?>
 <?php $this->params['show-all'] = $this->render('_show-all', [
     'model' => $model,
+    'searchModel' => $searchModel,
 ]); ?>
 <?php endif; ?>
 <div id="invoice-spinner" class="spinner" style="display:none">
@@ -95,6 +96,7 @@ if (!empty($lineItem)) {
         ?>   
 	</div>
 </div>
+<?php if ((int) $model->type === InvoiceSearch::TYPE_INVOICE): ?>
 <div class="row">
 	<div class="col-md-9"> 
 	    <?= $this->render('payment/_index', [
@@ -115,6 +117,7 @@ if (!empty($lineItem)) {
 	</div>
     <?php Pjax::end(); ?>
 </div>
+        <?php endif; ?>
 <div class="row">
 <?php Pjax::Begin(['id' => 'invoice-message-panel', 'timeout' => 6000]); ?>
    <div class="col-md-3">

@@ -96,8 +96,18 @@ echo Menu::widget([
         //     'badgeBgClass' => 'label-default'
         // ],
         
-        [
+                    [
             'label' => Yii::t('backend', 'Proforma Invoices'),
+            'icon' => '<i class="fa  fa-dollar"></i>',
+            'url' => ['/invoice/index', 'InvoiceSearch[type]' => Invoice::TYPE_PRO_FORMA_INVOICE],
+            'visible' => Yii::$app->user->can('managePfi'),
+            'active' => (isset(Yii::$app->request->queryParams['InvoiceSearch']['type']) && Yii::$app->request->queryParams['InvoiceSearch']['type'] == Invoice::TYPE_PRO_FORMA_INVOICE) ? true : false,
+            'badge' => Invoice::pfiCount(),
+            'badgeBgClass' => 'label-default'
+        ],
+
+        [
+            'label' => Yii::t('backend', 'New Proforma Invoices'),
             'icon' => '<i class="fa  fa-dollar"></i>',
             'url' => ['/proforma-invoice/index'],
             'visible' => Yii::$app->user->can('managePfi'),

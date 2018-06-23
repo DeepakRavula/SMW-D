@@ -100,7 +100,6 @@ trait Payable
             $paymentModel->reference = $from->getInvoiceNumber();
         }
         $paymentModel->user_id = $user->id;
-        $paymentModel->customerId = $user->id;
         if ($paymentModel->save()) {
             $creditPaymentId = $paymentModel->id;
             $paymentModel->id = null;
