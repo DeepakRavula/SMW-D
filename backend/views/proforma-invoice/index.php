@@ -51,6 +51,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     return !empty($data->user->phoneNumber->number) ? $data->user->phoneNumber->number : null;
                 },
             ],
+            [
+                'attribute' => 'phone',
+                'label' => 'Total',
+                'value' => function ($data) {
+                    return !empty($data->total) ? $data->total : null;
+                },
+            ],
         ],
     ]); ?>
 </div>
