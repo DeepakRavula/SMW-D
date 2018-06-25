@@ -36,10 +36,11 @@ class TransactionQuery extends \yii\db\ActiveQuery
     {
         return $this->joinWith(['payment' => function ($query) use ($userId) {
             $query->joinWith(['customerCredit' => function ($query) use ($userId) {
-                $query->andWhere(['customer_payment.userId' => $userId]);
+                $query->andWhere(['NOT',['customer_payment.id' => null]])
+                ->andWhere(['customer_payment.userId' => $userId]);
             }])
             ->notDeleted()
-            ->notCreditUsed();
+            ->exceptAutoPayments();
         }]);
     }
 
