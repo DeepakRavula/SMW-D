@@ -362,8 +362,7 @@ class PaymentController extends BaseController
             $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         }
         $searchModel->load(Yii::$app->request->get());
-	$customerRequest = Yii::$app->request->get('PaymentFormLessonSearch');
-        $searchModel->userId = $customerRequest['userId'];
+	$model->userId = $searchModel->userId;
         $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
         $model->load(Yii::$app->request->get());
         $lessonLineItemsDataProvider = new ActiveDataProvider([
