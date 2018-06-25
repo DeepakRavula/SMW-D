@@ -33,10 +33,10 @@ use yii\helpers\Url;
 <script>
     var createPFI = {
         setAction: function() {
-            var lessonId = '<?= $searchModel->lessonId ?>';
+            var userId = '<?= $searchModel->userId ?>';
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-            var params = $.param({ 'PaymentFormLessonSearch[lessonId]': lessonId, 'PaymentFormLessonSearch[lessonIds]': lessonIds, 
+            var params = $.param({ 'PaymentFormLessonSearch[userId]': userId, 'PaymentFormLessonSearch[lessonIds]': lessonIds, 
                 'ProformaInvoice[invoiceIds]': invoiceIds });
             var url = '<?= Url::to(['proforma-invoice/create']) ?>?' + params;
             $('#modal-form').attr('action', url);
