@@ -28,10 +28,8 @@ class m180616_113552_pfi_refactor extends Migration
         $transactionIds = [];
         $invoices = Invoice::find()
             ->notDeleted()
-            ->notCanceled()
             ->andWhere(['NOT', ['invoice.user_id' => 0]])
             ->location([14, 15])
-            ->notReturned()
             ->all();
         foreach ($invoices as $invoice) {
             $transactionIds[] = $invoice->transactionId;

@@ -361,6 +361,7 @@ class UserController extends BaseController
                 ->invoices($id)
                 ->union($paymentQuery)
                 ->all();
+        
         $ids = ArrayHelper::getColumn($invoiceQuery, 'id');
         $accountQuery = Transaction::find()
             ->andWhere(['id' => $ids])
