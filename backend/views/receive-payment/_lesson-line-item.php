@@ -125,24 +125,27 @@ use yii\bootstrap\Html;
             'contentOptions' => ['class' => 'text-right invoice-value']
         ]);
 
-        array_push($columns, [
-            'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right'],
-            'label' => 'Payment',
-            'value' => function ($data) { 
-                return Html::textInput('', round($data->getOwingAmount($data->enrolment->id), 2), 
-                    ['class' => 'payment-amount text-right']); 
-            },
-            'attribute' => 'new_activity',
-            'format' => 'raw',
-        ]);
+        if ($searchModel->showCheckBox && !$isCreatePfi) {
+            array_push($columns, [
+                'headerOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right'],
+                'label' => 'Payment',
+                'value' => function ($data) { 
+                    return Html::textInput('', round($data->getOwingAmount($data->enrolment->id), 2), 
+                        ['class' => 'payment-amount text-right']); 
+                },
+                'attribute' => 'new_activity',
+                'format' => 'raw',
+            ]);
+        }
     ?>
 <?php if ($searchModel->showCheckBox) : ?>
     <?= GridView::widget([
         'options' => ['id' => 'lesson-line-item-grid'],
         'dataProvider' => $lessonLineItemsDataProvider,
         'filterModel' => $searchModel,
-        'filterUrl' => Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $searchModel->userId]),
+        'filterUrl' => $isCreatePfi ? Url::to(['proforma-invoice/create', 'PaymentFormLessonSearch[userId]' => $searchModel->userId]) : 
+            Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $searchModel->userId]),
         'columns' => $columns,
         'summary' => false,
         'rowOptions' => ['class' => 'line-items-value'],

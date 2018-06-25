@@ -52,7 +52,7 @@ use common\Models\User;
     });
     $(document).off('click', '#create-pfi').on('click', '#create-pfi', function () {
         $.ajax({
-            url    : '<?= Url::to(['proforma-invoice/create', 'PaymentFormLessonSearch[lessonId]' => $model->id]); ?>',
+            url    : '<?= Url::to(['proforma-invoice/create', 'PaymentFormLessonSearch[userId]' => $model->customer->id]); ?>',
             type   : 'get',
             dataType: 'json',
             success: function(response)

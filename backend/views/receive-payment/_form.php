@@ -64,6 +64,7 @@ use yii\jui\Accordion;
                 'header' => 'Lessons',
                 'content' => $this->render('/receive-payment/_lesson-line-item', [
                     'model' => $model,
+                    'isCreatePfi' => false,
                     'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
                     'searchModel' => $searchModel
                 ]),
@@ -73,6 +74,7 @@ use yii\jui\Accordion;
                 'headerOptions' => ['tag' => 'h3'],
                 'content' => $this->render('/receive-payment/_invoice-line-item', [
                     'model' => $model,
+                    'isCreatePfi' => false,
                     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                     'searchModel' => $searchModel
                 ]),

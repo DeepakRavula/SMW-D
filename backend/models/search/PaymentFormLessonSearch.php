@@ -53,10 +53,6 @@ class PaymentFormLessonSearch extends Lesson
             $fromDate = new \DateTime($this->fromDate);
             $toDate = new \DateTime($this->toDate);
         }
-        if ($this->lessonId) {
-            $lesson = Lesson::findOne($this->lessonId);
-            $userId = $lesson->customer->id;
-        }
         $lessonsQuery = Lesson::find();
         if ($this->lessonIds) {
             $lessonsQuery->andWhere(['id' => $this->lessonIds]);

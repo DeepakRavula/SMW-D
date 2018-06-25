@@ -75,7 +75,7 @@ class ProformaInvoiceController extends BaseController
         $model = new ProformaInvoice();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d,Y');
-        if (!$request->post()) {
+        if (!$request->isPost) {
             $searchModel->fromDate = $currentDate->format('M 1, Y');
             $searchModel->toDate = $currentDate->format('M t, Y'); 
             $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
@@ -83,10 +83,7 @@ class ProformaInvoiceController extends BaseController
         $model->load(Yii::$app->request->get());
         $searchModel->load(Yii::$app->request->get());
         $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
-        if ($searchModel->lessonId) {
-            $lesson = Lesson::findOne($searchModel->lessonId);
-            $model->userId = $lesson->customer->id;
-        }
+        $model->userId = $searchModel->userId;
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery,
             'pagination' => false 
@@ -106,7 +103,6 @@ class ProformaInvoiceController extends BaseController
         
         if ($request->isPost) {
             $model->load($request->post());
-            $searchModel->load($request->post());
             if (!empty($searchModel->lessonIds) || !empty($model->invoiceIds)) {
                 $lessons = Lesson::findAll($searchModel->lessonIds);
                 $invoices = Invoice::findAll($model->invoiceIds);

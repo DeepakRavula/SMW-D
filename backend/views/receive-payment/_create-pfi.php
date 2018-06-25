@@ -11,12 +11,13 @@ use yii\helpers\Url;
 
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['proforma-invoice/create', 'ProformaInvoice[lessonId]' => $searchModel->lessonId]),
+        'action' => Url::to(['proforma-invoice/create']),
     ]); ?>
     <?php ActiveForm::end(); ?>
     <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
     <?= $this->render('/receive-payment/_lesson-line-item', [
         'model' => $model,
+        'isCreatePfi' => true,
         'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
         'searchModel' => $searchModel,
     ]);
@@ -25,6 +26,7 @@ use yii\helpers\Url;
     <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
     <?= $this->render('/receive-payment/_invoice-line-item', [
         'model' => $model,
+        'isCreatePfi' => true,
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
         'searchModel' => $searchModel,
     ]);
@@ -50,6 +52,11 @@ use yii\helpers\Url;
         $('.modal-save').text('Create PFI');
         $('.select-on-check-all').prop('checked', true);
         createPFI.setAction();
+    });
+
+    $(document).off('pjax:success', '#lesson-line-item-listing').on('pjax:success', '#lesson-line-item-listing', function () {
+        createPFI.setAction();
+        return false;
     });
 
     $(document).off('change', '#lesson-line-item-grid, #invoice-line-item-grid, .select-on-check-all, input[name="selection[]"]').on('change', '#lesson-line-item-grid, #invoice-line-item-grid, .select-on-check-all, input[name="selection[]"]', function () {

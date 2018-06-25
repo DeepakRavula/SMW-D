@@ -53,6 +53,7 @@ use yii\bootstrap\Html;
         }
     ]);
 
+if ($searchModel->showCheckBox && !$isCreatePfi) {
     array_push($columns, [
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right'],
@@ -63,6 +64,7 @@ use yii\bootstrap\Html;
         'attribute' => 'new_activity',
         'format' => 'raw',
     ]);
+}
 ?>
 
 <?php Pjax::Begin(['id' => 'invoice-lineitem-listing', 'timeout' => 6000]); ?>
