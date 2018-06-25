@@ -105,12 +105,12 @@ use yii\jui\Accordion;
             var canUseCustomerCredits = 0;
             var canUseInvoiceCredits = 0;
             $('.credit-items-value').each(function() {
-                if ($(this).find('.check-checkbox').is(":checked")){
+                if ($(this).find('.check-checkbox').is(":checked")) {
+                    var creditId = $(this).find('.credit-type').attr('creditId');
+                    creditIds.push(creditId);
                     var creditType = $(this).find('.credit-type').text();
                     if (creditType == 'Invoice Credit') {
                         canUseInvoiceCredits = 1;
-                        var creditId = $(this).find('.credit-type').attr('creditId');
-                        creditIds.push(creditId);
                     } 
                     if (creditType == 'Customer Credit') {
                         canUseCustomerCredits = 1;
