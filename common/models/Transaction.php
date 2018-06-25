@@ -119,6 +119,6 @@ class Transaction extends \yii\db\ActiveRecord
 
     public function getAccountDescription()
     {
-        return $this->payment ? 'Payment' : 'Invoice I-' . str_pad($this->invoice->id, 5, 0, STR_PAD_LEFT);
+        return $this->payment ? 'Payment' : $this->invoice->getInvoiceNumber();
     }
 }
