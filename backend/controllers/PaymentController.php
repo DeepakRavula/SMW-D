@@ -321,23 +321,24 @@ class PaymentController extends BaseController
         $invoiceCredits = $this->getCustomerCreditInvoices($customerId);
         $results = [];
         $amount = 0;
-        if (!empty($invoiceCredits)) {
-            foreach ($invoiceCredits as $invoiceCredit) {
-                $amount += abs($invoiceCredit->balance);
-            }
-            $results[] = [
-                'id' => 0,
-                'type' => 'Invoice Credit',
-                'amount' => $amount
-            ];
-        }
         $customer = User::findOne($customerId);
         if ($customer->hasCustomerCredit()) {
             $results[] = [
-                'id' => 1,
+                'id' => $customer->id,
                 'type' => 'Customer Credit',
+                'reference' => null,
                 'amount' => $customer->creditAmount
             ];
+        }
+        if (!empty($invoiceCredits)) {
+            foreach ($invoiceCredits as $invoiceCredit) {
+                $results[] = [
+                    'id' => $invoiceCredit->id,
+                    'type' => 'Invoice Credit',
+                    'reference' => $invoiceCredit->getInvoiceNumber(),
+                    'amount' => abs($invoiceCredit->balance)
+                ];
+            }
         }
         $creditDataProvider = new ArrayDataProvider([
             'allModels' => $results,

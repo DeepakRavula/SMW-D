@@ -96,7 +96,7 @@ class PaymentForm extends Model
                 }
             }
             if ($this->canUseInvoiceCredits) {
-                $creditInvoices = $this->getCustomerCreditInvoices($this->userId);
+                $creditInvoices = Invoice::findAll($this->creditIds);
                 foreach ($creditInvoices as $creditInvoice) {
                     if ($this->invoiceIds) {
                         $invoices = Invoice::findAll($this->invoiceIds);
