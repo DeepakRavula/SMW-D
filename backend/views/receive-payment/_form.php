@@ -30,7 +30,7 @@ use yii\jui\Accordion;
     ]); ?>
 
     <div class="row">
-        <div class="col-xs-3">
+        <div class="col-xs-2">
             <?= $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'value'  => Yii::$app->formatter->asDate($model->date),
                 'dateFormat' => 'php:M d, Y',
@@ -55,6 +55,7 @@ use yii\jui\Accordion;
 
     <?= $form->field($model, 'amountNeeded')->hiddenInput(['id' => 'amount-needed-value'])->label(false); ?>
     <?= $form->field($model, 'selectedCreditValue')->hiddenInput(['id' => 'selected-credit-value'])->label(false); ?>
+    <?= $form->field($model, 'amountToDistribute')->hiddenInput([])->label(false); ?>
 
     <?php ActiveForm::end(); ?>
     <?= Accordion::widget([
@@ -127,15 +128,30 @@ use yii\jui\Accordion;
         calcAmountNeeded : function() {
             var amount = parseFloat('0.00');
             $('.line-items-value').each(function() {
-                if ($(this).find('.check-checkbox').is(":checked")){
+                if ($(this).find('.check-checkbox').is(":checked")) {
                     var balance = $(this).find('.invoice-value').text();
                     balance = balance.replace('$', '');
                     amount = parseFloat(amount) + parseFloat(balance);
                 }
             });
+            var amountToDistribute = 0.0;
+            $('.line-items-value').each(function() {
+                if ($(this).find('.check-checkbox').is(":checked")) {
+                    if ($.isEmptyObject($(this).find('.payment-amount').val())) {
+                        $(this).find('.payment-amount').val($(this).find('.invoice-value').text());
+                    }
+                    amountToDistribute += parseFloat($(this).find('.payment-amount').val());
+                }
+            });
+            $('.line-items-value').each(function() {
+                if (!$(this).find('.check-checkbox').is(":checked")) {
+                    $(this).find('.payment-amount').val('');
+                }
+            });
+            $('#paymentform-amounttodistribute').val(amountToDistribute);
             var creditAmount = parseFloat('0.00');
             $('.credit-items-value').each(function() {
-                if ($(this).find('.check-checkbox').is(":checked")){
+                if ($(this).find('.check-checkbox').is(":checked")) {
                     var balance = $(this).find('.credit-value').text();
                     balance = balance.replace('$', '');
                     creditAmount = parseFloat(creditAmount) + parseFloat(balance);
@@ -175,7 +191,7 @@ use yii\jui\Accordion;
         receivePayment.setAvailableCredits();
     });
 
-    $(document).off('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
+    $(document).off('change', '#credit-line-item-grid, .payment-amount, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '.payment-amount, #credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
         receivePayment.setAction();
         receivePayment.calcAmountNeeded();
         receivePayment.validateAmount();

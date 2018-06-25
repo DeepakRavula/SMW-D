@@ -2,6 +2,7 @@
 
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use yii\bootstrap\Html;
 
 ?>
 <?php
@@ -50,6 +51,17 @@ use yii\widgets\Pjax;
         'value' => function ($data) {
             return !empty($data->balance) ? Yii::$app->formatter->asCurrency($data->balance) : null;
         }
+    ]);
+
+    array_push($columns, [
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right'],
+        'label' => 'Payment',
+        'value' => function ($data) { 
+            return Html::textInput('', round($data->balance, 2), ['class' => 'payment-amount text-right']); 
+        },
+        'attribute' => 'new_activity',
+        'format' => 'raw',
     ]);
 ?>
 

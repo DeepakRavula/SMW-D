@@ -363,8 +363,9 @@ class PaymentController extends BaseController
             $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         }
         $searchModel->load(Yii::$app->request->get());
-	$model->userId = $searchModel->userId;
+	    $model->userId = $searchModel->userId;
         $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
+        $lessonsQuery->orderBy(['lesson.id' => SORT_ASC]);
         $model->load(Yii::$app->request->get());
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery,
@@ -378,6 +379,7 @@ class PaymentController extends BaseController
                 ->customer($searchModel->userId)
                 ->unpaid();
         }
+        $invoicesQuery->orderBy(['invoice.id' => SORT_ASC]);
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoicesQuery,
             'pagination' => false 
