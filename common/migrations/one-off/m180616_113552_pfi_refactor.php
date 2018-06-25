@@ -25,6 +25,7 @@ class m180616_113552_pfi_refactor extends Migration
     public function safeUp()
     {
         set_time_limit(0);
+	ini_set('memory_limit', '-1');
         $transactionIds = [];
         $invoices = Invoice::find()
             ->notDeleted()
