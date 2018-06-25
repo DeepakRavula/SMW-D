@@ -138,7 +138,9 @@ use yii\jui\Accordion;
             $('.line-items-value').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
                     if ($.isEmptyObject($(this).find('.payment-amount').val())) {
-                        $(this).find('.payment-amount').val($(this).find('.invoice-value').text());
+                        var balance = $(this).find('.invoice-value').text();
+                        balance = balance.replace('$', '');
+                        $(this).find('.payment-amount').val(balance);
                     }
                     amountToDistribute += parseFloat($(this).find('.payment-amount').val());
                 }
