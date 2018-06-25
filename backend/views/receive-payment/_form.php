@@ -144,10 +144,6 @@ use yii\jui\Accordion;
             $('#selected-credit-value').val((creditAmount).toFixed(2));
             $('#amount-needed-value').val((amount).toFixed(2));
             $('.amount-needed-value').text((amount).toFixed(2));
-            var amount = $('#paymentform-amount').val();
-            $('#paymentform-amount').val(amount).trigger('change');
-            $('#paymentform-amount').focus();
-            $('#paymentform-amount').blur();
             return false;
         },
         setAvailableCredits : function() {
@@ -159,6 +155,12 @@ use yii\jui\Accordion;
             });
             $('.credit-available').text((creditAmount).toFixed(2));
             return false;
+        },
+        validateAmount : function() {
+            var amount = $('#paymentform-amount').val();
+            $('#paymentform-amount').val(amount).trigger('change');
+            $('#paymentform-amount').focus();
+            $('#paymentform-amount').blur();
         }
     };
 
@@ -176,12 +178,14 @@ use yii\jui\Accordion;
     $(document).off('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
         receivePayment.setAction();
         receivePayment.calcAmountNeeded();
+        receivePayment.validateAmount();
         return false;
     });
 
     $(document).off('pjax:success', '#lesson-line-item-listing').on('pjax:success', '#lesson-line-item-listing', function () {
         receivePayment.setAction();
         receivePayment.calcAmountNeeded();
+        receivePayment.validateAmount();
         return false;
     });
 

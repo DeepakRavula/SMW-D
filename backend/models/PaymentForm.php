@@ -108,7 +108,7 @@ class PaymentForm extends Model
                                     if ($paymentModel->amount > $creditInvoice->balance) {
                                         $paymentModel->amount = abs($creditInvoice->balance);
                                     }
-                                    $pay = $invoice->addPayment($creditInvoice, $paymentModel);
+                                    $invoice->addPayment($creditInvoice, $paymentModel);
                                 } else {
                                     break;
                                 }
