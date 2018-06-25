@@ -59,7 +59,7 @@ class PaymentForm extends Model
     {
         $customer = User::findOne($this->userId);
         if ($this->creditIds) {
-            if ($this->canUseCustomerCredits) {
+            if ($this->canUseCustomerCredits) {die('dfa');
                 if ($this->invoiceIds) {
                     $invoices = Invoice::findAll($this->invoiceIds);
                     foreach ($invoices as $invoice) {
@@ -96,7 +96,7 @@ class PaymentForm extends Model
                 }
             }
             if ($this->canUseInvoiceCredits) {
-                $creditInvoices = $this->getCustomerCreditInvoices($this->userId);
+                $creditInvoices = Invoice::findAll($this->creditIds);
                 foreach ($creditInvoices as $creditInvoice) {
                     if ($this->invoiceIds) {
                         $invoices = Invoice::findAll($this->invoiceIds);
@@ -108,7 +108,7 @@ class PaymentForm extends Model
                                     if ($paymentModel->amount > $creditInvoice->balance) {
                                         $paymentModel->amount = abs($creditInvoice->balance);
                                     }
-                                    $invoice->addPayment($creditInvoice, $paymentModel);
+                                    $pay = $invoice->addPayment($creditInvoice, $paymentModel);
                                 } else {
                                     break;
                                 }

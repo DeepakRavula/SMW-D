@@ -81,7 +81,6 @@ use yii\jui\Accordion;
                 'header' => 'Credits',
                 'headerOptions' => ['tag' => 'h3'],
                 'content' => $this->render('/receive-payment/_credits-available', [
-                    'model' => $model,
                     'creditDataProvider' => $creditDataProvider,
                 ]),
                 'options' => ['tag' => 'div'],
@@ -102,7 +101,7 @@ use yii\jui\Accordion;
             var userId = <?= $searchModel->userId ?>;
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-            var creditIds = $('#credit-line-item-grid').yiiGridView('getSelectedRows');
+            var creditIds = new Array();
             var canUseCustomerCredits = 0;
             var canUseInvoiceCredits = 0;
             $('.credit-items-value').each(function() {
@@ -110,7 +109,10 @@ use yii\jui\Accordion;
                     var creditType = $(this).find('.credit-type').text();
                     if (creditType == 'Invoice Credit') {
                         canUseInvoiceCredits = 1;
-                    } else if (creditType == 'Customer Credit') {
+                        var creditId = $(this).find('.credit-type').attr('creditId');
+                        creditIds.push(creditId);
+                    } 
+                    if (creditType == 'Customer Credit') {
                         canUseCustomerCredits = 1;
                     }
                 }
