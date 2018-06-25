@@ -30,7 +30,7 @@ use yii\jui\Accordion;
     ]); ?>
 
     <div class="row">
-        <div class="col-xs-3">
+        <div class="col-xs-2">
             <?= $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'value'  => Yii::$app->formatter->asDate($model->date),
                 'dateFormat' => 'php:M d, Y',
@@ -55,6 +55,7 @@ use yii\jui\Accordion;
 
     <?= $form->field($model, 'amountNeeded')->hiddenInput(['id' => 'amount-needed-value'])->label(false); ?>
     <?= $form->field($model, 'selectedCreditValue')->hiddenInput(['id' => 'selected-credit-value'])->label(false); ?>
+    <?= $form->field($model, 'amountToDistribute')->hiddenInput([])->label(false); ?>
 
     <?php ActiveForm::end(); ?>
     <?= Accordion::widget([
@@ -81,7 +82,6 @@ use yii\jui\Accordion;
                 'header' => 'Credits',
                 'headerOptions' => ['tag' => 'h3'],
                 'content' => $this->render('/receive-payment/_credits-available', [
-                    'model' => $model,
                     'creditDataProvider' => $creditDataProvider,
                 ]),
                 'options' => ['tag' => 'div'],
@@ -102,15 +102,18 @@ use yii\jui\Accordion;
             var userId = <?= $searchModel->userId ?>;
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-            var creditIds = $('#credit-line-item-grid').yiiGridView('getSelectedRows');
+            var creditIds = new Array();
             var canUseCustomerCredits = 0;
             var canUseInvoiceCredits = 0;
             $('.credit-items-value').each(function() {
-                if ($(this).find('.check-checkbox').is(":checked")){
+                if ($(this).find('.check-checkbox').is(":checked")) {
+                    var creditId = $(this).find('.credit-type').attr('creditId');
+                    creditIds.push(creditId);
                     var creditType = $(this).find('.credit-type').text();
                     if (creditType == 'Invoice Credit') {
                         canUseInvoiceCredits = 1;
-                    } else if (creditType == 'Customer Credit') {
+                    } 
+                    if (creditType == 'Customer Credit') {
                         canUseCustomerCredits = 1;
                     }
                 }
@@ -125,15 +128,30 @@ use yii\jui\Accordion;
         calcAmountNeeded : function() {
             var amount = parseFloat('0.00');
             $('.line-items-value').each(function() {
-                if ($(this).find('.check-checkbox').is(":checked")){
+                if ($(this).find('.check-checkbox').is(":checked")) {
                     var balance = $(this).find('.invoice-value').text();
                     balance = balance.replace('$', '');
                     amount = parseFloat(amount) + parseFloat(balance);
                 }
             });
+            var amountToDistribute = 0.0;
+            $('.line-items-value').each(function() {
+                if ($(this).find('.check-checkbox').is(":checked")) {
+                    if ($.isEmptyObject($(this).find('.payment-amount').val())) {
+                        $(this).find('.payment-amount').val($(this).find('.invoice-value').text());
+                    }
+                    amountToDistribute += parseFloat($(this).find('.payment-amount').val());
+                }
+            });
+            $('.line-items-value').each(function() {
+                if (!$(this).find('.check-checkbox').is(":checked")) {
+                    $(this).find('.payment-amount').val('');
+                }
+            });
+            $('#paymentform-amounttodistribute').val(amountToDistribute);
             var creditAmount = parseFloat('0.00');
             $('.credit-items-value').each(function() {
-                if ($(this).find('.check-checkbox').is(":checked")){
+                if ($(this).find('.check-checkbox').is(":checked")) {
                     var balance = $(this).find('.credit-value').text();
                     balance = balance.replace('$', '');
                     creditAmount = parseFloat(creditAmount) + parseFloat(balance);
@@ -142,10 +160,6 @@ use yii\jui\Accordion;
             $('#selected-credit-value').val((creditAmount).toFixed(2));
             $('#amount-needed-value').val((amount).toFixed(2));
             $('.amount-needed-value').text((amount).toFixed(2));
-            var amount = $('#paymentform-amount').val();
-            $('#paymentform-amount').val(amount).trigger('change');
-            $('#paymentform-amount').focus();
-            $('#paymentform-amount').blur();
             return false;
         },
         setAvailableCredits : function() {
@@ -157,6 +171,12 @@ use yii\jui\Accordion;
             });
             $('.credit-available').text((creditAmount).toFixed(2));
             return false;
+        },
+        validateAmount : function() {
+            var amount = $('#paymentform-amount').val();
+            $('#paymentform-amount').val(amount).trigger('change');
+            $('#paymentform-amount').focus();
+            $('#paymentform-amount').blur();
         }
     };
 
@@ -171,15 +191,17 @@ use yii\jui\Accordion;
         receivePayment.setAvailableCredits();
     });
 
-    $(document).off('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
+    $(document).off('change', '#credit-line-item-grid, .payment-amount, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '.payment-amount, #credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
         receivePayment.setAction();
         receivePayment.calcAmountNeeded();
+        receivePayment.validateAmount();
         return false;
     });
 
     $(document).off('pjax:success', '#lesson-line-item-listing').on('pjax:success', '#lesson-line-item-listing', function () {
         receivePayment.setAction();
         receivePayment.calcAmountNeeded();
+        receivePayment.validateAmount();
         return false;
     });
 

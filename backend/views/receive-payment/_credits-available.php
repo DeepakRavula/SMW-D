@@ -17,10 +17,23 @@ use yii\widgets\Pjax;
 
     array_push($columns, [
         'headerOptions' => ['class' => 'text-left'],
-        'contentOptions' => ['class' => 'text-left credit-type'],
+        'contentOptions' => function ($model) {
+            return [
+                'creditId' => $model['id'],
+                'class' => 'text-left credit-type'
+            ];
+        },
         'label' => 'Type',
         'value' => 'type',
     ]);
+
+    array_push($columns, [
+        'headerOptions' => ['class' => 'text-left'],
+        'contentOptions' => ['class' => 'text-left'],
+        'label' => 'Reference',
+        'value' => 'reference',
+    ]);
+
 
     array_push($columns, [
         'format' => 'currency',

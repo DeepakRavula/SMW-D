@@ -7,6 +7,7 @@ use kartik\grid\GridView;
 use common\models\Location;
 use yii\helpers\ArrayHelper;
 use common\models\Student;
+use yii\bootstrap\Html;
 
 ?>
 
@@ -122,6 +123,18 @@ use common\models\Student;
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']
+        ]);
+
+        array_push($columns, [
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right'],
+            'label' => 'Payment',
+            'value' => function ($data) { 
+                return Html::textInput('', round($data->getOwingAmount($data->enrolment->id), 2), 
+                    ['class' => 'payment-amount text-right']); 
+            },
+            'attribute' => 'new_activity',
+            'format' => 'raw',
         ]);
     ?>
 <?php if ($searchModel->showCheckBox) : ?>

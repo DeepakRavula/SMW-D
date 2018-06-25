@@ -38,6 +38,7 @@ class PaymentForm extends Model
     public $userId;
     public $lessonIds;
     public $creditIds;
+    public $amountToDistribute;
     public $canUseInvoiceCredits;
     public $canUseCustomerCredits;
     public $selectedCreditValue;
@@ -51,17 +52,29 @@ class PaymentForm extends Model
             [['payment_method_id', 'date'], 'required'],
             ['amount', 'validateAmount'],
             [['date', 'amountNeeded', 'invoiceIds', 'canUseInvoiceCredits', 'selectedCreditValue',
-                'lessonIds', 'canUseCustomerCredits', 'creditIds', 'amount', 'userId'], 'safe']
+                'lessonIds', 'canUseCustomerCredits', 'creditIds', 'amount', 'userId',
+                'amountToDistribute'], 'safe']
         ];
     }
 
     public function save()
     {
         $customer = User::findOne($this->userId);
+        if ($this->invoiceIds) {
+            $invoices = Invoice::find()
+                ->where(['id' => $this->invoiceIds])
+                ->orderBy(['id' => SORT_ASC])
+                ->all();
+        }
+        if ($this->lessonIds) {
+            $lessons = Lesson::find()
+                ->where(['id' => $this->lessonIds])
+                ->orderBy(['id' => SORT_ASC])
+                ->all();
+        }
         if ($this->creditIds) {
             if ($this->canUseCustomerCredits) {
                 if ($this->invoiceIds) {
-                    $invoices = Invoice::findAll($this->invoiceIds);
                     foreach ($invoices as $invoice) {
                         if ($invoice->isOwing()) {
                             $paymentModel = new Payment();
@@ -78,7 +91,6 @@ class PaymentForm extends Model
                     }
                 }
                 if ($this->lessonIds) {
-                    $lessons = Lesson::findAll($this->lessonIds);
                     foreach ($lessons as $lesson) {
                         if ($lesson->isOwing($lesson->enrolment->id)) {
                             $paymentModel = new Payment();
@@ -96,10 +108,9 @@ class PaymentForm extends Model
                 }
             }
             if ($this->canUseInvoiceCredits) {
-                $creditInvoices = $this->getCustomerCreditInvoices($this->userId);
+                $creditInvoices = Invoice::findAll($this->creditIds);
                 foreach ($creditInvoices as $creditInvoice) {
                     if ($this->invoiceIds) {
-                        $invoices = Invoice::findAll($this->invoiceIds);
                         foreach ($invoices as $invoice) {
                             if ($invoice->isOwing()) {
                                 $paymentModel = new Payment();
@@ -116,7 +127,6 @@ class PaymentForm extends Model
                         }
                     }
                     if ($this->lessonIds) {
-                        $lessons = Lesson::findAll($this->lessonIds);
                         foreach ($lessons as $lesson) {
                             if ($lesson->isOwing($lesson->enrolment->id)) {
                                 $paymentModel = new Payment();
@@ -137,7 +147,6 @@ class PaymentForm extends Model
         } else {
             $amount = $this->amount;
             if ($this->invoiceIds) {
-                $invoices = Invoice::findAll($this->invoiceIds);
                 foreach ($invoices as $invoice) {
                     if ($invoice->isOwing()) {
                         $paymentModel = new Payment();
@@ -155,7 +164,6 @@ class PaymentForm extends Model
                 }
             }
             if ($this->lessonIds) {
-                $lessons = Lesson::findAll($this->lessonIds);
                 foreach ($lessons as $lesson) {
                     if ($lesson->isOwing($lesson->enrolment->id)) {
                         $paymentModel = new Payment();
@@ -191,6 +199,9 @@ class PaymentForm extends Model
             if ($this->amountNeeded > 0.01) {
                 $this->addError($attributes, "Amount can't be empty");
             }
+        }
+        if ($this->amountToDistribute > ($this->selectedCreditValue + $this->amount)) {
+            $this->addError($attributes, "Amount mismatched with distributions");
         }
     }
 }
