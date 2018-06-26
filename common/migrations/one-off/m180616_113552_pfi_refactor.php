@@ -106,10 +106,8 @@ class m180616_113552_pfi_refactor extends Migration
         
         $realInvoices = Invoice::find()
             ->notDeleted()
-            ->notCanceled()
             ->andWhere(['NOT', ['invoice.user_id' => 0]])
             ->location([14, 15])
-            ->notReturned()
             ->invoice()
             ->all();
         foreach ($realInvoices as $realInvoice) {
