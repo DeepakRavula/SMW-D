@@ -9,7 +9,6 @@ use common\Models\User;
         <button class="btn dropdown-toggle" data-toggle="dropdown">More Action&nbsp;&nbsp;<span class="caret"></span></button>
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a id="receive-payment" href="#">Receive Payment</a></li>
-            <li><a id="create-pfi" href="#">Create PFI</a></li>
             <li><a id="lesson-mail-button" href="#">Mail</a></li>
             <?php if ($model->isPrivate()) : ?>
                 <?php if ($model->canExplode()) : ?>
@@ -46,23 +45,10 @@ use common\Models\User;
                 if (response.status) {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
+                    
                 }
             }
         });
     });
-    $(document).off('click', '#create-pfi').on('click', '#create-pfi', function () {
-        $.ajax({
-            url    : '<?= Url::to(['proforma-invoice/create', 'PaymentFormLessonSearch[userId]' => $model->customer->id]); ?>',
-            type   : 'get',
-            dataType: 'json',
-            success: function(response)
-            {
-                if (response.status) {
-                    $('#modal-content').html(response.data);
-                    $('#popup-modal').modal('show');
-                }
-            }
-        });
-        return false;
-    });
+
 </script>

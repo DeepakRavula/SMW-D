@@ -218,7 +218,9 @@ use yii\jui\Accordion;
         var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Receive Payment</h4> </div> <div class="col-md-6"> <h4 class="amount-needed pull-right">Amount Needed $<span class="amount-needed-value">0.00</span></h4> </div> </div>'; 
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html(header);
-        $('.modal-save').text('Pay');
+        $('.modal-save').text('Save');
+        $('.modal-save-all').text('Create PFI');
+        $('.modal-save-all').show();
         $('.select-on-check-all').prop('checked', true);
         receivePayment.setAction();
         receivePayment.calcAmountNeeded();
@@ -253,6 +255,7 @@ use yii\jui\Accordion;
     });
 
     $(document).off('click', '.modal-save-all').on('click', '.modal-save-all', function() {
+        alert('ssss');
         $('#modal-spinner').show();
         var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
         var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
@@ -262,7 +265,7 @@ use yii\jui\Accordion;
         } else {
             $('.modal-save-all').attr('disabled', true);
             $('.modal-save-replaced').attr('disabled', true);
-            var params = $.param({ 'ProformaInvoice[lessonIds]': lessonIds, 'ProformaInvoice[invoiceIds]': invoiceIds });
+            var params = $.param({ 'PaymentFormLessonSearch[lessonIds]': lessonIds, 'ProformaInvoice[invoiceIds]': invoiceIds });
             $.ajax({
                 url    : '<?= Url::to(['proforma-invoice/create']) ?>?' +params,
                 type   : 'get',
