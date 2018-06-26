@@ -154,12 +154,12 @@ use yii\jui\Accordion;
             return false;
         },
         calcAmountNeeded : function() {
-            var amount = parseFloat('0.00');
+            var amountNeeded = parseFloat('0.00');
             $('.line-items-value').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
                     var balance = $(this).find('.invoice-value').text();
                     balance = balance.replace('$', '');
-                    amount = parseFloat(amount) + parseFloat(balance);
+                    amountNeeded = parseFloat(amountNeeded) + parseFloat(balance);
                 }
             });
             var amountToDistribute = 0.0;
@@ -192,8 +192,8 @@ use yii\jui\Accordion;
             $('.amount-to-apply').text((amountToDistribute).toFixed(2));
             var amountReceived = $('#paymentform-amount').val();
             $('.amount-to-credit').text(((creditAmount + amountReceived) - amountToDistribute).toFixed(2));
-            $('#amount-needed-value').val((amount).toFixed(2));
-            $('.amount-needed-value').text((amount).toFixed(2));
+            $('#amount-needed-value').val((amountNeeded).toFixed(2));
+            $('.amount-needed-value').text((amountNeeded).toFixed(2));
             return false;
         },
         setAvailableCredits : function() {
@@ -207,8 +207,8 @@ use yii\jui\Accordion;
             return false;
         },
         validateAmount : function() {
-            var amount = $('#paymentform-amount').val();
-            $('#paymentform-amount').val(amount).trigger('change');
+            var amountReceived = $('#paymentform-amount').val();
+            $('#paymentform-amount').val(amountReceived).trigger('change');
             $('#paymentform-amount').focus();
             $('#paymentform-amount').blur();
         }

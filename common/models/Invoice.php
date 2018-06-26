@@ -861,10 +861,18 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $payment = new Payment();
         $payment->user_id = $this->user_id;
-        $payment->invoiceId = $this->id;
+        $payment->customerId = $this->user_id;
         $payment->payment_method_id = $paymentMethodId;
         $payment->amount = $this->balance;
-        return $payment->save();
+        if ($payment->save()) {
+            $paymentModel = new Payment();
+            $paymentModel->amount = $payment->amount;
+            $invoice->addPayment($this->customer, $paymentModel);
+            $status = true;
+        } else {
+            $status = false;
+        }
+        return $status;
     }
 
     public function sendEmail()
