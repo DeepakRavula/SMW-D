@@ -52,7 +52,7 @@ class ProformaInvoiceSearch extends ProformaInvoice
         $query->joinWith(['user' => function ($query) {	
 		$query->joinWith('userProfile');
 		$query->joinWith('phoneNumber');
-        }]);
+        }])->groupBy("proforma_invoice.id");
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
