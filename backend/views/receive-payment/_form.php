@@ -255,13 +255,12 @@ use yii\jui\Accordion;
     });
 
     $(document).off('click', '.modal-save-all').on('click', '.modal-save-all', function() {
-        alert('ssss');
         $('#modal-spinner').show();
         var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
         var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(lessonIds) && $.isEmptyObject(invoiceIds)) {
             $('#modal-spinner').hide();
-            $('#index-error-notification').html("Choose any lessons to create PFI").fadeIn().delay(5000).fadeOut();
+            $('#index-error-notification').html("Choose any lessons or invoices to create PFI").fadeIn().delay(5000).fadeOut();
         } else {
             $('.modal-save-all').attr('disabled', true);
             $('.modal-save-replaced').attr('disabled', true);
@@ -271,7 +270,6 @@ use yii\jui\Accordion;
                 type   : 'get',
                 success: function(response)
                 {
-                    alert(response.status);
                     if (response.status) {
                         window.location.href = response.url;
                     }
