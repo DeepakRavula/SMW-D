@@ -29,9 +29,11 @@ use kartik\time\TimePicker;
             echo $form->field($model, 'duration')->widget(
             TimePicker::classname(),
                 [
-                'options' => ['id' => 'lesson-duration'],
+                'options' => ['id' => 'lesson-duration', 'placeholder' => $placeholder,],
                 'pluginOptions' => [
                     'showMeridian' => false,
+                    'defaultTime' => false,
+                   
                 ],
             ]
         );
@@ -63,19 +65,8 @@ use kartik\time\TimePicker;
 
     $(document).ready(function() {
         $('#popup-modal .modal-dialog').css({'width': '600px'});
+        $('#popup-modal .modal-body').css({'height': '200px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Duration</h4>');
-        var button = '';
-        if (button == '1') {
-            $('#on').addClass('btn-info');
-            $('#off').removeClass('btn-info');
-            $('.on').show();
-            $('.off').hide();
-        } else {
-            $('#off').addClass('btn-info');
-
-            $('#on').removeClass('btn-info');
-            $('.on').hide();
-            $('.off').show();
-        }
+       
     });
 </script>
