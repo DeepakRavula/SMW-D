@@ -71,23 +71,12 @@ class ProformaInvoiceController extends BaseController
     {
         $request = Yii::$app->request;
         $searchModel = new PaymentFormLessonSearch();
-        $searchModel->showCheckBox = true;
         $model = new ProformaInvoice();
-        $currentDate = new \DateTime();
-        $model->date = $currentDate->format('M d,Y');
-        if (!$request->isPost) {
-            $searchModel->fromDate = $currentDate->format('M 1, Y');
-            $searchModel->toDate = $currentDate->format('M t, Y'); 
-            $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
-        }
         $model->load(Yii::$app->request->get());
         $searchModel->load(Yii::$app->request->get());
         $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
         $model->userId = $searchModel->userId;
-        $lessonLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $lessonsQuery,
-            'pagination' => false 
-        ]);
+        $lessons=$lessonsQuery->all();
         $invoicesQuery = Invoice::find();
         if ($model->invoiceIds) {
             $invoicesQuery->andWhere(['id' => $model->invoiceIds]);
@@ -96,13 +85,8 @@ class ProformaInvoiceController extends BaseController
                 ->customer($model->userId)
                 ->unpaid();
         }
-        $invoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $invoicesQuery,
-            'pagination' => false 
-        ]);
-        
-        if ($request->isPost) {
-            $model->load($request->post());
+        $invoices=$invoicesQuery->all();
+       // print_r($searchModel);die;
             if (!empty($searchModel->lessonIds) || !empty($model->invoiceIds)) {
                 $lessons = Lesson::findAll($searchModel->lessonIds);
                 $invoices = Invoice::findAll($model->invoiceIds);
@@ -144,18 +128,7 @@ class ProformaInvoiceController extends BaseController
                     'errors' => 'Select any lesson or invoice to create PFI',
                 ];
             }
-        } else {
-            $data = $this->renderAjax('/receive-payment/_create-pfi', [
-                'model' => $model,
-                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-                'searchModel'=> $searchModel,
-            ]);
-            $response = [
-                'status' => true,
-                'data' => $data
-            ];
-        }
+        
         return $response;
     }
 

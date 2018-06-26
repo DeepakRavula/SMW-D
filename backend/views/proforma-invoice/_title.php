@@ -7,4 +7,4 @@ use backend\models\search\InvoiceSearch;
 ?>
 
 <?php $title = 'Proforma Invoices';?>
-<a href="<?= Url::to(['index']);?>"><?= $title;?></a>/ <?= $model->getProformaInvoiceNumber();?>
+<a href="<?= Url::to(['index']);?>"><?= $title;?></a> / <?= $model->getProformaInvoiceNumber();?>

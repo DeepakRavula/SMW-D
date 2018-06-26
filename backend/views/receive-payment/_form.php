@@ -223,7 +223,9 @@ use yii\bootstrap\Html;
         var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Receive Payment</h4> </div> <div class="col-md-6"> <h4 class="amount-needed pull-right">Amount Needed $<span class="amount-needed-value">0.00</span></h4> </div> </div>'; 
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html(header);
-        $('.modal-save').text('Pay');
+        $('.modal-save').text('Save');
+        $('.modal-save-all').text('Create PFI');
+        $('.modal-save-all').show();
         $('.select-on-check-all').prop('checked', true);
         receivePayment.setAction();
         receivePayment.calcAmountNeeded();
@@ -279,17 +281,16 @@ use yii\bootstrap\Html;
         var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(lessonIds) && $.isEmptyObject(invoiceIds)) {
             $('#modal-spinner').hide();
-            $('#index-error-notification').html("Choose any lessons to create PFI").fadeIn().delay(5000).fadeOut();
+            $('#index-error-notification').html("Choose any lessons or invoices to create PFI").fadeIn().delay(5000).fadeOut();
         } else {
             $('.modal-save-all').attr('disabled', true);
             $('.modal-save-replaced').attr('disabled', true);
-            var params = $.param({ 'ProformaInvoice[lessonIds]': lessonIds, 'ProformaInvoice[invoiceIds]': invoiceIds });
+            var params = $.param({ 'PaymentFormLessonSearch[lessonIds]': lessonIds, 'ProformaInvoice[invoiceIds]': invoiceIds });
             $.ajax({
                 url    : '<?= Url::to(['proforma-invoice/create']) ?>?' +params,
                 type   : 'get',
                 success: function(response)
                 {
-                    alert(response.status);
                     if (response.status) {
                         window.location.href = response.url;
                     }
