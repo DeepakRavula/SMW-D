@@ -1,9 +1,5 @@
 <?php
 
-use yii\helpers\Html;
-use yii\helpers\Url;
-use backend\models\search\PaymentSearch;
-use kartik\grid\GridView;
 use common\components\gridView\KartikGridView;
 use yii\helpers\ArrayHelper;
 use common\models\PaymentMethod;
@@ -113,7 +109,7 @@ $this->params['action-button'] = $this->render('_action-button');?>
     ];
 ?>
 
-    <div class="grid-row-open">
+    <div>
         <?= KartikGridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
