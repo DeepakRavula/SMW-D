@@ -95,7 +95,20 @@ use yii\jui\Accordion;
         'clientOptions' => ['collapsible' => true],
     ]); ?>
 
-    <h4 class="pull-right amount-needed">Available Credits $<span class="credit-available">0.00</span></h4>
+    <div class="pull-right">
+        <div>
+            <h4 class="pull-right amount-needed">Available Credits $<span class="credit-available">0.00</span></h4>
+        </div>
+        <div>
+            <h4 class="pull-right">Selected Credits $<span class="credit-selected">0.00</span></h4>
+        </div>
+        <div>
+            <h4 class="pull-right">Amount To Apply $<span class="amount-to-apply">0.00</span></h4>
+        </div>
+        <div>
+            <h4 class="pull-right">Amount To Credit $<span class="amount-to-credit">0.00</span></h4>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -162,6 +175,10 @@ use yii\jui\Accordion;
                 }
             });
             $('#selected-credit-value').val((creditAmount).toFixed(2));
+            $('.credit-selected').text((creditAmount).toFixed(2));
+            $('.amount-to-apply').text((amountToDistribute).toFixed(2));
+            var amountReceived = $('#paymentform-amount').val();
+            $('.amount-to-credit').text(((creditAmount + amountReceived) - amountToDistribute).toFixed(2));
             $('#amount-needed-value').val((amount).toFixed(2));
             $('.amount-needed-value').text((amount).toFixed(2));
             return false;
@@ -199,6 +216,11 @@ use yii\jui\Accordion;
         receivePayment.setAction();
         receivePayment.calcAmountNeeded();
         receivePayment.validateAmount();
+        return false;
+    });
+
+    $(document).off('change', '#paymentform-amount').on('change', '#paymentform-amount', function () {
+        receivePayment.calcAmountNeeded();
         return false;
     });
 
