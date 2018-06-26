@@ -9,7 +9,6 @@ use yii\helpers\ArrayHelper;
 use common\models\PaymentMethod;
 use common\models\User;
 use common\models\Location;
-use yii\jui\Accordion;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
