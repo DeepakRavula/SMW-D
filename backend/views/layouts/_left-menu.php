@@ -219,6 +219,13 @@ echo Menu::widget([
                     'badgeBgClass' => 'label-default'
                 ],
                 [
+                    'label' => Yii::t('backend', 'Terms of Service'),
+                    'icon' => '<i class="fa fa-file-text-o"></i>',
+                    'url' => ['/terms-of-service/index'],
+					'visible' => Yii::$app->user->can('manageBlogs'),
+                    'active' => (Yii::$app->controller->id === 'terms-of-service') ? true : false,
+                ],
+                [
                     'label' => Yii::t('backend', 'Programs'),
                     'icon' => '<i class="fa fa-table"></i>',
                     'url' => ['/program/index'],
