@@ -373,7 +373,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isOwing($enrolmentId)
     {
-        return $this->getCreditAppliedAmount($enrolmentId) < $this->netPrice;
+        return round($this->getCreditAppliedAmount($enrolmentId), 2) < round($this->netPrice, 2);
     }
 
     public function getOwingAmount($enrolmentId)
@@ -1267,7 +1267,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $grossPrice = $this->isGroup() ? $this->programRate / count($this->course->lessons) : 
             $this->programRate * $this->unit;
-        return round($grossPrice, 4);
+        return $grossPrice;
     }
 
     public function getDiscount()
@@ -1296,7 +1296,7 @@ class Lesson extends \yii\db\ActiveRecord
             $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $lessonPrice;
         }
         
-        return round($discount, 4);
+        return $discount;
     }
 
     public function addCustomerDiscount($discount = null)
