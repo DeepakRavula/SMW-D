@@ -49,17 +49,13 @@ class ProformaInvoiceSearch extends ProformaInvoice
         $query = ProformaInvoice::find()
                 ->location($locationId);
        
-
+        $query->joinWith(['user' => function ($query) {	
+		$query->joinWith('userProfile');
+		$query->joinWith('phoneNumber');
+        }]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-        if (!empty($params) && !($this->load($params) && $this->validate())) {
-            return $dataProvider;
-        }
-	$query->joinWith(['user' => function ($query) {	
-		$query->joinWith('userProfile');
-		$query->joinWith('phoneNumber');
-        }])->groupBy('proforma_invoice.id');
 	$dataProvider->setSort([
             'attributes' => [
                 'number' => [
@@ -79,11 +75,16 @@ class ProformaInvoiceSearch extends ProformaInvoice
 	$dataProvider->sort->defaultOrder = [
             'number' => SORT_DESC,
         ];
+        
+        if (!empty($params) && !($this->load($params) && $this->validate())) {
+            return $dataProvider;
+        }
+	
 	if(!empty($this->number)) {
 		$query->andFilterWhere(['proforma_invoice.id' => $this->number]);
-        }
-	$query->andFilterWhere(['proforma_invoice.userId' => trim($this->customer)]);
-	$query->andFilterWhere(['like', 'user_phone.number', trim($this->phone)]);
+    }
+	$query->andFilterWhere(['proforma_invoice.userId' => $this->customer]);
+	$query->andFilterWhere(['like', 'user_phone.number', $this->phone]);
         return $dataProvider;
     }
 }

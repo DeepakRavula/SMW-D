@@ -17,14 +17,14 @@ $this->title = 'Proforma Invoices';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php Pjax::begin([
-    'enablePushState' => false,
     'timeout' => 6000,
-	'id' => 'proforma-listing']); ?>
-<div class="proforma-invoice-index">
+    'enablePushState' => false,
+    'id' => 'proforma-invoice-listing',]); ?>
 <div class="grid-row-open">
     <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id; ?>
     <?php echo KartikGridView::widget([
         'dataProvider' => $dataProvider,
+        'id' => 'proforma-invoice-grid',
         'filterModel' => $searchModel,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['proforma-invoice/view', 'id' => $model->id]);
@@ -79,8 +79,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     ],
             'filterInputOptions'=>['placeholder'=>'Customer'],
-            'format'=>'raw'
-
             ],
             [
                 'attribute' => 'phone',
@@ -99,7 +97,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
-</div>
 </div>
     <?php Pjax::end(); ?>
 
