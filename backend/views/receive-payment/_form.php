@@ -118,6 +118,8 @@ use yii\jui\Accordion;
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
             var creditIds = new Array();
+            var lessonPayments = new Array();
+            var invoicePayments = new Array();
             var canUseCustomerCredits = 0;
             var canUseInvoiceCredits = 0;
             $('.credit-items-value').each(function() {
@@ -133,9 +135,20 @@ use yii\jui\Accordion;
                     }
                 }
             });
+            $('.lesson-line-items').each(function() {
+                if ($(this).find('.check-checkbox').is(":checked")) {
+                    lessonPayments.push($(this).find('.payment-amount').val());
+                }
+            });
+            $('.invoice-line-items').each(function() {
+                if ($(this).find('.check-checkbox').is(":checked")) {
+                    invoicePayments.push($(this).find('.payment-amount').val());
+                }
+            });
             var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId, 'PaymentFormLessonSearch[lessonIds]': lessonIds, 
                 'PaymentForm[invoiceIds]': invoiceIds, 'PaymentForm[canUseCustomerCredits]': canUseCustomerCredits, 
-                'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[creditIds]': creditIds });
+                'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[creditIds]': creditIds,
+                'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[invoicePayments]': invoicePayments });
             var url = '<?= Url::to(['payment/receive']) ?>?' + params;
             $('#modal-form').attr('action', url);
             return false;

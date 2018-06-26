@@ -148,7 +148,7 @@ use yii\bootstrap\Html;
             Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $searchModel->userId]),
         'columns' => $columns,
         'summary' => false,
-        'rowOptions' => ['class' => 'line-items-value'],
+        'rowOptions' => ['class' => 'line-items-value lesson-line-items'],
         'emptyText' => 'No Lessons Available!'
     ]); ?>
 <?php else: ?>

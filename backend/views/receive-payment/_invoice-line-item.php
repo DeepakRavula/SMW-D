@@ -73,7 +73,7 @@ if ($searchModel->showCheckBox && !$isCreatePfi) {
         'dataProvider' => $invoiceLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,
-        'rowOptions' => ['class' => 'line-items-value'],
+        'rowOptions' => ['class' => 'line-items-value invoice-line-items'],
         'emptyText' => 'No Invoices Available!'
     ]); ?>
 <?php Pjax::end(); ?>
