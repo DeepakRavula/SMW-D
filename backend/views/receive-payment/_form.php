@@ -1,12 +1,15 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 use common\models\PaymentMethod;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\jui\Accordion;
+use kartik\select2\Select2;
+use common\models\Location;
+use common\models\User;
+use yii\bootstrap\Html;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\PaymentMethods */
@@ -18,6 +21,11 @@ use yii\jui\Accordion;
         ->andWhere(['displayed' => 1])
         ->orderBy(['sortOrder' => SORT_ASC])
         ->all();  
+
+    $customers = ArrayHelper::map(User::find()
+        ->active()
+        ->customers(Location::findOne(['slug' => \Yii::$app->location])->id)
+        ->all(), 'id', 'publicIdentity');
 ?>
 <div id="index-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="receive-payment-form">
@@ -30,6 +38,15 @@ use yii\jui\Accordion;
     ]); ?>
 
     <div class="row">
+        <div class="col-xs-4">
+            <?= $form->field($model, 'userId')->widget(Select2::classname(), [
+                'data' => $customers,
+                'options' => [
+                    'placeholder' => 'customer',
+                    'id' => 'customer-payment'
+                ]
+            ])->label('Customer'); ?>
+        </div>
         <div class="col-xs-2">
             <?= $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'value'  => Yii::$app->formatter->asDate($model->date),
@@ -58,42 +75,30 @@ use yii\jui\Accordion;
     <?= $form->field($model, 'amountToDistribute')->hiddenInput([])->label(false); ?>
 
     <?php ActiveForm::end(); ?>
-    <?= Accordion::widget([
-        'items' => [
-            [
-                'header' => 'Lessons',
-                'content' => $this->render('/receive-payment/_lesson-line-item', [
-                    'model' => $model,
-                    'isCreatePfi' => false,
-                    'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-                    'searchModel' => $searchModel
-                ]),
-            ],
-            [
-                'header' => 'Invoices',
-                'headerOptions' => ['tag' => 'h3'],
-                'content' => $this->render('/receive-payment/_invoice-line-item', [
-                    'model' => $model,
-                    'isCreatePfi' => false,
-                    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                    'searchModel' => $searchModel
-                ]),
-                'options' => ['tag' => 'div'],
-            ],
-            [
-                'header' => 'Credits',
-                'headerOptions' => ['tag' => 'h3'],
-                'content' => $this->render('/receive-payment/_credits-available', [
-                    'creditDataProvider' => $creditDataProvider,
-                ]),
-                'options' => ['tag' => 'div'],
-            ]
-        ],
-        'options' => ['tag' => 'div'],
-        'itemOptions' => ['tag' => 'div'],
-        'headerOptions' => ['tag' => 'h3'],
-        'clientOptions' => ['collapsible' => true],
-    ]); ?>
+
+    <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
+    <?= $this->render('/receive-payment/_lesson-line-item', [
+        'model' => $model,
+        'isCreatePfi' => false,
+        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+        'searchModel' => $searchModel
+    ]);
+    ?>
+
+    <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
+    <?= $this->render('/receive-payment/_invoice-line-item', [
+        'model' => $model,
+        'isCreatePfi' => false,
+        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+        'searchModel' => $searchModel
+    ]);
+    ?>
+
+    <?= Html::label('Credits', ['class' => 'admin-login']) ?>
+    <?= $this->render('/receive-payment/_credits-available', [
+        'creditDataProvider' => $creditDataProvider,
+    ]);
+    ?>
 
     <div class="pull-right">
         <div>
@@ -114,7 +119,7 @@ use yii\jui\Accordion;
 <script>
     var receivePayment = {
         setAction: function() {
-            var userId = <?= $searchModel->userId ?>;
+            var userId = $('#customer-payment').val();
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
             var creditIds = new Array();
@@ -234,6 +239,22 @@ use yii\jui\Accordion;
 
     $(document).off('change', '#paymentform-amount').on('change', '#paymentform-amount', function () {
         receivePayment.calcAmountNeeded();
+        return false;
+    });
+
+    $(document).off('change', '#customer-payment').on('change', '#customer-payment', function () {
+        $('#modal-spinner').show();
+        var userId = $('#customer-payment').val();
+        var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId });
+        var url = '<?= Url::to(['payment/receive']) ?>?' + params;
+        $.pjax.reload({url: url, container: "#invoice-lineitem-listing", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({url: url, container: "#lesson-line-item-listing", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({url: url, container: "#credit-lineitem-listing", replace: false, async: false, timeout: 6000});
+        receivePayment.setAction();
+        receivePayment.calcAmountNeeded();
+        receivePayment.setAvailableCredits();
+        receivePayment.validateAmount();
+        $('#modal-spinner').hide();
         return false;
     });
 

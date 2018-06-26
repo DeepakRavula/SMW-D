@@ -316,28 +316,30 @@ class PaymentController extends BaseController
             ->all();
     }
 
-    public function getAvailableCredit($customerId)
+    public function getAvailableCredit($customerId = null)
     {
         $invoiceCredits = $this->getCustomerCreditInvoices($customerId);
         $results = [];
         $amount = 0;
         $customer = User::findOne($customerId);
-        if ($customer->hasCustomerCredit()) {
-            $results[] = [
-                'id' => $customer->id,
-                'type' => 'Customer Credit',
-                'reference' => null,
-                'amount' => $customer->creditAmount
-            ];
-        }
-        if (!empty($invoiceCredits)) {
-            foreach ($invoiceCredits as $invoiceCredit) {
+        if ($customer) {
+            if ($customer->hasCustomerCredit()) {
                 $results[] = [
-                    'id' => $invoiceCredit->id,
-                    'type' => 'Invoice Credit',
-                    'reference' => $invoiceCredit->getInvoiceNumber(),
-                    'amount' => abs($invoiceCredit->balance)
+                    'id' => $customer->id,
+                    'type' => 'Customer Credit',
+                    'reference' => null,
+                    'amount' => $customer->creditAmount
                 ];
+            }
+            if (!empty($invoiceCredits)) {
+                foreach ($invoiceCredits as $invoiceCredit) {
+                    $results[] = [
+                        'id' => $invoiceCredit->id,
+                        'type' => 'Invoice Credit',
+                        'reference' => $invoiceCredit->getInvoiceNumber(),
+                        'amount' => abs($invoiceCredit->balance)
+                    ];
+                }
             }
         }
         $creditDataProvider = new ArrayDataProvider([
@@ -375,7 +377,11 @@ class PaymentController extends BaseController
         if ($model->invoiceIds) {
             $invoicesQuery->andWhere(['id' => $model->invoiceIds]);
         } else {
+            if (!$searchModel->userId) {
+                $searchModel->userId = null;
+            }
             $invoicesQuery->notDeleted()
+                ->invoice()
                 ->customer($searchModel->userId)
                 ->unpaid();
         }
