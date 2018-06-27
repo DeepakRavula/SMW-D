@@ -20,6 +20,8 @@ use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use common\models\User;
 use backend\models\search\PaymentFormLessonSearch;
+use common\models\LessonPayment;
+use common\models\InvoicePayment;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -39,7 +41,7 @@ class PaymentController extends BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => [
                     'invoice-payment', 'credit-payment', 'update', 'delete', 'receive',
-                    'validate-apply-credit', 'validate-receive'
+                    'validate-apply-credit', 'validate-receive','updatepayment'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -54,7 +56,7 @@ class PaymentController extends BaseController
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'print', 'receive',
                             'invoice-payment', 'credit-payment', 'validate-apply-credit',
-                            'validate-receive'
+                            'validate-receive','updatepayment'
                         ],
                         'roles' => ['managePfi', 'manageInvoices'],
                     ],
@@ -431,5 +433,53 @@ class PaymentController extends BaseController
             $model->amount = 0.0;
         }
         return ActiveForm::validate($model);
+    }
+    public function actionUpdatepayment($id)
+    {
+        $model = $this->findModel($id);
+	$lessonPayment = Lesson::find()
+		 ->joinWith(['lessonPayments' => function ($query) use ($id) {
+                $query->andWhere(['paymentId' => $id]);
+            }])
+		->all();
+	    $lessonDataProvider = new ActiveDataProvider([
+            'query' => $lessonPayment,
+            'pagination' => false
+        ]);
+	    
+	$invoicePayment = Invoice::find()
+		 ->joinWith(['invoicePayments' => function ($query) use ($id) {
+                $query->andWhere(['payment_id' => $id]);
+            }])
+		->all();
+	    
+	    $invoiceDataProvider = new ActiveDataProvider([
+            'query' => $invoicePayment,
+            'pagination' => false
+        ]);
+        if (Yii::$app->request->post()) {
+            if($model->load(Yii::$app->request->post()) && $model->save()) {
+                return [
+                    'status' => true
+                ];
+            } 
+        else {
+            return [
+                    'status' => false,
+                    'errors' =>$model->getErrors()
+                ];
+            }
+        }
+            else {
+		$data = $this->renderAjax('_form', [
+		'model' => $model,
+		'lessonDataProvider' => $lessonDataProvider,
+		'invoiceDataProvider' => $invoiceDataProvider
+        ]);
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
     }
 }
