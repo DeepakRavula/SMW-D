@@ -164,16 +164,17 @@ class PrivateLessonController extends BaseController
     {
         $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
         $lessonId = end($lessonIds);
-        $model = $this->findModel($lessonId);
+      
         foreach ($lessonIds as $lessonId) {
             $model = $this->findModel($lessonId);
             if(!$model->isEditable()){
                 return [
                     'status' => false,
-                    'message' => 'You can\'t edit this lesson.',
+                    'message' => ' One of the choosen lesson is invoiced.You can\'t edit duration for this lessons',
                 ]; 
             }
         }
+        $model = new Lesson();
         $data = $this->renderAjax('_form-edit-duration', [
             'lessonIds' => $lessonIds,
             'model' => $model,

@@ -16,13 +16,16 @@ class ProformaInvoiceSearch extends ProformaInvoice
     
     public $showCheckBox;
     public $isPrint;
+    public $number;
+    public $customer;
+    public $phone;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['showCheckBox','isPrint'], 'safe'],
+            [['showCheckBox','isPrint','number','customer','phone'], 'safe'],
         ];
     }
 
@@ -46,14 +49,42 @@ class ProformaInvoiceSearch extends ProformaInvoice
         $query = ProformaInvoice::find()
                 ->location($locationId);
        
-
+        $query->joinWith(['user' => function ($query) {	
+		$query->joinWith('userProfile');
+		$query->joinWith('phoneNumber');
+        }])->groupBy("proforma_invoice.id");
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+	$dataProvider->setSort([
+            'attributes' => [
+                'number' => [
+                    'asc' => ['proforma_invoice.proforma_invoice_number' => SORT_ASC],
+                    'desc' => ['proforma_invoice.proforma_invoice_number' => SORT_DESC],
+                ],
+                'customer' => [
+                    'asc' => ['user_profile.firstname' => SORT_ASC],
+                    'desc' => ['user_profile.firstname' => SORT_DESC],
+                ],
+		'phone' => [
+                    'asc' => ['user_phone.number' => SORT_ASC],
+                    'desc' => ['user_phone.number' => SORT_DESC],
+                ],
+            ]
+        ]);
+	$dataProvider->sort->defaultOrder = [
+            'number' => SORT_DESC,
+        ];
+        
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-       
+	
+	if(!empty($this->number)) {
+		$query->andFilterWhere(['proforma_invoice.id' => $this->number]);
+    }
+	$query->andFilterWhere(['proforma_invoice.userId' => $this->customer]);
+	$query->andFilterWhere(['like', 'user_phone.number', $this->phone]);
         return $dataProvider;
     }
 }

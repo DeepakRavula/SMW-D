@@ -95,6 +95,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $program_rate;
     public $splittedLessonId;
     public $applyFullDiscount;
+    public $lessonIds;
 
     /**
      * {@inheritdoc}
@@ -316,7 +317,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isEditable()
     {
-        return !$this->isExpired() && !$this->hasInvoice() && $this->isPrivate() && !$this->isExtendedLesson();
+        return !$this->hasInvoice() && $this->isPrivate();
     }
 
     public function getLastHierarchy()
