@@ -227,7 +227,7 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 
     public function customer($customerId)
     {
-        return $this->andFilterWhere(['invoice.user_id' => $customerId]);
+        return $this->andWhere(['invoice.user_id' => $customerId]);
     }
     
     public function openingBalance()
