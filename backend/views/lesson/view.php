@@ -314,7 +314,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                 if (response.status) {
                     $('#merge-lesson-modal').modal('hide');
                 } else {
-                    $('#error-notification').html('Lesson cannot be merged').fadeIn().delay(5000).fadeOut();
+                    $('#merge-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
                 }
             }
         });

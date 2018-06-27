@@ -7,7 +7,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
 ?>
-<div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
+
 <?php
 $enrolmentId = $model->enrolment->id;
 $locationId = $model->course->locationId;
@@ -28,6 +28,7 @@ $splitLessonDataProvider = new ActiveDataProvider([
         'header' => '<h4 class="m-0">Merge Lesson</h4>',
         'id'=>'merge-lesson-modal',
     ]);?>
+    <div id="merge-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
     <h5><strong><?= 'Please choose the lesson that should be merged.'; ?></strong></h5>
 	<?php $form = ActiveForm::begin([
         'id' => 'merge-lesson-form',
