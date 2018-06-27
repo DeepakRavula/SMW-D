@@ -108,7 +108,7 @@ $config = [
 	    'test-email/*',
             'reverse-enrolment/*',
         'unscheduled-lesson/*',
-        'terms-of-service/*'
+        'terms-of-service/*',
          'proforma-invoice/*'
             // The actions listed here will be allowed to everyone including guests.
             // So, 'admin/*' should not appear here in the production, of course.
