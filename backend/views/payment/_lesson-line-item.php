@@ -29,7 +29,7 @@ use kartik\daterange\DateRangePicker;
 	[
             'label' => 'Amount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->amount);
+                return Yii::$app->formatter->asCurrency($data->netPrice);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
