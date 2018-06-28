@@ -440,8 +440,7 @@ class PaymentController extends BaseController
 	$lessonPayment = Lesson::find()
 		 ->joinWith(['lessonPayments' => function ($query) use ($id) {
                 $query->andWhere(['paymentId' => $id]);
-            }])
-		->all();
+            }]);
 	    $lessonDataProvider = new ActiveDataProvider([
             'query' => $lessonPayment,
             'pagination' => false
@@ -451,7 +450,8 @@ class PaymentController extends BaseController
 		 ->joinWith(['invoicePayments' => function ($query) use ($id) {
                 $query->andWhere(['payment_id' => $id]);
             }])
-		->all();
+		 ->notDeleted()
+		 ->invoice();
 	    
 	    $invoiceDataProvider = new ActiveDataProvider([
             'query' => $invoicePayment,

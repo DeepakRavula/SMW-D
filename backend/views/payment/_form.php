@@ -15,7 +15,7 @@ use yii\bootstrap\Html;
         'id' => 'modal-form',
         'action' => $url,
     ]); ?>
-    	<?= $form->field($model, 'amount')->textInput()?>
+
 </div>
     <?php ActiveForm::end(); ?>
 <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
@@ -32,6 +32,10 @@ use yii\bootstrap\Html;
     ]);
     ?>
 <script>
+	$(document).ready(function () {
+		   $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Payment</h4>');
+			$('#popup-modal .modal-dialog').css({'width': '1000px'});
+	});
     $(document).on('modal-success', function(event, params) {
         var url = "<?php echo Url::to(['payment/index']); ?>";
         $.pjax.reload({url: url, container: "#payment-listing", replace: false, timeout: 4000});

@@ -136,8 +136,6 @@ $this->params['action-button'] = $this->render('_action-button');?>
                     if(response.status)
                     {
                         $('#popup-modal').modal('show');
-                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Blogs</h4>');
-			$('#popup-modal .modal-dialog').css({'width': '1000px'});
                         $('#modal-content').html(response.data);
                     }
                 }
