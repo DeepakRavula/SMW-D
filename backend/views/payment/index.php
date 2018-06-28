@@ -137,7 +137,8 @@ $this->params['action-button'] = $this->render('_action-button');?>
                     {
                         $('#modal-content').html(response.data);
                         $('#popup-modal').modal('show');
-                       
+			$('.modal-save').hide();
+			$('.modal-cancel').hide();
                     }
                 }
             });
