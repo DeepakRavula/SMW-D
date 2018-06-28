@@ -41,7 +41,7 @@ class PaymentController extends BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => [
                     'invoice-payment', 'credit-payment', 'update', 'delete', 'receive',
-                    'validate-apply-credit', 'validate-receive','updatepayment'
+                    'validate-apply-credit', 'validate-receive','update-payment'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -56,7 +56,7 @@ class PaymentController extends BaseController
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'print', 'receive',
                             'invoice-payment', 'credit-payment', 'validate-apply-credit',
-                            'validate-receive','updatepayment'
+                            'validate-receive','update-payment'
                         ],
                         'roles' => ['managePfi', 'manageInvoices'],
                     ],
@@ -434,7 +434,7 @@ class PaymentController extends BaseController
         }
         return ActiveForm::validate($model);
     }
-    public function actionUpdatepayment($id)
+    public function actionUpdatePayment($id)
     {
         $model = $this->findModel($id);
 	$lessonPayment = Lesson::find()
@@ -458,17 +458,7 @@ class PaymentController extends BaseController
             'pagination' => false
         ]);
         if (Yii::$app->request->post()) {
-            if($model->load(Yii::$app->request->post()) && $model->save()) {
-                return [
-                    'status' => true
-                ];
-            } 
-        else {
-            return [
-                    'status' => false,
-                    'errors' =>$model->getErrors()
-                ];
-            }
+           
         }
             else {
 		$data = $this->renderAjax('_form', [

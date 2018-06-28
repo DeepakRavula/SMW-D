@@ -125,7 +125,7 @@ $this->params['action-button'] = $this->render('_action-button');?>
 <script>
   $(document).on('click', '#payment-listing  tbody > tr', function () {
             var paymentId = $(this).data('key');
-            var customUrl = '<?= Url::to(['payment/updatepayment']); ?>?id=' + paymentId;
+            var customUrl = '<?= Url::to(['payment/update-payment']); ?>?id=' + paymentId;
             $.ajax({
                 url    : customUrl,
                 type   : 'get',
@@ -135,8 +135,9 @@ $this->params['action-button'] = $this->render('_action-button');?>
                 {
                     if(response.status)
                     {
-                        $('#popup-modal').modal('show');
                         $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                       
                     }
                 }
             });
