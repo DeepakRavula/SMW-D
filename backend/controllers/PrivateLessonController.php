@@ -214,7 +214,7 @@ class PrivateLessonController extends BaseController
     public function actionMerge($id)
     {
         $model = $this->findModel($id);
-        $model->setScenario(Lesson::SCENARIO_EDIT);
+        $model->setScenario(Lesson::SCENARIO_MERGE);
         $post = Yii::$app->request->post();
         $additionalDuration = new \DateTime(Lesson::DEFAULT_MERGE_DURATION);
         $lessonDuration = new \DateTime($model->duration);
@@ -222,6 +222,7 @@ class PrivateLessonController extends BaseController
             . 'H' . $additionalDuration->format('i') . 'M'));
         $model->duration = $lessonDuration->format('H:i:s');
         $splitLesson = $this->findModel($post['radioButtonSelection']);
+        $model->splittedLessonId = $splitLesson->id;
         if ($model->validate()) {
             $splitLesson->privateLesson->merge($model);
             Yii::$app->session->setFlash('alert', [
@@ -233,7 +234,7 @@ class PrivateLessonController extends BaseController
         } else {
             $errors = ActiveForm::validate($model);
             return [
-                'errors' => $errors,
+                'error' => end($errors),
                 'status' => false
             ];
         }

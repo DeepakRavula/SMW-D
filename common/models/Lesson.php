@@ -93,6 +93,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $applyContext;
     public $locationId;
     public $program_rate;
+    public $splittedLessonId;
     public $applyFullDiscount;
     public $lessonIds;
 
@@ -143,7 +144,7 @@ class Lesson extends \yii\db\ActiveRecord
             ['program_rate', 'required', 'on' => self::SCENARIO_CREATE_GROUP],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyFullDiscount',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId',
-                 'isPresent', 'programRate', 'teacherRate'], 'safe'],
+                 'isPresent', 'programRate', 'teacherRate', 'splittedLessonId'], 'safe'],
             [['classroomId'], ClassroomValidator::className(),
                 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),
@@ -163,6 +164,7 @@ class Lesson extends \yii\db\ActiveRecord
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function ($model, $attribute) {
                     return $model->course->program->isPrivate();
                 }],
+            ['splittedLessonId', 'validateMerge', 'on' => self::SCENARIO_MERGE],
             ['date', 'validateOnInvoiced', 'on' => self::SCENARIO_EDIT],
             [['date'], TeacherSubstituteValidator::className(), 'on' => self::SCENARIO_SUBSTITUTE_TEACHER],
             [['date'], IntraEnrolledLessonValidator::className(), 'on' => [self::SCENARIO_REVIEW, self::SCENARIO_MERGE]]
@@ -296,6 +298,23 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return !$this->isDeleted && !$this->hasInvoice() && $this->isPrivate();
     }
+
+    public function validateMerge($attribute)
+    {
+        $lessonDiscountValues = [];
+        $splitLessonDiscountValues = [];
+        $splitLesson = self::findOne($this->splittedLessonId);
+        foreach ($this->discounts as $discount) {
+            $lessonDiscountValues[] = $discount->value;
+        }
+        foreach ($splitLesson->discounts as $discount) {
+            $splitLessonDiscountValues[] = $discount->value;
+        }
+        if (array_diff($lessonDiscountValues, $splitLessonDiscountValues)) {
+            $this->addError($attribute, "Discount varied lesson's can't be merged");
+        }
+    }
+
     public function isEditable()
     {
         return !$this->hasInvoice() && $this->isPrivate();
@@ -321,6 +340,11 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Student::className(), ['id' => 'studentId'])
                 ->via('enrolment');
+    }
+
+    public function getDiscounts()
+    {
+        return $this->hasMany(LessonDiscount::className(), ['lessonId' => 'id']);
     }
     
     public function getCustomer()
@@ -854,7 +878,7 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function canMerge()
     {
-        if ($this->enrolment->hasExplodedLesson() && !$this->isExploded && !$this->isExtra() && !$this->hasInvoice() && !$this->isCanceled() && !$this->isUnscheduled()) {
+        if ($this->enrolment->hasExplodedLesson() && !$this->isExploded && !$this->isExtra() && !$this->hasInvoice() && !$this->isCanceled()) {
             $lessonDuration = new \DateTime($this->duration);
             $date = new \DateTime($this->date);
             $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
