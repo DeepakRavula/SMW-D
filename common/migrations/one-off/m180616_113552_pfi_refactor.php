@@ -61,7 +61,7 @@ class m180616_113552_pfi_refactor extends Migration
                         $balance = $payment->amount - abs($invoice->balance);
                         $payment->delete();
                     } else {
-                        $payment->invoicePayment->updateAttributes(['amount' => $balance]);
+                        $payment->invoicePayment->updateAttributes(['amount' => $payment->invoicePayment->amount - $balance]);
                     }
                 }
             }
