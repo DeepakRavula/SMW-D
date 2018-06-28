@@ -20,6 +20,8 @@ use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use common\models\User;
 use backend\models\search\PaymentFormLessonSearch;
+use common\models\LessonPayment;
+use common\models\InvoicePayment;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -39,7 +41,7 @@ class PaymentController extends BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => [
                     'invoice-payment', 'credit-payment', 'update', 'delete', 'receive',
-                    'validate-apply-credit', 'validate-receive'
+                    'validate-apply-credit', 'validate-receive','update-payment'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -54,7 +56,7 @@ class PaymentController extends BaseController
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'print', 'receive',
                             'invoice-payment', 'credit-payment', 'validate-apply-credit',
-                            'validate-receive'
+                            'validate-receive','update-payment'
                         ],
                         'roles' => ['managePfi', 'manageInvoices'],
                     ],
@@ -396,10 +398,11 @@ class PaymentController extends BaseController
             $payment = new Payment();
             $payment->amount = $model->amount;
             $payment->user_id = $searchModel->userId;
-            $payment->customerId = $searchModel->userId;
+            //$payment->customerId = $searchModel->userId;
             $payment->payment_method_id = $model->payment_method_id;
             $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $payment->save();
+            $model->paymentId = $payment->id;
             $model->lessonIds = $searchModel->lessonIds;
             $model->save();
             $response = [
@@ -431,5 +434,43 @@ class PaymentController extends BaseController
             $model->amount = 0.0;
         }
         return ActiveForm::validate($model);
+    }
+    public function actionUpdatePayment($id)
+    {
+        $model = $this->findModel($id);
+	$lessonPayment = Lesson::find()
+		 ->joinWith(['lessonPayments' => function ($query) use ($id) {
+                $query->andWhere(['paymentId' => $id]);
+            }]);
+	    $lessonDataProvider = new ActiveDataProvider([
+            'query' => $lessonPayment,
+            'pagination' => false
+        ]);
+	    
+	$invoicePayment = Invoice::find()
+		 ->joinWith(['invoicePayments' => function ($query) use ($id) {
+                $query->andWhere(['payment_id' => $id]);
+            }])
+		 ->notDeleted()
+		 ->invoice();
+	    
+	    $invoiceDataProvider = new ActiveDataProvider([
+            'query' => $invoicePayment,
+            'pagination' => false
+        ]);
+        if (Yii::$app->request->post()) {
+           
+        }
+            else {
+		$data = $this->renderAjax('_form', [
+		'model' => $model,
+		'lessonDataProvider' => $lessonDataProvider,
+		'invoiceDataProvider' => $invoiceDataProvider
+        ]);
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
     }
 }

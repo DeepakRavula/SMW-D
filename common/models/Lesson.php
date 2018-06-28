@@ -1020,7 +1020,7 @@ class Lesson extends \yii\db\ActiveRecord
                 ->joinWith('lessonCredit')
                 ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
                 ->notDeleted()
-                ->sum('amount');
+                ->sum('payment.amount');
     }
     
     public function getCreditAppliedAmount($enrolmentId)
@@ -1030,7 +1030,7 @@ class Lesson extends \yii\db\ActiveRecord
                 ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
                 ->creditApplied()
                 ->notDeleted()
-                ->sum('amount');
+                ->sum('payment.amount');
     }
 
     public function getCreditAppliedPayment($enrolmentId)

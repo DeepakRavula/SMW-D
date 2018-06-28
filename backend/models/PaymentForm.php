@@ -8,6 +8,8 @@ use common\models\Invoice;
 use common\models\Lesson;
 use common\models\Payment;
 use common\models\User;
+use common\models\LessonPayment;
+use common\models\InvoicePayment;
 
 /**
  * This is the model class for table "course".
@@ -44,6 +46,7 @@ class PaymentForm extends Model
     public $canUseInvoiceCredits;
     public $canUseCustomerCredits;
     public $selectedCreditValue;
+    public $paymentId;
     
     /**
      * {@inheritdoc}
@@ -55,7 +58,7 @@ class PaymentForm extends Model
             ['amount', 'validateAmount'],
             [['date', 'amountNeeded', 'invoiceIds', 'canUseInvoiceCredits', 'selectedCreditValue',
                 'lessonIds', 'canUseCustomerCredits', 'creditIds', 'amount', 'userId',
-                'amountToDistribute', 'invoicePayments', 'lessonPayments'], 'safe']
+                'amountToDistribute', 'invoicePayments', 'lessonPayments','paymentId'], 'safe']
         ];
     }
 
@@ -74,8 +77,10 @@ class PaymentForm extends Model
                 ->orderBy(['id' => SORT_ASC])
                 ->all();
         }
+        
         $lessonPayments = $this->lessonPayments;
         $invoicePayments = $this->invoicePayments;
+        //print_r($this->lessonPayments);die;
         if ($this->creditIds) {
             if ($this->canUseCustomerCredits) {
                 if ($this->invoiceIds) {
@@ -83,11 +88,17 @@ class PaymentForm extends Model
                         if ($invoice->isOwing()) {
                             $paymentModel = new Payment();
                             $paymentModel->amount = $invoicePayments[$i];
+
                             if ($customer->hasCustomerCredit()) {
                                 if ($paymentModel->amount > $customer->creditAmount) {
                                     $paymentModel->amount = $customer->creditAmount;
                                 }
-                                $invoice->addPayment($customer, $paymentModel);
+                                $invoicePaymentModel = new InvoicePayment();
+                                 $invoicePaymentModel->invoice_id = $this->invoiceId;
+                                 $invoicePaymentModel->payment_id = $this->id;
+                                   $invoicePaymentModel->amount     = $this->amount;
+                                    $invoicePaymentModel->save();
+                                //$invoice->addPayment($customer, $paymentModel);
                             } else {
                                 break;
                             }
@@ -103,7 +114,8 @@ class PaymentForm extends Model
                                 if ($paymentModel->amount > $customer->creditAmount) {
                                     $paymentModel->amount = $customer->creditAmount;
                                 }
-                                $lesson->addPayment($customer, $paymentModel);
+                                
+                                //$lesson->addPayment($customer, $paymentModel);
                             } else {
                                 break;
                             }
@@ -111,7 +123,7 @@ class PaymentForm extends Model
                     }
                 }
             }
-            if ($this->canUseInvoiceCredits) {
+            if ($this->canUseInvoiceCredits) {   
                 $creditInvoices = Invoice::findAll($this->creditIds);
                 foreach ($creditInvoices as $creditInvoice) {
                     if ($this->invoiceIds) {
@@ -159,8 +171,15 @@ class PaymentForm extends Model
                             if ($paymentModel->amount > $amount) {
                                 $paymentModel->amount = $amount;
                             }
-                            $invoice->addPayment($customer, $paymentModel);
+                            //$invoice->addPayment($customer, $paymentModel);
                             $amount -= $paymentModel->amount;
+                            $invoicePaymentModel = new InvoicePayment();
+                            $invoicePaymentModel->invoice_id = $invoice->id;
+                            $invoicePaymentModel->payment_id = $this->paymentId;
+                            $invoicePaymentModel->amount     = $invoicePayments[$i];
+                            $invoicePaymentModel->save();
+                            $invoice->save();
+
                         } else {
                             break;
                         }
@@ -176,8 +195,16 @@ class PaymentForm extends Model
                             if ($paymentModel->amount > $amount) {
                                 $paymentModel->amount = $amount;
                             }
-                            $lesson->addPayment($customer, $paymentModel);
-                            $amount -= $paymentModel->amount;
+                                 $amount -= $paymentModel->amount;
+                                 $paymentModel->save();
+                                $lessonPayment = new LessonPayment();
+                                $lessonPayment->lessonId    = $lesson->id;
+                                $lessonPayment->paymentId   = $this->paymentId;
+                                $lessonPayment->amount      = $lessonPayments[$i];
+                                $lessonPayment->enrolmentId = $lesson->enrolmentId;
+                                $lessonPayment->save();
+                            //$lesson->addPayment($customer, $paymentModel);
+                           
                         } else {
                             break;
                         }
