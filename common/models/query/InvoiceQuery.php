@@ -152,6 +152,15 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+    public function hasManualPayments()
+    {
+        return $this->joinWith(['invoicePayments' => function ($query) {
+            $query->joinWith(['payment' => function ($query) {
+                $query->exceptAutoPayments();
+            }]);
+        }]);
+    }
+
     public function unpaid()
     {
         return $this->andFilterWhere([

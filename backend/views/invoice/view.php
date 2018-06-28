@@ -96,7 +96,7 @@ if (!empty($lineItem)) {
         ?>   
 	</div>
 </div>
-<?php if ((int) $model->type === InvoiceSearch::TYPE_INVOICE): ?>
+
 <div class="row">
 	<div class="col-md-9"> 
 	    <?= $this->render('payment/_index', [
@@ -117,7 +117,7 @@ if (!empty($lineItem)) {
 	</div>
     <?php Pjax::end(); ?>
 </div>
-        <?php endif; ?>
+
 <div class="row">
 <?php Pjax::Begin(['id' => 'invoice-message-panel', 'timeout' => 6000]); ?>
    <div class="col-md-3">

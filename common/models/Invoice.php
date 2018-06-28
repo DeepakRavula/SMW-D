@@ -246,6 +246,14 @@ class Invoice extends \yii\db\ActiveRecord
             ->onCondition(['payment.isDeleted' => false]);
     }
 
+    public function getManualPayments()
+    {
+        return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
+            ->via('invoicePayments')
+            ->onCondition(['payment.isDeleted' => false])
+            ->onCondition(['NOT', ['payment.payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]]);
+    }
+
     public function getAllPayments()
     {
         return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
@@ -855,6 +863,11 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return !$this->lineItem->isLessonCredit() && !$this->lineItem->isOpeningBalance()
             && !$this->lineItem->isMisc();
+    }
+
+    public function hasManualPayments()
+    {
+        return !empty($this->manualPayments);
     }
 
     public function addPreferredPayment($paymentMethodId)

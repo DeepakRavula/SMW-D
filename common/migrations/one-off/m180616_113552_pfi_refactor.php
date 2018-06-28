@@ -7,6 +7,8 @@ use common\models\Transaction;
 use common\models\OpeningBalance;
 use common\models\CustomerPayment;
 use common\models\PaymentMethod;
+use common\models\InvoicePayment;
+use common\models\LessonPayment;
 /**
  * Class m180616_113552_pfi_refactor
  */
@@ -25,103 +27,45 @@ class m180616_113552_pfi_refactor extends Migration
     public function safeUp()
     {
         set_time_limit(0);
-	ini_set('memory_limit', '-1');
-        $transactionIds = [];
+	    ini_set('memory_limit', '-1');
+        $invoicePayments = InvoicePayment::find()->all();
+        $lessonPayments = LessonPayment::find()->all();
+        foreach ($invoicePayments as $invoicePayment) {
+            if ($invoicePayment->payment) {
+                $invoicePayment->updateAttributes(['amount' => $invoicePayment->payment->amount]);
+            }
+        }
+        foreach ($lessonPayments as $lessonPayment) {
+            if ($lessonPayment->payment) {
+                $lessonPayment->updateAttributes(['amount' => $lessonPayment->payment->amount]);
+            }
+        }
         $invoices = Invoice::find()
             ->notDeleted()
-            ->andWhere(['NOT', ['invoice.user_id' => 0]])
             ->location([14, 15])
+            ->andWhere(['<', 'balance', 0])
+            ->andWhere(['NOT', ['invoice.user_id'=> 0]])
+            ->hasManualPayments()
             ->all();
         foreach ($invoices as $invoice) {
-            $transactionIds[] = $invoice->transactionId;
-        }
-        $payments = Payment::find()
-            ->notDeleted()
-            ->location([14, 15])
-            ->all();
-        foreach ($payments as $payment) {
-            $transactionIds[] = $payment->transactionId;
-        }
-        $transactions = Transaction::find()
-            ->andWhere(['id' => $transactionIds])
-            ->orderBy(['id' => SORT_ASC])
-            ->all();
-        foreach ($transactions as $transaction) {
-            if ($transaction->invoice) {
-                $invoice = $transaction->invoice;
-                if ($invoice->isInvoice()) {
-                    $transaction = new Transaction();
-                    $transaction->save();
-                    $invoice->updateAttributes(['transactionId' => $transaction->id]);
+            $amount = 0;
+            if ($invoice->hasManualPayments()) {
+                foreach ($invoice->manualPayments as $payment) {
+                    $amount += $payment->amount;
                 }
-            } else if ($transaction->payment) {
-                $payment = $transaction->payment;
-                if (!$payment->isAutoPayments()) {
-                    if ($payment->invoice) {
-                        $transaction = new Transaction();
-                        $transaction->save();
-                        $payment->updateAttributes(['transactionId' => $transaction->id]);
-                        $customerPayment = new CustomerPayment();
-                        $customerPayment->userId = $payment->user_id;
-                        $customerPayment->paymentId = $payment->id;
-                        $customerPayment->save();
-                        if ($payment->invoice->isInvoice()) {
-                            $paymentModel = new Payment();
-                            $paymentModel->amount = $payment->amount;
-                            $paymentModel->date = $payment->date;
-                            $payment->invoice->addPayment($payment->invoice->user, $paymentModel);
-                        }
-                        $payment->invoicePayment->delete();
-                    }
-                } else {
-                    if ($payment->invoice) {
-                        if ($payment->isCreditUsed()) {
-                            if (!$payment->invoice->isInvoice()) {
-                                $customerPayment = new CustomerPayment();
-                                $customerPayment->userId = $payment->user_id;
-                                $customerPayment->paymentId = $payment->id;
-                                $customerPayment->save();
-                                $payment->invoicePayment->delete();
-                            } else if ($payment->debitPayment->invoice) {
-                                if (!$payment->debitPayment->invoice->isInvoice()) {
-                                    $customerPayment = new CustomerPayment();
-                                    $customerPayment->userId = $payment->user_id;
-                                    $customerPayment->paymentId = $payment->debitPayment->id;
-                                    $customerPayment->save();
-                                    $payment->debitPayment->invoicePayment->delete();
-                                }
-                            }
-                        }
-                        $transaction = new Transaction();
-                        $transaction->save();
-                        $payment->updateAttributes(['transactionId' => $transaction->id]);
-                    } else if ($payment->lesson) {
-                        $transaction = new Transaction();
-                        $transaction->save();
-                        $payment->updateAttributes(['transactionId' => $transaction->id]);
+            }
+            if ($amount > $invoice->total) {
+                foreach ($invoice->manualPayments as $payment) {
+                    $balance = abs($invoice->balance);
+                    if ($payment->amount < $invoice->balance) {
+                        $balance = $payment->amount - abs($invoice->balance);
+                        $payment->delete();
+                    } else {
+                        $payment->invoicePayment->updateAttributes(['amount' => $balance]);
                     }
                 }
             }
-        }
-        
-        $realInvoices = Invoice::find()
-            ->notDeleted()
-            ->andWhere(['NOT', ['invoice.user_id' => 0]])
-            ->location([14, 15])
-            ->invoice()
-            ->all();
-        foreach ($realInvoices as $realInvoice) {
-            $realInvoice->save();
-        }
-
-        $transactions = Transaction::find()
-            ->joinWith('payment')
-            ->joinWith('invoice')
-            ->andWhere(['AND', ['invoice.transactionId' => null], ['payment.transactionId' => null]])
-            ->all();
-
-        foreach ($transactions as $transaction) {
-            $transaction->delete();
+            $invoice->save();
         }
     }
     /**
