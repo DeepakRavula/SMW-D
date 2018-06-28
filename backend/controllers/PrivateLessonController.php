@@ -170,7 +170,7 @@ class PrivateLessonController extends BaseController
             if(!$model->isEditable()){
                 return [
                     'status' => false,
-                    'message' => ' One of the choosen lesson is invoiced.You can\'t edit duration for this lessons',
+                    'message' => ' One of the chosen lesson is invoiced. You can\'t edit duration for this lessons',
                 ]; 
             }
         }
@@ -273,7 +273,15 @@ class PrivateLessonController extends BaseController
     {
         $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
         $lessonId = end($lessonIds);
-        $model = $this->findModel($lessonId);
+	$model = $this->findModel($lessonId);
+	foreach ($lessonIds as $lessonId) {
+            if(!$model->isEditable()){
+                return [
+                    'status' => false,
+                    'message' => ' One of the chosen lesson is invoiced. You can\'t edit discount for this lessons',
+                ]; 
+            }
+        }
         $lineItemDiscount = LessonMultiDiscount::loadLineItemDiscount($lessonIds);
         $paymentFrequencyDiscount = LessonMultiDiscount::loadPaymentFrequencyDiscount($lessonIds);
         $customerDiscount = LessonMultiDiscount::loadCustomerDiscount($lessonIds);
