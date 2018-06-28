@@ -21,6 +21,7 @@ use yii\helpers\Json;
 use yii\web\Response;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use common\models\InvoicePayment;
 use common\models\Note;
 use common\models\Course;
 use common\models\PaymentCycle;
@@ -237,11 +238,11 @@ class InvoiceController extends BaseController
         $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $customerInvoicePayments,
         ]);
-        $invoicePayments                     = Payment::find()
-            ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                $query->andWhere(['ip.invoice_id' => $model->id]);
-            }])
-            ->orderBy(['date' => SORT_DESC]);
+        $invoicePayments                     = InvoicePayment::find()
+            ->joinWith(['payment p' => function ($query) use ($model) {
+                $query->orderBy(['payment.date' => SORT_DESC]);
+            }]);
+            
         // if ($model->isProFormaInvoice()) {
         //     $invoicePayments->notLessonCreditUsed();
         // }
