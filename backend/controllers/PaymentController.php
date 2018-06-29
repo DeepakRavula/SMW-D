@@ -451,8 +451,7 @@ class PaymentController extends BaseController
 		 ->joinWith(['invoicePayments' => function ($query) use ($id) {
                 $query->andWhere(['payment_id' => $id]);
             }])
-		 ->notDeleted()
-		 ->invoice();
+		 ->notDeleted();
 	    
 	    $invoiceDataProvider = new ActiveDataProvider([
             'query' => $invoicePayment,
