@@ -12,8 +12,10 @@ class m180627_101252_add_amount_column_migration extends Migration
      */
     public function safeUp()
     {
-         $this->addColumn('invoice_payment', 'amount', $this->decimal(10, 4)->notNull());
-         $this->addColumn('lesson_payment', 'amount', $this->decimal(10, 4)->notNull());
+        $this->addColumn('invoice_payment', 'amount', $this->decimal(10, 4)->notNull());
+        $this->addColumn('lesson_payment', 'amount', $this->decimal(10, 4)->notNull());
+        $this->addColumn('invoice_payment', 'isDeleted', $this->integer()->notNull());
+        $this->addColumn('lesson_payment', 'isDeleted', $this->integer()->notNull());
     }
 
     /**
