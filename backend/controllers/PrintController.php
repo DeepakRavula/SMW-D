@@ -38,7 +38,7 @@ class PrintController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['invoice', 'course', 'evaluation', 'teacher-lessons', 'time-voucher', 'customer-invoice', 'account-view', 'royalty', 'royalty-free', 'tax-collected', 'user', 'customer-items-print', 'proforma-invoice'],
+                        'actions' => ['invoice', 'course', 'evaluation', 'teacher-lessons', 'time-voucher', 'customer-invoice', 'account-view', 'royalty', 'royalty-free', 'tax-collected', 'user', 'customer-items-print', 'proforma-invoice','payment'],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
@@ -472,4 +472,33 @@ class PrintController extends BaseController
             'searchModel'=>$searchModel,
         ]);
     }
+     public function actionPayment($id) {
+        $model = Payment::findOne($id);
+        $lessonPayment = Lesson::find()
+		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
+                $query->andWhere(['paymentId' => $id]);
+            }]);
+	    $lessonDataProvider = new ActiveDataProvider([
+            'query' => $lessonPayment,
+            'pagination' => false
+        ]);
+	    
+        $invoicePayment = Invoice::find()
+            ->notDeleted()
+            ->joinWith(['invoicePayments' => function ($query) use ($id) {
+                $query->andWhere(['payment_id' => $id]);
+            }]);
+	    
+	    $invoiceDataProvider = new ActiveDataProvider([
+            'query' => $invoicePayment,
+            'pagination' => false
+        ]);
+        $this->layout = '/print';
+	
+        return $this->render('/payment/print/view', [
+            'model' => $model,
+	    'lessonDataProvider' => $lessonDataProvider,
+            'invoiceDataProvider' => $invoiceDataProvider,
+        ]);
+    } 
 }
