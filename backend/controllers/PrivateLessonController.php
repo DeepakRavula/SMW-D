@@ -275,6 +275,7 @@ class PrivateLessonController extends BaseController
         $lessonId = end($lessonIds);
 	$model = $this->findModel($lessonId);
 	foreach ($lessonIds as $lessonId) {
+	$model = $this->findModel($lessonId);
             if(!$model->isEditable()){
                 return [
                     'status' => false,
