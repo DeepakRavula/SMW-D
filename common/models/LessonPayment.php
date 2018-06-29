@@ -80,4 +80,12 @@ class LessonPayment extends \yii\db\ActiveRecord
         
         return $payment->amount;
     }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
+    }
 }
