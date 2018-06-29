@@ -323,34 +323,46 @@ class PaymentController extends BaseController
         $invoiceCredits = $this->getCustomerCreditInvoices($customerId);
         $results = [];
         $amount = 0;
-        $customer = User::findOne($customerId);
-        if ($customer) {
-            if ($customer->hasCustomerCredit()) {
+        $paymentCredits = $this->getPaymentCredits($customerId);
+        
+        if ($invoiceCredits) {
+            foreach ($invoiceCredits as $invoiceCredit) {
                 $results[] = [
-                    'id' => $customer->id,
-                    'type' => 'Customer Credit',
-                    'reference' => null,
-                    'amount' => $customer->creditAmount
+                    'id' => $invoiceCredit->id,
+                    'type' => 'Invoice Credit',
+                    'reference' => $invoiceCredit->getInvoiceNumber(),
+                    'amount' => abs($invoiceCredit->balance)
                 ];
             }
-            if (!empty($invoiceCredits)) {
-                foreach ($invoiceCredits as $invoiceCredit) {
-                    $results[] = [
-                        'id' => $invoiceCredit->id,
-                        'type' => 'Invoice Credit',
-                        'reference' => $invoiceCredit->getInvoiceNumber(),
-                        'amount' => abs($invoiceCredit->balance)
-                    ];
-                }
+        }
+
+        if ($paymentCredits) {
+            foreach ($paymentCredits as $paymentCredit) {
+                $results[] = [
+                    'id' => $paymentCredit->id,
+                    'type' => 'Payment Credit',
+                    'reference' => $paymentCredit->reference,
+                    'amount' => $paymentCredit->creditAmount
+                ];
             }
         }
+        
         $creditDataProvider = new ArrayDataProvider([
             'allModels' => $results,
             'sort' => [
-                'attributes' => ['type', 'amount'],
-            ],
+                'attributes' => ['type', 'reference', 'amount']
+            ]
         ]);
         return $creditDataProvider;
+    }
+
+    public function getPaymentCredits($customerId) 
+    {
+        return Payment::find()
+            ->notDeleted()
+            ->exceptAutoPayments()
+            ->customer($customerId)
+            ->all();
     }
 
     public function actionReceive()
@@ -435,11 +447,12 @@ class PaymentController extends BaseController
         }
         return ActiveForm::validate($model);
     }
+
     public function actionUpdatePayment($id)
     {
         $model = $this->findModel($id);
-	$lessonPayment = Lesson::find()
-		 ->joinWith(['lessonPayments' => function ($query) use ($id) {
+	    $lessonPayment = Lesson::find()
+		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
                 $query->andWhere(['paymentId' => $id]);
             }]);
 	    $lessonDataProvider = new ActiveDataProvider([
@@ -447,12 +460,11 @@ class PaymentController extends BaseController
             'pagination' => false
         ]);
 	    
-	$invoicePayment = Invoice::find()
-		 ->joinWith(['invoicePayments' => function ($query) use ($id) {
+        $invoicePayment = Invoice::find()
+            ->notDeleted()
+            ->joinWith(['invoicePayments' => function ($query) use ($id) {
                 $query->andWhere(['payment_id' => $id]);
-            }])
-		 ->notDeleted()
-		 ->invoice();
+            }]);
 	    
 	    $invoiceDataProvider = new ActiveDataProvider([
             'query' => $invoicePayment,
@@ -460,13 +472,12 @@ class PaymentController extends BaseController
         ]);
         if (Yii::$app->request->post()) {
            
-        }
-            else {
-		$data = $this->renderAjax('_form', [
-		'model' => $model,
-		'lessonDataProvider' => $lessonDataProvider,
-		'invoiceDataProvider' => $invoiceDataProvider
-        ]);
+        } else {
+            $data = $this->renderAjax('_form', [
+                'model' => $model,
+                'lessonDataProvider' => $lessonDataProvider,
+                'invoiceDataProvider' => $invoiceDataProvider
+            ]);
             return [
                 'status' => true,
                 'data' => $data
