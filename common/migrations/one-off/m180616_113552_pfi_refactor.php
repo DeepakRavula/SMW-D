@@ -57,8 +57,8 @@ class m180616_113552_pfi_refactor extends Migration
             if ($amount > $invoice->total) {
                 foreach ($invoice->manualPayments as $payment) {
                     $balance = abs($invoice->balance);
-                    if ($payment->amount < $invoice->balance) {
-                        $balance = $payment->amount - abs($invoice->balance);
+                    if ($payment->amount < $balance) {
+                        $balance = $payment->amount - $balance;
                         $payment->delete();
                     } else {
                         $payment->invoicePayment->updateAttributes(['amount' => $payment->invoicePayment->amount - $balance]);
