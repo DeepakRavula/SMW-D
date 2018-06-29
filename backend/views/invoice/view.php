@@ -102,7 +102,6 @@ if (!empty($lineItem)) {
 	    <?= $this->render('payment/_index', [
             'model' => $model,
             'searchModel' => $searchModel,
-            'invoicePayments' => $invoicePayments,
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'print'=>false,        
         ]);?>

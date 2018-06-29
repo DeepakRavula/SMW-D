@@ -2,6 +2,9 @@
 
 namespace common\models;
 
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
+
+
 /**
  * This is the model class for table "city".
  *
@@ -26,6 +29,20 @@ class LessonPayment extends \yii\db\ActiveRecord
     {
         return [
             [['lessonId', 'paymentId', 'enrolmentId'], 'integer'],
+            [['isDeleted'], 'safe']
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
         ];
     }
 
@@ -42,14 +59,17 @@ class LessonPayment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
     }
+
     public function getPayment()
     {
         return $this->hasOne(Payment::className(), ['id' => 'paymentId']);
     }
+
     public function getCreditUsage()
     {
         return $this->hasOne(CreditUsage::className(), ['credit_payment_id' => 'paymentId']);
     }
+
     public function getCredit()
     {
         $payment = Payment::findOne(['id' => $this->paymentId]);

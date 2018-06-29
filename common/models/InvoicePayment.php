@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\models\timelineEvent\TimelineEventPayment;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "payments".
@@ -31,6 +32,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
         return [
             [['payment_id', 'invoice_id'], 'required'],
             [['payment_id', 'invoice_id'], 'integer'],
+            [['isDeleted'], 'safe']
         ];
     }
 
@@ -45,6 +47,19 @@ class InvoicePayment extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+        ];
+    }
+
     public static function find()
     {
         return new \common\models\query\InvoicePaymentQuery(get_called_class());
@@ -54,12 +69,20 @@ class InvoicePayment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Payment::className(), ['id' => 'payment_id']);
     }
+
     public function getTimelineEventPayment()
     {
         return $this->hasOne(TimelineEventPayment::className(), ['paymentId' => 'payment_id']);
     }
+
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
+    }
+
+    public function getDebitPayment()
+    {
+        return $this->hasOne(Payment::className(), ['id' => 'credit_payment_id'])
+            ->viaTable('credit_usage', ['debit_payment_id' => 'payment_id']);
     }
 }

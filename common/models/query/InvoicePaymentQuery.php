@@ -28,10 +28,24 @@ class InvoicePaymentQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
-    public function paid()
-    {
-        $this->joinWith('payment p');
 
-        return $this;
+    public function notDeleted()
+    {
+        return $this->andWhere(['invoice_payment.isDeleted' => false]);
+    }
+
+    public function notLessonCreditUsed()
+    {
+        return $this->joinWith(['debitPayment dp' => function ($query) {
+            $query->joinWith(['lessonCredit' => function ($query) {
+                $query->andWhere(['lesson_payment.id' => null]);
+            }])
+            ->where(['OR', ['dp.id' => null], ['NOT', ['dp.id' => null]]]);
+        }]);
+    }
+
+    public function invoice($invoiceId)
+    {
+        return $this->andWhere(['invoice_payment.invoice_id' => $invoiceId]);
     }
 }
