@@ -323,7 +323,7 @@ class PaymentController extends BaseController
         $invoiceCredits = $this->getCustomerCreditInvoices($customerId);
         $results = [];
         $amount = 0;
-        $paymentCredits = $this->getPaymentCredits($customerId);
+        $paymentCredits = $this->getCustomerPayments($customerId);
         
         if ($invoiceCredits) {
             foreach ($invoiceCredits as $invoiceCredit) {
@@ -358,7 +358,7 @@ class PaymentController extends BaseController
         return $creditDataProvider;
     }
 
-    public function getPaymentCredits($customerId) 
+    public function getCustomerPayments($customerId)
     {
         return Payment::find()
             ->notDeleted()

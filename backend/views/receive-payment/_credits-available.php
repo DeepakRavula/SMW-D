@@ -2,6 +2,7 @@
 
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use yii\bootstrap\Html;
 
 ?>
 
@@ -41,6 +42,17 @@ use yii\widgets\Pjax;
         'contentOptions' => ['class' => 'text-right credit-value'],
         'label' => 'Amount',
         'value' => 'amount'
+    ]);
+
+    array_push($columns, [
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right'],
+        'label' => 'Payment',
+        'value' => function ($model) { 
+            return Html::textInput('', round($model['amount'], 2), 
+                ['class' => 'credit-amount text-right']); 
+        },
+        'format' => 'raw'
     ]);
 ?>
 

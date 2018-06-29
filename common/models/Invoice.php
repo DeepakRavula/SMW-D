@@ -458,11 +458,13 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getCreditUsedPayment()
     {
-        return Payment::find()
-            ->joinWith('invoicePayment ip')
-            ->andWhere(['ip.invoice_id' => $this->id, 'payment.user_id' => $this->user_id])
-            ->creditUsed()
+        return InvoicePayment::find()
             ->notDeleted()
+            ->invoice($this->id)
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted()
+                    ->creditUsed();
+            }])
             ->all();
     }
 
@@ -510,10 +512,13 @@ class Invoice extends \yii\db\ActiveRecord
     
     public function getCreditUsedPaymentTotal()
     {
-        $paymentTotal = Payment::find()
-            ->joinWith('invoicePayment ip')
-            ->andWhere(['ip.invoice_id' => $this->id])
-            ->creditUsed()
+        $paymentTotal = InvoicePayment::find()
+            ->notDeleted()
+            ->invoice($this->id)
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted()
+                    ->creditUsed();
+            }])
             ->sum('payment.amount');
 
         return empty($paymentTotal) ? 0.0000 : $paymentTotal;
@@ -554,19 +559,6 @@ class Invoice extends \yii\db\ActiveRecord
 
         $invoicePaymentTotal = $paymentTotal->sum('invoice_payment.amount');
         return empty($invoicePaymentTotal) ? 0.0000 : $invoicePaymentTotal;
-    }
-
-    public function getProFormaPaymentTotal()
-    {
-        $invoicePaymentTotal = Payment::find()
-            ->joinWith('invoicePayment ip')
-            ->andWhere([
-                'ip.invoice_id' => $this->id
-            ])
-            ->andWhere(['NOT IN', 'payment.payment_method_id', [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]])
-            ->sum('payment.amount');
-
-        return $invoicePaymentTotal;
     }
 
     public function hasProFormaCredit()

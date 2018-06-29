@@ -85,4 +85,12 @@ class InvoicePayment extends \yii\db\ActiveRecord
         return $this->hasOne(Payment::className(), ['id' => 'credit_payment_id'])
             ->viaTable('credit_usage', ['debit_payment_id' => 'payment_id']);
     }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
+    }
 }
