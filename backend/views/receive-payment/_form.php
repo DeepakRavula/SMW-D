@@ -195,12 +195,21 @@ use yii\bootstrap\Html;
                     $(this).find('.payment-amount').val('');
                 }
             });
+            $('.credit-items-value').each(function() {
+                if (!$(this).find('.check-checkbox').is(":checked")) {
+                    $(this).find('.credit-amount').val('');
+                }
+            });
             $('#paymentform-amounttodistribute').val(amountToDistribute);
             var creditAmount = parseFloat('0.00');
             $('.credit-items-value').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
-                    var balance = $(this).find('.credit-amount').val();
-                    creditAmount = parseFloat(creditAmount) + parseFloat(balance);
+                    if ($.isEmptyObject($(this).find('.credit-amount').val())) {
+                        var balance = $(this).find('.credit-value').text();debugger
+                        balance = balance.replace('$', '');
+                        $(this).find('.credit-amount').val(balance);
+                    }
+                    creditAmount += parseFloat($(this).find('.credit-amount').val());
                 }
             });
             $('#selected-credit-value').val((creditAmount).toFixed(2));
@@ -236,9 +245,9 @@ use yii\bootstrap\Html;
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html(header);
         $('.modal-save').text('Save');
-	$('.modal-back').text('Create PFI');
-	$('.modal-back').removeClass('btn-info');
-	$('.modal-back').addClass('btn-default');
+        $('.modal-back').text('Create PFI');
+        $('.modal-back').removeClass('btn-info');
+        $('.modal-back').addClass('btn-default');
         $('.modal-back').show();
         $('.select-on-check-all').prop('checked', true);
         receivePayment.setAction();
@@ -246,7 +255,7 @@ use yii\bootstrap\Html;
         receivePayment.setAvailableCredits();
     });
 
-    $(document).off('change', '#credit-line-item-grid, .payment-amount, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '.payment-amount, #credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
+    $(document).off('change', '#credit-line-item-grid, .payment-amount, .credit-amount, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '.payment-amount, #credit-line-item-grid, #invoice-line-item-grid, .credit-amount, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
         receivePayment.setAction();
         receivePayment.calcAmountNeeded();
         receivePayment.validateAmount();

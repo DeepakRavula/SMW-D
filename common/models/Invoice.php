@@ -650,8 +650,7 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $sumOfPayment = Payment::find()
                 ->andWhere(['user_id' => $customerId])
-                ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED,
-                    PaymentMethod::TYPE_CREDIT_APPLIED]]])
+                ->exceptAutoPayments()
                 ->sum('payment.amount');
 
         return $sumOfPayment;
@@ -660,7 +659,9 @@ class Invoice extends \yii\db\ActiveRecord
     public function getSumOfInvoice($customerId)
     {
         $sumOfInvoice = self::find()
-                ->andWhere(['user_id' => $customerId, 'type' => self::TYPE_INVOICE, 'isDeleted' => false])
+                ->notDeleted()
+                ->invoice()
+                ->andWhere(['user_id' => $customerId])
                 ->sum('invoice.total');
 
         return $sumOfInvoice;
@@ -669,7 +670,8 @@ class Invoice extends \yii\db\ActiveRecord
     public function getSumOfAllInvoice($customerId)
     {
         $sumOfInvoice = self::find()
-                ->andWhere(['user_id' => $customerId, 'isDeleted' => false])
+                ->notDeleted()
+                ->andWhere(['user_id' => $customerId])
                 ->sum('invoice.total');
 
         return $sumOfInvoice;
