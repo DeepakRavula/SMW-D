@@ -181,6 +181,7 @@ class InvoiceController extends BaseController
             }
         }
     }
+
     public function actionNote($id)
     {
         $model = $this->findModel($id);
@@ -229,15 +230,6 @@ class InvoiceController extends BaseController
         $userDataProvider = $userSearchModel->search($queryParams);
         $userDataProvider->pagination = false;
         
-        $customerInvoicePayments = Payment::find()
-            ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                $query->andWhere(['ip.invoice_id' => $model->id]);
-            }])
-            ->andWhere(['user_id' => $model->user_id]);
-
-        $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
-            'query' => $customerInvoicePayments,
-        ]);
         $invoicePayments = InvoicePayment::find()
             ->notDeleted()
             ->joinWith(['payment' => function ($query) {
@@ -275,16 +267,13 @@ class InvoiceController extends BaseController
         $logDataProvider= new ActiveDataProvider([
             'query' => LogHistory::find()
             ->invoice($id) ]);
-        $searchModel->isPrint=false;
-        return $this->render(
-            'view',
-                [
+        $searchModel->isPrint = false;
+        return $this->render('view', [
                 'model' => $model,
                 'userSearchModel' => $userSearchModel,
                 'userDataProvider' => $userDataProvider,
                 'searchModel' => $searchModel,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                'invoicePayments' => $customerInvoicePaymentsDataProvider,
                 'customer' => empty($customer) ? new User() : $customer,
                 'userModel' => $userModel,
                 'userEmail' => $userEmail,
@@ -293,8 +282,7 @@ class InvoiceController extends BaseController
                 'itemDataProvider' => $itemDataProvider,
                 'itemSearchModel' => $itemSearchModel,
                 'logDataProvider' => $logDataProvider,
-        ]
-        );
+        ]);
     }
 
     public function actionAddMisc($id, $itemId)

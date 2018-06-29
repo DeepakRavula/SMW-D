@@ -546,11 +546,12 @@ class Invoice extends \yii\db\ActiveRecord
     public function getInvoicePaymentTotal()
     {
         $paymentTotal = InvoicePayment::find()
-            ->joinWith('payment');
-           
-        if ($this->isProFormaInvoice()) {
-            $paymentTotal->notCreditUsed();
-        }
+            ->notDeleted()
+            ->invoice($this->id)
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted();
+            }]);
+
         $invoicePaymentTotal = $paymentTotal->sum('invoice_payment.amount');
         return empty($invoicePaymentTotal) ? 0.0000 : $invoicePaymentTotal;
     }
