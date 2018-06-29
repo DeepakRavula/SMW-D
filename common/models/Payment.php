@@ -160,9 +160,15 @@ class Payment extends ActiveRecord
         return $this->hasOne(UserProfile::className(), ['user_id' => 'id'])
             ->via('user');
     }
+
     public function getLessonCredit()
     {
         return $this->hasOne(LessonPayment::className(), ['paymentId' => 'id']);
+    }
+
+    public function getLessonPayments()
+    {
+        return $this->hasMany(LessonPayment::className(), ['paymentId' => 'id']);
     }
 
     public function getCustomerCredit()
@@ -279,29 +285,22 @@ class Payment extends ActiveRecord
             $this->invoice->save();
             return parent::afterSave($insert, $changedAttributes);
         }
-        // if (!empty($this->invoiceId)) {
-        //     $invoicePaymentModel = new InvoicePayment();
-        //     $invoicePaymentModel->invoice_id = $this->invoiceId;
-        //     $invoicePaymentModel->payment_id = $this->id;
-        //     $invoicePaymentModel->amount     = $this->amount;
-        //     $invoicePaymentModel->save();
-        //     $this->invoice->save();
-        // }
-        // if (!empty($this->customerId)) {
-        //     $customerPayment = new CustomerPayment();
-        //     $customerPayment->userId = $this->customerId;
-        //     $customerPayment->paymentId = $this->id;
-        //     $customerPayment->save();
-        // }
-       // print_r($this->enrolmentId);die;
-        // if (!empty($this->lessonId) && !empty($this->enrolmentId)) {
-        //     $lessonPayment = new LessonPayment();
-        //     $lessonPayment->lessonId    = $this->lessonId;
-        //     $lessonPayment->paymentId   = $this->id;
-        //     $lessonPayment->amount      = $this->amount;
-        //     $lessonPayment->enrolmentId = $this->enrolmentId;
-        //     $lessonPayment->save();
-        // }
+        if (!empty($this->invoiceId)) {
+            $invoicePaymentModel = new InvoicePayment();
+            $invoicePaymentModel->invoice_id = $this->invoiceId;
+            $invoicePaymentModel->payment_id = $this->id;
+            $invoicePaymentModel->amount     = $this->amount;
+            $invoicePaymentModel->save();
+            $this->invoice->save();
+        }
+        if (!empty($this->lessonId) && !empty($this->enrolmentId)) {
+            $lessonPayment = new LessonPayment();
+            $lessonPayment->lessonId    = $this->lessonId;
+            $lessonPayment->paymentId   = $this->id;
+            $lessonPayment->amount      = $this->amount;
+            $lessonPayment->enrolmentId = $this->enrolmentId;
+            $lessonPayment->save();
+        }
         $this->trigger(self::EVENT_CREATE);
         
         return parent::afterSave($insert, $changedAttributes);
@@ -366,5 +365,20 @@ class Payment extends ActiveRecord
             $this->invoice->save();
         }
         return true;
+    }
+
+    public function getCreditAmount()
+    {
+        $invoicePaymentAmount = 0;
+        $lessonPaymentAmount = 0;
+        $invoicePayments = $this->invoicePayments;
+        $lessonPayments = $this->lessonPayments;
+        foreach ($invoicePayments as $invoicePayment) {
+            $invoicePaymentAmount += $invoicePayment->amount;
+        }
+        foreach ($lessonPayments as $lessonPayment) {
+            $lessonPaymentAmount += $lessonPayment->amount;
+        }
+        return $this->amount - ($lessonPaymentAmount + $invoicePaymentAmount);
     }
 }
