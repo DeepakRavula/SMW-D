@@ -4,12 +4,22 @@ use yii\grid\GridView;
 ?>
 <?php
 $columns = [
-    'date:date',
-    'paymentMethod.name',
+    [
+        'label' => 'Date',
+        'value' => function ($data) {
+            return Yii::$app->formatter->asDate($data->payment->date);
+        },
+    ],
+    [
+        'label' => 'Payment Method',
+        'value' => function ($data) {
+            return $data->payment->paymentMethod->name;
+        },
+    ],
     [
         'label' => 'Number',
         'value' => function ($data) {
-            return $data->reference;
+            return $data->payment->reference;
         },
     ],
     [

@@ -1016,54 +1016,63 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getLessonCreditAmount($enrolmentId)
     {
-        return Payment::find()
-                ->joinWith('lessonCredit')
-                ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
-                ->notDeleted()
-                ->sum('payment.amount');
+        return LessonPayment::find()
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted();
+            }])
+            ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
+            ->notDeleted()
+            ->sum('payment.amount');
     }
     
     public function getCreditAppliedAmount($enrolmentId)
     {
         return LessonPayment::find()
-		->joinWith(['payment' => function ($query) {
-			$query->notDeleted()
-				->notCreditUsed();
+		    ->joinWith(['payment' => function ($query) {
+                $query->notDeleted()
+                    ->notCreditUsed();
 			}])
-                ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
-                ->notDeleted()
-                ->sum('lesson_payment.amount');
+            ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
+            ->notDeleted()
+            ->sum('lesson_payment.amount');
     }
 
     public function getCreditAppliedPayment($enrolmentId)
     {
-        return Payment::find()
-                ->joinWith('lessonCredit')
-                ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
-                ->creditApplied()
-                ->notDeleted()
-                ->all();
+        return LessonPayment::find()
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted()
+                    ->notCreditUsed();
+            }])
+            ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
+            ->notDeleted()
+            ->all();
     }
     
     public function getCreditUsedAmount($enrolmentId)
     {
-        return Payment::find()
-                ->joinWith('lessonCredit')
-                ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolmentId])
-                ->creditUsed()
-                ->notDeleted()
-                ->sum('amount');
+        return LessonPayment::find()
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted()
+                    ->creditUsed();
+            }])
+            ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
+            ->notDeleted()
+            ->sum('amount');
     }
 
     public function getCreditUsedPayment($enrolmentId)
     {
-        return Payment::find()
-                ->joinWith('lessonCredit')
-                ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
-                ->creditUsed()
-                ->notDeleted()
-                ->all();
+        return LessonPayment::find()
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted()
+                    ->creditUsed();
+            }])
+            ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
+            ->notDeleted()
+            ->all();
     }
+    
     public function getProformaLessonItem()
     {
         return $this->hasOne(ProformaItemLesson::className(), ['lessonId' => 'id']);

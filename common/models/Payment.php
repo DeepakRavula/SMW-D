@@ -381,4 +381,9 @@ class Payment extends ActiveRecord
         }
         return $this->amount - ($lessonPaymentAmount + $invoicePaymentAmount);
     }
+
+    public function hasCredit()
+    {
+        return $this->creditAmount > 0.00;
+    }
 }
