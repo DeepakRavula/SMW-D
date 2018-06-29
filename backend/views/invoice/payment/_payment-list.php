@@ -49,9 +49,9 @@ use yii\widgets\Pjax;
     }
 
     array_push($columns, [
-        'label'=>'Amount',
+        'label' => 'Amount',
         'format' => 'currency',
-        'options' => ['class' => 'text-right','width'=>'10%;'] , 
+        'options' => ['class' => 'text-right','width'=>'10%;'],
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right'],
         'value' => function ($data) {

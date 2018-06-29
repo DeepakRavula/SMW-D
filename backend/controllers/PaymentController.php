@@ -338,12 +338,14 @@ class PaymentController extends BaseController
 
         if ($paymentCredits) {
             foreach ($paymentCredits as $paymentCredit) {
-                $results[] = [
-                    'id' => $paymentCredit->id,
-                    'type' => 'Payment Credit',
-                    'reference' => $paymentCredit->reference,
-                    'amount' => $paymentCredit->creditAmount
-                ];
+                if ($paymentCredit->hasCredit()) {
+                    $results[] = [
+                        'id' => $paymentCredit->id,
+                        'type' => 'Payment Credit',
+                        'reference' => $paymentCredit->reference,
+                        'amount' => $paymentCredit->creditAmount
+                    ];
+                }
             }
         }
         
@@ -410,7 +412,6 @@ class PaymentController extends BaseController
             $payment = new Payment();
             $payment->amount = $model->amount;
             $payment->user_id = $searchModel->userId;
-            //$payment->customerId = $searchModel->userId;
             $payment->payment_method_id = $model->payment_method_id;
             $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $payment->save();

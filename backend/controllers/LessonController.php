@@ -29,6 +29,7 @@ use common\models\log\StudentLog;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 use common\models\LessonHierarchy;
+use common\models\LessonPayment;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -109,6 +110,7 @@ class LessonController extends BaseController
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = $this->findModel($id);
+        $enrolment = Enrolment::findOne(['courseId' => $model->courseId]);
         $model->duration = $model->fullDuration;
         $notes = Note::find()
                 ->andWhere(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
@@ -119,7 +121,7 @@ class LessonController extends BaseController
         ]);
 
         $groupLessonStudents = Student::find()
-                        ->notDeleted()
+            ->notDeleted()
             ->joinWith(['enrolment' => function ($query) use ($id) {
                 $query->joinWith(['course' => function ($query) use ($id) {
                     $query->joinWith(['program' => function ($query) use ($id) {
@@ -138,16 +140,19 @@ class LessonController extends BaseController
         $studentDataProvider = new ActiveDataProvider([
             'query' => $groupLessonStudents,
         ]);
-        $payments = Payment::find()
-            ->joinWith(['lessonCredit' => function ($query) use ($id) {
-                $query->andWhere(['lesson_payment.lessonId' => $id]);
-            }]);
+        $payments = LessonPayment::find()
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted();
+            }])
+            ->andWhere(['lesson_payment.lessonId' => $id, 'lesson_payment.enrolmentId' => $enrolment->id])
+            ->notDeleted();
         $paymentsDataProvider = new ActiveDataProvider([
-            'query' => $payments,
+            'query' => $payments
         ]);
-        $logDataProvider =new ActiveDataProvider([
-            'query' => LogHistory::find()
-            ->lesson($id) ]);
+        $logDataProvider = new ActiveDataProvider([
+            'query' => LogHistory::find()->lesson($id) 
+        ]);
+
         return $this->render('view', [
             'model' => $model,
             'noteDataProvider' => $noteDataProvider,
