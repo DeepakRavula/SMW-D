@@ -42,6 +42,7 @@ class PaymentForm extends Model
     public $creditIds;
     public $invoicePayments;
     public $lessonPayments;
+    public $creditPayments;
     public $amountToDistribute;
     public $canUseInvoiceCredits;
     public $canUsePaymentCredits;
@@ -57,8 +58,9 @@ class PaymentForm extends Model
             [['payment_method_id', 'date'], 'required'],
             ['amount', 'validateAmount'],
             [['date', 'amountNeeded', 'invoiceIds', 'canUseInvoiceCredits', 'selectedCreditValue',
-                'lessonIds', 'canUseCustomerCredits', 'creditIds', 'amount', 'userId',
-                'amountToDistribute', 'invoicePayments', 'lessonPayments','paymentId'], 'safe']
+                'lessonIds', 'canUsePaymentCredits', 'creditIds', 'amount', 'userId',
+                'amountToDistribute', 'invoicePayments', 'lessonPayments','paymentId',
+                'creditPayments'], 'safe']
         ];
     }
 
@@ -77,7 +79,7 @@ class PaymentForm extends Model
                 ->orderBy(['id' => SORT_ASC])
                 ->all();
         }
-        
+        $creditPayments = $this->creditPayments;
         $lessonPayments = $this->lessonPayments;
         $invoicePayments = $this->invoicePayments;
         if ($this->creditIds) {
@@ -118,54 +120,90 @@ class PaymentForm extends Model
                     }
                 }
             }
-        } else {
-            $amount = $this->amount;
-            if ($this->invoiceIds) {
-                foreach ($invoices as $i => $invoice) {
-                    if ($invoice->isOwing()) {
-//                        $paymentModel = new Payment();
-//                        $paymentModel->amount = $invoicePayments[$i];
-                        if ($amount > 0.00) {
-//                            if ($paymentModel->amount > $amount) {
-//                                $paymentModel->amount = $amount;
-//                            }
-                            //$invoice->addPayment($customer, $paymentModel);
-                            //$amount -= $paymentModel->amount;
-                            $invoicePaymentModel = new InvoicePayment();
-                            $invoicePaymentModel->invoice_id = $invoice->id;
-                            $invoicePaymentModel->payment_id = $this->paymentId;
-                            $invoicePaymentModel->amount     = $invoicePayments[$i];
-                            $invoicePaymentModel->save();
-                            $invoice->save();
-
-                        } else {
-                            break;
+            if ($this->canUsePaymentCredits) {
+                $creditPayments = Payment::findAll($this->creditIds);
+                foreach ($creditPayments as $creditPayment) {
+                    if ($this->invoiceIds) {
+                        foreach ($invoices as $i => $invoice) {
+                            if ($invoice->isOwing()) {
+                                if ($creditPayment->hasCredit()) {
+                                    if ($invoicePayments[$i] > $creditPayment->creditAmount) {
+                                        $amountToPay = $creditPayment->creditAmount;
+                                    } else {
+                                        $amountToPay = $invoicePayments[$i];
+                                    }
+                                    $invoicePaymentModel = new InvoicePayment();
+                                    $invoicePaymentModel->invoice_id = $invoice->id;
+                                    $invoicePaymentModel->payment_id = $creditPayment->id;
+                                    $invoicePaymentModel->amount     = $amountToPay;
+                                    $invoicePaymentModel->save();
+                                    $invoice->save();
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if ($this->lessonIds) {
+                        foreach ($lessons as $i => $lesson) {
+                            if ($lesson->isOwing($lesson->enrolment->id)) {
+                                if ($creditPayment->hasCredit()) {
+                                    if ($lessonPayments[$i] > $creditPayment->creditAmount) {
+                                        $amountToPay = $creditPayment->creditAmount;
+                                    } else {
+                                        $amountToPay = $lessonPayments[$i];
+                                    }
+                                    $lessonPaymentModel = new LessonPayment();
+                                    $lessonPaymentModel->lessonId = $lesson->id;
+                                    $lessonPaymentModel->paymentId = $creditPayment->id;
+                                    $lessonPaymentModel->enrolmentId = $lesson->enrolment->id;
+                                    $lessonPaymentModel->amount     = $amountToPay;
+                                    $lessonPaymentModel->save();
+                                } else {
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
             }
-            if ($this->lessonIds) {
-                foreach ($lessons as $i => $lesson) {
-                    if ($lesson->isOwing($lesson->enrolment->id)) {
-//                        $paymentModel = new Payment();
-//                        $paymentModel->amount = $lessonPayments[$i];
-                        if ($amount > 0.00) {
-//                            if ($paymentModel->amount > $amount) {
-//                                $paymentModel->amount = $amount;
-//                            }
-//                                 $amount -= $paymentModel->amount;
-//                                 $paymentModel->save();
-                                $lessonPayment = new LessonPayment();
-                                $lessonPayment->lessonId    = $lesson->id;
-                                $lessonPayment->paymentId   = $this->paymentId;
-                                $lessonPayment->amount      = $lessonPayments[$i];
-                                $lessonPayment->enrolmentId = $lesson->enrolmentId;
-                                $lessonPayment->save();
-                            //$lesson->addPayment($customer, $paymentModel);
-                           
+        }
+        
+        $amount = $this->amount;
+        if ($this->invoiceIds) {
+            foreach ($invoices as $i => $invoice) {
+                if ($invoice->isOwing()) {
+                    if ($amount > 0.00) {
+                        if ($amount > $invoice->balance) {
+                            $amountToPay = $invoice->balance;
                         } else {
-                            break;
+                            $amountToPay = $amount;
                         }
+                        $invoicePaymentModel = new InvoicePayment();
+                        $invoicePaymentModel->invoice_id = $invoice->id;
+                        $invoicePaymentModel->payment_id = $this->paymentId;
+                        $invoicePaymentModel->amount     = $amountToPay;
+                        $invoicePaymentModel->save();
+                        $invoice->save();
+                        $amount -= $amountToPay;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        if ($this->lessonIds) {
+            foreach ($lessons as $i => $lesson) {
+                if ($lesson->isOwing($lesson->enrolment->id)) {
+                    if ($amount > 0.00) {
+                        $lessonPayment = new LessonPayment();
+                        $lessonPayment->lessonId    = $lesson->id;
+                        $lessonPayment->paymentId   = $this->paymentId;
+                        $lessonPayment->amount      = $lessonPayments[$i];
+                        $lessonPayment->enrolmentId = $lesson->enrolmentId;
+                        $lessonPayment->save();
+                    } else {
+                        break;
                     }
                 }
             }

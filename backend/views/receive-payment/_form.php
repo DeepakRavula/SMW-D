@@ -125,7 +125,8 @@ use yii\bootstrap\Html;
             var creditIds = new Array();
             var lessonPayments = new Array();
             var invoicePayments = new Array();
-            var canUseCustomerCredits = 0;
+            var creditPayments = new Array();
+            var canUsePaymentCredits = 0;
             var canUseInvoiceCredits = 0;
             $('.credit-items-value').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
@@ -135,8 +136,8 @@ use yii\bootstrap\Html;
                     if (creditType == 'Invoice Credit') {
                         canUseInvoiceCredits = 1;
                     } 
-                    if (creditType == 'Customer Credit') {
-                        canUseCustomerCredits = 1;
+                    if (creditType == 'Payment Credit') {
+                        canUsePaymentCredits = 1;
                     }
                 }
             });
@@ -150,10 +151,21 @@ use yii\bootstrap\Html;
                     invoicePayments.push($(this).find('.payment-amount').val());
                 }
             });
+            $('.credit-line-items').each(function() {
+                if ($(this).find('.check-checkbox').is(":checked")) {
+                    creditPayments.push($(this).find('.credit-amount').val());
+                }
+            });
+            $('.invoice-line-items').each(function() {
+                if ($(this).find('.check-checkbox').is(":checked")) {
+                    invoicePayments.push($(this).find('.payment-amount').val());
+                }
+            });
             var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId, 'PaymentFormLessonSearch[lessonIds]': lessonIds, 
-                'PaymentForm[invoiceIds]': invoiceIds, 'PaymentForm[canUseCustomerCredits]': canUseCustomerCredits, 
+                'PaymentForm[invoiceIds]': invoiceIds, 'PaymentForm[canUsePaymentCredits]': canUsePaymentCredits, 
                 'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[creditIds]': creditIds,
-                'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[invoicePayments]': invoicePayments });
+                'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[invoicePayments]': invoicePayments,
+                'PaymentForm[creditPayments]': creditPayments });
             var url = '<?= Url::to(['payment/receive']) ?>?' + params;
             $('#modal-form').attr('action', url);
             return false;
@@ -187,8 +199,7 @@ use yii\bootstrap\Html;
             var creditAmount = parseFloat('0.00');
             $('.credit-items-value').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
-                    var balance = $(this).find('.credit-value').text();
-                    balance = balance.replace('$', '');
+                    var balance = $(this).find('.credit-amount').val();
                     creditAmount = parseFloat(creditAmount) + parseFloat(balance);
                 }
             });
