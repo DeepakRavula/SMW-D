@@ -267,6 +267,11 @@ $this->params['action-button'] = $this->render('_action-menu', [
                         $('#modal-content').html(response.data);
                         $('#popup-modal').modal('show');
                     }
+		    else {
+                                    if (response.message) {
+                                        $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                    }
+                                }
                 }
             });
             return false;
