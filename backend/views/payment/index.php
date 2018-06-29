@@ -22,8 +22,8 @@ $this->params['action-button'] = $this->render('_action-button');?>
             'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
             'attribute' => 'dateRange',
             'value' => function ($data) {
-                if (!empty($data->date)) {
-                    $lessonDate = Yii::$app->formatter->asDate($data->date);
+                if (!empty($data->payment->date)) {
+                    $lessonDate = Yii::$app->formatter->asDate($data->payment->date);
                     return $lessonDate;
                 }
 
@@ -83,7 +83,7 @@ $this->params['action-button'] = $this->render('_action-button');?>
             'label' => 'Payment Method',
             'attribute' => 'paymentMethod',
             'value' => function ($data) {
-                return $data->paymentMethod->name;
+                return $data->payment->paymentMethod->name;
             },
             'filterType' => KartikGridView::FILTER_SELECT2,
             'filter' => ArrayHelper::map(PaymentMethod::find()
