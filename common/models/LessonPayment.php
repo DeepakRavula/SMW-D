@@ -55,6 +55,10 @@ class LessonPayment extends \yii\db\ActiveRecord
            
         ];
     }
+    public static function find()
+    {
+        return new \common\models\query\LessonPaymentQuery(get_called_class());
+    }
     public function getLesson()
     {
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
