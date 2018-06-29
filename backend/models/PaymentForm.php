@@ -165,14 +165,14 @@ class PaymentForm extends Model
             if ($this->invoiceIds) {
                 foreach ($invoices as $i => $invoice) {
                     if ($invoice->isOwing()) {
-                        $paymentModel = new Payment();
-                        $paymentModel->amount = $invoicePayments[$i];
+//                        $paymentModel = new Payment();
+//                        $paymentModel->amount = $invoicePayments[$i];
                         if ($amount > 0.00) {
-                            if ($paymentModel->amount > $amount) {
-                                $paymentModel->amount = $amount;
-                            }
+//                            if ($paymentModel->amount > $amount) {
+//                                $paymentModel->amount = $amount;
+//                            }
                             //$invoice->addPayment($customer, $paymentModel);
-                            $amount -= $paymentModel->amount;
+                            //$amount -= $paymentModel->amount;
                             $invoicePaymentModel = new InvoicePayment();
                             $invoicePaymentModel->invoice_id = $invoice->id;
                             $invoicePaymentModel->payment_id = $this->paymentId;
@@ -189,14 +189,14 @@ class PaymentForm extends Model
             if ($this->lessonIds) {
                 foreach ($lessons as $i => $lesson) {
                     if ($lesson->isOwing($lesson->enrolment->id)) {
-                        $paymentModel = new Payment();
-                        $paymentModel->amount = $lessonPayments[$i];
+//                        $paymentModel = new Payment();
+//                        $paymentModel->amount = $lessonPayments[$i];
                         if ($amount > 0.00) {
-                            if ($paymentModel->amount > $amount) {
-                                $paymentModel->amount = $amount;
-                            }
-                                 $amount -= $paymentModel->amount;
-                                 $paymentModel->save();
+//                            if ($paymentModel->amount > $amount) {
+//                                $paymentModel->amount = $amount;
+//                            }
+//                                 $amount -= $paymentModel->amount;
+//                                 $paymentModel->save();
                                 $lessonPayment = new LessonPayment();
                                 $lessonPayment->lessonId    = $lesson->id;
                                 $lessonPayment->paymentId   = $this->paymentId;
