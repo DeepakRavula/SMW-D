@@ -222,7 +222,8 @@ class Payment extends ActiveRecord
 
     public function getInvoicePayment()
     {
-        return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'id']);
+        return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'id'])
+        ->andWhere(['invoice_payment.isDeleted' => false]);
     }
 
     public function isInvoicePayment()
@@ -232,7 +233,8 @@ class Payment extends ActiveRecord
 
     public function getInvoicePayments()
     {
-        return $this->hasMany(InvoicePayment::className(), ['payment_id' => 'id']);
+        return $this->hasMany(InvoicePayment::className(), ['payment_id' => 'id'])
+        ->andWhere(['invoice_payment.isDeleted' => false]);
     }
 
     public function getPaymentCheque()
