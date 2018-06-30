@@ -96,6 +96,8 @@ class m180616_113552_pfi_refactor extends Migration
             ->lessonItem()
             ->all();
         foreach ($lineItems as $lineItem) {
+            if($lineItem->lesson)
+            {
             if (!$lineItem->isGroupLesson()) {
                 if ($lineItem->hasLineItemDiscount()) {
                     $discount = new LessonDiscount();
@@ -142,6 +144,7 @@ class m180616_113552_pfi_refactor extends Migration
                     $discount->save();
                 }
             }
+        }
         }
 
     }
