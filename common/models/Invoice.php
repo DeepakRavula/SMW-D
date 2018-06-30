@@ -575,11 +575,18 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getInvoicePaymentTotal()
     {
+        $isProFormaInvoice = false;
+        if ($this->isProFormaInvoice()) {
+            $isProFormaInvoice = true;
+        }
         $paymentTotal = InvoicePayment::find()
             ->notDeleted()
             ->invoice($this->id)
-            ->joinWith(['payment' => function ($query) {
+            ->joinWith(['payment' => function ($query) use ($isProFormaInvoice) {
                 $query->notDeleted();
+                if ($isProFormaInvoice) {
+                    $query->notCreditUsed();
+                }
             }]);
 
         $invoicePaymentTotal = $paymentTotal->sum('invoice_payment.amount');
