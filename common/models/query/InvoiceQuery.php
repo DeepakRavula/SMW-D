@@ -152,7 +152,7 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
-    public function hasManualPayments()
+    public function manualPayments()
     {
         return $this->joinWith(['invoicePayments' => function ($query) {
             $query->joinWith(['payment' => function ($query) {

@@ -248,10 +248,14 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getManualPayments()
     {
-        return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
-            ->via('invoicePayments')
-            ->onCondition(['payment.isDeleted' => false])
-            ->onCondition(['NOT', ['payment.payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]]);
+        return InvoicePayment::find()
+            ->notDeleted()
+            ->invoice($this->id)
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted()
+                    ->exceptAutoPayments();
+            }])
+            ->all();
     }
 
     public function getAllPayments()

@@ -45,7 +45,7 @@ class m180616_113552_pfi_refactor extends Migration
             ->location([14, 15])
             ->andWhere(['<', 'balance', 0])
             ->andWhere(['NOT', ['invoice.user_id'=> 0]])
-            ->hasManualPayments()
+            ->manualPayments()
             ->all();
         foreach ($invoices as $invoice) {
             $amount = 0;
@@ -61,7 +61,7 @@ class m180616_113552_pfi_refactor extends Migration
                         $balance = $payment->amount - $balance;
                         $payment->delete();
                     } else {
-                        $payment->invoicePayment->updateAttributes(['amount' => $payment->invoicePayment->amount - $balance]);
+                        $payment->updateAttributes(['amount' => $payment->amount - $balance]);
                         $payment->invoice->save();
                     }
                 }
