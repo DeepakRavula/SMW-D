@@ -9,6 +9,8 @@ use common\models\CustomerPayment;
 use common\models\PaymentMethod;
 use common\models\InvoicePayment;
 use common\models\LessonPayment;
+use common\models\InvoiceLineItem;
+use common\models\discount\LessonDiscount;
 /**
  * Class m180616_113552_pfi_refactor
  */
@@ -84,6 +86,64 @@ class m180616_113552_pfi_refactor extends Migration
                 }
             }
         }
+        $locationId = [14, 15];
+        $lineItems = InvoiceLineItem::find()
+            ->notDeleted()
+            ->joinWith(['invoice' => function ($query) use ($date, $locationId) {
+                $query->andWhere(['invoice.location_id' => $locationId])
+                ->notDeleted();
+            }])
+            ->lessonItem()
+            ->all();
+        foreach ($lineItems as $lineItem) {
+            if (!$lineItem->isGroupLesson()) {
+                if ($lineItem->hasLineItemDiscount()) {
+                    $discount = new LessonDiscount();
+                    $discount->lessonId = $lineItem->lesson->id;
+                    if ($lineItem->lesson->hasLineItemDiscount()) {
+                        $discount = $lineItem->lesson->lineItemDiscount;
+                    }
+                    $discount->value = $lineItem->lineItemDiscount->value;
+                    $discount->valueType = $lineItem->lineItemDiscount->valueType;
+                    $discount->type = $lineItem->lineItemDiscount->type;
+                    $discount->save();
+                }
+                if ($lineItem->hasMultiEnrolmentDiscount()) {
+                    $discount = new LessonDiscount();
+                    $discount->lessonId = $lineItem->lesson->id;
+                    if ($lineItem->lesson->hasMultiEnrolmentDiscount()) {
+                        $discount = $lineItem->lesson->multiEnrolmentDiscount;
+                    }
+                    $discount->value = $lineItem->multiEnrolmentDiscount->value;
+                    $discount->valueType = $lineItem->multiEnrolmentDiscount->valueType;
+                    $discount->type = $lineItem->multiEnrolmentDiscount->type;
+                    $discount->save();
+                }
+                if ($lineItem->hasCustomerDiscount()) {
+                    $discount = new LessonDiscount();
+                    $discount->lessonId = $lineItem->lesson->id;
+                    if ($lineItem->lesson->hasCustomerDiscount()) {
+                        $discount = $lineItem->lesson->customerDiscount;
+                    }
+                    $discount->value = $lineItem->customerDiscount->value;
+                    $discount->valueType = $lineItem->customerDiscount->valueType;
+                    $discount->type = $lineItem->customerDiscount->type;
+                    $discount->save();
+                }
+                if ($lineItem->hasEnrolmentPaymentFrequencyDiscount()) {
+                    $discount = new LessonDiscount();
+                    $discount->lessonId = $lineItem->lesson->id;
+                    if ($lineItem->lesson->hasEnrolmentPaymentFrequencyDiscount()) {
+                        $discount = $lineItem->lesson->enrolmentPaymentFrequencyDiscount;
+                    }
+                    $discount->value = $lineItem->enrolmentPaymentFrequencyDiscount->value;
+                    $discount->valueType = $lineItem->enrolmentPaymentFrequencyDiscount->valueType;
+                    $discount->type = $lineItem->enrolmentPaymentFrequencyDiscount->type;
+                    $discount->save();
+                }
+            }
+        }
+
     }
     /**
      * {@inheritdoc}
