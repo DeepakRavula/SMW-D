@@ -40,6 +40,7 @@ class m180616_113552_pfi_refactor extends Migration
                 $lessonPayment->updateAttributes(['amount' => $lessonPayment->payment->amount]);
             }
         }
+        
         $invoices = Invoice::find()
             ->notDeleted()
             ->location([14, 15])
@@ -67,6 +68,21 @@ class m180616_113552_pfi_refactor extends Migration
                 }
             }
             $invoice->save();
+        }
+
+        $proformaInvoices = Invoice::find()
+            ->notDeleted()
+            ->proFormaInvoice()
+            ->location([14, 15])
+            ->andWhere(['NOT', ['invoice.user_id'=> 0]])
+            ->manualPayments()
+            ->all();
+        foreach ($proformaInvoices as $proformaInvoice) {
+            if (!$proformaInvoice->hasCreditUsed()) {
+                foreach ($proformaInvoice->manualPayments as $payment) {
+                    $payment->delete();
+                }
+            }
         }
     }
     /**
