@@ -200,7 +200,7 @@ class PaymentForm extends Model
                         $lessonPayment->lessonId    = $lesson->id;
                         $lessonPayment->paymentId   = $this->paymentId;
                         $lessonPayment->amount      = $lessonPayments[$i];
-                        $lessonPayment->enrolmentId = $lesson->enrolmentId;
+                        $lessonPayment->enrolmentId = $lesson->enrolment->id;
                         $lessonPayment->save();
                     } else {
                         break;
