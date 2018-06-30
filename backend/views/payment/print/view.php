@@ -8,6 +8,13 @@
    $this->params['breadcrumbs'][] = ['label' => 'Proforma-Invoices', 'url' => ['index']];
    $this->params['breadcrumbs'][] = $this->title;
    ?>
+<?php
+   echo $this->render('/print/_invoice-header', [
+       'paymentModel'=>$model,
+       'userModel'=>$model->user,
+       'locationModel'=>$model->user->location->location,
+]);
+   ?>
 <div class="row-fluid invoice-info m-t-10">
   <?php
 echo $this->render('/payment/_lesson-line-item', [
