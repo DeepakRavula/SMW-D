@@ -89,7 +89,7 @@ class m180616_113552_pfi_refactor extends Migration
         $locationId = [14, 15];
         $lineItems = InvoiceLineItem::find()
             ->notDeleted()
-            ->joinWith(['invoice' => function ($query) use ($date, $locationId) {
+            ->joinWith(['invoice' => function ($query) use ($locationId) {
                 $query->andWhere(['invoice.location_id' => $locationId])
                 ->notDeleted();
             }])
