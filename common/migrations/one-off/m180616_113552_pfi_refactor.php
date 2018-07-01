@@ -1,12 +1,7 @@
 <?php
 use yii\db\Migration;
 use common\models\Invoice;
-use common\models\Payment;
 use common\models\User;
-use common\models\Transaction;
-use common\models\OpeningBalance;
-use common\models\CustomerPayment;
-use common\models\PaymentMethod;
 use common\models\InvoicePayment;
 use common\models\LessonPayment;
 use common\models\InvoiceLineItem;
@@ -63,6 +58,7 @@ class m180616_113552_pfi_refactor extends Migration
                     if ($payment->amount < $balance) {
                         $balance = $balance - $payment->amount;
                         $payment->delete();
+                        $invoice->save();
                     } else {
                         $payment->updateAttributes(['amount' => $payment->amount - $balance]);
                         $payment->invoice->save();

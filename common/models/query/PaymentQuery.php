@@ -99,7 +99,7 @@ class PaymentQuery extends ActiveQuery
             $query->joinWith(['lessonCredit' => function ($query) {
                 $query->andWhere(['lesson_payment.id' => null]);
             }])
-            ->where(['OR', ['dp.id' => null], ['NOT', ['dp.id' => null]]]);
+            ->andWhere(['OR', ['dp.id' => null], ['NOT', ['dp.id' => null]]]);
         }]);
     }
 
@@ -109,7 +109,7 @@ class PaymentQuery extends ActiveQuery
             $query->joinWith(['lessonCredit' => function ($query) {
                 $query->andWhere(['NOT', ['lesson_payment.id' => null]]);
             }])
-            ->where(['NOT', ['dp.id' => null]])
+            ->andWhere(['NOT', ['dp.id' => null]])
             ->andWhere(['dp.isDeleted' => false]);
         }]);
     }
