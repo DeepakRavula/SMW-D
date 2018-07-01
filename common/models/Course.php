@@ -39,6 +39,8 @@ class Course extends \yii\db\ActiveRecord
     public $userName;
     public $studentId;
     public $duration;
+    public $lessonsCount;
+    public $autoRenewal;
 
     /**
      * {@inheritdoc}
@@ -62,7 +64,7 @@ class Course extends \yii\db\ActiveRecord
             [['startDate', 'endDate', 'programRate'], 'safe'],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
-            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId','duration'], 'safe'],
+            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId','duration','lessonsCount','autoRenewal'], 'safe'],
           
         ];
     }

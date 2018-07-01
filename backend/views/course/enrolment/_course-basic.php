@@ -149,8 +149,25 @@ use yii\web\View;
         </div>
         <div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
     </div>
-</div>
-
+<div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">No of Lessons</label>
+        </div>
+        <div class="col-xs-2"></div>
+        <div class="col-xs-3">
+            <?= $form->field($model, 'lessonsCount')->textInput(['class' => 'form-control text-right'])->label(false); ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <label class="modal-form-label">Auto Renewal</label>
+        </div>
+        <div class="col-xs-3"></div>
+        <div class="col-xs-3">
+            <?= $form->field($model, 'autoRenewal')->checkbox()->label(false); ?>
+        </div>
+    </div>
+ </div>   
 <?php ActiveForm::end(); ?>
 
 <script>
@@ -170,18 +187,20 @@ use yii\web\View;
             var multiEnrolmentDiscount = $('#enrolmentform-enrolmentdiscount').val();
             var customerDiscount = $('#customer-discount').val();
             var programRate = $('#enrolmentform-programrate').val();
+            var lessonsCount = $('#enrolmentform-lessonscount').val();
             var options = {
                 duration: duration,
                 programId: programId,
                 programRate: programRate,
                 customerDiscount: customerDiscount,
                 multiEnrolmentDiscount: multiEnrolmentDiscount,
-                paymentFrequencyDiscount: paymentFrequencyDiscount
+                paymentFrequencyDiscount: paymentFrequencyDiscount,
+                lessonsCount: lessonsCount
             };
             var params = $.param({duration: options.duration, id: options.programId,
                 paymentFrequencyDiscount: options.paymentFrequencyDiscount,
                 multiEnrolmentDiscount: options.multiEnrolmentDiscount,
-                rate: options.programRate, customerDiscount : options.customerDiscount
+                rate: options.programRate, customerDiscount : options.customerDiscount,lessonsCount : options.lessonsCount
             });
             $.ajax({
                 url: '<?= Url::to(['student/fetch-program-rate']); ?>?' + params,
