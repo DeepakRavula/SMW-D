@@ -39,7 +39,6 @@ class Course extends \yii\db\ActiveRecord
     public $userName;
     public $studentId;
     public $duration;
-    public $lessonsCount;
     public $autoRenewal;
 
     /**
@@ -64,7 +63,7 @@ class Course extends \yii\db\ActiveRecord
             [['startDate', 'endDate', 'programRate'], 'safe'],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
-            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId','duration','lessonsCount','autoRenewal'], 'safe'],
+            [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId','duration','lessonsCount'], 'safe'],
           
         ];
     }
@@ -82,6 +81,7 @@ class Course extends \yii\db\ActiveRecord
             'day' => 'Day',
             'fromTime' => 'From Time',
             'duration' => 'Duration',
+            'lessonsCount' => 'Lessons Count',
             'startDate' => 'Start Date',
             'endDate' => 'End Date',
             'paymentFrequency' => 'Payment Frequency',
@@ -123,6 +123,7 @@ class Course extends \yii\db\ActiveRecord
         $this->startDate = $date->format('Y-m-d H:i:s');
         $this->teacherId = $model->teacherId;
         $this->programRate = $model->programRate;
+        $this->lessonsCount = $model->lessonsCount;
         return $this;
     }
     
@@ -248,7 +249,11 @@ class Course extends \yii\db\ActiveRecord
             $endDate = $startDate->add(new \DateInterval('P' . $weeks .'W'));
             $this->endDate = $endDate->format('Y-m-d H:i:s');
         } else {
-            $endDate = (new Carbon($this->startDate))->addMonths(23);
+            $lessonsCount   =     $this->lessonsCount;
+            $monthsToAdd    =     ($lessonsCount/4)-1;
+           // print_r($monthsToAdd);
+            $endDate = (new Carbon($this->startDate))->addMonths($monthsToAdd);
+           // print_r($endDate);die;
             $startDate = new \DateTime($this->startDate);
             $this->startDate = $startDate->format('Y-m-d H:i:s');
             $this->endDate = $endDate->endOfMonth();
@@ -256,6 +261,7 @@ class Course extends \yii\db\ActiveRecord
 
         return parent::beforeSave($insert);
     }
+
 
     public function afterSave($insert, $changedAttributes)
     {

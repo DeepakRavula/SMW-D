@@ -36,7 +36,7 @@ class EnrolmentForm extends Model
     public $enrolmentDiscount;
     public $duration;
     public $lessonsCount;
-    public $autoRenewal;
+    public $autoRenew;
 
     public $firstname;
     public $lastname;
@@ -77,7 +77,7 @@ class EnrolmentForm extends Model
             [['firstname', 'lastname', 'email', 'labelId', 'number', 'phoneLabelId',
                 'addressLabelId', 'address', 'cityId', 'countryId', 'provinceId'],
                 'safe'],
-            [['postalCode', 'extension', 'first_name', 'last_name', 'birth_date','lessonsCount','autoRenewal'], 'safe'],
+            [['postalCode', 'extension', 'first_name', 'last_name', 'birth_date','lessonsCount','autoRenew'], 'safe'],
         ];
     }
 }
