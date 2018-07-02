@@ -38,6 +38,43 @@ class m180616_113552_pfi_refactor extends Migration
             }
         }
         
+        $proformaInvoices = Invoice::find()
+            ->notDeleted()
+            ->proFormaInvoice()
+            ->location([14, 15])
+            ->andWhere(['NOT', ['invoice.user_id'=> 0]])
+            ->manualPayments()
+            ->all();
+        foreach ($proformaInvoices as $proformaInvoice) {
+            if (!$proformaInvoice->hasCreditUsed()) {
+                foreach ($proformaInvoices->manualPayments as $payment) {
+                    foreach ($proformaInvoice->manualPayments as $payment) {
+                        $payment->delete();
+                    }
+                }
+            } else if (!$proformaInvoice->hasLessonCreditUsedPayment()) {
+                $amount = 0;
+                if ($proformaInvoices->hasManualPayments()) {
+                    foreach ($proformaInvoices->manualPayments as $payment) {
+                        $amount += $payment->amount;
+                    }
+                }
+                if ($amount > $proformaInvoices->creditUsedPaymentTotal) {
+                    $balance = $amount - abs($proformaInvoices->creditUsedPaymentTotal);
+                    foreach ($proformaInvoices->manualPayments as $payment) {
+                        if ($payment->amount < $balance) {
+                            $balance = $balance - $payment->amount;
+                            $payment->delete();
+                            $proformaInvoices->save();
+                        } else {
+                            $payment->updateAttributes(['amount' => $payment->amount - $balance]);
+                            $payment->invoice->save();
+                        }
+                    }
+                }
+            }
+        }
+
         $invoices = Invoice::find()
             ->notDeleted()
             ->location([14, 15])
@@ -68,42 +105,6 @@ class m180616_113552_pfi_refactor extends Migration
             $invoice->save();
         }
 
-        $proformaInvoices = Invoice::find()
-            ->notDeleted()
-            ->proFormaInvoice()
-            ->location([14, 15])
-            ->andWhere(['NOT', ['invoice.user_id'=> 0]])
-            ->manualPayments()
-            ->all();
-        foreach ($proformaInvoices as $proformaInvoice) {
-            if (!$proformaInvoice->hasCreditUsed()) {
-                foreach ($invoice->manualPayments as $payment) {
-                    foreach ($proformaInvoice->manualPayments as $payment) {
-                        $payment->delete();
-                    }
-                }
-            } else if (!$proformaInvoice->hasLessonCreditUsedPayment()) {
-                $amount = 0;
-                if ($invoice->hasManualPayments()) {
-                    foreach ($invoice->manualPayments as $payment) {
-                        $amount += $payment->amount;
-                    }
-                }
-                if ($amount > $invoice->creditUsedPaymentTotal) {
-                    $balance = $amount - abs($invoice->creditUsedPaymentTotal);
-                    foreach ($invoice->manualPayments as $payment) {
-                        if ($payment->amount < $balance) {
-                            $balance = $balance - $payment->amount;
-                            $payment->delete();
-                            $invoice->save();
-                        } else {
-                            $payment->updateAttributes(['amount' => $payment->amount - $balance]);
-                            $payment->invoice->save();
-                        }
-                    }
-                }
-            }
-        }
         $locationId = [14, 15];
         $lineItems = InvoiceLineItem::find()
             ->notDeleted()

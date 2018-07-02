@@ -142,7 +142,7 @@ class Payment extends ActiveRecord
      */
     public static function find()
     {
-        return new PaymentQuery(get_called_class(), parent::find()->andWhere(['payment.isDeleted' => false]));
+        return new PaymentQuery(get_called_class());
     }
 
     public function getTransaction()
