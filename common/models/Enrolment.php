@@ -6,6 +6,7 @@ use Yii;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\TimestampBehavior;
 use common\models\discount\EnrolmentDiscount;
+use Carbon\Carbon;
 
 /**
  * This is the model class for table "enrolment".
@@ -438,24 +439,28 @@ class Enrolment extends \yii\db\ActiveRecord
         $interval = new \DateInterval('P1D');
         $start = new \DateTime($this->course->startDate);
         $end = new \DateTime($this->course->endDate);
+        $lessonsCount   =   $this->course->lessonsCount;
         $period = new \DatePeriod($start, $interval, $end);
-        $this->generateLessons($period);
+        $this->generateLessons($start,$lessonsCount);
         return parent::afterSave($insert, $changedAttributes);
     }
 
-    public function generateLessons($period, $isConfirmed = null)
+    public function generateLessons($startDate,$lessonsCount,$isConfirmed = null)
     {
         if (!$isConfirmed) {
             $isConfirmed = false;
         }
-        foreach ($period as $day) {
-            $checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
-            if ($checkDay) {
-                if ($this->course->isProfessionalDevelopmentDay($day)) {
-                    continue;
-                }
-                $this->course->createLesson($day, $isConfirmed);
-            }
+        $day    =   $startDate;
+        $dayList = Course::getWeekdaysList();
+        $weekday = $dayList[$startDate->format('N')];
+       for ($x = 1; $x <= $lessonsCount; $x++) {
+           $this->course->createLesson($day, $isConfirmed);  
+           $day    =   $day->modify('next ' . $weekday);
+            if ($this->course->isProfessionalDevelopmentDay($day)) {
+                $day    =  $day->modify('next ' . $weekday);
+             }
+           
+
         }
         return true;
     }

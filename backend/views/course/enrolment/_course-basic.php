@@ -162,8 +162,8 @@ use yii\web\View;
         <div class="col-xs-6">
             <label class="modal-form-label">Auto Renewal</label>
         </div>
-        <div class="col-xs-3"></div>
-        <div class="col-xs-3">
+        <div class="col-xs-5"></div>
+        <div class="m-r-55 pull-right">
             <?= $form->field($model, 'autoRenew')->checkbox()->label(false); ?>
         </div>
     </div>

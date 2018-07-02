@@ -250,10 +250,7 @@ class Course extends \yii\db\ActiveRecord
             $this->endDate = $endDate->format('Y-m-d H:i:s');
         } else {
             $lessonsCount   =     $this->lessonsCount;
-            $monthsToAdd    =     ($lessonsCount/4)-1;
-           // print_r($monthsToAdd);
-            $endDate = (new Carbon($this->startDate))->addMonths($monthsToAdd);
-           // print_r($endDate);die;
+            $endDate = (new Carbon($this->startDate))->add(new \DateInterval('P' . $lessonsCount .'W'));
             $startDate = new \DateTime($this->startDate);
             $this->startDate = $startDate->format('Y-m-d H:i:s');
             $this->endDate = $endDate->endOfMonth();
