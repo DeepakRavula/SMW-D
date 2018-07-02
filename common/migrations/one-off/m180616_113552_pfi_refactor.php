@@ -77,8 +77,30 @@ class m180616_113552_pfi_refactor extends Migration
             ->all();
         foreach ($proformaInvoices as $proformaInvoice) {
             if (!$proformaInvoice->hasCreditUsed()) {
-                foreach ($proformaInvoice->manualPayments as $payment) {
-                    $payment->delete();
+                foreach ($invoice->manualPayments as $payment) {
+                    foreach ($proformaInvoice->manualPayments as $payment) {
+                        $payment->delete();
+                    }
+                }
+            } else if (!$proformaInvoice->hasLessonCreditUsedPayment()) {
+                $amount = 0;
+                if ($invoice->hasManualPayments()) {
+                    foreach ($invoice->manualPayments as $payment) {
+                        $amount += $payment->amount;
+                    }
+                }
+                if ($amount > $invoice->creditUsedPaymentTotal) {
+                    $balance = $amount - abs($invoice->creditUsedPaymentTotal);
+                    foreach ($invoice->manualPayments as $payment) {
+                        if ($payment->amount < $balance) {
+                            $balance = $balance - $payment->amount;
+                            $payment->delete();
+                            $invoice->save();
+                        } else {
+                            $payment->updateAttributes(['amount' => $payment->amount - $balance]);
+                            $payment->invoice->save();
+                        }
+                    }
                 }
             }
         }
