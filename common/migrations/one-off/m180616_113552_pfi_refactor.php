@@ -51,12 +51,7 @@ class m180616_113552_pfi_refactor extends Migration
                     $payment->delete();
                 }
             } else if (!$proformaInvoice->hasLessonCreditUsedPayment()) {
-                $amount = 0;
-                if ($proformaInvoice->hasManualPayments()) {
-                    foreach ($proformaInvoice->manualPayments as $payment) {
-                        $amount += $payment->amount;
-                    }
-                }
+                $amount = $proformaInvoice->invoiceAppliedPaymentTotal;
                 if ($amount > $proformaInvoice->creditUsedPaymentTotal) {
                     $balance = $amount - abs($proformaInvoice->creditUsedPaymentTotal);
                     foreach ($proformaInvoice->manualPayments as $payment) {
@@ -81,16 +76,11 @@ class m180616_113552_pfi_refactor extends Migration
             ->manualPayments()
             ->all();
         foreach ($invoices as $invoice) {
-            $amount = 0;
-            if ($invoice->hasManualPayments()) {
-                foreach ($invoice->manualPayments as $payment) {
-                    $amount += $payment->amount;
-                }
-            }
+            $amount = $invoice->invoiceAppliedPaymentTotal;
             if ($amount > $invoice->total) {
                 foreach ($invoice->manualPayments as $payment) {
                     $balance = abs($invoice->balance);
-                    if ($payment->amount < $balance) {
+                    if ($payment->amount <= $balance) {
                         $balance = $balance - $payment->amount;
                         $payment->delete();
                         $invoice->save();
@@ -113,55 +103,54 @@ class m180616_113552_pfi_refactor extends Migration
             ->lessonItem()
             ->all();
         foreach ($lineItems as $lineItem) {
-            if($lineItem->lesson)
-            {
-            if (!$lineItem->isGroupLesson()) {
-                if ($lineItem->hasLineItemDiscount()) {
-                    $discount = new LessonDiscount();
-                    $discount->lessonId = $lineItem->lesson->id;
-                    if ($lineItem->lesson->hasLineItemDiscount()) {
-                        $discount = $lineItem->lesson->lineItemDiscount;
+            if($lineItem->lesson) {
+                if (!$lineItem->isGroupLesson()) {
+                    if ($lineItem->hasLineItemDiscount()) {
+                        $discount = new LessonDiscount();
+                        $discount->lessonId = $lineItem->lesson->id;
+                        if ($lineItem->lesson->hasLineItemDiscount()) {
+                            $discount = $lineItem->lesson->lineItemDiscount;
+                        }
+                        $discount->value = $lineItem->lineItemDiscount->value;
+                        $discount->valueType = $lineItem->lineItemDiscount->valueType;
+                        $discount->type = $lineItem->lineItemDiscount->type;
+                        $discount->save();
                     }
-                    $discount->value = $lineItem->lineItemDiscount->value;
-                    $discount->valueType = $lineItem->lineItemDiscount->valueType;
-                    $discount->type = $lineItem->lineItemDiscount->type;
-                    $discount->save();
-                }
-                if ($lineItem->hasMultiEnrolmentDiscount()) {
-                    $discount = new LessonDiscount();
-                    $discount->lessonId = $lineItem->lesson->id;
-                    if ($lineItem->lesson->hasMultiEnrolmentDiscount()) {
-                        $discount = $lineItem->lesson->multiEnrolmentDiscount;
+                    if ($lineItem->hasMultiEnrolmentDiscount()) {
+                        $discount = new LessonDiscount();
+                        $discount->lessonId = $lineItem->lesson->id;
+                        if ($lineItem->lesson->hasMultiEnrolmentDiscount()) {
+                            $discount = $lineItem->lesson->multiEnrolmentDiscount;
+                        }
+                        $discount->value = $lineItem->multiEnrolmentDiscount->value;
+                        $discount->valueType = $lineItem->multiEnrolmentDiscount->valueType;
+                        $discount->type = $lineItem->multiEnrolmentDiscount->type;
+                        $discount->save();
                     }
-                    $discount->value = $lineItem->multiEnrolmentDiscount->value;
-                    $discount->valueType = $lineItem->multiEnrolmentDiscount->valueType;
-                    $discount->type = $lineItem->multiEnrolmentDiscount->type;
-                    $discount->save();
-                }
-                if ($lineItem->hasCustomerDiscount()) {
-                    $discount = new LessonDiscount();
-                    $discount->lessonId = $lineItem->lesson->id;
-                    if ($lineItem->lesson->hasCustomerDiscount()) {
-                        $discount = $lineItem->lesson->customerDiscount;
+                    if ($lineItem->hasCustomerDiscount()) {
+                        $discount = new LessonDiscount();
+                        $discount->lessonId = $lineItem->lesson->id;
+                        if ($lineItem->lesson->hasCustomerDiscount()) {
+                            $discount = $lineItem->lesson->customerDiscount;
+                        }
+                        $discount->value = $lineItem->customerDiscount->value;
+                        $discount->valueType = $lineItem->customerDiscount->valueType;
+                        $discount->type = $lineItem->customerDiscount->type;
+                        $discount->save();
                     }
-                    $discount->value = $lineItem->customerDiscount->value;
-                    $discount->valueType = $lineItem->customerDiscount->valueType;
-                    $discount->type = $lineItem->customerDiscount->type;
-                    $discount->save();
-                }
-                if ($lineItem->hasEnrolmentPaymentFrequencyDiscount()) {
-                    $discount = new LessonDiscount();
-                    $discount->lessonId = $lineItem->lesson->id;
-                    if ($lineItem->lesson->hasEnrolmentPaymentFrequencyDiscount()) {
-                        $discount = $lineItem->lesson->enrolmentPaymentFrequencyDiscount;
+                    if ($lineItem->hasEnrolmentPaymentFrequencyDiscount()) {
+                        $discount = new LessonDiscount();
+                        $discount->lessonId = $lineItem->lesson->id;
+                        if ($lineItem->lesson->hasEnrolmentPaymentFrequencyDiscount()) {
+                            $discount = $lineItem->lesson->enrolmentPaymentFrequencyDiscount;
+                        }
+                        $discount->value = $lineItem->enrolmentPaymentFrequencyDiscount->value;
+                        $discount->valueType = $lineItem->enrolmentPaymentFrequencyDiscount->valueType;
+                        $discount->type = $lineItem->enrolmentPaymentFrequencyDiscount->type;
+                        $discount->save();
                     }
-                    $discount->value = $lineItem->enrolmentPaymentFrequencyDiscount->value;
-                    $discount->valueType = $lineItem->enrolmentPaymentFrequencyDiscount->valueType;
-                    $discount->type = $lineItem->enrolmentPaymentFrequencyDiscount->type;
-                    $discount->save();
                 }
             }
-        }
         }
 
     }
