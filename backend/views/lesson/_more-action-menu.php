@@ -2,8 +2,13 @@
 
 use yii\helpers\Url;
 use common\Models\User;
+use yii\widgets\Pjax;
 ?>
 
+<?php Pjax::begin([
+    'id' => 'lesson-more-action',
+    'timeout' => 6000,
+]) ?>
 <div class="pull-right">
     <div class="btn-group">
         <button class="btn dropdown-toggle" data-toggle="dropdown">More Action&nbsp;&nbsp;<span class="caret"></span></button>
@@ -25,6 +30,8 @@ use common\Models\User;
         </ul>
     </div>
 </div>
+<?php Pjax::end(); ?>	
+
 <script>
     $(document).on('click', '#split-lesson', function () {
         $.ajax({

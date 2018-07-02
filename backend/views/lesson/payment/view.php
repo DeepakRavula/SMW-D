@@ -1,5 +1,6 @@
 <?php
 use yii\grid\GridView;
+use yii\widgets\Pjax;
 
 ?>
 <?php
@@ -33,8 +34,8 @@ $columns = [
     ],
 ]; ?>
 <div>
-<?php yii\widgets\Pjax::begin([
-    'id' => 'invoice-payment-listing',
+<?php Pjax::begin([
+    'id' => 'lesson-payment-listing',
     'timeout' => 6000,
 ]) ?>
     <?= GridView::widget([

@@ -866,8 +866,23 @@ class Lesson extends \yii\db\ActiveRecord
                 env('PUSHER_APP_ID'),
                 $options
             );
-            if(!isset($changedAttributes['isConfirmed']) && $this->isConfirmed) {
+            if (!isset($changedAttributes['isConfirmed']) && $this->isConfirmed) {
                 $pusher->trigger('lesson', 'lesson-edit', '');
+            }
+            if ($this->isPrivate()) {
+                $amount = $this->getCreditAppliedAmount($this->enrolment->id);
+                if ($amount > $this->netPrice) {
+                    foreach ($this->getCreditAppliedPayment($this->enrolment->id) as $lessonPayment) {
+                        $balance = $this->getCreditAppliedAmount($this->enrolment->id) - $this->netPrice;
+                        if ($lessonPayment->amount <= $balance) {
+                            $balance = $balance - $lessonPayment->amount;
+                            $lessonPayment->delete();
+                        } else {
+                            $lessonPayment->amount = $lessonPayment->amount - $balance;
+                            $lessonPayment->save();
+                        }
+                    }
+                }
             }
         }
         
@@ -1026,12 +1041,12 @@ class Lesson extends \yii\db\ActiveRecord
     public function getCreditAppliedAmount($enrolmentId)
     {
         return LessonPayment::find()
+            ->notDeleted()
 		    ->joinWith(['payment' => function ($query) {
                 $query->notDeleted()
                     ->notCreditUsed();
 			}])
             ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
-            ->notDeleted()
             ->sum('lesson_payment.amount');
     }
 

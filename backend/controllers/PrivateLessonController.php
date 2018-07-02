@@ -273,9 +273,9 @@ class PrivateLessonController extends BaseController
     {
         $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
         $lessonId = end($lessonIds);
-	$model = $this->findModel($lessonId);
-	foreach ($lessonIds as $lessonId) {
-	$model = $this->findModel($lessonId);
+        $model = $this->findModel($lessonId);
+        foreach ($lessonIds as $lessonId) {
+            $model = $this->findModel($lessonId);
             if(!$model->isEditable()){
                 return [
                     'status' => false,
@@ -312,6 +312,7 @@ class PrivateLessonController extends BaseController
                 $paymentFrequencyDiscount->save();
                 $multiEnrolmentDiscount->save();
             }
+            $model->save();
             $response = [
                 'status' => true
             ];

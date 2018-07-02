@@ -49,16 +49,11 @@ class LessonPayment extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
-    {
-        return [
-           
-        ];
-    }
     public static function find()
     {
         return new \common\models\query\LessonPaymentQuery(get_called_class());
     }
+
     public function getLesson()
     {
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
@@ -87,5 +82,38 @@ class LessonPayment extends \yii\db\ActiveRecord
             $this->isDeleted = false;
         }
         return parent::beforeSave($insert);
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (!$insert) {
+            if ($this->payment->isAutoPayments()) {
+                if ($this->payment->isCreditApplied()) {
+                    if ($this->payment->creditUsage->debitUsagePayment) {
+                        if ($this->payment->creditUsage->debitUsagePayment->amount != $this->amount) {
+                            $this->payment->creditUsage->debitUsagePayment->amount = $this->amount;
+                            $this->payment->creditUsage->debitUsagePayment->save();
+                        }
+                    }
+                } else {
+                    if ($this->payment->debitUsage->creditUsagePayment) {
+                        if ($this->payment->debitUsage->creditUsagePayment->amount != $this->amount) {
+                            $this->payment->debitUsage->creditUsagePayment->amount = $this->amount;
+                            $this->payment->debitUsage->creditUsagePayment->save();
+                        }
+                    }
+                }
+                $this->payment->updateAttributes(['amount' => $this->amount]);
+            }
+        }
+        return parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function afterSoftDelete()
+    {
+        if ($this->payment->isAutoPayments() && !$this->payment->isDeleted) {
+            $this->payment->delete();
+        }
+        return true;
     }
 }

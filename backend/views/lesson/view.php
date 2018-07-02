@@ -197,11 +197,10 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
             type   : 'get',
             success: function(response)
             {
-                if(response.status)
-                    {
-                        $('#lesson-payment-modal').modal('show');
-                        $('#lesson-payment-content').html(response.data);
-                    }
+                if(response.status) {
+                    $('#lesson-payment-modal').modal('show');
+                    $('#lesson-payment-content').html(response.data);
+                }
             }
         });
         return false;
@@ -300,6 +299,9 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         if ($('#lesson-price-details').length) {
             $.pjax.reload({container: "#lesson-price-details", replace: false, async: false, timeout: 6000});
         }
+        if ($('#lesson-payment-listing').length) {
+            $.pjax.reload({container: "#lesson-payment-listing", replace: false, async: false, timeout: 6000});
+        }
         return false;
     });
     
@@ -382,7 +384,10 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                     $('#success-notification').html(response.message).fadeIn().delay(3000).fadeOut();
                     $.pjax.reload({container: "#lesson-schedule-buttons", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: '#lesson-detail', replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#lesson-explode", replace: false, async: false, timeout: 6000});                    
+                    $.pjax.reload({container: "#lesson-explode", replace: false, async: false, timeout: 6000});
+                    if ($('#lesson-more-action').length) {
+                        $.pjax.reload({container: "#lesson-more-action", replace: false, async: false, timeout: 6000});
+                    }               
                     $('#attendance-panel').hide();
                 } else {
                     $('#menu-shown').hide();

@@ -363,6 +363,16 @@ class Payment extends ActiveRecord
                 }
             }
         }
+        foreach ($this->invoicePayments as $invoicePayment) {
+            if (!$invoicePayment->isDeleted) {
+                $invoicePayment->delete();
+            }
+        }
+        foreach ($this->lessonPayments as $lessonPayment) {
+            if (!$lessonPayment->isDeleted) {
+                $lessonPayment->delete();
+            }
+        }
         if ($this->invoice) {
             $this->invoice->save();
         }

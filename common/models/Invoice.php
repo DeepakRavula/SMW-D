@@ -459,6 +459,19 @@ class Invoice extends \yii\db\ActiveRecord
     {
         if ($insert) {
             $this->trigger(self::EVENT_AFTER_INSERT);
+        } else {
+            $amount = $this->invoicePaymentTotal;
+            if ($amount > $this->total) {
+                foreach ($this->getCreditAppliedPayment($this->enrolment->id) as $lessonPayment) {
+                    $balance = $this->getCreditAppliedAmount($this->enrolment->id) - $this->netPrice;
+                    if ($lessonPayment->amount <= $balance) {
+                        $balance = $balance - $lessonPayment->amount;
+                        $lessonPayment->delete();
+                    } else {
+                        $lessonPayment->updateAttributes(['amount' => $lessonPayment->amount - $balance]);
+                    }
+                }
+            }
         }
         return parent::afterSave($insert, $changedAttributes);
     }
