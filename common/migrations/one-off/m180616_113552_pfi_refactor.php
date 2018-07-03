@@ -142,7 +142,6 @@ class m180616_113552_pfi_refactor extends Migration
 
         $invoices = Invoice::find()
             ->notDeleted()
-            ->invoice()
             ->location([14, 15])
             ->andWhere(['<', 'balance', 0])
             ->andWhere(['NOT', ['invoice.user_id'=> 0]])
@@ -159,7 +158,7 @@ class m180616_113552_pfi_refactor extends Migration
                         $invoice->save();
                     } else {
                         $payment->updateAttributes(['amount' => $payment->amount - $balance]);
-                        $payment->invoice->save();
+                        $invoice->save();
                     }
                 }
             }
