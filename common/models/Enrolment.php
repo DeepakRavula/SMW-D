@@ -441,11 +441,11 @@ class Enrolment extends \yii\db\ActiveRecord
         $end = new \DateTime($this->course->endDate);
         $lessonsCount   =   $this->course->lessonsCount;
         $period = new \DatePeriod($start, $interval, $end);
-        $this->generateLessons($start,$lessonsCount);
+        $this->generateLessonsByCount($start,$lessonsCount);
         return parent::afterSave($insert, $changedAttributes);
     }
 
-    public function generateLessons($startDate,$lessonsCount,$isConfirmed = null)
+    public function generateLessonsByCount($startDate,$lessonsCount,$isConfirmed = null)
     {
         if (!$isConfirmed) {
             $isConfirmed = false;
@@ -461,6 +461,22 @@ class Enrolment extends \yii\db\ActiveRecord
              }
            
 
+        }
+        return true;
+    }
+    public function generateLessons($period, $isConfirmed = null)
+    {
+        if (!$isConfirmed) {
+            $isConfirmed = false;
+        }
+        foreach ($period as $day) {
+            $checkDay = (int) $day->format('N') === (int) $this->courseSchedule->day;
+            if ($checkDay) {
+                if ($this->course->isProfessionalDevelopmentDay($day)) {
+                    continue;
+                }
+                $this->course->createLesson($day, $isConfirmed);
+            }
         }
         return true;
     }
