@@ -6,6 +6,7 @@ use common\models\InvoicePayment;
 use common\models\LessonPayment;
 use common\models\InvoiceLineItem;
 use common\models\discount\LessonDiscount;
+use common\models\Lesson;
 /**
  * Class m180616_113552_pfi_refactor
  */
@@ -37,7 +38,36 @@ class m180616_113552_pfi_refactor extends Migration
                 $lessonPayment->updateAttributes(['amount' => $lessonPayment->payment->amount]);
             }
         }
-        
+
+        $proformaInvoices = Invoice::find()
+            ->notDeleted()
+            ->proFormaInvoice()
+            ->location([14, 15])
+            ->andWhere(['NOT', ['invoice.user_id'=> 0]])
+            ->lessonCreditUsed()
+            ->all();
+        foreach ($proformaInvoices as $proformaInvoice) {
+            foreach ($proformaInvoice->lessonCreditUsedPayment as $invoicePayment) {
+                if ($invoicePayment->payment->debitUsage->creditUsagePayment->lessonPayment->lesson) {
+                    $lesson = $invoicePayment->payment->debitUsage->creditUsagePayment->lessonPayment->lesson;
+                    $leafs = $lesson->leafs;
+                    foreach ($leafs as $leaf) {
+                        $parent = $leaf->parent()->one();
+                        foreach ($parent->getCreditUsedPayment($parent->enrolment->id) as $lessonPayment) {
+                            $iPayment = new InvoicePayment();
+                            $iPayment->invoice_id = $proformaInvoice->id;
+                            $iPayment->payment_id = $lessonPayment->id;
+                            $iPayment->amount = $lessonPayment->amount;
+                            $iPayment->save();
+                        }
+                        $lessonPayment->delete();
+                    }
+                    if ($leafs) {
+                        $invoicePayment->delete();
+                    }
+                }
+            }
+        }
         $proformaInvoices = Invoice::find()
             ->notDeleted()
             ->proFormaInvoice()

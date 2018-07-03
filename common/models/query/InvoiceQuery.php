@@ -156,7 +156,8 @@ class InvoiceQuery extends \yii\db\ActiveQuery
     {
         return $this->joinWith(['invoicePayments' => function ($query) {
             $query->joinWith(['payment' => function ($query) {
-                $query->exceptAutoPayments();
+                $query->notDeleted()
+                ->exceptAutoPayments();
             }]);
         }]);
     }
@@ -267,6 +268,16 @@ class InvoiceQuery extends \yii\db\ActiveQuery
     {
         return $this->joinWith(['lineItem' => function ($query) {
             $query->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_LESSON_CREDIT]);
+        }]);
+    }
+
+    public function lessonCreditUsed()
+    {
+        return $this->joinWith(['invoicePayments' => function ($query) {
+            $query->joinWith(['payment' => function ($query) {
+                $query->notDeleted()
+                    ->lessonCreditUsed();
+            }]);
         }]);
     }
 
