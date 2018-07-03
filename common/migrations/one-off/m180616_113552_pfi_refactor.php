@@ -50,22 +50,44 @@ class m180616_113552_pfi_refactor extends Migration
             foreach ($proformaInvoice->lessonCreditUsedPayment as $invoicePayment) {
                 if ($invoicePayment->payment->debitUsage->creditUsagePayment->lessonPayment->lesson) {
                     $lesson = $invoicePayment->payment->debitUsage->creditUsagePayment->lessonPayment->lesson;
-                    $leafs = $lesson->leafs;
-                    foreach ($leafs as $leaf) {
-                        $parent = $leaf->parent()->one();
-                        foreach ($parent->getCreditUsedPayment($parent->enrolment->id) as $lessonPayment) {
-                            $iPayment = new InvoicePayment();
-                            $iPayment->invoice_id = $proformaInvoice->id;
-                            $iPayment->payment_id = $lessonPayment->id;
-                            $iPayment->amount = $lessonPayment->amount;
-                            $iPayment->save();
+                    if ($lesson->isPrivate()) {
+                        $leafs = $lesson->leafs;
+                        if ($leafs) {
+                            foreach ($leafs as $leaf) {
+                                $parent = $leaf->parent()->one();
+                                foreach ($parent->getCreditUsedPayment($parent->enrolment->id) as $lessonPayment) {
+                                    $iPayment = new InvoicePayment();
+                                    $iPayment->invoice_id = $proformaInvoice->id;
+                                    $iPayment->payment_id = $lessonPayment->payment->id;
+                                    $iPayment->amount = $lessonPayment->amount;
+                                    $iPayment->save();
+                                }
+                                $lessonPayment->updateAttributes([
+                                    'isDeleted' => true
+                                ]);
+                                foreach ($leaf->getCreditAppliedPayment($leaf->enrolment->id) as $lessonPayment) {
+                                    $lessonPayment->payment->updateAttributes([
+                                        'reference' => $lessonPayment->payment->creditUsage->debitUsagePayment->invoice->invoiceNumber
+                                    ]);
+                                }
+                            }
                         }
-                        $lessonPayment->delete();
-                    }
-                    if ($leafs) {
-                        $invoicePayment->delete();
+                        if ($leafs) {
+                            $invoicePayment->updateAttributes(['isDeleted' => true]);
+                        }
                     }
                 }
+            }
+        }
+
+        $cancelledLessons = Lesson::find()
+            ->canceled()
+            ->location([14, 15])
+            ->all();
+        foreach ($cancelledLessons as $cancelledLesson) {
+            foreach ($cancelledLesson->lessonPayments as $lessonPayment) {
+                $lessonPayment->updateAttributes(['isDeleted' => true]);
+                $lessonPayment->payment->updateAttributes(['isDeleted' => true]);
             }
         }
         $proformaInvoices = Invoice::find()
