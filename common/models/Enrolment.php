@@ -38,7 +38,7 @@ class Enrolment extends \yii\db\ActiveRecord
     const TYPE_EXTRA   = 2;
     const TYPE_REVERSE = 'reverse';
     const ENROLMENT_EXPIRY=90;
-    
+    const LESSONS_COUNT =   96;
     const EVENT_CREATE = 'create';
     const EVENT_GROUP='group-course-enroll';
     /**
@@ -454,6 +454,7 @@ class Enrolment extends \yii\db\ActiveRecord
         $dayList = Course::getWeekdaysList();
         $weekday = $dayList[$startDate->format('N')];
        for ($x = 1; $x <= $lessonsCount; $x++) {
+           $lastLessonDate  =    $day->format('Y-m-d H:i:s');
            $this->course->createLesson($day, $isConfirmed);  
            $day    =   $day->modify('next ' . $weekday);
             if ($this->course->isProfessionalDevelopmentDay($day)) {
@@ -462,6 +463,8 @@ class Enrolment extends \yii\db\ActiveRecord
            
 
         }
+        $this->course->endDate  =  $lastLessonDate;
+        $this->course->save();
         return true;
     }
     public function generateLessons($period, $isConfirmed = null)

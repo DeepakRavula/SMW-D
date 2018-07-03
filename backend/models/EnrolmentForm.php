@@ -65,7 +65,7 @@ class EnrolmentForm extends Model
             [['programId', 'paymentFrequency', 'duration', 'startDate', 'programRate'],
                 'safe'],
             [['fromTime', 'day', 'teacherId'], 'safe'],
-            [['programId', 'paymentFrequency', 'duration', 'programRate'],
+            [['programId', 'paymentFrequency', 'duration', 'programRate','lessonsCount'],
                 'required', 'on' => self::SCENARIO_BASIC],
             [['enrolmentDiscount', 'pfDiscount'], 'safe'],
             [['startDate'], 'required', 'on' => self::SCENARIO_DATE_DETAILED],

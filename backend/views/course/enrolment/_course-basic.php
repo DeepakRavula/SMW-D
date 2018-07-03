@@ -9,6 +9,7 @@ use yii\bootstrap\ActiveForm;
 use yii\jui\DatePicker;
 use yii\helpers\Url;
 use yii\web\View;
+use common\models\Enrolment;
 
 ?>
 
@@ -24,6 +25,7 @@ use yii\web\View;
             ->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM])
             ->all(), 'id', 'name')
 ?>
+<?= $model->lessonsCount    =   Enrolment::LESSONS_COUNT;?>
 <div class="user-create-form">
     <div class="row">
         <div class="col-xs-6">
