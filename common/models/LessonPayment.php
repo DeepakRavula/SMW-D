@@ -90,16 +90,20 @@ class LessonPayment extends \yii\db\ActiveRecord
             if ($this->payment->isAutoPayments()) {
                 if ($this->payment->isCreditApplied()) {
                     if ($this->payment->creditUsage->debitUsagePayment) {
-                        if ($this->payment->creditUsage->debitUsagePayment->amount != $this->amount) {
-                            $this->payment->creditUsage->debitUsagePayment->amount = $this->amount;
-                            $this->payment->creditUsage->debitUsagePayment->save();
+                        $this->payment->creditUsage->debitUsagePayment->updateAttributes(['amount' => - ($this->amount)]);
+                        if ($this->payment->creditUsage->debitUsagePayment->invoicePayment) {
+                            $this->payment->creditUsage->debitUsagePayment->invoicePayment->updateAttributes(['amount' => - ($this->amount)]);
+                        } else if ($this->payment->creditUsage->debitUsagePayment->lessonPayment) {
+                            $this->payment->creditUsage->debitUsagePayment->lessonPayment->updateAttributes(['amount' => - ($this->amount)]);
                         }
                     }
                 } else {
                     if ($this->payment->debitUsage->creditUsagePayment) {
-                        if ($this->payment->debitUsage->creditUsagePayment->amount != $this->amount) {
-                            $this->payment->debitUsage->creditUsagePayment->amount = $this->amount;
-                            $this->payment->debitUsage->creditUsagePayment->save();
+                        $this->payment->debitUsage->creditUsagePayment->updateAttributes(['amount' => $this->amount]);
+                        if ($this->payment->creditUsage->debitUsagePayment->invoicePayment) {
+                            $this->payment->creditUsage->debitUsagePayment->invoicePayment->updateAttributes(['amount' => $this->amount]);
+                        } else if ($this->payment->creditUsage->debitUsagePayment->lessonPayment) {
+                            $this->payment->creditUsage->debitUsagePayment->lessonPayment->updateAttributes(['amount' => $this->amount]);
                         }
                     }
                 }

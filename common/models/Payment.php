@@ -348,7 +348,7 @@ class Payment extends ActiveRecord
     {
         if ($this->isAutoPayments()) {
             if ($this->isCreditApplied()) {
-                if ($this->creditUsage->debitUsagePayment) {
+                if ($this->creditUsage->debitUsagePayment && !$this->creditUsage->debitUsagePayment->isDeleted) {
                     $this->creditUsage->debitUsagePayment->delete();
                 }
                 if ($this->lessonCredit) {
@@ -358,7 +358,7 @@ class Payment extends ActiveRecord
                     }
                 }
             } else {
-                if ($this->debitUsage->creditUsagePayment) {
+                if ($this->debitUsage->creditUsagePayment && !$this->debitUsage->creditUsagePayment->isDeleted) {
                     $this->debitUsage->creditUsagePayment->delete();
                 }
             }

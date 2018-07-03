@@ -52,30 +52,14 @@ class LessonReschedule extends Model
         $rescheduledLesson = Lesson::findOne($this->rescheduledLessonId);
         $oldLesson->makeAsChild($rescheduledLesson);
         if ($oldLesson->isPrivate()) {
-            if ($oldLesson->hasLessonCredit($oldLesson->enrolment->id)) {
-                if ($rescheduledLesson->isExploded && !$oldLesson->isExploded) {
-                    $amount = $oldLesson->getCreditAppliedAmount($oldLesson->enrolment->id) /
-                        ($oldLesson->durationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC);
-                } else {
-                    $amount = $oldLesson->getLessonCreditAmount($oldLesson->enrolment->id);
-                }
-                $payment = new Payment();
-                $payment->amount = $amount;
-                $rescheduledLesson->addPayment($oldLesson, $payment);
-            }
             if ($oldLesson->usedLessonSplits) {
                 foreach ($oldLesson->usedLessonSplits as $extended) {
                     $extended->updateAttributes(['extendedLessonId' => $rescheduledLesson->id]);
                 }
             }
-        } else {
-            foreach ($oldLesson->course->enrolments as $enrolment) {
-                if ($oldLesson->hasLessonCredit($enrolment->id)) {
-                    $payment = new Payment();
-                    $payment->amount = $oldLesson->getLessonCreditAmount($enrolment->id);
-                    $rescheduledLesson->addPayment($oldLesson, $payment);
-                }
-            }
+        }
+        foreach ($oldLesson->lessonPayments as $lessonPayment) {
+            $lessonPayment->updateAttributes(['lessonId' => $rescheduledLesson->id]);
         }
         return true;
     }
