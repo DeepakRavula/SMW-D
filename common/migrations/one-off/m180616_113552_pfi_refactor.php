@@ -43,24 +43,44 @@ class m180616_113552_pfi_refactor extends Migration
             ->proFormaInvoice()
             ->location([14, 15])
             ->andWhere(['NOT', ['invoice.user_id'=> 0]])
-            ->manualPayments()
+            ->appliedPayments()
             ->all();
         foreach ($proformaInvoices as $proformaInvoice) {
             if (!$proformaInvoice->hasCreditUsed()) {
-                foreach ($proformaInvoice->manualPayments as $payment) {
+                foreach ($proformaInvoice->invoicePayments as $payment) {
                     $payment->delete();
                 }
             } else if (!$proformaInvoice->hasLessonCreditUsedPayment()) {
-                $amount = $proformaInvoice->invoiceAppliedPaymentTotal;
-                if ($amount > $proformaInvoice->creditUsedPaymentTotal) {
-                    $balance = $amount - abs($proformaInvoice->creditUsedPaymentTotal);
+                $appliedAmount = $proformaInvoice->invoiceAppliedPaymentTotal;
+                if ($appliedAmount > $proformaInvoice->creditUsedPaymentTotal) {
+                    $amountToReduce = $appliedAmount - abs($proformaInvoice->creditUsedPaymentTotal);
                     foreach ($proformaInvoice->manualPayments as $payment) {
-                        if ($payment->amount < $balance) {
-                            $balance = $balance - $payment->amount;
+                        if ($payment->amount <= $amountToReduce) {
+                            $amountToReduce -= $payment->amount;
                             $payment->delete();
                             $proformaInvoice->save();
                         } else {
-                            $payment->updateAttributes(['amount' => $payment->amount - $balance]);
+                            $payment->updateAttributes(['amount' => $payment->amount - $amountToReduce]);
+                            $amountToReduce -= $payment->amount;
+                            $payment->invoice->save();
+                        }
+                    }
+                    foreach ($proformaInvoice->creditAppliedPayments as $payment) {
+                        if ($payment->amount <= $amountToReduce) {
+                            $amountToReduce -= $payment->amount;
+                            $payment->delete();
+                            $proformaInvoice->save();
+                        } else {
+                            $payment->updateAttributes(['amount' => $payment->amount - $amountToReduce]);
+                            if ($payment->payment->creditUsage->debitUsagePayment) {
+                                $payment->payment->creditUsage->debitUsagePayment->updateAttributes(['amount' => - ($payment->amount - $amountToReduce)]);
+                                if ($payment->payment->creditUsage->debitUsagePayment->invoicePayment) {
+                                    $payment->payment->creditUsage->debitUsagePayment->invoicePayment->updateAttributes(['amount' => - ($payment->amount - $amountToReduce)]);
+                                } else if ($payment->payment->creditUsage->debitUsagePayment->lessonPayment) {
+                                    $payment->payment->creditUsage->debitUsagePayment->lessonPayment->updateAttributes(['amount' => - ($payment->amount - $amountToReduce)]);
+                                }
+                            }
+                            $amountToReduce -= $payment->amount;
                             $payment->invoice->save();
                         }
                     }
@@ -70,6 +90,7 @@ class m180616_113552_pfi_refactor extends Migration
 
         $invoices = Invoice::find()
             ->notDeleted()
+            ->invoice()
             ->location([14, 15])
             ->andWhere(['<', 'balance', 0])
             ->andWhere(['NOT', ['invoice.user_id'=> 0]])
@@ -81,7 +102,7 @@ class m180616_113552_pfi_refactor extends Migration
                 foreach ($invoice->manualPayments as $payment) {
                     $balance = abs($invoice->balance);
                     if ($payment->amount <= $balance) {
-                        $balance = $balance - $payment->amount;
+                        $balance -= $payment->amount;
                         $payment->delete();
                         $invoice->save();
                     } else {

@@ -258,6 +258,18 @@ class Invoice extends \yii\db\ActiveRecord
             ->all();
     }
 
+    public function getCreditAppliedPayments()
+    {
+        return InvoicePayment::find()
+            ->notDeleted()
+            ->invoice($this->id)
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted()
+                    ->creditApplied();
+            }])
+            ->all();
+    }
+
     public function getAllPayments()
     {
         return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
@@ -271,7 +283,8 @@ class Invoice extends \yii\db\ActiveRecord
     
     public function getInvoicePayments()
     {
-        return $this->hasMany(InvoicePayment::className(), ['invoice_id' => 'id']);
+        return $this->hasMany(InvoicePayment::className(), ['invoice_id' => 'id'])
+            ->onCondition(['invoice_payment.isDeleted' => false]);
     }
 
     public function getUser()

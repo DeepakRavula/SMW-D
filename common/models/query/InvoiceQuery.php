@@ -161,6 +161,16 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         }]);
     }
 
+    public function appliedPayments()
+    {
+        return $this->joinWith(['invoicePayments' => function ($query) {
+            $query->joinWith(['payment' => function ($query) {
+                $query->notDeleted()
+                    ->notCreditUsed();
+            }]);
+        }]);
+    }
+
     public function unpaid()
     {
         return $this->andFilterWhere([
