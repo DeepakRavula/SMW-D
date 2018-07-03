@@ -175,7 +175,6 @@ class StudentController extends BaseController
         $courseSchedule->studentId = $id;
         $multipleEnrolmentDiscount = new MultiEnrolmentDiscount();
         $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
-        //print_r($courseDetail->lessonsCount);die;
         $courseModel->setModel($courseDetail);
         $courseSchedule->setModel($courseDetail);
         if ($courseModel->save()) {
