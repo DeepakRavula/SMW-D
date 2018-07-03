@@ -25,7 +25,7 @@ use common\models\Enrolment;
             ->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM])
             ->all(), 'id', 'name')
 ?>
-<?= $model->lessonsCount    =   Enrolment::LESSONS_COUNT;?>
+<?php $model->lessonsCount    =   Enrolment::LESSONS_COUNT;?>
 <div class="user-create-form">
     <div class="row">
         <div class="col-xs-6">
