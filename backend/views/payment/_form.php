@@ -6,8 +6,9 @@ use yii\bootstrap\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Blog */
 /* @var $form yii\bootstrap\ActiveForm */
-?>
 
+?>
+<?= Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class' => 'btn btn-box-tool']); ?>
 <div class="payment-form">
 <?php 
         $url = Url::to(['payment/updatepayment', 'id' => $model->id]);
@@ -19,6 +20,7 @@ use yii\bootstrap\Html;
 </div>
     <?php ActiveForm::end(); ?>
 <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
+
     <?= $this->render('/payment/_lesson-line-item', [
         'model' => $model,
         'lessonDataProvider' => $lessonDataProvider,
@@ -33,12 +35,17 @@ use yii\bootstrap\Html;
     ?>
 <script>
 	$(document).ready(function () {
-		   $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Payment</h4>');
-			$('#popup-modal .modal-dialog').css({'width': '1000px'});
+		var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Payment</h4> </div> <div class="col-md-6"> <div class = "pull-right"><a id="print" href="#"><i class="fa fa-print m-r-10"></i></a>  </div> </div> </div>';
+        $('#popup-modal').find('.modal-header').html(header);
+	$('#popup-modal .modal-dialog').css({'width': '1000px'});
 	});
     $(document).on('modal-success', function(event, params) {
         var url = "<?php echo Url::to(['payment/index']); ?>";
         $.pjax.reload({url: url, container: "#payment-listing", replace: false, timeout: 4000});
         return false;
     });
+    $(document).on("click", "#print", function () {
+		var url = '<?php echo Url::to(['print/payment','id' => $model->id]); ?>';
+       window.open(url, '_blank');
+   });
 </script>
