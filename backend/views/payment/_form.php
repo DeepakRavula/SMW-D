@@ -8,7 +8,7 @@ use yii\bootstrap\Html;
 /* @var $form yii\bootstrap\ActiveForm */
 
 ?>
-<?= Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class' => 'btn btn-box-tool']); ?>
+
 <div class="payment-form">
 <?php 
         $url = Url::to(['payment/updatepayment', 'id' => $model->id]);
