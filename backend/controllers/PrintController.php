@@ -476,7 +476,8 @@ class PrintController extends BaseController
         $model = Payment::findOne($id);
         $lessonPayment = Lesson::find()
 		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
-                $query->andWhere(['paymentId' => $id]);
+                $query->andWhere(['paymentId' => $id])
+			->notDeleted();
             }]);
 	    $lessonDataProvider = new ActiveDataProvider([
             'query' => $lessonPayment,
@@ -486,7 +487,8 @@ class PrintController extends BaseController
         $invoicePayment = Invoice::find()
             ->notDeleted()
             ->joinWith(['invoicePayments' => function ($query) use ($id) {
-                $query->andWhere(['payment_id' => $id]);
+                $query->andWhere(['payment_id' => $id])
+			->notDeleted();
             }]);
 	    
 	    $invoiceDataProvider = new ActiveDataProvider([
