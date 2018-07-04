@@ -167,7 +167,7 @@ use kartik\switchinput\SwitchInput;
         </div>
         <div class="col-xs-5"></div>
         <div title="Auto Renewal" class="m-r-55 pull-right">
-            <?= $form->field($model, 'autoRenew')->widget(SwitchInput::classname(), []); ?>
+            <?= $form->field($model, 'autoRenew')->widget(SwitchInput::classname(), [])->label(false); ?>
         </div>
     </div>
  </div>   
