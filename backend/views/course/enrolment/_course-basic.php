@@ -10,7 +10,7 @@ use yii\jui\DatePicker;
 use yii\helpers\Url;
 use yii\web\View;
 use common\models\Enrolment;
-
+use kartik\switchinput\SwitchInput;
 ?>
 
 
@@ -26,6 +26,7 @@ use common\models\Enrolment;
             ->all(), 'id', 'name')
 ?>
 <?php $model->lessonsCount    =   Enrolment::LESSONS_COUNT;?>
+<?php $model->autoRenew       =   1;?>
 <div class="user-create-form">
     <div class="row">
         <div class="col-xs-6">
@@ -153,7 +154,7 @@ use common\models\Enrolment;
     </div>
 <div class="row">
         <div class="col-xs-6">
-            <label class="modal-form-label">No of Lessons</label>
+            <label class="modal-form-label">Number of Lessons</label>
         </div>
         <div class="col-xs-2"></div>
         <div class="col-xs-3">
@@ -162,11 +163,11 @@ use common\models\Enrolment;
     </div>
     <div class="row">
         <div class="col-xs-6">
-            <label class="modal-form-label">Auto Renewal</label>
+            <label class="modal-form-label">Should this enrolment automatically renew itself?</label>
         </div>
         <div class="col-xs-5"></div>
-        <div class="m-r-55 pull-right">
-            <?= $form->field($model, 'autoRenew')->checkbox()->label(false); ?>
+        <div title="Auto Renewal" class="m-r-55 pull-right">
+            <?= $form->field($model, 'autoRenew')->widget(SwitchInput::classname(), []); ?>
         </div>
     </div>
  </div>   
