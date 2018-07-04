@@ -4,7 +4,6 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 use common\models\Lesson;
 use common\models\Invoice;
-
     if ($searchModel->isWeb) {
         $tableOption = ['class' => 'table table-condensed'];
         $columns = [
@@ -88,9 +87,15 @@ use common\models\Invoice;
         }
     ]);
 Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
-<?php if($model->type == Invoice::TYPE_INVOICE) { ?>
+<?php
+if ($model->type == Invoice::TYPE_INVOICE) {
+	$id = 'line-item-grid';
+} else {
+	$id = 'proforma-line-item-grid';
+}
+?>
     <?= GridView::widget([
-        'id' => 'line-item-grid',
+        'id' => $id,
         'dataProvider' => $invoiceLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,
@@ -99,18 +104,6 @@ Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
         'tableOptions' => $tableOption,
         'headerRowOptions' => ['class' => 'bg-light-gray'],
     ]); ?>
-<?php } else { ?>
-<?= GridView::widget([
-        'id' => 'proforma-line-item-grid',
-        'dataProvider' => $invoiceLineItemsDataProvider,
-        'columns' => $columns,
-        'summary' => false,
-        'emptyText' => false,
-        'options' => ['class' => 'col-md-12'],
-        'tableOptions' => $tableOption,
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-    ]); ?>
-<?php } ?>
  <?php Pjax::end(); ?>
 
 <script>
