@@ -234,6 +234,38 @@ Modal::begin([
         }
     });
 
+    $(document).off('click', '#line-item-grid table tr').on('click', '#line-item-grid table tr', function () {
+        var id = $(this).data('key');
+        var selectedRows = $('#line-item-grid').yiiGridView('getSelectedRows');
+        if (!$.isEmptyObject(selectedRows)) {
+            $('#invoice-error-notification').html('You are not allowed to perform this action!').fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ id : id });
+            var url = '<?= Url::to(['invoice-line-item/delete']) ?>?' + params;
+            $.ajax({
+                url    : '<?= Url::to(['invoice-line-item/update']) ?>?' + params,
+                type: 'get',
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response.status)
+                    {
+                        $('#popup-modal .modal-dialog').css({'width': '600px'});
+                        $('#popup-modal').modal('show');
+                        $('.modal-delete').show();
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Line Item</h4>');
+                        $('.modal-delete').attr('action', url);
+                        $('#modal-content').html(response.data);
+                        $('.modal-delete').attr('message', response.deleteConfirmation);
+                    } else {
+                        $('#invoice-error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
+                    }
+                }
+            });
+        }
+        return false;
+    });
+
     $(document).on('modal-error', function (event, params) {
         if (params.message) {
             $('#modal-popup-error-notification').html(params.message).fadeIn().delay(5000).fadeOut();
