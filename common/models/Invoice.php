@@ -602,18 +602,11 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getInvoicePaymentTotal()
     {
-        $isProFormaInvoice = false;
-        if ($this->isProFormaInvoice()) {
-            $isProFormaInvoice = true;
-        }
         $paymentTotal = InvoicePayment::find()
             ->notDeleted()
             ->invoice($this->id)
-            ->joinWith(['payment' => function ($query) use ($isProFormaInvoice) {
+            ->joinWith(['payment' => function ($query) {
                 $query->notDeleted();
-                if ($isProFormaInvoice) {
-                    $query->notCreditUsed();
-                }
             }]);
 
         $invoicePaymentTotal = $paymentTotal->sum('invoice_payment.amount');
@@ -644,21 +637,7 @@ class Invoice extends \yii\db\ActiveRecord
         if ($this->isInvoice()) {
             $balance = $this->total - (round($this->invoicePaymentTotal, 2) == round($this->total, 2) ? $this->total : $this->invoicePaymentTotal);
         } else {
-            if (!$this->hasDebitPayments()) {
-                $balance = $this->total + $this->notLessonCreditUsedPaymentTotal;
-            }
-            if (round($this->total, 2) == round($this->invoicePaymentTotal + $this->creditUsedPaymentTotal, 2)) {
-                $balance = 0.0000;
-            }
-            if (round($this->total, 2) > round($this->invoicePaymentTotal - $this->notLessonCreditUsedPaymentTotal, 2)) {
-                $balance = $this->total - ($this->invoicePaymentTotal + $this->notLessonCreditUsedPaymentTotal);
-            }
-            if (round($this->total, 2) < round($this->invoicePaymentTotal + $this->notLessonCreditUsedPaymentTotal, 2)) {
-                $balance = -(($this->invoicePaymentTotal + $this->notLessonCreditUsedPaymentTotal) - $this->total);
-            }
-            if ($this->total - $this->notLessonCreditUsedPaymentTotal > $this->invoicePaymentTotal) {
-                $balance = ($this->total - $this->notLessonCreditUsedPaymentTotal) - $this->invoicePaymentTotal;
-            }
+            $balance =  - ($this->invoiceAppliedPaymentTotal) - ($this->creditUsedPaymentTotal);
         }
         return $balance;
     }
