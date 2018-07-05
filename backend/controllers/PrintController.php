@@ -22,8 +22,6 @@ use common\models\PaymentMethod;
 use backend\models\search\InvoiceLineItemSearch;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
-use common\models\ProformaInvoice;
-use backend\models\search\ProformaInvoiceSearch;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
@@ -38,7 +36,7 @@ class PrintController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['invoice', 'course', 'evaluation', 'teacher-lessons', 'time-voucher', 'customer-invoice', 'account-view', 'royalty', 'royalty-free', 'tax-collected', 'user', 'customer-items-print', 'proforma-invoice'],
+                        'actions' => ['invoice', 'course', 'evaluation', 'teacher-lessons', 'time-voucher', 'customer-invoice', 'account-view', 'royalty', 'royalty-free', 'tax-collected', 'user', 'customer-items-print'],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
@@ -437,39 +435,6 @@ class PrintController extends BaseController
         return $this->render('/report/customer-item/_print', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
-        ]);
-    }
-    public function actionProformaInvoice($id)
-    {
-        $model = ProformaInvoice::findOne($id);
-        $lessonLineItems = Lesson::find()
-            ->joinWith(['proformaLessonItem' => function ($query) use ($model) {
-                $query->joinWith(['proformaLineItem' => function ($query) use ($model) {
-                    $query->andWhere(['proforma_line_item.proformaInvoiceId' => $model->id]);
-                }]);
-            }]);
-        $lessonLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $lessonLineItems,
-        ]);
-	$invoiceLineItems = Invoice::find()
-            ->joinWith(['proformaInvoiceItem' => function ($query) use ($model) {
-                $query->joinWith(['proformaLineItem' => function ($query) use ($model) {
-                    $query->andWhere(['proforma_line_item.proformaInvoiceId' => $model->id]);
-                }]);
-            }]);
-        $invoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $invoiceLineItems,
-        ]);
-	$searchModel = new ProformaInvoiceSearch();
-	$searchModel->showCheckBox = false;
-        $searchModel->isPrint = true;
-        $this->layout = '/print';
-
-        return $this->render('/proforma-invoice/print/view', [
-            'model' => $model,
-	    'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-            'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-            'searchModel'=>$searchModel,
         ]);
     }
 }

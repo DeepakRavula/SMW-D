@@ -37,23 +37,44 @@ trait Invoiceable
             'Y-m-d H:i:s',
                 $this->date
         );
-        $invoiceLineItem->amount = $this->programRate;
-        $invoiceLineItem->unit   = $this->unit;
-        $invoiceLineItem->unit   = $this->unit;
-        if ($this->isUnscheduled()) {
-            $invoiceLineItem->cost       = 0;
+        if ($this->proFormaLineItem) {
+            $invoiceLineItem->amount = $this->proFormaLineItem->amount;
         } else {
-            $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
+            $invoiceLineItem->amount = $this->courseProgramRate ? $this->courseProgramRate->programRate
+                    : $this->enrolment->program->rate;
+            $invoiceLineItem->unit   = $this->unit;
         }
-        $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
-        $invoiceLineItem->rate = $this->teacherRate;
+        if ($invoice->isProFormaInvoice()) {
+            if ($this->isExtra()) {
+                $invoiceLineItem->item_type_id = ItemType::TYPE_EXTRA_LESSON;
+            } elseif ($this->isPrivate()) {
+                $invoiceLineItem->item_type_id = ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON;
+            }
+            $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
+        } else {
+            $invoiceLineItem->unit   = $this->unit;
+            if ($this->isUnscheduled()) {
+                $invoiceLineItem->cost       = 0;
+            } else {
+                $invoiceLineItem->cost       = $rate * $invoiceLineItem->unit;
+            }
+            $invoiceLineItem->item_type_id = ItemType::TYPE_PRIVATE_LESSON;
+            $invoiceLineItem->rate = $rate;
+        }
         $studentFullName               = $this->enrolment->student->fullName;
         $description                  = $this->enrolment->program->name.' for '.$studentFullName.' with '
             . $this->teacher->publicIdentity.' on '.$actualLessonDate->format('M. jS, Y');
         $invoiceLineItem->description = $description;
         $invoiceLineItem->code       = $invoiceLineItem->getItemCode();
         if ($invoiceLineItem->save()) {
-            $invoiceLineItem->addLineItemDetails($this);
+            $lesson = Lesson::find()
+                ->descendantsOf($this->id)
+                ->orderBy(['lesson.id' => SORT_DESC])
+                ->one();
+            if (!$lesson) {
+                $lesson = $this;
+            }
+            $invoiceLineItem->addLineItemDetails($lesson);
             return $invoiceLineItem;
         } else {
             Yii::error('Create Invoice Line Item: ' . VarDumper::dumpAsString($invoiceLineItem->getErrors()));
@@ -201,10 +222,7 @@ trait Invoiceable
         }
         $lessons = $query->andWhere(['courseId' => $this->courseId])
                     ->all();
-        foreach ($lessons as $lesson) {
-            $lesson->cancel();
-            $lesson->delete();
-        }
+        $invoice = $this->addLessonsCredit($lessons);
         $paymentCycleQuery = PaymentCycle::find()
                 ->andWhere(['enrolmentId' => $this->id])
                 ->notDeleted();
@@ -223,6 +241,32 @@ trait Invoiceable
             }
         }
         return !empty($invoice) ? $invoice : null;
+    }
+
+    public function addLessonsCredit($lessons)
+    {
+        $hasCredit = false;
+        foreach ($lessons as $lesson) {
+            if ($lesson->hasLessonCredit($this->id)) {
+                $hasCredit = true;
+            }
+        }
+        if ($hasCredit) {
+            $invoice = $this->addLessonCreditInvoice();
+        }
+        foreach ($lessons as $lesson) {
+            if ($lesson->hasLessonCredit($this->id)) {
+                if ($hasCredit) {
+                    $invoice->save();
+                }
+                $payment = new Payment();
+                $payment->amount = $lesson->getLessonCreditAmount($this->id);
+                $invoice->addPayment($lesson, $payment, $this);
+            }
+            $lesson->cancel();
+            $lesson->delete();
+        }
+        return $hasCredit ? $invoice : null;
     }
 
     public function createProFormaInvoice()

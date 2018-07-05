@@ -36,8 +36,6 @@ use common\models\Label;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
-    use Payable;
-    
     const STATUS_NOT_ACTIVE = 1;
     const STATUS_ACTIVE = 2;
     const STATUS_DRAFT = 3;
@@ -87,7 +85,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function tableName()
     {
-        return 'user';
+        return '{{%user}}';
     }
 
     /**
@@ -348,30 +346,9 @@ class User extends ActiveRecord implements IdentityInterface
         return parent::beforeDelete();
     }
 
-    public function getCreditAmount()
-    {
-        $id = $this->id;
-        return Payment::find()
-                ->notDeleted()
-                ->joinWith(['customerCredit' => function ($query) use ($id) {
-                    $query->andWhere(['customer_payment.userId' => $id]);
-                }])
-                ->sum('amount');
-    }
-
-    public function hasCustomerCredit()
-    {
-        return $this->creditAmount > 0.01;
-    }
-
     public function getCustomerPaymentPreference()
     {
         return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'id']);
-    }
-
-    public function getCustomerCredit()
-    {
-        return $this->hasOne(CustomerPayment::className(), ['userId' => 'id']);
     }
     
     public function getPhoneNumbers()

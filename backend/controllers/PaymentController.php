@@ -15,13 +15,6 @@ use yii\filters\ContentNegotiator;
 use yii\filters\AccessControl;
 use yii\data\ArrayDataProvider;
 use common\components\controllers\BaseController;
-use backend\models\PaymentForm;
-use common\models\Lesson;
-use yii\data\ActiveDataProvider;
-use common\models\User;
-use backend\models\search\PaymentFormLessonSearch;
-use common\models\LessonPayment;
-use common\models\InvoicePayment;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -39,10 +32,7 @@ class PaymentController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => [
-                    'invoice-payment', 'credit-payment', 'update', 'delete', 'receive',
-                    'validate-apply-credit', 'validate-receive','update-payment'
-                ],
+                'only' => ['invoice-payment', 'credit-payment', 'update', 'delete', 'validate-apply-credit'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -53,11 +43,8 @@ class PaymentController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => [
-                            'index', 'update', 'view', 'delete', 'create', 'print', 'receive',
-                            'invoice-payment', 'credit-payment', 'validate-apply-credit',
-                            'validate-receive','update-payment'
-                        ],
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'print', 
+                            'invoice-payment', 'credit-payment', 'validate-apply-credit'],
                         'roles' => ['managePfi', 'manageInvoices'],
                     ],
                 ],
@@ -309,180 +296,43 @@ class PaymentController extends BaseController
         return $response;
     }
 
-    public function getCustomerCreditInvoices($customerId)
+    public function getAvailableCredit($invoice)
     {
-        return Invoice::find()
-            ->notDeleted()
-            ->notCanceled()
-            ->invoiceCredit($customerId)
-            ->all();
-    }
+        $invoiceCredits = Invoice::find()
+                ->notDeleted()
+                ->invoiceCredit($invoice->user_id)
+                ->andWhere(['NOT', ['invoice.id' => $invoice->id]])
+                ->all();
 
-    public function getAvailableCredit($customerId = null)
-    {
-        $invoiceCredits = $this->getCustomerCreditInvoices($customerId);
         $results = [];
-        $amount = 0;
-        $paymentCredits = $this->getCustomerPayments($customerId);
-        
-        if ($invoiceCredits) {
+        if (!empty($invoiceCredits)) {
             foreach ($invoiceCredits as $invoiceCredit) {
+                if ($invoiceCredit->isReversedInvoice()) {
+                    $lastInvoicePayment = $invoiceCredit;
+                } else {
+                    $lastInvoicePayments = $invoiceCredit->payments;
+                    $lastInvoicePayment = end($lastInvoicePayments);
+                }
+                $paymentDate = new \DateTime();
+                if (!empty($lastInvoicePayment)) {
+                    $paymentDate = \DateTime::createFromFormat('Y-m-d H:i:s', $lastInvoicePayment->date);
+                }
+                $amount = abs($invoiceCredit->balance);
                 $results[] = [
                     'id' => $invoiceCredit->id,
-                    'type' => 'Invoice Credit',
-                    'reference' => $invoiceCredit->getInvoiceNumber(),
-                    'amount' => abs($invoiceCredit->balance)
+                    'invoice_number' => $invoiceCredit->getInvoiceNumber(),
+                    'date' => $paymentDate->format('d-m-Y'),
+                    'amount' => $amount
                 ];
             }
         }
 
-        if ($paymentCredits) {
-            foreach ($paymentCredits as $paymentCredit) {
-                if ($paymentCredit->hasCredit()) {
-                    $results[] = [
-                        'id' => $paymentCredit->id,
-                        'type' => 'Payment Credit',
-                        'reference' => $paymentCredit->reference,
-                        'amount' => $paymentCredit->creditAmount
-                    ];
-                }
-            }
-        }
-        
         $creditDataProvider = new ArrayDataProvider([
             'allModels' => $results,
             'sort' => [
-                'attributes' => ['type', 'reference', 'amount']
-            ]
+                'attributes' => ['id', 'invoice_number', 'date', 'amount'],
+            ],
         ]);
         return $creditDataProvider;
-    }
-
-    public function getCustomerPayments($customerId)
-    {
-        return Payment::find()
-            ->notDeleted()
-            ->exceptAutoPayments()
-            ->customer($customerId)
-            ->all();
-    }
-
-    public function actionReceive()
-    {
-        $request = Yii::$app->request;
-        $searchModel = new PaymentFormLessonSearch();
-        $searchModel->showCheckBox = true;
-        $model = new PaymentForm();
-        $currentDate = new \DateTime();
-        $model->date = $currentDate->format('M d, Y');
-        if (!$request->post()) {
-            $searchModel->fromDate = $currentDate->format('M 1, Y');
-            $searchModel->toDate = $currentDate->format('M t, Y'); 
-            $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
-        }
-        $searchModel->load(Yii::$app->request->get());
-	    $model->userId = $searchModel->userId;
-        $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
-        $lessonsQuery->orderBy(['lesson.id' => SORT_ASC]);
-        $model->load(Yii::$app->request->get());
-        $lessonLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $lessonsQuery,
-            'pagination' => false
-        ]);
-        $invoicesQuery = Invoice::find();
-        if ($model->invoiceIds) {
-            $invoicesQuery->andWhere(['id' => $model->invoiceIds]);
-        } else {
-            if (!$searchModel->userId) {
-                $searchModel->userId = null;
-            }
-            $invoicesQuery->notDeleted()
-                ->invoice()
-                ->customer($searchModel->userId)
-                ->unpaid();
-        }
-        $invoicesQuery->orderBy(['invoice.id' => SORT_ASC]);
-        $invoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $invoicesQuery,
-            'pagination' => false 
-        ]);
-        $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
-        if ($request->post()) {
-            $model->load($request->post());
-            $payment = new Payment();
-            $payment->amount = $model->amount;
-            $payment->user_id = $searchModel->userId;
-            $payment->payment_method_id = $model->payment_method_id;
-            $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
-            $payment->save();
-            $model->paymentId = $payment->id;
-            $model->lessonIds = $searchModel->lessonIds;
-            $model->save();
-            $response = [
-                'status' => true,
-                'message' => 'Payment added succesfully'
-            ];
-        } else {
-            $data = $this->renderAjax('/receive-payment/_form', [
-                'model' => $model,
-                'creditDataProvider' => $creditDataProvider,
-                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-                'searchModel' => $searchModel
-            ]);
-            $response = [
-                'status' => true,
-                'data' => $data
-            ];
-        }
-        return $response;
-    }
-
-    public function actionValidateReceive()
-    {
-        $request = Yii::$app->request;
-        $model = new PaymentForm();
-        $model->load($request->post());
-        if (!$model->amount) {
-            $model->amount = 0.0;
-        }
-        return ActiveForm::validate($model);
-    }
-
-    public function actionUpdatePayment($id)
-    {
-        $model = $this->findModel($id);
-	    $lessonPayment = Lesson::find()
-		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
-                $query->andWhere(['paymentId' => $id]);
-            }]);
-	    $lessonDataProvider = new ActiveDataProvider([
-            'query' => $lessonPayment,
-            'pagination' => false
-        ]);
-	    
-        $invoicePayment = Invoice::find()
-            ->notDeleted()
-            ->joinWith(['invoicePayments' => function ($query) use ($id) {
-                $query->andWhere(['payment_id' => $id]);
-            }]);
-	    
-	    $invoiceDataProvider = new ActiveDataProvider([
-            'query' => $invoicePayment,
-            'pagination' => false
-        ]);
-        if (Yii::$app->request->post()) {
-           
-        } else {
-            $data = $this->renderAjax('_form', [
-                'model' => $model,
-                'lessonDataProvider' => $lessonDataProvider,
-                'invoiceDataProvider' => $invoiceDataProvider
-            ]);
-            return [
-                'status' => true,
-                'data' => $data
-            ];
-        }
     }
 }

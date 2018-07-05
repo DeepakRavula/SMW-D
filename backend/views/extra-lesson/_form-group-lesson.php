@@ -65,7 +65,7 @@ use kartik\time\TimePicker;
             ])?>
     </div>
     <div class="col-md-2">
-            <?php echo $form->field($model, 'program_rate')->textInput()?>
+            <?php echo $form->field($model, 'programRate')->textInput()?>
     </div>
     <div class="col-md-2 m-b-20">
             <?php echo $form->field($model, 'applyFullDiscount')->checkbox()?>

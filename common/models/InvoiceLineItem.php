@@ -233,10 +233,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id']);
     }
-    public function getProformaInvoiceItem()
-    {
-        return $this->hasOne(ProformaItemInvoice::className(), ['invoice_id' => 'id']);
-    }
+
     public function getProFormaLesson()
     {
         if (!$this->isExtraLesson()) {
@@ -529,7 +526,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $minutes     = $getDuration->format('i');
         return (($hours * 60) + $minutes) / 60;
     }
-    
     public function getLessonDuration($date, $teacherId)
     {
         $totalDuration = InvoiceLineItem::find()
@@ -544,7 +540,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             ->sum('unit');
         return $totalDuration;
     }
-
     public function getLessonCost($date, $teacherId)
     {
         $totalCost = InvoiceLineItem::find()
@@ -559,7 +554,6 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             ->sum('cost');
         return $totalCost;
     }
-
     public function addLessonCreditApplied($lesson)
     {
         $old = clone $this;
@@ -582,6 +576,12 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         if ($this->invoice->isReversedInvoice()) {
             return true;
         }
+        if ($this->isPaymentCycleLesson()) {
+            $invoiceItemPaymentCycleLesson = new InvoiceItemPaymentCycleLesson();
+            $invoiceItemPaymentCycleLesson->paymentCycleLessonId    = $lesson->paymentCycleLesson->id;
+            $invoiceItemPaymentCycleLesson->invoiceLineItemId    = $this->id;
+            $invoiceItemPaymentCycleLesson->save();
+        }
         if ($this->isPrivateLesson() || $this->isExtraLesson() ||
             $this->isGroupLesson()) {
             $invoiceItemLesson = new InvoiceItemLesson();
@@ -590,28 +590,49 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $invoiceItemLesson->save();
         }
         if (!$this->isGroupLesson()) {
-            if ($this->invoice->isInvoice()) {
-                if ($lesson->hasCustomerDiscount()) {
+            if ($this->invoice->isInvoice() && $lesson->proFormaLineItem) {
+                $proFormaLineItem = $lesson->proFormaLineItem;
+                if ($proFormaLineItem->hasCustomerDiscount()) {
                     $customerDiscount = $this->addCustomerDiscount(
                         null,
-                            $lesson->customerDiscount
+                            $proFormaLineItem->customerDiscount
                     );
                 }
-                if ($lesson->hasLineItemDiscount()) {
+                if ($proFormaLineItem->hasLineItemDiscount()) {
                     $lineItemDiscount = $this->addLineItemDiscount(
-                            $lesson->lineItemDiscount
+                            $proFormaLineItem->lineItemDiscount
                     );
                 }
-                if ($lesson->hasEnrolmentPaymentFrequencyDiscount()) {
+                if ($proFormaLineItem->hasEnrolmentPaymentFrequencyDiscount()) {
                     $pfDiscount = $this->addEnrolmentPaymentFrequencyDiscount(
-                        null, $lesson->enrolmentPaymentFrequencyDiscount);
+                        null, $proFormaLineItem->enrolmentPaymentFrequencyDiscount);
                 }
-                if ($lesson->hasMultiEnrolmentDiscount()) {
+                if ($proFormaLineItem->hasMultiEnrolmentDiscount()) {
                     $enrolDiscount = $this->addMultiEnrolmentDiscount(
-                        null, $lesson->multiEnrolmentDiscount);
+                        null, $proFormaLineItem->multiEnrolmentDiscount);
+                }
+            }
+            if (!$this->invoice->isInvoice()) {
+                if ($this->canAddEnrolmentPaymentFrequencyDiscount($lesson)) {
+                    $this->addEnrolmentPaymentFrequencyDiscount($lesson->enrolment);
+                }
+                if ($this->canAddMultiEnrolmentDiscount($lesson)) {
+                    $this->addMultiEnrolmentDiscount($lesson->enrolment);
                 }
             }
         }
+    }
+
+    public function canAddEnrolmentPaymentFrequencyDiscount($lesson)
+    {
+        return $this->isLessonItem() && $lesson->enrolment->hasPaymentFrequencyDiscount() &&
+            !$this->hasEnrolmentPaymentFrequencyDiscount();
+    }
+
+    public function canAddMultiEnrolmentDiscount($lesson)
+    {
+        return $this->isLessonItem() && $lesson->enrolment->hasMultiEnrolmentDiscount() &&
+            !$this->hasMultiEnrolmentDiscount();
     }
 
     public function hasLineItemDiscount()
@@ -744,10 +765,10 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $discount->value = InvoiceLineItemDiscount::FULL_DISCOUNT;
         return $discount->save();
     }
-
-    public static function getItemCategoryName($itemCategoryId)
+     public static function getItemCategoryName($itemCategoryId)
     {
-        $itemcategory = ItemCategory::findOne(['id' => $itemCategoryId]);
+        $itemcategory= ItemCategory::findOne(['id'=>$itemCategoryId]);
+        print_r($itemcategory->name);
         return $itemcategory->name;
     }
 }

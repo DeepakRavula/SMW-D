@@ -58,7 +58,7 @@ class ExtraLesson extends Lesson
         $course = $this->createCourse();
         $regularCourse->extendTo($course);
         $course->courseProgramRate->updateAttributes([
-            'programRate' => $this->program_rate,
+            'programRate' => $this->programRate,
             'applyFullDiscount' => $this->applyFullDiscount
         ]);
         foreach ($enrolments as $enrolment) {

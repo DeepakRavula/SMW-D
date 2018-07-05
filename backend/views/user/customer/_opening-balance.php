@@ -1,12 +1,14 @@
 <?php
 
+use common\models\Payment;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 ?>
-<?php
+<?php 
 $amount = 0;
 if (!empty($openingBalanceCredit)) {
     $amount = $openingBalanceCredit->balance;
@@ -17,7 +19,7 @@ if (!empty($positiveOpeningBalanceModel)) {
     $invoiceId = $positiveOpeningBalanceModel->id;
 } ?>
 <?php if (!empty($openingBalanceCredit) || !empty($positiveOpeningBalanceModel)) : ?>
-<?php $boxTools = Html::a('<i title="View" class="fa fa-eye"></i>', Url::to(['invoice/view', 'id' => $invoiceId])); ?>
+<?php $boxTools = Html::a('<i title="View" class="fa fa-eye"></i>', Url::to(['invoice/view', 'id' => $invoiceId])); ?> 
 <?php else : ?>
 <?php $boxTools = '<i title="Add" class="fa fa-plus ob-add-btn m-r-10"></i>';?>
 <?php endif;?>

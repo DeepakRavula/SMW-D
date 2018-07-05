@@ -55,6 +55,11 @@ $this->params['label'] = $this->render('_title', [
             'dataProvider' => $unscheduledLessonDataProvider,
         ]);
 
+        $vacationContent = $this->render('vacation/_index', [
+            'model' => new Vacation(),
+            'studentModel' => $model,
+        ]);
+
         $logContent = $this->render('log/index', [
             'model' => $model,
             'logs' => $logs
@@ -94,7 +99,13 @@ $this->params['label'] = $this->render('_title', [
                     'id' => 'note',
                 ],
             ],
- 
+                [
+                'label' => 'Vacations',
+                'content' => $vacationContent,
+                'options' => [
+                    'id' => 'vacation',
+                ],
+            ],
             [
                 'label' => 'History',
                 'content' => $logContent,

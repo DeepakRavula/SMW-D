@@ -21,7 +21,6 @@ use yii\helpers\Json;
 use yii\web\Response;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
-use common\models\InvoicePayment;
 use common\models\Note;
 use common\models\Course;
 use common\models\PaymentCycle;
@@ -181,7 +180,6 @@ class InvoiceController extends BaseController
             }
         }
     }
-
     public function actionNote($id)
     {
         $model = $this->findModel($id);
@@ -230,13 +228,20 @@ class InvoiceController extends BaseController
         $userDataProvider = $userSearchModel->search($queryParams);
         $userDataProvider->pagination = false;
         
-        $invoicePayments = InvoicePayment::find()
-            ->notDeleted()
-            ->joinWith(['payment' => function ($query) {
-                $query->notDeleted()
-                    ->orderBy(['payment.date' => SORT_DESC]);
+        $customerInvoicePayments = Payment::find()
+            ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
+                $query->andWhere(['ip.invoice_id' => $model->id]);
             }])
-            ->invoice($id);
+            ->andWhere(['user_id' => $model->user_id]);
+
+        $customerInvoicePaymentsDataProvider = new ActiveDataProvider([
+            'query' => $customerInvoicePayments,
+        ]);
+        $invoicePayments                     = Payment::find()
+            ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
+                $query->andWhere(['ip.invoice_id' => $model->id]);
+            }])
+            ->orderBy(['date' => SORT_DESC]);
         if ($model->isProFormaInvoice()) {
             $invoicePayments->notLessonCreditUsed();
         }
@@ -267,13 +272,16 @@ class InvoiceController extends BaseController
         $logDataProvider= new ActiveDataProvider([
             'query' => LogHistory::find()
             ->invoice($id) ]);
-        $searchModel->isPrint = false;
-        return $this->render('view', [
+        $searchModel->isPrint=false;
+        return $this->render(
+            'view',
+                [
                 'model' => $model,
                 'userSearchModel' => $userSearchModel,
                 'userDataProvider' => $userDataProvider,
                 'searchModel' => $searchModel,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                'invoicePayments' => $customerInvoicePaymentsDataProvider,
                 'customer' => empty($customer) ? new User() : $customer,
                 'userModel' => $userModel,
                 'userEmail' => $userEmail,
@@ -282,7 +290,8 @@ class InvoiceController extends BaseController
                 'itemDataProvider' => $itemDataProvider,
                 'itemSearchModel' => $itemSearchModel,
                 'logDataProvider' => $logDataProvider,
-        ]);
+        ]
+        );
     }
 
     public function actionAddMisc($id, $itemId)
@@ -671,6 +680,75 @@ class InvoiceController extends BaseController
         return $response;
     }
 
+    public function actionPostDistribute($id)
+    {
+        $model = Invoice::findOne($id);
+        if ($model->canPost()) {
+            $model->isPosted = true;
+            $status = $model->distributeCreditsToLesson();
+            $model->save();
+            $response = [
+                'status' => true
+            ];
+        } else {
+            $response = [
+                'status' => false
+            ];
+        }
+        return $response;
+    }
+
+    public function actionPost($id)
+    {
+        $model = Invoice::findOne($id);
+        if ($model->canPost()) {
+            $model->isPosted = true;
+            $response = [
+                'status' => $model->save()
+            ];
+        } else {
+            $response = [
+                'status' => false
+            ];
+        }
+        return $response;
+    }
+
+    public function actionDistribute($id)
+    {
+        $model = Invoice::findOne($id);
+        if ($model->canDistributeCreditsToLesson()) {
+            $status = $model->distributeCreditsToLesson();
+            $response = [
+                'status' => true
+            ];
+        } else {
+            $response = [
+                'status' => false
+            ];
+        }
+        return $response;
+    }
+
+    public function actionUnpost($id)
+    {
+        $model = Invoice::findOne($id);
+        $model->isPosted = false;
+        $response = [
+            'status' => $model->save()
+        ];
+        return $response;
+    }
+
+    public function actionRetractCredits($id)
+    {
+        $model = Invoice::findOne($id);
+        $status = $model->retractCreditsFromLessons();
+        $response = [
+            'status' => true
+        ];
+        return $response;
+    }
 
     public function actionVoid($id, $canbeUnscheduled)
     {

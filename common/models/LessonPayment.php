@@ -2,9 +2,6 @@
 
 namespace common\models;
 
-use yii2tech\ar\softdelete\SoftDeleteBehavior;
-
-
 /**
  * This is the model class for table "city".
  *
@@ -29,95 +26,30 @@ class LessonPayment extends \yii\db\ActiveRecord
     {
         return [
             [['lessonId', 'paymentId', 'enrolmentId'], 'integer'],
-            [['isDeleted'], 'safe']
-        ];
-    }
-
-    public function behaviors()
-    {
-        return [
-            'softDeleteBehavior' => [
-                'class' => SoftDeleteBehavior::className(),
-                'softDeleteAttributeValues' => [
-                    'isDeleted' => true,
-                ],
-                'replaceRegularDelete' => true
-            ],
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function find()
+    public function attributeLabels()
     {
-        return new \common\models\query\LessonPaymentQuery(get_called_class());
+        return [
+           
+        ];
     }
-
     public function getLesson()
     {
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
     }
-
-    public function getPayment()
-    {
-        return $this->hasOne(Payment::className(), ['id' => 'paymentId']);
-    }
-
     public function getCreditUsage()
     {
         return $this->hasOne(CreditUsage::className(), ['credit_payment_id' => 'paymentId']);
     }
-
     public function getCredit()
     {
         $payment = Payment::findOne(['id' => $this->paymentId]);
         
         return $payment->amount;
-    }
-
-    public function beforeSave($insert)
-    {
-        if ($insert) {
-            $this->isDeleted = false;
-        }
-        return parent::beforeSave($insert);
-    }
-
-    public function afterSave($insert, $changedAttributes)
-    {
-        if (!$insert) {
-            if ($this->payment->isAutoPayments()) {
-                if ($this->payment->isCreditApplied()) {
-                    if ($this->payment->creditUsage->debitUsagePayment) {
-                        $this->payment->creditUsage->debitUsagePayment->updateAttributes(['amount' => - ($this->amount)]);
-                        if ($this->payment->creditUsage->debitUsagePayment->invoicePayment) {
-                            $this->payment->creditUsage->debitUsagePayment->invoicePayment->updateAttributes(['amount' => - ($this->amount)]);
-                        } else if ($this->payment->creditUsage->debitUsagePayment->lessonPayment) {
-                            $this->payment->creditUsage->debitUsagePayment->lessonPayment->updateAttributes(['amount' => - ($this->amount)]);
-                        }
-                    }
-                } else {
-                    if ($this->payment->debitUsage->creditUsagePayment) {
-                        $this->payment->debitUsage->creditUsagePayment->updateAttributes(['amount' => $this->amount]);
-                        if ($this->payment->creditUsage->debitUsagePayment->invoicePayment) {
-                            $this->payment->creditUsage->debitUsagePayment->invoicePayment->updateAttributes(['amount' => $this->amount]);
-                        } else if ($this->payment->creditUsage->debitUsagePayment->lessonPayment) {
-                            $this->payment->creditUsage->debitUsagePayment->lessonPayment->updateAttributes(['amount' => $this->amount]);
-                        }
-                    }
-                }
-                $this->payment->updateAttributes(['amount' => $this->amount]);
-            }
-        }
-        return parent::afterSave($insert, $changedAttributes);
-    }
-
-    public function afterSoftDelete()
-    {
-        if ($this->payment->isAutoPayments() && !$this->payment->isDeleted) {
-            $this->payment->delete();
-        }
-        return true;
     }
 }

@@ -133,16 +133,8 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return $this->joinWith(['enrolment' => function ($query) use ($id) {
             $query->joinWith(['student' => function ($query) use ($id) {
-                $query->andWhere(['student.id' => $id]);
-            }]);
-        }]);
-    }
-
-    public function customer($id)
-    {
-        return $this->joinWith(['enrolment' => function ($query) use ($id) {
-            $query->joinWith(['student' => function ($query) use ($id) {
-                $query->andWhere(['customer_id' => $id]);
+                $query->andWhere(['customer_id' => $id])
+                ->active();
             }]);
         }]);
     }
@@ -158,9 +150,8 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->joinWith(['invoiceItemLessons' => function ($query) {
             $query->joinWith(['invoiceLineItem' => function ($query) {
                 $query->joinWith(['invoice' => function ($query) {
-                    $query->andWhere(['OR', ['invoice.id' => null], ['invoice.isDeleted' => true]]);
-                }])
-                ->andWhere(['OR', ['invoice_line_item.id' => null], ['invoice_line_item.isDeleted' => true]]);
+                    $query->andWhere(['invoice.id' => null]);
+                }]);
             }]);
         }]);
     }
@@ -221,9 +212,8 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function privateLessons()
     {
         $this->joinWith(['course' => function ($query) {
-            $query->joinWith(['program' => function ($query) {
-                $query->andWhere(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
-            }]);
+            $query->joinWith('program')
+                ->andWhere(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
         }]);
 
         return $this;
@@ -248,9 +238,8 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function groupLessons()
     {
         $this->joinWith(['course' => function ($query) {
-            $query->joinWith(['program' => function ($query) {
-                $query->andWhere(['program.type' => Program::TYPE_GROUP_PROGRAM]);
-            }]);
+            $query->joinWith('program')
+                ->andWhere(['program.type' => Program::TYPE_GROUP_PROGRAM]);
         }]);
 
         return $this;
@@ -415,17 +404,6 @@ class LessonQuery extends \yii\db\ActiveQuery
     public function date($date)
     {
         return $this->andWhere(['DATE(lesson.date)' => $date]);
-    }
-
-    public function nonPfi()
-    {
-        return $this->joinWith(['proformaLessonItem' => function ($query) {
-            $query->joinWith(['proformaLineItem' => function ($query) {
-                $query->joinWith(['proformaInvoice' => function ($query) {
-                    $query->andWhere(['proforma_invoice.id' => null]);
-                }]);
-            }]);
-        }]);
     }
     
     public function notExpired()

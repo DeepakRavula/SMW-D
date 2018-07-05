@@ -12,7 +12,7 @@ class m180329_051558_test_email extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('test_email', [
+	     $this->createTable('test_email', [
             'id' => $this->primaryKey(),
             'email' => $this->string()->notNull(),
         ]);

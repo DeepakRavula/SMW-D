@@ -27,21 +27,27 @@ DateTimePickerAsset::register($this);
 </div>
 
 <?php if ($model->course->program->isPrivate()) : ?>
-    <div class="row">
-        <?php Pjax::begin(['id' => 'enrolment-pfi']); ?>
+   <div class="row">
+<?php Pjax::begin(['id' => 'enrolment-pfi']); ?>
 			<div class="col-md-6">
-                <?= $this->render('_pf', [
-                    'model' => $model,
-                ]); ?>
-            </div>
-        <?php Pjax::end(); ?>
-        <div class="col-md-6">
-            <?= $this->render('_student', [
+			<?=
+            $this->render('_pf', [
                 'model' => $model,
-            ]); ?>
-        </div>
-    </div>        
-<?php endif; ?>
+            ]);
+            ?>
+                        </div>
+<?php Pjax::end(); ?>
+<?php Pjax::begin(['id' => 'enrolment-vacation']); ?>
+	<div class="col-md-6">
+		<?=
+        $this->render('_vacation', [
+            'model' => $model,
+        ]);
+        ?>
+	</div>
+<?php Pjax::end(); ?>
+                </div>
+	<?php endif; ?>
 <?php
 Modal::begin([
     'header' => '<h4 class="m-0">Edit</h4>',

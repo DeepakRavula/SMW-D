@@ -18,8 +18,6 @@ use yii\data\ActiveDataProvider;
 use common\models\InvoiceLineItem;
 use common\models\Payment;
 use common\models\TestEmail;
-use common\models\ProformaInvoice;
-use backend\models\search\ProformaInvoiceSearch;
 use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
@@ -33,7 +31,7 @@ class EmailController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['send', 'lesson', 'invoice', 'enrolment','proforma-invoice'],
+                'only' => ['send', 'lesson', 'invoice', 'enrolment'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -44,7 +42,7 @@ class EmailController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['send', 'lesson', 'invoice', 'enrolment','proforma-invoice'],
+                        'actions' => ['send', 'lesson', 'invoice', 'enrolment'],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
@@ -180,49 +178,6 @@ class EmailController extends BaseController
             'invoicePaymentsDataProvider' => $invoicePaymentsDataProvider,
             'invoiceModel' => $model,
             'searchModel' => $searchModel,
-            'userModel' => $model->user,
-        ]);
-        $post = Yii::$app->request->post();
-        if (!$post) {
-            return [
-                'status' => true,
-                'data' => $data,
-            ];
-        }
-    }
-    public function actionProformaInvoice($id) {
-        $model = ProformaInvoice::findOne($id);
-	$searchModel = new ProformaInvoiceSearch();
-	$searchModel->showCheckBox = false;
-        $lessonLineItems = Lesson::find()
-            ->joinWith(['proformaLessonItem' => function ($query) use ($model) {
-                $query->joinWith(['proformaLineItem' => function ($query) use ($model) {
-                    $query->andWhere(['proforma_line_item.proformaInvoiceId' => $model->id]);
-                }]);
-            }]);
-        $lessonLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $lessonLineItems,
-        ]);
-	$invoiceLineItems = Invoice::find()
-            ->joinWith(['proformaInvoiceItem' => function ($query) use ($model) {
-                $query->joinWith(['proformaLineItem' => function ($query) use ($model) {
-                    $query->andWhere(['proforma_line_item.proformaInvoiceId' => $model->id]);
-                }]);
-            }]);
-        $invoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $invoiceLineItems,
-        ]);
-            $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_PFI]);
-       
-        $data = $this->renderAjax('/mail/proforma-invoice', [
-            'model' => new EmailForm(),
-            'emails' => !empty($model->user->email) ?$model->user->email : null,
-            'subject' => $emailTemplate->subject ?? 'Proforma Invoice from Arcadia Academy of Music',
-            'emailTemplate' => $emailTemplate,
-            'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-	    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-            'proformaInvoiceModel' => $model,
-	    'searchModel' => $searchModel,
             'userModel' => $model->user,
         ]);
         $post = Yii::$app->request->post();
