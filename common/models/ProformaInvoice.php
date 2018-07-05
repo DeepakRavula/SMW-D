@@ -132,4 +132,42 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Location::className(), ['id' => 'locationId']);
     }
+    public function getTotalDiscount()
+    {
+        $discount = 0.0;
+        $lineItems  =   $this->proformaLineItems;
+        foreach($lineItems as $lineItem)
+        {
+            if($lineItem->lessonLineItem){
+                $discount+=$lineItem->lessonLineItem->discount;
+            }
+            if($lineItem->invoiceLineItem){
+                $discount+=$lineItem->invoiceLineItem->totalDiscount;
+            }
+           
+        }
+
+        return $discount;
+    }
+    public function getSubtotal()
+    {
+        $subtotal = 0.0;
+        $lineItems  =   $this->proformaLineItems;
+         foreach($lineItems as $lineItem)
+        {
+            if($lineItem->lessonLineItem){
+                $subtotal+=$lineItem->lessonLineItem->netPrice;
+            }
+            if($lineItem->invoiceLineItem){
+                $subtotal+=$lineItem->invoiceLineItem->subTotal;
+            }
+
+        }
+        
+
+        return $subtotal;
+    }
+    public function getProformaLineItems(){
+        return $this->hasMany(ProformaLineItem::className(), ['proformaInvoiceId' => 'id']);
+    }
 }

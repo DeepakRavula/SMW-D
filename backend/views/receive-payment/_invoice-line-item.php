@@ -27,8 +27,8 @@ use yii\bootstrap\Html;
     ]);
 
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-left'],
-        'contentOptions' => ['class' => 'text-left'],
+        'headerOptions' => ['class' => 'text-left','style' => 'width:650px;'],
+        'contentOptions' => ['class' => 'text-left','style' => 'width:650px;'],
         'label' => 'Number',
         'value' => function ($data) {
             return $data->invoiceNumber;
