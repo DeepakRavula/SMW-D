@@ -34,6 +34,7 @@ class Enrolment extends \yii\db\ActiveRecord
     const AUTO_RENEWAL_DAYS_FROM_END_DATE = 90;
     const AUTO_RENEWAL_STATE_ENABLED='enabled';
     const AUTO_RENEWAL_STATE_DISABLED='disabled';
+    const LESSONS_COUNT =   96;
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA   = 2;
     const TYPE_REVERSE = 'reverse';
