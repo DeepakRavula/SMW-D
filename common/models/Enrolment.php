@@ -7,7 +7,6 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\TimestampBehavior;
 use common\models\discount\EnrolmentDiscount;
 use Carbon\Carbon;
-use DateInterval;
 /**
  * This is the model class for table "enrolment".
  *
@@ -39,7 +38,6 @@ class Enrolment extends \yii\db\ActiveRecord
     const TYPE_EXTRA   = 2;
     const TYPE_REVERSE = 'reverse';
     const ENROLMENT_EXPIRY=90;
-    
     const EVENT_CREATE = 'create';
     const EVENT_GROUP='group-course-enroll';
     /**
@@ -424,11 +422,9 @@ class Enrolment extends \yii\db\ActiveRecord
                 $this->isConfirmed = false;
             }
             if ($this->isExtra() || $this->course->program->isGroup()) {
-                $renew = false;
-            } else {
-                $renew = true;
-            }
-            $this->isAutoRenew = $renew;
+                $this->isAutoRenew = false;
+            } 
+            
         }
         return parent::beforeSave($insert);
     }
@@ -442,8 +438,9 @@ class Enrolment extends \yii\db\ActiveRecord
         $interval = new \DateInterval('P1D');
         $start = new \DateTime($this->course->startDate);
         $end = new \DateTime($this->course->endDate);
+        $lessonsCount   =   $this->course->lessonsCount;
         $period = new \DatePeriod($start, $interval, $end);
-        $this->generateLessons($period);
+        $this->generateLessonsByCount($start,$lessonsCount);
         return parent::afterSave($insert, $changedAttributes);
     }
 
@@ -452,18 +449,17 @@ class Enrolment extends \yii\db\ActiveRecord
         if (!$isConfirmed) {
             $isConfirmed = false;
         }
-         $day    =  clone $startDate;
-         $dayList = Course::getWeekdaysList();
-         $weekday = $dayList[$startDate->format('N')];
+        $day    =   $startDate;
+        $dayList = Course::getWeekdaysList();
+        $weekday = $dayList[$startDate->format('N')];
        for ($x = 1; $x <= $lessonsCount; $x++) {
-           $lastLessonDate  =    clone $day;
-           $lastLessonDate  =   $lastLessonDate->format('Y-m-d H:i:s');
-           $this->course->createLesson($day, $isConfirmed);
-           $day    =   $day->add(new DateInterval('P7D'));
+           $lastLessonDate  =    $day->format('Y-m-d H:i:s');
+           $this->course->createLesson($day, $isConfirmed);  
+           $day    =   $day->modify('next ' . $weekday);
             if ($this->course->isProfessionalDevelopmentDay($day)) {
-               $day    =   $day->add(new DateInterval('P7D'));
+                $day    =  $day->modify('next ' . $weekday);
              }
-          
+           
 
         }
         $this->course->endDate  =  $lastLessonDate;

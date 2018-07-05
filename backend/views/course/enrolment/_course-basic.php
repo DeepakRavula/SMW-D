@@ -26,7 +26,6 @@ use kartik\switchinput\SwitchInput;
             ->all(), 'id', 'name')
 ?>
 <?php $model->lessonsCount    =   Enrolment::LESSONS_COUNT;?>
-<?php $model->autoRenew       =   1;?>
 <div class="user-create-form">
     <div class="row">
         <div class="col-xs-6">
@@ -154,7 +153,7 @@ use kartik\switchinput\SwitchInput;
     </div>
 <div class="row">
         <div class="col-xs-6">
-            <label class="modal-form-label">Number of Lessons</label>
+            <label class="modal-form-label">No of Lessons</label>
         </div>
         <div class="col-xs-2"></div>
         <div class="col-xs-3">
@@ -190,18 +189,20 @@ use kartik\switchinput\SwitchInput;
             var multiEnrolmentDiscount = $('#enrolmentform-enrolmentdiscount').val();
             var customerDiscount = $('#customer-discount').val();
             var programRate = $('#enrolmentform-programrate').val();
+            var lessonsCount = $('#enrolmentform-lessonscount').val();
             var options = {
                 duration: duration,
                 programId: programId,
                 programRate: programRate,
                 customerDiscount: customerDiscount,
                 multiEnrolmentDiscount: multiEnrolmentDiscount,
-                paymentFrequencyDiscount: paymentFrequencyDiscount
+                paymentFrequencyDiscount: paymentFrequencyDiscount,
+                lessonsCount: lessonsCount
             };
             var params = $.param({duration: options.duration, id: options.programId,
                 paymentFrequencyDiscount: options.paymentFrequencyDiscount,
                 multiEnrolmentDiscount: options.multiEnrolmentDiscount,
-                rate: options.programRate, customerDiscount : options.customerDiscount
+                rate: options.programRate, customerDiscount : options.customerDiscount,lessonsCount : options.lessonsCount
             });
             $.ajax({
                 url: '<?= Url::to(['student/fetch-program-rate']); ?>?' + params,
