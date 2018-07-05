@@ -83,12 +83,6 @@ class PrivateLesson extends \yii\db\ActiveRecord
             $lesson->isExploded = true;
             $lesson->save();
             $reschedule = $model->rescheduleTo($lesson);
-            if ($model->hasProFormaInvoice()) {
-                $lesson->addPrivateLessonLineItem($model->proFormaInvoice);
-            }
-        }
-        if ($model->proFormaLineItem) {
-            $model->proFormaLineItem->delete();
         }
         return $model->cancel();
     }

@@ -914,9 +914,10 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return (int) $this->status === self::STATUS_RESCHEDULED;
     }
+
     public function hasSubstituteByTeacher() {
-	    if(!empty($this->rootLesson)) {
-	    return  $this->rootLesson->teacherId !== $this->teacherId;
+	    if (!empty($this->rootLesson)) {
+	        return  $this->rootLesson->teacherId !== $this->teacherId;
 	    }
 	    return false;
     }
@@ -1200,7 +1201,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function makeAsChild($lesson)
     {
         if ($this->append($lesson) && $lesson->setExpiry()) {
-            $lesson->copyRootDiscount();
+            $this->copyDiscount($lesson);
         }
         return true;
     }
@@ -1242,7 +1243,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function dailyScheduleStatus() 
     {
 	    $status = $this->getStatus();
-	    if($this->status === self::STATUS_CANCELED) {
+	    if ($this->status === self::STATUS_CANCELED) {
 		    $status = "Rescheduled to " . Yii::$app->formatter->asDate($this->leaf->date);    
 	    }    
 	    return $status; 
@@ -1418,24 +1419,25 @@ class Lesson extends \yii\db\ActiveRecord
         return true;
     }
 
-    public function copyRootDiscount()
+    public function copyDiscount($lesson)
     {
         if ($this->isPrivate()) {
-            if ($this->rootLesson->hasCustomerDiscount()) {
-                $this->addCustomerDiscount($this->rootLesson->customerDiscount);
+            if ($this->hasCustomerDiscount()) {
+                $lesson->addCustomerDiscount($this->customerDiscount);
             }
-            if ($this->rootLesson->hasEnrolmentPaymentFrequencyDiscount()) {
-                $this->addPFDiscount($this->rootLesson->enrolmentPaymentFrequencyDiscount);
+            if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
+                $lesson->addPFDiscount($this->enrolmentPaymentFrequencyDiscount);
             }
-            if ($this->rootLesson->hasMultiEnrolmentDiscount()) {
-                $this->addEnrolmentDiscount($this->rootLesson->multiEnrolmentDiscount);
+            if ($this->hasMultiEnrolmentDiscount()) {
+                $lesson->addEnrolmentDiscount($this->multiEnrolmentDiscount);
             }
-            if ($this->rootLesson->hasLineItemDiscount()) {
-                $this->addLineItemDiscount($this->rootLesson->lineItemDiscount);
+            if ($this->hasLineItemDiscount()) {
+                $lesson->addLineItemDiscount($this->lineItemDiscount);
             }
         }
         return true;
     }
+
     public function getLineItemDiscountValues()
     {
         return $this->lineItemDiscount->valueType ? $this->lineItemDiscount->value : $this->lineItemDiscount->value;
