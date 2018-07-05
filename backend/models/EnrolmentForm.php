@@ -35,8 +35,6 @@ class EnrolmentForm extends Model
     public $pfDiscount;
     public $enrolmentDiscount;
     public $duration;
-    public $lessonsCount;
-    public $autoRenew;
 
     public $firstname;
     public $lastname;
@@ -65,7 +63,7 @@ class EnrolmentForm extends Model
             [['programId', 'paymentFrequency', 'duration', 'startDate', 'programRate'],
                 'safe'],
             [['fromTime', 'day', 'teacherId'], 'safe'],
-            [['programId', 'paymentFrequency', 'duration', 'programRate','lessonsCount'],
+            [['programId', 'paymentFrequency', 'duration', 'programRate'],
                 'required', 'on' => self::SCENARIO_BASIC],
             [['enrolmentDiscount', 'pfDiscount'], 'safe'],
             [['startDate'], 'required', 'on' => self::SCENARIO_DATE_DETAILED],
@@ -77,7 +75,7 @@ class EnrolmentForm extends Model
             [['firstname', 'lastname', 'email', 'labelId', 'number', 'phoneLabelId',
                 'addressLabelId', 'address', 'cityId', 'countryId', 'provinceId'],
                 'safe'],
-            [['postalCode', 'extension', 'first_name', 'last_name', 'birth_date','lessonsCount','autoRenew'], 'safe'],
+            [['postalCode', 'extension', 'first_name', 'last_name', 'birth_date'], 'safe'],
         ];
     }
 }

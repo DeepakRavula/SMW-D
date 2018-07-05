@@ -21,7 +21,6 @@ class CourseSchedule extends \yii\db\ActiveRecord
     public $paymentFrequency;
     public $programRate;
     public $discount;
-    public $isAutoRenew;
 
     /**
      * @inheritdoc
@@ -39,7 +38,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
         return [
             [['day', 'fromTime'], 'required'],
             [['courseId', 'paymentFrequency'], 'integer'],
-            [['fromTime', 'duration', 'discount', 'paymentFrequency', 'programRate','isAutoRenew'], 'safe'],
+            [['fromTime', 'duration', 'discount', 'paymentFrequency', 'programRate'], 'safe'],
         ];
     }
 
@@ -107,7 +106,6 @@ class CourseSchedule extends \yii\db\ActiveRecord
             $enrolmentModel->courseId = $this->courseId;
             $enrolmentModel->studentId = $this->studentId;
             $enrolmentModel->paymentFrequencyId = $this->paymentFrequency;
-            $enrolmentModel->isAutoRenew =  $this->isAutoRenew;
             $enrolmentModel->save();
         }
         return parent::afterSave($insert, $changedAttributes);

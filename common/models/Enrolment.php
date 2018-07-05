@@ -6,7 +6,6 @@ use Yii;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\TimestampBehavior;
 use common\models\discount\EnrolmentDiscount;
-use Carbon\Carbon;
 
 /**
  * This is the model class for table "enrolment".
@@ -38,7 +37,7 @@ class Enrolment extends \yii\db\ActiveRecord
     const TYPE_EXTRA   = 2;
     const TYPE_REVERSE = 'reverse';
     const ENROLMENT_EXPIRY=90;
-    const LESSONS_COUNT =   96;
+    
     const EVENT_CREATE = 'create';
     const EVENT_GROUP='group-course-enroll';
     /**
@@ -423,9 +422,11 @@ class Enrolment extends \yii\db\ActiveRecord
                 $this->isConfirmed = false;
             }
             if ($this->isExtra() || $this->course->program->isGroup()) {
-                $this->isAutoRenew = false;
-            } 
-            
+                $renew = false;
+            } else {
+                $renew = true;
+            }
+            $this->isAutoRenew = $renew;
         }
         return parent::beforeSave($insert);
     }
@@ -439,34 +440,11 @@ class Enrolment extends \yii\db\ActiveRecord
         $interval = new \DateInterval('P1D');
         $start = new \DateTime($this->course->startDate);
         $end = new \DateTime($this->course->endDate);
-        $lessonsCount   =   $this->course->lessonsCount;
         $period = new \DatePeriod($start, $interval, $end);
-        $this->generateLessonsByCount($start,$lessonsCount);
+        $this->generateLessons($period);
         return parent::afterSave($insert, $changedAttributes);
     }
 
-    public function generateLessonsByCount($startDate,$lessonsCount,$isConfirmed = null)
-    {
-        if (!$isConfirmed) {
-            $isConfirmed = false;
-        }
-        $day    =   $startDate;
-        $dayList = Course::getWeekdaysList();
-        $weekday = $dayList[$startDate->format('N')];
-       for ($x = 1; $x <= $lessonsCount; $x++) {
-           $lastLessonDate  =    $day->format('Y-m-d H:i:s');
-           $this->course->createLesson($day, $isConfirmed);  
-           $day    =   $day->modify('next ' . $weekday);
-            if ($this->course->isProfessionalDevelopmentDay($day)) {
-                $day    =  $day->modify('next ' . $weekday);
-             }
-           
-
-        }
-        $this->course->endDate  =  $lastLessonDate;
-        $this->course->save();
-        return true;
-    }
     public function generateLessons($period, $isConfirmed = null)
     {
         if (!$isConfirmed) {

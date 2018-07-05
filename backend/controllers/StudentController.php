@@ -178,7 +178,6 @@ class StudentController extends BaseController
         $courseModel->setModel($courseDetail);
         $courseSchedule->setModel($courseDetail);
         if ($courseModel->save()) {
-            $courseSchedule->isAutoRenew    =   $courseDetail->autoRenew;
             $courseSchedule->courseId = $courseModel->id;
             if ($courseSchedule->save()) {
                 if (!empty($courseDetail->enrolmentDiscount)) {
