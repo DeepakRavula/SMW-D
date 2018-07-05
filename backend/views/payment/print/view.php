@@ -16,12 +16,15 @@
 ]);
    ?>
 <div class="row-fluid invoice-info m-t-10">
+    <div class="col-xs-10">
+        <div class="m-l-22"> <b>Lessons</b></div>
   <?php
 echo $this->render('/payment/_lesson-line-item', [
     'model' => $model,
     'lessonDataProvider' => $lessonDataProvider,
 ]);
 ?>
+   </div>
 <div class="col-xs-10">
         <div class="m-l-22"> <b>Invoices</b></div>
 		<?= $this->render('/payment/_invoice-line-item', [
