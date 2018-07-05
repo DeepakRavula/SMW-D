@@ -26,6 +26,7 @@ use kartik\switchinput\SwitchInput;
             ->all(), 'id', 'name')
 ?>
 <?php $model->lessonsCount    =   Enrolment::LESSONS_COUNT;?>
+<?php $model->autoRenew    =   true;?>
 <div class="user-create-form">
     <div class="row">
         <div class="col-xs-6">
