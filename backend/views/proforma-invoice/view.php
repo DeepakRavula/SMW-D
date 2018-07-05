@@ -46,6 +46,11 @@ $this->render('_customer', [
 </div>
 <div class="row">
 <div class="col-md-12">
+    
+    <?php
+    $lessonCount = $lessonLineItemsDataProvider->getCount();
+    if ($lessonCount > 0) {
+	    ?>
 <?php LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
     'boxTools' => '',
@@ -61,11 +66,14 @@ $this->render('/receive-payment/_lesson-line-item', [
 ]);
 ?>
         <?php LteBox::end()?>
+    <?php } ?>
         </div>
 
 </div>
 <div class="row">
 <div class="col-md-12">
+    <?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); 
+    if($invoiceCount > 0) { ?>
 <?php LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
     'boxTools' => '',
@@ -82,6 +90,7 @@ $this->render('/receive-payment/_invoice-line-item', [
 ?>
 
          <?php LteBox::end()?>
+    <?php } ?>
         </div>
 </div>
 
