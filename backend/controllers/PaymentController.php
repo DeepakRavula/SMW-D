@@ -313,7 +313,6 @@ class PaymentController extends BaseController
     {
         return Invoice::find()
             ->notDeleted()
-            ->notCanceled()
             ->invoiceCredit($customerId)
             ->all();
     }
