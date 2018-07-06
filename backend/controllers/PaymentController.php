@@ -408,7 +408,6 @@ class PaymentController extends BaseController
         $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
         if ($request->post()) {
             $model->load($request->post());
-	   // print_r($model->reference);die("coing");
             $payment = new Payment();
             $payment->amount = $model->amount;
 	    $payment->reference = $model->reference;
