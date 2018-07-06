@@ -1380,6 +1380,19 @@ class Lesson extends \yii\db\ActiveRecord
         return $lessonDiscount->save();
     }
 
+    public function getPaidAmount($id) 
+    {
+        $amount = 0.0;
+        $lessonPayments = LessonPayment::find()
+            ->notDeleted()
+            ->andWhere(['paymentId' => $id, 'lessonId' => $this->id])
+            ->all();
+        foreach ($lessonPayments as $payment) {
+            $amount += $payment->amount;
+        }
+        return $amount;
+    }
+
     public function addEnrolmentDiscount($discount = null)
     {
         $lessonDiscount = new LessonDiscount();

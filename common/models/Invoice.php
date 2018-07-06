@@ -324,6 +324,19 @@ class Invoice extends \yii\db\ActiveRecord
         return $status;
     }
 
+    public function getPaidAmount($id) 
+    {
+        $amount = 0.0;
+        $invoicePayments = InvoicePayment::find()
+            ->notDeleted()
+            ->andWhere(['payment_id' => $id, 'invoice_id' => $this->id])
+            ->all();
+        foreach ($invoicePayments as $payment) {
+            $amount += $payment->amount;
+        }
+        return $amount;
+    }
+
     public function isOpeningBalance()
     {
         if (!$this->lineItem) {

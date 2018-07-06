@@ -42,6 +42,14 @@ use kartik\daterange\DateRangePicker;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
         ],
+    [
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right invoice-value'],
+        'label' => 'Paid',
+        'value' => function ($data) use ($model) {
+            return Yii::$app->formatter->asCurrency($data->getPaidAmount($model->id));
+        }
+    ]
 	    ];
 ?>
 <?php Pjax::Begin(['id' => 'lesson-listing', 'timeout' => 6000]); ?>

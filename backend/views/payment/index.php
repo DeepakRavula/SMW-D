@@ -4,6 +4,7 @@ use common\components\gridView\KartikGridView;
 use yii\helpers\ArrayHelper;
 use common\models\PaymentMethod;
 use common\models\User;
+use yii\widgets\Pjax;
 use common\models\Location;
 use yii\helpers\Url;
 
@@ -12,7 +13,7 @@ use yii\helpers\Url;
 
 $this->title = 'Payments';
 $this->params['action-button'] = $this->render('_action-button');?>
-<?php yii\widgets\Pjax::begin(['id' => 'payment-listing']); ?>
+<?php Pjax::begin(['id' => 'payment-listing']); ?>
 
 <?php
     $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -121,27 +122,27 @@ $this->params['action-button'] = $this->render('_action-button');?>
             'columns' => $columns,
         ]); ?>
     </div>
-<?php yii\widgets\Pjax::end(); ?>
+<?php Pjax::end(); ?>
+
 <script>
-  $(document).on('click', '#payment-listing  tbody > tr', function () {
-            var paymentId = $(this).data('key');
-            var customUrl = '<?= Url::to(['payment/update-payment']); ?>?id=' + paymentId;
-            $.ajax({
-                url    : customUrl,
-                type   : 'get',
-                dataType: "json",
-                data   : $(this).serialize(),
-                success: function(response)
+    $(document).on('click', '#payment-listing  tbody > tr', function () {
+        var paymentId = $(this).data('key');
+        var customUrl = '<?= Url::to(['payment/view']); ?>?id=' + paymentId;
+        $.ajax({
+            url    : customUrl,
+            type   : 'get',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
                 {
-                    if(response.status)
-                    {
-                        $('#modal-content').html(response.data);
-                        $('#popup-modal').modal('show');
-			$('.modal-save').hide();
-			$('.modal-cancel').hide();
-                    }
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('.modal-save').hide();
                 }
-            });
-            return false;
+            }
         });
+        return false;
+    });
 </script>

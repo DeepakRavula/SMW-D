@@ -33,14 +33,15 @@ use yii\bootstrap\Html;
         'invoiceDataProvider' => $invoiceDataProvider,
     ]);
     ?>
+
 <script>
 	$(document).ready(function () {
-		var header = '<div class="row"> <div class="col-md-6"> <h4 class="m-0">Payment</h4> </div> <div class="col-md-6"> <div class = "pull-right"><a id="print" href="#"><i class="fa fa-print m-r-10"></i></a>  </div> </div> </div>';
+		var header = '<?= $this->render('modal-action'); ?>';
         $('#popup-modal').find('.modal-header').html(header);
-	$('#popup-modal .modal-dialog').css({'width': '1000px'});
+	    $('#popup-modal .modal-dialog').css({'width': '1000px'});
 	});
     $(document).on('modal-success', function(event, params) {
-        var url = "<?php echo Url::to(['payment/index']); ?>";
+        var url = "<?= Url::to(['payment/index']); ?>";
         $.pjax.reload({url: url, container: "#payment-listing", replace: false, timeout: 4000});
         return false;
     });

@@ -41,7 +41,7 @@ class PaymentController extends BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => [
                     'invoice-payment', 'credit-payment', 'update', 'delete', 'receive',
-                    'validate-apply-credit', 'validate-receive','update-payment'
+                    'validate-apply-credit', 'validate-receive','update-payment', 'view'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -99,9 +99,39 @@ class PaymentController extends BaseController
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+        $model = $this->findModel($id);
+	    $lessonPayment = Lesson::find()
+		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
+                $query->andWhere(['paymentId' => $id]);
+            }]);
+	    $lessonDataProvider = new ActiveDataProvider([
+            'query' => $lessonPayment,
+            'pagination' => false
         ]);
+	    
+        $invoicePayment = Invoice::find()
+            ->notDeleted()
+            ->joinWith(['invoicePayments' => function ($query) use ($id) {
+                $query->andWhere(['payment_id' => $id]);
+            }]);
+	    
+	    $invoiceDataProvider = new ActiveDataProvider([
+            'query' => $invoicePayment,
+            'pagination' => false
+        ]);
+        if (Yii::$app->request->post()) {
+           
+        } else {
+            $data = $this->renderAjax('_form', [
+                'model' => $model,
+                'lessonDataProvider' => $lessonDataProvider,
+                'invoiceDataProvider' => $invoiceDataProvider
+            ]);
+            return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
     }
 
     /**

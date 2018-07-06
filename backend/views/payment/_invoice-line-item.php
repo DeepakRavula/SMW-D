@@ -38,6 +38,14 @@ use yii\bootstrap\Html;
         'value' => function ($data) {
             return !empty($data->balance) ? Yii::$app->formatter->asCurrency($data->balance) : null;
         }
+    ],
+    [
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right invoice-value'],
+        'label' => 'Paid',
+        'value' => function ($data) use ($model) {
+            return $data->getPaidAmount($model->id);
+        }
     ]
 	];
 ?>
