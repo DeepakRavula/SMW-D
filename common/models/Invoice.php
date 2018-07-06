@@ -171,6 +171,14 @@ class Invoice extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceLineItem::className(), ['invoice_id' => 'id'])
                 ->onCondition(['invoice_line_item.isDeleted' => false]);
     }
+
+    public function getPaymentsById($id) 
+    {
+        return InvoicePayment::find()
+            ->notDeleted()
+            ->andWhere(['payment_id' => $id, 'invoice_id' => $this->id])
+            ->all();
+    }
     
     public function getProformaPaymentFrequency()
     {

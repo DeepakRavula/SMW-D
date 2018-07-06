@@ -38,25 +38,32 @@ use yii\bootstrap\Html;
         'value' => function ($data) {
             return !empty($data->balance) ? Yii::$app->formatter->asCurrency($data->balance) : null;
         }
-    ],
-    [
-        'headerOptions' => ['class' => 'text-right'],
-        'contentOptions' => ['class' => 'text-right invoice-value'],
-        'label' => 'Paid',
-        'value' => function ($data) use ($model) {
-            return $data->getPaidAmount($model->id);
-        }
     ]
-	];
+    ];
+    if ($canEdit) {
+        array_push($columns, [
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right'],
+            'label' => 'Payment',
+            'value' => function ($data) use ($model) {
+                return Html::textInput('', round($data->getPaidAmount($model->id), 2), [
+                    'class' => 'payment-amount text-right', 'invoice-id' => $data->id
+                ]); 
+            },
+            'attribute' => 'new_activity',
+            'format' => 'raw'
+        ]);
+    }
 ?>
 
-<?php Pjax::Begin(['id' => 'invoice-listing', 'timeout' => 6000]); ?>
-    <?= GridView::widget([
-        'id' => 'invoice-grid',
-        'dataProvider' => $invoiceDataProvider,
-        'columns' => $columns,
-        'summary' => false,
-        'rowOptions' => ['class' => 'line-items-value invoice-line-items'],
-        'emptyText' => 'No Invoices Available!'
-    ]); ?>
-<?php Pjax::end(); ?>
+
+    <?php Pjax::Begin(['id' => 'invoice-listing', 'timeout' => 6000]); ?>
+        <?= GridView::widget([
+            'id' => 'invoice-grid',
+            'dataProvider' => $invoiceDataProvider,
+            'columns' => $columns,
+            'summary' => false,
+            'rowOptions' => ['class' => 'line-items-value invoice-line-items'],
+            'emptyText' => 'No Invoices Available!'
+        ]); ?>
+    <?php Pjax::end(); ?>

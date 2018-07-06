@@ -16,6 +16,7 @@ use yii\filters\AccessControl;
 use yii\data\ArrayDataProvider;
 use common\components\controllers\BaseController;
 use backend\models\PaymentForm;
+use backend\models\PaymentEditForm;
 use common\models\Lesson;
 use yii\data\ActiveDataProvider;
 use common\models\User;
@@ -41,7 +42,8 @@ class PaymentController extends BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => [
                     'invoice-payment', 'credit-payment', 'update', 'delete', 'receive',
-                    'validate-apply-credit', 'validate-receive','update-payment', 'view'
+                    'validate-apply-credit', 'validate-receive', 'update-payment', 'view',
+                    'validate-update'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -56,7 +58,7 @@ class PaymentController extends BaseController
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'print', 'receive',
                             'invoice-payment', 'credit-payment', 'validate-apply-credit',
-                            'validate-receive','update-payment'
+                            'validate-receive', 'update-payment', 'validate-update'
                         ],
                         'roles' => ['managePfi', 'manageInvoices'],
                     ],
@@ -122,8 +124,9 @@ class PaymentController extends BaseController
         if (Yii::$app->request->post()) {
            
         } else {
-            $data = $this->renderAjax('_form', [
+            $data = $this->renderAjax('view', [
                 'model' => $model,
+                'canEdit' => false,
                 'lessonDataProvider' => $lessonDataProvider,
                 'invoiceDataProvider' => $invoiceDataProvider
             ]);
@@ -161,44 +164,6 @@ class PaymentController extends BaseController
      *
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-        $model->old = clone $model;
-        $model->setScenario(Payment::SCENARIO_EDIT);
-        $model->date = (new \DateTime($model->date))->format('d-m-Y');
-        if ($model->isCreditUsed()) {
-            $model->setScenario(Payment::SCENARIO_CREDIT_USED_EDIT);
-        }
-        $data = $this->renderAjax('/invoice/payment/_form', [
-            'model' => $model,
-        ]);
-        $request = Yii::$app->request;
-        if ($request->post()) {
-            $model->load($request->post());
-            $model->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
-            if ($model->save()) {
-                $model->invoice->save();
-                $response = [
-                    'status' => true,
-                    'message' => 'Payment succesfully updated!'
-                ];
-            } else {
-                $errors = ActiveForm::validate($model);
-                $response = [
-                    'status' => false,
-                    'errors' => $errors
-                ];
-            }
-        } else {
-            $response = [
-                'status' => true,
-                'data' => $data,
-            ];
-        }
-        return $response;
-    }
-
     /**
      * Deletes an existing Payments model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -479,13 +444,28 @@ class PaymentController extends BaseController
         return ActiveForm::validate($model);
     }
 
-    public function actionUpdatePayment($id)
+    public function actionValidateUpdate()
     {
-        $model = $this->findModel($id);
-	    $lessonPayment = Lesson::find()
+        $request = Yii::$app->request;
+        $model = new PaymentEditForm();
+        $model->load($request->post());
+        if (!$model->amount) {
+            $model->amount = 0.0;
+        }
+        return ActiveForm::validate($model);
+    }
+
+    public function actionUpdate($id)
+    {
+        $payment = $this->findModel($id);
+        $model = new PaymentEditForm();
+        $model->load(Yii::$app->request->get());
+        $lessonPayment = Lesson::find()
+            ->notDeleted()
 		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
                 $query->andWhere(['paymentId' => $id]);
-            }]);
+            }])
+            ->orderBy(['lesson.id' => SORT_ASC]);
 	    $lessonDataProvider = new ActiveDataProvider([
             'query' => $lessonPayment,
             'pagination' => false
@@ -495,24 +475,34 @@ class PaymentController extends BaseController
             ->notDeleted()
             ->joinWith(['invoicePayments' => function ($query) use ($id) {
                 $query->andWhere(['payment_id' => $id]);
-            }]);
+            }])
+            ->orderBy(['invoice.id' => SORT_ASC]);
 	    
 	    $invoiceDataProvider = new ActiveDataProvider([
             'query' => $invoicePayment,
             'pagination' => false
         ]);
-        if (Yii::$app->request->post()) {
-           
+        if (Yii::$app->request->isPost) {
+           $paymentModel->load(Yii::$app->request->post());
+           $paymentModel->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
+           $paymentModel->save();
+           $model->save();
+           $response = [
+                'status' => true
+            ];
         } else {
             $data = $this->renderAjax('_form', [
                 'model' => $model,
+                'paymentModel' => $payment,
+                'canEdit' => true,
                 'lessonDataProvider' => $lessonDataProvider,
                 'invoiceDataProvider' => $invoiceDataProvider
             ]);
-            return [
+            $response = [
                 'status' => true,
                 'data' => $data
             ];
         }
+        return $response;
     }
 }

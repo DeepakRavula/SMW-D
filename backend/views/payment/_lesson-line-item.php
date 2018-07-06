@@ -2,6 +2,7 @@
 
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use yii\bootstrap\Html;
 use common\models\Lesson;
 use kartik\daterange\DateRangePicker;
 
@@ -42,24 +43,33 @@ use kartik\daterange\DateRangePicker;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
         ],
-    [
-        'headerOptions' => ['class' => 'text-right'],
-        'contentOptions' => ['class' => 'text-right invoice-value'],
-        'label' => 'Paid',
-        'value' => function ($data) use ($model) {
-            return Yii::$app->formatter->asCurrency($data->getPaidAmount($model->id));
-        }
-    ]
-	    ];
+    ];
+    
+    if ($canEdit) {
+        array_push($columns, [
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right'],
+            'label' => 'Payment',
+            'value' => function ($data) use ($model) {
+                return Html::textInput('', round($data->getPaidAmount($model->id), 2), [
+                    'class' => 'payment-amount text-right', 'lesson-id' => $data->id
+                ]); 
+            },
+            'attribute' => 'new_activity',
+            'format' => 'raw'
+        ]);
+    }
 ?>
-<?php Pjax::Begin(['id' => 'lesson-listing', 'timeout' => 6000]); ?>
-    <?= GridView::widget([
-        'id' => 'lesson-grid',
-        'dataProvider' => $lessonDataProvider,
-        'columns' => $columns,
-        'summary' => false,
-        'emptyText' => false,
-        'options' => ['class' => 'col-md-12'],
-        'headerRowOptions' => ['class' => 'bg-light-gray'],
-    ]); ?>
-<?php Pjax::end(); ?>
+
+    <?php Pjax::Begin(['id' => 'lesson-listing', 'timeout' => 6000]); ?>
+        <?= GridView::widget([
+            'id' => 'lesson-grid',
+            'dataProvider' => $lessonDataProvider,
+            'columns' => $columns,
+            'summary' => false,
+            'emptyText' => false,
+            'rowOptions' => ['class' => 'line-items-value lesson-line-items'],
+            'options' => ['class' => 'col-md-12'],
+            'headerRowOptions' => ['class' => 'bg-light-gray'],
+        ]); ?>
+    <?php Pjax::end(); ?>
