@@ -110,14 +110,20 @@ class EnrolmentController extends BaseController
      *
      * @return mixed
      */
+
     public function actionView($id)
     {
         $model = $this->findModel($id);
+	 $lessonCount = Lesson::find()
+		    ->andWhere(['courseId' => $model->course->id])
+		    ->notDeleted()
+		    ->count();
         $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
                 ->andWhere(['courseId' => $model->course->id])
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
+		->limit(10)
                 ->notDeleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' => false,
@@ -140,6 +146,7 @@ class EnrolmentController extends BaseController
             'lessonDataProvider' => $lessonDataProvider,
             'paymentCycleDataProvider' => $paymentCycleDataProvider,
             'logDataProvider' => $logDataProvider,
+	    'lessonCount' => $lessonCount,
         ]);
     }
 
