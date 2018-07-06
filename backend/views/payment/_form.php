@@ -24,7 +24,7 @@ use yii\bootstrap\Html;
 ?>
 
 <div class="payment-form">
-    <?php $url = Url::to(['payment/update', 'id' => $model->id]); ?>
+    <?php $url = Url::to(['payment/update', 'id' => $model->paymentId]); ?>
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
         'action' => $url,
@@ -57,7 +57,7 @@ use yii\bootstrap\Html;
         <div class="col-xs-2">
             <?= $form->field($paymentModel, 'amount')->textInput([
                 'class' => 'text-right form-control',
-                'value' => round($model->amount, 2)
+                'value' => round($paymentModel->amount, 2)
             ])->label('Amount Received'); ?>
         </div>
     </div>
@@ -108,14 +108,14 @@ var updatePayment = {
             var lessonPayments = new Array();
             var invoicePayments = new Array();
             $('.lesson-line-items').each(function() {
-                lessonIds.push($(this).attr('lesson-id'));
+                lessonIds.push($(this).data('key'));
                 var amount = $(this).find('.payment-amount').val();
-                lessonPayments.push($.isEmptyObject(amount) ? '0.0' : amount);
+                lessonPayments.push($.isEmptyObject(amount) ? 0.0 : amount);
             });
             $('.invoice-line-items').each(function() {
-                invoiceIds.push($(this).attr('invoice-id'));
+                invoiceIds.push($(this).data('key'));
                 var amount = $(this).find('.payment-amount').val();
-                invoicePayments.push($.isEmptyObject(amount) ? '0.0' : amount);
+                invoicePayments.push($.isEmptyObject(amount) ? 0.0 : amount);
             });
             var params = $.param({ 'PaymentEditForm[lessonIds]': lessonIds, 
                 'PaymentEditForm[invoiceIds]': invoiceIds, 'PaymentEditForm[lessonPayments]': lessonPayments, 
@@ -129,14 +129,14 @@ var updatePayment = {
             var amountToDistribute = 0.0;
             $('.line-items-value').each(function() {
                 var amount = $(this).find('.payment-amount').val();
-                amountToDistribute += parseFloat($.isEmptyObject(amount) ? '0.0' : amount);
+                amountToDistribute += parseFloat($.isEmptyObject(amount) ? 0.0 : amount);
             });
             $('#paymenteditform-amounttodistribute').val(amountToDistribute);
             $('.amount-to-apply').text((amountToDistribute).toFixed(2));
             $('.amount-to-credit').text((amountReceived - amountToDistribute).toFixed(2));
             return false;
         },
-        validateAmount : function() {debugger
+        validateAmount : function() {
             var amountReceived = $('#payment-amount').val();
             $('#payment-amount').val(amountReceived).trigger('change');
             $('#payment-amount').focus();

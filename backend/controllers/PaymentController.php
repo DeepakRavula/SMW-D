@@ -459,6 +459,7 @@ class PaymentController extends BaseController
     {
         $payment = $this->findModel($id);
         $model = new PaymentEditForm();
+        $model->paymentId = $payment->id;
         $model->load(Yii::$app->request->get());
         $lessonPayment = Lesson::find()
             ->notDeleted()
@@ -483,9 +484,9 @@ class PaymentController extends BaseController
             'pagination' => false
         ]);
         if (Yii::$app->request->isPost) {
-           $paymentModel->load(Yii::$app->request->post());
-           $paymentModel->date = (new \DateTime($paymentModel->date))->format('Y-m-d H:i:s');
-           $paymentModel->save();
+           $payment->load(Yii::$app->request->post());
+           $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
+           $payment->save();
            $model->save();
            $response = [
                 'status' => true

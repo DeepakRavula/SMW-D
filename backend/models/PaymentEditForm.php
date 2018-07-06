@@ -25,7 +25,7 @@ use common\models\InvoicePayment;
  */
 class PaymentEditForm extends Model
 {
-    public $id;
+    public $paymentId;
     public $invoiceIds;
     public $date;
     public $payment_method_id;
@@ -47,7 +47,7 @@ class PaymentEditForm extends Model
             [['payment_method_id', 'date'], 'required'],
             ['amount', 'validateAmount'],
             [['date', 'invoiceIds', 'selectedCreditValue', 'lessonIds', 'amount', 'userId', 'amountToDistribute', 
-                'invoicePayments', 'lessonPayments', 'id', 'reference'], 'safe']
+                'invoicePayments', 'lessonPayments', 'paymentId', 'reference'], 'safe']
         ];
     }
 
@@ -65,33 +65,37 @@ class PaymentEditForm extends Model
 
         $lessonPayments = $this->lessonPayments;
         $invoicePayments = $this->invoicePayments;
-
+        
         foreach ($lessons as $i => $lesson) {
-            if ($lessonPayments[$i] != $lesson->getPaidAmount($this->id)) {
-                $amount = $lessonPayments[$i];
-                $payments = $lesson->getPaymentsById($this->id);
-                foreach ($payments as $i => $lessonPayment) {
-                    if ($i == 0) {
+            $amount = $lessonPayments[$i];
+            $payments = $lesson->getPaymentsById($this->paymentId);
+            foreach ($payments as $i => $lessonPayment) {
+                if ($i == 0) {
+                    if ($amount == 0) {
+                        $lessonPayment->delete();
+                    } else {
                         $lessonPayment->amount = $amount;
                         $lessonPayment->save();
-                    } else {
-                        $lessonPayment->delete();
                     }
+                } else {
+                    $lessonPayment->delete();
                 }
             }
         }
 
         foreach ($invoices as $i => $invoice) {
-            if ($invoicePayments[$i] != $invoice->getPaidAmount($this->id)) {
-                $amount = $invoicePayments[$i];
-                $payments = $lesson->getPaymentsById($this->id);
-                foreach ($payments as $i => $invoicePayment) {
-                    if ($i == 0) {
+            $amount = $invoicePayments[$i];
+            $payments = $lesson->getPaymentsById($this->paymentId);
+            foreach ($payments as $i => $invoicePayment) {
+                if ($i == 0) {
+                    if ($amount == 0) {
+                        $invoicePayment->delete();
+                    } else {
                         $invoicePayment->amount = $amount;
                         $invoicePayment->save();
-                    } else {
-                        $invoicePayment->delete();
                     }
+                } else {
+                    $invoicePayment->delete();
                 }
             }
         }

@@ -47,7 +47,7 @@ use yii\bootstrap\Html;
             'label' => 'Payment',
             'value' => function ($data) use ($model) {
                 return Html::textInput('', round($data->getPaidAmount($model->id), 2), [
-                    'class' => 'payment-amount text-right', 'invoice-id' => $data->id
+                    'class' => 'payment-amount text-right'
                 ]); 
             },
             'attribute' => 'new_activity',
