@@ -60,6 +60,7 @@ class LessonReschedule extends Model
         }
         foreach ($oldLesson->lessonPayments as $lessonPayment) {
             $lessonPayment->updateAttributes(['lessonId' => $rescheduledLesson->id]);
+            $lessonPayment->payment->creditUsage->debitUsagePayment->updateAttributes(['reference' => $rescheduledLesson->lessonNumber]);
         }
         return true;
     }
@@ -97,7 +98,8 @@ class LessonReschedule extends Model
         if ($rescheduleTeacher) {
             $lessonModel->teacherId = $teacherId;
         }
-
+        $lessonModel->programRate = $oldLesson->programRate;
+        $lessonModel->teacherRate = $oldLesson->teacherRate;
         $lessonModel->status = Lesson::STATUS_SCHEDULED;
         if ($oldLesson->isExtra()) {
             $lessonModel->type = $oldLesson->type;
