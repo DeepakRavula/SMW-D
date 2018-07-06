@@ -408,8 +408,10 @@ class PaymentController extends BaseController
         $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
         if ($request->post()) {
             $model->load($request->post());
+	   // print_r($model->reference);die("coing");
             $payment = new Payment();
             $payment->amount = $model->amount;
+	    $payment->reference = $model->reference;
             $payment->user_id = $searchModel->userId;
             $payment->payment_method_id = $model->payment_method_id;
             $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');

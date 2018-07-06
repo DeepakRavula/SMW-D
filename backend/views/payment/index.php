@@ -61,7 +61,7 @@ $this->params['action-button'] = $this->render('_action-button');?>
             'label' => 'Customer',
             'attribute' => 'customer',
             'value' => function ($data) {
-                return $data->invoice->user->publicIdentity ?? null;
+                return $data->user->publicIdentity ?? null;
             },
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:35%'],
             'headerOptions' => ['class' => 'text-left', 'style' => 'width:35%'],
@@ -97,6 +97,15 @@ $this->params['action-button'] = $this->render('_action-button');?>
             ],
             'filterInputOptions'=>['placeholder'=>'Payment Method'],
             'format'=>'raw'
+        ],
+		      [
+            'label' => 'Reference',
+            'attribute' => 'reference',
+            'value' => function ($data) {
+                return $data->reference;
+            },
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:25%'],
+            'headerOptions' => ['class' => 'text-right', 'style' => 'width:25%'],
         ],
         [
             'label' => 'Amount',

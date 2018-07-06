@@ -65,6 +65,9 @@ use yii\bootstrap\Html;
             <?= $form->field($model, 'payment_method_id')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))
                 ->label('Payment Method'); ?>
         </div>
+	<div class="col-xs-2">
+            <?= $form->field($model, 'reference')->textInput(['class' => 'text-right form-control'])->label('Reference'); ?>
+        </div>
         <div class="col-xs-2">
             <?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control'])->label('Amount Received'); ?>
         </div>
