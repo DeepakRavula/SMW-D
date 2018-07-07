@@ -76,9 +76,8 @@ use yii\bootstrap\Html;
     <?= $form->field($model, 'amountNeeded')->hiddenInput(['id' => 'amount-needed-value'])->label(false); ?>
     <?= $form->field($model, 'selectedCreditValue')->hiddenInput(['id' => 'selected-credit-value'])->label(false); ?>
     <?= $form->field($model, 'amountToDistribute')->hiddenInput([])->label(false); ?>
-
     <?php ActiveForm::end(); ?>
-
+    
     <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
     <?= $this->render('/receive-payment/_lesson-line-item', [
         'model' => $model,
@@ -120,6 +119,7 @@ use yii\bootstrap\Html;
 </div>
 
 <script>
+    var lockTextBox =   false;
     var receivePayment = {
         setAction: function() {
             var userId = $('#customer-payment').val();
@@ -221,6 +221,9 @@ use yii\bootstrap\Html;
             var amountReceived = $('#paymentform-amount').val();
             $('.amount-to-credit').text(((creditAmount + amountReceived) - amountToDistribute).toFixed(2));
             $('#amount-needed-value').val((amountNeeded).toFixed(2));
+           if(!lockTextBox){
+            $('#paymentform-amount').val((amountNeeded).toFixed(2));
+           }
             $('.amount-needed-value').text((amountNeeded).toFixed(2));
             return false;
         },
@@ -236,7 +239,6 @@ use yii\bootstrap\Html;
         },
         validateAmount : function() {
             var amountReceived = $('#paymentform-amount').val();
-            $('#paymentform-amount').val(amountReceived).trigger('change');
             $('#paymentform-amount').focus();
             $('#paymentform-amount').blur();
         }
@@ -265,7 +267,8 @@ use yii\bootstrap\Html;
         return false;
     });
 
-    $(document).off('change', '#paymentform-amount').on('change', '#paymentform-amount', function () {
+    $(document).off('keyup', '#paymentform-amount').on('keyup', '#paymentform-amount', function () {
+        lockTextBox = true;
         receivePayment.calcAmountNeeded();
         return false;
     });
