@@ -92,7 +92,6 @@ class Lesson extends \yii\db\ActiveRecord
     public $userName;
     public $applyContext;
     public $locationId;
-    public $program_rate;
     public $splittedLessonId;
     public $applyFullDiscount;
     public $lessonIds;
@@ -141,7 +140,7 @@ class Lesson extends \yii\db\ActiveRecord
             }],
             [['courseId', 'status', 'type'], 'integer'],
             [['programRate', 'teacherRate'], 'number'],
-            ['program_rate', 'required', 'on' => self::SCENARIO_CREATE_GROUP],
+            ['programRate', 'required', 'on' => self::SCENARIO_CREATE_GROUP],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyFullDiscount',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId',
                  'isPresent', 'programRate', 'teacherRate', 'splittedLessonId'], 'safe'],
