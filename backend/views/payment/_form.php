@@ -52,9 +52,9 @@ use yii\bootstrap\Html;
             <?= $form->field($paymentModel, 'reference')->textInput()->label('Reference'); ?>
         </div>
         <div class="col-xs-2">
-            <?= $form->field($paymentModel, 'amount')->textInput([
+            <?= $form->field($model, 'amount')->textInput([
                 'class' => 'text-right form-control',
-                'value' => round($paymentModel->amount, 2)
+                'value' => round($model->amount, 2)
             ])->label('Amount Received'); ?>
         </div>
     </div>
@@ -122,7 +122,7 @@ var updatePayment = {
             return false;
         },
         calcAmountNeeded : function() {
-            var amountReceived = $('#payment-amount').val();
+            var amountReceived = $('#paymenteditform-amount').val();
             var amountToDistribute = 0.0;
             $('.line-items-value').each(function() {
                 var amount = $(this).find('.payment-amount').val();
@@ -134,23 +134,18 @@ var updatePayment = {
             return false;
         },
         validateAmount : function() {
-            var amountReceived = $('#payment-amount').val();
-            $('#payment-amount').val(amountReceived).trigger('change');
-            $('#payment-amount').focus();
-            $('#payment-amount').blur();
+            var amountReceived = $('#paymenteditform-amount').val();
+            $('#paymenteditform-amount').val(amountReceived).trigger('change');
+            $('#paymenteditform-amount').focus();
+            $('#paymenteditform-amount').blur();
             return false;
         }
     };
 
-    $(document).off('change', '.payment-amount').on('change', '.payment-amount', function () {
+    $(document).off('change', '.paymenteditform-amount, .payment-amount').on('change', '.paymenteditform-amount, .payment-amount', function () {
         updatePayment.setAction();
         updatePayment.calcAmountNeeded();
         updatePayment.validateAmount();
-        return false;
-    });
-
-    $(document).off('change', '#payment-amount').on('change', '#payment-amount', function () {
-        updatePayment.calcAmountNeeded();
         return false;
     });
 

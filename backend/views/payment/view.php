@@ -54,7 +54,7 @@ use yii\bootstrap\Html;
 
     $(document).off("click", "#edit").on("click", "#edit", function () {
         $('#modal-spinner').show();
-        var url = '<?= Url::to(['payment/update','id' => $model->id]); ?>';
+        var url = '<?= Url::to(['payment/update', 'id' => $model->id]); ?>';
         $.ajax({
             url    : url,
             type   : 'get',

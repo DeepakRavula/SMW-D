@@ -284,7 +284,9 @@ class Payment extends ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
-            $this->invoice->save();
+            if ($this->invoice) {
+                $this->invoice->save();
+            }
             return parent::afterSave($insert, $changedAttributes);
         }
         if (!empty($this->invoiceId)) {
