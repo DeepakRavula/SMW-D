@@ -33,6 +33,7 @@ class LessonSearch extends Lesson
     public $ids;
     public $attendanceStatus;
     public $rate;
+    public $isSeeMore;
     /**
      * {@inheritdoc}
      */
@@ -42,7 +43,7 @@ class LessonSearch extends Lesson
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
             [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId',
-                'invoiceType','dateRange', 'rate','student', 'program', 'teacher'], 'safe'],
+                'invoiceType','dateRange', 'rate','student', 'program', 'teacher','isSeeMore'], 'safe'],
         ];
     }
     
@@ -64,8 +65,14 @@ class LessonSearch extends Lesson
      */
     public function search($params)
     {
+	//print_r($this->isSeeMore);
         $this->fromDate = (new \DateTime())->format('M d, Y');
         $this->toDate = (new \DateTime())->format('M d, Y');
+	if($this->isSeeMore == false) {
+	$this->dateRange = $this->fromDate.' - '.$this->toDate;
+	} elseif($this->isSeeMore == true) {
+		$this->dateRange = "";
+	}
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Lesson::find()
             ->isConfirmed()
@@ -88,6 +95,7 @@ class LessonSearch extends Lesson
             ]);
             return $dataProvider;
         }
+	//print_r($this->isSeeMore);die("cvcvcv");
 //	print_r($this->student);
 //	print_r($this->lessonStatus);
 //	print_r($this->dateRange);die("mddm");

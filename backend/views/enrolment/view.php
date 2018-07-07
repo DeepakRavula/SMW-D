@@ -36,6 +36,13 @@ $this->render('_view-enrolment', [
 	'model' => $model,
 	'lessonDataProvider' => $lessonDataProvider,
     ]);
+    $noteContent = $this->render('_payment-cycle', [
+        'model' => $model,
+        'paymentCycleDataProvider' => $paymentCycleDataProvider,
+    ]);
+    $logContent = $this->render('log/index', [
+	'logDataProvider' => $logDataProvider,
+    ]);
     ?>
     <?php
     LteBox::begin([
@@ -46,7 +53,7 @@ $this->render('_view-enrolment', [
     ])
     ?>
     <?=
-    $this->render('_lesson', [
+    $this->render('_private-lesson', [
 	'model' => $model,
 	'lessonDataProvider' => $lessonDataProvider,
 	'lessonCount' => $lessonCount
@@ -71,8 +78,36 @@ $this->render('_view-enrolment', [
     ?>
     <?php LteBox::end() ?>
     <?php
+    $items       = [
+    [
+        'label' => 'Payment Cycle',
+        'content' => $noteContent,
+        'options' => [
+            'id' => 'payment-cycle',
+        ],
+    ],
+    [
+        'label' => 'Lesson',
+        'content' => $lessonContent,
+        'options' => [
+            'id' => 'lesson',
+        ],
+    ],
+    [
+        'label' => 'History',
+        'content' => $logContent,
+        'options' => [
+            'id' => 'history',
+        ],
+    ]
+];
     if ($model->course->program->isGroup()) {
 	    array_shift($items);
+    }
+    if($model->course->program->isGroup()) {
+    echo Tabs::widget([
+        'items' => $items,
+    ]);
     }
     ?>
 </div>
@@ -171,7 +206,7 @@ $this->render('_view-enrolment', [
                 var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
                 var student = '<?= $model->student->id ?>';
 		var status = "";
-                var params = $.param({'LessonSearch[student]': student, 'LessonSearch[type]': type, 'lessonSearch[lessonStatus]': status,'lessonSearch[dateRange]': dateRange});
+                var params = $.param({'LessonSearch[student]': student, 'LessonSearch[type]': type, 'lessonSearch[lessonStatus]': status, 'lessonSearch[isSeeMore]': true });
                 var url = '<?= Url::to(['lesson/index']); ?>?' + params;
                 $('.see-more').attr("href", url);
             }
