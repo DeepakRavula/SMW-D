@@ -21,16 +21,20 @@
   <?php
 echo $this->render('/payment/_lesson-line-item', [
     'model' => $model,
+    'canEdit' => false,
     'lessonDataProvider' => $lessonDataProvider,
 ]);
 ?>
    </div>
 <div class="col-xs-10">
         <div class="m-l-22"> <b>Invoices</b></div>
-		<?= $this->render('/payment/_invoice-line-item', [
-            'model' => $model,
-            'invoiceDataProvider' => $invoiceDataProvider,        
-            ]);?>
+	<?=
+	$this->render('/payment/_invoice-line-item', [
+	    'model' => $model,
+	    'canEdit' => false,
+	    'invoiceDataProvider' => $invoiceDataProvider,
+	]);
+	?>
 	</div>
 </div>
     <script>
