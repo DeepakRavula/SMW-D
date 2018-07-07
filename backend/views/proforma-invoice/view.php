@@ -96,7 +96,7 @@ $this->render('/receive-payment/_invoice-line-item', [
 
 <div class="row">
 <?php Pjax::Begin(['id' => 'invoice-message-panel', 'timeout' => 6000]); ?>
-   <div class="col-md-3">
+   <div class="col-md-4">
 		<?=
          $this->render('_message', [
             'model' => $model,
@@ -104,23 +104,35 @@ $this->render('/receive-payment/_invoice-line-item', [
         ?>
 	</div>
     <?php Pjax::end(); ?>
-	<div class="col-md-4">
+	<div class="col-md-5">
+            <?php Pjax::Begin(['id' => 'invoice-user-history', 'timeout' => 6000]); ?>
+	
 		<?=
+        $this->render('log', [
+            'model' => $model,
+        ]);
+        ?>
+	<?php Pjax::end(); ?>
+	</div>
+    	<?php Pjax::Begin(['id' => 'invoice-bottom-summary', 'timeout' => 6000]); ?>
+	<div class="col-md-3">
+		<?=
+        $this->render('_view-bottom-summary', [
+            'model' => $model,
+        ]);
+        ?>
+	</div>
+</div>
+    <?php Pjax::end(); ?>
+    <div class="row">
+        <div class="col-md-12">
+        <?=
 $this->render('note/view', [
     'model' => new Note(),
     'noteDataProvider' => $noteDataProvider,
 ]);
 ?>
-	</div>
-<?php Pjax::Begin(['id' => 'invoice-user-history', 'timeout' => 6000]); ?>
-	<div class="col-md-5">
-		<?=
-        $this->render('log', [
-            'model' => $model,
-        ]);
-        ?>	
-	</div>
-	<?php Pjax::end(); ?>
+        </div>
 </div>
 <script>
       	$(document).on('beforeSubmit', '#invoice-note-form', function (e) {
