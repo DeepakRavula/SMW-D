@@ -107,6 +107,7 @@ $config = [
             'email-template/*',
 	    'test-email/*',
             'reverse-enrolment/*',
+	    'proforma-invoice/*',
         'unscheduled-lesson/*',
         'terms-of-service/*'
             // The actions listed here will be allowed to everyone including guests.

@@ -86,7 +86,6 @@ class ProformaInvoiceController extends BaseController
                 ->unpaid();
         }
         $invoices=$invoicesQuery->all();
-       // print_r($searchModel);die;
             if (!empty($searchModel->lessonIds) || !empty($model->invoiceIds)) {
                 $lessons = Lesson::findAll($searchModel->lessonIds);
                 $invoices = Invoice::findAll($model->invoiceIds);
