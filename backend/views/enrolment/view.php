@@ -169,8 +169,9 @@ $this->render('_view-enrolment', [
                 $(".more-lesson").show();
                 var dateRange = "";
                 var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
-                var student = '<?= $model->student->fullName ?>';
-                var params = $.param({'LessonSearch[Student]': student, 'LessonSearch[type]': type, 'lessonSearch[dateRange]': dateRange});
+                var student = '<?= $model->student->id ?>';
+		var status = '';
+                var params = $.param({'LessonSearch[student]': student, 'LessonSearch[type]': type, 'lessonSearch[lessonStatus]': status,'lessonSearch[dateRange]': dateRange});
                 var url = '<?= Url::to(['lesson/index']); ?>?' + params;
                 $('.see-more').attr("href", url);
             }

@@ -89,7 +89,7 @@ class LessonSearch extends Lesson
             ]);
             return $dataProvider;
         }
-      
+
         $query->andFilterWhere(['student.id' => $this->student]);
         $query->andFilterWhere(['program.id' => $this->program]);
 	
