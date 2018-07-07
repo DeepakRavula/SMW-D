@@ -4,8 +4,8 @@ use yii\helpers\Url;
 use common\components\gridView\KartikGridView;
 use yii\helpers\ArrayHelper;
 use common\models\PaymentMethod;
+use common\models\Location;
 use common\models\User;
-use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -16,6 +16,7 @@ $this->params['action-button'] = $this->render('_action-button');
 <?php yii\widgets\Pjax::begin(['id' => 'payment-listing']); ?>
 
 <?php
+$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 $columns = [
     [
 	'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
@@ -135,7 +136,7 @@ $columns = [
 <script>
     $(document).on('click', '#payment-listing  tbody > tr', function () {
         var paymentId = $(this).data('key');
-        var customUrl = '<?= Url::to(['payment/update-payment']); ?>?id=' + paymentId;
+        var customUrl = '<?= Url::to(['payment/view']); ?>?id=' + paymentId;
         $.ajax({
             url: customUrl,
             type: 'get',

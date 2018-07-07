@@ -105,10 +105,10 @@ class PaymentEditForm extends Model
 
     public function validateAmount($attributes)
     {
-        if ($this->amountToDistribute > $this->amount) {
+        if (round($this->amountToDistribute, 2) > round($this->amount, 2)) {
             $this->addError($attributes, "Amount mismatched with distributions");
         }
-        if ($this->amount < 0.01) {
+        if (round($this->amount, 2) < 0.01) {
             $this->addError($attributes, "Amount can't be empty");
         }
     }
