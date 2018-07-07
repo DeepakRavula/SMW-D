@@ -97,15 +97,16 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         }
         return $lessonTotal + $invoiceTotal;
     }
+    
     public function getProformaInvoiceNumber()
     {
         $proformaInvoiceNumber = str_pad($this->proforma_invoice_number, 5, 0, STR_PAD_LEFT);
             return 'P-'.$proformaInvoiceNumber;
     }
+    
     public function beforeSave($insert)
     {
         $lastInvoice   = $this->lastInvoice();
-        $invoiceNumber = 1;
         if (!empty($lastInvoice)) {
             $proformaInvoiceNumber = $lastInvoice->proforma_invoice_number + 1;
         }
@@ -118,9 +119,12 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         }
         return parent::beforeSave($insert);
     }
-    public function getUser(){
+    
+    public function getUser()
+    {
         return $this->hasOne(User::className(), ['id' => 'userId']);
     }
+    
     public function lastInvoice()
     {
         return $query = ProformaInvoice::find()->alias('i')
@@ -128,6 +132,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
                     ->orderBy(['i.id' => SORT_DESC])
                     ->one();
     }
+    
     public function getLocation()
     {
         return $this->hasOne(Location::className(), ['id' => 'locationId']);
@@ -163,11 +168,11 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             }
 
         }
-        
-
         return $subtotal;
     }
-    public function getProformaLineItems(){
+    
+    public function getProformaLineItems()
+    {
         return $this->hasMany(ProformaLineItem::className(), ['proformaInvoiceId' => 'id']);
     }
 }

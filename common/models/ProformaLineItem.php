@@ -38,8 +38,6 @@ class ProformaLineItem extends \yii\db\ActiveRecord
         return [
             [['proformaInvoiceId'], 'required'],
             [['proformaLineItemId','lessonId','$invoiceId'], 'safe'],
-
-
         ];
     }
 
@@ -81,11 +79,13 @@ class ProformaLineItem extends \yii\db\ActiveRecord
     {
         return $this->hasOne(ProformaInvoice::className(), ['id' => 'proformaInvoiceId']);
     }
+    
     public function getLessonLineItem()
     {
         return $this->hasMany(Lesson::className(), ['id' => 'lessonId']);
     }
-     public function getInvoiceLineItem()
+    
+    public function getInvoiceLineItem()
     {
         return $this->hasMany(Invoice::className(), ['id' => 'invoiceId']);
     }

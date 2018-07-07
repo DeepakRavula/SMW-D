@@ -5,8 +5,6 @@ use common\components\gridView\KartikGridView;
 use yii\helpers\ArrayHelper;
 use common\models\PaymentMethod;
 use common\models\User;
-use yii\widgets\Pjax;
-use common\models\Location;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -133,6 +131,7 @@ $columns = [
     ?>
 </div>
 <?php yii\widgets\Pjax::end(); ?>
+
 <script>
     $(document).on('click', '#payment-listing  tbody > tr', function () {
         var paymentId = $(this).data('key');
@@ -144,8 +143,7 @@ $columns = [
             data: $(this).serialize(),
             success: function (response)
             {
-                if (response.status)
-                {
+                if (response.status) {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
                     $('.modal-save').hide();
