@@ -1,26 +1,15 @@
 <?php
 use yii\grid\GridView;
-use yii\widgets\Pjax;
 
 ?>
 <?php
 $columns = [
-    [
-        'label' => 'Date',
-        'value' => function ($data) {
-            return Yii::$app->formatter->asDate($data->payment->date);
-        },
-    ],
-    [
-        'label' => 'Payment Method',
-        'value' => function ($data) {
-            return $data->payment->paymentMethod->name;
-        },
-    ],
+    'date:date',
+    'paymentMethod.name',
     [
         'label' => 'Number',
         'value' => function ($data) {
-            return $data->payment->reference;
+            return $data->reference;
         },
     ],
     [
@@ -34,8 +23,8 @@ $columns = [
     ],
 ]; ?>
 <div>
-<?php Pjax::begin([
-    'id' => 'lesson-payment-listing',
+<?php yii\widgets\Pjax::begin([
+    'id' => 'invoice-payment-listing',
     'timeout' => 6000,
 ]) ?>
     <?= GridView::widget([

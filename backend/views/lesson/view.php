@@ -25,55 +25,38 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
 <br>
-<div class="m-b-10"> </div>
 <div class="row">
 	<div class="col-md-6">
-   
-		<?= $this->render('_details', [
+		<?=
+        $this->render('_details', [
             'model' => $model,
-        ]); ?>
-       
-        <?php if (!$model->isGroup()): ?>
-        
-            <?= $this->render('_student', [
-                'model' => $model,
-            ]); ?>
-
-            <?php if ($model->isPrivate() && !$model->isUnscheduled()): ?>
-                <div id="attendance-panel">
-                    <?= $this->render('attendance/_view', [
-                        'model' => $model,
-                    ]); ?>	
-                </div>
-            <?php endif; ?>
-            
-        <?php endif; ?>
-
-    </div>
-
-    <div class="col-md-6">  
-        
-        <?= $this->render('schedule/_view', [
+        ]);
+        ?>
+		<?php if (!$model->isGroup()): ?>
+		<?=
+        $this->render('_student', [
             'model' => $model,
-        ]); ?>
-
-
-        <?= $this->render('_price-details', [
+        ]);
+        ?>
+		<?php endif;?>
+	</div>
+	<div class="col-md-6">
+		<?=
+        $this->render('schedule/_view', [
             'model' => $model,
-        ]); ?>
-        
-        <?php if (!$model->isGroup()): ?>
-
-            <?= $this->render('_discount', [
-                'model' => $model,
-            ]); ?>
-
-        <?php endif; ?>
-
-    </div>
-
+        ]);
+        ?>
+    <?php if ($model->isPrivate() && !$model->isUnscheduled()): ?>
+        <div id="attendance-panel">
+		<?=
+        $this->render('attendance/_view', [
+            'model' => $model,
+        ]);
+        ?>	
+        </div>
+    <?php endif; ?>
+	</div>
 </div>
-
 <div class="row">
 	<div class="col-md-12">
 		<div class="nav-tabs-custom">
@@ -197,10 +180,11 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
             type   : 'get',
             success: function(response)
             {
-                if(response.status) {
-                    $('#lesson-payment-modal').modal('show');
-                    $('#lesson-payment-content').html(response.data);
-                }
+                if(response.status)
+                    {
+                        $('#lesson-payment-modal').modal('show');
+                        $('#lesson-payment-content').html(response.data);
+                    }
             }
         });
         return false;
@@ -288,22 +272,6 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         $('#merge-lesson-modal').modal('show');
         return false;
     });
-
-    $(document).on('modal-success', function(event, params) {
-        if (params.url) {
-            window.location.href = params.url;
-        }
-        if ($('#lesson-discount').length) {
-            $.pjax.reload({container: "#lesson-discount", replace: false, async: false, timeout: 6000});
-        }
-        if ($('#lesson-price-details').length) {
-            $.pjax.reload({container: "#lesson-price-details", replace: false, async: false, timeout: 6000});
-        }
-        if ($('#lesson-payment-listing').length) {
-            $.pjax.reload({container: "#lesson-payment-listing", replace: false, async: false, timeout: 6000});
-        }
-        return false;
-    });
     
     $(document).on('beforeSubmit', '#merge-lesson-form', function (e) {
         $.ajax({
@@ -316,7 +284,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                 if (response.status) {
                     $('#merge-lesson-modal').modal('hide');
                 } else {
-                    $('#merge-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                    $('#error-notification').html('Lesson cannot be merged').fadeIn().delay(5000).fadeOut();
                 }
             }
         });
@@ -343,14 +311,13 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     
     $(document).on('click', '#lesson-delete', function () {
         var id = '<?= $model->id;?>';
-        var params = $.param({ 'PrivateLesson[ids]': [id], 'PrivateLesson[isBulk]': false });
         bootbox.confirm({ 
             message: "Are you sure you want to delete this lesson?", 
             callback: function(result){
                 if(result) {
                     $('.bootbox').modal('hide');
                     $.ajax({
-                        url: '<?= Url::to(['private-lesson/delete']); ?>?' + params,
+                        url: '<?= Url::to(['private-lesson/delete']); ?>?id=' + id,
                         type: 'post',
                         success: function (response)
                         {
@@ -384,10 +351,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                     $('#success-notification').html(response.message).fadeIn().delay(3000).fadeOut();
                     $.pjax.reload({container: "#lesson-schedule-buttons", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: '#lesson-detail', replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#lesson-explode", replace: false, async: false, timeout: 6000});
-                    if ($('#lesson-more-action').length) {
-                        $.pjax.reload({container: "#lesson-more-action", replace: false, async: false, timeout: 6000});
-                    }               
+                    $.pjax.reload({container: "#lesson-explode", replace: false, async: false, timeout: 6000});                    
                     $('#attendance-panel').hide();
                 } else {
                     $('#menu-shown').hide();
@@ -415,41 +379,6 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                     $.pjax.reload({container: "#lesson-schedule-buttons", replace: false, async: false, timeout: 6000});
                 } else {
                     $('#error-notification').html(response.message).fadeIn().delay(3000).fadeOut();
-                }
-            }
-        });
-        return false;
-    });
-
-    $(document).off('click', '#lesson-discount').on('click', '#lesson-discount', function(){
-        var message = 'Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.';
-        $('#modal-popup-warning-notification').text(message).fadeIn();
-        var lessonId = '<?= $model->id; ?>';
-        var lessonIds = [lessonId];
-        var params = $.param({ 'PrivateLesson[ids]': lessonIds });
-        $.ajax({
-            url    : '<?= Url::to(['private-lesson/apply-discount']) ?>?' + params,
-            type   : 'get',
-            success: function(response)
-            {
-                if (response.status) {
-                    $('#modal-content').html(response.data);
-                    $('#popup-modal').modal('show');
-                }
-            }
-        });
-        return false;
-    });
-
-    $(document).off('click', '#lesson-price').on('click', '#lesson-price', function(){
-        $.ajax({
-            url    : '<?= Url::to(['lesson/edit-price', 'id' => $model->id]) ?>',
-            type   : 'get',
-            success: function(response)
-            {
-                if (response.status) {
-                    $('#modal-content').html(response.data);
-                    $('#popup-modal').modal('show');
                 }
             }
         });

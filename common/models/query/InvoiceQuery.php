@@ -54,11 +54,6 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['invoice.isCanceled' => false]);
     }
 
-    public function canceled()
-    {
-        return $this->andWhere(['invoice.isCanceled' => true]);
-    }
-
     public function notReturned()
     {
         return $this->joinWith(['reverseInvoice' => function ($query) {
@@ -66,16 +61,10 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         }]);
     }
 
-    public function returned()
-    {
-        return $this->joinWith(['reverseInvoice' => function ($query) {
-            $query->andWhere(['NOT', ['invoice_reverse.id' => null]]);
-        }]);
-    }
-
     public function location($locationId)
     {
-        return $this->andWhere(['invoice.location_id' => $locationId]);
+        $this->andWhere(['invoice.location_id' => $locationId]);
+        return $this;
     }
     
     public function student($id)
@@ -106,9 +95,12 @@ class InvoiceQuery extends \yii\db\ActiveQuery
 
     public function invoiceCredit($userId)
     {
-        return $this->andWhere(['user_id' => $userId])
-               ->invoice() 
-            ->andWhere(['<', 'balance', 0.00]);
+        $this->andWhere([
+            'user_id' => $userId
+        ])
+        ->andWhere(['<', 'balance', 0.00]);
+
+        return $this;
     }
 
     public function proFormaCredit($lessonId)
@@ -152,26 +144,6 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
-    public function manualPayments()
-    {
-        return $this->joinWith(['invoicePayments' => function ($query) {
-            $query->joinWith(['payment' => function ($query) {
-                $query->notDeleted()
-                ->exceptAutoPayments();
-            }]);
-        }]);
-    }
-
-    public function appliedPayments()
-    {
-        return $this->joinWith(['invoicePayments' => function ($query) {
-            $query->joinWith(['payment' => function ($query) {
-                $query->notDeleted()
-                    ->notCreditUsed();
-            }]);
-        }]);
-    }
-
     public function unpaid()
     {
         return $this->andFilterWhere([
@@ -191,14 +163,6 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this->andFilterWhere([
             'invoice.type' => Invoice::TYPE_INVOICE
         ]);
-    }
-
-    public function lessonInvoice()
-    {
-        return $this->invoice()
-            ->joinWith(['lineItem' => function ($query) {
-            $query->andWhere(['invoice_line_item.item_type_id' => [ItemType::TYPE_PRIVATE_LESSON, ItemType::TYPE_EXTRA_LESSON]]);
-        }]);
     }
     
     public function paid()
@@ -234,53 +198,16 @@ class InvoiceQuery extends \yii\db\ActiveQuery
         return $this->andFilterWhere(['between', 'DATE(invoice.date)', $fromDate, $toDate]);
     }
 
-    public function nonPfi()
-    {
-        return $this->joinWith(['proformaInvoiceItem' => function ($query) {
-            $query->joinWith(['proformaLineItem' => function ($query) {
-                $query->joinWith(['proformaInvoice' => function ($query) {
-                    $query->andWhere(['proforma_invoice.id' => null]);
-                }]);
-            }]);
-        }]);
-    }
-
     public function customer($customerId)
     {
-        return $this->andWhere(['invoice.user_id' => $customerId]);
+        return $this->andFilterWhere(['invoice.user_id' => $customerId]);
     }
-    
     public function openingBalance()
     {
-        return $this->joinWith(['lineItem' => function ($query) {
-            $query->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
+        return $this->joinWith(['lineItems' => function ($query) {
+            $query->andWhere(['item_type_id' => ItemType::TYPE_OPENING_BALANCE]);
         }]);
     }
-
-    public function nonLessonCredit()
-    {
-        return $this->joinWith(['lineItem' => function ($query) {
-            $query->andWhere(['NOT', ['invoice_line_item.item_type_id' => ItemType::TYPE_LESSON_CREDIT]]);
-        }]);
-    }
-
-    public function lessonCredit()
-    {
-        return $this->joinWith(['lineItem' => function ($query) {
-            $query->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_LESSON_CREDIT]);
-        }]);
-    }
-
-    public function lessonCreditUsed()
-    {
-        return $this->joinWith(['invoicePayments' => function ($query) {
-            $query->joinWith(['payment' => function ($query) {
-                $query->notDeleted()
-                    ->lessonCreditUsed();
-            }]);
-        }]);
-    }
-
     public function userLocation($locationId)
     {
         $this->joinWith(['user' => function ($query) use ($locationId) {

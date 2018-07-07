@@ -28,8 +28,6 @@ use common\models\BulkRescheduleLesson;
 use common\models\log\StudentLog;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
-use common\models\LessonHierarchy;
-use common\models\LessonPayment;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -49,9 +47,7 @@ class LessonController extends BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => ['modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom',
-                    'payment', 'substitute','update','unschedule', 'credit-transfer',
-                    'edit-price'
-                ],
+                    'payment', 'substitute','update','unschedule', 'credit-transfer'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -63,7 +59,7 @@ class LessonController extends BaseController
                     [
                         'allow' => true,
                         'actions' => ['index', 'view', 'credit-transfer',
-							'validate-on-update', 'edit-price',
+							'validate-on-update', 
 							'fetch-duration','edit-classroom', 
 							'update', 'update-field', 'review',
 							'fetch-conflict', 'confirm',
@@ -110,7 +106,6 @@ class LessonController extends BaseController
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = $this->findModel($id);
-        $enrolment = Enrolment::findOne(['courseId' => $model->courseId]);
         $model->duration = $model->fullDuration;
         $notes = Note::find()
                 ->andWhere(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
@@ -121,7 +116,7 @@ class LessonController extends BaseController
         ]);
 
         $groupLessonStudents = Student::find()
-            ->notDeleted()
+                        ->notDeleted()
             ->joinWith(['enrolment' => function ($query) use ($id) {
                 $query->joinWith(['course' => function ($query) use ($id) {
                     $query->joinWith(['program' => function ($query) use ($id) {
@@ -140,19 +135,16 @@ class LessonController extends BaseController
         $studentDataProvider = new ActiveDataProvider([
             'query' => $groupLessonStudents,
         ]);
-        $payments = LessonPayment::find()
-            ->joinWith(['payment' => function ($query) {
-                $query->notDeleted();
-            }])
-            ->andWhere(['lesson_payment.lessonId' => $id, 'lesson_payment.enrolmentId' => $enrolment->id])
-            ->notDeleted();
+        $payments = Payment::find()
+            ->joinWith(['lessonCredit' => function ($query) use ($id) {
+                $query->andWhere(['lesson_payment.lessonId' => $id]);
+            }]);
         $paymentsDataProvider = new ActiveDataProvider([
-            'query' => $payments
+            'query' => $payments,
         ]);
-        $logDataProvider = new ActiveDataProvider([
-            'query' => LogHistory::find()->lesson($id) 
-        ]);
-
+        $logDataProvider =new ActiveDataProvider([
+            'query' => LogHistory::find()
+            ->lesson($id) ]);
         return $this->render('view', [
             'model' => $model,
             'noteDataProvider' => $noteDataProvider,
@@ -211,7 +203,6 @@ class LessonController extends BaseController
             }
         }
     }
-
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
@@ -571,7 +562,6 @@ class LessonController extends BaseController
             foreach ($lessons as $i => $lesson) {
                 $oldLesson = Lesson::findOne($oldLessonIds[$i]);
                 $oldLesson->rescheduleTo($lesson);
-                LessonHierarchy::deleteAll($oldLesson->id);
                 $bulkReschedule = new BulkRescheduleLesson();
                 $bulkReschedule->lessonId = $lesson->id;
                 $bulkReschedule->save();
@@ -580,7 +570,6 @@ class LessonController extends BaseController
         foreach ($lessons as $lesson) {
             $lesson->isConfirmed = true;
             $lesson->save();
-            $lesson->setDiscount();
         }
         if (!empty($courseModel->enrolment) && empty($courseRequest)) {
             $enrolmentModel              = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
@@ -598,8 +587,9 @@ class LessonController extends BaseController
                 if ($courseModel->enrolment->student->isDraft()) {
                     $courseModel->enrolment->student->updateAttributes(['status' => Student::STATUS_ACTIVE]);
                 }
+                $invoice = $courseModel->enrolment->firstPaymentCycle->createProFormaInvoice();
                 $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
-                return $this->redirect(['/enrolment/view', 'id' => $enrolmentModel->id]);
+                return $this->redirect(['/invoice/view', 'id' => $invoice->id]);
             }
         } else {
             $message = 'Course has been created successfully';
@@ -749,34 +739,5 @@ class LessonController extends BaseController
                 'message' => 'Lesson not yet invoiced',
             ];
         }
-    }
-    
-    public function actionEditPrice($id)
-    {
-        $request = Yii::$app->request;
-        $model = $this->findModel($id);
-        if ($request->isPost) {
-            if ($model->load($request->post())) {
-                if ($model->save()) {
-                    $response = [
-                        'status' => true
-                    ];
-                } else {
-                    $response = [
-                        'status' => false,
-                        'errors' => ActiveForm::validate($model)
-                    ];
-                }
-            }
-        } else {
-            $data = $this->renderAjax('_price-form', [
-                'model' => $model
-            ]);
-            $response = [
-                'status' => true,
-                'data' => $data
-            ];
-        }
-        return $response;
     }
 }

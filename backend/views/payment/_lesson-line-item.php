@@ -3,8 +3,6 @@
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use yii\bootstrap\Html;
-use common\models\Lesson;
-use kartik\daterange\DateRangePicker;
 
 ?>
 

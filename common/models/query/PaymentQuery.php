@@ -31,6 +31,14 @@ class PaymentQuery extends ActiveQuery
     /**
      * @return $this
      */
+    public function openingBalance($invoice)
+    {
+        $this->andWhere(['payment.user_id' => $invoice->user_id])
+            ->andWhere(['like', 'payment.amount', '-']);
+
+        return $this;
+    }
+
     public function proFormaInvoice()
     {
         $this->joinWith(['invoicePayment ip' => function ($query) {
@@ -40,11 +48,6 @@ class PaymentQuery extends ActiveQuery
         }]);
 
         return $this;
-    }
-
-    public function customer($customerId)
-    {
-        return $this->andWhere(['payment.user_id' => $customerId]);
     }
 
     public function invoice()
@@ -58,16 +61,16 @@ class PaymentQuery extends ActiveQuery
 
     public function location($locationId)
     {
-        return $this->joinWith(['user' => function ($query) use ($locationId) {
-            $query->joinWith(['userLocation' => function ($query) use ($locationId) {
-                $query->andWhere(['user_location.location_id' => $locationId]);
-            }]);
-        }]);
+        $this->joinWith('invoice')
+                    ->andWhere(['invoice.location_id' => $locationId]);
+        return $this;
     }
 
     public function notDeleted()
     {
-        return $this->andWhere(['payment.isDeleted' => false]);
+        $this->andWhere(['payment.isDeleted' => false]);
+
+        return $this;
     }
 
     public function exceptAutoPayments()
@@ -88,7 +91,7 @@ class PaymentQuery extends ActiveQuery
         return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
     }
 
-    public function openingBalance()
+    public function accountEntry()
     {
         return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_ACCOUNT_ENTRY]);
     }
@@ -99,7 +102,7 @@ class PaymentQuery extends ActiveQuery
             $query->joinWith(['lessonCredit' => function ($query) {
                 $query->andWhere(['lesson_payment.id' => null]);
             }])
-            ->andWhere(['OR', ['dp.id' => null], ['NOT', ['dp.id' => null]]]);
+            ->where(['OR', ['dp.id' => null], ['NOT', ['dp.id' => null]]]);
         }]);
     }
 
@@ -109,7 +112,7 @@ class PaymentQuery extends ActiveQuery
             $query->joinWith(['lessonCredit' => function ($query) {
                 $query->andWhere(['NOT', ['lesson_payment.id' => null]]);
             }])
-            ->andWhere(['NOT', ['dp.id' => null]])
+            ->where(['NOT', ['dp.id' => null]])
             ->andWhere(['dp.isDeleted' => false]);
         }]);
     }

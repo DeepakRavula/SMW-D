@@ -48,7 +48,6 @@ class PaymentSearch extends Payment
         $locationId          = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query               = Payment::find()
             ->location($locationId)
-            ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
             ->notDeleted();
            
         $query->joinWith('userProfile');
@@ -84,7 +83,7 @@ class PaymentSearch extends Payment
             ]
         ]);
         $dataProvider->sort->defaultOrder = [
-            'dateRange' => SORT_ASC,
+            'dateRange' => SORT_DESC,
         ];
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;

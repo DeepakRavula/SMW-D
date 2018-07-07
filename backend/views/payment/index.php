@@ -1,5 +1,9 @@
 <?php
 
+use yii\helpers\Html;
+use yii\helpers\Url;
+use backend\models\search\PaymentSearch;
+use kartik\grid\GridView;
 use common\components\gridView\KartikGridView;
 use yii\helpers\ArrayHelper;
 use common\models\PaymentMethod;
@@ -12,15 +16,15 @@ use yii\helpers\Url;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Payments';
-$this->params['action-button'] = $this->render('_action-button');?>
+$this->params['action-button'] = $this->render('_action-button'); ?>
+
 <?php Pjax::begin(['id' => 'payment-listing']); ?>
 
 <?php
     $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
     $columns = [
         [
-            'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
-            'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
+            'label' => 'Date',
             'attribute' => 'dateRange',
             'value' => function ($data) {
                 if (!empty($data->date)) {
@@ -31,7 +35,7 @@ $this->params['action-button'] = $this->render('_action-button');?>
                 return null;
             },
             'filterType' => KartikGridView::FILTER_DATE_RANGE,
-            'filterWidgetOptions' => [
+                'filterWidgetOptions' => [
                 'id' => 'enrolment-startdate-search',
                 'convertFormat' => true,
                 'initRangeExpr' => true,
@@ -49,7 +53,7 @@ $this->params['action-button'] = $this->render('_action-button');?>
                             "moment().endOf('week')"],
                         Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')",
                             "moment().endOf('month')"],
-                    
+
                     ],
                     'locale' => [
                         'format' => 'M d, Y',
@@ -62,16 +66,18 @@ $this->params['action-button'] = $this->render('_action-button');?>
             'label' => 'Customer',
             'attribute' => 'customer',
             'value' => function ($data) {
-                return $data->invoice->user->publicIdentity ?? null;
+                return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
             },
-            'contentOptions' => ['class' => 'text-left', 'style' => 'width:35%'],
-            'headerOptions' => ['class' => 'text-left', 'style' => 'width:35%'],
-            'filterType'=>KartikGridView::FILTER_SELECT2,
-            'filter'=> ArrayHelper::map(User::find()->customers($locationId)->notDeleted()->active()
-                ->all(), 'id', 'publicIdentity'),
-            'filterWidgetOptions'=>[
-                'pluginOptions'=>[
-                    'allowClear'=>true,
+            'contentOptions' => ['style' => 'font-size:14px'],
+            'filterType' => KartikGridView::FILTER_SELECT2,
+            'filter' => ArrayHelper::map(User::find()
+                    ->customers($locationId)
+                    ->notDeleted()
+                    ->active()
+                    ->all(), 'id', 'publicIdentity'),
+            'filterWidgetOptions' => [
+                'pluginOptions' => [
+                    'allowClear' => true,
                 ],
 
             ],
@@ -79,8 +85,6 @@ $this->params['action-button'] = $this->render('_action-button');?>
             'format'=>'raw'
         ],
         [
-            'contentOptions' => ['class' => 'text-left', 'style' => 'width:30%'],
-            'headerOptions' => ['class' => 'text-left', 'style' => 'width:30%'],
             'label' => 'Payment Method',
             'attribute' => 'paymentMethod',
             'value' => function ($data) {
@@ -88,12 +92,12 @@ $this->params['action-button'] = $this->render('_action-button');?>
             },
             'filterType' => KartikGridView::FILTER_SELECT2,
             'filter' => ArrayHelper::map(PaymentMethod::find()
-            ->andWhere(['displayed' => true])
-            ->orderBy(['name' => SORT_ASC])
-            ->asArray()->all(), 'name', 'name'),
-            'filterWidgetOptions'=>[
-                'pluginOptions'=>[
-                    'allowClear'=>true,
+                    ->orderBy(['name' => SORT_ASC])
+                    ->asArray()
+                    ->all(), 'name', 'name'),
+            'filterWidgetOptions' => [
+                'pluginOptions' =>[
+                    'allowClear' => true,
                 ],
             ],
             'filterInputOptions'=>['placeholder'=>'Payment Method'],
@@ -103,14 +107,13 @@ $this->params['action-button'] = $this->render('_action-button');?>
             'label' => 'Amount',
             'attribute' => 'amount',
             'value' => function ($data) {
-                $amount = $data->amount;
+                $amount = abs($data->amount);
                 return Yii::$app->formatter->asDecimal($amount,2);
             },
-            'contentOptions' => ['class' => 'text-right', 'style' => 'width:25%'],
-            'headerOptions' => ['class' => 'text-right', 'style' => 'width:25%'],
-        ],
-    ];
-?>
+            'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
+            'headerOptions' => ['class' => 'text-right']
+        ]
+    ]; ?>
 
     <div>
         <?= KartikGridView::widget([

@@ -53,7 +53,7 @@ use kartik\switchinput\SwitchInput;
                 'contentOptions' => ['class' => 'text-left'],
                 'label' => 'Description',
                 'value' => function ($data) {
-                    return $data->accountDescription;
+                    return $data->getAccountDescription();
                 }
             ],
                 [
@@ -61,8 +61,8 @@ use kartik\switchinput\SwitchInput;
                 'contentOptions' => ['class' => 'text-right'],
                 'format' => 'currency',
                 'label' => 'Debit',
-                'value' => function ($data) use ($isCustomerView) {
-                    return !empty($data->getDebit($isCustomerView)) ? Yii::$app->formatter->asDecimal($data->getDebit($isCustomerView)) : null;
+                'value' => function ($data) {
+                    return !empty($data->debit) ? Yii::$app->formatter->asDecimal($data->debit) : null;
                 }
             ],
                 [
@@ -70,16 +70,16 @@ use kartik\switchinput\SwitchInput;
                 'contentOptions' => ['class' => 'text-right'],
                 'label' => 'Credit',
                 'format' => 'currency',
-                'value' => function ($data) use ($isCustomerView) {
-                    return !empty($data->getCredit($isCustomerView)) ? abs($data->getCredit($isCustomerView)) : null;
+                'value' => function ($data) {
+                    return !empty($data->credit) ? abs($data->credit) : null;
                 }
             ],
                 [
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
                 'label' => 'Balance',
-                'value' => function ($data) use ($isCustomerView) {
-                    return Yii::$app->formatter->asDecimal($data->getBalance($isCustomerView));
+                'value' => function ($data) {
+                    return Yii::$app->formatter->asDecimal($data->balance);
                 }
             ]
         ],

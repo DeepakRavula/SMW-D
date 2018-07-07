@@ -21,7 +21,6 @@ class Note extends \yii\db\ActiveRecord
     const INSTANCE_TYPE_USER = 2;
     const INSTANCE_TYPE_LESSON = 3;
     const INSTANCE_TYPE_INVOICE = 4;
-    const INSTANCE_TYPE_PROFORMA =5;
     
     public $hasEditable;
     /**
@@ -83,9 +82,6 @@ class Note extends \yii\db\ActiveRecord
             case self::INSTANCE_TYPE_INVOICE:
                 $name = 'invoice';
             break;
-            case self::INSTANCE_TYPE_PROFORMA:
-            $name = 'proforma-invoice';
-        break;
         }
         return $name;
     }

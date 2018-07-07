@@ -5,9 +5,6 @@ use yii\jui\DatePicker;
 use common\models\PaymentMethod;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
-use kartik\select2\Select2;
-use common\models\Location;
-use common\models\User;
 use yii\bootstrap\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Blog */
@@ -157,12 +154,12 @@ var updatePayment = {
         return false;
     });
 
-	$(document).ready(function () {
-		$('.modal-save').show();
-	    $('#popup-modal .modal-dialog').css({'width': '1000px'});
+    $(document).ready(function () {
+        $('.modal-save').show();
+        $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Payment</h4>');
 
         updatePayment.setAction();
         updatePayment.calcAmountNeeded();
-	});
+    });
 </script>

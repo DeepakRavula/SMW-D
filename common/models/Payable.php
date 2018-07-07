@@ -76,61 +76,59 @@ trait Payable
         $db = \Yii::$app->db;
         $transaction = $db->beginTransaction();
         $paymentModel = new Payment();
-        $paymentModel->date = $payment->date;
         $paymentModel->sourceId = $payment->sourceId;
         $paymentModel->amount = $payment->amount;
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
         if ($this->tableName() === 'invoice') {
             $paymentModel->invoiceId = $this->id;
-            $user = $this->user;
-        } else if ($this->tableName() === 'lesson') {
-            $user = $this->customer;
+        } else {
             $paymentModel->lessonId = $this->id;
-            if (!$enrolment) {
-                $enrolment = $this->enrolment;
-            }
-            $paymentModel->enrolmentId = $enrolment->id;
-        } else if ($this->tableName() === 'user') {
-            $paymentModel->customerId = $this->id;
-            $user = $this;
         }
         if ($from->tableName() === 'lesson') {
             $paymentModel->reference = $from->getLessonNumber();
-        } else if ($from->tableName() === 'invoice') {
+        } else {
             $paymentModel->reference = $from->getInvoiceNumber();
         }
-        $paymentModel->user_id = $user->id;
         if ($paymentModel->save()) {
             $creditPaymentId = $paymentModel->id;
+            if ($this->tableName() === 'lesson') {
+                if (!$enrolment) {
+                    $enrolment = $this->enrolment;
+                }
+                $lessonPayment = $this->addLessonPayment($creditPaymentId, $enrolment->id);
+                if (!$lessonPayment) {
+                    $transaction->rollBack();
+                }
+            }
+            
             $paymentModel->id = null;
             $paymentModel->isNewRecord = true;
             $paymentModel->setScenario(Payment::SCENARIO_CREDIT_USED);
             $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_USED;
-            $paymentModel->invoiceId = null;
-            $paymentModel->sourceId = null;
-            $paymentModel->lessonId = null;
-            $paymentModel->customerId = null;
-            $paymentModel->reference = null;
             if ($from->tableName() === 'invoice') {
                 $paymentModel->invoiceId = $from->id;
-            } else if ($from->tableName() === 'user') {
-                $paymentModel->customerId = $from->id;
-            } else if ($from->tableName() === 'lesson') {
-                if (!$enrolment) {
-                    $enrolment = $from->enrolment;
-                }
+                $paymentModel->lessonId = null;
+            } else {
                 $paymentModel->lessonId = $from->id;
-                $paymentModel->enrolmentId = $enrolment->id;
+                $paymentModel->invoiceId = null;
             }
-            
             if ($this->tableName() === 'invoice') {
                 $paymentModel->reference = $this->getInvoiceNumber();
-            } else if ($this->tableName() === 'lesson') {
+            } else {
                 $paymentModel->reference = $this->getLessonNumber();
             }
             $paymentModel->amount = -abs($paymentModel->amount);
             if ($paymentModel->save()) {
                 $debitPaymentId = $paymentModel->id;
+                if ($from->tableName() === 'lesson') {
+                    if (!$enrolment) {
+                        $enrolment = $from->enrolment;
+                    }
+                    $lessonPayment = $from->addLessonPayment($debitPaymentId, $enrolment->id);
+                    if (!$lessonPayment) {
+                        $transaction->rollBack();
+                    }
+                }
                 $creditMapping = $this->createCreditUsage($creditPaymentId, $debitPaymentId);
                 if ($creditMapping) {
                     $transaction->commit();

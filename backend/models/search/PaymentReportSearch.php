@@ -48,8 +48,9 @@ class PaymentReportSearch extends Payment
         $locationId          = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query               = Payment::find()
             ->location($locationId)
-              ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY,PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED, PaymentMethod::TYPE_GIFT_CARD]]])
-            ->notDeleted();
+			   ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY,PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED, PaymentMethod::TYPE_GIFT_CARD]]])
+            ->notDeleted()
+            ->andWhere(['invoice.isDeleted' => false]);
 		
         $dataProvider        = new ActiveDataProvider([
             'query' => $query,

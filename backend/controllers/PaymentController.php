@@ -19,10 +19,7 @@ use backend\models\PaymentForm;
 use backend\models\PaymentEditForm;
 use common\models\Lesson;
 use yii\data\ActiveDataProvider;
-use common\models\User;
 use backend\models\search\PaymentFormLessonSearch;
-use common\models\LessonPayment;
-use common\models\InvoicePayment;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -50,7 +47,7 @@ class PaymentController extends BaseController
                     'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-			'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
@@ -317,7 +314,6 @@ class PaymentController extends BaseController
     {
         $invoiceCredits = $this->getCustomerCreditInvoices($customerId);
         $results = [];
-        $amount = 0;
         $paymentCredits = $this->getCustomerPayments($customerId);
         
         if ($invoiceCredits) {
@@ -343,7 +339,7 @@ class PaymentController extends BaseController
                 }
             }
         }
-        
+
         $creditDataProvider = new ArrayDataProvider([
             'allModels' => $results,
             'sort' => [

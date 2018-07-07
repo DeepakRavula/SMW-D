@@ -3,7 +3,7 @@
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use common\models\Lesson;
-use common\models\Invoice;
+
     if ($searchModel->isWeb) {
         $tableOption = ['class' => 'table table-condensed'];
         $columns = [
@@ -76,7 +76,25 @@ use common\models\Invoice;
             }
         ]);
     }
-
+    if ($model->isProformaInvoice()) {
+        array_push($columns, [
+            'label' => 'Payment',
+            'format' => 'currency',
+            'value' => function ($data) {
+                $amount = 0;
+                if (!$data->isGroupLesson()) {
+                    if (!$data->invoice->isDeleted() && $data->proFormaLesson) {
+                        $amount = $data->proFormaLesson->getCreditAppliedAmount($data->proFormaLesson->enrolment->id) ?? 0;
+                    }
+                } else {
+                    $amount = $data->lesson->getCreditAppliedAmount($data->enrolment->id) ?? 0;
+                }
+                return Yii::$app->formatter->asDecimal($amount);
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;']
+        ]);
+    }
     array_push($columns, [
         'label' => 'Price',
         'format' => 'currency',
@@ -87,15 +105,8 @@ use common\models\Invoice;
         }
     ]);
 Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
-<?php
-if ($model->type == Invoice::TYPE_INVOICE) {
-	$id = 'line-item-grid';
-} else {
-	$id = 'proforma-line-item-grid';
-}
-?>
     <?= GridView::widget([
-        'id' => $id,
+        'id' => 'line-item-grid',
         'dataProvider' => $invoiceLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,

@@ -21,7 +21,6 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 class Payment extends ActiveRecord
 {
     public $invoiceId;
-    public $enrolmentId;
     public $lessonId;
     public $old;
     public $credit;
@@ -30,7 +29,6 @@ class Payment extends ActiveRecord
     public $paymentMethodName;
     public $invoiceNumber;
     public $userName;
-    public $customerId;
     
     const TYPE_OPENING_BALANCE_CREDIT = 1;
     const SCENARIO_CREATE = 'scenario-create';
@@ -69,7 +67,7 @@ class Payment extends ActiveRecord
             [['amount'], 'number'],
             ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_APPLY_CREDIT]],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'sourceId', 'credit', 
-                'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId'], 'safe'],
+                'isDeleted', 'transactionId', 'notes'], 'safe'],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
                 self::SCENARIO_CREDIT_USED_EDIT]],
         ];
@@ -142,12 +140,7 @@ class Payment extends ActiveRecord
      */
     public static function find()
     {
-        return new PaymentQuery(get_called_class());
-    }
-
-    public function getTransaction()
-    {
-        return $this->hasOne(Transaction::className(), ['transactionId' => 'id']);
+        return new PaymentQuery(get_called_class(), parent::find()->andWhere(['payment.isDeleted' => false]));
     }
 
     public function getUser()
@@ -160,43 +153,15 @@ class Payment extends ActiveRecord
         return $this->hasOne(UserProfile::className(), ['user_id' => 'id'])
             ->via('user');
     }
-
     public function getLessonCredit()
     {
         return $this->hasOne(LessonPayment::className(), ['paymentId' => 'id']);
-    }
-
-    public function getLessonPayments()
-    {
-        return $this->hasMany(LessonPayment::className(), ['paymentId' => 'id']);
-    }
-
-    public function getLessonPayment()
-    {
-        return $this->hasOne(LessonPayment::className(), ['paymentId' => 'id']);
-    }
-
-    public function getCustomerCredit()
-    {
-        return $this->hasOne(CustomerPayment::className(), ['paymentId' => 'id']);
     }
     
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoice_id'])
                 ->viaTable('invoice_payment', ['payment_id' => 'id']);
-    }
-
-    public function getCustomer()
-    {
-        return $this->hasOne(User::className(), ['id' => 'userId'])
-                ->viaTable('customer_payment', ['payment_id' => 'id']);
-    }
-
-    public function getLesson()
-    {
-        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
-                ->viaTable('lesson_payment', ['paymentId' => 'id']);
     }
 
     public function getPaymentMethod()
@@ -222,13 +187,12 @@ class Payment extends ActiveRecord
     public function getDebitPayment()
     {
         return $this->hasOne(self::className(), ['id' => 'credit_payment_id'])
-            ->viaTable('credit_usage', ['debit_payment_id' => 'id']);
+        ->viaTable('credit_usage', ['debit_payment_id' => 'id']);
     }
 
     public function getInvoicePayment()
     {
-        return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'id'])
-        ->andWhere(['invoice_payment.isDeleted' => false]);
+        return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'id']);
     }
 
     public function isInvoicePayment()
@@ -238,8 +202,7 @@ class Payment extends ActiveRecord
 
     public function getInvoicePayments()
     {
-        return $this->hasMany(InvoicePayment::className(), ['payment_id' => 'id'])
-        ->andWhere(['invoice_payment.isDeleted' => false]);
+        return $this->hasMany(InvoicePayment::className(), ['payment_id' => 'id']);
     }
 
     public function getPaymentCheque()
@@ -276,6 +239,13 @@ class Payment extends ActiveRecord
         $transaction = new Transaction();
         $transaction->save();
         $this->transactionId = $transaction->id;
+        if (!empty($this->invoiceId)) {
+            $model = Invoice::findOne(['id' => $this->invoiceId]);
+            $this->user_id = $model->user_id;
+        } elseif (!empty($this->lessonId)) {
+            $model = Lesson::findOne(['id' => $this->lessonId]);
+            $this->user_id = $model->enrolment->student->customer->id;
+        }
         $this->isDeleted = false;
         if (empty($this->date)) {
             $this->date = (new \DateTime())->format('Y-m-d H:i:s');
@@ -298,17 +268,8 @@ class Payment extends ActiveRecord
             $invoicePaymentModel = new InvoicePayment();
             $invoicePaymentModel->invoice_id = $this->invoiceId;
             $invoicePaymentModel->payment_id = $this->id;
-            $invoicePaymentModel->amount     = $this->amount;
             $invoicePaymentModel->save();
             $this->invoice->save();
-        }
-        if (!empty($this->lessonId) && !empty($this->enrolmentId)) {
-            $lessonPayment = new LessonPayment();
-            $lessonPayment->lessonId    = $this->lessonId;
-            $lessonPayment->paymentId   = $this->id;
-            $lessonPayment->amount      = $this->amount;
-            $lessonPayment->enrolmentId = $this->enrolmentId;
-            $lessonPayment->save();
         }
         $this->trigger(self::EVENT_CREATE);
         
@@ -348,14 +309,14 @@ class Payment extends ActiveRecord
 
     public function isAutoPayments()
     {
-        return $this->isCreditApplied() || $this->isCreditUsed() || $this->isAccountEntry();
+        return $this->isCreditApplied() || $this->isCreditUsed();
     }
 
     public function afterSoftDelete()
     {
         if ($this->isAutoPayments()) {
             if ($this->isCreditApplied()) {
-                if ($this->creditUsage->debitUsagePayment && !$this->creditUsage->debitUsagePayment->isDeleted) {
+                if ($this->creditUsage->debitUsagePayment) {
                     $this->creditUsage->debitUsagePayment->delete();
                 }
                 if ($this->lessonCredit) {
@@ -365,44 +326,14 @@ class Payment extends ActiveRecord
                     }
                 }
             } else {
-                if ($this->debitUsage->creditUsagePayment && !$this->debitUsage->creditUsagePayment->isDeleted) {
+                if ($this->debitUsage->creditUsagePayment) {
                     $this->debitUsage->creditUsagePayment->delete();
                 }
-            }
-        }
-        foreach ($this->invoicePayments as $invoicePayment) {
-            if (!$invoicePayment->isDeleted) {
-                $invoicePayment->delete();
-            }
-        }
-        foreach ($this->lessonPayments as $lessonPayment) {
-            if (!$lessonPayment->isDeleted) {
-                $lessonPayment->delete();
             }
         }
         if ($this->invoice) {
             $this->invoice->save();
         }
         return true;
-    }
-
-    public function getCreditAmount()
-    {
-        $invoicePaymentAmount = 0;
-        $lessonPaymentAmount = 0;
-        $invoicePayments = $this->invoicePayments;
-        $lessonPayments = $this->lessonPayments;
-        foreach ($invoicePayments as $invoicePayment) {
-            $invoicePaymentAmount += $invoicePayment->amount;
-        }
-        foreach ($lessonPayments as $lessonPayment) {
-            $lessonPaymentAmount += $lessonPayment->amount;
-        }
-        return $this->amount - ($lessonPaymentAmount + $invoicePaymentAmount);
-    }
-
-    public function hasCredit()
-    {
-        return $this->creditAmount > 0.00;
     }
 }

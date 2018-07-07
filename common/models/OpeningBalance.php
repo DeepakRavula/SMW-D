@@ -4,7 +4,10 @@ namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use common\models\query\PaymentQuery;
+use common\models\PaymentMethod;
 use Carbon\Carbon;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "payments".
@@ -20,7 +23,7 @@ class OpeningBalance extends ActiveRecord
     public $isCredit;
     public $amount;
     public $user_id;
-
+    
     /**
      * {@inheritdoc}
      */

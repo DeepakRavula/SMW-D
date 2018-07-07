@@ -142,6 +142,9 @@ a.desc:after {
 .m-r-45{
     margin-right:45px;
 }
+.m-r-55{
+    margin-right:55px;
+}
 .m-t-n-35 {
 	margin-top:-35px;
 }
@@ -448,9 +451,6 @@ dl {
 }
 .direct-chat-timestamp {
     color: #999;
-}
-.amount-needed {
-    font-weight: bold;
 }
 .show-all-top {
     margin-top: -10px;
