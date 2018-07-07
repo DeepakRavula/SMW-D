@@ -298,6 +298,9 @@ use yii\bootstrap\Html;
         if ($('#invoice-payment-listing').length) {
             $.pjax.reload({container: "#invoice-payment-listing", replace: false, async: false, timeout: 6000});
         }
+	if ($('#customer-view').length) {
+	    $.pjax.reload({container:"#customer-view",replace:false, async: false, timeout: 6000});
+    }
         return false;
     });
 
