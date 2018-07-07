@@ -143,9 +143,9 @@ class LessonController extends BaseController
         $payments = LessonPayment::find()
             ->joinWith(['payment' => function ($query) {
                 $query->notDeleted();
-            }])
-            ->andWhere(['lesson_payment.lessonId' => $id, 'lesson_payment.enrolmentId' => $enrolment->id])
-            ->notDeleted();
+        }])
+        ->andWhere(['lesson_payment.lessonId' => $id])
+        ->notDeleted();
         $paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments
         ]);
