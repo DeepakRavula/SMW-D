@@ -12,6 +12,7 @@ use common\models\Lesson;
 use common\models\ExamResult;
 use common\models\Student;
 use common\models\User;
+use common\models\Location;
 use backend\models\search\LessonSearch;
 use backend\models\search\InvoiceSearch;
 use backend\models\search\UserSearch;
@@ -30,21 +31,27 @@ use backend\models\search\ProformaInvoiceSearch;
  */
 class PrintController extends BaseController
 {
-	public function behaviors()
+    public function behaviors()
     {
         return [
-			'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['invoice', 'course', 'evaluation', 'teacher-lessons', 'time-voucher', 'customer-invoice', 'account-view', 'royalty', 'royalty-free', 'tax-collected', 'user', 'customer-items-print', 'proforma-invoice','payment'],
+                        'actions' => [
+                            'invoice', 'course', 'evaluation', 'teacher-lessons', 
+                            'time-voucher', 'customer-invoice', 'account-view', 
+                            'royalty', 'royalty-free', 'tax-collected', 'user', 
+                            'customer-items-print', 'proforma-invoice','payment'
+                        ],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
             ],  
         ];
     }
+    
     public function actionInvoice($id)
     {
         $model = Invoice::findOne(['id' => $id]);
@@ -79,6 +86,7 @@ class PrintController extends BaseController
             'searchModel'=>$searchModel,
         ]);
     }
+    
     public function actionCourse($id)
     {
         $model = Course::findOne(['id' => $id]);
@@ -99,6 +107,7 @@ class PrintController extends BaseController
             'lessonDataProvider' => $lessonDataProvider,
         ]);
     }
+    
     public function actionEvaluation($studentId)
     {
         $studentModel = Student::findOne(['id' => $studentId]);
@@ -114,11 +123,11 @@ class PrintController extends BaseController
             'examResultDataProvider' => $examResultDataProvider,
         ]);
     }
+    
     public function actionTeacherLessons($id)
     {
         $model = User::findOne(['id' => $id]);
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $request = Yii::$app->request;
         $lessonSearch = new LessonSearch();
         $lessonSearch->fromDate = new \DateTime();
@@ -198,11 +207,11 @@ class PrintController extends BaseController
             'searchModel' => $invoiceSearchModel,
         ]);
     }
+    
     public function actionCustomerInvoice($id)
     {
         $model = User::findOne(['id' => $id]);
-        $session = Yii::$app->session;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $request = Yii::$app->request;
         $currentDate = new \DateTime();
         $model->fromDate = $currentDate->format('1-m-Y');
@@ -243,6 +252,7 @@ class PrintController extends BaseController
             'dateRange' => $model->dateRange,
         ]);
     }
+    
     public function actionAccountView($id, $accountView)
     {
         $model = User::findOne(['id' => $id]);
@@ -267,6 +277,7 @@ class PrintController extends BaseController
                 'userModel' => $model,
         ]);
     }
+    
     public function actionRoyaltyFree()
     {
         $searchModel = new ReportSearch();
@@ -283,7 +294,7 @@ class PrintController extends BaseController
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $royaltyFreeItems = InvoiceLineItem::find()
                 ->notDeleted()
             ->joinWith(['invoice' => function ($query) use ($locationId, $searchModel) {
@@ -305,6 +316,7 @@ class PrintController extends BaseController
                 'royaltyFreeDataProvider' => $royaltyFreeDataProvider,
         ]);
     }
+    
     public function actionTaxCollected()
     {
         $searchModel = new ReportSearch();
@@ -321,7 +333,7 @@ class PrintController extends BaseController
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $invoiceTaxes = InvoiceLineItem::find()
                 ->notDeleted()
             ->joinWith(['invoice' => function ($query) use ($locationId, $searchModel) {
@@ -344,6 +356,7 @@ class PrintController extends BaseController
                 'taxDataProvider' => $taxDataProvider,
         ]);
     }
+    
     public function actionRoyalty()
     {
         $searchModel = new ReportSearch();
@@ -360,7 +373,7 @@ class PrintController extends BaseController
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 
         $invoiceTaxTotal = Invoice::find()
             ->andWhere(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
@@ -395,6 +408,7 @@ class PrintController extends BaseController
                 'royaltyPayment' => $royaltyPayment,
         ]);
     }
+    
     public function actionUser()
     {
         $searchModel = new UserSearch();
@@ -439,6 +453,7 @@ class PrintController extends BaseController
             'searchModel' => $searchModel,
         ]);
     }
+    
     public function actionProformaInvoice($id)
     {
         $model = ProformaInvoice::findOne($id);
@@ -472,7 +487,9 @@ class PrintController extends BaseController
             'searchModel'=>$searchModel,
         ]);
     }
-     public function actionPayment($id) {
+    
+    public function actionPayment($id) 
+    {
         $model = Payment::findOne($id);
         $lessonPayment = Lesson::find()
 		    ->joinWith(['lessonPayments' => function ($query) use ($id) {

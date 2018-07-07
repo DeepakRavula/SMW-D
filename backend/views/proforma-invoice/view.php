@@ -1,7 +1,5 @@
 <?php
-//print_r($model->id);die;
-/* @var $this yii\web\View */
-/* @var $model common\models\Invoice */
+
 use common\models\Note;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
