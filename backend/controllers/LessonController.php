@@ -88,11 +88,11 @@ class LessonController extends BaseController
         $searchModel = new LessonSearch();
         $request = Yii::$app->request;
         $lessonRequest = $request->get('LessonSearch');
-        $searchModel->lessonStatus = Lesson::STATUS_SCHEDULED;
+        //$searchModel->lessonStatus = Lesson::STATUS_SCHEDULED;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        if (!empty($lessonRequest['dateRange'])) {
-            $searchModel->dateRange = $lessonRequest['dateRange'];
-        }
+//        if (!empty($lessonRequest['dateRange'])) {
+//            $searchModel->dateRange = $lessonRequest['dateRange'];
+//        }
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

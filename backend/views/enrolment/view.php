@@ -170,7 +170,7 @@ $this->render('_view-enrolment', [
                 var dateRange = "";
                 var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
                 var student = '<?= $model->student->id ?>';
-		var status = '';
+		var status = "";
                 var params = $.param({'LessonSearch[student]': student, 'LessonSearch[type]': type, 'lessonSearch[lessonStatus]': status,'lessonSearch[dateRange]': dateRange});
                 var url = '<?= Url::to(['lesson/index']); ?>?' + params;
                 $('.see-more').attr("href", url);

@@ -66,7 +66,6 @@ class LessonSearch extends Lesson
     {
         $this->fromDate = (new \DateTime())->format('M d, Y');
         $this->toDate = (new \DateTime())->format('M d, Y');
-        $this->dateRange = $this->fromDate.' - '.$this->toDate;
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Lesson::find()
             ->isConfirmed()
@@ -89,7 +88,9 @@ class LessonSearch extends Lesson
             ]);
             return $dataProvider;
         }
-
+//	print_r($this->student);
+//	print_r($this->lessonStatus);
+//	print_r($this->dateRange);die("mddm");
         $query->andFilterWhere(['student.id' => $this->student]);
         $query->andFilterWhere(['program.id' => $this->program]);
 	
