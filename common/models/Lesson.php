@@ -219,8 +219,8 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function isScheduledOrRescheduled()
     {
-        return (int) $this->status === self::STATUS_SCHEDULED ||
-            (int) $this->status === self::STATUS_RESCHEDULED;
+        return (int) $this->status === self::STATUS_SCHEDULED || 
+                (int) $this->status === self::STATUS_RESCHEDULED;
     }
     
     public function isResolveSingleLesson()
@@ -341,7 +341,7 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(Student::className(), ['id' => 'studentId'])
                 ->via('enrolment');
     }
-
+    
     public function getDiscounts()
     {
         return $this->hasMany(LessonDiscount::className(), ['lessonId' => 'id']);
@@ -1036,14 +1036,14 @@ class Lesson extends \yii\db\ActiveRecord
                 $query->notDeleted();
             }])
             ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
-            ->notDeleted()
+                ->notDeleted()
             ->sum('payment.amount');
     }
     
     public function getCreditAppliedAmount($enrolmentId)
     {
         return LessonPayment::find()
-            ->notDeleted()
+                ->notDeleted()
 		    ->joinWith(['payment' => function ($query) {
                 $query->notDeleted()
                     ->notCreditUsed();
@@ -1060,8 +1060,8 @@ class Lesson extends \yii\db\ActiveRecord
                     ->notCreditUsed();
             }])
             ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
-            ->notDeleted()
-            ->all();
+                ->notDeleted()
+                ->all();
     }
     
     public function getCreditUsedAmount($enrolmentId)
@@ -1072,8 +1072,8 @@ class Lesson extends \yii\db\ActiveRecord
                     ->creditUsed();
             }])
             ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
-            ->notDeleted()
-            ->sum('amount');
+                ->notDeleted()
+                ->sum('amount');
     }
 
     public function getCreditUsedPayment($enrolmentId)
@@ -1083,11 +1083,11 @@ class Lesson extends \yii\db\ActiveRecord
                 $query->notDeleted()
                     ->creditUsed();
             }])
-            ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
-            ->notDeleted()
-            ->all();
+                ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
+                ->notDeleted()
+                ->all();
     }
-    
+
     public function getProformaLessonItem()
     {
         return $this->hasOne(ProformaItemLesson::className(), ['lessonId' => 'id']);
@@ -1380,6 +1380,25 @@ class Lesson extends \yii\db\ActiveRecord
         return $lessonDiscount->save();
     }
 
+    
+    public function getPaidAmount($id) 
+    {
+        $amount = 0.0;
+        $lessonPayments = $this->getPaymentsById($id);
+        foreach ($lessonPayments as $payment) {
+            $amount += $payment->amount;
+        }
+        return $amount;
+    }
+
+    public function getPaymentsById($id) 
+    {
+        return LessonPayment::find()
+            ->notDeleted()
+            ->andWhere(['paymentId' => $id, 'lessonId' => $this->id])
+            ->all();
+    }
+
     public function addEnrolmentDiscount($discount = null)
     {
         $lessonDiscount = new LessonDiscount();
@@ -1395,9 +1414,11 @@ class Lesson extends \yii\db\ActiveRecord
         return $lessonDiscount->save();
     }
 
-    public function addLineItemDiscount($discount = null)
+    public function addLineItemDiscount($discount)
     {
         $lessonDiscount = new LessonDiscount();
+        $lessonDiscount->id = null;
+        $lessonDiscount->isNewRecord = true;
         $lessonDiscount = clone $discount;
         $lessonDiscount->lessonId = $this->id;
         return $lessonDiscount->save();

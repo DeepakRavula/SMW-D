@@ -5,7 +5,6 @@ use yii\jui\DatePicker;
 use common\models\PaymentMethod;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
-use yii\jui\Accordion;
 use kartik\select2\Select2;
 use common\models\Location;
 use common\models\User;

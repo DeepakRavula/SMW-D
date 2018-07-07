@@ -2,11 +2,6 @@
 use yii\db\Migration;
 use common\models\Invoice;
 use common\models\User;
-use common\models\InvoicePayment;
-use common\models\LessonPayment;
-use common\models\InvoiceLineItem;
-use common\models\discount\LessonDiscount;
-use common\models\Lesson;
 /**
  * Class m180616_113552_pfi_refactor
  */

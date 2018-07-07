@@ -14,7 +14,6 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
-use backend\models\lesson\discount\LessonMultiDiscount;
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
@@ -30,9 +29,7 @@ class PrivateLessonController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => [
-                    'merge', 'update-attendance', 'delete', 'apply-discount','edit-duration',
-                ],
+                'only' => ['merge', 'update-attendance', 'delete'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -43,10 +40,7 @@ class PrivateLessonController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => [
-                            'index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance',
-                                'apply-discount','edit-duration'
-                        ],
+                        'actions' => ['index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance'],
                         'roles' => ['managePrivateLessons'],
                     ],
                 ],
@@ -132,25 +126,20 @@ class PrivateLessonController extends BaseController
      *
      * @return mixed
      */
-    public function actionDelete()
+    public function actionDelete($id)
     {
-        $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
-        $isBulk = Yii::$app->request->get('PrivateLesson')['isBulk'];
-        $lessons = Lesson::findAll($lessonIds);
-        foreach ($lessons as $lesson) {
-            if (!$lesson->isDeletable()) {
-                return [
-                    'status' => false,
-                    'message' => 'You can\'t delete this lesson.',
-                ];
-            }
-        }
-        foreach ($lessons as $lesson) {
+        $model = $this->findModel($id);
+        if (!$model->isDeletable()) {
+            $response = [
+                'status' => false,
+                'message' => 'You can\'t delete this lesson.',
+            ];
+        } else {
             $message = 'Lesson has been deleted successfully!';
-            if ($lesson->hasLessonCredit($lesson->enrolment->id)) {
-                $message .= ' Lesson credits transfered to customer account';
+            if ($model->hasLessonCredit($model->enrolment->id)) {
+                $message .= ' Lesson credits transfered to new credit invoice';
             }
-            $lesson->delete();
+            $model->delete();
             $response = [
                 'status' => true,
                 'url' => Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]),
@@ -158,45 +147,6 @@ class PrivateLessonController extends BaseController
             ];
         }
 
-        return $response;
-    }
-    public function actionEditDuration()
-    {
-        $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
-        $lessonId = end($lessonIds);
-      
-        foreach ($lessonIds as $lessonId) {
-            $model = $this->findModel($lessonId);
-            if(!$model->isEditable()){
-                return [
-                    'status' => false,
-                    'message' => ' One of the chosen lesson is invoiced. You can\'t edit duration for this lessons',
-                ]; 
-            }
-        }
-        $model = new Lesson();
-        $data = $this->renderAjax('_form-edit-duration', [
-            'lessonIds' => $lessonIds,
-            'model' => $model,
-            
-        ]);
-        $post = Yii::$app->request->post();
-        if ($post) {
-            foreach ($lessonIds as $lessonId) {
-                $model = $this->findModel($lessonId);
-                $model->load($post);
-                $model->save();
-            }
-            $response = [
-                'status' => true,
-                'message' => 'Lesson Duration Edited Sucessfully',
-            ];
-        } else {
-              $response = [
-                'status' => true,
-                'data' => $data
-            ];
-        }
         return $response;
     }
 
@@ -214,7 +164,7 @@ class PrivateLessonController extends BaseController
     public function actionMerge($id)
     {
         $model = $this->findModel($id);
-        $model->setScenario(Lesson::SCENARIO_MERGE);
+        $model->setScenario(Lesson::SCENARIO_EDIT);
         $post = Yii::$app->request->post();
         $additionalDuration = new \DateTime(Lesson::DEFAULT_MERGE_DURATION);
         $lessonDuration = new \DateTime($model->duration);
@@ -222,7 +172,6 @@ class PrivateLessonController extends BaseController
             . 'H' . $additionalDuration->format('i') . 'M'));
         $model->duration = $lessonDuration->format('H:i:s');
         $splitLesson = $this->findModel($post['radioButtonSelection']);
-        $model->splittedLessonId = $splitLesson->id;
         if ($model->validate()) {
             $splitLesson->privateLesson->merge($model);
             Yii::$app->session->setFlash('alert', [
@@ -234,7 +183,7 @@ class PrivateLessonController extends BaseController
         } else {
             $errors = ActiveForm::validate($model);
             return [
-                'error' => end($errors),
+                'errors' => $errors,
                 'status' => false
             ];
         }
@@ -267,61 +216,5 @@ class PrivateLessonController extends BaseController
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-    }
-
-    public function actionApplyDiscount()
-    {
-        $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
-        $lessonId = end($lessonIds);
-        $model = $this->findModel($lessonId);
-        foreach ($lessonIds as $lessonId) {
-            $model = $this->findModel($lessonId);
-            if(!$model->isEditable()){
-                return [
-                    'status' => false,
-                    'message' => ' One of the chosen lesson is invoiced. You can\'t edit discount for this lessons',
-                ]; 
-            }
-        }
-        $lineItemDiscount = LessonMultiDiscount::loadLineItemDiscount($lessonIds);
-        $paymentFrequencyDiscount = LessonMultiDiscount::loadPaymentFrequencyDiscount($lessonIds);
-        $customerDiscount = LessonMultiDiscount::loadCustomerDiscount($lessonIds);
-        $multiEnrolmentDiscount = LessonMultiDiscount::loadEnrolmentDiscount($lessonIds);
-        $data = $this->renderAjax('_form-apply-discount', [
-            'lessonIds' => $lessonIds,
-            'model' => $model,
-            'customerDiscount' => $customerDiscount,
-            'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
-            'lineItemDiscount' => $lineItemDiscount,
-            'multiEnrolmentDiscount' => $multiEnrolmentDiscount
-        ]);
-        $post = Yii::$app->request->post();
-        if ($post) {
-            foreach ($lessonIds as $lessonId) {
-                $model = $this->findModel($lessonId);
-                $lineItemDiscount = LessonMultiDiscount::loadLineItemDiscount([$lessonId]);
-                $customerDiscount = LessonMultiDiscount::loadCustomerDiscount([$lessonId]);
-                $lineItemDiscount->load($post);
-                $customerDiscount->load($post);
-                $lineItemDiscount->save();
-                $customerDiscount->save();
-                $paymentFrequencyDiscount = LessonMultiDiscount::loadPaymentFrequencyDiscount([$lessonId]);
-                $multiEnrolmentDiscount = LessonMultiDiscount::loadEnrolmentDiscount([$lessonId]);
-                $paymentFrequencyDiscount->load($post);
-                $multiEnrolmentDiscount->load($post);
-                $paymentFrequencyDiscount->save();
-                $multiEnrolmentDiscount->save();
-            }
-            $model->save();
-            $response = [
-                'status' => true
-            ];
-        } else {
-            return [
-                'status' => true,
-                'data' => $data
-            ];
-        }
-        return $response;
     }
 }

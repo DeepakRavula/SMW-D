@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Payment;
 use Yii;
 use yii\helpers\Url;
 use common\models\Location;

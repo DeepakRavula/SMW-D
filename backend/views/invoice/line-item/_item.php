@@ -1,7 +1,6 @@
 <?php
 use yii\helpers\Url;
 use common\models\User;
-use common\models\Invoice;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\widgets\Pjax;
@@ -19,16 +18,10 @@ use yii\widgets\Pjax;
     'model' => $model,
 ]);?>
 <?php
-	if($model->type == Invoice::TYPE_PRO_FORMA_INVOICE) {
-        $panelName = 'Lessons';
-        $boxTools = '';
-	} else {
-		$panelName = 'Items';
-	}
     LteBox::begin([
         'type' => LteConst::TYPE_DEFAULT,
         'boxTools' => $boxTools,
-        'title' => $panelName,
+        'title' => 'Items',
         'withBorder' => true,
     ])
     ?>

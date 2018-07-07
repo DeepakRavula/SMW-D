@@ -1,19 +1,14 @@
 <?php
 
-use yii\helpers\Url;
+use yii\helpers\Html;
 use common\Models\User;
-use yii\widgets\Pjax;
+use yii\helpers\Url;
 ?>
 
-<?php Pjax::begin([
-    'id' => 'lesson-more-action',
-    'timeout' => 6000,
-]) ?>
-<div class="pull-right">
+<div class="m-b-10 pull-right">
     <div class="btn-group">
         <button class="btn dropdown-toggle" data-toggle="dropdown">More Action&nbsp;&nbsp;<span class="caret"></span></button>
         <ul class="dropdown-menu dropdown-menu-right">
-            <li><a id="receive-payment" href="#">Receive Payment</a></li>
             <li><a id="lesson-mail-button" href="#">Mail</a></li>
             <?php if ($model->isPrivate()) : ?>
                 <?php if ($model->canExplode()) : ?>
@@ -27,10 +22,10 @@ use yii\widgets\Pjax;
                     <li><a id="lesson-delete" href="#">Delete</a></li>
                 <?php endif; ?>
             <?php endif; ?>
+            
         </ul>
     </div>
 </div>
-<?php Pjax::end(); ?>	
 
 <script>
     $(document).on('click', '#split-lesson', function () {
@@ -41,21 +36,4 @@ use yii\widgets\Pjax;
         });
         return false;
     });
-
-    $(document).off('click', '#receive-payment').on('click', '#receive-payment', function () {
-        $.ajax({
-            url    : '<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->customer->id]); ?>',
-            type   : 'get',
-            dataType: 'json',
-            success: function(response)
-            {
-                if (response.status) {
-                    $('#modal-content').html(response.data);
-                    $('#popup-modal').modal('show');
-                    
-                }
-            }
-        });
-    });
-
 </script>

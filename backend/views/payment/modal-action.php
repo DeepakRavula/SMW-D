@@ -1,0 +1,1 @@
+<div class="row"> <div class="col-md-6"> <h4 class="m-0">Payment</h4> </div> <div class="col-md-6"> <div class = "pull-right"><a id="edit" href="#"><i class="fa fa-pencil m-r-10"></i></a><a id="print" href="#"><i class="fa fa-print m-r-10"></i></a>  </div> </div> </div>

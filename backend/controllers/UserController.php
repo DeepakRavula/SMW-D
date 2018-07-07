@@ -4,11 +4,13 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\User;
+use common\models\CompanyAccount;
 use common\models\TeacherAvailability;
 use common\models\Qualification;
 use common\models\Enrolment;
 use backend\models\UserForm;
 use common\models\Lesson;
+use common\models\CustomerAccount;
 use backend\models\search\LessonSearch;
 use common\models\Note;
 use common\models\Location;
@@ -37,7 +39,6 @@ use trntv\filekit\actions\UploadAction;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 use common\models\Payment;
-use common\models\Transaction;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -353,22 +354,20 @@ class UserController extends BaseController
             'query' => $notes,
         ]);
     }
-    protected function getAccountDataProvider($id)
+    protected function getAccountDataProvider($id, $accountView)
     {
-        $paymentQuery = Transaction::find()
-                ->manualPayments($id);
-        $invoiceQuery = Transaction::find()
-                ->invoices($id)
-                ->union($paymentQuery)
-                ->all();
-        
-        $ids = ArrayHelper::getColumn($invoiceQuery, 'id');
-        $accountQuery = Transaction::find()
-            ->andWhere(['id' => $ids])
-            ->orderBy(['transaction.id' => SORT_DESC]);
+        if (!$accountView) {
+            $accountQuery = CompanyAccount::find()
+                        ->andWhere(['userId' => $id])
+                        ->orderBy(['transactionId' => SORT_DESC]);
+        } else {
+            $accountQuery = CustomerAccount::find()
+                        ->andWhere(['userId' => $id])
+                        ->orderBy(['transactionId' => SORT_DESC]);
+        }
         return new ActiveDataProvider([
-            'query' => $accountQuery
-        ]);
+                'query' => $accountQuery
+            ]);
     }
     protected function getPrivateQualificationDataProvider($id)
     {
@@ -478,7 +477,6 @@ class UserController extends BaseController
         }
 
         return $this->render('view', [
-            'isCustomerView' => $searchModel->accountView,
             'minTime' => $minTime,
             'maxTime' => $maxTime,
             'model' => $model,
@@ -500,7 +498,7 @@ class UserController extends BaseController
             'openingBalanceCredit' => $this->getOpeningBalanceCredit($id),
             'teacherLessonDataProvider' => $this->getTeacherLessonDataProvider($id, $locationId,$lessonSearchModel->summariseReport),
             'noteDataProvider' => $this->getNoteDataProvider($id),
-            'accountDataProvider' => $this->getAccountDataProvider($id),
+            'accountDataProvider' => $this->getAccountDataProvider($id, $searchModel->accountView),
             'teachersAvailabilities' => $this->getTeacherAvailabilities($id, $locationId),
             'privateQualificationDataProvider' => $this->getPrivateQualificationDataProvider($id),
             'groupQualificationDataProvider' => $this->getGroupQualificationDataProvider($id),
@@ -513,8 +511,6 @@ class UserController extends BaseController
 
     public function actionCreate()
     {
-
-        
         $model = new UserForm(['scenario' => UserForm::SCENARIO_CREATE]);
         $emailModel = new UserEmail();
         $model->roles = Yii::$app->request->queryParams['role_name'];

@@ -23,7 +23,6 @@ use common\models\User;
 use common\components\controllers\BaseController;
 use Carbon\CarbonInterval;
 use backend\models\search\ScheduleSearch;
-use common\models\Invoice;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.

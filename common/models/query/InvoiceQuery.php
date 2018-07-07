@@ -191,7 +191,7 @@ class InvoiceQuery extends \yii\db\ActiveQuery
             'invoice.type' => Invoice::TYPE_INVOICE
         ]);
     }
-
+    
     public function lessonInvoice()
     {
         return $this->invoice()

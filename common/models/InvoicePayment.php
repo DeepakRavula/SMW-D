@@ -96,6 +96,9 @@ class InvoicePayment extends \yii\db\ActiveRecord
 
     public function afterSoftDelete()
     {
+        if ($this->payment->isAutoPayments() && !$this->payment->isDeleted) {
+            $this->payment->delete();
+        }
         if ($this->invoice) {
             $this->invoice->save();
         }

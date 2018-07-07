@@ -1,0 +1,1 @@
+<div class="pull-right"> <h4 class="amount-needed"> Amount Paid <?= Yii::$app->formatter->asCurrency($model->amount) ?> </h4> </div>
