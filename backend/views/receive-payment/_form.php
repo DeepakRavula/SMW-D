@@ -264,8 +264,8 @@ use yii\bootstrap\Html;
         return false;
     });
 
-    $(document).off('change', '#paymentform-amount').on('keyup', '#paymentform-amount', function () {
-        lockTextBox =   true;
+    $(document).off('keyup', '#paymentform-amount').on('keyup', '#paymentform-amount', function () {
+        lockTextBox = true;
         receivePayment.calcAmountNeeded();
         return false;
     });
