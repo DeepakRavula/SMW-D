@@ -107,7 +107,6 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         $lastInvoice   = $this->lastInvoice();
-        $invoiceNumber = 1;
         if (!empty($lastInvoice)) {
             $proformaInvoiceNumber = $lastInvoice->proforma_invoice_number + 1;
         }
