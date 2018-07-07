@@ -48,7 +48,6 @@ class PaymentForm extends Model
     public $canUsePaymentCredits;
     public $selectedCreditValue;
     public $paymentId;
-    public $lockTextBox;
     /**
      * {@inheritdoc}
      */
@@ -60,7 +59,7 @@ class PaymentForm extends Model
             [['date', 'amountNeeded', 'invoiceIds', 'canUseInvoiceCredits', 'selectedCreditValue',
                 'lessonIds', 'canUsePaymentCredits', 'creditIds', 'amount', 'userId',
                 'amountToDistribute', 'invoicePayments', 'lessonPayments','paymentId',
-                'creditPayments','lockTextBox'], 'safe']
+                'creditPayments'], 'safe']
         ];
     }
 
