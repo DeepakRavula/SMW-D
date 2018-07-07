@@ -37,7 +37,7 @@ use yii\bootstrap\Html;
     ]); ?>
 
     <div class="row">
-        <div class="col-xs-4">
+        <div class="col-xs-3">
             <?= $form->field($model, 'userId')->widget(Select2::classname(), [
                 'data' => $customers,
                 'options' => [
@@ -60,12 +60,12 @@ use yii\bootstrap\Html;
                 ]
             ])->label('Date'); ?>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-2">
             <?= $form->field($model, 'payment_method_id')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))
                 ->label('Payment Method'); ?>
         </div>
 	<div class="col-xs-2">
-            <?= $form->field($model, 'reference')->textInput(['class' => 'text-right form-control'])->label('Reference'); ?>
+            <?= $form->field($model, 'reference')->textInput(['class' => 'form-control'])->label('Reference'); ?>
         </div>
         <div class="col-xs-2">
             <?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control'])->label('Amount Received'); ?>
@@ -214,6 +214,7 @@ use yii\bootstrap\Html;
                     creditAmount += parseFloat($(this).find('.credit-amount').val());
                 }
             });
+            amountNeeded    =   amountNeeded-creditAmount;
             $('#selected-credit-value').val((creditAmount).toFixed(2));
             $('.credit-selected').text((creditAmount).toFixed(2));
             $('.amount-to-apply').text((amountToDistribute).toFixed(2));

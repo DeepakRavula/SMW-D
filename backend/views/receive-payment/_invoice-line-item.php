@@ -8,6 +8,7 @@ use yii\bootstrap\Html;
 <?php
     $columns = [];
     if ($searchModel->showCheckBox) {
+        $contentWidth   =   "width:0px;";
         array_push($columns, [
             'class' => 'yii\grid\CheckboxColumn',
             'contentOptions' => ['style' => 'width:30px;'],
@@ -15,6 +16,9 @@ use yii\bootstrap\Html;
                 return ['checked' => true, 'class' =>'check-checkbox'];
             }
         ]);
+    }
+    else{
+        $contentWidth   =   "width:650px;";
     }
 
     array_push($columns, [
@@ -27,8 +31,8 @@ use yii\bootstrap\Html;
     ]);
 
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-left','style' => 'width:650px;'],
-        'contentOptions' => ['class' => 'text-left','style' => 'width:650px;'],
+        'headerOptions' => ['class' => 'text-left','style' => $contentWidth],
+        'contentOptions' => ['class' => 'text-left','style' => $contentWidth],
         'label' => 'Number',
         'value' => function ($data) {
             return $data->invoiceNumber;
