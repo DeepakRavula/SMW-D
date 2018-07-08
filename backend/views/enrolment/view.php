@@ -206,7 +206,7 @@ $this->render('_view-enrolment', [
                 var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
                 var student = '<?= $model->student->id ?>';
 		var status = "";
-                var params = $.param({'LessonSearch[student]': student, 'LessonSearch[type]': type, 'lessonSearch[lessonStatus]': status, 'lessonSearch[isSeeMore]': true });
+                var params = $.param({'LessonSearch[student]': student, 'LessonSearch[type]': type, 'LessonSearch[lessonStatus]': status, 'LessonSearch[isSeeMore]': true });
                 var url = '<?= Url::to(['lesson/index']); ?>?' + params;
                 $('.see-more').attr("href", url);
             }

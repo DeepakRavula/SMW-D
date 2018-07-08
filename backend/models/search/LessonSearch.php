@@ -65,7 +65,6 @@ class LessonSearch extends Lesson
      */
     public function search($params)
     {
-	//print_r($this->isSeeMore);
         $this->fromDate = (new \DateTime())->format('M d, Y');
         $this->toDate = (new \DateTime())->format('M d, Y');
 	if($this->isSeeMore == false) {
