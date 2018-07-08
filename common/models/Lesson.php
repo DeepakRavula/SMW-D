@@ -226,6 +226,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return (int) $this->applyContext === self::APPLY_SINGLE_LESSON;
     }
+
     public function isUnscheduled()
     {
         return (int) $this->status === self::STATUS_UNSCHEDULED;
@@ -653,6 +654,7 @@ class Lesson extends \yii\db\ActiveRecord
         $number = str_pad($this->id, 6, 0, STR_PAD_LEFT);
         return 'L-' . $number;
     }
+
     public function getScheduleTitle()
     {
         if ($this->isGroup()) {
@@ -661,6 +663,7 @@ class Lesson extends \yii\db\ActiveRecord
             return $this->enrolment->student->fullName;
         }
     }
+
     public function getClass()
     {
         if (!empty($this->colorCode)) {
@@ -703,8 +706,8 @@ class Lesson extends \yii\db\ActiveRecord
     public function getStatus()
     {
         $status = null;
-	 if ($this->isExpired()) {
-		$status = 'Expired';
+	    if ($this->isExpired()) {
+		    $status = 'Expired';
 		}
 		switch ($this->status) {
             case self::STATUS_SCHEDULED:
@@ -725,12 +728,12 @@ class Lesson extends \yii\db\ActiveRecord
                 }
             break;
             case self::STATUS_UNSCHEDULED:
-		 if (!$this->isExpired()) {
-                $status = 'Unscheduled';	    
-                if ($this->isExploded) {
-                    $status .= ' (Exploded)';
-                } 
-		    }
+		        if (!$this->isExpired()) {
+                    $status = 'Unscheduled';	    
+                    if ($this->isExploded) {
+                        $status .= ' (Exploded)';
+                    } 
+		        }
             break;
         }
 
@@ -1132,7 +1135,7 @@ class Lesson extends \yii\db\ActiveRecord
         $startDate = (new \DateTime($this->course->startDate))->format('Y-m-d');
         $holidays = Holiday::find()
             ->andWhere(['>=', 'DATE(date)', $startDate])
-                        ->all();
+            ->all();
         $holidayDates = ArrayHelper::getColumn($holidays, function ($element) {
             return (new \DateTime($element->date))->format('Y-m-d');
         });
