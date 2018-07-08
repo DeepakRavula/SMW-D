@@ -85,7 +85,7 @@ class PaymentEditForm extends Model
 
         foreach ($invoices as $i => $invoice) {
             $amount = $invoicePayments[$i];
-            $payments = $lesson->getPaymentsById($this->paymentId);
+            $payments = $invoice->getPaymentsById($this->paymentId);
             foreach ($payments as $i => $invoicePayment) {
                 if ($i == 0) {
                     if ($amount == 0) {

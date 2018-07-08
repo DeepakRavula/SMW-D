@@ -246,6 +246,24 @@ class Invoice extends \yii\db\ActiveRecord
             ->onCondition(['payment.isDeleted' => false]);
     }
 
+    public function getPaidAmount($id) 
+    {
+        $amount = 0.0;
+        $invoicePayments = $this->getPaymentsById($id);
+        foreach ($invoicePayments as $payment) {
+            $amount += $payment->amount;
+        }
+        return $amount;
+    }
+
+    public function getPaymentsById($id) 
+    {
+        return InvoicePayment::find()
+            ->notDeleted()
+            ->andWhere(['payment_id' => $id, 'invoice_id' => $this->id])
+            ->all();
+    }
+
     public function getManualPayments()
     {
         return InvoicePayment::find()

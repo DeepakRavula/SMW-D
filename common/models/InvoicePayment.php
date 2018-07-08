@@ -94,6 +94,14 @@ class InvoicePayment extends \yii\db\ActiveRecord
         return parent::beforeSave($insert);
     }
 
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (!$insert) {
+            $this->invoice->save();
+        }
+        return true;
+    }
+
     public function afterSoftDelete()
     {
         if ($this->invoice) {
