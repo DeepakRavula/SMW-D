@@ -67,11 +67,7 @@ class LessonSearch extends Lesson
     {
         $this->fromDate = (new \DateTime())->format('M d, Y');
         $this->toDate = (new \DateTime())->format('M d, Y');
-	if($this->isSeeMore == false) {
 	$this->dateRange = $this->fromDate.' - '.$this->toDate;
-	} elseif($this->isSeeMore == true) {
-		$this->dateRange = "";
-	}
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Lesson::find()
             ->isConfirmed()
@@ -86,6 +82,9 @@ class LessonSearch extends Lesson
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
+	if($this->isSeeMore == true) {
+		$this->dateRange = "";
+	}
         if (!empty($this->ids)) {
             $lessonQuery = Lesson::find()
                     ->andWhere(['id' => $this->ids]);
@@ -94,10 +93,7 @@ class LessonSearch extends Lesson
             ]);
             return $dataProvider;
         }
-	//print_r($this->isSeeMore);die("cvcvcv");
-//	print_r($this->student);
-//	print_r($this->lessonStatus);
-//	print_r($this->dateRange);die("mddm");
+
         $query->andFilterWhere(['student.id' => $this->student]);
         $query->andFilterWhere(['program.id' => $this->program]);
 	
