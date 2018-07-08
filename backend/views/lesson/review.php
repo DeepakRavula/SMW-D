@@ -133,7 +133,7 @@ $this->render('review/_button', [
         return false;
     });
 
-    $(document).on('click','.modal-save, .modal-save-all',function() {
+    $(document).on('click','.modal-save',function() {
         if ($('#lesson-applycontext').length !== 0) {
             $('#lesson-applycontext').val($(this).val());
         }
@@ -154,4 +154,5 @@ $this->render('review/_button', [
         }
         return false;
     });
+    
 </script>

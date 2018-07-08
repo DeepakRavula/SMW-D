@@ -111,4 +111,25 @@ use yii\helpers\Url;
     $(document).on('click', '.glyphicon-remove', function () {
         $('#lesson-date').val('').trigger('change');
     });
+    $(document).off('click', '.modal-save-all').on('click', '.modal-save-all', function() {
+        if ($('#lesson-applycontext').length !== 0) {
+            $('#lesson-applycontext').val($(this).val());
+        }
+        var id  =   '<?=$model->id;?>';
+        $.ajax({
+            url: '<?= Url::to(['lesson/update-field']); ?>?id=' +id ,
+            type: 'get',
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.status)
+                {
+                    $('#popup-modal').modal('hide');
+                    $(document).trigger("modal-success", response);
+                }
+            }
+        });
+
+        return false;
+    });
 </script>
