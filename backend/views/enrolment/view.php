@@ -37,8 +37,8 @@ $this->render('_view-enrolment', [
 	'lessonDataProvider' => $lessonDataProvider,
     ]);
     $noteContent = $this->render('_payment-cycle', [
-        'model' => $model,
-        'paymentCycleDataProvider' => $paymentCycleDataProvider,
+	'model' => $model,
+	'paymentCycleDataProvider' => $paymentCycleDataProvider,
     ]);
     $logContent = $this->render('log/index', [
 	'logDataProvider' => $logDataProvider,
@@ -47,7 +47,7 @@ $this->render('_view-enrolment', [
     <?php
     LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' =>  false,
+	'boxTools' => false,
 	'title' => 'Lessons',
 	'withBorder' => true,
     ])
@@ -66,7 +66,7 @@ $this->render('_view-enrolment', [
     <?php
     LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' =>  false,
+	'boxTools' => false,
 	'title' => 'History',
 	'withBorder' => true,
     ])
@@ -78,36 +78,36 @@ $this->render('_view-enrolment', [
     ?>
     <?php LteBox::end() ?>
     <?php
-    $items       = [
-    [
-        'label' => 'Payment Cycle',
-        'content' => $noteContent,
-        'options' => [
-            'id' => 'payment-cycle',
-        ],
-    ],
-    [
-        'label' => 'Lesson',
-        'content' => $lessonContent,
-        'options' => [
-            'id' => 'lesson',
-        ],
-    ],
-    [
-        'label' => 'History',
-        'content' => $logContent,
-        'options' => [
-            'id' => 'history',
-        ],
-    ]
-];
+    $items = [
+	[
+	    'label' => 'Payment Cycle',
+	    'content' => $noteContent,
+	    'options' => [
+		'id' => 'payment-cycle',
+	    ],
+	],
+	[
+	    'label' => 'Lesson',
+	    'content' => $lessonContent,
+	    'options' => [
+		'id' => 'lesson',
+	    ],
+	],
+	[
+	    'label' => 'History',
+	    'content' => $logContent,
+	    'options' => [
+		'id' => 'history',
+	    ],
+	]
+    ];
     if ($model->course->program->isGroup()) {
 	    array_shift($items);
     }
-    if($model->course->program->isGroup()) {
-    echo Tabs::widget([
-        'items' => $items,
-    ]);
+    if ($model->course->program->isGroup()) {
+	    echo Tabs::widget([
+		'items' => $items,
+	    ]);
     }
     ?>
 </div>
@@ -204,10 +204,9 @@ $this->render('_view-enrolment', [
                 $(".more-lesson").show();
                 var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
                 var student = '<?= $model->student->id ?>';
-                var params = $.param({'LessonSearch[student]': student, 'LessonSearch[type]': type, 'LessonSearch[isSeeMore]': true });
+                var params = $.param({'LessonSearch[student]': student, 'LessonSearch[type]': type, 'LessonSearch[isSeeMore]': true});
                 var url = '<?= Url::to(['lesson/index']); ?>?' + params;
                 $('.see-more').attr("href", url);
             }
         });
 </script>
-
