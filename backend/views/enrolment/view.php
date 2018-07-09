@@ -47,7 +47,7 @@ $this->render('_view-enrolment', [
     <?php
     LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => '',
+	'boxTools' =>  false,
 	'title' => 'Lessons',
 	'withBorder' => true,
     ])
@@ -66,7 +66,7 @@ $this->render('_view-enrolment', [
     <?php
     LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
-	'boxTools' => '',
+	'boxTools' =>  false,
 	'title' => 'History',
 	'withBorder' => true,
     ])
