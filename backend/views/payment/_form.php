@@ -142,7 +142,7 @@ var updatePayment = {
         }
     };
 
-    $(document).off('change', '.paymenteditform-amount, .payment-amount').on('change', '.paymenteditform-amount, .payment-amount', function () {
+    $(document).off('change', '#paymenteditform-amount, .payment-amount').on('change', '#paymenteditform-amount, .payment-amount', function () {
         updatePayment.setAction();
         updatePayment.calcAmountNeeded();
         updatePayment.validateAmount();
@@ -150,7 +150,12 @@ var updatePayment = {
     });
 
     $(document).ready(function () {
+        $('.payment-edit').addClass('modal-save');
+        $('.modal-save').removeClass('payment-edit');
         $('.modal-save').show();
+        $('.modal-save').text('Save');
+        $('.modal-save-all').hide();
+        $('.modal-delete').hide();
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Payment</h4>');
 

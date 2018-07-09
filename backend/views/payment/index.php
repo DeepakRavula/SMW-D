@@ -136,22 +136,26 @@ $columns = [
 <script>
     $(document).on('click', '#payment-listing  tbody > tr', function () {
         var paymentId = $(this).data('key');
-        var customUrl = '<?= Url::to(['payment/view']); ?>?id=' + paymentId;
+		var params = $.param({'PaymentEditForm[paymentId]': paymentId });
+        var customUrl = '<?= Url::to(['payment/view']); ?>?' + params;
         $.ajax({
             url: customUrl,
             type: 'get',
             dataType: "json",
-            data: $(this).serialize(),
             success: function (response)
             {
                 if (response.status) {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
-                    $('.modal-save').hide();
-                    $('.modal-cancel').hide();
                 }
             }
         });
+        return false;
+    });
+
+	$(document).on('modal-success', function(event, params) {
+        var url = "<?= Url::to(['payment/index']); ?>";
+        $.pjax.reload({url: url, container: "#payment-listing", replace: false, timeout: 4000});
         return false;
     });
 </script>

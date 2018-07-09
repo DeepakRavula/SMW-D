@@ -2,13 +2,19 @@
 
 use yii\helpers\Url;
 use yii\bootstrap\Html;
+use yii\bootstrap\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model common\models\Blog */
 /* @var $form yii\bootstrap\ActiveForm */
 
 ?>
 
-<?= $this->render('payment-summary', ['model' => $model]); ?>
+<?php $form = ActiveForm::begin([
+    'id' => 'modal-form',
+    'action' => Url::to(['payment/view', 'PaymentEditForm[paymentId]' => $model->id])
+]); ?>
+
+<?php ActiveForm::end(); ?>
 
 <?php $lessonCount = $lessonDataProvider->getCount(); ?>
 <?php if ($lessonCount > 0) : ?>
@@ -36,23 +42,25 @@ use yii\bootstrap\Html;
 
 <script>
 	$(document).ready(function () {
-		var header = '<?= $this->render('modal-action'); ?>';
+		var header = '<?= $this->render('payment-summary', ['model' => $model]); ?>';
+        var url = '<?= Url::to(['payment/delete','id' => $model->id]); ?>';
         $('#popup-modal').find('.modal-header').html(header);
-	    $('#popup-modal .modal-dialog').css({'width': '1000px'});
+        $('.modal-delete').show();
+        $('.modal-save-all').show();
+        $('.modal-save-all').text('Print');
+        $('.modal-save').text('Edit');
+        $('.modal-save').addClass('payment-edit');
+        $('.payment-edit').removeClass('modal-save');
+        $(".modal-delete").attr("action", url);
+        $('#popup-modal .modal-dialog').css({'width': '1000px'});
 	});
 
-    $(document).on('modal-success', function(event, params) {
-        var url = "<?= Url::to(['payment/index']); ?>";
-        $.pjax.reload({url: url, container: "#payment-listing", replace: false, timeout: 4000});
-        return false;
-    });
-
-    $(document).on("click", "#print", function () {
+    $(document).on("click", ".modal-save-all", function () {
         var url = '<?= Url::to(['print/payment','id' => $model->id]); ?>';
         window.open(url, '_blank');
     });
 
-    $(document).off("click", "#edit").on("click", "#edit", function () {
+    $(document).off("click", ".payment-edit").on("click", ".payment-edit", function () {
         $('#modal-spinner').show();
         var url = '<?= Url::to(['payment/update', 'id' => $model->id]); ?>';
         $.ajax({

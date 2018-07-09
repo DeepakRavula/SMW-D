@@ -468,22 +468,19 @@ class: "small",
 	});
 
     $(document).on("click", "#payment-grid tbody > tr", function() {
-        var paymentId = $(this).data('key');
-        var url = '<?= Url::to(['payment/delete']); ?>?id=' + paymentId;
+        var invoicePaymentId = $(this).data('key');
+        var params = $.param({'PaymentEditForm[invoicePaymentId]': invoicePaymentId });
+        var customUrl = '<?= Url::to(['payment/view']); ?>?' + params;
         $.ajax({
-            url    : '<?= Url::to(['payment/update']); ?>?id=' + paymentId,
-            type   : 'get',
+            url: customUrl,
+            type: 'get',
             dataType: "json",
-            success: function(response)
+            data: $(this).serialize(),
+            success: function (response)
             {
-                if(response.status)
-                {
+                if (response.status) {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
-                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Payment</h4>');
-                    $('#popup-modal .modal-dialog').css({'width': '400px'});
-                    $('.modal-delete').show();
-                    $('.modal-delete').attr('action', url);
                 }
             }
         });
@@ -512,6 +509,7 @@ class: "small",
             });
             return false;
     });
+    
     $(document).on('beforeSubmit', '#walkin-customer-form', function (e) {
             $.ajax({
                     url    : $(this).attr('action'),
@@ -534,28 +532,28 @@ class: "small",
             });
             return false;
     });
-    $(document).on("click", '.add-customer-invoice', function() {
-       $('#customer-spinner').show();
-         var customerId=$(this).attr('data-key');
-         var params = $.param({'customerId': customerId });
-    $.ajax({
-        url    : '<?= Url::to(['invoice/update-customer' ,'id' => $model->id]); ?>&' + params,
-                    type   : 'post',
-                    dataType: "json",
-                    data   : $(this).serialize(),
-                    success: function(response)
-                    {
-                       if(response.status)
-                       {
-               $('#customer-spinner').hide();
-                $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
-                                    $('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                $('#customer-modal').modal('hide');
 
-                            }
-                    }
-            });
-            return false;
+    $(document).on("click", '.add-customer-invoice', function() {
+        $('#customer-spinner').show();
+        var customerId = $(this).attr('data-key');
+        var params = $.param({'customerId': customerId });
+        $.ajax({
+            url    : '<?= Url::to(['invoice/update-customer' ,'id' => $model->id]); ?>&' + params,
+            type   : 'post',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status) {
+                    $('#customer-spinner').hide();
+                    $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
+                    $('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
+                    $('#customer-modal').modal('hide');
+
+                }
+            }
+        });
+        return false;
     });
  
     $(document).on("click", '#print-btn', function() {
