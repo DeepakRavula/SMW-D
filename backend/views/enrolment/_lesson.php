@@ -57,4 +57,4 @@ use yii\helpers\Url;
         });
         return false;
     });
- </script>
+</script>

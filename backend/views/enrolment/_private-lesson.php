@@ -40,27 +40,8 @@ use yii\grid\GridView;
             ],
             [
                 'label' => 'Invoice Status',
-                'value' => function ($data) use($model) {
-                    $status = null;
-                    if ($data->isPrivate()) {
-                        if (!empty($data->invoice)) {
-                            return $data->invoice->getStatus();
-                        } else {
-                            $status = 'Not Invoiced';
-                        }
-                    } else {
-                        $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
-                            ->andWhere(['courseId' => $data->courseId])
-                            ->andWhere(['studentId' => $model->id])->one();
-                        $invoice = $enrolment->getInvoice($data->id);
-                        if ($invoice) {
-                            return $invoice->getStatus();
-                        } else {
-                            $status = 'Not Invoiced';
-                        }
-                    }
-
-                    return $status;
+                'value' => function ($data) {
+                    return $data->getInvoiceStatus();
                 },
             ],
            

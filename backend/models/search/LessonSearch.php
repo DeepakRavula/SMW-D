@@ -65,9 +65,11 @@ class LessonSearch extends Lesson
      */
     public function search($params)
     {
-        $this->fromDate = (new \DateTime())->format('M d, Y');
-        $this->toDate = (new \DateTime())->format('M d, Y');
-	$this->dateRange = $this->fromDate.' - '.$this->toDate;
+        if(!$this->isSeeMore) {
+            $this->fromDate = (new \DateTime())->format('M d, Y');
+            $this->toDate = (new \DateTime())->format('M d, Y');
+            $this->dateRange = $this->fromDate.' - '.$this->toDate;
+        }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Lesson::find()
             ->isConfirmed()
@@ -82,9 +84,9 @@ class LessonSearch extends Lesson
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-	if($this->isSeeMore == true) {
-		$this->dateRange = "";
-	}
+	    if($this->isSeeMore == true) {
+		    $this->dateRange = "";
+	    }
         if (!empty($this->ids)) {
             $lessonQuery = Lesson::find()
                     ->andWhere(['id' => $this->ids]);

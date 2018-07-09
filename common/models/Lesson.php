@@ -1440,4 +1440,25 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->lineItemDiscount->valueType ? $this->lineItemDiscount->value : $this->lineItemDiscount->value;
     }
+
+    public function getInvoiceStatus() {
+        if ($this->isPrivate()) {
+            if (!empty($this->invoice)) {
+                return $this->invoice->getStatus();
+            } else {
+                $status = 'Not Invoiced';
+            }
+        } else {
+            $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
+                ->andWhere(['courseId' => $this->courseId])
+                ->andWhere(['studentId' => $this->student->id])->one();
+            $invoice = $enrolment->getInvoice($this->id);
+            if ($invoice) {
+                return $invoice->getStatus();
+            } else {
+                $status = 'Not Invoiced';
+            }
+        }
+        return $status;
+    }
 }
