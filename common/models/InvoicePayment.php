@@ -97,6 +97,30 @@ class InvoicePayment extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
+            if ($this->payment->isAutoPayments()) {
+                if ($this->payment->isCreditApplied()) {
+                    if ($this->payment->creditUsage->debitUsagePayment) {
+                        $this->payment->creditUsage->debitUsagePayment->updateAttributes(['amount' => - ($this->amount)]);
+                        if ($this->payment->creditUsage->debitUsagePayment->invoicePayment) {
+                            $this->payment->creditUsage->debitUsagePayment->invoicePayment->updateAttributes(['amount' => - ($this->amount)]);
+                            $this->payment->creditUsage->debitUsagePayment->invoice->save();
+                        } else if ($this->payment->creditUsage->debitUsagePayment->lessonPayment) {
+                            $this->payment->creditUsage->debitUsagePayment->lessonPayment->updateAttributes(['amount' => - ($this->amount)]);
+                        }
+                    }
+                } else {
+                    if ($this->payment->debitUsage->creditUsagePayment) {
+                        $this->payment->debitUsage->creditUsagePayment->updateAttributes(['amount' => $this->amount]);
+                        if ($this->payment->creditUsage->debitUsagePayment->invoicePayment) {
+                            $this->payment->creditUsage->debitUsagePayment->invoicePayment->updateAttributes(['amount' => $this->amount]);
+                            $this->payment->creditUsage->debitUsagePayment->invoice->save();
+                        } else if ($this->payment->creditUsage->debitUsagePayment->lessonPayment) {
+                            $this->payment->creditUsage->debitUsagePayment->lessonPayment->updateAttributes(['amount' => $this->amount]);
+                        }
+                    }
+                }
+                $this->payment->updateAttributes(['amount' => $this->amount]);
+            }
             $this->invoice->save();
         }
         return true;

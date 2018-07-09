@@ -247,6 +247,26 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         });
         return false;
     });
+
+    $(document).on("click", "#payment-grid tbody > tr", function() {
+        var lessonPaymentId = $(this).data('key');
+        var params = $.param({'PaymentEditForm[lessonPaymentId]': lessonPaymentId });
+        var customUrl = '<?= Url::to(['payment/view']); ?>?' + params;
+        $.ajax({
+            url: customUrl,
+            type: 'get',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                }
+            }
+        });
+        return false;
+    });
     
     $(document).on('beforeSubmit', '#lesson-note-form', function (e) {
         $.ajax({

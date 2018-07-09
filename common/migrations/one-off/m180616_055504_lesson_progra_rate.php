@@ -14,6 +14,9 @@ class m180616_055504_lesson_progra_rate extends Migration
      */
     public function safeUp()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        
         $lessons = Lesson::find()
             ->notDeleted()
             ->isConfirmed()

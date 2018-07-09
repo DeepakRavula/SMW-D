@@ -124,22 +124,27 @@ use yii\bootstrap\Html;
             var userId = $('#customer-payment').val();
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-            var creditIds = new Array();
+            var paymentCreditIds = new Array();
+            var invoiceCreditIds = new Array();
             var lessonPayments = new Array();
             var invoicePayments = new Array();
-            var creditPayments = new Array();
+            var paymentCredits = new Array();
+            var invoiceCredits = new Array();
             var canUsePaymentCredits = 0;
             var canUseInvoiceCredits = 0;
             $('.credit-items-value').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
                     var creditId = $(this).find('.credit-type').attr('creditId');
-                    creditIds.push(creditId);
                     var creditType = $(this).find('.credit-type').text();
                     if (creditType == 'Invoice Credit') {
+                        invoiceCredits.push($(this).find('.credit-amount').val());
                         canUseInvoiceCredits = 1;
+                        invoiceCreditIds.push(creditId);
                     } 
                     if (creditType == 'Payment Credit') {
+                        paymentCredits.push($(this).find('.credit-amount').val());
                         canUsePaymentCredits = 1;
+                        paymentCreditIds.push(creditId);
                     }
                 }
             });
@@ -153,21 +158,12 @@ use yii\bootstrap\Html;
                     invoicePayments.push($(this).find('.payment-amount').val());
                 }
             });
-            $('.credit-line-items').each(function() {
-                if ($(this).find('.check-checkbox').is(":checked")) {
-                    creditPayments.push($(this).find('.credit-amount').val());
-                }
-            });
-            $('.invoice-line-items').each(function() {
-                if ($(this).find('.check-checkbox').is(":checked")) {
-                    invoicePayments.push($(this).find('.payment-amount').val());
-                }
-            });
             var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId, 'PaymentFormLessonSearch[lessonIds]': lessonIds, 
                 'PaymentForm[invoiceIds]': invoiceIds, 'PaymentForm[canUsePaymentCredits]': canUsePaymentCredits, 
-                'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[creditIds]': creditIds,
+                'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[invoiceCreditIds]': invoiceCreditIds,
                 'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[invoicePayments]': invoicePayments,
-                'PaymentForm[creditPayments]': creditPayments });
+                'PaymentForm[paymentCredits]': paymentCredits, 'PaymentForm[paymentCreditIds]': paymentCreditIds,
+                'PaymentForm[invoiceCredits]': invoiceCredits });
             var url = '<?= Url::to(['payment/receive']) ?>?' + params;
             $('#modal-form').attr('action', url);
             return false;
@@ -214,16 +210,16 @@ use yii\bootstrap\Html;
                     creditAmount += parseFloat($(this).find('.credit-amount').val());
                 }
             });
-            amountNeeded    =   amountNeeded-creditAmount;
+            amountNeeded = amountNeeded-creditAmount;
             $('#selected-credit-value').val((creditAmount).toFixed(2));
             $('.credit-selected').text((creditAmount).toFixed(2));
             $('.amount-to-apply').text((amountToDistribute).toFixed(2));
             var amountReceived = $('#paymentform-amount').val();
             $('.amount-to-credit').text(((creditAmount + amountReceived) - amountToDistribute).toFixed(2));
             $('#amount-needed-value').val((amountNeeded).toFixed(2));
-           if(!lockTextBox){
-            $('#paymentform-amount').val((amountNeeded).toFixed(2));
-           }
+            if (!lockTextBox) {
+                $('#paymentform-amount').val((amountNeeded).toFixed(2));
+            }
             $('.amount-needed-value').text((amountNeeded).toFixed(2));
             return false;
         },

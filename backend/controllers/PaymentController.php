@@ -18,6 +18,8 @@ use common\components\controllers\BaseController;
 use backend\models\PaymentForm;
 use backend\models\PaymentEditForm;
 use common\models\Lesson;
+use common\models\InvoicePayment;
+use common\models\LessonPayment;
 use yii\data\ActiveDataProvider;
 use backend\models\search\PaymentFormLessonSearch;
 
@@ -96,12 +98,29 @@ class PaymentController extends BaseController
      *
      * @return mixed
      */
-    public function actionView($id)
+    public function actionView()
     {
-        $model = $this->findModel($id);
-	    $lessonPayment = Lesson::find()
-		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
-                $query->andWhere(['paymentId' => $id]);
+        if (Yii::$app->request->get('PaymentEditForm')) {
+            $request = Yii::$app->request->get('PaymentEditForm');
+            if (!empty($request['paymentId'])) {
+                $paymentId = $request['paymentId'];
+            }
+            if (!empty($request['invoicePaymentId'])) {
+                $invoicePaymentId = $request['invoicePaymentId'];
+                $invoicePayment = InvoicePayment::findOne($invoicePaymentId);
+                $paymentId = $invoicePayment->payment_id;
+            }
+            if (!empty($request['lessonPaymentId'])) {
+                $lessonPaymentId = $request['lessonPaymentId'];
+                $lessonPayment = LessonPayment::findOne($lessonPaymentId);
+                $paymentId = $lessonPayment->paymentId;
+            }
+        }
+        $model = $this->findModel($paymentId);
+        $lessonPayment = Lesson::find()
+            ->notDeleted()
+		    ->joinWith(['lessonPayments' => function ($query) use ($paymentId) {
+                $query->andWhere(['paymentId' => $paymentId]);
             }]);
 	    $lessonDataProvider = new ActiveDataProvider([
             'query' => $lessonPayment,
@@ -110,8 +129,8 @@ class PaymentController extends BaseController
 	    
         $invoicePayment = Invoice::find()
             ->notDeleted()
-            ->joinWith(['invoicePayments' => function ($query) use ($id) {
-                $query->andWhere(['payment_id' => $id]);
+            ->joinWith(['invoicePayments' => function ($query) use ($paymentId) {
+                $query->andWhere(['payment_id' => $paymentId]);
             }]);
 	    
 	    $invoiceDataProvider = new ActiveDataProvider([
@@ -408,6 +427,7 @@ class PaymentController extends BaseController
             ->notDeleted()
             ->exceptAutoPayments()
             ->customer($customerId)
+            ->orderBy(['payment.id' => SORT_ASC])
             ->all();
     }
 
