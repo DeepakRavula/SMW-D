@@ -456,10 +456,10 @@ class Enrolment extends \yii\db\ActiveRecord
        for ($x = 1; $x <= $lessonsCount; $x++) {
            $lastLessonDate  =    $day->format('Y-m-d H:i:s');
            $this->course->createLesson($day, $isConfirmed);  
-	   $day    =   $day->add(new DateInterval('P7D'));
-	   if ($this->course->isProfessionalDevelopmentDay($day)) {
-	    $day    =   $day->add(new DateInterval('P7D'));
-	   }
+           $day    =   $day->add(new DateInterval('P7D'));
+            if ($this->course->isProfessionalDevelopmentDay($day)) {
+                $day    =   $day->add(new DateInterval('P7D'));
+            }
 
            
 

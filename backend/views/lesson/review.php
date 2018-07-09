@@ -133,7 +133,7 @@ $this->render('review/_button', [
         return false;
     });
 
-    $(document).on('click','.modal-save',function() {
+    $(document).on('click', '.modal-save', function() {
         if ($('#lesson-applycontext').length !== 0) {
             $('#lesson-applycontext').val($(this).val());
         }

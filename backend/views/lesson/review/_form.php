@@ -112,6 +112,7 @@ use yii\helpers\Url;
     $(document).on('click', '.glyphicon-remove', function () {
         $('#lesson-date').val('').trigger('change');
     });
+    
     $(document).off('click', '.modal-save-all').on('click', '.modal-save-all', function() {
         
         if ($('#lesson-applycontext').length !== 0) {
@@ -119,7 +120,7 @@ use yii\helpers\Url;
         }
      
         $.ajax({
-            url: '<?= Url::to(['lesson/update-field','id' => $model->id]); ?>',
+            url: '<?= Url::to(['lesson/update-field', 'id' => $model->id]); ?>',
             type: 'post',
             dataType: "json",
             data: $('#modal-form').serialize(),
