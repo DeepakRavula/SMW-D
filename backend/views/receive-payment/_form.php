@@ -203,23 +203,24 @@ use yii\bootstrap\Html;
             $('.credit-items-value').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
                     if ($.isEmptyObject($(this).find('.credit-amount').val())) {
-                        var balance = $(this).find('.credit-value').text();debugger
+                        var balance = $(this).find('.credit-value').text();
                         balance = balance.replace('$', '');
                         $(this).find('.credit-amount').val(balance);
                     }
                     creditAmount += parseFloat($(this).find('.credit-amount').val());
                 }
             });
-            amountNeeded = amountNeeded-creditAmount;
             $('#selected-credit-value').val((creditAmount).toFixed(2));
             $('.credit-selected').text((creditAmount).toFixed(2));
             $('.amount-to-apply').text((amountToDistribute).toFixed(2));
             var amountReceived = $('#paymentform-amount').val();
-            $('.amount-to-credit').text(((creditAmount + amountReceived) - amountToDistribute).toFixed(2));
-            $('#amount-needed-value').val((amountNeeded).toFixed(2));
             if (!lockTextBox) {
-                $('#paymentform-amount').val((amountNeeded).toFixed(2));
+                var amountReceived = amountNeeded - creditAmount < 0 ? '' : (-(creditAmount - amountNeeded)).toFixed(2);
+                $('#paymentform-amount').val(amountReceived);
             }
+            var amountToCredit = (creditAmount + parseFloat(amountReceived)) - amountToDistribute;debugger
+            $('.amount-to-credit').text((amountToCredit).toFixed(2));
+            $('#amount-needed-value').val((amountNeeded).toFixed(2));
             $('.amount-needed-value').text((amountNeeded).toFixed(2));
             return false;
         },
@@ -228,7 +229,7 @@ use yii\bootstrap\Html;
             $('.credit-items-value').each(function() {
                 var balance = $(this).find('.credit-value').text();
                 balance = balance.replace('$', '');
-                creditAmount = parseFloat(creditAmount) + parseFloat(balance);
+                creditAmount += parseFloat(balance);
             });
             $('.credit-available').text((creditAmount).toFixed(2));
             return false;
@@ -265,7 +266,9 @@ use yii\bootstrap\Html;
 
     $(document).off('keyup', '#paymentform-amount').on('keyup', '#paymentform-amount', function () {
         lockTextBox = true;
+        receivePayment.setAction();
         receivePayment.calcAmountNeeded();
+        receivePayment.setAvailableCredits();
         return false;
     });
 
