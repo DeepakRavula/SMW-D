@@ -65,11 +65,6 @@ class LessonSearch extends Lesson
      */
     public function search($params)
     {
-        if(!$this->isSeeMore) {
-            $this->fromDate = (new \DateTime())->format('M d, Y');
-            $this->toDate = (new \DateTime())->format('M d, Y');
-            $this->dateRange = $this->fromDate.' - '.$this->toDate;
-        }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Lesson::find()
             ->isConfirmed()
@@ -83,6 +78,11 @@ class LessonSearch extends Lesson
         ]);
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
+        }
+        if (!$this->isSeeMore && !$this->dateRange) {
+            $this->fromDate = (new \DateTime())->format('M d, Y');
+            $this->toDate = (new \DateTime())->format('M d, Y');
+            $this->dateRange = $this->fromDate.' - '.$this->toDate;
         }
         if (!empty($this->ids)) {
             $lessonQuery = Lesson::find()
@@ -98,10 +98,9 @@ class LessonSearch extends Lesson
 	
         if (!empty($this->teacher)) {
             $query->joinWith(['teacherProfile' => function ($query) {
-		    $query->joinWith(['user' => function($query) {
-                $query->andFilterWhere(['user.id' => $this->teacher
-                        ]);
-		}]);
+		        $query->joinWith(['user' => function($query) {
+                    $query->andFilterWhere(['user.id' => $this->teacher]);
+		        }]);
             }]);
         }
         if (!empty($this->customerId)) {
@@ -126,8 +125,7 @@ class LessonSearch extends Lesson
             $query->scheduled();
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_RESCHEDULED) {
             $query->rescheduled()
-		  ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
-;
+		    ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_UNSCHEDULED) {
             $query->unscheduled()->notExpired();
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_EXPIRED){
@@ -152,13 +150,13 @@ class LessonSearch extends Lesson
         }
  
         $query->joinWith('teacherProfile');
-	$dataProvider->setSort([
+	    $dataProvider->setSort([
             'attributes' => [
                 'program' => [
                     'asc' => ['program.name' => SORT_ASC],
                     'desc' => ['program.name' => SORT_DESC],
                 ],
-		 'teacher' => [
+		        'teacher' => [
                     'asc' => ['user_profile.firstname' => SORT_ASC],
                     'desc' => ['user_profile.firstname' => SORT_DESC],
                 ],
@@ -166,7 +164,7 @@ class LessonSearch extends Lesson
                     'asc' => ['student.first_name' => SORT_ASC],
                     'desc' => ['student.first_name' => SORT_DESC],
                 ],
-		'dateRange' => [
+		        'dateRange' => [
                     'asc' => ['date' => SORT_ASC],
                     'desc' => ['date' => SORT_DESC],
                 ],
@@ -185,7 +183,7 @@ class LessonSearch extends Lesson
             Lesson::STATUS_SCHEDULED => 'Scheduled',
             Lesson::STATUS_RESCHEDULED => 'Rescheduled',
             Lesson::STATUS_UNSCHEDULED => 'Unscheduled',
-	    Lesson::STATUS_EXPIRED => 'Expired'
+	        Lesson::STATUS_EXPIRED => 'Expired'
         ];
     }
     public static function invoiceStatuses()
