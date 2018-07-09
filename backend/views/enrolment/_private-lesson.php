@@ -21,33 +21,22 @@ use yii\grid\GridView;
 	    'label' => 'Duration',
 	    'value' => function ($data) {
 		    $lessonDuration = (new \DateTime($data->duration))->format('H:i');
-		    $duration = substr($lessonDuration, 3);
-		    return $duration . "mins";
+		    return $lessonDuration;
 	    },
 	],
 	[
 	    'label' => 'Price',
-	    'attribute' => 'price',
+		'attribute' => 'price',
+		'contentOptions' => ['style' => 'text-align:right'],
+        'headerOptions' => ['style' => 'text-align:right'],
 	    'value' => function ($data) {
 		    return Yii::$app->formatter->asCurrency($data->netPrice);
 	    },
 	],
 	[
-	    'label' => 'Lesson Status',
+	    'label' => 'Status',
 	    'value' => function ($data) {
 		    return $data->getStatus();
-	    },
-	],
-	[
-	    'label' => 'Invoice Status',
-	    'value' => function ($data) {
-		    return $data->getInvoiceStatus();
-	    },
-	],
-	[
-	    'label' => 'Present',
-	    'value' => function ($data) {
-		    return $data->getPresent();
 	    },
 	],
     ];
