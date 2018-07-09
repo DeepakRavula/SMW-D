@@ -50,7 +50,7 @@ use yii\helpers\Html;
             [
             'label' => 'Subtotal',
 	    'value' => function ($data) {
-                return $data->amount;
+                return $data->invoice->subTotal;
             },	
             'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
@@ -72,7 +72,7 @@ use yii\helpers\Html;
             [
             'label' => 'Total',
             'value' => function ($data) {
-                return $data->amount + $data->tax_rate;
+                return $data->invoice->subTotal + $data->tax_rate;
             },
             'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
