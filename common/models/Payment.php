@@ -163,17 +163,20 @@ class Payment extends ActiveRecord
 
     public function getLessonCredit()
     {
-        return $this->hasOne(LessonPayment::className(), ['paymentId' => 'id']);
+        return $this->hasOne(LessonPayment::className(), ['paymentId' => 'id'])
+            ->onCondition(['lesson_payment.isDeleted' => false]);
     }
 
     public function getLessonPayments()
     {
-        return $this->hasMany(LessonPayment::className(), ['paymentId' => 'id']);
+        return $this->hasMany(LessonPayment::className(), ['paymentId' => 'id'])
+            ->onCondition(['lesson_payment.isDeleted' => false]);
     }
 
     public function getLessonPayment()
     {
-        return $this->hasOne(LessonPayment::className(), ['paymentId' => 'id']);
+        return $this->hasOne(LessonPayment::className(), ['paymentId' => 'id'])
+            ->onCondition(['lesson_payment.isDeleted' => false]);
     }
     
     public function getInvoice()
@@ -223,7 +226,7 @@ class Payment extends ActiveRecord
     public function getInvoicePayment()
     {
         return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'id'])
-        ->andWhere(['invoice_payment.isDeleted' => false]);
+            ->onCondition(['invoice_payment.isDeleted' => false]);
     }
 
     public function isInvoicePayment()
@@ -234,7 +237,7 @@ class Payment extends ActiveRecord
     public function getInvoicePayments()
     {
         return $this->hasMany(InvoicePayment::className(), ['payment_id' => 'id'])
-        ->andWhere(['invoice_payment.isDeleted' => false]);
+            ->onCondition(['invoice_payment.isDeleted' => false]);
     }
 
     public function getPaymentCheque()

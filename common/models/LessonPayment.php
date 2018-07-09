@@ -93,6 +93,7 @@ class LessonPayment extends \yii\db\ActiveRecord
                         $this->payment->creditUsage->debitUsagePayment->updateAttributes(['amount' => - ($this->amount)]);
                         if ($this->payment->creditUsage->debitUsagePayment->invoicePayment) {
                             $this->payment->creditUsage->debitUsagePayment->invoicePayment->updateAttributes(['amount' => - ($this->amount)]);
+                            $this->payment->creditUsage->debitUsagePayment->invoice->save();
                         } else if ($this->payment->creditUsage->debitUsagePayment->lessonPayment) {
                             $this->payment->creditUsage->debitUsagePayment->lessonPayment->updateAttributes(['amount' => - ($this->amount)]);
                         }
@@ -102,6 +103,7 @@ class LessonPayment extends \yii\db\ActiveRecord
                         $this->payment->debitUsage->creditUsagePayment->updateAttributes(['amount' => $this->amount]);
                         if ($this->payment->creditUsage->debitUsagePayment->invoicePayment) {
                             $this->payment->creditUsage->debitUsagePayment->invoicePayment->updateAttributes(['amount' => $this->amount]);
+                            $this->payment->creditUsage->debitUsagePayment->invoice->save();
                         } else if ($this->payment->creditUsage->debitUsagePayment->lessonPayment) {
                             $this->payment->creditUsage->debitUsagePayment->lessonPayment->updateAttributes(['amount' => $this->amount]);
                         }
