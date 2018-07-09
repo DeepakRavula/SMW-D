@@ -408,6 +408,7 @@ class PaymentController extends BaseController
             ->notDeleted()
             ->exceptAutoPayments()
             ->customer($customerId)
+            ->orderBy(['payment.id' => SORT_ASC])
             ->all();
     }
 

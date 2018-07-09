@@ -153,7 +153,7 @@ use yii\bootstrap\Html;
                     invoicePayments.push($(this).find('.payment-amount').val());
                 }
             });
-            $('.credit-line-items').each(function() {
+            $('.credit-items-value').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
                     creditPayments.push($(this).find('.credit-amount').val());
                 }

@@ -80,6 +80,12 @@ class PaymentForm extends Model
                 ->orderBy(['id' => SORT_ASC])
                 ->all();
         }
+        if ($this->creditIds) {
+            $payments = Payment::find()
+                ->where(['id' => $this->creditIds])
+                ->orderBy(['id' => SORT_ASC])
+                ->all();
+        }
         $creditPayments = $this->creditPayments;
         $lessonPayments = $this->lessonPayments;
         $invoicePayments = $this->invoicePayments;
@@ -122,14 +128,13 @@ class PaymentForm extends Model
                 }
             }
             if ($this->canUsePaymentCredits) {
-                $creditPayments = Payment::findAll($this->creditIds);
-                foreach ($creditPayments as $creditPayment) {
+                foreach ($payments as $j => $creditPayment) {
                     if ($this->invoiceIds) {
                         foreach ($invoices as $i => $invoice) {
                             if ($invoice->isOwing()) {
                                 if ($creditPayment->hasCredit()) {
-                                    if ($invoicePayments[$i] > $creditPayment->creditAmount) {
-                                        $amountToPay = $creditPayment->creditAmount;
+                                    if ($invoicePayments[$i] > $creditPayments[$j]) {
+                                        $amountToPay = $creditPayments[$j];
                                     } else {
                                         $amountToPay = $invoicePayments[$i];
                                     }
