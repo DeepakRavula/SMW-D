@@ -142,9 +142,8 @@ $this->render('_view-enrolment', [
         });
 
         $(document).on('click', '.enrolment-full-delete', function () {
-            var enrolmentId = '<?= $model->id; ?>';
             $.ajax({
-                url: '<?= Url::to(['enrolment/full-delete']); ?>?id=' + enrolmentId,
+                url: '<?= Url::to(['enrolment/full-delete', 'id' => $model->id]); ?>',
                 type: 'get',
                 dataType: "json",
                 success: function (response)
@@ -198,13 +197,14 @@ $this->render('_view-enrolment', [
             }
             return false;
         });
+
         $(document).ready(function () {
             var lesson_count = '<?= $lessonCount; ?>';
             if (lesson_count > 10) {
                 $(".more-lesson").show();
                 var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
                 var student = '<?= $model->student->id ?>';
-                var params = $.param({'LessonSearch[student]': student, 'LessonSearch[type]': type, 'LessonSearch[isSeeMore]': true});
+                var params = $.param({'LessonSearch[student]': student, 'LessonSearch[type]': type, 'LessonSearch[isSeeMore]': 1});
                 var url = '<?= Url::to(['lesson/index']); ?>?' + params;
                 $('.see-more').attr("href", url);
             }

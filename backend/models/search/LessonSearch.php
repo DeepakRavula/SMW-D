@@ -84,9 +84,6 @@ class LessonSearch extends Lesson
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-	    if($this->isSeeMore == true) {
-		    $this->dateRange = "";
-	    }
         if (!empty($this->ids)) {
             $lessonQuery = Lesson::find()
                     ->andWhere(['id' => $this->ids]);
@@ -151,10 +148,7 @@ class LessonSearch extends Lesson
 
             $this->fromDate = new \DateTime($this->fromDate);
             $this->toDate = new \DateTime($this->toDate);
-
-            if ((int) $this->invoiceType !== Invoice::TYPE_INVOICE) {
-                $query->andWhere(['between', 'DATE(lesson.date)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
-            }
+            $query->andWhere(['between', 'DATE(lesson.date)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);
         }
  
         $query->joinWith('teacherProfile');
