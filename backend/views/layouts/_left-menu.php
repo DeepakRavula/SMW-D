@@ -297,7 +297,15 @@ echo Menu::widget([
                     'icon' => '<i class="fa fa-envelope"></i>',
                     'url' => ['/test-email/index'],
 		    'visible' => env('YII_ENV') === 'dev',
-                ]
+        ],
+        [
+            'label' => Yii::t('backend', 'Terms of Service'),
+            'icon' => '<i class="fa fa-file-text-o"></i>',
+            'url' => ['/terms-of-service/index'],
+            'visible' => Yii::$app->user->can('manageBlogs'),
+            'active' => (Yii::$app->controller->id === 'terms-of-service') ? true : false,
+        ],
+                
             ]
         ],
         [
