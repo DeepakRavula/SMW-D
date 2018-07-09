@@ -7,6 +7,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\TimestampBehavior;
 use common\models\discount\EnrolmentDiscount;
 use Carbon\Carbon;
+use DateInterval;
 /**
  * This is the model class for table "enrolment".
  *
@@ -455,10 +456,11 @@ class Enrolment extends \yii\db\ActiveRecord
        for ($x = 1; $x <= $lessonsCount; $x++) {
            $lastLessonDate  =    $day->format('Y-m-d H:i:s');
            $this->course->createLesson($day, $isConfirmed);  
-           $day    =   $day->modify('next ' . $weekday);
-            if ($this->course->isProfessionalDevelopmentDay($day)) {
-                $day    =  $day->modify('next ' . $weekday);
-             }
+	   $day    =   $day->add(new DateInterval('P7D'));
+	   if ($this->course->isProfessionalDevelopmentDay($day)) {
+	    $day    =   $day->add(new DateInterval('P7D'));
+	   }
+
            
 
         }

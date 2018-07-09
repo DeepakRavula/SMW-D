@@ -17,7 +17,8 @@ use yii\helpers\Url;
     'id' => 'modal-form',
     'action' => Url::to(['lesson/update-field', 'id' => $model->id]),
     'enableAjaxValidation' => true,
-    'enableClientValidation' => false
+    'enableClientValidation' => false,
+    'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
 ]);
 ?>
 <div class="row">
@@ -112,14 +113,16 @@ use yii\helpers\Url;
         $('#lesson-date').val('').trigger('change');
     });
     $(document).off('click', '.modal-save-all').on('click', '.modal-save-all', function() {
+        
         if ($('#lesson-applycontext').length !== 0) {
             $('#lesson-applycontext').val($(this).val());
         }
-        var id  =   '<?=$model->id;?>';
+     
         $.ajax({
-            url: '<?= Url::to(['lesson/update-field']); ?>?id=' +id ,
-            type: 'get',
+            url: '<?= Url::to(['lesson/update-field','id' => $model->id]); ?>',
+            type: 'post',
             dataType: "json",
+            data: $('#modal-form').serialize(),
             success: function (response)
             {
                 if (response.status)
