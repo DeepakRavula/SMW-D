@@ -70,64 +70,50 @@ class ProformaInvoiceController extends BaseController
     public function actionCreate()
     {
         $request = Yii::$app->request;
+        $groupLessonSearchModel = new PaymentFormGroupLessonSearch();
         $searchModel = new PaymentFormLessonSearch();
         $model = new ProformaInvoice();
         $model->load(Yii::$app->request->get());
         $searchModel->load(Yii::$app->request->get());
-        $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
+        $groupLessonSearchModel->load(Yii::$app->request->get());
         $model->userId = $searchModel->userId;
-        $lessons = $lessonsQuery->all();
-        $invoicesQuery = Invoice::find();
-        if ($model->invoiceIds) {
-            $invoicesQuery->andWhere(['id' => $model->invoiceIds]);
-        } else {
-            $invoicesQuery->notDeleted()
-                ->customer($model->userId)
-                ->unpaid();
-        }
-        $invoices = $invoicesQuery->all();
-            if ($searchModel->lessonIds || $model->invoiceIds) {
-                $lessons = Lesson::findAll($searchModel->lessonIds);
-                $invoices = Invoice::findAll($model->invoiceIds);
-                $endLesson = end($lessons);
-                $endInvoice = end($invoices);
-                if ($lessons) {
-                    $user = $endLesson->customer;
+        $user = User::findOne($model->userId);
+        if ($searchModel->lessonIds || $model->invoiceIds) {
+            $groupLessons = Lesson::findAll($groupLessonSearchModel->lessonIds);
+            $lessons = Lesson::findAll($searchModel->lessonIds);
+            $invoices = Invoice::findAll($model->invoiceIds);
+            $endLesson = end($lessons);
+            $endGroupLesson = end($groupLessons);
+            $endInvoice = end($invoices);
+            $model->locationId = $user->userLocation->location_id;
+            $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
+            $model->save();
+            if ($lessons) {
+                foreach ($lessons as $lesson) {
+                    $proformaLineItem = new ProformaLineItem();
+                    $proformaLineItem->proformaInvoiceId = $model->id;
+                    $proformaLineItem->lessonId = $lesson->id;
+                    $proformaLineItem->save();
                 }
-                if (!$user) {
-                    $user = $endInvoice->user;
-                }
-                $model->userId = $user->id;
-                $model->locationId = $user->userLocation->location_id;
-                $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
-                $model->save();
-                if ($lessons) {
-                    foreach ($lessons as $lesson) {
-                        $proformaLineItem = new ProformaLineItem();
-                        $proformaLineItem->proformaInvoiceId = $model->id;
-                        $proformaLineItem->lessonId = $lesson->id;
-                        $proformaLineItem->save();
-                    }
-                }
-                if ($invoices) {
-                    foreach ($invoices as $invoice) {
-                        $proformaLineItem = new ProformaLineItem();
-                        $proformaLineItem->proformaInvoiceId = $model->id;
-                        $proformaLineItem->invoiceId = $invoice->id;
-                        $proformaLineItem->save();
-                    }
-                }
-                $response = [
-                    'status' => true,
-                    'url' => Url::to(['proforma-invoice/view', 'id' => $model->id])
-                ];
-            } else {
-                $response = [
-                    'status' => false,
-                    'errors' => 'Select any lesson or invoice to create PFI',
-                ];
             }
-        
+            if ($invoices) {
+                foreach ($invoices as $invoice) {
+                    $proformaLineItem = new ProformaLineItem();
+                    $proformaLineItem->proformaInvoiceId = $model->id;
+                    $proformaLineItem->invoiceId = $invoice->id;
+                    $proformaLineItem->save();
+                }
+            }
+            $response = [
+                'status' => true,
+                'url' => Url::to(['proforma-invoice/view', 'id' => $model->id])
+            ];
+        } else {
+            $response = [
+                'status' => false,
+                'errors' => 'Select any lesson or invoice to create PFI',
+            ];
+        }
         return $response;
     }
 
