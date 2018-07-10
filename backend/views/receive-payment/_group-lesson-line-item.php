@@ -7,6 +7,7 @@ use kartik\grid\GridView;
 use common\models\Location;
 use yii\helpers\ArrayHelper;
 use common\models\Student;
+use common\models\Enrolment;
 use yii\bootstrap\Html;
 
 ?>
@@ -62,8 +63,14 @@ use yii\bootstrap\Html;
         array_push($columns, [
             'label' => 'Student',
             'attribute' => 'student',
-            'value' => function ($data) {
-                return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
+            'value' => function ($data) use($searchModel) {
+                $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['courseId' => $data->courseId])
+                    ->customer($searchModel->userId)
+                    ->one();
+                return !empty($enrolment->student->fullName) ? $enrolment->student->fullName : null;
             },
             'filterType' => KartikGridView::FILTER_SELECT2,
             'filter' => ArrayHelper::map(Student::find()
