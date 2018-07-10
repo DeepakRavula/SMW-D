@@ -22,10 +22,9 @@ use yii\helpers\Url;
         <div class="col-xs-6 pull-left">
             <label class="dollar-symbol">Tax</label>
         </div>
-        <div class="col-xs-2">
-        </div>
+        
         <div class="col-xs-4">
-            <?= $form->field($model, 'tax')->textInput(); ?>
+            <?= $form->field($model, 'tax')->textInput()->label(false); ?>
         </div>
     </div>
     <?php ActiveForm::end(); ?>
