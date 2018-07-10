@@ -3,7 +3,12 @@
 use yii\helpers\Url;
 use yii\helpers\Json;
 use common\models\Enrolment;
-use yii\grid\GridView;
+use common\components\gridView\KartikGridView;
+use yii\helpers\ArrayHelper;
+use common\models\Program;
+use common\models\Location;
+use common\models\Student;
+use common\models\UserProfile;
 ?>
 
 
@@ -21,41 +26,53 @@ use yii\grid\GridView;
 	    'label' => 'Duration',
 	    'value' => function ($data) {
 		    $lessonDuration = (new \DateTime($data->duration))->format('H:i');
-		    $duration = substr($lessonDuration, 3);
-		    return $duration . "mins";
+		    return $lessonDuration;
 	    },
 	],
 	[
 	    'label' => 'Price',
-	    'attribute' => 'price',
+		'attribute' => 'price',
+		'contentOptions' => ['style' => 'text-align:right'],
+        'headerOptions' => ['style' => 'text-align:right'],
 	    'value' => function ($data) {
 		    return Yii::$app->formatter->asCurrency($data->netPrice);
 	    },
 	],
 	[
-	    'label' => 'Lesson Status',
+	    'label' => 'Status',
 	    'value' => function ($data) {
 		    return $data->getStatus();
 	    },
 	],
 	[
-	    'label' => 'Invoice Status',
-	    'value' => function ($data) {
-		    return $data->getInvoiceStatus();
-	    },
+		'label' => 'Student',
+		'attribute' => 'student',
+		'value' => function ($data) {
+			return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
+		},
 	],
+
 	[
-	    'label' => 'Present',
-	    'value' => function ($data) {
-		    return $data->getPresent();
-	    },
+		'label' => 'Program',
+		'attribute' => 'program',
+		'value' => function ($data) {
+			return !empty($data->course->program->name) ? $data->course->program->name : null;
+		},
+	],
+
+	[
+		'label' => 'Teacher',
+		'attribute' => 'teacher',
+		'value' => function ($data) {
+			return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
+		},
 	],
     ];
     ?>
     <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin(['id' => 'enrolment-lesson-index', 'timeout' => 6000,]); ?>
 	<?php
-	echo GridView::widget([
+	echo KartikGridView::widget([
 	    'dataProvider' => $lessonDataProvider,
 	    'options' => ['id' => 'student-lesson-grid'],
 	    'rowOptions' => function ($model, $key, $index, $grid) {

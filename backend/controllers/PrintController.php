@@ -482,7 +482,7 @@ class PrintController extends BaseController
 
         return $this->render('/proforma-invoice/print/view', [
             'model' => $model,
-	    'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+	        'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
             'searchModel'=>$searchModel,
         ]);
