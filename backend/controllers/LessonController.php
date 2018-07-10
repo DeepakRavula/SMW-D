@@ -50,7 +50,7 @@ class LessonController extends BaseController
                 'only' => ['modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom',
                     'payment', 'substitute','update','unschedule', 'credit-transfer',
-                    'edit-price'
+                    'edit-price', 'edit-tax'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -63,7 +63,7 @@ class LessonController extends BaseController
                     [
                         'allow' => true,
                         'actions' => ['index', 'view', 'credit-transfer',
-							'validate-on-update', 'edit-price',
+							'validate-on-update', 'edit-price','edit-tax',
 							'fetch-duration','edit-classroom', 
 							'update', 'update-field', 'review',
 							'fetch-conflict', 'confirm',
@@ -772,6 +772,37 @@ class LessonController extends BaseController
             }
         } else {
             $data = $this->renderAjax('_price-form', [
+                'model' => $model
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
+    }
+
+    public function actionEditTax($id)
+    {
+        $request = Yii::$app->request;
+        $model = $this->findModel($id);
+        if ($request->isPost) {
+           // print_r($model->tax);
+            if ($model->load($request->post())) {
+               // print_r($model->tax);die();
+                if ($model->save()) {
+                    $response = [
+                        'status' => true
+                    ];
+                } else {
+                    $response = [
+                        'status' => false,
+                        'errors' => ActiveForm::validate($model)
+                    ];
+                }
+            }
+        } else {
+            $data = $this->renderAjax('_tax-form', [
                 'model' => $model
             ]);
             $response = [

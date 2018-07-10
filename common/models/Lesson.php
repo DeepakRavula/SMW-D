@@ -143,7 +143,7 @@ class Lesson extends \yii\db\ActiveRecord
             ['programRate', 'required', 'on' => self::SCENARIO_CREATE_GROUP],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyFullDiscount',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId',
-                 'isPresent', 'programRate', 'teacherRate', 'splittedLessonId'], 'safe'],
+                 'isPresent', 'programRate', 'teacherRate', 'splittedLessonId','tax'], 'safe'],
             [['classroomId'], ClassroomValidator::className(),
                 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),
@@ -197,7 +197,8 @@ class Lesson extends \yii\db\ActiveRecord
             'summariseReport' => 'Summarize Results',
             'toEmailAddress' => 'To',
             'showAllReviewLessons' => 'Show All',
-            'isPresent' => 'Present'
+            'isPresent' => 'Present',
+            'tax' => 'Tax'
         ];
     }
 

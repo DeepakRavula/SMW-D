@@ -62,6 +62,9 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
             'model' => $model,
         ]); ?>
         
+        <?= $this->render('_total-details', [
+            'model' => $model,
+        ]); ?>
         <?php if (!$model->isGroup()): ?>
 
             <?= $this->render('_discount', [
@@ -464,6 +467,20 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     $(document).off('click', '#lesson-price').on('click', '#lesson-price', function(){
         $.ajax({
             url    : '<?= Url::to(['lesson/edit-price', 'id' => $model->id]) ?>',
+            type   : 'get',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                }
+            }
+        });
+        return false;
+    });
+    $(document).off('click', '#lesson-tax').on('click', '#lesson-tax', function(){
+        $.ajax({
+            url    : '<?= Url::to(['lesson/edit-tax', 'id' => $model->id]) ?>',
             type   : 'get',
             success: function(response)
             {
