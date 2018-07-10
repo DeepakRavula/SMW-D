@@ -3,7 +3,12 @@
 use yii\helpers\Url;
 use yii\helpers\Json;
 use common\models\Enrolment;
-use yii\grid\GridView;
+use common\components\gridView\KartikGridView;
+use yii\helpers\ArrayHelper;
+use common\models\Program;
+use common\models\Location;
+use common\models\Student;
+use common\models\UserProfile;
 ?>
 
 
@@ -39,12 +44,88 @@ use yii\grid\GridView;
 		    return $data->getStatus();
 	    },
 	],
+	[
+		'label' => 'Student',
+		'attribute' => 'student',
+		'value' => function ($data) {
+			return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
+		},
+		'filterType'=>KartikGridView::FILTER_SELECT2,
+		'filter'=>ArrayHelper::map(Student::find()->orderBy(['first_name' => SORT_ASC])
+		->joinWith(['enrolment' => function ($query) {
+			$query->joinWith(['course' => function ($query) {
+				$query->confirmed()
+						->location(Location::findOne(['slug' => \Yii::$app->location])->id);
+			}]);
+		}])
+		->all(), 'id', 'fullName'),
+		'filterWidgetOptions'=>[
+	'options' => [
+		'id' => 'student',
+	],
+			'pluginOptions'=>[
+				'allowClear'=>true,
+	],
+],
+		'filterInputOptions'=>['placeholder'=>'Student'],
+	],
+	[
+		'label' => 'Program',
+		'attribute' => 'program',
+		'value' => function ($data) {
+			return !empty($data->course->program->name) ? $data->course->program->name : null;
+		},
+		'filterType'=>KartikGridView::FILTER_SELECT2,
+		'filter'=>ArrayHelper::map(
+	Program::find()->orderBy(['name' => SORT_ASC])
+		->joinWith(['course' => function ($query) {
+			$query->joinWith(['enrolment'])
+				->confirmed()
+				->location(Location::findOne(['slug' => \Yii::$app->location])->id);
+		}])
+		->asArray()->all(),
+			'id',
+			'name'
+		),
+		'filterInputOptions'=>['placeholder'=>'Program'],
+		'format'=>'raw',
+		'filterWidgetOptions'=>[
+			'pluginOptions'=>[
+				'allowClear'=>true,
+	]
+],
+	],
+	[
+		'label' => 'Teacher',
+		'attribute' => 'teacher',
+		'value' => function ($data) {
+			return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
+		},
+	'filterType'=>KartikGridView::FILTER_SELECT2,
+		'filter'=>ArrayHelper::map(UserProfile::find()->orderBy(['firstname' => SORT_ASC])
+		->joinWith(['courses' => function ($query) {
+			$query->joinWith('enrolment')
+				->confirmed()
+				->location(Location::findOne(['slug' => \Yii::$app->location])->id);
+		}])
+		->all(), 'user_id', 'fullName'),
+		'filterWidgetOptions'=>[
+	'options' => [
+		'id' => 'teacher',
+	],
+			'pluginOptions'=>[
+				'allowClear'=>true,
+	],
+	 ],
+		'filterInputOptions'=>['placeholder'=>'Teacher'],
+		'format'=>'raw'
+],
     ];
     ?>
     <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin(['id' => 'enrolment-lesson-index', 'timeout' => 6000,]); ?>
 	<?php
-	echo GridView::widget([
+	echo KartikGridView::widget([
 	    'dataProvider' => $lessonDataProvider,
 	    'options' => ['id' => 'student-lesson-grid'],
 	    'rowOptions' => function ($model, $key, $index, $grid) {
