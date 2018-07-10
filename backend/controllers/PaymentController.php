@@ -495,6 +495,7 @@ class PaymentController extends BaseController
             $payment->save();
             $model->paymentId = $payment->id;
             $model->lessonIds = $searchModel->lessonIds;
+            $model->groupLessonIds = $groupLessonSearchModel->lessonIds;
             $model->save();
             $response = [
                 'status' => true,

@@ -126,8 +126,14 @@ use yii\bootstrap\Html;
         array_push($columns, [
             'attribute' => 'balance',
             'label' => 'Balance',
-            'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
+            'value' => function ($data) use($searchModel) {
+                $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['courseId' => $data->courseId])
+                    ->customer($searchModel->userId)
+                    ->one();
+                return Yii::$app->formatter->asCurrency($data->getOwingAmount($enrolment->id));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']
@@ -138,8 +144,14 @@ use yii\bootstrap\Html;
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
                 'label' => 'Payment',
-                'value' => function ($data) { 
-                    return Html::textInput('', round($data->getOwingAmount($data->enrolment->id), 2), 
+                'value' => function ($data) use($searchModel) {
+                    $enrolment = Enrolment::find()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->andWhere(['courseId' => $data->courseId])
+                        ->customer($searchModel->userId)
+                        ->one();
+                    return Html::textInput('', round($data->getOwingAmount($enrolment->id), 2), 
                         ['class' => 'payment-amount text-right']); 
                 },
                 'attribute' => 'new_activity',
