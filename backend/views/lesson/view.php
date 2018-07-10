@@ -45,36 +45,18 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                         'model' => $model,
                     ]); ?>	
                 </div>
-            <?php endif; ?>
-            
+            <?php endif; ?>            
         <?php endif; ?>
-
     </div>
-
-    <div class="col-md-6">  
-        
+    <div class="col-md-6">      
         <?= $this->render('schedule/_view', [
-            'model' => $model,
-        ]); ?>
-
-
-        <?= $this->render('_price-details', [
             'model' => $model,
         ]); ?>
         
         <?= $this->render('_total-details', [
             'model' => $model,
         ]); ?>
-        <?php if (!$model->isGroup()): ?>
-
-            <?= $this->render('_discount', [
-                'model' => $model,
-            ]); ?>
-
-        <?php endif; ?>
-
     </div>
-
 </div>
 
 <div class="row">

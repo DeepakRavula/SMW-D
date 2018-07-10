@@ -1309,7 +1309,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getNetPrice()
     {
-        return $this->grossPrice - $this->discount;
+        return ($this->grossPrice + $this->tax) - $this->discount;
     }
 
     public function getNetCost()
@@ -1465,5 +1465,24 @@ class Lesson extends \yii\db\ActiveRecord
     public function getLineItemDiscountValues()
     {
         return $this->lineItemDiscount->valueType ? $this->lineItemDiscount->value : $this->lineItemDiscount->value;
+    }
+
+    public function getTotal() {
+        $total = $this->getSubTotal() + $this->tax;
+        return $total;
+    }
+    
+    public function getPaid($id) {
+        $lessonPaid = LessonPayment::find()
+            ->andWhere(['lessonId' => $id])
+            ->sum('lesson_payment.amount');
+            if(empty($lessonPaid)) {
+                return 0;
+        }
+        return $lessonPaid;  
+    }
+
+    public function getSubTotal() {
+        return $this->grossPrice - $this->getDiscount();
     }
 }

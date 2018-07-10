@@ -26,18 +26,17 @@ LteBox::begin([
 	<dt class="m-r-10">Qty</dt>
     <dd><?= $model->unit; ?></dd>
     <dt class="m-r-10">Lesson Price</dt>
-    <dd><?= Yii::$app->formatter->asCurrency($model->netPrice); ?></dd>
+    <dd><?= Yii::$app->formatter->asCurrency($model->grossPrice); ?></dd>
     <dt class="m-r-10">Discount</dt>
 	<dd><?= Yii::$app->formatter->asCurrency($model->discount); ?></dd>
 	<dt class="m-r-10">SubTotal</dt>
-    <dd><?= Yii::$app->formatter->asCurrency($model->netPrice); ?></dd>
+    <dd><?= Yii::$app->formatter->asCurrency($model->getSubTotal()); ?></dd>
     <dt class="m-r-10">Tax</dt>
     <dd><?= Yii::$app->formatter->asCurrency($model->tax); ?></dd>
     <dt class="m-r-10">Total</dt>
-    <dd><?= Yii::$app->formatter->asCurrency($model->netPrice); ?></dd>
+    <dd><?= Yii::$app->formatter->asCurrency($model->getTotal()); ?></dd>
     <dt class="m-r-10">Paid</dt>
-    <?php $paymentTotal = !empty($model->invoicePaymentTotal) ? $model->invoicePaymentTotal : 0; ?>
-    <dd><?= Yii::$app->formatter->asCurrency($model->getPaidAmount($model->payment->id)); ?></dd>
+    <dd><?= Yii::$app->formatter->asCurrency($model->getPaid($model->id)); ?></dd>
     <dt class="m-r-10">Balance</dt>
     <dd><?= Yii::$app->formatter->asCurrency($model->getOwingAmount($model->enrolment->id)); ?></dd>
 </dl>
