@@ -22,6 +22,7 @@ use common\models\InvoicePayment;
 use common\models\LessonPayment;
 use yii\data\ActiveDataProvider;
 use backend\models\search\PaymentFormLessonSearch;
+use backend\models\search\PaymentFormGroupLessonSearch;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -434,23 +435,35 @@ class PaymentController extends BaseController
     public function actionReceive()
     {
         $request = Yii::$app->request;
+        $groupLessonSearchModel = new PaymentFormGroupLessonSearch();
+        $groupLessonSearchModel->showCheckBox = true;
         $searchModel = new PaymentFormLessonSearch();
         $searchModel->showCheckBox = true;
         $model = new PaymentForm();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d, Y');
         if (!$request->post()) {
+            $groupLessonSearchModel->fromDate = $currentDate->format('M 1, Y');
+            $groupLessonSearchModel->toDate = $currentDate->format('M t, Y'); 
+            $groupLessonSearchModel->dateRange = $groupLessonSearchModel->fromDate . ' - ' . $groupLessonSearchModel->toDate;
             $searchModel->fromDate = $currentDate->format('M 1, Y');
             $searchModel->toDate = $currentDate->format('M t, Y'); 
             $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         }
+        $groupLessonSearchModel->load(Yii::$app->request->get());
         $searchModel->load(Yii::$app->request->get());
-	    $model->userId = $searchModel->userId;
+        $model->userId = $searchModel->userId;
+        $groupLessonsQuery = $groupLessonSearchModel->search(Yii::$app->request->queryParams);
+        $groupLessonsQuery->orderBy(['lesson.id' => SORT_ASC]);
         $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
         $lessonsQuery->orderBy(['lesson.id' => SORT_ASC]);
         $model->load(Yii::$app->request->get());
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery,
+            'pagination' => false
+        ]);
+        $groupLessonLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $groupLessonsQuery,
             'pagination' => false
         ]);
         $invoicesQuery = Invoice::find();
@@ -475,13 +488,14 @@ class PaymentController extends BaseController
             $model->load($request->post());
             $payment = new Payment();
             $payment->amount = $model->amount;
-	    $payment->reference = $model->reference;
+	        $payment->reference = $model->reference;
             $payment->user_id = $searchModel->userId;
             $payment->payment_method_id = $model->payment_method_id;
             $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
             $payment->save();
             $model->paymentId = $payment->id;
             $model->lessonIds = $searchModel->lessonIds;
+            $model->groupLessonIds = $groupLessonSearchModel->lessonIds;
             $model->save();
             $response = [
                 'status' => true,
@@ -493,7 +507,9 @@ class PaymentController extends BaseController
                 'creditDataProvider' => $creditDataProvider,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                 'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-                'searchModel' => $searchModel
+                'groupLessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
+                'searchModel' => $searchModel,
+                'groupLessonSearchModel' => $groupLessonSearchModel
             ]);
             $response = [
                 'status' => true,
