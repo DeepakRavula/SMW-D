@@ -1045,7 +1045,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function getCreditAppliedAmount($enrolmentId)
     {
         return LessonPayment::find()
-                ->notDeleted()
+            ->notDeleted()
 		    ->joinWith(['payment' => function ($query) {
                 $query->notDeleted()
                     ->notCreditUsed();

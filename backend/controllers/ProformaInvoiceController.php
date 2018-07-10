@@ -76,7 +76,7 @@ class ProformaInvoiceController extends BaseController
         $searchModel->load(Yii::$app->request->get());
         $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
         $model->userId = $searchModel->userId;
-        $lessons=$lessonsQuery->all();
+        $lessons = $lessonsQuery->all();
         $invoicesQuery = Invoice::find();
         if ($model->invoiceIds) {
             $invoicesQuery->andWhere(['id' => $model->invoiceIds]);
@@ -85,8 +85,8 @@ class ProformaInvoiceController extends BaseController
                 ->customer($model->userId)
                 ->unpaid();
         }
-        $invoices=$invoicesQuery->all();
-            if (!empty($searchModel->lessonIds) || !empty($model->invoiceIds)) {
+        $invoices = $invoicesQuery->all();
+            if ($searchModel->lessonIds || $model->invoiceIds) {
                 $lessons = Lesson::findAll($searchModel->lessonIds);
                 $invoices = Invoice::findAll($model->invoiceIds);
                 $endLesson = end($lessons);
@@ -94,7 +94,7 @@ class ProformaInvoiceController extends BaseController
                 if ($lessons) {
                     $user = $endLesson->customer;
                 }
-                if (empty($user)) {
+                if (!$user) {
                     $user = $endInvoice->user;
                 }
                 $model->userId = $user->id;

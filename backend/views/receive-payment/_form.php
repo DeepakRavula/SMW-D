@@ -78,7 +78,7 @@ use yii\bootstrap\Html;
     <?php ActiveForm::end(); ?>
     
     <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_lesson-line-item', [
+    <?= $this->render('_lesson-line-item', [
         'model' => $model,
         'isCreatePfi' => false,
         'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
@@ -86,8 +86,17 @@ use yii\bootstrap\Html;
     ]);
     ?>
 
+    <?= Html::label('Group Lessons', ['class' => 'admin-login']) ?>
+    <?= $this->render('_group-lesson-line-item', [
+        'model' => $model,
+        'isCreatePfi' => false,
+        'lessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
+        'searchModel' => $groupLessonSearchModel
+    ]);
+    ?>
+
     <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_invoice-line-item', [
+    <?= $this->render('_invoice-line-item', [
         'model' => $model,
         'isCreatePfi' => false,
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
@@ -96,7 +105,7 @@ use yii\bootstrap\Html;
     ?>
 
     <?= Html::label('Credits', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_credits-available', [
+    <?= $this->render('_credits-available', [
         'creditDataProvider' => $creditDataProvider,
     ]);
     ?>
