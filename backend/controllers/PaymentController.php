@@ -240,24 +240,35 @@ class PaymentController extends BaseController
             $model->load(Yii::$app->request->post());
             $payment->amount = $model->amount;
             $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
-            $payment->save();
-            $model->save();
+            if (round($payment->amount, 2) > 0.00) {
+                $payment->save();
+                $model->save();
+            } else {
+                $payment->delete();
+            }
             $response = [
                 'status' => true
             ];
         } else {
-            $data = $this->renderAjax('_form', [
-                'model' => $model,
-                'paymentModel' => $payment,
-                'canEdit' => true,
-                'groupLessonDataProvider' => $groupLessonDataProvider,
-                'lessonDataProvider' => $lessonDataProvider,
-                'invoiceDataProvider' => $invoiceDataProvider
-            ]);
-            $response = [
-                'status' => true,
-                'data' => $data
-            ];
+            if ($payment->isAutoPayments()) {
+                $response = [
+                    'status' => false,
+                    'message' => "System generated payments can't be deleted!"
+                ];
+            } else {
+                $data = $this->renderAjax('_form', [
+                    'model' => $model,
+                    'paymentModel' => $payment,
+                    'canEdit' => true,
+                    'groupLessonDataProvider' => $groupLessonDataProvider,
+                    'lessonDataProvider' => $lessonDataProvider,
+                    'invoiceDataProvider' => $invoiceDataProvider
+                ]);
+                $response = [
+                    'status' => true,
+                    'data' => $data
+                ];
+            }
         }
         return $response;
     }
@@ -520,7 +531,9 @@ class PaymentController extends BaseController
             $payment->user_id = $searchModel->userId;
             $payment->payment_method_id = $model->payment_method_id;
             $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
-            $payment->save();
+            if (round($payment->amount, 2) > 0.00) {
+                $payment->save();
+            }
             $model->paymentId = $payment->id;
             $model->lessonIds = $searchModel->lessonIds;
             $model->groupLessonIds = $groupLessonSearchModel->lessonIds;
