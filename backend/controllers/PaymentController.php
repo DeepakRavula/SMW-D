@@ -119,12 +119,24 @@ class PaymentController extends BaseController
         }
         $model = $this->findModel($paymentId);
         $lessonPayment = Lesson::find()
+            ->privateLessons()
             ->notDeleted()
 		    ->joinWith(['lessonPayments' => function ($query) use ($paymentId) {
                 $query->andWhere(['paymentId' => $paymentId]);
             }]);
 	    $lessonDataProvider = new ActiveDataProvider([
             'query' => $lessonPayment,
+            'pagination' => false
+        ]);
+
+        $groupLessonPayment = Lesson::find()
+            ->groupLessons()
+            ->notDeleted()
+		    ->joinWith(['lessonPayments' => function ($query) use ($paymentId) {
+                $query->andWhere(['paymentId' => $paymentId]);
+            }]);
+	    $groupLessonDataProvider = new ActiveDataProvider([
+            'query' => $groupLessonPayment,
             'pagination' => false
         ]);
 	    
@@ -143,6 +155,7 @@ class PaymentController extends BaseController
                 'model' => $model,
                 'canEdit' => false,
                 'lessonDataProvider' => $lessonDataProvider,
+                'groupLessonDataProvider' => $groupLessonDataProvider,
                 'invoiceDataProvider' => $invoiceDataProvider
             ]);
             return [
@@ -184,8 +197,10 @@ class PaymentController extends BaseController
         $payment = $this->findModel($id);
         $model = new PaymentEditForm();
         $model->paymentId = $payment->id;
+        $model->userId = $payment->user_id;
         $model->amount = $payment->amount;
         $lessonPayment = Lesson::find()
+            ->privateLessons()
             ->notDeleted()
 		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
                 $query->andWhere(['paymentId' => $id]);
@@ -193,6 +208,18 @@ class PaymentController extends BaseController
             ->orderBy(['lesson.id' => SORT_ASC]);
 	    $lessonDataProvider = new ActiveDataProvider([
             'query' => $lessonPayment,
+            'pagination' => false
+        ]);
+
+        $groupLessonPayment = Lesson::find()
+            ->groupLessons()
+            ->notDeleted()
+		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
+                $query->andWhere(['paymentId' => $id]);
+            }])
+            ->orderBy(['lesson.id' => SORT_ASC]);
+	    $groupLessonDataProvider = new ActiveDataProvider([
+            'query' => $groupLessonPayment,
             'pagination' => false
         ]);
 	    
@@ -223,6 +250,7 @@ class PaymentController extends BaseController
                 'model' => $model,
                 'paymentModel' => $payment,
                 'canEdit' => true,
+                'groupLessonDataProvider' => $groupLessonDataProvider,
                 'lessonDataProvider' => $lessonDataProvider,
                 'invoiceDataProvider' => $invoiceDataProvider
             ]);

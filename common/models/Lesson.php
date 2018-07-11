@@ -1383,22 +1383,25 @@ class Lesson extends \yii\db\ActiveRecord
     }
 
     
-    public function getPaidAmount($id) 
+    public function getPaidAmount($id, $enrolmentId = null) 
     {
         $amount = 0.0;
-        $lessonPayments = $this->getPaymentsById($id);
+        $lessonPayments = $this->getPaymentsById($id, $enrolmentId);
         foreach ($lessonPayments as $payment) {
             $amount += $payment->amount;
         }
         return $amount;
     }
 
-    public function getPaymentsById($id) 
+    public function getPaymentsById($id, $enrolmentId = null) 
     {
-        return LessonPayment::find()
+        $query = LessonPayment::find()
             ->notDeleted()
-            ->andWhere(['paymentId' => $id, 'lessonId' => $this->id])
-            ->all();
+            ->andWhere(['paymentId' => $id, 'lessonId' => $this->id]);
+        if ($enrolmentId) {
+            $query->andWhere(['enrolmentId' => $enrolmentId]);
+        }
+        return $query->all();
     }
 
     public function addEnrolmentDiscount($discount = null)

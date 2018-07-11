@@ -127,7 +127,7 @@ use yii\bootstrap\Html;
 </div>
 
 <script>
-    var lockTextBox =   false;
+    var lockTextBox = false;
     var receivePayment = {
         setAction: function() {
             var userId = $('#customer-payment').val();
