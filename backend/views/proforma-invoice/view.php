@@ -70,6 +70,29 @@ $this->params['action-button'] = $this->render('_buttons', [
 
 <div class="row">
     <div class="col-md-12">
+        <?php $lessonCount = $groupLessonLineItemsDataProvider->getCount(); ?>
+        <?php if ($lessonCount > 0) : ?>
+            <?php LteBox::begin([
+                'type' => LteConst::TYPE_DEFAULT,
+                'boxTools' => '',
+                'title' => 'Group Lessons',
+                'withBorder' => true,
+            ]) ?>
+
+            <?= $this->render('/receive-payment/_group-lesson-line-item', [
+                'model' => $model,
+                'lessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
+                'searchModel' => $groupLessonSearchModel,
+            ]); ?>
+
+            <?php LteBox::end()?>
+
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
         <?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
         <?php if ($invoiceCount > 0) : ?>
             <?php LteBox::begin([

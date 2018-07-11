@@ -325,15 +325,18 @@ use yii\bootstrap\Html;
 
     $(document).off('click', '.modal-back').on('click', '.modal-back', function() {
         $('#modal-spinner').show();
+        var userId = $('#customer-payment').val();
         var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
         var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-        if ($.isEmptyObject(lessonIds) && $.isEmptyObject(invoiceIds)) {
+        var groupLessonIds = $('#group-lesson-line-item-grid').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(lessonIds) && $.isEmptyObject(invoiceIds) && $.isEmptyObject(groupLessonIds)) {
             $('#modal-spinner').hide();
             $('#index-error-notification').html("Choose any lessons or invoices to create PFI").fadeIn().delay(5000).fadeOut();
         } else {
             $('.modal-back').attr('disabled', true);
             $('.modal-save-replaced').attr('disabled', true);
-            var params = $.param({ 'PaymentFormLessonSearch[lessonIds]': lessonIds, 'ProformaInvoice[invoiceIds]': invoiceIds });
+            var params = $.param({ 'PaymentFormLessonSearch[lessonIds]': lessonIds, 'PaymentFormLessonSearch[userId]': userId, 
+                'ProformaInvoice[invoiceIds]': invoiceIds, 'PaymentFormGroupLessonSearch[lessonIds]': groupLessonIds });
             $.ajax({
                 url    : '<?= Url::to(['proforma-invoice/create']) ?>?' +params,
                 type   : 'get',

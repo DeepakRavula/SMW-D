@@ -10,6 +10,7 @@ use yii\web\Response;
 use yii\helpers\Url;
 use yii\filters\AccessControl;
 use common\models\Lesson;
+use common\models\Enrolment;
 use common\models\Invoice;
 use common\models\ProformaInvoice;
 use common\models\ProformaLineItem;
@@ -21,6 +22,7 @@ use common\models\UserEmail;
 use common\models\Note;
 use backend\models\search\ProformaInvoiceSearch;
 use backend\models\search\PaymentFormLessonSearch;
+use backend\models\search\PaymentFormGroupLessonSearch;
 /**
  * ProformaInvoiceController implements the CRUD actions for ProformaInvoice model.
  */
@@ -78,13 +80,10 @@ class ProformaInvoiceController extends BaseController
         $groupLessonSearchModel->load(Yii::$app->request->get());
         $model->userId = $searchModel->userId;
         $user = User::findOne($model->userId);
-        if ($searchModel->lessonIds || $model->invoiceIds) {
+        if ($searchModel->lessonIds || $model->invoiceIds || $groupLessonSearchModel->lessonIds) {
             $groupLessons = Lesson::findAll($groupLessonSearchModel->lessonIds);
             $lessons = Lesson::findAll($searchModel->lessonIds);
             $invoices = Invoice::findAll($model->invoiceIds);
-            $endLesson = end($lessons);
-            $endGroupLesson = end($groupLessons);
-            $endInvoice = end($invoices);
             $model->locationId = $user->userLocation->location_id;
             $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
             $model->save();
@@ -93,6 +92,21 @@ class ProformaInvoiceController extends BaseController
                     $proformaLineItem = new ProformaLineItem();
                     $proformaLineItem->proformaInvoiceId = $model->id;
                     $proformaLineItem->lessonId = $lesson->id;
+                    $proformaLineItem->save();
+                }
+            }
+            if ($groupLessons) {
+                foreach ($groupLessons as $lesson) {
+                    $enrolment = Enrolment::find()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->andWhere(['courseId' => $lesson->courseId])
+                        ->customer($model->userId)
+                        ->one();
+                    $proformaLineItem = new ProformaLineItem();
+                    $proformaLineItem->proformaInvoiceId = $model->id;
+                    $proformaLineItem->lessonId = $lesson->id;
+                    $proformaLineItem->enrolmentId = $enrolment->id;
                     $proformaLineItem->save();
                 }
             }
@@ -122,7 +136,10 @@ class ProformaInvoiceController extends BaseController
         $model = $this->findModel($id);
         $searchModel = new PaymentFormLessonSearch();
         $searchModel->showCheckBox = false;
-        if (!empty($model->userId)) {
+        $groupLessonSearchModel = new PaymentFormLessonSearch();
+        $groupLessonSearchModel->showCheckBox = false;
+        $groupLessonSearchModel->userId = $model->userId;
+        if ($model->userId) {
             $customer  = User::findOne(['id' => $model->userId]);
             $userModel = UserProfile::findOne(['user_id' => $customer->id]);
             $userEmail = UserEmail::find()
@@ -132,11 +149,22 @@ class ProformaInvoiceController extends BaseController
                 ->one();
         }
         $lessonLineItems = Lesson::find()
+            ->privateLessons()
             ->joinWith(['proformaLessonItem' => function ($query) use ($model) {
                 $query->joinWith(['proformaLineItem' => function ($query) use ($model) {
                     $query->andWhere(['proforma_line_item.proformaInvoiceId' => $model->id]);
                 }]);
             }]);
+        $groupLessonLineItems = Lesson::find()
+            ->groupLessons()
+            ->joinWith(['proformaLessonItem' => function ($query) use ($model) {
+                $query->joinWith(['proformaLineItem' => function ($query) use ($model) {
+                    $query->andWhere(['proforma_line_item.proformaInvoiceId' => $model->id]);
+                }]);
+            }]);
+        $groupLessonLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $groupLessonLineItems,
+        ]);
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonLineItems,
         ]);
@@ -150,19 +178,21 @@ class ProformaInvoiceController extends BaseController
             'query' => $invoiceLineItems,
         ]);
         $notes = Note::find()
-        ->andWhere(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_PROFORMA])
-        ->orderBy(['createdOn' => SORT_DESC]);
+            ->andWhere(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_PROFORMA])
+            ->orderBy(['createdOn' => SORT_DESC]);
 
-    $noteDataProvider = new ActiveDataProvider([
-        'query' => $notes,
-    ]);
+        $noteDataProvider = new ActiveDataProvider([
+            'query' => $notes,
+        ]);
         return $this->render('view', [
             'model' => $model,
             'customer' => $customer,
             'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+            'groupLessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-            'noteDataProvider'=>$noteDataProvider,
+            'noteDataProvider' => $noteDataProvider,
             'searchModel' => $searchModel,
+            'groupLessonSearchModel' => $groupLessonSearchModel
         ]);
     }
 
@@ -181,6 +211,7 @@ class ProformaInvoiceController extends BaseController
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
     public function actionNote($id)
     {
         $model = $this->findModel($id);
