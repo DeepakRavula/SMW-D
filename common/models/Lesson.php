@@ -1045,7 +1045,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function getCreditAppliedAmount($enrolmentId)
     {
         return LessonPayment::find()
-                ->notDeleted()
+            ->notDeleted()
 		    ->joinWith(['payment' => function ($query) {
                 $query->notDeleted()
                     ->notCreditUsed();
@@ -1383,22 +1383,25 @@ class Lesson extends \yii\db\ActiveRecord
     }
 
     
-    public function getPaidAmount($id) 
+    public function getPaidAmount($id, $enrolmentId = null) 
     {
         $amount = 0.0;
-        $lessonPayments = $this->getPaymentsById($id);
+        $lessonPayments = $this->getPaymentsById($id, $enrolmentId);
         foreach ($lessonPayments as $payment) {
             $amount += $payment->amount;
         }
         return $amount;
     }
 
-    public function getPaymentsById($id) 
+    public function getPaymentsById($id, $enrolmentId = null) 
     {
-        return LessonPayment::find()
+        $query = LessonPayment::find()
             ->notDeleted()
-            ->andWhere(['paymentId' => $id, 'lessonId' => $this->id])
-            ->all();
+            ->andWhere(['paymentId' => $id, 'lessonId' => $this->id]);
+        if ($enrolmentId) {
+            $query->andWhere(['enrolmentId' => $enrolmentId]);
+        }
+        return $query->all();
     }
 
     public function addEnrolmentDiscount($discount = null)
@@ -1464,36 +1467,5 @@ class Lesson extends \yii\db\ActiveRecord
     public function getLineItemDiscountValues()
     {
         return $this->lineItemDiscount->valueType ? $this->lineItemDiscount->value : $this->lineItemDiscount->value;
-    }
-    
-    public function getInvoiceStatus() {
-        $status = null;
-        if ($this->isPrivate()) {
-            $invoice = $this->invoice;
-        } else {
-            $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
-                ->andWhere(['courseId' => $this->courseId])
-                ->andWhere(['studentId' => $this->student->id])->one();
-            $invoice = $enrolment->getInvoice($this->id);
-        }  
-        if ($invoice) {
-            switch ($invoice->status) {
-                case Invoice::STATUS_OWING:
-                    $status = 'Owing';
-                break;
-                case Invoice::STATUS_PAID:
-                    $status = 'Paid';
-                break;
-                case Invoice::STATUS_CREDIT:
-                    $status = 'Credit';
-                break;
-            }
-            if ($invoice->isVoid) {
-                $status = 'Voided';
-            }
-        } else {
-            $status = 'Not Invoiced';
-        }
-        return $status;
     }
 }

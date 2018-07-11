@@ -8,6 +8,7 @@ use common\models\Invoice;
 use common\models\Lesson;
 use common\models\Payment;
 use common\models\User;
+use common\models\Enrolment;
 use common\models\LessonPayment;
 use common\models\InvoicePayment;
 
@@ -33,8 +34,10 @@ class PaymentEditForm extends Model
     public $amountNeeded;
     public $userId;
     public $lessonIds;
+    public $groupLessonIds;
     public $invoicePayments;
     public $lessonPayments;
+    public $groupLessonPayments;
     public $amountToDistribute;
     public $reference;
     
@@ -44,10 +47,10 @@ class PaymentEditForm extends Model
     public function rules()
     {
         return [
-            [['payment_method_id', 'date'], 'required'],
             ['amount', 'validateAmount'],
             [['date', 'invoiceIds', 'selectedCreditValue', 'lessonIds', 'amount', 'userId', 'amountToDistribute', 
-                'invoicePayments', 'lessonPayments', 'paymentId', 'reference'], 'safe']
+                'invoicePayments', 'lessonPayments', 'paymentId', 'reference', 'groupLessonIds', 
+                'groupLessonPayments'], 'safe']
         ];
     }
 
@@ -63,12 +66,41 @@ class PaymentEditForm extends Model
             ->orderBy(['id' => SORT_ASC])
             ->all();
 
+        $groupLessons = Lesson::find()
+            ->where(['id' => $this->groupLessonIds])
+            ->orderBy(['id' => SORT_ASC])
+            ->all();
+
         $lessonPayments = $this->lessonPayments;
+        $groupLessonPayments = $this->groupLessonPayments;
         $invoicePayments = $this->invoicePayments;
         
         foreach ($lessons as $i => $lesson) {
             $amount = $lessonPayments[$i];
             $payments = $lesson->getPaymentsById($this->paymentId);
+            foreach ($payments as $i => $lessonPayment) {
+                if ($i == 0) {
+                    if ($amount == 0) {
+                        $lessonPayment->delete();
+                    } else {
+                        $lessonPayment->amount = $amount;
+                        $lessonPayment->save();
+                    }
+                } else {
+                    $lessonPayment->delete();
+                }
+            }
+        }
+
+        foreach ($groupLessons as $i => $lesson) {
+            $enrolment = Enrolment::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->andWhere(['courseId' => $lesson->courseId])
+                ->customer($this->userId)
+                ->one();
+            $amount = $groupLessonPayments[$i];
+            $payments = $lesson->getPaymentsById($this->paymentId, $enrolment->id);
             foreach ($payments as $i => $lessonPayment) {
                 if ($i == 0) {
                     if ($amount == 0) {

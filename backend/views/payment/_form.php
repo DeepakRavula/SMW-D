@@ -71,6 +71,18 @@ use yii\bootstrap\Html;
         ?>
     <?php endif; ?>
 
+    <?php $lessonCount = $groupLessonDataProvider->getCount(); ?>
+    <?php if ($lessonCount > 0) : ?>
+        <?= Html::label('Group Lessons', ['class' => 'admin-login']) ?>
+
+        <?= $this->render('_group-lesson-line-item', [
+            'model' => $paymentModel,
+            'canEdit' => $canEdit,
+            'lessonDataProvider' => $groupLessonDataProvider,
+        ]);
+        ?>
+    <?php endif; ?>
+
     <?php $invoiceCount = $invoiceDataProvider->getCount(); ?>
     <?php if ($invoiceCount > 0) : ?>
         <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
@@ -98,36 +110,48 @@ use yii\bootstrap\Html;
 
 
 <script>
+var lockTextBox = false;
 var updatePayment = {
         setAction: function() {
             var lessonIds = new Array();
+            var groupLessonIds = new Array();
             var invoiceIds = new Array();
             var lessonPayments = new Array();
+            var groupLessonPayments = new Array();
             var invoicePayments = new Array();
             $('.lesson-line-items').each(function() {
                 lessonIds.push($(this).data('key'));
                 var amount = $(this).find('.payment-amount').val();
                 lessonPayments.push($.isEmptyObject(amount) ? 0.0 : amount);
             });
+            $('.group-lesson-line-items').each(function() {
+                groupLessonIds.push($(this).data('key'));
+                var amount = $(this).find('.payment-amount').val();
+                groupLessonPayments.push($.isEmptyObject(amount) ? 0.0 : amount);
+            });
             $('.invoice-line-items').each(function() {
                 invoiceIds.push($(this).data('key'));
                 var amount = $(this).find('.payment-amount').val();
                 invoicePayments.push($.isEmptyObject(amount) ? 0.0 : amount);
             });
-            var params = $.param({ 'PaymentEditForm[lessonIds]': lessonIds, 
+            var params = $.param({ 'PaymentEditForm[lessonIds]': lessonIds, 'PaymentEditForm[groupLessonIds]': groupLessonIds, 
                 'PaymentEditForm[invoiceIds]': invoiceIds, 'PaymentEditForm[lessonPayments]': lessonPayments, 
-                'PaymentEditForm[invoicePayments]': invoicePayments });
+                'PaymentEditForm[invoicePayments]': invoicePayments, 'PaymentEditForm[groupLessonPayments]': groupLessonPayments });
             var url = '<?= Url::to(['payment/update', 'id' => $paymentModel->id]) ?>&' + params;
             $('#modal-form').attr('action', url);
             return false;
         },
         calcAmountNeeded : function() {
-            var amountReceived = $('#paymenteditform-amount').val();
+            var amountReceived = '<?= $model->amount; ?>';
             var amountToDistribute = 0.0;
             $('.line-items-value').each(function() {
                 var amount = $(this).find('.payment-amount').val();
                 amountToDistribute += parseFloat($.isEmptyObject(amount) ? 0.0 : amount);
             });
+            if (!lockTextBox) {
+                var amountReceived = parseFloat(amountReceived) > amountToDistribute ? parseFloat(amountReceived) : amountToDistribute;
+                $('#paymenteditform-amount').val((amountReceived).toFixed(2));
+            }
             $('#paymenteditform-amounttodistribute').val(amountToDistribute);
             $('.amount-to-apply').text((amountToDistribute).toFixed(2));
             $('.amount-to-credit').text((amountReceived - amountToDistribute).toFixed(2));
@@ -142,10 +166,23 @@ var updatePayment = {
         }
     };
 
-    $(document).off('change', '#paymenteditform-amount, .payment-amount').on('change', '#paymenteditform-amount, .payment-amount', function () {
+    $(document).off('change', '.payment-amount').on('change', '.payment-amount', function () {
         updatePayment.setAction();
         updatePayment.calcAmountNeeded();
         updatePayment.validateAmount();
+        return false;
+    });
+
+    $(document).off('change', '#paymenteditform-amount').on('change', '#paymenteditform-amount', function () {
+        updatePayment.setAction();
+        updatePayment.calcAmountNeeded();
+        return false;
+    });
+
+    $(document).off('keyup', '#paymenteditform-amount').on('keyup', '#paymenteditform-amount', function () {
+        lockTextBox = true;
+        updatePayment.setAction();
+        updatePayment.calcAmountNeeded();
         return false;
     });
 
