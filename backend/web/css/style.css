@@ -491,3 +491,11 @@ dl {
     background-color: white !important;
     pointer-events:none;
 }
+.receive-payment-text {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.receive-payment-text-value {
+    font-size: 20px;
+}
