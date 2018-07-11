@@ -16,7 +16,8 @@ use yii\helpers\Url;
 <script>
 	$(document).off('click', '#receive-payments').on('click', '#receive-payments', function () {
         $.ajax({
-            url    : '<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->customer->id]); ?>',
+            url    : '<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->customer->id,
+                'PaymentFormGroupLessonSearch[userId]' => $model->customer->id ]); ?>',
             type   : 'get',
             dataType: 'json',
             success: function(response)

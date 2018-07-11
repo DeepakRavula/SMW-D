@@ -18,7 +18,8 @@ $user = User::findOne($model->id);
 <script>
 	$(document).off('click', '#receive-payments').on('click', '#receive-payments', function () {
         $.ajax({
-            url    : '<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->id]); ?>',
+            url    : '<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->id, 
+                'PaymentFormGroupLessonSearch[userId]' => $model->id]); ?>',
             type   : 'get',
             dataType: 'json',
             success: function(response)

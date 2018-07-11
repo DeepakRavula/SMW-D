@@ -289,7 +289,7 @@ use yii\bootstrap\Html;
     $(document).off('change', '#customer-payment').on('change', '#customer-payment', function () {
         $('#modal-spinner').show();
         var userId = $('#customer-payment').val();
-        var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId });
+        var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId, 'PaymentFormGroupLessonSearch[userId]' => userId });
         var url = '<?= Url::to(['payment/receive']) ?>?' + params;
         $.pjax.reload({url: url, container: "#invoice-lineitem-listing", replace: false, async: false, timeout: 6000});
         $.pjax.reload({url: url, container: "#lesson-line-item-listing", replace: false, async: false, timeout: 6000});
