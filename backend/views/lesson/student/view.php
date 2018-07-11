@@ -41,7 +41,7 @@ use common\models\LessonPayment;
                 },
             ],
             ['class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {create} {createPFI} {viewPFI} {payment}',
+                'template' => '{view} {create} {payment}',
                 'buttons' => [
                     'create' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
@@ -68,25 +68,14 @@ use common\models\LessonPayment;
                             ]);
                         }
                     },
-                    'viewPFI' => function ($url, $model) use ($lessonModel) {
-                        $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
-                            ->andWhere(['courseId' => $lessonModel->courseId])
-                            ->andWhere(['studentId' => $model->id])->one();
-                        if ($lessonModel->hasGroupProFormaLineItem($enrolment)) {
-                            $pfi = $lessonModel->getGroupProFormaLineItem($enrolment)->invoice;
-                            $url = Url::to(['invoice/view', 'id' => $pfi->id]);
-                            return Html::a('View PFI', $url, [
-                                'title' => Yii::t('yii', 'View PFI'),
-                                'class' => ['btn-info btn-sm']
-                            ]);
-                        }
-                    },
                     'payment' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
                             ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
-                        $lessonPayment = LessonPayment::findOne(['enrolmentId' => $enrolment->id,
-                            'lessonId' => $lessonModel->id]);
+                        $lessonPayment = LessonPayment::find()
+                            ->notDeleted()
+                            ->andWhere(['enrolmentId' => $enrolment->id, 'lessonId' => $lessonModel->id])
+                            ->all();
                         if ($lessonPayment) {
                             $url = Url::to(['lesson/payment', 'lessonId' => $lessonModel->id, 'enrolmentId' => $enrolment->id]);
                             return Html::a('View Payment', null, [

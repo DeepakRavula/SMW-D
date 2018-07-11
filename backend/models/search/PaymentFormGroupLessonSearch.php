@@ -86,8 +86,10 @@ class PaymentFormGroupLessonSearch extends Lesson
                         ->customer($this->userId)
                         ->one();
                 }
-                if ($lesson->isOwing($enrolment->id)) {
-                    $lessonIds[] = $lesson->id;
+                if (!$enrolment->hasinvoice($lesson->id)) {
+                    if ($lesson->isOwing($enrolment->id)) {
+                        $lessonIds[] = $lesson->id;
+                    }
                 }
             }
             $lessonsQuery->andWhere(['id' => $lessonIds]);
