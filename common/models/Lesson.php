@@ -1039,7 +1039,7 @@ class Lesson extends \yii\db\ActiveRecord
             }])
             ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
                 ->notDeleted()
-            ->sum('payment.amount');
+            ->sum('lesson_payment.amount');
     }
     
     public function getCreditAppliedAmount($enrolmentId)

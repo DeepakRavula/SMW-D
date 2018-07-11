@@ -110,20 +110,17 @@ use yii\bootstrap\Html;
     ]);
     ?>
 
-    <div class="pull-right">
-        <div>
-            <h4 class="pull-right amount-needed">Available Credits $<span class="credit-available">0.00</span></h4>
-        </div>
-        <div>
-            <h4 class="pull-right">Selected Credits $<span class="credit-selected">0.00</span></h4>
-        </div>
-        <div>
-            <h4 class="pull-right">Amount To Apply $<span class="amount-to-apply">0.00</span></h4>
-        </div>
-        <div>
-            <h4 class="pull-right">Amount To Credit $<span class="amount-to-credit">0.00</span></h4>
-        </div>
-    </div>
+    <div class ="pull-right">
+    <dl class = "dl-horizontal">
+    <dt class = "pull-left receive-payment-text">Available Credits   :   </dt>
+    <dd><span class="pull-right credit-available receive-payment-text-value">0.00</span></dd>
+    <dt class = "pull-left receive-payment-text">Selected Credits    :   </dt>
+    <dd><span class="pull-right credit-selected receive-payment-text-value">0.00</span></dd>
+    <dt class = "pull-left receive-payment-text">Amount To Apply     :   </dt>
+    <dd><span class=" pull-right amount-to-apply receive-payment-text-value">0.00</span></dd>
+    <dt class = "pull-left receive-payment-text">Amount To Credit    :   </dt>
+    <dd><span class=" pull-right amount-to-credit receive-payment-text-value">0.00</span></dd>
+    </dl>
 </div>
 
 <script>
