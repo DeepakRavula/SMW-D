@@ -44,29 +44,6 @@ use common\models\UserProfile;
 		    return $data->getStatus();
 	    },
 	],
-	[
-		'label' => 'Student',
-		'attribute' => 'student',
-		'value' => function ($data) {
-			return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
-		},
-	],
-
-	[
-		'label' => 'Program',
-		'attribute' => 'program',
-		'value' => function ($data) {
-			return !empty($data->course->program->name) ? $data->course->program->name : null;
-		},
-	],
-
-	[
-		'label' => 'Teacher',
-		'attribute' => 'teacher',
-		'value' => function ($data) {
-			return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
-		},
-	],
     ];
     ?>
     <div class="grid-row-open">
