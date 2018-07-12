@@ -123,6 +123,15 @@ class InvoicePayment extends \yii\db\ActiveRecord
             }
             $this->invoice->save();
         }
+	else {
+            $paymentReceipt              =   new PaymentReceipt();
+            $paymentReceipt->receiptId   =   $this->receiptId;
+            $paymentReceipt->paymentId   =   $this->payment->id;
+            $paymentReceipt->objectType  =   Receipt::TYPE_INVOICE;
+            $paymentReceipt->objectId    =   $this->invoice_id;
+            $paymentReceipt->amount      =   $this->amount;
+            $paymentReceipt->save();
+        }
         return true;
     }
 
