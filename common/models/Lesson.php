@@ -1045,7 +1045,7 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function getCreditAppliedAmount($enrolmentId)
     {
-        return LessonPayment::find()
+        $creditAppliedAmount =  LessonPayment::find()
             ->notDeleted()
 		    ->joinWith(['payment' => function ($query) {
                 $query->notDeleted()
@@ -1053,6 +1053,10 @@ class Lesson extends \yii\db\ActiveRecord
 			}])
             ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
             ->sum('lesson_payment.amount');
+            if(empty($creditAppliedAmount)) {
+                return 0;
+            }
+            return  $creditAppliedAmount;
     }
 
     public function getCreditAppliedPayment($enrolmentId)
@@ -1469,18 +1473,9 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->lineItemDiscount->valueType ? $this->lineItemDiscount->value : $this->lineItemDiscount->value;
     }
-    
-    public function getPaid($id) {
-        $lessonPaid = LessonPayment::find()
-            ->andWhere(['lessonId' => $id])
-            ->sum('lesson_payment.amount');
-            if(empty($lessonPaid)) {
-                return 0;
-        }
-        return $lessonPaid;  
-    }
 
-    public function getSubTotal() {
-        return $this->grossPrice - $this->getDiscount();
+    public function getSubTotal()
+    {
+        return $this->grossPrice - $this->discount;
     }
 }

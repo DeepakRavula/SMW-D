@@ -36,7 +36,7 @@ LteBox::begin([
     <dt class="m-r-10">Total</dt>
     <dd><?= Yii::$app->formatter->asCurrency($model->netPrice); ?></dd>
     <dt class="m-r-10">Paid</dt>
-    <dd><?= Yii::$app->formatter->asCurrency($model->getPaid($model->id)); ?></dd>
+    <dd><?= Yii::$app->formatter->asCurrency($model->getCreditAppliedAmount($model->enrolment->id)); ?></dd>
     <dt class="m-r-10">Balance</dt>
     <dd><?= Yii::$app->formatter->asCurrency($model->getOwingAmount($model->enrolment->id)); ?></dd>
 </dl>

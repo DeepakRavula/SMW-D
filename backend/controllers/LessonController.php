@@ -787,9 +787,7 @@ class LessonController extends BaseController
         $request = Yii::$app->request;
         $model = $this->findModel($id);
         if ($request->isPost) {
-           // print_r($model->tax);
             if ($model->load($request->post())) {
-               // print_r($model->tax);die();
                 if ($model->save()) {
                     $response = [
                         'status' => true
