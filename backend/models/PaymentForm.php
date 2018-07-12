@@ -7,6 +7,7 @@ use yii\base\Model;
 use common\models\Invoice;
 use common\models\Lesson;
 use common\models\Payment;
+use common\models\Enrolment;
 use common\models\User;
 use common\models\LessonPayment;
 use common\models\InvoicePayment;
@@ -39,10 +40,12 @@ class PaymentForm extends Model
     public $lessonId;
     public $userId;
     public $lessonIds;
+    public $groupLessonIds;
     public $invoiceCreditIds;
     public $paymentCreditIds;
     public $invoicePayments;
     public $lessonPayments;
+    public $groupLessonPayments;
     public $paymentCredits;
     public $invoiceCredits;
     public $amountToDistribute;
@@ -63,7 +66,8 @@ class PaymentForm extends Model
             [['date', 'amountNeeded', 'invoiceIds', 'canUseInvoiceCredits', 'selectedCreditValue',
                 'lessonIds', 'canUsePaymentCredits', 'invoiceCreditIds', 'amount', 'userId',
                 'amountToDistribute', 'invoicePayments', 'lessonPayments','paymentId',
-                'paymentCredits', 'invoiceCredits', 'reference', 'paymentCreditIds'], 'safe']
+                'paymentCredits', 'invoiceCredits', 'reference', 'paymentCreditIds',
+                'groupLessonIds', 'groupLessonPayments'], 'safe']
         ];
     }
 
@@ -82,6 +86,12 @@ class PaymentForm extends Model
                 ->orderBy(['id' => SORT_ASC])
                 ->all();
         }
+        if ($this->groupLessonIds) {
+            $groupLessons = Lesson::find()
+                ->where(['id' => $this->groupLessonIds])
+                ->orderBy(['id' => SORT_ASC])
+                ->all();
+        }
         if ($this->paymentCreditIds) {
             $creditPayments = Payment::find()
                 ->where(['id' => $this->paymentCreditIds])
@@ -97,6 +107,7 @@ class PaymentForm extends Model
         $paymentCredits = $this->paymentCredits;
         $invoiceCredits = $this->invoiceCredits;
         $lessonPayments = $this->lessonPayments;
+        $groupLessonPayments = $this->groupLessonPayments;
         $invoicePayments = $this->invoicePayments;
         if ($this->invoiceCreditIds) {
             if ($this->canUseInvoiceCredits) { 
@@ -131,6 +142,30 @@ class PaymentForm extends Model
                                         $invoiceCredits[$j] -= $paymentModel->amount;
                                     }
                                     $lesson->addPayment($creditInvoice, $paymentModel);
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if ($this->groupLessonIds) {
+                        foreach ($groupLessons as $i => $lesson) {
+                            if ($groupLessonPayments[$i] > 0.00) {
+                                $paymentModel = new Payment();
+                                $paymentModel->amount = $groupLessonPayments[$i];
+                                if ($invoiceCredits[$j] > 0.00) {
+                                    if ($paymentModel->amount > $invoiceCredits[$j]) {
+                                        $paymentModel->amount = $invoiceCredits[$j];
+                                        $groupLessonPayments[$i] -= $invoiceCredits[$j];
+                                        $invoiceCredits[$j] -= $paymentModel->amount;
+                                    }
+                                    $enrolment = Enrolment::find()
+                                        ->notDeleted()
+                                        ->isConfirmed()
+                                        ->andWhere(['courseId' => $lesson->courseId])
+                                        ->customer($this->userId)
+                                        ->one();
+                                    $lesson->addPayment($creditInvoice, $paymentModel, $enrolment);
                                 } else {
                                     break;
                                 }
@@ -189,6 +224,35 @@ class PaymentForm extends Model
                             }
                         }
                     }
+                    if ($this->groupLessonIds) {
+                        foreach ($groupLessons as $i => $lesson) {
+                            $enrolment = Enrolment::find()
+                                ->notDeleted()
+                                ->isConfirmed()
+                                ->andWhere(['courseId' => $lesson->courseId])
+                                ->customer($this->userId)
+                                ->one();
+                            if ($lesson->isOwing($enrolment->id)) {
+                                if ($paymentCredits[$j] > 0.00) {
+                                    if ($groupLessonPayments[$i] > $paymentCredits[$j]) {
+                                        $amountToPay = $paymentCredits[$j];
+                                    } else {
+                                        $amountToPay = $groupLessonPayments[$i];
+                                    }
+                                    $groupLessonPayments[$i] -= $amountToPay;
+                                    $paymentCredits[$j] -= $amountToPay;
+                                    $lessonPaymentModel = new LessonPayment();
+                                    $lessonPaymentModel->lessonId = $lesson->id;
+                                    $lessonPaymentModel->paymentId = $creditPayment->id;
+                                    $lessonPaymentModel->enrolmentId = $enrolment->id;
+                                    $lessonPaymentModel->amount     = $amountToPay;
+                                    $lessonPaymentModel->save();
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -225,6 +289,28 @@ class PaymentForm extends Model
                         $lessonPayment->paymentId   = $this->paymentId;
                         $lessonPayment->amount      = $lessonPayments[$i];
                         $lessonPayment->enrolmentId = $lesson->enrolment->id;
+                        $lessonPayment->save();
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        if ($this->groupLessonIds) {
+            foreach ($groupLessons as $i => $lesson) {
+                $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['courseId' => $lesson->courseId])
+                    ->customer($this->userId)
+                    ->one();
+                if ($groupLessonPayments[$i] > 0.00) {
+                    if ($amount > 0.00) {
+                        $lessonPayment = new LessonPayment();
+                        $lessonPayment->lessonId    = $lesson->id;
+                        $lessonPayment->paymentId   = $this->paymentId;
+                        $lessonPayment->amount      = $groupLessonPayments[$i];
+                        $lessonPayment->enrolmentId = $enrolment->id;
                         $lessonPayment->save();
                     } else {
                         break;

@@ -23,8 +23,7 @@ class ProformaItemLesson extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            ['lessonId', 'safe'],
-
+            [['lessonId', 'enrolmentId'], 'safe'],
         ];
     }
 
@@ -36,7 +35,6 @@ class ProformaItemLesson extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'lessonId' => 'Lesson',
-            
         ];
     }
 
@@ -61,4 +59,13 @@ class ProformaItemLesson extends \yii\db\ActiveRecord
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
     }
    
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            if (!$this->enrolmentId) {
+                $this->enrolmentId = $this->lesson->enrolment->id;
+            }
+        }
+        return parent::beforeSave($insert);
+    }
 }

@@ -131,19 +131,21 @@ class LessonQuery extends \yii\db\ActiveQuery
     
     public function student($id)
     {
-        return $this->joinWith(['enrolment' => function ($query) use ($id) {
+        return $this->joinWith(['enrolments' => function ($query) use ($id) {
             $query->joinWith(['student' => function ($query) use ($id) {
                 $query->andWhere(['student.id' => $id]);
             }]);
+            $query->andWhere(['NOT', ['enrolment.id' => null]]);
         }]);
     }
 
     public function customer($id)
     {
-        return $this->joinWith(['enrolment' => function ($query) use ($id) {
+        return $this->joinWith(['enrolments' => function ($query) use ($id) {
             $query->joinWith(['student' => function ($query) use ($id) {
                 $query->andWhere(['customer_id' => $id]);
             }]);
+            $query->andWhere(['NOT', ['enrolment.id' => null]]);
         }]);
     }
     

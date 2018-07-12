@@ -60,7 +60,9 @@ class LessonReschedule extends Model
         }
         foreach ($oldLesson->lessonPayments as $lessonPayment) {
             $lessonPayment->updateAttributes(['lessonId' => $rescheduledLesson->id]);
-            $lessonPayment->payment->creditUsage->debitUsagePayment->updateAttributes(['reference' => $rescheduledLesson->lessonNumber]);
+            if ($lessonPayment->payment->creditUsage) {
+                $lessonPayment->payment->creditUsage->debitUsagePayment->updateAttributes(['reference' => $rescheduledLesson->lessonNumber]);
+            }
         }
         return true;
     }

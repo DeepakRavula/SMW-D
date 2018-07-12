@@ -28,6 +28,18 @@ use yii\bootstrap\ActiveForm;
     ?>
 <?php endif; ?>
 
+<?php $lessonCount = $groupLessonDataProvider->getCount(); ?>
+<?php if ($lessonCount > 0) : ?>
+    <?= Html::label('Group Lessons', ['class' => 'admin-login']) ?>
+
+    <?= $this->render('/payment/_group-lesson-line-item', [
+        'model' => $model,
+        'canEdit' => $canEdit,
+        'lessonDataProvider' => $groupLessonDataProvider,
+    ]);
+    ?>
+<?php endif; ?>
+
 <?php $invoiceCount = $invoiceDataProvider->getCount(); ?>
 <?php if ($invoiceCount > 0) : ?>
     <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
@@ -69,11 +81,12 @@ use yii\bootstrap\ActiveForm;
             dataType: "json",
             success: function(response)
             {
-                if(response.status)
-                {
+                $('#modal-spinner').hide();
+                if (response.status) {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
-                    $('#modal-spinner').hide();
+                } else {
+                    $('#modal-popup-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
                 }
             }
         });

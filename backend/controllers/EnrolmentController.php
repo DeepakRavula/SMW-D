@@ -167,16 +167,14 @@ class EnrolmentController extends BaseController
         $enrolmentModel->isConfirmed = true;
         if ($enrolmentModel->save()) {
             $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-            $enrolmentModel->on(
-                Enrolment::EVENT_AFTER_INSERT,
+            $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
                 [new StudentLog(), 'addGroupEnrolment'],
                 ['loggedUser' => $loggedUser]
             );
             $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
-            $invoice = $enrolmentModel->createProFormaInvoice();
             return [
                 'status' => true,
-                'url' => Url::to(['/invoice/view', 'id' => $invoice->id])
+                'url' => Url::to(['/course/view', 'id' => $course->id])
             ];
         }
     }

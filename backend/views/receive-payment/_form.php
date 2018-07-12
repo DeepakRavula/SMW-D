@@ -78,7 +78,7 @@ use yii\bootstrap\Html;
     <?php ActiveForm::end(); ?>
     
     <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_lesson-line-item', [
+    <?= $this->render('_lesson-line-item', [
         'model' => $model,
         'isCreatePfi' => false,
         'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
@@ -86,8 +86,17 @@ use yii\bootstrap\Html;
     ]);
     ?>
 
+    <?= Html::label('Group Lessons', ['class' => 'admin-login']) ?>
+    <?= $this->render('_group-lesson-line-item', [
+        'model' => $model,
+        'isCreatePfi' => false,
+        'lessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
+        'searchModel' => $groupLessonSearchModel
+    ]);
+    ?>
+
     <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_invoice-line-item', [
+    <?= $this->render('_invoice-line-item', [
         'model' => $model,
         'isCreatePfi' => false,
         'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
@@ -96,37 +105,36 @@ use yii\bootstrap\Html;
     ?>
 
     <?= Html::label('Credits', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_credits-available', [
+    <?= $this->render('_credits-available', [
         'creditDataProvider' => $creditDataProvider,
     ]);
     ?>
 
-    <div class="pull-right">
-        <div>
-            <h4 class="pull-right amount-needed">Available Credits $<span class="credit-available">0.00</span></h4>
-        </div>
-        <div>
-            <h4 class="pull-right">Selected Credits $<span class="credit-selected">0.00</span></h4>
-        </div>
-        <div>
-            <h4 class="pull-right">Amount To Apply $<span class="amount-to-apply">0.00</span></h4>
-        </div>
-        <div>
-            <h4 class="pull-right">Amount To Credit $<span class="amount-to-credit">0.00</span></h4>
-        </div>
-    </div>
+    <div class ="pull-right">
+    <dl class = "dl-horizontal">
+    <dt class = "pull-left receive-payment-text">Available Credits   :   </dt>
+    <dd><span class="pull-right credit-available receive-payment-text-value">0.00</span></dd>
+    <dt class = "pull-left receive-payment-text">Selected Credits    :   </dt>
+    <dd><span class="pull-right credit-selected receive-payment-text-value">0.00</span></dd>
+    <dt class = "pull-left receive-payment-text">Amount To Apply     :   </dt>
+    <dd><span class=" pull-right amount-to-apply receive-payment-text-value">0.00</span></dd>
+    <dt class = "pull-left receive-payment-text">Amount To Credit    :   </dt>
+    <dd><span class=" pull-right amount-to-credit receive-payment-text-value">0.00</span></dd>
+    </dl>
 </div>
 
 <script>
-    var lockTextBox =   false;
+    var lockTextBox = false;
     var receivePayment = {
         setAction: function() {
             var userId = $('#customer-payment').val();
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
+            var groupLessonIds = $('#group-lesson-line-item-grid').yiiGridView('getSelectedRows');
             var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
             var paymentCreditIds = new Array();
             var invoiceCreditIds = new Array();
             var lessonPayments = new Array();
+            var groupLessonPayments = new Array();
             var invoicePayments = new Array();
             var paymentCredits = new Array();
             var invoiceCredits = new Array();
@@ -153,12 +161,18 @@ use yii\bootstrap\Html;
                     lessonPayments.push($(this).find('.payment-amount').val());
                 }
             });
+            $('.group-lesson-line-items').each(function() {
+                if ($(this).find('.check-checkbox').is(":checked")) {
+                    groupLessonPayments.push($(this).find('.payment-amount').val());
+                }
+            });
             $('.invoice-line-items').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
                     invoicePayments.push($(this).find('.payment-amount').val());
                 }
             });
-            var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId, 'PaymentFormLessonSearch[lessonIds]': lessonIds, 
+            var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId, 'PaymentFormLessonSearch[lessonIds]': lessonIds,
+                'PaymentFormGroupLessonSearch[lessonIds]': groupLessonIds, 'PaymentForm[groupLessonPayments]': groupLessonPayments,
                 'PaymentForm[invoiceIds]': invoiceIds, 'PaymentForm[canUsePaymentCredits]': canUsePaymentCredits, 
                 'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[invoiceCreditIds]': invoiceCreditIds,
                 'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[invoicePayments]': invoicePayments,
@@ -172,7 +186,7 @@ use yii\bootstrap\Html;
             var amountNeeded = parseFloat('0.00');
             $('.line-items-value').each(function() {
                 if ($(this).find('.check-checkbox').is(":checked")) {
-                    var balance = $(this).find('.invoice-value').text();
+                    var balance = $(this).find('.payment-amount').val();
                     balance = balance.replace('$', '');
                     amountNeeded = parseFloat(amountNeeded) + parseFloat(balance);
                 }
@@ -218,7 +232,7 @@ use yii\bootstrap\Html;
                 var amountReceived = amountNeeded - creditAmount < 0 ? '' : (-(creditAmount - amountNeeded)).toFixed(2);
                 $('#paymentform-amount').val(amountReceived);
             }
-            var amountToCredit = (creditAmount + parseFloat(amountReceived)) - amountToDistribute;debugger
+            var amountToCredit = (creditAmount + parseFloat(amountReceived)) - amountToDistribute;
             $('.amount-to-credit').text((amountToCredit).toFixed(2));
             $('#amount-needed-value').val((amountNeeded).toFixed(2));
             $('.amount-needed-value').text((amountNeeded).toFixed(2));
@@ -257,7 +271,7 @@ use yii\bootstrap\Html;
         receivePayment.setAvailableCredits();
     });
 
-    $(document).off('change', '#credit-line-item-grid, .payment-amount, .credit-amount, #invoice-line-item-grid, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]').on('change', '.payment-amount, #credit-line-item-grid, #invoice-line-item-grid, .credit-amount, #lesson-line-item-grid .select-on-check-all, input[name="selection[]"]', function () {
+    $(document).off('change', '#credit-line-item-grid, .payment-amount, .credit-amount, #invoice-line-item-grid, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]').on('change', '.payment-amount, #credit-line-item-grid, #invoice-line-item-grid, .credit-amount, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]', function () {
         receivePayment.setAction();
         receivePayment.calcAmountNeeded();
         receivePayment.validateAmount();
@@ -275,7 +289,7 @@ use yii\bootstrap\Html;
     $(document).off('change', '#customer-payment').on('change', '#customer-payment', function () {
         $('#modal-spinner').show();
         var userId = $('#customer-payment').val();
-        var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId });
+        var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId, 'PaymentFormGroupLessonSearch[userId]': userId });
         var url = '<?= Url::to(['payment/receive']) ?>?' + params;
         $.pjax.reload({url: url, container: "#invoice-lineitem-listing", replace: false, async: false, timeout: 6000});
         $.pjax.reload({url: url, container: "#lesson-line-item-listing", replace: false, async: false, timeout: 6000});
@@ -308,15 +322,18 @@ use yii\bootstrap\Html;
 
     $(document).off('click', '.modal-back').on('click', '.modal-back', function() {
         $('#modal-spinner').show();
+        var userId = $('#customer-payment').val();
         var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
         var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
-        if ($.isEmptyObject(lessonIds) && $.isEmptyObject(invoiceIds)) {
+        var groupLessonIds = $('#group-lesson-line-item-grid').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(lessonIds) && $.isEmptyObject(invoiceIds) && $.isEmptyObject(groupLessonIds)) {
             $('#modal-spinner').hide();
             $('#index-error-notification').html("Choose any lessons or invoices to create PFI").fadeIn().delay(5000).fadeOut();
         } else {
             $('.modal-back').attr('disabled', true);
             $('.modal-save-replaced').attr('disabled', true);
-            var params = $.param({ 'PaymentFormLessonSearch[lessonIds]': lessonIds, 'ProformaInvoice[invoiceIds]': invoiceIds });
+            var params = $.param({ 'PaymentFormLessonSearch[lessonIds]': lessonIds, 'PaymentFormLessonSearch[userId]': userId, 
+                'ProformaInvoice[invoiceIds]': invoiceIds, 'PaymentFormGroupLessonSearch[lessonIds]': groupLessonIds });
             $.ajax({
                 url    : '<?= Url::to(['proforma-invoice/create']) ?>?' +params,
                 type   : 'get',

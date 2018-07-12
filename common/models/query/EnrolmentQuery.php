@@ -61,6 +61,13 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
         }]);
     }
 
+    public function customer($customerId)
+    {
+        return $this->joinWith(['student' => function ($query) use ($customerId) {
+            $query->andWhere(['student.customer_id' => $customerId]);
+        }]);
+    }
+
     public function programs()
     {
         $this->joinWith(['course' => function ($query) {
