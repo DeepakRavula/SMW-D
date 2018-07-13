@@ -11,9 +11,7 @@ use common\models\Location;
 
 ?>
 <?php $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
-echo $this->render('/print/_header', [
-       'locationModel'=>$model,
-]);
+echo " Customers detailes :";
 ?>
 
 <div class="user-index"> 
