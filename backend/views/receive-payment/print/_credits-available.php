@@ -5,12 +5,8 @@ use yii\widgets\Pjax;
 use yii\bootstrap\Html;
 
 ?>
-
 <?php
     $columns = [];
-   
-
-
     array_push($columns, [
         'headerOptions' => ['class' => 'text-left'],
         'contentOptions' => ['class' => 'text-left'],
@@ -24,7 +20,7 @@ use yii\bootstrap\Html;
         'contentOptions' => ['class' => 'text-left'],
         'label' => 'Amount',
         'value' => function ($data) {
-            return  !empty($data->amount) ? $data->amount: null;
+            return  !empty($data->amount) ? Yii::$app->formatter->asDecimal($data->amount): null;
         }
     ]);
     array_push($columns, [

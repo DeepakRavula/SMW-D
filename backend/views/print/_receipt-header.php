@@ -5,32 +5,22 @@
             <h2 class="">
                 <span class="logo-lg"><img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png" /></span>
             </h2>
-            </div>
-                    <div class="col-xs-4 invoice-col">
-                        <div class="pull-right">
-            <?php if (!empty($paymentModel)): ?>
-                            <div class="right-align">
-                            <div class="f-s-30">  </div>
-                            <div class="text-right"> Amount Received   :      <?= $paymentModel->amount ?></div>
-                            <div class="text-right"> Date              :      <?= Yii::$app->formatter->asDate($paymentModel->date); ?></div>
-                            </div>
-                            </div>
-<?php endif; ?>
-            <?php if (!empty($courseModel)): ?>
-                <b><?= $courseModel->program->name; ?></b><br/>
-                <b><?= Yii::$app->formatter->asDate($courseModel->startDate); ?>-<?= Yii::$app->formatter->asDate($courseModel->endDate); ?></b><br>
-                <br>
-                <b>Duration:</b>
-                <?php
-                $length = \DateTime::createFromFormat('H:i:s', $courseModel->courseSchedule->duration);
-                echo $length->format('H:i');
-                ?> <br>
-                <b>Time:</b>
-                <?php
-                $fromTime = \DateTime::createFromFormat('H:i:s', $courseModel->courseSchedule->fromTime);
-                echo $fromTime->format('h:i A');
-                ?><br>
-<?php endif; ?>
+            </div>                    
+                <?php if (!empty($courseModel)) : ?>
+                    <b><?= $courseModel->program->name; ?></b><br/>
+                    <b><?= Yii::$app->formatter->asDate($courseModel->startDate); ?>-<?= Yii::$app->formatter->asDate($courseModel->endDate); ?></b><br>
+                    <br>
+                    <b>Duration:</b>
+                    <?php
+                    $length = \DateTime::createFromFormat('H:i:s', $courseModel->courseSchedule->duration);
+                    echo $length->format('H:i');
+                    ?> <br>
+                    <b>Time:</b>
+                    <?php
+                    $fromTime = \DateTime::createFromFormat('H:i:s', $courseModel->courseSchedule->fromTime);
+                    echo $fromTime->format('h:i A');
+                    ?><br>
+                <?php endif; ?>
                         </div>
         </div>
         </div>
@@ -41,26 +31,26 @@
                 From
                 <address>
                     <b>Arcadia Music Academy ( <?= $locationModel->name; ?> )</b><br>
-                    <?php if (!empty($locationModel->address)): ?>
+                    <?php if (!empty($locationModel->address)) : ?>
                         <?= $locationModel->address; ?>
                     <?php endif; ?>
                     <br/>
-                    <?php if (!empty($locationModel->city_id)): ?>
+                    <?php if (!empty($locationModel->city_id)) : ?>
                         <?= $locationModel->city->name; ?>,
                     <?php endif; ?>        
-                    <?php if (!empty($locationModel->province_id)): ?>
+                    <?php if (!empty($locationModel->province_id)) : ?>
                         <?= $locationModel->province->name; ?>
                     <?php endif; ?>
                     <br/>
-                    <?php if (!empty($locationModel->postal_code)): ?>
+                    <?php if (!empty($locationModel->postal_code)) : ?>
                         <?= $locationModel->postal_code; ?>
                     <?php endif; ?>
                     <br/>
-                    <?php if (!empty($locationModel->phone_number)): ?>
+                    <?php if (!empty($locationModel->phone_number)) : ?>
                         <?= $locationModel->phone_number ?>
                     <?php endif; ?>
                     <br/>
-                    <?php if (!empty($locationModel->email)): ?>
+                    <?php if (!empty($locationModel->email)) : ?>
                         <?= $locationModel->email ?>
                     <?php endif; ?>
                     <br/>
@@ -103,7 +93,7 @@
                             <?php echo $phoneNumber->number;
                             echo '<br/>'; ?>
                         <?php endif; ?>
-                        <?php if (!empty($userModel->email)): ?>
+                        <?php if (!empty($userModel->email)) : ?>
         <?php echo $userModel->email;
         echo '<br/>'; ?>
     <?php endif; ?>

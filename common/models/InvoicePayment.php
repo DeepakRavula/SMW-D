@@ -19,6 +19,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public $receiptId;
     public static function tableName()
     {
         return 'invoice_payment';
@@ -31,7 +32,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
     {
         return [
             [['payment_id', 'invoice_id'], 'required'],
-            [['payment_id', 'invoice_id'], 'integer'],
+            [['payment_id', 'invoice_id', 'receiptId'], 'integer'],
             [['isDeleted'], 'safe']
         ];
     }

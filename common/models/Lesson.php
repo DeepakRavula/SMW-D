@@ -143,7 +143,7 @@ class Lesson extends \yii\db\ActiveRecord
             ['programRate', 'required', 'on' => self::SCENARIO_CREATE_GROUP],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyFullDiscount',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId',
-                 'isPresent', 'programRate', 'teacherRate', 'splittedLessonId'], 'safe'],
+                 'isPresent', 'programRate', 'teacherRate', 'splittedLessonId','tax'], 'safe'],
             [['classroomId'], ClassroomValidator::className(),
                 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),
@@ -197,7 +197,8 @@ class Lesson extends \yii\db\ActiveRecord
             'summariseReport' => 'Summarize Results',
             'toEmailAddress' => 'To',
             'showAllReviewLessons' => 'Show All',
-            'isPresent' => 'Present'
+            'isPresent' => 'Present',
+            'tax' => 'Tax'
         ];
     }
 
@@ -1044,7 +1045,7 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function getCreditAppliedAmount($enrolmentId)
     {
-        return LessonPayment::find()
+        $creditAppliedAmount =  LessonPayment::find()
             ->notDeleted()
 		    ->joinWith(['payment' => function ($query) {
                 $query->notDeleted()
@@ -1052,6 +1053,7 @@ class Lesson extends \yii\db\ActiveRecord
 			}])
             ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
             ->sum('lesson_payment.amount');
+            return  $creditAppliedAmount;
     }
 
     public function getCreditAppliedPayment($enrolmentId)
@@ -1308,7 +1310,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getNetPrice()
     {
-        return $this->grossPrice - $this->discount;
+        return $this->subTotal + $this->tax;
     }
 
     public function getNetCost()
@@ -1467,5 +1469,10 @@ class Lesson extends \yii\db\ActiveRecord
     public function getLineItemDiscountValues()
     {
         return $this->lineItemDiscount->valueType ? $this->lineItemDiscount->value : $this->lineItemDiscount->value;
+    }
+
+    public function getSubTotal()
+    {
+        return $this->grossPrice - $this->discount;
     }
 }

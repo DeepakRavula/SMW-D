@@ -45,7 +45,8 @@ class PrintController extends BaseController
                             'invoice', 'course', 'evaluation', 'teacher-lessons', 
                             'time-voucher', 'customer-invoice', 'account-view', 
                             'royalty', 'royalty-free', 'tax-collected', 'user', 
-                            'customer-items-print', 'proforma-invoice','payment','receipt'
+                            'customer-items-print', 'proforma-invoice','payment',
+                            'receipt'
                         ],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
@@ -522,54 +523,57 @@ class PrintController extends BaseController
             'invoiceDataProvider' => $invoiceDataProvider,
         ]);
     }
-       public function actionReceipt($id,$paymentId)
-    {
-        $receiptLessonIds=[];
-        $receiptInvoiceIds=[];
-        $receiptPaymentIds =[];
-        $model  =  Payment::findOne(['id' => $paymentId]);
-        $customer   = User::findOne(['id' => $model->user_id]);
-        $searchModel    =   new ProformaInvoiceSearch();
-        $searchModel->showCheckBox  =   false;
-        $paymentReceipts   =   PaymentReceipt::find()->andWhere(['receiptId'=>$id])->all();
-        if(!empty($paymentReceipts)){
-         foreach($paymentReceipts as $paymentReceipt){
-            // print_r($paymentReceipt->id);
-             if($paymentReceipt->objectType == Receipt::TYPE_INVOICE){
-                 $receiptInvoiceIds[]  =   $paymentReceipt->objectId;
 
-             } if($paymentReceipt->objectType == Receipt::TYPE_LESSON){
-                 $receiptLessonIds[]  =   $paymentReceipt->objectId;
-             }
-             $receiptPaymentIds[]  =   $paymentReceipt->paymentId;
-         }
-     }
+    public function actionReceipt($id,$paymentId = null)
+    {
+        $receiptLessonIds = [];
+        $receiptInvoiceIds = [];
+        $receiptPaymentIds = [];
+        $receiptModel = Receipt::findOne(['id' => $id]);
+        if (!empty($paymentId)) {
+        $model  =  Payment::findOne(['id' => $paymentId]);
+        }
+        $customer =  User::findOne(['id' => $receiptModel->userId]);
+        $searchModel  =  new ProformaInvoiceSearch();
+        $searchModel->showCheckBox = false;
+        $paymentReceipts = PaymentReceipt::find()->andWhere(['receiptId' => $id])->all();
+        if(!empty($paymentReceipts)) {
+        foreach($paymentReceipts as $paymentReceipt) {
+            if($paymentReceipt->objectType == Receipt::TYPE_INVOICE) {
+                $receiptInvoiceIds[]  =   $paymentReceipt->objectId;
+
+            } if($paymentReceipt->objectType == Receipt::TYPE_LESSON) {
+                $receiptLessonIds[]  =   $paymentReceipt->objectId;
+            }
+            $receiptPaymentIds[]  =   $paymentReceipt->paymentId;
+        }
+    }
 
         $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $receiptLessonIds]);
         $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $receiptInvoiceIds]);
         $paymentTransactions     =   Payment::find()->andWhere(['id' => $receiptPaymentIds]);
         $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
-         'query' => $paymentLessonLineItems,
-         'pagination' => false,
-     ]);
-        $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
-         'query' => $paymentInvoiceLineItems,
-         'pagination' => false,
-     ]);
-        $paymentLineItemsDataProvider = new ActiveDataProvider([
-        'query' => $paymentTransactions,
+        'query' => $paymentLessonLineItems,
         'pagination' => false,
     ]);
+        $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $paymentInvoiceLineItems,
+            'pagination' => false,
+        ]);
+        $paymentLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $paymentTransactions,
+            'pagination' => false,
+        ]);
 
     $this->layout = '/print';
 
     return $this->render('/receive-payment/print/view', [
-        'model' => $model,
-        'lessonLineItemsDataProvider' => $paymentLessonLineItemsDataProvider,
-        'invoiceLineItemsDataProvider' => $paymentInvoiceLineItemsDataProvider,
-        'paymentLineItemsDataProvider' => $paymentLineItemsDataProvider, 
-        'searchModel'                  => $searchModel,
+        'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
+        'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
+        'paymentLineItemsDataProvider'  =>  $paymentLineItemsDataProvider,
+        'searchModel'                  =>  $searchModel,
         'customer'                     =>   $customer,
+        'receiptModel'                 =>   $receiptModel, 
     ]);
     }
 }
