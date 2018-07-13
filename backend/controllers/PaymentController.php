@@ -542,11 +542,11 @@ class PaymentController extends BaseController
             if (round($payment->amount, 2) > 0.00) {
                 $payment->save();
             }
-	        $receiptModel               =   new Receipt();
-            $receiptModel->date         =   $model->date;
-            $receiptModel->userId       =   $searchModel->userId;
-            $receiptModel->locationId   =   $locationId;
-            $receiptModel->receiptNumber=   1;
+	        $receiptModel                   =   new Receipt();
+            $receiptModel->date             =   $model->date;
+            $receiptModel->userId           =   $searchModel->userId;
+            $receiptModel->locationId       =   $locationId;
+            $receiptModel->receiptNumber    =   1;
             $receiptModel->save();
             $model->paymentId = $payment->id;
 	        $model->receiptId = $receiptModel->id;
@@ -554,13 +554,13 @@ class PaymentController extends BaseController
             $model->groupLessonIds = $groupLessonSearchModel->lessonIds;
             $model->save();
             $paymentReceipts   =   PaymentReceipt::find()
-                                    ->andWhere(['receiptId'=>$receiptModel->id])->all();
-            if(!empty($paymentReceipts)){
-                foreach($paymentReceipts as $paymentReceipt){
-                    if($paymentReceipt->objectType == Receipt::TYPE_INVOICE){
+                                    ->andWhere(['receiptId' => $receiptModel->id])->all();
+            if(!empty($paymentReceipts)) {
+                foreach($paymentReceipts as $paymentReceipt) {
+                    if($paymentReceipt->objectType == Receipt::TYPE_INVOICE) {
                         $receiptInvoiceIds[]  =   $paymentReceipt->objectId;
 
-                    } if($paymentReceipt->objectType == Receipt::TYPE_LESSON){
+                    } if($paymentReceipt->objectType == Receipt::TYPE_LESSON) {
                         $receiptLessonIds[]  =   $paymentReceipt->objectId;
                     }
                     $receiptPaymentIds[]  =   $paymentReceipt->paymentId;
