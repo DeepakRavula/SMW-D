@@ -542,7 +542,7 @@ class PaymentController extends BaseController
             if (round($payment->amount, 2) > 0.00) {
                 $payment->save();
             }
-	        $receiptModel                   =   new Receipt();
+            $receiptModel                   =   new Receipt();
             $receiptModel->date             =   $model->date;
             $receiptModel->userId           =   $searchModel->userId;
             $receiptModel->locationId       =   $locationId;
