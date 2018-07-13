@@ -6,6 +6,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use common\models\query\PaymentQuery;
 use common\models\PaymentMethod;
+use common\models\Payment;
 use Carbon\Carbon;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
@@ -402,5 +403,11 @@ class Payment extends ActiveRecord
     public function hasCredit()
     {
         return $this->creditAmount > 0.00;
+    }
+    public function getAmountUsedInPaymentforTransacation($receiptId,$paymentId){
+        $getAmountUsed =     PaymentReceipt::find()
+                            ->Where(['AND','receiptId' => $receiptId,$paymentId => $paymentId])
+                            ->sum('amount');
+        return $getAmountUsed;                    
     }
 }

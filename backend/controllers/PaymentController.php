@@ -567,23 +567,29 @@ class PaymentController extends BaseController
             }
         }
 
-           $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $receiptLessonIds]);
-           $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $receiptInvoiceIds]);
-           $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $paymentLessonLineItems,
-            'pagination' => false,
-        ]);
+            $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $receiptLessonIds]);
+            $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $receiptInvoiceIds]);
+            $paymentTransactions     =   Payment::find()->andWhere(['id' => $receiptPaymentIds]);
+            $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
+                'query' => $paymentLessonLineItems,
+                'pagination' => false,
+            ]);
 
-        $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
-            'query' => $paymentInvoiceLineItems,
-            'pagination' => false,
-        ]);
+            $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
+                'query' => $paymentInvoiceLineItems,
+                'pagination' => false,
+            ]);
+            $paymentLineItemsDataProvider = new ActiveDataProvider([
+                'query' => $paymentTransactions,
+                'pagination' => false,
+            ]);
 
             $searchModel->showCheckBox = false;
             $printData = $this->renderAjax('/receive-payment/print/_form', [
                 'model' => $model,
                 'invoiceLineItemsDataProvider' => $paymentInvoiceLineItemsDataProvider,
                 'lessonLineItemsDataProvider' =>   $paymentLessonLineItemsDataProvider,
+                'paymentLineItemsDataProvider'  =>  $paymentLineItemsDataProvider,
                 'searchModel' => $searchModel,
                 'receiptModel' => $receiptModel,
             ]);

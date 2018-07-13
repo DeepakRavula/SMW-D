@@ -6,6 +6,7 @@ use common\models\Lesson;
 use common\models\Payment;
 use common\models\Invoice;
 use commmon\models\Receipt;
+use common\models\PaymentReceipt;
 use Yii;
 
 /**

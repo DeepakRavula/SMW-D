@@ -45,6 +45,19 @@ use yii\bootstrap\Html;
     </div>
 </div>    
      <?php endif; ?>
+     <div class = "row">        
+    <div class = "col-md-12">
+    <?= Html::label('Payments Used', ['class' => 'admin-login']) ?>
+    <?= $this->render('/receive-payment/print/_credits-available', [
+        'model' => $model,
+        'paymentLineItemsDataProvider' => $paymentLineItemsDataProvider,
+        'searchModel' => $searchModel,
+        'receiptModel'=>$receiptModel,
+    ]);
+    ?>
+    </div>
+</div>  
+
      <?php endif; ?>
     <script>
         $(document).ready(function () {
