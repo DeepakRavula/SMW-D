@@ -42,26 +42,26 @@
                 From
                 <address>
                     <b>Arcadia Music Academy ( <?= $locationModel->name; ?> )</b><br>
-                    <?php if (!empty($locationModel->address)): ?>
+                    <?php if (!empty($locationModel->address)) : ?>
                         <?= $locationModel->address; ?>
                     <?php endif; ?>
                     <br/>
-                    <?php if (!empty($locationModel->city_id)): ?>
+                    <?php if (!empty($locationModel->city_id)) : ?>
                         <?= $locationModel->city->name; ?>,
                     <?php endif; ?>        
-                    <?php if (!empty($locationModel->province_id)): ?>
+                    <?php if (!empty($locationModel->province_id)) : ?>
                         <?= $locationModel->province->name; ?>
                     <?php endif; ?>
                     <br/>
-                    <?php if (!empty($locationModel->postal_code)): ?>
+                    <?php if (!empty($locationModel->postal_code)) : ?>
                         <?= $locationModel->postal_code; ?>
                     <?php endif; ?>
                     <br/>
-                    <?php if (!empty($locationModel->phone_number)): ?>
+                    <?php if (!empty($locationModel->phone_number)) : ?>
                         <?= $locationModel->phone_number ?>
                     <?php endif; ?>
                     <br/>
-                    <?php if (!empty($locationModel->email)): ?>
+                    <?php if (!empty($locationModel->email)) : ?>
                         <?= $locationModel->email ?>
                     <?php endif; ?>
                     <br/>
@@ -104,7 +104,7 @@
                             <?php echo $phoneNumber->number;
                             echo '<br/>'; ?>
                         <?php endif; ?>
-                        <?php if (!empty($userModel->email)): ?>
+                        <?php if (!empty($userModel->email)) : ?>
         <?php echo $userModel->email;
         echo '<br/>'; ?>
     <?php endif; ?>

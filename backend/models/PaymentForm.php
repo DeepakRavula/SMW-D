@@ -68,7 +68,7 @@ class PaymentForm extends Model
                 'lessonIds', 'canUsePaymentCredits', 'invoiceCreditIds', 'amount', 'userId',
                 'amountToDistribute', 'invoicePayments', 'lessonPayments','paymentId',
                 'paymentCredits', 'invoiceCredits', 'reference', 'paymentCreditIds',
-                'groupLessonIds', 'groupLessonPayments','receiptId'], 'safe']
+                'groupLessonIds', 'groupLessonPayments', 'receiptId'], 'safe']
         ];
     }
 
