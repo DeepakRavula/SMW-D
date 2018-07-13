@@ -22,7 +22,7 @@ use yii\bootstrap\Html;
     array_push($columns, [
         'headerOptions' => ['class' => 'text-left'],
         'contentOptions' => ['class' => 'text-left'],
-        'label' => 'Date',
+        'label' => 'Amount',
         'value' => function ($data) {
             return  !empty($data->amount) ? $data->amount: null;
         }
@@ -30,9 +30,17 @@ use yii\bootstrap\Html;
     array_push($columns, [
         'headerOptions' => ['class' => 'text-left'],
         'contentOptions' => ['class' => 'text-left'],
-        'label' => 'Date',
+        'label' => 'Payment Method',
+        'value' => function ($data) {
+            return  !empty($data->paymentMethod->name) ? $data->paymentMethod->name: null;
+        }
+    ]);
+    array_push($columns, [
+        'headerOptions' => ['class' => 'text-left'],
+        'contentOptions' => ['class' => 'text-left'],
+        'label' => 'Amount Used',
         'value' => function ($data) use($receiptModel){
-            return  !empty($data->getAmountUsedInPaymentforTransacation($receiptModel->id,$data->id)) ?$data->getAmountUsedInPaymentforTransacation($receiptModel->id,$data->id): null;
+            return  !empty($data->getAmountUsedInPaymentforTransacation($receiptModel->id,$data->id)) ? $data->getAmountUsedInPaymentforTransacation($receiptModel->id,$data->id): null;
         }
     ]);
 

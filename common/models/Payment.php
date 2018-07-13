@@ -406,8 +406,8 @@ class Payment extends ActiveRecord
     }
     public function getAmountUsedInPaymentforTransacation($receiptId,$paymentId){
         $getAmountUsed =     PaymentReceipt::find()
-                            ->Where(['AND','receiptId' => $receiptId,$paymentId => $paymentId])
-                            ->sum('amount');
+                            ->andWhere(['receiptId' => $receiptId])
+                            ->sum('amount');                  
         return $getAmountUsed;                    
     }
 }
