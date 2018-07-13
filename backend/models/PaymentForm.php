@@ -193,7 +193,7 @@ class PaymentForm extends Model
                                     $invoicePaymentModel = new InvoicePayment();
                                     $invoicePaymentModel->invoice_id = $invoice->id;
                                     $invoicePaymentModel->payment_id = $creditPayment->id;
-				                    $invoicePaymentModel->receiptId  = $this->receiptId;
+                                    $invoicePaymentModel->receiptId  = $this->receiptId;
                                     $invoicePaymentModel->amount     = $amountToPay;
                                     $invoicePaymentModel->save();
                                     $invoice->save();
@@ -217,7 +217,7 @@ class PaymentForm extends Model
                                     $lessonPaymentModel = new LessonPayment();
                                     $lessonPaymentModel->lessonId = $lesson->id;
                                     $lessonPaymentModel->paymentId = $creditPayment->id;
-				                    $lessonPaymentModel->receiptId  = $this->receiptId;
+                                    $lessonPaymentModel->receiptId  = $this->receiptId;
                                     $lessonPaymentModel->enrolmentId = $lesson->enrolment->id;
                                     $lessonPaymentModel->amount     = $amountToPay;
                                     $lessonPaymentModel->save();
@@ -247,7 +247,7 @@ class PaymentForm extends Model
                                     $lessonPaymentModel = new LessonPayment();
                                     $lessonPaymentModel->lessonId = $lesson->id;
                                     $lessonPaymentModel->paymentId = $creditPayment->id;
-				                    $lessonPaymentModel->receiptId  = $this->receiptId;
+                                    $lessonPaymentModel->receiptId  = $this->receiptId;
                                     $lessonPaymentModel->enrolmentId = $enrolment->id;
                                     $lessonPaymentModel->amount     = $amountToPay;
                                     $lessonPaymentModel->save();
@@ -274,7 +274,7 @@ class PaymentForm extends Model
                         $invoicePaymentModel = new InvoicePayment();
                         $invoicePaymentModel->invoice_id = $invoice->id;
                         $invoicePaymentModel->payment_id = $this->paymentId;
-			            $invoicePaymentModel->receiptId  = $this->receiptId;
+                        $invoicePaymentModel->receiptId  = $this->receiptId;
                         $invoicePaymentModel->amount     = $amountToPay;
                         $invoicePaymentModel->save();
                         $invoice->save();
@@ -294,7 +294,7 @@ class PaymentForm extends Model
                         $lessonPayment->paymentId   = $this->paymentId;
                         $lessonPayment->amount      = $lessonPayments[$i];
                         $lessonPayment->enrolmentId = $lesson->enrolment->id;
-			            $lessonPayment->receiptId  = $this->receiptId;
+                        $lessonPayment->receiptId  = $this->receiptId;
                         $lessonPayment->save();
                     } else {
                         break;
@@ -315,7 +315,7 @@ class PaymentForm extends Model
                         $lessonPayment = new LessonPayment();
                         $lessonPayment->lessonId    = $lesson->id;
                         $lessonPayment->paymentId   = $this->paymentId;
-			            $lessonPayment->receiptId  = $this->receiptId;
+                        $lessonPayment->receiptId  = $this->receiptId;
                         $lessonPayment->amount      = $groupLessonPayments[$i];
                         $lessonPayment->enrolmentId = $enrolment->id;
                         $lessonPayment->save();
