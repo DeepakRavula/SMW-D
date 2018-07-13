@@ -11,9 +11,8 @@ use common\models\Location;
 
 ?>
 <?php $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
-echo " Customers detailes :";
 ?>
-
+<h2 class="col-md-12"><b><?= 'Customer list for '. $model->name ;?></b></h2>
 <div class="user-index"> 
     <?php Pjax::begin([
         'id' => 'user-index',
