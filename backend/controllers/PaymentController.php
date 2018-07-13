@@ -549,7 +549,7 @@ class PaymentController extends BaseController
             $receiptModel->receiptNumber    =   1;
             $receiptModel->save();
             $model->paymentId = $payment->id;
-	        $model->receiptId = $receiptModel->id;
+            $model->receiptId = $receiptModel->id;
             $model->lessonIds = $searchModel->lessonIds;
             $model->groupLessonIds = $groupLessonSearchModel->lessonIds;
             $model->save();
