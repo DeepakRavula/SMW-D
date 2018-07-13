@@ -176,7 +176,7 @@ $this->render('_view-enrolment', [
             var lesson_count = '<?= $lessonCount; ?>';
             if (lesson_count > 10) {
 		    var private = <?= $model->course->program->isPrivate(); ?>;
-                if(private) {
+                if (private) {
                 $(".more-lesson").show();
                 var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
                 var student = '<?= $model->student->id ?>';
