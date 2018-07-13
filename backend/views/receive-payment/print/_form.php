@@ -10,10 +10,10 @@ use common\models\User;
 use yii\bootstrap\Html;
 
 ?>
-  <?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
-  <?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
-  <?php if ($lessonCount <= 0 && $invoiceCount<=0 && $model->amount>0) : ?>
-  <div class="text-center"><h2>You didn't select any lessons or invoices</h2><br/><h4>so we'll save this payment as credit to your customer account</h4> </div>
+<?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
+<?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
+<?php if ($lessonCount <= 0 && $invoiceCount<=0 && $model->amount>0) : ?>
+<div class="text-center"><h2>You didn't select any lessons or invoices</h2><br/><h4>so we'll save this payment as credit to your customer account</h4> </div>
 <?php else:?>
 <?php if ($lessonCount > 0) : ?>
 <div class = "row">
@@ -27,25 +27,25 @@ use yii\bootstrap\Html;
         'searchModel' => $searchModel
     ]);
     ?>
-     </div>  
-     </div>  
-   <?php endif; ?>
-   
+    </div>  
+    </div>  
+<?php endif; ?>
+
         <?php if ($invoiceCount > 0) : ?>
-<div class = "row">        
-    <div class = "col-md-12">
-    <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
-    <?= $this->render('/receive-payment/_invoice-line-item', [
-        'model' => $model,
-        'isCreatePfi' => false,
-        'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-        'searchModel' => $searchModel
-    ]);
-    ?>
-    </div>
+    <div class = "row">        
+        <div class = "col-md-12">
+        <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
+        <?= $this->render('/receive-payment/_invoice-line-item', [
+            'model' => $model,
+            'isCreatePfi' => false,
+            'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+            'searchModel' => $searchModel
+        ]);
+        ?>
+        </div>
 </div>    
-     <?php endif; ?>
-     <?php endif; ?>
+    <?php endif; ?>
+    <?php endif; ?>
     <script>
         $(document).ready(function () {
             var amountValue = '<?= $model->amount ?>';

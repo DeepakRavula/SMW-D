@@ -6,31 +6,32 @@
                 <span class="logo-lg"><img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png" /></span>
             </h2>
             </div>
-                    <div class="col-xs-4 invoice-col">
-                        <div class="pull-right">
-            <?php if (!empty($paymentModel)): ?>
+                <div class="col-xs-4 invoice-col">
+                    <div class="pull-right">
+                        <?php if (!empty($paymentModel)): ?>
                             <div class="right-align">
-                            <div class="f-s-30">  </div>
-                            <div class="text-right"> Amount Received   :      <?= $paymentModel->amount ?></div>
-                            <div class="text-right"> Date              :      <?= Yii::$app->formatter->asDate($paymentModel->date); ?></div>
+                                <div class="f-s-30">  </div>
+                                <div class="text-right"> Amount Received   :      <?= $paymentModel->amount ?></div>
+                                <div class="text-right"> Date              :      <?= Yii::$app->formatter->asDate($paymentModel->date); ?></div>
                             </div>
-                            </div>
-<?php endif; ?>
-            <?php if (!empty($courseModel)): ?>
-                <b><?= $courseModel->program->name; ?></b><br/>
-                <b><?= Yii::$app->formatter->asDate($courseModel->startDate); ?>-<?= Yii::$app->formatter->asDate($courseModel->endDate); ?></b><br>
-                <br>
-                <b>Duration:</b>
-                <?php
-                $length = \DateTime::createFromFormat('H:i:s', $courseModel->courseSchedule->duration);
-                echo $length->format('H:i');
-                ?> <br>
-                <b>Time:</b>
-                <?php
-                $fromTime = \DateTime::createFromFormat('H:i:s', $courseModel->courseSchedule->fromTime);
-                echo $fromTime->format('h:i A');
-                ?><br>
-<?php endif; ?>
+                            <?php endif; ?>
+                        </div>
+                    
+                <?php if (!empty($courseModel)): ?>
+                    <b><?= $courseModel->program->name; ?></b><br/>
+                    <b><?= Yii::$app->formatter->asDate($courseModel->startDate); ?>-<?= Yii::$app->formatter->asDate($courseModel->endDate); ?></b><br>
+                    <br>
+                    <b>Duration:</b>
+                    <?php
+                    $length = \DateTime::createFromFormat('H:i:s', $courseModel->courseSchedule->duration);
+                    echo $length->format('H:i');
+                    ?> <br>
+                    <b>Time:</b>
+                    <?php
+                    $fromTime = \DateTime::createFromFormat('H:i:s', $courseModel->courseSchedule->fromTime);
+                    echo $fromTime->format('h:i A');
+                    ?><br>
+                <?php endif; ?>
                         </div>
         </div>
         </div>

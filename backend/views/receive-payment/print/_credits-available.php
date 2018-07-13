@@ -5,12 +5,8 @@ use yii\widgets\Pjax;
 use yii\bootstrap\Html;
 
 ?>
-
 <?php
     $columns = [];
-   
-
-
     array_push($columns, [
         'headerOptions' => ['class' => 'text-left'],
         'contentOptions' => ['class' => 'text-left'],
