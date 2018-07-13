@@ -193,7 +193,7 @@ class PaymentForm extends Model
                                     $invoicePaymentModel = new InvoicePayment();
                                     $invoicePaymentModel->invoice_id = $invoice->id;
                                     $invoicePaymentModel->payment_id = $creditPayment->id;
-				    $invoicePaymentModel->receiptId  = $this->receiptId;
+                                    $invoicePaymentModel->receiptId  = $this->receiptId;
                                     $invoicePaymentModel->amount     = $amountToPay;
                                     $invoicePaymentModel->save();
                                     $invoice->save();
