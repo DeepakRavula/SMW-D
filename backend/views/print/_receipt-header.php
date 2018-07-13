@@ -17,7 +17,7 @@
                             <?php endif; ?>
                         </div>
                     
-                <?php if (!empty($courseModel)): ?>
+                <?php if (!empty($courseModel)) : ?>
                     <b><?= $courseModel->program->name; ?></b><br/>
                     <b><?= Yii::$app->formatter->asDate($courseModel->startDate); ?>-<?= Yii::$app->formatter->asDate($courseModel->endDate); ?></b><br>
                     <br>
