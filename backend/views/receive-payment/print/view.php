@@ -20,7 +20,6 @@ use insolita\wgadminlte\LteConst;
    echo $this->render('/print/_receipt-header', [
        'userModel'=>$customer,
        'locationModel'=>$locationModel,
-       'paymentModel' => $model,
 ]);
    ?>
 </div>
@@ -37,7 +36,6 @@ use insolita\wgadminlte\LteConst;
             <div class = "col-md-12">
                   <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
             <?= $this->render('/receive-payment/print/_lesson-line-item', [
-                'model' => $model,
                 'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
                 'searchModel' => $searchModel,
             ]); ?>
@@ -55,7 +53,6 @@ use insolita\wgadminlte\LteConst;
             <div class = "col-md-12">
                   <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
             <?= $this->render('/receive-payment/print/_invoice-line-item', [
-                'model' => $model,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                 'searchModel' => $searchModel,
             ]); ?>

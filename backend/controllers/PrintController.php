@@ -524,13 +524,16 @@ class PrintController extends BaseController
         ]);
     }
 
-    public function actionReceipt($id,$paymentId)
+    public function actionReceipt($id,$paymentId = null)
     {
-        $receiptLessonIds=[];
-        $receiptInvoiceIds=[];
-        $receiptPaymentIds =[];
+        $receiptLessonIds = [];
+        $receiptInvoiceIds = [];
+        $receiptPaymentIds = [];
+        $receiptModel = Receipt::findOne(['id' => $id]);
+        if (!empty($paymentId)) {
         $model  =  Payment::findOne(['id' => $paymentId]);
-        $customer =  User::findOne(['id' => $model->user_id]);
+        }
+        $customer =  User::findOne(['id' => $receiptModel->userId]);
         $searchModel  =  new ProformaInvoiceSearch();
         $searchModel->showCheckBox = false;
         $paymentReceipts = PaymentReceipt::find()->andWhere(['receiptId' => $id])->all();
@@ -561,7 +564,6 @@ class PrintController extends BaseController
     $this->layout = '/print';
 
     return $this->render('/receive-payment/print/view', [
-        'model' => $model,
         'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
         'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
         'searchModel'                  => $searchModel,

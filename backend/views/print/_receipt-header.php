@@ -5,18 +5,7 @@
             <h2 class="">
                 <span class="logo-lg"><img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png" /></span>
             </h2>
-            </div>
-                <div class="col-xs-4 invoice-col">
-                    <div class="pull-right">
-                        <?php if (!empty($paymentModel)): ?>
-                            <div class="right-align">
-                                <div class="f-s-30">  </div>
-                                <div class="text-right"> Amount Received   :      <?= $paymentModel->amount ?></div>
-                                <div class="text-right"> Date              :      <?= Yii::$app->formatter->asDate($paymentModel->date); ?></div>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                    
+            </div>                    
                 <?php if (!empty($courseModel)) : ?>
                     <b><?= $courseModel->program->name; ?></b><br/>
                     <b><?= Yii::$app->formatter->asDate($courseModel->startDate); ?>-<?= Yii::$app->formatter->asDate($courseModel->endDate); ?></b><br>
