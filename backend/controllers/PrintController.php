@@ -530,17 +530,16 @@ class PrintController extends BaseController
         $receiptInvoiceIds=[];
         $receiptPaymentIds =[];
         $model  =  Payment::findOne(['id' => $paymentId]);
-        $customer   = User::findOne(['id' => $model->user_id]);
-        $searchModel    =   new ProformaInvoiceSearch();
-        $searchModel->showCheckBox  =   false;
-        $paymentReceipts   =   PaymentReceipt::find()->andWhere(['receiptId'=>$id])->all();
-        if(!empty($paymentReceipts)){
-        foreach($paymentReceipts as $paymentReceipt){
-            // print_r($paymentReceipt->id);
-            if($paymentReceipt->objectType == Receipt::TYPE_INVOICE){
+        $customer =  User::findOne(['id' => $model->user_id]);
+        $searchModel  =  new ProformaInvoiceSearch();
+        $searchModel->showCheckBox = false;
+        $paymentReceipts = PaymentReceipt::find()->andWhere(['receiptId' => $id])->all();
+        if(!empty($paymentReceipts)) {
+        foreach($paymentReceipts as $paymentReceipt) {
+            if($paymentReceipt->objectType == Receipt::TYPE_INVOICE) {
                 $receiptInvoiceIds[]  =   $paymentReceipt->objectId;
 
-            } if($paymentReceipt->objectType == Receipt::TYPE_LESSON){
+            } if($paymentReceipt->objectType == Receipt::TYPE_LESSON) {
                 $receiptLessonIds[]  =   $paymentReceipt->objectId;
             }
             $receiptPaymentIds[]  =   $paymentReceipt->paymentId;
