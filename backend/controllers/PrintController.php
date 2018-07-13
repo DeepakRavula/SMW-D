@@ -547,22 +547,27 @@ class PrintController extends BaseController
 
         $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $receiptLessonIds]);
         $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $receiptInvoiceIds]);
+        $paymentTransactions     =   Payment::find()->andWhere(['id' => $receiptPaymentIds]);
         $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
          'query' => $paymentLessonLineItems,
          'pagination' => false,
      ]);
-
-     $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
+        $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
          'query' => $paymentInvoiceLineItems,
          'pagination' => false,
      ]);
+        $paymentLineItemsDataProvider = new ActiveDataProvider([
+        'query' => $paymentTransactions,
+        'pagination' => false,
+    ]);
 
     $this->layout = '/print';
 
     return $this->render('/receive-payment/print/view', [
         'model' => $model,
-        'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
-        'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
+        'lessonLineItemsDataProvider' => $paymentLessonLineItemsDataProvider,
+        'invoiceLineItemsDataProvider' => $paymentInvoiceLineItemsDataProvider,
+        'paymentLineItemsDataProvider' => $paymentLineItemsDataProvider, 
         'searchModel'                  => $searchModel,
         'customer'                     =>   $customer,
     ]);

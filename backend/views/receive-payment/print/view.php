@@ -53,7 +53,7 @@ use insolita\wgadminlte\LteConst;
         <?php if ($invoiceCount > 0) : ?>
         <div class = "row">
             <div class = "col-md-12">
-                  <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
+                <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
             <?= $this->render('/receive-payment/print/_invoice-line-item', [
                 'model' => $model,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
@@ -64,8 +64,20 @@ use insolita\wgadminlte\LteConst;
         <?php endif; ?>
     </div>
 </div>
-
- <?php endif; ?>
+        <div class = "row">        
+            <div class = "col-md-12">
+                <?= Html::label('Payments Used', ['class' => 'admin-login']) ?>
+                <?= $this->render('/receive-payment/print/_credits-available', [
+        
+        'paymentLineItemsDataProvider' => $paymentLineItemsDataProvider,
+        'searchModel' => $searchModel,
+        'receiptModel'=>$receiptModel,
+    ]);
+    ?>
+    ?>
+    </div>
+</div>  
+<?php endif; ?>
     
 
 

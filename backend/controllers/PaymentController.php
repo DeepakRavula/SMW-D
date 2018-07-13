@@ -485,8 +485,8 @@ class PaymentController extends BaseController
         $model = new PaymentForm();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d, Y');
-	$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-	$receiptLessonIds=[];
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $receiptLessonIds=[];
         $receiptInvoiceIds=[];
         $receiptPaymentIds =[];
         if (!$request->post()) {
@@ -542,7 +542,7 @@ class PaymentController extends BaseController
             if (round($payment->amount, 2) > 0.00) {
                 $payment->save();
             }
-	    $receiptModel               =   new Receipt();
+	        $receiptModel               =   new Receipt();
             $receiptModel->date         =   $model->date;
             $receiptModel->userId       =   $searchModel->userId;
             $receiptModel->locationId   =   $locationId;
