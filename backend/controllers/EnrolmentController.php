@@ -128,6 +128,15 @@ class EnrolmentController extends BaseController
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' => false,
         ]);
+	     $groupLessonDataProvider = new ActiveDataProvider([
+            'query' => Lesson::find()
+                ->andWhere(['courseId' => $model->course->id])
+                ->scheduledOrRescheduled()
+                ->isConfirmed()
+                ->notDeleted()
+                ->orderBy(['lesson.date' => SORT_ASC]),
+            'pagination' =>  [ 'pageSize' => 10, ],
+        ]);
         $logDataProvider = new ActiveDataProvider([
             'query' => LogHistory::find()
             ->enrolment($id) ]);
@@ -143,6 +152,7 @@ class EnrolmentController extends BaseController
         
         return $this->render('view', [
             'model' => $model,
+	    'groupLessonDataProvider' => $groupLessonDataProvider,
             'lessonDataProvider' => $lessonDataProvider,
             'paymentCycleDataProvider' => $paymentCycleDataProvider,
             'logDataProvider' => $logDataProvider,
