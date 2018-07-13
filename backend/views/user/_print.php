@@ -41,7 +41,12 @@ echo $this->render('/print/_header', [
                     return !empty($data->userProfile->lastname) ? $data->userProfile->lastname : null;
                 },
             ],
-            'email',
+            [
+                'label' => 'Email',
+                'value' => function ($data) {
+                    return !empty($data->getEmail()) ? $data->getEmail() : null;
+                },
+            ],
             [
                 'label' => 'Phone',
                 'value' => function ($data) {
