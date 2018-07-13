@@ -63,7 +63,7 @@ class LessonController extends BaseController
                     [
                         'allow' => true,
                         'actions' => ['index', 'view', 'credit-transfer',
-							'validate-on-update', 'edit-price','edit-tax',
+							'validate-on-update', 'edit-price','edit-tax', 
 							'fetch-duration','edit-classroom', 
 							'update', 'update-field', 'review',
 							'fetch-conflict', 'confirm',

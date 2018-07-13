@@ -1053,9 +1053,6 @@ class Lesson extends \yii\db\ActiveRecord
 			}])
             ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
             ->sum('lesson_payment.amount');
-            if(empty($creditAppliedAmount)) {
-                return 0;
-            }
             return  $creditAppliedAmount;
     }
 
@@ -1313,7 +1310,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getNetPrice()
     {
-        return ($this->grossPrice + $this->tax) - $this->discount;
+        return $this->subTotal + $this->tax;
     }
 
     public function getNetCost()
