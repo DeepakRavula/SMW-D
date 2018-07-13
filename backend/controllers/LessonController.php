@@ -599,6 +599,7 @@ class LessonController extends BaseController
             } else {
                 if ($courseModel->enrolment->student->isDraft()) {
                     $courseModel->enrolment->student->updateAttributes(['status' => Student::STATUS_ACTIVE]);
+                    $courseModel->enrolment->customer->updateAttributes(['status' => USER::STATUS_ACTIVE]);
                 }
                 $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
                 return $this->redirect(['/enrolment/view', 'id' => $enrolmentModel->id]);
