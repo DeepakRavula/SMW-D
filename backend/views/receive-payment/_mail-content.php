@@ -4,7 +4,7 @@
 	<table style="width:100%">
     	<tr>
 			<td>
-    			<?= $this->render('/receive-payment/_lesson-line-item', [
+    			<?= $this->render('/receive-payment/print/_lesson-line-item', [
             		'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
 	    			'searchModel' => $searchModel,
             		'model' => $model,
@@ -22,7 +22,7 @@
             <tbody>
             	<tr>
 					<td>
-    					<?= $this->render('/receive-payment/_invoice-line-item', [
+    					<?= $this->render('/receive-payment/print/_invoice-line-item', [
             				'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 	    					'searchModel' => $searchModel,
             				'model' => $model,
@@ -31,24 +31,7 @@
     			</tr>
             </tbody>
             </table>
-		<?php endif; ?>
-	      	<table align="right">
-		 	<tbody>
-		      	<tr>
-			  		<td><strong>Total</strong></td>
-			  		<td style="text-align:right">
-			      	<?=
-			      	Yii::$app->formatter->format(
-				    		$model->total, ['currency', 'USD', [
-				      		\NumberFormatter::MIN_FRACTION_DIGITS => 2,
-				      		\NumberFormatter::MAX_FRACTION_DIGITS => 2,
-				  	]]
-			      	);
-			      	?>
-			  		</td>
-		     	</tr>
-		    </tbody>
-	        </table>   
+		<?php endif; ?> 
 	</div>
 </div>
         <!-- /.col -->
