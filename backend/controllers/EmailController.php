@@ -233,4 +233,56 @@ class EmailController extends BaseController
             ];
         }
     }
+    public function actionReceipt($id,$paymentId = null)
+    {
+        $receiptLessonIds = [];
+        $receiptInvoiceIds = [];
+        $receiptPaymentIds = [];
+        $receiptModel = Receipt::findOne(['id' => $id]);
+        if (!empty($paymentId)) {
+        $model  =  Payment::findOne(['id' => $paymentId]);
+        }
+        $customer =  User::findOne(['id' => $receiptModel->userId]);
+        $searchModel  =  new ProformaInvoiceSearch();
+        $searchModel->showCheckBox = false;
+        $paymentReceipts = PaymentReceipt::find()->andWhere(['receiptId' => $id])->all();
+        if(!empty($paymentReceipts)) {
+        foreach($paymentReceipts as $paymentReceipt) {
+            if($paymentReceipt->objectType == Receipt::TYPE_INVOICE) {
+                $receiptInvoiceIds[]  =   $paymentReceipt->objectId;
+
+            } if($paymentReceipt->objectType == Receipt::TYPE_LESSON) {
+                $receiptLessonIds[]  =   $paymentReceipt->objectId;
+            }
+            $receiptPaymentIds[]  =   $paymentReceipt->paymentId;
+        }
+    }
+
+        $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $receiptLessonIds]);
+        $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $receiptInvoiceIds]);
+        $paymentTransactions     =   Payment::find()->andWhere(['id' => $receiptPaymentIds]);
+        $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
+        'query' => $paymentLessonLineItems,
+        'pagination' => false,
+    ]);
+        $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $paymentInvoiceLineItems,
+            'pagination' => false,
+        ]);
+        $paymentLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $paymentTransactions,
+            'pagination' => false,
+        ]);
+
+    $this->layout = '/print';
+
+    return $this->render('/receive-payment/print/view', [
+        'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
+        'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
+        'paymentLineItemsDataProvider'  =>  $paymentLineItemsDataProvider,
+        'searchModel'                  =>  $searchModel,
+        'customer'                     =>   $customer,
+        'receiptModel'                 =>   $receiptModel, 
+    ]);
+    }
 }

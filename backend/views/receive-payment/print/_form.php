@@ -68,12 +68,16 @@ use yii\bootstrap\Html;
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html(header);
         $('.modal-save').text('Print');
+        $('.modal-save-all').text('Email');
         $('.modal-back').hide();
-        $('.select-on-check-all').prop('checked', true);
     });
     $(document).on("click", '.modal-save', function() {
         var url = '<?= Url::to(['print/receipt' ,'id' => $receiptModel->id,'paymentId' => $model->paymentId]); ?>';
         window.open(url,'_blank');
+        return false;
+    });
+    $(document).on("click", '.modal-save-all', function() {
+        var url = '<?= Url::to(['email/receipt' ,'id' => $receiptModel->id,'paymentId' => $model->paymentId]); ?>';
         return false;
     });
     </script>
