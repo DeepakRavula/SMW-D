@@ -30,6 +30,7 @@ class Payment extends ActiveRecord
     public $paymentMethodName;
     public $invoiceNumber;
     public $userName;
+    public $paymentAmount;
     public $customerId;
     
     const TYPE_OPENING_BALANCE_CREDIT = 1;
@@ -67,6 +68,7 @@ class Payment extends ActiveRecord
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
             [['amount'], 'number'],
+            [['paymentAmount'], 'number'],
             ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_APPLY_CREDIT]],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'sourceId', 'credit', 
                 'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId'], 'safe'],

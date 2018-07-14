@@ -8,10 +8,16 @@ use common\models\Location;
 use yii\helpers\ArrayHelper;
 use common\models\Student;
 use yii\bootstrap\Html;
-
+use yii\bootstrap\ActiveForm;
 ?>
 
-<?php Pjax::begin(['enablePushState' => false, 'id' => 'lesson-line-item-listing','timeout' => 6000,]); ?>
+<?php 
+    $form = ActiveForm::begin([
+        'id' => 'modal-form-lesson',
+        'enableClientValidation' => false
+    ]);
+?>
+
     <?php  
         $columns = [];
         if ($searchModel->showCheckBox) {
@@ -128,18 +134,24 @@ use yii\bootstrap\Html;
 
         if ($searchModel->showCheckBox && !$isCreatePfi) {
             array_push($columns, [
-                'headerOptions' => ['class' => 'text-right'],
-                'contentOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
                 'label' => 'Payment',
-                'value' => function ($data) { 
-                    return Html::textInput('', round($data->getOwingAmount($data->enrolment->id), 2), 
-                        ['class' => 'payment-amount text-right']); 
+                'value' => function ($data) use ($form) {
+                    return $form->field($data, 'paymentAmount')->textInput([
+                        'value' => round($data->getOwingAmount($data->enrolment->id), 2),
+                        'class' => 'form-control text-right payment-amount',
+                        'id' => 'lesson-payment-' . $data->id
+                    ])->label(false);
                 },
                 'attribute' => 'new_activity',
                 'format' => 'raw',
             ]);
         }
     ?>
+<?php ActiveForm::end(); ?>
+
+<?php Pjax::begin(['enablePushState' => false, 'id' => 'lesson-line-item-listing','timeout' => 6000,]); ?>
 <?php if ($searchModel->showCheckBox) : ?>
     <?= GridView::widget([
         'options' => ['id' => 'lesson-line-item-grid'],
@@ -153,6 +165,7 @@ use yii\bootstrap\Html;
         'emptyText' => 'No Lessons Available!'
     ]); ?>
 <?php else: ?>
+
 <?= GridView::widget([
         'options' => ['id' => 'lesson-line-item-grid'],
         'dataProvider' => $lessonLineItemsDataProvider,
@@ -161,4 +174,5 @@ use yii\bootstrap\Html;
         'emptyText' => 'No Lessons Available!'
     ]); ?>
 <?php endif; ?>
+
 <?php Pjax::end(); ?>

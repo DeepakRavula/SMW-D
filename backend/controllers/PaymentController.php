@@ -455,7 +455,7 @@ class PaymentController extends BaseController
         $creditDataProvider = new ArrayDataProvider([
             'allModels' => $results,
             'sort' => [
-                'attributes' => ['type', 'reference', 'amount']
+                'attributes' => ['id', 'type', 'reference', 'amount']
             ]
         ]);
         return $creditDataProvider;

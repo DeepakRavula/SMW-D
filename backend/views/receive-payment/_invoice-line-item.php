@@ -3,8 +3,19 @@
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use yii\bootstrap\Html;
+use yii\helpers\Url;
+use common\models\Invoice;
+use yii\bootstrap\ActiveForm;
 
 ?>
+
+<?php 
+    $form = ActiveForm::begin([
+        'id' => 'modal-form-invoice',
+        'enableClientValidation' => false
+    ]);
+?>
+
 <?php
     $columns = [];
     if ($searchModel->showCheckBox) {
@@ -59,11 +70,15 @@ use yii\bootstrap\Html;
 
 if ($searchModel->showCheckBox && !$isCreatePfi) {
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-right'],
-        'contentOptions' => ['class' => 'text-right'],
+        'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
+        'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
         'label' => 'Payment',
-        'value' => function ($data) { 
-            return Html::textInput('', round($data->balance, 2), ['class' => 'payment-amount text-right']); 
+        'value' => function ($data) use ($form) {
+            return $form->field($data, 'paymentAmount')->textInput([
+                'value' => round($data->balance, 2), 
+                'class' => 'form-control text-right payment-amount',
+                'id' => 'invoice-payment-' . $data->id
+            ])->label(false);
         },
         'attribute' => 'new_activity',
         'format' => 'raw',
@@ -82,3 +97,4 @@ if ($searchModel->showCheckBox && !$isCreatePfi) {
     ]); ?>
 <?php Pjax::end(); ?>
 
+<?php ActiveForm::end();

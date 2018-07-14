@@ -61,7 +61,6 @@ class PaymentForm extends Model
     public function rules()
     {
         return [
-            [['payment_method_id', 'date'], 'required'],
             ['amount', 'validateAmount'],
             [['date', 'amountNeeded', 'invoiceIds', 'canUseInvoiceCredits', 'selectedCreditValue',
                 'lessonIds', 'canUsePaymentCredits', 'invoiceCreditIds', 'amount', 'userId',
@@ -337,8 +336,13 @@ class PaymentForm extends Model
                 $this->addError($attributes, "Amount can't be empty");
             }
         }
-        if ($this->amountToDistribute > ($this->selectedCreditValue + $this->amount)) {
-            $this->addError($attributes, "Amount mismatched with distributions");
+
+        if (is_numeric($this->amountToDistribute)) {
+            if ($this->amountToDistribute > ($this->selectedCreditValue + $this->amount)) {
+                $this->addError($attributes, "Amount mismatched with distributions");
+            }
+        } else {
+            $this->addError($attributes, "Amount must be number");
         }
     }
 }
