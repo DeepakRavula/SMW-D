@@ -25,6 +25,8 @@ use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 use common\models\ProformaInvoice;
 use backend\models\search\ProformaInvoiceSearch;
+use common\models\Receipt;
+use common\models\PaymentReceipt;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
@@ -43,7 +45,8 @@ class PrintController extends BaseController
                             'invoice', 'course', 'evaluation', 'teacher-lessons', 
                             'time-voucher', 'customer-invoice', 'account-view', 
                             'royalty', 'royalty-free', 'tax-collected', 'user', 
-                            'customer-items-print', 'proforma-invoice','payment'
+                            'customer-items-print', 'proforma-invoice','payment',
+                            'receipt'
                         ],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
@@ -519,5 +522,58 @@ class PrintController extends BaseController
 	    'lessonDataProvider' => $lessonDataProvider,
             'invoiceDataProvider' => $invoiceDataProvider,
         ]);
-    } 
+    }
+
+    public function actionReceipt($id,$paymentId = null)
+    {
+        $receiptLessonIds = [];
+        $receiptInvoiceIds = [];
+        $receiptPaymentIds = [];
+        $receiptModel = Receipt::findOne(['id' => $id]);
+        if (!empty($paymentId)) {
+        $model  =  Payment::findOne(['id' => $paymentId]);
+        }
+        $customer =  User::findOne(['id' => $receiptModel->userId]);
+        $searchModel  =  new ProformaInvoiceSearch();
+        $searchModel->showCheckBox = false;
+        $paymentReceipts = PaymentReceipt::find()->andWhere(['receiptId' => $id])->all();
+        if(!empty($paymentReceipts)) {
+        foreach($paymentReceipts as $paymentReceipt) {
+            if($paymentReceipt->objectType == Receipt::TYPE_INVOICE) {
+                $receiptInvoiceIds[]  =   $paymentReceipt->objectId;
+
+            } if($paymentReceipt->objectType == Receipt::TYPE_LESSON) {
+                $receiptLessonIds[]  =   $paymentReceipt->objectId;
+            }
+            $receiptPaymentIds[]  =   $paymentReceipt->paymentId;
+        }
+    }
+
+        $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $receiptLessonIds]);
+        $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $receiptInvoiceIds]);
+        $paymentTransactions     =   Payment::find()->andWhere(['id' => $receiptPaymentIds]);
+        $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
+        'query' => $paymentLessonLineItems,
+        'pagination' => false,
+    ]);
+        $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $paymentInvoiceLineItems,
+            'pagination' => false,
+        ]);
+        $paymentLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $paymentTransactions,
+            'pagination' => false,
+        ]);
+
+    $this->layout = '/print';
+
+    return $this->render('/receive-payment/print/view', [
+        'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
+        'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
+        'paymentLineItemsDataProvider'  =>  $paymentLineItemsDataProvider,
+        'searchModel'                  =>  $searchModel,
+        'customer'                     =>   $customer,
+        'receiptModel'                 =>   $receiptModel, 
+    ]);
+    }
 }

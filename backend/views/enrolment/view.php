@@ -52,12 +52,19 @@ $this->render('_view-enrolment', [
 	'withBorder' => true,
     ])
     ?>
-    <?=
-    $this->render('_private-lesson', [
-	'model' => $model,
-	'lessonDataProvider' => $lessonDataProvider,
-	'lessonCount' => $lessonCount
-    ]);
+    <?php if($model->course->program->isPrivate()):
+        echo $this->render('_private-lesson', [
+	    'model' => $model,
+	    'lessonDataProvider' => $lessonDataProvider,
+	    'lessonCount' => $lessonCount
+        ]);
+    else:
+	    echo $this->render('_private-lesson', [
+	    'model' => $model,
+	    'groupLessonDataProvider' => $groupLessonDataProvider,
+	    'lessonCount' => $lessonCount
+        ]);    
+    endif;
     ?>
     <div class="more-lesson pull-right" id = "admin-login" style = "display:none">
 	<a class = "see-more" href = "">See More</a>
@@ -77,39 +84,6 @@ $this->render('_view-enrolment', [
     ]);
     ?>
     <?php LteBox::end() ?>
-    <?php
-    $items = [
-	[
-	    'label' => 'Payment Cycle',
-	    'content' => $noteContent,
-	    'options' => [
-		'id' => 'payment-cycle',
-	    ],
-	],
-	[
-	    'label' => 'Lesson',
-	    'content' => $lessonContent,
-	    'options' => [
-		'id' => 'lesson',
-	    ],
-	],
-	[
-	    'label' => 'History',
-	    'content' => $logContent,
-	    'options' => [
-		'id' => 'history',
-	    ],
-	]
-    ];
-    if ($model->course->program->isGroup()) {
-	    array_shift($items);
-    }
-    if ($model->course->program->isGroup()) {
-	    echo Tabs::widget([
-		'items' => $items,
-	    ]);
-    }
-    ?>
 </div>
 
 <script>
@@ -201,12 +175,17 @@ $this->render('_view-enrolment', [
         $(document).ready(function () {
             var lesson_count = '<?= $lessonCount; ?>';
             if (lesson_count > 10) {
+		    var private = <?= $model->course->program->isPrivate(); ?>;
+                if (private) {
                 $(".more-lesson").show();
                 var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
                 var student = '<?= $model->student->id ?>';
                 var params = $.param({'LessonSearch[student]': student, 'LessonSearch[type]': type, 'LessonSearch[isSeeMore]': 1});
                 var url = '<?= Url::to(['lesson/index']); ?>?' + params;
                 $('.see-more').attr("href", url);
+            }
+            } else {
+                $(".more-lesson").hide();
             }
         });
 </script>
