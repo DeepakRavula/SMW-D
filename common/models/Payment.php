@@ -406,7 +406,9 @@ class Payment extends ActiveRecord
     {
         return $this->creditAmount > 0.00;
     }
-    public function getAmountUsedInPaymentforTransacation($receiptId,$paymentId){
+
+    public function getAmountUsedInPaymentforTransacation($receiptId, $paymentId) 
+    {
         $getAmountUsed =     PaymentReceipt::find()
                             ->andWhere(['receiptId' => $receiptId])
                             ->andWhere(['paymentId' => $paymentId])
