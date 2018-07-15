@@ -315,7 +315,7 @@ class PaymentForm extends Model
                         $lessonPayment = new LessonPayment();
                         $lessonPayment->lessonId    = $lesson->id;
                         $lessonPayment->paymentId   = $this->paymentId;
-                        $lessonPayment->receiptId  = $this->receiptId;
+                        $lessonPayment->receiptId   = $this->receiptId;
                         $lessonPayment->amount      = $groupLessonPayments[$i];
                         $lessonPayment->enrolmentId = $enrolment->id;
                         $lessonPayment->save();
