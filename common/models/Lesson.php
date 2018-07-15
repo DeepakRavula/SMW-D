@@ -1332,6 +1332,7 @@ class Lesson extends \yii\db\ActiveRecord
         if ($this->hasMultiEnrolmentDiscount()) {
             $discount += $lessonPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :
                 $this->multiEnrolmentDiscount->value;
+            $discount = $discount / 4;
             $lessonPrice = $this->grossPrice - $discount;
         }
         if ($this->hasLineItemDiscount()) {
