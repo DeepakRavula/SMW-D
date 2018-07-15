@@ -36,7 +36,7 @@ class EmailController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['send', 'lesson', 'invoice', 'enrolment','proforma-invoice', 'receipt'],
+                'only' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -47,7 +47,7 @@ class EmailController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['send', 'lesson', 'invoice', 'enrolment','proforma-invoice', 'receipt'],
+                        'actions' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt'],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
