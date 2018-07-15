@@ -23,6 +23,9 @@ use backend\models\search\ProformaInvoiceSearch;
 use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
+use common\models\Receipt;
+use common\models\User;
+use common\models\PaymentReceipt;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -33,7 +36,7 @@ class EmailController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['send', 'lesson', 'invoice', 'enrolment','proforma-invoice'],
+                'only' => ['send', 'lesson', 'invoice', 'enrolment','proforma-invoice', 'receipt'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -44,7 +47,7 @@ class EmailController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['send', 'lesson', 'invoice', 'enrolment','proforma-invoice'],
+                        'actions' => ['send', 'lesson', 'invoice', 'enrolment','proforma-invoice', 'receipt'],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
@@ -274,15 +277,26 @@ class EmailController extends BaseController
             'pagination' => false,
         ]);
 
-    $this->layout = '/print';
-
-    return $this->render('/receive-payment/print/view', [
+     $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_RECEIPT]);
+     $data  =   $this->renderAjax('/mail/receipt', [
         'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
         'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
         'paymentLineItemsDataProvider'  =>  $paymentLineItemsDataProvider,
         'searchModel'                  =>  $searchModel,
         'customer'                     =>   $customer,
         'receiptModel'                 =>   $receiptModel, 
+        'model' => new EmailForm(),
+        'emailTemplate'                =>   $emailTemplate,
+        'emails' => !empty($customer->email) ?$customer->email : null,
+        'subject' => $emailTemplate->subject ?? 'Receipt from Arcadia Academy of Music',
     ]);
+    
+    $post = Yii::$app->request->post();
+    if (!$post) {
+        return [
+            'status' => true,
+            'data' => $data,
+        ];
     }
+}
 }

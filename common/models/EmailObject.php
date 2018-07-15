@@ -14,6 +14,7 @@ class EmailObject extends \yii\db\ActiveRecord
     const OBJECT_LESSON = 2;
     const OBJECT_PFI=3;
     const OBJECT_INVOICE = 4;
+    const OBJECT_RECEIPT  = 5;
     
     /**
      * {@inheritdoc}

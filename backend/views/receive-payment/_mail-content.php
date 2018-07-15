@@ -7,7 +7,6 @@
     			<?= $this->render('/receive-payment/print/_lesson-line-item', [
             		'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
 	    			'searchModel' => $searchModel,
-            		'model' => $model,
         		]); ?>
 			</td>
     	</tr>
@@ -25,7 +24,6 @@
     					<?= $this->render('/receive-payment/print/_invoice-line-item', [
             				'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
 	    					'searchModel' => $searchModel,
-            				'model' => $model,
         				]); ?>
 					</td>
     			</tr>

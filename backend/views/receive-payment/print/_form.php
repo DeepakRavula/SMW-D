@@ -69,6 +69,7 @@ use yii\bootstrap\Html;
         $('#popup-modal').find('.modal-header').html(header);
         $('.modal-save').text('Print');
         $('.modal-save-all').text('Email');
+        $('.modal-save-all').show();
         $('.modal-back').hide();
     });
     $(document).on("click", '.modal-save', function() {
@@ -77,7 +78,19 @@ use yii\bootstrap\Html;
         return false;
     });
     $(document).on("click", '.modal-save-all', function() {
-        var url = '<?= Url::to(['email/receipt' ,'id' => $receiptModel->id,'paymentId' => $model->paymentId]); ?>';
-        return false;
+        $('#popup-modal').modal('hide');
+        $.ajax({
+                url    : '<?= Url::to(['email/receipt', 'id' => $receiptModel->id,'paymentId' => $model->paymentId]); ?>', 
+                type   : 'get',
+                success: function(response)
+                {
+                    if (response.status) {
+                       // $('#popup-modal').modal('hide');
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                    }
+                }
+            });
+            return false;
     });
     </script>
