@@ -35,8 +35,8 @@ use yii\helpers\Url;
             'dateFormat' => 'php:M d, Y',
             'clientOptions' => [
                 'changeMonth' => true,
-                'yearRange' => '1500:3000',
-                'changeYear' => true,
+		'changeYear' => true,
+                'yearRange' => '-70:-3',
             ],
         ])->textInput(['placeholder' => 'Select Date'])->label(false);?>
     </div>
