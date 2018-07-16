@@ -292,7 +292,7 @@ class PaymentController extends BaseController
         if ($model->validate()) {
             $model->delete();
             if ($model->invoice) {
-                $modelInvoice->save();
+                $model->invoice->save();
             }
             
             $response = [
