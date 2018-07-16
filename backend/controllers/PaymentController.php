@@ -257,7 +257,7 @@ class PaymentController extends BaseController
             if ($payment->isAutoPayments()) {
                 $response = [
                     'status' => false,
-                    'message' => "System generated payments can't be deleted!"
+                    'message' => "System generated payments can't be modified!"
                 ];
             } else {
                 $data = $this->renderAjax('_form', [

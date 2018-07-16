@@ -79,7 +79,8 @@ use yii\bootstrap\ActiveForm;
                 return $form->field($data, 'paymentAmount')->textInput([
                     'value' => round($data->getPaidAmount($model->id), 2),
                     'class' => 'form-control text-right payment-amount',
-                    'id' => 'lesson-payment-' . $data->id
+                    'id' => 'lesson-payment-' . $data->id,
+                    'readOnly' => $data->hasInvoice()
                 ])->label(false);
             },
             'attribute' => 'new_activity',
