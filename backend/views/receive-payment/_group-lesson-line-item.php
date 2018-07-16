@@ -132,12 +132,12 @@ use yii\bootstrap\ActiveForm;
         array_push($columns, [
             'attribute' => 'balance',
             'label' => 'Balance',
-            'value' => function ($data) use($searchModel) {
+            'value' => function ($data) use($searchModel, $model) {
                 $enrolment = Enrolment::find()
                     ->notDeleted()
                     ->isConfirmed()
                     ->andWhere(['courseId' => $data->courseId])
-                    ->customer($searchModel->userId)
+                    ->customer($model->userId)
                     ->one();
                 return Yii::$app->formatter->asCurrency($data->getOwingAmount($enrolment->id));
             },
@@ -150,12 +150,12 @@ use yii\bootstrap\ActiveForm;
                 'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
                 'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
                 'label' => 'Payment',
-                'value' => function ($data) use($searchModel, $form) {
+                'value' => function ($data) use($searchModel, $form, $model) {
                     $enrolment = Enrolment::find()
                         ->notDeleted()
                         ->isConfirmed()
                         ->andWhere(['courseId' => $data->courseId])
-                        ->customer($searchModel->userId)
+                        ->customer($model->userId)
                         ->one();
                     return $form->field($data, 'paymentAmount')->textInput([
                         'value' => round($data->getOwingAmount($enrolment->id), 2), 

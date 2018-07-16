@@ -38,7 +38,7 @@ use yii\bootstrap\Html;
 
     <div class="row">
         <div class="col-xs-3">
-            <?= $form->field($model, 'userId')->widget(Select2::classname(), [
+            <?= $form->field($paymentModel, 'user_id')->widget(Select2::classname(), [
                 'data' => $customers,
                 'options' => [
                     'placeholder' => 'customer',
@@ -47,7 +47,7 @@ use yii\bootstrap\Html;
             ])->label('Customer'); ?>
         </div>
         <div class="col-xs-2">
-            <?= $form->field($model, 'date')->widget(DatePicker::classname(), [
+            <?= $form->field($paymentModel, 'date')->widget(DatePicker::classname(), [
                 'value'  => Yii::$app->formatter->asDate($model->date),
                 'dateFormat' => 'php:M d, Y',
                 'options' => [
@@ -61,11 +61,11 @@ use yii\bootstrap\Html;
             ])->label('Date'); ?>
         </div>
         <div class="col-xs-2">
-            <?= $form->field($model, 'payment_method_id')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))
+            <?= $form->field($paymentModel, 'payment_method_id')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))
                 ->label('Payment Method'); ?>
         </div>
 	<div class="col-xs-2">
-            <?= $form->field($model, 'reference')->textInput(['class' => 'form-control'])->label('Reference'); ?>
+            <?= $form->field($paymentModel, 'reference')->textInput(['class' => 'form-control'])->label('Reference'); ?>
         </div>
         <div class="col-xs-2">
             <?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control'])->label('Amount Received'); ?>
@@ -203,7 +203,7 @@ use yii\bootstrap\Html;
                 if ($(this).find('.check-checkbox').is(":checked")) {
                     var balance = $(this).find('.payment-amount').val();
                     balance = balance.match(/\d+\.?\d*/)[0];
-                    amountNeeded = parseFloat(amountNeeded) + parseFloat(balance);
+                    amountNeeded += parseFloat(balance);
                 }
             });
             
@@ -239,7 +239,7 @@ use yii\bootstrap\Html;
                 var amountReceived = amountNeeded - creditAmount < 0 ? '' : (-(creditAmount - amountNeeded)).toFixed(2);
                 $('#paymentform-amount').val(amountReceived);
             }
-            var amountToCredit = (parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.0') : parseFloat(amountReceived))) - amountToDistribute;
+            var amountToCredit = Math.round(parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - amountToDistribute);
             $('.amount-to-credit').text((amountToCredit).toFixed(2));
             $('#amount-needed-value').val((amountNeeded).toFixed(2));
             $('.amount-needed-value').text((amountNeeded).toFixed(2));

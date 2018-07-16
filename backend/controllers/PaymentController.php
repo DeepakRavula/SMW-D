@@ -288,14 +288,12 @@ class PaymentController extends BaseController
     public function actionDelete($id)
     {
         $model        = $this->findModel($id);
-        $model->setScenario(Payment::SCENARIO_DELETE);
-        if ($model->isCreditUsed()) {
-            $model->setScenario(Payment::SCENARIO_CREDIT_USED_DELETE);
-        }
-        $modelInvoice = $model->invoice;
         if ($model->validate()) {
             $model->delete();
-            $modelInvoice->save();
+            if ($model->invoice) {
+                $modelInvoice->save();
+            }
+            
             $response = [
                 'status' => true,
                 'message' => 'Payment succesfully deleted!'
@@ -483,6 +481,7 @@ class PaymentController extends BaseController
         $searchModel = new PaymentFormLessonSearch();
         $searchModel->showCheckBox = true;
         $model = new PaymentForm();
+        $payment = new Payment();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d, Y');
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -500,6 +499,7 @@ class PaymentController extends BaseController
         $groupLessonSearchModel->load(Yii::$app->request->get());
         $searchModel->load(Yii::$app->request->get());
         $model->userId = $searchModel->userId;
+        $payment->user_id = $searchModel->userId;
         $groupLessonsQuery = $groupLessonSearchModel->search(Yii::$app->request->queryParams);
         $groupLessonsQuery->orderBy(['lesson.id' => SORT_ASC]);
         $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
@@ -533,12 +533,9 @@ class PaymentController extends BaseController
         $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
         if ($request->post()) {
             $model->load($request->post());
-            $payment = new Payment();
+            $payment->load($request->post());
             $payment->amount = $model->amount;
-	        $payment->reference = $model->reference;
-            $payment->user_id = $searchModel->userId;
-            $payment->payment_method_id = $model->payment_method_id;
-            $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+            $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
             if (round($payment->amount, 2) > 0.00) {
                 $payment->save();
             }
@@ -547,13 +544,24 @@ class PaymentController extends BaseController
             $model->lessonIds = $searchModel->lessonIds;
             $model->groupLessonIds = $groupLessonSearchModel->lessonIds;
             $model->save();
+            $printData = $this->renderAjax('/receive-payment/print/_form', [
+                'model' => $model,
+                'paymentModel' => $payment,
+                'paymentsLineItemDataProvider' => $creditDataProvider,
+                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                'groupLessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
+                'searchModel' => $searchModel,
+                'groupLessonSearchModel' => $groupLessonSearchModel,
+            ]);
             $response = [
                 'status' => true,
-                'message' => 'Payment Added Sucessfully',
+                'data' => $printData,
             ];
         } else {
             $data = $this->renderAjax('/receive-payment/_form', [
                 'model' => $model,
+                'paymentModel' => $payment,
                 'creditDataProvider' => $creditDataProvider,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                 'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
