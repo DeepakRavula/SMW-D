@@ -12,7 +12,7 @@ use common\models\Location;
 ?>
 <?php $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
 ?>
-<h2 class="col-md-12"><b><?= 'Customer list for '. $model->name ;?></b></h2>
+<h2 class="col-md-12"><b><?= ucfirst($searchModel->role_name) . ' list for '. $model->name ;?></b></h2>
 <div class="user-index"> 
     <?php Pjax::begin([
         'id' => 'user-index',
