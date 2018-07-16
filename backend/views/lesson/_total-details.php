@@ -16,7 +16,7 @@ LteBox::begin([
     'boxTools' => $this->render('_discount-action-menu', [
         'model' => $model,
     ]),
-    'title' => 'Total',
+    'title' => 'Totals',
     'withBorder' => true,
 ])
 ?>
