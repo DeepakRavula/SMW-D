@@ -1330,15 +1330,15 @@ class Lesson extends \yii\db\ActiveRecord
         $discount = 0.0;
         $lessonPrice = $this->grossPrice;
         if ($this->hasMultiEnrolmentDiscount()) {
-            $discount += $lessonPrice < 0 ? - ($this->multiEnrolmentDiscount->value) :
-                $this->multiEnrolmentDiscount->value;
+            $discount += $lessonPrice < 0 ? 0 :
+                $this->multiEnrolmentDiscount->value / 4;
             $lessonPrice = $this->grossPrice - $discount;
         }
         if ($this->hasLineItemDiscount()) {
             if ((int) $this->lineItemDiscount->valueType) {
                 $discount += ($this->lineItemDiscount->value / 100) * $lessonPrice;
             } else {
-                $discount += $lessonPrice < 0 ? - ($this->lineItemDiscount->value) :
+                $discount += $lessonPrice < 0 ? 0 :
                     $this->lineItemDiscount->value;
             }
             $lessonPrice = $this->grossPrice - $discount;
