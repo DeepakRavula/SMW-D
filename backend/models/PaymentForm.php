@@ -394,7 +394,7 @@ class PaymentForm extends Model
         }
 
         if (is_numeric($this->amountToDistribute)) {
-            if ($this->amountToDistribute > ($this->selectedCreditValue + $this->amount)) {
+            if (round($this->amountToDistribute, 2) > (round($this->selectedCreditValue, 2) + round($this->amount, 2))) {
                 $this->addError($attributes, "Amount mismatched with distributions");
             }
         } else {
