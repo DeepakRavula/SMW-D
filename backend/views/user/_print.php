@@ -11,11 +11,8 @@ use common\models\Location;
 
 ?>
 <?php $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
-echo $this->render('/print/_header', [
-       'locationModel'=>$model,
-]);
 ?>
-
+<h2 class="col-md-12"><b><?= ucfirst($searchModel->role_name) . ' list for '. $model->name ;?></b></h2>
 <div class="user-index"> 
     <?php Pjax::begin([
         'id' => 'user-index',
@@ -41,7 +38,12 @@ echo $this->render('/print/_header', [
                     return !empty($data->userProfile->lastname) ? $data->userProfile->lastname : null;
                 },
             ],
-            'email',
+            [
+                'label' => 'Email',
+                'value' => function ($data) {
+                    return !empty($data->getEmail()) ? $data->getEmail() : null;
+                },
+            ],
             [
                 'label' => 'Phone',
                 'value' => function ($data) {
