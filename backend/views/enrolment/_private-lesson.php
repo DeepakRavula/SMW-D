@@ -3,7 +3,7 @@
 use yii\helpers\Url;
 use yii\helpers\Json;
 use common\models\Enrolment;
-use common\components\gridView\KartikGridView;
+use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use common\models\Program;
 use common\models\Location;
@@ -30,18 +30,27 @@ use common\models\UserProfile;
 	    },
 	],
 	[
+	    'label' => 'Status',
+	    'value' => function ($data) {
+		    return $data->getStatus();
+	    },
+	],
+	[
 	    'label' => 'Price',
 		'attribute' => 'price',
-		'contentOptions' => ['style' => 'text-align:right'],
-        'headerOptions' => ['style' => 'text-align:right'],
+		'contentOptions' => ['class' => 'text-right'],
+        'headerOptions' => ['class' => 'text-right'],
 	    'value' => function ($data) {
 		    return Yii::$app->formatter->asCurrency($data->netPrice);
 	    },
 	],
 	[
-	    'label' => 'Status',
+	    'label' => 'Owing',
+		'attribute' => 'owing',
+		'contentOptions' => ['class' => 'text-right'],
+        'headerOptions' => ['class' => 'text-right'],
 	    'value' => function ($data) {
-		    return $data->getStatus();
+		    return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
 	    },
 	],
     ];
@@ -49,30 +58,32 @@ use common\models\UserProfile;
     <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin(['id' => 'enrolment-lesson-index', 'timeout' => 6000,]); ?>
 	<?php if ($model->course->program->isPrivate()):
-	echo KartikGridView::widget([
+	echo GridView::widget([
 	    'dataProvider' => $lessonDataProvider,
 	    'options' => ['id' => 'student-lesson-grid'],
 	    'rowOptions' => function ($model, $key, $index, $grid) {
 		    $url = Url::to(['lesson/view', 'id' => $model->id]);
 
 		    return ['data-url' => $url];
-	    },
-	    'tableOptions' => ['class' => 'table table-bordered'],
+		},
+		'options' => ['class' => 'col-md-12'],
+	    'tableOptions' => ['class' => 'table table-condensed'],
 	    'headerRowOptions' => ['class' => 'bg-light-gray'],
 	    'summary' => false,
 	    'emptyText' => false,
 	    'columns' => $columns,
 	]);
 	else:
-		echo KartikGridView::widget([
+		echo GridView::widget([
 	    'dataProvider' => $groupLessonDataProvider,
 	    'options' => ['id' => 'student-lesson-grid'],
 	    'rowOptions' => function ($model, $key, $index, $grid) {
 		    $url = Url::to(['lesson/view', 'id' => $model->id]);
 
 		    return ['data-url' => $url];
-	    },
-	    'tableOptions' => ['class' => 'table table-bordered'],
+		},
+		'options' => ['class' => 'col-md-12'],
+	    'tableOptions' => ['class' => 'table table-condensed'],
 	    'headerRowOptions' => ['class' => 'bg-light-gray'],
 	    'summary' => false,
 	    'emptyText' => false,

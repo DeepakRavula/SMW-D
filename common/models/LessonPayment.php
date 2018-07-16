@@ -117,19 +117,7 @@ class LessonPayment extends \yii\db\ActiveRecord
                 $this->payment->updateAttributes(['amount' => $this->amount]);
             }
         }
-	 else{
-                   $paymentReceipt              =   new PaymentReceipt();
-                   $paymentReceipt->receiptId   =   $this->receiptId;
-                   $paymentReceipt->paymentId   =   $this->payment->id;
-                   $paymentReceipt->objectType  =   Receipt::TYPE_LESSON;
-                   $paymentReceipt->objectId    =   $this->lessonId;
-                   $paymentReceipt->amount      =   $this->amount;
-                   if(!$paymentReceipt->save())
-                   {
-                       print_r($paymentReceipt->receiptId);
-                    die($paymentReceipt->getErrors());
-                   }
-        }
+
         return parent::afterSave($insert, $changedAttributes);
     }
 

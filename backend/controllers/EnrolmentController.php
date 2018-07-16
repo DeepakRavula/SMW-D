@@ -125,6 +125,7 @@ class EnrolmentController extends BaseController
                 ->isConfirmed()
 		        ->limit(10)
                 ->notDeleted()
+                ->notCompleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' => false,
         ]);
@@ -134,6 +135,7 @@ class EnrolmentController extends BaseController
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
                 ->notDeleted()
+                ->notCompleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' =>  [ 'pageSize' => 10, ],
         ]);

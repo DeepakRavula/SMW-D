@@ -36,8 +36,24 @@ class m180705_163535_creating_table_payment_receipt extends Migration
                 'id' => $this->primaryKey(),
                 'receiptId' => $this->integer()->notNull(),
                 'paymentId' => $this->integer()->notNull(),
-                'objectType' => $this->integer()->notNull(),
-                'objectId' => $this->integer()->notNull(),
+                'amount'    => $this->double()->notNull(),
+            ]);
+        }
+        $payment_receipt_lesson = Yii::$app->db->schema->getTableSchema('payment_receipt_lesson');
+        if ($payment_receipt_lesson == null) {
+            $this->createTable('payment_receipt_lesson', [
+                'id' => $this->primaryKey(),
+                'receiptId' => $this->integer()->notNull(),
+                'lessonId' => $this->integer()->notNull(),
+                'amount'    => $this->double()->notNull(),
+            ]);
+        }
+        $payment_receipt_invoice = Yii::$app->db->schema->getTableSchema('payment_receipt_invoice');
+        if ($payment_receipt_invoice == null) {
+            $this->createTable('payment_receipt_invoice', [
+                'id' => $this->primaryKey(),
+                'receiptId' => $this->integer()->notNull(),
+                'invoiceId' => $this->integer()->notNull(),
                 'amount'    => $this->double()->notNull(),
             ]);
         }
