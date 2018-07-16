@@ -3,9 +3,15 @@
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use yii\bootstrap\Html;
-
+use yii\bootstrap\ActiveForm;
 ?>
 
+<?php 
+    $form = ActiveForm::begin([
+        'id' => 'modal-form-invoice',
+        'enableClientValidation' => false
+    ]);
+?>
 <?php
     $columns = [
 	[
@@ -36,27 +42,34 @@ use yii\bootstrap\Html;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value'],
             'label' => 'Balance',
-            'value' => function ($data) {
-                return !empty($data->balance) ? Yii::$app->formatter->asCurrency($data->balance) : null;
+            'value' => function ($data) use ($model, $canEdit) {
+                $balance = $data->balance;
+                if ($canEdit) {
+                    $balance += $data->getPaidAmount($model->id);
+                }
+                return Yii::$app->formatter->asCurrency($balance);
             }
         ]
     ];
         
     if ($canEdit) {
         array_push($columns, [
-            'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right'],
+            'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
             'label' => 'Payment',
-            'value' => function ($data) use ($model) {
-                return Html::textInput('', round($data->getPaidAmount($model->id), 2), [
-                    'class' => 'payment-amount text-right'
-                ]); 
+            'value' => function ($data) use ($form, $model) {
+                return $form->field($data, 'paymentAmount')->textInput([
+                    'value' => round($data->getPaidAmount($model->id), 2),
+                    'class' => 'form-control text-right payment-amount',
+                    'id' => 'invoice-payment-' . $data->id
+                ])->label(false);
             },
             'attribute' => 'new_activity',
             'format' => 'raw'
         ]);
     }
 ?>
+<?php ActiveForm::end(); ?>
 
 <?php Pjax::Begin(['id' => 'invoice-listing', 'timeout' => 6000]); ?>
     <?= GridView::widget([

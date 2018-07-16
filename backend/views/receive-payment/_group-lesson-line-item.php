@@ -46,11 +46,11 @@ use yii\bootstrap\ActiveForm;
                 'pluginOptions' => [
                     'autoApply' => true,
                     'ranges' => [
-                      Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
-		Yii::t('kvdrp', 'Next Month') => ["moment().add(1, 'month').startOf('month')", "moment().add(1, 'month').endOf('month')"],
-		Yii::t('kvdrp', 'Next 3 Months') => ["moment().add(1, 'month').startOf('month')", "moment().add(3, 'month').endOf('month')"],
-		Yii::t('kvdrp', 'Next 6 Months') => ["moment().add(1, 'month').startOf('month')", "moment().add(6, 'month').endOf('month')"],
-		Yii::t('kvdrp', 'Next 12 Months') => ["moment().add(1, 'month').startOf('month')", "moment().add(12, 'month').endOf('month')"],
+                        Yii::t('kvdrp', 'This Month') => ["moment().startOf('month')", "moment().endOf('month')"],
+                        Yii::t('kvdrp', 'Next Month') => ["moment().add(1, 'month').startOf('month')", "moment().add(1, 'month').endOf('month')"],
+                        Yii::t('kvdrp', 'Next 3 Months') => ["moment().add(1, 'month').startOf('month')", "moment().add(3, 'month').endOf('month')"],
+                        Yii::t('kvdrp', 'Next 6 Months') => ["moment().add(1, 'month').startOf('month')", "moment().add(6, 'month').endOf('month')"],
+                        Yii::t('kvdrp', 'Next 12 Months') => ["moment().add(1, 'month').startOf('month')", "moment().add(12, 'month').endOf('month')"],
                     ],
                     'locale' => [
                         'format' => 'M d, Y',
@@ -150,7 +150,7 @@ use yii\bootstrap\ActiveForm;
                 'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
                 'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
                 'label' => 'Payment',
-                'value' => function ($data) use($searchModel, $form) {
+                'value' => function ($data) use ($searchModel, $form) {
                     $enrolment = Enrolment::find()
                         ->notDeleted()
                         ->isConfirmed()

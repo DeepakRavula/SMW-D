@@ -3,13 +3,36 @@
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use yii\bootstrap\Html;
-
+use yii\bootstrap\ActiveForm;
 ?>
 
+<?php 
+    $form = ActiveForm::begin([
+        'id' => 'modal-form-lesson',
+        'enableClientValidation' => false
+    ]);
+?>
 
 <?php 
     $columns = [
-	[
+        [
+            'headerOptions' => ['class' => 'text-left'],
+            'contentOptions' => ['class' => 'text-left'],
+            'label' => 'Date',
+            'value' => function ($data) {
+                $date = Yii::$app->formatter->asDate($data->date);
+                $lessonTime = (new \DateTime($data->date))->format('H:i:s');
+
+                return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
+            }
+        ],
+        [
+            'label' => 'Student',
+            'value' => function ($data) {
+                return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
+            },
+        ],
+	    [
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left'],
             'attribute' => 'royaltyFree',
@@ -18,14 +41,14 @@ use yii\bootstrap\Html;
                 return $model->course->program->name;
             }
         ],
-	[
+	    [
             'headerOptions' => ['class' => 'text-left'],
             'label' => 'Teacher',
             'value' => function ($data) {
                 return $data->teacher->publicIdentity;
             }
         ],
-	[
+	    [   
             'label' => 'Amount',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency($data->netPrice);
@@ -33,10 +56,14 @@ use yii\bootstrap\Html;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
         ],
-	[
+	    [
             'label' => 'Balance',
-            'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
+            'value' => function ($data) use ($model, $canEdit) {
+                $balance = $data->getOwingAmount($data->enrolment->id);
+                if ($canEdit) {
+                    $balance += $data->getPaidAmount($model->id);
+                }
+                return Yii::$app->formatter->asCurrency($balance);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -45,19 +72,22 @@ use yii\bootstrap\Html;
     
     if ($canEdit) {
         array_push($columns, [
-            'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right'],
+            'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
             'label' => 'Payment',
-            'value' => function ($data) use ($model) {
-                return Html::textInput('', round($data->getPaidAmount($model->id), 2), [
-                    'class' => 'payment-amount text-right'
-                ]); 
+            'value' => function ($data) use ($model, $form) {
+                return $form->field($data, 'paymentAmount')->textInput([
+                    'value' => round($data->getPaidAmount($model->id), 2),
+                    'class' => 'form-control text-right payment-amount',
+                    'id' => 'lesson-payment-' . $data->id
+                ])->label(false);
             },
             'attribute' => 'new_activity',
             'format' => 'raw'
         ]);
     }
 ?>
+<?php ActiveForm::end(); ?>
 
     <?php Pjax::Begin(['id' => 'lesson-listing', 'timeout' => 6000]); ?>
         <?= GridView::widget([

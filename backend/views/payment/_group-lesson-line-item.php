@@ -4,13 +4,43 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 use yii\bootstrap\Html;
 use common\models\Enrolment;
-
+use yii\bootstrap\ActiveForm;
 ?>
 
+<?php 
+    $form = ActiveForm::begin([
+        'id' => 'modal-form-group-lesson',
+        'enableClientValidation' => false
+    ]);
+?>
 
 <?php 
     $columns = [
-	[
+        [
+            'headerOptions' => ['class' => 'text-left'],
+            'contentOptions' => ['class' => 'text-left'],
+            'label' => 'Date',
+            'value' => function ($data) {
+                $date = Yii::$app->formatter->asDate($data->date);
+                $lessonTime = (new \DateTime($data->date))->format('H:i:s');
+
+                return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
+            }
+        ],
+        [
+            'label' => 'Student',
+            'attribute' => 'student',
+            'value' => function ($data) use ($model) {
+                $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['courseId' => $data->courseId])
+                    ->customer($model->user_id)
+                    ->one();
+                return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
+            },
+        ],
+	    [
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left'],
             'attribute' => 'royaltyFree',
@@ -19,14 +49,14 @@ use common\models\Enrolment;
                 return $model->course->program->name;
             }
         ],
-	[
+	    [
             'headerOptions' => ['class' => 'text-left'],
             'label' => 'Teacher',
             'value' => function ($data) {
                 return $data->teacher->publicIdentity;
             }
         ],
-	[
+	    [
             'label' => 'Amount',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency($data->netPrice);
@@ -34,16 +64,20 @@ use common\models\Enrolment;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
         ],
-	[
+	    [
             'label' => 'Balance',
-            'value' => function ($data) use($model) {
+            'value' => function ($data) use ($model, $canEdit) {
                 $enrolment = Enrolment::find()
                     ->notDeleted()
                     ->isConfirmed()
                     ->andWhere(['courseId' => $data->courseId])
                     ->customer($model->user_id)
                     ->one();
-                return Yii::$app->formatter->asCurrency($data->getOwingAmount($enrolment->id));
+                $balance = $data->getOwingAmount($enrolment->id);
+                if ($canEdit) {
+                    $balance += $data->getPaidAmount($model->id, $enrolment->id);
+                }
+                return Yii::$app->formatter->asCurrency($balance);
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -52,25 +86,28 @@ use common\models\Enrolment;
     
     if ($canEdit) {
         array_push($columns, [
-            'headerOptions' => ['class' => 'text-right'],
-            'contentOptions' => ['class' => 'text-right'],
+            'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
+            'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
             'label' => 'Payment',
-            'value' => function ($data) use ($model) {
+            'value' => function ($data) use ($form, $model) {
                 $enrolment = Enrolment::find()
                     ->notDeleted()
                     ->isConfirmed()
                     ->andWhere(['courseId' => $data->courseId])
                     ->customer($model->user_id)
                     ->one();
-                return Html::textInput('', round($data->getPaidAmount($model->id, $enrolment->id), 2), [
-                    'class' => 'payment-amount text-right'
-                ]); 
+                return $form->field($data, 'paymentAmount')->textInput([
+                    'value' => round($data->getPaidAmount($model->id, $enrolment->id), 2), 
+                    'class' => 'form-control text-right payment-amount',
+                    'id' => 'group-lesson-payment-' . $data->id
+                ])->label(false);
             },
             'attribute' => 'new_activity',
             'format' => 'raw'
         ]);
     }
 ?>
+<?php ActiveForm::end(); ?>
 
     <?php Pjax::Begin(['id' => 'group-lesson-listing', 'timeout' => 6000]); ?>
         <?= GridView::widget([

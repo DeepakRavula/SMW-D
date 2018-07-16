@@ -146,6 +146,7 @@ var updatePayment = {
             var amountToDistribute = 0.0;
             $('.line-items-value').each(function() {
                 var amount = $(this).find('.payment-amount').val();
+                amount = amount.match(/\d+\.?\d*/)[0];
                 amountToDistribute += parseFloat($.isEmptyObject(amount) ? 0.0 : amount);
             });
             if (!lockTextBox) {
@@ -156,33 +157,48 @@ var updatePayment = {
             $('.amount-to-apply').text((amountToDistribute).toFixed(2));
             $('.amount-to-credit').text((amountReceived - amountToDistribute).toFixed(2));
             return false;
-        },
-        validateAmount : function() {
-            var amountReceived = $('#paymenteditform-amount').val();
-            $('#paymenteditform-amount').val(amountReceived).trigger('change');
-            $('#paymenteditform-amount').focus();
-            $('#paymenteditform-amount').blur();
-            return false;
         }
     };
 
-    $(document).off('change', '.payment-amount').on('change', '.payment-amount', function () {
-        updatePayment.setAction();
+    $(document).off('change', '.payment-amount').on('change', '.payment-amount', function () {debugger
+        var payment = $(this).val();
+        var id = $(this).attr('id');
+        if (!$.isEmptyObject(payment)) {
+            var balance = $(this).closest('td').prev('td').text();
+            balance = balance.replace('$', '');
+            id = id.replace('#', '');
+            if ($.isNumeric(payment)) {
+                if (parseFloat(payment) > parseFloat(balance)) {
+                    $('.field-'+id).addClass('has-error');
+                    $('.field-'+id).find('.help-block').html("<div style='color:#dd4b39'>Can't over pay!</div>");
+                    $('.modal-save').attr('disabled', true);
+                } else {debugger
+                    $('.modal-save').attr('disabled', false);
+                    $('.field-'+id).removeClass('has-error');
+                    $('.field-'+id).find('.help-block').html("");
+                }
+            } else {
+                $('.field-'+id).addClass('has-error');
+                $('.field-'+id).find('.help-block').html("<div style='color:#dd4b39'>Amount must be a number!</div>");
+                $('.modal-save').attr('disabled', true);
+            }
+        }
+        
         updatePayment.calcAmountNeeded();
-        updatePayment.validateAmount();
+        updatePayment.setAction();
         return false;
     });
 
     $(document).off('change', '#paymenteditform-amount').on('change', '#paymenteditform-amount', function () {
-        updatePayment.setAction();
         updatePayment.calcAmountNeeded();
+        updatePayment.setAction();
         return false;
     });
 
     $(document).off('keyup', '#paymenteditform-amount').on('keyup', '#paymenteditform-amount', function () {
         lockTextBox = true;
-        updatePayment.setAction();
         updatePayment.calcAmountNeeded();
+        updatePayment.setAction();
         return false;
     });
 
@@ -196,7 +212,7 @@ var updatePayment = {
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Payment</h4>');
 
-        updatePayment.setAction();
         updatePayment.calcAmountNeeded();
+        updatePayment.setAction();
     });
 </script>
