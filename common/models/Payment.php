@@ -64,6 +64,7 @@ class Payment extends ActiveRecord
     public function rules()
     {
         return [
+            [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE]],
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
@@ -81,6 +82,26 @@ class Payment extends ActiveRecord
     {
         if ((float) $this->amount === (float) 0) {
             $this->addError($attributes, "Amount can't be 0");
+        }
+    }
+
+    public function validateOnDelete($attributes)
+    {
+        if ($this->hasLessonPayments() && !$this->isAutoPayments()) {
+            foreach ($this->lessonPayments as $lessonPayment) {
+                if ($lessonPayment->lesson->isPrivate()) {
+                    if ($lessonPayment->lesson->hasInvoice()) {
+                        $this->addError($attributes, "Invoiced lesson's payments can't be deleted!");
+                        break;
+                    }
+                } else {
+                    if ($lessonPayment->enrolment->hasInvoice($lessonPayment->lessonId)) {
+                        $this->addError($attributes, "Invoiced lesson's payments can't be deleted!");
+                        break;
+                    }
+                }
+            }
+            
         }
     }
 
@@ -167,6 +188,11 @@ class Payment extends ActiveRecord
     {
         return $this->hasOne(LessonPayment::className(), ['paymentId' => 'id'])
             ->onCondition(['lesson_payment.isDeleted' => false]);
+    }
+
+    public function hasLessonPayments()
+    {
+        return !empty($this->lessonPayments);
     }
     
     public function getInvoice()

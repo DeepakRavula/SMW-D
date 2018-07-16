@@ -72,6 +72,12 @@ use yii\bootstrap\ActiveForm;
         window.open(url, '_blank');
     });
 
+    $(document).on('modal-error', function (event, params) {
+        if (params.message) {
+            $('#modal-popup-error-notification').html(params.message).fadeIn().delay(5000).fadeOut();
+        }
+    });
+
     $(document).off("click", ".payment-edit").on("click", ".payment-edit", function () {
         $('#modal-spinner').show();
         var url = '<?= Url::to(['payment/update', 'id' => $model->id]); ?>';

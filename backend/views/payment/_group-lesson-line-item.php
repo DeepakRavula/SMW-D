@@ -51,9 +51,15 @@ use yii\bootstrap\ActiveForm;
         ],
 	    [
             'headerOptions' => ['class' => 'text-left'],
-            'label' => 'Teacher',
-            'value' => function ($data) {
-                return $data->teacher->publicIdentity;
+            'label' => 'Invoiced ?',
+            'value' => function ($data) use ($model) {
+                $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['courseId' => $data->courseId])
+                    ->customer($model->user_id)
+                    ->one();
+                return $enrolment->hasInvoice($data->id) ? 'Yes' : 'No';
             }
         ],
 	    [

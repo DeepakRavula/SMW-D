@@ -287,7 +287,8 @@ class PaymentController extends BaseController
      */
     public function actionDelete($id)
     {
-        $model        = $this->findModel($id);
+        $model = $this->findModel($id);
+        $model->setScenario(Payment::SCENARIO_DELETE);
         if ($model->validate()) {
             $model->delete();
             if ($model->invoice) {

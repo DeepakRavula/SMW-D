@@ -48,6 +48,13 @@ use yii\bootstrap\ActiveForm;
                 return $data->teacher->publicIdentity;
             }
         ],
+        [
+            'headerOptions' => ['class' => 'text-left'],
+            'label' => 'Invoiced ?',
+            'value' => function ($data) {
+                return $data->hasInvoice() ? 'Yes' : 'No';
+            }
+        ],
 	    [   
             'label' => 'Amount',
             'value' => function ($data) {
