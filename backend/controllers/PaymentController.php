@@ -23,6 +23,10 @@ use common\models\LessonPayment;
 use yii\data\ActiveDataProvider;
 use backend\models\search\PaymentFormLessonSearch;
 use backend\models\search\PaymentFormGroupLessonSearch;
+use common\models\Receipt;
+use common\models\PaymentReceipt;
+use common\models\Location;
+
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -284,14 +288,12 @@ class PaymentController extends BaseController
     public function actionDelete($id)
     {
         $model        = $this->findModel($id);
-        $model->setScenario(Payment::SCENARIO_DELETE);
-        if ($model->isCreditUsed()) {
-            $model->setScenario(Payment::SCENARIO_CREDIT_USED_DELETE);
-        }
-        $modelInvoice = $model->invoice;
         if ($model->validate()) {
             $model->delete();
-            $modelInvoice->save();
+            if ($model->invoice) {
+                $modelInvoice->save();
+            }
+            
             $response = [
                 'status' => true,
                 'message' => 'Payment succesfully deleted!'
@@ -455,7 +457,7 @@ class PaymentController extends BaseController
         $creditDataProvider = new ArrayDataProvider([
             'allModels' => $results,
             'sort' => [
-                'attributes' => ['type', 'reference', 'amount']
+                'attributes' => ['id', 'type', 'reference', 'amount']
             ]
         ]);
         return $creditDataProvider;
@@ -479,8 +481,13 @@ class PaymentController extends BaseController
         $searchModel = new PaymentFormLessonSearch();
         $searchModel->showCheckBox = true;
         $model = new PaymentForm();
+        $payment = new Payment();
         $currentDate = new \DateTime();
         $model->date = $currentDate->format('M d, Y');
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $receiptLessonIds = [];
+        $receiptInvoiceIds = [];
+        $receiptPaymentIds = [];
         if (!$request->post()) {
             $groupLessonSearchModel->fromDate = $currentDate->format('M 1, Y');
             $groupLessonSearchModel->toDate = $currentDate->format('M t, Y'); 
@@ -492,6 +499,7 @@ class PaymentController extends BaseController
         $groupLessonSearchModel->load(Yii::$app->request->get());
         $searchModel->load(Yii::$app->request->get());
         $model->userId = $searchModel->userId;
+        $payment->user_id = $searchModel->userId;
         $groupLessonsQuery = $groupLessonSearchModel->search(Yii::$app->request->queryParams);
         $groupLessonsQuery->orderBy(['lesson.id' => SORT_ASC]);
         $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
@@ -525,26 +533,68 @@ class PaymentController extends BaseController
         $creditDataProvider = $this->getAvailableCredit($searchModel->userId);
         if ($request->post()) {
             $model->load($request->post());
-            $payment = new Payment();
+            $payment->load($request->post());
             $payment->amount = $model->amount;
-	        $payment->reference = $model->reference;
-            $payment->user_id = $searchModel->userId;
-            $payment->payment_method_id = $model->payment_method_id;
-            $payment->date = (new \DateTime($model->date))->format('Y-m-d H:i:s');
+            $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
             if (round($payment->amount, 2) > 0.00) {
                 $payment->save();
             }
+            $receiptModel                   =   new Receipt();
+            $receiptModel->date             =   (new \DateTime($payment->date))->format('Y-m-d');
+            $receiptModel->userId           =   $searchModel->userId;
+            $receiptModel->locationId       =   $locationId;
+            $receiptModel->receiptNumber    =   1;
+            $receiptModel->save();
             $model->paymentId = $payment->id;
+            $model->receiptId = $receiptModel->id;
             $model->lessonIds = $searchModel->lessonIds;
             $model->groupLessonIds = $groupLessonSearchModel->lessonIds;
             $model->save();
+            $paymentReceipts   =   PaymentReceipt::find()
+                                    ->andWhere(['receiptId' => $receiptModel->id])->all();
+            if(!empty($paymentReceipts)) {
+                foreach($paymentReceipts as $paymentReceipt) {
+                    if($paymentReceipt->objectType == Receipt::TYPE_INVOICE) {
+                        $receiptInvoiceIds[]  =   $paymentReceipt->objectId;
+
+                    } if($paymentReceipt->objectType == Receipt::TYPE_LESSON) {
+                        $receiptLessonIds[]  =   $paymentReceipt->objectId;
+                    }
+                    $receiptPaymentIds[]  =   $paymentReceipt->paymentId;
+                }
+            }
+            $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $receiptLessonIds]);
+            $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $receiptInvoiceIds]);
+            $paymentTransactions     =   Payment::find()->andWhere(['id' => $receiptPaymentIds]);
+            $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
+                'query' => $paymentLessonLineItems,
+                'pagination' => false,
+            ]);
+            $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
+                'query' => $paymentInvoiceLineItems,
+                'pagination' => false,
+            ]);
+            $paymentLineItemsDataProvider = new ActiveDataProvider([
+                'query' => $paymentTransactions,
+                'pagination' => false,
+            ]);
+            $searchModel->showCheckBox = false;
+            $printData = $this->renderAjax('/receive-payment/print/_form', [
+                'model' => $model,
+                'invoiceLineItemsDataProvider' => $paymentInvoiceLineItemsDataProvider,
+                'lessonLineItemsDataProvider' =>   $paymentLessonLineItemsDataProvider,
+                'paymentLineItemsDataProvider'  =>  $paymentLineItemsDataProvider,
+                'searchModel' => $searchModel,
+                'receiptModel' => $receiptModel,
+            ]);
             $response = [
                 'status' => true,
-                'message' => 'Payment added succesfully'
+                'data' => $printData,
             ];
         } else {
             $data = $this->renderAjax('/receive-payment/_form', [
                 'model' => $model,
+                'paymentModel' => $payment,
                 'creditDataProvider' => $creditDataProvider,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                 'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,

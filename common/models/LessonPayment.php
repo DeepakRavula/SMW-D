@@ -17,6 +17,8 @@ class LessonPayment extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public $receiptId;
     public static function tableName()
     {
         return '{{%lesson_payment}}';
@@ -29,7 +31,7 @@ class LessonPayment extends \yii\db\ActiveRecord
     {
         return [
             [['lessonId', 'paymentId', 'enrolmentId'], 'integer'],
-            [['isDeleted'], 'safe']
+            [['isDeleted','receiptId'], 'safe']
         ];
     }
 
@@ -81,6 +83,9 @@ class LessonPayment extends \yii\db\ActiveRecord
         if ($insert) {
             $this->isDeleted = false;
         }
+        if (round($this->amount, 2) == round($this->lesson->getOwingAmount($this->enrolmentId), 2)) {
+            $this->amount = $this->lesson->getOwingAmount($this->enrolmentId);
+        }
         return parent::beforeSave($insert);
     }
 
@@ -111,6 +116,19 @@ class LessonPayment extends \yii\db\ActiveRecord
                 }
                 $this->payment->updateAttributes(['amount' => $this->amount]);
             }
+        }
+	 else{
+                   $paymentReceipt              =   new PaymentReceipt();
+                   $paymentReceipt->receiptId   =   $this->receiptId;
+                   $paymentReceipt->paymentId   =   $this->payment->id;
+                   $paymentReceipt->objectType  =   Receipt::TYPE_LESSON;
+                   $paymentReceipt->objectId    =   $this->lessonId;
+                   $paymentReceipt->amount      =   $this->amount;
+                   if(!$paymentReceipt->save())
+                   {
+                       print_r($paymentReceipt->receiptId);
+                    die($paymentReceipt->getErrors());
+                   }
         }
         return parent::afterSave($insert, $changedAttributes);
     }

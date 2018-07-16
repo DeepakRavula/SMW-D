@@ -48,7 +48,7 @@ use common\models\UserProfile;
     ?>
     <div class="grid-row-open">
     <?php yii\widgets\Pjax::begin(['id' => 'enrolment-lesson-index', 'timeout' => 6000,]); ?>
-	<?php
+	<?php if ($model->course->program->isPrivate()):
 	echo KartikGridView::widget([
 	    'dataProvider' => $lessonDataProvider,
 	    'options' => ['id' => 'student-lesson-grid'],
@@ -63,6 +63,22 @@ use common\models\UserProfile;
 	    'emptyText' => false,
 	    'columns' => $columns,
 	]);
+	else:
+		echo KartikGridView::widget([
+	    'dataProvider' => $groupLessonDataProvider,
+	    'options' => ['id' => 'student-lesson-grid'],
+	    'rowOptions' => function ($model, $key, $index, $grid) {
+		    $url = Url::to(['lesson/view', 'id' => $model->id]);
+
+		    return ['data-url' => $url];
+	    },
+	    'tableOptions' => ['class' => 'table table-bordered'],
+	    'headerRowOptions' => ['class' => 'bg-light-gray'],
+	    'summary' => false,
+	    'emptyText' => false,
+	    'columns' => $columns,
+	]);
+	endif;
 	?>
 	<?php yii\widgets\Pjax::end(); ?>
     </div>
