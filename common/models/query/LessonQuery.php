@@ -436,4 +436,10 @@ class LessonQuery extends \yii\db\ActiveQuery
             $query->andWhere(['>', 'DATE(expiryDate)', (new \DateTime())->format('Y-m-d')]);
         }]);
     }
+
+    public function notCompleted()
+    {
+        return $this->scheduledOrRescheduled()
+                ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
+    }
 }

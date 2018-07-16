@@ -30,16 +30,7 @@ $this->render('_view-enrolment', [
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>
 </div>
-<div class="nav-tabs-custom">
     <?php
-    $lessonContent = $this->render('_lesson', [
-	'model' => $model,
-	'lessonDataProvider' => $lessonDataProvider,
-    ]);
-    $noteContent = $this->render('_payment-cycle', [
-	'model' => $model,
-	'paymentCycleDataProvider' => $paymentCycleDataProvider,
-    ]);
     $logContent = $this->render('log/index', [
 	'logDataProvider' => $logDataProvider,
     ]);
@@ -84,7 +75,6 @@ $this->render('_view-enrolment', [
     ]);
     ?>
     <?php LteBox::end() ?>
-</div>
 
 <script>
         $(document).on('click', '.enrolment-delete', function () {
