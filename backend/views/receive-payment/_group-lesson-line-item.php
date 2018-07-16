@@ -9,10 +9,16 @@ use yii\helpers\ArrayHelper;
 use common\models\Student;
 use common\models\Enrolment;
 use yii\bootstrap\Html;
-
+use yii\bootstrap\ActiveForm;
 ?>
 
-<?php Pjax::begin(['enablePushState' => false, 'id' => 'group-lesson-line-item-listing','timeout' => 6000,]); ?>
+<?php 
+    $form = ActiveForm::begin([
+        'id' => 'modal-form-group-lesson',
+        'enableClientValidation' => false
+    ]);
+?>
+
     <?php  
         $columns = [];
         if ($searchModel->showCheckBox) {
@@ -141,24 +147,30 @@ use yii\bootstrap\Html;
 
         if ($searchModel->showCheckBox && !$isCreatePfi) {
             array_push($columns, [
-                'headerOptions' => ['class' => 'text-right'],
-                'contentOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
                 'label' => 'Payment',
-                'value' => function ($data) use($searchModel) {
+                'value' => function ($data) use($searchModel, $form) {
                     $enrolment = Enrolment::find()
                         ->notDeleted()
                         ->isConfirmed()
                         ->andWhere(['courseId' => $data->courseId])
                         ->customer($searchModel->userId)
                         ->one();
-                    return Html::textInput('', round($data->getOwingAmount($enrolment->id), 2), 
-                        ['class' => 'payment-amount text-right']); 
+                    return $form->field($data, 'paymentAmount')->textInput([
+                        'value' => round($data->getOwingAmount($enrolment->id), 2), 
+                        'class' => 'form-control text-right payment-amount',
+                        'id' => 'group-lesson-payment-' . $data->id
+                    ])->label(false);
                 },
                 'attribute' => 'new_activity',
                 'format' => 'raw',
             ]);
         }
     ?>
+    <?php ActiveForm::end(); ?>
+
+<?php Pjax::begin(['enablePushState' => false, 'id' => 'group-lesson-line-item-listing','timeout' => 6000,]); ?>
 <?php if ($searchModel->showCheckBox) : ?>
     <?= GridView::widget([
         'options' => ['id' => 'group-lesson-line-item-grid'],

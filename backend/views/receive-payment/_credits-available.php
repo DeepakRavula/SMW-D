@@ -3,7 +3,16 @@
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use yii\bootstrap\Html;
+use common\models\Invoice;
+use common\models\Payment;
+use yii\bootstrap\ActiveForm;
+?>
 
+<?php 
+    $form = ActiveForm::begin([
+        'id' => 'modal-form-credit',
+        'enableClientValidation' => false
+    ]);
 ?>
 
 <?php
@@ -45,12 +54,20 @@ use yii\bootstrap\Html;
     ]);
 
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-right'],
-        'contentOptions' => ['class' => 'text-right'],
+        'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
+        'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
         'label' => 'Payment',
-        'value' => function ($model) { 
-            return Html::textInput('', round($model['amount'], 2), 
-                ['class' => 'credit-amount text-right']); 
+        'value' => function ($model) use ($form) {
+            if ($model['type'] == 'Payment Credit') {
+                $fieldModel = Payment::findOne($model['id']);
+            } else {
+                $fieldModel = Invoice::findOne($model['id']);
+            }
+            return $form->field($fieldModel, 'paymentAmount')->textInput([
+                'value' => round($model['amount'], 2),
+                'class' => 'form-control text-right credit-amount',
+                'id' => 'credit-payment-' . $model['id']
+            ])->label(false);
         },
         'format' => 'raw'
     ]);
@@ -67,3 +84,4 @@ use yii\bootstrap\Html;
     ]); ?>
 <?php Pjax::end(); ?>
 
+<?php ActiveForm::end();

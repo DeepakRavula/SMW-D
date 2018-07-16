@@ -459,7 +459,7 @@ class PaymentController extends BaseController
         $creditDataProvider = new ArrayDataProvider([
             'allModels' => $results,
             'sort' => [
-                'attributes' => ['type', 'reference', 'amount']
+                'attributes' => ['id', 'type', 'reference', 'amount']
             ]
         ]);
         return $creditDataProvider;
@@ -543,7 +543,7 @@ class PaymentController extends BaseController
                 $payment->save();
             }
             $receiptModel                   =   new Receipt();
-            $receiptModel->date             =   $model->date;
+            $receiptModel->date             =   (new \DateTime($model->date))->format('Y-m-d');
             $receiptModel->userId           =   $searchModel->userId;
             $receiptModel->locationId       =   $locationId;
             $receiptModel->receiptNumber    =   1;

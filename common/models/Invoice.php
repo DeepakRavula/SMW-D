@@ -47,6 +47,7 @@ class Invoice extends \yii\db\ActiveRecord
     public $discountApplied;
     public $toEmailAddress;
     public $subject;
+    public $paymentAmount;
     public $content;
     public $userName;
     public $hasEditable;
@@ -90,7 +91,8 @@ class Invoice extends \yii\db\ActiveRecord
         return [
             ['user_id', 'required'],
             [['isSent'], 'boolean'],
-            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount', 
+            [['paymentAmount'], 'number'],
+            [['type', 'notes','status', 'customerDiscount', 'paymentFrequencyDiscount',
                 'isDeleted', 'isCanceled', 'isVoid'], 'safe'],
             [['id'], 'checkPaymentExists', 'on' => self::SCENARIO_DELETE],
             [['discountApplied'], 'required', 'on' => self::SCENARIO_DISCOUNT],
