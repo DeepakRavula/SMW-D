@@ -27,8 +27,7 @@ use insolita\wgadminlte\LteConst;
 <?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
 <?php if ($lessonCount <= 0 && $invoiceCount<=0 && $model->amount>0) : ?>
   <div class="text-center"><h2>You didn't select any lessons or invoices</h2><br/><h4>so we'll save this payment as credit to your customer account</h4> </div>
-  <?php else:?>
-  <div class="row">
+  <?php else:?>  <div class="row">
     <div class="col-md-12">
        
         <?php if ($lessonCount > 0) : ?>
@@ -59,18 +58,6 @@ use insolita\wgadminlte\LteConst;
             </div>
             </div>
         <?php endif; ?>
-    </div>
-</div>
-        <div class = "row">        
-            <div class = "col-md-12">
-                <?= Html::label('Payments Used', ['class' => 'admin-login']) ?>
-                <?= $this->render('/receive-payment/print/_credits-available', [
-                    'paymentLineItemsDataProvider' => $paymentLineItemsDataProvider,
-                    'searchModel' => $searchModel,
-                    'receiptModel'=>$receiptModel,
-    ]);
-    ?>
-    
     </div>
 </div>  
 <?php endif; ?>

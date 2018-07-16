@@ -79,9 +79,6 @@ use yii\bootstrap\Html;
     <?= GridView::widget([
         'options' => ['id' => 'lesson-line-item-grid'],
         'dataProvider' => $lessonLineItemsDataProvider,
-        'filterModel' => $searchModel,
-        'filterUrl' => $isCreatePfi ? Url::to(['proforma-invoice/create', 'PaymentFormLessonSearch[userId]' => $searchModel->userId]) : 
-            Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $searchModel->userId]),
         'columns' => $columns,
         'summary' => false,
         'rowOptions' => ['class' => 'line-items-value lesson-line-items'],

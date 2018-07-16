@@ -523,5 +523,56 @@ class PrintController extends BaseController
             'invoiceDataProvider' => $invoiceDataProvider,
         ]);
     }
+    public function actionReceipt($lessonIds, $invoiceIds, $paymentCreditIds, $paymentCredits, $groupLessonIds)
+    {
+        $lessonIds = [];
+        $invoiceIds = [];
+        $paymentCreditIds = [];
+        $paymentCredits =
+        $receiptModel = Receipt::findOne(['id' => $id]);
+        if (!empty($paymentId)) {
+        $model  =  Payment::findOne(['id' => $paymentId]);
+        }
+        $customer =  User::findOne(['id' => $receiptModel->userId]);
+        $searchModel  =  new ProformaInvoiceSearch();
+        $searchModel->showCheckBox = false;
+        $paymentReceipts = PaymentReceipt::find()->andWhere(['receiptId' => $id])->all();
+        if(!empty($paymentReceipts)) {
+        foreach($paymentReceipts as $paymentReceipt) {
+            if($paymentReceipt->objectType == Receipt::TYPE_INVOICE) {
+                $receiptInvoiceIds[]  =   $paymentReceipt->objectId;
 
+            } if($paymentReceipt->objectType == Receipt::TYPE_LESSON) {
+                $receiptLessonIds[]  =   $paymentReceipt->objectId;
+            }
+            $receiptPaymentIds[]  =   $paymentReceipt->paymentId;
+        }
+    }
+
+        $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $lessonIds]);
+        $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $invoiceIds]);
+        $paymentGroupLessonLineItems = Lesson::find()->andWhere(['id' => $paymentGroupLessonLineItems]);
+        $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
+        'query' => $paymentLessonLineItems,
+        'pagination' => false,
+    ]);
+        $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $paymentInvoiceLineItems,
+            'pagination' => false,
+        ]);
+        $paymentGroupLessonLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $paymentGroupLessonLineItems,
+            'pagination' => false,
+        ]);
+
+    $this->layout = '/print';
+
+    return $this->redirect('/receive-payment/print/view', [
+        'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
+        'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
+        'paymentGroupLessonLineItemsDataProvider'  =>  $paymentGroupLessonLineItemsDataProvider,
+        'searchModel'                  =>  $searchModel,
+        'customer'                     =>   $customer,
+    ]);
+    }			
 }

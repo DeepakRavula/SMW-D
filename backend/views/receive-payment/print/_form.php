@@ -12,7 +12,8 @@ use yii\bootstrap\Html;
 ?>
 <?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
 <?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
-<?php if ($lessonCount <= 0 && $invoiceCount<=0 && $model->amount>0) : ?>
+<?php $groupLessonsCount = !empty($groupLessonLineItemsDataProvider) ? $groupLessonLineItemsDataProvider->getCount() : 0; ?>
+<?php if ($lessonCount <= 0 && $invoiceCount <= 0 && $groupLessonsCount <= 0) : ?>
 <div class="text-center"><h2>You didn't select any lessons or invoices</h2><br/><h4>so we'll save this payment as credit to your customer account</h4> </div>
 <?php else:?>
 <?php if ($lessonCount > 0) : ?>
@@ -20,7 +21,7 @@ use yii\bootstrap\Html;
     <div class = "col-md-12">
 <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
 
-    <?= $this->render('/receive-payment/_lesson-line-item', [
+    <?= $this->render('/receive-payment/print/_lesson-line-item', [
         'model' => $model,
         'isCreatePfi' => false,
         'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
@@ -35,7 +36,7 @@ use yii\bootstrap\Html;
             <div class = "row">        
              <div class = "col-md-12">
                 <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
-         <?= $this->render('/receive-payment/_invoice-line-item', [
+         <?= $this->render('/receive-payment/print/_invoice-line-item', [
             'model' => $model,
             'isCreatePfi' => false,
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
@@ -45,13 +46,22 @@ use yii\bootstrap\Html;
         </div>
     </div>    
     <?php endif; ?>
+    <?php if ($groupLessonsCount > 0) : ?>
+    <?= Html::label('Group Lessons', ['class' => 'admin-login']) ?>
+    <?= $this->render('_group-lesson-line-item', [
+        'model' => $model,
+        'isCreatePfi' => false,
+        'lessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
+        'searchModel' => $groupLessonSearchModel
+    ]);
+    ?>
+     <?php endif; ?>
     <div class = "row">        
             <div class = "col-md-12">
                 <?= Html::label('Payments Used', ['class' => 'admin-login']) ?>
                 <?= $this->render('/receive-payment/print/_credits-available', [
-                    'paymentLineItemsDataProvider' => $paymentLineItemsDataProvider,
+                    'paymentLineItemsDataProvider' => $paymentsLineItemDataProvider,
                     'searchModel' => $searchModel,
-                    'receiptModel'=>$receiptModel,
     ]);
     ?>
     
@@ -71,9 +81,27 @@ use yii\bootstrap\Html;
         $('.modal-back').hide();
         $('.select-on-check-all').prop('checked', true);
     });
-    $(document).on("click", '.modal-save', function() {
-        var url = '<?= Url::to(['print/receipt' ,'id' => $receiptModel->id,'paymentId' => $model->paymentId]); ?>';
-        window.open(url,'_blank');
-        return false;
-    });
-    </script>
+    $(document).off('click', '.modal-save').on('click', '.modal-save', function() {
+            var userId = <?= $model->userId;?>;
+            var lessonIds = <?= json_encode($model->lessonIds ); ?>;
+            var invoiceIds = <?= json_encode($model->invoiceIds ); ?>;    
+            var paymentCreditIds = <?= json_encode($model->paymentCreditIds); ?>;    
+            var paymentCredits = <?= json_encode($model->paymentCredits); ?>;  
+            var invoiceCreditIds = <?= json_encode($model->invoiceCreditIds); ?>; 
+            var invoiceCredits = <?= json_encode($model->invoiceCredits); ?>; 
+            var groupLessonIds = <?= json_encode($model->groupLessonIds); ?>; 
+            var params = $.param({ 'lessonIds': lessonIds, 'userId': userId, 
+                'invoiceIds': invoiceIds, 'groupLessonIds': groupLessonIds });
+            $.ajax({
+                url    : '<?= Url::to(['print/receipt']) ?>?' +params,
+                type   : 'get',
+                success: function(response)
+                {
+                    if (response.status) {
+                        //window.location.href = response.url;
+                    }
+                }
+            });
+        });
+        
+       </script>

@@ -3,48 +3,68 @@
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 use yii\bootstrap\Html;
-
+use common\models\Invoice;
+use common\models\Payment;
+use yii\bootstrap\ActiveForm;
 ?>
+
+<?php 
+    $form = ActiveForm::begin([
+        'id' => 'modal-form-credit',
+        'enableClientValidation' => false
+    ]);
+?>
+
 <?php
     $columns = [];
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-left'],
-        'contentOptions' => ['class' => 'text-left'],
-        'label' => 'Date',
-        'value' => function ($data) {
-            return  !empty($data->date) ? Yii::$app->formatter->asDate($data->date): null;
-        }
-    ]);
-    array_push($columns, [
-        'headerOptions' => ['class' => 'text-left'],
-        'contentOptions' => ['class' => 'text-left'],
-        'label' => 'Amount',
-        'value' => function ($data) {
-            return  !empty($data->amount) ? Yii::$app->formatter->asDecimal($data->amount): null;
-        }
-    ]);
-    array_push($columns, [
-        'headerOptions' => ['class' => 'text-left'],
-        'contentOptions' => ['class' => 'text-left'],
-        'label' => 'Payment Method',
-        'value' => function ($data) {
-            return  !empty($data->paymentMethod->name) ? $data->paymentMethod->name: null;
-        }
-    ]);
-    array_push($columns, [
-        'headerOptions' => ['class' => 'text-left'],
-        'contentOptions' => ['class' => 'text-left'],
-        'label' => 'Amount Used',
-        'value' => function ($data) use($receiptModel){
-            return  !empty($data->getAmountUsedInPaymentforTransacation($receiptModel->id,$data->id)) ? $data->getAmountUsedInPaymentforTransacation($receiptModel->id,$data->id): null;
+        'class' => 'yii\grid\CheckboxColumn',
+        'contentOptions' => ['style' => 'width:30px;'],
+        'checkboxOptions' => function($model, $key, $index, $column) {
+            return ['checked' => true, 'class' =>'check-checkbox'];
         }
     ]);
 
+    array_push($columns, [
+        'headerOptions' => ['class' => 'text-left'],
+        'contentOptions' => function ($model) {
+            return [
+                'creditId' => $model['id'],
+                'class' => 'text-left credit-type'
+            ];
+        },
+        'label' => 'Type',
+        'value' => 'type',
+    ]);
+
+    array_push($columns, [
+        'headerOptions' => ['class' => 'text-left'],
+        'contentOptions' => ['class' => 'text-left'],
+        'label' => 'Reference',
+        'value' => 'reference',
+    ]);
+
+
+    array_push($columns, [
+        'format' => 'currency',
+        'headerOptions' => ['class' => 'text-right'],
+        'contentOptions' => ['class' => 'text-right credit-value'],
+        'label' => 'Amount',
+        'value' => 'amount'
+    ]);
+
+    array_push($columns, [
+        'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
+        'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
+        'label' => 'Amount Used',
+        'value' => 'amountUsed',
+        'format' => 'raw'
+    ]);
 ?>
 
 <?php Pjax::Begin(['id' => 'credit-lineitem-listing', 'timeout' => 6000]); ?>
     <?= GridView::widget([
-        'id' => 'credit-lesson-line-item-grid',
+        'id' => 'credit-line-item-grid',
         'dataProvider' => $paymentLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,
@@ -53,6 +73,4 @@ use yii\bootstrap\Html;
     ]); ?>
 <?php Pjax::end(); ?>
 
-
-
-
+<?php ActiveForm::end();

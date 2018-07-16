@@ -63,7 +63,7 @@ if ($searchModel->showCheckBox && !$isCreatePfi) {
         'contentOptions' => ['class' => 'text-right'],
         'label' => 'Payment',
         'value' => function ($data) { 
-            return Html::textInput('', round($data->balance, 2), ['class' => 'payment-amount text-right']); 
+            return Html::label('', round($data->balance, 2), ['class' => 'payment-amount text-right']); 
         },
         'attribute' => 'new_activity',
         'format' => 'raw',
