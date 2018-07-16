@@ -38,8 +38,8 @@ use common\models\UserProfile;
 	[
 	    'label' => 'Price',
 		'attribute' => 'price',
-		'contentOptions' => ['style' => 'text-align:right'],
-        'headerOptions' => ['style' => 'text-align:right'],
+		'contentOptions' => ['class' => 'text-right'],
+        'headerOptions' => ['class' => 'text-right'],
 	    'value' => function ($data) {
 		    return Yii::$app->formatter->asCurrency($data->netPrice);
 	    },
@@ -47,8 +47,8 @@ use common\models\UserProfile;
 	[
 	    'label' => 'Owing',
 		'attribute' => 'owing',
-		'contentOptions' => ['style' => 'text-align:right'],
-        'headerOptions' => ['style' => 'text-align:right'],
+		'contentOptions' => ['class' => 'text-right'],
+        'headerOptions' => ['class' => 'text-right'],
 	    'value' => function ($data) {
 		    return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
 	    },
