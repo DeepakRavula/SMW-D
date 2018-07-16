@@ -146,8 +146,11 @@ var updatePayment = {
             var amountToDistribute = 0.0;
             $('.line-items-value').each(function() {
                 var amount = $(this).find('.payment-amount').val();
-                amount = amount.match(/\d+\.?\d*/)[0];
-                amountToDistribute += parseFloat($.isEmptyObject(amount) ? 0.0 : amount);
+                amount = parseFloat($.isEmptyObject(amount) ? 0.0 : amount);
+                if (!$.isNumeric(amount)) {
+                    amount.match(/\d+\.?\d*/)[0];
+                }
+                amountToDistribute += amount;
             });
             if (!lockTextBox) {
                 var amountReceived = parseFloat(amountReceived) > amountToDistribute ? parseFloat(amountReceived) : amountToDistribute;
@@ -160,7 +163,7 @@ var updatePayment = {
         }
     };
 
-    $(document).off('change', '.payment-amount').on('change', '.payment-amount', function () {debugger
+    $(document).off('change', '.payment-amount').on('change', '.payment-amount', function () {
         var payment = $(this).val();
         var id = $(this).attr('id');
         if (!$.isEmptyObject(payment)) {
@@ -172,7 +175,7 @@ var updatePayment = {
                     $('.field-'+id).addClass('has-error');
                     $('.field-'+id).find('.help-block').html("<div style='color:#dd4b39'>Can't over pay!</div>");
                     $('.modal-save').attr('disabled', true);
-                } else {debugger
+                } else {
                     $('.modal-save').attr('disabled', false);
                     $('.field-'+id).removeClass('has-error');
                     $('.field-'+id).find('.help-block').html("");
