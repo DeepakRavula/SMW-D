@@ -288,14 +288,12 @@ class PaymentController extends BaseController
     public function actionDelete($id)
     {
         $model        = $this->findModel($id);
-        $model->setScenario(Payment::SCENARIO_DELETE);
-        if ($model->isCreditUsed()) {
-            $model->setScenario(Payment::SCENARIO_CREDIT_USED_DELETE);
-        }
-        $modelInvoice = $model->invoice;
         if ($model->validate()) {
             $model->delete();
-            $modelInvoice->save();
+            if ($model->invoice) {
+                $modelInvoice->save();
+            }
+            
             $response = [
                 'status' => true,
                 'message' => 'Payment succesfully deleted!'

@@ -64,7 +64,6 @@ class Payment extends ActiveRecord
     public function rules()
     {
         return [
-            [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE, self::SCENARIO_CREDIT_USED_DELETE]],
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
@@ -102,18 +101,6 @@ class Payment extends ActiveRecord
         }
     }
 
-    public function validateOnDelete($attributes)
-    {
-        if ($this->invoice->isProFormaInvoice() && $this->invoice->hasLessonCreditUsedPayment() && !$this->isCreditUsed()) {
-            $this->addError($attributes, "Can't delete payment before retract lesson credit");
-        }
-        if ($this->invoice->isInvoice() && $this->isCreditUsed()) {
-            $appliedInvoice = $this->debitUsage->creditUsagePayment->invoice;
-            if ($appliedInvoice->isProFormaInvoice() && $appliedInvoice->hasLessonCreditUsedPayment()) {
-                $this->addError($attributes, "Can't delete payment before retract lesson credit");
-            }
-        }
-    }
     /**
      * {@inheritdoc}
      */
