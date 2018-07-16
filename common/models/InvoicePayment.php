@@ -92,6 +92,9 @@ class InvoicePayment extends \yii\db\ActiveRecord
         if ($insert) {
             $this->isDeleted = false;
         }
+        if (round($this->amount, 2) == round($this->invoice->balance, 2)) {
+            $this->amount = $this->invoice->balance;
+        }
         return parent::beforeSave($insert);
     }
 
@@ -123,15 +126,6 @@ class InvoicePayment extends \yii\db\ActiveRecord
                 $this->payment->updateAttributes(['amount' => $this->amount]);
             }
             $this->invoice->save();
-        }
-	else {
-            $paymentReceipt              =   new PaymentReceipt();
-            $paymentReceipt->receiptId   =   $this->receiptId;
-            $paymentReceipt->paymentId   =   $this->payment->id;
-            $paymentReceipt->objectType  =   Receipt::TYPE_INVOICE;
-            $paymentReceipt->objectId    =   $this->invoice_id;
-            $paymentReceipt->amount      =   $this->amount;
-            $paymentReceipt->save();
         }
         return true;
     }

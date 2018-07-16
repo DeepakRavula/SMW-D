@@ -95,6 +95,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $splittedLessonId;
     public $applyFullDiscount;
     public $lessonIds;
+    public $paymentAmount;
 
     /**
      * {@inheritdoc}
@@ -138,6 +139,7 @@ class Lesson extends \yii\db\ActiveRecord
             ['courseId', 'required', 'when' => function ($model, $attribute) {
                 return $model->type !== self::TYPE_EXTRA;
             }],
+            ['paymentAmount', 'number'],
             [['courseId', 'status', 'type'], 'integer'],
             [['programRate', 'teacherRate'], 'number'],
             ['programRate', 'required', 'on' => self::SCENARIO_CREATE_GROUP],

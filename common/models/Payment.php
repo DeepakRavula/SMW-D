@@ -31,6 +31,7 @@ class Payment extends ActiveRecord
     public $paymentMethodName;
     public $invoiceNumber;
     public $userName;
+    public $paymentAmount;
     public $customerId;
     
     const TYPE_OPENING_BALANCE_CREDIT = 1;
@@ -63,11 +64,11 @@ class Payment extends ActiveRecord
     public function rules()
     {
         return [
-            [['amount'], 'validateOnDelete', 'on' => [self::SCENARIO_DELETE, self::SCENARIO_CREDIT_USED_DELETE]],
             [['amount'], 'validateOnEdit', 'on' => [self::SCENARIO_EDIT, self::SCENARIO_CREDIT_USED_EDIT]],
             [['amount'], 'validateOnApplyCredit', 'on' => self::SCENARIO_APPLY_CREDIT],
             [['amount'], 'required'],
             [['amount'], 'number'],
+            [['paymentAmount'], 'number'],
             ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_APPLY_CREDIT]],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'sourceId', 'credit', 
                 'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId'], 'safe'],
@@ -100,18 +101,6 @@ class Payment extends ActiveRecord
         }
     }
 
-    public function validateOnDelete($attributes)
-    {
-        if ($this->invoice->isProFormaInvoice() && $this->invoice->hasLessonCreditUsedPayment() && !$this->isCreditUsed()) {
-            $this->addError($attributes, "Can't delete payment before retract lesson credit");
-        }
-        if ($this->invoice->isInvoice() && $this->isCreditUsed()) {
-            $appliedInvoice = $this->debitUsage->creditUsagePayment->invoice;
-            if ($appliedInvoice->isProFormaInvoice() && $appliedInvoice->hasLessonCreditUsedPayment()) {
-                $this->addError($attributes, "Can't delete payment before retract lesson credit");
-            }
-        }
-    }
     /**
      * {@inheritdoc}
      */
@@ -404,7 +393,9 @@ class Payment extends ActiveRecord
     {
         return $this->creditAmount > 0.00;
     }
-    public function getAmountUsedInPaymentforTransacation($receiptId,$paymentId){
+
+    public function getAmountUsedInPaymentforTransacation($receiptId, $paymentId) 
+    {
         $getAmountUsed =     PaymentReceipt::find()
                             ->andWhere(['receiptId' => $receiptId])
                             ->andWhere(['paymentId' => $paymentId])
