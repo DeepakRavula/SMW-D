@@ -84,7 +84,7 @@ use yii\bootstrap\ActiveForm;
                 ->all(), 'id', 'fullName'),
             'filterWidgetOptions' => [
                 'options' => [
-                    'id' => 'student'
+                    'id' => 'student_filter_lesson_line_item'
                 ],
                 'pluginOptions' => [
                     'allowClear' => true
