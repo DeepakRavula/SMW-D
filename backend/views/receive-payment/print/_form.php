@@ -92,7 +92,6 @@ use yii\bootstrap\Html;
         var url = '<?= $url ?>'; 
         $('.modal-save').attr('action', url);
         $('.modal-back').hide();
-        $('.select-on-check-all').prop('checked', true);
     });
     $(document).off('click', '.modal-save').on('click', '.modal-save', function() {
             var url = '<?= $url; ?>';

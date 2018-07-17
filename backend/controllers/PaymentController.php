@@ -560,7 +560,7 @@ $results[] = [
             'pagination' => false
         ]);
         $invoicesQuery = Invoice::find();
-        if ($model->invoiceIds) {
+        if (isset($model->invoiceIds)) {
             $invoicesQuery->andWhere(['id' => $model->invoiceIds]);
         } else {
             if (!$searchModel->userId) {

@@ -23,6 +23,9 @@ use backend\models\search\ProformaInvoiceSearch;
 use yii\helpers\ArrayHelper;
 use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
+use common\models\Receipt;
+use common\models\User;
+use common\models\PaymentReceipt;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -33,7 +36,7 @@ class EmailController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['send', 'lesson', 'invoice', 'enrolment','proforma-invoice'],
+                'only' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -44,7 +47,7 @@ class EmailController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['send', 'lesson', 'invoice', 'enrolment','proforma-invoice'],
+                        'actions' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt'],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
@@ -233,4 +236,67 @@ class EmailController extends BaseController
             ];
         }
     }
+    public function actionReceipt($id,$paymentId = null)
+    {
+        $receiptLessonIds = [];
+        $receiptInvoiceIds = [];
+        $receiptPaymentIds = [];
+        $receiptModel = Receipt::findOne(['id' => $id]);
+        if (!empty($paymentId)) {
+        $model  =  Payment::findOne(['id' => $paymentId]);
+        }
+        $customer =  User::findOne(['id' => $receiptModel->userId]);
+        $searchModel  =  new ProformaInvoiceSearch();
+        $searchModel->showCheckBox = false;
+        $paymentReceipts = PaymentReceipt::find()->andWhere(['receiptId' => $id])->all();
+        if(!empty($paymentReceipts)) {
+        foreach($paymentReceipts as $paymentReceipt) {
+            if($paymentReceipt->objectType == Receipt::TYPE_INVOICE) {
+                $receiptInvoiceIds[]  =   $paymentReceipt->objectId;
+
+            } if($paymentReceipt->objectType == Receipt::TYPE_LESSON) {
+                $receiptLessonIds[]  =   $paymentReceipt->objectId;
+            }
+            $receiptPaymentIds[]  =   $paymentReceipt->paymentId;
+        }
+    }
+
+        $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $receiptLessonIds]);
+        $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $receiptInvoiceIds]);
+        $paymentTransactions     =   Payment::find()->andWhere(['id' => $receiptPaymentIds]);
+        $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
+        'query' => $paymentLessonLineItems,
+        'pagination' => false,
+    ]);
+        $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $paymentInvoiceLineItems,
+            'pagination' => false,
+        ]);
+        $paymentLineItemsDataProvider = new ActiveDataProvider([
+            'query' => $paymentTransactions,
+            'pagination' => false,
+        ]);
+
+     $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_RECEIPT]);
+     $data  =   $this->renderAjax('/mail/receipt', [
+        'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
+        'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
+        'paymentLineItemsDataProvider'  =>  $paymentLineItemsDataProvider,
+        'searchModel'                  =>  $searchModel,
+        'customer'                     =>   $customer,
+        'receiptModel'                 =>   $receiptModel, 
+        'model' => new EmailForm(),
+        'emailTemplate'                =>   $emailTemplate,
+        'emails' => !empty($customer->email) ?$customer->email : null,
+        'subject' => $emailTemplate->subject ?? 'Receipt from Arcadia Academy of Music',
+    ]);
+    
+    $post = Yii::$app->request->post();
+    if (!$post) {
+        return [
+            'status' => true,
+            'data' => $data,
+        ];
+    }
+}
 }
