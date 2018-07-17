@@ -291,8 +291,8 @@ class PaymentController extends BaseController
         $model->setScenario(Payment::SCENARIO_DELETE);
         if ($model->validate()) {
             $model->delete();
-            if ($model->invoice) {
-                $model->invoice->save();
+            foreach ($model->invoicePayments as $invoicePayment) {
+                $invoicePayment->invoice->save();
             }
             
             $response = [
