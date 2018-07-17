@@ -7,11 +7,6 @@ use yii\helpers\Url;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<style>
-    .col-xs-3 {
-        width: 23%;
-    }
-</style>
 
 <div>
     <?php $form = ActiveForm::begin([
@@ -22,9 +17,12 @@ use yii\helpers\Url;
         <div class="col-xs-6 pull-left">
             <label class="dollar-symbol">Tax</label>
         </div>
-        
+        <div class="col-xs-2">
+        </div>
         <div class="col-xs-4">
-            <?= $form->field($model, 'tax')->textInput()->label(false); ?>
+            <?= $form->field($model, 'tax')->textInput([
+                'value' => Yii::$app->formatter->asDecimal($model->tax, 2),
+                'class' => 'text-right form-control' ])->label(false); ?>
         </div>
     </div>
     <?php ActiveForm::end(); ?>
