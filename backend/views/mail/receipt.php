@@ -3,8 +3,7 @@
 use yii\helpers\ArrayHelper;
 use common\models\UserEmail;
 
-    $content = $this->renderAjax('/proforma-invoice/mail/content', [
-    'model' => $proformaInvoiceModel,
+    $content = $this->renderAjax('/receive-payment/_mail-content', [
     'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
     'emailTemplate' => $emailTemplate,
@@ -24,7 +23,6 @@ use common\models\UserEmail;
 <?= $this->render('/mail/_form', [
     'content' => $content,
     'model' => $model,
-    'invoiceId' => $proformaInvoiceModel->id,
     'data' => $data,
     'subject' => $subject,
     'emailTemplate' => $emailTemplate
