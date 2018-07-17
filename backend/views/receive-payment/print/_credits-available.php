@@ -17,14 +17,7 @@ use yii\bootstrap\ActiveForm;
 
 <?php
     $columns = [];
-    array_push($columns, [
-        'class' => 'yii\grid\CheckboxColumn',
-        'contentOptions' => ['style' => 'width:30px;'],
-        'checkboxOptions' => function($model, $key, $index, $column) {
-            return ['checked' => true, 'class' =>'check-checkbox'];
-        }
-    ]);
-
+    
     array_push($columns, [
         'headerOptions' => ['class' => 'text-left'],
         'contentOptions' => function ($model) {

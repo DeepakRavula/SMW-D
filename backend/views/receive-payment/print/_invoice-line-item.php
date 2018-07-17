@@ -9,13 +9,6 @@ use yii\bootstrap\Html;
     $columns = [];
     if ($searchModel->showCheckBox) {
         $contentWidth   =   "width:0px;";
-        array_push($columns, [
-            'class' => 'yii\grid\CheckboxColumn',
-            'contentOptions' => ['style' => 'width:30px;'],
-            'checkboxOptions' => function($model, $key, $index, $column) {
-                return ['checked' => true, 'class' =>'check-checkbox'];
-            }
-        ]);
     }
     else{
         $contentWidth   =   "width:650px;";
@@ -56,19 +49,6 @@ use yii\bootstrap\Html;
             return !empty($data->balance) ? Yii::$app->formatter->asCurrency($data->balance) : null;
         }
     ]);
-
-if ($searchModel->showCheckBox && !$isCreatePfi) {
-    array_push($columns, [
-        'headerOptions' => ['class' => 'text-right'],
-        'contentOptions' => ['class' => 'text-right'],
-        'label' => 'Payment',
-        'value' => function ($data) { 
-            return Html::label('', round($data->balance, 2), ['class' => 'payment-amount text-right']); 
-        },
-        'attribute' => 'new_activity',
-        'format' => 'raw',
-    ]);
-}
 ?>
 
 <?php Pjax::Begin(['id' => 'invoice-lineitem-listing', 'timeout' => 6000]); ?>

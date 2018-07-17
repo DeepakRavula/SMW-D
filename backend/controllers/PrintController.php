@@ -28,7 +28,8 @@ use common\models\ProformaInvoice;
 use backend\models\search\ProformaInvoiceSearch;
 use common\models\Receipt;
 use common\models\PaymentReceipt;
-
+use backend\models\PaymentForm;
+use yii\data\ArrayDataProvider;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -526,19 +527,17 @@ class PrintController extends BaseController
     }
     public function actionReceipt()
     {
-        $searchModel                   = new PaymentFormSearch();
-        if ($searchModel->load($request->get())) {
-            print_r($searchModel);die('coming');
-        }
-        if (!empty($paymentId)) {
-        $model  =  Payment::findOne(['id' => $paymentId]);
-        }
-        $customer =  User::findOne(['id' => $userId]);
+        $model  = new PaymentForm();
+        $request = Yii::$app->request;
+        if ($model->load($request->get())) {
+            //print_r($model);die('coming');
+        
+        $customer =  User::findOne(['id' => $model->userId]);
         $searchModel  =  new ProformaInvoiceSearch();
         $searchModel->showCheckBox = false;
-        $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $lessonIds]);
-        $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $invoiceIds]);
-        $paymentGroupLessonLineItems = Lesson::find()->andWhere(['id' => $groupLessonIds]);
+        $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $model->lessonIds]);
+        $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $model->invoiceIds]);
+        $paymentGroupLessonLineItems = Lesson::find()->andWhere(['id' => $model->groupLessonIds]);
         $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
         'query' => $paymentLessonLineItems,
         'pagination' => false,
@@ -547,10 +546,57 @@ class PrintController extends BaseController
             'query' => $paymentInvoiceLineItems,
             'pagination' => false,
         ]);
-        $paymentGroupLessonLineItemsDataProvider = new ActiveDataProvider([
+        $groupLessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $paymentGroupLessonLineItems,
             'pagination' => false,
         ]);
+        
+        $results = [];
+      if(!empty($model->paymentCreditIds))  {    
+          $paymentCreditIds = $model->paymentCreditIds; 
+          $paymentCredits   = $model->paymentCredits;          
+      foreach($paymentCreditIds as $key =>  $paymentCreditId) {
+          $paymentCredit = Payment::findOne(['id' => $paymentCreditId]);
+          $results[] = [
+            'id' => $paymentCredit->id,
+            'type' => 'Payment Credit',
+            'reference' => $paymentCredit->reference,
+            'amount' => $paymentCredit->amount,
+            'amountUsed' => $model->paymentCredits[$key],
+        ];
+      }  
+    }
+      if(!empty($invoiceCreditIds)) {  
+        $invoiceCreditIds = $model->invoiceCreditIds; 
+        $invoiceCredits   = $model->invoiceCredits;  
+      foreach($invoiceCreditIds as $key =>  $invoiceCreditId) {
+        $invoiceCredit = Invoice::findOne(['id' => $invoiceCreditId]);
+        $results[] = [
+          'id' => $invoiceCredit->id,
+          'type' => 'Invoice Credit',
+          'reference' => $invoiceCredit->reference,
+          'amount' => $invoiceCredit->amount,
+          'amountUsed' => $model->invoiceCredits[$key],
+      ];
+    }
+    
+} 
+$paymentNew = Payment::findOne(['id' => $model->paymentId]);
+if (!empty($paymentNew)) {
+$results[] = [
+    'id' => $paymentId,
+    'type' => 'Payment',
+    'reference' => !empty($paymentNew->reference) ? $paymentNew->reference : null,
+    'amount' => $paymentNew->amount,
+    'amountUsed' => $amount,
+]; 
+}
+     $paymentsLineItemsDataProvider = new ArrayDataProvider([
+        'allModels' => $results,
+        'sort' => [
+            'attributes' => ['id', 'type', 'reference', 'amount', 'amountUsed']
+        ]
+     ]);
 
     $this->layout = '/print';
 
@@ -558,9 +604,11 @@ class PrintController extends BaseController
         'model'                        => !empty($model) ? $model : new Payment(),
         'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
         'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
-        'paymentGroupLessonLineItemsDataProvider'  =>  $paymentGroupLessonLineItemsDataProvider,
+        'groupLessonLineItemsDataProvider' =>  $groupLessonLineItemsDataProvider,
+        'paymentsLineItemsDataProvider'  =>  $paymentsLineItemsDataProvider,
         'searchModel'                  =>  $searchModel,
         'customer'                     =>   $customer,
     ]);
-    }			
+    }	
+}		
 }

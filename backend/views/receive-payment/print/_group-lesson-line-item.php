@@ -11,26 +11,8 @@ use common\models\Enrolment;
 use yii\bootstrap\Html;
 use yii\bootstrap\ActiveForm;
 ?>
-
-<?php 
-    $form = ActiveForm::begin([
-        'id' => 'modal-form-group-lesson',
-        'enableClientValidation' => false
-    ]);
-?>
-
     <?php  
         $columns = [];
-        if ($searchModel->showCheckBox) {
-            array_push($columns, [
-                'class' => 'yii\grid\CheckboxColumn',
-                'contentOptions' => ['style' => 'width:30px;'],
-                'checkboxOptions' => function($model, $key, $index, $column) {
-                    return ['checked' => true,'class' =>'check-checkbox'];
-                }
-            ]);
-        }
-
         array_push($columns, [
             'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
@@ -47,12 +29,12 @@ use yii\bootstrap\ActiveForm;
         array_push($columns, [
             'label' => 'Student',
             'attribute' => 'student',
-            'value' => function ($data) use($searchModel) {
+            'value' => function ($data) use($model) {
                 $enrolment = Enrolment::find()
                     ->notDeleted()
                     ->isConfirmed()
                     ->andWhere(['courseId' => $data->courseId])
-                    ->customer($searchModel->userId)
+                    ->customer($model->userId)
                     ->one();
                 return !empty($enrolment->student->fullName) ? $enrolment->student->fullName : null;
             },
@@ -90,7 +72,7 @@ use yii\bootstrap\ActiveForm;
         array_push($columns, [
             'attribute' => 'balance',
             'label' => 'Balance',
-            'value' => function ($data) use($searchModel, $model) {
+            'value' => function ($data) use($model) {
                 $enrolment = Enrolment::find()
                     ->notDeleted()
                     ->isConfirmed()
@@ -102,43 +84,9 @@ use yii\bootstrap\ActiveForm;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']
         ]);
-
-        if ($searchModel->showCheckBox && !$isCreatePfi) {
-            array_push($columns, [
-                'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
-                'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
-                'label' => 'Payment',
-                'value' => function ($data) use($searchModel, $form, $model) {
-                    $enrolment = Enrolment::find()
-                        ->notDeleted()
-                        ->isConfirmed()
-                        ->andWhere(['courseId' => $data->courseId])
-                        ->customer($model->userId)
-                        ->one();
-                    return $form->field($data, 'paymentAmount')->textInput([
-                        'value' => round($data->getOwingAmount($enrolment->id), 2), 
-                        'class' => 'form-control text-right payment-amount',
-                        'id' => 'group-lesson-payment-' . $data->id
-                    ])->label(false);
-                },
-                'attribute' => 'new_activity',
-                'format' => 'raw',
-            ]);
-        }
     ?>
-    <?php ActiveForm::end(); ?>
 
 <?php Pjax::begin(['enablePushState' => false, 'id' => 'group-lesson-line-item-listing','timeout' => 6000,]); ?>
-<?php if ($searchModel->showCheckBox) : ?>
-    <?= GridView::widget([
-        'options' => ['id' => 'group-lesson-line-item-grid'],
-        'dataProvider' => $lessonLineItemsDataProvider,
-        'columns' => $columns,
-        'summary' => false,
-        'rowOptions' => ['class' => 'line-items-value group-lesson-line-items'],
-        'emptyText' => 'No Lessons Available!'
-    ]); ?>
-<?php else: ?>
 <?= GridView::widget([
         'options' => ['id' => 'group-lesson-line-item-grid'],
         'dataProvider' => $lessonLineItemsDataProvider,
@@ -146,5 +94,4 @@ use yii\bootstrap\ActiveForm;
         'summary' => false,
         'emptyText' => 'No Lessons Available!'
     ]); ?>
-<?php endif; ?>
 <?php Pjax::end(); ?>
