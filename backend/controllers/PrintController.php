@@ -584,11 +584,11 @@ class PrintController extends BaseController
 $paymentNew = Payment::findOne(['id' => $model->paymentId]);
 if (!empty($paymentNew)) {
 $results[] = [
-    'id' => $paymentId,
+    'id' => $paymentNew->id,
     'type' => 'Payment',
     'reference' => !empty($paymentNew->reference) ? $paymentNew->reference : null,
     'amount' => $paymentNew->amount,
-    'amountUsed' => $amount,
+    'amountUsed' => $model->amount,
 ]; 
 }
      $paymentsLineItemsDataProvider = new ArrayDataProvider([

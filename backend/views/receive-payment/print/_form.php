@@ -76,7 +76,7 @@ use yii\bootstrap\Html;
     <?php endif; ?>
     <?php ActiveForm::end(); ?>
     <?php $url = Url::to(['print/receipt',  'PaymentForm[lessonIds]' => $model->lessonIds, 'PaymentForm[userId]' => $model->userId, 
-                'PaymentForm[invoiceIds]' => $model->invoiceIds, 'PaymentForm[groupLessonIds]' => $model->groupLessonIds,  'PaymentForm[invoiceCreditIds]' => $model->invoiceCreditIds, 'PaymentForm[invoiceCredits]' => $model->invoiceCredits,  'PaymentForm[paymentCreditIds]' => $model->paymentCreditIds, 'PaymentForm[paymentCredits]' => $model->paymentCredits]); ?>
+                'PaymentForm[invoiceIds]' => $model->invoiceIds, 'PaymentForm[groupLessonIds]' => $model->groupLessonIds,  'PaymentForm[invoiceCreditIds]' => $model->invoiceCreditIds, 'PaymentForm[invoiceCredits]' => $model->invoiceCredits,  'PaymentForm[paymentCreditIds]' => $model->paymentCreditIds, 'PaymentForm[paymentCredits]' => $model->paymentCredits, 'PaymentForm[amount]' => $model->amount, 'PaymentForm[paymentId]' => $model->paymentId]); ?>
 
     <script>
         $(document).ready(function () {
