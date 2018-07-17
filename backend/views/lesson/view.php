@@ -416,7 +416,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                 if (response.status)
                 {
                     $('#success-notification').html(response.message).fadeIn().delay(3000).fadeOut();
-                    $.pjax.reload({container: "#invoice-payment-listing", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#lesson-payment-listing", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#lesson-schedule-buttons", replace: false, async: false, timeout: 6000});
                 } else {
                     $('#error-notification').html(response.message).fadeIn().delay(3000).fadeOut();
@@ -460,6 +460,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         });
         return false;
     });
+
     $(document).off('click', '#lesson-tax').on('click', '#lesson-tax', function(){
         $.ajax({
             url    : '<?= Url::to(['lesson/edit-tax', 'id' => $model->id]) ?>',
@@ -472,6 +473,12 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                 }
             }
         });
+        return false;
+    });
+
+    $(document).on('modal-delete', function(event, params) {
+        $.pjax.reload({container: "#lesson-payment-listing", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#lesson-schedule-buttons", replace: false, async: false, timeout: 6000});
         return false;
     });
 </script>

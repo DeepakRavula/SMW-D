@@ -86,6 +86,9 @@ class LessonPayment extends \yii\db\ActiveRecord
         if (round($this->amount, 2) == round($this->lesson->getOwingAmount($this->enrolmentId), 2)) {
             $this->amount = $this->lesson->getOwingAmount($this->enrolmentId);
         }
+        if (round($this->amount, 2) == 0.00) {
+            $this->isDeleted = true;
+        }
         return parent::beforeSave($insert);
     }
 

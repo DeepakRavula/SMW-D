@@ -257,7 +257,7 @@ class PaymentController extends BaseController
             if ($payment->isAutoPayments()) {
                 $response = [
                     'status' => false,
-                    'message' => "System generated payments can't be deleted!"
+                    'message' => "System generated payments can't be modified!"
                 ];
             } else {
                 $data = $this->renderAjax('_form', [
@@ -287,11 +287,12 @@ class PaymentController extends BaseController
      */
     public function actionDelete($id)
     {
-        $model        = $this->findModel($id);
+        $model = $this->findModel($id);
+        $model->setScenario(Payment::SCENARIO_DELETE);
         if ($model->validate()) {
             $model->delete();
             if ($model->invoice) {
-                $modelInvoice->save();
+                $model->invoice->save();
             }
             
             $response = [

@@ -192,10 +192,9 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->joinWith(['invoiceItemLessons' => function ($query) {
             $query->joinWith(['invoiceLineItem' => function ($query) {
                 $query->joinWith(['invoice' => function ($query) {
-                    $query->andWhere(['not', ['invoice.id' => null]])
-                        ->andWhere(['invoice.isDeleted' => false,
-                            'invoice.type' => Invoice::TYPE_INVOICE]);
-                }]);
+                    $query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE]);
+                }])
+                ->andWhere(['invoice_line_item.isDeleted' => false]);
             }]);
         }]);
     }
@@ -435,5 +434,11 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->joinWith(['privateLesson' => function ($query) {
             $query->andWhere(['>', 'DATE(expiryDate)', (new \DateTime())->format('Y-m-d')]);
         }]);
+    }
+
+    public function notCompleted()
+    {
+        return $this->scheduledOrRescheduled()
+                ->andWhere(['>=', 'lesson.date', (new \DateTime())->format('Y-m-d H:i:s')]);
     }
 }

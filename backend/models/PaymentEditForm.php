@@ -47,6 +47,7 @@ class PaymentEditForm extends Model
     public function rules()
     {
         return [
+            ['amount', 'number'],
             ['amount', 'validateAmount'],
             [['date', 'invoiceIds', 'selectedCreditValue', 'lessonIds', 'amount', 'userId', 'amountToDistribute', 
                 'invoicePayments', 'lessonPayments', 'paymentId', 'reference', 'groupLessonIds', 

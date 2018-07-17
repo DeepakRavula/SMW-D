@@ -57,6 +57,14 @@ class PaymentFormLessonSearch extends Lesson
         if ($this->lessonIds) {
             $lessonsQuery->andWhere(['id' => $this->lessonIds]);
         } else if ($this->dateRange) {
+            $invoicedLessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->notCanceled()
+                ->between($fromDate, $toDate)
+                ->privateLessons()
+                ->customer($this->userId)
+                ->invoiced();
             $query = Lesson::find()
                 ->notDeleted()
                 ->isConfirmed()
@@ -64,7 +72,8 @@ class PaymentFormLessonSearch extends Lesson
                 ->between($fromDate, $toDate)
                 ->privateLessons()
                 ->customer($this->userId)
-                ->unInvoiced();
+                ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
+                ->andWhere(['invoiced_lesson.id' => null]);
             if ($this->student) {
                 $query->student($this->student);
             }

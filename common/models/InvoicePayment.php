@@ -95,6 +95,9 @@ class InvoicePayment extends \yii\db\ActiveRecord
         if (round($this->amount, 2) == round($this->invoice->balance, 2)) {
             $this->amount = $this->invoice->balance;
         }
+        if (round($this->amount, 2) == 0.00) {
+            $this->isDeleted = true;
+        }
         return parent::beforeSave($insert);
     }
 
