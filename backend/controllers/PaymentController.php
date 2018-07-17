@@ -484,7 +484,7 @@ class PaymentController extends BaseController
         $results[] = [
           'id' => $invoiceCredit->id,
           'type' => 'Invoice Credit',
-          'reference' => $invoiceCredit->reference,
+          'reference' => $invoiceCredit->getInvoiceNumber(),
           'amount' => $invoiceCredit->amount,
           'amountUsed' => $invoiceCredits[$key],
       ];
