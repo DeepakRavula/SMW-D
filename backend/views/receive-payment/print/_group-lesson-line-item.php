@@ -7,11 +7,10 @@ use kartik\grid\GridView;
 use common\models\Location;
 use yii\helpers\ArrayHelper;
 use common\models\Student;
+use common\models\Enrolment;
 use yii\bootstrap\Html;
-
+use yii\bootstrap\ActiveForm;
 ?>
-
-<?php Pjax::begin(['enablePushState' => false, 'id' => 'lesson-line-item-listing','timeout' => 6000,]); ?>
     <?php  
         $columns = [];
         array_push($columns, [
@@ -30,8 +29,14 @@ use yii\bootstrap\Html;
         array_push($columns, [
             'label' => 'Student',
             'attribute' => 'student',
-            'value' => function ($data) {
-                return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
+            'value' => function ($data) use($model) {
+                $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['courseId' => $data->courseId])
+                    ->customer($model->userId)
+                    ->one();
+                return !empty($enrolment->student->fullName) ? $enrolment->student->fullName : null;
             },
         ]);
 
@@ -67,30 +72,26 @@ use yii\bootstrap\Html;
         array_push($columns, [
             'attribute' => 'balance',
             'label' => 'Balance',
-            'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
+            'value' => function ($data) use($model) {
+                $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['courseId' => $data->courseId])
+                    ->customer($model->userId)
+                    ->one();
+                return Yii::$app->formatter->asCurrency($data->getOwingAmount($enrolment->id));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']
         ]);
-
     ?>
-<?php if ($searchModel->showCheckBox) : ?>
-    <?= GridView::widget([
-        'options' => ['id' => 'lesson-line-item-grid'],
-        'dataProvider' => $lessonLineItemsDataProvider,
-        'columns' => $columns,
-        'summary' => false,
-        'rowOptions' => ['class' => 'line-items-value lesson-line-items'],
-        'emptyText' => 'No Lessons Available!'
-    ]); ?>
-<?php else: ?>
+
+<?php Pjax::begin(['enablePushState' => false, 'id' => 'group-lesson-line-item-listing','timeout' => 6000,]); ?>
 <?= GridView::widget([
-        'options' => ['id' => 'lesson-line-item-grid'],
+        'options' => ['id' => 'group-lesson-line-item-grid'],
         'dataProvider' => $lessonLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,
         'emptyText' => 'No Lessons Available!'
     ]); ?>
-<?php endif; ?>
 <?php Pjax::end(); ?>

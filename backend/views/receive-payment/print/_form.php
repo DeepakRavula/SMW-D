@@ -10,9 +10,17 @@ use common\models\User;
 use yii\bootstrap\Html;
 
 ?>
+ <?php $form = ActiveForm::begin([
+        'id' => 'modal-form',
+        'action' => Url::to(['print/receipt',  'PaymentForm[lessonIds]' => $model->lessonIds, 'PaymentForm[userId]' => $model->userId, 
+        'PaymentForm[invoiceIds]' => $model->invoiceIds, 'PaymentForm[groupLessonIds]' => $model->groupLessonIds,  'PaymentForm[invoiceCreditIds]' => $model->invoiceCreditIds, 'PaymentForm[invoiceCredits]' => $model->invoiceCredits,  'PaymentForm[paymentCreditIds]' => $model->paymentCreditIds, 'PaymentForm[paymentCredits]' => $model->paymentCredits]),
+        
+    ]); ?>
+
 <?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
 <?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
-<?php if ($lessonCount <= 0 && $invoiceCount<=0 && $model->amount>0) : ?>
+<?php $groupLessonsCount = !empty($groupLessonLineItemsDataProvider) ? $groupLessonLineItemsDataProvider->getCount() : 0; ?>
+<?php if ($lessonCount <= 0 && $invoiceCount <= 0 && $groupLessonsCount <= 0) : ?>
 <div class="text-center"><h2>You didn't select any lessons or invoices</h2><br/><h4>so we'll save this payment as credit to your customer account</h4> </div>
 <?php else:?>
 <?php if ($lessonCount > 0) : ?>
@@ -20,7 +28,7 @@ use yii\bootstrap\Html;
     <div class = "col-md-12">
 <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
 
-    <?= $this->render('/receive-payment/_lesson-line-item', [
+    <?= $this->render('/receive-payment/print/_lesson-line-item', [
         'model' => $model,
         'isCreatePfi' => false,
         'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
@@ -35,7 +43,7 @@ use yii\bootstrap\Html;
             <div class = "row">        
              <div class = "col-md-12">
                 <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
-         <?= $this->render('/receive-payment/_invoice-line-item', [
+         <?= $this->render('/receive-payment/print/_invoice-line-item', [
             'model' => $model,
             'isCreatePfi' => false,
             'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
@@ -45,18 +53,31 @@ use yii\bootstrap\Html;
         </div>
     </div>    
     <?php endif; ?>
+    <?php if ($groupLessonsCount > 0) : ?>
+    <?= Html::label('Group Lessons', ['class' => 'admin-login']) ?>
+    <?= $this->render('_group-lesson-line-item', [
+        'model' => $model,
+        'isCreatePfi' => false,
+        'lessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
+        'searchModel' => $groupLessonSearchModel
+    ]);
+    ?>
+     <?php endif; ?>
     <div class = "row">        
             <div class = "col-md-12">
                 <?= Html::label('Payments Used', ['class' => 'admin-login']) ?>
                 <?= $this->render('/receive-payment/print/_credits-available', [
-                    'paymentLineItemsDataProvider' => $paymentLineItemsDataProvider,
+                    'paymentLineItemsDataProvider' => $paymentsLineItemDataProvider,
                     'searchModel' => $searchModel,
-                    'receiptModel'=>$receiptModel,
     ]);
     ?>
     
     </div>
     <?php endif; ?>
+    <?php ActiveForm::end(); ?>
+    <?php $url = Url::to(['print/receipt',  'PaymentForm[lessonIds]' => $model->lessonIds, 'PaymentForm[userId]' => $model->userId, 
+                'PaymentForm[invoiceIds]' => $model->invoiceIds, 'PaymentForm[groupLessonIds]' => $model->groupLessonIds,  'PaymentForm[invoiceCreditIds]' => $model->invoiceCreditIds, 'PaymentForm[invoiceCredits]' => $model->invoiceCredits,  'PaymentForm[paymentCreditIds]' => $model->paymentCreditIds, 'PaymentForm[paymentCredits]' => $model->paymentCredits]); ?>
+
     <script>
         $(document).ready(function () {
             var amountValue = '<?= $model->amount ?>';
@@ -68,12 +89,15 @@ use yii\bootstrap\Html;
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html(header);
         $('.modal-save').text('Print');
+        var url = '<?= $url ?>'; 
+        $('.modal-save').attr('action', url);
         $('.modal-back').hide();
         $('.select-on-check-all').prop('checked', true);
     });
-    $(document).on("click", '.modal-save', function() {
-        var url = '<?= Url::to(['print/receipt' ,'id' => $receiptModel->id,'paymentId' => $model->paymentId]); ?>';
-        window.open(url,'_blank');
-        return false;
-    });
-    </script>
+    $(document).off('click', '.modal-save').on('click', '.modal-save', function() {
+            var url = '<?= $url; ?>';
+            window.open(url,'_blank');
+            return false;
+        });
+        
+       </script>

@@ -55,7 +55,7 @@ class PaymentFormGroupLessonSearch extends Lesson
             $toDate = new \DateTime($this->toDate);
         }
         $lessonsQuery = Lesson::find();
-        if ($this->lessonIds) {
+        if (isset($this->lessonIds)) {
             $lessonsQuery->andWhere(['id' => $this->lessonIds]);
         } else if ($this->dateRange) {
             $query = Lesson::find()

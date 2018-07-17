@@ -173,6 +173,15 @@ use yii\bootstrap\Html;
                     invoicePayments.push($(this).find('.payment-amount').val());
                 }
             });
+            if ($.isEmptyObject(lessonIds)) {
+                lessonIds = null;
+            }
+            if ($.isEmptyObject(invoiceIds)) {
+                invoiceIds = null;
+            }
+            if ($.isEmptyObject(groupLessonIds)) {
+                groupLessonIds = null;
+            }
             var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId, 'PaymentFormLessonSearch[lessonIds]': lessonIds,
                 'PaymentFormGroupLessonSearch[lessonIds]': groupLessonIds, 'PaymentForm[groupLessonPayments]': groupLessonPayments,
                 'PaymentForm[invoiceIds]': invoiceIds, 'PaymentForm[canUsePaymentCredits]': canUsePaymentCredits, 

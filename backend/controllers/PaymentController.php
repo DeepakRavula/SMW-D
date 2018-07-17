@@ -463,7 +463,52 @@ class PaymentController extends BaseController
         ]);
         return $creditDataProvider;
     }
-
+    public function getUsedCredit($paymentCreditIds, $paymentCredits, $invoiceCreditIds, $invoiceCredits, $paymentId, $amount)
+    { 
+        $results = [];
+      if(!empty($paymentCreditIds))  {                
+      foreach($paymentCreditIds as $key =>  $paymentCreditId) {
+          $paymentCredit = Payment::findOne(['id' => $paymentCreditId]);
+          $results[] = [
+            'id' => $paymentCredit->id,
+            'type' => 'Payment Credit',
+            'reference' => $paymentCredit->reference,
+            'amount' => $paymentCredit->amount,
+            'amountUsed' => $paymentCredits[$key],
+        ];
+      }  
+    }
+      if(!empty($invoiceCreditIds)) {  
+      foreach($invoiceCreditIds as $key =>  $invoiceCreditId) {
+        $invoiceCredit = Invoice::findOne(['id' => $invoiceCreditId]);
+        $results[] = [
+          'id' => $invoiceCredit->id,
+          'type' => 'Invoice Credit',
+          'reference' => $invoiceCredit->reference,
+          'amount' => $invoiceCredit->amount,
+          'amountUsed' => $invoiceCredits[$key],
+      ];
+    }
+    
+} 
+$paymentNew = Payment::findOne(['id' => $paymentId]);
+if (!empty($paymentNew)) {
+$results[] = [
+    'id' => $paymentId,
+    'type' => 'Payment',
+    'reference' => !empty($paymentNew->reference) ? $paymentNew->reference : null,
+    'amount' => $paymentNew->amount,
+    'amountUsed' => $amount,
+]; 
+}
+     $paymentsLineItemsDataProvider = new ArrayDataProvider([
+        'allModels' => $results,
+        'sort' => [
+            'attributes' => ['id', 'type', 'reference', 'amount', 'amountUsed']
+        ]
+     ]);
+    return $paymentsLineItemsDataProvider;  
+    }
     public function getCustomerPayments($customerId)
     {
         return Payment::find()
@@ -540,53 +585,22 @@ class PaymentController extends BaseController
             if (round($payment->amount, 2) > 0.00) {
                 $payment->save();
             }
-            $receiptModel                   =   new Receipt();
-            $receiptModel->date             =   (new \DateTime($payment->date))->format('Y-m-d');
-            $receiptModel->userId           =   $searchModel->userId;
-            $receiptModel->locationId       =   $locationId;
-            $receiptModel->receiptNumber    =   1;
-            $receiptModel->save();
+            
             $model->paymentId = $payment->id;
-            $model->receiptId = $receiptModel->id;
             $model->lessonIds = $searchModel->lessonIds;
             $model->groupLessonIds = $groupLessonSearchModel->lessonIds;
             $model->save();
-            $paymentReceipts   =   PaymentReceipt::find()
-                                    ->andWhere(['receiptId' => $receiptModel->id])->all();
-            if(!empty($paymentReceipts)) {
-                foreach($paymentReceipts as $paymentReceipt) {
-                    if($paymentReceipt->objectType == Receipt::TYPE_INVOICE) {
-                        $receiptInvoiceIds[]  =   $paymentReceipt->objectId;
 
-                    } if($paymentReceipt->objectType == Receipt::TYPE_LESSON) {
-                        $receiptLessonIds[]  =   $paymentReceipt->objectId;
-                    }
-                    $receiptPaymentIds[]  =   $paymentReceipt->paymentId;
-                }
-            }
-            $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $receiptLessonIds]);
-            $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $receiptInvoiceIds]);
-            $paymentTransactions     =   Payment::find()->andWhere(['id' => $receiptPaymentIds]);
-            $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
-                'query' => $paymentLessonLineItems,
-                'pagination' => false,
-            ]);
-            $paymentInvoiceLineItemsDataProvider = new ActiveDataProvider([
-                'query' => $paymentInvoiceLineItems,
-                'pagination' => false,
-            ]);
-            $paymentLineItemsDataProvider = new ActiveDataProvider([
-                'query' => $paymentTransactions,
-                'pagination' => false,
-            ]);
-            $searchModel->showCheckBox = false;
+            $paymentsLineItemsDataProvider = $this->getUsedCredit($model->paymentCreditIds, $model->paymentCredits, $model->invoiceCreditIds, $model->invoiceIds, $model->paymentId, $model->amount);
             $printData = $this->renderAjax('/receive-payment/print/_form', [
                 'model' => $model,
-                'invoiceLineItemsDataProvider' => $paymentInvoiceLineItemsDataProvider,
-                'lessonLineItemsDataProvider' =>   $paymentLessonLineItemsDataProvider,
-                'paymentLineItemsDataProvider'  =>  $paymentLineItemsDataProvider,
+                'paymentModel' => $payment,
+                'paymentsLineItemDataProvider' => $paymentsLineItemsDataProvider,
+                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                'groupLessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
                 'searchModel' => $searchModel,
-                'receiptModel' => $receiptModel,
+                'groupLessonSearchModel' => $groupLessonSearchModel,
             ]);
             $response = [
                 'status' => true,
