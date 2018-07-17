@@ -597,7 +597,7 @@ $results[] = [
      $paymentsLineItemsDataProvider = new ArrayDataProvider([
         'allModels' => $results,
         'sort' => [
-            'attributes' => ['id', 'type', 'reference', 'amount', 'amountUsed']
+            'attributes' => ['id', 'type', 'reference', 'amount', 'amountUsed', 'method']
         ]
      ]);
 
