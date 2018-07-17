@@ -482,11 +482,11 @@ class PaymentController extends BaseController
       foreach($invoiceCreditIds as $key =>  $invoiceCreditId) {
         $invoiceCredit = Invoice::findOne(['id' => $invoiceCreditId]);
         $results[] = [
-          'id' => $invoiceCredit->id,
-          'type' => 'Invoice Credit',
-          'reference' => $invoiceCredit->getInvoiceNumber(),
-          'amount' => $invoiceCredit->amount,
-          'amountUsed' => $invoiceCredits[$key],
+            'id' => $invoiceCredit->id,
+            'type' => 'Invoice Credit',
+            'reference' => $invoiceCredit->getInvoiceNumber(),
+            'amount' => abs($invoiceCredit->balance),
+            'amountUsed' => $invoiceCredits[$key],
       ];
     }
     
