@@ -90,18 +90,11 @@ use yii\bootstrap\Html;
             var invoiceCreditIds = <?= json_encode($model->invoiceCreditIds); ?>; 
             var invoiceCredits = <?= json_encode($model->invoiceCredits); ?>; 
             var groupLessonIds = <?= json_encode($model->groupLessonIds); ?>; 
-            var params = $.param({ 'lessonIds': lessonIds, 'userId': userId, 
-                'invoiceIds': invoiceIds, 'groupLessonIds': groupLessonIds });
-            $.ajax({
-                url    : '<?= Url::to(['print/receipt']) ?>?' +params,
-                type   : 'get',
-                success: function(response)
-                {
-                    if (response.status) {
-                        //window.location.href = response.url;
-                    }
-                }
-            });
+            var params = $.param({ 'PaymentFormSearch[lessonIds]': lessonIds, 'PaymentFormSearch[userId]': userId, 
+                'PaymentFormSearch[invoiceIds]': invoiceIds, 'PaymentFormSearch : [groupLessonIds]' : groupLessonIds });
+            var url = '<?= Url::to(['print/receipt']); ?>?' + params;
+            window.open(url,'_blank');
+            return false;
         });
         
        </script>

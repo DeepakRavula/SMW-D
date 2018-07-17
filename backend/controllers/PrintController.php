@@ -16,6 +16,7 @@ use common\models\Location;
 use backend\models\search\LessonSearch;
 use backend\models\search\InvoiceSearch;
 use backend\models\search\UserSearch;
+use backend\models\search\PaymentFormSearch;
 use common\models\CustomerAccount;
 use common\models\CompanyAccount;
 use backend\models\search\ReportSearch;
@@ -523,35 +524,21 @@ class PrintController extends BaseController
             'invoiceDataProvider' => $invoiceDataProvider,
         ]);
     }
-    public function actionReceipt($lessonIds, $invoiceIds, $paymentCreditIds, $paymentCredits, $groupLessonIds)
+    public function actionReceipt()
     {
-        $lessonIds = [];
-        $invoiceIds = [];
-        $paymentCreditIds = [];
-        $paymentCredits =
-        $receiptModel = Receipt::findOne(['id' => $id]);
+        $searchModel                   = new PaymentFormSearch();
+        if ($searchModel->load($request->get())) {
+            print_r($searchModel);die('coming');
+        }
         if (!empty($paymentId)) {
         $model  =  Payment::findOne(['id' => $paymentId]);
         }
-        $customer =  User::findOne(['id' => $receiptModel->userId]);
+        $customer =  User::findOne(['id' => $userId]);
         $searchModel  =  new ProformaInvoiceSearch();
         $searchModel->showCheckBox = false;
-        $paymentReceipts = PaymentReceipt::find()->andWhere(['receiptId' => $id])->all();
-        if(!empty($paymentReceipts)) {
-        foreach($paymentReceipts as $paymentReceipt) {
-            if($paymentReceipt->objectType == Receipt::TYPE_INVOICE) {
-                $receiptInvoiceIds[]  =   $paymentReceipt->objectId;
-
-            } if($paymentReceipt->objectType == Receipt::TYPE_LESSON) {
-                $receiptLessonIds[]  =   $paymentReceipt->objectId;
-            }
-            $receiptPaymentIds[]  =   $paymentReceipt->paymentId;
-        }
-    }
-
         $paymentLessonLineItems  =   Lesson::find()->andWhere(['id'  => $lessonIds]);
         $paymentInvoiceLineItems =   Invoice::find()->andWhere(['id' => $invoiceIds]);
-        $paymentGroupLessonLineItems = Lesson::find()->andWhere(['id' => $paymentGroupLessonLineItems]);
+        $paymentGroupLessonLineItems = Lesson::find()->andWhere(['id' => $groupLessonIds]);
         $paymentLessonLineItemsDataProvider = new ActiveDataProvider([
         'query' => $paymentLessonLineItems,
         'pagination' => false,
@@ -567,7 +554,8 @@ class PrintController extends BaseController
 
     $this->layout = '/print';
 
-    return $this->redirect('/receive-payment/print/view', [
+    return $this->render('/receive-payment/print/view', [
+        'model'                        => !empty($model) ? $model : new Payment(),
         'lessonLineItemsDataProvider' =>  $paymentLessonLineItemsDataProvider,
         'invoiceLineItemsDataProvider' =>  $paymentInvoiceLineItemsDataProvider,
         'paymentGroupLessonLineItemsDataProvider'  =>  $paymentGroupLessonLineItemsDataProvider,
