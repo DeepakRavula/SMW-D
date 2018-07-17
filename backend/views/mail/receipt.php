@@ -6,8 +6,10 @@ use common\models\UserEmail;
     $content = $this->renderAjax('/receive-payment/_mail-content', [
     'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
     'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+    'paymentsLineItemsDataProvider'  =>  $paymentsLineItemsDataProvider,
     'emailTemplate' => $emailTemplate,
     'searchModel' => $searchModel,
+    'customer' => $customer,
     ]);
     $model->to = $emails;
     $data = null;

@@ -1,38 +1,58 @@
-<?= $emailTemplate->header ?? 'Please find the Receipt below:'; ?><Br>
+<?php
+use yii\bootstrap\ActiveForm;
+use yii\jui\DatePicker;
+use common\models\PaymentMethod;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
+use kartik\select2\Select2;
+use common\models\Location;
+use common\models\User;
+use yii\bootstrap\Html;
+use insolita\wgadminlte\LteBox;
+use insolita\wgadminlte\LteConst;
+?>
 <?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
-<?php if ($lessonCount > 0) : ?>
-	<table style="width:100%">
-    	<tr>
-			<td>
-    			<?= $this->render('/receive-payment/print/_lesson-line-item', [
-            		'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-	    			'searchModel' => $searchModel,
-        		]); ?>
-			</td>
-    	</tr>
-	</table>
-<?php endif; ?>
-<div class="row">
-    <!-- /.col -->
-    <div class="table-responsive">
-	<?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
+<?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
+<?php $groupLessonsCount = !empty($groupLessonLineItemsDataProvider) ? $groupLessonLineItemsDataProvider->getCount() : 0; ?>
+<?php if ($lessonCount <= 0 && $invoiceCount <= 0 && $groupLessonsCount <= 0) : ?>
+  <div class="text-center"><h2>You didn't select any lessons or invoices</h2><br/><h4>so we'll save this payment as credit to your customer account</h4> </div>
+  <?php else:?>  
+   
+        <?php if ($lessonCount > 0) : ?>
+        <div class="col-xs-10">
+                  <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
+            <?= $this->render('/receive-payment/print/_lesson-line-item', [
+                'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
+                'searchModel' => $searchModel,
+            ]); ?>   
+       </div>     
+        <?php endif; ?>
+   
+<?php if ($groupLessonsCount > 0) : ?>
+<div class="col-xs-10">
+    <?= Html::label('Group Lessons', ['class' => 'admin-login']) ?>
+    <?= $this->render('/receive-payment/print/_group-lesson-line-item', [
+        'model' => $model,
+        'isCreatePfi' => false,
+        'lessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
+    ]);
+    ?>
+    </div>
+     <?php endif; ?>       
         <?php if ($invoiceCount > 0) : ?>
-            <table class="table table-invoice-total" style="width: 100%;">
-            <tbody>
-            	<tr>
-					<td>
-    					<?= $this->render('/receive-payment/print/_invoice-line-item', [
-            				'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-	    					'searchModel' => $searchModel,
-        				]); ?>
-					</td>
-    			</tr>
-            </tbody>
-            </table>
-		<?php endif; ?> 
-	</div>
-</div>
-        <!-- /.col -->
-<br>
-<?= $emailTemplate->footer ?? 'Thank you 
-Arcadia Academy of Music Team.'; ?>
+            <div class = "col-xs-10">
+                <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
+            <?= $this->render('/receive-payment/print/_invoice-line-item', [
+                'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
+                'searchModel' => $searchModel,
+            ]); ?>
+            </div>
+        <?php endif; ?>
+    <div class="col-xs-10">       
+                <?= Html::label('Payments Used', ['class' => 'admin-login']) ?>
+            <?= $this->render('/receive-payment/print/_credits-available', [
+                'paymentLineItemsDataProvider' => $paymentsLineItemsDataProvider,
+                    'searchModel' => $searchModel,
+            ]); ?>
+    </div>
+<?php endif; ?> 
