@@ -63,6 +63,7 @@ class PaymentForm extends Model
     {
         return [
             ['amount', 'validateAmount'],
+            ['amount', 'match', 'pattern' => '^\d+\.\d{0,2}$^', 'message' => 'Two decimal places allowed!'],
             [['date', 'amountNeeded', 'invoiceIds', 'canUseInvoiceCredits', 'selectedCreditValue',
                 'lessonIds', 'canUsePaymentCredits', 'invoiceCreditIds', 'amount', 'userId',
                 'amountToDistribute', 'invoicePayments', 'lessonPayments','paymentId',
