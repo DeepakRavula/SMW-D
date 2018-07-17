@@ -39,11 +39,11 @@ class UserForm extends Model
     {
         return [
             ['firstname', 'filter', 'filter' => 'trim'],
-            ['firstname', 'required', 'on' => self::SCENARIO_CREATE],
+            ['firstname', 'required'],
             ['firstname', 'string', 'min' => 2, 'max' => 255],
 
             ['lastname', 'filter', 'filter' => 'trim'],
-            ['lastname', 'required', 'on' => self::SCENARIO_CREATE],
+            ['lastname', 'required'],
             ['lastname', 'string', 'min' => 2, 'max' => 255],
             ['pin', 'integer', 'min' => 1111, 'max' => 9999],
             ['pin', 'validatePin'],

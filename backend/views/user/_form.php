@@ -17,7 +17,6 @@ Select2Asset::register($this);
         'action' => Url::to(['user/create', 'role_name' => $model->roles]),
         'id' => 'modal-form',
         'enableAjaxValidation' => true,
-        'enableClientValidation' => false,
         'validationUrl' => Url::to(['user-contact/validate']),
     ]); ?>
     <div class="row">
