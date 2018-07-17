@@ -563,6 +563,7 @@ class PrintController extends BaseController
             'reference' => $paymentCredit->reference,
             'amount' => $paymentCredit->amount,
             'amountUsed' => $model->paymentCredits[$key],
+            'method' => $paymentCredit->paymentMethod->name,
         ];
       }  
     }
@@ -577,6 +578,7 @@ class PrintController extends BaseController
             'reference' => $invoiceCredit->getInvoiceNumber(),
             'amount' => abs($invoiceCredit->balance),
             'amountUsed' => $model->invoiceCredits[$key],
+            'method' => '',
       ];
     }
     
@@ -589,6 +591,7 @@ $results[] = [
     'reference' => !empty($paymentNew->reference) ? $paymentNew->reference : null,
     'amount' => $paymentNew->amount,
     'amountUsed' => $model->amount,
+    'method'     => $paymentNew->paymentMethod->name,
 ]; 
 }
      $paymentsLineItemsDataProvider = new ArrayDataProvider([
