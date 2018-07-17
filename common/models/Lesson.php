@@ -406,7 +406,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getOwingAmount($enrolmentId)
     {
-        return $this->netPrice - $this->getCreditAppliedAmount($enrolmentId);
+        return round($this->netPrice, 2) - round($this->getCreditAppliedAmount($enrolmentId), 2);
     }
 
     public function getPaymentCycle()
