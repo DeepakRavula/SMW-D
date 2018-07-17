@@ -25,54 +25,48 @@ use insolita\wgadminlte\LteConst;
 </div>
 <?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
 <?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
-<?php if ($lessonCount <= 0 && $invoiceCount<=0) : ?>
+<?php $groupLessonsCount = !empty($groupLessonLineItemsDataProvider) ? $groupLessonLineItemsDataProvider->getCount() : 0; ?>
+<?php if ($lessonCount <= 0 && $invoiceCount <= 0 && $groupLessonsCount <= 0) : ?>
   <div class="text-center"><h2>You didn't select any lessons or invoices</h2><br/><h4>so we'll save this payment as credit to your customer account</h4> </div>
-  <?php else:?>
-  <div class="row">
-    <div class="col-md-12">
-       
+  <?php else:?>  
+   
         <?php if ($lessonCount > 0) : ?>
-        <div class = "row">
-            <div class = "col-md-12">
+        <div class="col-xs-10">
                   <?= Html::label('Lessons', ['class' => 'admin-login']) ?>
             <?= $this->render('/receive-payment/print/_lesson-line-item', [
                 'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
                 'searchModel' => $searchModel,
-            ]); ?>
-                </div>
-            </div>
+            ]); ?>   
+       </div>     
         <?php endif; ?>
+   
+<?php if ($groupLessonsCount > 0) : ?>
+<div class="col-xs-10">
+    <?= Html::label('Group Lessons', ['class' => 'admin-login']) ?>
+    <?= $this->render('/receive-payment/print/_group-lesson-line-item', [
+        'model' => $model,
+        'isCreatePfi' => false,
+        'lessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
+    ]);
+    ?>
     </div>
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-       
+     <?php endif; ?>       
         <?php if ($invoiceCount > 0) : ?>
-        <div class = "row">
-            <div class = "col-md-12">
+            <div class = "col-xs-10">
                 <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
             <?= $this->render('/receive-payment/print/_invoice-line-item', [
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                 'searchModel' => $searchModel,
             ]); ?>
             </div>
-            </div>
         <?php endif; ?>
-    </div>
-</div>
-        <div class = "row">        
-            <div class = "col-md-12">
+    <div class="col-xs-10">       
                 <?= Html::label('Payments Used', ['class' => 'admin-login']) ?>
-                <?= $this->render('/receive-payment/print/_credits-available', [
-                    'paymentLineItemsDataProvider' => $paymentLineItemsDataProvider,
+            <?= $this->render('/receive-payment/print/_credits-available', [
+                'paymentLineItemsDataProvider' => $paymentsLineItemsDataProvider,
                     'searchModel' => $searchModel,
-                    'receiptModel'=>$receiptModel,
-    ]);
-    ?>
-    
+            ]); ?>
     </div>
-</div>  
 <?php endif; ?>
     
 
