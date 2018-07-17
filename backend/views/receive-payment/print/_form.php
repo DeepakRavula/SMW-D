@@ -10,6 +10,13 @@ use common\models\User;
 use yii\bootstrap\Html;
 
 ?>
+ <?php $form = ActiveForm::begin([
+        'id' => 'modal-form',
+        'action' => Url::to(['print/receipt',  'PaymentForm[lessonIds]' => $model->lessonIds, 'PaymentForm[userId]' => $model->userId, 
+        'PaymentForm[invoiceIds]' => $model->invoiceIds, 'PaymentForm[groupLessonIds]' => $model->groupLessonIds,  'PaymentForm[invoiceCreditIds]' => $model->invoiceCreditIds, 'PaymentForm[invoiceCredits]' => $model->invoiceCredits,  'PaymentForm[paymentCreditIds]' => $model->paymentCreditIds, 'PaymentForm[paymentCredits]' => $model->paymentCredits]),
+        
+    ]); ?>
+
 <?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
 <?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
 <?php $groupLessonsCount = !empty($groupLessonLineItemsDataProvider) ? $groupLessonLineItemsDataProvider->getCount() : 0; ?>
@@ -67,6 +74,10 @@ use yii\bootstrap\Html;
     
     </div>
     <?php endif; ?>
+    <?php ActiveForm::end(); ?>
+    <?php $url = Url::to(['print/receipt',  'PaymentForm[lessonIds]' => $model->lessonIds, 'PaymentForm[userId]' => $model->userId, 
+                'PaymentForm[invoiceIds]' => $model->invoiceIds, 'PaymentForm[groupLessonIds]' => $model->groupLessonIds,  'PaymentForm[invoiceCreditIds]' => $model->invoiceCreditIds, 'PaymentForm[invoiceCredits]' => $model->invoiceCredits,  'PaymentForm[paymentCreditIds]' => $model->paymentCreditIds, 'PaymentForm[paymentCredits]' => $model->paymentCredits]); ?>
+
     <script>
         $(document).ready(function () {
             var amountValue = '<?= $model->amount ?>';
@@ -78,21 +89,13 @@ use yii\bootstrap\Html;
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html(header);
         $('.modal-save').text('Print');
+        var url = '<?= $url ?>'; 
+        $('.modal-save').attr('action', url);
         $('.modal-back').hide();
         $('.select-on-check-all').prop('checked', true);
     });
     $(document).off('click', '.modal-save').on('click', '.modal-save', function() {
-            var userId = <?= $model->userId;?>;
-            var lessonIds = <?= json_encode($model->lessonIds ); ?>;
-            var invoiceIds = <?= json_encode($model->invoiceIds ); ?>;    
-            var paymentCreditIds = <?= json_encode($model->paymentCreditIds); ?>;    
-            var paymentCredits = <?= json_encode($model->paymentCredits); ?>;  
-            var invoiceCreditIds = <?= json_encode($model->invoiceCreditIds); ?>; 
-            var invoiceCredits = <?= json_encode($model->invoiceCredits); ?>; 
-            var groupLessonIds = <?= json_encode($model->groupLessonIds); ?>; 
-            var params = $.param({ 'PaymentForm[lessonIds]': lessonIds, 'PaymentForm[userId]': userId, 
-                'PaymentForm[invoiceIds]': invoiceIds, 'PaymentForm[groupLessonIds]' : groupLessonIds,  'PaymentForm[invoiceCreditIds]': invoiceCreditIds, 'PaymentForm[invoiceCredits]' : invoiceCredits,  'PaymentForm[paymentCreditIds]': paymentCreditIds, 'PaymentForm[paymentCredits]' : paymentCredits });
-            var url = '<?= Url::to(['print/receipt']); ?>?' + params;
+            var url = '<?= $url; ?>';
             window.open(url,'_blank');
             return false;
         });
