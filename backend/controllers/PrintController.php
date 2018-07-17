@@ -572,11 +572,11 @@ class PrintController extends BaseController
       foreach($invoiceCreditIds as $key =>  $invoiceCreditId) {
         $invoiceCredit = Invoice::findOne(['id' => $invoiceCreditId]);
         $results[] = [
-          'id' => $invoiceCredit->id,
-          'type' => 'Invoice Credit',
-          'reference' => $invoiceCredit->reference,
-          'amount' => $invoiceCredit->amount,
-          'amountUsed' => $model->invoiceCredits[$key],
+            'id' => $invoiceCredit->id,
+            'type' => 'Invoice Credit',
+            'reference' => $invoiceCredit->getInvoiceNumber(),
+            'amount' => abs($invoiceCredit->balance),
+            'amountUsed' => $model->invoiceCredits[$key],
       ];
     }
     
