@@ -49,7 +49,7 @@ class PaymentEditForm extends Model
         return [
             ['amount', 'number'],
             ['amount', 'validateAmount'],
-            ['amount', 'match', 'pattern' => '^\d+\.\d{0,2}$^', 'message' => 'Two decimal places allowed!'],
+            //['amount', 'match', 'pattern' => '^\d+\.\d{0,2}$^', 'message' => 'Two decimal places allowed!'],
             [['date', 'invoiceIds', 'selectedCreditValue', 'lessonIds', 'amount', 'userId', 'amountToDistribute', 
                 'invoicePayments', 'lessonPayments', 'paymentId', 'reference', 'groupLessonIds', 
                 'groupLessonPayments'], 'safe']
