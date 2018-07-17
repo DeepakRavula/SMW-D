@@ -88,6 +88,7 @@ class LessonController extends BaseController
         $searchModel = new LessonSearch();
         $request = Yii::$app->request;
         $lessonRequest = $request->get('LessonSearch');
+        $searchModel->lessonStatus = Lesson::STATUS_SCHEDULED;
         if (!empty($lessonRequest['isSeeMore'])) {
         $searchModel->isSeeMore = $lessonRequest['isSeeMore'];
         }
