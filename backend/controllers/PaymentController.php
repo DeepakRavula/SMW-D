@@ -484,7 +484,7 @@ class PaymentController extends BaseController
         $model = new PaymentForm();
         $payment = new Payment();
         $currentDate = new \DateTime();
-        $model->date = $currentDate->format('M d, Y');
+        $payment->date = $currentDate->format('M d, Y');
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $receiptLessonIds = [];
         $receiptInvoiceIds = [];
