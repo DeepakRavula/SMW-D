@@ -90,13 +90,13 @@ class Payment extends ActiveRecord
         if ($this->hasLessonPayments() && !$this->isAutoPayments()) {
             foreach ($this->lessonPayments as $lessonPayment) {
                 if ($lessonPayment->lesson->isPrivate()) {
-                    if ($lessonPayment->lesson->hasInvoice()) {
-                        $this->addError($attributes, "Invoiced lesson's payments can't be deleted!");
+                    if ($lessonPayment->lesson->hasCreditUsed($lessonPayment->enrolmentId)) {
+                        $this->addError($attributes, "Used lesson's payments can't be deleted!");
                         break;
                     }
                 } else {
-                    if ($lessonPayment->enrolment->hasInvoice($lessonPayment->lessonId)) {
-                        $this->addError($attributes, "Invoiced lesson's payments can't be deleted!");
+                    if ($lessonPayment->lesson->hasCreditUsed($lessonPayment->enrolmentId)) {
+                        $this->addError($attributes, "Used lesson's payments can't be deleted!");
                         break;
                     }
                 }

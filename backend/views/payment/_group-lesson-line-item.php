@@ -106,7 +106,7 @@ use yii\bootstrap\ActiveForm;
                     'value' => round($data->getPaidAmount($model->id, $enrolment->id), 2), 
                     'class' => 'form-control text-right payment-amount',
                     'id' => 'group-lesson-payment-' . $data->id,
-                    'readOnly' => $enrolment->hasInvoice($data->id)
+                    'readOnly' => $data->hasCreditUsed($enrolment->id)
                 ])->label(false);
             },
             'attribute' => 'new_activity',

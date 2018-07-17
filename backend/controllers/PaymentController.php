@@ -291,8 +291,8 @@ class PaymentController extends BaseController
         $model->setScenario(Payment::SCENARIO_DELETE);
         if ($model->validate()) {
             $model->delete();
-            if ($model->invoice) {
-                $model->invoice->save();
+            foreach ($model->invoicePayments as $invoicePayment) {
+                $invoicePayment->invoice->save();
             }
             
             $response = [
@@ -529,7 +529,7 @@ $results[] = [
         $model = new PaymentForm();
         $payment = new Payment();
         $currentDate = new \DateTime();
-        $model->date = $currentDate->format('M d, Y');
+        $payment->date = $currentDate->format('M d, Y');
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $receiptLessonIds = [];
         $receiptInvoiceIds = [];
