@@ -17,7 +17,7 @@ class m180715_080319_adding_email_template_for_receipt extends Migration
          $emailObject->name    =  'Receipt';
          $emailObject->save();
         $emailTemplate  =   new EmailTemplate();
-        $emailTemplate->emailTypeId =   EmailObject::OBJECT_RECEPT;
+        $emailTemplate->emailTypeId =   EmailObject::OBJECT_RECEIPT;
         $emailTemplate->subject     =   'Receipt from Arcadia Academy of Music';
         $emailTemplate->header = 'Please find the receipt below';
         $emailTemplate->footer = 'Thank you Arcadia Academy of Music Team';
