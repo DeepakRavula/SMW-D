@@ -48,5 +48,7 @@ use dosamigos\ckeditor\CKEditor;
 		$('#popup-modal .modal-dialog').css({'width': '1000px'});
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
                         $('.modal-save').text('Send');
+                        $('.modal-back').hide();
+                        $('.modal-save-all').hide();
 	});
 	</script>
