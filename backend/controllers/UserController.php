@@ -144,6 +144,7 @@ class UserController extends BaseController
                     'dataProvider' => $dataProvider,
         ]);
     }
+
     protected function getStudentDataProvider($id)
     {
         $query = Student::find()
@@ -154,6 +155,7 @@ class UserController extends BaseController
             'query' => $query,
         ]);
     }
+
     protected function getTeacherDataProvider($id)
     {
         $query = TeacherAvailability::find()
@@ -163,6 +165,7 @@ class UserController extends BaseController
             'query' => $query,
         ]);
     }
+
     protected function getLessonDataProvider($id, $locationId)
     {
         $lessonQuery = Lesson::find()
@@ -177,6 +180,7 @@ class UserController extends BaseController
             'query' => $lessonQuery,
         ]);
     }
+
     protected function getEnrolledStudentDataProvider($id, $locationId)
     {
         $query = Student::find()->notDeleted()
@@ -187,6 +191,7 @@ class UserController extends BaseController
             'query' => $query,
         ]);
     }
+
     protected function getLocationDataProvider($id)
     {
         $query = Location::find()
@@ -196,6 +201,7 @@ class UserController extends BaseController
             'query' => $query,
         ]);
     }
+
     protected function getEnrolmentDataProvider($id, $locationId)
     {
         $currentdate = new \DateTime();
@@ -219,6 +225,7 @@ class UserController extends BaseController
             'query' => $enrolmentQuery,
         ]);
     }
+
     protected function getInvoiceDataProvider($model, $locationId)
     {
         $request = Yii::$app->request;
@@ -248,6 +255,7 @@ class UserController extends BaseController
 		->count();
 	    return $invoiceCount;
     }
+
     protected function getPfiDataProvider($id, $locationId)
     {
         $proFormaInvoiceQuery = Invoice::find()
@@ -261,6 +269,7 @@ class UserController extends BaseController
             'query' => $proFormaInvoiceQuery,
         ]);
     }
+
     protected function getUnscheduleLessonDataProvider($id)
     {
         $unscheduledLessons = Lesson::find()
@@ -277,6 +286,7 @@ class UserController extends BaseController
             'query' => $unscheduledLessons,
         ]);
     }
+
     protected function getPaymentDataProvider($id)
     {
         return new ActiveDataProvider([
@@ -284,6 +294,7 @@ class UserController extends BaseController
                 ->andWhere(['user_id' => $id]),
         ]);
     }
+
     protected function getUnavailabilityDataProvider($id)
     {
         $unavailabilities = TeacherUnavailability::find()
@@ -293,6 +304,7 @@ class UserController extends BaseController
             'query' => $unavailabilities,
         ]);
     }
+
     protected function getTeacherLessonDataProvider($id, $locationId)
     {
         $request = Yii::$app->request;
@@ -325,6 +337,7 @@ class UserController extends BaseController
             'pagination' => false,
         ]);
     }
+
     protected function getOpeningBalanceCredit($id)
     {
         return Invoice::find()
@@ -334,6 +347,7 @@ class UserController extends BaseController
             ->notDeleted()
             ->one();
     }
+
     protected function getPositiveOpeningBalance($id)
     {
         return Invoice::find()
@@ -343,6 +357,7 @@ class UserController extends BaseController
             ->notDeleted()
             ->one();
     }
+
     protected function getNoteDataProvider($id)
     {
         $notes = Note::find()
@@ -353,6 +368,7 @@ class UserController extends BaseController
             'query' => $notes,
         ]);
     }
+    
     protected function getAccountDataProvider($id)
     {
         $paymentQuery = Transaction::find()
@@ -370,6 +386,7 @@ class UserController extends BaseController
             'query' => $accountQuery
         ]);
     }
+
     protected function getPrivateQualificationDataProvider($id)
     {
         $privatePrograms = Qualification::find()
@@ -382,6 +399,7 @@ class UserController extends BaseController
             'query' => $privatePrograms,
         ]);
     }
+
     protected function getGroupQualificationDataProvider($id)
     {
         $groupPrograms = Qualification::find()
@@ -394,6 +412,7 @@ class UserController extends BaseController
             'query' => $groupPrograms,
         ]);
     }
+
     protected function getTimeVoucherDataProvider($id, $fromDate, $toDate)
     {
         $timeVoucher = InvoiceLineItem::find()
@@ -412,6 +431,7 @@ class UserController extends BaseController
             'pagination' => false,
         ]);
     }
+
     protected function getLogDataProvider($id)
     {
         return new ActiveDataProvider([
@@ -513,9 +533,7 @@ class UserController extends BaseController
 
     public function actionCreate()
     {
-
-        
-        $model = new UserForm(['scenario' => UserForm::SCENARIO_CREATE]);
+        $model = new UserForm();
         $emailModel = new UserEmail();
         $model->roles = Yii::$app->request->queryParams['role_name'];
         if ($model->roles !== User::ROLE_STAFFMEMBER) {

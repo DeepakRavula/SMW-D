@@ -28,7 +28,10 @@ class UserContactController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['create-email', 'create-phone', 'update-primary', 'create-address','edit-email','edit-phone','edit-address', 'delete','validate'],
+                'only' => [
+                    'create-email', 'create-phone', 'update-primary', 'create-address', 
+                    'edit-email', 'edit-phone', 'edit-address', 'delete', 'validate'
+                ],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -39,13 +42,17 @@ class UserContactController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create-email', 'create-phone', 'update-primary', 'create-address','edit-email','edit-phone','edit-address', 'delete','validate'],
+                        'actions' => [
+                            'create-email', 'create-phone', 'update-primary', 'create-address', 
+                            'edit-email', 'edit-phone', 'edit-address', 'delete', 'validate'
+                        ],
                         'roles' => ['manageTeachers', 'manageCustomers', 'manageAdmin', 'manageStaff', 'manageOwners'],
                     ],
                 ],
             ],  
         ];
     }
+
     public function actionCreateEmail($id)
     {
         $user = User::findOne(['id' => $id]);
@@ -124,6 +131,7 @@ class UserContactController extends BaseController
             ];
         }
     }
+
     public function actionCreateAddress($id)
     {
         $user = User::findOne(['id' => $id]);
@@ -166,6 +174,7 @@ class UserContactController extends BaseController
             ];
         }
     }
+
     public function actionUpdatePrimary($id, $contactId, $contactType)
     {
         $model = User::findOne(['id' => $id]);
@@ -219,6 +228,7 @@ class UserContactController extends BaseController
         $contact->updateAttributes(['isPrimary' => true]);
         return $response;
     }
+
     public function actionEditEmail($id)
     {
         $model = $this->findModel($id);
@@ -248,6 +258,7 @@ class UserContactController extends BaseController
             'data' => $data
         ];
     }
+
     public function actionEditPhone($id)
     {
         $model = $this->findModel($id);
@@ -277,6 +288,7 @@ class UserContactController extends BaseController
             'data' => $data
         ];
     }
+
     public function actionEditAddress($id)
     {
         $model = $this->findModel($id);
@@ -343,9 +355,10 @@ class UserContactController extends BaseController
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
     public function actionValidate($id = null)
     {
-        if(!empty($id)) {
+        if (!empty($id)) {
             $model = UserEmail::findOne(['userContactId' => $id]);
         } else {
             $model = new UserEmail();
