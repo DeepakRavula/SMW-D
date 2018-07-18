@@ -140,7 +140,12 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 [
                 'label' => 'ID',
                 'value' => function ($data) {
-                    return $data->invoicePayment->invoice->getInvoiceNumber();
+                    if ($data->invoicePayment) {
+                        $value = $data->invoicePayment->invoice->getInvoiceNumber();
+                    } else {
+                        $value = '';
+                    }
+                    return $value;
                 },
                 'contentOptions' => ['style' => 'font-size:14px'],
             ],
@@ -190,14 +195,14 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'options' => ['class' => ''],
                 'showPageSummary' => true,
                 'headerRowOptions' => ['class' => 'bg-light-gray'],
-                'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
-                        $url = Url::to(['invoice/view', 'id' => $model->invoice->id]);
-                        $data = ['data-url' => $url];
-                        if ($searchModel->groupByMethod) {
-                            $data = array_merge($data, ['class' => 'click-disable']);
-                    }
-                        return $data;
-                },
+                // 'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+                //         $url = Url::to(['payment/view', 'id' => $model->id]);
+                //         $data = ['data-url' => $url];
+                //         if ($searchModel->groupByMethod) {
+                //             $data = array_merge($data, ['class' => 'click-disable']);
+                //     }
+                //         return $data;
+                // },
                 'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
                 'pjax' => true,
                 'pjaxSettings' => [

@@ -8,11 +8,15 @@ use common\models\Lesson;
 <div class="row">
     <div class="col-md-12">
         <div class="pull-left">
-            <?= Html::a('Back', '', ['class' => 'btn btn-info modal-back']);?>
+            <?= Html::a('Back', '', ['id' => 'modal-back', 'class' => 'btn btn-info modal-back']);?>
             <?= Html::a('Delete', '', ['class' => 'btn btn-danger modal-delete']); ?>
         </div>
         <div class="pull-right">
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default modal-cancel']);?>
+            <?= Html::submitButton(Yii::t('backend', 'Apply'), [
+                'class' => 'btn btn-info modal-button',
+                'name' => 'signup-button'
+            ]) ?>
             <?= Html::submitButton(Yii::t('backend', 'Save'), [
                 'class' => 'btn btn-info modal-save',
                 'name' => 'signup-button',
@@ -30,6 +34,7 @@ use common\models\Lesson;
 <script type="text/javascript">
     $(document).ready(function () {
         $('.modal-save-all').hide();
+        $('.modal-button').hide();
         $('.modal-back').hide();
         $('.modal-delete').hide();
     });

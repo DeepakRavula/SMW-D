@@ -64,10 +64,10 @@ use yii\bootstrap\ActiveForm;
         $('#popup-modal').find('.modal-header').html(header);
         $('.modal-delete').show();
         $('.modal-save-all').show();
+        $('.modal-button').show();
+        $('.modal-save').hide();
         $('.modal-save-all').text('Print');
-        $('.modal-save').text('Edit');
-        $('.modal-save').addClass('payment-edit');
-        $('.payment-edit').removeClass('modal-save');
+        $('.modal-button').text('Edit');
         $(".modal-delete").attr("action", url);
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
 	});
@@ -83,7 +83,7 @@ use yii\bootstrap\ActiveForm;
         }
     });
 
-    $(document).off("click", ".payment-edit").on("click", ".payment-edit", function () {
+    $(document).off("click", ".modal-button").on("click", ".modal-button", function () {
         $('#modal-spinner').show();
         var url = '<?= Url::to(['payment/update', 'id' => $model->id]); ?>';
         $.ajax({

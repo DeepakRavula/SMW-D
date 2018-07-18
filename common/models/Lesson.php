@@ -826,7 +826,9 @@ class Lesson extends \yii\db\ActiveRecord
             }
             $this->classroomId = $this->getTeacherClassroomId();
         }
-
+        if (!$this->tax) {
+            $this->tax = 0.0;
+        }
         return parent::beforeSave($insert);
     }
     

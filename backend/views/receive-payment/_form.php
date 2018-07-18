@@ -273,8 +273,8 @@ use yii\bootstrap\Html;
         $('#popup-modal').find('.modal-header').html(header);
         $('.modal-save').text('Save');
         $('.modal-back').text('Create PFI');
-        $('.modal-back').removeClass('btn-info');
-        $('.modal-back').addClass('btn-default');
+        $('#modal-back').removeClass('btn-info');
+        $('#modal-back').addClass('btn-default');
         $('.modal-back').show();
         $('.select-on-check-all').prop('checked', true);
         receivePayment.calcAmountNeeded();
@@ -283,7 +283,7 @@ use yii\bootstrap\Html;
     });
 
     $(document).off('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]').on('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]', function () {
-        receivePayment.calcAmountNeeded();
+        debugger;receivePayment.calcAmountNeeded();
         receivePayment.setAction();
         return false;
     });
@@ -340,21 +340,9 @@ use yii\bootstrap\Html;
         return false;
     });
 
-    $(document).off('pjax:success', '#lesson-line-item-listing').on('pjax:success', '#lesson-line-item-listing', function () {
+    $(document).off('pjax:success', '#lesson-line-item-listing, #group-lesson-line-item-listing').on('pjax:success', '#lesson-line-item-listing, #group-lesson-line-item-listing', function () {
         receivePayment.calcAmountNeeded();
         receivePayment.setAction();
-        return false;
-    });
-
-    $(document).on('modal-success', function(event, params) {
-       //$('#success-notification').html(params.message).fadeIn().delay(5000).fadeOut();
-
-        if ($('#invoice-payment-listing').length) {
-            $.pjax.reload({container: "#invoice-payment-listing", replace: false, async: false, timeout: 6000});
-        }
-	if ($('#customer-view').length) {
-	    $.pjax.reload({container:"#customer-view",replace:false, async: false, timeout: 6000});
-    }
         return false;
     });
 
