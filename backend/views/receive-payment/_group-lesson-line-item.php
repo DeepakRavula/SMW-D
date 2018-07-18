@@ -87,7 +87,7 @@ use yii\bootstrap\ActiveForm;
                             ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
                     }]);
                 }])
-                ->customer($model->userId)
+                ->customer($searchModel->userId)
                 ->all(), 'id', 'fullName'),
             'filterWidgetOptions' => [
                 'options' => [
@@ -132,12 +132,12 @@ use yii\bootstrap\ActiveForm;
         array_push($columns, [
             'attribute' => 'balance',
             'label' => 'Balance',
-            'value' => function ($data) use($searchModel, $model) {
+            'value' => function ($data) use ($searchModel) {
                 $enrolment = Enrolment::find()
                     ->notDeleted()
                     ->isConfirmed()
                     ->andWhere(['courseId' => $data->courseId])
-                    ->customer($model->userId)
+                    ->customer($searchModel->userId)
                     ->one();
                 return Yii::$app->formatter->asCurrency($data->getOwingAmount($enrolment->id));
             },
@@ -150,12 +150,12 @@ use yii\bootstrap\ActiveForm;
                 'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
                 'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
                 'label' => 'Payment',
-                'value' => function ($data) use($searchModel, $form, $model) {
+                'value' => function ($data) use ($searchModel, $form) {
                     $enrolment = Enrolment::find()
                         ->notDeleted()
                         ->isConfirmed()
                         ->andWhere(['courseId' => $data->courseId])
-                        ->customer($model->userId)
+                        ->customer($searchModel->userId)
                         ->one();
                     return $form->field($data, 'paymentAmount')->textInput([
                         'value' => round($data->getOwingAmount($enrolment->id), 2), 

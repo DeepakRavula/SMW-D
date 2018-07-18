@@ -283,7 +283,7 @@ use yii\bootstrap\Html;
     });
 
     $(document).off('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]').on('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]', function () {
-        receivePayment.calcAmountNeeded();
+        debugger;receivePayment.calcAmountNeeded();
         receivePayment.setAction();
         return false;
     });
@@ -340,7 +340,7 @@ use yii\bootstrap\Html;
         return false;
     });
 
-    $(document).off('pjax:success', '#lesson-line-item-listing').on('pjax:success', '#lesson-line-item-listing', function () {
+    $(document).off('pjax:success', '#lesson-line-item-listing, #group-lesson-line-item-listing').on('pjax:success', '#lesson-line-item-listing, #group-lesson-line-item-listing', function () {
         receivePayment.calcAmountNeeded();
         receivePayment.setAction();
         return false;
