@@ -46,8 +46,8 @@ use yii\bootstrap\ActiveForm;
         'value' => 'amount'
     ]);
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
-        'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
+        'headerOptions' => ['class' => 'text-left', 'style' => 'width:180px'],
+        'contentOptions' => ['class' => 'text-left', 'style' => 'width:180px'],
         'label' => 'Payment Method',
         'value' => 'method',
         'format' => 'raw'
