@@ -490,6 +490,11 @@ $this->params['action-button'] = $this->render('_action-button', [
         return false;
     });
 
+    $(document).on('modal-next', function(event, params) {
+        $.pjax.reload({container: "#customer-view", replace: false, async: false, timeout: 6000}); 
+        return false;
+    });
+
     $(document).on('click', '.availability', function () {
         $('.teacher-availability-create').show();
     });

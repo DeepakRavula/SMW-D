@@ -79,9 +79,6 @@ if (!empty($lineItem)) {
     }
 ?>
 
-
-
-<?php Pjax::end(); ?>
 <div class="row">
 	<div class="col-md-12">  
 		<?=
@@ -206,6 +203,7 @@ Modal::begin([
         'userDataProvider' => $userDataProvider
 ]); ?>
 <?php Modal::end(); ?>
+<?php Pjax::end(); ?>
 
 <script>
  $(document).ready(function() {
@@ -282,6 +280,11 @@ Modal::begin([
         invoice.reload();
     });
     
+    $(document).on('modal-next', function(event, params) {
+        $.pjax.reload({container: "#invoice-view", replace: false, async: false, timeout: 6000}); 
+        return false;
+    });
+
     $(document).on('modal-delete', function (event, params) {
         invoice.reload();
     });
