@@ -158,4 +158,9 @@ $columns = [
         $.pjax.reload({url: url, container: "#payment-listing", replace: false, timeout: 4000});
         return false;
     });
+	$(document).on('modal-delete', function(event, params) {
+        var url = "<?php echo Url::to(['payment/index']); ?>";
+        $.pjax.reload({url: url, container: "#payment-listing", replace: false, timeout: 4000});
+        return false;
+    });
 </script>
