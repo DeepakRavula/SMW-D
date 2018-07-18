@@ -6,6 +6,7 @@ use yii\helpers\ArrayHelper;
 use common\models\PaymentMethod;
 use common\models\Location;
 use common\models\User;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -13,7 +14,7 @@ use common\models\User;
 $this->title = 'Payments';
 $this->params['action-button'] = $this->render('_action-button');
 ?>
-<?php yii\widgets\Pjax::begin(['id' => 'payment-listing']); ?>
+<?php Pjax::begin(['id' => 'payment-listing']); ?>
 
 <?php
 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -118,7 +119,6 @@ $columns = [
     ],
 ];
 ?>
-
 <div>
     <?=
     KartikGridView::widget([
@@ -131,7 +131,7 @@ $columns = [
     ]);
     ?>
 </div>
-<?php yii\widgets\Pjax::end(); ?>
+<?php Pjax::end(); ?>
 
 <script>
     $(document).on('click', '#payment-listing  tbody > tr', function () {
@@ -159,8 +159,7 @@ $columns = [
         return false;
     });
 	$(document).on('modal-delete', function(event, params) {
-        var url = "<?php echo Url::to(['payment/index']); ?>";
-        $.pjax.reload({url: url, container: "#payment-listing", replace: false, timeout: 4000});
+        $.pjax.reload({container: "#payment-listing", replace: false, timeout: 4000});
         return false;
     });
 </script>
