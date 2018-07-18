@@ -499,3 +499,7 @@ dl {
 .receive-payment-text-value {
     font-size: 18px;
 }
+
+.total-horizontal-dd {
+    width: 60px;
+}
