@@ -156,10 +156,15 @@ $this->render('_view-enrolment', [
                 window.location.href = params.url;
             } else {
                 paymentFrequency.onEditableSuccess();
-                $.pjax.reload({container: "#enrolment-lesson-index", replace: false, async: false, timeout: 4000});
             }
             return false;
         });
+        
+        $(document).on('modal-next', function(event, params) {
+        var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"  
+        $.pjax.reload({url: url, container: "#enrolment-lesson-index", replace: false, timeout: 4000});
+        return false;
+    });
 
         $(document).ready(function () {
             var lesson_count = '<?= $lessonCount; ?>';

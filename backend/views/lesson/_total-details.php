@@ -21,25 +21,25 @@ LteBox::begin([
 ])
 ?>
 <dl class="dl-horizontal lesson-discount">
-	<dt class="m-r-10">Lesson Rate/hr</dt>
-	<dd><?= Yii::$app->formatter->asCurrency($model->programRate); ?></dd>
+	<dt class=" m-r-10">Lesson Rate/hr</dt>
+	<dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->programRate); ?></dd>
 	<dt class="m-r-10">Qty</dt>
-    <dd><?= $model->unit; ?></dd>
+    <dd class = "total-horizontal-dd text-right"><?= $model->unit; ?></dd>
     <dt class="m-r-10">Lesson Price</dt>
-    <dd><?= Yii::$app->formatter->asCurrency($model->grossPrice); ?></dd>
+    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->grossPrice); ?></dd>
     <dt class="m-r-10">Discount</dt>
-	<dd><?= Yii::$app->formatter->asCurrency($model->discount); ?></dd>
+	<dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->discount); ?></dd>
 	<dt class="m-r-10">SubTotal</dt>
-    <dd><?= Yii::$app->formatter->asCurrency($model->getSubTotal()); ?></dd>
+    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->getSubTotal()); ?></dd>
     <dt class="m-r-10">Tax</dt>
-    <dd><?= Yii::$app->formatter->asCurrency($model->tax); ?></dd>
+    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->tax); ?></dd>
     <dt class="m-r-10">Total</dt>
-    <dd><?= Yii::$app->formatter->asCurrency($model->netPrice); ?></dd>
+    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->netPrice); ?></dd>
     <dt class="m-r-10">Paid</dt>
-    <dd><?php $lessonPaid = !empty($model->getCreditAppliedAmount($model->enrolment->id)) ? $model->getCreditAppliedAmount($model->enrolment->id) : 0; ?>
+    <dd class = "total-horizontal-dd text-right"><?php $lessonPaid = !empty($model->getCreditAppliedAmount($model->enrolment->id)) ? $model->getCreditAppliedAmount($model->enrolment->id) : 0; ?>
     <?= Yii::$app->formatter->asCurrency($lessonPaid); ?></dd>
     <dt class="m-r-10">Balance</dt>
-    <dd><?= Yii::$app->formatter->asCurrency($model->getOwingAmount($model->enrolment->id)); ?></dd>
+    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->getOwingAmount($model->enrolment->id)); ?></dd>
 </dl>
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>

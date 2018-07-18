@@ -309,6 +309,11 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         }
         return false;
     });
+
+     $(document).on('modal-next', function(event, params) {   
+        $.pjax.reload({ container: "#lesson-price-details", replace: false, timeout: 4000});
+        return false;
+    });
     
     $(document).on('beforeSubmit', '#merge-lesson-form', function (e) {
         $.ajax({
