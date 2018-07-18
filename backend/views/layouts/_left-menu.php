@@ -99,7 +99,7 @@ echo Menu::widget([
         ],
 
         [
-            'label' => Yii::t('backend', 'New Proforma Invoices'),
+            'label' => Yii::t('backend', 'Payment Requests'),
             'icon' => '<i class="fa  fa-dollar"></i>',
             'url' => ['/proforma-invoice/index'],
             'visible' => Yii::$app->user->can('managePfi'),

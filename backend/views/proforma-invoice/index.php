@@ -13,7 +13,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel backend\models\search\PrivateLessonSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Proforma Invoices';
+$this->title = 'Payment Requests';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php Pjax::begin([
