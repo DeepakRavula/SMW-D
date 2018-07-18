@@ -474,6 +474,7 @@ class PaymentController extends BaseController
             'type' => 'Payment Credit',
             'reference' => $paymentCredit->reference,
             'amount' => $paymentCredit->amount,
+            'method' => $paymentCredit->paymentMethod->name,
             'amountUsed' => $paymentCredits[$key],
         ];
       }  
@@ -486,6 +487,7 @@ class PaymentController extends BaseController
             'type' => 'Invoice Credit',
             'reference' => $invoiceCredit->getInvoiceNumber(),
             'amount' => abs($invoiceCredit->balance),
+            'method' => '',
             'amountUsed' => $invoiceCredits[$key],
       ];
     }
@@ -498,6 +500,7 @@ $results[] = [
     'type' => 'Payment',
     'reference' => !empty($paymentNew->reference) ? $paymentNew->reference : null,
     'amount' => $paymentNew->amount,
+    'method' => $paymentNew->paymentMethod->name,
     'amountUsed' => $amount,
 ]; 
 }

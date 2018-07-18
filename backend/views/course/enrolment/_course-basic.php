@@ -181,6 +181,7 @@ use kartik\switchinput\SwitchInput;
     $(document).ready(function () {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment Basic</h4>');
         $('.modal-save').text('Next');
+        $('#modal-back').hide();
         $('#popup-modal .modal-dialog').css({'width': '600px'});
         $.fn.modal.Constructor.prototype.enforceFocus = function() {};
         enrolment.fetchProgram();

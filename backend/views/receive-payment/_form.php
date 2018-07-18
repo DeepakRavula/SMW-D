@@ -273,8 +273,8 @@ use yii\bootstrap\Html;
         $('#popup-modal').find('.modal-header').html(header);
         $('.modal-save').text('Save');
         $('.modal-back').text('Create PFI');
-        $('.modal-back').removeClass('btn-info');
-        $('.modal-back').addClass('btn-default');
+        $('#modal-back').removeClass('btn-info');
+        $('#modal-back').addClass('btn-default');
         $('.modal-back').show();
         $('.select-on-check-all').prop('checked', true);
         receivePayment.calcAmountNeeded();
@@ -347,7 +347,8 @@ use yii\bootstrap\Html;
     });
 
     $(document).on('modal-success', function(event, params) {
-        $('#success-notification').html(params.message).fadeIn().delay(5000).fadeOut();
+       //$('#success-notification').html(params.message).fadeIn().delay(5000).fadeOut();
+
         if ($('#invoice-payment-listing').length) {
             $.pjax.reload({container: "#invoice-payment-listing", replace: false, async: false, timeout: 6000});
         }

@@ -45,8 +45,6 @@ echo Menu::widget([
             'url' => ['/student/index', 'StudentSearch[showAllStudents]' => false],
             'visible' => Yii::$app->user->can('manageStudents'),
             'active' => (Yii::$app->controller->id === 'student') ? true : false,
-            'badge' => Student::count(),
-            'badgeBgClass' => 'label-default',
         ],
             [
             'label' => Yii::t('backend', 'Customers'),
@@ -54,8 +52,6 @@ echo Menu::widget([
             'url' => ['/user/index', 'UserSearch[role_name]' => User::ROLE_CUSTOMER],
             'visible' => Yii::$app->user->can('manageCustomers'),
             'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_CUSTOMER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_CUSTOMER)) ? true : false,
-            'badge' => User::customerCount(),
-            'badgeBgClass' => 'label-default',
         ],
             [
             'label' => Yii::t('backend', 'Teachers'),
@@ -63,8 +59,6 @@ echo Menu::widget([
             'url' => ['/user/index', 'UserSearch[role_name]' => User::ROLE_TEACHER],
             'visible' => Yii::$app->user->can('manageTeachers'),
             'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_TEACHER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_TEACHER)) ? true : false,
-            'badge' => User::teacherCount(),
-            'badgeBgClass' => 'label-default'
         ],
         [
             'label' => Yii::t('backend', 'Private Lessons'),
@@ -84,7 +78,7 @@ echo Menu::widget([
             'label' => Yii::t('backend', 'Unscheduled Lessons'),
             'url' => ['unscheduled-lesson/index'],
             'icon' => '<i class="fa fa-music"></i>',
-	    'active' => (Yii::$app->controller->id === 'unscheduled-lesson') ? true : false,
+	        'active' => (Yii::$app->controller->id === 'unscheduled-lesson') ? true : false,
         ],
         //     [
         //     'label' => Yii::t('backend', 'Proforma Invoices'),
@@ -102,8 +96,6 @@ echo Menu::widget([
             'url' => ['/invoice/index', 'InvoiceSearch[type]' => Invoice::TYPE_PRO_FORMA_INVOICE],
             'visible' => Yii::$app->user->can('managePfi'),
             'active' => (isset(Yii::$app->request->queryParams['InvoiceSearch']['type']) && Yii::$app->request->queryParams['InvoiceSearch']['type'] == Invoice::TYPE_PRO_FORMA_INVOICE) ? true : false,
-            'badge' => Invoice::pfiCount(),
-            'badgeBgClass' => 'label-default'
         ],
 
         [
@@ -119,8 +111,6 @@ echo Menu::widget([
             'url' => ['/invoice/index', 'InvoiceSearch[type]' => Invoice::TYPE_INVOICE],
             'visible' => Yii::$app->user->can('manageInvoices'),
             'active' => (isset(Yii::$app->request->queryParams['InvoiceSearch']['type']) && Yii::$app->request->queryParams['InvoiceSearch']['type'] == Invoice::TYPE_INVOICE) ? true : false,
-            'badge' => Invoice::invoiceCount(),
-            'badgeBgClass' => 'label-default'
         ],
         [
             'label' => Yii::t('backend', 'Payments'),
@@ -233,8 +223,7 @@ echo Menu::widget([
 					'visible' => Yii::$app->user->can('manageAdmin'),
                     'url' => ['/user/index', 'UserSearch[role_name]' => User::ROLE_ADMINISTRATOR],
                     'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_ADMINISTRATOR || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_ADMINISTRATOR)) ? true : false,
-                    'badge' => User::adminCount(),
-                    'badgeBgClass' => 'label-default'
+                   
                 ],
                 [
                     'label' => Yii::t('backend', 'Programs'),
@@ -242,8 +231,7 @@ echo Menu::widget([
                     'url' => ['/program/index'],
 					'visible' => Yii::$app->user->can('managePrograms'),
                     'active' => (Yii::$app->controller->id === 'program') ? true : false,
-                    'badge' => Program::find()->active()->count(),
-                    'badgeBgClass' => 'label-default'
+                   
                 ],
                 [
                     'label' => Yii::t('backend', 'Cities'),
@@ -346,8 +334,7 @@ echo Menu::widget([
                     'url' => ['/user/index', 'UserSearch[role_name]' => User::ROLE_STAFFMEMBER],
 					'visible' => Yii::$app->user->can('manageStaff'),
                     'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_STAFFMEMBER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_STAFFMEMBER)) ? true : false,
-                    'badge' => User::staffCount(),
-                    'badgeBgClass' => 'label-default'
+                    
                 ],
                 [
                     'label' => Yii::t('backend', 'Owners'),
@@ -355,8 +342,7 @@ echo Menu::widget([
                     'url' => ['/user/index', 'UserSearch[role_name]' => User::ROLE_OWNER],
                     'visible' => Yii::$app->user->can('manageOwners'),
                     'active' => (isset(Yii::$app->request->queryParams['UserSearch']['role_name']) && Yii::$app->request->queryParams['UserSearch']['role_name'] == User::ROLE_OWNER || (isset(Yii::$app->request->queryParams['User']['role_name']) && Yii::$app->request->queryParams['User']['role_name'] == User::ROLE_OWNER)) ? true : false,
-                    'badge' => User::ownerCount(),
-                    'badgeBgClass' => 'label-default'
+                    
                 ],
 
                 [
