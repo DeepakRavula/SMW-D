@@ -347,7 +347,8 @@ use yii\bootstrap\Html;
     });
 
     $(document).on('modal-success', function(event, params) {
-        $('#success-notification').html(params.message).fadeIn().delay(5000).fadeOut();
+       // $('#success-notification').html(params.message).fadeIn().delay(5000).fadeOut();
+       
         if ($('#invoice-payment-listing').length) {
             $.pjax.reload({container: "#invoice-payment-listing", replace: false, async: false, timeout: 6000});
         }

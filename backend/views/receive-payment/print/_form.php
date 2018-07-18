@@ -94,6 +94,7 @@ use yii\bootstrap\Html;
         $('.modal-back').hide();
     });
     $(document).off('click', '.modal-save-all').on('click', '.modal-save-all', function() {
+            $('#popup-modal').modal('hide');
             var url = '<?= $url; ?>';
             window.open(url,'_blank');
             return false;
