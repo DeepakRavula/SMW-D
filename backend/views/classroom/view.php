@@ -50,7 +50,8 @@ use yii\bootstrap\Modal;
                 {
                     if(response.status) {
                         $('#classroom-detail-model').modal('hide');
-                        $.pjax.reload({container: '#classroom-details', timeout: 6000});
+						$.pjax.reload({container: "#classroom-details", replace: false, async: false, timeout: 4000});
+						$.pjax.reload({container: "#classroom-view", replace: false, async: false, timeout: 4000});
                     }
                 }
             });
