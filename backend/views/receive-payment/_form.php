@@ -346,18 +346,6 @@ use yii\bootstrap\Html;
         return false;
     });
 
-    $(document).on('modal-success', function(event, params) {
-       //$('#success-notification').html(params.message).fadeIn().delay(5000).fadeOut();
-
-        if ($('#invoice-payment-listing').length) {
-            $.pjax.reload({container: "#invoice-payment-listing", replace: false, async: false, timeout: 6000});
-        }
-	if ($('#customer-view').length) {
-	    $.pjax.reload({container:"#customer-view",replace:false, async: false, timeout: 6000});
-    }
-        return false;
-    });
-
     $(document).off('click', '.modal-back').on('click', '.modal-back', function() {
         $('#modal-spinner').show();
         var userId = $('#customer-payment').val();

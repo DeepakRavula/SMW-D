@@ -466,7 +466,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         return false;
     });
 
-    $(document).off('click', '#lesson-tax').on('click', '#lesson-tax', function(){
+    $(document).off('click', '#edit-lesson-tax').on('click', '#edit-lesson-tax', function(){
         $.ajax({
             url    : '<?= Url::to(['lesson/edit-tax', 'id' => $model->id]) ?>',
             type   : 'get',
