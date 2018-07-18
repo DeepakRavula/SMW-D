@@ -77,13 +77,14 @@ Modal::begin([
                 $('#modal-spinner').hide();
                 if (response.status)
                 {
+                    $('#modal-spinner').hide();
                     if (!$.isEmptyObject(response.data)) {
                         $('#modal-content').html(response.data);
                         $('.modal-back').show();
                         $(document).trigger("modal-next", response);
                     } else {
                         $(document).trigger("modal-success", response);
-                        $('#popup-modal').modal('hide');    
+                        $('#popup-modal').modal('hide'); 
                     }
                 } else {
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
