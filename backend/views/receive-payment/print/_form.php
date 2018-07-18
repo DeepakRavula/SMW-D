@@ -91,7 +91,6 @@ use yii\bootstrap\Html;
         $('.modal-save').text('Email');
         $('.modal-save-all').text('Print');
         $('.modal-save-all').show();
-        $('.modal-save').attr('action', url);
         $('.modal-back').hide();
     });
     $(document).off('click', '.modal-save-all').on('click', '.modal-save-all', function() {
