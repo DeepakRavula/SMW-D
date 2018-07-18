@@ -143,8 +143,8 @@ use yii\widgets\MaskedInput;
         $('.modal-save').text('Next');
         $('#popup-modal .modal-dialog').css({'width': '600px'});
         $('#modal-spinner').hide();
-        $('.modal-back').removeClass("course-detail-back");
-        $('.modal-back').addClass('add-customer-back');
+        $('#modal-back').removeClass();
+        $('#modal-back').addClass('btn btn-info add-customer-back');
     });
 
     $(document).off('click', '.add-customer-back').on('click', '.add-customer-back', function () {

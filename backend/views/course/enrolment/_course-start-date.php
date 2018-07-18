@@ -44,9 +44,8 @@ use yii\jui\DatePicker;
         $('.modal-save').text('Next');
         $('#popup-modal .modal-dialog').css({'width': '400px'});
         $('#modal-spinner').hide();
-        $('.modal-back').removeClass("add-customer-back");
-        $('.modal-back').removeClass("course-detail-back");
-        $('.modal-back').addClass('course-date-detail-back');
+        $('#modal-back').removeClass();
+        $('#modal-back').addClass('btn btn-info course-date-detail-back');
     });
 
     $(document).off('click', '.course-date-detail-back').on('click', '.course-date-detail-back', function () {

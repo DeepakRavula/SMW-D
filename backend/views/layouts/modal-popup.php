@@ -24,34 +24,49 @@ Modal::begin([
 
 
 <script>
+    var modal = {
+        disableButtons: function() {
+            $('.modal-save').attr('disabled', true);
+            $('.modal-button').attr('disabled', true);
+            $('.modal-save-all').attr('disabled', true);
+            $('.modal-back').attr('disabled', true);
+            $('.modal-delete').attr('disabled', true);
+            $('.modal-cancel').attr('disabled', true);
+        },
+        enableButtons: function() {
+            $('.modal-save').attr('disabled', false);
+            $('.modal-button').attr('disabled', false);
+            $('.modal-delete').attr('disabled', false);
+            $('.modal-cancel').attr('disabled', false);
+            $('.modal-save-all').attr('disabled', false);
+            $('.modal-back').attr('disabled', false);
+        },
+        restoreButtonSettings: function() {
+            $('.modal-delete').hide();
+            $('.modal-button').hide();
+            $('.modal-save').text('Save');
+            $('.modal-save-all').hide();
+            $('.modal-back').hide();
+            $('.modal-save').attr('message', null);
+            $('#modal-popup-warning-notification').fadeOut();
+        }
+    };
+
     $(document).off('click', '.modal-save').on('click', '.modal-save', function () {
-        $('.modal-save').attr('disabled', true);
-        $('.modal-save-all').attr('disabled', true);
-        $('.modal-back').attr('disabled', true);
-        $('.modal-delete').attr('disabled', true);
-        $('.modal-cancel').attr('disabled', true);
+        modal.disableButtons();
         $('#modal-form').submit();
         return false;
     });
 
     $(document).on('afterValidate', '#modal-form', function (event, messages, errorAttributes) {
         if (errorAttributes.length > 0) {
-            $('.modal-save').attr('disabled', false);
-            $('.modal-delete').attr('disabled', false);
-            $('.modal-cancel').attr('disabled', false);
-            $('.modal-save-all').attr('disabled', false);
-            $('.modal-back').attr('disabled', false);
+            modal.enableButtons();
         }
     });
 
     $(document).off('beforeSubmit', '#modal-form').on('beforeSubmit', '#modal-form', function () {
         $('#modal-spinner').show();
-	    $('.modal-save').attr('disabled', true);
-        $('.modal-delete').attr('disabled', true);
-        $('.modal-cancel').attr('disabled', true);
-        $('.modal-save-all').attr('disabled', true);
-        $('.modal-save-all').attr('disabled', true);
-        $('.modal-back').attr('disabled', true);
+	    modal.disableButtons();
         $.ajax({
             url: $('#modal-form').attr('action'),
             type: 'post',
@@ -59,28 +74,22 @@ Modal::begin([
             data: $('#modal-form').serialize(),
             success: function (response)
             {
+                $('#modal-spinner').hide();
                 if (response.status)
                 {
-                    $('#modal-spinner').hide();
-                    $(document).trigger("modal-success", response);
                     if (!$.isEmptyObject(response.data)) {
                         $('#modal-content').html(response.data);
                         $('.modal-back').show();
                         $(document).trigger("modal-next", response);
                     } else {
+                        $(document).trigger("modal-success", response);
                         $('#popup-modal').modal('hide');    
                     }
                 } else {
-                    $('#modal-spinner').hide();
                     $('#modal-form').yiiActiveForm('updateMessages', response.errors, true);
                     $(document).trigger("modal-error", response);
                 }
-                $('.modal-save').attr('disabled', false);
-                $('.modal-save-all').attr('disabled', false);
-                $('.modal-delete').attr('disabled', false);
-                $('.modal-cancel').attr('disabled', false);
-                $('.modal-save-all').attr('disabled', false);
-                $('.modal-back').attr('disabled', false);
+                modal.enableButtons();
             }
         });
         return false;
@@ -88,24 +97,15 @@ Modal::begin([
 
     $('#popup-modal').on('shown.bs.modal', function () {
         var isDatePicker = $('#modal-form').find('input[type=text],textarea,select').filter(':visible:first').attr('class');
-        if(isDatePicker != 'form-control hasDatepicker' && isDatePicker != 'form-control no-focus'){
-	$('#modal-form').find('input[type=text],textarea,select').filter(':visible:first').focus();
+        if (isDatePicker != 'form-control hasDatepicker' && isDatePicker != 'form-control no-focus'){
+	        $('#modal-form').find('input[type=text],textarea,select').filter(':visible:first').focus();
         }
         $('#modal-spinner').hide();
     });
 
     $('#popup-modal').on('hidden.bs.modal', function () {
-        $('.modal-save').attr('disabled', false);
-        $('.modal-save-all').attr('disabled', false);
-        $('.modal-back').attr('disabled', false);
-        $('.modal-delete').attr('disabled', false);
-        $('.modal-cancel').attr('disabled', false);
-        $('.modal-delete').hide();
-        $('.modal-save').text('Save');
-        $('.modal-save-all').hide();
-        $('.modal-back').hide();
-        $('.modal-save').attr('message', null);
-        $('#modal-popup-warning-notification').fadeOut();
+        modal.enableButtons();
+        modal.restoreButtonSettings();
         $(document).trigger("modal-close");
     });
 
@@ -130,12 +130,11 @@ Modal::begin([
                         data   : $('#modal-form').serialize(),
                         success: function(response)
                         {
+                            $('#modal-spinner').hide();
                             if (response.status) {
-                                $('#modal-spinner').hide();
                                 $('#popup-modal').modal('hide');
                                 $(document).trigger("modal-delete", response);
                             } else {
-                                $('#modal-spinner').hide();
                                 $(document).trigger("modal-error", response);
                             }
                         }

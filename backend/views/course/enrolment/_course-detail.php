@@ -79,6 +79,7 @@ use kartik\select2\Select2;
     });
 
     $(document).ready(function () {
+        $('#modal-back').show();
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment Detail</h4>');
         var isReverse = <?= $isReverse ?>;
         if (isReverse == 1) {
@@ -96,13 +97,12 @@ use kartik\select2\Select2;
             'durationId' : '#enrolmentform-duration',
             'studentId' : '<?= $student ? $student->id : null ?>'
         };
-	$(document).off('change', options.changeId).on('change', options.changeId, function () {
-        $.fn.calendarDayView(options);
-	});
+        $(document).off('change', options.changeId).on('change', options.changeId, function () {
+            $.fn.calendarDayView(options);
+        });
         $('#modal-spinner').hide();
-        $('.modal-back').removeClass("add-customer-back");
-        $('.modal-back').removeClass("course-date-detail-back");
-        $('.modal-back').addClass('course-detail-back');
+        $('#modal-back').removeClass();
+        $('#modal-back').addClass('btn btn-info course-detail-back');
     });
 
     $(document).on('week-calendar-after-render', function(event, params) {
