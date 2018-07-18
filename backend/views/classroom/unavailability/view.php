@@ -6,12 +6,18 @@ use yii\bootstrap\Modal;
 use common\models\ClassroomUnavailability;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
-
+use yii\widgets\Pjax;
+?>
+<?php Pjax::begin([
+    'id' => 'classroom-view'
+]); ?>
+<?php 
 $this->title = $model->name;
 $this->params['label'] = $this->render('_title', [
     'model' => $model,
 ]);
 ?>
+<?php Pjax::end(); ?>
 <?php
 Modal::begin([
     'header' => '<h4 class="m-0">Unavailability</h4>',

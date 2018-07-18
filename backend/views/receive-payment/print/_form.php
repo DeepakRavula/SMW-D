@@ -12,8 +12,8 @@ use yii\bootstrap\Html;
 ?>
  <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['print/receipt',  'PaymentForm[lessonIds]' => $model->lessonIds, 'PaymentForm[userId]' => $model->userId, 
-        'PaymentForm[invoiceIds]' => $model->invoiceIds, 'PaymentForm[groupLessonIds]' => $model->groupLessonIds,  'PaymentForm[invoiceCreditIds]' => $model->invoiceCreditIds, 'PaymentForm[invoiceCredits]' => $model->invoiceCredits,  'PaymentForm[paymentCreditIds]' => $model->paymentCreditIds, 'PaymentForm[paymentCredits]' => $model->paymentCredits]),
+        'action' => Url::to(['email/receipt',  'PaymentForm[lessonIds]' => $model->lessonIds, 'PaymentForm[userId]' => $model->userId, 
+        'PaymentForm[invoiceIds]' => $model->invoiceIds, 'PaymentForm[groupLessonIds]' => $model->groupLessonIds,  'PaymentForm[invoiceCreditIds]' => $model->invoiceCreditIds, 'PaymentForm[invoiceCredits]' => $model->invoiceCredits,  'PaymentForm[paymentCreditIds]' => $model->paymentCreditIds, 'PaymentForm[paymentCredits]' => $model->paymentCredits, 'PaymentForm[amount]' => $model->amount, 'PaymentForm[paymentId]' => $model->paymentId]),
         
     ]); ?>
 
@@ -88,12 +88,13 @@ use yii\bootstrap\Html;
             }
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html(header);
-        $('.modal-save').text('Print');
-        var url = '<?= $url ?>'; 
+        $('.modal-save').text('Email');
+        $('.modal-save-all').text('Print');
+        $('.modal-save-all').show();
         $('.modal-save').attr('action', url);
         $('.modal-back').hide();
     });
-    $(document).off('click', '.modal-save').on('click', '.modal-save', function() {
+    $(document).off('click', '.modal-save-all').on('click', '.modal-save-all', function() {
             var url = '<?= $url; ?>';
             window.open(url,'_blank');
             return false;
