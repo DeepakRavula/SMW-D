@@ -24,7 +24,8 @@ $this->params['label'] = $this->render('_title', [
 
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
-if ($lastRole === User::ROLE_ADMINISTRATOR) {
+$loggedUser = User::findOne(Yii::$app->user->id); 
+if ($loggedUser->isAdmin()) {
     $this->params['action-button'] = Html::a('<i class="fa fa-pencil"></i>', '#', ['class' => 'f-s-18 edit-location']);
 }
 ?>
@@ -36,7 +37,6 @@ if ($lastRole === User::ROLE_ADMINISTRATOR) {
 <link type="text/css" href="/plugins/fullcalendar-scheduler/scheduler.css" rel="stylesheet">
 <script type="text/javascript" src="/plugins/fullcalendar-scheduler/scheduler.js"></script>
 <br>
-<?php $loggedUser = User::findOne(Yii::$app->user->id); ?>
 <?php Pjax::begin([
     'id' => 'location-view']) ; ?>
 <div class="row">
