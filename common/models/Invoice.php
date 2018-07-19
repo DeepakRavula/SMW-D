@@ -789,9 +789,9 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function getInvoiceStatus()
     {
-        if ((int) $this->total === (int) $this->invoicePaymentTotal) {
+        if (round($this->total, 2) === round($this->invoicePaymentTotal, 2)) {
             $status = self::STATUS_PAID;
-        } elseif ((int) $this->total > (int) $this->invoicePaymentTotal) {
+        } elseif (round($this->total, 2) > round($this->invoicePaymentTotal, 2)) {
             $status = self::STATUS_OWING;
         } else {
             if ((int) $this->type === (int) self::TYPE_INVOICE) {
