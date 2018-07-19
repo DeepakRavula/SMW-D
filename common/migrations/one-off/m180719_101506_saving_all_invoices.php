@@ -21,6 +21,8 @@ class m180719_101506_saving_all_invoices extends Migration
      */
     public function safeUp()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $invoices = Invoice::find()
         ->notDeleted()
         ->all();

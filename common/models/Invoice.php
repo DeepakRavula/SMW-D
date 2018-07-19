@@ -800,8 +800,10 @@ class Invoice extends \yii\db\ActiveRecord
             $status = self::STATUS_CREDIT;
         }
         if (!$this->isInvoice()) {
-            if (round($this->invoiceAppliedPaymentTotal, 2) > round($this->creditUsedPaymentTotal, 2)) {
-                $status = self::STATUS_CREDIT;
+            if (round($this->invoiceAppliedPaymentTotal, 2) >= round($this->total, 2)) {
+                $status = self::STATUS_PAID;
+            } else {
+                $status = self::STATUS_OWING;
             }
         }
         return $status;

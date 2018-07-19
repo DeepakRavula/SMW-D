@@ -14,6 +14,8 @@ class m180719_110558_adding_line_item_discount_to_lesson_discount extends Migrat
      */
     public function safeUp()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $locationId = [14, 15];
         $lineItems = InvoiceLineItem::find()
             ->notDeleted()
