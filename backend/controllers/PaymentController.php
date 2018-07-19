@@ -459,7 +459,8 @@ class PaymentController extends BaseController
             'allModels' => $results,
             'sort' => [
                 'attributes' => ['id', 'type', 'reference', 'amount']
-            ]
+            ],
+            'pagination' => false
         ]);
         return $creditDataProvider;
     }
@@ -508,7 +509,8 @@ class PaymentController extends BaseController
             'allModels' => $results,
             'sort' => [
                 'attributes' => ['id', 'type', 'reference', 'amount', 'amountUsed']
-            ]
+            ],
+            'pagination' => false
         ]);
         return $paymentsLineItemsDataProvider;
     }

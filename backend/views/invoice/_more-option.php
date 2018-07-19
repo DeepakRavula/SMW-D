@@ -2,10 +2,10 @@
 
 use yii\helpers\Url;
 ?>
-<div class="btn-group-sm">
-    <button class="btn dropdown-toggle" data-toggle="dropdown">More Action&nbsp;&nbsp;<span class="caret"></span></button>
+<div class="dropdown">
+    <i class="fa fa-gear dropdown-toggle" data-toggle="dropdown"></i>
     <ul class="dropdown-menu dropdown-menu-right">
-	<li><a id="receive-payments" href="#">Receive Payment</a></li>
+	    <li><a id="receive-payments" href="#">Receive Payment</a></li>
         <?php if ($model->isInvoice()) : ?>
              <?php if (!$model->isVoid) : ?>
                 <li><a id="void" href="#">Void</a></li>
@@ -15,6 +15,7 @@ use yii\helpers\Url;
         <?php endif; ?>
     </ul>
 </div>
+
 <script>
 	$(document).off('click', '#receive-payments').on('click', '#receive-payments', function () {
         $.ajax({

@@ -10,8 +10,8 @@ use yii\widgets\Pjax;
     'timeout' => 6000,
 ]) ?>
 <div class="pull-right">
-    <div class="btn-group">
-        <button class="btn dropdown-toggle" data-toggle="dropdown">More Action&nbsp;&nbsp;<span class="caret"></span></button>
+    <div class="dropdown">
+        <i class="fa fa-gear dropdown-toggle" data-toggle="dropdown"></i>
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a id="receive-payment" href="#">Receive Payment</a></li>
             <li><a id="lesson-mail-button" href="#">Mail</a></li>
