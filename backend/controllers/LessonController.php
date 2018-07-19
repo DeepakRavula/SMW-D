@@ -50,7 +50,7 @@ class LessonController extends BaseController
                 'only' => ['modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom',
                     'payment', 'substitute','update','unschedule', 'credit-transfer',
-                    'edit-price', 'edit-tax'
+                    'edit-price', 'edit-tax', 'edit-cost'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -62,14 +62,12 @@ class LessonController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'credit-transfer',
-							'validate-on-update', 'edit-price','edit-tax', 
-							'fetch-duration','edit-classroom', 
-							'update', 'update-field', 'review',
-							'fetch-conflict', 'confirm',
-							'invoice', 'take-payment',
-							'modify-classroom',
-							'payment', 'substitute', 'unschedule'],
+                        'actions' => [
+                            'index', 'view', 'credit-transfer', 'validate-on-update', 'edit-price',' edit-tax', 
+							'fetch-duration','edit-classroom', 'update', 'update-field', 'review',
+							'fetch-conflict', 'confirm', 'invoice', 'take-payment', 'modify-classroom',
+                            'payment', 'substitute', 'unschedule', 'edit-cost'
+                        ],
                         'roles' => ['managePrivateLessons', 
 							'manageGroupLessons'],
                     ],
@@ -797,6 +795,35 @@ class LessonController extends BaseController
             }
         } else {
             $data = $this->renderAjax('_tax-form', [
+                'model' => $model
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
+    }
+
+    public function actionEditCost($id)
+    {
+        $request = Yii::$app->request;
+        $model = $this->findModel($id);
+        if ($request->isPost) {
+            if ($model->load($request->post())) {
+                if ($model->save()) {
+                    $response = [
+                        'status' => true
+                    ];
+                } else {
+                    $response = [
+                        'status' => false,
+                        'errors' => ActiveForm::validate($model)
+                    ];
+                }
+            }
+        } else {
+            $data = $this->renderAjax('/lesson/cost/_form', [
                 'model' => $model
             ]);
             $response = [

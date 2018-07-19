@@ -829,6 +829,12 @@ class Lesson extends \yii\db\ActiveRecord
         if (!$this->tax) {
             $this->tax = 0.0;
         }
+        if (!$this->teacherRate) {
+            $this->teacherRate = 0.0;
+        }
+        if (!$this->programRate) {
+            $this->programRate = 0.0;
+        }
         return parent::beforeSave($insert);
     }
     

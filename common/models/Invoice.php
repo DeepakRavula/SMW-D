@@ -434,9 +434,10 @@ class Invoice extends \yii\db\ActiveRecord
     {
         return (bool) $this->isDeleted;
     }
+    
     public function hasCredit()
     {
-        return (int) $this->status === (int) self::STATUS_CREDIT;
+        return round($this->balance, 2) < 0.00;
     }
 
     public function hasMiscItem()
@@ -791,13 +792,16 @@ class Invoice extends \yii\db\ActiveRecord
     {
         if (round($this->total, 2) === round($this->invoicePaymentTotal, 2)) {
             $status = self::STATUS_PAID;
-        } elseif (round($this->total, 2) > round($this->invoicePaymentTotal, 2)) {
+        }
+        if (round($this->total, 2) > round($this->invoicePaymentTotal, 2)) {
             $status = self::STATUS_OWING;
-        } else {
-            if ((int) $this->type === (int) self::TYPE_INVOICE) {
+        }
+        if (round($this->total, 2) < round($this->invoicePaymentTotal, 2)) {
+            $status = self::STATUS_CREDIT;
+        }
+        if (!$this->isInvoice()) {
+            if (round($this->invoiceAppliedPaymentTotal, 2) > round($this->creditUsedPaymentTotal, 2)) {
                 $status = self::STATUS_CREDIT;
-            } else {
-                $status = self::STATUS_PAID;
             }
         }
         return $status;
