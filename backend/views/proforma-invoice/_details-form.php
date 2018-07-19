@@ -60,7 +60,7 @@ use yii\helpers\Url;
 <script>
     $(document).ready(function () {
         $('#popup-modal .modal-dialog').css({'width': '400px'});
-        $('#popup-modal').find('.modal-header').html('Proforma Invoice Details');
+        $('#popup-modal').find('.modal-header').html('Edit Details');
     });
     $(document).on('modal-success', function(event, params) {
         $.pjax.reload({container: "#invoice-details", replace: false, timeout: 4000});
