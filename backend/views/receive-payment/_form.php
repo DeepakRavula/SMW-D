@@ -269,7 +269,7 @@ use yii\bootstrap\Html;
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html(header);
         $('.modal-save').text('Save');
-        $('.modal-back').text('Create PFI');
+        $('.modal-back').text('Create Payment Request');
         $('#modal-back').removeClass('btn-info');
         $('#modal-back').addClass('btn-default');
         $('.modal-back').show();
