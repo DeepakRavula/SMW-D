@@ -112,15 +112,13 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ($insert) {
-        $lastInvoice   = $this->lastInvoice();
-        if (!empty($lastInvoice)) {
-            $proformaInvoiceNumber = $lastInvoice->proforma_invoice_number + 1;
-        }
-        else{
-            $proformaInvoiceNumber=1;
-        }
-        $this->proforma_invoice_number = $proformaInvoiceNumber;
-       
+            $lastInvoice   = $this->lastInvoice();
+            if (!empty($lastInvoice)) {
+                $proformaInvoiceNumber = $lastInvoice->proforma_invoice_number + 1;
+            } else{
+                $proformaInvoiceNumber = 1;
+            }
+            $this->proforma_invoice_number = $proformaInvoiceNumber;
             $this->date = (new \DateTime())->format('Y-m-d');
             $this->dueDate = (new \DateTime())->format('Y-m-d');
             $this->status = self::STATUS_UNPAID;
