@@ -22,10 +22,12 @@ use yii\helpers\Url;
                     'value' => Yii::$app->formatter->asDate($model->date),
                 ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                'readonly' => true,
                 'pluginOptions' => [
                     'autoclose' => true,
 		            'showOnFocus' =>false,
                     'format' => 'M d, yyyy',
+                    
                 ],
             ]);
             ?>
@@ -36,6 +38,7 @@ use yii\helpers\Url;
                     'value' => Yii::$app->formatter->asDate($model->dueDate),
                 ],
                 'type' => DatePicker::TYPE_COMPONENT_APPEND,
+                'readonly' => true,
                 'pluginOptions' => [
                     'autoclose' => true,
 		            'showOnFocus' =>false,
