@@ -29,10 +29,7 @@ class m180609_055058_new_pfi_schema_changes_ extends Migration
     // Use up()/down() to run migration code without a transaction.
     public function up()
     {
-        $this->dropTable('proforma_invoice');
-        $this->dropTable('proforma_line_item');
-        $this->dropTable('proforma_item_lesson');
-        $this->dropTable('proforma_item_invoice');
+        
         $tableSchema = Yii::$app->db->schema->getTableSchema('proforma_invoice');
         if ($tableSchema) {
             $this->dropTable('proforma_invoice');
