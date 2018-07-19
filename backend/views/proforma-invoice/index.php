@@ -55,6 +55,14 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
                 'filterInputOptions'=>['placeholder'=>'Number'],
             ],
+            [
+                'label' => 'Due Date',
+		'headerOptions' => ['class' => 'text-left'],
+	        'contentOptions' => ['class' => 'text-left'],
+                'value' => function ($data) {
+                    return !empty($data->dueDate) ? Yii::$app->formatter->asDate($data->dueDate) : null;
+                },
+            ],
 
             [
                 'attribute' => 'customer',
@@ -101,14 +109,6 @@ $this->params['breadcrumbs'][] = $this->title;
 	        'contentOptions' => ['class' => 'text-left'],
                 'value' => function ($data) {
                     return !empty($data->getStatus()) ? $data->getStatus() : null;
-                },
-            ],
-            [
-                'label' => 'Due Date',
-		'headerOptions' => ['class' => 'text-left'],
-	        'contentOptions' => ['class' => 'text-left'],
-                'value' => function ($data) {
-                    return !empty($data->dueDate) ? Yii::$app->formatter->asDate($data->dueDate) : null;
                 },
             ],
         ],
