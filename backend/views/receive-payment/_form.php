@@ -247,7 +247,7 @@ use yii\bootstrap\Html;
                 var amountReceived = amountNeeded - creditAmount < 0 ? '' : (-(creditAmount - amountNeeded)).toFixed(2);
                 $('#paymentform-amount').val(amountReceived);
             }
-            var amountToCredit = Math.round(parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - amountToDistribute);
+            var amountToCredit = parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - amountToDistribute;
             $('.amount-to-credit').text((amountToCredit).toFixed(2));
             $('#amount-needed-value').val((amountNeeded).toFixed(2));
             $('.amount-needed-value').text((amountNeeded).toFixed(2));
