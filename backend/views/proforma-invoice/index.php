@@ -95,6 +95,22 @@ $this->params['breadcrumbs'][] = $this->title;
                     return !empty($data->total) ? Yii::$app->formatter->asCurrency($data->total) : null;
                 },
             ],
+            [
+                'label' => 'Status',
+		'headerOptions' => ['class' => 'text-left'],
+	        'contentOptions' => ['class' => 'text-left'],
+                'value' => function ($data) {
+                    return !empty($data->getStatus()) ? $data->getStatus() : null;
+                },
+            ],
+            [
+                'label' => 'Due Date',
+		'headerOptions' => ['class' => 'text-left'],
+	        'contentOptions' => ['class' => 'text-left'],
+                'value' => function ($data) {
+                    return !empty($data->dueDate) ? Yii::$app->formatter->asDate($data->dueDate) : null;
+                },
+            ],
         ],
     ]); ?>
 </div>

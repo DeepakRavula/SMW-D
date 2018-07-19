@@ -212,4 +212,21 @@ $this->params['action-button'] = $this->render('_buttons', [
         window.open(url,'_blank');
         return false;
     });
+
+    $(document).on('click', '.proforma-invoice-detail', function (e) {
+        $.ajax({
+            url    : '<?= Url::to(['proforma-invoice/update', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: 'json',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal .modal-dialog').css({'width': '400px'});
+                    $('#popup-modal').modal('show');
+                }
+            }
+        });
+		return false;
+  	});
 </script>
