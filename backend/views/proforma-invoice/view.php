@@ -7,7 +7,7 @@ use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
 
-$this->title = 'Proforma Invoice';
+$this->title = 'Payment Requests';
 $this->params['label'] = $this->render('_title', [
     'model' => $model,
 ]);
