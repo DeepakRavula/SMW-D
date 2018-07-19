@@ -151,10 +151,16 @@ use yii\bootstrap\ActiveForm;
     ?>
 <?php ActiveForm::end(); ?>
 
-<?php Pjax::begin(['enablePushState' => false, 'id' => 'lesson-line-item-listing','timeout' => 6000,]); ?>
+<?php $gridId = 'lesson-line-item-grid'; $pjaxId = 'lesson-line-item-listing'; ?>
+<?php if (isset($changeGridId)) {
+    $gridId = 'lesson-line-item-grid-pr'; 
+    $pjaxId = 'lesson-line-item-listing-pr';
+} ?>
+
+<?php Pjax::begin(['enablePushState' => false, 'id' => $pjaxId, 'timeout' => 6000,]); ?>
 <?php if ($searchModel->showCheckBox) : ?>
     <?= GridView::widget([
-        'options' => ['id' => 'lesson-line-item-grid'],
+        'options' => ['id' => $gridId],
         'dataProvider' => $lessonLineItemsDataProvider,
         'filterModel' => $searchModel,
         'filterUrl' => $isCreatePfi ? Url::to(['proforma-invoice/create', 'PaymentFormLessonSearch[userId]' => $searchModel->userId]) : 
@@ -167,7 +173,7 @@ use yii\bootstrap\ActiveForm;
 <?php else: ?>
 
 <?= GridView::widget([
-        'options' => ['id' => 'lesson-line-item-grid'],
+        'options' => ['id' => $gridId],
         'dataProvider' => $lessonLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,
