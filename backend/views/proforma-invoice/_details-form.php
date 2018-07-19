@@ -14,8 +14,6 @@ use yii\helpers\Url;
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
         'action' => Url::to(['proforma-invoice/update', 'id' => $model->id]),
-        'enableClientValidation' => false,
-        'enableAjaxValidation' => true
     ]); ?>
  	<div class="row">
         <div class="col-xs-7">
@@ -47,7 +45,25 @@ use yii\helpers\Url;
             ?>
         </div>
 	</div>
+    <div class ="col-xs-7">
+        <?php $list = [1 => 'UnPaid', 2 => 'Paid']; ?>
+         <div class="row">
+             <div class="col-md-8">
+                  <?= $form->field($model, 'status')->radioList($list)->label('Status'); ?>
+            </div>
+        </div>
+    </div>
     </div>
 
     <?php ActiveForm::end(); ?>
 </div>
+<script>
+    $(document).ready(function () {
+        $('#popup-modal .modal-dialog').css({'width': '400px'});
+        $('#popup-modal').find('.modal-header').html('Proforma Invoice Details');
+    });
+    $(document).on('modal-success', function(event, params) {
+        $.pjax.reload({container: "#invoice-details", replace: false, timeout: 4000});
+        return false;
+    });
+</script>

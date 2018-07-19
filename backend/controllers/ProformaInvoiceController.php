@@ -203,7 +203,7 @@ class ProformaInvoiceController extends BaseController
             'model' => $model,
         ]);
         if ($model->load(Yii::$app->request->post())){
-            // $model->dueDate = 
+             $model->dueDate = (new \DateTime($model->dueDate))->format('Y-m-d');
             if($model->save()) {
             return [
                 'status'=>true,

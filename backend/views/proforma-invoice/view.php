@@ -222,6 +222,7 @@ $this->params['action-button'] = $this->render('_buttons', [
             {
                 if (response.status) {
                     $('#modal-content').html(response.data);
+                    $('#popup-modal .modal-dialog').css({'width': '400px'});
                     $('#popup-modal').modal('show');
                 }
             }
