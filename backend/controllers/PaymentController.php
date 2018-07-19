@@ -199,6 +199,7 @@ class PaymentController extends BaseController
     public function actionUpdate($id)
     {
         $payment = $this->findModel($id);
+        $payment->setScenario(Payment::SCENARIO_EDIT);
         $model = new PaymentEditForm();
         $model->paymentId = $payment->id;
         $model->userId = $payment->user_id;
@@ -238,26 +239,21 @@ class PaymentController extends BaseController
             'query' => $invoicePayment,
             'pagination' => false
         ]);
-        if (Yii::$app->request->isPost) {
-            $model->load(Yii::$app->request->get());
-            $payment->load(Yii::$app->request->post());
-            $model->load(Yii::$app->request->post());
-            $payment->amount = $model->amount;
-            $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
-            if (round($payment->amount, 2) > 0.00) {
-                $payment->save();
-                $model->save();
-            } else {
-                $payment->delete();
-            }
-            $response = [
-                'status' => true
-            ];
-        } else {
-            if ($payment->isAutoPayments()) {
+        if ($payment->validate()) {
+            if (Yii::$app->request->isPost) {
+                $model->load(Yii::$app->request->get());
+                $payment->load(Yii::$app->request->post());
+                $model->load(Yii::$app->request->post());
+                $payment->amount = $model->amount;
+                $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
+                if (round($payment->amount, 2) > 0.00) {
+                    $payment->save();
+                    $model->save();
+                } else {
+                    $payment->delete();
+                }
                 $response = [
-                    'status' => false,
-                    'message' => "System generated payments can't be modified!"
+                    'status' => true
                 ];
             } else {
                 $data = $this->renderAjax('_form', [
@@ -273,6 +269,11 @@ class PaymentController extends BaseController
                     'data' => $data
                 ];
             }
+        } else {
+            $response = [
+                'status' => false,
+                'message' => current($payment->getErrors())
+            ];
         }
         return $response;
     }
