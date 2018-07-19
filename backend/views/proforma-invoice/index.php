@@ -16,11 +16,12 @@ use yii\widgets\Pjax;
 $this->title = 'Payment Requests';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
+<div class="grid-row-open">
 <?php Pjax::begin([
-    'timeout' => 6000,
+    'timeout' => 8000,
     'enablePushState' => false,
     'id' => 'proforma-invoice-listing',]); ?>
-<div class="grid-row-open">
     <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id; ?>
     <?php echo KartikGridView::widget([
         'dataProvider' => $dataProvider,
