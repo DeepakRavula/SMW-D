@@ -101,7 +101,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     public function getProformaInvoiceNumber()
     {
         $proformaInvoiceNumber = str_pad($this->proforma_invoice_number, 5, 0, STR_PAD_LEFT);
-            return 'P-'.$proformaInvoiceNumber;
+            return 'PR-'.$proformaInvoiceNumber;
     }
     
     public function beforeSave($insert)

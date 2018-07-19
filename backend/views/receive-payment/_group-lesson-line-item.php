@@ -170,10 +170,16 @@ use yii\bootstrap\ActiveForm;
     ?>
     <?php ActiveForm::end(); ?>
 
-<?php Pjax::begin(['enablePushState' => false, 'id' => 'group-lesson-line-item-listing','timeout' => 6000,]); ?>
+<?php $gridId = 'group-lesson-line-item-grid'; $pjaxId = 'group-lesson-line-item-listing'; ?>
+<?php if (isset($changeGridId)) {
+    $gridId = 'group-lesson-line-item-grid-pr'; 
+    $pjaxId = 'group-lesson-line-item-listing-pr';
+} ?>
+
+<?php Pjax::begin(['enablePushState' => false, 'id' => $gridId,'timeout' => 6000,]); ?>
 <?php if ($searchModel->showCheckBox) : ?>
     <?= GridView::widget([
-        'options' => ['id' => 'group-lesson-line-item-grid'],
+        'options' => ['id' => $gridId],
         'dataProvider' => $lessonLineItemsDataProvider,
         'filterModel' => $searchModel,
         'filterUrl' => $isCreatePfi ? Url::to(['proforma-invoice/create', 'PaymentFormGroupLessonSearch[userId]' => $searchModel->userId]) : 
@@ -185,7 +191,7 @@ use yii\bootstrap\ActiveForm;
     ]); ?>
 <?php else: ?>
 <?= GridView::widget([
-        'options' => ['id' => 'group-lesson-line-item-grid'],
+        'options' => ['id' => $gridId],
         'dataProvider' => $lessonLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,
