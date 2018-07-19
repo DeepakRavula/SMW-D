@@ -23,7 +23,6 @@ class m180719_101506_saving_all_invoices extends Migration
     {
         $invoices = Invoice::find()
         ->notDeleted()
-        ->location([14, 15])
         ->all();
 
     foreach ($invoices as $invoice) {
