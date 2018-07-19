@@ -2,6 +2,7 @@
 
 use yii\db\Migration;
 use common\models\Invoice;
+use common\models\User;
 
 /**
  * Class m180719_101506_saving_all_invoices
