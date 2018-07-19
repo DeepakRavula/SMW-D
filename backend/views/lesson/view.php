@@ -2,6 +2,7 @@
 
 use yii\bootstrap\Tabs;
 use yii\helpers\Url;
+use common\models\User;
 use common\models\Note;
 use yii\bootstrap\Modal;
 use common\models\PrivateLesson;
@@ -47,6 +48,14 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                 </div>
             <?php endif; ?>            
         <?php endif; ?>
+        <?php $loggedUser = User::findOne(Yii::$app->user->id); ?>
+        <?php if ($loggedUser->isAdmin() || $loggedUser->isOwner()): ?>
+            <div id="cost-panel">
+                <?= $this->render('cost/_view', [
+                    'model' => $model,
+                ]); ?>	
+            </div>
+        <?php endif; ?>     
     </div>
     <div class="col-md-6">      
         <?= $this->render('schedule/_view', [
@@ -252,6 +261,24 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         });
         return false;
     });
+
+    $(document).off("click", ".edit-cost").on("click", ".edit-cost", function() {
+        var customUrl = '<?= Url::to(['lesson/edit-cost', 'id' => $model->id]); ?>';
+        $.ajax({
+            url: customUrl,
+            type: 'get',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                }
+            }
+        });
+        return false;
+    });
     
     $(document).on('beforeSubmit', '#lesson-note-form', function (e) {
         $.ajax({
@@ -295,8 +322,11 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     });
 
     $(document).on('modal-success', function(event, params) {
-        if (params.url) {
+        if (params.url) {debugger
             window.location.href = params.url;
+        }
+        if ($('#lesson-cost').length) {
+            $.pjax.reload({container: "#lesson-cost", replace: false, async: false, timeout: 6000});
         }
         if ($('#lesson-discount').length) {
             $.pjax.reload({container: "#lesson-discount", replace: false, async: false, timeout: 6000});

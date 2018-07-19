@@ -237,9 +237,6 @@ class InvoiceController extends BaseController
                     ->orderBy(['payment.date' => SORT_DESC]);
             }])
             ->invoice($id);
-        if ($model->isProFormaInvoice()) {
-            $invoicePayments->notLessonCreditUsed();
-        }
         $invoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $invoicePayments,
         ]);
