@@ -18,13 +18,11 @@ use yii\helpers\Url;
     <?=	Html::a(
             '<i title="Delete" class="fa fa-trash"></i>',
             ['proforma-invoice/delete', 'id' => $model->id],
-        [
-            'class' => 'm-r-10 btn btn-box-tool ',
+            ['class' => 'm-r-10 btn btn-box-tool ',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this invoice?',
             ],
-            'id' => 'delete-button',
-        ]
+            'id' => 'delete-button',]
         )
         ?>
     <div class="dropdown">
