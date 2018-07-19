@@ -1,13 +1,13 @@
 
 <dl class="dl-invoice-summary">
     <dt id="invoice-discount">Discounts</dt>
-    <dd><?=Yii::$app->formatter->format($model->totalDiscount, ['currency', 'USD', [
+    <dd><?=Yii::$app->formatter->format($model->getTotalDiscount(), ['currency', 'USD', [
                 \NumberFormatter::MIN_FRACTION_DIGITS => 2,
                 \NumberFormatter::MAX_FRACTION_DIGITS => 2,
         ]]);
         ?>
      <dt>SubTotal</dt>
-    <dd><?=Yii::$app->formatter->format($model->subTotal, ['currency', 'USD', [
+    <dd><?=Yii::$app->formatter->format($model->getSubtotal(), ['currency', 'USD', [
                 \NumberFormatter::MIN_FRACTION_DIGITS => 2,
                 \NumberFormatter::MAX_FRACTION_DIGITS => 2,
         ]]);
