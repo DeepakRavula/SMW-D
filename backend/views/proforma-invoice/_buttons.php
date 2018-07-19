@@ -11,6 +11,20 @@ use yii\helpers\Url;
 <?php Pjax::Begin(['id' => 'invoice-header-summary']) ?>
 
 <div id="invoice-header">
+<?= Yii::$app->formatter->format($model->getTotal($model->id), ['currency', 'USD', [
+        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
+        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
+    ]]); ?> &nbsp;&nbsp;
+    <?=	Html::a(
+            '<i title="Delete" class="fa fa-trash"></i>',
+            ['proforma-invoice/delete', 'id' => $model->id],
+            ['class' => 'm-r-10 btn btn-box-tool ',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this invoice?',
+            ],
+            'id' => 'delete-button',]
+        )
+        ?>
     <div class="dropdown">
         <i class="fa fa-gear dropdown-toggle" data-toggle="dropdown"></i>
         <ul class="dropdown-menu dropdown-menu-right">
@@ -19,10 +33,7 @@ use yii\helpers\Url;
             <li><a id="proforma-print-btn" href="#">Print</a></li>
         </ul>
     </div>
-    <?= Yii::$app->formatter->format($model->getTotal($model->id), ['currency', 'USD', [
-        \NumberFormatter::MIN_FRACTION_DIGITS => 2,
-        \NumberFormatter::MAX_FRACTION_DIGITS => 2,
-    ]]); ?> &nbsp;&nbsp;
+   
 </div>
 
 <?php Pjax::end();?>

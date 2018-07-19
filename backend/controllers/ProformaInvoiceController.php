@@ -34,7 +34,7 @@ class ProformaInvoiceController extends BaseController
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => [
-                    'create','note', 'update'
+                    'create','note', 'update', 'delete'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -45,7 +45,7 @@ class ProformaInvoiceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index','create','view','note', 'update'],
+                        'actions' => ['index','create','view','note', 'update', 'delete'],
                         'roles' => [
                              'managePfi'
                         ]
@@ -247,6 +247,13 @@ class ProformaInvoiceController extends BaseController
             return [
                 'status' => true,
             ];
+        }
+    }
+    public function actionDelete($id)
+    {
+        $model = $this->findModel($id);
+        if ($model->delete()) {
+            return $this->redirect(['proforma-invoice/index']);
         }
     }
 }
