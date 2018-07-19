@@ -143,13 +143,6 @@ $this->params['action-button'] = $this->render('_action-menu', [
                     return $lessonDuration;
                 },
             ],
-	    [
-		'label' => 'Price',
-		'attribute' => 'price',
-		'value' => function ($data) {
-			return Yii::$app->formatter->asCurrency($data->netPrice);
-		},
-	    ],
     [
                 'label' => 'Status',
                 'attribute' => 'lessonStatus',
@@ -164,31 +157,21 @@ $this->params['action-button'] = $this->render('_action-menu', [
                 },
             ],
             [
-                'label' => 'Invoiced ?',
-                'attribute'=> 'invoiceStatus',
-                'filter'=>LessonSearch::invoiceStatuses(),
+                'label' => 'Price',
+                'attribute' => 'price',
+                'contentOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
-                    $status = null;
-                    if (!empty($data->invoice)) {
-                        $status = 'Yes';
-                    } else {
-                        $status = 'No';
-                    }
-
-                    return $status;
+                    return Yii::$app->formatter->asCurrency($data->netPrice);
                 },
-            ],
-              [
-                'label' => 'Present',
-                'attribute' => 'attendanceStatus',
-                'filter' => LessonSearch::attendanceStatuses(),
+                ],
+            [
+                'label' => 'Owing',
+                'attribute' => 'owing',
+                'contentOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
-                    $status = null;
-                    if (!empty($data->isPresent)) {
-                        return $data->getPresent();
-                    }
-
-                    return $status;
+                    return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
                 },
             ],
         ];
