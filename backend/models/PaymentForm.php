@@ -137,6 +137,7 @@ class PaymentForm extends Model
                                             break;
                                         }
                                     }
+                                    $invoice->save();
                                 }
                             }
                         }
@@ -228,6 +229,7 @@ class PaymentForm extends Model
                                         break;
                                     }
                                 }
+                                $invoice->save();
                             }
                         }
                         if ($this->lessonIds) {
@@ -321,6 +323,7 @@ class PaymentForm extends Model
                             break;
                         }
                     }
+                    $invoice->save();
                 }
             }
         }
