@@ -8,6 +8,13 @@ use common\models\Invoice;
  */
 class m180719_101506_saving_all_invoices extends Migration
 {
+    public function init() 
+    {
+        parent::init();
+        $user = User::findByRole(User::ROLE_BOT);
+        $botUser = end($user);
+        Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
+    }
     /**
      * {@inheritdoc}
      */
