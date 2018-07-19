@@ -143,7 +143,7 @@ $this->params['action-button'] = $this->render('_action-menu', [
                     return $lessonDuration;
                 },
             ],
-    [
+            [
                 'label' => 'Status',
                 'attribute' => 'lessonStatus',
                 'filter' => LessonSearch::lessonStatuses(),
