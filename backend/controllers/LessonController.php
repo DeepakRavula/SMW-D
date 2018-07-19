@@ -66,7 +66,7 @@ class LessonController extends BaseController
                             'index', 'view', 'credit-transfer', 'validate-on-update', 'edit-price',' edit-tax', 
 							'fetch-duration','edit-classroom', 'update', 'update-field', 'review',
 							'fetch-conflict', 'confirm', 'invoice', 'take-payment', 'modify-classroom',
-                            'payment', 'substitute', 'unschedule', 'edit-cost'
+                            'payment', 'substitute', 'unschedule', 'edit-cost', 'edit-tax', 
                         ],
                         'roles' => ['managePrivateLessons', 
 							'manageGroupLessons'],
