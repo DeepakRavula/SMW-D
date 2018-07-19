@@ -46,17 +46,19 @@ class ProFormaInvoiceController extends Controller
                     $lessonIds[] = $lesson->id;
                 }
             }
-            $model = new ProformaInvoice();
-            $model->userId = $enrolment->customer->id;
-            $model->locationId = $enrolment->customer->userLocation->location_id;
-            $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
-            $model->save();
-            $lessons = Lesson::findAll($lessonIds);
-            foreach ($lessons as $lesson) {
-                $proformaLineItem = new ProformaLineItem();
-                $proformaLineItem->proformaInvoiceId = $model->id;
-                $proformaLineItem->lessonId = $lesson->id;
-                $proformaLineItem->save();
+            if ($lessonIds) {
+                $model = new ProformaInvoice();
+                $model->userId = $enrolment->customer->id;
+                $model->locationId = $enrolment->customer->userLocation->location_id;
+                $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
+                $model->save();
+                $lessons = Lesson::findAll($lessonIds);
+                foreach ($lessons as $lesson) {
+                    $proformaLineItem = new ProformaLineItem();
+                    $proformaLineItem->proformaInvoiceId = $model->id;
+                    $proformaLineItem->lessonId = $lesson->id;
+                    $proformaLineItem->save();
+                }
             }
         }
     }
