@@ -49,6 +49,7 @@ use yii\helpers\Url;
     $(document).ready(function () {
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Create PFI</h4>');
+        $('.modal-save').show();
         $('.modal-save').text('Create PFI');
         $('.select-on-check-all').prop('checked', true);
         createPFI.setAction();

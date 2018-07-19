@@ -14,15 +14,18 @@ use common\models\Lesson;
         <div class="pull-right">
             <?= Html::a('Cancel', '', ['class' => 'btn btn-default modal-cancel']);?>
             <?= Html::submitButton(Yii::t('backend', 'Apply'), [
+                'id' => 'modal-apply',
                 'class' => 'btn btn-info modal-button',
                 'name' => 'signup-button'
             ]) ?>
             <?= Html::submitButton(Yii::t('backend', 'Save'), [
+                'id' => 'modal-save',
                 'class' => 'btn btn-info modal-save',
                 'name' => 'signup-button',
                 'value' => Lesson::APPLY_SINGLE_LESSON
             ]) ?>
             <?= Html::submitButton(Yii::t('backend', 'Apply All'), [
+                'id' => 'modal-save-all',
                 'class' => 'btn btn-info modal-save-all',
                 'name' => 'button',
                 'value' => Lesson::APPLY_ALL_FUTURE_LESSONS

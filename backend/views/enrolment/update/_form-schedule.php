@@ -97,6 +97,7 @@ $columns = [
 <script type="text/javascript">
     $(document).ready(function() {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">End Date Adjustment</h4>');
+        $('.modal-save').show();
         $('.modal-save').text('Confirm');
         $('#popup-modal .modal-dialog').css({'width': '600px'});
     });

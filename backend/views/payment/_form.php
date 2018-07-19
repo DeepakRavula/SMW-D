@@ -206,10 +206,9 @@ var updatePayment = {
     });
 
     $(document).ready(function () {
-        $('.payment-edit').addClass('modal-save');
-        $('.modal-save').removeClass('payment-edit');
         $('.modal-save').show();
         $('.modal-save').text('Save');
+        $('#modal-apply').hide();
         $('.modal-save-all').hide();
         $('.modal-delete').hide();
         $('#popup-modal .modal-dialog').css({'width': '1000px'});

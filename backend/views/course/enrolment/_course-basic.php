@@ -180,6 +180,7 @@ use kartik\switchinput\SwitchInput;
 <script>
     $(document).ready(function () {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment Basic</h4>');
+        $('.modal-save').show();
         $('.modal-save').text('Next');
         $('#modal-back').hide();
         $('#popup-modal .modal-dialog').css({'width': '600px'});

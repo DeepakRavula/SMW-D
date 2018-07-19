@@ -46,6 +46,7 @@ use yii\helpers\Url;
 <script>
     $(document).ready(function () {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Student Details</h4>');
+        $('.modal-save').show();
         $('.modal-save').text('Preview Lessons');
         $('#popup-modal .modal-dialog').css({'width': '400px'});
         $('#modal-spinner').hide();

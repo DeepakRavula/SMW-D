@@ -126,6 +126,7 @@ $this->render('review/_button', [
                     $('#popup-modal .modal-dialog').css({'width': '1000px'});
                     $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Lesson edit</h4>');
                     $('.modal-save').text('Apply');
+                    $('.modal-save').show();
                     $('.modal-save-all').show();
                 }
             }

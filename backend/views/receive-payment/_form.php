@@ -273,6 +273,7 @@ use yii\bootstrap\Html;
         $('#modal-back').removeClass('btn-info');
         $('#modal-back').addClass('btn-default');
         $('.modal-back').show();
+        $('.modal-save').show();
         $('.select-on-check-all').prop('checked', true);
         receivePayment.calcAmountNeeded();
         receivePayment.setAvailableCredits();

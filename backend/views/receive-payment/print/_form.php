@@ -82,6 +82,7 @@ use yii\bootstrap\Html;
         }
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html(header);
+        $('.modal-save').show();
         $('.modal-save').text('Email');
         $('.modal-save-all').text('Print');
         $('.modal-save-all').show();

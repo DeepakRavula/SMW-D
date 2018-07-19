@@ -39,7 +39,7 @@ use yii\jui\DatePicker;
 
 <script>
     $(document).ready(function () {
-        $('.modal-back').show();
+        $('#modal-back').show();
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Enrolment Start Date</h4>');
         $('.modal-save').text('Next');
         $('#popup-modal .modal-dialog').css({'width': '400px'});

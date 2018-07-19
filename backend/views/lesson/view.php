@@ -309,6 +309,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                     $('#popup-modal').modal('show');
                     $('#popup-modal .modal-dialog').css({'width': '1000px'});
                     $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
+                    $('.modal-save').show();
                     $('.modal-save').text('Send');
                 }
             }
