@@ -32,7 +32,7 @@ trait Invoiceable
         $invoiceLineItem = $this->addLessonLineItem($invoice);
         $qualification = Qualification::findOne(['teacher_id' => $this->teacherId,
             'program_id' => $this->course->program->id]);
-        $rate = !empty($qualification->rate) ? $qualification->rate : 0;
+        $rate = $this->teacherRate;
         $actualLessonDate            = \DateTime::createFromFormat(
             'Y-m-d H:i:s',
                 $this->date

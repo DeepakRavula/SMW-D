@@ -4,7 +4,7 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 use common\models\Lesson;
 use common\models\Invoice;
-    if ($searchModel->isWeb) {
+    if ($searchModel->isWeb && $model->isInvoice()) {
         $tableOption = ['class' => 'table table-condensed'];
         $columns = [
             [
@@ -31,8 +31,8 @@ use common\models\Invoice;
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:70px;'],
             'attribute' => 'royaltyFree',
             'label' => 'Royalty Free',
-            'value' => function ($model) {
-                return $model->royaltyFree ? 'Yes' : 'No';
+            'value' => function ($data) {
+                return $data->royaltyFree ? 'Yes' : 'No';
             }
         ]);
     }
@@ -57,8 +57,8 @@ use common\models\Invoice;
             'contentOptions' => ['class' => 'text-right', 'style' => 'width:80px;'],
             'format' => 'currency',
             'attribute' => 'discount',
-            'value' => function ($model) {
-                return Yii::$app->formatter->asDecimal($model->discount);
+            'value' => function ($data) {
+                return Yii::$app->formatter->asDecimal($data->discount);
             }
         ],
         [
@@ -88,7 +88,7 @@ use common\models\Invoice;
     ]);
 Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>
 <?php
-if ($model->type == Invoice::TYPE_INVOICE) {
+if ($model->isInvoice()) {
 	$id = 'line-item-grid';
 } else {
 	$id = 'proforma-line-item-grid';

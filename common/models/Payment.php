@@ -87,6 +87,14 @@ class Payment extends ActiveRecord
 
     public function validateOnDelete($attributes)
     {
+        if ($this->hasInvoicePayments()) {
+            foreach ($this->invoicePayments as $invoicePayment) {
+                if (!$invoicePayment->invoice->isInvoice()) {
+                    $this->addError($attributes, "Used PFI's payments can't be deleted!");
+                    break;
+                }
+            }
+        }
         if ($this->hasLessonPayments() && !$this->isAutoPayments()) {
             foreach ($this->lessonPayments as $lessonPayment) {
                 if ($lessonPayment->lesson->isPrivate()) {
@@ -101,7 +109,6 @@ class Payment extends ActiveRecord
                     }
                 }
             }
-            
         }
     }
 
@@ -115,9 +122,14 @@ class Payment extends ActiveRecord
 
     public function validateOnEdit($attributes)
     {
-        if (round($this->old['amount'], 2) !== round($this->amount, 2)) {
-            if ($this->invoice->isProFormaInvoice() && $this->invoice->hasLessonCreditUsedPayment()) {
-                $this->addError($attributes, "Can't adjust payment before retract lesson credit");
+        if ($this->isAutoPayments()) {
+            $this->addError($attributes, "System generated payments can't be deleted!");
+        }
+        if ($this->hasInvoicePayments()) {
+            foreach ($this->invoicePayments as $invoicePayment) {
+                if (!$invoicePayment->invoice->isInvoice()) {
+                    $this->addError($attributes, "Used PFI's payments can't be modified!");
+                }
             }
         }
     }
@@ -248,6 +260,11 @@ class Payment extends ActiveRecord
     public function isInvoicePayment()
     {
         return !empty($this->invoicePayment);
+    }
+
+    public function hasInvoicePayments()
+    {
+        return !empty($this->invoicePayments);
     }
 
     public function getInvoicePayments()
