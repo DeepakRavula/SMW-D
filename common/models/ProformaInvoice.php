@@ -141,17 +141,16 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     {
         $discount = 0.0;
         $lineItems  =   $this->proformaLineItems;
-        foreach($lineItems as $lineItem)
+        foreach($lineItems as $lineItem) 
         {
-            if($lineItem->lessonLineItem){
-                $discount+=$lineItem->lessonLineItem->discount;
+            if($lineItem->lessonLineItem) {
+                $discount+=$lineItem->lesson->discount;
             }
             if($lineItem->invoiceLineItem){
-                $discount+=$lineItem->invoiceLineItem->totalDiscount;
+                $discount+=$lineItem->invoice->totalDiscount;
             }
            
         }
-
         return $discount;
     }
     public function getSubtotal()
@@ -161,10 +160,10 @@ class ProformaInvoice extends \yii\db\ActiveRecord
          foreach($lineItems as $lineItem)
         {
             if($lineItem->lessonLineItem){
-                $subtotal+=$lineItem->lessonLineItem->netPrice;
+                $subtotal+=$lineItem->lesson->netPrice;
             }
             if($lineItem->invoiceLineItem){
-                $subtotal+=$lineItem->invoiceLineItem->subTotal;
+                $subtotal+=$lineItem->invoice->subTotal;
             }
 
         }

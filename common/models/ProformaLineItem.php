@@ -84,11 +84,21 @@ class ProformaLineItem extends \yii\db\ActiveRecord
     
     public function getLessonLineItem()
     {
-        return $this->hasMany(Lesson::className(), ['id' => 'lessonId']);
+        return $this->hasOne(ProformaItemLesson::className(), ['proformaLineItemId' => 'id']);
     }
     
     public function getInvoiceLineItem()
     {
-        return $this->hasMany(Invoice::className(), ['id' => 'invoiceId']);
+        return $this->hasMany(ProformaItemInvoice::className(), ['proformaLineItemId' => 'id']);
+    }
+    public function getLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+            ->via('lessonLineItem');
+    }
+    public function getInvoice()
+    {
+        return $this->hasOne(Invoice::className(), ['id' => 'invoiceId'])
+            ->via('invoiceLineItem');
     }
 }
