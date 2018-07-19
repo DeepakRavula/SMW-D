@@ -144,10 +144,10 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         foreach($lineItems as $lineItem) 
         {
             if($lineItem->lessonLineItem) {
-                $discount+=$lineItem->lessonLineItem->lesson->discount;
+                $discount+=$lineItem->lesson->discount;
             }
             if($lineItem->invoiceLineItem){
-                $discount+=$lineItem->invoiceLineItem->invoice->totalDiscount;
+                $discount+=$lineItem->invoice->totalDiscount;
             }
            
         }
@@ -160,10 +160,10 @@ class ProformaInvoice extends \yii\db\ActiveRecord
          foreach($lineItems as $lineItem)
         {
             if($lineItem->lessonLineItem){
-                $subtotal+=$lineItem->lessonLineItem->netPrice;
+                $subtotal+=$lineItem->lesson->netPrice;
             }
             if($lineItem->invoiceLineItem){
-                $subtotal+=$lineItem->invoiceLineItem->subTotal;
+                $subtotal+=$lineItem->invoice->subTotal;
             }
 
         }
