@@ -90,4 +90,20 @@ class ProFormaInvoiceController extends Controller
             }
         }
     }
+
+    public function actionSave()
+    {
+        $prs = ProformaInvoice::findAll();
+        foreach ($prs as $pr) {
+            $pr->save();
+        }
+    }
+
+    public function actionTruncate()
+    {
+        Yii::$app->db->createCommand()->truncateTable('proforma_invoice')->execute();
+        Yii::$app->db->createCommand()->truncateTable('proforma_item_invoice')->execute();
+        Yii::$app->db->createCommand()->truncateTable('proforma_item_lesson')->execute();
+        Yii::$app->db->createCommand()->truncateTable('proforma_line_item')->execute();
+    }
 }
