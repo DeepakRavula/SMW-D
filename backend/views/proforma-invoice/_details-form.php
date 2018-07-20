@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
-use kartik\date\DatePicker;
+use yii\jui\DatePicker;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -17,34 +17,35 @@ use yii\helpers\Url;
     ]); ?>
  	<div class="row">
         <div class="col-xs-7">
-        <?php echo $form->field($model, 'date')->widget(DatePicker::classname(), [
+            <?= $form->field($model, 'date')->widget(DatePicker::classname(), [
                 'options' => [
-                    'value' => Yii::$app->formatter->asDate($model->date),
+                    'class' => 'form-control',
+                    'readOnly' => true
                 ],
-                'type' => DatePicker::TYPE_COMPONENT_APPEND,
-                'readonly' => true,
-                'pluginOptions' => [
-                    'autoclose' => true,
-		            'showOnFocus' =>false,
-                    'format' => 'M d, yyyy',
-                    
-                ],
-            ]);
+                'dateFormat' => 'php:M d, Y',
+                'clientOptions' => [
+                    'defaultDate' => (new \DateTime($model->date))->format('M d, Y'),
+                    'changeMonth' => true,
+                    'yearRange' => '2015:2100',
+                    'changeYear' => true,
+                ]
+                ])->label('Date');
             ?>
         </div>
         <div class="col-xs-7">
-        <?php echo $form->field($model, 'dueDate')->widget(DatePicker::classname(), [
+            <?= $form->field($model, 'dueDate')->widget(DatePicker::classname(), [
                 'options' => [
-                    'value' => Yii::$app->formatter->asDate($model->dueDate),
+                    'class' => 'form-control',
+                    'readOnly' => true
                 ],
-                'type' => DatePicker::TYPE_COMPONENT_APPEND,
-                'readonly' => true,
-                'pluginOptions' => [
-                    'autoclose' => true,
-		            'showOnFocus' =>false,
-                    'format' => 'M d, yyyy',
-                ],
-            ]);
+                'dateFormat' => 'php:M d, Y',
+                'clientOptions' => [
+                    'defaultDate' => (new \DateTime($model->dueDate))->format('M d, Y'),
+                    'changeMonth' => true,
+                    'yearRange' => '2015:2100',
+                    'changeYear' => true,
+                ]
+                ])->label('Due Date');
             ?>
         </div>
 	</div>
@@ -60,8 +61,10 @@ use yii\helpers\Url;
 
     <?php ActiveForm::end(); ?>
 </div>
+
 <script>
     $(document).ready(function () {
+        $('.modal-save').show();
         $('#popup-modal .modal-dialog').css({'width': '400px'});
         $('#popup-modal').find('.modal-header').html('Edit Details');
     });

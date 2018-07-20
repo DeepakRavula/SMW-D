@@ -6,7 +6,6 @@ use common\models\PaymentFrequency;
 use yii\helpers\ArrayHelper;
 use kartik\time\TimePicker;
 use yii\bootstrap\ActiveForm;
-use yii\jui\DatePicker;
 use yii\helpers\Url;
 use yii\web\View;
 use common\models\Enrolment;

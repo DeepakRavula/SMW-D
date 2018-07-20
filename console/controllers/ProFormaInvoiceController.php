@@ -33,12 +33,21 @@ class ProFormaInvoiceController extends Controller
             ->isRegular()
             ->all();
         foreach ($enrolments as $enrolment) {
+            $invoicedLessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->notCanceled()
+                ->andWhere(['<', 'DATE(lesson.date)', $date->format('Y-m-d')])
+                ->enrolment($enrolment->id)
+                ->invoiced();
             $lessons = Lesson::find()
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
                 ->andWhere(['<', 'DATE(lesson.date)', $date->format('Y-m-d')])
                 ->enrolment($enrolment->id)
+                ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
+                ->andWhere(['invoiced_lesson.id' => null])
                 ->all();
             $lessonIds = [];
             foreach ($lessons as $lesson) {
