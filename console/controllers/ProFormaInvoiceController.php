@@ -93,7 +93,7 @@ class ProFormaInvoiceController extends Controller
 
     public function actionSave()
     {
-        $prs = ProformaInvoice::findAll();
+        $prs = ProformaInvoice::find()->all();
         foreach ($prs as $pr) {
             $pr->save();
         }
