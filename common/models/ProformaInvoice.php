@@ -123,6 +123,19 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             $this->date = (new \DateTime())->format('Y-m-d');
             $this->dueDate = (new \DateTime())->format('Y-m-d');
             $this->status = self::STATUS_UNPAID;
+        } else {
+            $invoiceId = $this->id;
+            $lesson = Lesson::find()
+                ->joinWith(['proformaLessonItem' => function ($query) use ($invoiceId) {
+                    $query->joinWith(['proformaLineItem' => function ($query) use ($invoiceId) {
+                        $query->andWhere(['proforma_line_item.proformaInvoiceId' => $invoiceId]);
+                    }]);
+                }])
+                ->orderBy(['lesson.date' => SORT_ASC])
+                ->one();
+            if ($lesson) {
+                $this->dueDate = (new \DateTime($lesson->date))->format('Y-m-d');
+            }
         }
         return parent::beforeSave($insert);
     }

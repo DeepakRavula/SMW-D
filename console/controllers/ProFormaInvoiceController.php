@@ -25,27 +25,45 @@ class ProFormaInvoiceController extends Controller
 
     public function actionPaymentRequest()
     {
-        $date = new \DateTime('2018-08-30');
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+
+        $currentDate = (new \DateTime())->format('Y-m-d');
         $enrolments = Enrolment::find()
             ->notDeleted()
             ->isConfirmed()
             ->privateProgram()
+            ->andWhere(['NOT', ['enrolment.paymentFrequencyId' => 0]])
             ->isRegular()
+            ->joinWith(['course' => function ($query) use ($currentDate) {
+                $query->andWhere(['>=', 'DATE(course.endDate)', $currentDate])
+                        ->confirmed();
+            }])
             ->all();
+        
         foreach ($enrolments as $enrolment) {
+            $date = null;
+            $dateRange = $enrolment->getCurrentPaymentCycleDateRange($date);
+            list($from_date, $to_date) = explode(' - ', $dateRange);
+            $fromDate = new \DateTime($from_date);
+            $toDate = new \DateTime($to_date);
             $invoicedLessons = Lesson::find()
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
-                ->andWhere(['<', 'DATE(lesson.date)', $date->format('Y-m-d')])
-                ->enrolment($enrolment->id)
+                ->privateLessons()
+                ->program($enrolment->course->programId)
+                ->between($fromDate, $toDate)
+                ->student($enrolment->studentId)
                 ->invoiced();
             $lessons = Lesson::find()
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
-                ->andWhere(['<', 'DATE(lesson.date)', $date->format('Y-m-d')])
-                ->enrolment($enrolment->id)
+                ->privateLessons()
+                ->program($enrolment->course->programId)
+                ->between($fromDate, $toDate)
+                ->student($enrolment->studentId)
                 ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
                 ->andWhere(['invoiced_lesson.id' => null])
                 ->all();
@@ -68,6 +86,7 @@ class ProFormaInvoiceController extends Controller
                     $proformaLineItem->lessonId = $lesson->id;
                     $proformaLineItem->save();
                 }
+                $model->save();
             }
         }
     }
