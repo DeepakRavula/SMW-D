@@ -63,6 +63,27 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($data) {
                     return !empty($data->dueDate) ? Yii::$app->formatter->asDate($data->dueDate) : null;
                 },
+                'filterType' => KartikGridView::FILTER_DATE_RANGE,
+			  'filterWidgetOptions' => [
+                    'model' => $searchModel,
+                    'convertFormat' => true,
+                    'initRangeExpr' => true,
+                    'attribute' => 'dateRange',
+                    'convertFormat' => true,
+                    'pluginOptions'=>[
+                        'autoApply' => true,
+                        'ranges' => [
+                            Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
+                            Yii::t('kvdrp', 'Tomorrow') => ["moment().startOf('day').add(1,'days')", "moment().endOf('day').add(1,'days')"],
+                            Yii::t('kvdrp', 'Next {n} Days', ['n' => 7]) => ["moment().startOf('day')", "moment().endOf('day').add(6, 'days')"],
+                            Yii::t('kvdrp', 'Next {n} Days', ['n' => 30]) => ["moment().startOf('day')", "moment().endOf('day').add(29, 'days')"],
+                        ],
+                        'locale' => [
+                            'format' => 'M d, Y',
+                        ],
+                        'opens' => 'right'
+                    ],
+                ],
             ],
 
             [

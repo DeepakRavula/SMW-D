@@ -19,13 +19,15 @@ class ProformaInvoiceSearch extends ProformaInvoice
     public $number;
     public $customer;
     public $phone;
+    public $status;
+    public $dateRange;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['showCheckBox','isPrint','number','customer','phone'], 'safe'],
+            [['showCheckBox','isPrint','number','customer','phone', 'dateRange', 'status'], 'safe'],
         ];
     }
 
@@ -82,6 +84,9 @@ class ProformaInvoiceSearch extends ProformaInvoice
 	
 	if(!empty($this->number)) {
 		$query->andFilterWhere(['proforma_invoice.id' => $this->number]);
+    }
+    if(!empty($this->dateRange)) {
+		$query->andFilterWhere(['DATE(proforma_invoice.dueDate)' => $this->number]);
     }
 	$query->andFilterWhere(['proforma_invoice.userId' => $this->customer]);
 	$query->andFilterWhere(['like', 'user_phone.number', $this->phone]);
