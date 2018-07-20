@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use common\models\Location;
 use common\models\query\ProformaInvoiceQuery;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "proforma_invoice".
@@ -44,7 +45,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return [
             [['userId', 'locationId'], 'required'],
             [['lessonIds', 'invoiceIds', 'dateRange', 'fromDate', 'toDate', 'lessonId', 
-                'notes', 'status', 'dueDate', 'date'], 'safe']
+                'notes', 'status', 'dueDate', 'date', 'isDeleted'], 'safe']
         ];
     }
 
@@ -62,7 +63,20 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             'notes'  =>'Message',
             'status' => 'Status',
             'dueDate' => 'Due Date',
+            'isDeleted' => 'Is Deleted',
             
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+            ],
         ];
     }
 
