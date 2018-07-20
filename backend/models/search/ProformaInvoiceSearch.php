@@ -21,13 +21,19 @@ class ProformaInvoiceSearch extends ProformaInvoice
     public $phone;
     public $status;
     public $dateRange;
+    public $proformaInvoiceStatus;
+    public $fromDate;
+    public $toDate;
+    public $showAll;
+
+    const STATUS_ALL = 'all';
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['showCheckBox','isPrint','number','customer','phone', 'dateRange', 'status'], 'safe'],
+            [['showCheckBox','isPrint','number','customer','phone', 'dateRange', 'status', 'proformaInvoiceStatus', 'showAll'], 'safe'],
         ];
     }
 
@@ -50,7 +56,7 @@ class ProformaInvoiceSearch extends ProformaInvoice
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = ProformaInvoice::find()
                 ->location($locationId);
-       
+
         $query->joinWith(['user' => function ($query) {	
 		$query->joinWith('userProfile');
 		$query->joinWith('phoneNumber');
@@ -68,10 +74,14 @@ class ProformaInvoiceSearch extends ProformaInvoice
                     'asc' => ['user_profile.firstname' => SORT_ASC],
                     'desc' => ['user_profile.firstname' => SORT_DESC],
                 ],
-		'phone' => [
+		        'phone' => [
                     'asc' => ['user_phone.number' => SORT_ASC],
                     'desc' => ['user_phone.number' => SORT_DESC],
                 ],
+                'dateRange' => [
+                    'asc' => ['proforma_invoice.dueDate' => SORT_ASC],
+                    'desc' => ['proforma_invoice.dueDate' => SORT_DESC],
+                ]
             ]
         ]);
 	$dataProvider->sort->defaultOrder = [
@@ -81,15 +91,31 @@ class ProformaInvoiceSearch extends ProformaInvoice
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-	
-	if(!empty($this->number)) {
-		$query->andFilterWhere(['proforma_invoice.id' => $this->number]);
+        if(!empty($this->number)) {
+            $query->andFilterWhere(['proforma_invoice.id' => $this->number]);
+        }
+        if (!empty($this->dateRange)) {
+            list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
+            $query->andWhere(['between', 'DATE(proforma_invoice.dueDate)',
+                (new \DateTime($this->fromDate))->format('Y-m-d'),
+                (new \DateTime($this->toDate))->format('Y-m-d')]);
+        }
+        if(!empty($this->proformaInvoiceStatus)) {
+            $query->andFilterWhere(['proforma_invoice.status' => $this->proformaInvoiceStatus]);
+        }
+        if (!$this->showAll) {
+            $query->unpaid();
+        }
+        $query->andFilterWhere(['proforma_invoice.userId' => $this->customer]);
+        $query->andFilterWhere(['like', 'user_phone.number', $this->phone]);
+            return $dataProvider;
     }
-    if(!empty($this->dateRange)) {
-		$query->andFilterWhere(['DATE(proforma_invoice.dueDate)' => $this->number]);
-    }
-	$query->andFilterWhere(['proforma_invoice.userId' => $this->customer]);
-	$query->andFilterWhere(['like', 'user_phone.number', $this->phone]);
-        return $dataProvider;
+    public static function proformaInvoiceStatuses()
+    {
+        return [
+            self::STATUS_ALL => 'All',
+	        ProformaInvoice::STATUS_PAID => 'Paid',
+            ProformaInvoice::STATUS_UNPAID => 'Unpaid',
+        ];
     }
 }
