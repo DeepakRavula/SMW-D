@@ -32,20 +32,6 @@ use yii\helpers\Url;
             ?>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xs-6 pull-left">
-            <label class="dollar-symbol">Teacher Rate Per Hour</label>
-        </div>
-        <div class="col-xs-2">
-        </div>
-        <div class="col-xs-4">
-            <?= $form->field($model, 'teacherRate')->textInput([
-                    'value' => Yii::$app->formatter->asDecimal($model->teacherRate, 2),
-                    'class' => 'text-right form-control'
-                ])->label(false); 
-            ?>
-        </div>
-    </div>
     <?php ActiveForm::end(); ?>
 </div>
 

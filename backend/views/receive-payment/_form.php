@@ -191,7 +191,6 @@ use yii\bootstrap\Html;
                 'PaymentForm[invoiceCredits]': invoiceCredits });
             var url = '<?= Url::to(['payment/receive']) ?>?' + params;
             $('#modal-form').attr('action', url);
-            return false;
         },
         calcAmountNeeded : function() {
             var amountToDistribute = parseFloat('0.0');
@@ -248,11 +247,10 @@ use yii\bootstrap\Html;
                 var amountReceived = amountNeeded - creditAmount < 0 ? '' : (-(creditAmount - amountNeeded)).toFixed(2);
                 $('#paymentform-amount').val(amountReceived);
             }
-            var amountToCredit = Math.round(parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - amountToDistribute);
+            var amountToCredit = parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - amountToDistribute;
             $('.amount-to-credit').text((amountToCredit).toFixed(2));
             $('#amount-needed-value').val((amountNeeded).toFixed(2));
             $('.amount-needed-value').text((amountNeeded).toFixed(2));
-            return false;
         },
         setAvailableCredits : function() {
             var creditAmount = parseFloat('0.00');
@@ -262,7 +260,6 @@ use yii\bootstrap\Html;
                 creditAmount += parseFloat(balance);
             });
             $('.credit-available').text((creditAmount).toFixed(2));
-            return false;
         }
     };
 
@@ -272,10 +269,11 @@ use yii\bootstrap\Html;
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html(header);
         $('.modal-save').text('Save');
-        $('.modal-back').text('Create PFI');
+        $('.modal-back').text('Create Payment Request');
         $('#modal-back').removeClass('btn-info');
         $('#modal-back').addClass('btn-default');
         $('.modal-back').show();
+        $('.modal-save').show();
         $('.select-on-check-all').prop('checked', true);
         receivePayment.calcAmountNeeded();
         receivePayment.setAvailableCredits();
@@ -283,7 +281,7 @@ use yii\bootstrap\Html;
     });
 
     $(document).off('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]').on('change', '#credit-line-item-grid, #invoice-line-item-grid, #lesson-line-item-grid, #group-lesson-line-item-grid, .select-on-check-all, input[name="selection[]"]', function () {
-        debugger;receivePayment.calcAmountNeeded();
+        receivePayment.calcAmountNeeded();
         receivePayment.setAction();
         return false;
     });

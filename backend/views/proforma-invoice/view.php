@@ -7,7 +7,7 @@ use yii\bootstrap\Modal;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
 
-$this->title = 'Payment Requests';
+$this->title = $model->getProformaInvoiceNumber();
 $this->params['label'] = $this->render('_title', [
     'model' => $model,
 ]);
@@ -58,6 +58,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 
             <?= $this->render('/receive-payment/_lesson-line-item', [
                 'model' => $model,
+                'changeGridId' => true,
                 'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
                 'searchModel' => $searchModel,
             ]); ?>
@@ -81,6 +82,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 
             <?= $this->render('/receive-payment/_group-lesson-line-item', [
                 'model' => $model,
+                'changeGridId' => true,
                 'lessonLineItemsDataProvider' => $groupLessonLineItemsDataProvider,
                 'searchModel' => $groupLessonSearchModel,
             ]); ?>
@@ -104,6 +106,7 @@ $this->params['action-button'] = $this->render('_buttons', [
         
             <?= $this->render('/receive-payment/_invoice-line-item', [
                 'model' => $model,
+                'changeGridId' => true,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                 'searchModel' => $searchModel,
             ]); ?>
@@ -209,4 +212,21 @@ $this->params['action-button'] = $this->render('_buttons', [
         window.open(url,'_blank');
         return false;
     });
+
+    $(document).on('click', '.proforma-invoice-detail', function (e) {
+        $.ajax({
+            url    : '<?= Url::to(['proforma-invoice/update', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: 'json',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal .modal-dialog').css({'width': '400px'});
+                    $('#popup-modal').modal('show');
+                }
+            }
+        });
+		return false;
+  	});
 </script>

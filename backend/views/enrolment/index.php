@@ -173,6 +173,7 @@ echo KartikGridView::widget([
                 {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
+                    $('.modal-save').show();
                     $('.modal-save').text('Next');
                     $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment Basic</h4>');
                     $('#popup-modal .modal-dialog').css({'width': '600px'});

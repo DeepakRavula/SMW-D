@@ -16,11 +16,12 @@ use yii\widgets\Pjax;
 $this->title = 'Payment Requests';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
+<div class="grid-row-open">
 <?php Pjax::begin([
-    'timeout' => 6000,
+    'timeout' => 8000,
     'enablePushState' => false,
     'id' => 'proforma-invoice-listing',]); ?>
-<div class="grid-row-open">
     <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id; ?>
     <?php echo KartikGridView::widget([
         'dataProvider' => $dataProvider,
@@ -54,6 +55,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
                 'filterInputOptions'=>['placeholder'=>'Number'],
+            ],
+            [
+                'label' => 'Due Date',
+		'headerOptions' => ['class' => 'text-left'],
+	        'contentOptions' => ['class' => 'text-left'],
+                'value' => function ($data) {
+                    return !empty($data->dueDate) ? Yii::$app->formatter->asDate($data->dueDate) : null;
+                },
             ],
 
             [
@@ -93,6 +102,14 @@ $this->params['breadcrumbs'][] = $this->title;
 	        'contentOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
                     return !empty($data->total) ? Yii::$app->formatter->asCurrency($data->total) : null;
+                },
+            ],
+            [
+                'label' => 'Status',
+		'headerOptions' => ['class' => 'text-left'],
+	        'contentOptions' => ['class' => 'text-left'],
+                'value' => function ($data) {
+                    return !empty($data->getStatus()) ? $data->getStatus() : null;
                 },
             ],
         ],

@@ -39,6 +39,7 @@ use yii\helpers\Url;
 
 <script>
     $(document).on('modal-next', function(event, params) {
+        $('.modal-save').show();
         $('.modal-save').text('Preview lessons');
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
     });

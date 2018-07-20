@@ -20,7 +20,7 @@ LteBox::begin([
     'withBorder' => true,
 ])
 ?>
-<dl class="dl-horizontal total-horizontal lesson-discount">
+<dl class="dl-horizontal lesson-discount">
 	<dt class=" m-r-10">Lesson Rate/hr</dt>
 	<dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->programRate); ?></dd>
 	<dt class="m-r-10">Qty</dt>

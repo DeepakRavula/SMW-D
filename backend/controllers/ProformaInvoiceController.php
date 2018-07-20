@@ -34,7 +34,7 @@ class ProformaInvoiceController extends BaseController
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => [
-                    'create','note',
+                    'create','note', 'update', 'delete'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -45,7 +45,7 @@ class ProformaInvoiceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index','create','view','note'],
+                        'actions' => ['index','create','view','note', 'update', 'delete'],
                         'roles' => [
                              'managePfi'
                         ]
@@ -196,6 +196,34 @@ class ProformaInvoiceController extends BaseController
         ]);
     }
 
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+        $data  = $this->renderAjax('_details-form', [
+            'model' => $model,
+        ]);
+        if ($model->load(Yii::$app->request->post())){
+             $model->dueDate = (new \DateTime($model->dueDate))->format('Y-m-d');
+            if($model->save()) {
+            return [
+                'status'=>true,
+            ];
+            }
+            else {
+            return  [
+                'status' => false,
+                'errors' => ActiveForm::validate($model),
+            ];
+        }
+        }
+            else {
+                return  [
+                    'status' => true,
+                    'data' =>$data,
+                ];
+            }
+        return $response;
+    }
     protected function findModel($id)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -219,6 +247,13 @@ class ProformaInvoiceController extends BaseController
             return [
                 'status' => true,
             ];
+        }
+    }
+    public function actionDelete($id)
+    {
+        $model = $this->findModel($id);
+        if ($model->delete()) {
+            return $this->redirect(['proforma-invoice/index']);
         }
     }
 }

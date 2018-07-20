@@ -6,8 +6,8 @@
  * and open the template in the editor.
  */
 ?>
-    <div class="btn-group schedule-visibility-action-button">
-        <button class="btn dropdown-toggle" data-toggle="dropdown">More Action&nbsp;&nbsp;<span class="caret"></span></button>
+    <div class="dropdown schedule-visibility-action-button">
+        <i class="fa fa-gear dropdown-toggle" data-toggle="dropdown"></i>
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a id="copy-availability" href="#">Copy From Operational Hours</a></li>
         </ul>

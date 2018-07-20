@@ -86,13 +86,19 @@ if ($searchModel->showCheckBox && !$isCreatePfi) {
 }
 ?>
 
-<?php Pjax::Begin(['id' => 'invoice-lineitem-listing', 'timeout' => 6000]); ?>
+<?php $gridId = 'invoice-line-item-grid'; $pjaxId = 'invoice-line-item-listing'; $class = 'line-items-value invoice-line-items'; ?>
+<?php if (isset($changeGridId)) {
+    $gridId = 'invoice-line-item-grid-pr';
+    $pjaxId = 'invoice-line-item-listing-pr';
+    $class = 'line-items-value-pr invoice-line-items-pr';
+} ?>
+<?php Pjax::Begin(['id' => $pjaxId, 'timeout' => 6000]); ?>
     <?= GridView::widget([
-        'id' => 'invoice-line-item-grid',
+        'id' => $gridId,
         'dataProvider' => $invoiceLineItemsDataProvider,
         'columns' => $columns,
         'summary' => false,
-        'rowOptions' => ['class' => 'line-items-value invoice-line-items'],
+        'rowOptions' => ['class' => $class],
         'emptyText' => 'No Invoices Available!'
     ]); ?>
 <?php Pjax::end(); ?>

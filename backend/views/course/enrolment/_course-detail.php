@@ -82,6 +82,7 @@ use kartik\select2\Select2;
         $('#modal-back').show();
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">New Enrolment Detail</h4>');
         var isReverse = <?= $isReverse ?>;
+        $('.modal-save').show();
         if (isReverse == 1) {
             $('.modal-save').text('Next');
         } else {

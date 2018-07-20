@@ -503,8 +503,3 @@ dl {
 .total-horizontal-dd {
     width: 60px;
 }
-
-.total-horizontal dt {
-    width: 100px;
-    text-align: left;
-}

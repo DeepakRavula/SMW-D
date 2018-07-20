@@ -199,6 +199,7 @@ class PaymentController extends BaseController
     public function actionUpdate($id)
     {
         $payment = $this->findModel($id);
+        $payment->setScenario(Payment::SCENARIO_EDIT);
         $model = new PaymentEditForm();
         $model->paymentId = $payment->id;
         $model->userId = $payment->user_id;
@@ -238,26 +239,21 @@ class PaymentController extends BaseController
             'query' => $invoicePayment,
             'pagination' => false
         ]);
-        if (Yii::$app->request->isPost) {
-            $model->load(Yii::$app->request->get());
-            $payment->load(Yii::$app->request->post());
-            $model->load(Yii::$app->request->post());
-            $payment->amount = $model->amount;
-            $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
-            if (round($payment->amount, 2) > 0.00) {
-                $payment->save();
-                $model->save();
-            } else {
-                $payment->delete();
-            }
-            $response = [
-                'status' => true
-            ];
-        } else {
-            if ($payment->isAutoPayments()) {
+        if ($payment->validate()) {
+            if (Yii::$app->request->isPost) {
+                $model->load(Yii::$app->request->get());
+                $payment->load(Yii::$app->request->post());
+                $model->load(Yii::$app->request->post());
+                $payment->amount = $model->amount;
+                $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
+                if (round($payment->amount, 2) > 0.00) {
+                    $payment->save();
+                    $model->save();
+                } else {
+                    $payment->delete();
+                }
                 $response = [
-                    'status' => false,
-                    'message' => "System generated payments can't be modified!"
+                    'status' => true
                 ];
             } else {
                 $data = $this->renderAjax('_form', [
@@ -273,6 +269,11 @@ class PaymentController extends BaseController
                     'data' => $data
                 ];
             }
+        } else {
+            $response = [
+                'status' => false,
+                'message' => current($payment->getErrors())
+            ];
         }
         return $response;
     }
@@ -459,59 +460,62 @@ class PaymentController extends BaseController
             'allModels' => $results,
             'sort' => [
                 'attributes' => ['id', 'type', 'reference', 'amount']
-            ]
+            ],
+            'pagination' => false
         ]);
         return $creditDataProvider;
     }
+
     public function getUsedCredit($paymentCreditIds, $paymentCredits, $invoiceCreditIds, $invoiceCredits, $paymentId, $amount)
     { 
         $results = [];
-      if(!empty($paymentCreditIds))  {                
-      foreach($paymentCreditIds as $key =>  $paymentCreditId) {
-          $paymentCredit = Payment::findOne(['id' => $paymentCreditId]);
-          $results[] = [
-            'id' => $paymentCredit->id,
-            'type' => 'Payment Credit',
-            'reference' => $paymentCredit->reference,
-            'amount' => $paymentCredit->amount,
-            'method' => $paymentCredit->paymentMethod->name,
-            'amountUsed' => $paymentCredits[$key],
-        ];
-      }  
-    }
-      if(!empty($invoiceCreditIds)) {  
-      foreach($invoiceCreditIds as $key =>  $invoiceCreditId) {
-        $invoiceCredit = Invoice::findOne(['id' => $invoiceCreditId]);
-        $results[] = [
-            'id' => $invoiceCredit->id,
-            'type' => 'Invoice Credit',
-            'reference' => $invoiceCredit->getInvoiceNumber(),
-            'amount' => abs($invoiceCredit->balance),
-            'method' => '',
-            'amountUsed' => $invoiceCredits[$key],
-      ];
+        if (!empty($paymentCreditIds)) {                
+            foreach ($paymentCreditIds as $key =>  $paymentCreditId) {
+                $paymentCredit = Payment::findOne(['id' => $paymentCreditId]);
+                $results[] = [
+                    'id' => $paymentCredit->id,
+                    'type' => 'Payment Credit',
+                    'reference' => $paymentCredit->reference,
+                    'amount' => $paymentCredit->amount,
+                    'method' => $paymentCredit->paymentMethod->name,
+                    'amountUsed' => $paymentCredits[$key],
+                ];
+            }  
+        }
+        if  (!empty($invoiceCreditIds)) {  
+            foreach ($invoiceCreditIds as $key =>  $invoiceCreditId) {
+                $invoiceCredit = Invoice::findOne(['id' => $invoiceCreditId]);
+                $results[] = [
+                    'id' => $invoiceCredit->id,
+                    'type' => 'Invoice Credit',
+                    'reference' => $invoiceCredit->getInvoiceNumber(),
+                    'amount' => abs($invoiceCredit->balance),
+                    'method' => '',
+                    'amountUsed' => $invoiceCredits[$key],
+                ];
+            }
+        } 
+        $paymentNew = Payment::findOne(['id' => $paymentId]);
+        if (!empty($paymentNew)) {
+            $results[] = [
+                'id' => $paymentId,
+                'type' => 'Payment',
+                'reference' => !empty($paymentNew->reference) ? $paymentNew->reference : null,
+                'amount' => $paymentNew->amount,
+                'method' => $paymentNew->paymentMethod->name,
+                'amountUsed' => $amount,
+            ]; 
+        }
+        $paymentsLineItemsDataProvider = new ArrayDataProvider([
+            'allModels' => $results,
+            'sort' => [
+                'attributes' => ['id', 'type', 'reference', 'amount', 'amountUsed']
+            ],
+            'pagination' => false
+        ]);
+        return $paymentsLineItemsDataProvider;
     }
     
-} 
-$paymentNew = Payment::findOne(['id' => $paymentId]);
-if (!empty($paymentNew)) {
-$results[] = [
-    'id' => $paymentId,
-    'type' => 'Payment',
-    'reference' => !empty($paymentNew->reference) ? $paymentNew->reference : null,
-    'amount' => $paymentNew->amount,
-    'method' => $paymentNew->paymentMethod->name,
-    'amountUsed' => $amount,
-]; 
-}
-     $paymentsLineItemsDataProvider = new ArrayDataProvider([
-        'allModels' => $results,
-        'sort' => [
-            'attributes' => ['id', 'type', 'reference', 'amount', 'amountUsed']
-        ]
-     ]);
-    return $paymentsLineItemsDataProvider;  
-    }
     public function getCustomerPayments($customerId)
     {
         return Payment::find()
@@ -594,7 +598,7 @@ $results[] = [
             $model->groupLessonIds = $groupLessonSearchModel->lessonIds;
             $model->save();
 
-            $paymentsLineItemsDataProvider = $this->getUsedCredit($model->paymentCreditIds, $model->paymentCredits, $model->invoiceCreditIds, $model->invoiceIds, $model->paymentId, $model->amount);
+            $paymentsLineItemsDataProvider = $this->getUsedCredit($model->paymentCreditIds, $model->paymentCredits, $model->invoiceCreditIds, $model->invoiceCredits, $model->paymentId, $model->amount);
             $printData = $this->renderAjax('/receive-payment/print/_form', [
                 'model' => $model,
                 'paymentModel' => $payment,

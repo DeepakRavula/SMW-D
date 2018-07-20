@@ -133,6 +133,7 @@ $this->render('_view-enrolment', [
                     {
                         $('#popup-modal').modal('show');
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Enrolment Edit</h4>');
+                        $('.modal-save').show();
                         $('.modal-save').text('Next');
                         $('#modal-content').html(response.data);
                         $('#popup-modal .modal-dialog').css({'width': '500px'});

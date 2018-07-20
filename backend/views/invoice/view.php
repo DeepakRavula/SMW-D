@@ -251,6 +251,7 @@ Modal::begin([
                         $('#popup-modal .modal-dialog').css({'width': '600px'});
                         $('#popup-modal').modal('show');
                         $('.modal-delete').show();
+                        $('.modal-save').show();
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Line Item</h4>');
                         $('.modal-delete').attr('action', url);
                         $('#modal-content').html(response.data);
@@ -345,6 +346,7 @@ Modal::begin([
                         $('#popup-modal').modal('show');
                         $('#popup-modal .modal-dialog').css({'width': '1000px'});
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
+                        $('.modal-save').show();
                         $('.modal-save').text('Send');
                     }
                 }
@@ -364,6 +366,7 @@ Modal::begin([
                         $('#popup-modal').modal('show');
                         $('#payment-amountneeded').val((amountNeeded).toFixed(2));
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Apply Credit</h4>');
+                        $('.modal-save').show();
                         $('.modal-save').text('Pay now')
                     } else {
 bootbox.alert({

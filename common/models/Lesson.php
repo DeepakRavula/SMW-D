@@ -829,6 +829,12 @@ class Lesson extends \yii\db\ActiveRecord
         if (!$this->tax) {
             $this->tax = 0.0;
         }
+        if (!$this->teacherRate) {
+            $this->teacherRate = 0.0;
+        }
+        if (!$this->programRate) {
+            $this->programRate = 0.0;
+        }
         return parent::beforeSave($insert);
     }
     
@@ -1335,7 +1341,7 @@ class Lesson extends \yii\db\ActiveRecord
         $lessonPrice = $this->grossPrice;
         if ($this->hasMultiEnrolmentDiscount()) {
             $discount += $lessonPrice < 0 ? 0 :
-                $this->multiEnrolmentDiscount->value / 4;
+                $this->multiEnrolmentDiscount->value;
             $lessonPrice = $this->grossPrice - $discount;
         }
         if ($this->hasLineItemDiscount()) {
@@ -1420,7 +1426,7 @@ class Lesson extends \yii\db\ActiveRecord
         if (!$discount) {
             $lessonDiscount->type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
             $lessonDiscount->valueType = $this->enrolment->multipleEnrolmentDiscount->discountType;
-            $lessonDiscount->value = $this->enrolment->multipleEnrolmentDiscount->discount;
+            $lessonDiscount->value = $this->enrolment->multipleEnrolmentDiscount->discount / 4;
         }
         return $lessonDiscount->save();
     }

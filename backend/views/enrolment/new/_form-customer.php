@@ -140,6 +140,7 @@ use yii\widgets\MaskedInput;
 <script>
     $(document).ready(function () {
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Customer Details</h4>');
+        $('.modal-save').show();
         $('.modal-save').text('Next');
         $('#popup-modal .modal-dialog').css({'width': '600px'});
         $('#modal-spinner').hide();
