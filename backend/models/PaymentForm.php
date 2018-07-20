@@ -368,7 +368,7 @@ class PaymentForm extends Model
                             $lessonPayment->lessonId    = $lesson->id;
                             $lessonPayment->paymentId   = $this->paymentId;
                             $lessonPayment->receiptId  = $this->receiptId;
-                            $lessonPayment->amount      = $groupLessonPayments[$i];
+                            $lessonPayment->amount      = round($groupLessonPayments[$i], 2);
                             $lessonPayment->enrolmentId = $enrolment->id;
                             $lessonPayment->save();
                             $amount -= round($groupLessonPayments[$i], 2);
