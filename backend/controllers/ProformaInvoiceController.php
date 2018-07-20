@@ -202,28 +202,28 @@ class ProformaInvoiceController extends BaseController
         $data  = $this->renderAjax('_details-form', [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post())){
-             $model->dueDate = (new \DateTime($model->dueDate))->format('Y-m-d');
-            if($model->save()) {
-            return [
-                'status'=>true,
-            ];
-            }
-            else {
-            return  [
-                'status' => false,
-                'errors' => ActiveForm::validate($model),
-            ];
-        }
-        }
-            else {
-                return  [
-                    'status' => true,
-                    'data' =>$data,
+        if ($model->load(Yii::$app->request->post())) {
+            $model->date = (new \DateTime($model->date))->format('Y-m-d');
+            $model->dueDate = (new \DateTime($model->dueDate))->format('Y-m-d');
+            if ($model->save()) {
+                $response = [
+                    'status'=>true,
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model),
                 ];
             }
+        } else {
+            $response = [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
         return $response;
     }
+
     protected function findModel($id)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;

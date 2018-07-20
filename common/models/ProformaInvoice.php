@@ -43,7 +43,8 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     {
         return [
             [['userId', 'locationId'], 'required'],
-            [['lessonIds', 'invoiceIds', 'dateRange', 'fromDate', 'toDate', 'lessonId','notes', 'status', 'dueDate'], 'safe']
+            [['lessonIds', 'invoiceIds', 'dateRange', 'fromDate', 'toDate', 'lessonId', 
+                'notes', 'status', 'dueDate', 'date'], 'safe']
         ];
     }
 
@@ -115,7 +116,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             $lastInvoice   = $this->lastInvoice();
             if (!empty($lastInvoice)) {
                 $proformaInvoiceNumber = $lastInvoice->proforma_invoice_number + 1;
-            } else{
+            } else {
                 $proformaInvoiceNumber = 1;
             }
             $this->proforma_invoice_number = $proformaInvoiceNumber;
@@ -130,10 +131,10 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'userId']);
     }
+
     public function getStatus()
     {
         $status = null;
-        
         switch ($this->status) {
             case self::STATUS_UNPAID:
                 $status = 'Unpaid';
@@ -144,6 +145,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         }
         return $status;
     }
+
     public function lastInvoice()
     {
         return $query = ProformaInvoice::find()->alias('i')
@@ -156,35 +158,34 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Location::className(), ['id' => 'locationId']);
     }
+
     public function getTotalDiscount()
     {
         $discount = 0.0;
-        $lineItems  =   $this->proformaLineItems;
-        foreach($lineItems as $lineItem) 
-        {
-            if($lineItem->lessonLineItem) {
-                $discount+=$lineItem->lesson->discount;
+        $lineItems = $this->proformaLineItems;
+        foreach ($lineItems as $lineItem) {
+            if ($lineItem->lessonLineItem) {
+                $discount += $lineItem->lesson->discount;
             }
-            if($lineItem->invoiceLineItem){
-                $discount+=$lineItem->invoice->totalDiscount;
+            if ($lineItem->invoiceLineItem) {
+                $discount += $lineItem->invoice->totalDiscount;
             }
            
         }
         return $discount;
     }
+
     public function getSubtotal()
     {
         $subtotal = 0.0;
         $lineItems  =   $this->proformaLineItems;
-         foreach($lineItems as $lineItem)
-        {
-            if($lineItem->lessonLineItem){
-                $subtotal+=$lineItem->lesson->netPrice;
+        foreach( $lineItems as $lineItem) {
+            if ($lineItem->lessonLineItem) {
+                $subtotal += $lineItem->lesson->netPrice;
             }
-            if($lineItem->invoiceLineItem){
-                $subtotal+=$lineItem->invoice->subTotal;
+            if ($lineItem->invoiceLineItem) {
+                $subtotal += $lineItem->invoice->subTotal;
             }
-
         }
         return $subtotal;
     }
