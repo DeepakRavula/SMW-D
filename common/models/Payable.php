@@ -78,7 +78,7 @@ trait Payable
         $paymentModel = new Payment();
         $paymentModel->date = $payment->date;
         $paymentModel->sourceId = $payment->sourceId;
-        $paymentModel->amount = $payment->amount;
+        $paymentModel->amount = round($payment->amount, 2);
         $paymentModel->payment_method_id = PaymentMethod::TYPE_CREDIT_APPLIED;
         if ($this->tableName() === 'invoice') {
             $paymentModel->invoiceId = $this->id;
