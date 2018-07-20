@@ -118,6 +118,7 @@ class ProformaInvoiceController extends BaseController
                     $proformaLineItem->save();
                 }
             }
+            $model->save();
             $response = [
                 'status' => true,
                 'url' => Url::to(['proforma-invoice/view', 'id' => $model->id])
