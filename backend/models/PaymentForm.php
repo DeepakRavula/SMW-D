@@ -114,23 +114,23 @@ class PaymentForm extends Model
             if ($this->canUseInvoiceCredits) { 
                 foreach ($creditInvoices as $j => $creditInvoice) {
                     if ($creditInvoice->hasCredit()) {
-                        if ($invoiceCredits[$j] > abs($creditInvoice->balance)) {
-                            $invoiceCredits[$j] = abs($creditInvoice->balance);
+                        if (round($invoiceCredits[$j], 2) > round(abs($creditInvoice->balance), 2)) {
+                            $invoiceCredits[$j] = round(abs($creditInvoice->balance), 2);
                         }
                         if ($this->invoiceIds) {
                             foreach ($invoices as $i => $invoice) {
                                 if ($invoice->isOwing()) {
-                                    if ($invoicePayments[$i] > $invoice->balance) {
-                                        $invoicePayments[$i] = $invoice->balance;
+                                    if (round($invoicePayments[$i], 2) > round($invoice->balance, 2)) {
+                                        $invoicePayments[$i] = round($invoice->balance, 2);
                                     }
-                                    if ($invoicePayments[$i] > 0.00) {
+                                    if (round($invoicePayments[$i], 2) > 0.00) {
                                         $paymentModel = new Payment();
-                                        $paymentModel->amount = $invoicePayments[$i];
-                                        if ($invoiceCredits[$j] > 0.0) {
-                                            if ($paymentModel->amount > $invoiceCredits[$j]) {
-                                                $paymentModel->amount = $invoiceCredits[$j];
-                                                $invoicePayments[$i] -= $invoiceCredits[$j];
-                                                $invoiceCredits[$j] -= $paymentModel->amount;
+                                        $paymentModel->amount = round($invoicePayments[$i], 2);
+                                        if (round($invoiceCredits[$j], 2) > 0.0) {
+                                            if (round($paymentModel->amount, 2) > round($invoiceCredits[$j], 2)) {
+                                                $paymentModel->amount = round($invoiceCredits[$j], 2);
+                                                $invoicePayments[$i] -= round($invoiceCredits[$j], 2);
+                                                $invoiceCredits[$j] -= round($paymentModel->amount, 2);
                                             }
                                             $invoice->addPayment($creditInvoice, $paymentModel);
                                         } else {
@@ -147,14 +147,14 @@ class PaymentForm extends Model
                                     if ($lessonPayments[$i] > $lesson->getOwingAmount($lesson->enrolment->id)) {
                                         $lessonPayments[$i] = $lesson->getOwingAmount($lesson->enrolment->id);
                                     }
-                                    if ($lessonPayments[$i] > 0.00) {
+                                    if (round($lessonPayments[$i], 2) > 0.00) {
                                         $paymentModel = new Payment();
-                                        $paymentModel->amount = $lessonPayments[$i];
-                                        if ($invoiceCredits[$j] > 0.00) {
-                                            if ($paymentModel->amount > $invoiceCredits[$j]) {
-                                                $paymentModel->amount = $invoiceCredits[$j];
-                                                $lessonPayments[$i] -= $invoiceCredits[$j];
-                                                $invoiceCredits[$j] -= $paymentModel->amount;
+                                        $paymentModel->amount = round($lessonPayments[$i], 2);
+                                        if (round($invoiceCredits[$j], 2) > 0.00) {
+                                            if (round($paymentModel->amount, 2) > round($invoiceCredits[$j],2)) {
+                                                $paymentModel->amount = round($invoiceCredits[$j], 2);
+                                                $lessonPayments[$i] -= round($invoiceCredits[$j], 2);
+                                                $invoiceCredits[$j] -= round($paymentModel->amount, 2);
                                             }
                                             $lesson->addPayment($creditInvoice, $paymentModel);
                                         } else {
@@ -173,17 +173,17 @@ class PaymentForm extends Model
                                     ->customer($this->userId)
                                     ->one();
                                 if ($lesson->isOwing($enrolment->id)) {
-                                    if ($groupLessonPayments[$i] > $lesson->getOwingAmount($enrolment->id)) {
+                                    if (round($groupLessonPayments[$i], 2) > $lesson->getOwingAmount($enrolment->id)) {
                                         $groupLessonPayments[$i] = $lesson->getOwingAmount($enrolment->id);
                                     }
-                                    if ($groupLessonPayments[$i] > 0.00) {
+                                    if (round($groupLessonPayments[$i], 2) > 0.00) {
                                         $paymentModel = new Payment();
-                                        $paymentModel->amount = $groupLessonPayments[$i];
-                                        if ($invoiceCredits[$j] > 0.00) {
-                                            if ($paymentModel->amount > $invoiceCredits[$j]) {
-                                                $paymentModel->amount = $invoiceCredits[$j];
-                                                $groupLessonPayments[$i] -= $invoiceCredits[$j];
-                                                $invoiceCredits[$j] -= $paymentModel->amount;
+                                        $paymentModel->amount = round($groupLessonPayments[$i], 2);
+                                        if (round($invoiceCredits[$j], 2) > 0.00) {
+                                            if (round($paymentModel->amount, 2) > round($invoiceCredits[$j], 2)) {
+                                                $paymentModel->amount = round($invoiceCredits[$j], 2);
+                                                $groupLessonPayments[$i] -= round($invoiceCredits[$j], 2);
+                                                $invoiceCredits[$j] -= round($paymentModel->amount, 2);
                                             }
                                             $lesson->addPayment($creditInvoice, $paymentModel, $enrolment);
                                         } else {
@@ -201,28 +201,28 @@ class PaymentForm extends Model
             if ($this->canUsePaymentCredits) {
                 foreach ($creditPayments as $j => $creditPayment) {
                     if ($creditPayment->hasCredit()) {
-                        if ($paymentCredits[$j] > abs($creditPayment->creditAmount)) {
-                            $paymentCredits[$j] = abs($creditPayment->creditAmount);
+                        if (round($paymentCredits[$j], 2) > round(abs($creditPayment->creditAmount), 2)) {
+                            $paymentCredits[$j] = round(abs($creditPayment->creditAmount), 2);
                         }
                         if ($this->invoiceIds) {
                             foreach ($invoices as $i => $invoice) {
                                 if ($invoice->isOwing()) {
-                                    if ($invoicePayments[$i] > $invoice->balance) {
-                                        $invoicePayments[$i] = $invoice->balance;
+                                    if (round($invoicePayments[$i], 2) > round($invoice->balance, 2)) {
+                                        $invoicePayments[$i] = round($invoice->balance, 2);
                                     }
-                                    if ($paymentCredits[$j] > 0.00) {
-                                        if ($invoicePayments[$i] > $paymentCredits[$j]) {
-                                            $amountToPay = $paymentCredits[$j];
-                                            $invoicePayments[$i] -= $amountToPay;
-                                            $paymentCredits[$j] -= $amountToPay;
+                                    if (round($paymentCredits[$j], 2) > 0.00) {
+                                        if (round($invoicePayments[$i], 2) > round($paymentCredits[$j], 2)) {
+                                            $amountToPay = round($paymentCredits[$j], 2);
+                                            $invoicePayments[$i] -= round($amountToPay, 2);
+                                            $paymentCredits[$j] -= round($amountToPay, 2);
                                         } else {
-                                            $amountToPay = $invoicePayments[$i];
+                                            $amountToPay = round($invoicePayments[$i], 2);
                                         }
                                         $invoicePaymentModel = new InvoicePayment();
                                         $invoicePaymentModel->invoice_id = $invoice->id;
                                         $invoicePaymentModel->payment_id = $creditPayment->id;
                                         $invoicePaymentModel->receiptId  = $this->receiptId;
-                                        $invoicePaymentModel->amount     = $amountToPay;
+                                        $invoicePaymentModel->amount     = round($amountToPay, 2);
                                         $invoicePaymentModel->save();
                                         $invoice->save();
                                     } else {
@@ -235,23 +235,23 @@ class PaymentForm extends Model
                         if ($this->lessonIds) {
                             foreach ($lessons as $i => $lesson) {
                                 if ($lesson->isOwing($lesson->enrolment->id)) {
-                                    if ($lessonPayments[$i] > $lesson->getOwingAmount($lesson->enrolment->id)) {
+                                    if (round($lessonPayments[$i], 2) > $lesson->getOwingAmount($lesson->enrolment->id)) {
                                         $lessonPayments[$i] = $lesson->getOwingAmount($lesson->enrolment->id);
                                     }
-                                    if ($paymentCredits[$j] > 0.00) {
-                                        if ($lessonPayments[$i] > $paymentCredits[$j]) {
-                                            $amountToPay = $paymentCredits[$j];
+                                    if (round($paymentCredits[$j], 2) > 0.00) {
+                                        if (round($lessonPayments[$i], 2) > round($paymentCredits[$j], 2)) {
+                                            $amountToPay = round($paymentCredits[$j], 2);
                                         } else {
-                                            $amountToPay = $lessonPayments[$i];
+                                            $amountToPay = round($lessonPayments[$i], 2);
                                         }
-                                        $lessonPayments[$i] -= $amountToPay;
-                                        $paymentCredits[$j] -= $amountToPay;
+                                        $lessonPayments[$i] -= round($amountToPay, 2);
+                                        $paymentCredits[$j] -= round($amountToPay, 2);
                                         $lessonPaymentModel = new LessonPayment();
                                         $lessonPaymentModel->lessonId = $lesson->id;
                                         $lessonPaymentModel->paymentId = $creditPayment->id;
                                         $lessonPaymentModel->receiptId  = $this->receiptId;
                                         $lessonPaymentModel->enrolmentId = $lesson->enrolment->id;
-                                        $lessonPaymentModel->amount     = $amountToPay;
+                                        $lessonPaymentModel->amount     = round($amountToPay, 2);
                                         $lessonPaymentModel->save();
                                     } else {
                                         break;
@@ -268,23 +268,23 @@ class PaymentForm extends Model
                                     ->customer($this->userId)
                                     ->one();
                                 if ($lesson->isOwing($enrolment->id)) {
-                                    if ($groupLessonPayments[$i] > $lesson->getOwingAmount($enrolment->id)) {
+                                    if (round($groupLessonPayments[$i], 2) > $lesson->getOwingAmount($enrolment->id)) {
                                         $groupLessonPayments[$i] = $lesson->getOwingAmount($enrolment->id);
                                     }
-                                    if ($paymentCredits[$j] > 0.00) {
-                                        if ($groupLessonPayments[$i] > $paymentCredits[$j]) {
-                                            $amountToPay = $paymentCredits[$j];
+                                    if (round($paymentCredits[$j], 2) > 0.00) {
+                                        if (round($groupLessonPayments[$i], 2) > round($paymentCredits[$j], 2)) {
+                                            $amountToPay = round($paymentCredits[$j], 2);
                                         } else {
-                                            $amountToPay = $groupLessonPayments[$i];
+                                            $amountToPay = round($groupLessonPayments[$i], 2);
                                         }
-                                        $groupLessonPayments[$i] -= $amountToPay;
-                                        $paymentCredits[$j] -= $amountToPay;
+                                        $groupLessonPayments[$i] -= round($amountToPay, 2);
+                                        $paymentCredits[$j] -=  round($amountToPay, 2);
                                         $lessonPaymentModel = new LessonPayment();
                                         $lessonPaymentModel->lessonId = $lesson->id;
                                         $lessonPaymentModel->paymentId = $creditPayment->id;
                                         $lessonPaymentModel->receiptId  = $this->receiptId;
                                         $lessonPaymentModel->enrolmentId = $enrolment->id;
-                                        $lessonPaymentModel->amount     = $amountToPay;
+                                        $lessonPaymentModel->amount     =  round($amountToPay, 2);
                                         $lessonPaymentModel->save();
                                     } else {
                                         break;
@@ -297,25 +297,25 @@ class PaymentForm extends Model
             }
         }
         
-        $amount = $this->amount;
+        $amount =  $this->amount;
         if ($this->invoiceIds) {
             foreach ($invoices as $i => $invoice) {
                 if ($invoice->isOwing()) {
-                    if ($invoicePayments[$i] > $invoice->balance) {
-                        $invoicePayments[$i] = $invoice->balance;
+                    if (round($invoicePayments[$i], 2) > round($invoice->balance, 2)) {
+                        $invoicePayments[$i] =  round($invoice->balance, 2);
                     }
                     if ($invoicePayments[$i] > 0.00) {
                         if ($amount > 0.00) {
-                            if ($amount > $invoicePayments[$i]) {
-                                $amountToPay = $invoice->balance;
+                            if (round($amount, 2) > round($invoicePayments[$i], 2)) {
+                                $amountToPay = round($invoice->balance, 2);
                             } else {
-                                $amountToPay = $amount;
+                                $amountToPay = round($amount);
                             }
                             $invoicePaymentModel = new InvoicePayment();
                             $invoicePaymentModel->invoice_id = $invoice->id;
                             $invoicePaymentModel->payment_id = $this->paymentId;
                             $invoicePaymentModel->receiptId  = $this->receiptId;
-                            $invoicePaymentModel->amount     = $amountToPay;
+                            $invoicePaymentModel->amount     = round($amountToPay, 2);
                             $invoicePaymentModel->save();
                             $invoice->save();
                             $amount -= $amountToPay;
@@ -330,11 +330,11 @@ class PaymentForm extends Model
         if ($this->lessonIds) {
             foreach ($lessons as $i => $lesson) {
                 if ($lesson->isOwing($lesson->enrolment->id)) {
-                    if ($lessonPayments[$i] > $lesson->getOwingAmount($lesson->enrolment->id)) {
+                    if ( round($lessonPayments[$i], 2) > $lesson->getOwingAmount($lesson->enrolment->id)) {
                         $lessonPayments[$i] = $lesson->getOwingAmount($lesson->enrolment->id);
                     }
-                    if ($lessonPayments[$i] > 0.00) {
-                        if ($amount > 0.00) {
+                    if ( round($lessonPayments[$i], 2) > 0.00) {
+                        if ( round($amount, 2) > 0.00) {
                             $lessonPayment = new LessonPayment();
                             $lessonPayment->lessonId    = $lesson->id;
                             $lessonPayment->paymentId   = $this->paymentId;
@@ -358,11 +358,11 @@ class PaymentForm extends Model
                     ->customer($this->userId)
                     ->one();
                 if ($lesson->isOwing($enrolment->id)) {
-                    if ($groupLessonPayments[$i] > $lesson->getOwingAmount($enrolment->id)) {
+                    if ( round($groupLessonPayments[$i], 2) > $lesson->getOwingAmount($enrolment->id)) {
                         $groupLessonPayments[$i] = $lesson->getOwingAmount($enrolment->id);
                     }
-                    if ($groupLessonPayments[$i] > 0.00) {
-                        if ($amount > 0.00) {
+                    if ( round($groupLessonPayments[$i], 2) > 0.00) {
+                        if ( round($amount, 2) > 0.00) {
                             $lessonPayment = new LessonPayment();
                             $lessonPayment->lessonId    = $lesson->id;
                             $lessonPayment->paymentId   = $this->paymentId;
