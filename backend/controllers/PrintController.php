@@ -567,7 +567,7 @@ class PrintController extends BaseController
         ];
       }  
     }
-      if(!empty($invoiceCreditIds)) {  
+      if(!empty($model->invoiceCreditIds)) {  
         $invoiceCreditIds = $model->invoiceCreditIds; 
         $invoiceCredits   = $model->invoiceCredits;  
       foreach($invoiceCreditIds as $key =>  $invoiceCreditId) {
@@ -576,7 +576,7 @@ class PrintController extends BaseController
             'id' => $invoiceCredit->id,
             'type' => 'Invoice Credit',
             'reference' => $invoiceCredit->getInvoiceNumber(),
-            'amount' => abs($invoiceCredit->balance),
+            'amount' => '',
             'amountUsed' => $model->invoiceCredits[$key],
             'method' => '',
       ];

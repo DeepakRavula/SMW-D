@@ -128,10 +128,10 @@ class PaymentForm extends Model
                                         $paymentModel->amount = $invoicePayments[$i];
                                         if ($invoiceCredits[$j] > 0.0) {
                                             if ($paymentModel->amount > $invoiceCredits[$j]) {
-                                                $paymentModel->amount = $invoiceCredits[$j];
-                                                $invoicePayments[$i] -= $invoiceCredits[$j];
-                                                $invoiceCredits[$j] -= $paymentModel->amount;
+                                                $paymentModel->amount = $invoiceCredits[$j];                                
                                             }
+                                            $invoicePayments[$i] -= $paymentModel->amount;
+                                            $invoiceCredits[$j] -= $paymentModel->amount;
                                             $invoice->addPayment($creditInvoice, $paymentModel);
                                         } else {
                                             break;
@@ -153,9 +153,9 @@ class PaymentForm extends Model
                                         if ($invoiceCredits[$j] > 0.00) {
                                             if ($paymentModel->amount > $invoiceCredits[$j]) {
                                                 $paymentModel->amount = $invoiceCredits[$j];
-                                                $lessonPayments[$i] -= $invoiceCredits[$j];
-                                                $invoiceCredits[$j] -= $paymentModel->amount;
                                             }
+                                            $lessonPayments[$i] -= $paymentModel->amount;
+                                            $invoiceCredits[$j] -= $paymentModel->amount;
                                             $lesson->addPayment($creditInvoice, $paymentModel);
                                         } else {
                                             break;
@@ -181,10 +181,10 @@ class PaymentForm extends Model
                                         $paymentModel->amount = $groupLessonPayments[$i];
                                         if ($invoiceCredits[$j] > 0.00) {
                                             if ($paymentModel->amount > $invoiceCredits[$j]) {
-                                                $paymentModel->amount = $invoiceCredits[$j];
-                                                $groupLessonPayments[$i] -= $invoiceCredits[$j];
-                                                $invoiceCredits[$j] -= $paymentModel->amount;
+                                                $paymentModel->amount = $invoiceCredits[$j];                               
                                             }
+                                            $groupLessonPayments[$i] -= $paymentModel->amount;
+                                            $invoiceCredits[$j] -= $paymentModel->amount;
                                             $lesson->addPayment($creditInvoice, $paymentModel, $enrolment);
                                         } else {
                                             break;
@@ -212,12 +212,12 @@ class PaymentForm extends Model
                                     }
                                     if ($paymentCredits[$j] > 0.00) {
                                         if ($invoicePayments[$i] > $paymentCredits[$j]) {
-                                            $amountToPay = $paymentCredits[$j];
-                                            $invoicePayments[$i] -= $amountToPay;
-                                            $paymentCredits[$j] -= $amountToPay;
+                                            $amountToPay = $paymentCredits[$j];                                
                                         } else {
                                             $amountToPay = $invoicePayments[$i];
                                         }
+                                        $invoicePayments[$i] -= $amountToPay;
+                                        $paymentCredits[$j] -= $amountToPay;
                                         $invoicePaymentModel = new InvoicePayment();
                                         $invoicePaymentModel->invoice_id = $invoice->id;
                                         $invoicePaymentModel->payment_id = $creditPayment->id;
@@ -342,6 +342,7 @@ class PaymentForm extends Model
                             $lessonPayment->enrolmentId = $lesson->enrolment->id;
                             $lessonPayment->receiptId  = $this->receiptId;
                             $lessonPayment->save();
+                            $amount -= $lessonPayments[$i];
                         } else {
                             break;
                         }
@@ -370,6 +371,7 @@ class PaymentForm extends Model
                             $lessonPayment->amount      = $groupLessonPayments[$i];
                             $lessonPayment->enrolmentId = $enrolment->id;
                             $lessonPayment->save();
+                            $amount -= $groupLessonPayments[$i];
                         } else {
                             break;
                         }
