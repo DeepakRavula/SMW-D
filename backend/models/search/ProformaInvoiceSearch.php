@@ -113,7 +113,6 @@ class ProformaInvoiceSearch extends ProformaInvoice
     public static function proformaInvoiceStatuses()
     {
         return [
-            self::STATUS_ALL => 'All',
 	        ProformaInvoice::STATUS_PAID => 'Paid',
             ProformaInvoice::STATUS_UNPAID => 'Unpaid',
         ];
