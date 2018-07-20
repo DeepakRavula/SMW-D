@@ -16,10 +16,10 @@ $form = ActiveForm::begin([
     ]);
 ?>
 <?php yii\widgets\Pjax::begin() ?>
-<div class="show-all-top">
+<div class="show-all-top m-r-20">
 <div class="checkbox">
 <div id="show-all" class="checkbox-btn">
-<?= $form->field($searchModel, 'showAllLessons')->checkbox(['data-pjax' => true]); ?>
+<?= $form->field($searchModel, 'showAll')->checkbox(['data-pjax' => true]); ?>
 </div>
 </div>
 </div>
