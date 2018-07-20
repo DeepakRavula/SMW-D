@@ -144,8 +144,8 @@ class PaymentForm extends Model
                         if ($this->lessonIds) {
                             foreach ($lessons as $i => $lesson) {
                                 if ($lesson->isOwing($lesson->enrolment->id)) {
-                                    if ($lessonPayments[$i] > $lesson->getOwingAmount($lesson->enrolment->id)) {
-                                        $lessonPayments[$i] = $lesson->getOwingAmount($lesson->enrolment->id);
+                                    if (round($lessonPayments[$i], 2) > round($lesson->getOwingAmount($lesson->enrolment->id), 2)) {
+                                        $lessonPayments[$i] = round($lesson->getOwingAmount($lesson->enrolment->id), 2);
                                     }
                                     if (round($lessonPayments[$i], 2) > 0.00) {
                                         $paymentModel = new Payment();
@@ -173,8 +173,8 @@ class PaymentForm extends Model
                                     ->customer($this->userId)
                                     ->one();
                                 if ($lesson->isOwing($enrolment->id)) {
-                                    if (round($groupLessonPayments[$i], 2) > $lesson->getOwingAmount($enrolment->id)) {
-                                        $groupLessonPayments[$i] = $lesson->getOwingAmount($enrolment->id);
+                                    if (round($groupLessonPayments[$i], 2) > round($lesson->getOwingAmount($enrolment->id), 2)) {
+                                        $groupLessonPayments[$i] = round($lesson->getOwingAmount($enrolment->id), 2);
                                     }
                                     if (round($groupLessonPayments[$i], 2) > 0.00) {
                                         $paymentModel = new Payment();
@@ -235,8 +235,8 @@ class PaymentForm extends Model
                         if ($this->lessonIds) {
                             foreach ($lessons as $i => $lesson) {
                                 if ($lesson->isOwing($lesson->enrolment->id)) {
-                                    if (round($lessonPayments[$i], 2) > $lesson->getOwingAmount($lesson->enrolment->id)) {
-                                        $lessonPayments[$i] = $lesson->getOwingAmount($lesson->enrolment->id);
+                                    if (round($lessonPayments[$i], 2) > round($lesson->getOwingAmount($lesson->enrolment->id), 2)) {
+                                        $lessonPayments[$i] = round($lesson->getOwingAmount($lesson->enrolment->id), 2);
                                     }
                                     if (round($paymentCredits[$j], 2) > 0.00) {
                                         if (round($lessonPayments[$i], 2) > round($paymentCredits[$j], 2)) {
@@ -268,8 +268,8 @@ class PaymentForm extends Model
                                     ->customer($this->userId)
                                     ->one();
                                 if ($lesson->isOwing($enrolment->id)) {
-                                    if (round($groupLessonPayments[$i], 2) > $lesson->getOwingAmount($enrolment->id)) {
-                                        $groupLessonPayments[$i] = $lesson->getOwingAmount($enrolment->id);
+                                    if (round($groupLessonPayments[$i], 2) > round($lesson->getOwingAmount($enrolment->id), 2)) {
+                                        $groupLessonPayments[$i] = round($lesson->getOwingAmount($enrolment->id), 2);
                                     }
                                     if (round($paymentCredits[$j], 2) > 0.00) {
                                         if (round($groupLessonPayments[$i], 2) > round($paymentCredits[$j], 2)) {
@@ -330,8 +330,8 @@ class PaymentForm extends Model
         if ($this->lessonIds) {
             foreach ($lessons as $i => $lesson) {
                 if ($lesson->isOwing($lesson->enrolment->id)) {
-                    if ( round($lessonPayments[$i], 2) > $lesson->getOwingAmount($lesson->enrolment->id)) {
-                        $lessonPayments[$i] = $lesson->getOwingAmount($lesson->enrolment->id);
+                    if ( round($lessonPayments[$i], 2) > round($lesson->getOwingAmount($lesson->enrolment->id), 2)) {
+                        $lessonPayments[$i] = round($lesson->getOwingAmount($lesson->enrolment->id), 2);
                     }
                     if ( round($lessonPayments[$i], 2) > 0.00) {
                         if ( round($amount, 2) > 0.00) {
@@ -358,8 +358,8 @@ class PaymentForm extends Model
                     ->customer($this->userId)
                     ->one();
                 if ($lesson->isOwing($enrolment->id)) {
-                    if ( round($groupLessonPayments[$i], 2) > $lesson->getOwingAmount($enrolment->id)) {
-                        $groupLessonPayments[$i] = $lesson->getOwingAmount($enrolment->id);
+                    if ( round($groupLessonPayments[$i], 2) > round($lesson->getOwingAmount($enrolment->id), 2)) {
+                        $groupLessonPayments[$i] = round($lesson->getOwingAmount($enrolment->id), 2);
                     }
                     if ( round($groupLessonPayments[$i], 2) > 0.00) {
                         if ( round($amount, 2) > 0.00) {
