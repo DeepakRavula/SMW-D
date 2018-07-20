@@ -10,9 +10,9 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 <div id="index-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <?php 
 if ((int)$searchModel->type === Lesson::TYPE_PRIVATE_LESSON) : ?>
-$this->params['show-all'] = $this->render('_button', [
+<?php $this->params['show-all'] = $this->render('_show-all-button', [
     'searchModel' => $searchModel
-]);
+]); ?>
 <?= $this->render('_index-lesson', [
     'searchModel' => $searchModel,
     'dataProvider' => $dataProvider,
