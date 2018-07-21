@@ -44,7 +44,7 @@ class ProFormaInvoiceController extends Controller
             ->all();
         
         foreach ($enrolments as $enrolment) {
-            $dateRange = $enrolment->getPaymentCycleDateRange($priorDate);
+            $dateRange = $enrolment->getPaymentCycleDateRange(null, $priorDate);
             list($from_date, $to_date) = explode(' - ', $dateRange);
             $fromDate = new \DateTime($from_date);
             $toDate = new \DateTime($to_date);
