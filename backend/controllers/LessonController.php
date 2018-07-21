@@ -780,6 +780,12 @@ class LessonController extends BaseController
     {
         $request = Yii::$app->request;
         $model = $this->findModel($id);
+        if (!$model->isEditable()) {
+            return [
+                'status' => false,
+                'message' => ' The lesson is invoiced. You can\'t edit tax for this lessons',
+                ]; 
+            }
         if ($request->isPost) {
             if ($model->load($request->post())) {
                 if ($model->save()) {
