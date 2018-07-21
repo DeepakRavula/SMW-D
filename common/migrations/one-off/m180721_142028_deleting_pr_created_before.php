@@ -15,7 +15,7 @@ class m180721_142028_deleting_pr_created_before extends Migration
     public function safeUp()
     {
         $proformaInvoices = ProformaInvoice::find()
-                ->andWhere(['between', 'id', 172, 278])
+                ->andWhere(['id' < '172'])
                 ->all();         
         foreach ($proformaInvoices as $proformaInvoice) {
         $proformaInvoice->updateAttributes(['isDeleted' => true]);
