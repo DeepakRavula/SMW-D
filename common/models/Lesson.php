@@ -1440,8 +1440,10 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $status = false;
         foreach ($this->proformaLessonItems as $item) {
-            if (!$item->proformaInvoice->isDeleted && $item->proformaInvoice->isCreatedByBot()) {
-                $status = true;
+            if ($item->proformaInvoice) {
+                if (!$item->proformaInvoice->isDeleted && $item->proformaInvoice->isCreatedByBot()) {
+                    $status = true;
+                }
             }
         }
         return $status;

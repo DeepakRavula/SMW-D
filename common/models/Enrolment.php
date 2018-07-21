@@ -147,13 +147,14 @@ class Enrolment extends \yii\db\ActiveRecord
         } else {
             $courseStartDate = (new \DateTime($this->course->startDate))->format('Y-m-1');
         }
+        $dateToCompare = new \DateTime($date);
         $startDate = new \DateTime($courseStartDate);
         $startDateClone = clone ($startDate);
         $endDate = $startDateClone->modify('+' . $this->paymentsFrequency->frequencyLength . ' month, -1 day');
-        if ($startDate <= $date && $endDate >= $date) {
+        if ($startDate <= $dateToCompare && $endDate >= $dateToCompare) {
             return $startDate->format('Y-m-d') . ' - ' . $endDate->format('Y-m-d');
         } else {
-            return $this->getPaymentCycleDateRange($endDate, $date);
+            return $this->getPaymentCycleDateRange($endDate, $dateToCompare->format('Y-m-d'));
         }
     }
 
