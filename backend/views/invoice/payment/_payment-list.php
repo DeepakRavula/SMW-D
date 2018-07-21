@@ -13,7 +13,7 @@ use yii\widgets\Pjax;
             'label' => 'Date',
             'options'=>['width'=>'15%;'] , 
             'value' => function ($data) {
-                return Yii::$app->formatter->asDate($data->payment->date);
+                return Yii::$app->formatter->asDate($data->date);
             }
         ],
         [
@@ -22,7 +22,7 @@ use yii\widgets\Pjax;
             'options' => ['width'=>'15%;'] ,
             'label' => 'Type',
             'value' => function ($data) {
-                return $data->payment->paymentMethod->name;
+                return $data->paymentMethod->name;
             }
         ],
         [
@@ -31,7 +31,7 @@ use yii\widgets\Pjax;
             'options'=>['width'=>'20%;'] ,
             'contentOptions' => ['class' => 'text-left', 'style' => 'min-width:20%;max-width:20%;word-wrap:break-word;'],
             'value' => function ($data) {
-                return $data->payment->reference;
+                return $data->reference;
             }
         ]
     ];
@@ -42,7 +42,7 @@ use yii\widgets\Pjax;
             'label' => 'Notes',
             'options' => ['width'=>'30%;'],
             'value' => function ($data) {
-                return $data->payment->notes;
+                return $data->notes;
 
             },
         ]);

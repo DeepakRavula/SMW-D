@@ -64,8 +64,8 @@ class PrintController extends BaseController
                 ->notDeleted()
                 ->andWhere(['invoice_id' => $id]);
         $invoicePayments                     = Payment::find()
-            ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                $query->andWhere(['ip.invoice_id' => $model->id]);
+            ->joinWith(['invoicePayment' => function ($query) use ($model) {
+                $query->andWhere(['invoice_payment.invoice_id' => $model->id]);
             }])
             ->orderBy(['date' => SORT_DESC]);
         if ($model->isProFormaInvoice()) {
