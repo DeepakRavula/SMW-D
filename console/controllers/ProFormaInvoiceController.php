@@ -28,7 +28,8 @@ class ProFormaInvoiceController extends Controller
         set_time_limit(0);
         ini_set('memory_limit', '-1');
 
-        $currentDate = (new \DateTime())->format('Y-m-d');
+        $currentDate = new \DateTime();
+        $priorDate = ($currentDate->modify('+ 15 days'))->format('Y-m-d');
         $enrolments = Enrolment::find()
             ->notDeleted()
             ->isConfirmed()
@@ -36,15 +37,14 @@ class ProFormaInvoiceController extends Controller
             ->privateProgram()
             ->andWhere(['NOT', ['enrolment.paymentFrequencyId' => 0]])
             ->isRegular()
-            ->joinWith(['course' => function ($query) use ($currentDate) {
-                $query->andWhere(['>=', 'DATE(course.endDate)', $currentDate])
+            ->joinWith(['course' => function ($query) use ($priorDate) {
+                $query->andWhere(['>=', 'DATE(course.endDate)', $priorDate])
                         ->confirmed();
             }])
             ->all();
         
         foreach ($enrolments as $enrolment) {
-            $date = null;
-            $dateRange = $enrolment->getCurrentPaymentCycleDateRange($date);
+            $dateRange = $enrolment->getPaymentCycleDateRange(null, $priorDate);
             list($from_date, $to_date) = explode(' - ', $dateRange);
             $fromDate = new \DateTime($from_date);
             $toDate = new \DateTime($to_date);
@@ -53,41 +53,43 @@ class ProFormaInvoiceController extends Controller
                 ->isConfirmed()
                 ->notCanceled()
                 ->privateLessons()
-                ->program($enrolment->course->programId)
                 ->between($fromDate, $toDate)
-                ->student($enrolment->studentId)
+                ->enrolment($enrolment->id)
                 ->invoiced();
-            $lessons = Lesson::find()
+            $query = Lesson::find()   
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
                 ->privateLessons()
-                ->program($enrolment->course->programId)
                 ->between($fromDate, $toDate)
-                ->student($enrolment->studentId)
+                ->enrolment($enrolment->id)
                 ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
                 ->andWhere(['invoiced_lesson.id' => null])
-                ->all();
-            $lessonIds = [];
-            foreach ($lessons as $lesson) {
-                if ($lesson->isOwing($enrolment->id)) {
-                    $lessonIds[] = $lesson->id;
-                }
-            }
-            if ($lessonIds) {
-                $model = new ProformaInvoice();
-                $model->userId = $enrolment->customer->id;
-                $model->locationId = $enrolment->customer->userLocation->location_id;
-                $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
-                $model->save();
-                $lessons = Lesson::findAll($lessonIds);
+                ->orderBy(['lesson.date' => SORT_ASC]);
+            $firstLesson = $query->one();
+            if ($firstLesson->hasAutomatedPaymentRequest()) {
+                $lessons = $query->all();
+                $lessonIds = [];
                 foreach ($lessons as $lesson) {
-                    $proformaLineItem = new ProformaLineItem();
-                    $proformaLineItem->proformaInvoiceId = $model->id;
-                    $proformaLineItem->lessonId = $lesson->id;
-                    $proformaLineItem->save();
+                    if ($lesson->isOwing($enrolment->id)) {
+                        $lessonIds[] = $lesson->id;
+                    }
                 }
-                $model->save();
+                if ($lessonIds) {
+                    $model = new ProformaInvoice();
+                    $model->userId = $enrolment->customer->id;
+                    $model->locationId = $enrolment->customer->userLocation->location_id;
+                    $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
+                    $model->save();
+                    $lessons = Lesson::findAll($lessonIds);
+                    foreach ($lessons as $lesson) {
+                        $proformaLineItem = new ProformaLineItem();
+                        $proformaLineItem->proformaInvoiceId = $model->id;
+                        $proformaLineItem->lessonId = $lesson->id;
+                        $proformaLineItem->save();
+                    }
+                    $model->save();
+                }
             }
         }
     }
