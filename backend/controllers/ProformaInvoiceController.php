@@ -320,5 +320,6 @@ class ProformaInvoiceController extends BaseController
                 $model->save();
             }
         }
+        return $this->redirect(['proforma-invoice/index']);
     }
 }
