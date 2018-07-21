@@ -509,7 +509,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
                 } else {
-                    $('#lesson-view-tax').html('The lesson is invoiced. You can\'t edit tax for this lessons').fadeIn().delay(3000).fadeOut();
+                    $('#lesson-view-tax').text(response.errors).fadeIn().delay(3000).fadeOut();
                 }
             }
         });

@@ -780,32 +780,22 @@ class LessonController extends BaseController
     {
         $request = Yii::$app->request;
         $model = $this->findModel($id);
-        if (!$model->isEditable()) {
-            return [
-                'status' => false,
-                'message' => ' The lesson is invoiced. You can\'t edit tax for this lessons',
-                ]; 
-            }
+        $model->setScenario(Lesson::SCENARIO_EDIT);
         if ($request->isPost) {
             if ($model->load($request->post())) {
-                if ($model->save()) {
-                    $response = [
-                        'status' => true
-                    ];
-                } else {
-                    $response = [
-                        'status' => false,
-                        'errors' => ActiveForm::validate($model)
-                    ];
-                }
-            }
+                $model->save();
+                $response = [
+                    'status' => true
+                ];
+            } 
         } else {
             $data = $this->renderAjax('_tax-form', [
                 'model' => $model
-            ]);
+            ]);    
             $response = [
-                'status' => true,
-                'data' => $data
+                'status' => empty(current(ActiveForm::validate($model))),
+                'data' => $data,
+                'errors' => current(ActiveForm::validate($model))
             ];
         }
         return $response;
