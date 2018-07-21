@@ -9,6 +9,8 @@ use common\models\PaymentMethod;
 use common\models\Payment;
 use Carbon\Carbon;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "payments".
@@ -72,7 +74,8 @@ class Payment extends ActiveRecord
             [['paymentAmount'], 'number'],
             ['amount', 'validateNonZero', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_APPLY_CREDIT]],
             [['payment_method_id', 'user_id', 'reference', 'date', 'old', 'sourceId', 'credit', 
-                'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId'], 'safe'],
+                'isDeleted', 'transactionId', 'notes', 'enrolmentId', 'customerId', 'createdByUserId', 
+                'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
             ['amount', 'compare', 'operator' => '<', 'compareValue' => 0, 'on' => [self::SCENARIO_CREDIT_USED,
                 self::SCENARIO_CREDIT_USED_EDIT]],
         ];
@@ -157,6 +160,17 @@ class Payment extends ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
+            ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
             ],
         ];
     }

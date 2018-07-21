@@ -219,6 +219,15 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+    public function program($programId)
+    {
+        return $this->joinWith(['course' => function ($query) use ($programId) {
+            $query->joinWith(['program' => function ($query) use ($programId) {
+                $query->andWhere(['program.id' => $programId]);
+            }]);
+        }]);
+    }
+
     public function privateLessons()
     {
         $this->joinWith(['course' => function ($query) {

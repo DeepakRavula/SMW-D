@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models\query;
+use common\models\ProformaInvoice;
 
 
 class ProformaInvoiceQuery extends \yii\db\ActiveQuery
@@ -23,6 +24,27 @@ class ProformaInvoiceQuery extends \yii\db\ActiveQuery
         
 
         return $this;
+    }
+    public function between($fromDate, $toDate)
+    {
+        return $this->andFilterWhere(['between', 'DATE(proformainvoice.dueDate)', $fromDate, $toDate]);
+    }
+    public function unpaid()
+    {
+        return $this->andFilterWhere([
+            'proforma_invoice.status' => ProformaInvoice::STATUS_UNPAID,
+        ]);
+    }
+    public function paid()
+    {
+        return $this->andFilterWhere([
+            'proforma_invoice.status' => ProformaInvoice::STATUS_UNPAID,
+        ]);
+    }
+
+    public function notDeleted()
+    {
+        return $this->andWhere(['proforma_invoice.isDeleted' => false]);
     }
 
 }

@@ -140,6 +140,24 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
     }
 
+    public function getCurrentPaymentCycleDateRange($date = null)
+    {
+        $currentDate = new \DateTime();
+        if ($date) {
+            $courseStartDate = ($date->modify('+1 day'))->format('Y-m-d');
+        } else {
+            $courseStartDate = (new \DateTime($this->course->startDate))->format('Y-m-1');
+        }
+        $startDate = new \DateTime($courseStartDate);
+        $date = clone ($startDate);
+        $endDate = $date->modify('+' . $this->paymentsFrequency->frequencyLength . ' month, -1 day');
+        if ($startDate <= $currentDate && $endDate >= $currentDate) {
+            return $startDate->format('Y-m-d') . ' - ' . $endDate->format('Y-m-d');
+        } else {
+            return $this->getCurrentPaymentCycleDateRange($endDate);
+        }
+    }
+
     public function getCustomer()
     {
         return $this->hasOne(User::className(), ['id' => 'customer_id'])
