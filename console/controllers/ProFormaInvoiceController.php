@@ -32,6 +32,7 @@ class ProFormaInvoiceController extends Controller
         $enrolments = Enrolment::find()
             ->notDeleted()
             ->isConfirmed()
+            ->location(['14','15'])
             ->privateProgram()
             ->andWhere(['NOT', ['enrolment.paymentFrequencyId' => 0]])
             ->isRegular()
