@@ -14,12 +14,12 @@ class m180721_103501_add_payment_audit_log extends Migration
     {
         $this->addColumn('payment', 'createdOn', $this->timeStamp()->defaultValue(null));
 		$this->addColumn('payment', 'updatedOn', $this->timeStamp()->defaultValue(null));
-		$this->addColumn('payment', 'createdByuserId', $this->integer()->unsigned()->notNull());
-        $this->addColumn('payment', 'updatedByuserId', $this->integer()->unsigned()->notNull());
+		$this->addColumn('payment', 'createdByUserId', $this->integer()->unsigned()->notNull());
+        $this->addColumn('payment', 'updatedByUserId', $this->integer()->unsigned()->notNull());
         $this->addColumn('proforma_invoice', 'createdOn', $this->timeStamp()->defaultValue(null));
 		$this->addColumn('proforma_invoice', 'updatedOn', $this->timeStamp()->defaultValue(null));
-		$this->addColumn('proforma_invoice', 'createdByuserId', $this->integer()->unsigned()->notNull());
-		$this->addColumn('proforma_invoice', 'updatedByuserId', $this->integer()->unsigned()->notNull());
+		$this->addColumn('proforma_invoice', 'createdByUserId', $this->integer()->unsigned()->notNull());
+		$this->addColumn('proforma_invoice', 'updatedByUserId', $this->integer()->unsigned()->notNull());
     }
 
     /**
