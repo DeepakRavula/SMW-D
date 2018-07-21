@@ -45,7 +45,7 @@ class ProformaInvoiceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index','create','view','note', 'update', 'delete'],
+                        'actions' => ['index','create','view','note', 'update', 'delete', 'create-payment-request'],
                         'roles' => [
                              'managePfi'
                         ]
@@ -255,6 +255,70 @@ class ProformaInvoiceController extends BaseController
         $model = $this->findModel($id);
         if ($model->delete()) {
             return $this->redirect(['proforma-invoice/index']);
+        }
+    }
+    public function actionCreatePaymentRequest()
+    {
+        $currentDate = (new \DateTime())->format('Y-m-d');
+        $enrolments = Enrolment::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->privateProgram()
+            ->andWhere(['NOT', ['enrolment.paymentFrequencyId' => 0]])
+            ->isRegular()
+            ->joinWith(['course' => function ($query) use ($currentDate) {
+                $query->andWhere(['>=', 'DATE(course.endDate)', $currentDate])
+                        ->confirmed();
+            }])
+            ->all();
+        
+        foreach ($enrolments as $enrolment) {
+            $date = null;
+            $dateRange = $enrolment->getCurrentPaymentCycleDateRange($date);
+            list($from_date, $to_date) = explode(' - ', $dateRange);
+            $fromDate = new \DateTime($from_date);
+            $toDate = new \DateTime($to_date);
+            $invoicedLessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->notCanceled()
+                ->privateLessons()
+                ->program($enrolment->course->programId)
+                ->between($fromDate, $toDate)
+                ->student($enrolment->studentId)
+                ->invoiced();
+            $lessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->notCanceled()
+                ->privateLessons()
+                ->program($enrolment->course->programId)
+                ->between($fromDate, $toDate)
+                ->student($enrolment->studentId)
+                ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
+                ->andWhere(['invoiced_lesson.id' => null])
+                ->all();
+            $lessonIds = [];
+            foreach ($lessons as $lesson) {
+                if ($lesson->isOwing($enrolment->id)) {
+                    $lessonIds[] = $lesson->id;
+                }
+            }
+            if ($lessonIds) {
+                $model = new ProformaInvoice();
+                $model->userId = $enrolment->customer->id;
+                $model->locationId = $enrolment->customer->userLocation->location_id;
+                $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
+                $model->save();
+                $lessons = Lesson::findAll($lessonIds);
+                foreach ($lessons as $lesson) {
+                    $proformaLineItem = new ProformaLineItem();
+                    $proformaLineItem->proformaInvoiceId = $model->id;
+                    $proformaLineItem->lessonId = $lesson->id;
+                    $proformaLineItem->save();
+                }
+                $model->save();
+            }
         }
     }
 }
