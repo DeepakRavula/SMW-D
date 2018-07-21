@@ -20,9 +20,6 @@ $this->title = 'Private Lessons';
 $this->params['action-button'] = $this->render('_action-menu', [
     'searchModel' => $searchModel
 ]);
-$this->params['show-all'] = $this->render('_show-all-button', [
-    'searchModel' => $searchModel
-]);
 ?>
 
 <div class="grid-row-open p-10">
@@ -146,9 +143,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                     return $lessonDuration;
                 },
             ],
-        ];       
-        if ($searchModel->showAll) { 
-        array_push($columns, [
+            [
                 'label' => 'Status',
                 'attribute' => 'lessonStatus',
                 'filter' => LessonSearch::lessonStatuses(),
@@ -160,9 +155,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
 
                     return $status;
                 },
-            ]);
-            }
-            array_push($columns, 
+            ],
             [
                 'label' => 'Price',
                 'attribute' => 'price',
@@ -175,18 +168,13 @@ $this->params['show-all'] = $this->render('_show-all-button', [
             [
                 'label' => 'Owing',
                 'attribute' => 'owing',
-                'contentOptions' => function ($data) {
-                   $highLightClass = 'text-right';
-                   if ($data->getOwingAmount($data->enrolment->id) > 0) {
-                    $highLightClass = 'text-right danger';
-                   }
-                    return ['class' => $highLightClass];
-                },
+                'contentOptions' => ['class' => 'text-right'],
                 'headerOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
                     return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
                 },
-            ]);
+            ],
+        ];
 
         if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
             array_shift($columns);
@@ -368,11 +356,5 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         }
         return false;
     });
-    $("#lessonsearch-showall").on("change", function() {
-      var showAll = $(this).is(":checked");
-       var params = $.param({'LessonSearch[type]': <?= Lesson::TYPE_PRIVATE_LESSON ?>,'LessonSearch[showAll]': (showAll | 0) });
-      var url = "<?php echo Url::to(['lesson/index']); ?>?"+params;
-              $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
-          });
 </script>
 
