@@ -25,4 +25,10 @@ class ProformaInvoiceQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
+    public function notDeleted()
+    {
+        $this->andWhere(['proforma_invoice.isDeleted' => false]);
+        return $this;
+    }
+
 }

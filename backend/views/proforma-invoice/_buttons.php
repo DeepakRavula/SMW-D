@@ -7,6 +7,7 @@ use yii\widgets\Pjax;
 use yii\helpers\Url;
 
 ?>
+
 <?php $loggedUser = User::findOne(Yii::$app->user->id); ?>
 <?php Pjax::Begin(['id' => 'invoice-header-summary']) ?>
 
@@ -50,7 +51,7 @@ use yii\helpers\Url;
     $(document).on('click', '#delete-button', function () {
             var proformaInvoiceId = '<?= $model->id; ?>';
             bootbox.confirm({
-                message: "Are you sure you want to delete this enrolment?",
+                message: "Are you sure you want to delete this payment Request?",
                 callback: function (result) {
                     if (result) {
                         $('.bootbox').modal('hide');
@@ -62,10 +63,7 @@ use yii\helpers\Url;
                             {
                                 if (response.status) {
                                     window.location.href = response.url;
-                                }
-                                // else {
-                                //     $('#delete-button').html('You are not allowed to delete this enrolment.').fadeIn().delay(3000).fadeOut();
-                                // }
+                                } 
                             }
                         });
                     }

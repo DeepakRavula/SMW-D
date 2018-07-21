@@ -253,7 +253,6 @@ class ProformaInvoiceController extends BaseController
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        if ($model) {
             $model->delete();
             $message = "Proforma-invoice-deleted";
             $response = [
@@ -261,12 +260,6 @@ class ProformaInvoiceController extends BaseController
                 'url' => Url::to(['proforma-invoice/index']),
                 'message' => $message
             ];
-        } else {
-            print_r($model->getErrors());
-            $response = [
-                'status' => false
-            ];
-        }
         return $response;
     }
 }
