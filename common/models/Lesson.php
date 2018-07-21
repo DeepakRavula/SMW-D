@@ -1107,6 +1107,11 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->hasOne(ProformaItemLesson::className(), ['lessonId' => 'id']);
     }
 
+    public function getProformaLessonItems()
+    {
+        return $this->hasMany(ProformaItemLesson::className(), ['lessonId' => 'id']);
+    }
+
     public function hasCreditUsed($enrolmentId)
     {
         return !empty($this->getCreditUsedPayment($enrolmentId));
@@ -1429,6 +1434,17 @@ class Lesson extends \yii\db\ActiveRecord
             $lessonDiscount->value = $this->enrolment->multipleEnrolmentDiscount->discount / 4;
         }
         return $lessonDiscount->save();
+    }
+
+    public function hasAutomatedPaymentRequest()
+    {
+        $status = false;
+        foreach ($this->proformaLessonItems as $item) {
+            if (!$item->proformaInvoice->isDeleted && $item->proformaInvoice->isCreatedByBot()) {
+                $status = true;
+            }
+        }
+        return $status;
     }
 
     public function addLineItemDiscount($discount)
