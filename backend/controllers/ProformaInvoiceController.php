@@ -249,11 +249,24 @@ class ProformaInvoiceController extends BaseController
             ];
         }
     }
+
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        if ($model->delete()) {
-            return $this->redirect(['proforma-invoice/index']);
+        if ($model) {
+            $model->delete();
+            $message = "Proforma-invoice-deleted";
+            $response = [
+                'status' => true,
+                'url' => Url::to(['proforma-invoice/index']),
+                'message' => $message
+            ];
+        } else {
+            print_r($model->getErrors());
+            $response = [
+                'status' => false
+            ];
         }
+        return $response;
     }
 }

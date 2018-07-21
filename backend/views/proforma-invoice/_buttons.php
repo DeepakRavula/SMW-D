@@ -15,22 +15,14 @@ use yii\helpers\Url;
         \NumberFormatter::MIN_FRACTION_DIGITS => 2,
         \NumberFormatter::MAX_FRACTION_DIGITS => 2,
     ]]); ?> &nbsp;&nbsp;
-    <?=	Html::a(
-            '<i title="Delete" class="fa fa-trash"></i>',
-            ['proforma-invoice/delete', 'id' => $model->id],
-            ['class' => 'm-r-10 btn btn-box-tool ',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this invoice?',
-            ],
-            'id' => 'delete-button',]
-        )
-        ?>
+    
     <div class="dropdown">
         <i class="fa fa-gear dropdown-toggle" data-toggle="dropdown"></i>
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a id="proforma-receive-payment" href="#">Receive Payment</a></li>
             <li><a id="proforma-invoice-mail-button" href="#">Mail</a></li>
             <li><a id="proforma-print-btn" href="#">Print</a></li>
+            <li><a class="delete-button" id="delete-button" href="<?= Url::to(['proforma-invoice/delete', 'id' => $model->id]);?>">Delete</a></li>
         </ul>
     </div>
    
@@ -54,4 +46,31 @@ use yii\helpers\Url;
             }
         });
     });
+
+    $(document).on('click', '#delete-button', function () {
+            var proformaInvoiceId = '<?= $model->id; ?>';
+            bootbox.confirm({
+                message: "Are you sure you want to delete this enrolment?",
+                callback: function (result) {
+                    if (result) {
+                        $('.bootbox').modal('hide');
+                        $.ajax({
+                            url: '<?= Url::to(['proforma-invoice/delete']); ?>?id=' + proformaInvoiceId,
+                            dataType: "json",
+                            data: $(this).serialize(),
+                            success: function (response)
+                            {
+                                if (response.status) {
+                                    window.location.href = response.url;
+                                }
+                                // else {
+                                //     $('#delete-button').html('You are not allowed to delete this enrolment.').fadeIn().delay(3000).fadeOut();
+                                // }
+                            }
+                        });
+                    }
+                }
+            });
+            return false;
+        });
 </script>

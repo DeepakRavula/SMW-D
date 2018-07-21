@@ -37,6 +37,19 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return 'proforma_invoice';
     }
     
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -65,18 +78,6 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             'dueDate' => 'Due Date',
             'isDeleted' => 'Is Deleted',
             
-        ];
-    }
-
-    public function behaviors()
-    {
-        return [
-            'softDeleteBehavior' => [
-                'class' => SoftDeleteBehavior::className(),
-                'softDeleteAttributeValues' => [
-                    'isDeleted' => true,
-                ],
-            ],
         ];
     }
 
