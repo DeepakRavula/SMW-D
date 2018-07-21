@@ -44,7 +44,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return [
             [['userId', 'locationId'], 'required'],
             [['lessonIds', 'invoiceIds', 'dateRange', 'fromDate', 'toDate', 'lessonId', 
-                'notes', 'status', 'dueDate', 'date'], 'safe']
+                'notes', 'status', 'dueDate', 'date', 'isDueDateAdjusted'], 'safe']
         ];
     }
 
@@ -123,6 +123,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             $this->date = (new \DateTime())->format('Y-m-d');
             $this->dueDate = (new \DateTime())->format('Y-m-d');
             $this->status = self::STATUS_UNPAID;
+            $this->isDueDateAdjusted = false;
         } else {
             $invoiceId = $this->id;
             $lesson = Lesson::find()
@@ -133,8 +134,10 @@ class ProformaInvoice extends \yii\db\ActiveRecord
                 }])
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->one();
-            if ($lesson) {
-                $this->dueDate = (new \DateTime($lesson->date))->format('Y-m-d');
+            if ($lesson && !$this->isDueDateAdjusted) {
+                if (new \DateTime($lesson->date) > new \DateTime()) {
+                    $this->dueDate = (new \DateTime($lesson->date))->format('Y-m-d');
+                }
             }
         }
         return parent::beforeSave($insert);

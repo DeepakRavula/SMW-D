@@ -203,7 +203,11 @@ class ProformaInvoiceController extends BaseController
         $data  = $this->renderAjax('_details-form', [
             'model' => $model,
         ]);
+        $pr = clone $model;
         if ($model->load(Yii::$app->request->post())) {
+            if (new \DateTime($model->dueDate) != new \DateTime($pr->dueDate)) {
+                $model->isDueDateAdjusted = true;
+            }
             $model->date = (new \DateTime($model->date))->format('Y-m-d');
             $model->dueDate = (new \DateTime($model->dueDate))->format('Y-m-d');
             if ($model->save()) {
