@@ -30,6 +30,7 @@ use common\models\Receipt;
 use common\models\PaymentReceipt;
 use backend\models\PaymentForm;
 use yii\data\ArrayDataProvider;
+use common\models\InvoicePayment;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -63,11 +64,13 @@ class PrintController extends BaseController
         $invoiceLineItems = InvoiceLineItem::find()
                 ->notDeleted()
                 ->andWhere(['invoice_id' => $id]);
-        $invoicePayments                     = Payment::find()
-            ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                $query->andWhere(['ip.invoice_id' => $model->id]);
-            }])
-            ->orderBy(['date' => SORT_DESC]);
+        $invoicePayments = InvoicePayment::find()
+                 ->notDeleted()
+                 ->joinWith(['payment' => function ($query) {
+                 $query->notDeleted()
+                  ->orderBy(['payment.date' => SORT_DESC]);
+        }])
+        ->invoice($id);
         if ($model->isProFormaInvoice()) {
             $invoicePayments->notCreditUsed();
         }
