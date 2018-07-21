@@ -86,7 +86,7 @@ class ProformaInvoiceSearch extends ProformaInvoice
             ]
         ]);
 	$dataProvider->sort->defaultOrder = [
-            'number' => SORT_DESC,
+            'dateRange' => SORT_ASC,
         ];
         
         if (!empty($params) && !($this->load($params) && $this->validate())) {
