@@ -166,6 +166,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return $query = ProformaInvoice::find()->alias('i')
                     ->andWhere(['i.locationId' => $this->locationId])
                     ->orderBy(['i.id' => SORT_DESC])
+                    ->notDeleted()
                     ->one();
     }
     

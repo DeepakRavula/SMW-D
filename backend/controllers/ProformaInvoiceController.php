@@ -232,6 +232,7 @@ class ProformaInvoiceController extends BaseController
                     'id' => $id,
                     'locationId' => $locationId,
                 ])
+                ->notDeleted()
                 ->one();
         if ($model !== null) {
             return $model;
@@ -254,7 +255,7 @@ class ProformaInvoiceController extends BaseController
     {
         $model = $this->findModel($id);
             $model->delete();
-            $message = "Proforma-invoice-deleted";
+            $message = "Payment request deleted";
             $response = [
                 'status' => true,
                 'url' => Url::to(['proforma-invoice/index']),

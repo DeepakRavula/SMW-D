@@ -49,14 +49,13 @@ use yii\helpers\Url;
     });
 
     $(document).on('click', '#delete-button', function () {
-            var proformaInvoiceId = '<?= $model->id; ?>';
             bootbox.confirm({
                 message: "Are you sure you want to delete this payment Request?",
                 callback: function (result) {
                     if (result) {
                         $('.bootbox').modal('hide');
                         $.ajax({
-                            url: '<?= Url::to(['proforma-invoice/delete']); ?>?id=' + proformaInvoiceId,
+                            url: '<?= Url::to(['proforma-invoice/delete', 'id' => $model->id]); ?>',
                             dataType: "json",
                             data: $(this).serialize(),
                             success: function (response)
