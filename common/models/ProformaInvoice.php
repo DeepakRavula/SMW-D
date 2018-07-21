@@ -162,6 +162,12 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return $status;
     }
 
+    public function isCreatedByBot()
+    {
+        $botUser = User::findByRole(User::ROLE_BOT);
+        return $this->createdByUserId == $botUser->id;
+    }
+
     public function lastInvoice()
     {
         return $query = ProformaInvoice::find()->alias('i')
