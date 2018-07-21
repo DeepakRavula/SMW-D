@@ -194,7 +194,8 @@ class ProformaInvoice extends \yii\db\ActiveRecord
 
     public function isCreatedByBot()
     {
-        $botUser = User::findByRole(User::ROLE_BOT);
+        $user = User::findByRole(User::ROLE_BOT);
+		$botUser = end($user);
         return $this->createdByUserId == $botUser->id;
     }
 
