@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use common\models\Location;
 use common\models\query\ProformaInvoiceQuery;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "proforma_invoice".
@@ -36,6 +37,19 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return 'proforma_invoice';
     }
     
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -44,7 +58,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return [
             [['userId', 'locationId'], 'required'],
             [['lessonIds', 'invoiceIds', 'dateRange', 'fromDate', 'toDate', 'lessonId', 
-                'notes', 'status', 'dueDate', 'date', 'isDueDateAdjusted'], 'safe']
+                'notes', 'status', 'dueDate', 'date', 'isDueDateAdjusted','isDeleted'], 'safe']
         ];
     }
 
@@ -62,6 +76,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             'notes'  =>'Message',
             'status' => 'Status',
             'dueDate' => 'Due Date',
+            'isDeleted' => 'Is Deleted',
             
         ];
     }
@@ -167,6 +182,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return $query = ProformaInvoice::find()->alias('i')
                     ->andWhere(['i.locationId' => $this->locationId])
                     ->orderBy(['i.id' => SORT_DESC])
+                    ->notDeleted()
                     ->one();
     }
     

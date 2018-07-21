@@ -44,7 +44,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
 			'filterType'=>KartikGridView::FILTER_SELECT2,
                 'filter'=>ArrayHelper::map(ProformaInvoice::find()
-			->location($locationId)->orderBy(['proforma_invoice_number' => SORT_ASC])
+            ->location($locationId)->orderBy(['proforma_invoice_number' => SORT_ASC])
+            ->notDeleted()
                 ->all(), 'id', 'proFormaInvoiceNumber'),
                 'filterWidgetOptions'=>[
             'options' => [
