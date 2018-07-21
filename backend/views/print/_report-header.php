@@ -5,7 +5,7 @@
                 <span class="logo-lg"><img class="login-logo-img" src="<?= Yii::$app->request->baseUrl ?>/img/logo.png" /></span>   
                 <span class="pull-right invoice-address right-align">
                     <small>
-                    <b>Arcadia Music Academy ( <?= $locationModel->name; ?> )</b><br>
+                    <b>Arcadia Academy of Music ( <?= $locationModel->name; ?> )</b><br>
                     <?php if (!empty($locationModel->address)): ?>
                         <?= $locationModel->address; ?>
                     <?php endif; ?>

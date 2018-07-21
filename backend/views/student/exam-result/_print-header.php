@@ -15,7 +15,7 @@
                 <div class="invoice-print-address">
                     From
                     <address>
-                        <strong>Arcadia Music Academy ( <?= $studentModel->customer->userLocation->location->name; ?> )</strong><br>
+                        <strong>Arcadia Academy of Music ( <?= $studentModel->customer->userLocation->location->name; ?> )</strong><br>
                         <?php if (!empty($studentModel->customer->userLocation->location->address)): ?>
                             <?= $studentModel->customer->userLocation->location->address; ?>
                         <?php endif; ?><br>

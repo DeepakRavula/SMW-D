@@ -30,7 +30,7 @@
             <div class="new-invoice-print-address">
                 From
                 <address>
-                    <b>Arcadia Music Academy ( <?= $locationModel->name; ?> )</b><br>
+                    <b>Arcadia Academy of Music ( <?= $locationModel->name; ?> )</b><br>
                     <?php if (!empty($locationModel->address)) : ?>
                         <?= $locationModel->address; ?>
                     <?php endif; ?>
