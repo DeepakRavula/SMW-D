@@ -49,6 +49,7 @@ class ProformaInvoiceSearch extends ProformaInvoice
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = ProformaInvoice::find()
+                ->notDeleted()
                 ->location($locationId);
        
         $query->joinWith(['user' => function ($query) {	
