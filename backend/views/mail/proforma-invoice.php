@@ -24,7 +24,7 @@ use common\models\UserEmail;
 <?= $this->render('/mail/_form', [
     'content' => $content,
     'model' => $model,
-    'invoiceId' => $proformaInvoiceModel->id,
+    'paymentRequestId' => $proformaInvoiceModel->id,
     'data' => $data,
     'subject' => $subject,
     'emailTemplate' => $emailTemplate

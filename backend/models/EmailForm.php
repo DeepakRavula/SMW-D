@@ -15,6 +15,7 @@ class EmailForm extends Model
     public $subject;
     public $content;
     public $id;
+    public $paymentRequestId;
     const ENVIRONMENT_NAME = 'develoment';
     /**
      * {@inheritdoc}
@@ -23,7 +24,7 @@ class EmailForm extends Model
     {
         return [
             [['to', 'subject', 'content'], 'required'],
-            [['invoiceId'], 'safe']
+            [['invoiceId', 'paymentRequestId'], 'safe']
         ];
     }
 

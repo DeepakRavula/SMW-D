@@ -73,6 +73,11 @@ class EmailController extends BaseController
                 $invoice->isSent = true;
                 $invoice->save();
             }
+            if (!empty($model->paymentRequestId)) {
+                $proformaInvoice = ProformaInvoice::findOne(['id' => $model->paymentRequestId]);
+                $proformaInvoice->isMailSent = true;
+                $proformaInvoice->save();
+            }
             return [
                 'status' => true,
                 'message' => 'Mail has been sent successfully',

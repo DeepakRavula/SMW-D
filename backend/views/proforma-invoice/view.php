@@ -15,6 +15,10 @@ $this->params['label'] = $this->render('_title', [
 $this->params['action-button'] = $this->render('_buttons', [
     'model' => $model,
 ]); 
+
+$this->params['show-all'] = $this->render('_show-all', [
+    'model' => $model,
+]);
 ?>
 
 <?php Modal::begin([
@@ -229,4 +233,14 @@ $this->params['action-button'] = $this->render('_buttons', [
         });
 		return false;
   	});
+      $('#proforma-invoice-mail-sent').on('switchChange.bootstrapSwitch', function(event, state) {
+		var params = $.param({'state' : state | 0});
+	$.ajax({
+            url    : '<?= Url::to(['proforma-invoice/update-mail-status', 'id' => $model->id]) ?>&' + params,
+            type   : 'POST',
+            dataType: "json",
+            data   : $('#mail-flag').serialize()
+        });
+        return false;
+    });
 </script>
