@@ -8,33 +8,21 @@ use common\models\Location;
 use common\models\User;
 use common\models\ProformaInvoice;
 use yii\widgets\Pjax;
-
+use backend\models\search\ProformaInvoiceSearch;
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\PrivateLessonSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Payment Requests';
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['show-all'] = $this->render('_button', [
+    'searchModel' => $searchModel
+]);
 ?>
-
-<div class="grid-row-open">
-<?php Pjax::begin([
-    'timeout' => 8000,
-    'enablePushState' => false,
-    'id' => 'proforma-invoice-listing',]); ?>
-    <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id; ?>
-    <?php echo KartikGridView::widget([
-        'dataProvider' => $dataProvider,
-        'id' => 'proforma-invoice-grid',
-        'filterModel' => $searchModel,
-        'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::to(['proforma-invoice/view', 'id' => $model->id]);
-
-            return ['data-url' => $url];
-        },
-        'summary' => false,
-        'emptyText' => false,
-        'columns' => [
+  <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id; ?>
+<?php  
+        $columns = [];
+        $columns = [
             [
                 'attribute' => 'number',
                 'label' => 'Number',
@@ -44,7 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
 			'filterType'=>KartikGridView::FILTER_SELECT2,
                 'filter'=>ArrayHelper::map(ProformaInvoice::find()
-			->location($locationId)->orderBy(['proforma_invoice_number' => SORT_ASC])
+            ->location($locationId)->orderBy(['proforma_invoice_number' => SORT_ASC])
+            ->notDeleted()
                 ->all(), 'id', 'proFormaInvoiceNumber'),
                 'filterWidgetOptions'=>[
             'options' => [
@@ -58,8 +47,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'label' => 'Due Date',
-		'headerOptions' => ['class' => 'text-left'],
-	        'contentOptions' => ['class' => 'text-left'],
+                'headerOptions' => ['class' => 'text-left'],
+                'attribute' => 'dateRange',
+	            'contentOptions' => ['class' => 'text-left'],
                 'value' => function ($data) {
                     return !empty($data->dueDate) ? Yii::$app->formatter->asDate($data->dueDate) : null;
                 },
@@ -125,16 +115,53 @@ $this->params['breadcrumbs'][] = $this->title;
                     return !empty($data->total) ? Yii::$app->formatter->asCurrency($data->total) : null;
                 },
             ],
-            [
+        ];
+        if ($searchModel->showAll) {
+            array_push($columns,  [
                 'label' => 'Status',
-		'headerOptions' => ['class' => 'text-left'],
-	        'contentOptions' => ['class' => 'text-left'],
+        'attribute' => 'proformaInvoiceStatus',
+        'filter'=> ProformaInvoiceSearch::ProformaInvoiceStatuses(),
                 'value' => function ($data) {
-                    return !empty($data->getStatus()) ? $data->getStatus() : null;
+                    return $data->getStatus();
                 },
-            ],
-        ],
+                'contentOptions' => function ($data) {
+                    $options = [];
+                    $type = 1;
+                    Html::addCssClass($options, $type.'-'.strtolower($data->getStatus()));
+    
+                    return $options;
+                },
+            ]);
+        }
+
+        ?>
+<div class="grid-row-open">
+<?php Pjax::begin([
+    'timeout' => 8000,
+    'enablePushState' => false,
+    'id' => 'proforma-invoice-listing',]); ?>
+    <?php echo KartikGridView::widget([
+        'dataProvider' => $dataProvider,
+        'id' => 'proforma-invoice-grid',
+        'filterModel' => $searchModel,
+        'rowOptions' => function ($model, $key, $index, $grid) {
+            $url = Url::to(['proforma-invoice/view', 'id' => $model->id]);
+
+            return ['data-url' => $url];
+        },
+        'summary' => false,
+        'emptyText' => false,
+        'columns' => $columns,
     ]); ?>
 </div>
     <?php Pjax::end(); ?>
-
+    <script>
+$(document).ready(function(){
+  $("#proformainvoicesearch-showall").on("change", function() {
+      var showAll = $(this).is(":checked");
+       var params = $.param({ 'ProformaInvoiceSearch[showAll]': (showAll | 0)});
+      var url = "<?php echo Url::to(['proforma-invoice/index']); ?>?"+params;
+              $.pjax.reload({url: url, container: "#proforma-invoice-listing", replace: false, timeout: 4000});  //Reload GridView
+          });
+});
+  </script>

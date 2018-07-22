@@ -5,6 +5,9 @@ namespace common\models;
 use Yii;
 use common\models\Location;
 use common\models\query\ProformaInvoiceQuery;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "proforma_invoice".
@@ -36,6 +39,30 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return 'proforma_invoice';
     }
     
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
+            ],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -44,7 +71,8 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return [
             [['userId', 'locationId'], 'required'],
             [['lessonIds', 'invoiceIds', 'dateRange', 'fromDate', 'toDate', 'lessonId', 
-                'notes', 'status', 'dueDate', 'date'], 'safe']
+                'notes', 'status', 'dueDate', 'date', 'isDueDateAdjusted', 'isDeleted', 
+                'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe']
         ];
     }
 
@@ -62,6 +90,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             'notes'  =>'Message',
             'status' => 'Status',
             'dueDate' => 'Due Date',
+            'isDeleted' => 'Is Deleted',
             
         ];
     }
@@ -113,6 +142,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ($insert) {
+            $this->isDeleted = false;
             $lastInvoice   = $this->lastInvoice();
             if (!empty($lastInvoice)) {
                 $proformaInvoiceNumber = $lastInvoice->proforma_invoice_number + 1;
@@ -123,6 +153,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             $this->date = (new \DateTime())->format('Y-m-d');
             $this->dueDate = (new \DateTime())->format('Y-m-d');
             $this->status = self::STATUS_UNPAID;
+            $this->isDueDateAdjusted = false;
         } else {
             $invoiceId = $this->id;
             $lesson = Lesson::find()
@@ -133,8 +164,10 @@ class ProformaInvoice extends \yii\db\ActiveRecord
                 }])
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->one();
-            if ($lesson) {
-                $this->dueDate = (new \DateTime($lesson->date))->format('Y-m-d');
+            if ($lesson && !$this->isDueDateAdjusted) {
+                if (new \DateTime($lesson->date) > new \DateTime()) {
+                    $this->dueDate = (new \DateTime($lesson->date))->format('Y-m-d');
+                }
             }
         }
         return parent::beforeSave($insert);
@@ -159,11 +192,19 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return $status;
     }
 
+    public function isCreatedByBot()
+    {
+        $user = User::findByRole(User::ROLE_BOT);
+		$botUser = end($user);
+        return $this->createdByUserId == $botUser->id;
+    }
+
     public function lastInvoice()
     {
-        return $query = ProformaInvoice::find()->alias('i')
-                    ->andWhere(['i.locationId' => $this->locationId])
-                    ->orderBy(['i.id' => SORT_DESC])
+        return $query = ProformaInvoice::find()
+                    ->andWhere(['locationId' => $this->locationId])
+                    ->orderBy(['id' => SORT_DESC])
+                    ->notDeleted()
                     ->one();
     }
     

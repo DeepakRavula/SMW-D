@@ -22,6 +22,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 ]);
 ?>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
+<div id="lesson-view-tax" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="view-danger-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="success-notification" style="display:none;" class="alert-success alert fade in"></div>
@@ -507,6 +508,8 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                 if (response.status) {
                     $('#modal-content').html(response.data);
                     $('#popup-modal').modal('show');
+                } else {
+                    $('#lesson-view-tax').text(response.errors).fadeIn().delay(3000).fadeOut();
                 }
             }
         });

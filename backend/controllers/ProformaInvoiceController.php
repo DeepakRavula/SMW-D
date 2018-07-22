@@ -45,7 +45,7 @@ class ProformaInvoiceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index','create','view','note', 'update', 'delete'],
+                        'actions' => ['index','create','view','note', 'update', 'delete', 'create-payment-request'],
                         'roles' => [
                              'managePfi'
                         ]
@@ -203,7 +203,11 @@ class ProformaInvoiceController extends BaseController
         $data  = $this->renderAjax('_details-form', [
             'model' => $model,
         ]);
+        $pr = clone $model;
         if ($model->load(Yii::$app->request->post())) {
+            if (new \DateTime($model->dueDate) != new \DateTime($pr->dueDate)) {
+                $model->isDueDateAdjusted = true;
+            }
             $model->date = (new \DateTime($model->date))->format('Y-m-d');
             $model->dueDate = (new \DateTime($model->dueDate))->format('Y-m-d');
             if ($model->save()) {
@@ -233,6 +237,7 @@ class ProformaInvoiceController extends BaseController
                     'id' => $id,
                     'locationId' => $locationId,
                 ])
+                ->notDeleted()
                 ->one();
         if ($model !== null) {
             return $model;
@@ -250,11 +255,17 @@ class ProformaInvoiceController extends BaseController
             ];
         }
     }
+
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        if ($model->delete()) {
-            return $this->redirect(['proforma-invoice/index']);
-        }
+            $model->delete();
+            $message = "Payment request deleted";
+            $response = [
+                'status' => true,
+                'url' => Url::to(['proforma-invoice/index']),
+                'message' => $message
+            ];
+        return $response;
     }
 }
