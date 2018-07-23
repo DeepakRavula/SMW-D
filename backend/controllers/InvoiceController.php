@@ -157,18 +157,19 @@ class InvoiceController extends BaseController
         $request = Yii::$app->request;
         $model = $this->findModel($id);
         $customer = new User();
+        $customer->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $userProfile = new UserProfile();
-        $userContact=new UserContact();
-        $userEmail=new UserEmail();
+        $userContact = new UserContact();
+        $userEmail = new UserEmail();
         if ($userProfile->load($request->post()) && $userEmail->load($request->post())) {
             if ($customer->save()) {
-                $userProfile->user_id=$customer->id;
+                $userProfile->user_id = $customer->id;
                 $userProfile->save();
-                $userContact->userId=$customer->id;
-                $userContact->isPrimary=true;
-                $userContact-> labelId= Label::LABEL_WORK;
+                $userContact->userId = $customer->id;
+                $userContact->isPrimary = true;
+                $userContact->labelId = Label::LABEL_WORK;
                 $userContact->save();
-                $userEmail->userContactId=$userContact->id;
+                $userEmail->userContactId = $userContact->id;
                 $userEmail->save();
                 $model->user_id = $customer->id;
                 $model->save();
@@ -319,7 +320,7 @@ class InvoiceController extends BaseController
     {
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $locationModel = Location::findOne(['id' => $locationId]);
         $today = (new \DateTime())->format('Y-m-d H:i:s');
         $data = Yii::$app->request->rawBody;
