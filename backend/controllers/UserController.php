@@ -273,7 +273,6 @@ class UserController extends BaseController
     protected function getUnscheduleLessonDataProvider($id)
     {
         $unscheduledLessons = Lesson::find()
-            ->enrolled()
             ->isConfirmed()
             ->joinWith(['privateLesson'])
             ->orderBy(['private_lesson.expiryDate' => SORT_ASC])
