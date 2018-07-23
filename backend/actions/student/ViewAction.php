@@ -72,6 +72,7 @@ class ViewAction extends Action
                 ->orderBy(['private_lesson.expiryDate' => SORT_ASC])
                 ->unscheduled()
                 ->notRescheduled()
+                ->notExpired()
                 ->notDeleted();
 
         return new ActiveDataProvider([
