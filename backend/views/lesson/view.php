@@ -324,20 +324,21 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     });
 
     $(document).on('modal-success', function(event, params) {
-        if (params.url) {debugger
+        if (params.url) {
             window.location.href = params.url;
-        }
-        if ($('#lesson-cost').length) {
-            $.pjax.reload({container: "#lesson-cost", replace: false, async: false, timeout: 6000});
-        }
-        if ($('#lesson-discount').length) {
-            $.pjax.reload({container: "#lesson-discount", replace: false, async: false, timeout: 6000});
-        }
-        if ($('#lesson-price-details').length) {
-            $.pjax.reload({container: "#lesson-price-details", replace: false, async: false, timeout: 6000});
-        }
-        if ($('#lesson-payment-listing').length) {
-            $.pjax.reload({container: "#lesson-payment-listing", replace: false, async: false, timeout: 6000});
+        } else {
+            if ($('#lesson-cost').length) {
+                $.pjax.reload({container: "#lesson-cost", replace: false, async: false, timeout: 6000});
+            }
+            if ($('#lesson-discount').length) {
+                $.pjax.reload({container: "#lesson-discount", replace: false, async: false, timeout: 6000});
+            }
+            if ($('#lesson-price-details').length) {
+                $.pjax.reload({container: "#lesson-price-details", replace: false, async: false, timeout: 6000});
+            }
+            if ($('#lesson-payment-listing').length) {
+                $.pjax.reload({container: "#lesson-payment-listing", replace: false, async: false, timeout: 6000});
+            }
         }
         return false;
     });

@@ -22,7 +22,7 @@ use yii\bootstrap\Html;
         ->all();  
 
     $customers = ArrayHelper::map(User::find()
-        ->active()
+        ->notDeleted()
         ->customers(Location::findOne(['slug' => \Yii::$app->location])->id)
         ->all(), 'id', 'publicIdentity');
 ?>

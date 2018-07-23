@@ -71,8 +71,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return [
             [['userId', 'locationId'], 'required'],
             [['lessonIds', 'invoiceIds', 'dateRange', 'fromDate', 'toDate', 'lessonId', 
-                'notes', 'status', 'dueDate', 'date', 'isDueDateAdjusted', 'isDeleted', 
-                'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe']
+                'notes', 'status', 'dueDate', 'date', 'isMailSent'], 'safe']
         ];
     }
 
@@ -90,7 +89,8 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             'notes'  =>'Message',
             'status' => 'Status',
             'dueDate' => 'Due Date',
-            'isDeleted' => 'Is Deleted',
+            'isMailSent' => 'Mail Sent',
+            'isDeleted' => 'isDeleted'
             
         ];
     }
@@ -154,6 +154,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             $this->dueDate = (new \DateTime())->format('Y-m-d');
             $this->status = self::STATUS_UNPAID;
             $this->isDueDateAdjusted = false;
+            $this->isMailSent = false;
         } else {
             $invoiceId = $this->id;
             $lesson = Lesson::find()
