@@ -23,7 +23,7 @@ use yii\bootstrap\Html;
 
     $customers = ArrayHelper::map(User::find()
         ->notDeleted()
-        ->customers(Location::findOne(['slug' => \Yii::$app->location])->id)
+        ->customersAndGuests(Location::findOne(['slug' => \Yii::$app->location])->id)
         ->all(), 'id', 'publicIdentity');
 ?>
 <div id="index-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
