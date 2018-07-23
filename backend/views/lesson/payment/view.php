@@ -27,7 +27,7 @@ $columns = [
         'attribute' => 'amount',
         'format' => 'currency',
         'value' => function ($data) {
-            return Yii::$app->formatter->asDecimal($data->amount);
+            return Yii::$app->formatter->asDecimal(round($data->amount, 2));
         },
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right']

@@ -7,7 +7,7 @@
         ]]);
         ?>
     <dt>SubTotal</dt>
-    <dd><?=Yii::$app->formatter->format($model->subTotal, ['currency', 'USD', [
+    <dd><?=Yii::$app->formatter->format(round($model->subTotal, 2), ['currency', 'USD', [
                 \NumberFormatter::MIN_FRACTION_DIGITS => 2,
                 \NumberFormatter::MAX_FRACTION_DIGITS => 2,
         ]]);
@@ -19,7 +19,7 @@
         ]]);
         ?></dd>
     <dt><b>Total</b></dt>
-    <dd><b><?=Yii::$app->formatter->format($model->total, ['currency', 'USD', [
+    <dd><b><?=Yii::$app->formatter->format(round($model->total, 2), ['currency', 'USD', [
                 \NumberFormatter::MIN_FRACTION_DIGITS => 2,
                 \NumberFormatter::MAX_FRACTION_DIGITS => 2,
         ]]);
@@ -27,13 +27,13 @@
     <dt>Paid</dt>
     <dd> <?php $paymentTotal = !empty($model->invoicePaymentTotal) ? $model->invoicePaymentTotal : 0; ?> 
         <?=
-        Yii::$app->formatter->format($paymentTotal, ['currency', 'USD', [
+        Yii::$app->formatter->format(round($paymentTotal, 2), ['currency', 'USD', [
                 \NumberFormatter::MIN_FRACTION_DIGITS => 2,
                 \NumberFormatter::MAX_FRACTION_DIGITS => 2,
         ]]);
         ?>
     <dt><b>Balance</b></dt>
-    <dd><b> <?=Yii::$app->formatter->format($model->balance, ['currency', 'USD', [
+    <dd><b> <?=Yii::$app->formatter->format(round($model->balance, 2), ['currency', 'USD', [
                 \NumberFormatter::MIN_FRACTION_DIGITS => 2,
                 \NumberFormatter::MAX_FRACTION_DIGITS => 2,
         ]]);

@@ -35,7 +35,7 @@ use yii\bootstrap\ActiveForm;
             'contentOptions' => ['class' => 'text-right'],
             'label' => 'Amount',
             'value' => function ($data) {
-                return !empty($data->total) ? Yii::$app->formatter->asCurrency($data->total) : null;
+                return !empty($data->total) ? Yii::$app->formatter->asCurrency(round($data->total, 2)) : null;
             }
         ],
         [
@@ -47,7 +47,7 @@ use yii\bootstrap\ActiveForm;
                 if ($canEdit) {
                     $balance += $data->getPaidAmount($model->id);
                 }
-                return Yii::$app->formatter->asCurrency($balance);
+                return Yii::$app->formatter->asCurrency(round($balance, 2));
             }
         ]
     ];

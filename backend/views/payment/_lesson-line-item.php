@@ -58,7 +58,7 @@ use yii\bootstrap\ActiveForm;
 	    [   
             'label' => 'Amount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->netPrice);
+                return Yii::$app->formatter->asCurrency(round($data->netPrice, 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -70,7 +70,7 @@ use yii\bootstrap\ActiveForm;
                 if ($canEdit) {
                     $balance += $data->getPaidAmount($model->id);
                 }
-                return Yii::$app->formatter->asCurrency($balance);
+                return Yii::$app->formatter->asCurrency(round($balance, 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']

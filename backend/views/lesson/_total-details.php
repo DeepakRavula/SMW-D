@@ -30,16 +30,16 @@ LteBox::begin([
     <dt class="m-r-10">Discount</dt>
 	<dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->discount); ?></dd>
 	<dt class="m-r-10">SubTotal</dt>
-    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->getSubTotal()); ?></dd>
+    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency(round($model->getSubTotal(), 2)); ?></dd>
     <dt class="m-r-10">Tax</dt>
     <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->tax); ?></dd>
     <dt class="m-r-10">Total</dt>
-    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->netPrice); ?></dd>
+    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency(round($model->netPrice, 2)); ?></dd>
     <dt class="m-r-10">Paid</dt>
     <dd class = "total-horizontal-dd text-right"><?php $lessonPaid = !empty($model->getCreditAppliedAmount($model->enrolment->id)) ? $model->getCreditAppliedAmount($model->enrolment->id) : 0; ?>
-    <?= Yii::$app->formatter->asCurrency($lessonPaid); ?></dd>
+    <?= Yii::$app->formatter->asCurrency(round($lessonPaid, 2)); ?></dd>
     <dt class="m-r-10">Balance</dt>
-    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->getOwingAmount($model->enrolment->id)); ?></dd>
+    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency(round($model->getOwingAmount($model->enrolment->id), 2)); ?></dd>
 </dl>
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>

@@ -37,7 +37,7 @@ use yii\bootstrap\Html;
         'contentOptions' => ['class' => 'text-right'],
         'label' => 'Amount',
         'value' => function ($data) {
-            return !empty($data->total) ? Yii::$app->formatter->asCurrency($data->total) : null;
+            return !empty($data->total) ? Yii::$app->formatter->asCurrency(round($data->total, 2)) : null;
         }
     ]);
 
@@ -46,7 +46,7 @@ use yii\bootstrap\Html;
         'contentOptions' => ['class' => 'text-right invoice-value'],
         'label' => 'Balance',
         'value' => function ($data) {
-            return !empty($data->balance) ? Yii::$app->formatter->asCurrency($data->balance) : null;
+            return !empty($data->balance) ? Yii::$app->formatter->asCurrency(round($data->balance, 2)) : null;
         }
     ]);
 ?>

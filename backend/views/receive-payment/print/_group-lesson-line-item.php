@@ -63,7 +63,7 @@ use yii\bootstrap\ActiveForm;
             'label' => 'Amount',
             'attribute' => 'amount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->netPrice);
+                return Yii::$app->formatter->asCurrency(round($data->netPrice, 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -79,7 +79,7 @@ use yii\bootstrap\ActiveForm;
                     ->andWhere(['courseId' => $data->courseId])
                     ->customer($model->userId)
                     ->one();
-                return Yii::$app->formatter->asCurrency($data->getOwingAmount($enrolment->id));
+                return Yii::$app->formatter->asCurrency(round($data->getOwingAmount($enrolment->id), 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']

@@ -58,7 +58,7 @@ use yii\bootstrap\Html;
             'label' => 'Amount',
             'attribute' => 'amount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->netPrice);
+                return Yii::$app->formatter->asCurrency(round($data->netPrice, 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
@@ -68,7 +68,7 @@ use yii\bootstrap\Html;
             'attribute' => 'balance',
             'label' => 'Balance',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
+                return Yii::$app->formatter->asCurrency(round($data->getOwingAmount($data->enrolment->id), 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']
