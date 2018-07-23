@@ -526,9 +526,10 @@ class: "small",
                     {
                        if(response.status)
                        {
+                                    $('#walkin-modal').modal('hide');
                                     $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
                                     $('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                                    $('#walkin-modal').modal('hide');
+                                    
                             }else
                             {
                              $('#walkin-customer-form').yiiActiveForm('updateMessages',
