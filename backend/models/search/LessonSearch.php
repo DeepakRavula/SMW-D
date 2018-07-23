@@ -171,7 +171,7 @@ class LessonSearch extends Lesson
             ]
         ]);
 	$dataProvider->sort->defaultOrder = [
-            'program' => SORT_ASC,
+            'dateRange' => SORT_ASC,
 	    ];
         return $dataProvider;
     }
