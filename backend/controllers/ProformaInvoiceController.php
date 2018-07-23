@@ -34,7 +34,7 @@ class ProformaInvoiceController extends BaseController
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => [
-                    'create','note', 'update', 'delete'
+                    'create','note', 'update', 'delete', 'update-mail-status'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -45,7 +45,7 @@ class ProformaInvoiceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index','create','view','note', 'update', 'delete', 'create-payment-request'],
+                        'actions' => ['index','create','view','note', 'update', 'delete', 'update-mail-status'],
                         'roles' => [
                              'managePfi'
                         ]
@@ -267,5 +267,11 @@ class ProformaInvoiceController extends BaseController
                 'message' => $message
             ];
         return $response;
+    }
+    public function actionUpdateMailStatus($id, $state)
+    {
+        $model = $this->findModel($id);
+        $model->isMailSent = $state;
+        $model->save();
     }
 }
