@@ -309,7 +309,7 @@ class PaymentForm extends Model
                             if (round($amount, 2) > round($invoicePayments[$i], 2)) {
                                 $amountToPay = round($invoice->balance, 2);
                             } else {
-                                $amountToPay = round($amount);
+                                $amountToPay = round($amount, 2);
                             }
                             $invoicePaymentModel = new InvoicePayment();
                             $invoicePaymentModel->invoice_id = $invoice->id;
