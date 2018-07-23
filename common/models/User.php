@@ -68,6 +68,8 @@ class User extends ActiveRecord implements IdentityInterface
     public $groupLessonHourlyRate;
     public $hasEditable;
     public $lessonId;
+    public $locationId;
+
     public static $roleNames = [
         self::ROLE_ADMINISTRATOR => 'Admin',
         self::ROLE_OWNER => 'Owner',
@@ -156,7 +158,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['username'], 'filter', 'filter' => '\yii\helpers\Html::encode'],
             [['customerIds'], 'required', 'on' => self::SCENARIO_MERGE],
             ['customerIds', 'validateCanMerge', 'on' => self::SCENARIO_MERGE],
-            [['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate',
+            [['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate', 'locationId',
                 'customerId', 'isDeleted', 'pin_hash', 'canLogin', 'canMerge'], 'safe']
         ];
     }
@@ -324,6 +326,17 @@ class User extends ActiveRecord implements IdentityInterface
             $this->isDeleted = false;
         }
         return parent::beforeSave($insert);
+    }
+
+    public function afterSave($insert, $changedAttributes) 
+    {
+        if ($this->locationId) {
+            $userLocation = new UserLocation();
+            $userLocation->user_id = $this->id;
+            $userLocation->location_id = $this->locationId;
+            $userLocation->save();
+        }
+        parent::afterSave($insert, $changedAttributes);
     }
     
     public function beforeDelete() 
