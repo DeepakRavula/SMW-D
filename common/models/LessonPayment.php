@@ -117,6 +117,10 @@ class LessonPayment extends \yii\db\ActiveRecord
                 }
                 $this->payment->updateAttributes(['amount' => $this->amount]);
             }
+        } else {
+            if (!$this->date) {
+                $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
+            }
         }
 
         return parent::afterSave($insert, $changedAttributes);
