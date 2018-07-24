@@ -125,7 +125,10 @@ class InvoicePayment extends \yii\db\ActiveRecord
                 }
                 $this->payment->updateAttributes(['amount' => $this->amount]);
             }
-            $this->invoice->save();
+        }
+        $this->invoice->save();
+        foreach ($this->invoice->paymentRequests as $paymentRequest) {
+            $paymentRequest->save();
         }
         return true;
     }

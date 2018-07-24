@@ -129,7 +129,6 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             $this->proforma_invoice_number = $proformaInvoiceNumber;
             $this->date = (new \DateTime())->format('Y-m-d');
             $this->dueDate = (new \DateTime())->format('Y-m-d');
-            $this->status = self::STATUS_UNPAID;
             $this->isDueDateAdjusted = false;
             $this->isMailSent = false;
         } else {
@@ -148,6 +147,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
                 }
             }
         }
+        $this->status = round($this->total, 2) > 0.00 ? self::STATUS_UNPAID : self::STATUS_PAID;
         return parent::beforeSave($insert);
     }
     

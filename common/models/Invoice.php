@@ -558,6 +558,23 @@ class Invoice extends \yii\db\ActiveRecord
         return !empty($this->getNonLessonCreditUsedPayment());
     }
 
+    public function getPaymentRequests()
+    {
+        return $this->hasMany(ProformaInvoice::className(), ['id' => 'proformaInvoiceId'])
+            ->via('proformaLineItems');
+    }
+
+    public function getProformaLineItems()
+    {
+        return $this->hasMany(ProformaLineItem::className(), ['id' => 'proformaLineItemId'])
+            ->via('proformaInvoiceItems');
+    }
+
+    public function getProformaInvoiceItems()
+    {
+        return $this->hasMany(ProformaItemInvoice::className(), ['invoiceId' => 'id']);
+    }
+
     public function getProformaInvoiceItem()
     {
         return $this->hasOne(ProformaItemInvoice::className(), ['invoiceId' => 'id']);

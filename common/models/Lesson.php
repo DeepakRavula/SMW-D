@@ -1415,6 +1415,23 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->isOwing($enrolmentId) ? 'Unpaid' : 'Paid';
     }
 
+    public function getPaymentRequests()
+    {
+        return $this->hasMany(ProformaInvoice::className(), ['id' => 'proformaInvoiceId'])
+            ->via('paymentRequestLineItems');
+    }
+
+    public function getPaymentRequestLineItems()
+    {
+        return $this->hasMany(ProformaLineItem::className(), ['id' => 'proformaLineItemId'])
+            ->via('paymentRequestLessonItems');
+    }
+
+    public function getPaymentRequestLessonItems()
+    {
+        return $this->hasMany(ProformaItemLesson::className(), ['lessonId' => 'id']);
+    }
+
     public function getPaymentsById($id, $enrolmentId = null) 
     {
         $query = LessonPayment::find()
