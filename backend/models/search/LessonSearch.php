@@ -34,6 +34,7 @@ class LessonSearch extends Lesson
     public $attendanceStatus;
     public $rate;
     public $isSeeMore;
+    public $showAll;
     /**
      * {@inheritdoc}
      */
@@ -43,7 +44,7 @@ class LessonSearch extends Lesson
             [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
             [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId',
-                'invoiceType','dateRange', 'rate','student', 'program', 'teacher','isSeeMore'], 'safe'],
+                'invoiceType','dateRange', 'rate','student', 'program', 'teacher','isSeeMore', 'showAll'], 'safe'],
         ];
     }
     
