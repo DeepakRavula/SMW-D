@@ -177,7 +177,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 'attribute' => 'owing',
                 'contentOptions' => function ($data) {
                    $highLightClass = 'text-right';
-                   if ($data->getOwingAmount($data->enrolment->id) > 0) {
+                   if ($data->isOwing($data->enrolment->id)) {
                     $highLightClass = 'text-right danger';
                    }
                     return ['class' => $highLightClass];
@@ -368,7 +368,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         }
         return false;
     });
-    $("#lessonsearch-showall").on("change", function() {
+    $(document).off('change', '#lessonsearch-showall').on('change', '#lessonsearch-showall', function(){
       var showAll = $(this).is(":checked");
        var params = $.param({'LessonSearch[type]': <?= Lesson::TYPE_PRIVATE_LESSON ?>,'LessonSearch[showAll]': (showAll | 0) });
       var url = "<?php echo Url::to(['lesson/index']); ?>?"+params;
