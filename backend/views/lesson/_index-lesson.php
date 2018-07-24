@@ -152,6 +152,11 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 'label' => 'Status',
                 'attribute' => 'lessonStatus',
                 'filter' => LessonSearch::lessonStatuses(),
+                'filterWidgetOptions'=>[
+                    'options' => [
+                        'id' => 'lesson-index-status',
+                    ],
+                ],
                 'value' => function ($data) {
                     $status = null;
                     if (!empty($data->status)) {
@@ -197,7 +202,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         'dataProvider' => $dataProvider,
         'options' => ['id' => 'lesson-index-1'],
         'filterModel' => $searchModel,
-        'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true]),
+        'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[showAll]' => $searchModel->showAll]),
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['lesson/view', 'id' => $model->id]);
 
@@ -370,9 +375,9 @@ $this->params['show-all'] = $this->render('_show-all-button', [
     });
     $(document).off('change', '#lessonsearch-showall').on('change', '#lessonsearch-showall', function(){
       var showAll = $(this).is(":checked");
-       var params = $.param({'LessonSearch[type]': <?= Lesson::TYPE_PRIVATE_LESSON ?>,'LessonSearch[showAll]': (showAll | 0) });
+       var params = $.param({'LessonSearch[type]': <?= Lesson::TYPE_PRIVATE_LESSON ?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[status]': '' });
       var url = "<?php echo Url::to(['lesson/index']); ?>?"+params;
               $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
-          });
+          });  
 </script>
 
