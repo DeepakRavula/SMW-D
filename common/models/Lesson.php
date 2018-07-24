@@ -1410,6 +1410,11 @@ class Lesson extends \yii\db\ActiveRecord
         return $amount;
     }
 
+    public function getPaidStatus($enrolmentId) 
+    {
+        return $this->isOwing($enrolmentId) ? 'Unpaid' : 'Paid';
+    }
+
     public function getPaymentsById($id, $enrolmentId = null) 
     {
         $query = LessonPayment::find()

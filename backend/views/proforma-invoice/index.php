@@ -112,7 +112,7 @@ $this->params['show-all'] = $this->render('_button', [
 		'headerOptions' => ['class' => 'text-right'],
 	        'contentOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
-                    return !empty($data->total) ? Yii::$app->formatter->asCurrency($data->total) : null;
+                    return Yii::$app->formatter->asCurrency($data->total);
                 },
             ],
         ];
@@ -122,12 +122,12 @@ $this->params['show-all'] = $this->render('_button', [
         'attribute' => 'proformaInvoiceStatus',
         'filter'=> ProformaInvoiceSearch::ProformaInvoiceStatuses(),
                 'value' => function ($data) {
-                    return $data->getStatus();
+                    return $data->getPRStatus();
                 },
                 'contentOptions' => function ($data) {
                     $options = [];
                     $type = 1;
-                    Html::addCssClass($options, $type.'-'.strtolower($data->getStatus()));
+                    Html::addCssClass($options, $type.'-'.strtolower($data->getPrStatus()));
     
                     return $options;
                 },
