@@ -67,6 +67,17 @@ use yii\bootstrap\ActiveForm;
             return !empty($data->balance) ? Yii::$app->formatter->asCurrency(round($data->balance, 2)) : null;
         }
     ]);
+    if (isset($changeGridId)) {
+        array_push($columns, [
+            'label' => 'Status',
+            'value' => function ($data) {
+                return $data->getStatus();
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right invoice-value']
+        ]); 
+    }
+
 
 if ($searchModel->showCheckBox && !$isCreatePfi) {
     array_push($columns, [

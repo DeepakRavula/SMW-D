@@ -145,6 +145,23 @@ use yii\bootstrap\ActiveForm;
             'contentOptions' => ['class' => 'text-right invoice-value']
         ]);
 
+        if (isset($changeGridId)) {
+            array_push($columns, [
+                'label' => 'Status',
+                'value' => function ($data) use ($searchModel) {
+                    $enrolment = Enrolment::find()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->andWhere(['courseId' => $data->courseId])
+                        ->customer($searchModel->userId)
+                        ->one();
+                    return $data->getPaidStatus($enrolment->id);
+                },
+                'headerOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right invoice-value']
+            ]); 
+        }
+
         if ($searchModel->showCheckBox && !$isCreatePfi) {
             array_push($columns, [
                 'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],

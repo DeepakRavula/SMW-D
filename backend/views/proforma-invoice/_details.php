@@ -21,7 +21,7 @@ LteBox::begin([
 	<dt>Date</dt>
 	<dd><?= Yii::$app->formatter->asDate($model->date); ?></dd>
 	<dt>Status</dt>
-	<dd><?= $model->getStatus();  ?></dd>
+	<dd><?= $model->getPRStatus();  ?></dd>
 	<dt>Due Date</dt>
 	<dd><?= Yii::$app->formatter->asDate($model->dueDate); ?></dd>
 </dl>
