@@ -438,7 +438,7 @@ class PaymentController extends BaseController
                     'id' => $invoiceCredit->id,
                     'type' => 'Invoice Credit',
                     'reference' => $invoiceCredit->getInvoiceNumber(),
-                    'amount' => abs($invoiceCredit->balance)
+                    'amount' => round(abs($invoiceCredit->balance), 2)
                 ];
             }
         }
@@ -450,7 +450,7 @@ class PaymentController extends BaseController
                         'id' => $paymentCredit->id,
                         'type' => 'Payment Credit',
                         'reference' => $paymentCredit->reference,
-                        'amount' => $paymentCredit->creditAmount
+                        'amount' => round($paymentCredit->creditAmount, 2)
                     ];
                 }
             }
@@ -476,9 +476,9 @@ class PaymentController extends BaseController
                     'id' => $paymentCredit->id,
                     'type' => 'Payment Credit',
                     'reference' => $paymentCredit->reference,
-                    'amount' => $paymentCredit->amount,
+                    'amount' => round($paymentCredit->amount, 2),
                     'method' => $paymentCredit->paymentMethod->name,
-                    'amountUsed' => $paymentCredits[$key],
+                    'amountUsed' => round($paymentCredits[$key], 2),
                 ];
             }  
         }
@@ -491,7 +491,7 @@ class PaymentController extends BaseController
                     'reference' => $invoiceCredit->getInvoiceNumber(),
                     'amount' => '',
                     'method' => '',
-                    'amountUsed' => $invoiceCredits[$key],
+                    'amountUsed' => round($invoiceCredits[$key], 2),
                 ];
             }
         } 
