@@ -656,9 +656,9 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $balance = 0.0000;
         if ($this->isInvoice()) {
-            $balance = $this->total - (round($this->invoicePaymentTotal, 2) == round($this->total, 2) ? $this->total : $this->invoicePaymentTotal);
+            $balance = round($this->total, 2) - (round($this->invoicePaymentTotal, 2) == round($this->total, 2) ? round($this->total, 2) : round($this->invoicePaymentTotal, 2));
         } else {
-            $balance =  - ($this->invoiceAppliedPaymentTotal) - ($this->creditUsedPaymentTotal);
+            $balance =  - (round($this->invoiceAppliedPaymentTotal, 2)) - (round($this->creditUsedPaymentTotal, 2));
         }
         return $balance;
     }
