@@ -33,7 +33,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
         return [
             [['payment_id', 'invoice_id'], 'required'],
             [['payment_id', 'invoice_id', 'receiptId'], 'integer'],
-            [['isDeleted'], 'safe']
+            [['isDeleted', 'date'], 'safe']
         ];
     }
 
@@ -45,6 +45,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
         return [
             'invoice_id' => 'Invoice ID',
             'payment_id' => 'Payment ID',
+            'date' => 'Date',
         ];
     }
 
@@ -101,6 +102,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
+            $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
             if ($this->payment->isAutoPayments()) {
                 if ($this->payment->isCreditApplied()) {
                     if ($this->payment->creditUsage->debitUsagePayment) {

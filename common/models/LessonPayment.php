@@ -31,7 +31,7 @@ class LessonPayment extends \yii\db\ActiveRecord
     {
         return [
             [['lessonId', 'paymentId', 'enrolmentId'], 'integer'],
-            [['isDeleted','receiptId'], 'safe']
+            [['isDeleted','receiptId', 'date'], 'safe']
         ];
     }
 
@@ -92,6 +92,7 @@ class LessonPayment extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if (!$insert) {
+            $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
             if ($this->payment->isAutoPayments()) {
                 if ($this->payment->isCreditApplied()) {
                     if ($this->payment->creditUsage->debitUsagePayment) {
