@@ -63,6 +63,14 @@ use yii\bootstrap\ActiveForm;
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right']
         ],
+        [   
+            'label' => 'Payment',
+            'value' => function ($data) use($model) {
+                return Yii::$app->formatter->asCurrency(round($data->getPaidAmount($model->id), 2));
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right']
+        ],
 	    [
             'label' => 'Balance',
             'value' => function ($data) use ($model, $canEdit) {
