@@ -38,6 +38,14 @@ use yii\bootstrap\ActiveForm;
                 return !empty($data->total) ? Yii::$app->formatter->asCurrency(round($data->total, 2)) : null;
             }
         ],
+        [   
+            'label' => 'Payment',
+            'value' => function ($data) use($model) {
+                return Yii::$app->formatter->asCurrency(round($data->getPaidAmount($model->id), 2));
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right']
+        ],
         [
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value'],
