@@ -57,7 +57,6 @@ use yii\bootstrap\ActiveForm;
         'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
         'label' => 'Amount Used',
         'value' => 'amountUsed',
-        'format' => 'raw'
     ]);
 ?>
 
