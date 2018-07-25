@@ -1461,10 +1461,12 @@ class Lesson extends \yii\db\ActiveRecord
     public function hasAutomatedPaymentRequest()
     {
         $status = false;
+        print_r($this->date);die('coming');
         foreach ($this->proformaLessonItems as $item) {
             if ($item->proformaInvoice) {
                 if (!$item->proformaInvoice->isDeleted && $item->proformaInvoice->isCreatedByBot()) {
                     $status = true;
+                    break;
                 }
             }
         }
