@@ -81,6 +81,9 @@ class ProformaLineItem extends \yii\db\ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
         if ($this->lessonId) {
             $proformaLessonItem = new ProformaItemLesson();
             $proformaLessonItem->lessonId = $this->lessonId;
