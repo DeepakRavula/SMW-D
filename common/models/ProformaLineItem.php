@@ -74,6 +74,14 @@ class ProformaLineItem extends \yii\db\ActiveRecord
         return new ProformaLineItemQuery(get_called_class());
     }
 
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
+    }
+
     /**
      * {@inheritdoc}
      *
@@ -81,9 +89,6 @@ class ProformaLineItem extends \yii\db\ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
-        if ($insert) {
-            $this->isDeleted = false;
-        }
         if ($this->lessonId) {
             $proformaLessonItem = new ProformaItemLesson();
             $proformaLessonItem->lessonId = $this->lessonId;
