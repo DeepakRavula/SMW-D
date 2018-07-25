@@ -107,30 +107,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
 
     public function getTotal()
     {
-        $lessonTotal = 0;
-        $invoiceTotal = 0;
-        $invoiceId = $this->id;
-        $lessonLineItems = Lesson::find()
-            ->joinWith(['proformaLessonItem' => function ($query) use ($invoiceId) {
-                $query->joinWith(['proformaLineItem' => function ($query) use ($invoiceId) {
-                    $query->andWhere(['proforma_line_item.proformaInvoiceId' => $invoiceId]);
-                }]);
-            }])
-            ->all();
-        foreach ($lessonLineItems as $lessonLineItem) {
-            $lessonTotal += $lessonLineItem->netPrice;
-        }
-        $invoiceLineItems = Invoice::find()
-            ->joinWith(['proformaInvoiceItem' => function ($query) use ($invoiceId) {
-                $query->joinWith(['proformaLineItem' => function ($query) use ($invoiceId){
-                    $query->andWhere(['proforma_line_item.proformaInvoiceId' => $invoiceId]);
-                }]);
-            }])
-            ->all();
-        foreach ($invoiceLineItems as $invoiceLineItem) {
-            $invoiceTotal += $invoiceLineItem->balance;
-        }
-        return $lessonTotal + $invoiceTotal;
+        return $this->subTotal;
     }
     
     public function getProformaInvoiceNumber()
@@ -152,7 +129,6 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             $this->proforma_invoice_number = $proformaInvoiceNumber;
             $this->date = (new \DateTime())->format('Y-m-d');
             $this->dueDate = (new \DateTime())->format('Y-m-d');
-            $this->status = self::STATUS_UNPAID;
             $this->isDueDateAdjusted = false;
             $this->isMailSent = false;
         } else {
@@ -171,6 +147,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
                 }
             }
         }
+        $this->status = round($this->total, 2) > 0.00 ? self::STATUS_UNPAID : self::STATUS_PAID;
         return parent::beforeSave($insert);
     }
     
@@ -233,16 +210,32 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     public function getSubtotal()
     {
         $subtotal = 0.0;
-        $lineItems  =   $this->proformaLineItems;
-        foreach( $lineItems as $lineItem) {
+        $lineItems = $this->proformaLineItems;
+        foreach ($lineItems as $lineItem) {
             if ($lineItem->lessonLineItem) {
-                $subtotal += $lineItem->lesson->netPrice;
+                if ($lineItem->lesson->isPrivate()) {
+                    $enrolmentId = $lineItem->lesson->enrolment->id;
+                } else {
+                    $enrolment = Enrolment::find()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->andWhere(['courseId' => $lineItem->lesson->courseId])
+                        ->customer($this->userId)
+                        ->one();
+                    $enrolmentId = $enrolment->id;
+                }
+                $subtotal += $lineItem->lesson->getOwingAmount($enrolmentId);
             }
             if ($lineItem->invoiceLineItem) {
-                $subtotal += $lineItem->invoice->subTotal;
+                $subtotal += $lineItem->invoice->balance;
             }
         }
         return $subtotal;
+    }
+
+    public function getPrStatus()
+    {
+        return round($this->total, 2) > 0.00 ? 'Unpaid' : 'Paid';
     }
     
     public function getProformaLineItems()

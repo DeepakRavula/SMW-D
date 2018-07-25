@@ -49,15 +49,6 @@ use yii\helpers\Url;
             ?>
         </div>
 	</div>
-    <div class ="col-xs-7">
-        <?php $list = [1 => 'UnPaid', 2 => 'Paid']; ?>
-         <div class="row">
-             <div class="col-md-8">
-                  <?= $form->field($model, 'status')->radioList($list)->label('Status'); ?>
-            </div>
-        </div>
-    </div>
-    </div>
 
     <?php ActiveForm::end(); ?>
 </div>

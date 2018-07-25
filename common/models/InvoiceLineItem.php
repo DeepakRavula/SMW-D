@@ -476,7 +476,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $lineItemPrice;
         }
         
-        return round($discount, 4);
+        return $discount;
     }
     
     public function getTaxLineItemTotal($date)

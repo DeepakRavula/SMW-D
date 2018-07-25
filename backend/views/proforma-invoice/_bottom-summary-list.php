@@ -7,7 +7,7 @@
         ]]);
         ?>
      <dt>SubTotal</dt>
-    <dd><?=Yii::$app->formatter->format($model->getSubtotal(), ['currency', 'USD', [
+    <dd><?=Yii::$app->formatter->format($model->subtotal, ['currency', 'USD', [
                 \NumberFormatter::MIN_FRACTION_DIGITS => 2,
                 \NumberFormatter::MAX_FRACTION_DIGITS => 2,
         ]]);

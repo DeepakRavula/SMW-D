@@ -233,14 +233,31 @@ $this->params['show-all'] = $this->render('_show-all', [
         });
 		return false;
   	});
-      $('#proforma-invoice-mail-sent').on('switchChange.bootstrapSwitch', function(event, state) {
-		var params = $.param({'state' : state | 0});
-	$.ajax({
+
+    $('#proforma-invoice-mail-sent').on('switchChange.bootstrapSwitch', function(event, state) {
+        var params = $.param({'state' : state | 0});
+	    $.ajax({
             url    : '<?= Url::to(['proforma-invoice/update-mail-status', 'id' => $model->id]) ?>&' + params,
             type   : 'POST',
             dataType: "json",
             data   : $('#mail-flag').serialize()
         });
+        return false;
+    });
+
+    $(document).on('modal-next', function(event, params) {
+        if ($('#group-lesson-line-item-listing-pr').length) {
+            $.pjax.reload({container: "#group-lesson-line-item-listing-pr", replace: false, async: false, timeout: 6000});
+        }
+        if ($('#lesson-line-item-listing-pr').length) {
+            $.pjax.reload({container: "#lesson-line-item-listing-pr", replace: false, async: false, timeout: 6000});
+        }
+        if ($('#invoice-line-item-listing-pr').length) {
+            $.pjax.reload({container: "#invoice-line-item-listing-pr", replace: false, async: false, timeout: 6000});
+        }
+        $.pjax.reload({container: "#invoice-details", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
         return false;
     });
 </script>

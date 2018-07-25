@@ -558,6 +558,23 @@ class Invoice extends \yii\db\ActiveRecord
         return !empty($this->getNonLessonCreditUsedPayment());
     }
 
+    public function getPaymentRequests()
+    {
+        return $this->hasMany(ProformaInvoice::className(), ['id' => 'proformaInvoiceId'])
+            ->via('proformaLineItems');
+    }
+
+    public function getProformaLineItems()
+    {
+        return $this->hasMany(ProformaLineItem::className(), ['id' => 'proformaLineItemId'])
+            ->via('proformaInvoiceItems');
+    }
+
+    public function getProformaInvoiceItems()
+    {
+        return $this->hasMany(ProformaItemInvoice::className(), ['invoiceId' => 'id']);
+    }
+
     public function getProformaInvoiceItem()
     {
         return $this->hasOne(ProformaItemInvoice::className(), ['invoiceId' => 'id']);
@@ -656,9 +673,9 @@ class Invoice extends \yii\db\ActiveRecord
     {
         $balance = 0.0000;
         if ($this->isInvoice()) {
-            $balance = $this->total - (round($this->invoicePaymentTotal, 2) == round($this->total, 2) ? $this->total : $this->invoicePaymentTotal);
+            $balance = round($this->total, 2) - (round($this->invoicePaymentTotal, 2) == round($this->total, 2) ? round($this->total, 2) : round($this->invoicePaymentTotal, 2));
         } else {
-            $balance =  - ($this->invoiceAppliedPaymentTotal) - ($this->creditUsedPaymentTotal);
+            $balance =  - (round($this->invoiceAppliedPaymentTotal, 2)) - (round($this->creditUsedPaymentTotal, 2));
         }
         return $balance;
     }

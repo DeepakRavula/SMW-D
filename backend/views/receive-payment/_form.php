@@ -328,7 +328,7 @@ use yii\bootstrap\Html;
         var userId = $('#customer-payment').val();
         var params = $.param({ 'PaymentFormLessonSearch[userId]' : userId, 'PaymentFormGroupLessonSearch[userId]': userId });
         var url = '<?= Url::to(['payment/receive']) ?>?' + params;
-        $.pjax.reload({url: url, container: "#invoice-lineitem-listing", replace: false, async: false, timeout: 6000});
+        $.pjax.reload({url: url, container: "#invoice-line-item-listing", replace: false, async: false, timeout: 6000});
         $.pjax.reload({url: url, container: "#lesson-line-item-listing", replace: false, async: false, timeout: 6000});
         $.pjax.reload({url: url, container: "#credit-lineitem-listing", replace: false, async: false, timeout: 6000});
         receivePayment.calcAmountNeeded();

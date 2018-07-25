@@ -126,11 +126,13 @@ class InvoicePayment extends \yii\db\ActiveRecord
                 }
                 $this->payment->updateAttributes(['amount' => $this->amount]);
             }
-            $this->invoice->save();
         } else {
             if (!$this->date) {
                 $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
             }
+        $this->invoice->save();
+        foreach ($this->invoice->paymentRequests as $paymentRequest) {
+            $paymentRequest->save();
         }
         return true;
     }

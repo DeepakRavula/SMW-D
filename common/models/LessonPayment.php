@@ -121,7 +121,9 @@ class LessonPayment extends \yii\db\ActiveRecord
                 $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
             }
         }
-
+        foreach ($this->lesson->paymentRequests as $paymentRequest) {
+            $paymentRequest->save();
+        }
         return parent::afterSave($insert, $changedAttributes);
     }
 

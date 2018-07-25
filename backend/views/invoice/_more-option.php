@@ -1,25 +1,30 @@
 <?php
 
 use yii\helpers\Url;
+use yii\widgets\Pjax;
 ?>
-<div class="dropdown">
-    <i class="fa fa-gear dropdown-toggle" data-toggle="dropdown"></i>
-    <ul class="dropdown-menu dropdown-menu-right">
-	    <li><a id="receive-payments" href="#">Receive Payment</a></li>
-        <?php if ($model->isInvoice()) : ?>
-             <?php if (!$model->isVoid) : ?>
-                <li><a id="void" href="#">Void</a></li>
-            <?php else : ?>
-                <li><a class="multiselect-disable" href="#">Void</a></li>
+
+<?php Pjax::begin(['id' => 'invoice-more-option', 'timeout' => 6000]); ?>
+    <div class="dropdown">
+        <i class="fa fa-gear dropdown-toggle" data-toggle="dropdown"></i>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li><a id="receive-payments" href='<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->user_id]); ?>'>Receive Payment</a></li>
+            <?php if ($model->isInvoice()) : ?>
+                <?php if (!$model->isVoid) : ?>
+                    <li><a id="void" href="#">Void</a></li>
+                <?php else : ?>
+                    <li><a class="multiselect-disable" href="#">Void</a></li>
+                <?php endif; ?>
             <?php endif; ?>
-        <?php endif; ?>
-    </ul>
-</div>
+        </ul>
+    </div>
+
+<?php Pjax::end(); ?>
 
 <script>
 	$(document).off('click', '#receive-payments').on('click', '#receive-payments', function () {
         $.ajax({
-            url    : '<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->user_id]); ?>',
+            url    : $(this).attr('href'),
             type   : 'get',
             dataType: 'json',
             success: function(response)
