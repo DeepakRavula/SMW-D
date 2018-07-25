@@ -1465,6 +1465,7 @@ class Lesson extends \yii\db\ActiveRecord
             if ($item->proformaInvoice) {
                 if (!$item->proformaInvoice->isDeleted && $item->proformaInvoice->isCreatedByBot()) {
                     $status = true;
+                    break;
                 }
             }
         }
