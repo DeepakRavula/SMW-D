@@ -63,7 +63,9 @@ $this->params['breadcrumbs'][] = $this->title;
             },
         ],
         [
-            'attribute' => 'total',
+            'value' => function ($data) {
+                return round($data->total, 2);
+            },
             'label' => 'Total',
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],

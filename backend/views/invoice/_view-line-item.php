@@ -58,7 +58,7 @@ use common\models\Invoice;
             'format' => 'currency',
             'attribute' => 'discount',
             'value' => function ($data) {
-                return Yii::$app->formatter->asDecimal(round($data->discount, 2));
+                return round($data->discount, 2);
             }
         ],
         [
@@ -83,7 +83,7 @@ use common\models\Invoice;
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right', 'style' => 'width:50px;'],
         'value' => function ($data) {
-            return Yii::$app->formatter->asDecimal(round($data->netPrice, 2));
+            return round($data->netPrice, 2);
         }
     ]);
 Pjax::Begin(['id' => 'invoice-view-lineitem-listing', 'timeout' => 6000]); ?>

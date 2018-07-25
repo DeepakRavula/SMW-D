@@ -62,7 +62,7 @@ echo GridView::widget([
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right','style' =>'max-width:60px'],
             'value' => function ($data) {
-                return Yii::$app->formatter->asDecimal($data->amount);
+                return round($data->amount, 2);
             },
         ],
     ],
