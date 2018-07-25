@@ -130,6 +130,7 @@ class InvoicePayment extends \yii\db\ActiveRecord
             if (!$this->date) {
                 $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
             }
+        }
         $this->invoice->save();
         foreach ($this->invoice->paymentRequests as $paymentRequest) {
             $paymentRequest->save();
