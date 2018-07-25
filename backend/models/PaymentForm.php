@@ -34,6 +34,7 @@ class PaymentForm extends Model
 
     public $invoiceIds;
     public $date;
+    public $prId;
     public $payment_method_id;
     public $amount;
     public $amountNeeded;
@@ -67,7 +68,7 @@ class PaymentForm extends Model
             [['date', 'amountNeeded', 'invoiceIds', 'canUseInvoiceCredits', 'selectedCreditValue',
                 'lessonIds', 'canUsePaymentCredits', 'invoiceCreditIds', 'amount', 'userId',
                 'amountToDistribute', 'invoicePayments', 'lessonPayments','paymentId',
-                'paymentCredits', 'invoiceCredits', 'reference', 'paymentCreditIds',
+                'paymentCredits', 'invoiceCredits', 'reference', 'paymentCreditIds', 'prId',
                 'groupLessonIds', 'groupLessonPayments', 'receiptId', 'payment_method_id'], 'safe']
         ];
     }

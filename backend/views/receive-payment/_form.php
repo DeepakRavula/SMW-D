@@ -123,11 +123,13 @@ use yii\bootstrap\Html;
     <dd><span class=" pull-right amount-to-credit receive-payment-text-value">0.00</span></dd>
     </dl>
 </div>
+<?php $prId = $model->prId ?>
 
 <script>
     var lockTextBox = false;
     var receivePayment = {
         setAction: function() {
+            var prId = '<?= $prId; ?>';
             var userId = $('#customer-payment').val();
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var groupLessonIds = $('#group-lesson-line-item-grid').yiiGridView('getSelectedRows');
@@ -188,7 +190,7 @@ use yii\bootstrap\Html;
                 'PaymentForm[canUseInvoiceCredits]': canUseInvoiceCredits, 'PaymentForm[invoiceCreditIds]': invoiceCreditIds,
                 'PaymentForm[lessonPayments]': lessonPayments, 'PaymentForm[invoicePayments]': invoicePayments,
                 'PaymentForm[paymentCredits]': paymentCredits, 'PaymentForm[paymentCreditIds]': paymentCreditIds,
-                'PaymentForm[invoiceCredits]': invoiceCredits });
+                'PaymentForm[invoiceCredits]': invoiceCredits, 'PaymentForm[prId]': prId });
             var url = '<?= Url::to(['payment/receive']) ?>?' + params;
             $('#modal-form').attr('action', url);
         },

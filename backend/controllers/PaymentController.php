@@ -26,6 +26,8 @@ use backend\models\search\PaymentFormGroupLessonSearch;
 use common\models\Receipt;
 use common\models\PaymentReceipt;
 use common\models\Location;
+use common\models\ProformaInvoice;
+use yii\helpers\Url;
 
 
 /**
@@ -609,9 +611,17 @@ class PaymentController extends BaseController
                 'searchModel' => $searchModel,
                 'groupLessonSearchModel' => $groupLessonSearchModel,
             ]);
+            $url = null;
+            if ($model->prId) {
+                $pr = ProformaInvoice::findOne($model->prId);
+                if ($pr->isPaid()) {
+                    $url = Url::to(['proforma-invoice/index']);
+                }
+            }
             $response = [
                 'status' => true,
                 'data' => $printData,
+                'url' => $url,
             ];
         } else {
             $data = $this->renderAjax('/receive-payment/_form', [
