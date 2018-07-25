@@ -66,8 +66,8 @@ class ProFormaInvoiceController extends Controller
                 ->andWhere(['invoiced_lesson.id' => null])
                 ->orderBy(['lesson.date' => SORT_ASC]);
             $lessons = $query->all();
+            $lessonIds = [];
             foreach ($lessons as $lesson) {
-                $lessonIds = [];
                 if ($lesson->isOwing($enrolment->id)) {
                     $lessonIds[] = $lesson->id;
                 }

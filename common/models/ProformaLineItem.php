@@ -89,38 +89,36 @@ class ProformaLineItem extends \yii\db\ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
-        if ($this->lessonId) {
-            $proformaLessonItem = new ProformaItemLesson();
-            $proformaLessonItem->lessonId = $this->lessonId;
-            $proformaLessonItem->enrolmentId = $this->enrolmentId;
-            $proformaLessonItem->proformaLineItemId = $this->id;
-            $proformaLessonItem->save();
-        }
-        if ($this->invoiceId) {
-            $proformaInvoiceItem = new ProformaItemInvoice();
-            $proformaInvoiceItem->invoiceId = $this->invoiceId;
-            $proformaInvoiceItem->proformaLineItemId = $this->id;
-            $proformaInvoiceItem->save();
-        }
-        if ($this->invoiceLineItem) {
-            if ($this->invoice->isPaid()) {
-                $this->delete();
+        if ($insert) {
+            if ($this->lessonId) {
+                $proformaLessonItem = new ProformaItemLesson();
+                $proformaLessonItem->lessonId = $this->lessonId;
+                $proformaLessonItem->enrolmentId = $this->enrolmentId;
+                $proformaLessonItem->proformaLineItemId = $this->id;
+                $proformaLessonItem->save();
             }
-        }
-        if ($this->lessonLineItem) {
-            if ($this->lesson->isPrivate()) {
-                $enrolmentId = $this->lesson->enrolment->id;
-            } else {
-                $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $this->lesson->courseId])
-                    ->customer($this->proformaInvoice->userId)
-                    ->one();
-                $enrolmentId = $enrolment->id;
+            if ($this->invoiceId) {
+                $proformaInvoiceItem = new ProformaItemInvoice();
+                $proformaInvoiceItem->invoiceId = $this->invoiceId;
+                $proformaInvoiceItem->proformaLineItemId = $this->id;
+                $proformaInvoiceItem->save();
             }
-            if (!$this->lesson->isOwing($enrolmentId)) {
-                $this->delete();
+        } else {
+            if ($this->lessonLineItem) {
+                if ($this->lesson->isPrivate()) {
+                    $enrolmentId = $this->lesson->enrolment->id;
+                } else {
+                    $enrolment = Enrolment::find()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->andWhere(['courseId' => $this->lesson->courseId])
+                        ->customer($this->proformaInvoice->userId)
+                        ->one();
+                    $enrolmentId = $enrolment->id;
+                }
+                if (!$this->lesson->isOwing($enrolmentId)) {
+                    $this->delete();
+                }
             }
         }
         return parent::afterSave($insert, $changedAttributes);
