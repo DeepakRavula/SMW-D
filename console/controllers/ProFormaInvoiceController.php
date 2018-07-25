@@ -30,19 +30,18 @@ class ProFormaInvoiceController extends Controller
 
         $currentDate = new \DateTime();
         $priorDate = ($currentDate->modify('+ 15 days'))->format('Y-m-d');
-        // $enrolments = Enrolment::find()
-        //     ->notDeleted()
-        //     ->isConfirmed()
-        //     ->location(['14','15'])
-        //     ->privateProgram()
-        //     ->andWhere(['NOT', ['enrolment.paymentFrequencyId' => 0]])
-        //     ->isRegular()
-        //     ->joinWith(['course' => function ($query) use ($priorDate) {
-        //         $query->andWhere(['>=', 'DATE(course.endDate)', $priorDate])
-        //                 ->confirmed();
-        //     }])
-        //     ->all();
-        $enrolments = Enrolment::find()->andWhere(['id' => 915])->all();
+        $enrolments = Enrolment::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->location(['14','15'])
+            ->privateProgram()
+            ->andWhere(['NOT', ['enrolment.paymentFrequencyId' => 0]])
+            ->isRegular()
+            ->joinWith(['course' => function ($query) use ($priorDate) {
+                $query->andWhere(['>=', 'DATE(course.endDate)', $priorDate])
+                        ->confirmed();
+            }])
+            ->all();
         foreach ($enrolments as $enrolment) {
             $dateRange = $enrolment->getPaymentCycleDateRange(null, $priorDate);
             list($from_date, $to_date) = explode(' - ', $dateRange);
@@ -66,23 +65,24 @@ class ProFormaInvoiceController extends Controller
                 ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
                 ->andWhere(['invoiced_lesson.id' => null])
                 ->orderBy(['lesson.date' => SORT_ASC]);
-                $lessons = $query->all();
-                foreach ($lessons as $lesson) {
-                    if ($lesson->isOwing($enrolment->id)) {
-                        $lessonIds[] = $lesson->id;
-                    }
+            $lessons = $query->all();
+            foreach ($lessons as $lesson) {
+                $lessonIds = [];
+                if ($lesson->isOwing($enrolment->id)) {
+                    $lessonIds[] = $lesson->id;
                 }
-            $firstLesson = $query->one();
-            if ($firstLesson) {
-                if (!$firstLesson->hasAutomatedPaymentRequest()) {
-                    $lessonIds = [];
-                    if ($lessonIds) {
+                if ($lessonIds) {
+                    $query = Lesson::find()
+                        ->andWhere(['id' => $lessonIds])
+                        ->orderBy(['lesson.date' => SORT_ASC]);
+                    $firstLesson = $query->one();
+                    if (!$firstLesson->hasAutomatedPaymentRequest()) {
+                        $lessons = $query->all();
                         $model = new ProformaInvoice();
                         $model->userId = $enrolment->customer->id;
                         $model->locationId = $enrolment->customer->userLocation->location_id;
                         $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
                         $model->save();
-                        $lessons = Lesson::findAll($lessonIds);
                         foreach ($lessons as $lesson) {
                             $proformaLineItem = new ProformaLineItem();
                             $proformaLineItem->proformaInvoiceId = $model->id;
