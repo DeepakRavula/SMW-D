@@ -40,6 +40,7 @@ $this->params['action-button'] = $this->render('_buttons', [
 <br>
 <?php Pjax::begin([
     'id' => 'invoice-view',
+    'timeout' => 6000,
 ]);?>
 <div class="row">
 	<div class="col-md-6">
