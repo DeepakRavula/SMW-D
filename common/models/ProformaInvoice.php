@@ -131,6 +131,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             $this->dueDate = (new \DateTime())->format('Y-m-d');
             $this->isDueDateAdjusted = false;
             $this->isMailSent = false;
+            $this->status = self::STATUS_UNPAID;
         } else {
             $invoiceId = $this->id;
             $lesson = Lesson::find()
@@ -147,19 +148,21 @@ class ProformaInvoice extends \yii\db\ActiveRecord
                     $this->dueDate = (new \DateTime($lesson->date))->format('Y-m-d');
                 }
             }
+            $this->status = round($this->total, 2) > 0.00 ? self::STATUS_UNPAID : self::STATUS_PAID;
         }
-        $this->status = round($this->total, 2) > 0.00 ? self::STATUS_UNPAID : self::STATUS_PAID;
-
+        
         return parent::beforeSave($insert);
     }
 
     public function afterSave($insert, $changedAttributes)
     {
-        foreach ($this->proformaLineItems as $proformaLineItem) {
-            $proformaLineItem->save();
-        }
-        if (round($this->total, 2) == 0.00) {
-            $this->delete();
+        if (!$insert) {
+            foreach ($this->proformaLineItems as $proformaLineItem) {
+                $proformaLineItem->save();
+            }
+            if (round($this->total, 2) == 0.00) {
+                $this->delete();
+            }
         }
         return parent::afterSave($insert, $changedAttributes);
     }

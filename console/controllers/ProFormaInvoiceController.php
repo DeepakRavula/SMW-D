@@ -71,26 +71,26 @@ class ProFormaInvoiceController extends Controller
                 if ($lesson->isOwing($enrolment->id)) {
                     $lessonIds[] = $lesson->id;
                 }
-                if ($lessonIds) {
-                    $query = Lesson::find()
-                        ->andWhere(['id' => $lessonIds])
-                        ->orderBy(['lesson.date' => SORT_ASC]);
-                    $firstLesson = $query->one();
-                    if (!$firstLesson->hasAutomatedPaymentRequest()) {
-                        $lessons = $query->all();
-                        $model = new ProformaInvoice();
-                        $model->userId = $enrolment->customer->id;
-                        $model->locationId = $enrolment->customer->userLocation->location_id;
-                        $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
-                        $model->save();
-                        foreach ($lessons as $lesson) {
-                            $proformaLineItem = new ProformaLineItem();
-                            $proformaLineItem->proformaInvoiceId = $model->id;
-                            $proformaLineItem->lessonId = $lesson->id;
-                            $proformaLineItem->save();
-                        }
-                        $model->save();
+            }
+            if ($lessonIds) {
+                $query = Lesson::find()
+                    ->andWhere(['id' => $lessonIds])
+                    ->orderBy(['lesson.date' => SORT_ASC]);
+                $firstLesson = $query->one();
+                if (!$firstLesson->hasAutomatedPaymentRequest()) {
+                    $lessons = $query->all();
+                    $model = new ProformaInvoice();
+                    $model->userId = $enrolment->customer->id;
+                    $model->locationId = $enrolment->customer->userLocation->location_id;
+                    $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
+                    $model->save();
+                    foreach ($lessons as $lesson) {
+                        $proformaLineItem = new ProformaLineItem();
+                        $proformaLineItem->proformaInvoiceId = $model->id;
+                        $proformaLineItem->lessonId = $lesson->id;
+                        $proformaLineItem->save();
                     }
+                    $model->save();
                 }
             }
         }
@@ -102,6 +102,15 @@ class ProFormaInvoiceController extends Controller
         foreach ($prs as $pr) {
             $pr->save();
         }
+    }
+
+    public function actionDelete()
+    {
+        $prs = ProformaInvoice::find()->all();
+        foreach ($prs as $pr) {
+            $pr->updateAttributes(['isDeleted' => true]);
+        }
+        return true;
     }
 
     public function actionTruncate()
