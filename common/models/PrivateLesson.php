@@ -69,6 +69,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
     {
         $model = $this->lesson;
         $lessonDurationSec = $model->durationSec;
+        $newLessonIds = [];
         for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
             $lesson = clone $model;
             $lesson->isNewRecord = true;
@@ -83,6 +84,23 @@ class PrivateLesson extends \yii\db\ActiveRecord
             $lesson->isExploded = true;
             $lesson->save();
             $reschedule = $model->rescheduleTo($lesson);
+            $newLessonIds[] = $lesson->id;
+        }
+        $newLessons = Lesson::find()
+            ->where(['id' => $newLessonIds])
+            ->all();
+        $credit = 0;
+        foreach ($newLessons as $newLesson) {
+            $enrolmentId = $newLesson->enrolment->id;
+            if (round($newLesson->getCreditAppliedAmount($enrolmentId), 2) > round($newLesson->netPrice, 2)) {
+                $credit = $newLesson->getCreditAppliedAmount($enrolmentId) - $newLesson->netPrice;
+            }
+        }
+        foreach ($newLessons as $newLesson) {
+            $enrolmentId = $newLesson->enrolment->id;
+            if ($newLesson->isOwing($enrolmentId)) {
+                $credit = $newLesson->getCreditAppliedAmount($enrolmentId) - $newLesson->netPrice;
+            }
         }
         return $model->cancel();
     }
