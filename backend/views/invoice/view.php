@@ -529,6 +529,7 @@ class: "small",
                        {
                                     $('#walkin-modal').modal('hide');
                                     $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
+                                    $.pjax.reload({container: "#invoice-more-option", replace: false, async: false, timeout: 6000});
                                     $('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
                                     
                             }else
@@ -793,7 +794,7 @@ $(document).on('beforeSubmit', '#invoice-detail-form', function (e) {
             $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-title", replace:false,async: false, timeout: 6000});
-            $.pjax.reload({container: "#invoice-view-tab-item", replace:false,async: false, timeout: 6000});
+            $.pjax.reload({container: "#invoice-view-tab-item", replace:false,async: false, timeout: 6000}); 
             $('#invoice-spinner').hide();
         }
     }

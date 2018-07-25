@@ -31,7 +31,7 @@ class LessonPayment extends \yii\db\ActiveRecord
     {
         return [
             [['lessonId', 'paymentId', 'enrolmentId'], 'integer'],
-            [['isDeleted','receiptId'], 'safe']
+            [['isDeleted','receiptId', 'date'], 'safe']
         ];
     }
 
@@ -115,6 +115,10 @@ class LessonPayment extends \yii\db\ActiveRecord
                     }
                 }
                 $this->payment->updateAttributes(['amount' => $this->amount]);
+            }
+        } else {
+            if (!$this->date) {
+                $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
             }
         }
         foreach ($this->lesson->paymentRequests as $paymentRequest) {
