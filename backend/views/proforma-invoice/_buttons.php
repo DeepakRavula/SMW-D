@@ -12,7 +12,7 @@ use yii\helpers\Url;
 <?php Pjax::Begin(['id' => 'invoice-header-summary']) ?>
 
 <div id="invoice-header">
-<?= Yii::$app->formatter->format($model->getTotal($model->id), ['currency', 'USD', [
+<?= Yii::$app->formatter->format(round($model->getTotal($model->id), 2), ['currency', 'USD', [
         \NumberFormatter::MIN_FRACTION_DIGITS => 2,
         \NumberFormatter::MAX_FRACTION_DIGITS => 2,
     ]]); ?> &nbsp;&nbsp;
@@ -35,7 +35,7 @@ use yii\helpers\Url;
 	$(document).off('click', '#proforma-receive-payment').on('click', '#proforma-receive-payment', function () {
         $.ajax({
             url    : '<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->userId, 
-                'PaymentFormGroupLessonSearch[userId]' => $model->userId]); ?>',
+                'PaymentFormGroupLessonSearch[userId]' => $model->userId, 'PaymentForm[prId]' => $model->id]); ?>',
             type   : 'get',
             dataType: 'json',
             success: function(response)

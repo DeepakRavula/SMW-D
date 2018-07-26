@@ -42,7 +42,7 @@ $this->title = 'All Locations';
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'value' => function ($data) use ($searchModel) {
-                return !empty($data->getRevenue($searchModel->fromDate, $searchModel->toDate)) ? $data->getRevenue($searchModel->fromDate, $searchModel->toDate) : 0;
+                return !empty($data->getRevenue($searchModel->fromDate, $searchModel->toDate)) ? round($data->getRevenue($searchModel->fromDate, $searchModel->toDate), 2) : 0;
             },
         ],
             [
@@ -51,7 +51,7 @@ $this->title = 'All Locations';
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'value' => function ($data) use ($searchModel) {
-                $royaltyValue=$data->getLocationDebt(LocationDebt::TYPE_ROYALTY, $searchModel->fromDate, $searchModel->toDate);
+                $royaltyValue = $data->getLocationDebt(LocationDebt::TYPE_ROYALTY, $searchModel->fromDate, $searchModel->toDate);
                 return round($royaltyValue, 2);
             },
         ],
@@ -61,7 +61,7 @@ $this->title = 'All Locations';
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'value' => function ($data) use ($searchModel) {
-                $advertisementValue=$data->getLocationDebt(LocationDebt::TYPE_ADVERTISEMENT, $searchModel->fromDate, $searchModel->toDate);
+                $advertisementValue = $data->getLocationDebt(LocationDebt::TYPE_ADVERTISEMENT, $searchModel->fromDate, $searchModel->toDate);
                 return round($advertisementValue, 2);
             },
         ],
@@ -71,7 +71,7 @@ $this->title = 'All Locations';
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right'],
             'value' => function ($data) use ($searchModel) {
-                $taxAmount=$data->getTaxAmount($searchModel->fromDate, $searchModel->toDate);
+                $taxAmount = $data->getTaxAmount($searchModel->fromDate, $searchModel->toDate);
                 return round($taxAmount, 2);
             },
         ],
@@ -81,9 +81,9 @@ $this->title = 'All Locations';
             'contentOptions' => ['class' => 'text-right'],
             'format' => 'currency',
             'value' => function ($data) use ($searchModel) {
-                $subTotal=$data->SubTotal($searchModel->fromDate, $searchModel->toDate);
-                $taxAmount=$data->getTaxAmount($searchModel->fromDate, $searchModel->toDate);
-                $total=$subTotal+$taxAmount;
+                $subTotal = $data->SubTotal($searchModel->fromDate, $searchModel->toDate);
+                $taxAmount = $data->getTaxAmount($searchModel->fromDate, $searchModel->toDate);
+                $total = $subTotal + $taxAmount;
                 return round($total, 2);
             },
         ],

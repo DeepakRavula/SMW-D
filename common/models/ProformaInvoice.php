@@ -131,12 +131,14 @@ class ProformaInvoice extends \yii\db\ActiveRecord
             $this->dueDate = (new \DateTime())->format('Y-m-d');
             $this->isDueDateAdjusted = false;
             $this->isMailSent = false;
+            $this->status = self::STATUS_UNPAID;
         } else {
             $invoiceId = $this->id;
             $lesson = Lesson::find()
-                ->joinWith(['proformaLessonItem' => function ($query) use ($invoiceId) {
+                ->joinWith(['proformaLessonItems' => function ($query) use ($invoiceId) {
                     $query->joinWith(['proformaLineItem' => function ($query) use ($invoiceId) {
-                        $query->andWhere(['proforma_line_item.proformaInvoiceId' => $invoiceId]);
+                        $query->notDeleted()
+                            ->andWhere(['proforma_line_item.proformaInvoiceId' => $invoiceId]);
                     }]);
                 }])
                 ->orderBy(['lesson.date' => SORT_ASC])
@@ -146,9 +148,23 @@ class ProformaInvoice extends \yii\db\ActiveRecord
                     $this->dueDate = (new \DateTime($lesson->date))->format('Y-m-d');
                 }
             }
+            $this->status = round($this->total, 2) > 0.00 ? self::STATUS_UNPAID : self::STATUS_PAID;
         }
-        $this->status = round($this->total, 2) > 0.00 ? self::STATUS_UNPAID : self::STATUS_PAID;
+        
         return parent::beforeSave($insert);
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (!$insert) {
+            foreach ($this->proformaLineItems as $proformaLineItem) {
+                $proformaLineItem->save();
+            }
+            if (round($this->total, 2) == 0.00) {
+                $this->delete();
+            }
+        }
+        return parent::afterSave($insert, $changedAttributes);
     }
     
     public function getUser()
@@ -207,6 +223,11 @@ class ProformaInvoice extends \yii\db\ActiveRecord
         return $discount;
     }
 
+    public function isPaid()
+    {
+        return (int) $this->status === (int) self::STATUS_PAID;
+    }
+
     public function getSubtotal()
     {
         $subtotal = 0.0;
@@ -240,6 +261,7 @@ class ProformaInvoice extends \yii\db\ActiveRecord
     
     public function getProformaLineItems()
     {
-        return $this->hasMany(ProformaLineItem::className(), ['proformaInvoiceId' => 'id']);
+        return $this->hasMany(ProformaLineItem::className(), ['proformaInvoiceId' => 'id'])
+            ->onCondition(['proforma_line_item.isDeleted' => false]);
     }
 }

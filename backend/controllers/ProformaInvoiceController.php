@@ -151,16 +151,18 @@ class ProformaInvoiceController extends BaseController
         }
         $lessonLineItems = Lesson::find()
             ->privateLessons()
-            ->joinWith(['proformaLessonItem' => function ($query) use ($model) {
+            ->joinWith(['proformaLessonItems' => function ($query) use ($model) {
                 $query->joinWith(['proformaLineItem' => function ($query) use ($model) {
-                    $query->andWhere(['proforma_line_item.proformaInvoiceId' => $model->id]);
+                    $query->notDeleted()
+                    ->andWhere(['proforma_line_item.proformaInvoiceId' => $model->id]);
                 }]);
             }]);
         $groupLessonLineItems = Lesson::find()
             ->groupLessons()
-            ->joinWith(['proformaLessonItem' => function ($query) use ($model) {
+            ->joinWith(['proformaLessonItems' => function ($query) use ($model) {
                 $query->joinWith(['proformaLineItem' => function ($query) use ($model) {
-                    $query->andWhere(['proforma_line_item.proformaInvoiceId' => $model->id]);
+                    $query->notDeleted()
+                        ->andWhere(['proforma_line_item.proformaInvoiceId' => $model->id]);
                 }]);
             }]);
         $groupLessonLineItemsDataProvider = new ActiveDataProvider([
@@ -170,9 +172,10 @@ class ProformaInvoiceController extends BaseController
             'query' => $lessonLineItems,
         ]);
         $invoiceLineItems = Invoice::find()
-            ->joinWith(['proformaInvoiceItem' => function ($query) use ($model) {
+            ->joinWith(['proformaInvoiceItems' => function ($query) use ($model) {
                 $query->joinWith(['proformaLineItem' => function ($query) use ($model) {
-                    $query->andWhere(['proforma_line_item.proformaInvoiceId' => $model->id]);
+                    $query->notDeleted()
+                    ->andWhere(['proforma_line_item.proformaInvoiceId' => $model->id]);
                 }]);
             }]);
         $invoiceLineItemsDataProvider = new ActiveDataProvider([

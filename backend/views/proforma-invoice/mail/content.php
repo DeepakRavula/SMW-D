@@ -39,7 +39,7 @@
 			  		<td style="text-align:right">
 			      	<?=
 			      	Yii::$app->formatter->format(
-				    		$model->total, ['currency', 'USD', [
+						round($model->total, 2), ['currency', 'USD', [
 				      		\NumberFormatter::MIN_FRACTION_DIGITS => 2,
 				      		\NumberFormatter::MAX_FRACTION_DIGITS => 2,
 				  	]]

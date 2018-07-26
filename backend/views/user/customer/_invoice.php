@@ -71,7 +71,7 @@ $boxTools = $this->render('_invoice-buttons', [
             'contentOptions' => ['class' => 'text-right'],
             'enableSorting' => false,
             'value' => function ($data) {
-                return Yii::$app->formatter->asDecimal($data->total);
+                return round($data->total, 2);
             },
         ],
 		   [
@@ -82,7 +82,7 @@ $boxTools = $this->render('_invoice-buttons', [
             'contentOptions' => ['class' => 'text-right'],
             'enableSorting' => false,
             'value' => function ($data) {
-                return $data->balance;
+                return round($data->balance, 2);
             },
         ],
     ],

@@ -42,7 +42,7 @@
                      <tr>
                       <td style="width: 50%;">SubTotal</td>
 						<td style="text-align:right"><?= Yii::$app->formatter->format(
-            $model->subTotal,
+            round($model->subTotal, 2),
                             ['currency', 'USD', [
                         \NumberFormatter::MIN_FRACTION_DIGITS => 2,
                         \NumberFormatter::MAX_FRACTION_DIGITS => 2,
@@ -66,7 +66,7 @@
                       <td><strong>Total</strong></td>
 						<td style="text-align:right"><strong>
 					<?= Yii::$app->formatter->format(
-                        $model->total,
+                        round($model->total, 2),
                             ['currency', 'USD', [
                         \NumberFormatter::MIN_FRACTION_DIGITS => 2,
                         \NumberFormatter::MAX_FRACTION_DIGITS => 2,
@@ -77,7 +77,7 @@
 					 <tr>
                       <td>Paid</td>
 						<td style="text-align:right"> <?= Yii::$app->formatter->format(
-                        $model->invoicePaymentTotal,
+                        round($model->invoicePaymentTotal, 2),
                             ['currency', 'USD', [
                         \NumberFormatter::MIN_FRACTION_DIGITS => 2,
                         \NumberFormatter::MAX_FRACTION_DIGITS => 2,
@@ -88,7 +88,7 @@
                       <td class="p-t-20">Balance</td>
 						<td class="p-t-20" style="text-align:right"><strong>
 					<?= Yii::$app->formatter->format(
-                        $model->invoiceBalance,
+                        round($model->invoiceBalance, 2),
                             ['currency', 'USD', [
                         \NumberFormatter::MIN_FRACTION_DIGITS => 2,
                         \NumberFormatter::MAX_FRACTION_DIGITS => 2,

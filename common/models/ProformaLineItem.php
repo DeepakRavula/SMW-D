@@ -5,6 +5,8 @@ namespace common\models;
 use Yii;
 use common\models\ProformaItemInvoice;
 use common\models\ProformaItemLesson;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use common\models\query\ProformaLineItemQuery;
 
 
 /**
@@ -38,7 +40,21 @@ class ProformaLineItem extends \yii\db\ActiveRecord
     {
         return [
             [['proformaInvoiceId'], 'required'],
-            [['proformaLineItemId','lessonId','invoiceId', 'enrolmentId'], 'safe'],
+            [['proformaLineItemId','lessonId','invoiceId', 'enrolmentId',
+                'isDeleted'], 'safe'],
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ]
         ];
     }
 
@@ -50,8 +66,20 @@ class ProformaLineItem extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'proformaInvoiceId' => 'Invoice',
-            
         ];
+    }
+
+    public static function find()
+    {
+        return new ProformaLineItemQuery(get_called_class());
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
     }
 
     /**
@@ -61,18 +89,37 @@ class ProformaLineItem extends \yii\db\ActiveRecord
      */
     public function afterSave($insert, $changedAttributes)
     {
-        if ($this->lessonId) {
-            $proformaLessonItem = new ProformaItemLesson();
-            $proformaLessonItem->lessonId = $this->lessonId;
-            $proformaLessonItem->enrolmentId = $this->enrolmentId;
-            $proformaLessonItem->proformaLineItemId = $this->id;
-            $proformaLessonItem->save();
-        }
-        if ($this->invoiceId) {
-            $proformaInvoiceItem = new ProformaItemInvoice();
-            $proformaInvoiceItem->invoiceId = $this->invoiceId;
-            $proformaInvoiceItem->proformaLineItemId = $this->id;
-            $proformaInvoiceItem->save();
+        if ($insert) {
+            if ($this->lessonId) {
+                $proformaLessonItem = new ProformaItemLesson();
+                $proformaLessonItem->lessonId = $this->lessonId;
+                $proformaLessonItem->enrolmentId = $this->enrolmentId;
+                $proformaLessonItem->proformaLineItemId = $this->id;
+                $proformaLessonItem->save();
+            }
+            if ($this->invoiceId) {
+                $proformaInvoiceItem = new ProformaItemInvoice();
+                $proformaInvoiceItem->invoiceId = $this->invoiceId;
+                $proformaInvoiceItem->proformaLineItemId = $this->id;
+                $proformaInvoiceItem->save();
+            }
+        } else {
+            if ($this->lessonLineItem) {
+                if ($this->lesson->isPrivate()) {
+                    $enrolmentId = $this->lesson->enrolment->id;
+                } else {
+                    $enrolment = Enrolment::find()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->andWhere(['courseId' => $this->lesson->courseId])
+                        ->customer($this->proformaInvoice->userId)
+                        ->one();
+                    $enrolmentId = $enrolment->id;
+                }
+                if (!$this->lesson->isOwing($enrolmentId)) {
+                    $this->delete();
+                }
+            }
         }
         return parent::afterSave($insert, $changedAttributes);
     }
@@ -91,11 +138,13 @@ class ProformaLineItem extends \yii\db\ActiveRecord
     {
         return $this->hasMany(ProformaItemInvoice::className(), ['proformaLineItemId' => 'id']);
     }
+
     public function getLesson()
     {
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
             ->via('lessonLineItem');
     }
+
     public function getInvoice()
     {
         return $this->hasOne(Invoice::className(), ['id' => 'invoiceId'])

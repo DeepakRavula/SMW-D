@@ -43,7 +43,7 @@ use yii\widgets\Pjax;
 <?= Html::a('<i class="fa fa-print m-r-10"></i>', ['#'], ['class' => 'm-r-10 btn btn-box-tool','id'=>'print-btn']) ?>
 <?= strtoupper($model->getStatus()) . ' '?>
 <?php endif; ?>
-<?= Yii::$app->formatter->format($model->total, ['currency', 'USD', [
+<?= Yii::$app->formatter->format(round($model->total, 2), ['currency', 'USD', [
     \NumberFormatter::MIN_FRACTION_DIGITS => 2,
     \NumberFormatter::MAX_FRACTION_DIGITS => 2,
 ]]); ?> &nbsp;&nbsp;

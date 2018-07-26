@@ -41,7 +41,7 @@ use yii\widgets\Pjax;
                 'headerOptions' => ['class' => 'text-right'],
                 'contentOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
-                    return Yii::$app->formatter->asDecimal($data->price);
+                    return round($data->price, 2);
                 },
             ],
                   
