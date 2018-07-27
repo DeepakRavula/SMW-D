@@ -104,6 +104,11 @@ class Student extends \yii\db\ActiveRecord
         return new StudentQuery(get_called_class());
     }
 
+    public function getCustomerPaymentPreference()
+    {
+        return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'customer_id']);
+    }
+
     public function getCustomer()
     {
         return $this->hasOne(User::className(), ['id' => 'customer_id']);
