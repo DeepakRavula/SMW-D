@@ -170,11 +170,6 @@ class Enrolment extends \yii\db\ActiveRecord
             ->orderBy(['payment_cycle.startDate' => SORT_ASC])
             ->onCondition(['payment_cycle.isDeleted' => false]);
     }
-
-    public function getVacation()
-    {
-        return $this->hasOne(Vacation::className(), ['studentId' => 'studentId']);
-    }
     
     public function getCourseProgramRate()
     {
