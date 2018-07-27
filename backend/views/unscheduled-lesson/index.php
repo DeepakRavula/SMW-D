@@ -156,12 +156,10 @@ $this->params['show-all'] = $this->render('_button', [
 	<?php yii\widgets\Pjax::end(); ?>
 	</div>
 <script>
-$(document).ready(function(){
-  $("#unscheduledlessonsearch-showall").on("change", function() {
+$(document).off('click', '#unscheduledlessonsearch-showall').on('click', '#unscheduledlessonsearch-showall', function () {
       	var showAllExpiredLesson = $(this).is(":checked");
     	var params = $.param({ 'UnscheduledLessonSearch[showAll]': (showAllExpiredLesson | 0) });
       	var url = "<?php echo Url::to(['unscheduled-lesson/index']); ?>?"+params;
         $.pjax.reload({url: url, container: "#unscheduled-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
-          });
 });
 </script>
