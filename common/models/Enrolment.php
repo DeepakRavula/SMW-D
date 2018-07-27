@@ -6,7 +6,6 @@ use Yii;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\TimestampBehavior;
 use common\models\discount\EnrolmentDiscount;
-use Carbon\Carbon;
 use DateInterval;
 /**
  * This is the model class for table "enrolment".
@@ -143,7 +142,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getPaymentCycleDateRange($start_date = null, $date)
     {
         if ($start_date) {
-            $courseStartDate = ($start_date->modify('+1 day'))->format('Y-m-d');
+            $courseStartDate = $start_date->modify('+1 day')->format('Y-m-d');
         } else {
             $courseStartDate = (new \DateTime($this->course->startDate))->format('Y-m-1');
         }

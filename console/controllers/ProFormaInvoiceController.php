@@ -11,7 +11,7 @@ use common\models\Enrolment;
 use common\models\ProformaInvoice;
 use common\models\ProformaLineItem;
 
-class ProFormaInvoiceController extends Controller
+class ProformaInvoiceController extends Controller
 {
     public $locationId;
 
@@ -28,6 +28,11 @@ class ProFormaInvoiceController extends Controller
         set_time_limit(0);
         ini_set('memory_limit', '-1');
 
+        $prs = ProformaInvoice::find()->all();
+        foreach ($prs as $pr) {
+            $pr->updateAttributes(['isDeleted' => true]);
+        }
+        
         $currentDate = new \DateTime();
         $priorDate = ($currentDate->modify('+ 15 days'))->format('Y-m-d');
         $enrolments = Enrolment::find()
@@ -41,6 +46,7 @@ class ProFormaInvoiceController extends Controller
                 $query->andWhere(['>=', 'DATE(course.endDate)', $priorDate])
                         ->confirmed();
             }])
+            ->notPaymentPrefered()
             ->all();
         foreach ($enrolments as $enrolment) {
             $dateRange = $enrolment->getPaymentCycleDateRange(null, $priorDate);
