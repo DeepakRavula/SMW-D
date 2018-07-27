@@ -68,9 +68,10 @@ class PrivateLesson extends \yii\db\ActiveRecord
     public function split()
     {
         $model = $this->lesson;
+        $enrolment = $model->enrolment;
         $lessonDurationSec = $model->durationSec;
-        $newLessonIds = [];
-        for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
+        $splitCount = $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC;
+        for ($i = 0; $i < $splitCount; $i++) {
             $lesson = clone $model;
             $lesson->isNewRecord = true;
             $lesson->id = null;
@@ -84,22 +85,35 @@ class PrivateLesson extends \yii\db\ActiveRecord
             $lesson->isExploded = true;
             $lesson->save();
             $reschedule = $model->rescheduleTo($lesson);
-            $newLessonIds[] = $lesson->id;
-        }
-        $newLessons = Lesson::find()
-            ->where(['id' => $newLessonIds])
-            ->all();
-        $credit = 0;
-        foreach ($newLessons as $newLesson) {
-            $enrolmentId = $newLesson->enrolment->id;
-            if (round($newLesson->getCreditAppliedAmount($enrolmentId), 2) > round($newLesson->netPrice, 2)) {
-                $credit = $newLesson->getCreditAppliedAmount($enrolmentId) - $newLesson->netPrice;
+            if ($lesson->hasMultiEnrolmentDiscount()) {
+                $lesson->multiEnrolmentDiscount->updateAttributes(['value' => $lesson->multiEnrolmentDiscount->value / $splitCount]);
             }
-        }
-        foreach ($newLessons as $newLesson) {
-            $enrolmentId = $newLesson->enrolment->id;
-            if ($newLesson->isOwing($enrolmentId)) {
-                $credit = $newLesson->getCreditAppliedAmount($enrolmentId) - $newLesson->netPrice;
+            if ($lesson->hasLineItemDiscount()) {
+                if (!$lesson->lineItemDiscount->valueType) {
+                    $lesson->lineItemDiscount->updateAttributes(['value' => $lesson->lineItemDiscount->value / $splitCount]);
+                }
+            }
+            if ($i == 0) {
+                $firstSplitId = $lesson->id;
+            } else {
+                $firstSplitLesson = Lesson::findOne($firstSplitId);
+                if ($firstSplitLesson->hasCredit($enrolment->id)) {
+                    foreach ($firstSplitLesson->lessonPayments as $firstSplitLessonPayment) {
+                        if (!$firstSplitLessonPayment->payment->isAutoPayments()) {
+                            if ($firstSplitLessonPayment->amount > $firstSplitLessonPayment->lesson->netPrice) {
+                                $lessonPayment = new LessonPayment();
+                                $lessonPayment->lessonId    = $lesson->id;
+                                $lessonPayment->paymentId   = $firstSplitLessonPayment->paymentId;
+                                $lessonPayment->amount      = round($lesson->netPrice, 2) <= round($firstSplitLessonPayment->creditAmount, 2) ? 
+                                    round($lesson->netPrice, 2) : round($firstSplitLessonPayment->creditAmount, 2);
+                                $lessonPayment->enrolmentId = $enrolment->id;
+                                $lessonPayment->save();
+                                $firstSplitLessonPayment->amount -= $lessonPayment->amount;
+                                $firstSplitLessonPayment->save();
+                            }
+                        }
+                    }
+                }
             }
         }
         return $model->cancel();
@@ -118,7 +132,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if($this->lesson->rootLesson) {
+        if ($this->lesson->rootLesson) {
             $rootPrivateLesson = $this->lesson->rootLesson->privateLesson;
             $rootPrivateLesson->expiryDate = (new \DateTime($this->expiryDate))->format('Y-m-d H:i:s');
             $rootPrivateLesson->save();
