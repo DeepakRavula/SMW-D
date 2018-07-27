@@ -89,6 +89,7 @@ class ReportController extends BaseController
             ], 
         ];
     }
+
     public function actionStudentBirthday()
     {
         $searchModel = new StudentBirthdaySearch();
@@ -113,6 +114,7 @@ class ReportController extends BaseController
             'searchModel' => $searchModel,
         ]);
     }
+
     public function actionPayment()
     {
         $searchModel = new PaymentReportSearch();
@@ -121,10 +123,7 @@ class ReportController extends BaseController
         $searchModel->toDate = $currentDate->format('M d,Y');
         $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         $request = Yii::$app->request;
-        if ($searchModel->load($request->get())) {
-            $paymentRequest = $request->get('PaymentReportSearch');
-            $searchModel->dateRange = $paymentRequest['dateRange'];
-        }
+        $searchModel->load($request->get());
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('payment/index', [
@@ -153,26 +152,29 @@ class ReportController extends BaseController
         
         $invoiceTaxTotal = Invoice::find()
             ->andWhere(['location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE])
-            ->andWhere(['between', 'date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
+            ->andWhere(['between', 'DATE(date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->notDeleted()
             ->sum('tax');
 
         $payments = Payment::find()
-            ->joinWith(['invoice i' => function ($query) use ($locationId) {
-                $query->andWhere(['i.location_id' => $locationId]);
-            }])
-            ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
+            ->exceptAutoPayments()
             ->exceptGiftCard()
+            ->location($locationId)
             ->notDeleted()
-            ->andWhere(['between', 'payment.date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
+            ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->sum('payment.amount');
 
+        $fromDate = new \DateTime($searchModel->fromDate);
+        $toDate = new \DateTime($searchModel->toDate);
+
         $royaltyPayment = InvoiceLineItem::find()
-                        ->notDeleted()
-            ->joinWith(['invoice i' => function ($query) use ($locationId) {
-                $query->andWhere(['i.location_id' => $locationId, 'type' => Invoice::TYPE_INVOICE]);
+            ->notDeleted()
+            ->joinWith(['invoice' => function ($query) use ($locationId, $fromDate, $toDate) {
+                $query->location($locationId)
+                    ->invoice()
+                    ->notDeleted()
+                    ->andWhere(['between', 'DATE(invoice.date)', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')]);
             }])
-            ->andWhere(['between', 'i.date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->royaltyFree()
             ->sum('invoice_line_item.amount');
                 
@@ -202,18 +204,16 @@ class ReportController extends BaseController
         }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $invoiceTaxes = InvoiceLineItem::find()
-                        ->notDeleted()
+            ->notDeleted()
             ->joinWith(['invoice' => function ($query) use ($locationId, $searchModel) {
-                $query->andWhere([
-                    'location_id' => $locationId,
-                    'type' => Invoice::TYPE_INVOICE,
-                ])
-                ->andWhere(['between', 'date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
+                $query->location($locationId)
+                ->invoice()
+                ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
                 ->notDeleted();
             }])
             ->andWhere(['>', 'tax_rate', 0]);
         if ($searchModel->summarizeResults) {
-            $invoiceTaxes ->groupBy(['invoice.id','DATE(invoice.date)']);
+            $invoiceTaxes ->groupBy(['invoice.id', 'DATE(invoice.date)']);
         } else {
             $invoiceTaxes->orderBy(['invoice.date' => SORT_ASC]);
         }
@@ -246,13 +246,11 @@ class ReportController extends BaseController
         }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $royaltyFreeItems = InvoiceLineItem::find()
-                        ->notDeleted()
+            ->notDeleted()
             ->joinWith(['invoice' => function ($query) use ($locationId, $searchModel) {
-                $query->andWhere([
-                    'location_id' => $locationId,
-                    'type' => Invoice::TYPE_INVOICE,
-                ])
-                ->andWhere(['between', 'date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
+                $query->location($locationId)
+                ->invoice()
+                ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
                 ->notDeleted();
             }])
             ->royaltyFree();

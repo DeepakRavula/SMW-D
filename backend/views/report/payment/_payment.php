@@ -5,6 +5,7 @@ use kartik\grid\GridView;
 use yii\helpers\Url;
 use common\models\InvoicePayment;
 use common\models\Invoice;
+use common\models\Location;
 use common\models\PaymentMethod;
 use common\models\Payment;
 use backend\assets\CustomGridAsset;
@@ -59,9 +60,10 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 [
                 'label' => 'Amount',
                 'value' => function ($data) use ($searchModel) {
-                    $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-                    $amount = 0.00;
+                    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+                    $amount = 0;
                     $payments = Payment::find()
+                        ->notDeleted()
                         ->location($locationId)
                         ->andWhere([
                             'payment_method_id' => $data->payment_method_id,
@@ -73,7 +75,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                         $amount += $payment->amount;
                     }
 
-                    return Yii::$app->formatter->asDecimal(round($amount,2),2);
+                    return round($amount, 2);
                 },
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
@@ -143,8 +145,10 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'value' => function ($data) {
                     if ($data->invoicePayment) {
                         $value = $data->invoicePayment->invoice->getInvoiceNumber();
+                    } else if ($data->lessonPayment) {
+                        $value = $data->lessonPayment->lesson->getLessonNumber();
                     } else {
-                        $value = '';
+                        $value = 'Un-applied';
                     }
                     return $value;
                 },
@@ -177,7 +181,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 [
                 'label' => 'Amount',
                 'value' => function ($data) {
-                    return Yii::$app->formatter->asDecimal($data->amount,2);
+                    return round($data->amount, 2);
                 },
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
                 'hAlign' => 'right',
@@ -196,14 +200,6 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'options' => ['class' => ''],
                 'showPageSummary' => true,
                 'headerRowOptions' => ['class' => 'bg-light-gray'],
-                // 'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
-                //         $url = Url::to(['payment/view', 'id' => $model->id]);
-                //         $data = ['data-url' => $url];
-                //         if ($searchModel->groupByMethod) {
-                //             $data = array_merge($data, ['class' => 'click-disable']);
-                //     }
-                //         return $data;
-                // },
                 'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
                 'pjax' => true,
                 'pjaxSettings' => [

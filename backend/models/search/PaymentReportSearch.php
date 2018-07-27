@@ -48,7 +48,8 @@ class PaymentReportSearch extends Payment
         $locationId          = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query               = Payment::find()
             ->location($locationId)
-            ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_ACCOUNT_ENTRY,PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED, PaymentMethod::TYPE_GIFT_CARD]]])
+            ->exceptAutoPayments()
+            ->exceptGiftCard()
             ->notDeleted();
 		
         $dataProvider        = new ActiveDataProvider([
@@ -56,10 +57,7 @@ class PaymentReportSearch extends Payment
             'pagination' => false,
         ]);
         
-        $query->orderBy([
-            'DATE(payment.date)' => SORT_ASC,
-            'payment_method_id' => SORT_ASC
-            ]);
+        $query->orderBy(['DATE(payment.date)' => SORT_ASC, 'payment_method_id' => SORT_ASC]);
         if (!($this->load($params) && $this->validate())) {
             $this->fromDate      = new \DateTime();
             $this->toDate        = new \DateTime();
@@ -70,7 +68,7 @@ class PaymentReportSearch extends Payment
         if ($this->groupByMethod) {
             $query->groupBy('DATE(payment.date), payment_method_id');
         }
-        if (!empty($this->dateRange)) {
+        if ($this->dateRange) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
         }
         $query->andWhere(['between', 'DATE(payment.date)', (new \DateTime($this->fromDate))->format('Y-m-d'),
