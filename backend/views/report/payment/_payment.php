@@ -60,19 +60,20 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'label' => 'Amount',
                 'value' => function ($data) use ($searchModel) {
                     $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-                    $amount = 0;
+                    $amount = 0.00;
                     $payments = Payment::find()
                         ->location($locationId)
                         ->andWhere([
                             'payment_method_id' => $data->payment_method_id,
                             'DATE(payment.date)' => (new \DateTime($data->date))->format('Y-m-d')
                         ])
+                        ->notDeleted()
                         ->all();
                     foreach ($payments as $payment) {
                         $amount += $payment->amount;
                     }
 
-                    return Yii::$app->formatter->asDecimal($amount,2);
+                    return Yii::$app->formatter->asDecimal(round($amount,2),2);
                 },
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
