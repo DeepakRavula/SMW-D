@@ -92,6 +92,9 @@ class InvoicePayment extends \yii\db\ActiveRecord
     {
         if ($insert) {
             $this->isDeleted = false;
+            if (!$this->date) {
+                $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
+            }
         }
         if (round($this->amount, 2) == 0.00) {
             $this->isDeleted = true;
@@ -125,10 +128,6 @@ class InvoicePayment extends \yii\db\ActiveRecord
                     }
                 }
                 $this->payment->updateAttributes(['amount' => $this->amount]);
-            }
-        } else {
-            if (!$this->date) {
-                $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
             }
         }
         $this->invoice->save();
