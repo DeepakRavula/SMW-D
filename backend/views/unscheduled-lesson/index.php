@@ -17,15 +17,8 @@ use common\models\Student;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Unscheduled Lessons';
-$this->params['show-all'] = $this->render('_button', [
-    'searchModel' => $searchModel
-]);
 ?>
 <div class="grid-row-open p-10">
-<?php yii\widgets\Pjax::begin([
-    'enablePushState' => false,
-    'timeout' => 6000,
-	'id' => 'unscheduled-lesson-listing']); ?>
 	<?php
 	$columns	 = [
 		[
@@ -153,15 +146,3 @@ $this->params['show-all'] = $this->render('_button', [
 		]);
 		?>
 	</div>
-	<?php yii\widgets\Pjax::end(); ?>
-	</div>
-<script>
-$(document).ready(function(){
-  $("#unscheduledlessonsearch-showall").on("change", function() {
-      	var showAllExpiredLesson = $(this).is(":checked");
-    	var params = $.param({ 'UnscheduledLessonSearch[showAll]': (showAllExpiredLesson | 0) });
-      	var url = "<?php echo Url::to(['unscheduled-lesson/index']); ?>?"+params;
-        $.pjax.reload({url: url, container: "#unscheduled-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
-          });
-});
-</script>
