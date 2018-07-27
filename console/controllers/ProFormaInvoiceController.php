@@ -34,7 +34,7 @@ class ProformaInvoiceController extends Controller
         }
         
         $currentDate = new \DateTime();
-        $priorDate = ($currentDate->modify('+ 15 days'))->format('Y-m-d');
+        $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
         $enrolments = Enrolment::find()
             ->notDeleted()
             ->isConfirmed()
