@@ -22,7 +22,7 @@ $this->params['show-all'] = $this->render('_button', [
 ]);
 ?>
 <div class="grid-row-open p-10">
-<?php yii\widgets\Pjax::begin([
+<?php Pjax::begin([
     'enablePushState' => false,
     'timeout' => 6000,
 	'id' => 'unscheduled-lesson-listing']); ?>
@@ -153,8 +153,9 @@ $this->params['show-all'] = $this->render('_button', [
 		]);
 		?>
 	</div>
-	<?php yii\widgets\Pjax::end(); ?>
-	</div>
+<?php Pjax::end(); ?>
+</div>
+
 <script>
 $(document).off('click', '#unscheduledlessonsearch-showall').on('click', '#unscheduledlessonsearch-showall', function () {
       	var showAllExpiredLesson = $(this).is(":checked");
