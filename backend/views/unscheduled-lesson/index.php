@@ -157,7 +157,7 @@ $this->params['show-all'] = $this->render('_button', [
 </div>
 
 <script>
-$(document).off('click', '#unscheduledlessonsearch-showall').on('click', '#unscheduledlessonsearch-showall', function () {
+$(document).off('change', '#unscheduledlessonsearch-showall').on('change', '#unscheduledlessonsearch-showall', function () {
       	var showAllExpiredLesson = $(this).is(":checked");
     	var params = $.param({ 'UnscheduledLessonSearch[showAll]': (showAllExpiredLesson | 0) });
       	var url = "<?php echo Url::to(['unscheduled-lesson/index']); ?>?"+params;
