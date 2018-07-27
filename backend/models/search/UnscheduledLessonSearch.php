@@ -56,30 +56,31 @@ class UnscheduledLessonSearch extends Lesson
             ->location($locationId)
             ->unscheduled()
 			->joinWith(['privateLesson'])
-            ->orderBy(['private_lesson.expiryDate' => SORT_ASC])
-            ->groupBy('lesson.id');
+            ->orderBy(['private_lesson.expiryDate' => SORT_ASC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-
-		$query->joinWith('student');
-		$query->joinWith('program');
-		$query->andFilterWhere(['student.id' => $this->student]);
-        $query->andFilterWhere(['program.id' => $this->program]);
-
+        if (!$this->showAll) {
+            $query->notExpired();
+        }
+        if (!empty($this->student)) {
+            $query->joinWith(['student' => function($query) {
+                $query->andFilterWhere(['student.id' => $this->student]);
+            }]);
+        }
+        if (!empty($this->program)) {
+            $query->joinWith(['program' => function($query) {
+                $query->andFilterWhere(['program.id' => $this->program]);
+            }]);
+        }
         if (!empty($this->teacher)) {
-            $query->joinWith(['teacherProfile' => function ($query) {
-		    $query->joinWith(['user' => function($query) {
+		    $query->joinWith(['teacher' => function($query) {
                 $query->andFilterWhere(['user.id' => $this->teacher
                         ]);
 		}]);
-            }]);
-        }
-        if (!$this->showAll) {
-            $query->notExpired();
         }
         return $dataProvider;
     }
