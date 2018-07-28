@@ -1,7 +1,6 @@
 <?php
 
 use yii\bootstrap\Tabs;
-use common\models\Vacation;
 use common\models\ExamResult;
 use yii\helpers\Url;
 use yii\bootstrap\Modal;
