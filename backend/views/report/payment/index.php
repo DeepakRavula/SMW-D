@@ -19,7 +19,7 @@ $this->params['show-all'] = $this->render('_button', [
             <?php echo $this->render('_search', ['model' => $searchModel]); ?>
         </div>
         <div class="box">  
-            <?php echo $this->render('_payment', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]); ?>
+            <?php echo $this->render('_payment', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'paymentsAmount' => $paymentsAmount]); ?>
         </div>
     </div>
 </div>

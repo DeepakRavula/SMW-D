@@ -59,10 +59,10 @@ class PaymentReportSearch extends Payment
         
         $query->orderBy(['DATE(payment.date)' => SORT_ASC, 'payment_method_id' => SORT_ASC]);
         if (!($this->load($params) && $this->validate())) {
-            $this->fromDate      = new \DateTime();
-            $this->toDate        = new \DateTime();
-            $query->andWhere(['between', 'DATE(payment.date)', $this->fromDate->format('Y-m-d'),
-                $this->toDate->format('Y-m-d')]);
+            $fromDate      = new \DateTime();
+            $toDate        = new \DateTime();
+            $query->andWhere(['between', 'DATE(payment.date)', $fromDate->format('Y-m-d'),
+                $toDate->format('Y-m-d')]);
             return $dataProvider;
         }
         if ($this->groupByMethod) {
