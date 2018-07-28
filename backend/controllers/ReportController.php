@@ -220,6 +220,7 @@ class ReportController extends BaseController
 
         $taxDataProvider = new ActiveDataProvider([
             'query' => $invoiceTaxes,
+            'pagination' => false
         ]);
                 
         return $this->render('tax-collected/index', [
