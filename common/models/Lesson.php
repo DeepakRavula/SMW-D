@@ -87,7 +87,6 @@ class Lesson extends \yii\db\ActiveRecord
     public $showAllReviewLessons = false;
     public $present;
     public $newDuration;
-    public $vacationId;
     public $studentId;
     public $userName;
     public $applyContext;

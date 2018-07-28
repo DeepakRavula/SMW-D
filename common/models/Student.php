@@ -29,7 +29,6 @@ class Student extends \yii\db\ActiveRecord
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_CUSTOMER_MERGE = 'customer-merge';
 
-    public $vacationId;
     public $studentId;
 
     /**
