@@ -76,9 +76,6 @@ class LessonSearch extends Lesson
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'pageSize' => 200,
-            ],
         ]);
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
