@@ -125,10 +125,19 @@ class ReportController extends BaseController
         $request = Yii::$app->request;
         $searchModel->load($request->get());
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $paymentsAmount = Payment::find()
+            ->exceptAutoPayments()
+            ->exceptGiftCard()
+            ->location($locationId)
+            ->notDeleted()
+            ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), 
+                (new \DateTime($searchModel->toDate))->format('Y-m-d')])
+            ->sum('payment.amount');
         return $this->render('payment/index', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'paymentsAmount' => $paymentsAmount
         ]);
     }
     

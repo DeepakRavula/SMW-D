@@ -4,11 +4,9 @@ namespace console\controllers;
 
 use Yii;
 use yii\console\Controller;
-use yii\helpers\Console;
 use common\models\Invoice;
 use common\models\User;
 use common\models\Lesson;
-use common\models\PaymentCycle;
 
 class InvoiceController extends Controller
 {

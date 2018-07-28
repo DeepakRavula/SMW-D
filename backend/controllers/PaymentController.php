@@ -335,12 +335,21 @@ class PaymentController extends BaseController
     {
         $searchModel = new PaymentReportSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $paymentsAmount = Payment::find()
+            ->exceptAutoPayments()
+            ->exceptGiftCard()
+            ->location($locationId)
+            ->notDeleted()
+            ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), 
+                (new \DateTime($searchModel->toDate))->format('Y-m-d')])
+            ->sum('payment.amount');
         $this->layout = '/print';
 
         return $this->render('/report/payment/_print', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            'paymentsAmount' => $paymentsAmount
         ]);
     }
 
