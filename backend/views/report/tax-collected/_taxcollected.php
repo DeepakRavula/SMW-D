@@ -17,19 +17,19 @@ use yii\helpers\Html;
                 return [
                     'mergeColumns' => [[1, 2]],
                     'content' => [
-                        3 => GridView::F_SUM,
-                        4 => GridView::F_SUM,
                         5 => GridView::F_SUM,
+                        6 => GridView::F_SUM,
+                        7 => GridView::F_SUM,
                     ],
                     'contentFormats' => [
-                        3 => ['format' => 'number', 'decimals' => 2],
-                        4 => ['format' => 'number', 'decimals' => 2],
                         5 => ['format' => 'number', 'decimals' => 2],
+                        6 => ['format' => 'number', 'decimals' => 2],
+                        7 => ['format' => 'number', 'decimals' => 2],
                     ],
                     'contentOptions' => [
-                        3 => ['style' => 'text-align:right'],
-                        4 => ['style' => 'text-align:right'],
                         5 => ['style' => 'text-align:right'],
+                        6 => ['style' => 'text-align:right'],
+                        7 => ['style' => 'text-align:right'],
                     ],
                     'options' => ['style' => 'font-weight:bold;']
     ];
@@ -47,10 +47,22 @@ use yii\helpers\Html;
                 return !empty($data->invoice->user->publicIdentity) ? $data->invoice->user->publicIdentity : null;
             },
         ],
+        [
+            'label' => 'Description',
+            'value' => function ($data) {
+                return $data->description ?? null;
+            },
+        ],
+        [
+            'label' => 'Qty',
+            'value' => function ($data) {
+                return $data->unit ?? null;
+            },
+        ],
             [
-            'label' => 'Subtotal',
+            'label' => 'Extended Price',
 	    'value' => function ($data) {
-                return $data->invoice->subTotal;
+                return round(($data->amount * $data->unit), 2);
             },	
             'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
@@ -72,7 +84,8 @@ use yii\helpers\Html;
             [
             'label' => 'Total',
             'value' => function ($data) {
-                return $data->invoice->subTotal + $data->tax_rate;
+                $extendedPrice = $data->amount * $data->unit;
+                return round(($extendedPrice + $data->tax_rate), 2);
             },
             'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],

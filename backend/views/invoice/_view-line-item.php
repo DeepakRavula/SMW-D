@@ -67,6 +67,24 @@ use common\models\Invoice;
             'contentOptions' => ['class' => 'text-left', 'style' => 'width:85px;']
         ],
         [
+            'label' => 'Tax',
+	        'value' => function ($data) {
+                return round($data->tax_rate, 2);
+            },
+            'format' => 'currency',
+            'contentOptions' => ['class' => 'text-right'],
+            'headerOptions' => ['class' => 'text-right'],
+        ],
+        [
+            'label' => 'Unit Price',
+	        'value' => function ($data) {
+                return round($data->amount, 2);
+            },
+            'format' => 'currency',
+            'contentOptions' => ['class' => 'text-right'],
+            'headerOptions' => ['class' => 'text-right'],
+        ],
+        [
             'label' => 'Cost',
             'format' => 'currency',
             'headerOptions' => ['class' => 'text-right'],
