@@ -78,8 +78,9 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 },
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
-                'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM
+                'pageSummary' => function ($summary, $data, $widget) use ($paymentsAmount) { 
+                    return round($paymentsAmount, 2); 
+                }
             ],
         ];
         ?>
@@ -184,8 +185,9 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 },
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
                 'hAlign' => 'right',
-                'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM
+                'pageSummary' => function ($summary, $data, $widget) use ($paymentsAmount) { 
+                    return round($paymentsAmount, 2); 
+                }
             ],
         ];
         ?>
