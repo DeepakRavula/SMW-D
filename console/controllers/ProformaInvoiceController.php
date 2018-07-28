@@ -4,7 +4,6 @@ namespace console\controllers;
 
 use Yii;
 use yii\console\Controller;
-use yii\helpers\Console;
 use common\models\User;
 use common\models\Lesson;
 use common\models\Enrolment;
