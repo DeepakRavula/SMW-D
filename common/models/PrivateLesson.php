@@ -99,13 +99,14 @@ class PrivateLesson extends \yii\db\ActiveRecord
                 $firstSplitLesson = Lesson::findOne($firstSplitId);
                 if ($firstSplitLesson->hasCredit($enrolment->id)) {
                     foreach ($firstSplitLesson->lessonPayments as $firstSplitLessonPayment) {
+                        $amountNeeded = $firstSplitLessonPayment->lesson->netPrice;
                         if (!$firstSplitLessonPayment->payment->isAutoPayments()) {
-                            if ($firstSplitLessonPayment->amount > $firstSplitLessonPayment->lesson->netPrice) {
+                            if ($firstSplitLessonPayment->amount > $amountNeeded) {
                                 $lessonPayment = new LessonPayment();
                                 $lessonPayment->lessonId    = $lesson->id;
                                 $lessonPayment->paymentId   = $firstSplitLessonPayment->paymentId;
-                                $lessonPayment->amount      = round($lesson->netPrice, 2) <= round($firstSplitLessonPayment->creditAmount, 2) ? 
-                                    round($lesson->netPrice, 2) : round($firstSplitLessonPayment->creditAmount, 2);
+                                $lessonPayment->amount      = $lesson->netPrice <= $firstSplitLessonPayment->amount ? 
+                                    $lesson->netPrice : $firstSplitLessonPayment->amount - $firstSplitLessonPayment->lesson->netPrice;
                                 $lessonPayment->enrolmentId = $enrolment->id;
                                 $lessonPayment->save();
                                 $firstSplitLessonPayment->amount -= $lessonPayment->amount;
