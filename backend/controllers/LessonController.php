@@ -88,6 +88,7 @@ class LessonController extends BaseController
         $lessonRequest = $request->get('LessonSearch');
         $searchModel->lessonStatus = Lesson::STATUS_SCHEDULED;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 200;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
