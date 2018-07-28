@@ -69,6 +69,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                             'payment_method_id' => $data->payment_method_id,
                             'DATE(payment.date)' => (new \DateTime($data->date))->format('Y-m-d')
                         ])
+                        ->notDeleted()
                         ->all();
                     foreach ($payments as $payment) {
                         $amount += $payment->amount;
