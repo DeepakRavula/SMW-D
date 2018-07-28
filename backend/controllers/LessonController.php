@@ -567,9 +567,6 @@ class LessonController extends BaseController
             foreach ($lessons as $i => $lesson) {
                 $oldLesson = Lesson::findOne($oldLessonIds[$i]);
                 $oldLesson->rescheduleTo($lesson);
-                if ($oldLesson) {
-                    LessonHierarchy::deleteAll([$oldLesson->id]);
-                }
                 $bulkReschedule = new BulkRescheduleLesson();
                 $bulkReschedule->lessonId = $lesson->id;
                 $bulkReschedule->save();
