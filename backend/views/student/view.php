@@ -51,6 +51,7 @@ $this->params['label'] = $this->render('_title', [
         ]);
 
         $unscheduledLessonContent = $this->render('_unscheduledLesson', [
+            '$unscheduledLessonSearchModel' => $unscheduledLessonSearchModel,
             'dataProvider' => $unscheduledLessonDataProvider,
         ]);
 

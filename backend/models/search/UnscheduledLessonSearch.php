@@ -19,6 +19,8 @@ class UnscheduledLessonSearch extends Lesson
     public $teacher;
     public $student;
     public $showAll;
+    public $showAllExpiredLesson;
+    public $studentUnscheduledLesson;
    
     /**
      * {@inheritdoc}
@@ -26,7 +28,7 @@ class UnscheduledLessonSearch extends Lesson
     public function rules()
     {
         return [
-            [['student', 'program', 'teacher', 'showAll'], 'safe'],
+            [['student', 'program', 'teacher', 'showAll', 'showAllExpiredLesson', 'studentUnscheduledLesson'], 'safe'],
            
         ];
     }
@@ -55,13 +57,20 @@ class UnscheduledLessonSearch extends Lesson
             ->notDeleted()
             ->location($locationId)
             ->unscheduled()
-			->joinWith(['privateLesson'])
+            ->notRescheduled()
+            ->joinWith(['privateLesson'])
+            ->andWhere(['NOT', ['private_lesson.lessonId' => null]])
             ->orderBy(['private_lesson.expiryDate' => SORT_ASC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
+        }
+        if ($this->studentUnscheduledLesson) {
+            if (!$this->showAllExpiredLesson) {
+           $query->notExpired();
+            } 
         }
         if (!$this->showAll) {
             $query->notExpired();

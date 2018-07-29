@@ -2,10 +2,27 @@
 
 use yii\grid\GridView;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
 
 ?>
+<?php
+$form = ActiveForm::begin([
+       //'action' => Url::to(['student/view', 'id' => $model->id]),
+        'method' => 'post',
+    'fieldConfig' => [
+        'options' => [
+            'tag' => false,
+        ],
+    ],
+    ]);
+?>
+<?php Pjax::begin(['options'=>['class' => 'm-r-25']]) ?>
+<?= $form->field($unscheduledLessonSearchModel, 'showAllExpiredLesson')->checkbox(['data-pjax' => true]); ?>
+<?php Pjax::end(); ?>
+<?php ActiveForm::end(); ?>
 
-<?php yii\widgets\Pjax::begin(['id' => 'lesson-index', 'timeout' => 6000,]); ?>
+<?php Pjax::begin(['id' => 'lesson-index', 'timeout' => 6000,]); ?>
 <div class="m-b-10 pull-right">
     <div class="btn-group">
         <i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i>
@@ -77,7 +94,7 @@ use yii\helpers\Url;
         'emptyText' => false,
         'columns' => $columns,
     ]); ?>
-	<?php yii\widgets\Pjax::end(); ?>
+	<?php Pjax::end(); ?>
     </div>
 </div>
 

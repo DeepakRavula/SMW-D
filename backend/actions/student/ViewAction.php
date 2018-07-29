@@ -12,6 +12,8 @@ use common\models\Note;
 use common\models\Location;
 use common\models\log\LogHistory;
 use backend\models\search\EnrolmentSearch;
+use backend\models\search\UnscheduledLessonSearch;
+
 /**
  * List of models.
  */
@@ -39,6 +41,7 @@ class ViewAction extends Action
                 ];
             }
             $enrolmentSearchModel=new EnrolmentSearch();
+            $unscheduledLessonSearchModel = new UnscheduledLessonSearch();
             return $this->controller->render('view', [
                     'model' => $model,
                     'allEnrolments' => $allEnrolments,
@@ -49,6 +52,7 @@ class ViewAction extends Action
                     'noteDataProvider' => $this->getNotes($id),
                     'logs' => $this->getLogs($id),
                     'enrolmentSearchModel'=> $enrolmentSearchModel,
+                    'unscheduledLessonSearchModel' => $unscheduledLessonSearchModel,
                     ]);
         } else {
             $this->controller->redirect(['index', 'StudentSearch[showAllStudents]' => false]);
@@ -64,20 +68,31 @@ class ViewAction extends Action
 
     protected function getUnscheduledLessons($id, $locationId)
     {
-        $unscheduledLessons = Lesson::find()
-                ->studentEnrolment($locationId, $id)
-                ->isConfirmed()
-                ->joinWith(['privateLesson'])
-                ->andWhere(['NOT', ['private_lesson.lessonId' => null]])
-                ->orderBy(['private_lesson.expiryDate' => SORT_ASC])
-                ->unscheduled()
-                ->notRescheduled()
-                ->notExpired()
-                ->notDeleted();
-
-        return new ActiveDataProvider([
-                'query' => $unscheduledLessons,
-        ]);
+        $searchModel = new UnscheduledLessonSearch();
+        $request = Yii::$app->request;
+        $searchModel->studentUnscheduledLesson=true;
+        $searchModel->studentId=$id;
+         if ($searchModel->load($request->get())) {
+             $unscheduledLessonRequest = $request->get('UnscheduledLessonearch');
+             $searchModel->showAllExpiredLesson = $unscheduledLessonRequest['showAllExpiredLesson'];
+         }
+        
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        return $dataProvider;
+        // $unscheduledLessons = Lesson::find()
+        //         ->studentEnrolment($locationId, $id)
+        //         ->isConfirmed()
+        //         ->joinWith(['privateLesson'])
+        //         ->andWhere(['NOT', ['private_lesson.lessonId' => null]])
+        //         ->orderBy(['private_lesson.expiryDate' => SORT_ASC])
+        //         ->unscheduled()
+        //         ->notRescheduled()
+        //         ->notExpired()
+        //         ->notDeleted();
+        // $searchModel = new UnscheduledLessonSearch();
+        // return new ActiveDataProvider([
+        //         'query' => $unscheduledLessons,
+        // ]);
     }
 
     protected function getLessons($id, $locationId)
