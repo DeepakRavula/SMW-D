@@ -93,29 +93,31 @@ class PrivateLesson extends \yii\db\ActiveRecord
                     $lesson->lineItemDiscount->updateAttributes(['value' => $lesson->lineItemDiscount->value / $splitCount]);
                 }
             }
-            if ($i == 0) {
-                $firstSplitId = $lesson->id;
-            } else {
-                $firstSplitLesson = Lesson::findOne($firstSplitId);
-                if ($firstSplitLesson->hasCredit($enrolment->id)) {
-                    foreach ($firstSplitLesson->lessonPayments as $firstSplitLessonPayment) {
-                        $amountNeeded = $firstSplitLessonPayment->lesson->netPrice;
-                        if (!$firstSplitLessonPayment->payment->isAutoPayments()) {
-                            if ($firstSplitLessonPayment->amount > $amountNeeded) {
-                                $lessonPayment = new LessonPayment();
-                                $lessonPayment->lessonId    = $lesson->id;
-                                $lessonPayment->paymentId   = $firstSplitLessonPayment->paymentId;
-                                $lessonPayment->amount      = $lesson->netPrice <= $firstSplitLessonPayment->amount ? 
-                                    $lesson->netPrice : $firstSplitLessonPayment->amount - $firstSplitLessonPayment->lesson->netPrice;
-                                $lessonPayment->enrolmentId = $enrolment->id;
-                                $lessonPayment->save();
-                                $firstSplitLessonPayment->amount -= $lessonPayment->amount;
-                                $firstSplitLessonPayment->save();
-                            }
-                        }
-                    }
-                }
-            }
+            // if ($i == 0) {
+            //     $firstSplitId = $lesson->id;
+            // } else {
+            //     $firstSplitLesson = Lesson::findOne($firstSplitId);
+            //     if ($firstSplitLesson->hasCredit($enrolment->id)) {
+            //         $amountNeeded = $firstSplitLesson->netPrice;
+            //         $amount = 0;
+            //         foreach ($firstSplitLesson->lessonPayments as $firstSplitLessonPayment) {
+            //             $amount += $firstSplitLessonPayment->amount;
+            //             if (!$firstSplitLessonPayment->payment->isAutoPayments()) {
+            //                 if ($amountNeeded < $amount) {
+            //                     $lessonPayment = new LessonPayment();
+            //                     $lessonPayment->lessonId    = $lesson->id;
+            //                     $lessonPayment->paymentId   = $firstSplitLessonPayment->paymentId;
+            //                     $lessonPayment->amount      = $amount - $amountNeeded;
+            //                     $lessonPayment->enrolmentId = $enrolment->id;
+            //                     $lessonPayment->save();
+            //                     $firstSplitLessonPayment->amount -= $lessonPayment->amount;
+            //                     $firstSplitLessonPayment->save();
+            //                     $amount += $firstSplitLessonPayment->amount;
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         }
         return $model->cancel();
     }
