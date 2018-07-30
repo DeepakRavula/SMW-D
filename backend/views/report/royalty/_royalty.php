@@ -5,7 +5,7 @@ use common\models\TaxCode;
 use common\models\TaxType;
 
 $total = $payments - $invoiceTaxTotal - $royaltyPayment;
-$location = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]);
+$location = Location::findOne(['id' => Location::findOne(['slug' => \Yii::$app->location])->id]);
 $advertisement = !empty($location->advertisement->value) ? $location->advertisement->value : 0;
 $royalty = !empty($location->royalty->value) ? $location->royalty->value : 0;
 $locationDebtAmount = $royalty + $advertisement;
