@@ -21,30 +21,30 @@ if ($total < 0) {
 <dl class="dl-horizontal royalty">
     <dt>Payments Received</dt>
     <dd><?php $payments = !empty($payments) ? $payments : 0; ?>
-    <?= Yii::$app->formatter->asCurrency(round($payments,2)); ?>
+    <?= Yii::$app->formatter->asCurrency(round($payments, 2)); ?>
 	</dd>
     <dt>Gift Card Payments</dt>
     <dd><?php $giftCardPayments = !empty($giftCardPayments) ? $giftCardPayments : 0; ?>
-    <?= Yii::$app->formatter->asCurrency(round($giftCardPayments,2)); ?>
+    <?= Yii::$app->formatter->asCurrency(round($giftCardPayments, 2)); ?>
 	</dd>
     <dt>Tax Collected</dt>
     <dd><?php $invoiceTaxTotal = !empty($invoiceTaxTotal) ? $invoiceTaxTotal : 0; ?>
-     <?= Yii::$app->formatter->asCurrency(round($invoiceTaxTotal,2));?>
+     <?= Yii::$app->formatter->asCurrency(round($invoiceTaxTotal, 2));?>
 	</dd>
     <dt>Royalty Free Items</dt>
     <dd><?php $royaltyPayment = !empty($royaltyPayment) ? $royaltyPayment : 0; ?>
-    <?= Yii::$app->formatter->asCurrency(round($royaltyPayment,2)); ?>
+    <?= Yii::$app->formatter->asCurrency(round($royaltyPayment, 2)); ?>
 	</dd>
     <dt>Revenue</dt>
     <dd><?php $total = !empty($total) ? $total : 0; ?>
-    <?= Yii::$app->formatter->asCurrency(round($total,2)); ?>	
+    <?= Yii::$app->formatter->asCurrency(round($total, 2)); ?>	
 	</dd>
     <dt>Advertisement <?= !empty($location->advertisement->value) ? ' (' . $location->advertisement->value . '%)' : ' - '; ?></dt>
     <dd>
-	<?= Yii::$app->formatter->asCurrency(round($advertisementAmount,2));?>		
+	<?= Yii::$app->formatter->asCurrency(round($advertisementAmount, 2));?>		
     <dt>Royalty <?= !empty($location->royalty->value) ? ' (' . $location->royalty->value . '%)' : ' - '; ?></dt>
     <dd>
-	<?= Yii::$app->formatter->asCurrency(round($royaltyAmount,2));?>			
+	<?= Yii::$app->formatter->asCurrency(round($royaltyAmount, 2));?>			
     <dt>Subtotal</dt>
     <?php $subtotal = $royaltyAmount + $advertisementAmount; ?> 
     <dd>
@@ -62,8 +62,8 @@ if ($total < 0) {
 
     ?>
     <dd>
-	<?= Yii::$app->formatter->asCurrency(round($tax,2)); ?>		
+	<?= Yii::$app->formatter->asCurrency(round($tax, 2)); ?>		
     <dt>Total</dt>
     <dd>
-	<?= Yii::$app->formatter->asCurrency(round(($subtotal + $tax),2)); ?>			
+	<?= Yii::$app->formatter->asCurrency(round(($subtotal + $tax), 2)); ?>			
 </dl>
