@@ -218,15 +218,16 @@ class ReportController extends BaseController
             $toDate = $currentDate;
         }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $invoiceTaxes = InvoiceLineItem::find()
+        $invoiceTaxes = Invoice::find()
             ->notDeleted()
-            ->joinWith(['invoice' => function ($query) use ($locationId, $searchModel) {
-                $query->location($locationId)
-                ->invoice()
-                ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
-                ->notDeleted();
-            }])
-            ->andWhere(['>', 'tax_rate', 0]);
+            ->location($locationId)
+            ->invoice()
+            ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), 
+                (new \DateTime($searchModel->toDate))->format('Y-m-d')])
+            ->andWhere(['>', 'tax', 0]);
+        $taxSum = $invoiceTaxes->sum('tax');
+        $subtotalSum = $invoiceTaxes->sum('subTotal');
+        $totalSum = $invoiceTaxes->sum('total');
         if ($searchModel->summarizeResults) {
             $invoiceTaxes ->groupBy(['invoice.id', 'DATE(invoice.date)']);
         } else {
@@ -241,6 +242,9 @@ class ReportController extends BaseController
         return $this->render('tax-collected/index', [
             'searchModel' => $searchModel,
             'taxDataProvider' => $taxDataProvider,
+            'taxSum' => $taxSum,
+            'subtotalSum' => $subtotalSum,
+            'totalSum' => $totalSum
         ]);
     }
 
