@@ -14,6 +14,7 @@ use common\models\PaymentMethod;
  */
 class PaymentSearch extends Payment
 {
+    public $number;
     public $customer;
     public $paymentMethod;
     public $startDate;
@@ -25,7 +26,8 @@ class PaymentSearch extends Payment
     public function rules()
     {
         return [
-            [['startDate', 'endDate', 'customer', 'dateRange', 'amount', 'user_id', 'paymentMethod'], 'safe'],
+            [['startDate', 'endDate', 'customer', 'dateRange', 'amount', 'user_id', 
+                'paymentMethod', 'number'], 'safe'],
         ];
     }
 
@@ -45,29 +47,25 @@ class PaymentSearch extends Payment
      */
     public function search($params)
     {
-        $locationId          = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $query               = Payment::find()
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $query = Payment::find()
             ->location($locationId)
-            ->andWhere(['NOT', ['payment_method_id' => [PaymentMethod::TYPE_CREDIT_USED, PaymentMethod::TYPE_CREDIT_APPLIED]]])
+            ->exceptAutoPayments()
             ->notDeleted();
-           
-        $query->joinWith('userProfile');
-        $query->joinWith('paymentMethod');
-        $dataProvider        = new ActiveDataProvider([
+        
+        $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-          
-        if(!empty($this->dateRange)) {
-            list($this->startDate, $this->endDate) = explode(' - ', $this->dateRange);
-            $query->andWhere(['between', 'DATE(payment.date)',
-                    (new \DateTime($this->startDate))->format('Y-m-d'),
-                    (new \DateTime($this->endDate))->format('Y-m-d')]);  
-        }
+
         $dataProvider->setSort([
             'attributes' => [
                 'customer' => [
                     'asc' => ['user_profile.firstname' => SORT_ASC],
                     'desc' => ['user_profile.firstname' => SORT_DESC],
+                ],
+                'number' => [
+                    'asc' => ['payment.id' => SORT_ASC],
+                    'desc' => ['payment.id' => SORT_DESC],
                 ],
                 'dateRange' => [
                     'asc' => ['payment.date' => SORT_ASC],
@@ -83,23 +81,39 @@ class PaymentSearch extends Payment
                 ],
             ]
         ]);
-        $dataProvider->sort->defaultOrder = [
-            'dateRange' => SORT_ASC,
-        ];
+
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-        if(!empty($this->dateRange)) {
-            list($this->startDate, $this->endDate) = explode(' - ', $this->dateRange);
-            $query->andWhere(['between', 'DATE(payment.date)',
-                (new \DateTime($this->startDate))->format('Y-m-d'),
-                (new \DateTime($this->endDate))->format('Y-m-d')]); 
-        }
+        if ($this->number) {
+            $query->andFilterWhere(['payment.id', $this->number]);
+        } else {
 
-        $query->andFilterWhere(['like', 'payment_method.name', $this->paymentMethod]);
-        $query->andFilterWhere(['like', 'amount', $this->amount]);
-        $query->andFilterWhere(['user_profile.user_id' => $this->customer]);
-        
+            if ($this->dateRange) {
+                list($this->startDate, $this->endDate) = explode(' - ', $this->dateRange);
+                $query->andWhere(['between', 'DATE(payment.date)',
+                    (new \DateTime($this->startDate))->format('Y-m-d'),
+                    (new \DateTime($this->endDate))->format('Y-m-d')]); 
+            }
+
+            if ($this->paymentMethod) {
+                $paymentMethod = $this->paymentMethod;
+                $query->joinWith(['paymentMethod' => function ($query) use ($paymentMethod) {
+                    $query->andFilterWhere(['like', 'payment_method.name', $paymentMethod]);
+                }]);
+            }
+
+            if ($this->amount) {
+                $query->andFilterWhere(['like', 'amount', $this->amount]);
+            }
+
+            if ($this->customer) {
+                $customer = $this->customer;
+                $query->joinWith(['userProfile' => function ($query) use ($customer) {
+                    $query->andFilterWhere(['user_profile.user_id' => $customer]);
+                }]);
+            }
+        }
         return $dataProvider;
     }
 }
