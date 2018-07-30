@@ -421,6 +421,12 @@ class Lesson extends \yii\db\ActiveRecord
             ->onCondition(['lesson_payment.isDeleted' => false]);
     }
 
+    public function getLessonPayment()
+    {
+        return $this->hasOne(LessonPayment::className(), ['lessonId' => 'id'])
+            ->onCondition(['lesson_payment.isDeleted' => false]);
+    }
+
     public function getPayments()
     {
         return $this->hasMany(Payment::className(), ['id' => 'paymentId'])
