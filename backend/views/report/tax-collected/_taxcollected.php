@@ -3,102 +3,95 @@
 use kartik\grid\GridView;
 use yii\helpers\Url;
 use yii\helpers\Html;
+use common\models\Location;
+use common\models\Invoice;
 
 ?>
     <?php
+    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
     $columns = [
-            [
+        [
             'value' => function ($data) {
-                return (new \DateTime($data->invoice->date))->format('l, F jS, Y');
+                return (new \DateTime($data->date))->format('l, F jS, Y');
             },
             'group' => true,
             'groupedRow' => true,
-            'groupFooter' => function ($model, $key, $index, $widget) {
-                return [
-                    'mergeColumns' => [[1, 2]],
-                    'content' => [
-                        5 => GridView::F_SUM,
-                        6 => GridView::F_SUM,
-                        7 => GridView::F_SUM,
-                    ],
-                    'contentFormats' => [
-                        5 => ['format' => 'number', 'decimals' => 2],
-                        6 => ['format' => 'number', 'decimals' => 2],
-                        7 => ['format' => 'number', 'decimals' => 2],
-                    ],
-                    'contentOptions' => [
-                        5 => ['style' => 'text-align:right'],
-                        6 => ['style' => 'text-align:right'],
-                        7 => ['style' => 'text-align:right'],
-                    ],
-                    'options' => ['style' => 'font-weight:bold;']
-    ];
-            }
+            // 'groupFooter' => function ($model, $key, $index, $widget) use ($locationId) {
+            //     return [
+            //         'mergeColumns' => [[1, 2]],
+            //         'content' => [
+            //             3 => GridView::F_SUM,
+            //             4 => GridView::F_SUM,
+            //             5 => GridView::F_SUM,
+            //         ],
+            //         'contentFormats' => [
+            //             3 => ['format' => 'number', 'decimals' => 2],
+            //             4 => ['format' => 'number', 'decimals' => 2],
+            //             5 => ['format' => 'number', 'decimals' => 2],
+            //         ],
+            //         'contentOptions' => [
+            //             3 => ['style' => 'text-align:right'],
+            //             4 => ['style' => 'text-align:right'],
+            //             5 => ['style' => 'text-align:right'],
+            //         ],
+            //         'options' => ['style' => 'font-weight:bold;']
+            //     ];
+            // }
         ],
-            [
+        [
             'label' => 'Source ID',
             'value' => function ($data) {
-                return $data->invoice->getInvoiceNumber();
-            },
+                return $data->getInvoiceNumber();
+            }
         ],
-            [
+        [
             'label' => 'Customer',
             'value' => function ($data) {
-                return !empty($data->invoice->user->publicIdentity) ? $data->invoice->user->publicIdentity : null;
-            },
+                return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
+            }
         ],
         [
-            'label' => 'Description',
+            'label' => 'Subtotal',
             'value' => function ($data) {
-                return $data->description ?? null;
+                return round($data->subTotal, 2);
             },
-        ],
-        [
-            'label' => 'Qty',
-            'value' => function ($data) {
-                return $data->unit ?? null;
-            },
-        ],
-            [
-            'label' => 'Extended Price',
-	    'value' => function ($data) {
-                return round(($data->amount * $data->unit), 2);
-            },	
             'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
+            'pageSummary' => function ($summary, $data, $widget) use ($subtotalSum) { 
+                return round($subtotalSum, 2); 
+            }
         ],
-            [
+        [
             'label' => 'Tax',
-	    'value' => function ($data) {
-                return $data->tax_rate;
+	        'value' => function ($data) {
+                return $data->tax;
             },
             'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
+            'pageSummary' => function ($summary, $data, $widget) use ($taxSum) { 
+                return round($taxSum, 2); 
+            }
         ],
-            [
+        [
             'label' => 'Total',
             'value' => function ($data) {
-                $extendedPrice = $data->amount * $data->unit;
-                return round(($extendedPrice + $data->tax_rate), 2);
+                return round($data->total, 2);
             },
             'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
-        ],
+            'pageSummary' => function ($summary, $data, $widget) use ($totalSum) { 
+                return round($totalSum, 2); 
+            }
+        ]
     ];
 
-    ?>   
+    ?>  
+
 <div class="box">
-    <?php
-    echo GridView::widget([
+    <?= GridView::widget([
         'dataProvider' => $taxDataProvider,
         'summary' => false,
         'emptyText' => false,
@@ -113,7 +106,5 @@ use yii\helpers\Html;
             ],
         ],
         'columns' => $columns,
-    ]);
-
-    ?>
+    ]); ?>
 </div>
