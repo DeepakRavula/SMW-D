@@ -172,7 +172,12 @@ class ReportController extends BaseController
             ->notDeleted()
             ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
             ->sum('payment.amount');
-
+        $giftCardPayments = Payment::find()
+            ->giftCardPayments()
+            ->location($locationId)
+            ->notDeleted()
+            ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
+            ->sum('payment.amount');
         $fromDate = new \DateTime($searchModel->fromDate);
         $toDate = new \DateTime($searchModel->toDate);
 
@@ -192,6 +197,7 @@ class ReportController extends BaseController
             'invoiceTaxTotal' => $invoiceTaxTotal,
             'payments' => $payments,
             'royaltyPayment' => $royaltyPayment,
+            'giftCardPayments' => $giftCardPayments,
         ]);
     }
 

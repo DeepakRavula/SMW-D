@@ -8,6 +8,8 @@ use common\models\Lesson;
 use Yii;
 use Carbon\Carbon;
 use common\models\CourseGroup;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "course".
@@ -60,7 +62,8 @@ class Course extends \yii\db\ActiveRecord
                 return (int)$model->program->type === Program::TYPE_GROUP_PROGRAM;
             }, 'except' => self::SCENARIO_EXTRA_GROUP_COURSE],
             [['startDate'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
-            [['startDate', 'endDate', 'programRate'], 'safe'],
+            [['startDate', 'endDate', 'programRate', 'createdByUserId', 
+            'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
             [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId','duration','lessonsCount'], 'safe'],
@@ -88,6 +91,23 @@ class Course extends \yii\db\ActiveRecord
             'rescheduleBeginDate' => 'Reschedule Future Lessons From',
             'rescheduleFromDate' => 'With effects from',
             'showAllCourses' => 'Show All'
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
+            ],
         ];
     }
 

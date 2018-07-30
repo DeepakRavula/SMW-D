@@ -239,6 +239,11 @@ class Payment extends ActiveRecord
                 ->viaTable('lesson_payment', ['paymentId' => 'id']);
     }
 
+    public function getPaymentNumber()
+    {
+        return 'P-' . $this->id;
+    }
+
     public function getPaymentMethod()
     {
         return $this->hasOne(PaymentMethod::className(), ['id' => 'payment_method_id']);

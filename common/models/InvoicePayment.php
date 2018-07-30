@@ -4,6 +4,8 @@ namespace common\models;
 
 use common\models\timelineEvent\TimelineEventPayment;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "payments".
@@ -33,7 +35,8 @@ class InvoicePayment extends \yii\db\ActiveRecord
         return [
             [['payment_id', 'invoice_id'], 'required'],
             [['payment_id', 'invoice_id', 'receiptId'], 'integer'],
-            [['isDeleted', 'date'], 'safe']
+            [['isDeleted', 'date', 'createdByUserId', 
+            'updatedByUserId', 'updatedOn', 'createdOn'], 'safe']
         ];
     }
 
@@ -58,6 +61,17 @@ class InvoicePayment extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
+            ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
             ],
         ];
     }

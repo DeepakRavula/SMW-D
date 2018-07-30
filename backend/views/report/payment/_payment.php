@@ -21,9 +21,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 ?>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 	<?php if ($searchModel->groupByMethod) : ?>
-		<?php
-        $columns = [
-                [
+		<?php $columns = [
+            [
                 'value' => function ($data) {
                     if (!empty($data->date)) {
                         $lessonDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->date);
@@ -51,13 +50,13 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     ];
                 }
             ],
-                [
+            [
                 'label' => 'Payment Method',
                 'value' => function ($data) {
                     return $data->paymentMethod->name;
                 },
             ],
-                [
+            [
                 'label' => 'Amount',
                 'value' => function ($data) use ($searchModel) {
                     $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
@@ -86,9 +85,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ];
         ?>
 	<?php else : ?>
-		<?php
-        $columns = [
-                [
+		<?php $columns = [
+            [
                 'value' => function ($data) {
                     if (!empty($data->date)) {
                         $lessonDate = Yii::$app->formatter->asDate($data->date);
@@ -116,7 +114,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     ];
                 }
             ],
-                [
+            [
                 'label' => 'Payment Method',
                 'value' => function ($data) {
                     return $data->paymentMethod->name;
@@ -141,28 +139,20 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     ];
                 },
             ],
-                [
-                'label' => 'ID',
+            [
+                'label' => 'Payment ID',
                 'value' => function ($data) {
-                    if ($data->invoicePayment) {
-                        $value = $data->invoicePayment->invoice->getInvoiceNumber();
-                    } else if ($data->lessonPayment) {
-                        $value = $data->lessonPayment->lesson->getLessonNumber();
-                    } else {
-                        $value = 'Un-applied';
-                    }
-                    return $value;
+                    return $data->getPaymentNumber();
                 },
-                'contentOptions' => ['style' => 'font-size:14px'],
             ],
-                [
+            [
                 'label' => 'Customer',
                 'value' => function ($data) {
                     return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                 },
                 'contentOptions' => ['style' => 'font-size:14px'],
             ],
-                [
+            [
                 'label' => 'Reference',
                 'contentOptions' => ['style' => 'font-size:14px'],
                 'value' => function ($data) {
@@ -179,7 +169,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     }
                 },
             ],
-                [
+            [
                 'label' => 'Amount',
                 'value' => function ($data) {
                     return round($data->amount, 2);
@@ -192,25 +182,22 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             ],
         ];
         ?>
-	<?php endif; ?>
-    <div class="grid-row-open">
-        <?=
-            GridView::widget([
-                'dataProvider' => $dataProvider,
-                'summary' => false,
-                'emptyText' => false,
-                'options' => ['class' => ''],
-                'showPageSummary' => true,
-                'headerRowOptions' => ['class' => 'bg-light-gray'],
-                'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
-                'pjax' => true,
-                'pjaxSettings' => [
-                    'neverTimeout' => true,
-                    'options' => [
-                        'id' => 'payment-listing',
-                    ],
-                ],
-                'columns' => $columns,
-            ]);
-            ?>
-    </div>
+    <?php endif; ?>
+    
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'summary' => false,
+        'emptyText' => false,
+        'options' => ['class' => ''],
+        'showPageSummary' => true,
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],
+        'pjax' => true,
+        'pjaxSettings' => [
+            'neverTimeout' => true,
+            'options' => [
+                'id' => 'payment-listing',
+            ],
+        ],
+        'columns' => $columns,
+    ]); ?>
