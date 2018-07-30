@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 use common\models\discount\EnrolmentDiscount;
 use DateInterval;
 /**
@@ -64,6 +65,11 @@ class Enrolment extends \yii\db\ActiveRecord
                 'updatedAtAttribute' => 'updatedAt',
                 'value' => (new \DateTime())->format('Y-m-d H:i:s'),
             ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
+            ],
         ];
     }
 
@@ -76,7 +82,8 @@ class Enrolment extends \yii\db\ActiveRecord
             [['courseId'], 'required'],
             [['courseId', 'studentId'], 'integer'],
             [['paymentFrequencyId', 'isDeleted', 'isConfirmed', 'createdAt',
-                'hasEditable', 'isAutoRenew', 'applyFullDiscount', 'updatedAt'], 'safe'],
+                'hasEditable', 'isAutoRenew', 'applyFullDiscount', 'updatedAt', 'createdByUserId', 
+                'updatedByUserId'], 'safe'],
         ];
     }
 
