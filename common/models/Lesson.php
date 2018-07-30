@@ -6,6 +6,7 @@ use Yii;
 use common\models\discount\EnrolmentDiscount;
 use yii\helpers\ArrayHelper;
 use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 use valentinek\behaviors\ClosureTable;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\components\validators\lesson\conflict\HolidayValidator;
@@ -121,6 +122,12 @@ class Lesson extends \yii\db\ActiveRecord
                 'parentAttribute' => 'lessonId',
             ],
             [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
                 'class' => BlameableBehavior::className(),
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
@@ -144,7 +151,7 @@ class Lesson extends \yii\db\ActiveRecord
             ['programRate', 'required', 'on' => self::SCENARIO_CREATE_GROUP],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyFullDiscount',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId',
-                 'isPresent', 'programRate', 'teacherRate', 'splittedLessonId','tax'], 'safe'],
+                 'isPresent', 'programRate', 'teacherRate', 'splittedLessonId','tax', 'updatedOn', 'createdOn'], 'safe'],
             [['classroomId'], ClassroomValidator::className(),
                 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),

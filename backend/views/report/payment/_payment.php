@@ -192,8 +192,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             ],
         ];
         ?>
-	<?php endif; ?>
-    <div class="grid-row-open">
+    <?php endif; ?>
+    
         <?=
             GridView::widget([
                 'dataProvider' => $dataProvider,
@@ -213,4 +213,3 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'columns' => $columns,
             ]);
             ?>
-    </div>

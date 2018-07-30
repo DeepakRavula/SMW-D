@@ -3,6 +3,8 @@
 namespace common\models;
 
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 
 
 /**
@@ -31,7 +33,8 @@ class LessonPayment extends \yii\db\ActiveRecord
     {
         return [
             [['lessonId', 'paymentId', 'enrolmentId'], 'integer'],
-            [['isDeleted','receiptId', 'date'], 'safe']
+            [['isDeleted','receiptId', 'date', 'createdByUserId', 
+            'updatedByUserId', 'updatedOn', 'createdOn'], 'safe']
         ];
     }
 
@@ -44,6 +47,17 @@ class LessonPayment extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
+            ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
             ],
         ];
     }
@@ -101,12 +115,6 @@ class LessonPayment extends \yii\db\ActiveRecord
             if (!$this->date) {
                 $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
             }
-            // foreach ($this->lesson->lessonPayments as $lessonPayment) {
-            //     if ($lessonPayment->paymentId == $this->paymentId) {
-            //         $this->amount += $lessonPayment->amount;
-            //         $lessonPayment->updateAttributes(['isDeleted' => true]);
-            //     }
-            // }
         }
         if (round($this->amount, 2) == 0.00) {
             $this->isDeleted = true;
