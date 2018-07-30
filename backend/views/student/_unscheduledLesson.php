@@ -8,13 +8,13 @@ use yii\widgets\Pjax;
 ?>
 <?php
 $form = ActiveForm::begin([
-       //'action' => Url::to(['student/view', 'id' => $model->id]),
-        'method' => 'post',
-    'fieldConfig' => [
-        'options' => [
-            'tag' => false,
-        ],
+    'action' => Url::to(['student/view', 'id' => $model->id]),
+    'method' => 'post',
+'fieldConfig' => [
+    'options' => [
+        'tag' => false,
     ],
+],
     ]);
 ?>
 <?php Pjax::begin(['options'=>['class' => 'm-r-25']]) ?>
@@ -120,4 +120,11 @@ $form = ActiveForm::begin([
             return false;
         }
     });
+
+    $(document).off('change', '#unscheduledlessonsearch-showallexpiredlesson').on('change', '#unscheduledlessonsearch-showallexpiredlesson', function () {
+      	var showAllExpiredLesson = $(this).is(":checked");
+    	var params = $.param({ 'UnscheduledLessonSearch[showAllExpiredLesson]': (showAllExpiredLesson | 0), 'UnscheduledLessonSearch[studentUnscheduledLesson]':1,'UnscheduledLessonSearch[studentId]':<?= $model->id ?>,});
+      	var url = "<?php echo Url::to(['student/view', 'id' => $model->id]); ?>?"+params;
+        $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
+});
 </script>
