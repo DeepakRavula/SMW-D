@@ -68,8 +68,10 @@ class PrivateLesson extends \yii\db\ActiveRecord
     public function split()
     {
         $model = $this->lesson;
+        $enrolment = $model->enrolment;
         $lessonDurationSec = $model->durationSec;
-        for ($i = 0; $i < $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC; $i++) {
+        $splitCount = $lessonDurationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC;
+        for ($i = 0; $i < $splitCount; $i++) {
             $lesson = clone $model;
             $lesson->isNewRecord = true;
             $lesson->id = null;
@@ -83,6 +85,39 @@ class PrivateLesson extends \yii\db\ActiveRecord
             $lesson->isExploded = true;
             $lesson->save();
             $reschedule = $model->rescheduleTo($lesson);
+            if ($lesson->hasMultiEnrolmentDiscount()) {
+                $lesson->multiEnrolmentDiscount->updateAttributes(['value' => $lesson->multiEnrolmentDiscount->value / $splitCount]);
+            }
+            if ($lesson->hasLineItemDiscount()) {
+                if (!$lesson->lineItemDiscount->valueType) {
+                    $lesson->lineItemDiscount->updateAttributes(['value' => $lesson->lineItemDiscount->value / $splitCount]);
+                }
+            }
+            // if ($i == 0) {
+            //     $firstSplitId = $lesson->id;
+            // } else {
+            //     $firstSplitLesson = Lesson::findOne($firstSplitId);
+            //     if ($firstSplitLesson->hasCredit($enrolment->id)) {
+            //         $amountNeeded = $firstSplitLesson->netPrice;
+            //         $amount = 0;
+            //         foreach ($firstSplitLesson->lessonPayments as $firstSplitLessonPayment) {
+            //             $amount += $firstSplitLessonPayment->amount;
+            //             if (!$firstSplitLessonPayment->payment->isAutoPayments()) {
+            //                 if ($amountNeeded < $amount) {
+            //                     $lessonPayment = new LessonPayment();
+            //                     $lessonPayment->lessonId    = $lesson->id;
+            //                     $lessonPayment->paymentId   = $firstSplitLessonPayment->paymentId;
+            //                     $lessonPayment->amount      = $amount - $amountNeeded;
+            //                     $lessonPayment->enrolmentId = $enrolment->id;
+            //                     $lessonPayment->save();
+            //                     $firstSplitLessonPayment->amount -= $lessonPayment->amount;
+            //                     $firstSplitLessonPayment->save();
+            //                     $amount += $firstSplitLessonPayment->amount;
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         }
         return $model->cancel();
     }
@@ -100,7 +135,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if($this->lesson->rootLesson) {
+        if ($this->lesson->rootLesson) {
             $rootPrivateLesson = $this->lesson->rootLesson->privateLesson;
             $rootPrivateLesson->expiryDate = (new \DateTime($this->expiryDate))->format('Y-m-d H:i:s');
             $rootPrivateLesson->save();

@@ -61,6 +61,22 @@ class LessonPayment extends \yii\db\ActiveRecord
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
     }
 
+    public function getEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['id' => 'enrolmentId']);
+    }
+
+    public function hasCredit()
+    {
+        return round($this->lesson->getCreditAppliedAmount($this->enrolment->id), 2) > round($this->lesson->netPrice, 2);
+    }
+
+    public function getCreditAmount()
+    {
+        $diffAmount = round($this->lesson->getCreditAppliedAmount($this->enrolment->id), 2) - round($this->lesson->netPrice, 2);
+        return $diffAmount > $this->amount ? $this->amount : $this->amount - $diffAmount;
+    }
+
     public function getPayment()
     {
         return $this->hasOne(Payment::className(), ['id' => 'paymentId']);
@@ -85,6 +101,12 @@ class LessonPayment extends \yii\db\ActiveRecord
             if (!$this->date) {
                 $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
             }
+            // foreach ($this->lesson->lessonPayments as $lessonPayment) {
+            //     if ($lessonPayment->paymentId == $this->paymentId) {
+            //         $this->amount += $lessonPayment->amount;
+            //         $lessonPayment->updateAttributes(['isDeleted' => true]);
+            //     }
+            // }
         }
         if (round($this->amount, 2) == 0.00) {
             $this->isDeleted = true;
@@ -119,7 +141,7 @@ class LessonPayment extends \yii\db\ActiveRecord
                 }
                 $this->payment->updateAttributes(['amount' => $this->amount]);
             }
-        } 
+        }
         foreach ($this->lesson->paymentRequests as $paymentRequest) {
             $paymentRequest->save();
         }

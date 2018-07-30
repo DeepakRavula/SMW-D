@@ -421,6 +421,12 @@ class Lesson extends \yii\db\ActiveRecord
             ->onCondition(['lesson_payment.isDeleted' => false]);
     }
 
+    public function getLessonPayment()
+    {
+        return $this->hasOne(LessonPayment::className(), ['lessonId' => 'id'])
+            ->onCondition(['lesson_payment.isDeleted' => false]);
+    }
+
     public function getPayments()
     {
         return $this->hasMany(Payment::className(), ['id' => 'paymentId'])
@@ -1086,7 +1092,7 @@ class Lesson extends \yii\db\ActiveRecord
             }])
             ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
                 ->notDeleted()
-                ->sum('amount');
+                ->sum('lesson_payment.amount');
     }
 
     public function getCreditUsedPayment($enrolmentId)
@@ -1109,6 +1115,17 @@ class Lesson extends \yii\db\ActiveRecord
     public function getProformaLessonItems()
     {
         return $this->hasMany(ProformaItemLesson::className(), ['lessonId' => 'id']);
+    }
+
+    public function hasCredit($enrolmentId)
+    {
+        return round($this->getCreditAppliedAmount($enrolmentId), 2) > round($this->netPrice, 2)
+            && round($this->getCreditAppliedAmount($enrolmentId), 2) > round($this->getCreditUsedAmount($enrolmentId), 2);
+    }
+
+    public function getCreditAmount($enrolmentId)
+    {
+        return round($this->getCreditAppliedAmount($enrolmentId), 2) - round($this->getCreditUsedAmount($enrolmentId), 2);
     }
 
     public function hasCreditUsed($enrolmentId)
@@ -1349,7 +1366,7 @@ class Lesson extends \yii\db\ActiveRecord
             $lessonPrice = $this->grossPrice - $discount;
         }
         if ($this->hasLineItemDiscount()) {
-            if ((int) $this->lineItemDiscount->valueType) {
+            if ($this->lineItemDiscount->valueType) {
                 $discount += ($this->lineItemDiscount->value / 100) * $lessonPrice;
             } else {
                 $discount += $lessonPrice < 0 ? 0 :
@@ -1370,9 +1387,12 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function addCustomerDiscount($discount = null)
     {
-        $lessonDiscount = new LessonDiscount();
         if ($discount) {
             $lessonDiscount = clone $discount;
+            $lessonDiscount->isNewRecord = true;
+            $lessonDiscount->id = null;
+        } else {
+            $lessonDiscount = new LessonDiscount();
         }
         $lessonDiscount->lessonId = $this->id;
         if (empty($discount)) {
@@ -1385,9 +1405,12 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function addPFDiscount($discount = null)
     {
-        $lessonDiscount = new LessonDiscount();
         if ($discount) {
             $lessonDiscount = clone $discount;
+            $lessonDiscount->isNewRecord = true;
+            $lessonDiscount->id = null;
+        } else {
+            $lessonDiscount = new LessonDiscount();
         }
         $lessonDiscount->lessonId = $this->id;
         if (!$discount) {
@@ -1444,9 +1467,12 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function addEnrolmentDiscount($discount = null)
     {
-        $lessonDiscount = new LessonDiscount();
         if ($discount) {
             $lessonDiscount = clone $discount;
+            $lessonDiscount->isNewRecord = true;
+            $lessonDiscount->id = null;
+        } else {
+            $lessonDiscount = new LessonDiscount();
         }
         $lessonDiscount->lessonId = $this->id;
         if (!$discount) {
