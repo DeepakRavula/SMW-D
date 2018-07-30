@@ -32,6 +32,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['i
         'invoiceTaxTotal' => $invoiceTaxTotal,
         'payments' => $payments,
         'royaltyPayment' => $royaltyPayment,
+        'giftCardPayments' => $giftCardPayments,
     ]);
 
     ?>

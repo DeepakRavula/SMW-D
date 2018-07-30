@@ -81,7 +81,10 @@ class PaymentQuery extends ActiveQuery
     {
         return $this->andWhere(['NOT', ['payment.payment_method_id' => [PaymentMethod::TYPE_GIFT_CARD ]]]);
     }
-    
+    public function giftCardPayments()
+    {
+        return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_GIFT_CARD]);
+    }
     public function creditUsed()
     {
         return $this->andWhere(['payment.payment_method_id' => PaymentMethod::TYPE_CREDIT_USED]);
