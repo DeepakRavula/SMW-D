@@ -19,7 +19,7 @@ class UnscheduledLessonSearch extends Lesson
     public $teacher;
     public $student;
     public $showAll;
-    public $showAllExpiredLesson;
+    public $showAllExpiredLesson = false;
     public $studentUnscheduledLesson;
     public $studentId;
    
