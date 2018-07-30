@@ -307,6 +307,12 @@ class Invoice extends \yii\db\ActiveRecord
             ->onCondition(['invoice_payment.isDeleted' => false]);
     }
 
+    public function getInvoicePayment()
+    {
+        return $this->hasMany(InvoicePayment::className(), ['invoice_id' => 'id'])
+            ->onCondition(['invoice_payment.isDeleted' => false]);
+    }
+
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);

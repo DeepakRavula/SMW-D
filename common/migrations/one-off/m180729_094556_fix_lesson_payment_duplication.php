@@ -3,6 +3,7 @@
 use yii\db\Migration;
 use common\models\User;
 use common\models\Lesson;
+use common\models\Invoice;
 
 /**
  * Class m180729_094556_fix_lesson_payment_duplication
@@ -37,6 +38,25 @@ class m180729_094556_fix_lesson_payment_duplication extends Migration
                         if ($rootLessonPayment->paymentId == $lessonPayment->paymentId) {
                             $rootLessonPayment->updateAttributes(['amount' => $lessonPayment->amount + $rootLessonPayment->amount]);
                             $lessonPayment->updateAttributes(['isDeleted' => true]);
+                        }
+                    }
+                }
+            }
+        }
+
+        $invoices = Invoice::find()
+            ->location([14, 15])
+            ->joinWith(['invoicePayment' => function ($query) {
+                $query->andWhere(['NOT', ['invoice_payment.id' => null]]);
+            }])
+            ->all();
+        foreach ($invoices as $invoice) {
+            foreach ($invoice->invoicePayments as $rootInvoicePayment) {
+                foreach ($invoice->invoicePayments as $invoicePayment) {
+                    if (!$rootInvoicePayment->isDeleted && $rootInvoicePayment->id != $invoicePayment->id) {
+                        if ($rootInvoicePayment->payment_id == $invoicePayment->payment_id) {
+                            $rootInvoicePayment->updateAttributes(['amount' => $invoicePayment->amount + $rootInvoicePayment->amount]);
+                            $invoicePayment->updateAttributes(['isDeleted' => true]);
                         }
                     }
                 }

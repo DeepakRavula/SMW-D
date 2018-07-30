@@ -101,12 +101,12 @@ class LessonPayment extends \yii\db\ActiveRecord
             if (!$this->date) {
                 $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
             }
-            // foreach ($this->lesson->lessonPayments as $lessonPayment) {
-            //     if ($lessonPayment->paymentId == $this->paymentId) {
-            //         $this->amount += $lessonPayment->amount;
-            //         $lessonPayment->updateAttributes(['isDeleted' => true]);
-            //     }
-            // }
+            foreach ($this->lesson->lessonPayments as $lessonPayment) {
+                if ($lessonPayment->paymentId == $this->paymentId) {
+                    $this->amount += $lessonPayment->amount;
+                    $lessonPayment->updateAttributes(['isDeleted' => true]);
+                }
+            }
         }
         if (round($this->amount, 2) == 0.00) {
             $this->isDeleted = true;

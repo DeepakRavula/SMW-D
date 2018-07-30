@@ -96,6 +96,12 @@ class InvoicePayment extends \yii\db\ActiveRecord
                 $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
             }
         }
+        foreach ($this->invoice->invoicePayments as $invoicePayment) {
+            if ($invoicePayment->payment_id == $this->payment_id) {
+                $this->amount += $invoicePayment->amount;
+                $invoicePayment->updateAttributes(['isDeleted' => true]);
+            }
+        }
         if (round($this->amount, 2) == 0.00) {
             $this->isDeleted = true;
         }
