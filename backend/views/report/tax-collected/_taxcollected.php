@@ -53,37 +53,34 @@ use common\models\Invoice;
         [
             'label' => 'Subtotal',
             'value' => function ($data) {
-                return round($data->subTotal, 2);
+                return Yii::$app->formatter->asCurrency(round($data->subTotal, 2));
             },
-            'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
             'pageSummary' => function ($summary, $data, $widget) use ($subtotalSum) { 
-                return round($subtotalSum, 2); 
+                return Yii::$app->formatter->asCurrency(round($subtotalSum, 2)); 
             }
         ],
         [
             'label' => 'Tax',
 	        'value' => function ($data) {
-                return $data->tax;
+                return Yii::$app->formatter->asCurrency($data->tax);
             },
-            'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
             'pageSummary' => function ($summary, $data, $widget) use ($taxSum) { 
-                return round($taxSum, 2); 
+                return Yii::$app->formatter->asCurrency(round($taxSum, 2)); 
             }
         ],
         [
             'label' => 'Total',
             'value' => function ($data) {
-                return round($data->total, 2);
+                return Yii::$app->formatter->asCurrency(round($data->total, 2));
             },
-            'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
             'pageSummary' => function ($summary, $data, $widget) use ($totalSum) { 
-                return round($totalSum, 2); 
+                return Yii::$app->formatter->asCurrency(round($totalSum, 2)); 
             }
         ]
     ];

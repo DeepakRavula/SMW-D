@@ -74,12 +74,12 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                         $amount += $payment->amount;
                     }
 
-                    return round($amount, 2);
+                    return Yii::$app->formatter->asCurrency(round($amount, 2));
                 },
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => function ($summary, $data, $widget) use ($paymentsAmount) { 
-                    return round($paymentsAmount, 2); 
+                    return Yii::$app->formatter->asCurrency(round($paymentsAmount, 2)); 
                 }
             ],
         ];
@@ -172,12 +172,12 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             [
                 'label' => 'Amount',
                 'value' => function ($data) {
-                    return round($data->amount, 2);
+                    return Yii::$app->formatter->asCurrency(round($data->amount, 2));
                 },
                 'contentOptions' => ['class' => 'text-right', 'style' => 'font-size:14px'],
                 'hAlign' => 'right',
                 'pageSummary' => function ($summary, $data, $widget) use ($paymentsAmount) { 
-                    return round($paymentsAmount, 2); 
+                    return Yii::$app->formatter->asCurrency(round($paymentsAmount, 2)); 
                 }
             ],
         ];
