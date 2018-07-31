@@ -81,15 +81,6 @@ class PaymentController extends BaseController
     public function actionIndex()
     {
         $searchModel = new PaymentSearch();
-        $currentDate = new \DateTime();
-        $searchModel->startDate = $currentDate->format('M d, Y');
-        $searchModel->endDate = $currentDate->format('M d, Y');
-        $searchModel->dateRange = $searchModel->startDate.' - '.$searchModel->endDate;
-        $request = Yii::$app->request;
-        $paymentRequest = $request->get('PaymentSearch');
-        if (!empty($paymentRequest['dateRange'])) {
-            $searchModel->dateRange = $paymentRequest['dateRange'];
-        }
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

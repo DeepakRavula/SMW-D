@@ -16,12 +16,13 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['i
     <?= $this->render('_search', ['model' => $searchModel]); ?>
 </div>
 
-<?= $this->render('_taxcollected', ['searchModel' => $searchModel, 
+<?= $this->render('_taxcollected', [
+    'searchModel' => $searchModel, 
     'taxDataProvider' => $taxDataProvider,
     'taxSum' => $taxSum,
     'subtotalSum' => $subtotalSum,
-    'totalSum' => $totalSum]); 
-?>
+    'totalSum' => $totalSum
+]); ?>
     
 <script>
     $(document).ready(function () {
