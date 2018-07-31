@@ -356,7 +356,7 @@ class PrintController extends BaseController
             'query' => $invoiceTaxes,
             'pagination' => false
         ]);
-                
+        $this->layout = '/print';       
         return $this->render('/report/tax-collected/_print', [
             'searchModel' => $searchModel,
             'taxDataProvider' => $taxDataProvider,

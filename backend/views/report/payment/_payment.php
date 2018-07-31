@@ -19,6 +19,28 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  * and open the template in the editor.
  */
 ?>
+<style>
+  .table > tbody > tr.success > td ,.table > tbody > tr.kv-grid-group-row > td{
+	background-color: white !important;
+}
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: white !important;
+}
+.table > thead:first-child > tr:first-child > th{
+    color : black;
+    background-color : lightgray;
+}
+.table > tbody >tr.warning >td {
+    font-size:17px;
+}
+.kv-page-summary {
+    border-top:none;
+    font-weight: bold;
+}
+.table > tbody + tbody {
+     border-top: none;
+}
+</style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 	<?php if ($searchModel->groupByMethod) : ?>
 		<?php $columns = [
@@ -34,21 +56,21 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
                 'group' => true,
                 'groupedRow' => true,
-                'groupFooter' => function ($model, $key, $index, $widget) {
-                    return [
-                        'mergeColumns' => [[1]],
-                        'content' => [
-                            2 => GridView::F_SUM,
-                        ],
-                        'contentFormats' => [
-                            2 => ['format' => 'number', 'decimals' => 2],
-                        ],
-                        'contentOptions' => [
-                            2 => ['style' => 'text-align:right'],
-                        ],
-                        'options' => ['style' => 'font-weight:bold;']
-                    ];
-                }
+                // 'groupFooter' => function ($model, $key, $index, $widget) {
+                //     return [
+                //         'mergeColumns' => [[1]],
+                //         'content' => [
+                //             2 => GridView::F_SUM,
+                //         ],
+                //         'contentFormats' => [
+                //             2 => ['format' => 'number', 'decimals' => 2],
+                //         ],
+                //         'contentOptions' => [
+                //             2 => ['style' => 'text-align:right'],
+                //         ],
+                //         'options' => ['style' => 'font-weight:bold;']
+                //     ];
+                // }
             ],
             [
                 'label' => 'Payment Method',
@@ -98,21 +120,21 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
                 'group' => true,
                 'groupedRow' => true,
-                'groupFooter' => function ($model, $key, $index, $widget) {
-                    return [
-                        'mergeColumns' => [[2, 3]],
-                        'content' => [
-                            5 => GridView::F_SUM,
-                        ],
-                        'contentFormats' => [
-                            5 => ['format' => 'number', 'decimals' => 2],
-                        ],
-                        'contentOptions' => [
-                            5 => ['style' => 'text-align:right'],
-                        ],
-                        'options' => ['style' => 'font-weight:bold;font-size:14px;']
-                    ];
-                }
+                // 'groupFooter' => function ($model, $key, $index, $widget) {
+                //     return [
+                //         'mergeColumns' => [[2, 3]],
+                //         'content' => [
+                //             5 => GridView::F_SUM,
+                //         ],
+                //         'contentFormats' => [
+                //             5 => ['format' => 'number', 'decimals' => 2],
+                //         ],
+                //         'contentOptions' => [
+                //             5 => ['style' => 'text-align:right'],
+                //         ],
+                //         'options' => ['style' => 'font-weight:bold;font-size:14px;']
+                //     ];
+                // }
             ],
             [
                 'label' => 'Payment Method',
@@ -123,21 +145,21 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'group' => true,
                 'groupedRow' => true,
                 'subGroupOf' => 0,
-                'groupFooter' => function ($model, $key, $index, $widget) {
-                    return [
-                        'mergeColumns' => [[2, 4]],
-                        'content' => [
-                            5 => GridView::F_SUM,
-                        ],
-                        'contentFormats' => [
-                            5 => ['format' => 'number', 'decimals' => 2],
-                        ],
-                        'contentOptions' => [
-                            5 => ['style' => 'text-align:right'],
-                        ],
-                        'options' => ['class' => 'success', 'style' => 'font-weight:bold;font-size:14px']
-                    ];
-                },
+                // 'groupFooter' => function ($model, $key, $index, $widget) {
+                //     return [
+                //         'mergeColumns' => [[2, 4]],
+                //         'content' => [
+                //             5 => GridView::F_SUM,
+                //         ],
+                //         'contentFormats' => [
+                //             5 => ['format' => 'number', 'decimals' => 2],
+                //         ],
+                //         'contentOptions' => [
+                //             5 => ['style' => 'text-align:right'],
+                //         ],
+                //         'options' => ['class' => 'success', 'style' => 'font-weight:bold;font-size:14px']
+                //     ];
+                // },
             ],
             [
                 'label' => 'Payment ID',
