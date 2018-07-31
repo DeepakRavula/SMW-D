@@ -78,6 +78,16 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
         }]);
     }
 
+    public function paymentPrefered()
+    {
+        return $this->joinWith(['student' => function ($query) {
+            $query->joinWith(['customerPaymentPreference' => function ($query) {
+                $query->andWhere(['AND', ['NOT', ['customer_payment_preference.id' => null]], 
+                    ['>=', 'DATE(customer_payment_preference.expiryDate)', (new \DateTime())->format('Y-m-d')]]);
+            }]);
+        }]);
+    }
+
     public function programs()
     {
         $this->joinWith(['course' => function ($query) {

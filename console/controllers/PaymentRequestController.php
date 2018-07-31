@@ -10,7 +10,7 @@ use common\models\Enrolment;
 use common\models\ProformaInvoice;
 use common\models\ProformaLineItem;
 
-class ProformaInvoiceController extends Controller
+class PaymentRequestController extends Controller
 {
     public $locationId;
 
@@ -22,7 +22,7 @@ class ProformaInvoiceController extends Controller
         Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
     }
 
-    public function actionPaymentRequest()
+    public function actionCreate()
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
