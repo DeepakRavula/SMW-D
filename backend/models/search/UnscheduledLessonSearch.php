@@ -19,9 +19,6 @@ class UnscheduledLessonSearch extends Lesson
     public $teacher;
     public $student;
     public $showAll;
-    public $showAllExpiredLesson;
-    public $studentUnscheduledLesson;
-    public $studentId;
    
     /**
      * {@inheritdoc}
@@ -29,7 +26,7 @@ class UnscheduledLessonSearch extends Lesson
     public function rules()
     {
         return [
-            [['student', 'program', 'teacher', 'showAll', 'showAllExpiredLesson', 'studentId', 'studentUnscheduledLesson'], 'safe'],
+            [['student', 'program', 'teacher', 'showAll'], 'safe'],
            
         ];
     }
