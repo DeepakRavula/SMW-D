@@ -17,12 +17,10 @@ $form = ActiveForm::begin([
 ],
     ]);
 ?>
-<?php Pjax::begin(['options'=>['class' => 'm-r-25']]) ?>
+
 <?= $form->field($unscheduledLessonSearchModel, 'showAllExpiredLesson')->checkbox(['data-pjax' => true]); ?>
-<?php Pjax::end(); ?>
 <?php ActiveForm::end(); ?>
 
-<?php Pjax::begin(['id' => 'student-view-unschedule-lesson-index', 'timeout' => 6000,]); ?>
 <div class="m-b-10 pull-right">
     <div class="btn-group">
         <i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i>
@@ -80,6 +78,7 @@ $form = ActiveForm::begin([
 
     ?>
     <div class="grid-row-open">
+    <?php Pjax::begin(['id' => 'student-view-unschedule-lesson-index', 'timeout' => 6000,]); ?>
     <?php echo GridView::widget([
         'dataProvider' => $dataProvider,
         'options' => ['id' => 'unschedule-lesson-index'],
@@ -125,6 +124,6 @@ $form = ActiveForm::begin([
       	var showAllExpiredLesson = $(this).is(":checked");
     	var params = $.param({ 'UnscheduledLessonSearch[showAllExpiredLesson]': (showAllExpiredLesson | 0), 'UnscheduledLessonSearch[studentUnscheduledLesson]':1,'UnscheduledLessonSearch[studentId]':<?= $model->id ?>,});
       	var url = "<?php echo Url::to(['student/view', 'id' => $model->id]); ?>?"+params;
-        $.pjax.reload({url: url, container: "#student-view-unschedule-lesson-index", replace: false, timeout: 4000});  //Reload GridView
+        $.pjax.reload({container: "#student-view-unschedule-lesson-index", replace: false, timeout: 4000});  //Reload GridView
 });
 </script>

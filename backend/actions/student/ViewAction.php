@@ -72,7 +72,7 @@ class ViewAction extends Action
         $request = Yii::$app->request;
         $searchModel->studentUnscheduledLesson = true;
         $searchModel->studentId = $id;
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search($request->queryParams);
         return $dataProvider;
     }
 
