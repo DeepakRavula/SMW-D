@@ -329,40 +329,40 @@ class PrintController extends BaseController
     {
         $searchModel = new ReportSearch();
         $currentDate = new \DateTime();
-        $searchModel->fromDate = $currentDate->format('1-m-Y');
-        $searchModel->toDate = $currentDate->format('t-m-Y');
+        $searchModel->fromDate = Yii::$app->formatter->asDate($currentDate);
+        $searchModel->toDate = Yii::$app->formatter->asDate($currentDate);
         $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         $request = Yii::$app->request;
-        if ($searchModel->load($request->get())) {
-            $royaltyRequest = $request->get('ReportSearch');
-            $searchModel->dateRange = $royaltyRequest['dateRange'];
-        }
+        $searchModel->load($request->get());
         $toDate = $searchModel->toDate;
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $invoiceTaxes = InvoiceLineItem::find()
-                ->notDeleted()
-            ->joinWith(['invoice' => function ($query) use ($locationId, $searchModel) {
-                $query->andWhere([
-                        'location_id' => $locationId,
-                        'type' => Invoice::TYPE_INVOICE,
-                    ])
-                    ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
-                    ->notDeleted();
-            }])
-            ->andWhere(['>', 'tax_rate', 0])
-				->orderBy(['invoice.date' => SORT_ASC]);
+        $invoiceTaxes = Invoice::find()
+            ->notDeleted()
+            ->location($locationId)
+            ->invoice()
+            ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), 
+                (new \DateTime($searchModel->toDate))->format('Y-m-d')])
+            ->andWhere(['>', 'tax', 0])
+            ->orderBy(['invoice.date' => SORT_ASC]);
+            
+        $taxSum = $invoiceTaxes->sum('tax');
+        $subtotalSum = $invoiceTaxes->sum('subTotal');
+        $totalSum = $invoiceTaxes->sum('total');
 
         $taxDataProvider = new ActiveDataProvider([
             'query' => $invoiceTaxes,
             'pagination' => false
         ]);
-        $this->layout = '/print';
+        $this->layout = '/print';       
         return $this->render('/report/tax-collected/_print', [
-                'searchModel' => $searchModel,
-                'taxDataProvider' => $taxDataProvider,
+            'searchModel' => $searchModel,
+            'taxDataProvider' => $taxDataProvider,
+            'taxSum' => $taxSum,
+            'subtotalSum' => $subtotalSum,
+            'totalSum' => $totalSum
         ]);
     }
     

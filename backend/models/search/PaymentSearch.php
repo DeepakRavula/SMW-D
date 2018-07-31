@@ -83,12 +83,14 @@ class PaymentSearch extends Payment
         ]);
 
         if (!($this->load($params) && $this->validate())) {
+            $query->andWhere(['between', 'DATE(payment.date)',
+                    (new \DateTime())->format('Y-m-d'),
+                    (new \DateTime())->format('Y-m-d')]); 
             return $dataProvider;
         }
         if ($this->number) {
             $query->andFilterWhere(['payment.id', $this->number]);
         } else {
-
             if ($this->dateRange) {
                 list($this->startDate, $this->endDate) = explode(' - ', $this->dateRange);
                 $query->andWhere(['between', 'DATE(payment.date)',
