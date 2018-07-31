@@ -69,11 +69,23 @@ class ViewAction extends Action
     protected function getUnscheduledLessons($id, $locationId)
     {
         $searchModel = new UnscheduledLessonSearch();
-        $request = Yii::$app->request;
-        $searchModel->studentUnscheduledLesson = true;
-        $searchModel->studentId = $id;
-        $dataProvider = $searchModel->search($request->queryParams);
-        return $dataProvider;
+        $searchModel->showAll = false;
+        $searchModel->load(Yii::$app->request->get());
+        $unscheduledLessons = Lesson::find()
+               ->studentEnrolment($locationId, $id)
+               ->isConfirmed()
+               ->joinWith(['privateLesson'])
+               ->andWhere(['NOT', ['private_lesson.lessonId' => null]])
+               ->orderBy(['private_lesson.expiryDate' => SORT_ASC])
+               ->unscheduled()
+               ->notRescheduled()
+               ->notDeleted();
+                if (!$searchModel->showAll) {
+                    $unscheduledLessons->notExpired(); 
+                } 
+            return new ActiveDataProvider([
+                'query' => $unscheduledLessons,
+        ]);
     }
 
     protected function getLessons($id, $locationId)

@@ -6,6 +6,7 @@ use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 
 ?>
+
 <?php
 $form = ActiveForm::begin([
     'action' => Url::to(['student/view', 'id' => $model->id]),
@@ -17,8 +18,7 @@ $form = ActiveForm::begin([
 ],
     ]);
 ?>
-
-<?= $form->field($unscheduledLessonSearchModel, 'showAllExpiredLesson')->checkbox(['data-pjax' => true]); ?>
+<?= $form->field($unscheduledLessonSearchModel, 'showAll')->checkbox(['data-pjax' => true]); ?>
 <?php ActiveForm::end(); ?>
 
 <div class="m-b-10 pull-right">
@@ -120,10 +120,10 @@ $form = ActiveForm::begin([
         }
     });
 
-    $(document).off('change', '#unscheduledlessonsearch-showallexpiredlesson').on('change', '#unscheduledlessonsearch-showallexpiredlesson', function () {
+    $(document).off('change', '#unscheduledlessonsearch-showall').on('change', '#unscheduledlessonsearch-showall', function () {
       	var showAllExpiredLesson = $(this).is(":checked");
-    	var params = $.param({ 'UnscheduledLessonSearch[showAllExpiredLesson]': (showAllExpiredLesson | 0), 'UnscheduledLessonSearch[studentUnscheduledLesson]':1,'UnscheduledLessonSearch[studentId]':<?= $model->id ?>,});
-      	var url = "<?php echo Url::to(['student/view', 'id' => $model->id]); ?>?"+params;
-        $.pjax.reload({container: "#student-view-unschedule-lesson-index", replace: false, timeout: 4000});  //Reload GridView
+    	var params = $.param({ 'UnscheduledLessonSearch[showAll]': (showAllExpiredLesson | 0)});
+      	var url = "<?= Url::to(['student/view', 'id' => $model->id]); ?>&"+params;
+        $.pjax.reload({url: url, container: "#student-view-unschedule-lesson-index", replace: false, timeout: 4000});  //Reload GridView
 });
 </script>

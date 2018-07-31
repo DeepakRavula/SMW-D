@@ -62,20 +62,15 @@ class UnscheduledLessonSearch extends Lesson
             ->joinWith(['privateLesson'])
             ->andWhere(['NOT', ['private_lesson.lessonId' => null]])
             ->orderBy(['private_lesson.expiryDate' => SORT_ASC]);
-                if ($this->studentUnscheduledLesson) {
-                    if (!$this->showAllExpiredLesson) {
-                        $query->notExpired(); 
-                    } 
-            $query->joinWith(['student' => function($query) {
-                $query->andWhere(['student.id' => $this->studentId]);
-            }]);
-            }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
+        if (!$this->showAll) {
+           $query->notExpired();
+       }
         if (!empty($this->student)) {
             $query->joinWith(['student' => function($query) {
                 $query->andFilterWhere(['student.id' => $this->student]);
