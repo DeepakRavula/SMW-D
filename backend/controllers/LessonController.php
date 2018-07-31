@@ -288,6 +288,15 @@ class LessonController extends BaseController
         $model = Lesson::find()->location($locationId)
             ->andWhere(['lesson.id' => $id, 'isDeleted' => false])->one();
         if ($model !== null) {
+            if ($model->leaf) {
+                if (!$model->leaf->isCanceled()) {
+                    $this->redirect(['lesson/view', 'id' => $model->leaf->id]);
+                } else {
+                    throw new NotFoundHttpException('The requested page does not exist.');
+                }
+            } else if ($model->isCanceled()) {
+                throw new NotFoundHttpException('The requested page does not exist.');
+            }
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
