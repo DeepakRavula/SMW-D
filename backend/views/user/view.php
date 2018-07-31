@@ -171,6 +171,7 @@ $this->params['action-button'] = $this->render('_action-button', [
                 'model' => $model,
             ]);
             $unscheduledLessonContent = $this->render('teacher/_unscheduled-lesson', [
+                'searchModel' => $searchModel,
                 'dataProvider' => $unscheduledLessonDataProvider,
                 'model' => $model,
             ]);

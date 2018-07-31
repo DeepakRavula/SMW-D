@@ -3,13 +3,22 @@
 use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
 
 ?>
 <div class=" p-15">
-    <?php yii\widgets\Pjax::begin([
-    'id' => 'lesson-index',
+    <?php Pjax::begin([
+    'id' => 'teacher-unscheduled-lesson-view',
     'timeout' => 6000,
 ]) ?>
+<?php
+$form = ActiveForm::begin([
+    'id' => 'teacher-unscheduled-lesson'
+    ]);
+?>
+<?= $form->field($searchModel, 'showAll')->checkbox(['data-pjax' => true]); ?>
+<?php ActiveForm::end(); ?>
 <?php echo GridView::widget([
     'dataProvider' => $dataProvider,
         'summary' => false,
@@ -80,7 +89,7 @@ use yii\helpers\Html;
 
    ]); ?>
 
-	<?php yii\widgets\Pjax::end(); ?>
+	<?php Pjax::end(); ?>
 
 </div>
 
@@ -90,4 +99,12 @@ use yii\helpers\Html;
         var params = $.param({ id: lessonId });
         lesson.update(params);
     });
+
+    $(document).off('change', '#usersearch-showall').on('change', '#usersearch-showall', function () {
+      	var showAllExpiredLesson = $(this).is(":checked");
+        var roleName = '<?= $searchModel->role_name; ?>';
+    	var params = $.param({ 'UserSearch[showAll]': (showAllExpiredLesson | 0), 'UserSearch[role_name]': roleName});
+      	var url = "<?= Url::to(['user/view', 'id' => $model->id]); ?>&"+params;
+        $.pjax.reload({url: url, container: "#teacher-unscheduled-lesson-view", replace: false, timeout: 4000});  //Reload GridView
+});
 </script>
