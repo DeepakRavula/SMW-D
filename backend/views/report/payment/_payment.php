@@ -20,6 +20,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
  */
 ?>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
+<?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id; ?>
 	<?php if ($searchModel->groupByMethod) : ?>
 		<?php $columns = [
             [
@@ -34,14 +35,19 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
                 'group' => true,
                 'groupedRow' => true,
-                'groupFooter' => function ($model, $key, $index, $widget) {
+                'groupFooter' => function ($model, $key, $index, $widget) use ($locationId) {
+                    $paymentsAmount = Payment::find()
+                        ->exceptAutoPayments()
+                        ->exceptGiftCard()
+                        ->location($locationId)
+                        ->notDeleted()
+                        ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($model->date))->format('Y-m-d'), 
+                            (new \DateTime($model->date))->format('Y-m-d')])
+                        ->sum('payment.amount');
                     return [
-                        'mergeColumns' => [[1]],
+                        //'mergeColumns' => [[1]],
                         'content' => [
-                            2 => GridView::F_SUM,
-                        ],
-                        'contentFormats' => [
-                            2 => ['format' => 'number', 'decimals' => 2],
+                            2 => Yii::$app->formatter->asCurrency(round($paymentsAmount, 2)),
                         ],
                         'contentOptions' => [
                             2 => ['style' => 'text-align:right'],
@@ -98,14 +104,19 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
                 'group' => true,
                 'groupedRow' => true,
-                'groupFooter' => function ($model, $key, $index, $widget) {
+                'groupFooter' => function ($model, $key, $index, $widget) use ($locationId) {
+                    $paymentsAmount = Payment::find()
+                        ->exceptAutoPayments()
+                        ->exceptGiftCard()
+                        ->location($locationId)
+                        ->notDeleted()
+                        ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($model->date))->format('Y-m-d'), 
+                            (new \DateTime($model->date))->format('Y-m-d')])
+                        ->sum('payment.amount');
                     return [
                         'mergeColumns' => [[2, 3]],
                         'content' => [
-                            5 => GridView::F_SUM,
-                        ],
-                        'contentFormats' => [
-                            5 => ['format' => 'number', 'decimals' => 2],
+                            5 => Yii::$app->formatter->asCurrency(round($paymentsAmount, 2)),
                         ],
                         'contentOptions' => [
                             5 => ['style' => 'text-align:right'],
