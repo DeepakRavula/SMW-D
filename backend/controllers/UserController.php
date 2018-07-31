@@ -278,7 +278,6 @@ class UserController extends BaseController
             ->orderBy(['private_lesson.expiryDate' => SORT_ASC])
             ->andWhere(['lesson.teacherId' => $id])
             ->unscheduled()
-            ->notExpired()
             ->notDeleted()
             ->groupBy(['lesson.id','private_lesson.id']);
 

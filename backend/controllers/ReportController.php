@@ -209,29 +209,24 @@ class ReportController extends BaseController
         $searchModel->toDate = Yii::$app->formatter->asDate($currentDate);
         $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;
         $request = Yii::$app->request;
-        if ($searchModel->load($request->get())) {
-            $royaltyRequest = $request->get('ReportSearch');
-            $searchModel->dateRange = $royaltyRequest['dateRange'];
-        }
+        $searchModel->load($request->get());
         $toDate = $searchModel->toDate;
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $invoiceTaxes = InvoiceLineItem::find()
+        $invoiceTaxes = Invoice::find()
             ->notDeleted()
-            ->joinWith(['invoice' => function ($query) use ($locationId, $searchModel) {
-                $query->location($locationId)
-                ->invoice()
-                ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
-                ->notDeleted();
-            }])
-            ->andWhere(['>', 'tax_rate', 0]);
-        if ($searchModel->summarizeResults) {
-            $invoiceTaxes ->groupBy(['invoice.id', 'DATE(invoice.date)']);
-        } else {
-            $invoiceTaxes->orderBy(['invoice.date' => SORT_ASC]);
-        }
+            ->location($locationId)
+            ->invoice()
+            ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), 
+                (new \DateTime($searchModel->toDate))->format('Y-m-d')])
+            ->andWhere(['>', 'tax', 0])
+            ->orderBy(['invoice.date' => SORT_ASC]);
+            
+        $taxSum = $invoiceTaxes->sum('tax');
+        $subtotalSum = $invoiceTaxes->sum('subTotal');
+        $totalSum = $invoiceTaxes->sum('total');
 
         $taxDataProvider = new ActiveDataProvider([
             'query' => $invoiceTaxes,
@@ -241,6 +236,9 @@ class ReportController extends BaseController
         return $this->render('tax-collected/index', [
             'searchModel' => $searchModel,
             'taxDataProvider' => $taxDataProvider,
+            'taxSum' => $taxSum,
+            'subtotalSum' => $subtotalSum,
+            'totalSum' => $totalSum
         ]);
     }
 

@@ -11,11 +11,19 @@ $this->title = 'Tax Collected';
 $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class' => 'btn btn-box-tool']);
 
 ?>
+
 <div class="form-inline form-group">
-<?php echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', ['model' => $searchModel]); ?>
 </div>
-<?php echo $this->render('_taxcollected', ['searchModel' => $searchModel, 'taxDataProvider' => $taxDataProvider]); ?>
-<div class="clearfix"></div>
+
+<?= $this->render('_taxcollected', [
+    'searchModel' => $searchModel, 
+    'taxDataProvider' => $taxDataProvider,
+    'taxSum' => $taxSum,
+    'subtotalSum' => $subtotalSum,
+    'totalSum' => $totalSum
+]); ?>
+    
 <script>
     $(document).ready(function () {
         $("#reportsearch-summarizeresults").on("change", function () {
