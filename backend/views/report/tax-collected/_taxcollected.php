@@ -7,6 +7,28 @@ use common\models\Location;
 use common\models\Invoice;
 
 ?>
+<style>
+  .table > tbody > tr.success > td ,.table > tbody > tr.kv-grid-group-row > td{
+	background-color: white !important;
+}
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: white !important;
+}
+.table > thead:first-child > tr:first-child > th{
+    color : black;
+    background-color : lightgray;
+}
+.table > tbody >tr.warning >td {
+    font-size:17px;
+}
+.kv-page-summary {
+    border-top:none;
+    font-weight: bold;
+}
+.table > tbody + tbody {
+     border-top: none;
+}
+</style>
     <?php
     $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
     $columns = [
@@ -15,6 +37,7 @@ use common\models\Invoice;
                 return (new \DateTime($data->date))->format('l, F jS, Y');
             },
             'group' => true,
+            'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
             'groupedRow' => true,
             'groupFooter' => function ($model, $key, $index, $widget) use ($locationId) {
                 $invoiceTaxes = Invoice::find()
