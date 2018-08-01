@@ -272,6 +272,9 @@ class UserController extends BaseController
 
     protected function getUnscheduleLessonDataProvider($id)
     {
+        $searchModel = new UserSearch();
+        $searchModel->showAll = false;
+        $searchModel->load(Yii::$app->request->get());
         $unscheduledLessons = Lesson::find()
             ->isConfirmed()
             ->joinWith(['privateLesson'])
@@ -280,6 +283,9 @@ class UserController extends BaseController
             ->unscheduled()
             ->notDeleted()
             ->groupBy(['lesson.id','private_lesson.id']);
+            if (!$searchModel->showAll) {
+                $unscheduledLessons->notExpired(); 
+            } 
 
         return new ActiveDataProvider([
             'query' => $unscheduledLessons,

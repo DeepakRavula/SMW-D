@@ -70,6 +70,11 @@ class PaymentQuery extends ActiveQuery
         return $this->andWhere(['payment.isDeleted' => false]);
     }
 
+    public function deleted()
+    {
+        return $this->andWhere(['payment.isDeleted' => true]);
+    }
+
     public function exceptAutoPayments()
     {
         return $this->andWhere(['NOT', ['payment.payment_method_id' => [

@@ -1,30 +1,45 @@
 <?php
 
-use yii\grid\GridView;
+use common\components\gridView\KartikGridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\Pjax;
+use common\models\User;
+use kartik\grid\GridView;
+use yii\widgets\ActiveForm;
 
 ?>
-<div id="customer-spinner" class="spinner" style="display:none">
-    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-    <span class="sr-only">Loading...</span>
-</div>  
+
 <?php Pjax::Begin(['id' => 'customer-add-listing', 'timeout' => 6000, 'enablePushState' => false]); ?>
- <?= GridView::widget([
-            'dataProvider' => $userDataProvider,
-            'summary' => false,
-            'emptyText' => false,
-            'rowOptions' => ['class' => 'add-customer-invoice'],
-            'tableOptions' => ['class' => 'table table-condensed'],
-            'headerRowOptions' => ['class' => 'bg-light-gray'],
-            'filterModel' => $searchModel,
-            'columns' => [
+    <?= GridView::widget([
+        'options' => ['id' => 'choose-customer'],
+        'dataProvider' => $userDataProvider,
+        'summary' => false,
+        'emptyText' => false,
+        'rowOptions' => ['class' => 'add-customer-invoice'],
+        'tableOptions' => ['class' => 'table table-condensed'],
+        'filterModel' => $searchModel,
+        'filterUrl' => Url::to(['invoice/update-customer', 'id' => $model->id, "UserSearch[role_name]" => User::ROLE_CUSTOMER]),
+        'columns' => [
             [
                 'attribute' => 'firstname',
                 'label' => 'First Name',
                 'value' => function ($data) {
                     return !empty($data->userProfile->firstname) ? $data->userProfile->firstname : null;
                 },
+                'filterType' => KartikGridView::FILTER_SELECT2,
+                'filter' => $first_names,
+                'filterWidgetOptions' => [
+                    'options' => [
+                        'id' => 'firstname'
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ]
+                ],
+                'filterInputOptions' => [
+                    'placeholder' => 'First Name'
+                ]
             ],
             [
                 'attribute' => 'lastname',
@@ -32,21 +47,36 @@ use yii\widgets\Pjax;
                 'value' => function ($data) {
                     return !empty($data->userProfile->lastname) ? $data->userProfile->lastname : null;
                 },
+                'filterType' => KartikGridView::FILTER_SELECT2,
+                'filter' => $last_names,
+                'filterWidgetOptions' => [
+                    'options' => [
+                        'id' => 'lastname'
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ]
+                ],
+                'filterInputOptions' => [ 
+                    'placeholder' => 'Last Name'
+                ]
             ],
             'email',
             [
+                'attribute' => 'phone',
                 'label' => 'Phone',
                 'value' => function ($data) {
-                    return !empty($data->phoneNumber->number) ? $data->phoneNumber->number : null;
+                    return !empty($data->user->phoneNumber->number) ? $data->user->phoneNumber->number : null;
                 },
-            ],
-        ],
+            ]
+        ]
     ]); ?>
 <?php Pjax::end(); ?>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="pull-right">
-                <?= Html::a('Cancel', '', ['class' => 'btn btn-default add-customer-cancel']);?>
-            </div>
-        </div>
-    </div>
+
+<?php $form = ActiveForm::begin([
+    'id' => 'modal-form'
+]); ?>
+
+    <?= $form->field($model, 'user_id')->hiddenInput()->label(false); ?>
+    
+<?php ActiveForm::end(); ?>

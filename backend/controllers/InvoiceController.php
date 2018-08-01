@@ -134,24 +134,52 @@ class InvoiceController extends BaseController
         return $this->redirect(['view', 'id' => $invoice->id]);
     }
 
-    public function actionUpdateCustomer($id, $customerId)
+    public function actionUpdateCustomer($id)
     {
+        $request = Yii::$app->request;
         $model = $this->findModel($id);
-        $model->user_id = $customerId;
-        if ($model->allPayments) {
-            foreach ($model->allPayments as $payment) {
-                $payment->updateAttributes([
-                    'user_id' => $customerId
-                ]);
+        $userSearchModel = new UserSearch();
+        $userDataProvider = $userSearchModel->search($request->getQueryParams());
+        $userDataProvider->pagination = false;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $userQuery = UserProfile::find()
+            ->joinWith(['user' => function($query) use ($locationId) {
+                $query->notDeleted()
+                ->customers($locationId);
+            }]);
+        $first_name = $userQuery->orderBy(['firstname' => SORT_ASC])
+            ->all();
+        $last_name = $userQuery->orderBy(['lastname' => SORT_ASC])
+	        ->all();
+        $first_names = ArrayHelper::map($first_name, 'user_id', 'firstname');
+        $last_names = ArrayHelper::map($last_name, 'user_id', 'lastname');
+        if ($request->isPost) {
+            if ($model->load($request->post()) && $model->save()) {
+                $response = [
+                    'status' => true
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => current(ActiveForm::validate($model))
+                ];
             }
-        }
-        if ($model->save()) {
-            return [
+        } else {
+            $data = $this->renderAjax('customer/_list', [
+                'model' => $model,
+                'first_names' => $first_names,
+                'last_names' => $last_names,
+                'userDataProvider' => $userDataProvider,
+                'searchModel' => $userSearchModel
+            ]);
+            $response = [
                 'status' => true,
-                'message' => 'customer has been updated successfully.'
+                'data' => $data
             ];
         }
+        return $response;
     }
+
     public function actionCreateWalkin($id)
     {
         $request = Yii::$app->request;
@@ -225,11 +253,6 @@ class InvoiceController extends BaseController
                 }
             }
         }
-        $userSearchModel = new UserSearch();
-        $queryParams = array_merge([],Yii::$app->request->getQueryParams());
-        $queryParams["UserSearch"]["role_name"] = User::ROLE_CUSTOMER;
-        $userDataProvider = $userSearchModel->search($queryParams);
-        $userDataProvider->pagination = false;
         
         $invoicePayments = InvoicePayment::find()
             ->notDeleted()
@@ -268,8 +291,6 @@ class InvoiceController extends BaseController
         $searchModel->isPrint = false;
         return $this->render('view', [
                 'model' => $model,
-                'userSearchModel' => $userSearchModel,
-                'userDataProvider' => $userDataProvider,
                 'searchModel' => $searchModel,
                 'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
                 'customer' => empty($customer) ? new User() : $customer,

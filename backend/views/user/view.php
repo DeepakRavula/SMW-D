@@ -171,6 +171,7 @@ $this->params['action-button'] = $this->render('_action-button', [
                 'model' => $model,
             ]);
             $unscheduledLessonContent = $this->render('teacher/_unscheduled-lesson', [
+                'searchModel' => $searchModel,
                 'dataProvider' => $unscheduledLessonDataProvider,
                 'model' => $model,
             ]);
@@ -503,11 +504,7 @@ $this->params['action-button'] = $this->render('_action-button', [
         $('#invoice-line-item-modal').modal('show');
     });
 
-    $(document).ready(function() {
-        $.fn.modal.Constructor.prototype.enforceFocus = function() {};
-    });
-
-    $(document).on('click', '.add-new-student', function () {
+    $(document).on('click', '.add-new-student', function () {
         $.ajax({
             url    : '<?= Url::to(['student/create', 'userId' => $model->id]); ?>',
             type   : 'get',

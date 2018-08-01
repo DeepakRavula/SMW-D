@@ -33,4 +33,9 @@ class LessonPaymentQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['lesson_payment.isDeleted' => false]);
     }
+
+    public function deleted()
+    {
+        return $this->andWhere(['lesson_payment.isDeleted' => true]);
+    }
 }

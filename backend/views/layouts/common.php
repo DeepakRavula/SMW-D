@@ -69,8 +69,12 @@ $bundle = BackendAsset::register($this);
     </div><!-- ./wrapper -->
 
 <?php $this->endContent(); ?>
-    <script>
-        $(".filters").on("click", function() {
+
+<script>
+    $(".filters").on("click", function() {
         return false;
     });
-    </script>
+    $(document).ready(function() {
+        $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+    });
+</script>

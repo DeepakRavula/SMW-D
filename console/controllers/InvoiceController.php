@@ -70,32 +70,7 @@ class InvoiceController extends Controller
 
         return true;
     }
-
-    public function actionPaymentPreferenceInvoice()
-    {
-        $currentDate = new \DateTime();
-        $customers = User::find()
-                ->joinWith(['customerPaymentPreference' => function ($query) use ($currentDate) {
-                    $query->date($currentDate)
-                        ->notExpired();
-                }])
-                ->notDeleted()
-                ->all();
-        foreach ($customers as $customer) {
-            $invoices = Invoice::find()
-                ->notDeleted()
-                ->proFormaInvoice()
-                ->customer($customer->id)
-                ->unpaid()
-                ->all();
-            foreach ($invoices as $invoice) {
-                $invoice->addPreferredPayment($customer->customerPaymentPreference->paymentMethodId);
-            }
-        }
-        
-        return true;
-    }
-
+    
     public function actionTriggerSave()
     {
         $locationId = $this->locationId;
