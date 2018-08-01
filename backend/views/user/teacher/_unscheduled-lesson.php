@@ -93,7 +93,7 @@ $form = ActiveForm::begin([
 
 </div>
 
-<script type="text/javascript">
+<script>
     $(document).on('click', '.unschedule-calendar', function () {
         var lessonId = $(this).parent().parent().data('key');
         var params = $.param({ id: lessonId });
@@ -106,5 +106,5 @@ $form = ActiveForm::begin([
     	var params = $.param({ 'UserSearch[showAll]': (showAllExpiredLesson | 0), 'UserSearch[role_name]': roleName});
       	var url = "<?= Url::to(['user/view', 'id' => $model->id]); ?>&"+params;
         $.pjax.reload({url: url, container: "#teacher-unscheduled-lesson-view", replace: false, timeout: 4000});  //Reload GridView
-});
+    });
 </script>
