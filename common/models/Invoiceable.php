@@ -186,43 +186,23 @@ trait Invoiceable
         return $invoice;
     }
     
-    public function addCreditInvoice($startDate = null, $endDate)
+    public function addCreditInvoice($endDate)
     {
         $endDate = (new \DateTime($endDate))->format('Y-m-d');
-        $query = Lesson::find()
-                    ->notDeleted()
-                    ->notCanceled()
-                    ->isConfirmed();
-        if ($startDate) {
-            $startDate = (new \DateTime($startDate))->format('Y-m-d');
-            $query->andWhere(['AND', ['>=', 'DATE(date)', $startDate], ['<=', 'DATE(date)', $endDate]]);
-        } else {
-             $query->andWhere(['>', 'DATE(date)', $endDate]);
-        }
-        $lessons = $query->andWhere(['courseId' => $this->courseId])
-                    ->all();
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->notCanceled()
+            ->isConfirmed()
+            ->andWhere(['lesson.courseId' => $this->courseId])
+            ->andWhere(['>', 'DATE(lesson.date)', $endDate])
+            ->all();
         foreach ($lessons as $lesson) {
-            $lesson->cancel();
-            $lesson->delete();
-        }
-        $paymentCycleQuery = PaymentCycle::find()
-                ->andWhere(['enrolmentId' => $this->id])
-                ->notDeleted();
-        if ($startDate) {
-            $paymentCycleQuery->andWhere(['OR', ['between', "DATE(endDate)", $startDate, $endDate],
-                                ['between', "DATE(startDate)", $startDate, $endDate]]);
-        } else {
-            $paymentCycleQuery->andWhere(['OR',
-                ['AND', ['<', 'DATE(startDate)', $endDate], ['>', 'DATE(endDate)', $endDate]],
-                ['>', 'DATE(startDate)', $endDate]]);
-        }
-        $paymentCycles = $paymentCycleQuery->all();
-        foreach ($paymentCycles as $paymentCycle) {
-            if (!$paymentCycle->hasLessons()) {
-                $paymentCycle->delete();
+            if (!$lesson->hasInvoice()) {
+                $lesson->cancel();
+                $lesson->delete();
             }
         }
-        return !empty($invoice) ? $invoice : null;
+        return true;
     }
 
     public function createProFormaInvoice()

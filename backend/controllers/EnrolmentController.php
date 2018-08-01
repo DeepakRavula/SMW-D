@@ -587,7 +587,7 @@ class EnrolmentController extends BaseController
         $previewDataProvider = null;
         if ($changedEndDate) {
             $date = Carbon::parse($changedEndDate);
-            $objects = ['Lessons', 'Payment Cycles'];
+            $objects = ['Lessons'];
             $results = [];
             if ($lastLessonDate > $date) {
                 $dateRange = $date->format('M d, Y') . ' - ' . $lastLessonDate->format('M d, Y');
@@ -630,13 +630,7 @@ class EnrolmentController extends BaseController
             $newEndDate = Carbon::parse($course->endDate);
             if ($endDate !== $newEndDate) {
                 if ($lastLessonDate > $newEndDate) {
-                    $invoice = $model->shrink();
-                    if (!$invoice) {
-                        $credit = 0;
-                    } else {
-                        $credit = abs($invoice->invoiceBalance);
-                        $message = '$' . $credit . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
-                    }
+                    $model->shrink();
                 } else if ($lastLessonDate < $newEndDate) {
                     $model->extend();
                 }
