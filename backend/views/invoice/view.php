@@ -272,6 +272,7 @@ if (!empty($lineItem)) {
     
     $(document).on('modal-next', function(event, params) {
         $.pjax.reload({container: "#invoice-view", replace: false, async: false, timeout: 6000}); 
+        $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
         return false;
     });
 

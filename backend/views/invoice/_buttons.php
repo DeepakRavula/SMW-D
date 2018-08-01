@@ -48,5 +48,4 @@ use yii\widgets\Pjax;
     \NumberFormatter::MAX_FRACTION_DIGITS => 2,
 ]]); ?> &nbsp;&nbsp;
 </div>
-
 <?php Pjax::end();?>
