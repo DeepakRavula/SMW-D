@@ -62,10 +62,10 @@ echo Menu::widget([
         ],
         [
             'label' => Yii::t('backend', 'Private Lessons'),
-            'url' => ['/lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON],
+            'url' => ['/lesson/index'],
             'icon' => '<i class="fa fa-music"></i>',
             'visible' => Yii::$app->user->can('managePrivateLessons'),
-            'active' => (isset(Yii::$app->request->queryParams['LessonSearch']['type']) && Yii::$app->request->queryParams['LessonSearch']['type'] == Lesson::TYPE_PRIVATE_LESSON) ? true : false,
+            'active' => (Yii::$app->controller->id === 'lesson') ? true : false,
         ],
         [
             'label' => Yii::t('backend', 'Group Lessons'),

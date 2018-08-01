@@ -362,22 +362,21 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         }
         return false;
     });
+
     $(document).on('modal-success', function(event, params) {
         if (!$.isEmptyObject(params.url)) {
             window.location.href = params.url;
-        }
-        else {
-            if(params.status){
-             $.pjax.reload({container: "#lesson-index-1",timeout: 6000, async:false});
-            }
+        } else if(params.status) {
+            $.pjax.reload({container: "#lesson-index-1",timeout: 6000, async:false});
         }
         return false;
     });
+
     $(document).off('change', '#lessonsearch-showall').on('change', '#lessonsearch-showall', function(){
-      var showAll = $(this).is(":checked");
-       var params = $.param({'LessonSearch[type]': <?= Lesson::TYPE_PRIVATE_LESSON ?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[status]': '' });
-      var url = "<?php echo Url::to(['lesson/index']); ?>?"+params;
-              $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
-          });  
+        var showAll = $(this).is(":checked");
+        var params = $.param({'LessonSearch[type]': <?= Lesson::TYPE_PRIVATE_LESSON ?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[status]': '' });
+        var url = "<?= Url::to(['lesson/index']); ?>?"+params;
+        $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
+    });  
 </script>
 

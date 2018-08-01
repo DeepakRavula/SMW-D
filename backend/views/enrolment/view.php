@@ -170,15 +170,16 @@ $this->render('_view-enrolment', [
         $(document).ready(function () {
             var lesson_count = '<?= $lessonCount; ?>';
             if (lesson_count > 10) {
-		    var private = <?= $model->course->program->isPrivate(); ?>;
+		        var private = <?= $model->course->program->isPrivate(); ?>;
                 if (private) {
-                $(".more-lesson").show();
-                var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
-                var student = '<?= $model->student->id ?>';
-                var params = $.param({'LessonSearch[student]': student, 'LessonSearch[type]': type, 'LessonSearch[isSeeMore]': 1});
-                var url = '<?= Url::to(['lesson/index']); ?>?' + params;
-                $('.see-more').attr("href", url);
-            }
+                    $(".more-lesson").show();
+                    var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
+                    var student = '<?= $model->student->id ?>';
+                    var program = '<?= $model->program->id ?>'; 
+                    var params = $.param({'LessonSearch[student]': student, 'LessonSearch[program]': program, 'LessonSearch[type]': type, 'LessonSearch[isSeeMore]': 1});
+                    var url = '<?= Url::to(['lesson/index']); ?>?' + params;
+                    $('.see-more').attr("href", url);
+                }
             } else {
                 $(".more-lesson").hide();
             }
