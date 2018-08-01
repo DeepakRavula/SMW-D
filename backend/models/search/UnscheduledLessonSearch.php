@@ -55,7 +55,6 @@ class UnscheduledLessonSearch extends Lesson
             ->notDeleted()
             ->location($locationId)
             ->unscheduled()
-            ->notRescheduled()
             ->joinWith(['privateLesson'])
             ->andWhere(['NOT', ['private_lesson.lessonId' => null]])
             ->orderBy(['private_lesson.expiryDate' => SORT_ASC]);
