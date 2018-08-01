@@ -7,6 +7,28 @@ use common\models\Location;
 use common\models\Invoice;
 
 ?>
+<style>
+  .table > tbody > tr.success > td ,.table > tbody > tr.kv-grid-group-row > td{
+	background-color: white !important;
+}
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: white !important;
+}
+.table > thead:first-child > tr:first-child > th{
+    color : black;
+    background-color : lightgray;
+}
+.table > tbody >tr.warning >td {
+    font-size:17px;
+}
+.kv-page-summary {
+    border-top:none;
+    font-weight: bold;
+}
+.table > tbody + tbody {
+     border-top: none;
+}
+</style>
     <?php
     $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
     $columns = [
@@ -15,28 +37,32 @@ use common\models\Invoice;
                 return (new \DateTime($data->date))->format('l, F jS, Y');
             },
             'group' => true,
+            'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
             'groupedRow' => true,
-            // 'groupFooter' => function ($model, $key, $index, $widget) use ($locationId) {
-            //     return [
-            //         'mergeColumns' => [[1, 2]],
-            //         'content' => [
-            //             3 => GridView::F_SUM,
-            //             4 => GridView::F_SUM,
-            //             5 => GridView::F_SUM,
-            //         ],
-            //         'contentFormats' => [
-            //             3 => ['format' => 'number', 'decimals' => 2],
-            //             4 => ['format' => 'number', 'decimals' => 2],
-            //             5 => ['format' => 'number', 'decimals' => 2],
-            //         ],
-            //         'contentOptions' => [
-            //             3 => ['style' => 'text-align:right'],
-            //             4 => ['style' => 'text-align:right'],
-            //             5 => ['style' => 'text-align:right'],
-            //         ],
-            //         'options' => ['style' => 'font-weight:bold;']
-            //     ];
-            // }
+            'groupFooter' => function ($model, $key, $index, $widget) use ($locationId) {
+                $invoiceTaxes = Invoice::find()
+                    ->notDeleted()
+                    ->location($locationId)
+                    ->invoice()
+                    ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($model->date))->format('Y-m-d'), 
+                        (new \DateTime($model->date))->format('Y-m-d')])
+                    ->andWhere(['>', 'tax', 0]);
+                    
+                return [
+                    'mergeColumns' => [[1, 2]],
+                    'content' => [
+                        3 => Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('subTotal'), 2)),
+                        4 => Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('tax'), 2)),
+                        5 => Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('total'), 2)),
+                    ],
+                    'contentOptions' => [
+                        3 => ['style' => 'text-align:right'],
+                        4 => ['style' => 'text-align:right'],
+                        5 => ['style' => 'text-align:right'],
+                    ],
+                    'options' => ['style' => 'font-weight:bold;']
+                ];
+            }
         ],
         [
             'label' => 'Source ID',

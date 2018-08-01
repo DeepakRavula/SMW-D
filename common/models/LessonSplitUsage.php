@@ -67,11 +67,8 @@ class LessonSplitUsage extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if ($insert) {
-            if ($this->lesson->hasLessonCredit($this->lesson->enrolment->id)) {
-                $amount = $this->lesson->getLessonCreditAmount($this->lesson->enrolment->id);
-                $payment = new Payment();
-                $payment->amount = $amount;
-                $this->extendedLesson->addPayment($this->lesson, $payment);
+            foreach ($this->lesson->lessonPayments as $lessonPayment) {
+                $lessonPayment->updateAttributes(['lessonId' => $this->extendedLessonId]);
             }
         }
 
