@@ -276,6 +276,11 @@ class Payment extends ActiveRecord
             ->onCondition(['invoice_payment.isDeleted' => false]);
     }
 
+    public function getAllInvoicePayment()
+    {
+        return $this->hasOne(InvoicePayment::className(), ['payment_id' => 'id']);
+    }
+
     public function isInvoicePayment()
     {
         return !empty($this->invoicePayment);

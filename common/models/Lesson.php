@@ -1086,8 +1086,8 @@ class Lesson extends \yii\db\ActiveRecord
                     ->notCreditUsed();
             }])
             ->andWhere(['lesson_payment.lessonId' => $this->id, 'lesson_payment.enrolmentId' => $enrolmentId])
-                ->notDeleted()
-                ->all();
+            ->notDeleted()
+            ->all();
     }
     
     public function getCreditUsedAmount($enrolmentId)
