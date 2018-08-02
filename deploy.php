@@ -83,7 +83,10 @@ task('deploy:git', function() {
     $deployPath = get('deploy_path');
 
     cd($deployPath);
-    $commit = run('git log --since=1.day --pretty=format:"%h, %ar : %s"');
+    $last_commit = run('git log -1 --pretty=format:"%H"');
+    $command = "git rev-list " .$last_commit . "..HEAD --pretty=format:'%h - %aD (%ar)%d%n  %s - %an'"; 
+    $commit = run($command);
+
     writeln($commit);
 
     set('slack_git_commit', $commit);
