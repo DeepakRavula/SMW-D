@@ -22,7 +22,7 @@ class LessonSearch extends Lesson
     public $fromDate;
     public $toDate;
     public $dateRange;
-    public $type;
+    public $type = 1;
     public $customerId;
     public $invoiceType;
     public $showAllReviewLessons = false;
@@ -79,11 +79,6 @@ class LessonSearch extends Lesson
         ]);
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
-        }
-        if (!$this->isSeeMore && !$this->dateRange) {
-            $this->fromDate = (new \DateTime())->format('M d, Y');
-            $this->toDate = (new \DateTime())->format('M d, Y');
-            $this->dateRange = $this->fromDate.' - '.$this->toDate;
         }
         if (!empty($this->ids)) {
             $lessonQuery = Lesson::find()
@@ -142,9 +137,8 @@ class LessonSearch extends Lesson
         } elseif ($this->invoiceStatus === self::STATUS_UNINVOICED) {
             $query->unInvoiced();
         }
-        if (!empty($this->dateRange)) {
+        if ($this->dateRange) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
-
             $this->fromDate = new \DateTime($this->fromDate);
             $this->toDate = new \DateTime($this->toDate);
             $query->andWhere(['between', 'DATE(lesson.date)', $this->fromDate->format('Y-m-d'), $this->toDate->format('Y-m-d')]);

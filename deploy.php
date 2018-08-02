@@ -3,6 +3,7 @@ namespace Deployer;
 
 require 'recipe/yii2-app-advanced.php';
 require 'recipe/slack.php';
+require __DIR__.'/common/components/deployer/slack.php';
 require __DIR__.'/common/env.php';
 
 // Hosts
@@ -77,6 +78,20 @@ task('deploy:one-off', function() {
     writeln('<info>One off migration is done.</info>');
 });
 
+task('deploy:git', function() {
+    writeln('<info>Show git commit...</info>');
+    $deployPath = get('deploy_path');
+
+    cd($deployPath);
+    $last_commit = run('git log -1 --pretty=format:"%H"');
+    $command = "git rev-list " .$last_commit . "..HEAD --pretty=format:'%h - %aD (%ar)%d%n  %s - %an'"; 
+    $commit = run($command);
+
+    writeln($commit);
+
+    set('slack_git_commit', $commit);
+});
+
 task('deploy:dev', [
 	'deploy:set-dev',
     'deploy:prepare',
@@ -84,6 +99,7 @@ task('deploy:dev', [
     'deploy:composer',
     'deploy:migration',
     'deploy:one-off',
+    'deploy:git',
 ]);
 
 task('deploy:prod', [
@@ -93,6 +109,7 @@ task('deploy:prod', [
     'deploy:composer',
     'deploy:migration',
     'deploy:one-off',
+    'deploy:git',
 ]);
 
 set('slack_success_text', '{{user}} deployed to {{instance}} instance.');
@@ -103,6 +120,9 @@ after('deploy:dev', 'success');
 after('deploy:prod', 'success');
 
 after('success', 'slack:notify:success');
+
+after('success', 'slack:notify:git');
+
 after('deploy:failed', 'slack:notify:failure');
 
 after('deploy:failed', 'deploy:unlock');
