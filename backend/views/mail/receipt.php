@@ -13,10 +13,10 @@ use common\models\UserEmail;
     ]);
     $model->to = $emails;
     $data = null;
-    if (!empty($userModel)) {
+    if (!empty($customer)) {
         $data = ArrayHelper::map(UserEmail::find()
             ->joinWith('userContact')
-            ->andWhere(['user_contact.userId' => $userModel->id])
+            ->andWhere(['user_contact.userId' => $customer->id])
             ->orderBy('user_email.email')
             ->all(), 'email', 'email');
     }

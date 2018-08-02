@@ -246,8 +246,6 @@ class EmailController extends BaseController
         $model  = new PaymentForm();
         $request = Yii::$app->request;
         if ($model->load($request->get())) {
-            //print_r($model);die('coming');
-        
         $customer =  User::findOne(['id' => $model->userId]);
         $searchModel  =  new ProformaInvoiceSearch();
         $searchModel->showCheckBox = false;
