@@ -85,7 +85,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             ],
             ['amount', 'default', 'value' => 0.0000],
             [['royaltyFree', 'invoice_id', 'item_id', 'item_type_id', 'tax_code', 'tax_status', 'tax_type', 
-                'tax_rate', 'userName', 'cost', 'code', 'isDeleted', 'lessonCanBeUnscheduled'], 'safe'],
+                'tax_rate', 'userName', 'cost', 'code', 'rate', 'isDeleted', 'lessonCanBeUnscheduled'], 'safe'],
         ];
     }
 

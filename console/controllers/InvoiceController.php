@@ -41,10 +41,10 @@ class InvoiceController extends Controller
                 }
             }
         }
-        foreach($privateLessons as $lesson) {
-            $lessonDate = new \DateTime($lesson->date);
-            $enrolmentDate = new \DateTime($lesson->enrolment->createdAt);
+        foreach ($privateLessons as $lesson) {
+            if (!$lesson->hasInvoice()) {
                 $lesson->createPrivateLessonInvoice();
+            }
         }
 
         return true;
