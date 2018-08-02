@@ -65,7 +65,7 @@ use yii\bootstrap\ActiveForm;
         $('.modal-delete').show();
         $('.modal-save-all').show();
         $('.modal-button').show();
-        $('.modal-save').hide();
+        $('.modal-save').text('Email');
         $('.modal-save-all').text('Print');
         $('.modal-button').text('Edit');
         $(".modal-delete").attr("action", url);
@@ -75,6 +75,11 @@ use yii\bootstrap\ActiveForm;
     $(document).on("click", ".modal-save-all", function () {
         var url = '<?= Url::to(['print/payment','id' => $model->id]); ?>';
         window.open(url, '_blank');
+    });
+
+    $(document).on("click", ".modal-save", function () {
+        var url = '<?= Url::to(['email/payment','id' => $model->id]); ?>';
+       
     });
 
     $(document).on('modal-error', function (event, params) {
