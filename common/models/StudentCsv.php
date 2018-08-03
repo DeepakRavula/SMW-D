@@ -97,14 +97,14 @@ class StudentCsv extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if ($insert) {
-            if (!empty($this->openingBalance) && round(abs($this->openingBalance), 2) > round(abs(0.00), 2)) {
-                $paymentModel = new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]);
-                $paymentModel->user_id = $this->student->customer->id;
-                $paymentModel->amount = $this->openingBalance;
-                $paymentModel->addOpeningBalance();
-            }
-        }
+        // if ($insert) {
+        //     if (!empty($this->openingBalance) && round(abs($this->openingBalance), 2) > round(abs(0.00), 2)) {
+        //        // $paymentModel = new Payment(['scenario' => Payment::SCENARIO_OPENING_BALANCE]);
+        //         $paymentModel->user_id = $this->student->customer->id;
+        //         $paymentModel->amount = $this->openingBalance;
+        //         $paymentModel->addOpeningBalance();
+        //     }
+        // }
         return parent::afterSave($insert, $changedAttributes);
     }
 
