@@ -14,7 +14,9 @@ class m180803_113315_lesson_discount_change extends Migration
     public function safeUp()
     {
         $lessonDiscount = LessonDiscount::findOne(['8611']);
-        $lessonDiscount->updateAttributes(['value' => 2.5650, 'valueType' => 0,'type' => 4]);
+        $lessonDiscount->updateAttributes(['value' => 10.0000, 'valueType' => 1,'type' => 2]);
+        $lessonDiscount = LessonDiscount::findOne(['8612']);
+        $lessonDiscount->updateAttributes(['value' => 1.2500, 'valueType' => 0,'type' => 3]);
          }
 
     /**
