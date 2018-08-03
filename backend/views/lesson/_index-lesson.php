@@ -38,24 +38,24 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 'value' => function ($data) {
                     return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
                 },
-                'filterType'=>KartikGridView::FILTER_SELECT2,
-                'filter'=>ArrayHelper::map(Student::find()->orderBy(['first_name' => SORT_ASC])
-                ->joinWith(['enrolment' => function ($query) {
-                    $query->joinWith(['course' => function ($query) {
-                        $query->confirmed()
+                'filterType' => KartikGridView::FILTER_SELECT2,
+                'filter' => ArrayHelper::map(Student::find()->orderBy(['first_name' => SORT_ASC])
+                    ->joinWith(['enrolment' => function ($query) {
+                        $query->joinWith(['course' => function ($query) {
+                            $query->confirmed()
                                 ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-                    }]);
-                }])
-                ->all(), 'id', 'fullName'),
-                'filterWidgetOptions'=>[
-            'options' => [
-                'id' => 'student',
-            ],
-                    'pluginOptions'=>[
-                        'allowClear'=>true,
-            ],
-        ],
-                'filterInputOptions'=>['placeholder'=>'Student'],
+                        }]);
+                    }])
+                    ->all(), 'id', 'fullName'),
+                'filterWidgetOptions' => [
+                    'options' => [
+                        'id' => 'student',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                    ],
+                ],
+                'filterInputOptions' => ['placeholder' => 'Student']
             ],
             [
                 'label' => 'Program',
@@ -63,25 +63,22 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 'value' => function ($data) {
                     return !empty($data->course->program->name) ? $data->course->program->name : null;
                 },
-                'filterType'=>KartikGridView::FILTER_SELECT2,
-                'filter'=>ArrayHelper::map(
-            Program::find()->orderBy(['name' => SORT_ASC])
-                ->joinWith(['course' => function ($query) {
-                    $query->joinWith(['enrolment'])
-                        ->confirmed()
-                        ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-                }])
-                ->asArray()->all(),
-                    'id',
-                    'name'
-                ),
-                'filterInputOptions'=>['placeholder'=>'Program'],
-                'format'=>'raw',
-                'filterWidgetOptions'=>[
-                    'pluginOptions'=>[
-                        'allowClear'=>true,
-            ]
-        ],
+                'filterType' => KartikGridView::FILTER_SELECT2,
+                'filter' => ArrayHelper::map(
+                    Program::find()->orderBy(['name' => SORT_ASC])
+                        ->joinWith(['course' => function ($query) {
+                            $query->joinWith(['enrolment'])
+                                ->confirmed()
+                                ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
+                        }])
+                        ->asArray()
+                        ->all(), 'id', 'name'),
+                'filterInputOptions' => ['placeholder' => 'Program'],
+                'filterWidgetOptions' => [
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                    ]
+                ]
             ],
             [
                 'label' => 'Teacher',
@@ -89,25 +86,24 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 'value' => function ($data) {
                     return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
                 },
-			'filterType'=>KartikGridView::FILTER_SELECT2,
-                'filter'=>ArrayHelper::map(UserProfile::find()->orderBy(['firstname' => SORT_ASC])
-                ->joinWith(['courses' => function ($query) {
-                    $query->joinWith('enrolment')
-                        ->confirmed()
-                        ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-                }])
-                ->all(), 'user_id', 'fullName'),
-                'filterWidgetOptions'=>[
-            'options' => [
-                'id' => 'teacher',
+			    'filterType' => KartikGridView::FILTER_SELECT2,
+                'filter' => ArrayHelper::map(UserProfile::find()->orderBy(['firstname' => SORT_ASC])
+                    ->joinWith(['courses' => function ($query) {
+                        $query->joinWith('enrolment')
+                            ->confirmed()
+                            ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
+                    }])
+                    ->all(), 'user_id', 'fullName'),
+                'filterWidgetOptions' => [
+                    'options' => [
+                        'id' => 'teacher',
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                    ],
+                ],
+                'filterInputOptions' => ['placeholder' => 'Teacher']
             ],
-                    'pluginOptions'=>[
-                        'allowClear'=>true,
-            ],
-			 ],
-                'filterInputOptions'=>['placeholder'=>'Teacher'],
-                'format'=>'raw'
-    ],
             [
                 'label' => 'Date',
                 'attribute' => 'dateRange',
@@ -117,7 +113,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                     'initRangeExpr' => true,
                     'attribute' => 'dateRange',
                     'convertFormat' => true,
-                    'pluginOptions'=>[
+                    'pluginOptions' => [
                         'autoApply' => true,
                         'ranges' => [
                             Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
@@ -129,26 +125,26 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                             'format' => 'M d, Y',
                         ],
                         'opens' => 'left'
-                    ],
+                    ]
                 ]),
                 'value' => function ($data) {
                     $date = Yii::$app->formatter->asDate($data->date);
                     $lessonTime = (new \DateTime($data->date))->format('H:i:s');
 
                     return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
-                },
+                }
             ],
-	    [
+	        [
                 'label' => 'Duration',
                 'attribute' => 'duration',
                 'value' => function ($data) {
                     $lessonDuration = (new \DateTime($data->duration))->format('H:i');
                     return $lessonDuration;
-                },
-            ],
+                }
+            ]
         ];       
         if ($searchModel->showAll) { 
-        array_push($columns, [
+            array_push($columns, [
                 'label' => 'Status',
                 'attribute' => 'lessonStatus',
                 'filter' => LessonSearch::lessonStatuses(),
@@ -162,43 +158,52 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                     if (!empty($data->status)) {
                         return $data->getStatus();
                     }
-
                     return $status;
                 },
             ]);
-            }
-            array_push($columns, 
+        }
+        array_push($columns, 
             [
                 'label' => 'Price',
                 'attribute' => 'price',
                 'contentOptions' => ['class' => 'text-right'],
                 'headerOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
-                    return Yii::$app->formatter->asCurrency($data->netPrice);
-                },
-                ],
+                    return Yii::$app->formatter->asCurrency(round($data->netPrice, 2));
+                }
+            ],
             [
                 'label' => 'Owing',
                 'attribute' => 'owing',
                 'contentOptions' => function ($data) {
-                   $highLightClass = 'text-right';
-                   if ($data->isOwing($data->enrolment->id)) {
-                    $highLightClass = 'text-right danger';
-                   }
+                    $highLightClass = 'text-right';
+                    if ($data->hasInvoice()) {
+                        if ($data->invoice->isOwing()) {
+                            $highLightClass .= ' danger';
+                        }
+                    } else if ($data->isOwing($data->enrolment->id)) {
+                        $highLightClass .= ' danger';
+                    }
                     return ['class' => $highLightClass];
                 },
                 'headerOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
-                    return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
+                    if ($data->hasInvoice()) {
+                        $owingAmount = $data->invoice->balance;
+                    } else {
+                        $owingAmount = $data->getOwingAmount($data->enrolment->id);
+                    }
+                    return Yii::$app->formatter->asCurrency(round($owingAmount, 2));
                 },
-            ]);
+            ]
+        );
 
         if ((int) $searchModel->type === Lesson::TYPE_GROUP_LESSON) {
             array_shift($columns);
         }
      ?>   
     <div class="box">
-    <?php echo KartikGridView::widget([
+    <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'options' => ['id' => 'lesson-index-1'],
         'filterModel' => $searchModel,
@@ -216,8 +221,8 @@ $this->params['show-all'] = $this->render('_show-all-button', [
 	<?php Pjax::end(); ?>
 
 <?php Modal::begin([
-        'header' => '<h4 class="m-0">Substitute Teacher</h4>',
-        'id'=>'teacher-substitute-modal',
+    'header' => '<h4 class="m-0">Substitute Teacher</h4>',
+    'id'=>'teacher-substitute-modal',
 ]);?>
 <div id="teacher-substitute-content"></div>
 <?php Modal::end(); ?>

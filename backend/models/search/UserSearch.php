@@ -95,11 +95,11 @@ class UserSearch extends User
         $query->leftJoin(['rbac_auth_assignment aa'], 'user.id = aa.user_id');
         $query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
         $query->leftJoin(['user_location ul'], 'ul.user_id = user.id');
-	$query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
-	$query->joinWith(['userContacts uc' => function ($query) {
-		$query->joinWith('phone');
+        $query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
+        $query->joinWith(['userContacts uc' => function ($query) {
+		    $query->joinWith('phone');
         }]);
-	$query->joinWith('emails');
+	    $query->joinWith('emails');
         $dataProvider->setSort([
             'attributes' => [
                 'firstname' => [
@@ -110,17 +110,17 @@ class UserSearch extends User
                     'asc' => ['uf.lastname' => SORT_ASC],
                     'desc' => ['uf.lastname' => SORT_DESC],
                 ],
-		'email' => [
+		        'email' => [
                     'asc' => ['user_email.email' => SORT_ASC],
                     'desc' => ['user_email.email' => SORT_DESC],
                 ],
-		'phone' => [
+		         'phone' => [
                     'asc' => ['user_phone.number' => SORT_ASC],
                     'desc' => ['user_phone.number' => SORT_DESC],
                 ]
             ]
         ]);
-	$dataProvider->sort->defaultOrder = [
+	    $dataProvider->sort->defaultOrder = [
           'lastname' => SORT_ASC,
 	    ];
         $query->joinWith(['emails' => function ($query) {
@@ -141,7 +141,6 @@ class UserSearch extends User
                 $query->joinWith(['student' => function ($query) use ($currentDate) {
                     $query->enrolled($currentDate);
                 }]);
-                
             }
            
         }
@@ -150,17 +149,12 @@ class UserSearch extends User
                 $query->joinWith(['userLocation' => function ($query) {
                     $query->joinWith('teacherAvailability');
                 }]);
-                
             }
-            
         }
-        if(!($this->showAll))
-        {
+        if (!$this->showAll) {
             $query->active();
-          
-            
         }
-	  $query->groupBy('user.id');
+	    $query->groupBy('user.id');
         return $dataProvider;
     }
 
