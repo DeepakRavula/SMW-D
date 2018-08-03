@@ -145,7 +145,7 @@ use common\models\InvoiceLineItem;
     'dataProvider' => $timeVoucherDataProvider,
     'summary' => false,
     'emptyText' => false,
-    'options' => ['class' => 'col-md-12'],
+    'options' => ['class' => 'col-md-12', 'id' => 'teacher-lesson-grid'],
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'pjax' => true,
