@@ -312,7 +312,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     
     public function isDefaultDiscountedItems()
     {
-        return $this->isLessonItem() || $this->isMisc() || $this->isOpeningBalance();
+        return $this->isMisc() || $this->isOpeningBalance();
     }
 
     public function beforeSave($insert)
