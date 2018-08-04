@@ -79,7 +79,7 @@ if (!empty($lineItem)) {
         $amount = 0.00;
     }
 ?>
-
+<?php Pjax::end(); ?>
 <div class="row">
 	<div class="col-md-12">  
 		<?=
@@ -193,7 +193,7 @@ if (!empty($lineItem)) {
  ]); ?>
 <div id="adjust-tax-modal-content"></div>
 <?php Modal::end(); ?>
-<?php Pjax::end(); ?>
+
 
 <script>
     $(document).on('click', '.edit-tax', function () {
