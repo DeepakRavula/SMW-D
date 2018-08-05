@@ -10,10 +10,9 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use common\models\User;
 use yii\filters\ContentNegotiator;
-use yii\web\Response;
-use yii\bootstrap\ActiveForm;
-use common\models\discount\CustomerDiscount;
+use backend\models\search\CustomerPaymentPreferenceSearch;
 use yii\filters\AccessControl;
+use yii\web\Response;
 use common\components\controllers\BaseController;
 
 /**
@@ -43,7 +42,7 @@ class CustomerPaymentPreferenceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['update', 'view', 'modify', 'delete'],
+                        'actions' => ['index','update', 'view', 'modify', 'delete'],
                         'roles' => ['manageCustomers'],
                     ],
                 ],
@@ -68,6 +67,17 @@ class CustomerPaymentPreferenceController extends BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
+    public function actionIndex()
+    {
+        $searchModel = new CustomerPaymentPreferenceSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
     public function actionModify($id)
     {
         $userModel = User::findOne($id);
