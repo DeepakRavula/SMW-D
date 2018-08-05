@@ -28,25 +28,25 @@ $columns = [
 		'value' => function ($data) {
 			return $data->getPaymentNumber();
 		},
-		// 'filterType' => KartikGridView::FILTER_SELECT2,
-		// 'filter' => ArrayHelper::map(Payment::find()
-		// 	->notDeleted()
-		// 	->location($locationId)
-		// 	->exceptAutoPayments()
-		// 	->andWhere(['between', 'DATE(payment.date)',
-        //             (new \DateTime($searchModel->startDate))->format('Y-m-d'),
-		// 			(new \DateTime($searchModel->endDate))->format('Y-m-d')])
-		// 	->orderBy(['payment.id' => SORT_ASC])
-		// 	->all(), 'paymentNumber', 'paymentNumber'),
-		// 'filterWidgetOptions' => [
-		// 	'options' => [
-		// 		'id' => 'payment-number'
-		// 	],
-		// 	'pluginOptions' =>[
-		// 		'allowClear' => true
-		// 	]
-		// ],
-		// 'filterInputOptions' => ['placeholder' => 'Number']
+		'filterType' => KartikGridView::FILTER_SELECT2,
+		'filter' => ArrayHelper::map(Payment::find()
+			->notDeleted()
+			->location($locationId)
+			->exceptAutoPayments()
+			->andWhere(['between', 'DATE(payment.date)',
+		            (new \DateTime($searchModel->startDate))->format('Y-m-d'),
+					(new \DateTime($searchModel->endDate))->format('Y-m-d')])
+			->orderBy(['payment.id' => SORT_ASC])
+			->all(), 'id', 'paymentNumber'),
+		'filterWidgetOptions' => [
+			'options' => [
+				'id' => 'payment-number'
+			],
+			'pluginOptions' => [
+				'allowClear' => true
+			]
+		],
+		'filterInputOptions' => ['placeholder' => 'Number']
 	],
     [
 		'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],

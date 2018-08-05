@@ -19,7 +19,8 @@ use yii\widgets\ActiveForm;
         'rowOptions' => ['class' => 'add-customer-invoice'],
         'tableOptions' => ['class' => 'table table-condensed'],
         'filterModel' => $searchModel,
-        'filterUrl' => Url::to(['invoice/update-customer', 'id' => $model->id, "UserSearch[role_name]" => User::ROLE_CUSTOMER]),
+        'filterUrl' => Url::to(['invoice/update-customer', 'id' => $model->id, "UserSearch[role_name]" => User::ROLE_CUSTOMER, 
+            "UserSearch[showAll]" => true]),
         'columns' => [
             [
                 'attribute' => 'firstname',
@@ -32,9 +33,6 @@ use yii\widgets\ActiveForm;
                 'filterWidgetOptions' => [
                     'options' => [
                         'id' => 'firstname'
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true
                     ]
                 ],
                 'filterInputOptions' => [

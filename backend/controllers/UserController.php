@@ -421,7 +421,7 @@ class UserController extends BaseController
     protected function getTimeVoucherDataProvider($id, $fromDate, $toDate)
     {
         $timeVoucher = InvoiceLineItem::find()
-                                        ->notDeleted()
+            ->notDeleted()
             ->joinWith(['invoice' => function ($query) use ($fromDate,$toDate) {
                 $query->andWhere(['invoice.isDeleted' => false, 'invoice.type' => Invoice::TYPE_INVOICE])
                     ->between((new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d'));

@@ -89,32 +89,31 @@ class PaymentSearch extends Payment
             return $dataProvider;
         }
         if ($this->number) {
-            $query->andFilterWhere(['payment.id', $this->number]);
-        } else {
-            if ($this->dateRange) {
-                list($this->startDate, $this->endDate) = explode(' - ', $this->dateRange);
-                $query->andWhere(['between', 'DATE(payment.date)',
-                    (new \DateTime($this->startDate))->format('Y-m-d'),
-                    (new \DateTime($this->endDate))->format('Y-m-d')]); 
-            }
+            $query->andFilterWhere(['payment.id' => $this->number]);
+        } 
+        if ($this->dateRange) {
+            list($this->startDate, $this->endDate) = explode(' - ', $this->dateRange);
+            $query->andWhere(['between', 'DATE(payment.date)',
+                (new \DateTime($this->startDate))->format('Y-m-d'),
+                (new \DateTime($this->endDate))->format('Y-m-d')]); 
+        }
 
-            if ($this->paymentMethod) {
-                $paymentMethod = $this->paymentMethod;
-                $query->joinWith(['paymentMethod' => function ($query) use ($paymentMethod) {
-                    $query->andFilterWhere(['like', 'payment_method.name', $paymentMethod]);
-                }]);
-            }
+        if ($this->paymentMethod) {
+            $paymentMethod = $this->paymentMethod;
+            $query->joinWith(['paymentMethod' => function ($query) use ($paymentMethod) {
+                $query->andFilterWhere(['like', 'payment_method.name', $paymentMethod]);
+            }]);
+        }
 
-            if ($this->amount) {
-                $query->andFilterWhere(['like', 'amount', $this->amount]);
-            }
+        if ($this->amount) {
+            $query->andFilterWhere(['like', 'amount', $this->amount]);
+        }
 
-            if ($this->customer) {
-                $customer = $this->customer;
-                $query->joinWith(['userProfile' => function ($query) use ($customer) {
-                    $query->andFilterWhere(['user_profile.user_id' => $customer]);
-                }]);
-            }
+        if ($this->customer) {
+            $customer = $this->customer;
+            $query->joinWith(['userProfile' => function ($query) use ($customer) {
+                $query->andFilterWhere(['user_profile.user_id' => $customer]);
+            }]);
         }
         return $dataProvider;
     }

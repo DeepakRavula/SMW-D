@@ -95,21 +95,21 @@ task('deploy:git', function() {
 task('deploy:dev', [
 	'deploy:set-dev',
     'deploy:prepare',
+    'deploy:git',
     'deploy:latest_code',
     'deploy:composer',
     'deploy:migration',
     'deploy:one-off',
-    'deploy:git',
 ]);
 
 task('deploy:prod', [
 	'deploy:set-prod',
     'deploy:prepare',
+    'deploy:git',
     'deploy:latest_code',
     'deploy:composer',
     'deploy:migration',
     'deploy:one-off',
-    'deploy:git',
 ]);
 
 set('slack_success_text', '{{user}} deployed to {{instance}} instance.');
