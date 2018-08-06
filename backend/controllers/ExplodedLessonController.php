@@ -70,7 +70,6 @@ class ExplodedLessonController extends BaseController
             'query' => $explodedLessons,
             'pagination' => false
         ]);
-        //print_r(count($dataProvider->getModels()));die;
               
         return $this->render('index', [
             'dataProvider' => $dataProvider,

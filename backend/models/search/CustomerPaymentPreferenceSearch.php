@@ -46,26 +46,25 @@ class CustomerPaymentPreferenceSearch extends CustomerPaymentPreference
         $currentdate= $currentDate = new \DateTime();
         $currentDate = $currentdate->format('Y-m-d');
         $customers =  Enrolment::find()
-        ->joinWith(['course' => function ($query) use ($locationId) {
-            $query->location($locationId)
-                    ->confirmed();
-        }])
-        ->notDeleted()
-        ->paymentPrefered()
-        ->isConfirmed()
-        ->isRegular()
-        ->andWhere(['>=', 'course.endDate', $currentDate]);
+            ->joinWith(['course' => function ($query) use ($locationId) {
+                $query->location($locationId)
+                        ->confirmed();
+            }])
+            ->notDeleted()
+            ->paymentPrefered()
+            ->isConfirmed()
+            ->isRegular()
+            ->andWhere(['>=', 'course.endDate', $currentDate]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $customers,
+            'pagination' => false
         ]);
 
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-
-    
-
+        
         return $dataProvider;
     }
 }

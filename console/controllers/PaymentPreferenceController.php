@@ -41,7 +41,7 @@ class PaymentPreferenceController extends Controller
             ->paymentPrefered()
             ->all();
         foreach ($enrolments as $enrolment) {
-            $dateRange = $enrolment->getPaymentCycleDateRange(null, $priorDate);
+            $dateRange = $enrolment->getCurrentPaymentCycleDateRange(null, $priorDate);
             list($from_date, $to_date) = explode(' - ', $dateRange);
             $fromDate = new \DateTime($from_date);
             $toDate = new \DateTime($to_date);
@@ -49,7 +49,6 @@ class PaymentPreferenceController extends Controller
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
-                ->privateLessons()
                 ->between($fromDate, $toDate)
                 ->enrolment($enrolment->id)
                 ->invoiced();
@@ -57,7 +56,6 @@ class PaymentPreferenceController extends Controller
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
-                ->privateLessons()
                 ->between($fromDate, $toDate)
                 ->enrolment($enrolment->id)
                 ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
