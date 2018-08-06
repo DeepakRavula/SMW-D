@@ -54,6 +54,15 @@ $columns = [
 		},
 		'contentOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
 		'headerOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
+	],
+	[
+		'label' => 'Expiry Date',
+		'attribute' => 'expiryDate',
+		'value' => function ($data) {
+			return !(empty($data->customerPaymentPreference->expiryDate)) ? Yii::$app->formatter->asDate($data->customerPaymentPreference->expiryDate) : null;
+		},
+		'contentOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
+		'headerOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
     ],
     
 ];
