@@ -42,7 +42,7 @@ class CustomerPaymentPreferenceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index','update', 'view', 'modify', 'delete'],
+                        'actions' => ['index', 'update', 'view', 'modify', 'delete'],
                         'roles' => ['manageCustomers'],
                     ],
                 ],
