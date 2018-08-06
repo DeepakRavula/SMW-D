@@ -4,7 +4,7 @@ namespace backend\models\search;
 
 use Yii;
 use common\models\Location;
-use common\models\User;
+use common\models\Enrolment;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\CustomerPaymentPreference;
@@ -43,12 +43,18 @@ class CustomerPaymentPreferenceSearch extends CustomerPaymentPreference
     public function search($params)
     {
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $customers = User::find()
-            ->joinWith(['customerPaymentPreference' => function ($query) {
-                $query ->andWhere(['NOT', ['customer_payment_preference.id' => null]]);
-            }])
-        ->location($locationId)
-        ->notDeleted();
+        $currentdate= $currentDate = new \DateTime();
+        $currentDate = $currentdate->format('Y-m-d');
+        $customers =  Enrolment::find()
+        ->joinWith(['course' => function ($query) use ($locationId) {
+            $query->location($locationId)
+                    ->confirmed();
+        }])
+        ->notDeleted()
+        ->paymentPrefered()
+        ->isConfirmed()
+        ->isRegular()
+        ->andWhere(['>=', 'course.endDate', $currentDate]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $customers,
