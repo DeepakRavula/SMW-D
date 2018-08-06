@@ -25,7 +25,7 @@ $columns = [
         'label' => 'Customer',
         'attribute' => 'customer',
         'value' => function ($data) {
-            return $data->customer->publicIdentity . "  (" . $data->customer->customerPaymentPreference->dayOfMonth . "of every payment cycle using " . $data->customer->customerPaymentPreference->getPaymentMethodName() . " till " . Yii::$app->formatter->asDate($data->customer->customerPaymentPreference->expiryDate) . ")" ?? null;
+            return $data->customer->publicIdentity . "  ( " . $data->customer->customerPaymentPreference->dayOfMonth . "  of every payment cycle using " . $data->customer->customerPaymentPreference->getPaymentMethodName() . " till " . Yii::$app->formatter->asDate($data->customer->customerPaymentPreference->expiryDate) . ")" ?? null;
         },
         'contentOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
         'headerOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
