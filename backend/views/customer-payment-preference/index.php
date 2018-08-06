@@ -29,9 +29,6 @@ $columns = [
         'value' => function ($data) {
             return $data->customer->publicIdentity . " (" . $data->customer->customerPaymentPreference->dayOfMonth . "  of every payment cycle using " . $data->customer->customerPaymentPreference->getPaymentMethodName() . " till " . Yii::$app->formatter->asDate($data->customer->customerPaymentPreference->expiryDate) . ")" ?? null;
         },
-        'contentOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
-        'headerOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
-        'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left', 'class' => 'main-group'],
         'group' => true,
         'groupedRow' => true,
     ],
@@ -40,21 +37,17 @@ $columns = [
         'attribute' => 'day',
         'value' => function ($data) {
             return $data->program->name ?? null;
-        },
-        'contentOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
-        'headerOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
+        }
     ],
     [
         'label' => 'Student',
         'attribute' => 'paymentMethod',
         'value' => function ($data) {
             return $data->student->fullName ?? null;
-        },
-        'contentOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
-        'headerOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
+        }
     ],
     [
-        'label' => 'Current Payment Cycle Date Range',
+        'label' => 'Current Payment Cycle',
         'attribute' => 'dateRange',
         'value' => function ($data) {
             $currentDate = new \DateTime();
@@ -68,12 +61,10 @@ $columns = [
             }
             $dateRange = implode(' - ', $paymentCycleFormattedDates);
             return !(empty($data->currentPaymentCycle)) ? $dateRange : null;
-        },
-        'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
-        'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
+        }
     ],
     [
-        'label' => 'Lessons Count of Current Payment Cycle',
+        'label' => 'Lessons Count',
         'attribute' => 'dateRange',
         'value' => function ($data) {
             $currentDate = new \DateTime();
@@ -90,12 +81,83 @@ $columns = [
                 ->enrolment($data->id)
                 ->all();
             return count($lessons);
-        },
-        'contentOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
-        'headerOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
+        }
     ],
     [
-        'label' => 'Unpaid Lessons Count of Current Payment Cycle',
+        'label' => 'Invoiced Lessons Count',
+        'attribute' => 'dateRange',
+        'value' => function ($data) {
+            $currentDate = new \DateTime();
+            $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
+            $dateRange = $data->getCurrentPaymentCycleDateRange(null, $priorDate);
+            $paymentCycleDates = explode(' - ', $dateRange);
+            $fromDate = new \DateTime($paymentCycleDates[0]);
+            $toDate = new \DateTime($paymentCycleDates[1]);
+            $lessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->notCanceled()
+                ->between($fromDate, $toDate)
+                ->enrolment($data->id)
+                ->invoiced()
+                ->all();
+            return count($lessons);
+        }
+    ],
+    [
+        'label' => 'Manualy Paid Lessons Count',
+        'attribute' => 'dateRange',
+        'value' => function ($data) {
+            $currentDate = new \DateTime();
+            $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
+            $dateRange = $data->getCurrentPaymentCycleDateRange(null, $priorDate);
+            $paymentCycleDates = explode(' - ', $dateRange);
+            $fromDate = new \DateTime($paymentCycleDates[0]);
+            $toDate = new \DateTime($paymentCycleDates[1]);
+            $lessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->notCanceled()
+                ->between($fromDate, $toDate)
+                ->enrolment($data->id)
+                ->joinWith(['lessonPayments' => function ($query) {
+                    $query->joinWith(['payment' => function ($query) {
+                        $query->notCreditUsed()
+                            ->andWhere(['NOT', ['payment.createdByUserId' => 727]]);
+                    }]);
+                }])
+                ->all();
+            return count($lessons);
+        }
+    ],
+    [
+        'label' => 'Automaticaly Paid Lessons Count',
+        'attribute' => 'dateRange',
+        'value' => function ($data) {
+            $currentDate = new \DateTime();
+            $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
+            $dateRange = $data->getCurrentPaymentCycleDateRange(null, $priorDate);
+            $paymentCycleDates = explode(' - ', $dateRange);
+            $fromDate = new \DateTime($paymentCycleDates[0]);
+            $toDate = new \DateTime($paymentCycleDates[1]);
+            $lessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->notCanceled()
+                ->between($fromDate, $toDate)
+                ->enrolment($data->id)
+                ->joinWith(['lessonPayments' => function ($query) {
+                    $query->joinWith(['payment' => function ($query) {
+                        $query->notCreditUsed()
+                        ->andWhere(['payment.createdByUserId' => 727]);
+                    }]);
+                }])
+                ->all();
+            return count($lessons);
+        }
+    ],
+    [
+        'label' => 'Unpaid Lessons Count',
         'attribute' => 'dateRange',
         'value' => function ($data) {
             $currentDate = new \DateTime();
@@ -131,9 +193,7 @@ $columns = [
                 ->andWhere(['id' => $owingLessonIds])
                 ->all();
             return count($lessonsToPay);
-        },
-        'contentOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
-        'headerOptions' => ['class' => 'text-left', 'style' => 'width:15%'],
+        }
     ]
 ];
 ?>
