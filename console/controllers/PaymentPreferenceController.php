@@ -41,7 +41,7 @@ class PaymentPreferenceController extends Controller
             ->paymentPrefered()
             ->all();
         foreach ($enrolments as $enrolment) {
-            $dateRange = $enrolment->getPaymentCycleDateRange(null, $priorDate);
+            $dateRange = $enrolment->getCurrentPaymentCycleDateRange(null, $priorDate);
             list($from_date, $to_date) = explode(' - ', $dateRange);
             $fromDate = new \DateTime($from_date);
             $toDate = new \DateTime($to_date);
@@ -49,7 +49,6 @@ class PaymentPreferenceController extends Controller
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
-                ->privateLessons()
                 ->between($fromDate, $toDate)
                 ->enrolment($enrolment->id)
                 ->invoiced();
@@ -57,7 +56,6 @@ class PaymentPreferenceController extends Controller
                 ->notDeleted()
                 ->isConfirmed()
                 ->notCanceled()
-                ->privateLessons()
                 ->between($fromDate, $toDate)
                 ->enrolment($enrolment->id)
                 ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
@@ -75,16 +73,18 @@ class PaymentPreferenceController extends Controller
             if ($owingLessonIds) {
                 $payment = new Payment();
                 $payment->amount = $amount;
-                if ($currentDate->format('d') == $enrolment->customer->customerPaymentPreference->dayOfMonth) {
-                    $date = $currentDate->format('Y-m-d H:i:s');
+                $day = $enrolment->customer->customerPaymentPreference->dayOfMonth;
+                $currentDate = new \DateTime();
+                if ($currentDate->format('d') <= $enrolment->customer->customerPaymentPreference->dayOfMonth) {
+                    $month = $currentDate->format('m');
+                    $year = $currentDate->format('Y');
                 } else {
                     $nextMonth = (new \DateTime())->modify('next month');
-                    $day = $enrolment->customer->customerPaymentPreference->dayOfMonth;
                     $month = $nextMonth->format('m');
                     $year = $nextMonth->format('Y');
-                    $formatedDate = $day . '-' . $month . '-' . $year;
-                    $date = (new \DateTime($formatedDate))->format('Y-m-d H:i:s');
                 }
+                $formatedDate = $day . '-' . $month . '-' . $year;
+                $date = (new \DateTime($formatedDate))->format('Y-m-d H:i:s');
                 $payment->date = $date;
                 $payment->user_id = $enrolment->customer->id;
                 $payment->payment_method_id = $enrolment->customer->customerPaymentPreference->paymentMethodId;

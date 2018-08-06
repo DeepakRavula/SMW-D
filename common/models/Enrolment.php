@@ -146,7 +146,7 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
     }
 
-    public function getPaymentCycleDateRange($start_date = null, $date)
+    public function getCurrentPaymentCycleDateRange($start_date = null, $date)
     {
         if ($start_date) {
             $courseStartDate = $start_date->modify('+1 day')->format('Y-m-d');
@@ -160,7 +160,7 @@ class Enrolment extends \yii\db\ActiveRecord
         if ($startDate <= $dateToCompare && $endDate >= $dateToCompare) {
             return $startDate->format('Y-m-d') . ' - ' . $endDate->format('Y-m-d');
         } else {
-            return $this->getPaymentCycleDateRange($endDate, $dateToCompare->format('Y-m-d'));
+            return $this->getCurrentPaymentCycleDateRange($endDate, $dateToCompare->format('Y-m-d'));
         }
     }
 
