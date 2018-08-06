@@ -17,19 +17,25 @@ $this->title = 'Exploded Lessons';
 <?php
 	$columns = [
         [
-            'label' => 'ID',
+            'label' => 'Lesson ID',
             'value' => function ($data) {
                 return $data->id;
             }
         ],
         [
-            'label' => 'Root ID',
+            'label' => 'Date',
             'value' => function ($data) {
-                return $data->rootLesson->id;
+                return Yii::$app->formatter->asDate($data->date);
             }
         ],
         [
-            'label' => 'PFD (RI)',
+            'label' => 'Status',
+            'value' => function ($data) {
+                return $data->hasInvoice() ? 'Invoiced' : ($data->isCompleted() ? 'Completed' : 'Scheduled');
+            }
+        ],
+        [
+            'label' => "Original Lesson's Payment Frequecy Discount",
             'value' => function ($data) {
                 $discount = null;
                 if ($data->rootLesson->enrolmentPaymentFrequencyDiscount) {
@@ -42,13 +48,13 @@ $this->title = 'Exploded Lessons';
             }
         ],
         [
-            'label' => 'PFD (LL)',
+            'label' => "Exploded Lesson's Payment Frequecy Discount",
             'value' => function ($data) {
                 return $data->enrolmentPaymentFrequencyDiscount ? $data->enrolmentPaymentFrequencyDiscount->value : null;
             }
         ],
         [
-            'label' => 'MED (RI)',
+            'label' => "Original Lesson's Multiple Enrolment Discount",
             'value' => function ($data) {
                 $discount = null;
                 if ($data->rootLesson->multiEnrolmentDiscount) {
@@ -61,13 +67,13 @@ $this->title = 'Exploded Lessons';
             }
         ],
         [
-            'label' => 'MED (LL)',
+            'label' => "Exploded Lesson's Multiple Enrolment Discount",
             'value' => function ($data) {
                 return $data->multiEnrolmentDiscount ? $data->multiEnrolmentDiscount->value : null;
             }
         ],
         [
-            'label' => 'CD (RI)',
+            'label' => "Original Lesson's customer Discount",
             'value' => function ($data) {
                 $discount = null;
                 if ($data->rootLesson->customerDiscount) {
@@ -80,13 +86,13 @@ $this->title = 'Exploded Lessons';
             }
         ],
         [
-            'label' => 'CD (LL)',
+            'label' => "Exploded Lesson's Customer Discount",
             'value' => function ($data) {
                 return $data->customerDiscount ? $data->customerDiscount->value : null;
             }
         ],
         [
-            'label' => 'LID (RI)',
+            'label' => "Original Lesson's Line Iitem Discount",
             'value' => function ($data) {
                 $discount = null;
                 if ($data->rootLesson->lineItemDiscount) {
@@ -99,7 +105,7 @@ $this->title = 'Exploded Lessons';
             }
         ],
         [
-            'label' => 'LID (LL)',
+            'label' => "Exploded Lesson's Line Iitem Discount",
             'value' => function ($data) {
                 return $data->lineItemDiscount ? $data->lineItemDiscount->value : null;
             }
@@ -109,7 +115,6 @@ $this->title = 'Exploded Lessons';
 
 <?= KartikGridView::widget([
     'dataProvider' => $dataProvider,
-    'filterModel' => false,
     'summary' => false,
     'tableOptions' => ['class' => 'table table-bordered'],
     'headerRowOptions' => ['class' => 'bg-light-gray'],
