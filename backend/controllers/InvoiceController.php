@@ -145,6 +145,7 @@ class InvoiceController extends BaseController
         $userQuery = UserProfile::find()
             ->joinWith(['user' => function($query) use ($locationId) {
                 $query->notDeleted()
+                ->notDraft()
                 ->customers($locationId);
             }]);
         $first_name = $userQuery->orderBy(['firstname' => SORT_ASC])
