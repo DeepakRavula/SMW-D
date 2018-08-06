@@ -67,6 +67,7 @@ use yii\bootstrap\ActiveForm;
         $('.modal-delete').show();
         $('.modal-save-all').show();
         $('.modal-button').show();
+        $('.modal-save').hide();
         $('.modal-save-all').text('Print');
         $('.modal-button').text('Edit');
         $(".modal-delete").attr("action", url);
