@@ -539,6 +539,14 @@ class Lesson extends \yii\db\ActiveRecord
                     ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON,
                         'invoice_line_item.isDeleted' => false]);
     }
+
+    public function getProFormaLineItemDeleted()
+    {
+        return $this->hasOne(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
+                ->via('invoiceItemPaymentCycleLessons')
+                ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
+                ->orderBy(['invoice_line_item.id' => SORT_DESC]);
+    }
    
     public function getRootLesson()
     {
