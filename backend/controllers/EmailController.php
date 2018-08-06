@@ -26,6 +26,7 @@ use common\components\controllers\BaseController;
 use backend\models\PaymentForm;
 use common\models\User;
 use yii\data\ArrayDataProvider;
+use backend\models\search\PaymentSearch;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -36,7 +37,7 @@ class EmailController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt'],
+                'only' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -47,7 +48,7 @@ class EmailController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt'],
+                        'actions' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment'],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
@@ -338,6 +339,7 @@ $results[] = [
     public function actionPayment($id) 
     {
         $model = Payment::findOne($id);
+        $searchModel = new PaymentSearch();
         $lessonPayment = Lesson::find()
 		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
                 $query->andWhere(['paymentId' => $id])

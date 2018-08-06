@@ -8,7 +8,9 @@ use yii\bootstrap\ActiveForm;
 /* @var $form yii\bootstrap\ActiveForm */
 
 ?>
-
+<?= Html::a('<i title="Mail" class="fa fa-envelope-o"></i>', '#', [
+    'id' => 'payment-mail-button',
+    'class' => 'm-r-10 btn btn-box-tool']) ?>
 <?php $form = ActiveForm::begin([
     'id' => 'modal-form',
     'action' => Url::to(['payment/view', 'PaymentEditForm[paymentId]' => $model->id])
@@ -65,7 +67,6 @@ use yii\bootstrap\ActiveForm;
         $('.modal-delete').show();
         $('.modal-save-all').show();
         $('.modal-button').show();
-        $('.modal-save').text('Email');
         $('.modal-save-all').text('Print');
         $('.modal-button').text('Edit');
         $(".modal-delete").attr("action", url);
@@ -76,6 +77,25 @@ use yii\bootstrap\ActiveForm;
         var url = '<?= Url::to(['print/payment','id' => $model->id]); ?>';
         window.open(url, '_blank');
     });
+
+   $(document).on('click', '#payment-mail-button', function (e) {
+            $.ajax({
+                url    : '<?= Url::to(['email/payment', 'id' => $model->id]); ?>',
+                type   : 'get',
+                dataType: 'json',
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal .modal-dialog').css({'width': '1000px'});
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
+                        $('.modal-save').text('Send');
+                    }
+                }
+            });
+            return false;
+  	});
 
     $(document).on('modal-error', function (event, params) {
         if (params.message) {

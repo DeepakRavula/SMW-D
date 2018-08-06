@@ -7,7 +7,8 @@
     			<?= $this->render('/payment/_lesson-line-item', [
             		'lessonDataProvider' => $lessonDataProvider,
 	    			'searchModel' => $searchModel,
-            		'model' => $model,
+					'model' => $model,
+					'canEdit' => false,
         		]); ?>
 			</td>
     	</tr>
@@ -25,7 +26,8 @@
     					<?= $this->render('/payment/_invoice-line-item', [
             				'invoiceDataProvider' => $invoiceDataProvider,
 	    					'searchModel' => $searchModel,
-            				'model' => $model,
+							'model' => $model,
+							'canEdit' => false,
         				]); ?>
 					</td>
     			</tr>
