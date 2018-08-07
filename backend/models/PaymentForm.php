@@ -56,7 +56,7 @@ class PaymentForm extends Model
     public $paymentId;
     public $reference;
     public $receiptId;
-    
+    public $notes;
     /**
      * {@inheritdoc}
      */
@@ -69,7 +69,7 @@ class PaymentForm extends Model
                 'lessonIds', 'canUsePaymentCredits', 'invoiceCreditIds', 'amount', 'userId',
                 'amountToDistribute', 'invoicePayments', 'lessonPayments','paymentId',
                 'paymentCredits', 'invoiceCredits', 'reference', 'paymentCreditIds', 'prId',
-                'groupLessonIds', 'groupLessonPayments', 'receiptId', 'payment_method_id'], 'safe']
+                'groupLessonIds', 'groupLessonPayments', 'receiptId', 'payment_method_id', 'notes'], 'safe']
         ];
     }
 

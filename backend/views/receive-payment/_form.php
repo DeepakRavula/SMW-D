@@ -37,7 +37,7 @@ use yii\bootstrap\Html;
     ]); ?>
 
     <div class="row">
-        <div class="col-xs-3">
+        <div class="col-xs-2">
             <?= $form->field($paymentModel, 'user_id')->widget(Select2::classname(), [
                 'data' => $customers,
                 'options' => [
@@ -64,14 +64,18 @@ use yii\bootstrap\Html;
             <?= $form->field($paymentModel, 'payment_method_id')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))
                 ->label('Payment Method'); ?>
         </div>
+        <div class="col-xs-2">
+            <?= $form->field($model, 'notes')->textArea(['class' => 'form-control'])->label('Notes'); ?>
+        </div>
 	<div class="col-xs-2">
             <?= $form->field($paymentModel, 'reference')->textInput(['class' => 'form-control'])->label('Reference'); ?>
         </div>
         <div class="col-xs-2">
             <?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control'])->label('Amount Received'); ?>
         </div>
+        
     </div>
-
+   
     <?= $form->field($model, 'amountNeeded')->hiddenInput(['id' => 'amount-needed-value'])->label(false); ?>
     <?= $form->field($model, 'selectedCreditValue')->hiddenInput(['id' => 'selected-credit-value'])->label(false); ?>
     <?= $form->field($model, 'amountToDistribute')->hiddenInput()->label(false); ?>
