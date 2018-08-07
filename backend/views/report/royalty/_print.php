@@ -18,7 +18,7 @@ echo $this->render('_royalty', [
     'searchModel' => $searchModel,
     'invoiceTaxTotal' => $invoiceTaxTotal,
     'payments' => $payments,
-    'royaltyPayment' => $royaltyPayment,
+    'royaltyFreeAmount' => $royaltyFreeAmount,
     'giftCardPayments' => $giftCardPayments,
 ]);
 

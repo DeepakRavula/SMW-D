@@ -4,7 +4,7 @@ use common\models\Location;
 use common\models\TaxCode;
 use common\models\TaxType;
 
-$total = $payments - $invoiceTaxTotal - $royaltyPayment;
+$total = $payments - $invoiceTaxTotal - $royaltyFreeAmount;
 $location = Location::findOne(['id' => Location::findOne(['slug' => \Yii::$app->location])->id]);
 $advertisement = !empty($location->advertisement->value) ? $location->advertisement->value : 0;
 $royalty = !empty($location->royalty->value) ? $location->royalty->value : 0;
@@ -32,8 +32,8 @@ if ($total < 0) {
      <?= Yii::$app->formatter->asCurrency(round($invoiceTaxTotal, 2));?>
 	</dd>
     <dt>Royalty Free Items</dt>
-    <dd><?php $royaltyPayment = !empty($royaltyPayment) ? $royaltyPayment : 0; ?>
-    <?= Yii::$app->formatter->asCurrency(round($royaltyPayment, 2)); ?>
+    <dd><?php $royaltyFreeAmount = !empty($royaltyFreeAmount) ? $royaltyFreeAmount : 0; ?>
+    <?= Yii::$app->formatter->asCurrency(round($royaltyFreeAmount, 2)); ?>
 	</dd>
     <dt>Revenue</dt>
     <dd><?php $total = !empty($total) ? $total : 0; ?>

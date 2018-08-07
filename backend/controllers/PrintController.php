@@ -406,7 +406,7 @@ class PrintController extends BaseController
         $fromDate = new \DateTime($searchModel->fromDate);
         $toDate = new \DateTime($searchModel->toDate);
 
-        $royaltyPayment = InvoiceLineItem::find()
+        $royaltyFreeItems = InvoiceLineItem::find()
                 ->notDeleted()
                 ->joinWith(['invoice' => function ($query) use ($locationId, $fromDate, $toDate) {
                     $query->location($locationId)
@@ -415,7 +415,12 @@ class PrintController extends BaseController
                         ->andWhere(['between', 'DATE(invoice.date)', $fromDate->format('Y-m-d'), $toDate->format('Y-m-d')]);
                 }])
                 ->royaltyFree()
-                ->sum('invoice_line_item.amount');
+                ->all();
+            $royaltyFreeAmount = 0;
+            foreach ($royaltyFreeItems as $royaltyFreeItem) {
+                $royaltyFreeAmount += $royaltyFreeItem->netPrice;
+                
+            }
 
         $this->layout = '/print';
 
@@ -423,7 +428,7 @@ class PrintController extends BaseController
                 'searchModel' => $searchModel,
                 'invoiceTaxTotal' => $invoiceTaxTotal,
                 'payments' => $payments,
-                'royaltyPayment' => $royaltyPayment,
+                'royaltyFreeAmount' => $royaltyFreeAmount,
 				'giftCardPayments' => $giftCardPayments,
         ]);
     }
