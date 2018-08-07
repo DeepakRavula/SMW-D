@@ -362,12 +362,12 @@ $results[] = [
             'pagination' => false
         ]);
 
-        $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_PFI]);
+        $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_PAYMENT]);
        
         $data = $this->renderAjax('/mail/payment', [
             'model' => new EmailForm(),
             'emails' => !empty($model->user->email) ?$model->user->email : null,
-            'subject' => $emailTemplate->subject ?? 'Proforma Invoice from Arcadia Academy of Music',
+            'subject' => $emailTemplate->subject ?? 'Payment from Arcadia Academy of Music',
             'emailTemplate' => $emailTemplate,
             'lessonDataProvider' => $lessonDataProvider,
 	        'invoiceDataProvider' => $invoiceDataProvider,

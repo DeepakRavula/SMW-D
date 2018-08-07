@@ -8,9 +8,7 @@ use yii\bootstrap\ActiveForm;
 /* @var $form yii\bootstrap\ActiveForm */
 
 ?>
-<?= Html::a('<i title="Mail" class="fa fa-envelope-o"></i>', '#', [
-    'id' => 'payment-mail-button',
-    'class' => 'm-r-10 btn btn-box-tool']) ?>
+
 <?php $form = ActiveForm::begin([
     'id' => 'modal-form',
     'action' => Url::to(['payment/view', 'PaymentEditForm[paymentId]' => $model->id])
