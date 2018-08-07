@@ -53,14 +53,14 @@ $columns = [
             $currentDate = new \DateTime();
             $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
             $paymentCycleFormattedDates = [];
-            $dateRange = $data->getCurrentPaymentCycleDateRange(null, $priorDate);
+            $dateRange = $data->getCurrentPaymentCycleDateRange($priorDate);
             $paymentCycleDates = explode(' - ', $dateRange);
             foreach ($paymentCycleDates as $paymentCycleDate) {
                 $paymentCycleDate = Carbon::parse($paymentCycleDate)->format('M d, Y');
                 $paymentCycleFormattedDates[] = $paymentCycleDate;
             }
             $dateRange = implode(' - ', $paymentCycleFormattedDates);
-            return !(empty($data->currentPaymentCycle)) ? $dateRange : null;
+            return $dateRange ?? null;
         }
     ],
     [
@@ -69,7 +69,7 @@ $columns = [
         'value' => function ($data) {
             $currentDate = new \DateTime();
             $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
-            $dateRange = $data->getCurrentPaymentCycleDateRange(null, $priorDate);
+            $dateRange = $data->getCurrentPaymentCycleDateRange($priorDate);
             $paymentCycleDates = explode(' - ', $dateRange);
             $fromDate = new \DateTime($paymentCycleDates[0]);
             $toDate = new \DateTime($paymentCycleDates[1]);
@@ -89,7 +89,7 @@ $columns = [
         'value' => function ($data) {
             $currentDate = new \DateTime();
             $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
-            $dateRange = $data->getCurrentPaymentCycleDateRange(null, $priorDate);
+            $dateRange = $data->getCurrentPaymentCycleDateRange($priorDate);
             $paymentCycleDates = explode(' - ', $dateRange);
             $fromDate = new \DateTime($paymentCycleDates[0]);
             $toDate = new \DateTime($paymentCycleDates[1]);
@@ -110,7 +110,7 @@ $columns = [
         'value' => function ($data) {
             $currentDate = new \DateTime();
             $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
-            $dateRange = $data->getCurrentPaymentCycleDateRange(null, $priorDate);
+            $dateRange = $data->getCurrentPaymentCycleDateRange($priorDate);
             $paymentCycleDates = explode(' - ', $dateRange);
             $fromDate = new \DateTime($paymentCycleDates[0]);
             $toDate = new \DateTime($paymentCycleDates[1]);
@@ -136,7 +136,7 @@ $columns = [
         'value' => function ($data) {
             $currentDate = new \DateTime();
             $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
-            $dateRange = $data->getCurrentPaymentCycleDateRange(null, $priorDate);
+            $dateRange = $data->getCurrentPaymentCycleDateRange($priorDate);
             $paymentCycleDates = explode(' - ', $dateRange);
             $fromDate = new \DateTime($paymentCycleDates[0]);
             $toDate = new \DateTime($paymentCycleDates[1]);
@@ -162,7 +162,7 @@ $columns = [
         'value' => function ($data) {
             $currentDate = new \DateTime();
             $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
-            $dateRange = $data->getCurrentPaymentCycleDateRange(null, $priorDate);
+            $dateRange = $data->getCurrentPaymentCycleDateRange($priorDate);
             $paymentCycleDates = explode(' - ', $dateRange);
             $fromDate = new \DateTime($paymentCycleDates[0]);
             $toDate = new \DateTime($paymentCycleDates[1]);

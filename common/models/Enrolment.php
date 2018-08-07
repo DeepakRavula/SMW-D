@@ -146,22 +146,17 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasOne(Student::className(), ['id' => 'studentId']);
     }
 
-    public function getCurrentPaymentCycleDateRange($start_date = null, $date)
+    public function getCurrentPaymentCycleDateRange($date)
     {
-        if ($start_date) {
-            $courseStartDate = $start_date->modify('+1 day')->format('Y-m-d');
+        $currentPaymentCycle = $this->getCurrentPaymentcycle($date);
+        if (!$currentPaymentCycle) {
+            $startDate = new \DateTime($date);
+            $endDate = new \DateTime($date);
         } else {
-            $courseStartDate = (new \DateTime($this->course->startDate))->format('Y-m-1');
+            $startDate = new \DateTime($currentPaymentCycle->startDate);
+            $endDate = new \DateTime($currentPaymentCycle->endDate);
         }
-        $dateToCompare = new \DateTime($date);
-        $startDate = new \DateTime($courseStartDate);
-        $startDateClone = clone ($startDate);
-        $endDate = $startDateClone->modify('+' . $this->paymentsFrequency->frequencyLength . ' month, -1 day');
-        if ($startDate <= $dateToCompare && $endDate >= $dateToCompare) {
-            return $startDate->format('Y-m-d') . ' - ' . $endDate->format('Y-m-d');
-        } else {
-            return $this->getCurrentPaymentCycleDateRange($endDate, $dateToCompare->format('Y-m-d'));
-        }
+        return $startDate->format('Y-m-d') . ' - ' . $endDate->format('Y-m-d');
     }
 
     public function getCustomer()
@@ -284,23 +279,17 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasMany(InvoiceItemEnrolment::className(), ['enrolmentId' => 'id']);
     }
 
-    public function getCurrentPaymentCycle()
+    public function getCurrentPaymentCycle($date)
     {
         $currentPaymentCycle = PaymentCycle::find()
             ->andWhere(['enrolmentId' => $this->id])
             ->notDeleted()
             ->andWhere(['AND',
-                ['<=', 'startDate', (new \DateTime())->format('Y-m-d')],
-                ['>=', 'endDate', (new \DateTime())->format('Y-m-d')]
+                ['<=', 'startDate', (new \DateTime($date))->format('Y-m-d')],
+                ['>=', 'endDate', (new \DateTime($date))->format('Y-m-d')]
             ])
             ->one();
-        if (!empty($currentPaymentCycle)) {
-            return $currentPaymentCycle;
-        } else {
-            return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
-                ->andWhere(['>', 'startDate', (new \DateTime())->format('Y-m-d')])
-                ->onCondition(['payment_cycle.isDeleted' => false]);
-        }
+        return $currentPaymentCycle;
     }
 
     public function getNextPaymentCycle()

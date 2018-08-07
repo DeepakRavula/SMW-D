@@ -129,7 +129,7 @@ class EnrolmentController extends BaseController
                 ->orderBy(['lesson.date' => SORT_ASC]),
             'pagination' => false,
         ]);
-	     $groupLessonDataProvider = new ActiveDataProvider([
+        $groupLessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()
                 ->andWhere(['courseId' => $model->course->id])
                 ->scheduledOrRescheduled()
@@ -154,11 +154,11 @@ class EnrolmentController extends BaseController
         
         return $this->render('view', [
             'model' => $model,
-	    'groupLessonDataProvider' => $groupLessonDataProvider,
+	        'groupLessonDataProvider' => $groupLessonDataProvider,
             'lessonDataProvider' => $lessonDataProvider,
             'paymentCycleDataProvider' => $paymentCycleDataProvider,
             'logDataProvider' => $logDataProvider,
-	    'lessonCount' => $lessonCount,
+	        'lessonCount' => $lessonCount,
         ]);
     }
 
