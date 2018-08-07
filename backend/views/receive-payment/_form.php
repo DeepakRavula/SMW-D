@@ -99,7 +99,7 @@ use yii\bootstrap\Html;
         'searchModel' => $groupLessonSearchModel
     ]);
     ?>
-
+<?php if($invoiceLineItemsDataProvider->totalCount > 0) : ?>
     <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
     <?= $this->render('_invoice-line-item', [
         'model' => $model,
@@ -108,19 +108,22 @@ use yii\bootstrap\Html;
         'searchModel' => $searchModel
     ]);
     ?>
-
+<?php endif;?>
+<?php if($creditDataProvider->totalCount > 0) : ?>
     <?= Html::label('Credits', ['class' => 'admin-login']) ?>
     <?= $this->render('_credits-available', [
         'creditDataProvider' => $creditDataProvider,
     ]);
     ?>
-
+<?php endif;?>
     <div class ="pull-right">
     <dl class = "dl-horizontal">
-    <dt class = "pull-left receive-payment-text">Available Credits   :   </dt>
-    <dd><span class="pull-right credit-available receive-payment-text-value">0.00</span></dd>
-    <dt class = "pull-left receive-payment-text">Selected Credits    :   </dt>
-    <dd><span class="pull-right credit-selected receive-payment-text-value">0.00</span></dd>
+    <?php if($creditDataProvider->totalCount > 0) : ?>
+     <dt class = "pull-left receive-payment-text">Available Credits   :   </dt>
+     <dd><span class="pull-right credit-available receive-payment-text-value">0.00</span></dd>
+     <dt class = "pull-left receive-payment-text">Selected Credits    :   </dt>
+     <dd><span class="pull-right credit-selected receive-payment-text-value">0.00</span></dd>
+    <?php endif;?>
     <dt class = "pull-left receive-payment-text">Amount To Apply     :   </dt>
     <dd><span class=" pull-right amount-to-apply receive-payment-text-value">0.00</span></dd>
     <dt class = "pull-left receive-payment-text">Amount To Credit    :   </dt>
@@ -128,16 +131,17 @@ use yii\bootstrap\Html;
     </dl>
 </div>
 <?php $prId = $model->prId ?>
-
 <script>
     var lockTextBox = false;
     var receivePayment = {
         setAction: function() {
+            if($("#invoice-line-item-grid").length != 0) {
+                var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
+            }
             var prId = '<?= $prId; ?>';
             var userId = $('#customer-payment').val();
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var groupLessonIds = $('#group-lesson-line-item-grid').yiiGridView('getSelectedRows');
-            var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
             var paymentCreditIds = new Array();
             var invoiceCreditIds = new Array();
             var lessonPayments = new Array();
