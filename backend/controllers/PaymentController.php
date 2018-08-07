@@ -591,6 +591,7 @@ class PaymentController extends BaseController
             $payment->load($request->post());
             $payment->amount = $model->amount;
             $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
+            $payment->notes = $model->notes;
             if (round($payment->amount, 2) > 0.00) {
                 $payment->save();
             }

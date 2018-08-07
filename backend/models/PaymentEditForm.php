@@ -40,6 +40,7 @@ class PaymentEditForm extends Model
     public $groupLessonPayments;
     public $amountToDistribute;
     public $reference;
+    public $notes;
     
     /**
      * {@inheritdoc}
@@ -52,7 +53,7 @@ class PaymentEditForm extends Model
             //['amount', 'match', 'pattern' => '^\d+\.\d{0,2}$^', 'message' => 'Two decimal places allowed!'],
             [['date', 'invoiceIds', 'selectedCreditValue', 'lessonIds', 'amount', 'userId', 'amountToDistribute', 
                 'invoicePayments', 'lessonPayments', 'paymentId', 'reference', 'groupLessonIds', 
-                'groupLessonPayments'], 'safe']
+                'groupLessonPayments','notes'], 'safe']
         ];
     }
 

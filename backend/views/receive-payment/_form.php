@@ -37,7 +37,7 @@ use yii\bootstrap\Html;
     ]); ?>
 
     <div class="row">
-        <div class="col-xs-3">
+        <div class="col-xs-2">
             <?= $form->field($paymentModel, 'user_id')->widget(Select2::classname(), [
                 'data' => $customers,
                 'options' => [
@@ -64,14 +64,18 @@ use yii\bootstrap\Html;
             <?= $form->field($paymentModel, 'payment_method_id')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))
                 ->label('Payment Method'); ?>
         </div>
+        <div class="col-xs-2">
+            <?= $form->field($model, 'notes')->textArea(['class' => 'form-control'])->label('Notes'); ?>
+        </div>
 	<div class="col-xs-2">
             <?= $form->field($paymentModel, 'reference')->textInput(['class' => 'form-control'])->label('Reference'); ?>
         </div>
         <div class="col-xs-2">
             <?= $form->field($model, 'amount')->textInput(['class' => 'text-right form-control'])->label('Amount Received'); ?>
         </div>
+        
     </div>
-
+   
     <?= $form->field($model, 'amountNeeded')->hiddenInput(['id' => 'amount-needed-value'])->label(false); ?>
     <?= $form->field($model, 'selectedCreditValue')->hiddenInput(['id' => 'selected-credit-value'])->label(false); ?>
     <?= $form->field($model, 'amountToDistribute')->hiddenInput()->label(false); ?>
@@ -95,7 +99,7 @@ use yii\bootstrap\Html;
         'searchModel' => $groupLessonSearchModel
     ]);
     ?>
-
+<?php if($invoiceLineItemsDataProvider->totalCount > 0) : ?>
     <?= Html::label('Invoices', ['class' => 'admin-login']) ?>
     <?= $this->render('_invoice-line-item', [
         'model' => $model,
@@ -104,19 +108,22 @@ use yii\bootstrap\Html;
         'searchModel' => $searchModel
     ]);
     ?>
-
+<?php endif;?>
+<?php if($creditDataProvider->totalCount > 0) : ?>
     <?= Html::label('Credits', ['class' => 'admin-login']) ?>
     <?= $this->render('_credits-available', [
         'creditDataProvider' => $creditDataProvider,
     ]);
     ?>
-
+<?php endif;?>
     <div class ="pull-right">
     <dl class = "dl-horizontal">
-    <dt class = "pull-left receive-payment-text">Available Credits   :   </dt>
-    <dd><span class="pull-right credit-available receive-payment-text-value">0.00</span></dd>
-    <dt class = "pull-left receive-payment-text">Selected Credits    :   </dt>
-    <dd><span class="pull-right credit-selected receive-payment-text-value">0.00</span></dd>
+    <?php if($creditDataProvider->totalCount > 0) : ?>
+     <dt class = "pull-left receive-payment-text">Available Credits   :   </dt>
+     <dd><span class="pull-right credit-available receive-payment-text-value">0.00</span></dd>
+     <dt class = "pull-left receive-payment-text">Selected Credits    :   </dt>
+     <dd><span class="pull-right credit-selected receive-payment-text-value">0.00</span></dd>
+    <?php endif;?>
     <dt class = "pull-left receive-payment-text">Amount To Apply     :   </dt>
     <dd><span class=" pull-right amount-to-apply receive-payment-text-value">0.00</span></dd>
     <dt class = "pull-left receive-payment-text">Amount To Credit    :   </dt>
@@ -124,16 +131,17 @@ use yii\bootstrap\Html;
     </dl>
 </div>
 <?php $prId = $model->prId ?>
-
 <script>
     var lockTextBox = false;
     var receivePayment = {
         setAction: function() {
+            if($("#invoice-line-item-grid").length != 0) {
+                var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
+            }
             var prId = '<?= $prId; ?>';
             var userId = $('#customer-payment').val();
             var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
             var groupLessonIds = $('#group-lesson-line-item-grid').yiiGridView('getSelectedRows');
-            var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
             var paymentCreditIds = new Array();
             var invoiceCreditIds = new Array();
             var lessonPayments = new Array();
