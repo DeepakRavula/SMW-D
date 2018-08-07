@@ -334,6 +334,7 @@ class LessonController extends BaseController
             'lessonIds' => $conflictedLessonIds
         ];
     }
+
     public function fetchConflictedLesson($course)
     {
         $conflictedLessons = $this->getConflicts($course);
@@ -350,6 +351,7 @@ class LessonController extends BaseController
         }
         return $lessons;
     }
+
     public function resolveSingleLesson($lesson, $oldDate)
     {
         if (! empty($lesson->date)) {
@@ -371,6 +373,7 @@ class LessonController extends BaseController
         }
         return $response;
     }
+
     public function resolveAllLesson($conflictedLessons, $lesson)
     {
         foreach ($conflictedLessons as $conflictedLesson) {
@@ -404,6 +407,7 @@ class LessonController extends BaseController
         ];
         return $response;
     }
+
     public function actionUpdateField($id)
     {
         $model = $this->findModel($id);
@@ -630,6 +634,7 @@ class LessonController extends BaseController
         }
         return $type;
     }
+    
     public function actionInvoice($id)
     {
         $model = Lesson::findOne(['id' => $id]);
