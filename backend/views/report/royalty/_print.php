@@ -19,6 +19,7 @@ echo $this->render('_royalty', [
     'invoiceTaxTotal' => $invoiceTaxTotal,
     'payments' => $payments,
     'royaltyPayment' => $royaltyPayment,
+    'giftCardPayments' => $giftCardPayments,
 ]);
 
 ?>
