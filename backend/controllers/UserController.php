@@ -170,7 +170,7 @@ class UserController extends BaseController
     {
         $lessonQuery = Lesson::find()
                 ->location($locationId)
-                ->student($id)
+                ->customer($id)
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
 		->orderBy(['lesson.date' => SORT_ASC])
