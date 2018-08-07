@@ -19,15 +19,15 @@ $this->title = 'Payment Preferences';
 <?php Pjax::begin(['id' => 'payment-preference-listing']);?>
 
 <?php
-set_time_limit(0);
-ini_set('memory_limit', '-1');
 $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
 $columns = [
     [
         'label' => 'Customer',
         'attribute' => 'customer',
         'value' => function ($data) {
-            return $data->customer->publicIdentity . " (" . $data->customer->customerPaymentPreference->dayOfMonth . "  of every payment cycle using " . $data->customer->customerPaymentPreference->getPaymentMethodName() . " till " . Yii::$app->formatter->asDate($data->customer->customerPaymentPreference->expiryDate) . ")" ?? null;
+            return $data->customer->publicIdentity . " (" . $data->customer->customerPaymentPreference->dayOfMonth . 
+                "  of every payment cycle using " . $data->customer->customerPaymentPreference->getPaymentMethodName() . 
+                " till " . Yii::$app->formatter->asDate($data->customer->customerPaymentPreference->expiryDate) . ")" ?? null;
         },
         'group' => true,
         'groupedRow' => true,

@@ -24,6 +24,8 @@ $this->title = 'Exploded Lessons';
         ],
         [
             'label' => 'Date',
+            'headerOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
+            'contentOptions' => ['class' => 'text-left', 'style' => 'width:10%'],
             'value' => function ($data) {
                 return Yii::$app->formatter->asDate($data->date);
             }

@@ -2,6 +2,7 @@
 
 use backend\widgets\Menu;
 use common\models\User;
+use common\models\UserLocation;
 use common\models\Program;
 use common\models\Lesson;
 use common\models\Invoice;
@@ -11,7 +12,7 @@ use common\models\log\LogHistory;
 
 ?>
 <?php
-$userLocation = \common\models\UserLocation::findOne(['user_id' => Yii::$app->user->identity->id]);
+$userLocation = UserLocation::findOne(['user_id' => Yii::$app->user->identity->id]);
 echo Menu::widget([
     'options' => ['class' => 'sidebar-menu'],
     'linkTemplate' => '<a href="{url}">{icon}<span>{label}</span>{right-icon}{badge}</a>',
