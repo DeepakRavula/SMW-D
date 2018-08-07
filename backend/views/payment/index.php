@@ -123,6 +123,15 @@ $columns = [
 			],
 		],
 		'filterInputOptions' => ['placeholder' => 'Payment Method']
+	],
+	[
+		'label' => 'Notes',
+		'attribute' => 'notes',
+		'value' => function ($data) {
+			return $data->notes;
+		},
+		'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
+		'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
     ],
     [
 		'label' => 'Reference',
@@ -132,7 +141,7 @@ $columns = [
 		},
 		'contentOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
 		'headerOptions' => ['class' => 'text-left', 'style' => 'width:20%'],
-    ],
+	],
     [
 		'label' => 'Amount',
 		'attribute' => 'amount',
