@@ -4,6 +4,7 @@ use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use common\models\Course;
 use yii\widgets\Pjax;
+use yii\helpers\Url;
 
 ?>
 <?php Pjax::begin([
@@ -40,6 +41,26 @@ LteBox::begin([
     <?= Yii::$app->formatter->asCurrency(round($lessonPaid, 2)); ?></dd>
     <dt class="m-r-10">Balance</dt>
     <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency(round($model->getOwingAmount($model->enrolment->id), 2)); ?></dd>
+    <?php if ($model->hasInvoice()) : ?>
+    <dt class="m-r-10">Invoice</dt>
+    <dd class = "total-horizontal-dd text-right">
+            <a id="invoice_link_lesson_panel" href="#" data-url = "<?= $model->invoice->id ?>" ><?= $model->invoice->getInvoiceNumber(); ?></a>
+    </dd>
+    <dt class="m-r-10">Owing</dt>
+    <dd class = "total-horizontal-dd text-right">
+         <?= Yii::$app->formatter->asCurrency(round($model->invoice->balance,2)); ?>
+    </dd>
+    <?php endif; ?>
 </dl>
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>
+<script>
+  $(document).on('click', '#invoice_link_lesson_panel', function () {
+        var invoiceId =$(this).attr('data-url');
+        var params = $.param({
+            'id': invoiceId
+        });
+        var url = '<?php echo Url::to(['invoice/view']); ?>?'+params;
+        window.open(url, '_blank');
+    });
+</script>
