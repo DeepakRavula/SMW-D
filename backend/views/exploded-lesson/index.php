@@ -56,6 +56,13 @@ $this->title = 'Exploded Lessons';
             }
         ],
         [
+            'label' => "Exploded Lesson's Invoice Line Item Payment Frequecy Discount",
+            'value' => function ($data) {
+                return $data->hasInvoice() ? ($data->invoiceLineItem->enrolmentPaymentFrequencyDiscount ? 
+                    $data->invoiceLineItem->enrolmentPaymentFrequencyDiscount->value : null) : null;
+            }
+        ],
+        [
             'label' => "Original Lesson's Multiple Enrolment Discount",
             'value' => function ($data) {
                 $discount = null;
@@ -75,11 +82,18 @@ $this->title = 'Exploded Lessons';
             }
         ],
         [
+            'label' => "Exploded Lesson's Invoice Line Item Multiple Enrolment Discount",
+            'value' => function ($data) {
+                return $data->hasInvoice() ? ($data->invoiceLineItem->multiEnrolmentDiscount ? 
+                    $data->invoiceLineItem->multiEnrolmentDiscount->value : null) : null;
+            }
+        ],
+        [
             'label' => "Original Lesson's customer Discount",
             'value' => function ($data) {
                 $discount = null;
                 if ($data->rootLesson->customerDiscount) {
-                    $discount = $data->rootLesson->multicustomerDiscountEnrolmentDiscount->value;
+                    $discount = $data->rootLesson->customerDiscount->value;
                 } else if ($data->rootLesson->proFormaLineItemDeleted) {
                     $discount = $data->rootLesson->proFormaLineItemDeleted->customerDiscount ? 
                         $data->rootLesson->proFormaLineItemDeleted->customerDiscount->value : null;
@@ -91,6 +105,13 @@ $this->title = 'Exploded Lessons';
             'label' => "Exploded Lesson's Customer Discount",
             'value' => function ($data) {
                 return $data->customerDiscount ? $data->customerDiscount->value : null;
+            }
+        ],
+        [
+            'label' => "Exploded Lesson's Invoice Line Item Customer Discount",
+            'value' => function ($data) {
+                return $data->hasInvoice() ? ($data->invoiceLineItem->customerDiscount ? 
+                    $data->invoiceLineItem->customerDiscount->value : null) : null;
             }
         ],
         [
@@ -110,6 +131,13 @@ $this->title = 'Exploded Lessons';
             'label' => "Exploded Lesson's Line Iitem Discount",
             'value' => function ($data) {
                 return $data->lineItemDiscount ? $data->lineItemDiscount->value : null;
+            }
+        ],
+        [
+            'label' => "Exploded Lesson's Invoice Line Item Line Iitem Discount",
+            'value' => function ($data) {
+                return $data->hasInvoice() ? ($data->invoiceLineItem->lineItemDiscount ? 
+                    $data->invoiceLineItem->lineItemDiscount->value : null) : null;
             }
         ]
     ];

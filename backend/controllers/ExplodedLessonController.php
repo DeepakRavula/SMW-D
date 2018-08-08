@@ -65,9 +65,20 @@ class ExplodedLessonController extends BaseController
             ->isConfirmed()
             ->location($locationId)
             ->split()
-            ->notCanceled();
+            ->notCanceled()
+            ->all();
+        $lessonIds = [];
+        foreach ($explodedLessons as $explodedLesson) {
+            if ($explodedLesson->discounts || $explodedLesson->rootLesson->discounts || ($explodedLesson->invoiceLineItem && $explodedLesson->invoiceLineItem->discounts)) {
+                foreach ($explodedLesson->discounts as $explodedLessonDiscount) {
+                    $lessonIds[] = $explodedLesson->id;
+                }
+            }
+        }
+        $lessons = Lesson::find()
+            ->where(['id' => $lessonIds]);
         $dataProvider = new ActiveDataProvider([
-            'query' => $explodedLessons,
+            'query' => $lessons,
             'pagination' => false
         ]);
               
