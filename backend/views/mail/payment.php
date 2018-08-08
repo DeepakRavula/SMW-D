@@ -3,20 +3,19 @@
 use yii\helpers\ArrayHelper;
 use common\models\UserEmail;
 
-    $content = $this->renderAjax('/receive-payment/_mail-content', [
-    'lessonLineItemsDataProvider' => $lessonLineItemsDataProvider,
-    'invoiceLineItemsDataProvider' => $invoiceLineItemsDataProvider,
-    'paymentsLineItemsDataProvider'  =>  $paymentsLineItemsDataProvider,
+    $content = $this->renderAjax('/payment/mail_content', [
+    'model' => $paymentModel,
+    'lessonDataProvider' => $lessonDataProvider,
+    'invoiceDataProvider' => $invoiceDataProvider,
     'emailTemplate' => $emailTemplate,
     'searchModel' => $searchModel,
-    'customer' => $customer,
     ]);
     $model->to = $emails;
     $data = null;
-    if (!empty($customer)) {
+    if (!empty($userModel)) {
         $data = ArrayHelper::map(UserEmail::find()
             ->joinWith('userContact')
-            ->andWhere(['user_contact.userId' => $customer->id])
+            ->andWhere(['user_contact.userId' => $userModel->id])
             ->orderBy('user_email.email')
             ->all(), 'email', 'email');
     }
@@ -25,6 +24,7 @@ use common\models\UserEmail;
 <?= $this->render('/mail/_form', [
     'content' => $content,
     'model' => $model,
+    'paymentRequestId' => $paymentModel->id,
     'data' => $data,
     'subject' => $subject,
     'emailTemplate' => $emailTemplate

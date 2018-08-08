@@ -26,6 +26,7 @@ use common\components\controllers\BaseController;
 use backend\models\PaymentForm;
 use common\models\User;
 use yii\data\ArrayDataProvider;
+use backend\models\search\PaymentSearch;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -36,7 +37,7 @@ class EmailController extends BaseController
         return [
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt'],
+                'only' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -47,7 +48,7 @@ class EmailController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt'],
+                        'actions' => ['send', 'lesson', 'invoice', 'enrolment', 'proforma-invoice', 'receipt', 'payment'],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
                 ],
@@ -246,8 +247,6 @@ class EmailController extends BaseController
         $model  = new PaymentForm();
         $request = Yii::$app->request;
         if ($model->load($request->get())) {
-            //print_r($model);die('coming');
-        
         $customer =  User::findOne(['id' => $model->userId]);
         $searchModel  =  new ProformaInvoiceSearch();
         $searchModel->showCheckBox = false;
@@ -336,4 +335,52 @@ $results[] = [
     }
 }
     }
+
+    public function actionPayment($id) 
+    {
+        $model = Payment::findOne($id);
+        $searchModel = new PaymentSearch();
+        $lessonPayment = Lesson::find()
+		    ->joinWith(['lessonPayments' => function ($query) use ($id) {
+                $query->andWhere(['paymentId' => $id])
+			->notDeleted();
+            }]);
+	    $lessonDataProvider = new ActiveDataProvider([
+            'query' => $lessonPayment,
+            'pagination' => false
+        ]);
+	    
+        $invoicePayment = Invoice::find()
+            ->notDeleted()
+            ->joinWith(['invoicePayments' => function ($query) use ($id) {
+                $query->andWhere(['payment_id' => $id])
+			->notDeleted();
+            }]);
+	    
+	    $invoiceDataProvider = new ActiveDataProvider([
+            'query' => $invoicePayment,
+            'pagination' => false
+        ]);
+
+        $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_PAYMENT]);
+       
+        $data = $this->renderAjax('/mail/payment', [
+            'model' => new EmailForm(),
+            'emails' => !empty($model->user->email) ?$model->user->email : null,
+            'subject' => $emailTemplate->subject ?? 'Payment from Arcadia Academy of Music',
+            'emailTemplate' => $emailTemplate,
+            'lessonDataProvider' => $lessonDataProvider,
+	        'invoiceDataProvider' => $invoiceDataProvider,
+            'paymentModel' => $model,
+	        'searchModel' => $searchModel,
+            'userModel' => $model->user,
+        ]);
+        $post = Yii::$app->request->post();
+        if (!$post) {
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        }
+    }    
 }

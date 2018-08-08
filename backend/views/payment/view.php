@@ -77,6 +77,25 @@ use yii\bootstrap\ActiveForm;
         window.open(url, '_blank');
     });
 
+   $(document).on('click', '#payment-mail-button', function (e) {
+            $.ajax({
+                url    : '<?= Url::to(['email/payment', 'id' => $model->id]); ?>',
+                type   : 'get',
+                dataType: 'json',
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal .modal-dialog').css({'width': '1000px'});
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
+                        $('.modal-save').text('Send');
+                    }
+                }
+            });
+            return false;
+  	});
+
     $(document).on('modal-error', function (event, params) {
         if (params.message) {
             $('#modal-popup-error-notification').html(params.message).fadeIn().delay(5000).fadeOut();
