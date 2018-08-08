@@ -5,6 +5,7 @@ namespace console\controllers;
 use yii\console\Controller;
 use Yii;
 use yii\db\Migration;
+use common\models\User;
 
 class LocationController extends Controller
 {
@@ -23,5 +24,16 @@ class LocationController extends Controller
         
         $migration = new Migration();
         return $migration->execute(file_get_contents($file), [':locationToWipe' => $this->locationId]);
+    }
+
+    public function actionWipeCustomers()
+    {
+        $customers = User::find()
+            ->location(8)
+            ->all();
+        foreach ($customers as $customer) {
+            $customer->delete();
+        }
+        return true;
     }
 }
