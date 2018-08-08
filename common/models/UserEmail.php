@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\query\UserEmailQuery;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "user_email".
@@ -47,7 +48,7 @@ class UserEmail extends \yii\db\ActiveRecord
             ['email', 'required', 'on' => self::SCENARIO_USER_CREATE],
             [['email'], 'string', 'max' => 255],
             [['email'], 'email'],
-            [['labelId'], 'safe'],
+            [['labelId', 'isDeleted'], 'safe'],
             [['email'], 'trim'],
             ['email', 'validateUnique'],
         ];
@@ -67,6 +68,19 @@ class UserEmail extends \yii\db\ActiveRecord
         ];
     }
     
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+        ];
+    }
+
     public static function find()
     {
         return new UserEmailQuery(get_called_class());
@@ -127,5 +141,13 @@ class UserEmail extends \yii\db\ActiveRecord
         $this->email = $model->email;
         $this->labelId = $model->labelId;
         return $this;
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+        $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
     }
 }

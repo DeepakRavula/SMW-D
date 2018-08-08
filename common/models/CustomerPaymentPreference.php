@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "customer_payment_preference".
@@ -31,7 +32,7 @@ class CustomerPaymentPreference extends \yii\db\ActiveRecord
             [['userId', 'dayOfMonth', 'paymentMethodId'], 'required'],
             [['userId', 'dayOfMonth', 'paymentMethodId'], 'integer'],
             ['dayOfMonth', 'integer', 'min' => 1, 'max' => 31],
-            [['expiryDate'], 'safe']
+            [['expiryDate', 'isDeleted'], 'safe']
         ];
     }
 
@@ -48,6 +49,19 @@ class CustomerPaymentPreference extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+        ];
+    }
+    
     /**
      * @inheritdoc
      * @return \common\models\query\CustomerAutoPaymentQuery the active query used by this AR class.
@@ -69,6 +83,7 @@ class CustomerPaymentPreference extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
+        $this->isDeleted = false;
         if (!empty($this->expiryDate)) {
             $this->expiryDate = (new \DateTime($this->expiryDate))->format('Y-m-d');
         }

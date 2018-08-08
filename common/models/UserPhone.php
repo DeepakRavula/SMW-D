@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "user_phone".
@@ -42,7 +43,20 @@ class UserPhone extends \yii\db\ActiveRecord
             [['number'], 'required'],
             [['userContactId', 'extension'], 'integer'],
             [['number'], 'string', 'max' => 15],
-            [['labelId'], 'safe']
+            [['labelId', 'isDeleted'], 'safe']
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
         ];
     }
 
@@ -87,5 +101,13 @@ class UserPhone extends \yii\db\ActiveRecord
             $this->userContact->delete();
         }
         return parent::beforeDelete();
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+        $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
     }
 }
