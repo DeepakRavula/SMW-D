@@ -72,12 +72,13 @@ class UserImport extends Model
 
     public function import()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $rows = $this->parseCSV();
         $errors = [];
         $successCount = 0;
         $studentCount = 0;
         $customerCount = 0;
-        //set_time_limit(1000);
         foreach ($rows as $i => $row) {
             if (empty($row['Billing Home Tel'])) {
                 continue;
@@ -271,10 +272,10 @@ class UserImport extends Model
         $studentCsv = new StudentCsv();
         $studentCsv->studentId = $student->id;
 	    $studentCsv->openingBalance = self::DEFAULT_OPENING_BALANCE;
-	if (!empty($row['Balance To Date'])) {
+        if (!empty($row['Balance To Date'])) {
             $studentCsv->openingBalance = $row['Balance To Date'];
-	}
-	$studentCsv->firstName = $row['First Name'];
+        }
+	    $studentCsv->firstName = $row['First Name'];
         $studentCsv->lastName = $row['Last Name'];
         $studentCsv->email = $row['Email Address'];
         $studentCsv->address = $row['Address'];
