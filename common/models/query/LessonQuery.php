@@ -324,6 +324,11 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['lesson.isConfirmed' => true]);
     }
 
+    public function course($courseId)
+    {
+        return $this->andWhere(['lesson.courseId' => $courseId]);
+    }
+
     public function enrolled()
     {
         $this->joinWith(['course' => function ($query) {

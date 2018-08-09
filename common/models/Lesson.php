@@ -1153,6 +1153,11 @@ class Lesson extends \yii\db\ActiveRecord
         return !empty($this->getCreditAppliedPayment($enrolmentId));
     }
 
+    public function hasPayment()
+    {
+        return $this->lessonPayment;
+    }
+
     public function hasPaymentCycleLesson()
     {
         return !empty($this->paymentCycleLesson);

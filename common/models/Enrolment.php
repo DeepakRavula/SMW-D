@@ -342,13 +342,10 @@ class Enrolment extends \yii\db\ActiveRecord
                 ->count('id');
     }
 
-    public function getFirstUnPaidProFormaPaymentCycle()
+    public function getFirstUnPaidPaymentCycle()
     {
         foreach ($this->paymentCycles as $paymentCycle) {
-            if (!$paymentCycle->hasProFormaInvoice()) {
-                return $paymentCycle;
-            } elseif (!$paymentCycle->proFormaInvoice->isPaid() &&
-                !$paymentCycle->proFormaInvoice->hasPayments()) {
+            if (!$paymentCycle->hasPaidLesson()) {
                 return $paymentCycle;
             }
         }
@@ -368,14 +365,11 @@ class Enrolment extends \yii\db\ActiveRecord
         return $models;
     }
     
-    public function getUnPaidProFormaPaymentCycles()
+    public function getUnPaidPaymentCycles()
     {
         $models = [];
         foreach ($this->paymentCycles as $paymentCycle) {
-            if (!$paymentCycle->hasProFormaInvoice()) {
-                $models[] = $paymentCycle;
-            } elseif (!$paymentCycle->proFormaInvoice->isPaid() &&
-                !$paymentCycle->proFormaInvoice->hasPayments()) {
+            if (!$paymentCycle->hasPaidLesson()) {
                 $models[] = $paymentCycle;
             }
         }
@@ -458,21 +452,18 @@ class Enrolment extends \yii\db\ActiveRecord
         if (!$isConfirmed) {
             $isConfirmed = false;
         }
-        $day    =   $startDate;
+        $day = $startDate;
         $dayList = Course::getWeekdaysList();
         $weekday = $dayList[$startDate->format('N')];
-       for ($x = 1; $x <= $lessonsCount; $x++) {
-           $lastLessonDate  =    $day->format('Y-m-d H:i:s');
+        for ($x = 1; $x <= $lessonsCount; $x++) {
+           $lastLessonDate = $day->format('Y-m-d H:i:s');
            $this->course->createLesson($day, $isConfirmed);  
-           $day    =   $day->add(new DateInterval('P7D'));
+           $day = $day->add(new DateInterval('P7D'));
             if ($this->course->isProfessionalDevelopmentDay($day)) {
-                $day    =   $day->add(new DateInterval('P7D'));
+                $day = $day->add(new DateInterval('P7D'));
             }
-
-           
-
         }
-        $this->course->endDate  =  $lastLessonDate;
+        $this->course->endDate = $lastLessonDate;
         $this->course->save();
         return true;
     }
@@ -546,9 +537,9 @@ class Enrolment extends \yii\db\ActiveRecord
     }
     
 
-    public function deleteUnPaidProformaPaymentCycles()
+    public function deleteUnPaidPaymentCycles()
     {
-        foreach ($this->unPaidProFormaPaymentCycles as $model) {
+        foreach ($this->unPaidPaymentCycles as $model) {
             $model->delete();
         }
     }
@@ -564,21 +555,11 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function resetPaymentCycle()
     {
-        if (!empty($this->firstUnPaidProFormaPaymentCycle)) {
-            $startDate = \DateTime::createFromFormat(
-        
-                'Y-m-d',
-                $this->firstUnPaidProFormaPaymentCycle->startDate
-        
-            );
-            $enrolmentLastPaymentCycleEndDate = \DateTime::createFromFormat(
-        
-                'Y-m-d H:i:s',
-                    $this->course->endDate
-        
-            );
+        if ($this->firstUnPaidPaymentCycle) {
+            $startDate = new \DateTime($this->firstUnPaidPaymentCycle->startDate);
+            $enrolmentLastPaymentCycleEndDate = new \DateTime($this->course->endDate);
             $intervalMonths = $this->diffInMonths($startDate, $enrolmentLastPaymentCycleEndDate);
-            $this->deleteUnPaidProformaPaymentCycles();
+            $this->deleteUnPaidPaymentCycles();
             $paymentCycleCount = (int) ($intervalMonths / $this->paymentsFrequency->frequencyLength);
             for ($i = 0; $i <= $paymentCycleCount; $i++) {
                 if ($i !== 0) {

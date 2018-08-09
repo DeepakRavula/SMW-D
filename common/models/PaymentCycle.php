@@ -149,6 +149,27 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return !empty($this->proFormaInvoice);
     }
 
+    public function hasPaidLesson()
+    {
+        $status = false;
+        $fromDate = new \DateTime($this->startDate);
+        $toDate = new \DateTime($this->endDate);
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->course($this->enrolment->courseId)
+            ->between($fromDate, $toDate)
+            ->all();
+        foreach ($lessons as $lesson) {
+            if ($lesson->hasPayment()) {
+                $status = true;
+                break;
+            }
+        }
+        return $status;
+    }
+
     public function beforeSave($insert)
     {
         if ($insert) {
@@ -162,92 +183,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         if (!$insert) {
             return parent::afterSave($insert, $changedAttributes);
         }
-        $this->createPaymentcycleLesson();
         return parent::afterSave($insert, $changedAttributes);
-    }
-
-    public function createPaymentCycleLesson()
-    {
-        $locationId = $this->enrolment->course->locationId;
-        $startDate  = new \DateTime($this->startDate);
-        $endDate    = new \DateTime($this->endDate);
-        $lessons = Lesson::find()
-                    ->isConfirmed()
-                    ->regular()
-                    ->paymentCycleLessonExcluded()
-                    ->notDeleted()
-                    ->location($locationId)
-                    ->andWhere(['courseId' => $this->enrolment->course->id])
-                    ->notRescheduled()
-                    ->between($startDate, $endDate)
-                    ->all();
-        foreach ($lessons as $lesson) {
-            $paymentCycleLesson                 = new PaymentCycleLesson();
-            $paymentCycleLesson->paymentCycleId = $this->id;
-            $paymentCycleLesson->lessonId       = $lesson->id;
-            $paymentCycleLesson->save();
-            if ($lesson->lastChild) {
-                $paymentCycleLesson->id = null;
-                $paymentCycleLesson->isNewRecord = true;
-                $paymentCycleLesson->lessonId = $lesson->lastChild->id;
-                $paymentCycleLesson->save();
-            }
-            if ($this->proFormaInvoice) {
-                $lesson->addPrivateLessonLineItem($this->proFormaInvoice);
-                $this->proFormaInvoice->save();
-            }
-        }
-        return true;
-    }
-
-    public function createProFormaInvoice()
-    {
-        if ($this->hasProFormaInvoice()) {
-            return $this->proFormaInvoice;
-        }
-        $locationId = $this->enrolment->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => $this->enrolment->student->customer->id]);
-        $invoice = new Invoice();
-        $invoice->user_id = $user->id;
-        $invoice->location_id = $locationId;
-        $invoice->dueDate = (new \DateTime($this->firstLesson->date))->format('Y-m-d');
-        $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
-        $invoice->createdUserId = Yii::$app->user->id;
-        $invoice->updatedUserId = Yii::$app->user->id;
-        $invoice->save();
-        if (is_a(Yii::$app, 'yii\console\Application')) {
-            $roleUser = User::findByRole(User::ROLE_BOT);
-            $botUser = end($roleUser);
-            $loggedUser = User::findOne(['id' => $botUser->id]);
-        } else {
-            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-        }
-        $invoice->on(Invoice::EVENT_AFTER_INSERT, [new InvoiceLog(), 'addProformaInvoice'], ['loggedUser' => $loggedUser]);
-        $invoice->trigger(Invoice::EVENT_AFTER_INSERT);
-        $lessons = Lesson::find()
-            ->isConfirmed()
-            ->notDeleted()
-            ->roots()
-            ->joinWith('paymentCycleLesson')
-            ->andWhere(['payment_cycle_lesson.paymentCycleId' => $this->id])
-            ->all();
-        foreach ($lessons as $lesson) {
-            $lesson->studentFullName = $this->enrolment->student->fullName;
-            if ($lesson->leafs) {
-                foreach ($lesson->leafs as $leaf) {
-                    if (!$leaf->isDeleted) {
-                        $leaf->studentFullName = $this->enrolment->student->fullName;
-                        $leaf->addPrivateLessonLineItem($invoice);
-                    }
-                }
-            } else {
-                if (!$lesson->isDeleted) {
-                    $lesson->addPrivateLessonLineItem($invoice);
-                }
-            }
-        }
-        $invoice->save();
-        return $invoice;
     }
 
     public function isPastPaymentCycle()

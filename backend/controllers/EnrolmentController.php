@@ -211,14 +211,14 @@ class EnrolmentController extends BaseController
             'multipleEnrolmentDiscount' => $multipleEnrolmentDiscount,
             'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
         ]);
-        $oldPaymentFrequency = $model->paymentFrequencyId;
+        $oldPaymentFrequency = clone $model;
         $oldPaymentFrequencyDiscount  = $model->getPaymentFrequencyDiscountValue();
         $post = Yii::$app->request->post();
         if ($post) {
             $paymentFrequencyDiscount->load($post);
             $multipleEnrolmentDiscount->load($post);
             $multipleEnrolmentDiscount->save();
-            $loggedUser                   = User::findOne(['id' => Yii::$app->user->id]);
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
             $paymentFrequencyDiscount->save();
             if ((int) $oldMultipleEnrolmentDiscount != (int) $multipleEnrolmentDiscount->discount) {
                 $model->on(
@@ -235,12 +235,11 @@ class EnrolmentController extends BaseController
                );
             }
             if ($model->load($post) && $model->save()) {
-                if ((int) $oldPaymentFrequency !== (int) $model->paymentFrequencyId) {
+                if ((int) $oldPaymentFrequency->paymentFrequencyId !== (int) $model->paymentFrequencyId) {
                     $model->resetPaymentCycle();
                 }
             }
            
-            
             $message = '';
             return [
                 'status' => true,
