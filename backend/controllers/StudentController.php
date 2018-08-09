@@ -19,6 +19,7 @@ use backend\models\EnrolmentForm;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
 use yii\filters\AccessControl;
+use common\models\Enrolment;
 
 /**
  * StudentController implements the CRUD actions for Student model.
@@ -94,10 +95,10 @@ class StudentController extends BaseController
         $model->on(Student::EVENT_AFTER_INSERT, [new StudentLog(), 'create'], ['loggedUser' => $loggedUser]);
         $request = Yii::$app->request;
         $user = $request->post('User');
-	$userModel=User::findOne(['id' => $userId]);
-	 $data = $this->renderAjax('/user/customer/_form-student', [
+        $userModel = User::findOne(['id' => $userId]);
+        $data = $this->renderAjax('/user/customer/_form-student', [
             'model' => $model,
-	    'customer'=>$userModel, 
+	        'customer' => $userModel, 
         ]);
         if ($model->load($request->post())) {
             $model->customer_id = $user['id'];
@@ -113,14 +114,12 @@ class StudentController extends BaseController
                     'errors' => ActiveForm::validate($model),
                 ];
             }
+        } else {
+            $response =  [
+                'status' => true,
+                'data' =>	$data,
+            ];	
         }
-	else
-	{
-	$response =  [
-                    'status' => true,
-                    'data' =>	$data,
-                ];	
-	}
         return $response;
     }
 
@@ -138,32 +137,33 @@ class StudentController extends BaseController
         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
         $oldAttributes = $model->getOldAttributes();
         $model->on(Student::EVENT_AFTER_UPDATE, [new StudentLog(), 'edit'], ['loggedUser' => $loggedUser, 'oldAttributes' => $oldAttributes]);
-        $userModel=$model->customer;
-         $data = $this->renderAjax('_form', [
+        $userModel = $model->customer;
+        $data = $this->renderAjax('_form', [
             'model' => $model,
-	    'customer'=>$userModel,
+	        'customer' => $userModel,
         ]);
-        if ($model->load(Yii::$app->request->post())){
-            if($model->save()) {
-            if ((int)$model->status === Student::STATUS_INACTIVE) {
-                return $this->redirect(['/student/index', 'StudentSearch[showAllStudents]' => false]);
-            }
-            return['status'=>true,];
-            }
-            else {
-            return  [
-                'status' => false,
-                'errors' => ActiveForm::validate($model),
-            ];
-        }
-        }
-            else {
-                return  [
-                    'status' => true,
-                    'data' =>$data,
+        if (Yii::$app->request->post()){
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                if ((int)$model->status === Student::STATUS_INACTIVE) {
+                    return $this->redirect(['/student/index', 'StudentSearch[showAllStudents]' => false]);
+                }
+                $response = [
+                    'status' => true
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model)
                 ];
             }
-        } 
+        } else {
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
+    } 
     
     public function actionCreateEnrolment($id)
     {
@@ -193,7 +193,8 @@ class StudentController extends BaseController
                 }
             }
         }
-        return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'LessonSearch[showAllReviewLessons]' => false]);
+        return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'Enrolment[type]' => Enrolment::TYPE_REVERSE, 
+            'LessonSearch[showAllReviewLessons]' => false]);
     }
 
     /**

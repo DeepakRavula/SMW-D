@@ -74,8 +74,7 @@ class UserSearch extends User
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = User::find()
-            ->notDeleted()
-            ->notDraft();
+            ->notDeleted();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

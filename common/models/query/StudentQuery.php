@@ -40,6 +40,11 @@ class StudentQuery extends ActiveQuery
         return $this->andWhere(['student.isDeleted' => false]);
     }
 
+    public function draft()
+    {
+        return $this->andWhere(['student.status' => Student::STATUS_DRAFT]);
+    }
+
     public function location($locationId)
     {
         $this->joinWith(['customer' => function ($query) use ($locationId) {

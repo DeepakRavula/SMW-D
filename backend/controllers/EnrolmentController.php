@@ -71,7 +71,7 @@ class EnrolmentController extends BaseController
                         'allow' => true,
                         'actions' => ['index', 'view', 'group', 'edit', 'edit-program-rate', 
                             'create', 'add', 'confirm', 'update', 'delete', 'edit-end-date',
-                            'reschedule'
+                            'reschedule', 'cancel'
                         ],
                         'roles' => ['manageEnrolments'],
                     ],
@@ -573,6 +573,14 @@ class EnrolmentController extends BaseController
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionCancel($id)
+    {
+        $model = $this->findModel($id);
+        $model->student->delete();
+        $model->student->customer->delete();
+        return $this->redirect(['index']);
     }
 
     public function actionEditEndDate($id)

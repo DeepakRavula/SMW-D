@@ -17,15 +17,17 @@ class UserQuery extends ActiveQuery
      */
     public function notDeleted()
     {
-        $this->andWhere(['user.isDeleted' => false]);
-
-        return $this;
+        return $this->andWhere(['user.isDeleted' => false]);
     }
+
     public function notDraft()
     {
-        $this->andWhere(['NOT IN', 'user.status', User::STATUS_DRAFT]);
+        return $this->andWhere(['NOT IN', 'user.status', User::STATUS_DRAFT]);
+    }
 
-        return $this;
+    public function draft()
+    {
+        return $this->andWhere(['user.status' => User::STATUS_DRAFT]);
     }
 
     /**
@@ -33,9 +35,7 @@ class UserQuery extends ActiveQuery
      */
     public function active()
     {
-        $this->andWhere(['user.status' => User::STATUS_ACTIVE]);
-
-        return $this;
+        return $this->andWhere(['user.status' => User::STATUS_ACTIVE]);
     }
 
     public function teachers($programId, $locationId)
