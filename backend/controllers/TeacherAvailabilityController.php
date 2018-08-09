@@ -389,7 +389,7 @@ class TeacherAvailabilityController extends BaseController
         foreach ($lessons as $lesson) {
             $lesson = Lesson::findOne($lesson->id);
             $toTime = new \DateTime($lesson->date);
-            $length = explode(':', $lesson->fullDuration);
+            $length = explode(':', $lesson->duration);
             $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
             if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
                 $title = $lesson->course->program->name.' ( '.$lesson->course->getEnrolmentsCount().' ) ';

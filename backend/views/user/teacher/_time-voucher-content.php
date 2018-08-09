@@ -99,7 +99,7 @@ $columns = [
 					->all();
 				$totalDuration = 0;
 				foreach($lessons as $lesson) {
-					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->fullDuration);
+					$duration		 = \DateTime::createFromFormat('H:i:s', $lesson->duration);
 					$hours			 = $duration->format('H');
 					$minutes		 = $duration->format('i');
 					$lessonDuration	 = $hours + ($minutes / 60);
