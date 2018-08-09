@@ -14,7 +14,6 @@ class m180808_060947_add_soft_delete extends Migration
     {
         $this->addColumn('blog', 'isDeleted', $this->boolean()->notNull());
         $this->addColumn('city', 'isDeleted', $this->boolean()->notNull());
-        $this->addColumn('classroom_unavailability', 'isDeleted', $this->boolean()->notNull());
         $this->addColumn('customer_payment_preference', 'isDeleted', $this->boolean()->notNull());
         $this->addColumn('exam_result', 'isDeleted', $this->boolean()->notNull());
         $this->addColumn('holiday', 'isDeleted', $this->boolean()->notNull());        
