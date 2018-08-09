@@ -105,7 +105,7 @@ class ViewAction extends Action
     protected function getExamResults($id)
     {
         $examResults = ExamResult::find()
-                ->notDeleted()
+                ->andWhere(['exam_result.isDeleted' => false])
                 ->andWhere(['studentId' => $id]);
 
         return new ActiveDataProvider([
