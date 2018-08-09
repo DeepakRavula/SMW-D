@@ -59,7 +59,7 @@ class ProgramController extends BaseController
      *
      * @return mixed
      */
-        public function actionIndex()
+    public function actionIndex()
     {
         $request = Yii::$app->request;
         $searchModel         = new ProgramSearch();

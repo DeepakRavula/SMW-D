@@ -116,7 +116,7 @@ class UserAddress extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         if ($insert) {
-        $this->isDeleted = false;
+            $this->isDeleted = false;
         }
         return parent::beforeSave($insert);
     }
