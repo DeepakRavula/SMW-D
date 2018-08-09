@@ -2,6 +2,8 @@
 
 namespace common\models;
 use Yii;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
+
 /**
  * This is the model class for table "holiday".
  *
@@ -24,7 +26,7 @@ class Holiday extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['date', 'description'], 'safe'],
+            [['date', 'description', 'isDeleted'], 'safe'],
             [['description'], 'trim'],
         ];
     }
@@ -40,6 +42,19 @@ class Holiday extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+        ];
+    }
+    
     /**
      * {@inheritdoc}
      *
@@ -52,7 +67,8 @@ class Holiday extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        $holidayDate = Yii::$app->formatter->asDate($this->date);
+        $this->isDeleted =  false;
+         $holidayDate = Yii::$app->formatter->asDate($this->date);
         $this->date = (new \DateTime($holidayDate))->format('Y-m-d');
 
         return parent::beforeSave($insert);

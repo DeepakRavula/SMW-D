@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "blog".
@@ -31,7 +32,7 @@ class Blog extends \yii\db\ActiveRecord
             [['user_id'], 'integer'],
             [['title', 'content'], 'string'],
             [['title', 'content'], 'trim'],
-            [['date'], 'safe'],
+            [['date', 'isDeleted'], 'safe'],
         ];
     }
 
@@ -49,8 +50,29 @@ class Blog extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+        ];
+    }
+
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
     }
 }

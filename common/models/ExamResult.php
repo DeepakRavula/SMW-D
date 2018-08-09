@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "exam_result".
@@ -41,7 +42,7 @@ class ExamResult extends \yii\db\ActiveRecord
             [['level', 'type'], 'trim'],
             [['mark'], 'number'],
             [['level'], 'string', 'max' => 10],
-            [['date'], 'safe'],
+            [['date', 'isDeleted'], 'safe'],
             [['type'], 'string', 'max' => 30],
         ];
     }
@@ -63,6 +64,19 @@ class ExamResult extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+        ];
+    }
+
     public function getTeacher()
     {
         return $this->hasOne(User::className(), ['id' => 'teacherId']);
@@ -79,22 +93,17 @@ class ExamResult extends \yii\db\ActiveRecord
     }
     public function beforeSave($insert)
     {
-        $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
-        
+        $this->isDeleted = false;
+        $this->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');        
         return parent::beforeSave($insert);
     }
-
-        
-        
+     
     public function afterSave($insert, $changedAttributes)
     {
         if ($insert) {
             $this->trigger(self::EVENT_CREATE);
-        }
-                
-                
+        }             
         $this->trigger(self::EVENT_UPDATE);
-        
         return parent::afterSave($insert, $changedAttributes);
     }
 }

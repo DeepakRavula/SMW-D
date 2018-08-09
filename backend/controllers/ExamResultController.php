@@ -138,13 +138,12 @@ class ExamResultController extends BaseController
         $model = $this->findModel($id);
         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
         $model->on(ExamResult::EVENT_AFTER_DELETE, [new StudentLog(), 'deleteExamResult'], ['loggedUser' => $loggedUser]);
-        if ($model->delete()) {
+        $model->delete();
             $url = Url::to(['student/view', 'id' => $model->studentId, '#' => 'exam-result']);
             return [
                 'status' => true,
                 'url' => $url,
             ];
-        }
     }
 
     /**
