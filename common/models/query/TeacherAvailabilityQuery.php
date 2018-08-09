@@ -102,4 +102,8 @@ class TeacherAvailabilityQuery extends ActiveQuery
         }]);
         return $this;
     }
+
+    public function notDeleted() {
+        return $this->andWhere(['teacher_availability_day.isDeleted' => false]);
+    }
 }

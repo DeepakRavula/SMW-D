@@ -189,6 +189,7 @@ class LocationController extends BaseController
         $availabilities= LocationAvailability::find()
                 ->location($location->id)
                 ->type($type)
+                ->notDeleted()
                 ->all();
         $events = [];
         foreach ($availabilities as $availability) {

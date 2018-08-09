@@ -14,6 +14,7 @@ use common\models\Qualification;
 use backend\models\search\ProgramSearch;
 use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
+use yii\helpers\Url;
 /**
  * ProgramController implements the CRUD actions for Program model.
  */
@@ -194,7 +195,10 @@ class ProgramController extends BaseController
         $model = $this->findModel($id);
         if ($model->deletable()) {
             $model->delete();
-            return['status' => true];
+            return[
+                'status' => true,
+                'url' => Url::to(['program/index']),
+            ];
         } else {
             return [
                 'status' => false,

@@ -47,4 +47,8 @@ class ProgramQuery extends ActiveQuery
                 ->isConfirmed();
         }]);
     }
+
+    public function notDeleted() {
+        return $this->andWhere(['program.isDeleted' =>  false]);
+    }
 }

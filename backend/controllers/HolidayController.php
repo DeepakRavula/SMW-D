@@ -12,6 +12,7 @@ use yii\filters\ContentNegotiator;
 use yii\web\Response;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 
 /**
  * HolidayController implements the CRUD actions for Holiday model.
@@ -138,10 +139,11 @@ class HolidayController extends BaseController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        $model = $this->findModel($id);
+        $model->delete();
          return [
-                'status' => true
+                'status' => true,
+                'url' => Url::to(['holiday/index']),
             ];
     }
 

@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Yii;
 use common\models\User;
 use yii\db\Query;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 /**
  * This is the model class for table "location".
  *
@@ -33,6 +34,13 @@ class Location extends \yii\db\ActiveRecord
     public function behaviors()
     {
         return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
             [
                 'class' => SluggableBehavior::className(),
                 'attribute' => 'name',
@@ -55,7 +63,7 @@ class Location extends \yii\db\ActiveRecord
             [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code', 'royaltyValue', 'advertisementValue', 'email'], 'required'],
             [['email'], 'unique'],
             [['email'], 'email'],
-            [['slug', 'conversionDate', 'email'], 'safe'],
+            [['slug', 'conversionDate', 'email', 'isDeleted'], 'safe'],
             [['royaltyValue', 'advertisementValue'], 'number'],
             [['city_id', 'province_id', 'country_id'], 'integer'],
             [['name'], 'string', 'max' => 32],
@@ -137,6 +145,7 @@ class Location extends \yii\db\ActiveRecord
         }
         if ($insert) {
             $this->country_id = 1;
+            $this->isDeleted = false;
         }
        
         return parent::beforeSave($insert);

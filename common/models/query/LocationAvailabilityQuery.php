@@ -45,4 +45,8 @@ class LocationAvailabilityQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['location_availability.type' => $type]);
     }
+
+    public function notDeleted() {
+        return $this->andWhere(['location_availability.isDeleted' => false]);
+    }
 }
