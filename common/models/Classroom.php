@@ -1,7 +1,6 @@
 <?php
 
 namespace common\models;
-use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use Yii;
 
 /**
@@ -30,7 +29,6 @@ class Classroom extends \yii\db\ActiveRecord
             [['name'], 'trim'],
             [['locationId'], 'integer'],
             [['name'], 'string', 'max' => 30],
-            [['isDeleted'], 'safe'],
         ];
     }
 
@@ -46,29 +44,8 @@ class Classroom extends \yii\db\ActiveRecord
         ];
     }
 
-    public function behaviors()
-    {
-        return [
-            'softDeleteBehavior' => [
-                'class' => SoftDeleteBehavior::className(),
-                'softDeleteAttributeValues' => [
-                    'isDeleted' => true,
-                ],
-                'replaceRegularDelete' => true
-            ],
-        ];
-    }
-
     public function getLessons()
     {
         return $this->hasMany(Lesson::className(), ['classroomId' => 'id']);
-    }
-
-    public function beforeSave($insert)
-    {
-        if ($insert) {
-            $this->isDeleted = false;
-        }
-        return parent::beforeSave($insert);
     }
 }
