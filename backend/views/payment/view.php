@@ -69,7 +69,7 @@ use yii\bootstrap\ActiveForm;
         $('.modal-save').hide();
         $('.modal-save-all').text('Print');
         $('.modal-button').text('Edit');
-        $('.modal-mail').text('Mail');
+        $('.modal-mail').text('EMail');
         $(".modal-delete").attr("action", url);
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
 	});

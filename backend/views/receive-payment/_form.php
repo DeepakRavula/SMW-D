@@ -64,10 +64,7 @@ use yii\bootstrap\Html;
             <?= $form->field($paymentModel, 'payment_method_id')->dropDownList(ArrayHelper::map($paymentMethods, 'id', 'name'))
                 ->label('Payment Method'); ?>
         </div>
-        <div class="col-xs-2">
-            <?= $form->field($model, 'notes')->textArea(['class' => 'form-control'])->label('Notes'); ?>
-        </div>
-	<div class="col-xs-2">
+	    <div class="col-xs-2">
             <?= $form->field($paymentModel, 'reference')->textInput(['class' => 'form-control'])->label('Reference'); ?>
         </div>
         <div class="col-xs-2">
@@ -116,6 +113,9 @@ use yii\bootstrap\Html;
     ]);
     ?>
 <?php endif;?>
+    <div class ="pull-left">
+        <?= $form->field($model, 'notes')->textArea(['class' => 'form-control','rows' => '3','cols' => '80'])->label('Notes'); ?>
+    </div>
     <div class ="pull-right">
     <dl class = "dl-horizontal">
     <?php if($creditDataProvider->totalCount > 0) : ?>
