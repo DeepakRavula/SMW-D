@@ -39,6 +39,7 @@ class EnrolmentForm extends Model
     public $autoRenew;
 
     public $firstname;
+    public $isReverse;
     public $lastname;
     public $email;
     public $labelId;
@@ -64,7 +65,7 @@ class EnrolmentForm extends Model
         return [
             [['programId', 'paymentFrequency', 'duration', 'startDate', 'programRate'],
                 'safe'],
-            [['fromTime', 'day', 'teacherId'], 'safe'],
+            [['fromTime', 'day', 'teacherId', 'isReverse'], 'safe'],
             [['programId', 'paymentFrequency', 'duration', 'programRate','lessonsCount'],
                 'required', 'on' => self::SCENARIO_BASIC],
             [['enrolmentDiscount', 'pfDiscount'], 'safe'],

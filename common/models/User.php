@@ -323,7 +323,9 @@ class User extends ActiveRecord implements IdentityInterface
             if (empty($this->canMerge)) {
                 $this->canMerge = false;
             }
-            $this->isDeleted = false;
+            if (empty($this->isDeleted)) {
+                $this->isDeleted = false;
+            }
         }
         return parent::beforeSave($insert);
     }
@@ -341,27 +343,18 @@ class User extends ActiveRecord implements IdentityInterface
     
     public function beforeDelete() 
     {
-        if ($this->userLocation) {
-            $this->userLocation->delete();
-        }
-        if ($this->userToken) {
-            $this->userToken->delete();
-        }
-        foreach ($this->emails as $email) {
-            $email->delete();
-        }
-        foreach ($this->addresses as $address) {
-            $address->delete();
-        }
-        foreach ($this->phoneNumbers as $phone) {
-            $phone->delete();
+        if ($this->students) {
+            foreach ($this->students as $student) {
+                $student->delete();
+            }
         }
         return parent::beforeDelete();
     }
 
     public function getCustomerPaymentPreference()
     {
-        return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'id']);
+        return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'id'])
+                ->andWhere(['customer_payment_preference.isDeleted' => false]);
     }
     
     public function getPhoneNumbers()
@@ -796,7 +789,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function getStudents()
     {
         return $this->hasMany(Student::className(), ['customer_id' => 'id'])
-            ->active()->notDeleted();
+            ->notDeleted();
     }
 
     public function getEnroledStudents()

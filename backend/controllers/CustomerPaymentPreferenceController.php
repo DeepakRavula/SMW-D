@@ -14,6 +14,7 @@ use backend\models\search\CustomerPaymentPreferenceSearch;
 use yii\filters\AccessControl;
 use yii\web\Response;
 use common\components\controllers\BaseController;
+use yii\helpers\Url;
 
 /**
  * CustomerDiscountController implements the CRUD actions for CustomerDiscount model.
@@ -142,10 +143,12 @@ class CustomerPaymentPreferenceController extends BaseController
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        
-        return [
-            'status' => $model->delete()
-        ];
+        $model->delete();
+            $response = [
+                'status' => true,
+                'url' => Url::to(['user/view', $model->id]),
+            ];
+        return $response;
     }
 
     /**
