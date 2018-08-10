@@ -343,20 +343,10 @@ class User extends ActiveRecord implements IdentityInterface
     
     public function beforeDelete() 
     {
-        if ($this->userLocation) {
-            $this->userLocation->delete();
-        }
-        if ($this->userToken) {
-            $this->userToken->delete();
-        }
-        foreach ($this->emails as $email) {
-            $email->delete();
-        }
-        foreach ($this->addresses as $address) {
-            $address->delete();
-        }
-        foreach ($this->phoneNumbers as $phone) {
-            $phone->delete();
+        if ($this->students) {
+            foreach ($this->students as $student) {
+                $student->delete();
+            }
         }
         return parent::beforeDelete();
     }
@@ -799,7 +789,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function getStudents()
     {
         return $this->hasMany(Student::className(), ['customer_id' => 'id'])
-            ->active()->notDeleted();
+            ->notDeleted();
     }
 
     public function getEnroledStudents()

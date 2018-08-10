@@ -128,6 +128,11 @@ class Student extends \yii\db\ActiveRecord
         return $this->hasMany(Enrolment::className(), ['studentId' => 'id']);
     }
 
+    public function getOneEnrolment()
+    {
+        return $this->hasOne(Enrolment::className(), ['studentId' => 'id']);
+    }
+
     public function getFirstPrivateCourse()
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId'])

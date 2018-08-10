@@ -645,7 +645,8 @@ class UserController extends BaseController
         $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
         $lastRole = end($roles);
         $adminModel = User::findOne(['id' => $id]);
-        $model = User::find()->location($locationId)
+        $model = User::find()
+                ->location($locationId)
                 ->andWhere(['user.id' => $id])
                 ->notDeleted()
                 ->one();
