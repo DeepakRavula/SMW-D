@@ -694,6 +694,11 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function resetDiscount($type, $value)
     {
+        if ((int) $type === (int) EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY) {
+            $type = LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
+        } else {
+            $type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
+        }
         if ($this->firstUnpaidPaymentCycle) {
             $fromDate = new \DateTime($this->firstUnpaidPaymentCycle->startDate);
             $toDate = new \DateTime($this->course->endDate);
@@ -718,7 +723,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 } else {
                     $lessonDiscount = new LessonDiscount();
                     $lessonDiscount->lessonId = $lesson->id;
-                    if ($lessonDiscount->isPfDiscount()) {
+                    if ((int) $type === (int) LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY) {
                         $lessonDiscount->type = LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
                         $lessonDiscount->value = $value;
                         $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_PERCENTAGE;
@@ -727,9 +732,7 @@ class Enrolment extends \yii\db\ActiveRecord
                         $lessonDiscount->value = $value / 4;
                         $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
                     }
-                    if (!$lessonDiscount->save()) {
-                        print_r($lessonDiscount);die;
-                    }
+                    $lessonDiscount->save();
                 }
             }
         }

@@ -171,6 +171,7 @@ $this->params['action-button'] = $this->render('_action-button', [
             $.pjax.reload({url: url, container: "#enrolment-pfi", replace: false, async: false, timeout: 4000});
             $.pjax.reload({url: url, container: "#enrolment-log", replace: false, async: false, timeout: 4000});
             $.pjax.reload({url: url, container: "#lesson-schedule", replace: false, async: false, timeout: 4000});
+            $.pjax.reload({url: url, container: "#enrolment-lesson-index", replace: false, async: false, timeout: 4000});
             $.pjax.reload({url: url, container: "#payment-cycle-listing", replace: false, async: false, timeout: 4000});
         }
     };

@@ -148,7 +148,8 @@ class ViewAction extends Action
         $model = Student::find()
             ->notDeleted()
             ->location($locationId)
-            ->andWhere(['student.id' => $id])->one();
+            ->andWhere(['student.id' => $id])
+            ->one();
         return $model;
     }
 }

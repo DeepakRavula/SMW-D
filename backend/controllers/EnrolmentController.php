@@ -229,7 +229,6 @@ class EnrolmentController extends BaseController
                 );
             }
             if ((int) $oldPaymentFrequencyDiscount != (int) $paymentFrequencyDiscount->discount) {
-                echo $paymentFrequencyDiscount->type;die;
                 $model->resetDiscount($paymentFrequencyDiscount->type, $paymentFrequencyDiscount->discount);
                 $model->on(
                    Enrolment::EVENT_AFTER_UPDATE,
