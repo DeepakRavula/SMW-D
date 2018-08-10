@@ -18,6 +18,7 @@ use common\models\Location;
 use common\models\LocationAvailability;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
@@ -142,13 +143,12 @@ class TeacherAvailabilityController extends BaseController
         $status=false;
         $availabilityModel = $this->findModel($id);
       
-        if ($availabilityModel->delete()) {
-            $status=true;
-        }
-
-        return [
-            'status' => $status
+        $availabilityModel->delete();
+        $response = [
+            'status' => true,
+            'url' => Url::to(['user/view', 'id' => $availabilityModel->teacher->id]),
         ];
+        return $response;
     }
     /**
      * Finds the TeacherAvailability model based on its primary key value.
@@ -310,6 +310,7 @@ class TeacherAvailabilityController extends BaseController
         $teacherAvailabilities = TeacherAvailability::find()
                 ->joinWith('userLocation')
                 ->andWhere(['user_id' => $id])
+                ->notDeleted()
                 ->all();
         foreach ($teacherAvailabilities as $teacherAvailability) {
             $title = null;

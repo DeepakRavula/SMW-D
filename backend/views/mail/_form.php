@@ -50,6 +50,8 @@ use dosamigos\ckeditor\CKEditor;
                         $('.modal-save').show();
                         $('.modal-save').text('Send');
                         $('.modal-back').hide();
+                        $('.modal-mail').hide();
+                        $('.modal-button').hide();
                         $('.modal-save-all').hide();
 	});
 	</script>

@@ -290,7 +290,8 @@ class LessonController extends BaseController
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Lesson::find()->location($locationId)
-            ->andWhere(['lesson.id' => $id, 'isDeleted' => false])->one();
+            ->notDeleted()
+            ->andWhere(['lesson.id' => $id])->one();
         if ($model !== null) {
             if ($model->leaf) {
                 if (!$model->leaf->isCanceled()) {
