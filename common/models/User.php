@@ -323,7 +323,9 @@ class User extends ActiveRecord implements IdentityInterface
             if (empty($this->canMerge)) {
                 $this->canMerge = false;
             }
-            $this->isDeleted = false;
+            if (empty($this->isDeleted)) {
+                $this->isDeleted = false;
+            }
         }
         return parent::beforeSave($insert);
     }

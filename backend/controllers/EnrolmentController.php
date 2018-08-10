@@ -239,18 +239,16 @@ class EnrolmentController extends BaseController
                     $model->resetPaymentCycle();
                 }
             }
-           
-            $message = '';
-            return [
-                'status' => true,
-                'message' => $message,
+            $response = [
+                'status' => true
             ];
         } else {
-            return [
+            $response = [
                 'status' => true,
-                'data' => $data,
+                'data' => $data
             ];
         }
+        return $response;
     }
     
     public function actionEditProgramRate($id)
@@ -334,8 +332,9 @@ class EnrolmentController extends BaseController
         $address->setModel($courseDetail);
         $userEmail->setModel($courseDetail);
         $student->setModel($courseDetail);
-        $user->status = User::STATUS_DRAFT;
-	    $user->canLogin = true;
+        $user->status = User::STATUS_NOT_ACTIVE;
+        $user->canLogin = true;
+        $user->isDeleted = true;
         if ($user->save()) {
             $auth = Yii::$app->authManager;
             $authManager = Yii::$app->authManager;
@@ -362,7 +361,8 @@ class EnrolmentController extends BaseController
             }
             //save student
             $student->customer_id = $user->id;
-            $student->status = Student::STATUS_DRAFT;
+            $student->status = Student::STATUS_INACTIVE;
+            $student->isDeleted = true;
             $student->save();
 
             //save course

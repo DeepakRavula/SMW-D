@@ -186,7 +186,9 @@ class Student extends \yii\db\ActiveRecord
             $this->birth_date = $birthDate->format('Y-m-d');
         }
         if ($insert) {
-            $this->isDeleted = false;
+            if (empty($this->isDeleted)) {
+                $this->isDeleted = false;
+            }
         }
 
         return parent::beforeSave($insert);
