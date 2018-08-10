@@ -8,6 +8,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
 use common\models\discount\EnrolmentDiscount;
 use DateInterval;
+use common\models\discount\LessonDiscount;
 /**
  * This is the model class for table "enrolment".
  *
@@ -688,6 +689,53 @@ class Enrolment extends \yii\db\ActiveRecord
         $period = new \DatePeriod($start, $interval, $end);
         $this->generateLessons($period, true);
         $this->resetPaymentCycle();
+        return true;
+    }
+
+    public function resetDiscount($type, $value)
+    {
+        if ((int) $type === (int) EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY) {
+            $type = LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
+        } else {
+            $type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
+        }
+        if ($this->firstUnpaidPaymentCycle) {
+            $fromDate = new \DateTime($this->firstUnpaidPaymentCycle->startDate);
+            $toDate = new \DateTime($this->course->endDate);
+            $lessons = Lesson::find()
+                ->notDeleted()
+                ->andWhere(['courseId' => $this->courseId])
+                ->between($fromDate, $toDate)
+                ->isConfirmed()
+                ->notCanceled()
+                ->all();
+            foreach ($lessons as $lesson) {
+                $lessonDiscount = LessonDiscount::find()
+                    ->andWhere(['type' => $type, 'lessonId' => $lesson->id])
+                    ->one();
+                if ($lessonDiscount) {
+                    if ($lessonDiscount->isPfDiscount()) {
+                        $lessonDiscount->value = $value;
+                    } else {
+                        $lessonDiscount->value = $value / 4;
+                    }
+                    $lessonDiscount->save();
+                } else {
+                    $lessonDiscount = new LessonDiscount();
+                    $lessonDiscount->lessonId = $lesson->id;
+                    if ((int) $type === (int) LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY) {
+                        $lessonDiscount->type = LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
+                        $lessonDiscount->value = $value;
+                        $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_PERCENTAGE;
+                    } else {
+                        $lessonDiscount->type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
+                        $lessonDiscount->value = $value / 4;
+                        $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
+                    }
+                    $lessonDiscount->save();
+                }
+            }
+        }
         return true;
     }
 

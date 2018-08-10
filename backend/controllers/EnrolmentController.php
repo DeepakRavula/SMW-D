@@ -221,6 +221,7 @@ class EnrolmentController extends BaseController
             $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
             $paymentFrequencyDiscount->save();
             if ((int) $oldMultipleEnrolmentDiscount != (int) $multipleEnrolmentDiscount->discount) {
+                $model->resetDiscount($multipleEnrolmentDiscount->type, $multipleEnrolmentDiscount->discount);
                 $model->on(
                     Enrolment::EVENT_AFTER_UPDATE,
                     [new DiscountLog(), 'enrolmentMultipleDiscountEdit'],
@@ -228,6 +229,7 @@ class EnrolmentController extends BaseController
                 );
             }
             if ((int) $oldPaymentFrequencyDiscount != (int) $paymentFrequencyDiscount->discount) {
+                $model->resetDiscount($paymentFrequencyDiscount->type, $paymentFrequencyDiscount->discount);
                 $model->on(
                    Enrolment::EVENT_AFTER_UPDATE,
                     [new DiscountLog(), 'enrolmentPaymentFrequencyDiscountEdit'],
