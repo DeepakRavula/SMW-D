@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 
 /**
  * CityController implements the CRUD actions for City model.
@@ -138,11 +139,12 @@ class CityController extends \common\components\controllers\BaseController
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        if ($model->delete()) {
-            return [
+        $model->delete();
+            $response = [
                 'status' => true,
+                'url' => Url::to(['city/index']),
             ];
-        }
+        return $response;
     }
 
     /**

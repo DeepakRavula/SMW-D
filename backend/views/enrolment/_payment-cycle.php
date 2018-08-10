@@ -16,7 +16,22 @@ use yii\widgets\Pjax;
         'options' => ['id' => 'enrolment-payment-cycle-grid'],
         'columns' => [
             'startDate:date',
-            'endDate:date'
+            'endDate:date',
+            [
+                'label' => 'Status',
+                'value' => function ($data) {
+                    if (!$data->hasPaidLesson()) {
+                        $status = 'Owing';
+                    }
+                    if ($data->hasPaidLesson()) {
+                        $status = 'Partialy Paid';
+                    }
+                    if (!$data->hasUnpaidLesson()) {
+                        $status = 'Paid';
+                    }
+                    return $status;
+                }
+            ]
         ]
     ]); ?>
 <?php Pjax::end(); ?>

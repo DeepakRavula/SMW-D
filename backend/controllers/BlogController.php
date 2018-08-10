@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
+use yii\helpers\Url;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
@@ -59,7 +60,9 @@ class BlogController extends \common\components\controllers\BaseController
      */
    public function actionIndex()
     {
-        $blog = Blog::find()->orderBy(['date' => SORT_DESC]);
+        $blog = Blog::find()
+            ->andWhere(['blog.isDeleted' => false])
+            ->orderBy(['date' => SORT_DESC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $blog,
         ]);
@@ -167,11 +170,12 @@ class BlogController extends \common\components\controllers\BaseController
    public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        if ($model->delete()) {
-            return [
+        $model->delete();
+            $response = [
                 'status' => true,
+                'url' => Url::to(['blog/index']),
             ];
-        }
+        return $response;
     }
 	public function actionList()
     {

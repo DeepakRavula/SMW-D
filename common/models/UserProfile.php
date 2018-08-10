@@ -142,7 +142,6 @@ class UserProfile extends ActiveRecord
             $birthDate = new \DateTime($this->birthDate);
             $this->birthDate = $birthDate->format('Y-m-d');
         }
-        
         return parent::beforeSave($insert);
     }
 

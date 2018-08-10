@@ -290,7 +290,8 @@ class LessonController extends BaseController
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Lesson::find()->location($locationId)
-            ->andWhere(['lesson.id' => $id, 'isDeleted' => false])->one();
+            ->notDeleted()
+            ->andWhere(['lesson.id' => $id])->one();
         if ($model !== null) {
             if ($model->leaf) {
                 if (!$model->leaf->isCanceled()) {
@@ -607,8 +608,14 @@ class LessonController extends BaseController
                 $message = 'Future lessons have been changed successfully';
                 $link	 = $this->redirect(['enrolment/view', 'id' => $courseModel->enrolment->id]);
             } else {
-                $courseModel->enrolment->student->updateAttributes(['status' => Student::STATUS_ACTIVE]);
-                $courseModel->enrolment->customer->updateAttributes(['status' => USER::STATUS_ACTIVE]);
+                $courseModel->enrolment->student->updateAttributes([
+                    'status' => Student::STATUS_ACTIVE,
+                    'isDeleted' => false
+                ]);
+                $courseModel->enrolment->customer->updateAttributes([
+                    'status' => USER::STATUS_ACTIVE,
+                    'isDeleted' => false
+                ]);
                 $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
                 return $this->redirect(['/enrolment/view', 'id' => $enrolmentModel->id]);
             }

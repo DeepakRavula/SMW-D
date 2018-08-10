@@ -72,4 +72,14 @@ class LessonDiscount extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Lesson::className(), ['id' => 'lessonId']);
     }
+
+    public function isPfDiscount()
+    {
+        return (int) $this->type === (int) self::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
+    }
+
+    public function isMeDiscount()
+    {
+        return (int) $this->type === (int) self::TYPE_MULTIPLE_ENROLMENT;
+    }
 }

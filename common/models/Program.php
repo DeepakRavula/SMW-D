@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\query\ProgramQuery;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "program".
@@ -47,7 +48,7 @@ class Program extends \yii\db\ActiveRecord
             [['name'], 'string', 'min' => 3, 'max' => 255],
             [['rate'], 'number','numberPattern' => '/^\d+(.\d{1,2})?$/', 'message' => 'Maximum of 2 digits is allowed after decimal point.'],
             [['status'], 'integer'],
-            [['type'], 'safe'],
+            [['type', 'isDeleted'], 'safe'],
         ];
     }
 
@@ -65,16 +66,25 @@ class Program extends \yii\db\ActiveRecord
             'showAllPrograms' => 'Show All'
         ];
     }
+
     public function behaviors()
     {
         return [
-            
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
         ];
     }
+
    
     public function beforeSave($insert)
     {
         if ($insert) {
+            $this->isDeleted =  false;
             $this->status = self::STATUS_ACTIVE;
         }
 

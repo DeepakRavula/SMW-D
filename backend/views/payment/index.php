@@ -188,8 +188,7 @@ $columns = [
     });
 
 	$(document).on('modal-success', function(event, params) {
-        var url = "<?= Url::to(['payment/index']); ?>";
-        $.pjax.reload({url: url, container: "#payment-listing", replace: false, timeout: 4000});
+        $.pjax.reload({container: "#payment-listing", replace: false, timeout: 4000});
         return false;
     });
 	$(document).on('modal-delete', function(event, params) {

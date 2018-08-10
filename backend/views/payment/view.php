@@ -65,9 +65,11 @@ use yii\bootstrap\ActiveForm;
         $('.modal-delete').show();
         $('.modal-save-all').show();
         $('.modal-button').show();
+        $('.modal-mail').show();
         $('.modal-save').hide();
         $('.modal-save-all').text('Print');
         $('.modal-button').text('Edit');
+        $('.modal-mail').text('Mail');
         $(".modal-delete").attr("action", url);
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
 	});
@@ -77,7 +79,7 @@ use yii\bootstrap\ActiveForm;
         window.open(url, '_blank');
     });
 
-   $(document).on('click', '#payment-mail-button', function (e) {
+   $(document).on('click', '.modal-mail', function (e) {
             $.ajax({
                 url    : '<?= Url::to(['email/payment', 'id' => $model->id]); ?>',
                 type   : 'get',

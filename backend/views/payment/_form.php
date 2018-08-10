@@ -211,6 +211,7 @@ var updatePayment = {
         $('#modal-apply').hide();
         $('.modal-save-all').hide();
         $('.modal-delete').hide();
+        $('.modal-mail').hide();
         $('#popup-modal .modal-dialog').css({'width': '1000px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Payment</h4>');
 
