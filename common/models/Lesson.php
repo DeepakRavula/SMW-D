@@ -697,6 +697,18 @@ class Lesson extends \yii\db\ActiveRecord
         return $class;
     }
 
+    public function getLastProFormaLineItem()
+    {
+        $paymentCycleLessonId = $this->paymentCycleLesson->id;
+        return InvoiceLineItem::find()
+            ->andWhere(['invoice_line_item.item_type_id' => ItemType::TYPE_PAYMENT_CYCLE_PRIVATE_LESSON])
+            ->joinWith(['lineItemPaymentCycleLessons' => function ($query) use ($paymentCycleLessonId) {
+                $query->andWhere(['paymentCycleLessonId' => $paymentCycleLessonId]);
+            }])
+            ->orderBy(['invoice_line_item.id' => SORT_DESC])
+            ->one();
+    }
+
     public function getProFormaLineItem()
     {
         if ($this->hasProFormaInvoice()) {
