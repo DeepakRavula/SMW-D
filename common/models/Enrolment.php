@@ -540,9 +540,17 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function deleteUnPaidPaymentCycles()
     {
-        foreach ($this->unPaidPaymentCycles as $model) {
-            $model->delete();
+        if ($this->firstUnpaidPaymentCycle) {
+            $paymentCycles = Paymentcycle::find()
+                ->notDeleted()
+                ->andWhere(['enrolmentId' => $this->id])
+                ->andWhere(['>=', 'startDate', $this->firstUnpaidPaymentCycle->startDate])
+                ->all();
+            foreach ($paymentCycles as $paymentCycle) {
+                $paymentCycle->delete();
+            }
         }
+        return true;
     }
 
     public function diffInMonths($date1, $date2)
