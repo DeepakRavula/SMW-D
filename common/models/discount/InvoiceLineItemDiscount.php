@@ -79,6 +79,16 @@ class InvoiceLineItemDiscount extends \yii\db\ActiveRecord
         return $this->hasOne(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId']);
     }
 
+    public function isLineItemDiscount()
+    {
+        return (int) $this->type === (int) self::TYPE_LINE_ITEM;
+    }
+
+    public function isMultiEnrolmentDiscount()
+    {
+        return (int) $this->type === (int) self::TYPE_MULTIPLE_ENROLMENT;
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         $this->invoiceLineItem->save();

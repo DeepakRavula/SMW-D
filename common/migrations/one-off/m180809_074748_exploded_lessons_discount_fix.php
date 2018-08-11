@@ -1,13 +1,23 @@
 <?php
 
 use yii\db\Migration;
+use common\models\User;
 use common\models\Lesson;
+use common\models\discount\LessonDiscount;
+use common\models\discount\InvoiceLineItemDiscount;
 
 /**
  * Class m180809_074748_exploded_lessons_discount_fix
  */
 class m180809_074748_exploded_lessons_discount_fix extends Migration
 {
+    public function init() 
+    {
+        parent::init();
+        $user = User::findByRole(User::ROLE_BOT);
+        $botUser = end($user);
+        Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
+    }
     /**
      * {@inheritdoc}
      */
@@ -21,17 +31,38 @@ class m180809_074748_exploded_lessons_discount_fix extends Migration
             ->split()
             ->notCanceled()
             ->all();
+        
         foreach ($explodedLessons as $explodedLesson) {
-            foreach ($explodedLesson->discounts as $discount) {
-                if ($explodedLesson->rootLesson->discounts) {
-                    $rootLessonDiscount = $explodedLesson->rootLesson->discounts;
-                } else if ($explodedLesson->rootLesson->paymentCycleLesson) {
-                    if ($explodedLesson->rootLesson->lastProFormaLineItem) {
-                        if ($explodedLesson->rootLesson->lastProFormaLineItem->discounts) {
-                            $rootLessonDiscount = $explodedLesson->rootLesson->lastProFormaLineItem->discounts;
+            $rootLesson = $explodedLesson->rootLesson;
+            if ($rootLesson->paymentCycleLesson) {
+                if ($rootLesson->lastProFormaLineItem) {
+                    $lastProFormaLineItem = $rootLesson->lastProFormaLineItem;
+                    if ($rootLesson->lastProFormaLineItem->discounts) {
+                        foreach ($explodedLesson->discounts as $exLediscount) {
+                            $exLediscount->delete();
                         }
                     }
+                    foreach ($lastProFormaLineItem->discounts as $pfliDiscount) {
+                        $lessonDiscount = new LessonDiscount();
+                        $lessonDiscount->type = $pfliDiscount->type;
+                        if (!$pfliDiscount->valueType) {
+                            $lessonDiscount->value = $pfliDiscount->value / ($rootLesson->durationSec / Lesson::DEFAULT_EXPLODE_DURATION_SEC);
+                        } else {
+                            $lessonDiscount->value = $pfliDiscount->value;
+                        }
+                        $lessonDiscount->valueType = $pfliDiscount->valueType;
+                        $lessonDiscount->lessonId = $explodedLesson->id;
+                        $lessonDiscount->save();
+                    }
                 }
+            }
+        }
+        foreach ($explodedLessons as $explodedLesson) {
+            if ($explodedLesson->hasInvoice()) {
+                foreach ($explodedLesson->invoice->lineItem->discounts as $liDiscount) {
+                    $liDiscount->delete();
+                }
+                
             }
         }
     }
