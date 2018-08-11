@@ -95,7 +95,8 @@ class ViewAction extends Action
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
                 ->orderBy(['lesson.date' => SORT_ASC])
-                ->notDeleted();
+                ->notDeleted()
+                ->notCompleted();
 
         return new ActiveDataProvider([
                 'query' => $lessons,

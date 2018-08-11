@@ -14,78 +14,41 @@ use yii\grid\GridView;
     	<a href="#"  title="Add" id="new-lesson" class="add-new-lesson text-add-new"><i class="fa fa-plus"></i></a>
     </div>
     <?php $columns = [
-             [
-                'label' => 'Program Name',
+            [
+                'label' => 'Date',
                 'value' => function ($data) {
-                    return !empty($data->course->program->name) ? $data->course->program->name : null;
+                    return Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
                 },
             ],
             [
-                'label' => 'Lesson Status',
+                'label' => 'Duration',
+                'value' => function ($data) {
+                    $lessonDuration = (new \DateTime($data->duration))->format('H:i');
+                    return $lessonDuration;
+                },
+            ],
+            [
+                'label' => 'Status',
                 'value' => function ($data) {
                     return $data->getStatus();
                 },
             ],
             [
-                'label' => 'Invoice Status',
-                'value' => function ($data) use($model) {
-                    $status = null;
-                    if ($data->isPrivate()) {
-                        if (!empty($data->invoice)) {
-                            return $data->invoice->getStatus();
-                        } else {
-                            $status = 'Not Invoiced';
-                        }
-                    } else {
-                        $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
-                            ->andWhere(['courseId' => $data->courseId])
-                            ->andWhere(['studentId' => $model->id])->one();
-                        $invoice = $enrolment->getInvoice($data->id);
-                        if ($invoice) {
-                            return $invoice->getStatus();
-                        } else {
-                            $status = 'Not Invoiced';
-                        }
-                    }
-
-                    return $status;
-                },
-            ],
-            [
-                'label' => 'Date',
+                'label' => 'Price',
+                'attribute' => 'price',
+                'contentOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
-                    return Yii::$app->formatter->asDate($data->date).' @ '.Yii::$app->formatter->asTime($data->date);
+                    return Yii::$app->formatter->asCurrency($data->netPrice);
                 },
             ],
             [
-                'label' => 'Prepaid?',
-                'value' => function ($data) use($model) {
-                    $pfi = null;
-                    if ($data->isPrivate()) {
-                        if ($data->proFormaInvoice) {
-                            $pfi = $data->proFormaInvoice;
-                        }
-                    } else {
-                        $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
-                            ->andWhere(['courseId' => $data->courseId])
-                            ->andWhere(['studentId' => $model->id])->one();
-                        $hasItem = $data->hasGroupProFormaLineItem($enrolment);
-                        if ($hasItem) {
-                            $pfi = $data->getGroupProFormaLineItem($enrolment)->invoice;
-                        }
-                    }
-                    if ($pfi) {
-                        $status = $pfi->hasCreditUsed() ? 'Yes' : 'No';
-                    } else {
-                        $status = 'No';
-                    }
-                    return $status;
-                },
-            ],
-            [
-                'label' => 'Present?',
+                'label' => 'Owing',
+                'attribute' => 'owing',
+                'contentOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
-                    return $data->getPresent();
+                    return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
                 },
             ],
         ];
