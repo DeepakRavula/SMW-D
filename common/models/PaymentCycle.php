@@ -191,6 +191,27 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return $status;
     }
 
+    public function createPaymentCycleLesson()
+    {
+        $locationId = $this->enrolment->course->locationId;
+        $startDate  = new \DateTime($this->startDate);
+        $endDate    = new \DateTime($this->endDate);
+        $lessons = Lesson::find()
+                    ->isConfirmed()
+                    ->notDeleted()
+                    ->notCanceled()
+                    ->andWhere(['courseId' => $this->enrolment->course->id])
+                    ->between($startDate, $endDate)
+                    ->all();
+        foreach ($lessons as $lesson) {
+            $paymentCycleLesson = new PaymentCycleLesson();
+            $paymentCycleLesson->paymentCycleId = $this->id;
+            $paymentCycleLesson->lessonId = $lesson->id;
+            $paymentCycleLesson->save();
+        }
+        return true;
+    }
+
     public function beforeSave($insert)
     {
         if ($insert) {
@@ -201,8 +222,8 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if (!$insert) {
-            return parent::afterSave($insert, $changedAttributes);
+        if ($insert) {
+            $this->createPaymentCycleLesson();
         }
         return parent::afterSave($insert, $changedAttributes);
     }
