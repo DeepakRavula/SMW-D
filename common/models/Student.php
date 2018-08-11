@@ -52,7 +52,7 @@ class Student extends \yii\db\ActiveRecord
             [[ 'status'], 'integer'],
             [['birth_date'], 'date', 'format' => 'M d,Y', 'message' => 'Date format shoule be in M d,Y format',
                 'except' => [self::SCENARIO_MERGE, self::SCENARIO_CUSTOMER_MERGE]],
-            [['customer_id', 'isDeleted'], 'safe'],
+            [['customer_id', 'isDeleted', 'gender'], 'safe'],
         ];
     }
 
@@ -61,6 +61,7 @@ class Student extends \yii\db\ActiveRecord
         $this->first_name = $model->first_name;
         $this->last_name = $model->last_name;
         $this->birth_date = $model->birth_date;
+        $this->gender = $model->gender;
         return $this;
     }
 
@@ -90,6 +91,7 @@ class Student extends \yii\db\ActiveRecord
             'birth_date' => 'Birth Date',
             'customer_id' => 'Customer Name',
             'showAllStudents' => 'Show All',
+            'gender' => 'Gender'
         ];
     }
 
