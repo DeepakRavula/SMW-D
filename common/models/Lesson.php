@@ -892,6 +892,7 @@ class Lesson extends \yii\db\ActiveRecord
                 $pusher->trigger('lesson', 'lesson-edit', '');
             }
             if ($this->isPrivate()) {
+                //print_r('lessonPrivate');die('coming');
                 $amount = $this->getCreditAppliedAmount($this->enrolment->id);
                 if ($amount > $this->netPrice) {
                     foreach ($this->getCreditAppliedPayment($this->enrolment->id) as $lessonPayment) {
