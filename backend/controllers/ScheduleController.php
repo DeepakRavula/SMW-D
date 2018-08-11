@@ -358,7 +358,7 @@ class ScheduleController extends BaseController
         $lessons = $this->getLessons($date, $teacherId);
         foreach ($lessons as &$lesson) {
             $toTime = new \DateTime($lesson->date);
-            $length = explode(':', $lesson->fullDuration);
+            $length = explode(':', $lesson->duration);
             $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
             $title = $lesson->scheduleTitle;
             $class = $lesson->class;
@@ -432,7 +432,7 @@ class ScheduleController extends BaseController
         foreach ($lessons as &$lesson) {
             if (! empty($lesson->classroomId)) {
                 $toTime = new \DateTime($lesson->date);
-                $length = explode(':', $lesson->fullDuration);
+                $length = explode(':', $lesson->duration);
                 $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
                 $title = $lesson->scheduleTitle;
                 $class = $lesson->class;

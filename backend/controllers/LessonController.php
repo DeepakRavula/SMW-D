@@ -111,7 +111,7 @@ class LessonController extends BaseController
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = $this->findModel($id);
         $enrolment = Enrolment::findOne(['courseId' => $model->courseId]);
-        $model->duration = $model->fullDuration;
+        //$model->duration = $model->getUnit();
         $notes = Note::find()
                 ->andWhere(['instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON])
                 ->orderBy(['createdOn' => SORT_DESC]);
