@@ -221,6 +221,7 @@ class PrivateLessonController extends BaseController
         $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
             . 'H' . $additionalDuration->format('i') . 'M'));
         $model->duration = $lessonDuration->format('H:i:s');
+        $model->save();
         $splitLesson = $this->findModel($post['radioButtonSelection']);
         $model->splittedLessonId = $splitLesson->id;
         if ($model->validate()) {

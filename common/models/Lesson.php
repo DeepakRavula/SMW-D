@@ -21,6 +21,7 @@ use backend\models\lesson\discount\LineItemLessonDiscount;
 use backend\models\lesson\discount\EnrolmentLessonDiscount;
 use backend\models\lesson\discount\PaymentFrequencyLessonDiscount;
 use common\models\discount\LessonDiscount;
+use Carbon\Carbon;
 
 /**
  * This is the model class for table "lesson".
@@ -288,19 +289,6 @@ class Lesson extends \yii\db\ActiveRecord
     public function hasExpiryDate()
     {
         return !empty($this->privateLesson);
-    }
-    
-    public function getFullDuration()
-    {
-        $duration = $this->duration;
-        foreach ($this->usedLessonSplits as $extendedLesson) {
-            $additionalDuration = new \DateTime($extendedLesson->lesson->duration);
-            $lessonDuration = new \DateTime($duration);
-            $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
-                    . 'H' . $additionalDuration->format('i') . 'M'));
-            $duration = $lessonDuration->format('H:i:s');
-        }
-        return $duration;
     }
 
     public function isDeletable()
@@ -1051,14 +1039,8 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getUnit()
     {
-        if ($this->usedLessonSplits) {
-            $unit = $this->fullDuration;
-        } else {
-            $unit = $this->duration;
-        }
-        $getDuration = \DateTime::createFromFormat('H:i:s', $unit);
-        $hours       = $getDuration->format('H');
-        $minutes     = $getDuration->format('i');
+        $hours       = Carbon::parse($this->duration)->format('H');
+        $minutes     = Carbon::parse($this->duration)->format('i');
         return (($hours * 60) + $minutes) / 60;
     }
 

@@ -24,7 +24,8 @@ class StudentValidator extends Validator
             $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
             $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
             $lessonStartTime = (new \DateTime($model->date))->format('H:i:s');
-            $lessonDuration = explode(':', $model->fullDuration);
+            $lessonDuration = explode(':', $model->duration);
+           
             $date = new \DateTime($model->date);
             $date->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));
             $date->modify('-1 second');

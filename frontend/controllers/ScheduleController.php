@@ -252,7 +252,7 @@ class ScheduleController extends Controller
         $lessons = $this->getLessons($userId, $date);
         foreach ($lessons as &$lesson) {
             $toTime = new \DateTime($lesson->date);
-            $length = explode(':', $lesson->fullDuration);
+            $length = explode(':', $lesson->duration);
             $toTime->add(new \DateInterval('PT'.$length[0].'H'.$length[1].'M'));
             if ((int) $lesson->course->program->type === (int) Program::TYPE_GROUP_PROGRAM) {
                 $description = $this->renderAjax('group-lesson-description', [
