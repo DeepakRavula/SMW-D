@@ -18,17 +18,16 @@ use common\models\User;
 ?>
 <?php $this->registerCssFile("@web/css/student/style.css");?>
 <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;?>
-<?php yii\widgets\Pjax::begin([
+<?php Pjax::begin([
     'enablePushState' => false,
     'timeout' => 6000,
 	'id' => 'student-listing']); ?>
-<?php
-echo KartikGridView::widget([
+<?= KartikGridView::widget([
     'id' => 'student-grid',
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
-        'summary' => false,
-        'emptyText' => false,
+    'summary' => false,
+    'emptyText' => false,
     'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
         $url = Url::to(['student/view', 'id' => $model->id]);
         $data = ['data-url' => $url];
@@ -39,7 +38,6 @@ echo KartikGridView::widget([
                 $data = array_merge($data, ['class' => 'info active']);
             }
         }
-
         return $data;
     },
     'tableOptions' => ['class' => 'table table-bordered'],
@@ -51,80 +49,71 @@ echo KartikGridView::widget([
             'value' => function ($data) {
                 return !(empty($data->first_name)) ? $data->first_name : null;
             },
-            'filterType'=>KartikGridView::FILTER_SELECT2,
-                'filter'=>ArrayHelper::map(Student::find()->orderBy(['first_name' => SORT_ASC])
-                ->joinWith(['enrolment' => function ($query) {
-                    $query->joinWith(['course' => function ($query) {
-                        $query->confirmed()
-                                ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-                    }]);
-                }])
+            'filterType' => KartikGridView::FILTER_SELECT2,
+            'filter' => ArrayHelper::map(Student::find()
+                ->orderBy(['first_name' => SORT_ASC])
+                ->notDeleted()
                 ->asArray()->all(), 'id', 'first_name'),
-                'filterWidgetOptions'=>[
-            'options' => [
-                'id' => 'first-name',
+            'filterWidgetOptions' => [
+                'options' => [
+                    'id' => 'first-name',
+                ],
+                'pluginOptions'=>[
+                    'allowClear'=>true,
+                ],
             ],
-                    'pluginOptions'=>[
-                        'allowClear'=>true,
-            ],
+            'filterInputOptions' => ['placeholder' => 'First Name'],
         ],
-                'filterInputOptions'=>['placeholder'=>'First Name'],
-            ],
         [
             'label' => 'Last Name',
             'attribute' => 'last_name',
             'value' => function ($data) {
                 return !(empty($data->last_name)) ? $data->last_name : null;
             },
-            'filterType'=>KartikGridView::FILTER_SELECT2,
-            'filter'=>ArrayHelper::map(Student::find()->orderBy(['last_name' => SORT_ASC])
-            ->joinWith(['enrolment' => function ($query) {
-                $query->joinWith(['course' => function ($query) {
-                    $query->confirmed()
-                            ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-                }]);
-            }])
-            ->asArray()->all(), 'id', 'last_name'),
-            'filterWidgetOptions'=>[
-        'options' => [
-            'id' => 'last-name',
-        ],
-                'pluginOptions'=>[
+            'filterType' => KartikGridView::FILTER_SELECT2,
+            'filter' => ArrayHelper::map(Student::find()
+                ->orderBy(['last_name' => SORT_ASC])
+                ->notDeleted()
+                ->asArray()->all(), 'id', 'last_name'),
+            'filterWidgetOptions' => [
+                'options' => [
+                    'id' => 'last-name',
+                ],
+                'pluginOptions' => [
                     'allowClear'=>true,
+                ],
+            ],
+            'filterInputOptions' => ['placeholder' => 'Last Name'],
         ],
-    ],
-            'filterInputOptions'=>['placeholder'=>'Last Name'],
-        ],
-            [
+        [
             'label' => 'Customer',
-	    'attribute' => 'customer',
+	        'attribute' => 'customer',
             'value' => function ($data) {
                 $fullName = !(empty($data->customerProfile->fullName)) ? $data->customerProfile->fullName : null;
 
                 return $fullName;
             },
-            'filterType'=> KartikGridView::FILTER_SELECT2,
+            'filterType' => KartikGridView::FILTER_SELECT2,
             'filter' => ArrayHelper::map(User::find()
 			    ->customers($locationId)
 			    ->joinWith(['userProfile' => function ($query) {
 					$query->orderBy('firstname');
 				}])
 			    ->all(), 'id', 'publicIdentity'),
-	    'filterWidgetOptions'=>[
-        'options' => [
-            'id' => 'customer',
-        ],
-                'pluginOptions'=>[
-                    'allowClear'=>true,
-        ],
+            'filterWidgetOptions' => [
+                'options' => [
+                    'id' => 'customer',
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true,
+                ],
 
-    ],
-            'filterInputOptions'=>['placeholder'=>'Customer'],
-            'format'=>'raw'
-],
-            [
+            ],
+            'filterInputOptions' => ['placeholder' => 'Customer']
+        ],
+        [
             'label' => 'Phone',
-	    'attribute' => 'phone',
+	        'attribute' => 'phone',
             'headerOptions' => ['class' => 'text-left'],
             'contentOptions' => ['class' => 'text-left'],
             'value' => function ($data) {
@@ -134,4 +123,4 @@ echo KartikGridView::widget([
     ],
 ]);
 ?>
-<?php yii\widgets\Pjax::end(); ?>
+<?php Pjax::end(); ?>

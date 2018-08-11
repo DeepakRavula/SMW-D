@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Student;
+use common\models\Location;
 
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
@@ -41,7 +42,7 @@ class StudentSearch extends Student
      */
     public function search($params)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Student::find()->notDeleted()
                 ->location($locationId);
 
