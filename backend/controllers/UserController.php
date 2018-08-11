@@ -174,8 +174,7 @@ class UserController extends BaseController
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
 		        ->orderBy(['lesson.date' => SORT_ASC])
-                ->notDeleted()
-                ->notCompleted();
+                ->notDeleted();
 
         return new ActiveDataProvider([
             'query' => $lessonQuery,
