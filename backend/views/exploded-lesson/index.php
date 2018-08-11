@@ -40,11 +40,9 @@ $this->title = 'Exploded Lessons';
             'label' => "Original Lesson's Payment Frequecy Discount",
             'value' => function ($data) {
                 $discount = null;
-                if ($data->rootLesson->enrolmentPaymentFrequencyDiscount) {
-                    $discount = $data->rootLesson->enrolmentPaymentFrequencyDiscount->value;
-                } else if ($data->rootLesson->proFormaLineItemDeleted) {
-                    $discount = $data->rootLesson->proFormaLineItemDeleted->enrolmentPaymentFrequencyDiscount ? 
-                        $data->rootLesson->proFormaLineItemDeleted->enrolmentPaymentFrequencyDiscount->value : null;
+                if ($data->rootLesson->lastProFormaLineItem) {
+                    $discount = $data->rootLesson->lastProFormaLineItem->enrolmentPaymentFrequencyDiscount ? 
+                        $data->rootLesson->lastProFormaLineItem->enrolmentPaymentFrequencyDiscount->value : null;
                 }
                 return $discount;
             }
@@ -58,19 +56,17 @@ $this->title = 'Exploded Lessons';
         [
             'label' => "Exploded Lesson's Invoice Line Item Payment Frequecy Discount",
             'value' => function ($data) {
-                return $data->hasInvoice() ? ($data->invoiceLineItem->enrolmentPaymentFrequencyDiscount ? 
-                    $data->invoiceLineItem->enrolmentPaymentFrequencyDiscount->value : null) : null;
+                return $data->hasInvoice() ? ($data->invoice->lineItem->enrolmentPaymentFrequencyDiscount ? 
+                    $data->invoice->lineItem->enrolmentPaymentFrequencyDiscount->value : null) : null;
             }
         ],
         [
             'label' => "Original Lesson's Multiple Enrolment Discount",
             'value' => function ($data) {
                 $discount = null;
-                if ($data->rootLesson->multiEnrolmentDiscount) {
-                    $discount = $data->rootLesson->multiEnrolmentDiscount->value;
-                } else if ($data->rootLesson->proFormaLineItemDeleted) {
-                    $discount = $data->rootLesson->proFormaLineItemDeleted->multiEnrolmentDiscount ? 
-                        $data->rootLesson->proFormaLineItemDeleted->multiEnrolmentDiscount->value : null;
+                if ($data->rootLesson->lastProFormaLineItem) {
+                    $discount = $data->rootLesson->lastProFormaLineItem->multiEnrolmentDiscount ? 
+                        $data->rootLesson->lastProFormaLineItem->multiEnrolmentDiscount->value : null;
                 }
                 return $discount;
             }
@@ -84,19 +80,17 @@ $this->title = 'Exploded Lessons';
         [
             'label' => "Exploded Lesson's Invoice Line Item Multiple Enrolment Discount",
             'value' => function ($data) {
-                return $data->hasInvoice() ? ($data->invoiceLineItem->multiEnrolmentDiscount ? 
-                    $data->invoiceLineItem->multiEnrolmentDiscount->value : null) : null;
+                return $data->hasInvoice() ? ($data->invoice->lineItem->multiEnrolmentDiscount ? 
+                    $data->invoice->lineItem->multiEnrolmentDiscount->value : null) : null;
             }
         ],
         [
             'label' => "Original Lesson's customer Discount",
             'value' => function ($data) {
                 $discount = null;
-                if ($data->rootLesson->customerDiscount) {
-                    $discount = $data->rootLesson->customerDiscount->value;
-                } else if ($data->rootLesson->proFormaLineItemDeleted) {
-                    $discount = $data->rootLesson->proFormaLineItemDeleted->customerDiscount ? 
-                        $data->rootLesson->proFormaLineItemDeleted->customerDiscount->value : null;
+                if ($data->rootLesson->lastProFormaLineItem) {
+                    $discount = $data->rootLesson->lastProFormaLineItem->customerDiscount ? 
+                        $data->rootLesson->lastProFormaLineItem->customerDiscount->value : null;
                 }
                 return $discount;
             }
@@ -110,19 +104,17 @@ $this->title = 'Exploded Lessons';
         [
             'label' => "Exploded Lesson's Invoice Line Item Customer Discount",
             'value' => function ($data) {
-                return $data->hasInvoice() ? ($data->invoiceLineItem->customerDiscount ? 
-                    $data->invoiceLineItem->customerDiscount->value : null) : null;
+                return $data->hasInvoice() ? ($data->invoice->lineItem->customerDiscount ? 
+                    $data->invoice->lineItem->customerDiscount->value : null) : null;
             }
         ],
         [
             'label' => "Original Lesson's Line Iitem Discount",
             'value' => function ($data) {
                 $discount = null;
-                if ($data->rootLesson->lineItemDiscount) {
-                    $discount = $data->rootLesson->lineItemDiscount->value;
-                } else if ($data->rootLesson->proFormaLineItemDeleted) {
-                    $discount = $data->rootLesson->proFormaLineItemDeleted->lineItemDiscount ? 
-                        $data->rootLesson->proFormaLineItemDeleted->lineItemDiscount->value : null;
+                if ($data->rootLesson->lastProFormaLineItem) {
+                    $discount = $data->rootLesson->lastProFormaLineItem->lineItemDiscount ? 
+                        $data->rootLesson->lastProFormaLineItem->lineItemDiscount->value : null;
                 }
                 return $discount;
             }
@@ -136,8 +128,8 @@ $this->title = 'Exploded Lessons';
         [
             'label' => "Exploded Lesson's Invoice Line Item Line Iitem Discount",
             'value' => function ($data) {
-                return $data->hasInvoice() ? ($data->invoiceLineItem->lineItemDiscount ? 
-                    $data->invoiceLineItem->lineItemDiscount->value : null) : null;
+                return $data->hasInvoice() ? ($data->invoice->lineItem->lineItemDiscount ? 
+                    $data->invoice->lineItem->lineItemDiscount->value : null) : null;
             }
         ]
     ];
