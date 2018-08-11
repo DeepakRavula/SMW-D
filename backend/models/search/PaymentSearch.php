@@ -47,6 +47,9 @@ class PaymentSearch extends Payment
      */
     public function search($params)
     {
+        $this->startDate = (new \DateTime())->format('M d, Y');
+        $this->endDate = (new \DateTime())->format('M d, Y');
+        $this->dateRange = $this->startDate.' - '.$this->endDate;
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Payment::find()
             ->location($locationId)
