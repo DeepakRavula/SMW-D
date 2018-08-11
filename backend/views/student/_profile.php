@@ -38,6 +38,8 @@ Pjax::begin([
 			<dd><?= !empty($model->birth_date) ? Yii::$app->formatter->asDate($model->birth_date) : null; ?></dd>
 			<dt>Age</dt>
 			<dd><?= $age; ?></dd>
+			<dt>Gender</dt>
+			<dd><?= $model->gender; ?></dd>
 		</dl>
 		<?php LteBox::end() ?>
 		</div> 

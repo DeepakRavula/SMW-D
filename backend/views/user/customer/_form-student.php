@@ -5,6 +5,7 @@ use yii\bootstrap\ActiveForm;
 use common\models\Student;
 use yii\helpers\Url;
 use yii\jui\DatePicker;
+use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Student */
@@ -39,9 +40,18 @@ use yii\jui\DatePicker;
                 ],
             ])->textInput(['placeholder' => 'Select Date']);
 				?>
+        <?php $data = [0 => 'Not Specified', 1 => 'Male', 2 => 'Female']; ?>
+        <?= $form->field($model, 'gender')->widget(Select2::classname(), [
+                'data' => $data,
+                'options' => [
+                    'id' => 'change-student-gender'
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ]
+            ]); ?>
         </div>
 	<?php echo $form->field($customer, 'id')->hiddenInput()->label(false); ?>
-
     <?php ActiveForm::end(); ?>
 </div>
 

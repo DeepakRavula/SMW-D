@@ -3,6 +3,7 @@
 use yii\jui\DatePicker;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
+use kartik\select2\Select2;
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -39,6 +40,21 @@ use yii\helpers\Url;
                 'yearRange' => '-70:-3',
             ],
         ])->textInput(['placeholder' => 'Select Date'])->label(false);?>
+    </div>
+    <div class="col-xs-5">
+        <label class="modal-customer-label">Gender</label>
+    </div>
+    <div class="col-xs-7">
+    <?php $data = [0 => 'Not Specified', 1 => 'Male', 2 => 'Female']; ?>
+        <?= $form->field($courseDetail, 'gender')->widget(Select2::classname(), [
+                'data' => $data,
+                'options' => [
+                    'id' => 'change-student-gender'
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ]
+            ])->label(false); ?>
     </div>
 </div> <!-- ./container -->
 <?php ActiveForm::end(); ?>
