@@ -17,6 +17,7 @@ use yii\widgets\ActiveForm;
 use yii\web\NotFoundHttpException;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 
 /**
  * BlogController implements the CRUD actions for Blog model.
@@ -338,12 +339,13 @@ class UserContactController extends BaseController
             $contactModel = $model->address;
             $type = UserContact::TYPE_ADDRESS;
         }
-        if ($contactModel->delete()) {
-            return [
+        $contactModel->delete();
+        $response = [
                 'status' => true,
                 'type' => $type,
+                'url' => Url::to(['user/view', $model->id]),
             ];
-        }
+        return $response;
     }
 
     protected function findModel($id)

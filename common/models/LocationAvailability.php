@@ -2,7 +2,7 @@
 
 namespace common\models;
 
-
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "location_availability".
@@ -40,7 +40,7 @@ class LocationAvailability extends \yii\db\ActiveRecord
         return [
             [['locationId', 'day','type'], 'required'],
             [['locationId', 'day','type'], 'integer'],
-            [['fromTime', 'toTime'], 'safe'],
+            [['fromTime', 'toTime', 'isDeleted'], 'safe'],
             [['fromTime'], 'validateToTime'] ,
             [['toTime'], 'validateToTime'] 
             
@@ -61,7 +61,22 @@ class LocationAvailability extends \yii\db\ActiveRecord
             'toTime' => 'To Time',
         ];
     }
-        public function validateToTime($attributes)
+    
+
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+        ];
+    }
+
+    public function validateToTime($attributes)
     {
            
                $fromTime=(new \DateTime($this->fromTime))->format('H:i:s');
@@ -84,5 +99,11 @@ class LocationAvailability extends \yii\db\ActiveRecord
                 'Saturday',
                 'Sunday'
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+        $this->isDeleted = false;
+        return parent::beforeSave($insert);
     }
 }

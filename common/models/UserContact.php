@@ -33,6 +33,7 @@ class UserContact extends \yii\db\ActiveRecord
         return [
             [['userId', 'isPrimary', 'labelId'], 'required'],
             [['userId'], 'integer'],
+            [['isDeleted'], 'safe'],
         ];
     }
 
@@ -86,5 +87,13 @@ class UserContact extends \yii\db\ActiveRecord
     {
         $this->isPrimary = true;
         return $this->save();
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
     }
 }

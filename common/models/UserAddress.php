@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "user_address".
@@ -40,7 +41,7 @@ class UserAddress extends \yii\db\ActiveRecord
             [['userContactId', 'provinceId', 'countryId'], 'integer'],
             [['address'], 'string', 'max' => 64],
             [['postalCode'], 'string', 'max' => 16],
-            [['labelId', 'cityId'], 'safe'],
+            [['labelId', 'cityId', 'isDeleted'], 'safe'],
             [['address','postalCode'], 'trim'],
         ];
     }
@@ -59,7 +60,20 @@ class UserAddress extends \yii\db\ActiveRecord
             'countryId' => 'Country'
         ];
     }
-    
+
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
+        ];
+    }
+
     public function getUserContact()
     {
         return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);
@@ -97,5 +111,13 @@ class UserAddress extends \yii\db\ActiveRecord
         $this->countryId = $model->countryId;
         $this->postalCode = $model->postalCode;
         return $this;
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
     }
 }

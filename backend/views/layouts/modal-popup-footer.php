@@ -30,6 +30,7 @@ use common\models\Lesson;
                 'name' => 'button',
                 'value' => Lesson::APPLY_ALL_FUTURE_LESSONS
             ]) ?>
+            <?= Html::a('EMail', '', ['class' => 'btn btn-info modal-mail']);?>
         </div>
     </div>
 </div>
@@ -40,5 +41,6 @@ use common\models\Lesson;
         $('.modal-button').hide();
         $('.modal-back').hide();
         $('.modal-delete').hide();
+        $('.modal-mail').hide();
     });
 </script>

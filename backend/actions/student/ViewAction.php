@@ -105,6 +105,7 @@ class ViewAction extends Action
     protected function getExamResults($id)
     {
         $examResults = ExamResult::find()
+                ->andWhere(['exam_result.isDeleted' => false])
                 ->andWhere(['studentId' => $id]);
 
         return new ActiveDataProvider([
@@ -147,7 +148,8 @@ class ViewAction extends Action
         $model = Student::find()
             ->notDeleted()
             ->location($locationId)
-            ->andWhere(['student.id' => $id])->one();
+            ->andWhere(['student.id' => $id])
+            ->one();
         return $model;
     }
 }

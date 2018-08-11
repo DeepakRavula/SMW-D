@@ -32,9 +32,6 @@ $loggedUser = User::findOne(Yii::$app->user->id);
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-6">
-            <?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
-        </div>
 		<?php if ($model->getModel()->isTeacher()) : ?>
 	        <div class="col-xs-4">
 				<?php

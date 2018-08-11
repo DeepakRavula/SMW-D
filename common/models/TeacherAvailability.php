@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\query\TeacherAvailabilityQuery;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "teacher_availability_day".
@@ -38,7 +39,7 @@ class TeacherAvailability extends \yii\db\ActiveRecord
     {
         return [
             [['day'], 'integer'],
-            [['teacher_location_id'], 'safe'],
+            [['teacher_location_id', 'isDeleted'], 'safe'],
         ];
     }
     /**
@@ -52,6 +53,19 @@ class TeacherAvailability extends \yii\db\ActiveRecord
             'day' => 'Day',
             'from_time' => 'From Time',
             'to_time' => 'To Time',
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
         ];
     }
 
@@ -102,5 +116,13 @@ class TeacherAvailability extends \yii\db\ActiveRecord
             $this->trigger(TeacherAvailability::EVENT_UPDATE);
         }
         $this->trigger(TeacherAvailability::EVENT_CREATE);
+    }
+
+    public function beforeSave($insert)
+    {   
+        if ($insert) {
+            $this->isDeleted = false;
+        }
+        return parent::beforeSave($insert);
     }
 }

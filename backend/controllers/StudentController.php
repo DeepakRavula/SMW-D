@@ -178,7 +178,7 @@ class StudentController extends BaseController
         $courseModel->setModel($courseDetail);
         $courseSchedule->setModel($courseDetail);
         if ($courseModel->save()) {
-            $courseSchedule->isAutoRenew    =   $courseDetail->autoRenew;
+            $courseSchedule->isAutoRenew = $courseDetail->autoRenew;
             $courseSchedule->courseId = $courseModel->id;
             if ($courseSchedule->save()) {
                 if (!empty($courseDetail->enrolmentDiscount)) {
@@ -193,7 +193,7 @@ class StudentController extends BaseController
                 }
             }
         }
-        return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'Enrolment[type]' => Enrolment::TYPE_REVERSE, 
+        return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'Enrolment[type]' => $courseDetail->isReverse ? Enrolment::TYPE_REVERSE : null, 
             'LessonSearch[showAllReviewLessons]' => false]);
     }
 
@@ -213,7 +213,8 @@ class StudentController extends BaseController
         $model = Student::find()
             ->notDeleted()
             ->location($locationId)
-            ->andWhere(['student.id' => $id])->one();
+            ->andWhere(['student.id' => $id])
+            ->one();
         return $model;
     }
 

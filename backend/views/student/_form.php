@@ -37,9 +37,6 @@ use yii\jui\DatePicker;
             ],
             ])->textInput(['placeholder' => 'Select Date']);
         ?>
-        <?php if (!$model->isNewRecord) : ?>
-            <?php echo $form->field($model, 'status')->dropDownList(Student::statuses()) ?>
-        <?php endif; ?>
         </div>
 	<?php echo $form->field($customer, 'id')->hiddenInput()->label(false); ?>
     <div class="row">

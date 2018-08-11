@@ -221,6 +221,7 @@ class EnrolmentController extends BaseController
             $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
             $paymentFrequencyDiscount->save();
             if ((int) $oldMultipleEnrolmentDiscount != (int) $multipleEnrolmentDiscount->discount) {
+                $model->resetDiscount($multipleEnrolmentDiscount->type, $multipleEnrolmentDiscount->discount);
                 $model->on(
                     Enrolment::EVENT_AFTER_UPDATE,
                     [new DiscountLog(), 'enrolmentMultipleDiscountEdit'],
@@ -228,6 +229,7 @@ class EnrolmentController extends BaseController
                 );
             }
             if ((int) $oldPaymentFrequencyDiscount != (int) $paymentFrequencyDiscount->discount) {
+                $model->resetDiscount($paymentFrequencyDiscount->type, $paymentFrequencyDiscount->discount);
                 $model->on(
                    Enrolment::EVENT_AFTER_UPDATE,
                     [new DiscountLog(), 'enrolmentPaymentFrequencyDiscountEdit'],
@@ -239,18 +241,16 @@ class EnrolmentController extends BaseController
                     $model->resetPaymentCycle();
                 }
             }
-           
-            $message = '';
-            return [
-                'status' => true,
-                'message' => $message,
+            $response = [
+                'status' => true
             ];
         } else {
-            return [
+            $response = [
                 'status' => true,
-                'data' => $data,
+                'data' => $data
             ];
         }
+        return $response;
     }
     
     public function actionEditProgramRate($id)
@@ -334,8 +334,9 @@ class EnrolmentController extends BaseController
         $address->setModel($courseDetail);
         $userEmail->setModel($courseDetail);
         $student->setModel($courseDetail);
-        $user->status = User::STATUS_DRAFT;
-	    $user->canLogin = true;
+        $user->status = User::STATUS_NOT_ACTIVE;
+        $user->canLogin = true;
+        $user->isDeleted = true;
         if ($user->save()) {
             $auth = Yii::$app->authManager;
             $authManager = Yii::$app->authManager;
@@ -362,7 +363,8 @@ class EnrolmentController extends BaseController
             }
             //save student
             $student->customer_id = $user->id;
-            $student->status = Student::STATUS_DRAFT;
+            $student->status = Student::STATUS_INACTIVE;
+            $student->isDeleted = true;
             $student->save();
 
             //save course
@@ -567,7 +569,8 @@ class EnrolmentController extends BaseController
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $model = Enrolment::find()->location($locationId)->isRegular()
-            ->andWhere(['enrolment.id' => $id, 'isDeleted' => false])->one();
+            ->notDeleted()
+            ->andWhere(['enrolment.id' => $id])->one();
         if ($model !== null) {
             return $model;
         } else {
