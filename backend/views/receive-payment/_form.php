@@ -114,7 +114,7 @@ use yii\bootstrap\Html;
     ?>
 <?php endif;?>
     <div class ="pull-left">
-        <?= $form->field($model, 'notes')->textArea(['class' => 'form-control','rows' => '3','cols' => '80'])->label('Notes'); ?>
+        <?= $form->field($model, 'notes')->textArea(['class' => 'form-control','rows' => '3','cols' => '60'])->label('Notes'); ?>
     </div>
     <div class ="pull-right">
     <dl class = "dl-horizontal">

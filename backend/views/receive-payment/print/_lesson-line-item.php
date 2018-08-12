@@ -65,6 +65,16 @@ use yii\bootstrap\Html;
         ]);
 
         array_push($columns, [
+            'attribute' => 'payment',
+            'label' => 'payment',
+            'value' => function ($data) {
+                return Yii::$app->formatter->asCurrency(round($data->getPaidAmount($data->payment->id), 2));
+            },
+            'headerOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right invoice-value']
+        ]);
+
+        array_push($columns, [
             'attribute' => 'balance',
             'label' => 'Balance',
             'value' => function ($data) {
