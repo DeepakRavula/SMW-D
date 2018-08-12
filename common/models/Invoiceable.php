@@ -128,7 +128,11 @@ trait Invoiceable
         $invoice->userName = $loggedUser->userProfile->fullName;
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $location_id;
+        if($this->isExpired()){
+            $invoice->date = (new \DateTime($this->privateLesson->expiryDate))->format('Y-m-d H:i:s'); 
+        } else {
         $invoice->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
+        }
         $invoice->save();
         $this->addPrivateLessonLineItem($invoice);
         $invoice->save();
