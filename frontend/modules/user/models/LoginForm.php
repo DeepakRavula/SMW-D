@@ -54,7 +54,7 @@ class LoginForm extends Model
         if (!$this->hasErrors()) {
             $users = $this->getUsers();
             foreach ($users as $user) {
-                if (!$user->validatePassword($this->password)) {
+                if (!$user->password_hash || !$user->validatePassword($this->password)) {
                     $misMatchCount += 1;
                 }
             }
