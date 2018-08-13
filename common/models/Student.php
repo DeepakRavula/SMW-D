@@ -251,7 +251,7 @@ class Student extends \yii\db\ActiveRecord
             ->count();
     }
 
-    public function getGender()
+    public function getGenderName()
     {
         $gender = null;
         switch ($this->gender) {

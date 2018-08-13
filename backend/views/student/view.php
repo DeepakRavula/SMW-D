@@ -436,33 +436,9 @@ $this->params['label'] = $this->render('_title', [
             {
                 if (response.status)
                 {
-                    $('#student-profile-content').html(response.data);
-                    $('#student-profile-modal').modal('show');
-                }
-            }
-        });
-        return false;
-    });
-
-    $(document).on('click', '.student-profile-cancel-button', function () {
-        $('#student-profile-modal').modal('hide');
-    });
-
-    $(document).on('beforeSubmit', '#student-form', function () {
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'post',
-            dataType: "json",
-            data: $(this).serialize(),
-            success: function (response)
-            {
-                if (response.status)
-                {
-                    $.pjax.reload({container: '#student-profile', timeout: 6000, async: false});
-                    $.pjax.reload({container: '#student-log', timeout: 6000, async: false});
-                    $('#student-profile-modal').modal('hide');
-                } else {
-                    $('#student-form').yiiActiveForm('updateMessages', response.errors, true);
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Profile</h4>');
+                    $('#modal-content').html(response.data);
                 }
             }
         });
