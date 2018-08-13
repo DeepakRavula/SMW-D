@@ -16,7 +16,7 @@ use kartik\select2\Select2;
     <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id; ?>
     <?php $form = ActiveForm::begin([
         'action' => Url::to(['/student/update', 'id' => $model->id]),
-        'id' => 'student-form',
+        'id' => 'modal-form',
         'enableAjaxValidation' => true,
         'enableClientValidation' => false,
         'validationUrl' => Url::to(['student/validate', 'id' => $model->id]),
@@ -38,23 +38,18 @@ use kartik\select2\Select2;
             ],
             ])->textInput(['placeholder' => 'Select Date']);
         ?>
-        <?php $data = [0 => 'Not Specified', 1 => 'Male', 2 => 'Female']; ?>
-        <?= $form->field($model, 'gender')->widget(Select2::classname(), [
-                'data' => $data,
-                'options' => [
-                    'id' => 'change-student-gender'
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ]
-            ]); ?>
+        <?php $list = [0 => 'Not Specified', 1 => 'Male', 2 => 'Female']; ?>
+        <?php $model->isNewRecord ? $model->gender = 0: $model->gender = $model->gender ;  ?>
+        <?= $form->field($model, 'gender')->radioList($list); ?>
         </div>
 	<?php echo $form->field($customer, 'id')->hiddenInput()->label(false); ?>
-    <div class="row">
-    <div class="pull-right">
-        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default student-profile-cancel-button']); ?>
-        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-    </div>
     <?php ActiveForm::end(); ?>
-    </div>
 </div>
+
+<script>
+    $(document).on('modal-success', function(event, params) {
+        $.pjax.reload({container: "#student-profile", replace: false, timeout: 4000});
+        return false;
+    });
+</script>
+
