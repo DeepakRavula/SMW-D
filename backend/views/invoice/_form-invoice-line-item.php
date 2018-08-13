@@ -61,6 +61,7 @@ use yii\widgets\Pjax;
 <script type="text/javascript">
     $(document).on('click', '.add-item-invoice', function() {
         $('#item-spinner').show();
+        $( ".add-item-invoice" ).addClass("multiselect-disable");
         var itemId=$(this).attr('data-key');
              var params = $.param({'itemId': itemId });
         $.ajax({

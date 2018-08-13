@@ -9,6 +9,7 @@ use yii\web\Cookie;
 use common\models\Location;
 use yii\helpers\ArrayHelper;
 use common\components\location\LocationChangedEvent;
+use common\components\location\LocationChangedEventFrontend;
 use yii\web\UrlNormalizerRedirectException;
 
 /**
@@ -20,6 +21,7 @@ use yii\web\UrlNormalizerRedirectException;
 class UrlManager extends \codemix\localeurls\UrlManager
 {
     const EVENT_LOCATION_CHANGED = 'locationChanged';
+    const EVENT_LOCATION_CHANGED_FRONTEND = 'frontendLocationChanged';
 
     /**
      * @var array list of available location codes. More specific patterns
@@ -416,6 +418,16 @@ class UrlManager extends \codemix\localeurls\UrlManager
             if ($oldLocation !== $location) {
                 Yii::trace("Triggering locationChanged event: $oldLocation -> $location", __METHOD__);
                 $this->trigger(self::EVENT_LOCATION_CHANGED, new LocationChangedEvent([
+                    'oldLocation' => $oldLocation,
+                    'location' => $location,
+                ]));
+            }
+        }
+        if ($this->hasEventHandlers(self::EVENT_LOCATION_CHANGED_FRONTEND)) {die;
+            $oldLocation = $this->loadPersistedLocation();
+            if ($oldLocation !== $location) {
+                Yii::trace("Triggering locationChanged event: $oldLocation -> $location", __METHOD__);
+                $this->trigger(self::EVENT_LOCATION_CHANGED_FRONTEND, new LocationChangedEventFrontend([
                     'oldLocation' => $oldLocation,
                     'location' => $location,
                 ]));

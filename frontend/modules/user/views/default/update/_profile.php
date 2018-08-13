@@ -36,11 +36,7 @@ foreach ($Roles as $name => $description) {
 			<?php endif; ?>
 		</div>
 	<?php endif; ?>
-	<?php if (!$model->getModel()->getIsNewRecord()) : ?>
-	<div class="col-xs-6">
-		<?php echo $form->field($model, 'status')->dropDownList(User::status()) ?>
-	</div>
-	<?php endif; ?>
+	
 	<div class="col-xs-6">
     <?= $form->field($userProfile, 'picture')->widget(
         Upload::classname(),

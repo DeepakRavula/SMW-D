@@ -88,12 +88,15 @@ class UserEmail extends \yii\db\ActiveRecord
     
     public function validateUnique($attributes)
     {
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = self::find()
                 ->andWhere(['email' => $this->email])
-                ->joinWith(['userContact uc' => function ($query) {
-                    $query->joinWith(['user u' => function ($query) {
-                        $query->andWhere(['u.isDeleted' => false]);
-                    }]);
+                ->joinWith(['userContact' => function ($query) use ($locationId) {
+                    $query->joinWith(['user' => function ($query) use ($locationId) {
+                        $query->notDeleted()
+                            ->location($locationId);
+                    }])
+                    ->notDeleted();
                 }]);
                 if (!$this->isNewRecord) {
                     $query->andWhere(['not', ['user_email.id' => $this->id]]);

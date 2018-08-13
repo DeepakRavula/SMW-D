@@ -20,11 +20,12 @@ use backend\models\search\ScheduleSearch;
 use common\models\Holiday;
 use common\models\TeacherUnavailability;
 use Carbon\Carbon;
+use common\components\controllers\FrontendBaseController;
 
 /**
  * QualificationController implements the CRUD actions for Qualification model.
  */
-class ScheduleController extends Controller
+class ScheduleController extends FrontendBaseController
 {
     public function behaviors()
     {

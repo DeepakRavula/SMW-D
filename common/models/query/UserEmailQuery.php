@@ -31,4 +31,9 @@ class UserEmailQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+    public function notDeleted()
+    {
+        return $this->andWhere(['user_email.isDeleted' => false]);
+    }
 }
