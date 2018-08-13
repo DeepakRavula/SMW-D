@@ -6,7 +6,7 @@ use Yii;
 use yii\base\Event;
 use common\models\User;
 use common\models\Location;
-use common\models\userEmail;
+use common\models\UserEmail;
 use cheatsheet\Time;
 
 /**
