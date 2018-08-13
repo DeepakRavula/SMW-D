@@ -28,6 +28,9 @@ class Student extends \yii\db\ActiveRecord
     const TYPE_CREATE='create';
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_CUSTOMER_MERGE = 'customer-merge';
+    const GENDER_NOT_SPECIFIED = 0;
+    const GENDER_MALE = 1;
+    const GENDER_FEMALE = 2;
 
     public $studentId;
 
@@ -246,5 +249,22 @@ class Student extends \yii\db\ActiveRecord
                         ->active()
                         ->groupBy(['student.id'])
             ->count();
+    }
+
+    public function getGender()
+    {
+        $gender = null;
+        switch ($this->gender) {
+            case self::GENDER_NOT_SPECIFIED:
+                $gender = 'Not Specified';
+            break;
+            case self::GENDER_MALE:
+                $gender = 'Male';
+            break;
+            case self::GENDER_FEMALE:
+                $gender = 'Female';
+            break;
+        }
+        return $gender;
     }
 }

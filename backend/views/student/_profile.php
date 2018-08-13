@@ -39,7 +39,7 @@ Pjax::begin([
 			<dt>Age</dt>
 			<dd><?= $age; ?></dd>
 			<dt>Gender</dt>
-			<dd><?= $model->gender; ?></dd>
+			<dd><?= $model->getGender(); ?></dd>
 		</dl>
 		<?php LteBox::end() ?>
 		</div> 

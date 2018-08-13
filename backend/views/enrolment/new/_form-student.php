@@ -45,16 +45,9 @@ use kartik\select2\Select2;
         <label class="modal-customer-label">Gender</label>
     </div>
     <div class="col-xs-7">
-    <?php $data = [0 => 'Not Specified', 1 => 'Male', 2 => 'Female']; ?>
-        <?= $form->field($courseDetail, 'gender')->widget(Select2::classname(), [
-                'data' => $data,
-                'options' => [
-                    'id' => 'change-student-gender'
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ]
-            ])->label(false); ?>
+    <?php $list = [0 => 'Not Specified', 1 => 'Male', 2 => 'Female']; ?>
+    <?php $courseDetail->gender = 0;  ?>
+    <?= $form->field($courseDetail, 'gender')->radioList($list)->label(false); ?>
     </div>
 </div> <!-- ./container -->
 <?php ActiveForm::end(); ?>
