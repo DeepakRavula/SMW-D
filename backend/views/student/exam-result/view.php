@@ -12,17 +12,7 @@ use insolita\wgadminlte\LteConst;
 /* @var $model common\models\Payments */
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
-<?php
-    Modal::begin([
-        'header' => '<h4 class="m-0">Evaluations</h4>',
-        'id'=>'new-exam-result-modal',
-    ]);
-     echo $this->render('_form', [
-            'model' => new ExamResult(),
-            'studentModel' => $studentModel,
-    ]);
-    Modal::end();
-    ?>		
+		
 <div class="col-md-12">	
 	<?php
     LteBox::begin([
