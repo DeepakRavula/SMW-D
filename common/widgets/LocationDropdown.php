@@ -26,13 +26,21 @@ class LocationDropdown extends Dropdown
         $role = end($roles);
         if ($role->name == User::ROLE_TEACHER) {
             $user = User::findOne($userId);
-            $userEmails = UserEmail::find()
+            $email = $user->email;
+            $users = User::find()
+                ->joinWith(['userContacts' => function ($query) use ($email) {
+                    $query->joinWith(['email' => function ($query) use ($email) {
+                        $query->andWhere(['email' => $email])
+                            ->notDeleted();
+                    }])
+                    ->primary()
+                    ->notDeleted();
+                }])
                 ->notDeleted()
-                ->andWhere(['email' => $user->email])
                 ->all();
             $locationIds = [];
-            foreach ($userEmails as $userEmail) {
-                $locationIds[] = $userEmail->user->userLocation->location_id;
+            foreach ($users as $user) {
+                $locationIds[] = $user->userLocation->location_id;
             }
             $locations = ArrayHelper::map(Location::find()->andWhere(['id' => $locationIds])->all(), 'slug', 'slug');
         } else {
