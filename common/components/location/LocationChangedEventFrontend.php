@@ -43,7 +43,9 @@ class LocationChangedEventFrontend extends Event
                 }])
                 ->one();
             $duration = Time::SECONDS_IN_A_MONTH;
-            Yii::$app->user->login($userEmail->user, $duration);
+            if ($userEmail) {
+                Yii::$app->user->login($userEmail->user, $duration);
+            }
         }
         return true;
     }
