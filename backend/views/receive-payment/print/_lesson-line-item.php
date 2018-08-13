@@ -66,7 +66,7 @@ use yii\bootstrap\Html;
 
         array_push($columns, [
             'attribute' => 'payment',
-            'label' => 'payment',
+            'label' => 'Payment',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency(round($data->getPaidAmount($data->payment->id), 2));
             },
