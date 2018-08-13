@@ -59,8 +59,8 @@ $config = [
         ],
         'urlManager' => [
             'class' => '\common\components\location\UrlManager',
+            'on locationChanged' => '\common\components\location\LocationChangedEventFrontend::onLocationChanged',
             'enableDefaultLocationUrlCode' => true,
-            'enableLocationPersistence' => false,
             'ignoreLocationUrlPatterns' => [
                 '#^user/sign-in#' => '#^user/sign-in#',
             ],

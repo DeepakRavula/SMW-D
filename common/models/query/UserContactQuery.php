@@ -36,11 +36,15 @@ class UserContactQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['user_contact.isPrimary' => true]);
     }
+    
     public function location($locationId)
     {
-        $this->joinWith('userLocation')
+        return $this->joinWith('userLocation')
             ->andWhere(['location_id' => $locationId]);
+    }
 
-        return $this;
+    public function notDeleted()
+    {
+        return $this->andWhere(['user_contact.isDeleted' => false]);
     }
 }

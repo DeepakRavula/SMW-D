@@ -49,11 +49,18 @@ class LoginForm extends Model
      */
     public function validatePassword()
     {
+        $misMatchCount = 0;
+        $userCount = count($this->getUsers());
         if (!$this->hasErrors()) {
-            $user = $this->getUser();
-            if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError('password', Yii::t('frontend', 'Incorrect username or password.'));
+            $users = $this->getUsers();
+            foreach ($users as $user) {
+                if (!$user->validatePassword($this->password)) {
+                    $misMatchCount += 1;
+                }
             }
+        }
+        if ($misMatchCount == $userCount) {
+            $this->addError('password', Yii::t('frontend', 'Incorrect username or password.'));
         }
     }
 
@@ -95,16 +102,36 @@ class LoginForm extends Model
         if ($this->user === false) {
             $userName = $this->identity;
             $this->user = User::find()
+                ->notDeleted()
                 ->joinWith(['userContacts' => function ($query) use ($userName) {
                     $query->joinWith(['email' => function ($query) use ($userName) {
-                        $query->andWhere(['email' => $userName]);
+                        $query->notDeleted()
+                            ->andWhere(['email' => $userName]);
                     }])
-                    ->primary();
+                    ->primary()
+                    ->notDeleted();
                 }])
-                ->notDeleted()
                 ->one();
         }
 
         return $this->user;
+    }
+
+    public function getUsers()
+    {
+        $userName = $this->identity;
+        $users = User::find()
+            ->notDeleted()
+            ->joinWith(['userContacts' => function ($query) use ($userName) {
+                $query->joinWith(['email' => function ($query) use ($userName) {
+                    $query->notDeleted()
+                        ->andWhere(['email' => $userName]);
+                }])
+                ->primary()
+                ->notDeleted();
+            }])
+            ->all();
+
+        return $users;
     }
 }

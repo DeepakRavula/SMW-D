@@ -57,6 +57,9 @@ class LessonReschedule extends Model
                     $extended->updateAttributes(['extendedLessonId' => $rescheduledLesson->id]);
                 }
             }
+            if ($oldLesson->paymentCycleLesson) {
+                $oldLesson->paymentCycleLesson->updateAttributes(['lessonId' => $rescheduledLesson->id]);
+            }
         }
         foreach ($oldLesson->lessonPayments as $lessonPayment) {
             $lessonPayment->updateAttributes(['lessonId' => $rescheduledLesson->id]);
