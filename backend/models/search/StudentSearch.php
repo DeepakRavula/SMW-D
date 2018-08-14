@@ -81,10 +81,10 @@ class StudentSearch extends Student
 	$dataProvider->sort->defaultOrder = [
             'first_name' => SORT_ASC,
         ];	
-        $query->andFilterWhere(['like', 'student.first_name', trim($this->first_name)])
-            ->andFilterWhere(['like', 'student.last_name', trim($this->last_name)])
+        $query->andFilterWhere(['like', 'student.first_name', $this->first_name])
+            ->andFilterWhere(['like', 'student.last_name', $this->last_name])
 	        ->andFilterWhere(['like', 'user_phone.number', trim($this->phone)])
-	        ->andFilterWhere(['like','user.id', trim($this->customer)])
+	        ->andFilterWhere(['or',['like', 'user_profile.firstname', trim($this->customer)],['like', 'user_profile.lastname', trim($this->customer)]])
             ->groupBy('student.id');
 
         if (!$this->showAllStudents) {

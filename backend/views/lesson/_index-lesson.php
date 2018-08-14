@@ -38,24 +38,6 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 'value' => function ($data) {
                     return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName : null;
                 },
-                'filterType' => KartikGridView::FILTER_SELECT2,
-                'filter' => ArrayHelper::map(Student::find()->orderBy(['first_name' => SORT_ASC])
-                    ->joinWith(['enrolment' => function ($query) {
-                        $query->joinWith(['course' => function ($query) {
-                            $query->confirmed()
-                                ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-                        }]);
-                    }])
-                    ->all(), 'id', 'fullName'),
-                'filterWidgetOptions' => [
-                    'options' => [
-                        'id' => 'student',
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true,
-                    ],
-                ],
-                'filterInputOptions' => ['placeholder' => 'Student']
             ],
             [
                 'label' => 'Program',
@@ -63,22 +45,6 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 'value' => function ($data) {
                     return !empty($data->course->program->name) ? $data->course->program->name : null;
                 },
-                'filterType' => KartikGridView::FILTER_SELECT2,
-                'filter' => ArrayHelper::map(
-                    Program::find()->orderBy(['name' => SORT_ASC])
-                        ->joinWith(['course' => function ($query) {
-                            $query->joinWith(['enrolment'])
-                                ->confirmed()
-                                ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-                        }])
-                        ->asArray()
-                        ->all(), 'id', 'name'),
-                'filterInputOptions' => ['placeholder' => 'Program'],
-                'filterWidgetOptions' => [
-                    'pluginOptions' => [
-                        'allowClear' => true,
-                    ]
-                ]
             ],
             [
                 'label' => 'Teacher',
@@ -86,23 +52,6 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 'value' => function ($data) {
                     return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
                 },
-			    'filterType' => KartikGridView::FILTER_SELECT2,
-                'filter' => ArrayHelper::map(UserProfile::find()->orderBy(['firstname' => SORT_ASC])
-                    ->joinWith(['courses' => function ($query) {
-                        $query->joinWith('enrolment')
-                            ->confirmed()
-                            ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-                    }])
-                    ->all(), 'user_id', 'fullName'),
-                'filterWidgetOptions' => [
-                    'options' => [
-                        'id' => 'teacher',
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true,
-                    ],
-                ],
-                'filterInputOptions' => ['placeholder' => 'Teacher']
             ],
             [
                 'label' => 'Date',
@@ -379,7 +328,10 @@ $this->params['show-all'] = $this->render('_show-all-button', [
 
     $(document).off('change', '#lessonsearch-showall').on('change', '#lessonsearch-showall', function(){
         var showAll = $(this).is(":checked");
-        var params = $.param({'LessonSearch[type]': <?= Lesson::TYPE_PRIVATE_LESSON ?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[status]': '' });
+        var student = $("input[name*='LessonSearch[student]").val();
+        var program = $("input[name*='LessonSearch[program]").val();
+        var teacher = $("input[name*='LessonSearch[teacher]").val();
+        var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[type]': <?= Lesson::TYPE_PRIVATE_LESSON ?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[status]': '' });
         var url = "<?= Url::to(['lesson/index']); ?>?"+params;
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
     });  

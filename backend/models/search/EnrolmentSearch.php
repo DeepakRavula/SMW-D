@@ -104,9 +104,9 @@ class EnrolmentSearch extends Enrolment
          $dataProvider->sort->defaultOrder = [
             'program' => SORT_ASC,
         ];
-        $query->andFilterWhere(['p.id' => $this->program]);
-        $query->andFilterWhere(['student.id' => $this->student]);
-        $query->andFilterWhere(['up.user_id' => $this->teacher]);
+        $query->andFilterWhere(['like', 'p.name', $this->program]);
+        $query->andFilterWhere(['or',['like', 'student.first_name', trim($this->student)],['like', 'student.last_name', trim($this->student)]]);
+        $query->andFilterWhere(['or',['like','up.firstname', $this->teacher], ['like','up.lastname', $this->teacher]]);
         if ($this->startdate) {
             list($this->startBeginDate, $this->startEndDate) = explode(' - ', $this->startdate);
             $query->andWhere(['between', 'DATE(course.startDate)',

@@ -36,24 +36,6 @@ $this->params['show-all'] = $this->render('_button', [
 				return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName
 						: null;
 			},
-			'filterType' => KartikGridView::FILTER_SELECT2,
-			'filter' => ArrayHelper::map(Student::find()->orderBy(['first_name' => SORT_ASC])
-					->joinWith(['enrolment' => function ($query) {
-							$query->joinWith(['course' => function ($query) {
-									$query->confirmed()
-									->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-								}]);
-						}])
-					->all(), 'id', 'fullName'),
-			'filterWidgetOptions' => [
-				'options' => [
-					'id' => 'student',
-				],
-				'pluginOptions' => [
-					'allowClear' => true,
-				],
-			],
-			'filterInputOptions' => ['placeholder' => 'Student'],
 		],
 		[
 			'label' => 'Program',
@@ -62,23 +44,6 @@ $this->params['show-all'] = $this->render('_button', [
 			'value' => function ($data) {
 				return !empty($data->course->program->name) ? $data->course->program->name : null;
 			},
-			'filterType' => KartikGridView::FILTER_SELECT2,
-			'filter' => ArrayHelper::map(
-				Program::find()->orderBy(['name' => SORT_ASC])
-					->joinWith(['course' => function ($query) {
-							$query->joinWith(['enrolment'])
-							->confirmed()
-							->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-						}])
-					->asArray()->all(), 'id', 'name'
-			),
-			'filterInputOptions' => ['placeholder' => 'Program'],
-			'format' => 'raw',
-			'filterWidgetOptions' => [
-				'pluginOptions' => [
-					'allowClear' => true,
-				]
-			],
 		],
 		[
 			'label' => 'Teacher',
@@ -88,24 +53,6 @@ $this->params['show-all'] = $this->render('_button', [
 				return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity
 						: null;
 			},
-			'filterType' => KartikGridView::FILTER_SELECT2,
-			'filter' => ArrayHelper::map(UserProfile::find()->orderBy(['firstname' => SORT_ASC])
-					->joinWith(['courses' => function ($query) {
-							$query->joinWith('enrolment')
-							->confirmed()
-							->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-						}])
-					->all(), 'user_id', 'fullName'),
-			'filterWidgetOptions' => [
-				'options' => [
-					'id' => 'teacher',
-				],
-				'pluginOptions' => [
-					'allowClear' => true,
-				],
-			],
-			'filterInputOptions' => ['placeholder' => 'Teacher'],
-			'format' => 'raw'
 		],
 		[
 			'label' => 'Duration',
@@ -159,7 +106,10 @@ $this->params['show-all'] = $this->render('_button', [
 <script>
 $(document).off('change', '#unscheduledlessonsearch-showall').on('change', '#unscheduledlessonsearch-showall', function () {
       	var showAllExpiredLesson = $(this).is(":checked");
-    	var params = $.param({ 'UnscheduledLessonSearch[showAll]': (showAllExpiredLesson | 0) });
+		var student_search = $("input[name*='UnscheduledLessonSearch[student]").val();
+		var program_search = $("input[name*='UnscheduledLessonSearch[program]").val();
+        var teacher_search = $("input[name*='UnscheduledLessonSearch[teacher]").val();
+    	var params = $.param({ 'UnscheduledLessonSearch[student]':student_search, 'UnscheduledLessonSearch[program]':program_search, 'UnscheduledLessonSearch[teacher]':teacher_search, 'UnscheduledLessonSearch[showAll]': (showAllExpiredLesson | 0) });
       	var url = "<?php echo Url::to(['unscheduled-lesson/index']); ?>?"+params;
         $.pjax.reload({url: url, container: "#unscheduled-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
 });
