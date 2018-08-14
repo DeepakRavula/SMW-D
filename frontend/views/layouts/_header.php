@@ -7,6 +7,8 @@ use frontend\assets\FrontendAsset;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\User;
+use common\models\Location;
+use common\widgets\LocationDropdown;
 
 $bundle = FrontendAsset::register($this);
 ?>
@@ -28,6 +30,19 @@ $bundle = FrontendAsset::register($this);
 		<nav class="navbar navbar-static-top" role="navigation">
 			<div class="navbar-custom-menu">
 				<ul class="nav navbar-nav">
+					<div class="m-t-10 pull-left">
+					<?php $userId = Yii::$app->user->id;
+        			$roles = Yii::$app->authManager->getRolesByUser($userId);
+       				$role = end($roles);
+       				if ($role->name == User::ROLE_TEACHER) { ?>
+						<?php $form = Html::beginForm(); ?>    
+							<div class="btn-group">
+								<button class="btn dropdown-toggle" data-toggle="dropdown"><?= Location::findOne(['slug' => Yii::$app->location])->name; ?> &nbsp;&nbsp;<span class="caret"></span></button>
+								<?= LocationDropdown::widget(); ?>
+							</div>
+						<?php Html::endForm() ?>
+					   <?php } ?>
+					</div>
 					<!-- User Account: style can be found in dropdown.less -->
 					<li class="notifications-menu" data-toggle="tooltip" data-original-title="Schedule" data-placement="bottom">
 						<a href="<?php echo Url::to(['/schedule/index']) ?>">Schedule</a>

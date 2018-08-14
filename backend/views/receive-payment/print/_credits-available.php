@@ -37,6 +37,13 @@ use yii\bootstrap\ActiveForm;
         'value' => 'reference',
     ]);
 
+    array_push($columns, [
+        'headerOptions' => ['class' => 'text-left', 'style' => 'width:180px'],
+        'contentOptions' => ['class' => 'text-left', 'style' => 'width:180px'],
+        'label' => 'Payment Method',
+        'value' => 'method',
+        'format' => 'raw'
+    ]);    
 
     array_push($columns, [
         'format' => 'currency',
@@ -45,14 +52,9 @@ use yii\bootstrap\ActiveForm;
         'label' => 'Amount',
         'value' => 'amount'
     ]);
+
     array_push($columns, [
-        'headerOptions' => ['class' => 'text-left', 'style' => 'width:180px'],
-        'contentOptions' => ['class' => 'text-left', 'style' => 'width:180px'],
-        'label' => 'Payment Method',
-        'value' => 'method',
-        'format' => 'raw'
-    ]);    
-    array_push($columns, [
+        'format' => 'currency',
         'headerOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
         'contentOptions' => ['class' => 'text-right', 'style' => 'width:180px'],
         'label' => 'Amount Used',

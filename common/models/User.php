@@ -792,6 +792,11 @@ class User extends ActiveRecord implements IdentityInterface
             ->notDeleted();
     }
 
+    public function getAllStudents()
+    {
+        return $this->hasMany(Student::className(), ['customer_id' => 'id']);
+    }
+
     public function getEnroledStudents()
     {
         return $this->studentsCount == 1 ? 'has ' . $this->studentsCount . ' student enrolled' :

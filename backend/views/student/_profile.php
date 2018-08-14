@@ -39,7 +39,7 @@ Pjax::begin([
 			<dt>Age</dt>
 			<dd><?= $age; ?></dd>
 			<dt>Gender</dt>
-			<dd><?= $model->gender; ?></dd>
+			<dd><?= $model->getGenderName(); ?></dd>
 		</dl>
 		<?php LteBox::end() ?>
 		</div> 
@@ -61,12 +61,3 @@ Pjax::begin([
 		<?php LteBox::end() ?>
 	</div>
 <?php Pjax::end(); ?>
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Edit Student Profile</h4>',
-    'id' => 'student-profile-modal',
-]);?>
-<div id="student-profile-content"></div>
-
-<?php Modal::end();
-?>

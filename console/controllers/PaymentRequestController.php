@@ -37,7 +37,7 @@ class PaymentRequestController extends Controller
         $enrolments = Enrolment::find()
             ->notDeleted()
             ->isConfirmed()
-            ->location(['14','15'])
+            ->location([14, 15, 16])
             ->privateProgram()
             ->andWhere(['NOT', ['enrolment.paymentFrequencyId' => 0]])
             ->isRegular()
@@ -49,56 +49,9 @@ class PaymentRequestController extends Controller
             ->all();
         foreach ($enrolments as $enrolment) {
             $dateRange = $enrolment->getCurrentPaymentCycleDateRange($priorDate);
-            list($from_date, $to_date) = explode(' - ', $dateRange);
-            $fromDate = new \DateTime($from_date);
-            $toDate = new \DateTime($to_date);
-            $invoicedLessons = Lesson::find()
-                ->notDeleted()
-                ->isConfirmed()
-                ->notCanceled()
-                ->privateLessons()
-                ->between($fromDate, $toDate)
-                ->enrolment($enrolment->id)
-                ->invoiced();
-            $query = Lesson::find()   
-                ->notDeleted()
-                ->isConfirmed()
-                ->notCanceled()
-                ->privateLessons()
-                ->between($fromDate, $toDate)
-                ->enrolment($enrolment->id)
-                ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
-                ->andWhere(['invoiced_lesson.id' => null])
-                ->orderBy(['lesson.date' => SORT_ASC]);
-            $lessons = $query->all();
-            $lessonIds = [];
-            foreach ($lessons as $lesson) {
-                if ($lesson->isOwing($enrolment->id)) {
-                    $lessonIds[] = $lesson->id;
-                }
-            }
-            if ($lessonIds) {
-                $query = Lesson::find()
-                    ->andWhere(['id' => $lessonIds])
-                    ->orderBy(['lesson.date' => SORT_ASC]);
-                $firstLesson = $query->one();
-                if (!$firstLesson->hasAutomatedPaymentRequest()) {
-                    $lessons = $query->all();
-                    $model = new ProformaInvoice();
-                    $model->userId = $enrolment->customer->id;
-                    $model->locationId = $enrolment->customer->userLocation->location_id;
-                    $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
-                    $model->save();
-                    foreach ($lessons as $lesson) {
-                        $proformaLineItem = new ProformaLineItem();
-                        $proformaLineItem->proformaInvoiceId = $model->id;
-                        $proformaLineItem->lessonId = $lesson->id;
-                        $proformaLineItem->save();
-                    }
-                    $model->save();
-                }
-            }
+            $enrolment->createPaymentRequest($dateRange);
         }
+        return true;
     }
 
     public function actionSave()

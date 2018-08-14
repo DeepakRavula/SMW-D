@@ -128,7 +128,11 @@ trait Invoiceable
         $invoice->userName = $loggedUser->userProfile->fullName;
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $location_id;
+        if ($this->isUnscheduled() && $this->isExpired()) {
+            $invoice->date = (new \DateTime($this->privateLesson->expiryDate))->format('Y-m-d H:i:s'); 
+        } else {
         $invoice->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
+        }
         $invoice->save();
         $this->addPrivateLessonLineItem($invoice);
         $invoice->save();
@@ -264,5 +268,59 @@ trait Invoiceable
         $invoice->total = $invoice->subTotal + $invoice->tax;
         $invoice->date = (new \DateTime())->format('Y-m-d H:i:s');
         return $invoice;
+    }
+
+    public function createPaymentRequest($dateRange)
+    {
+        list($from_date, $to_date) = explode(' - ', $dateRange);
+        $fromDate = new \DateTime($from_date);
+        $toDate = new \DateTime($to_date);
+        $invoicedLessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->privateLessons()
+            ->between($fromDate, $toDate)
+            ->enrolment($this->id)
+            ->invoiced();
+        $query = Lesson::find()   
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->privateLessons()
+            ->between($fromDate, $toDate)
+            ->enrolment($this->id)
+            ->leftJoin(['invoiced_lesson' => $invoicedLessons], 'lesson.id = invoiced_lesson.id')
+            ->andWhere(['invoiced_lesson.id' => null])
+            ->orderBy(['lesson.date' => SORT_ASC]);
+        $lessons = $query->all();
+        $lessonIds = [];
+        foreach ($lessons as $lesson) {
+            if ($lesson->isOwing($this->id)) {
+                $lessonIds[] = $lesson->id;
+            }
+        }
+        if ($lessonIds) {
+            $query = Lesson::find()
+                ->andWhere(['id' => $lessonIds])
+                ->orderBy(['lesson.date' => SORT_ASC]);
+            $firstLesson = $query->one();
+            if (!$firstLesson->hasAutomatedPaymentRequest()) {
+                $lessons = $query->all();
+                $model = new ProformaInvoice();
+                $model->userId = $this->customer->id;
+                $model->locationId = $this->customer->userLocation->location_id;
+                $model->proforma_invoice_number = $model->getProformaInvoiceNumber();
+                $model->save();
+                foreach ($lessons as $lesson) {
+                    $proformaLineItem = new ProformaLineItem();
+                    $proformaLineItem->proformaInvoiceId = $model->id;
+                    $proformaLineItem->lessonId = $lesson->id;
+                    $proformaLineItem->save();
+                }
+                $model->save();
+            }
+        }
+        return true;
     }
 }

@@ -8,5 +8,5 @@ use common\models\Location;
  */
 $location = Location::findOne(['slug' => Yii::$app->location]);
 ?>
- <div class="p-t-15 pull-left staff-location-header" data-toggle="tooltip" data-original-title="Your location" data-placement="bottom"><i class="fa fa-map-marker m-r-10"></i><?= $location->name; ?>
- </div>
+<div class="p-t-15 pull-left staff-location-header" data-toggle="tooltip" data-original-title="Your location" data-placement="bottom"><i class="fa fa-map-marker m-r-10"></i><?= $location->name; ?>
+</div>

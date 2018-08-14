@@ -40,16 +40,9 @@ use kartik\select2\Select2;
                 ],
             ])->textInput(['placeholder' => 'Select Date']);
 				?>
-        <?php $data = [0 => 'Not Specified', 1 => 'Male', 2 => 'Female']; ?>
-        <?= $form->field($model, 'gender')->widget(Select2::classname(), [
-                'data' => $data,
-                'options' => [
-                    'id' => 'change-student-gender'
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ]
-            ]); ?>
+        <?php $list = [0 => 'Not Specified', 1 => 'Male', 2 => 'Female']; ?>
+        <?php $model->isNewRecord ? $model->gender = 0: $model->gender = $model->gender ;  ?>
+        <?= $form->field($model, 'gender')->radioList($list); ?>
         </div>
 	<?php echo $form->field($customer, 'id')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>

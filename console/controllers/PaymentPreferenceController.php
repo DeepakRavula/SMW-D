@@ -35,7 +35,7 @@ class PaymentPreferenceController extends Controller
             ->isRegular()
             ->joinWith(['course' => function ($query) use ($priorDate) {
                 $query->andWhere(['>=', 'DATE(course.endDate)', $priorDate])
-                        ->location([14, 15])
+                        ->location([14, 15, 16])
                         ->confirmed();
             }])
             ->paymentPrefered()

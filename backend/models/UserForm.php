@@ -198,7 +198,7 @@ class UserForm extends Model
             $userProfileModel->save();
             $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
             $roles = Yii::$app->authManager->getRolesByUser($userProfileModel->user_id);
-            $role=end($roles);
+            $role = end($roles);
             return !$model->hasErrors();
         }
 
