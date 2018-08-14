@@ -265,7 +265,7 @@ $this->params['label'] = $this->render('_title', [
      $(document).on('click', '.add-new-exam-result,#student-exam-result-listing  tbody > tr', function () {
         var examResultId = $(this).data('key');
         var studentId  = <?= $model->id ?>;
-             if (examResultId === undefined) {
+            if (!examResultId) {
                     var customUrl = '<?= Url::to(['exam-result/create', 'studentId' => $model->id]); ?>';
             } else {
                 var customUrl = '<?= Url::to(['exam-result/update']); ?>?id=' + examResultId;
