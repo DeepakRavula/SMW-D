@@ -266,7 +266,7 @@ $this->params['label'] = $this->render('_title', [
         var examResultId = $(this).data('key');
         var studentId  = <?= $model->id ?>;
             if (!examResultId) {
-                    var customUrl = '<?= Url::to(['exam-result/create', 'studentId' => $model->id]); ?>';
+                var customUrl = '<?= Url::to(['exam-result/create', 'studentId' => $model->id]); ?>';
             } else {
                 var customUrl = '<?= Url::to(['exam-result/update']); ?>?id=' + examResultId;
                 var url = '<?= Url::to(['exam-result/delete']); ?>?id=' + examResultId;
