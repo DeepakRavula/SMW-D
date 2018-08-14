@@ -109,7 +109,7 @@ class ProformaInvoiceSearch extends ProformaInvoice
         }
         $query->joinWith(['user' => function($query) {
             $query->joinWith(['userProfile' => function($query) {
-                $query->andFilterWhere(['or',['like', 'user_profile.firstname', trim($this->customer)],['like', 'user_profile.lastname', trim($this->customer)]]);
+                $query->andFilterWhere(['or', ['like', 'user_profile.firstname', trim($this->customer)],['like', 'user_profile.lastname', trim($this->customer)]]);
             }]);
         }]);
         $query->andFilterWhere(['like', 'user_phone.number', $this->phone]);

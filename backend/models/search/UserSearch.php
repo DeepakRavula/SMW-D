@@ -126,7 +126,7 @@ class UserSearch extends User
             $query->andFilterWhere(['like', 'email', $this->email]);
         }]);
         $query->andFilterWhere(['like', 'uf.firstname', $this->firstname])
-            ->andFilterWhere(['like','uf.lastname', $this->lastname]);
+            ->andFilterWhere(['like', 'uf.lastname', $this->lastname]);
 
         $query->andFilterWhere(['ai.name' => $this->role_name]);
 

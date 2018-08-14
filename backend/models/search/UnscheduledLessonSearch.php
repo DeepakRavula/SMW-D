@@ -69,7 +69,7 @@ class UnscheduledLessonSearch extends Lesson
        }
         if ($this->student) {
             $query->joinWith(['student' => function($query) {
-                $query->andFilterWhere(['or',['like', 'student.first_name', trim($this->student)], ['like', 'student.last_name', trim($this->student)]]);
+                $query->andFilterWhere(['or', ['like', 'student.first_name', trim($this->student)], ['like', 'student.last_name', trim($this->student)]]);
             }]);
         }
         if ($this->program) {
@@ -79,8 +79,7 @@ class UnscheduledLessonSearch extends Lesson
         }
         if ($this->teacher) {
 		    $query->joinWith(['teacherProfile' => function($query) {
-                $query->andFilterWhere(['or',['like','user_profile.firstname', $this->teacher], ['like','user_profile.lastname', $this->teacher]]);$query->andFilterWhere(['user.id' => $this->teacher
-                        ]);
+                $query->andFilterWhere(['or', ['like', 'user_profile.firstname', $this->teacher], ['like','user_profile.lastname', $this->teacher]]);
 		    }]);
         }
         return $dataProvider;
