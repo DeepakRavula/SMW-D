@@ -16,7 +16,7 @@ use yii\widgets\Pjax;
             'summary' => false,
             'emptyText' => false,
             'filterModel' => $itemSearchModel,
-           // 'filterUrl' => Url::to(['invoice/show-items', 'id' => $invoiceModel->id ]),
+            'filterUrl' => Url::to(['invoice/show-items', 'id' => $invoiceModel->id ]),
             'tableOptions' => ['class' => 'table table-condensed'],
             'rowOptions' => ['class' => 'add-item-invoice'],
             'headerRowOptions' => ['class' => 'bg-light-gray'],

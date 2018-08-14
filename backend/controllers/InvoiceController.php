@@ -708,6 +708,7 @@ class InvoiceController extends BaseController
     public function actionShowItems($id)
     {
     //  print_r('ddd');die('coming');  
+    
         $invoiceModel                       = $this->findModel($id);
         $request                            = Yii::$app->request;
         $itemSearchModel                    = new ItemSearch();
