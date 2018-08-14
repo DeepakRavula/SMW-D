@@ -69,6 +69,7 @@ class User extends ActiveRecord implements IdentityInterface
     public $hasEditable;
     public $lessonId;
     public $locationId;
+    public $roles;
 
     public static $roleNames = [
         self::ROLE_ADMINISTRATOR => 'Admin',
@@ -159,7 +160,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['customerIds'], 'required', 'on' => self::SCENARIO_MERGE],
             ['customerIds', 'validateCanMerge', 'on' => self::SCENARIO_MERGE],
             [['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate', 'locationId',
-                'customerId', 'isDeleted', 'pin_hash', 'canLogin', 'canMerge'], 'safe']
+                'customerId', 'isDeleted', 'pin_hash', 'canLogin', 'canMerge', 'roles'], 'safe']
         ];
     }
 
@@ -598,7 +599,7 @@ class User extends ActiveRecord implements IdentityInterface
         $this->link('userProfile', $profile);
         $this->trigger(self::EVENT_AFTER_SIGNUP);
         $model = new UserForm();
-        $model->roles = Yii::$app->request->queryParams['role_name'];
+        $model->roles = $this->roles;
         // Default role
         $auth = Yii::$app->authManager;
         $auth->assign($auth->getRole($model->roles), $this->getId());

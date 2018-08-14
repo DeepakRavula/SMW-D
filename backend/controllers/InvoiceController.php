@@ -117,16 +117,15 @@ class InvoiceController extends BaseController
         $invoice = new Invoice();
         $request = Yii::$app->request;
         $invoiceRequest = $request->get('Invoice');
-        if (empty($invoiceRequest['customer_id'])) {
-            $invoice->user_id = Invoice::USER_UNASSINGED;
-            $invoice->type = Invoice::TYPE_INVOICE;
-        }
+        $invoice->type = Invoice::TYPE_INVOICE;
+        $location = Location::findOne(['slug' => \Yii::$app->location]);
         if (!empty($invoiceRequest['customer_id'])) {
             $invoice->user_id = $invoiceRequest['customer_id'];
             $invoice->type = $invoiceRequest['type'];
+        } else {
+            $invoice->user_id = $location->walkinCustomer->customerId;
         }
-        $location_id = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $invoice->location_id = $location_id;
+        $invoice->location_id = $location->id;
         $invoice->createdUserId = Yii::$app->user->id;
         $invoice->updatedUserId = Yii::$app->user->id;
         $invoice->save();

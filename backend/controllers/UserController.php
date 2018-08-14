@@ -555,6 +555,7 @@ class UserController extends BaseController
             'model' => $model,
             'emailModel' => $emailModel
         ]);
+        $model->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $request = Yii::$app->request;
         if ($request->post()) {
             if ($model->load($request->post()) && $emailModel->load($request->post())) {

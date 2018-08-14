@@ -271,8 +271,6 @@ if (!empty($lineItem)) {
     });
     
     $(document).on('modal-next', function(event, params) {
-        $.pjax.reload({container: "#invoice-view", replace: false, async: false, timeout: 6000}); 
-        $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
         invoice.reload();
         return false;
     });
@@ -453,7 +451,7 @@ if (!empty($lineItem)) {
             {
                 if (response.status) {
                     $('#modal-spinner').hide();
-                    $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
+                    invoice.reload();
                     $('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
                     $('#popup-modal').modal('hide');
 
@@ -656,14 +654,15 @@ if (!empty($lineItem)) {
         },
 
         reload: function() {
+            $.pjax.reload({container: "#invoice-view", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-details", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
-            $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-view-payment-tab", replace:false,async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-title", replace:false,async: false, timeout: 6000});
+            $.pjax.reload({container: "#invoice-more-option", replace:false,async: false, timeout: 6000});
             $.pjax.reload({container: "#invoice-view-tab-item", replace:false,async: false, timeout: 6000}); 
             $('#invoice-spinner').hide();
         }

@@ -22,6 +22,7 @@ class UserForm extends Model
     public $canLogin;
     public $canMerge;
     public $pin;
+    public $locationId;
     public $username;
     public $status;
     public $roles;
@@ -49,7 +50,7 @@ class UserForm extends Model
             ['pin', 'validatePin'],
             [['status'], 'integer'],
             ['roles', 'required'],
-            [['locations', 'pin', 'canLogin', 'canMerge'], 'safe'],
+            [['locations', 'pin', 'canLogin', 'canMerge', 'locationId'], 'safe'],
             [['password', 'confirmPassword'], 'string', 'min' => 6],
             ['confirmPassword', 'compare', 'compareAttribute' => 'password', 'message' => "Confirm Password doesn't match with the password"],
         ];
@@ -82,6 +83,7 @@ class UserForm extends Model
     {
         $this->password = trim($value);
     }
+
     public function getConfirmPassword()
     {
         return $this->confirmPassword;
@@ -171,6 +173,7 @@ class UserForm extends Model
                 throw new Exception('Model not saved');
             }
             if ($isNewRecord) {
+                $model->roles = $this->roles;
                 $model->afterSignup();
             }
 
@@ -181,11 +184,11 @@ class UserForm extends Model
                 $auth->assign($auth->getRole($this->roles), $model->getId());
             }
 
-            $userLocationModel = UserLocation::findOne(['user_id' => $model->getId(), 'location_id' => Location::findOne(['slug' => Yii::$app->location])->id]);
+            $userLocationModel = UserLocation::findOne(['user_id' => $model->getId(), 'location_id' => $this->locationId]);
             if (empty($userLocationModel) && $this->roles !== User::ROLE_ADMINISTRATOR) {
                 $userLocationModel = new UserLocation();
                 $userLocationModel->user_id = $model->getId();
-                $userLocationModel->location_id = Location::findOne(['slug' => Yii::$app->location])->id;
+                $userLocationModel->location_id = $this->locationId;
                 $userLocationModel->save();
             }
 
@@ -199,11 +202,12 @@ class UserForm extends Model
             $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
             $roles = Yii::$app->authManager->getRolesByUser($userProfileModel->user_id);
             $role = end($roles);
-            return !$model->hasErrors();
+            return $model->id;
         }
 
         return null;
     }
+
     public static function createMultiple($modelClass, $multipleModels = [])
     {
         $model = new $modelClass();

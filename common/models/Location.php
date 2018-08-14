@@ -9,6 +9,7 @@ use Yii;
 use common\models\User;
 use yii\db\Query;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use backend\models\UserForm;
 /**
  * This is the model class for table "location".
  *
@@ -125,6 +126,11 @@ class Location extends \yii\db\ActiveRecord
             ->onCondition(['location_debt.type' => LocationDebt::TYPE_ADVERTISEMENT]);
     }
 
+    public function getWalkinCustomer()
+    {
+        return $this->hasOne(LocationWalkinCustomer::className(), ['locationId' => 'id']);
+    }
+
     public function getLocationAvailabilities()
     {
         return $this->hasMany(LocationAvailability::className(), ['locationId' => 'id']);
@@ -182,6 +188,7 @@ class Location extends \yii\db\ActiveRecord
             $locationDebt->save();
 
             $this->addPermission();
+            $this->addWalkinCustomer();
         }
         return parent::afterSave($insert, $changedAttributes);
     }
@@ -237,7 +244,7 @@ class Location extends \yii\db\ActiveRecord
     
     public function getLocationDebt($locationDebt, $fromDate, $toDate)
     {
-        $locationDebtValue=0;
+        $locationDebtValue = 0;
         $revenue = $this->getRevenue($fromDate, $toDate);
         if (!empty($revenue) && $revenue>0) {
             if ((int)$locationDebt === (int)LocationDebt::TYPE_ROYALTY) {
@@ -254,9 +261,9 @@ class Location extends \yii\db\ActiveRecord
     
     public function subTotal($fromDate, $toDate)
     {
-        $royaltyValue=$this->getLocationDebt(LocationDebt::TYPE_ROYALTY, $fromDate, $toDate);
-        $advertisementValue=$this->getLocationDebt(LocationDebt::TYPE_ADVERTISEMENT, $fromDate, $toDate);
-        $subTotal=$royaltyValue+$advertisementValue;
+        $royaltyValue = $this->getLocationDebt(LocationDebt::TYPE_ROYALTY, $fromDate, $toDate);
+        $advertisementValue = $this->getLocationDebt(LocationDebt::TYPE_ADVERTISEMENT, $fromDate, $toDate);
+        $subTotal = $royaltyValue + $advertisementValue;
         return $subTotal;
     }
     
@@ -377,5 +384,23 @@ class Location extends \yii\db\ActiveRecord
             'manageTeachers',
             'viewBlogList',
         ];
+    }
+
+    public function addWalkinCustomer()
+    {
+        $customerForm = new UserForm();
+        $customerForm->roles = User::ROLE_CUSTOMER;
+        $customerForm->canLogin = true;
+        $customerForm->status = User::STATUS_ACTIVE;
+        $customerForm->canMerge = false;
+        $customerForm->firstname = 'Walkin';
+        $customerForm->lastname = 'Customer';
+        $customerForm->locationId = $this->id;
+        $customerId = $customerForm->save();
+        $walkin = new LocationWalkinCustomer();
+        $walkin->locationId = $this->id;
+        $walkin->customerId = $customerId;
+        $walkin->save();
+        return true;
     }
 }
