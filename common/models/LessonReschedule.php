@@ -92,19 +92,23 @@ class LessonReschedule extends Model
             ]);
         }
 
-        $originalLessonId	  = $lessonModel->id;
-        $classroomId              = $lessonModel->classroomId;
-        $lessonModel->id	  = null;
+        $originalLessonId = $lessonModel->id;
+        $classroomId = $lessonModel->classroomId;
+        $lessonModel->id = null;
         $lessonModel->isNewRecord = true;
-        $lessonModel->duration    = $duration;
+        $lessonModel->duration = $duration;
         if ($rescheduleDate) {
             $lessonModel->date = $toDate->format('Y-m-d H:i:s');
         }
         if ($rescheduleTeacher) {
             $lessonModel->teacherId = $teacherId;
+            $qualification = Qualification::findOne(['teacher_id' => $teacherId,
+                    'program_id' => $lessonModel->course->program->id]);
+            $lessonModel->teacherRate = $qualification->rate ?? 0;
+        } else {
+            $lessonModel->teacherRate = $oldLesson->teacherRate;
         }
         $lessonModel->programRate = $oldLesson->programRate;
-        $lessonModel->teacherRate = $oldLesson->teacherRate;
         $lessonModel->status = Lesson::STATUS_SCHEDULED;
         if ($oldLesson->isExtra()) {
             $lessonModel->type = $oldLesson->type;
