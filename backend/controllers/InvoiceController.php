@@ -49,7 +49,7 @@ class InvoiceController extends BaseController
                     'delete', 'note', 'get-payment-amount', 'update-customer', 'post',
                     'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax', 'mail',
                     'post-distribute', 'retract-credits', 'unpost', 'distribute',
-                    'void','update'
+                    'void','update', 'show-items'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -65,7 +65,7 @@ class InvoiceController extends BaseController
                             'compute-tax', 'create', 'update', 'delete', 'update-mail-status',
                             'all-completed-lessons', 'adjust-tax', 'revert-invoice', 'enrolment',
                             'invoice-payment-cycle', 'group-lesson','get-payment-amount', 'void',
-                            'post-distribute', 'retract-credits', 'unpost', 'distribute', 'post'
+                            'post-distribute', 'retract-credits', 'unpost', 'distribute', 'post', 'show-items'
                         ],
                         'roles' => [
                             'manageInvoices', 'managePfi'
@@ -704,5 +704,25 @@ class InvoiceController extends BaseController
             ];
         }
         return $response;
+    }
+    public function actionShowItems($id)
+    {
+    //  print_r('ddd');die('coming');  
+        $invoiceModel                       = $this->findModel($id);
+        $request                            = Yii::$app->request;
+        $itemSearchModel                    = new ItemSearch();
+        $itemSearchModel->avoidDefaultItems = true;
+        $itemSearchModel->showAllItems      = false;
+        $itemDataProvider                   = $itemSearchModel->search($request->queryParams);
+        $data = $this->renderAjax('_form-invoice-line-item', [
+            'invoiceModel' => $invoiceModel,
+            'itemDataProvider' => $itemDataProvider,
+            'itemSearchModel' =>$itemSearchModel,
+        ]);
+        $response = [
+            'status' => true,
+            'data' => $data
+        ];
+      return $response; 
     }
 }
