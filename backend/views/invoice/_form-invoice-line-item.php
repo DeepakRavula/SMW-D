@@ -50,6 +50,9 @@ use yii\widgets\Pjax;
     <?php Pjax::end(); ?>
 
 <script type="text/javascript">
+    $(document).ready(function(){
+        $('.modal-save').hide();
+    });
     $(document).on('click', '.add-item-invoice', function() {
         $('#item-spinner').show();
         $( ".add-item-invoice" ).addClass("multiselect-disable");
@@ -67,7 +70,7 @@ use yii\widgets\Pjax;
                     $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-view-lineitem-listing", replace: false, async: false, timeout: 6000}); 
                     $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
-                    $('#invoice-line-item-modal').modal('hide');
+                    $('#popup-modal').modal('hide');
                 }
             }
         });
