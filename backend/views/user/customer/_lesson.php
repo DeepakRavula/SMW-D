@@ -37,39 +37,40 @@ echo GridView::widget([
             },
         ],
         [
-            'label' => 'Lesson Status',
-            'value' => function ($data) {
-                if ($data->isCompleted()) {
-                    $status = 'Completed';
-                } else {
-                    $status = 'Scheduled';
-                }
-
-                return $status;
-            },
-        ],
-        [
-            'label' => 'Invoice Status',
-            'value' => function ($data) {
-                if (!empty($data->invoice)) {
-                    $status = $data->invoice->getStatus();
-                } else {
-                    $status = 'Not Invoiced';
-                }
-
-                return $status;
-            },
-        ],
-        [
             'label' => 'Date',
             'value' => function ($data) {
-                return !empty($data->date) ? Yii::$app->formatter->asDate($data->date) : null;
+                return Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
             },
         ],
         [
-            'label' => 'Present?',
+            'label' => 'Duration',
             'value' => function ($data) {
-                return $data->getPresent();
+                $lessonDuration = (new \DateTime($data->duration))->format('H:i');
+                return $lessonDuration;
+            },
+        ],
+        [
+            'label' => 'Status',
+            'value' => function ($data) {
+                return $data->getStatus();
+            },
+        ],
+        [
+            'label' => 'Price',
+            'attribute' => 'price',
+            'contentOptions' => ['class' => 'text-right'],
+            'headerOptions' => ['class' => 'text-right'],
+            'value' => function ($data) {
+                return Yii::$app->formatter->asCurrency($data->netPrice);
+            },
+        ],
+        [
+            'label' => 'Owing',
+            'attribute' => 'owing',
+            'contentOptions' => ['class' => 'text-right'],
+            'headerOptions' => ['class' => 'text-right'],
+            'value' => function ($data) {
+                return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
             },
         ],
     ],
