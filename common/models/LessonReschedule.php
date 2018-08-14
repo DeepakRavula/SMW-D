@@ -67,6 +67,11 @@ class LessonReschedule extends Model
                 $lessonPayment->payment->creditUsage->debitUsagePayment->updateAttributes(['reference' => $rescheduledLesson->lessonNumber]);
             }
         }
+        if ($oldLesson->teacherId != $rescheduledLesson->teacherId) {
+            $qualification = Qualification::findOne(['teacher_id' => $rescheduledLesson->teacherId,
+                        'program_id' => $rescheduledLesson->course->program->id]);
+            $rescheduledLesson->updateAttributes(['teacherRate' => $qualification->rate ?? 0]);
+        }
         return true;
     }
 
