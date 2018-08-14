@@ -5,6 +5,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Student;
 use Yii;
+use common\models\Location;
 
 /**
  * UserSearch represents the model behind the search form about `common\models\User`.
@@ -56,8 +57,9 @@ class StudentBirthdaySearch extends Student
      */
     public function search($params)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-        $query = Student::find()->notDeleted()
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $query = Student::find()
+            ->notDeleted()
             ->location($locationId)
             ->orderBy(['DATE_FORMAT(birth_date,"%m-%d")' => SORT_DESC]);
         $dataProvider = new ActiveDataProvider([
