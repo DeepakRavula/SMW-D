@@ -57,9 +57,13 @@ class LoginForm extends Model
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
-            $roles = Yii::$app->authManager->getRolesByUser($user->id);
-            $role = end($roles);
-            if (!$user || !in_array($role->name, [User::ROLE_STAFFMEMBER, User::ROLE_OWNER, User::ROLE_ADMINISTRATOR])) {
+            if ($user) {
+                $roles = Yii::$app->authManager->getRolesByUser($user->id);
+                $role = end($roles);
+                if (!in_array($role->name, [User::ROLE_STAFFMEMBER, User::ROLE_OWNER, User::ROLE_ADMINISTRATOR])) {
+                    $this->addError('username', Yii::t('backend', 'You are not allowed to login.'));
+                }
+            } else {
                 $this->addError('username', Yii::t('backend', 'You are not allowed to login.'));
             }
         }
