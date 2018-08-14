@@ -71,6 +71,7 @@ use yii\widgets\Pjax;
                 if (response.status) {
                     $('#item-spinner').hide();
                     $('#line-item-update').html(response.message).fadeIn().delay(8000).fadeOut();
+                    $( ".add-item-invoice" ).removeClass("multiselect-disable");
                     $.pjax.reload({container: "#invoice-header-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-bottom-summary", replace: false, async: false, timeout: 6000});
                     $.pjax.reload({container: "#invoice-user-history", replace: false, async: false, timeout: 6000});

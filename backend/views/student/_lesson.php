@@ -15,6 +15,12 @@ use yii\grid\GridView;
     </div>
     <?php $columns = [
             [
+                'label' => 'Program Name',
+                'value' => function ($data) {
+                    return !empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
+                },
+            ],
+            [
                 'label' => 'Date',
                 'value' => function ($data) {
                     return Yii::$app->formatter->asDate($data->date) . ' @ ' . Yii::$app->formatter->asTime($data->date);
