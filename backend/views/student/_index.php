@@ -51,6 +51,7 @@ use common\models\User;
             },
             'filterType' => KartikGridView::FILTER_SELECT2,
             'filter' => ArrayHelper::map(Student::find()
+                ->location($locationId)
                 ->orderBy(['first_name' => SORT_ASC])
                 ->notDeleted()
                 ->asArray()->all(), 'id', 'first_name'),
@@ -74,6 +75,7 @@ use common\models\User;
             'filter' => ArrayHelper::map(Student::find()
                 ->orderBy(['last_name' => SORT_ASC])
                 ->notDeleted()
+                ->location($locationId)
                 ->asArray()->all(), 'id', 'last_name'),
             'filterWidgetOptions' => [
                 'options' => [

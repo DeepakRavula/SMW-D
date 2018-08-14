@@ -15,7 +15,7 @@ LteBox::begin([
 ])
 ?>
 <dl class="dl-horizontal">
-	<dt>Cost</dt>
+	<dt>Cost/hr </dt>
 	<dd><?= Yii::$app->formatter->asCurrency($model->teacherRate); ?></dd>
 </dl>
 <?php LteBox::end() ?>

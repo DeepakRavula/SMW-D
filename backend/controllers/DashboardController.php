@@ -46,16 +46,16 @@ public function behaviors()
         if ($searchModel->load($request->get())) {
             $dashboardRequest = $request->get('DashboardSearch');
             $searchModel->dateRange = $dashboardRequest['dateRange'];
-	    list($searchModel->fromDate, $searchModel->toDate) = explode(' - ', $searchModel->dateRange);
+	        list($searchModel->fromDate, $searchModel->toDate) = explode(' - ', $searchModel->dateRange);
         }
         $toDate = $searchModel->toDate;
         if ($toDate > $currentDate) {
             $toDate = $currentDate;
         }
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-	$fromDate = Carbon::parse($searchModel->fromDate);	 
+	    $fromDate = Carbon::parse($searchModel->fromDate);	 
         $from = $fromDate->format('Y-m-d');
-	$toDate = Carbon::parse($searchModel->toDate);
+	    $toDate = Carbon::parse($searchModel->toDate);
         $to = $toDate->format('Y-m-d');
         $enrolments = Enrolment::find()
             ->notDeleted()
@@ -64,7 +64,7 @@ public function behaviors()
                     $query->privateProgram();
                 }])
                 ->confirmed()
-	        ->overlap($from, $to)
+	            ->overlap($from, $to)
                 ->andWhere(['course.type' => Course::TYPE_REGULAR])
                 ->location($locationId);
             }])
@@ -77,7 +77,7 @@ public function behaviors()
                     $query->group();
                 }])
                 ->confirmed()
-		->overlap($from, $to)
+		        ->overlap($from, $to)
                 ->andWhere(['course.type' => Course::TYPE_REGULAR])
                 ->location($locationId);
             }])
@@ -92,16 +92,16 @@ public function behaviors()
         $students = Student::find()
 			->notDeleted()
 			->joinWith(['enrolment' => function ($query) use ($locationId, $from, $to) {
-				    $query->joinWith(['course' => function ($query) use ($locationId, $from, $to) {
-                          $query->joinWith(['lessons' => function ($query) {
-                             $query->andWhere(['NOT',['lesson.id' => null]]);
-                          }])
-			 			->confirmed()
-						->overlap($from, $to)
-				  ->andWhere(['course.type' => Course::TYPE_REGULAR])
-						->location($locationId);
-					}]);
-                }])
+                $query->joinWith(['course' => function ($query) use ($locationId, $from, $to) {
+                    $query->joinWith(['lessons' => function ($query) {
+                        $query->andWhere(['NOT',['lesson.id' => null]]);
+                    }])
+                    ->confirmed()
+                    ->overlap($from, $to)
+                    ->andWhere(['course.type' => Course::TYPE_REGULAR])
+                    ->location($locationId);
+                }]);
+            }])
             ->groupBy('student.id')
 			->active()
 			->count();

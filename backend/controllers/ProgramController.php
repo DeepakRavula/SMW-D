@@ -15,6 +15,7 @@ use backend\models\search\ProgramSearch;
 use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
 use yii\helpers\Url;
+use common\models\Location;
 /**
  * ProgramController implements the CRUD actions for Program model.
  */
@@ -89,7 +90,7 @@ class ProgramController extends BaseController
      */
     public function actionView($id)
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Student::find()
                 ->notDeleted()
                 ->joinWith(['enrolment' => function ($query) use ($locationId, $id) {
