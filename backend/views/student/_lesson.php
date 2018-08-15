@@ -4,6 +4,7 @@ use yii\helpers\Url;
 use yii\helpers\Json;
 use common\models\Enrolment;
 use yii\grid\GridView;
+use common\models\Lesson;
 
 ?>
 
@@ -77,6 +78,9 @@ use yii\grid\GridView;
         'columns' => $columns,
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>
+    <div class="more-lesson pull-left" id = "admin-login" style = "display:none">
+            <a class = "see-more" href = "">Show More</a>
+    </div>
     </div>
 </div>
 
@@ -110,6 +114,23 @@ use yii\grid\GridView;
             }
         });
         return false;
+    });
+
+    $(document).ready(function () {
+        var lesson_count = '<?= $lessonCount; ?>';
+        if (lesson_count > 12) {
+            var private = <?= $model->lesson->isPrivate(); ?>;
+            if (private) {
+                $(".more-lesson").show();
+                var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
+                var student = '<?= $model->id ?>';
+                var params = $.param({'LessonSearch[student]': student, 'LessonSearch[type]': type, 'LessonSearch[isSeeMore]': 1});
+                var url = '<?= Url::to(['lesson/index']); ?>?' + params;
+                $('.see-more').attr("href", url);
+            }
+        } else {
+            $(".more-lesson").hide();
+        }
     });
 </script>
 

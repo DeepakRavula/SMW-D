@@ -47,7 +47,8 @@ $this->params['label'] = $this->render('_title', [
     <?php $lessonContent = $this->render('_lesson', [
             'lessonDataProvider' => $lessonDataProvider,
             'model' => $model,
-            'allEnrolments' => $allEnrolments
+            'allEnrolments' => $allEnrolments,
+            'lessonCount' => $lessonCount,
         ]);
 
         $unscheduledLessonContent = $this->render('_unscheduledLesson', [
