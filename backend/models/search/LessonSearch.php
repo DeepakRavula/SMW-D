@@ -89,14 +89,11 @@ class LessonSearch extends Lesson
             return $dataProvider;
         }
 
-        $query->andFilterWhere(['student.id' => $this->student]);
-        $query->andFilterWhere(['program.id' => $this->program]);
-	
-        if (!empty($this->teacher)) {
+        $query->andFilterWhere(['or', ['like', 'student.first_name', trim($this->student)], ['like', 'student.last_name', trim($this->student)]]);
+        $query->andFilterWhere(['like', 'program.name', $this->program]);
+        if ($this->teacher) {
             $query->joinWith(['teacherProfile' => function ($query) {
-		        $query->joinWith(['user' => function($query) {
-                    $query->andFilterWhere(['user.id' => $this->teacher]);
-		        }]);
+                $query->andFilterWhere(['or', ['like', 'user_profile.firstname', $this->teacher], ['like', 'user_profile.lastname', $this->teacher]]);
             }]);
         }
         if (!empty($this->customerId)) {
