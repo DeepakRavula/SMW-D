@@ -503,3 +503,7 @@ dl {
 .total-horizontal-dd {
     width: 60px;
 }
+
+.show-more-link {
+	margin-right: -950px;
+}

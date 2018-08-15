@@ -78,7 +78,7 @@ use common\models\Lesson;
         'columns' => $columns,
     ]); ?>
 	<?php yii\widgets\Pjax::end(); ?>
-    <div class="more-lesson pull-left" id = "admin-login" style = "display:none">
+    <div class="more-lesson show-more-link" id = "admin-login" style = "display:none">
             <a class = "see-more" href = "">Show More</a>
     </div>
     </div>
