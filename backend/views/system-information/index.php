@@ -191,7 +191,7 @@ $this->registerJsFile(
             <div class="small-box bg-yellow">
                 <div class="inner">
                     <h3>
-                        <?php echo User::find()->notDeleted()->count() ?>
+                        <?php echo User::find()->excludeWalkin()->notDeleted()->count() ?>
                     </h3>
                     <p>
                         <?php echo Yii::t('backend', 'User Registrations') ?>

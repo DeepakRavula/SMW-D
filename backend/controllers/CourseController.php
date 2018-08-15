@@ -240,14 +240,14 @@ class CourseController extends BaseController
         $model = $this->findModel($id);
         $teacherModel = ArrayHelper::map(
             User::find()
-                    ->joinWith('userLocation ul')
-                    ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
-                    ->andWhere(['raa.item_name' => 'teacher'])
-                    ->andWhere(['ul.location_id' => Location::findOne(['slug' => \Yii::$app->location])->id])
-                    ->notDeleted()
-                    ->all(),
-                'id',
-            'userProfile.fullName'
+                ->excludeWalkin()
+                ->joinWith('userLocation ul')
+                ->join('INNER JOIN', 'rbac_auth_assignment raa', 'raa.user_id = user.id')
+                ->andWhere(['raa.item_name' => 'teacher'])
+                ->andWhere(['ul.location_id' => Location::findOne(['slug' => \Yii::$app->location])->id])
+                ->notDeleted()
+                ->all(),
+                'id', 'userProfile.fullName'
             );
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);

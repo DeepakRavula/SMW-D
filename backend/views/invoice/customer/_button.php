@@ -7,9 +7,9 @@ use common\models\User;
 <?php if (!$model->isOpeningBalance()) : ?>
 <i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i>
 <ul class="dropdown-menu dropdown-menu-right">
-	<?php if (empty($model->user)) : ?>
+	<?php if (empty($model->user) || $model->user->isLocationWalkin()) : ?>
 		<li><a class="add-customer" href="#">Add Existing Customer...</a></li>
-		<li><a class="add-walkin" href="#">Add Walk-in...</a></li>
+		<li><a class="add-walkin" href="#">Add Walk-in With Name...</a></li>
 	<?php elseif ($model->user->isCustomer()) : ?>
 		<li><a class="add-customer" href="#">Change Customer...</a></li>
 	<?php elseif ($model->user->isWalkin()) : ?>

@@ -26,6 +26,7 @@ $customer_id = (empty($customer->id)) ? null : (string) $customer->id;
 <div class="row">
 <div class="col-md-3">
     <?php $customers = ArrayHelper::map(User::find()
+        ->excludeWalkin()
         ->join('INNER JOIN', 'user_location', 'user_location.user_id = user.id')
         ->join('INNER JOIN', 'rbac_auth_assignment', 'rbac_auth_assignment.user_id = user.id')
         ->andWhere(['user_location.location_id' => Location::findOne(['slug' => \Yii::$app->location])->id, 'rbac_auth_assignment.item_name' => 'customer'])

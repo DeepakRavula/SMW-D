@@ -29,6 +29,7 @@ class LocationController extends Controller
     public function actionWipeCustomers()
     {
         $customers = User::find()
+            ->excludeWalkin()
             ->location(8)
             ->all();
         foreach ($customers as $customer) {

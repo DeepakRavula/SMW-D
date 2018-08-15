@@ -84,6 +84,7 @@ $this->params['action-button'] = $actionButton; ?>
                     },
 			    'filterType'=> KartikGridView::FILTER_SELECT2,
             'filter' => ArrayHelper::map(User::find()
+            ->excludeWalkin()
 			    ->customers($locationId)
 			    ->joinWith(['userProfile' => function ($query) {
 					$query->orderBy('firstname');

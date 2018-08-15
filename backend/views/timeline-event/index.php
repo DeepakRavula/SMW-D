@@ -13,6 +13,7 @@ $loggedUser  = User::findOne(['id' => Yii::$app->user->id]);
 $findUserBot = User::findByRole(User::ROLE_BOT);
 $botUser     = end($findUserBot);
 $query       = User::find()
+    ->excludeWalkin()
     ->notDeleted();
 if ($loggedUser->isAdmin() || $loggedUser->isOwner()) {
     $query->backendUsers();

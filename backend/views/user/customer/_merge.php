@@ -18,7 +18,7 @@ use yii\helpers\Html;
     <div class="row">
         <div class="col-md-5">
             <?= $form->field($model, "customerId")->dropDownList(
-                    ArrayHelper::map(User::find()->customers($locationId)->notDeleted()->active()
+                    ArrayHelper::map(User::find()->excludeWalkin()->customers($locationId)->notDeleted()->active()
                         ->andWhere(['NOT', ['user.id' => $model->id]])
                         ->all(), 'id', 'publicIdentity'),
         ['multiple' => 'multiple', 'size' => '10']

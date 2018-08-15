@@ -161,16 +161,7 @@ if (!empty($lineItem)) {
     'model' => $model,
 ]); ?>
 <?php Modal::end();?>
-<?php Modal::begin([
-    'header' => '<h4 class="m-0">Add Walk-in</h4>',
-    'id' => 'walkin-modal',
-]); ?>
-<?= $this->render('customer/_walkin', [
-    'model' => $model,
-    'userModel' => empty($model->user) ? new UserProfile() : $model->user->userProfile,
-    'userEmail' => empty($model->user->primaryEmail->email) ? new UserEmail() : $model->user->primaryEmail,
-]);?>
-<?php Modal::end();?>
+
 <?php Modal::begin([
      'header' => '<h4 class="m-0">Edit Tax</h4>',
      'id' => 'edit-tax-modal',
@@ -300,16 +291,25 @@ if (!empty($lineItem)) {
 		return false;
     });
       
-    $(document).on('click', '.add-walkin', function (e) {
-		$('#walkin-modal .modal-dialog').css({'width': '400px'});
-		$('#walkin-modal').modal('show');
-		return false;
+    $(document).on('click', '.add-walkin', function () {
+		$.ajax({
+            url    : '<?= Url::to(['invoice/create-walkin', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: 'json',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal .modal-dialog').css({'width': '400px'});
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Add Walkin</h4>');
+                    $('.modal-save').show();
+                    $('.modal-save').text('Save');
+                }
+            }
+        });
+        return false;
   	});
-        
-    $(document).on('click', '.walkin-cancel-button', function (e) {
-		$('#walkin-modal').modal('hide');
-		return false;
-    });
       
 	$(document).on('click', '.invoice-note-cancel', function (e) {
 		$('#message-modal').modal('hide');
@@ -417,27 +417,6 @@ if (!empty($lineItem)) {
         return false;
     });
     
-    $(document).on('beforeSubmit', '#walkin-customer-form', function (e) {
-        $.ajax({
-            url    : $(this).attr('action'),
-            type   : 'post',
-            dataType: "json",
-            data   : $(this).serialize(),
-            success: function(response)
-            {
-                if (response.status) {
-                    $('#walkin-modal').modal('hide');
-                    $.pjax.reload({container : '#invoice-view', async : false, timeout : 6000});
-                    $.pjax.reload({container: "#invoice-more-option", replace: false, async: false, timeout: 6000});
-                    $('#customer-update').html(response.message).fadeIn().delay(8000).fadeOut();
-                } else {
-                    $('#walkin-customer-form').yiiActiveForm('updateMessages', response.errors, true);
-                }
-            }
-        });
-        return false;
-    });
-
     $(document).on("click", '.add-customer-invoice', function() {
         $('#modal-spinner').show();
         var customerId = $(this).attr('data-key');

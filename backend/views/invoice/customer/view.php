@@ -30,7 +30,7 @@ LteBox::begin([
 	<?php endif; ?>
 	<?php if (!empty($model->user)) : ?>
 	<dt>Name</dt>
-	<dd><?php if (!empty($role) && $role->name === User::ROLE_CUSTOMER) : ?>
+	<dd><?php if (!$model->user->isLocationWalkin()) : ?>
 		<a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => 'customer', 'id' => $customer->id]) ?>">
 	<?php endif; ?>
 	<?= $customer->publicIdentity?>

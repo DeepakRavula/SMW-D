@@ -48,7 +48,7 @@ elseif($roleName == User::ROLE_STAFFMEMBER) {
 		->location($locationId);
 }
 elseif($roleName == User::ROLE_CUSTOMER) {
-	$first_name->customers($locationId);
+	$first_name->customers($locationId)->excludeWalkin();
 }
 else {
 	$first_name->allTeachers()
@@ -72,7 +72,7 @@ elseif($roleName == User::ROLE_STAFFMEMBER) {
 		->location($locationId);
 }
 elseif($roleName == User::ROLE_CUSTOMER) {
-	$last_name->customers($locationId);
+	$last_name->customers($locationId)->excludeWalkin();
 }
 else {
 	$last_name->allTeachers()

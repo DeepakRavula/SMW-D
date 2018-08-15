@@ -108,8 +108,9 @@ class ProgramController extends BaseController
             ->joinWith(['userLocation ul' => function ($query) use ($locationId) {
                 $query->andWhere(['ul.location_id' => $locationId]);
             }])
-            ->joinWith('qualification')
-            ->andWhere(['program_id' => $id])
+            ->joinWith(['qualification' => function ($query) use ($id) {
+                $query->andWhere(['program_id' => $id]);
+            }])
             ->notDeleted();
         $teacherDataProvider = new ActiveDataProvider([
             'query' => $query,

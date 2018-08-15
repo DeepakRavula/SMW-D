@@ -49,7 +49,7 @@ class InvoiceController extends BaseController
                     'delete', 'note', 'get-payment-amount', 'update-customer', 'post',
                     'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax', 'mail',
                     'post-distribute', 'retract-credits', 'unpost', 'distribute',
-                    'void','update'
+                    'void', 'update', 'fetch-summary-and-status', 'compute-tax'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -144,6 +144,7 @@ class InvoiceController extends BaseController
         $userQuery = UserProfile::find()
             ->joinWith(['user' => function($query) use ($locationId) {
                 $query->notDeleted()
+                ->excludeWalkin()
                 ->customers($locationId);
             }]);
         $first_name = $userQuery->orderBy(['firstname' => SORT_ASC])
@@ -183,31 +184,47 @@ class InvoiceController extends BaseController
     {
         $request = Yii::$app->request;
         $model = $this->findModel($id);
-        $customer = new User();
+        $customer = !$model->user->isLocationWalkin() ? $model->user : new User();
         $customer->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $userProfile = new UserProfile();
-        $userContact = new UserContact();
-        $userEmail = new UserEmail();
-        if ($userProfile->load($request->post()) && $userEmail->load($request->post())) {
-            if ($customer->save()) {
-                $userProfile->user_id = $customer->id;
-                $userProfile->save();
-                $userContact->userId = $customer->id;
-                $userContact->isPrimary = true;
-                $userContact->labelId = Label::LABEL_WORK;
-                $userContact->save();
-                $userEmail->userContactId = $userContact->id;
-                $userEmail->save();
-                $model->user_id = $customer->id;
-                $model->save();
-                $auth = Yii::$app->authManager;
-                $auth->assign($auth->getRole(User::ROLE_GUEST), $customer->id);
-                return [
-                    'status' => true,
-                    'message' => 'customer has been Added successfully.'
-                ];
+        $userProfile = !$model->user->isLocationWalkin() ? $model->user->userProfile : new UserProfile();
+        $userContact = !$model->user->isLocationWalkin() ? ($model->user->primaryContact ? $model->user->primaryContact : new UserContact()) : new UserContact();
+        $userEmail = !$model->user->isLocationWalkin() ? ($model->user->primaryEmail ? $model->user->primaryEmail : new UserEmail()) : new UserEmail();
+        if ($request->isPost) {
+            if ($userProfile->load($request->post()) && $userEmail->load($request->post())) {
+                if ($customer->save()) {
+                    $userProfile->user_id = $customer->id;
+                    $userProfile->save();
+                    if ($userEmail->email) {
+                        //print_r($customer->id);die;
+                        $userContact->userId = $customer->id;
+                        $userContact->isPrimary = true;
+                        $userContact->labelId = Label::LABEL_WORK;
+                        $userContact->save();
+                        $userEmail->userContactId = $userContact->id;
+                        $userEmail->save();
+                    }
+                    $model->user_id = $customer->id;
+                    $model->save();
+                    $auth = Yii::$app->authManager;
+                    $auth->assign($auth->getRole(User::ROLE_GUEST), $customer->id);
+                    $response = [
+                        'status' => true,
+                        'message' => 'customer has been Added successfully.'
+                    ];
+                }
             }
+        } else {
+            $data = $this->renderAjax('customer/_walkin', [
+                'model' => $model,
+                'userModel' => $userProfile,
+                'userEmail' => $userEmail
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
         }
+        return $response;
     }
 
     public function actionNote($id)
@@ -272,21 +289,18 @@ class InvoiceController extends BaseController
             'query' => $notes,
         ]);
 
-        $customer  = new User();
-        $userModel = new UserProfile();
-        $userEmail = new UserEmail();
-        if (!empty($model->user_id)) {
-            $customer  = User::findOne(['id' => $model->user_id]);
-            $userModel = UserProfile::findOne(['user_id' => $customer->id]);
-            $userEmail = UserEmail::find()
-                ->joinWith(['userContact uc' => function ($query) use ($model) {
-                    $query->andWhere(['uc.userId' => $model->user_id]);
-                }])
-                ->one();
-        }
+        $customer  = User::findOne(['id' => $model->user_id]);
+        $userModel = UserProfile::findOne(['user_id' => $model->user_id]);
+        $user_id = $model->user_id;
+        $userEmail = UserEmail::find()
+            ->joinWith(['userContact uc' => function ($query) use ($user_id) {
+                $query->andWhere(['uc.userId' => $user_id]);
+            }])
+            ->one();
+            
         $logDataProvider= new ActiveDataProvider([
-            'query' => LogHistory::find()
-            ->invoice($id) ]);
+            'query' => LogHistory::find()->invoice($id) 
+        ]);
         $searchModel->isPrint = false;
         return $this->render('view', [
                 'model' => $model,
@@ -318,8 +332,6 @@ class InvoiceController extends BaseController
 
     public function actionFetchSummaryAndStatus($id)
     {
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
         $summary = $this->renderPartial('_view-bottom-summary', [
             'model' => $model,
@@ -338,8 +350,6 @@ class InvoiceController extends BaseController
 
     public function actionComputeTax()
     {
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $locationModel = Location::findOne(['id' => $locationId]);
         $today = (new \DateTime())->format('Y-m-d H:i:s');

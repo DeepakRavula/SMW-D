@@ -17,6 +17,7 @@ class FrontendBaseController extends Controller
             $user = User::findOne(Yii::$app->user->id);
             $email = $user->email;
             $users = User::find()
+                ->excludeWalkin()
                 ->joinWith(['userContacts' => function ($query) use ($email) {
                     $query->joinWith(['email' => function ($query) use ($email) {
                         $query->andWhere(['email' => $email])

@@ -315,6 +315,16 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasMany(Qualification::className(), ['teacher_id' => 'id']);
     }
 
+    public function getLocationWalkin()
+    {
+        return $this->hasMany(LocationWalkinCustomer::className(), ['customerId' => 'id']);
+    }
+
+    public function isLocationWalkin()
+    {
+        return !empty($this->locationWalkin);
+    }
+
     public function beforeSave($insert)
     {
         if ($insert) {

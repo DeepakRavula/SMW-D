@@ -49,6 +49,7 @@ use common\models\User;
                 $form->field($model, 'customerId')->widget(Select2::classname(), [
                     'data' => ArrayHelper::map(
                         User::find()
+                            ->excludeWalkin()
                             ->customers($locationId)
                             ->notDeleted()
                             ->active()
