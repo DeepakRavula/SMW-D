@@ -750,4 +750,5 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $itemcategory = ItemCategory::findOne(['id' => $itemCategoryId]);
         return $itemcategory->name;
     }
+    
 }

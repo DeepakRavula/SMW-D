@@ -263,14 +263,21 @@ GridView::widget([
 ]);
 ?></div>
 <script>
-$(document).ready(function(){
 var recordCount= '<?= $dataProvider->getCount(); ?>';
-if(recordCount>0){
+$(document).ready(function(){
+
+alert(recordCount);
+if(recordCount>0 && recordCount<=20){
     report.addNewRow();
 }
-    $(document).on('pjax:success', function() {
+$(document).on('click', '.pagination li > a', function (e) {
+    alert(recordCount);
+    if(recordCount>=20){
+    var activePage = $(this).attr('data-page');
+    var lastPage = recordCount/20;
+    alert(lastPage);
     report.addNewRow();
-   
+    }
 });
 });
 var report = {
