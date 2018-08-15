@@ -56,9 +56,21 @@ use yii\widgets\Pjax;
 <script>
 $(document).ready(function() {
     $(document).on('click', '.add-new-misc', function () {
-        $('#invoice-line-item-modal').modal('show');
+        $.ajax({
+            url    : '<?= Url::to(['invoice/show-items', 'id' => $model->id]); ?>',
+            type   : 'get',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal .modal-dialog').css({'width': '600px'});
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Add Line Items</h4>');
+                    $('#modal-content').html(response.data);
+                }
+            }
+        });
         return false;
-    });
+    });
     $(document).on('click', '.add-misc-cancel', function () {
     	$('#invoice-line-item-modal').modal('hide');
         $.pjax.reload({container: "#invoice-view-tab-item", replace: false, async: false, timeout: 6000});
