@@ -3,10 +3,7 @@
 use yii\helpers\Html;
 use common\components\gridView\KartikGridView;
 use yii\helpers\Url;
-use yii\helpers\ArrayHelper;
 use common\models\Location;
-use common\models\User;
-use common\models\ProformaInvoice;
 use yii\widgets\Pjax;
 use backend\models\search\ProformaInvoiceSearch;
 /* @var $this yii\web\View */
@@ -30,20 +27,6 @@ $this->params['show-all'] = $this->render('_button', [
                 'value' => function ($data) {
                     return $data->getProformaInvoiceNumber();
                 },
-			'filterType'=>KartikGridView::FILTER_SELECT2,
-                'filter'=>ArrayHelper::map(ProformaInvoice::find()
-            ->location($locationId)->orderBy(['proforma_invoice_number' => SORT_ASC])
-            ->notDeleted()
-                ->all(), 'id', 'proFormaInvoiceNumber'),
-                'filterWidgetOptions'=>[
-            'options' => [
-                'id' => 'proformainvoice',
-            ],
-                    'pluginOptions'=>[
-                        'allowClear'=>true,
-            ],
-        ],
-                'filterInputOptions'=>['placeholder'=>'Number'],
             ],
             [
                 'label' => 'Due Date',
@@ -82,24 +65,6 @@ $this->params['show-all'] = $this->render('_button', [
                 'value' => function ($data) {
                     return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                 },
-    'filterType'=> KartikGridView::FILTER_SELECT2,
-            'filter' => ArrayHelper::map(User::find()
-            ->excludeWalkin()
-			    ->customers($locationId)
-			    ->joinWith(['userProfile' => function ($query) {
-					$query->orderBy('firstname');
-				}])
-			    ->all(), 'id', 'publicIdentity'),
-	    'filterWidgetOptions'=>[
-        'options' => [
-            'id' => 'customer',
-        ],
-                'pluginOptions'=>[
-                    'allowClear'=>true,
-        ],
-
-    ],
-            'filterInputOptions'=>['placeholder'=>'Customer'],
             ],
             [
                 'attribute' => 'phone',
@@ -157,12 +122,13 @@ $this->params['show-all'] = $this->render('_button', [
 </div>
     <?php Pjax::end(); ?>
     <script>
-$(document).ready(function(){
-  $("#proformainvoicesearch-showall").on("change", function() {
-      var showAll = $(this).is(":checked");
-       var params = $.param({ 'ProformaInvoiceSearch[showAll]': (showAll | 0)});
-      var url = "<?php echo Url::to(['proforma-invoice/index']); ?>?"+params;
-              $.pjax.reload({url: url, container: "#proforma-invoice-listing", replace: false, timeout: 4000});  //Reload GridView
-          });
+$(document).off('change', '#proformainvoicesearch-showall').on('change', '#proformainvoicesearch-showall', function () {
+    var showAll = $(this).is(":checked");
+    var number = $("input[name*='ProformaInvoiceSearch[number]").val();
+    var customer = $("input[name*='ProformaInvoiceSearch[customer]").val();
+    var phone = $("input[name*='ProformaInvoiceSearch[phone]").val();
+    var params = $.param({ 'ProformaInvoiceSearch[number]':number, 'ProformaInvoiceSearch[customer]':customer, 'ProformaInvoiceSearch[phone]':phone, 'ProformaInvoiceSearch[showAll]': (showAll | 0)});
+    var url = "<?php echo Url::to(['proforma-invoice/index']); ?>?"+params;
+    $.pjax.reload({url: url, container: "#proforma-invoice-listing", replace: false, timeout: 4000});  //Reload GridView
 });
   </script>

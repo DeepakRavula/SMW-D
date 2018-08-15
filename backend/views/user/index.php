@@ -118,18 +118,6 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
                 'value' => function ($data) {
                     return !empty($data->userProfile->firstname) ? $data->userProfile->firstname : null;
                 },
-		'filterType'=>KartikGridView::FILTER_SELECT2,
-                'filter'=> $first_names,
-                'filterWidgetOptions'=>[
-            'options' => [
-                'id' => 'firstname',
-            ],
-                    'pluginOptions'=>[
-                        'allowClear'=>true,
-            ],
-        ],
-                'filterInputOptions'=>['placeholder'=>'First Name'],
-                'format'=>'raw'
             ],
             [
                 'attribute' => 'lastname',
@@ -137,18 +125,6 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
                 'value' => function ($data) {
                     return !empty($data->userProfile->lastname) ? $data->userProfile->lastname : null;
                 },
-		'filterType'=>KartikGridView::FILTER_SELECT2,
-                'filter'=> $last_names,
-                'filterWidgetOptions'=>[
-            'options' => [
-                'id' => 'lastname',
-            ],
-                    'pluginOptions'=>[
-                        'allowClear'=>true,
-            ],
-        ],
-                'filterInputOptions'=>['placeholder'=>'Last Name'],
-                'format'=>'raw'
             ],
             'email',
             [
@@ -191,15 +167,15 @@ $(document).ready(function(){
     $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     
    $("#usersearch-showall").on("change", function() {
-      var showAll = $(this).is(":checked");
-      var role_name= "<?=$roleName?>";
-      var firstname_search = $("input[name*='UserSearch[firstname]").val();
-      var lastname_search  = $("input[name*='UserSearch[lastname]").val();
-      var email_search     = $("input[name*='UserSearch[email]").val();
-      var phone_search     = $("input[name*='UserSearch[phone]").val();
-      var params           = $.param({'UserSearch[role_name]': role_name, 'UserSearch[showAll]': (showAll | 0),'UserSearch[firstname]':firstname_search,'UserSearch[lastname]':lastname_search,'UserSearch[email]':email_search,'UserSearch[phone]':phone_search });
-     var url = "<?php echo Url::to(['user/index']); ?>?"+params;
-      $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 6000});  //Reload GridView
+        var showAll = $(this).is(":checked");
+        var role_name= "<?=$roleName?>";
+        var firstname_search = $("input[name*='UserSearch[firstname]").val();
+        var lastname_search  = $("input[name*='UserSearch[lastname]").val();
+        var email_search     = $("input[name*='UserSearch[email]").val();
+        var phone_search     = $("input[name*='UserSearch[phone]").val();
+        var params           = $.param({'UserSearch[role_name]': role_name, 'UserSearch[showAll]': (showAll | 0),'UserSearch[firstname]':firstname_search,'UserSearch[lastname]':lastname_search,'UserSearch[email]':email_search,'UserSearch[phone]':phone_search });
+        var url = "<?php echo Url::to(['user/index']); ?>?"+params;
+        $.pjax.reload({url:url,container:"#user-index",replace:false,  timeout: 6000});  //Reload GridView
     });
 });
 </script>

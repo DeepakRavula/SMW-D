@@ -92,8 +92,8 @@ class ProformaInvoiceSearch extends ProformaInvoice
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
-        if(!empty($this->number)) {
-            $query->andFilterWhere(['proforma_invoice.id' => $this->number]);
+        if($this->number) {
+            $query->andFilterWhere(['like', 'proforma_invoice.proforma_invoice_number', $this->number]);
         }
         if (!empty($this->dateRange)) {
             list($this->fromDate, $this->toDate) = explode(' - ', $this->dateRange);
@@ -107,7 +107,11 @@ class ProformaInvoiceSearch extends ProformaInvoice
         if (!$this->showAll) {
             $query->unpaid();
         }
-        $query->andFilterWhere(['proforma_invoice.userId' => $this->customer]);
+        $query->joinWith(['user' => function($query) {
+            $query->joinWith(['userProfile' => function($query) {
+                $query->andFilterWhere(['or', ['like', 'user_profile.firstname', trim($this->customer)],['like', 'user_profile.lastname', trim($this->customer)]]);
+            }]);
+        }]);
         $query->andFilterWhere(['like', 'user_phone.number', $this->phone]);
             return $dataProvider;
     }

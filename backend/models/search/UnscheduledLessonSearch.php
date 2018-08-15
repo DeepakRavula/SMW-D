@@ -67,21 +67,20 @@ class UnscheduledLessonSearch extends Lesson
         if (!$this->showAll) {
            $query->notExpired();
        }
-        if (!empty($this->student)) {
+        if ($this->student) {
             $query->joinWith(['student' => function($query) {
-                $query->andFilterWhere(['student.id' => $this->student]);
+                $query->andFilterWhere(['or', ['like', 'student.first_name', trim($this->student)], ['like', 'student.last_name', trim($this->student)]]);
             }]);
         }
-        if (!empty($this->program)) {
+        if ($this->program) {
             $query->joinWith(['program' => function($query) {
-                $query->andFilterWhere(['program.id' => $this->program]);
+                $query->andFilterWhere(['like', 'program.name', $this->program]);
             }]);
         }
-        if (!empty($this->teacher)) {
-		    $query->joinWith(['teacher' => function($query) {
-                $query->andFilterWhere(['user.id' => $this->teacher
-                        ]);
-		}]);
+        if ($this->teacher) {
+		    $query->joinWith(['teacherProfile' => function($query) {
+                $query->andFilterWhere(['or', ['like', 'user_profile.firstname', $this->teacher], ['like','user_profile.lastname', $this->teacher]]);
+		    }]);
         }
         return $dataProvider;
     }

@@ -28,25 +28,6 @@ $this->params['show-all'] = $this->render('_button', [
         'value' => function ($data) {
             return $data->course->program->name;
         },
-                'filterType'=>KartikGridView::FILTER_SELECT2,
-                'filter'=>ArrayHelper::map(
-            Program::find()->orderBy(['name' => SORT_ASC])
-                ->joinWith(['course' => function ($query) {
-                    $query->joinWith(['enrolment'])
-                        ->confirmed()
-                        ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-                }])
-                ->asArray()->all(),
-                    'id',
-                    'name'
-                ),
-                'filterInputOptions'=>['placeholder'=>'Program'],
-                'format'=>'raw',
-                'filterWidgetOptions'=>[
-                    'pluginOptions'=>[
-                        'allowClear'=>true,
-            ]
-        ],
     ],
     [
         'attribute' => 'student',
@@ -54,25 +35,6 @@ $this->params['show-all'] = $this->render('_button', [
         'value' => function ($data) {
             return $data->student->fullName;
         },
-                'filterType'=>KartikGridView::FILTER_SELECT2,
-                'filter'=>ArrayHelper::map(Student::find()->orderBy(['first_name' => SORT_ASC])
-                ->joinWith(['enrolment' => function ($query) {
-                    $query->joinWith(['course' => function ($query) {
-                        $query->confirmed()
-                                ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-                    }]);
-                }])
-                ->all(), 'id', 'fullName'),
-                'filterWidgetOptions'=>[
-            'options' => [
-                'id' => 'student',
-            ],
-                    'pluginOptions'=>[
-                        'allowClear'=>true,
-            ],
-        ],
-                'filterInputOptions'=>['placeholder'=>'Student'],
-                'format'=>'raw'
     ],
     [
         'attribute' => 'teacher',
@@ -80,25 +42,6 @@ $this->params['show-all'] = $this->render('_button', [
         'value' => function ($data) {
             return $data->course->teacher->publicIdentity;
         },
-                'filterType'=>KartikGridView::FILTER_SELECT2,
-                'filter'=>ArrayHelper::map(UserProfile::find()->orderBy(['firstname' => SORT_ASC])
-                ->joinWith(['courses' => function ($query) {
-                    $query->joinWith('enrolment')
-                        ->confirmed()
-                        ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
-                }])
-                ->all(), 'user_id', 'fullName'),
-                'filterWidgetOptions'=>[
-            'options' => [
-                'id' => 'teacher',
-            ],
-                    'pluginOptions'=>[
-                        'allowClear'=>true,
-            ],
-
-        ],
-                'filterInputOptions'=>['placeholder'=>'Teacher'],
-                'format'=>'raw'
     ],
     [
         'attribute' => 'startdate',
@@ -191,8 +134,8 @@ echo KartikGridView::widget([
 
     $(document).on('change', '#enrolmentsearch-showallenrolments', function(){
         var showAllEnrolments = $(this).is(":checked");
-        var program_search = $("#enrolmentsearch-program").select2("val");
-        var student_search = $("#student").val();
+        var program_search = $("input[name*='EnrolmentSearch[program]").val();
+        var student_search = $("input[name*='EnrolmentSearch[student]").val();
         var teacher_search = $("input[name*='EnrolmentSearch[teacher]").val();
         var params = $.param({ 'EnrolmentSearch[showAllEnrolments]': (showAllEnrolments | 0),
             'EnrolmentSearch[program]':program_search,'EnrolmentSearch[student]':student_search,

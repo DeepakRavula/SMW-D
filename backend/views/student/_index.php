@@ -1,14 +1,10 @@
 <?php
 
 use yii\widgets\Pjax;
-use common\components\gridView\AdminLteGridView;
 use yii\helpers\Url;
 use common\models\Student;
 use common\components\gridView\KartikGridView;
-use yii\helpers\ArrayHelper;
 use common\models\Location;
-use common\models\UserProfile;
-use common\models\User;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -49,21 +45,6 @@ use common\models\User;
             'value' => function ($data) {
                 return !(empty($data->first_name)) ? $data->first_name : null;
             },
-            'filterType' => KartikGridView::FILTER_SELECT2,
-            'filter' => ArrayHelper::map(Student::find()
-                ->location($locationId)
-                ->orderBy(['first_name' => SORT_ASC])
-                ->notDeleted()
-                ->asArray()->all(), 'id', 'first_name'),
-            'filterWidgetOptions' => [
-                'options' => [
-                    'id' => 'first-name',
-                ],
-                'pluginOptions'=>[
-                    'allowClear'=>true,
-                ],
-            ],
-            'filterInputOptions' => ['placeholder' => 'First Name'],
         ],
         [
             'label' => 'Last Name',
@@ -71,48 +52,14 @@ use common\models\User;
             'value' => function ($data) {
                 return !(empty($data->last_name)) ? $data->last_name : null;
             },
-            'filterType' => KartikGridView::FILTER_SELECT2,
-            'filter' => ArrayHelper::map(Student::find()
-                ->orderBy(['last_name' => SORT_ASC])
-                ->notDeleted()
-                ->location($locationId)
-                ->asArray()->all(), 'id', 'last_name'),
-            'filterWidgetOptions' => [
-                'options' => [
-                    'id' => 'last-name',
-                ],
-                'pluginOptions' => [
-                    'allowClear'=>true,
-                ],
-            ],
-            'filterInputOptions' => ['placeholder' => 'Last Name'],
         ],
         [
             'label' => 'Customer',
 	        'attribute' => 'customer',
             'value' => function ($data) {
                 $fullName = !(empty($data->customerProfile->fullName)) ? $data->customerProfile->fullName : null;
-
                 return $fullName;
             },
-            'filterType' => KartikGridView::FILTER_SELECT2,
-            'filter' => ArrayHelper::map(User::find()
-                ->excludeWalkin()
-			    ->customers($locationId)
-			    ->joinWith(['userProfile' => function ($query) {
-					$query->orderBy('firstname');
-				}])
-			    ->all(), 'id', 'publicIdentity'),
-            'filterWidgetOptions' => [
-                'options' => [
-                    'id' => 'customer',
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                ],
-
-            ],
-            'filterInputOptions' => ['placeholder' => 'Customer']
         ],
         [
             'label' => 'Phone',
