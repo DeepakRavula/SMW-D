@@ -263,20 +263,22 @@ GridView::widget([
 ]);
 ?></div>
 <script>
-var recordCount= '<?= $dataProvider->getCount(); ?>';
+var recordCount= '<?= ItemCategory::getTotalCount($dataProvider->query->all()); ?>';
 $(document).ready(function(){
-
-alert(recordCount);
 if(recordCount>0 && recordCount<=20){
     report.addNewRow();
 }
-$(document).on('click', '.pagination li > a', function (e) {
-    alert(recordCount);
-    if(recordCount>=20){
-    var activePage = $(this).attr('data-page');
-    var lastPage = recordCount/20;
-    alert(lastPage);
+$(document).on('pjax:success', function() {
+    if(recordCount >= 20){
+    var activePage = $('ul.pagination li.active > a').text();
+    var lastPage = parseInt(recordCount/20);
+    var remainder = recordCount%20;
+    if(remainder>=1) {
+        lastPage = lastPage+1;
+    }
+    if (lastPage == activePage) {
     report.addNewRow();
+    }
     }
 });
 });
