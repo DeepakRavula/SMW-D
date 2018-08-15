@@ -82,24 +82,6 @@ $this->params['action-button'] = $actionButton; ?>
                     'value' => function ($data) {
                         return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                     },
-			    'filterType'=> KartikGridView::FILTER_SELECT2,
-            'filter' => ArrayHelper::map(User::find()
-			    ->customers($locationId)
-			    ->joinWith(['userProfile' => function ($query) {
-					$query->orderBy('firstname');
-				}])
-			    ->all(), 'id', 'publicIdentity'),
-	    'filterWidgetOptions'=>[
-        'options' => [
-            'id' => 'customer',
-        ],
-                'pluginOptions'=>[
-                    'allowClear'=>true,
-        ],
-
-    ],
-            'filterInputOptions'=>['placeholder'=>'Customer'],
-            'format'=>'raw'
                 ],
                 [
 					'attribute' => 'phone',
@@ -226,24 +208,6 @@ $this->params['action-button'] = $actionButton; ?>
                     'value' => function ($data) {
                         return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                     },
-			       'filterType'=> KartikGridView::FILTER_SELECT2,
-            'filter' => ArrayHelper::map(User::find()
-			    ->customers($locationId)
-			    ->joinWith(['userProfile' => function ($query) {
-					$query->orderBy('firstname');
-				}])
-			    ->all(), 'id', 'publicIdentity'),
-	    'filterWidgetOptions'=>[
-        'options' => [
-            'id' => 'customer',
-        ],
-                'pluginOptions'=>[
-                    'allowClear'=>true,
-        ],
-
-    ],
-            'filterInputOptions'=>['placeholder'=>'Customer'],
-            'format'=>'raw'
                 ],
                 [
 		    'attribute' => 'phone',
