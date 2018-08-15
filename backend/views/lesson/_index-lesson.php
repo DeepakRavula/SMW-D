@@ -332,7 +332,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         var program = $("input[name*='LessonSearch[program]").val();
         var teacher = $("input[name*='LessonSearch[teacher]").val();
         var dateRange = $("input[name*='LessonSearch[dateRange]").val();
-        var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher,'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?= Lesson::TYPE_PRIVATE_LESSON ?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[status]': '' });
+        var params = $.param({'LessonSearch[student]':student, 'LessonSearch[program]':program, 'LessonSearch[teacher]':teacher, 'LessonSearch[dateRange]': dateRange, 'LessonSearch[type]': <?= Lesson::TYPE_PRIVATE_LESSON ?>,'LessonSearch[showAll]': (showAll | 0), 'LessonSearch[status]': '' });
         var url = "<?= Url::to(['lesson/index']); ?>?"+params;
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
     });  
