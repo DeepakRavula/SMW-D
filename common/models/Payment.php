@@ -458,7 +458,7 @@ class Payment extends ActiveRecord
 
     public function hasCredit()
     {
-        return round($this->creditAmount, 2) > 0.00;
+        return round($this->creditAmount, 2) > 0.09;
     }
 
     public function getAmountUsedInPaymentforTransacation($receiptId, $paymentId) 

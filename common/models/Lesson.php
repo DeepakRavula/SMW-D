@@ -395,7 +395,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isOwing($enrolmentId)
     {
-        return round($this->getCreditAppliedAmount($enrolmentId), 2) < round($this->netPrice, 2);
+        return (round($this->getCreditAppliedAmount($enrolmentId), 2) - round($this->netPrice, 2)) < -0.09;
     }
 
     public function getOwingAmount($enrolmentId)
