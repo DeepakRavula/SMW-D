@@ -94,15 +94,6 @@ $columns = [
 		},
 		'contentOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
 		'headerOptions' => ['class' => 'text-left', 'style' => 'width:25%'],
-		'filterType' => KartikGridView::FILTER_SELECT2,
-		'filter' => ArrayHelper::map(User::find()->customers($locationId)->notDeleted()->active()
-				->all(), 'id', 'publicIdentity'),
-		'filterWidgetOptions' => [
-			'pluginOptions' => [
-			'allowClear' => true,
-			],
-		],
-		'filterInputOptions' => ['placeholder' => 'Customer']
     ],
     [
 		'contentOptions' => ['class' => 'text-left', 'style' => 'width:15%'],

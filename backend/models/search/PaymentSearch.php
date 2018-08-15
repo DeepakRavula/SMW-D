@@ -115,7 +115,7 @@ class PaymentSearch extends Payment
         if ($this->customer) {
             $customer = $this->customer;
             $query->joinWith(['userProfile' => function ($query) use ($customer) {
-                $query->andFilterWhere(['user_profile.user_id' => $customer]);
+                $query->andFilterWhere(['or', ['like', 'user_profile.firstname', trim($this->customer)], ['like', 'user_profile.lastname', trim($this->customer)]]);
             }]);
         }
         return $dataProvider;

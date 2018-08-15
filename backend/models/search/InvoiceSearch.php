@@ -129,7 +129,7 @@ class InvoiceSearch extends Invoice
 		$query->andFilterWhere(['invoice.id' => $this->number]);
         }
            $query->andFilterWhere(['like', 'user_phone.number', trim($this->phone)])
-            ->andFilterWhere(['user_profile.user_id' => trim($this->customer)])
+           ->andFilterWhere(['or', ['like', 'user_profile.firstname', trim($this->customer)], ['like', 'user_profile.lastname', trim($this->customer)]])
             ->groupBy('invoice.id');
        	$dataProvider->setSort([
             'attributes' => [
