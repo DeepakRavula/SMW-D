@@ -59,10 +59,12 @@ use yii\widgets\Pjax;
         }
     ]); ?>
     
-    <?php if ($searchModel->isWeb ) {
+    <?php if ($searchModel->isWeb) {
         $tableOption = ['class' => 'table table-condensed'];
+        $id = 'payment-grid';
     } else {
         $tableOption = ['class' => 'table table-condensed m-0', 'style'=>'width:100%; text-align:left'];
+        $id = 'payment-grid-email';
     } ?> 
 
     <?php Pjax::begin([
@@ -71,7 +73,7 @@ use yii\widgets\Pjax;
     ]) ?>
 
 	<?= GridView::widget([
-        'id' => 'payment-grid',
+        'id' => $id,
         'dataProvider' => $invoicePaymentsDataProvider,
         'columns' => $columns,
         'summary' => false,
