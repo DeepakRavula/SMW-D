@@ -21,7 +21,7 @@ LteBox::begin([
 	<dd><?= Yii::$app->formatter->asCurrency(round($model->netCost, 2)); ?></dd>
     <dt>Price </dt>
 	<dd><?= Yii::$app->formatter->asCurrency(round($model->getSubTotal(), 2)); ?></dd>
-    <?php $lessonProfit = round($model->getSubTotal(), 2) - round($model->netCost, 2); ?> 
+    <?php $lessonProfit = $model->getSubTotal() - $model->netCost; ?> 
     <dt>Profit </dt>
 	<dd><?= Yii::$app->formatter->asCurrency(round($lessonProfit, 2)); ?></dd>
 </dl>
