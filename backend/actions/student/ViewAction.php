@@ -44,6 +44,8 @@ class ViewAction extends Action
             $unscheduledLessonSearchModel = new UnscheduledLessonSearch();
             $lessonCount = Lesson::find()
                 ->studentEnrolment($locationId, $id)
+                ->isConfirmed()
+                ->notCanceled()
                 ->notCompleted()
 			    ->notDeleted()
                 ->count();
