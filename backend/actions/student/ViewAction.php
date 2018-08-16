@@ -103,7 +103,6 @@ class ViewAction extends Action
                 ->studentEnrolment($locationId, $id)
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
-                ->limit(12)
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->notDeleted()
                 ->privateLessons()

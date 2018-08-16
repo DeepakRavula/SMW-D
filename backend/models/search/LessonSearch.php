@@ -91,30 +91,6 @@ class LessonSearch extends Lesson
             return $dataProvider;
         }
 
-        $dataProvider->setSort([
-            'attributes' => [
-                'program' => [
-                    'asc' => ['program.name' => SORT_ASC],
-                    'desc' => ['program.name' => SORT_DESC],
-                ],
-		        'teacher' => [
-                    'asc' => ['user_profile.firstname' => SORT_ASC],
-                    'desc' => ['user_profile.firstname' => SORT_DESC],
-                ],
-                'student' => [
-                    'asc' => ['student.first_name' => SORT_ASC],
-                    'desc' => ['student.first_name' => SORT_DESC],
-                ],
-		        'dateRange' => [
-                    'asc' => ['date' => SORT_ASC],
-                    'desc' => ['date' => SORT_DESC],
-                ],
-            ]
-        ]);
-	$dataProvider->sort->defaultOrder = [
-            'dateRange' => SORT_ASC,
-        ];
-        
         if ($this->student) {
             $query->andFilterWhere(['or', ['like', 'student.first_name', trim($this->student)], ['like', 'student.last_name', trim($this->student)]]);
         } elseif ($this->studentId) {
@@ -176,6 +152,30 @@ class LessonSearch extends Lesson
         }
  
         $query->joinWith('teacherProfile');
+        $dataProvider->setSort([
+            'attributes' => [
+                'program' => [
+                    'asc' => ['program.name' => SORT_ASC],
+                    'desc' => ['program.name' => SORT_DESC],
+                ],
+		        'teacher' => [
+                    'asc' => ['user_profile.firstname' => SORT_ASC],
+                    'desc' => ['user_profile.firstname' => SORT_DESC],
+                ],
+                'student' => [
+                    'asc' => ['student.first_name' => SORT_ASC],
+                    'desc' => ['student.first_name' => SORT_DESC],
+                ],
+		        'dateRange' => [
+                    'asc' => ['date' => SORT_ASC],
+                    'desc' => ['date' => SORT_DESC],
+                ],
+            ]
+        ]);
+	$dataProvider->sort->defaultOrder = [
+            'dateRange' => SORT_ASC,
+        ];
+
         return $dataProvider;
     }
 
