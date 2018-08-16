@@ -125,7 +125,8 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
         return $this;
     }
 
-    public function student($studentId) {
+    public function student($studentId) 
+    {
         return $this->andWhere(['enrolment.studentId' => $studentId]);
     }
 }
