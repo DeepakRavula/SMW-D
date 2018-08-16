@@ -62,7 +62,7 @@ $this->params['action-button'] = $this->render('_action-button', [
         endif; ?>
 
         <div class="more-lesson pull-right" id = "admin-login" style = "display:none">
-            <a class = "see-more" href = "">See More</a>
+            <a class = "see-more" href = "">Show More</a>
         </div>
 
     <?php LteBox::end() ?>
@@ -193,7 +193,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 
     $(document).ready(function () {
         var lesson_count = '<?= $lessonCount; ?>';
-        if (lesson_count > 10) {
+        if (lesson_count > 12) {
             var private = <?= $model->course->program->isPrivate(); ?>;
             if (private) {
                 $(".more-lesson").show();

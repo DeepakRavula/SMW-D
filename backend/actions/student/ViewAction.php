@@ -42,6 +42,13 @@ class ViewAction extends Action
             }
             $enrolmentSearchModel=new EnrolmentSearch();
             $unscheduledLessonSearchModel = new UnscheduledLessonSearch();
+            $lessonCount = Lesson::find()
+                ->studentEnrolment($locationId, $id)
+                ->isConfirmed()
+                ->notCanceled()
+                ->notCompleted()
+			    ->notDeleted()
+                ->count();
             return $this->controller->render('view', [
                     'model' => $model,
                     'allEnrolments' => $allEnrolments,
@@ -53,6 +60,7 @@ class ViewAction extends Action
                     'logs' => $this->getLogs($id),
                     'enrolmentSearchModel'=> $enrolmentSearchModel,
                     'unscheduledLessonSearchModel' => $unscheduledLessonSearchModel,
+                    'lessonCount' => $lessonCount,
                     ]);
         } else {
             $this->controller->redirect(['index', 'StudentSearch[showAllStudents]' => false]);
@@ -94,12 +102,14 @@ class ViewAction extends Action
                 ->studentEnrolment($locationId, $id)
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
+                ->limit(12)
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->notDeleted()
                 ->notCompleted();
 
         return new ActiveDataProvider([
                 'query' => $lessons,
+                'pagination' => false
         ]);
     }
 

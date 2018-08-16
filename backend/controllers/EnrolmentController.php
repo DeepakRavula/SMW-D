@@ -123,7 +123,7 @@ class EnrolmentController extends BaseController
                 ->andWhere(['courseId' => $model->course->id])
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
-		        ->limit(10)
+		        ->limit(12)
                 ->notDeleted()
                 ->notCompleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
