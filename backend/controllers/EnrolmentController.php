@@ -486,10 +486,8 @@ class EnrolmentController extends BaseController
                 ->notCanceled()
                 ->all();
             $message = null;
-            $invoice = $model->addLessonsCredit($lessons);
-            if ($invoice) {
-                $message = '$' . $invoice->balance . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
-            }
+            $model->revertLessonsCredit($lessons);
+            $message = 'Lesson credits has been credited to ' . $model->customer->publicIdentity . ' account.';
             $model->deleteWithOutTransactionalData();
             $response = [
                 'status' => true,

@@ -186,8 +186,7 @@ $this->params['action-button'] = $this->render('_action-button', [
     });
     
     $(document).on('modal-next', function(event, params) {
-        var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"  
-        $.pjax.reload({url: url, container: "#enrolment-lesson-index", replace: false, timeout: 4000});
+        paymentFrequency.onEditableSuccess();
         return false;
     });
 
