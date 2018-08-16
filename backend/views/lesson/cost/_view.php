@@ -16,7 +16,14 @@ LteBox::begin([
 ?>
 <dl class="dl-horizontal">
 	<dt>Cost/hr </dt>
-	<dd><?= Yii::$app->formatter->asCurrency($model->teacherRate); ?></dd>
+	<dd><?= Yii::$app->formatter->asCurrency(round($model->teacherRate, 2)); ?></dd>
+    <dt>Cost </dt>
+	<dd><?= Yii::$app->formatter->asCurrency(round($model->netCost, 2)); ?></dd>
+    <dt>Price </dt>
+	<dd><?= Yii::$app->formatter->asCurrency(round($model->getSubTotal(), 2)); ?></dd>
+    <?php $lessonProfit = round($model->getSubTotal(), 2) - round($model->netCost, 2); ?> 
+    <dt>Profit </dt>
+	<dd><?= Yii::$app->formatter->asCurrency(round($lessonProfit, 2)); ?></dd>
 </dl>
 <?php LteBox::end() ?>
 <?php Pjax::end();?>					
