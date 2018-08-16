@@ -120,13 +120,6 @@ echo Menu::widget([
             'visible' => Yii::$app->user->can('manageInvoices'),
             'active' => (Yii::$app->controller->id === 'payment') ? true : false,
         ],
-        [
-            'label' => Yii::t('backend', 'Payment Preferences'),
-            'icon' => '<i class="fa  fa-dollar"></i>',
-            'url' => ['/customer-payment-preference/index'],
-            'visible' => Yii::$app->user->can('manageCustomers'),
-            'active' => (Yii::$app->controller->id === 'customer-payment-preference') ? true : false,
-        ],
             [
             'label' => Yii::t('backend', 'Reports'),
             'url' => '#',
