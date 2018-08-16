@@ -262,17 +262,29 @@ GridView::widget([
     'columns' => $columns,
 ]);
 ?></div>
+
 <script>
-$(document).ready(function(){
-var recordCount= '<?= $dataProvider->getCount(); ?>';
-if(recordCount>0){
-    report.addNewRow();
-}
-    $(document).on('pjax:success', function() {
-    report.addNewRow();
-   
+var recordCount = '<?= ItemCategory::getTotalCount($dataProvider->query->all()); ?>';
+$(document).ready(function() {
+    if (recordCount > 0 && recordCount <= 20) {
+        report.addNewRow();
+    }
 });
+
+$(document).on('pjax:success', function() {
+    if (recordCount >= 20) {
+        var activePage = $('ul.pagination li.active > a').text();
+        var lastPage = parseInt(recordCount / 20);
+        var remainder = recordCount % 20;
+        if (remainder >= 1) {
+            lastPage = lastPage + 1;
+        }
+        if (lastPage == activePage) {
+            report.addNewRow();
+        }
+    }
 });
+
 var report = {
         addNewRow: function () {
     var newSummaryContainer=$("<tbody>");

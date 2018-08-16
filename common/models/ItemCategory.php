@@ -129,4 +129,7 @@ public static function getTotal($provider) {
     }
     return $total;
 }
+public static function getTotalCount($provider) {
+   return count($provider);
+}
 }
