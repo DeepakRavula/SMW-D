@@ -47,10 +47,27 @@ class CourseReschedule extends Model
         return [
             [['dayTime', 'teacherId', 'duration', 'rescheduleBeginDate'], 'required', 'on' => self::SCENARIO_DETAILED],
             [['dateToChangeSchedule'], 'required', 'on' => self::SCENARIO_BASIC],
+            ['dateToChangeSchedule', 'validateDate', 'on' => self::SCENARIO_BASIC],
             [['dayTime', 'teacherId', 'duration'], 'safe'],
             [['dateToChangeSchedule', 'rescheduleBeginDate'], 'safe'],
             [['courseId'], 'safe']
         ];
+    }
+
+    public function validateDate($attributes)
+    {
+        $lessons = Lesson::find()
+            ->andWhere(['courseId' => $this->courseId])
+            ->regular()
+            ->notDeleted()
+            ->statusScheduled()
+            ->isConfirmed()
+            ->andWhere(['>=', 'DATE(lesson.date)', (new \DateTime($this->dateToChangeSchedule))->format('Y-m-d')])
+            ->orderBy(['lesson.date' => SORT_ASC])
+            ->all();
+        if (!$lessons) {
+            $this->addError($attributes, "There were no lessons to change schedule!");
+        }
     }
 
     /**

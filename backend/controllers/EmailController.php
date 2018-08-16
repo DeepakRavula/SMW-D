@@ -27,6 +27,7 @@ use backend\models\PaymentForm;
 use common\models\User;
 use yii\data\ArrayDataProvider;
 use backend\models\search\PaymentSearch;
+use common\models\InvoicePayment;
 /**
  * BlogController implements the CRUD actions for Blog model.
  */
@@ -169,14 +170,14 @@ class EmailController extends BaseController
         } else {
             $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_INVOICE]);
         }
-        $invoicePayments                     = Payment::find()
-            ->joinWith(['invoicePayment ip' => function ($query) use ($model) {
-                $query->andWhere(['ip.invoice_id' => $model->id]);
+        $invoicePayments = InvoicePayment::find()
+            ->notDeleted()
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted()
+                    ->orderBy(['payment.date' => SORT_DESC]);
             }])
-            ->orderBy(['date' => SORT_DESC]);
-        if ($model->isProFormaInvoice()) {
-            $invoicePayments->notCreditUsed();
-        }
+            ->invoice($id);
+        
         $invoicePaymentsDataProvider = new ActiveDataProvider([
             'query' => $invoicePayments,
         ]);
