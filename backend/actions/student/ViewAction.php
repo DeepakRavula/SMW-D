@@ -61,6 +61,7 @@ class ViewAction extends Action
                     'enrolmentSearchModel'=> $enrolmentSearchModel,
                     'unscheduledLessonSearchModel' => $unscheduledLessonSearchModel,
                     'lessonCount' => $lessonCount,
+                    'groupLessonDataProvider' => $this->getGroupLessons($id, $locationId),
                     ]);
         } else {
             $this->controller->redirect(['index', 'StudentSearch[showAllStudents]' => false]);
@@ -105,11 +106,29 @@ class ViewAction extends Action
                 ->limit(12)
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->notDeleted()
+                ->privateLessons()
                 ->notCompleted();
 
         return new ActiveDataProvider([
                 'query' => $lessons,
                 'pagination' => false
+        ]);
+    }
+
+    protected function getGroupLessons($id, $locationId)
+    {
+        $lessons = Lesson::find()
+                ->studentEnrolment($locationId, $id)
+                ->scheduledOrRescheduled()
+                ->isConfirmed()
+                ->limit(12)
+                ->orderBy(['lesson.date' => SORT_ASC])
+                ->notDeleted()
+                ->groupLessons()
+                ->notCompleted();
+
+        return new ActiveDataProvider([
+                'query' => $lessons,
         ]);
     }
 

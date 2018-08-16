@@ -35,13 +35,15 @@ class LessonSearch extends Lesson
     public $rate;
     public $isSeeMore;
     public $showAll;
+    public $studentId;
+    public $programId;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
+            [['id', 'courseId', 'teacherId','studentId', 'programId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
             [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId',
                 'invoiceType','dateRange', 'rate','student', 'program', 'teacher','isSeeMore', 'showAll'], 'safe'],
@@ -89,8 +91,40 @@ class LessonSearch extends Lesson
             return $dataProvider;
         }
 
-        $query->andFilterWhere(['or', ['like', 'student.first_name', trim($this->student)], ['like', 'student.last_name', trim($this->student)]]);
-        $query->andFilterWhere(['like', 'program.name', $this->program]);
+        $dataProvider->setSort([
+            'attributes' => [
+                'program' => [
+                    'asc' => ['program.name' => SORT_ASC],
+                    'desc' => ['program.name' => SORT_DESC],
+                ],
+		        'teacher' => [
+                    'asc' => ['user_profile.firstname' => SORT_ASC],
+                    'desc' => ['user_profile.firstname' => SORT_DESC],
+                ],
+                'student' => [
+                    'asc' => ['student.first_name' => SORT_ASC],
+                    'desc' => ['student.first_name' => SORT_DESC],
+                ],
+		        'dateRange' => [
+                    'asc' => ['date' => SORT_ASC],
+                    'desc' => ['date' => SORT_DESC],
+                ],
+            ]
+        ]);
+	$dataProvider->sort->defaultOrder = [
+            'dateRange' => SORT_ASC,
+        ];
+        
+        if ($this->student) {
+            $query->andFilterWhere(['or', ['like', 'student.first_name', trim($this->student)], ['like', 'student.last_name', trim($this->student)]]);
+        } elseif ($this->studentId) {
+            $query->andFilterWhere(['student.id' => $this->studentId ]);
+        }
+        if ($this->program) {
+            $query->andFilterWhere(['like', 'program.name', $this->program]);
+        } elseif ($this->programId) {
+            $query->andFilterWhere(['program.id' => $this->programId ]); 
+        }
         if ($this->teacher) {
             $query->joinWith(['teacherProfile' => function ($query) {
                 $query->andFilterWhere(['or', ['like', 'user_profile.firstname', $this->teacher], ['like', 'user_profile.lastname', $this->teacher]]);
@@ -142,29 +176,6 @@ class LessonSearch extends Lesson
         }
  
         $query->joinWith('teacherProfile');
-	    $dataProvider->setSort([
-            'attributes' => [
-                'program' => [
-                    'asc' => ['program.name' => SORT_ASC],
-                    'desc' => ['program.name' => SORT_DESC],
-                ],
-		        'teacher' => [
-                    'asc' => ['user_profile.firstname' => SORT_ASC],
-                    'desc' => ['user_profile.firstname' => SORT_DESC],
-                ],
-                'student' => [
-                    'asc' => ['student.first_name' => SORT_ASC],
-                    'desc' => ['student.first_name' => SORT_DESC],
-                ],
-		        'dateRange' => [
-                    'asc' => ['date' => SORT_ASC],
-                    'desc' => ['date' => SORT_DESC],
-                ],
-            ]
-        ]);
-	$dataProvider->sort->defaultOrder = [
-            'dateRange' => SORT_ASC,
-	    ];
         return $dataProvider;
     }
 
