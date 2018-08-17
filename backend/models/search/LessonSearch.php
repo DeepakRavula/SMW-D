@@ -74,7 +74,7 @@ class LessonSearch extends Lesson
             ->notDeleted()
             ->location($locationId)
             ->activePrivateLessons()
-            ->andWhere(['NOT IN', 'lesson.status', [Lesson::STATUS_CANCELED]]);
+            ->scheduledOrRescheduled();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
