@@ -39,14 +39,8 @@ LteBox::begin([
 </dl>
 <?php LteBox::end()?>
 <?php Pjax::end(); ?>
-<?php
-Modal::begin([
-    'header' => '<h4 class="m-0">Choose Date, Day and Time</h4>',
-    'id' => 'enrolment-edit-modal',
-]);
-?>
-<div id="enrolment-edit-content"></div>
-<?php Modal::end(); ?>
+
+
 <script>
 $(document).ready(function (e) {
 	$(document).on('click', '.enrolment-edit-cancel', function() {

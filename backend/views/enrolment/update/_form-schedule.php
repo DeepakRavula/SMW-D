@@ -4,6 +4,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\jui\DatePicker;
 use kartik\grid\GridView;
+use yii\widgets\Pjax;
 
 ?>
 
@@ -37,7 +38,7 @@ use kartik\grid\GridView;
 
 <?php ActiveForm::end(); ?>
 
-<?php yii\widgets\Pjax::begin([
+<?php Pjax::begin([
     'id' => 'after-end-date-changed-listing',
     'timeout' => 6000,
 ]); ?>
@@ -92,7 +93,7 @@ $columns = [
     </div>
 <?php endif; ?>
 
-<?php \yii\widgets\Pjax::end(); ?>
+<?php Pjax::end(); ?>
 
 <script type="text/javascript">
     $(document).ready(function() {
