@@ -35,13 +35,15 @@ class LessonSearch extends Lesson
     public $rate;
     public $isSeeMore;
     public $showAll;
+    public $studentId;
+    public $programId;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'courseId', 'teacherId', 'status', 'isDeleted'], 'integer'],
+            [['id', 'courseId', 'teacherId','studentId', 'programId', 'status', 'isDeleted'], 'integer'],
             [['date', 'showAllReviewLessons', 'summariseReport', 'ids'], 'safe'],
             [['lessonStatus', 'fromDate','invoiceStatus', 'attendanceStatus','toDate', 'type', 'customerId',
                 'invoiceType','dateRange', 'rate','student', 'program', 'teacher','isSeeMore', 'showAll'], 'safe'],
@@ -72,7 +74,7 @@ class LessonSearch extends Lesson
             ->notDeleted()
             ->location($locationId)
             ->activePrivateLessons()
-            ->andWhere(['NOT IN', 'lesson.status', [Lesson::STATUS_CANCELED]]);
+            ->scheduledOrRescheduled();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -89,8 +91,16 @@ class LessonSearch extends Lesson
             return $dataProvider;
         }
 
-        $query->andFilterWhere(['or', ['like', 'student.first_name', trim($this->student)], ['like', 'student.last_name', trim($this->student)]]);
-        $query->andFilterWhere(['like', 'program.name', $this->program]);
+        if ($this->student) {
+            $query->andFilterWhere(['or', ['like', 'student.first_name', trim($this->student)], ['like', 'student.last_name', trim($this->student)]]);
+        } elseif ($this->studentId) {
+            $query->andFilterWhere(['student.id' => $this->studentId ]);
+        }
+        if ($this->program) {
+            $query->andFilterWhere(['like', 'program.name', $this->program]);
+        } elseif ($this->programId) {
+            $query->andFilterWhere(['program.id' => $this->programId ]); 
+        }
         if ($this->teacher) {
             $query->joinWith(['teacherProfile' => function ($query) {
                 $query->andFilterWhere(['or', ['like', 'user_profile.firstname', $this->teacher], ['like', 'user_profile.lastname', $this->teacher]]);
@@ -142,7 +152,7 @@ class LessonSearch extends Lesson
         }
  
         $query->joinWith('teacherProfile');
-	    $dataProvider->setSort([
+        $dataProvider->setSort([
             'attributes' => [
                 'program' => [
                     'asc' => ['program.name' => SORT_ASC],
@@ -164,7 +174,8 @@ class LessonSearch extends Lesson
         ]);
 	$dataProvider->sort->defaultOrder = [
             'dateRange' => SORT_ASC,
-	    ];
+        ];
+
         return $dataProvider;
     }
 

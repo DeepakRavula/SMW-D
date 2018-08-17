@@ -51,6 +51,12 @@ $this->params['label'] = $this->render('_title', [
             'lessonCount' => $lessonCount,
         ]);
 
+        $groupLessonContent = $this->render('_group-lesson', [
+            'groupLessonDataProvider' => $groupLessonDataProvider,
+            'model' => $model,
+            'allEnrolments' => $allEnrolments,
+        ]);
+
         $unscheduledLessonContent = $this->render('_unscheduledLesson', [
             'model' => $model,
             'unscheduledLessonSearchModel' => $unscheduledLessonSearchModel,
@@ -76,10 +82,17 @@ $this->params['label'] = $this->render('_title', [
         }
         $items = [
                 [
-                'label' => 'Lessons',
+                'label' => 'Private Lessons',
                 'content' => $lessonContent,
                 'options' => [
                     'id' => 'lesson',
+                ],
+            ],
+            [
+                'label' => 'Group Lessons',
+                'content' => $groupLessonContent,
+                'options' => [
+                    'id' => 'group-lesson',
                 ],
             ],
                 [

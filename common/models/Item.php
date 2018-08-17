@@ -263,6 +263,7 @@ class Item extends \yii\db\ActiveRecord
         foreach ($invoice->lineItems as $lineItem) {
             if ($lineItem->item_id === $this->id) {
                 $lineItem->unit += 1;
+                $lineItem->setScenario(InvoiceLineItem::SCENARIO_MISC);
                 $lineItem->save();
                 $invoiceLineItemModel = $lineItem;
                 break;
