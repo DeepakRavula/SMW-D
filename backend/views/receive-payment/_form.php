@@ -139,7 +139,8 @@ use yii\bootstrap\Html;
     var lockTextBox = false;
     var receivePayment = {
         setAction: function() {
-            if($("#invoice-line-item-grid").length != 0) {
+            var invoiceIds = null;
+            if ($("#invoice-line-item-grid").length > 0) {
                 var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
             }
             var prId = '<?= $prId; ?>';
@@ -359,15 +360,19 @@ use yii\bootstrap\Html;
     });
 
     $(document).off('click', '.modal-back').on('click', '.modal-back', function() {
+        var invoiceIds = null;
         $('#modal-spinner').show();
         var userId = $('#customer-payment').val();
         var lessonIds = $('#lesson-line-item-grid').yiiGridView('getSelectedRows');
-        var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
+        if ($('#invoice-line-item-grid').length > 0) {
+            var invoiceIds = $('#invoice-line-item-grid').yiiGridView('getSelectedRows');
+        }
         var groupLessonIds = $('#group-lesson-line-item-grid').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(lessonIds) && $.isEmptyObject(invoiceIds) && $.isEmptyObject(groupLessonIds)) {
             $('#modal-spinner').hide();
             $('#index-error-notification').html("Choose any lessons or invoices to create PFI").fadeIn().delay(5000).fadeOut();
         } else {
+            
             $('.modal-back').attr('disabled', true);
             $('.modal-save-replaced').attr('disabled', true);
             var params = $.param({ 'PaymentFormLessonSearch[lessonIds]': lessonIds, 'PaymentFormLessonSearch[userId]': userId, 
