@@ -37,6 +37,9 @@ class LessonController extends Controller
             ->notCanceled()
             ->isConfirmed()
             ->notDeleted()
+            ->joinWith(['lessonPayment' => function ($query) {
+                $query->andWhere(['NOT', ['lesson_payment.id' => null]]);
+            }])
             ->all();
         foreach ($lessons as $lesson) {
             $lesson->save();
