@@ -127,7 +127,8 @@ $(document).off('change', '#proformainvoicesearch-showall').on('change', '#profo
     var number = $("input[name*='ProformaInvoiceSearch[number]").val();
     var customer = $("input[name*='ProformaInvoiceSearch[customer]").val();
     var phone = $("input[name*='ProformaInvoiceSearch[phone]").val();
-    var params = $.param({ 'ProformaInvoiceSearch[number]':number, 'ProformaInvoiceSearch[customer]':customer, 'ProformaInvoiceSearch[phone]':phone, 'ProformaInvoiceSearch[showAll]': (showAll | 0)});
+    var dateRange = $("input[name*='ProformaInvoiceSearch[dateRange]").val();
+    var params = $.param({ 'ProformaInvoiceSearch[dateRange]' :dateRange, 'ProformaInvoiceSearch[number]':number, 'ProformaInvoiceSearch[customer]':customer, 'ProformaInvoiceSearch[phone]':phone, 'ProformaInvoiceSearch[showAll]': (showAll | 0)});
     var url = "<?php echo Url::to(['proforma-invoice/index']); ?>?"+params;
     $.pjax.reload({url: url, container: "#proforma-invoice-listing", replace: false, timeout: 4000});  //Reload GridView
 });

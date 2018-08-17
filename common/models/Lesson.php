@@ -395,7 +395,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isOwing($enrolmentId)
     {
-        return round($this->getCreditAppliedAmount($enrolmentId), 2) < round($this->netPrice, 2);
+        return (round($this->getCreditAppliedAmount($enrolmentId), 2) - round($this->netPrice, 2)) < -0.09;
     }
 
     public function getOwingAmount($enrolmentId)
@@ -1449,6 +1449,17 @@ class Lesson extends \yii\db\ActiveRecord
     public function getPaidStatus($enrolmentId) 
     {
         return $this->isOwing($enrolmentId) ? 'Unpaid' : 'Paid';
+    }
+
+    public function hasPaymentRequest()
+    {
+        return !empty($this->paymentRequest);
+    }
+
+    public function getPaymentRequest()
+    {
+        return $this->hasOne(ProformaInvoice::className(), ['id' => 'proformaInvoiceId'])
+            ->via('paymentRequestLineItems');
     }
 
     public function getPaymentRequests()

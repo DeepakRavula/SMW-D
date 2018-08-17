@@ -47,7 +47,14 @@ $this->params['label'] = $this->render('_title', [
     <?php $lessonContent = $this->render('_lesson', [
             'lessonDataProvider' => $lessonDataProvider,
             'model' => $model,
-            'allEnrolments' => $allEnrolments
+            'allEnrolments' => $allEnrolments,
+            'lessonCount' => $lessonCount,
+        ]);
+
+        $groupLessonContent = $this->render('_group-lesson', [
+            'groupLessonDataProvider' => $groupLessonDataProvider,
+            'model' => $model,
+            'allEnrolments' => $allEnrolments,
         ]);
 
         $unscheduledLessonContent = $this->render('_unscheduledLesson', [
@@ -75,10 +82,17 @@ $this->params['label'] = $this->render('_title', [
         }
         $items = [
                 [
-                'label' => 'Lessons',
+                'label' => 'Private Lessons',
                 'content' => $lessonContent,
                 'options' => [
                     'id' => 'lesson',
+                ],
+            ],
+            [
+                'label' => 'Group Lessons',
+                'content' => $groupLessonContent,
+                'options' => [
+                    'id' => 'group-lesson',
                 ],
             ],
                 [
@@ -257,72 +271,39 @@ $this->params['label'] = $this->render('_title', [
         return false;
     });
 
-    $(document).on('click', '.exam-result-cancel-button', function () {
-        $('#new-exam-result-modal').modal('hide');
-        return false;
-    });
-
     $(document).on('click', '.extra-lesson-cancel-button', function () {
         $('#new-lesson-modal').modal('hide');
         return false;
     });
-    
-    $(document).on("click", ".add-new-exam-result,#student-exam-result-listing tbody > tr", function() {
+
+     $(document).on('click', '.add-new-exam-result,#student-exam-result-listing  tbody > tr', function () {
         var examResultId = $(this).data('key');
-        var studentId = <?= $model->id ?>;
-        if (examResultId === undefined) {
-            var customUrl = '<?= Url::to(['exam-result/create']); ?>?studentId='+studentId;
-        } else {
-            var customUrl = '<?= Url::to(['exam-result/update']); ?>?id=' + examResultId;
-        }
-        $.ajax({
-            url: customUrl,
-            type: 'get',
-            dataType: "json",
-            success: function (response)
-            {
-                if (response.status)
-                {
-                    $('#new-exam-result-modal .modal-body').html(response.data);
-                    $('#new-exam-result-modal').modal('show');
-                } else {
-                    $('#lesson-form').yiiActiveForm('updateMessages', response.errors, true);
-                }
+        var studentId  = <?= $model->id ?>;
+            if (!examResultId) {
+                var customUrl = '<?= Url::to(['exam-result/create', 'studentId' => $model->id]); ?>';
+            } else {
+                var customUrl = '<?= Url::to(['exam-result/update']); ?>?id=' + examResultId;
+                var url = '<?= Url::to(['exam-result/delete']); ?>?id=' + examResultId;
+                $('.modal-delete').show();
+                $(".modal-delete").attr("action",url);
             }
-        });
-
-        return false;
-    });
-
-    $(document).on('click', '.evaluation-delete', function () {
-        var examResultId = $('#examresult-id').val();
-        bootbox.confirm({
-            message: "Are you sure you want to delete this evaluation?",
-                callback: function (result) {
-                    if (result) {
-                        $('.bootbox').modal('hide');
-                        $.ajax({
-                            url: '<?= Url::to(['exam-result/delete']); ?>?id=' + examResultId,
-                            type: 'post',
-                            success: function (response)
-                            {
-                                if (response.status)
-                                {
-                                    $('#new-exam-result-modal').modal('hide');
-                                    $.pjax.reload({container: '#student-exam-result-listing', timeout: 6000, async: false});
-                                    $.pjax.reload({container: '#student-log', timeout: 6000, async: false});
-                                } else {
-                                    $('#evaluation-delete').html('You are not allowed to delete this evaluation.').
-                                            fadeIn().delay(3000).fadeOut();
-                                }
-                            }
-                        });
-                        return false;
+            $.ajax({
+                url    : customUrl,
+                type   : 'get',
+                dataType: "json",
+                data   : $(this).serialize(),
+                success: function(response)
+                {
+                    if(response.status)
+                    {
+                        $('#popup-modal').modal('show');
+                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Exam Result</h4>');
+                        $('#modal-content').html(response.data);
                     }
                 }
+            });
+            return false;
         });
-        return false;
-    });
 
     $(document).on('click', '.enrolment-delete', function () {
         var enrolmentId = $(this).parent().parent().data('key');
@@ -364,28 +345,6 @@ $this->params['label'] = $this->render('_title', [
                 {
                     $('#new-lesson-modal').modal('hide');
                     window.location.href = response.url;
-                }
-            }
-        });
-        return false;
-    });
-
-    $(document).on('beforeSubmit', '#exam-result-form', function (e) {
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'post',
-            dataType: "json",
-            data: $(this).serialize(),
-            success: function (response)
-            {
-                if (response.status)
-                {
-                    $.pjax.reload({container: '#student-exam-result-listing', timeout: 6000, async: false});
-                    $.pjax.reload({container: '#student-log', timeout: 6000, async: false});
-                    $('#new-exam-result-modal').modal('hide');
-                } else
-                {
-                    $('#exam-result-form').yiiActiveForm('updateMessages', response.errors, true);
                 }
             }
         });

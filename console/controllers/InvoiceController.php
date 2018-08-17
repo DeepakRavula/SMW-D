@@ -30,6 +30,7 @@ class InvoiceController extends Controller
     public function actionAllCompletedLessons()
     {
         $query = Lesson::find()
+                ->location([14, 15, 16])
                 ->isConfirmed()
                 ->notDeleted();
         $privateLessons = $query->completedUnInvoicedPrivate()->all();
@@ -54,6 +55,7 @@ class InvoiceController extends Controller
     {
         $lessons = Lesson::find()
             ->privateLessons()
+            ->location([14, 15, 16])
 			->isConfirmed()
             ->notDeleted()
             ->unscheduled()

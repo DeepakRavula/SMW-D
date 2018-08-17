@@ -62,7 +62,7 @@ $this->params['action-button'] = $this->render('_action-button', [
         endif; ?>
 
         <div class="more-lesson pull-right" id = "admin-login" style = "display:none">
-            <a class = "see-more" href = "">See More</a>
+            <a class = "see-more" href = "">Show More</a>
         </div>
 
     <?php LteBox::end() ?>
@@ -186,21 +186,20 @@ $this->params['action-button'] = $this->render('_action-button', [
     });
     
     $(document).on('modal-next', function(event, params) {
-        var url = "<?php echo Url::to(['enrolment/view', 'id' => $model->id]); ?>"  
-        $.pjax.reload({url: url, container: "#enrolment-lesson-index", replace: false, timeout: 4000});
+        paymentFrequency.onEditableSuccess();
         return false;
     });
 
     $(document).ready(function () {
         var lesson_count = '<?= $lessonCount; ?>';
-        if (lesson_count > 10) {
+        if (lesson_count > 12) {
             var private = <?= $model->course->program->isPrivate(); ?>;
             if (private) {
                 $(".more-lesson").show();
                 var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
-                var student = '<?= $model->student->id ?>';
-                var program = '<?= $model->program->id ?>'; 
-                var params = $.param({'LessonSearch[student]': student, 'LessonSearch[program]': program, 'LessonSearch[type]': type, 'LessonSearch[isSeeMore]': 1});
+                var studentId = '<?= $model->student->id ?>';
+                var programId = '<?= $model->program->id ?>'; 
+                var params = $.param({'LessonSearch[studentId]': studentId, 'LessonSearch[programId]': programId, 'LessonSearch[type]': type, 'LessonSearch[isSeeMore]': 1});
                 var url = '<?= Url::to(['lesson/index']); ?>?' + params;
                 $('.see-more').attr("href", url);
             }

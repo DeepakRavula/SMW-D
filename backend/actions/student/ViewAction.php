@@ -42,6 +42,13 @@ class ViewAction extends Action
             }
             $enrolmentSearchModel=new EnrolmentSearch();
             $unscheduledLessonSearchModel = new UnscheduledLessonSearch();
+            $lessonCount = Lesson::find()
+                ->studentEnrolment($locationId, $id)
+                ->isConfirmed()
+                ->notCanceled()
+                ->notCompleted()
+			    ->notDeleted()
+                ->count();
             return $this->controller->render('view', [
                     'model' => $model,
                     'allEnrolments' => $allEnrolments,
@@ -53,6 +60,8 @@ class ViewAction extends Action
                     'logs' => $this->getLogs($id),
                     'enrolmentSearchModel'=> $enrolmentSearchModel,
                     'unscheduledLessonSearchModel' => $unscheduledLessonSearchModel,
+                    'lessonCount' => $lessonCount,
+                    'groupLessonDataProvider' => $this->getGroupLessons($id, $locationId),
                     ]);
         } else {
             $this->controller->redirect(['index', 'StudentSearch[showAllStudents]' => false]);
@@ -94,8 +103,27 @@ class ViewAction extends Action
                 ->studentEnrolment($locationId, $id)
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
+                ->limit(12)
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->notDeleted()
+                ->privateLessons()
+                ->notCompleted();
+
+        return new ActiveDataProvider([
+                'query' => $lessons,
+                'pagination' => false
+        ]);
+    }
+
+    protected function getGroupLessons($id, $locationId)
+    {
+        $lessons = Lesson::find()
+                ->studentEnrolment($locationId, $id)
+                ->scheduledOrRescheduled()
+                ->isConfirmed()
+                ->orderBy(['lesson.date' => SORT_ASC])
+                ->notDeleted()
+                ->groupLessons()
                 ->notCompleted();
 
         return new ActiveDataProvider([

@@ -38,7 +38,7 @@ if ($model->isNewRecord) {
 ?>
 <div class="lesson-form">
 <?php $form = ActiveForm::begin([
-    'id' => 'exam-result-form',
+    'id' => 'modal-form',
     'action' => $url,
 ]); ?>
 <div class="row">
@@ -95,30 +95,17 @@ if ($model->isNewRecord) {
         ?>
         </div>
 </div>
-        <div class="clearfix"></div>
-        <div class="row">
-    <div class="col-md-12">
-        <div class="pull-right">
-		<?=  $form->field($model, 'id')->hiddenInput()->label(false);?>
-        <?php echo Html::submitButton(Yii::t('backend', 'Cancel'), ['class' => 'btn btn-default exam-result-cancel-button', 'name' => 'signup-button']) ?>
-        <?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
-        </div>
-            <div class="pull-left">       
- <?php
-                if (!$model->isNewRecord) {
-                    echo Html::a('Delete', [
-                'exam-result/delete', 'id' => $model->id
-                ], [
-                'id' => 'evaluation-delete-' . $model->id,
-                'title' => Yii::t('yii', 'Delete'),
-                'class' => 'evaluation-delete btn btn-danger',
-            ]);
-                }
-
-        ?>
-</div>
-    </div>
-    </div>
 <?php ActiveForm::end(); ?>
-
 </div>
+
+<script>
+    $(document).on('modal-success', function(event, params) {
+        $.pjax.reload({container: "#student-exam-result-listing", replace: false, timeout: 4000});
+        return false;
+    });
+    
+    $(document).on('modal-delete', function(event, params) {
+        $.pjax.reload({container: "#student-exam-result-listing", replace: false, timeout: 4000});
+        return false;
+    });
+</script>

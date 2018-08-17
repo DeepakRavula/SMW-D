@@ -55,22 +55,12 @@ Modal::begin([
 <?php Modal::end(); ?>
 
 <script>
-    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     
-    $(document).on('click', '.enrolment-edit-cancel', function(){
-        $('#enrolment-edit-modal').modal('hide');
-        return false;
-    });
-
     $(document).on('click', '.enrolment-rate-cancel', function(){
         $('#enrolment-rate-edit-modal').modal('hide');
         return false;
     });
     
-    $(document).on('click', '#enrolment-edit-save-btn', function(){
-       $('#spinner').show();
-    });
-
     $(document).on('beforeSubmit', '#enrolment-rate-form', function(){
         $.ajax({
             url    : '<?= Url::to(['enrolment/edit-program-rate', 'id' => $model->id]); ?>',
@@ -105,15 +95,11 @@ Modal::begin([
             dataType: "json",
             success: function(response)
             {
-                if(response.status)
-                {
-                    $('#enrolment-edit-content').html(response.data);
-                    $('#enrolment-edit-modal').modal('show');
-                    $('#warning-notification').html('You have entered a \n\
-                    non-approved Arcadia discount. All non-approved discounts \n\
-                    must be submitted in writing and approved by Head Office \n\
-                    prior to entering a discount, otherwise you are in breach \n\
-                    of your agreement.').fadeIn();
+                if (response.status) {
+                    $('#popup-modal').modal('show');
+                    $('#modal-content').html(response.data);
+                    $('.modal-save').show();
+                    $('.modal-save').text('Save');
                 }
             }
         });

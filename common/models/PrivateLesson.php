@@ -108,10 +108,11 @@ class PrivateLesson extends \yii\db\ActiveRecord
                                 $lessonPayment = new LessonPayment();
                                 $lessonPayment->lessonId    = $lesson->id;
                                 $lessonPayment->paymentId   = $firstSplitLessonPayment->paymentId;
-                                $lessonPayment->amount      = ($amount + $firstSplitLessonPayment->amount) - $amountNeeded;
+                                $amountRemin = ($amount + $firstSplitLessonPayment->amount) - $amountNeeded;
+                                $lessonPayment->amount      = $lesson->netPrice >= $amountRemin ? $amountRemin : $lesson->netPrice;
                                 $lessonPayment->enrolmentId = $enrolment->id;
                                 $lessonPayment->save();
-                                $firstSplitLessonPayment->amount -= $lessonPayment->amount;
+                                $firstSplitLessonPayment->amount -= $amountRemin;
                                 $firstSplitLessonPayment->save();
                                 $amount += $firstSplitLessonPayment->amount;
                             }

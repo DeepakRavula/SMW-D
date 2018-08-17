@@ -4,10 +4,8 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use common\models\Invoice;
 use common\models\Location;
-use common\models\User;
 use common\components\gridView\KartikGridView;
 use backend\models\search\InvoiceSearch;
-use kartik\daterange\DateRangePicker;
 use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
@@ -82,25 +80,6 @@ $this->params['action-button'] = $actionButton; ?>
                     'value' => function ($data) {
                         return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                     },
-			    'filterType'=> KartikGridView::FILTER_SELECT2,
-            'filter' => ArrayHelper::map(User::find()
-            ->excludeWalkin()
-			    ->customers($locationId)
-			    ->joinWith(['userProfile' => function ($query) {
-					$query->orderBy('firstname');
-				}])
-			    ->all(), 'id', 'publicIdentity'),
-	    'filterWidgetOptions'=>[
-        'options' => [
-            'id' => 'customer',
-        ],
-                'pluginOptions'=>[
-                    'allowClear'=>true,
-        ],
-
-    ],
-            'filterInputOptions'=>['placeholder'=>'Customer'],
-            'format'=>'raw'
                 ],
                 [
 					'attribute' => 'phone',
@@ -227,24 +206,6 @@ $this->params['action-button'] = $actionButton; ?>
                     'value' => function ($data) {
                         return !empty($data->user->publicIdentity) ? $data->user->publicIdentity : null;
                     },
-			       'filterType'=> KartikGridView::FILTER_SELECT2,
-            'filter' => ArrayHelper::map(User::find()
-			    ->customers($locationId)
-			    ->joinWith(['userProfile' => function ($query) {
-					$query->orderBy('firstname');
-				}])
-			    ->all(), 'id', 'publicIdentity'),
-	    'filterWidgetOptions'=>[
-        'options' => [
-            'id' => 'customer',
-        ],
-                'pluginOptions'=>[
-                    'allowClear'=>true,
-        ],
-
-    ],
-            'filterInputOptions'=>['placeholder'=>'Customer'],
-            'format'=>'raw'
                 ],
                 [
 		    'attribute' => 'phone',

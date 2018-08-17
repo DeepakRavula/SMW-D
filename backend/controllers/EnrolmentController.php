@@ -123,7 +123,7 @@ class EnrolmentController extends BaseController
                 ->andWhere(['courseId' => $model->course->id])
                 ->scheduledOrRescheduled()
                 ->isConfirmed()
-		        ->limit(10)
+		        ->limit(12)
                 ->notDeleted()
                 ->notCompleted()
                 ->orderBy(['lesson.date' => SORT_ASC]),
@@ -206,10 +206,31 @@ class EnrolmentController extends BaseController
         }
         $paymentFrequencyDiscount->enrolmentId = $id;
         $multipleEnrolmentDiscount->enrolmentId = $id;
+        $startDate = Carbon::parse($model->firstUnPaidPaymentCycle->startDate)->format('M d, Y');
+        $endDate = Carbon::parse($model->lastPaymentCycle->endDate)->format('M d, Y');
+        $dates = [$startDate, $endDate];
+        $dateRange = implode(' - ', $dates);
+        $objects = ["Payment Cycles", "Lesson's Discount", "Payment Request"];
+        $classes = ["payment-cycle", "lesson-discount", "payment-request"];
+        foreach ($objects as $i => $value) {
+            $results[] = [
+                'objects' => $value,
+                'action' => 'will be modified',
+                'date_range' => 'within ' . $dateRange,
+                'class' => $classes[$i]
+            ]; 
+        }
+        $previewDataProvider = new ArrayDataProvider([
+            'allModels' => $results,
+            'sort' => [
+                'attributes' => ['objects', 'action', 'date_range', 'class']
+            ]
+        ]);
         $data = $this->renderAjax('update/_form', [
             'model' => $model,
             'multipleEnrolmentDiscount' => $multipleEnrolmentDiscount,
             'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
+            'previewDataProvider' => $previewDataProvider
         ]);
         $oldPaymentFrequency = clone $model;
         $oldPaymentFrequencyDiscount  = $model->getPaymentFrequencyDiscountValue();
@@ -217,6 +238,7 @@ class EnrolmentController extends BaseController
         if ($post) {
             $paymentFrequencyDiscount->load($post);
             $multipleEnrolmentDiscount->load($post);
+            $model->load($post);
             $multipleEnrolmentDiscount->save();
             $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
             $paymentFrequencyDiscount->save();
@@ -231,14 +253,15 @@ class EnrolmentController extends BaseController
             if ((int) $oldPaymentFrequencyDiscount != (int) $paymentFrequencyDiscount->discount) {
                 $model->resetDiscount($paymentFrequencyDiscount->type, $paymentFrequencyDiscount->discount);
                 $model->on(
-                   Enrolment::EVENT_AFTER_UPDATE,
+                Enrolment::EVENT_AFTER_UPDATE,
                     [new DiscountLog(), 'enrolmentPaymentFrequencyDiscountEdit'],
                     ['loggedUser' => $loggedUser, 'oldDiscount' => $oldPaymentFrequencyDiscount,'newDiscount'=>$paymentFrequencyDiscount->discount]
-               );
+            );
             }
-            if ($model->load($post) && $model->save()) {
+            if ($model->save()) {
                 if ((int) $oldPaymentFrequency->paymentFrequencyId !== (int) $model->paymentFrequencyId) {
                     $model->resetPaymentCycle();
+                    $model->resetPaymentRequest();
                 }
             }
             $response = [
@@ -486,10 +509,8 @@ class EnrolmentController extends BaseController
                 ->notCanceled()
                 ->all();
             $message = null;
-            $invoice = $model->addLessonsCredit($lessons);
-            if ($invoice) {
-                $message = '$' . $invoice->balance . ' has been credited to ' . $model->customer->publicIdentity . ' account.';
-            }
+            $model->revertLessonsCredit($lessons);
+            $message = 'Lesson credits has been credited to ' . $model->customer->publicIdentity . ' account.';
             $model->deleteWithOutTransactionalData();
             $response = [
                 'status' => true,
