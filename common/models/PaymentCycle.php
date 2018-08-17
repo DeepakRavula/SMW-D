@@ -193,7 +193,6 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function createPaymentCycleLesson()
     {
-        $locationId = $this->enrolment->course->locationId;
         $startDate  = new \DateTime($this->startDate);
         $endDate    = new \DateTime($this->endDate);
         $lessons = Lesson::find()

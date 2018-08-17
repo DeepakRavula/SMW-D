@@ -562,6 +562,33 @@ class Enrolment extends \yii\db\ActiveRecord
         return (int) $months;
     }
 
+    public function resetPaymentRequest()
+    {
+        $currentDate = new \DateTime();
+        $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
+        $this->deletePaymentRequest();
+        $dateRange = $this->getCurrentPaymentCycleDateRange($priorDate);
+        $this->createPaymentRequest($dateRange);
+        return true;
+    }
+
+    public function deletePaymentRequest()
+    {
+        $lessons = Lesson::find()
+            ->isConfirmed()
+            ->notDeleted()
+            ->notCanceled()
+            ->andWhere(['courseId' => $this->course->id])
+            ->all();
+        
+        foreach ($lessons as $lesson) {
+            if ($lesson->hasPaymentRequest()) {
+                $lesson->paymentRequest->delete();
+            }
+        }
+        return true;
+    }
+
     public function resetPaymentCycle()
     {
         if ($this->firstUnPaidPaymentCycle) {

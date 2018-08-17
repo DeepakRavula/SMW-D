@@ -102,7 +102,7 @@ use yii\grid\GridView;
         var multiEnrolmentDiscount = '<?= $multipleEnrolmentDiscount->discount ?? null; ?>';
         var paymentFrequencyChanged = $('#enrolment-paymentfrequencyid').val();
         var paymentFrequencyDiscountChanged = $('#paymentfrequencyenrolmentdiscount-discount').val();
-        var multiEnrolmentDiscountChanged = $('#multienrolmentdiscount-discount').val();debugger
+        var multiEnrolmentDiscountChanged = $('#multienrolmentdiscount-discount').val();
         if (paymentFrequency != paymentFrequencyChanged || paymentFrequencyDiscount != paymentFrequencyDiscountChanged || multiEnrolmentDiscount != multiEnrolmentDiscountChanged) {
             $('.preview').show();
             if (paymentFrequencyDiscount == paymentFrequencyDiscountChanged && multiEnrolmentDiscount == multiEnrolmentDiscountChanged) {
@@ -112,8 +112,10 @@ use yii\grid\GridView;
             }
             if (paymentFrequency == paymentFrequencyChanged) {
                 $('.payment-cycle').hide();
+                $('.payment-request').hide();
             } else {
                 $('.payment-cycle').show();
+                $('.payment-request').show();
             }
         } else {
             $('.preview').hide();

@@ -210,13 +210,14 @@ class EnrolmentController extends BaseController
         $endDate = Carbon::parse($model->lastPaymentCycle->endDate)->format('M d, Y');
         $dates = [$startDate, $endDate];
         $dateRange = implode(' - ', $dates);
-        $objects = ["Payment Cycles", "Lesson's Discount"];
+        $objects = ["Payment Cycles", "Lesson's Discount", "Payment Request"];
+        $classes = ["payment-cycle", "lesson-discount", "payment-request"];
         foreach ($objects as $i => $value) {
             $results[] = [
                 'objects' => $value,
                 'action' => 'will be modified',
                 'date_range' => 'within ' . $dateRange,
-                'class' => $i == 0 ? 'payment-cycle' : 'lesson-discount'
+                'class' => $classes[$i]
             ]; 
         }
         $previewDataProvider = new ArrayDataProvider([
@@ -260,6 +261,7 @@ class EnrolmentController extends BaseController
             if ($model->save()) {
                 if ((int) $oldPaymentFrequency->paymentFrequencyId !== (int) $model->paymentFrequencyId) {
                     $model->resetPaymentCycle();
+                    $model->resetPaymentRequest();
                 }
             }
             $response = [
