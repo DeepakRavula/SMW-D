@@ -31,7 +31,6 @@ $this->params['show-all'] = $this->render('_button', [
 		[
 			'label' => 'Student',
 			'attribute' => 'student',
-			'contentOptions' => ['style' => 'width: 150px;'],
 			'value' => function ($data) {
 				return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName
 						: null;
@@ -40,7 +39,6 @@ $this->params['show-all'] = $this->render('_button', [
 		[
 			'label' => 'Program',
 			'attribute' => 'program',
-			'contentOptions' => ['style' => 'width: 150px;'],
 			'value' => function ($data) {
 				return !empty($data->course->program->name) ? $data->course->program->name : null;
 			},
@@ -48,7 +46,6 @@ $this->params['show-all'] = $this->render('_button', [
 		[
 			'label' => 'Teacher',
 			'attribute' => 'teacher',
-			'contentOptions' => ['style' => 'width: 150px;'],
 			'value' => function ($data) {
 				return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity
 						: null;
@@ -56,7 +53,6 @@ $this->params['show-all'] = $this->render('_button', [
 		],
 		[
 			'label' => 'Duration',
-			'contentOptions' => ['style' => 'width: 50px;'],
 			'value' => function ($data) {
 				return !empty($data->duration) ? (new \DateTime($data->duration))->format('H:i')
 						: null;
@@ -64,7 +60,6 @@ $this->params['show-all'] = $this->render('_button', [
 		],
 		[
 			'label' => 'Date',
-			'contentOptions' => ['style' => 'width: 150px;'],
 			'value' => function ($data) {
 				$date = Yii::$app->formatter->asDate($data->date);
 
