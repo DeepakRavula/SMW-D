@@ -104,7 +104,7 @@ class PaymentSearch extends Payment
         if ($this->paymentMethod) {
             $paymentMethod = $this->paymentMethod;
             $query->joinWith(['paymentMethod' => function ($query) use ($paymentMethod) {
-                $query->andFilterWhere(['like', 'payment_method.name', $paymentMethod]);
+                $query->andFilterWhere(['payment_method.name' => $paymentMethod]);
             }]);
         }
 

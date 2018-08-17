@@ -141,20 +141,11 @@ class InvoiceController extends BaseController
         $userDataProvider = $userSearchModel->search($request->getQueryParams());
         $userDataProvider->pagination = false;
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $userQuery = UserProfile::find()
-            ->joinWith(['user' => function($query) use ($locationId) {
-                $query->notDeleted()
-                ->excludeWalkin()
-                ->customers($locationId);
-            }]);
-        $first_name = $userQuery->orderBy(['firstname' => SORT_ASC])
-            ->all();
-        $last_name = $userQuery->orderBy(['lastname' => SORT_ASC])
-	        ->all();
-        $first_names = ArrayHelper::map($first_name, 'user_id', 'firstname');
-        $last_names = ArrayHelper::map($last_name, 'user_id', 'lastname');
         if ($request->isPost) {
             if ($model->load($request->post()) && $model->save()) {
+                foreach ($model->payments as $payment) {
+                    $payment->updateAttributes(['user_id' => $model->user_id]);
+                }
                 $response = [
                     'status' => true
                 ];
@@ -167,8 +158,6 @@ class InvoiceController extends BaseController
         } else {
             $data = $this->renderAjax('customer/_list', [
                 'model' => $model,
-                'first_names' => $first_names,
-                'last_names' => $last_names,
                 'userDataProvider' => $userDataProvider,
                 'searchModel' => $userSearchModel
             ]);
@@ -195,7 +184,6 @@ class InvoiceController extends BaseController
                     $userProfile->user_id = $customer->id;
                     $userProfile->save();
                     if ($userEmail->email) {
-                        //print_r($customer->id);die;
                         $userContact->userId = $customer->id;
                         $userContact->isPrimary = true;
                         $userContact->labelId = Label::LABEL_WORK;
@@ -204,6 +192,9 @@ class InvoiceController extends BaseController
                         $userEmail->save();
                     }
                     $model->user_id = $customer->id;
+                    foreach ($model->payments as $payment) {
+                        $payment->updateAttributes(['user_id' => $customer->id]);
+                    }
                     $model->save();
                     $auth = Yii::$app->authManager;
                     $auth->assign($auth->getRole(User::ROLE_GUEST), $customer->id);
@@ -714,10 +705,9 @@ class InvoiceController extends BaseController
         }
         return $response;
     }
+
     public function actionShowItems($id)
     {
-    //  print_r('ddd');die('coming');  
-    
         $invoiceModel                       = $this->findModel($id);
         $request                            = Yii::$app->request;
         $itemSearchModel                    = new ItemSearch();
@@ -727,12 +717,12 @@ class InvoiceController extends BaseController
         $data = $this->renderAjax('_form-invoice-line-item', [
             'invoiceModel' => $invoiceModel,
             'itemDataProvider' => $itemDataProvider,
-            'itemSearchModel' =>$itemSearchModel,
+            'itemSearchModel' => $itemSearchModel,
         ]);
         $response = [
             'status' => true,
             'data' => $data
         ];
-      return $response; 
+        return $response; 
     }
 }

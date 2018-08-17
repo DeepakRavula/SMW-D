@@ -27,37 +27,14 @@ use yii\widgets\ActiveForm;
                 'label' => 'First Name',
                 'value' => function ($data) {
                     return !empty($data->userProfile->firstname) ? $data->userProfile->firstname : null;
-                },
-                'filterType' => KartikGridView::FILTER_SELECT2,
-                'filter' => $first_names,
-                'filterWidgetOptions' => [
-                    'options' => [
-                        'id' => 'firstname'
-                    ]
-                ],
-                'filterInputOptions' => [
-                    'placeholder' => 'First Name'
-                ]
+                }
             ],
             [
                 'attribute' => 'lastname',
                 'label' => 'Last Name',
                 'value' => function ($data) {
                     return !empty($data->userProfile->lastname) ? $data->userProfile->lastname : null;
-                },
-                'filterType' => KartikGridView::FILTER_SELECT2,
-                'filter' => $last_names,
-                'filterWidgetOptions' => [
-                    'options' => [
-                        'id' => 'lastname'
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ]
-                ],
-                'filterInputOptions' => [ 
-                    'placeholder' => 'Last Name'
-                ]
+                }
             ],
             'email',
             [
