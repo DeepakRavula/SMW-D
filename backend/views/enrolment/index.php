@@ -13,15 +13,22 @@ use common\components\gridView\KartikGridView;
 /* @var $searchModel backend\models\search\EnrolmentSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 $this->title = 'Enrolments';
-$this->params['action-button'] = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>'), '#',
-    ['class' => 'new-enrol-btn']);
+$this->params['action-button'] = $this->render('_action-menu');
 
 $this->params['show-all'] = $this->render('_button', [
     'searchModel' => $searchModel
 ]);
 ?>
+
+<div id="index-success-notification" style="display:none;" class="alert-success alert fade in"></div>
+<div id="index-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
+
 <script src="/plugins/bootbox/bootbox.min.js"></script>
-	<?php $columns = [
+<?php $columns = [
+    [
+        'class' => '\kartik\grid\CheckboxColumn',
+        'mergeHeader' => false
+    ],
     [
         'attribute' => 'program',
         'label' => 'Program',
@@ -71,40 +78,76 @@ $this->params['show-all'] = $this->render('_button', [
                 'locale' => [
                     'format' => 'M d, Y',
                 ],
-                'opens' => 'left',
-            ],
+                'opens' => 'left'
+            ]
+        ]
+    ]
+]; ?>
 
-        ],
-    ],
-
-    ]; ?>
 <div class="grid-row-open">
-<?php
-echo KartikGridView::widget([
-    'dataProvider' => $dataProvider,
-    'summary' => false,
-    'emptyText' => false,
-    'filterModel'=>$searchModel,
-    'tableOptions' => ['class' => 'table table-bordered'],
-    'headerRowOptions' => ['class' => 'bg-light-gray'],
-     'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
-        $url = Url::to(['enrolment/view', 'id' => $model->id]);
-        $data = ['data-url' => $url];
-        return $data;
-    },
-    'columns' => $columns,
-        'pjax'=>true,
-    'pjaxSettings' => [
-        'neverTimeout' => true,
-        'options' => [
-            'id' => 'enrolment-listing',
-        ],
-    ],
-]);
-?>
+    <?= KartikGridView::widget([
+        'dataProvider' => $dataProvider,
+        'options' => ['id' => 'enrolment-listing-grid'],
+        'summary' => false,
+        'emptyText' => false,
+        'filterModel' => $searchModel,
+        'tableOptions' => ['class' => 'table table-bordered'],
+        'headerRowOptions' => ['class' => 'bg-light-gray'],
+        'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+            $url = Url::to(['enrolment/view', 'id' => $model->id]);
+            $data = ['data-url' => $url];
+            return $data;
+        },
+        'columns' => $columns,
+        'pjax' => true,
+        'pjaxSettings' => [
+            'neverTimeout' => true,
+            'options' => [
+                'id' => 'enrolment-listing'
+            ]
+        ]
+    ]); ?>
 </div>
 
 <script>
+    $(document).off('click', '#enrolment-teacher-change').on('click', '#enrolment-teacher-change', function(){
+        var enrolmentIds = $('#enrolment-listing-grid').yiiGridView('getSelectedRows');
+        if ($.isEmptyObject(enrolmentIds)) {
+            $('#index-error-notification').html("Choose any enrolments to change teacher").fadeIn().delay(5000).fadeOut();
+        } else {
+            var params = $.param({ 'EnrolmentSubstituteTeacher[enrolmentIds]': enrolmentIds });
+            $.ajax({
+                url    : '<?= Url::to(['teacher-substitute/enrolment']) ?>?' + params,
+                type   : 'get',
+                success: function(response)
+                {
+                    if (response.status) {
+                        $('#modal-content').html(response.data);
+                        $('#popup-modal').modal('show');
+                    } else {
+                        $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                    }
+                }
+            });
+        }
+    });
+
+    $(document).off('change', '#enrolment-listing-grid .select-on-check-all, input[name="selection[]"]').on('change', '#enrolment-listing-grid .select-on-check-all, input[name="selection[]"]', function () {
+        bulkAction.setAction();
+    });
+
+    var bulkAction = {
+        setAction: function() {
+            var enrolmentIds = $('#enrolment-listing-grid').yiiGridView('getSelectedRows');
+            if ($.isEmptyObject(enrolmentIds)) {
+                $('#enrolment-teacher-change').addClass('multiselect-disable');
+            } else {
+                $('#enrolment-teacher-change').removeClass('multiselect-disable');
+            }
+            return false;
+        }
+    };
+
     $(document).on('click', '.new-enrol-btn', function() {
         $.ajax({
             url    : '<?= Url::to(['course/create-enrolment-basic', 'studentId' => null, 'isReverse' => true]); ?>',

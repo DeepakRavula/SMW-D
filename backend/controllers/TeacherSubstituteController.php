@@ -14,6 +14,9 @@ use yii\filters\ContentNegotiator;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
+use common\models\EnrolmentSubstituteTeacher;
+use common\models\Enrolment;
+use yii\helpers\ArrayHelper;
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
@@ -30,7 +33,9 @@ class TeacherSubstituteController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['index', 'confirm'],
+                'only' => [
+                    'index', 'confirm', 'enrolment'
+                ],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -41,7 +46,9 @@ class TeacherSubstituteController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'confirm'],
+                        'actions' => [
+                            'index', 'confirm', 'enrolment'
+                        ],
                         'roles' => ['managePrivateLessons', 'manageGroupLessons'],
                     ],
                 ],
@@ -187,6 +194,55 @@ class TeacherSubstituteController extends BaseController
             $response = [
                 'status' => true,
                 'url' => Url::to(['/lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[ids]' => $lessonIds])
+            ];
+        }
+        return $response;
+    }
+
+    public function actionEnrolment()
+    {
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $model = new EnrolmentSubstituteTeacher();
+        $get = Yii::$app->request->get();
+        $model->load($get);
+        if ($model->validate()) {
+            $model->setScenario(EnrolmentSubstituteTeacher::SCENARIO_CHANGE);
+            $enrolments = Enrolment::find()
+                ->andWhere(['id' => $model->enrolmentIds])
+                ->all();
+            $teacherId = end($enrolments)->course->teacherId;
+            $programId = end($enrolments)->course->programId;
+            $teachers = ArrayHelper::map(User::find()
+                ->teachers($programId, $locationId)
+                ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
+                ->notDeleted()
+                ->andWhere(['NOT', ['user.id' => $teacherId]])
+                ->orderBy(['user_profile.firstname' => SORT_ASC])
+                ->all(), 'id', 'publicIdentity');
+            $data = $this->renderAjax('enrolment/_form', [
+                'teachers' => $teachers,
+                'model' => $model
+            ]);
+            if (Yii::$app->request->isPost) {
+                $model->load(Yii::$app->request->post());
+                $model->save();
+                $data = $this->renderAjax('enrolment/_preview', [
+                    'model' => $model
+                ]);
+                $response = [
+                    'status' => true,
+                    'data' => $data
+                ];
+            } else {
+                $response = [
+                    'status' => true,
+                    'data' => $data
+                ];
+            }
+        } else {
+            $response = [
+                'status' => false,
+                'message' => current(ActiveForm::validate($model))
             ];
         }
         return $response;
