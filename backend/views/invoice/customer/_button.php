@@ -13,7 +13,7 @@ use common\models\User;
 	<?php elseif ($model->user->isCustomer()) : ?>
 		<li><a class="add-customer" href="#">Change Customer...</a></li>
 	<?php elseif ($model->user->isWalkin()) : ?>
-		<li><a class="add-walkin" href="#">Edit Walk-in...</a></li>
+		<li><a class="edit-walkin" href="#">Edit Walk-in...</a></li>
 	<?php endif;?>
 </ul>
 <?php endif;?>
@@ -37,4 +37,24 @@ use common\models\User;
 		});
 		return false;
 	});
+
+	$(document).off('click', '.edit-walkin').on('click', '.edit-walkin', function () {
+		$.ajax({
+            url    : '<?= Url::to(['invoice/edit-walkin', 'id' => $model->id]); ?>',
+            type   : 'get',
+            dataType: 'json',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal .modal-dialog').css({'width': '400px'});
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Walkin</h4>');
+                    $('.modal-save').show();
+                    $('.modal-save').text('Save');
+                }
+            }
+        });
+        return false;
+  	});
 </script>
