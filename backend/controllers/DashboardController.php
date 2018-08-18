@@ -184,6 +184,19 @@ public function behaviors()
                 ->betweenEndDate($fromDate, $toDate);
             }])
             ->count();
+        $instructionHours = Lesson::find()
+            ->joinWith(['course' => function ($query) use ($locationId, $fromDate, $toDate) {
+                $query->joinWith('program')
+                    ->joinWith('courseSchedule')
+                    ->andWhere(['course.locationId' => $locationId])
+                    ->confirmed();
+            }])
+            ->andWhere(['between', 'lesson.date', $from, $to])
+            ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
+            ->isConfirmed()
+            ->notDeleted()     
+            ->sum('course_schedule.duration');
+        $instructionHoursCount = $instructionHours / 6000;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'enrolments' => $enrolments,
@@ -194,7 +207,8 @@ public function behaviors()
             'enrolmentLosses' => $enrolmentLosses,
             'enrolmentGainCount' => $enrolmentGainCount,
             'enrolmentLossCount' => $enrolmentLossCount,
-            'lessonsCount' => $lessonsCount
+            'lessonsCount' => $lessonsCount,
+            'instructionHoursCount' => $instructionHoursCount
         ]);
     }
 
