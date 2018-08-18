@@ -49,7 +49,8 @@ class InvoiceController extends BaseController
                     'delete', 'note', 'get-payment-amount', 'update-customer', 'post',
                     'create-walkin', 'fetch-user', 'add-misc', 'adjust-tax', 'mail',
                     'post-distribute', 'retract-credits', 'unpost', 'distribute',
-                    'void', 'update', 'fetch-summary-and-status', 'compute-tax', 'show-items'
+                    'void', 'update', 'fetch-summary-and-status', 'compute-tax', 'show-items',
+                    'edit-walkin'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -60,12 +61,14 @@ class InvoiceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['blank-invoice', 'index', 'mail', 'update-customer', 'create-walkin',
+                        'actions' => [
+                            'blank-invoice', 'index', 'mail', 'update-customer', 'create-walkin',
                             'note', 'view', 'fetch-user', 'add-misc','fetch-summary-and-status',
                             'compute-tax', 'create', 'update', 'delete', 'update-mail-status',
                             'all-completed-lessons', 'adjust-tax', 'revert-invoice', 'enrolment',
                             'invoice-payment-cycle', 'group-lesson','get-payment-amount', 'void',
-                            'post-distribute', 'retract-credits', 'unpost', 'distribute', 'post', 'show-items'
+                            'post-distribute', 'retract-credits', 'unpost', 'distribute', 'post', 'show-items',
+                            'edit-walkin'
                         ],
                         'roles' => [
                             'manageInvoices', 'managePfi'
@@ -173,11 +176,11 @@ class InvoiceController extends BaseController
     {
         $request = Yii::$app->request;
         $model = $this->findModel($id);
-        $customer = !$model->user->isLocationWalkin() ? $model->user : new User();
+        $customer = new User();
         $customer->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $userProfile = !$model->user->isLocationWalkin() ? $model->user->userProfile : new UserProfile();
-        $userContact = !$model->user->isLocationWalkin() ? ($model->user->primaryContact ? $model->user->primaryContact : new UserContact()) : new UserContact();
-        $userEmail = !$model->user->isLocationWalkin() ? ($model->user->primaryEmail ? $model->user->primaryEmail : new UserEmail()) : new UserEmail();
+        $userProfile = new UserProfile();
+        $userContact = new UserContact();
+        $userEmail = new UserEmail();
         if ($request->isPost) {
             if ($userProfile->load($request->post()) && $userEmail->load($request->post())) {
                 if ($customer->save()) {
@@ -201,6 +204,50 @@ class InvoiceController extends BaseController
                     $response = [
                         'status' => true,
                         'message' => 'customer has been Added successfully.'
+                    ];
+                }
+            }
+        } else {
+            $data = $this->renderAjax('customer/_walkin', [
+                'model' => $model,
+                'userModel' => $userProfile,
+                'userEmail' => $userEmail
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
+    }
+
+    public function actionEditWalkin($id)
+    {
+        $request = Yii::$app->request;
+        $model = $this->findModel($id);
+        $customer = User::findOne($model->user_id);
+        $customer->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $userProfile = $customer->userProfile;
+        $userContact = $customer->primaryContact ?? new UserContact();
+        $userEmail = $customer->primaryEmail ?? new UserEmail();
+        if ($request->isPost) {
+            if ($userProfile->load($request->post()) && $userEmail->load($request->post())) {
+                if ($customer->save()) {
+                    $userProfile->save();
+                    if ($userEmail->email) {
+                        if ($userEmail->isNewRecord) {
+                            $userContact->userId = $customer->id;
+                            $userContact->isPrimary = true;
+                            $userContact->labelId = Label::LABEL_WORK;
+                            $userContact->save();
+                            $userEmail->userContactId = $userContact->id;
+                        }
+                        $userEmail->save();
+                    }
+                    $model->save();
+                    $response = [
+                        'status' => true,
+                        'message' => 'customer has been updated successfully.'
                     ];
                 }
             }
