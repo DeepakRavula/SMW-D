@@ -10,7 +10,8 @@ use yii\widgets\Pjax;
 LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
     'title' => 'Cost',
-    'boxTools' => '<i title="Edit" class="fa fa-pencil edit-cost"></i>',
+    'boxTools' => '<i title="Edit" class="fa fa-pencil edit-cost"></i> <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+    </button>',
     'withBorder' => true,
 ])
 ?>
