@@ -99,6 +99,14 @@ echo Menu::widget([
             'active' => (isset(Yii::$app->request->queryParams['InvoiceSearch']['type']) && Yii::$app->request->queryParams['InvoiceSearch']['type'] == Invoice::TYPE_PRO_FORMA_INVOICE) ? true : false,
         ],
 
+	[
+	            'label' => Yii::t('backend', 'Payment Preferences'),
+            'icon' => '<i class="fa  fa-dollar"></i>',
+            'url' => ['/customer-payment-preference/index'],
+            'visible' => Yii::$app->user->can('manageAdmin'),
+            'active' => (Yii::$app->controller->id === 'customer-payment-preference') ? true : false,
+        ],
+          
         [
             'label' => Yii::t('backend', 'Payment Requests'),
             'icon' => '<i class="fa  fa-dollar"></i>',
