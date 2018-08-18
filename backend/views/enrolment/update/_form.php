@@ -18,7 +18,7 @@ use yii\grid\GridView;
 
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['enrolment/edit', 'id' => $model->id, 'Enrolment[isPreview]' => true]),
+        'action' => Url::to(['enrolment/edit', 'id' => $model->id]),
     ]); ?>
 
     <div class="row">

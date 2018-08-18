@@ -564,11 +564,24 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function resetPaymentRequest()
     {
-        $currentDate = new \DateTime();
-        $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
-        $this->deletePaymentRequest();
-        $dateRange = $this->getCurrentPaymentCycleDateRange($priorDate);
-        $this->createPaymentRequest($dateRange);
+        if ($this->firstUnpaidPaymentCycle) {
+            $this->deletePaymentRequest();
+            $startDate = (new \DateTime($this->firstUnpaidPaymentCycle->startDate))->format('Y-m-d');
+            $currentDate = new \DateTime();
+            $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
+            $paymentCycles = PaymentCycle::find()
+                ->notDeleted()
+                ->andWhere(['enrolmentId' => $this->id])
+                ->andWhere(['between', 'startDate', $startDate, $priorDate])
+                ->all();
+                
+            foreach ($paymentCycles as $paymentCycle) {
+                $startDate = new \DateTime($paymentCycle->startDate);
+                $endDate = new \DateTime($paymentCycle->endDate);
+                $dateRange = $startDate->format('Y-m-d') . ' - ' . $endDate->format('Y-m-d');
+                $this->createPaymentRequest($dateRange);
+            }
+        }
         return true;
     }
 

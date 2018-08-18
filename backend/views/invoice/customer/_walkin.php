@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 
 <?php $form = ActiveForm::begin([
 	'id' => 'modal-form',
-	'action' => Url::to(['invoice/create-walkin', 'id' => $model->id])
+	'action' => $userModel->isNewRecord ? Url::to(['invoice/create-walkin', 'id' => $model->id]) : Url::to(['invoice/edit-walkin', 'id' => $model->id])
 ]); ?>
 
     <div class="row col-md-12">
