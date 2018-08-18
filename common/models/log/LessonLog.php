@@ -32,7 +32,31 @@ class LessonLog extends Log
             $this->addLink($log, $studentIndex, $studentPath);
         }
     }
-
+    public function addLessonLog($object, $activity, $data, $locationId, $model, $loggedUser)
+    {
+        $log = new Log();
+        $log->logObjectId = $object->id;
+        $log->logActivityId = $activity->id;
+        $lessonIndex = 
+        //$studentIndex= $model->user->publicIdentity;
+        if (is_a(Yii::$app, 'yii\console\Application')) {
+            $invoicePath='/admin/invoice/view?id=' . $model->id;
+            $userPath='/admin/user/view?UserSearch[role_name]=customer&id='. $model->user->id;
+        } else {
+            $invoicePath=Url::to(['/invoice/view', 'id' => $model->id]);
+            $userPath=Url::to(['/user/view', 'UserSearch[role_name]' => 'customer', 'id' => $model->user->id]);
+        }
+        $log->message = $loggedUser->publicIdentity . ' created an {{'.$invoiceIndex.'}} for {{' .$userIndex. '}}';
+        $log->data = json_encode($data);
+        $log->createdUserId = $loggedUser->id;
+        $log->locationId = $locationId;
+        
+        if ($log->save()) {
+            $this->addHistory($log, $model, $object);
+            $this->addLink($log, $invoiceIndex, $invoicePath);
+            $this->addLink($log, $userIndex, $userPath);
+        }
+    }
     public function addLink($log, $index, $path)
     {
         $logLink          = new LogLink();

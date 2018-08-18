@@ -4,6 +4,8 @@ namespace common\models;
 
 use Yii;
 use yii\helpers\VarDumper;
+use common\models\log\InvoiceLog;
+use common\models\User;
 
 /**
  * This is the model class for table "invoice".
@@ -117,7 +119,8 @@ trait Invoiceable
     public function createInvoice()
     {
         $invoice = new Invoice();
-        $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
+        $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+        $invoice->on(Invoice::EVENT_AFTER_INSERT, [new InvoiceLog(), 'addInvoice'], ['loggedUser' => $loggedUser]);
         $invoice->type = INVOICE::TYPE_INVOICE;
         return $invoice;
     }
