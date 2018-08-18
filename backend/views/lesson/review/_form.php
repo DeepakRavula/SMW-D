@@ -84,6 +84,7 @@ use yii\helpers\Url;
         <div id="lesson-review-edit-calendar"></div>
     </div>
 </div>
+<?php $model->applyContext = Lesson::APPLY_SINGLE_LESSON;?>
 <?= $form->field($model, 'id')->hiddenInput()->label(false);?>
 <?= $form->field($model, 'teacherId')->hiddenInput()->label(false);?>
 <?= $form->field($model, 'applyContext')->hiddenInput()->label(false);?>
