@@ -108,19 +108,16 @@ public function behaviors()
 
         $completedPrograms = [];
         $programs = Lesson::find()
-                    ->select(['sum(course_schedule.duration) as hours, program.name as program_name, lesson.type'])
-                    ->joinWith(['course' => function ($query) use ($locationId) {
+                    ->select(['sum(lesson.duration) as hours, program.name as program_name, lesson.type'])
+                    ->joinWith(['course' => function ($query) {
                         $query->joinWith('program')
-                            ->joinWith('courseSchedule')
-                            ->andWhere(['course.locationId' => $locationId])
                             ->confirmed();
                     }])
-                    ->andWhere(['between', 'lesson.date', $from, $to])
-                    ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
+                    ->between($fromDate, $toDate)
+                    ->notCanceled()
                     ->isConfirmed()
                     ->notDeleted()
-                          
-                    ->groupBy(['course.programId'])
+                    ->location($locationId)
                     ->all();
         foreach ($programs as $program) {
             $completedProgram = [];
@@ -185,18 +182,14 @@ public function behaviors()
             }])
             ->count();
         $instructionHours = Lesson::find()
-            ->joinWith(['course' => function ($query) use ($locationId, $fromDate, $toDate) {
-                $query->joinWith('program')
-                    ->joinWith('courseSchedule')
-                    ->andWhere(['course.locationId' => $locationId])
-                    ->confirmed();
-            }])
-            ->andWhere(['between', 'lesson.date', $from, $to])
-            ->andWhere(['not', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
+            ->between($fromDate, $toDate)
+            ->notCanceled()
             ->isConfirmed()
-            ->notDeleted()     
-            ->sum('course_schedule.duration');
+            ->notDeleted()
+            ->location($locationId) 
+            ->sum('lesson.duration');
         $instructionHoursCount = $instructionHours / 6000;
+        //print_r($instructionHoursCount);die;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'enrolments' => $enrolments,
