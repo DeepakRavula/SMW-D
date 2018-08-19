@@ -18,7 +18,7 @@ use yii\grid\GridView;
 
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['enrolment/edit', 'id' => $model->id, 'Enrolment[isPreview]' => true]),
+        'action' => Url::to(['enrolment/edit', 'id' => $model->id]),
     ]); ?>
 
     <div class="row">
@@ -96,30 +96,39 @@ use yii\grid\GridView;
         $('.preview').hide();
     });
 
-    $(document).on('change', '#enrolment-paymentfrequencyid, #paymentfrequencyenrolmentdiscount-discount, #multienrolmentdiscount-discount', function () {
-        var paymentFrequency = '<?= $model->paymentFrequencyId; ?>';
-        var paymentFrequencyDiscount = '<?= $paymentFrequencyDiscount->discount ?? null; ?>';
-        var multiEnrolmentDiscount = '<?= $multipleEnrolmentDiscount->discount ?? null; ?>';
-        var paymentFrequencyChanged = $('#enrolment-paymentfrequencyid').val();
-        var paymentFrequencyDiscountChanged = $('#paymentfrequencyenrolmentdiscount-discount').val();
-        var multiEnrolmentDiscountChanged = $('#multienrolmentdiscount-discount').val();
-        if (paymentFrequency != paymentFrequencyChanged || paymentFrequencyDiscount != paymentFrequencyDiscountChanged || multiEnrolmentDiscount != multiEnrolmentDiscountChanged) {
-            $('.preview').show();
-            if (paymentFrequencyDiscount == paymentFrequencyDiscountChanged && multiEnrolmentDiscount == multiEnrolmentDiscountChanged) {
-                $('.lesson-discount').hide();
-            } else {
-                $('.lesson-discount').show();
-            }
-            if (paymentFrequency == paymentFrequencyChanged) {
-                $('.payment-cycle').hide();
-                $('.payment-request').hide();
-            } else {
-                $('.payment-cycle').show();
-                $('.payment-request').show();
-            }
-        } else {
-            $('.preview').hide();
-        }
-        return false;
+    $(document).on('change', '#enrolment-paymentfrequencyid', function () {
+        enrolment.edit();
     });
+
+    $(document).on('keyup', '#paymentfrequencyenrolmentdiscount-discount, #multienrolmentdiscount-discount', function () {
+        enrolment.edit();
+    });
+
+    var enrolment = {
+        edit: function() {
+            var paymentFrequency = '<?= $model->paymentFrequencyId; ?>';
+            var paymentFrequencyDiscount = '<?= $paymentFrequencyDiscount->discount ?? null; ?>';
+            var multiEnrolmentDiscount = '<?= $multipleEnrolmentDiscount->discount ?? null; ?>';
+            var paymentFrequencyChanged = $('#enrolment-paymentfrequencyid').val();
+            var paymentFrequencyDiscountChanged = $('#paymentfrequencyenrolmentdiscount-discount').val();
+            var multiEnrolmentDiscountChanged = $('#multienrolmentdiscount-discount').val();
+            if (paymentFrequency != paymentFrequencyChanged || paymentFrequencyDiscount != paymentFrequencyDiscountChanged || multiEnrolmentDiscount != multiEnrolmentDiscountChanged) {
+                $('.preview').show();
+                if (paymentFrequencyDiscount == paymentFrequencyDiscountChanged && multiEnrolmentDiscount == multiEnrolmentDiscountChanged) {
+                    $('.lesson-discount').hide();
+                } else {
+                    $('.lesson-discount').show();
+                }
+                if (paymentFrequency == paymentFrequencyChanged) {
+                    $('.payment-cycle').hide();
+                    $('.payment-request').hide();
+                } else {
+                    $('.payment-cycle').show();
+                    $('.payment-request').show();
+                }
+            } else {
+                $('.preview').hide();
+            }
+        }
+    };
 </script>

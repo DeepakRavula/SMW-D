@@ -31,7 +31,7 @@ class m180817_090853_user_location_fix extends Migration
         
         foreach ($courses as $course) {
             foreach ($course->enrolments as $enrolment) {
-                if ($enrolment->student->customer->userLocation) {
+                if (!$enrolment->student->customer->userLocation) {
                     $userLocation = new UserLocation();
                     $userLocation->user_id = $enrolment->student->customer->id;
                     $userLocation->location_id = $course->locationId;
