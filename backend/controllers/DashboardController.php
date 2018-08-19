@@ -118,6 +118,7 @@ public function behaviors()
                     ->isConfirmed()
                     ->notDeleted()
                     ->location($locationId)
+                    ->groupBy(['course.programId'])
                     ->all();
         foreach ($programs as $program) {
             $completedProgram = [];
