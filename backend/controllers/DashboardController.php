@@ -190,7 +190,6 @@ public function behaviors()
             ->location($locationId) 
             ->sum('lesson.duration');
         $instructionHoursCount = $instructionHours / 6000;
-        //print_r($instructionHoursCount);die;
         return $this->render('index', [
             'searchModel' => $searchModel,
             'enrolments' => $enrolments,
