@@ -48,16 +48,19 @@ class StudentQuery extends ActiveQuery
         return $this;
     }
 
-    public function active()
+    public function active($fromDate = null, $toDate = null)
     {
         $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-        $this->joinWith(['enrolments' => function ($query) use ($currentDate) {
-            $query->joinWith(['course' => function ($query) use ($currentDate) {
+        if (!$fromDate && !$toDate) {
+            $fromDate = $currentDate;
+            $toDate = $currentDate;
+        }
+        $this->joinWith(['enrolments' => function ($query) use ($fromDate, $toDate) {
+            $query->joinWith(['course' => function ($query) use ($fromDate, $toDate) {
                 $query->joinWith(['lessons' => function ($query) {
                     $query->andWhere(['NOT',['lesson.id' => null]]);
                 }])
-                    ->andWhere(['>=', 'DATE(course.endDate)', $currentDate])
-		            ->andWhere(['<=', 'DATE(course.startDate)', $currentDate])
+                    ->overlap($fromDate, $toDate)
 		            ->regular()
                     ->confirmed();
             }])
