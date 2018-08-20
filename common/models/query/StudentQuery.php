@@ -116,7 +116,7 @@ class StudentQuery extends ActiveQuery
     {
         $this->joinWith(['enrolments' => function ($query) use ($id, $locationId) {
             $query->joinWith(['course' => function ($query) use ($locationId, $id) {
-                $query->andWhere(['locationId' => $locationId, 'teacherId' => $id]);
+                $query->andWhere(['locationId' => $locationId, 'course.teacherId' => $id]);
             }])
             ->isConfirmed();
         }]);
