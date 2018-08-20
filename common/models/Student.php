@@ -128,9 +128,10 @@ class Student extends \yii\db\ActiveRecord
         return $this->hasOne(StudentCsv::className(), ['studentId' => 'id']);
     }
     
-    public function getEnrolment()
+    public function getEnrolments()
     {
-        return $this->hasMany(Enrolment::className(), ['studentId' => 'id']);
+        return $this->hasMany(Enrolment::className(), ['studentId' => 'id'])
+            ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);
     }
 
     public function getOneEnrolment()
@@ -141,7 +142,7 @@ class Student extends \yii\db\ActiveRecord
     public function getFirstPrivateCourse()
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId'])
-            ->via('enrolment')
+            ->via('enrolments')
             ->privateProgram()
             ->onCondition(['course.isConfirmed' => true]);
     }
@@ -245,7 +246,7 @@ class Student extends \yii\db\ActiveRecord
         return self::find()
             ->location($locationId)
             ->notDeleted()
-                        ->enrolled($currentDate)
+                        ->activeEnrolled($currentDate)
                         ->active()
                         ->groupBy(['student.id'])
             ->count();

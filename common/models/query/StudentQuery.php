@@ -55,13 +55,13 @@ class StudentQuery extends ActiveQuery
         return $this;
     }
 
-    public function enrolled($currentDate)
+    public function activeEnrolled($currentDate)
     {
-        $this->joinWith(['enrolment' => function ($query) use ($currentDate) {
+        $this->joinWith(['enrolments' => function ($query) use ($currentDate) {
             $query->joinWith(['course' => function ($query) use ($currentDate) {
-                $query->andWhere(['>=', 'course.endDate', $currentDate])
-		      ->andWhere(['<=', 'course.startDate', $currentDate])
-		      ->andWhere(['course.type' => Course::TYPE_REGULAR])
+                $query->andWhere(['>=', 'DATE(course.endDate)', $currentDate])
+		            ->andWhere(['<=', 'DATE(course.startDate)', $currentDate])
+		            ->regular()
                     ->confirmed();
             }])
             ->notDeleted()
@@ -74,7 +74,7 @@ class StudentQuery extends ActiveQuery
 
     public function groupCourseEnrolled($courseId)
     {
-        $this->joinWith(['enrolment' => function ($query) use ($courseId) {
+        $this->joinWith(['enrolments' => function ($query) use ($courseId) {
             $query->joinWith(['course' => function ($query) use ($courseId) {
                 $query->andWhere(['course.id' => $courseId])
                         ->confirmed();
@@ -99,7 +99,7 @@ class StudentQuery extends ActiveQuery
         $enrolledStudents = Student::find()
             ->notDeleted()
             ->select(['student.id', 'student.first_name', 'student.last_name'])
-            ->joinWith(['enrolment' => function ($query) use ($courseId) {
+            ->joinWith(['enrolments' => function ($query) use ($courseId) {
                 $query->joinWith(['course' => function ($query) use ($courseId) {
                     $query->andWhere(['course.id' => $courseId]);
                 }]);
@@ -117,7 +117,7 @@ class StudentQuery extends ActiveQuery
 
     public function teacherStudents($locationId, $id)
     {
-        $this->joinWith(['enrolment' => function ($query) use ($id, $locationId) {
+        $this->joinWith(['enrolments' => function ($query) use ($id, $locationId) {
             $query->joinWith(['course' => function ($query) use ($locationId, $id) {
                 $query->andWhere(['locationId' => $locationId, 'teacherId' => $id]);
             }])
