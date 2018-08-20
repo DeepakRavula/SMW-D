@@ -52,7 +52,10 @@ class StudentQuery extends ActiveQuery
     {
         $this->joinWith(['enrolments' => function ($query) use ($currentDate) {
             $query->joinWith(['course' => function ($query) use ($currentDate) {
-                $query->andWhere(['>=', 'DATE(course.endDate)', $currentDate])
+                $query->joinWith(['lessons' => function ($query) {
+                    $query->andWhere(['NOT',['lesson.id' => null]]);
+                }])
+                    ->andWhere(['>=', 'DATE(course.endDate)', $currentDate])
 		            ->andWhere(['<=', 'DATE(course.startDate)', $currentDate])
 		            ->regular()
                     ->confirmed();
