@@ -40,12 +40,9 @@ class StudentQuery extends ActiveQuery
 
     public function location($locationId)
     {
-        $this->joinWith(['customer' => function ($query) use ($locationId) {
-            $query->joinWith('userLocation')
-               ->andWhere(['user_location.location_id' => $locationId]);
+        return $this->joinWith(['customerLocation' => function ($query) use ($locationId) {
+            $query->andWhere(['user_location.location_id' => $locationId]);
         }]);
-
-        return $this;
     }
 
     public function active($fromDate = null, $toDate = null)

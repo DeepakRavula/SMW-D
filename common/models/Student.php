@@ -6,7 +6,7 @@ use Yii;
 use common\models\timelineEvent\TimelineEventStudent;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\models\query\StudentQuery;
-
+use common\models\Location;
 /**
  * This is the model class for table "student".
  *
@@ -116,6 +116,11 @@ class Student extends \yii\db\ActiveRecord
     public function getCustomer()
     {
         return $this->hasOne(User::className(), ['id' => 'customer_id']);
+    }
+
+    public function getCustomerLocation()
+    {
+        return $this->hasOne(UserLocation::className(), ['user_id' => 'customer_id']);
     }
 
     public function getCustomerProfile()
@@ -241,15 +246,15 @@ class Student extends \yii\db\ActiveRecord
 
     public static function count()
     {
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-        return self::find()
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $students = self::find()
             ->location($locationId)
             ->notDeleted()
             ->active()
-            ->groupBy(['student.id'])
-            ->count();
+            ->all();
+        return count($students);
     }
-
+    
     public function getGenderName()
     {
         $gender = null;
