@@ -28,13 +28,6 @@ class StudentQuery extends ActiveQuery
         return parent::one($db);
     }
 
-    public function active()
-    {
-        $this->andWhere(['student.status' => Student::STATUS_ACTIVE]);
-
-        return $this;
-    }
-
     public function notDeleted()
     {
         return $this->andWhere(['student.isDeleted' => false]);
@@ -55,7 +48,7 @@ class StudentQuery extends ActiveQuery
         return $this;
     }
 
-    public function activeEnrolled($currentDate)
+    public function active($currentDate)
     {
         $this->joinWith(['enrolments' => function ($query) use ($currentDate) {
             $query->joinWith(['course' => function ($query) use ($currentDate) {

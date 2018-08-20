@@ -139,7 +139,7 @@ class UserSearch extends User
             if (!$this->showAll) {
                 $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
                 $query->joinWith(['student' => function ($query) use ($currentDate) {
-                    $query->activeEnrolled($currentDate);
+                    $query->active($currentDate);
                 }]);
             }
            

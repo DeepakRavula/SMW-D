@@ -246,9 +246,8 @@ class Student extends \yii\db\ActiveRecord
         return self::find()
             ->location($locationId)
             ->notDeleted()
-                        ->activeEnrolled($currentDate)
-                        ->active()
-                        ->groupBy(['student.id'])
+            ->active($currentDate)
+            ->groupBy(['student.id'])
             ->count();
     }
 
