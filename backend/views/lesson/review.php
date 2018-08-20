@@ -8,52 +8,47 @@ $this->title = 'Review Lessons';
 
 <div class="row">
     <div class="col-md-6">
-        <?=
-        $this->render('review/_details', [
+        <?= $this->render('review/_details', [
+            'model' => $model,
             'courseModel' => $courseModel,
-        ]);
-        ?>
+        ]); ?>
     </div>
     <div class="col-md-6">
         <?php if (empty($rescheduleBeginDate)) : ?>
-            <?=
-            $this->render('review/_summary', [
+            <?= $this->render('review/_summary', [
                 'holidayConflictedLessonIds' => $holidayConflictedLessonIds,
                 'unscheduledLessonCount' => $unscheduledLessonCount,
                 'lessonCount' => $lessonCount,
                 'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
-            ]);
-            ?>
+            ]); ?>
         <?php endif; ?>
     </div>
 </div>
+
 <?php
 $hasConflict = false;
 if ($conflictedLessonIdsCount > 0) {
     $hasConflict = true;
-}
-?>
+} ?>
+
 <div class="row">
     <div class="col-md-12">
-        <?=
-        $this->render('review/_view', [
+        <?= $this->render('review/_view', [
             'searchModel' => $searchModel,
             'lessonDataProvider' => $lessonDataProvider,
             'conflicts' => $conflicts
-        ]);
-        ?>
+        ]); ?>
     </div>
 </div>
-<?=
-$this->render('review/_button', [
+
+<?= $this->render('review/_button', [
     'hasConflict' => $hasConflict,
     'rescheduleBeginDate' => $rescheduleBeginDate,
     'rescheduleEndDate' => $rescheduleEndDate,
     'courseId' => $courseId,
     'courseModel' => $courseModel,
     'enrolmentType' => $enrolmentType,
-]);
-?>
+]); ?>
 
 <div id="enrolment-loader" class="spinner" style="display:none">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -101,14 +96,15 @@ $this->render('review/_button', [
         if (startDate && endDate) {
             var params = $.param({
                 'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-                'Course[startDate]': startDate, 'Course[endDate]': endDate
+                'LessonReview[CourseStartDate]': startDate, 'LessonReview[CourseEndDate]': endDate
             });
         } else {
             var params = $.param({
                 'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
             });
         }
-        var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + params;
+        var url = "<?php echo Url::to(['lesson/review', 'LessonReview[courseId]' => $courseModel ? $courseModel->id : null, 
+            'LessonReview[enrolmentIds]' => $model->enrolmentIds]); ?>&" + params;
         $.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
     });
 
@@ -143,7 +139,8 @@ $this->render('review/_button', [
     $(document).on('modal-success', function(event, params) {
         var showAllReviewLessons = $('#lessonsearch-showallreviewlessons').is(":checked");
         var param = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0)});
-        var url = "<?php echo Url::to(['lesson/review', 'courseId' => $courseModel->id]); ?>?" + param;
+        var url = "<?php echo Url::to(['lesson/review', 'LessonReview[courseId]' => $courseModel ? $courseModel->id : null, 
+            'LessonReview[enrolmentIds]' => $model->enrolmentIds]); ?>&" + param;
         if ($('#review-lesson-listing').length !== 0) {
             $.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000, async: false});
         }

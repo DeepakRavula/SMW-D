@@ -3,6 +3,7 @@
 namespace common\models;
 
 use yii\base\Model;
+use yii\helpers\ArrayHelper;
 /**
  * This is the model class for table "course".
  *
@@ -68,5 +69,40 @@ class EnrolmentSubstituteTeacher extends Model
                     break;
                 }
             }
+    }
+
+    public function substitute()
+    {
+        $unConfirmedLessons = Lesson::find()
+            ->notConfirmed()
+            ->enrolment($this->enrolmentIds)
+            ->all();
+        
+        $courseIds = ArrayHelper::getColumn($unConfirmedLessons, function ($element) {
+            return $element->courseId;
+        });
+        $courseIds = array_unique($courseIds);
+        Lesson::deleteAll([
+            'courseId' => $courseIds,
+            'isConfirmed' => false,
+        ]);
+        $changesFrom = (new \DateTime($this->changesFrom))->format('Y-m-d');
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
+            ->enrolment($this->enrolmentIds)
+            ->notCanceled()
+            ->all();
+        foreach ($lessons as $lesson) {
+            $newLesson = new Lesson();
+            $newLesson = clone $lesson;
+            $newLesson->isNewRecord = true;
+            $newLesson->id = null;
+            $newLesson->teacherId = $this->teacherId;
+            $newLesson->isConfirmed = false;
+            $newLesson->save();
+        }
+        return true;
     }
 }

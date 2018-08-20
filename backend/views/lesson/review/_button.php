@@ -30,15 +30,16 @@ use yii\helpers\Url;
             ],
         ])
         ?>
+    <?php if ($courseModel) : ?>
 		<?php if ((int) $courseModel->program->isPrivate() && empty($enrolmentType)) : ?>
-			<?= Html::a('Cancel', ['student/view', 'id' => $courseModel->enrolment->studentId], ['class' => 'btn btn-default review-cancel']);
-            ?>
+			<?= Html::a('Cancel', ['student/view', 'id' => $courseModel->enrolment->studentId], ['class' => 'btn btn-default review-cancel']); ?>
 		<?php elseif (!empty($enrolmentType)) : ?>
-			<?= Html::a('Cancel', ['enrolment/cancel', 'id' => $courseModel->enrolment->id], ['class' => 'btn btn-default review-cancel']);
-            ?>
+			<?= Html::a('Cancel', ['enrolment/cancel', 'id' => $courseModel->enrolment->id], ['class' => 'btn btn-default review-cancel']); ?>
 		<?php else :?>
-			<?= Html::a('Cancel', ['lesson/index', '#' => 'group'], ['class' => 'btn btn-default review-cancel']);
-            ?>
-		<?php endif; ?>
+			<?= Html::a('Cancel', ['lesson/index', '#' => 'group'], ['class' => 'btn btn-default review-cancel']); ?>
+        <?php endif; ?>
+    <?php else :?>
+        <?= Html::a('Cancel', ['enrolment/index'], ['class' => 'btn btn-default review-cancel']); ?>
+    <?php endif; ?>
 	</div>
 </div>

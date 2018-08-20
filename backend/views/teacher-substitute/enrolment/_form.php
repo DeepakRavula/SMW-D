@@ -53,7 +53,7 @@ use yii\jui\DatePicker;
     $(document).ready(function () {
         $('.modal-save').show();
         $('.modal-save').text('Preview Lessons');
-        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Enrolment Teacher Change</h4>');
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Teacher Change</h4>');
         $('#popup-modal .modal-dialog').css({'width': '600px'});
     });
 </script>

@@ -225,13 +225,12 @@ class TeacherSubstituteController extends BaseController
             ]);
             if (Yii::$app->request->isPost) {
                 $model->load(Yii::$app->request->post());
-                $model->save();
-                $data = $this->renderAjax('enrolment/_preview', [
-                    'model' => $model
-                ]);
+                $model->substitute();
+                
                 $response = [
                     'status' => true,
-                    'data' => $data
+                    'url' => Url::to(['/lesson/review', 'LessonReview[enrolmentIds]' => $model->enrolmentIds, 
+                        'LessonReview[changesFrom]' => $model->changesFrom]),
                 ];
             } else {
                 $response = [

@@ -30,6 +30,8 @@ use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 use common\models\LessonHierarchy;
 use common\models\LessonPayment;
+use common\models\LessonReview;
+use yii\helpers\ArrayHelper;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -50,7 +52,7 @@ class LessonController extends BaseController
                 'only' => ['modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom',
                     'payment', 'substitute','update','unschedule', 'credit-transfer',
-                    'edit-price', 'edit-tax', 'edit-cost'
+                    'edit-price', 'edit-tax', 'edit-cost', 'fetch-conflict'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -306,42 +308,39 @@ class LessonController extends BaseController
         }
     }
 
-    public function getConflicts($course)
+    public function getConflicts($lessons, $scenario)
     {
         $conflicts = [];
         $conflictedLessonIds = [];
-        $draftLessons = Lesson::find()
-            ->andWhere(['courseId' => $course->id])
-            ->notConfirmed()
-            ->scheduled()
-            ->all();
-        foreach ($draftLessons as $draftLesson) {
-            $draftLesson->setScenario('review');
-        }
-        Model::validateMultiple($draftLessons);
-        foreach ($draftLessons as $draftLesson) {
-            if (!empty($draftLesson->getErrors('date'))) {
+        $holidayConflictedLessonIds = [];
+        foreach ($lessons as $draftLesson) {
+            $draftLesson->setScenario($scenario);
+            if (!$draftLesson->validate()) {
                 $conflictedLessonIds[] = $draftLesson->id;
             }
             $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
+            if ($draftLesson->isHolidayLesson()) {
+                $holidayConflictedLessonIds[] = $draftLesson->id;
+            }
         }
 
-        $holidayConflictedLessonIds = $course->getHolidayLessons();
         $conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
         return [
             'conflicts' => $conflicts,
-            'lessonIds' => $conflictedLessonIds
+            'lessonIds' => $conflictedLessonIds,
+            'holidayConflictedLessonIds' => $holidayConflictedLessonIds
         ];
     }
 
     public function fetchConflictedLesson($course)
     {
-        $conflictedLessons = $this->getConflicts($course);
         $lessons = Lesson::find()
+            ->notDeleted()
             ->andWhere(['courseId' => $course->id])
             ->notConfirmed()
             ->scheduled()
             ->all();
+        $conflictedLessons = $this->getConflicts($lessons);
         if (!empty($conflictedLessons['lessonIds'])) {
             $lessons = Lesson::find()
                 ->orderBy(['lesson.date' => SORT_ASC])
@@ -429,88 +428,81 @@ class LessonController extends BaseController
         return $response;
     }
 
-    public function actionReview($courseId)
+    public function actionReview()
     {
-        $model = new Lesson();
+        $model = new LessonReview();
         $searchModel = new LessonSearch();
         $request = Yii::$app->request;
-        $lessonSearchRequest = $request->get('LessonSearch');
-        $showAllReviewLessons = $lessonSearchRequest['showAllReviewLessons'];
-        $courseRequest = $request->get('Course');
-        $enrolmentRequest = $request->get('Enrolment');
-        $rescheduleBeginDate = $courseRequest['startDate'];
-        $rescheduleEndDate = $courseRequest['endDate'];
-        $enrolmentType = $enrolmentRequest['type'];
-        $courseModel = Course::findOne(['id' => $courseId]);
-
-        $conflictedLessons = $this->getConflicts($courseModel);
-        $lessonCount = Lesson::find()
-            ->andWhere(['courseId' => $courseModel->id,	'isConfirmed' => false])
-            ->count();
+        $model->load($request->get());
+        $searchModel->load($request->get());
+        if ($model->courseId) {
+            $scenario = Lesson::SCENARIO_REVIEW;
+            $courseModel = Course::findOne(['id' => $model->courseId]);
+            $lessons = Lesson::find()
+                ->notDeleted()
+                ->notConfirmed()
+                ->andWhere(['courseId' => $model->courseId])
+                ->all();
+        } else if ($model->enrolmentIds) {
+            $scenario = Lesson::SCENARIO_REVIEW_TEACHER;
+            $lessons = Lesson::find()
+                ->notDeleted()
+                ->notConfirmed()
+                ->enrolment($model->enrolmentIds)
+                ->notCanceled()
+                ->all();
+        }
+        $model->teacherId = end($lessons)->teacherId;
+        $conflictedLessons = $this->getConflicts($lessons, $scenario);
+        $lessonCount = count($lessons);
         $conflictedLessonIdsCount = count($conflictedLessons['lessonIds']);
+        $lessonIds = ArrayHelper::getColumn($lessons, function ($element) {
+            return $element->id;
+        });
         $unscheduledLessonCount = Lesson::find()
-            ->andWhere(['courseId' => $courseModel->id, 'status' => Lesson::STATUS_UNSCHEDULED, 'isConfirmed' => false])
+            ->andWhere(['id' => $lessonIds])
+            ->andWhere(['NOT', ['id' => $conflictedLessons['holidayConflictedLessonIds']]])
+            ->unscheduled()
             ->count();
         $query = Lesson::find()
+            ->andWhere(['id' => $lessonIds])
             ->orderBy(['lesson.date' => SORT_ASC]);
-        if (! $showAllReviewLessons) {
+        if (!$searchModel->showAllReviewLessons) {
             $query->andWhere(['IN', 'lesson.id', $conflictedLessons['lessonIds']]);
-        } else {
-            $query->andWhere(['courseId' => $courseModel->id, 'isConfirmed' => false]);
         }
         $lessonDataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => false,
+            'pagination' => false
         ]);
         return $this->render('review', [
-            'courseModel' => $courseModel,
-            'courseId' => $courseId,
+            'courseModel' => $courseModel ?? null,
+            'courseId' => $model->courseId,
             'lessonDataProvider' => $lessonDataProvider,
             'conflicts' => $conflictedLessons['conflicts'],
-            'rescheduleBeginDate' => $rescheduleBeginDate,
-            'rescheduleEndDate' => $rescheduleEndDate,
+            'rescheduleBeginDate' => $model->rescheduleBeginDate,
+            'rescheduleEndDate' => $model->rescheduleEndDate,
             'searchModel' => $searchModel,
             'model' => $model,
-            'holidayConflictedLessonIds' => $courseModel->getHolidayLessons(),
+            'holidayConflictedLessonIds' => $conflictedLessons['holidayConflictedLessonIds'],
             'lessonCount' => $lessonCount,
             'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
             'unscheduledLessonCount' => $unscheduledLessonCount,
-            'enrolmentType' => $enrolmentType,
+            'enrolmentType' => $model->enrolmentType
         ]);
     }
 
     public function actionFetchConflict($courseId)
     {
-        $response = \Yii::$app->response;
-        $response->format = Response::FORMAT_JSON;
         $courseModel = Course::findOne(['id' => $courseId]);
-        $conflicts = [];
-        $conflictedLessonIds = [];
         $draftLessons = Lesson::find()
+            ->notDeleted()
             ->andWhere(['courseId' => $courseModel->id])
             ->notConfirmed()
-            ->scheduled()
             ->all();
-        foreach ($draftLessons as $draftLesson) {
-            $draftLesson->setScenario('review');
-        }
-        Model::validateMultiple($draftLessons);
-        foreach ($draftLessons as $draftLesson) {
-            if (!empty($draftLesson->getErrors('date'))) {
-                $conflictedLessonIds[] = $draftLesson->id;
-            }
-            $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
-        }
-        $holidayConflictedLessonIds = $courseModel->getHolidayLessons();
-        $conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
-        $conflictedLessonIdsCount = count($conflictedLessonIds);
-        $hasConflict = false;
-        if ($conflictedLessonIdsCount > 0) {
-            $hasConflict = true;
-        }
+        $conflictedLessons = $this->getConflicts($draftLessons);
 
         return [
-            'hasConflict' => $hasConflict,
+            'hasConflict' => !empty($conflictedLessons['lessonIds']),
         ];
     }
 
