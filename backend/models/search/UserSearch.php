@@ -137,7 +137,7 @@ class UserSearch extends User
 
         if ($this->role_name === USER::ROLE_CUSTOMER) {
             if (!$this->showAll) {
-                $query->joinWith(['student' => function ($query) use ($currentDate) {
+                $query->joinWith(['student' => function ($query) {
                     $query->active();
                 }]);
             }

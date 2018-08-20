@@ -47,7 +47,7 @@ echo Menu::widget([
             'visible' => Yii::$app->user->can('manageStudents'),
             'active' => (Yii::$app->controller->id === 'student') ? true : false,
             'badge' => Student::count(),
-            'badgeBgClass' => 'label-default',
+            'badgeBgClass' => 'label-default label-student',
         ],
             [
             'label' => Yii::t('backend', 'Customers'),
