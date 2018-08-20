@@ -88,8 +88,7 @@ class StudentSearch extends Student
             ->groupBy('student.id');
 
         if (!$this->showAllStudents) {
-            $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-            $query->active($currentDate);
+            $query->active();
         }
         return $dataProvider;
     }

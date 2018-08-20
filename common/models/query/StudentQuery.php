@@ -48,8 +48,9 @@ class StudentQuery extends ActiveQuery
         return $this;
     }
 
-    public function active($currentDate)
+    public function active()
     {
+        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
         $this->joinWith(['enrolments' => function ($query) use ($currentDate) {
             $query->joinWith(['course' => function ($query) use ($currentDate) {
                 $query->joinWith(['lessons' => function ($query) {
