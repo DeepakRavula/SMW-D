@@ -4,6 +4,7 @@ namespace common\models\log;
 use Yii;
 use common\models\Invoice;
 use common\models\log\Log;
+use common\models\log\LessonLog;
 use yii\helpers\Url;
 
 class InvoiceLog extends Log
@@ -37,15 +38,7 @@ class InvoiceLog extends Log
         $activity       =   LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
         $locationId     =   $invoiceModel->location_id;
         $this->addLog($object, $activity, $invoice, $locationId, $invoiceModel, $loggedUser);
-        if ($invoice->hasLineItem) {
-           if ($invoice->lineItem->isLessonItem()) {
-                $lesson = $invoice->lineItem->lesson;
-                $lessonObject   =   LogObject::findOne(['name' => LogObject::TYPE_LESSON]);
-                $lessonActivity =   LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
-                $locationId     =   $invoiceModel->location_id;
-                $lesson->on(Lesson::CREATE_INVOICE, [new LessonLog(), 'addInvoice'], ['loggedUser' => $loggedUser]);
-           }     
-        }
+        
     }
 
     public function addLog($object, $activity, $data, $locationId, $model, $loggedUser)

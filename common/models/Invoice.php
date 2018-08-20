@@ -497,8 +497,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if ($insert) {
-           $this->trigger(self::EVENT_AFTER_INSERT);
+        if ($insert) {                     
         }
         return parent::afterSave($insert, $changedAttributes);
     }

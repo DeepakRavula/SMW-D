@@ -6,6 +6,8 @@ use Yii;
 use yii\helpers\VarDumper;
 use common\models\log\InvoiceLog;
 use common\models\User;
+use common\models\log\LessonLog;
+use common\models\Lesson;
 
 /**
  * This is the model class for table "invoice".
@@ -142,16 +144,24 @@ trait Invoiceable
         $invoice->userName = $loggedUser->userProfile->fullName;
         $invoice->user_id = $this->enrolment->student->customer->id;
         $invoice->location_id = $location_id;
-        if ($this->isUnscheduled() && $this->isExpired()) {
+        if ($this->isExpired()) {
             $invoice->date = (new \DateTime($this->privateLesson->expiryDate))->format('Y-m-d H:i:s'); 
         } else {
-        $invoice->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
+            $invoice->date = (new \DateTime($this->date))->format('Y-m-d H:i:s');
         }
         $invoice->save();
         $this->addPrivateLessonLineItem($invoice);
-        $invoice->save();
+        $invoice->save();       
         $this->creditTransfer($invoice);
-
+        if ($invoice->lineItem->lesson) {
+            $lesson = $invoice->lineItem->lesson;
+            if ($lesson->isExpired()) {
+                $lesson->on(Lesson::EVENT_LESSON_EXPIRED, [new LessonLog(), 'lessonExpired'], ['loggedUser' => $loggedUser]);
+                $lesson->trigger(Lesson::EVENT_LESSON_EXPIRED);
+            }
+            $lesson->on(Lesson::EVENT_CREATE_INVOICE, [new LessonLog(), 'addInvoice'], ['loggedUser' => $loggedUser]);
+            $lesson->trigger(Lesson::EVENT_CREATE_INVOICE);
+            }
         return $invoice;
     }
 
