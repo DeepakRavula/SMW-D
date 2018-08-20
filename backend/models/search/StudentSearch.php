@@ -88,9 +88,7 @@ class StudentSearch extends Student
             ->groupBy('student.id');
 
         if (!$this->showAllStudents) {
-            $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-            $query->enrolled($currentDate)
-                ->active();
+            $query->active();
         }
         return $dataProvider;
     }

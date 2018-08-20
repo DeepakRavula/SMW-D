@@ -28,13 +28,6 @@ class StudentQuery extends ActiveQuery
         return parent::one($db);
     }
 
-    public function active()
-    {
-        $this->andWhere(['student.status' => Student::STATUS_ACTIVE]);
-
-        return $this;
-    }
-
     public function notDeleted()
     {
         return $this->andWhere(['student.isDeleted' => false]);
@@ -47,21 +40,25 @@ class StudentQuery extends ActiveQuery
 
     public function location($locationId)
     {
-        $this->joinWith(['customer' => function ($query) use ($locationId) {
-            $query->joinWith('userLocation')
-               ->andWhere(['user_location.location_id' => $locationId]);
+        return $this->joinWith(['customerLocation' => function ($query) use ($locationId) {
+            $query->andWhere(['user_location.location_id' => $locationId]);
         }]);
-
-        return $this;
     }
 
-    public function enrolled($currentDate)
+    public function active($fromDate = null, $toDate = null)
     {
-        $this->joinWith(['enrolment' => function ($query) use ($currentDate) {
-            $query->joinWith(['course' => function ($query) use ($currentDate) {
-                $query->andWhere(['>=', 'course.endDate', $currentDate])
-		      ->andWhere(['<=', 'course.startDate', $currentDate])
-		      ->andWhere(['course.type' => Course::TYPE_REGULAR])
+        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+        if (!$fromDate && !$toDate) {
+            $fromDate = $currentDate;
+            $toDate = $currentDate;
+        }
+        $this->joinWith(['enrolments' => function ($query) use ($fromDate, $toDate) {
+            $query->joinWith(['course' => function ($query) use ($fromDate, $toDate) {
+                $query->joinWith(['lessons' => function ($query) {
+                    $query->andWhere(['NOT',['lesson.id' => null]]);
+                }])
+                    ->overlap($fromDate, $toDate)
+		            ->regular()
                     ->confirmed();
             }])
             ->notDeleted()
@@ -74,7 +71,7 @@ class StudentQuery extends ActiveQuery
 
     public function groupCourseEnrolled($courseId)
     {
-        $this->joinWith(['enrolment' => function ($query) use ($courseId) {
+        $this->joinWith(['enrolments' => function ($query) use ($courseId) {
             $query->joinWith(['course' => function ($query) use ($courseId) {
                 $query->andWhere(['course.id' => $courseId])
                         ->confirmed();
@@ -99,7 +96,7 @@ class StudentQuery extends ActiveQuery
         $enrolledStudents = Student::find()
             ->notDeleted()
             ->select(['student.id', 'student.first_name', 'student.last_name'])
-            ->joinWith(['enrolment' => function ($query) use ($courseId) {
+            ->joinWith(['enrolments' => function ($query) use ($courseId) {
                 $query->joinWith(['course' => function ($query) use ($courseId) {
                     $query->andWhere(['course.id' => $courseId]);
                 }]);
@@ -117,7 +114,7 @@ class StudentQuery extends ActiveQuery
 
     public function teacherStudents($locationId, $id)
     {
-        $this->joinWith(['enrolment' => function ($query) use ($id, $locationId) {
+        $this->joinWith(['enrolments' => function ($query) use ($id, $locationId) {
             $query->joinWith(['course' => function ($query) use ($locationId, $id) {
                 $query->andWhere(['locationId' => $locationId, 'teacherId' => $id]);
             }])

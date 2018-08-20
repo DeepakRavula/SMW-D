@@ -507,3 +507,15 @@ dl {
 .show-more-link {
 	margin-right: -950px;
 }
+
+.label-student {
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 80%;
+    font-weight: bold;
+    line-height: 1.5;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+}
