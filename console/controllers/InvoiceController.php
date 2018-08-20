@@ -7,7 +7,6 @@ use yii\console\Controller;
 use common\models\Invoice;
 use common\models\User;
 use common\models\Lesson;
-use common\models\log\LessonLog;
 
 class InvoiceController extends Controller
 {
