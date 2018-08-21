@@ -280,7 +280,7 @@ class StudentController extends BaseController
         if ($model->load($post)) {
             if ($model->validate()) {
                 $studentModel = Student::findOne($model->studentId);
-                foreach ($studentModel->enrolment as $enrolment) {
+                foreach ($studentModel->enrolments as $enrolment) {
                     $enrolment->studentId = $model->id;
                     $enrolment->save(false);
                 }

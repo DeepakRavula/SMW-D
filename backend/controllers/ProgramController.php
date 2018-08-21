@@ -93,7 +93,7 @@ class ProgramController extends BaseController
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $query = Student::find()
                 ->notDeleted()
-                ->joinWith(['enrolment' => function ($query) use ($locationId, $id) {
+                ->joinWith(['enrolments' => function ($query) use ($locationId, $id) {
                     $query->location($locationId)
                     ->andWhere(['course.programId' => $id])
                     ->isConfirmed();

@@ -9,7 +9,7 @@ use kartik\daterange\DateRangePicker;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 <style>
-	.pull-right {
+	.action-button {
 		margin-top:-10px;
 	}
 </style>

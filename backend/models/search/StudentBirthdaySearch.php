@@ -58,11 +58,10 @@ class StudentBirthdaySearch extends Student
     public function search($params)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
         $query = Student::find()
             ->notDeleted()
             ->location($locationId)
-            ->enrolled($currentDate)
+            ->active()
             ->orderBy(['DATE_FORMAT(birth_date,"%m-%d")' => SORT_DESC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
