@@ -116,7 +116,9 @@ class EnrolmentController extends BaseController
         $model = $this->findModel($id);
 	    $lessonCount = Lesson::find()
 			->andWhere(['courseId' => $model->course->id])
-			->notDeleted()
+            ->notDeleted()
+            ->scheduledOrRescheduled()
+            ->notCompleted()
 			->count();
 	    $lessonDataProvider = new ActiveDataProvider([
             'query' => Lesson::find()

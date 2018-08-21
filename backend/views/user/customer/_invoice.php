@@ -99,12 +99,13 @@ $boxTools = $this->render('_invoice-buttons', [
 		if(invoice_count > 10) {
 			$(".more-invoice").show();
 			var dateRange = "";
-			var customer = '<?= $userModel->id; ?>' ;
+			var customerId = '<?= $userModel->id; ?>' ;
 			var type = <?= Invoice::TYPE_INVOICE; ?>;
-			var params = $.param({ 'InvoiceSearch[customer]': customer, 'InvoiceSearch[type]': type, 'InvoiceSearch[invoiceDateRange]': dateRange });
+			var params = $.param({ 'InvoiceSearch[customerId]': customerId, 'InvoiceSearch[type]': type, 'InvoiceSearch[invoiceDateRange]': dateRange });
 			var url = '<?= Url::to(['invoice/index']); ?>?' + params;
 			$('.see-more').attr("href", url);
 		}
 	});
+
 </script>
 	

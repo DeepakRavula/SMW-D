@@ -35,6 +35,7 @@ class InvoiceSearch extends Invoice
     public $number;
     public $customer;
     public $proFormaInvoiceStatus;
+    public $customerId;
     /**
      * {@inheritdoc}
      */
@@ -45,7 +46,7 @@ class InvoiceSearch extends Invoice
             [['mailStatus', 'invoiceStatus', 'proFormaInvoiceStatus'], 'integer'],
             [['type', 'query', 'toggleAdditionalColumns', 'dateRange', 'invoiceDateRange',
                 'customer', 'dueFromDate', 'dueToDate', 'number', 'phone', 'summariseReport', 
-                'isPrint', 'isWeb', 'isMail'], 'safe'],
+                'isPrint', 'isWeb', 'isMail', 'customerId'], 'safe'],
         ];
     }
 
@@ -125,12 +126,15 @@ class InvoiceSearch extends Invoice
 				$query->joinWith(['phone']);
 			}]);
         }]);
-        if(!empty($this->number)) {
-		$query->andFilterWhere(['invoice.id' => $this->number]);
+        if ($this->number) {
+		    $query->andFilterWhere(['invoice.id' => $this->number]);
         }
-           $query->andFilterWhere(['like', 'user_phone.number', trim($this->phone)])
-           ->andFilterWhere(['or', ['like', 'user_profile.firstname', trim($this->customer)], ['like', 'user_profile.lastname', trim($this->customer)]])
-            ->groupBy('invoice.id');
+           $query->andFilterWhere(['like', 'user_phone.number', trim($this->phone)]);
+        if ($this->customer) {
+           $query->andFilterWhere(['or', ['like', 'user_profile.firstname', trim($this->customer)], ['like', 'user_profile.lastname', trim($this->customer)]]);
+        } elseif ($this->customerId) {
+            $query->andFilterWhere(['user.id' => $this->customerId ]); 
+        }
        	$dataProvider->setSort([
             'attributes' => [
                 'number' => [
