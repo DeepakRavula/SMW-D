@@ -197,7 +197,7 @@ class Location extends \yii\db\ActiveRecord
     {
         $activeStudentsCount = Student::find()
             ->notDeleted()
-            ->joinWith(['enrolment' => function ($query) use ($fromDate, $toDate) {
+            ->joinWith(['enrolments' => function ($query) use ($fromDate, $toDate) {
                 $query->joinWith(['course' => function ($query) use ($fromDate, $toDate) {
                     $query->joinWith(['location'])
                             ->confirmed()

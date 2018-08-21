@@ -556,9 +556,9 @@ class PaymentController extends BaseController
         $model->userId = $searchModel->userId;
         $payment->user_id = $searchModel->userId;
         $groupLessonsQuery = $groupLessonSearchModel->search(Yii::$app->request->queryParams);
-        $groupLessonsQuery->orderBy(['lesson.id' => SORT_ASC]);
+        $groupLessonsQuery->orderBy(['lesson.date' => SORT_ASC]);
         $lessonsQuery = $searchModel->search(Yii::$app->request->queryParams);
-        $lessonsQuery->orderBy(['lesson.id' => SORT_ASC]);
+        $lessonsQuery->orderBy(['lesson.date' => SORT_ASC]);
         $model->load(Yii::$app->request->get());
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonsQuery,

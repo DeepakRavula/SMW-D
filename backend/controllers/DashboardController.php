@@ -91,20 +91,9 @@ public function behaviors()
             ->count();
         $students = Student::find()
 			->notDeleted()
-			->joinWith(['enrolment' => function ($query) use ($locationId, $from, $to) {
-                $query->joinWith(['course' => function ($query) use ($locationId, $from, $to) {
-                    $query->joinWith(['lessons' => function ($query) {
-                        $query->andWhere(['NOT',['lesson.id' => null]]);
-                    }])
-                    ->confirmed()
-                    ->overlap($from, $to)
-                    ->andWhere(['course.type' => Course::TYPE_REGULAR])
-                    ->location($locationId);
-                }]);
-            }])
             ->groupBy('student.id')
-			->active()
-			->count();
+            ->active($from, $to)
+            ->count();
 
         $completedPrograms = [];
         $programs = Lesson::find()

@@ -123,7 +123,7 @@ class LessonController extends BaseController
 
         $groupLessonStudents = Student::find()
             ->notDeleted()
-            ->joinWith(['enrolment' => function ($query) use ($id) {
+            ->joinWith(['enrolments' => function ($query) use ($id) {
                 $query->joinWith(['course' => function ($query) use ($id) {
                     $query->joinWith(['program' => function ($query) use ($id) {
                         $query->group();

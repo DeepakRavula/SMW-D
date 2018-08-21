@@ -38,7 +38,7 @@ class Invoice extends \yii\db\ActiveRecord
     const EVENT_UPDATE = 'event-update';
     const SCENARIO_DELETE = 'delete';
     const SCENARIO_DISCOUNT = 'discount';
-    const EVENT_CREATE = 'create';
+    const EVENT_CREATE = 'addInvoice';
     const EVENT_DELETE = 'deleteInvoice';
     
     public $customer_id;
@@ -497,8 +497,7 @@ class Invoice extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if ($insert) {
-            $this->trigger(self::EVENT_AFTER_INSERT);
+        if ($insert) {                     
         }
         return parent::afterSave($insert, $changedAttributes);
     }

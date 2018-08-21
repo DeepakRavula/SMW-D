@@ -61,6 +61,7 @@ class StudentBirthdaySearch extends Student
         $query = Student::find()
             ->notDeleted()
             ->location($locationId)
+            ->active()
             ->orderBy(['DATE_FORMAT(birth_date,"%m-%d")' => SORT_DESC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

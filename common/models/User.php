@@ -736,8 +736,8 @@ class User extends ActiveRecord implements IdentityInterface
             ->andWhere(['raa.item_name' => 'customer'])
             ->andWhere(['ul.location_id' => Location::findOne(['slug' => \Yii::$app->location])->id])
             ->notDeleted()
-            ->joinWith(['student' => function ($query) use ($currentDate) {
-                $query->enrolled($currentDate);
+            ->joinWith(['student' => function ($query) {
+                $query->active();
             }])
             ->active()
             ->groupBy('user.id')

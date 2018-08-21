@@ -32,13 +32,62 @@ class LessonLog extends Log
             $this->addLink($log, $studentIndex, $studentPath);
         }
     }
-
-    public function addLink($log, $index, $path)
+    public function addInvoice($event)
+    { 
+        $lessonModel = $event->sender;
+        $lesson = Lesson::find()->andWhere(['id' => $lessonModel->id])->asArray()->one();
+        $loggedUser     =   end($event->data);
+        $object         =   LogObject::findOne(['name' => LogObject::TYPE_LESSON]);
+        $activity       =   LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
+        $locationId     =   $lessonModel->course->locationId;
+        $log = new Log();
+        $log->logObjectId = $object->id;
+        $log->logActivityId = $activity->id;
+        if (is_a(Yii::$app, 'yii\console\Application')) {
+            $baseUrl = Yii::$app->getUrlManager()->baseUrl;
+            $invoiceIndex = $lessonModel->invoice->getInvoiceNumber();
+            $invoicePath='/admin/invoice/view?id=' . $lessonModel->id;
+        } else {
+            $baseUrl = Yii::$app->request->hostInfo;
+            $invoiceIndex = $lessonModel->invoice->getInvoiceNumber();
+            $invoicePath=Url::to(['/invoice/view', 'id' => $lessonModel->invoice->id]);
+        }
+        $log->message = $loggedUser->publicIdentity . ' created an invoice #{{'.$invoiceIndex.'}} for this Lesson';
+        $log->data = json_encode($lesson);
+        $log->createdUserId = $loggedUser->id;
+        $log->locationId = $locationId;
+        
+        if ($log->save()) {
+            $this->addHistory($log, $lessonModel, $object);
+            $this->addLink($log, $invoiceIndex, $invoicePath,$baseUrl);
+        }
+    }
+    public function lessonExpired($event)
+    { 
+        $lessonModel = $event->sender;
+        $lesson = Lesson::find()->andWhere(['id' => $lessonModel->id])->asArray()->one();
+        $loggedUser     =   end($event->data);
+        $object         =   LogObject::findOne(['name' => LogObject::TYPE_LESSON]);
+        $activity       =   LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
+        $locationId     =   $lessonModel->course->locationId;
+        $log = new Log();
+        $log->logObjectId = $object->id;
+        $log->logActivityId = $activity->id;
+        $log->message = 'Lesson is Expired on '.Yii::$app->formatter->asDate($lessonModel->privateLesson->expiryDate);
+        $log->data = json_encode($lesson);
+        $log->createdUserId = $loggedUser->id;
+        $log->locationId = $locationId;
+        
+        if ($log->save()) {
+            $this->addHistory($log, $lessonModel, $object);
+        }
+    }
+    public function addLink($log, $index, $path,$baseUrl)
     {
         $logLink          = new LogLink();
         $logLink->logId   = $log->id;
         $logLink->index   = $index;
-        $logLink->baseUrl = Yii::$app->request->hostInfo;
+        $logLink->baseUrl = $baseUrl;
         $logLink->path    = $path;
         $logLink->save();
     }

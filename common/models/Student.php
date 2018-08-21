@@ -6,7 +6,7 @@ use Yii;
 use common\models\timelineEvent\TimelineEventStudent;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\models\query\StudentQuery;
-
+use common\models\Location;
 /**
  * This is the model class for table "student".
  *
@@ -118,6 +118,11 @@ class Student extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'customer_id']);
     }
 
+    public function getCustomerLocation()
+    {
+        return $this->hasOne(UserLocation::className(), ['user_id' => 'customer_id']);
+    }
+
     public function getCustomerProfile()
     {
         return $this->hasOne(UserProfile::className(), ['user_id' => 'customer_id']);
@@ -128,9 +133,10 @@ class Student extends \yii\db\ActiveRecord
         return $this->hasOne(StudentCsv::className(), ['studentId' => 'id']);
     }
     
-    public function getEnrolment()
+    public function getEnrolments()
     {
-        return $this->hasMany(Enrolment::className(), ['studentId' => 'id']);
+        return $this->hasMany(Enrolment::className(), ['studentId' => 'id'])
+            ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);
     }
 
     public function getOneEnrolment()
@@ -141,7 +147,7 @@ class Student extends \yii\db\ActiveRecord
     public function getFirstPrivateCourse()
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId'])
-            ->via('enrolment')
+            ->via('enrolments')
             ->privateProgram()
             ->onCondition(['course.isConfirmed' => true]);
     }
@@ -240,17 +246,15 @@ class Student extends \yii\db\ActiveRecord
 
     public static function count()
     {
-        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-        $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-        return self::find()
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $students = self::find()
             ->location($locationId)
             ->notDeleted()
-                        ->enrolled($currentDate)
-                        ->active()
-                        ->groupBy(['student.id'])
-            ->count();
+            ->active()
+            ->all();
+        return count($students);
     }
-
+    
     public function getGenderName()
     {
         $gender = null;

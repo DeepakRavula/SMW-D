@@ -78,6 +78,8 @@ class Lesson extends \yii\db\ActiveRecord
     const EVENT_UNSCHEDULE_ATTEMPTED	 = 'UnscheduleAttempted';
     const EVENT_UNSCHEDULED			 = 'Unscheduled';
     const EVENT_MISSED = 'missed';
+    const EVENT_CREATE_INVOICE = 'addInvoice';
+    const EVENT_LESSON_EXPIRED = 'lessonExpired';
 
     const APPLY_SINGLE_LESSON = 1;
     const APPLY_ALL_FUTURE_LESSONS = 2;
@@ -804,11 +806,15 @@ class Lesson extends \yii\db\ActiveRecord
     public function isExpired()
     {
         $currentDate = new \DateTime();
+        $isExpired = false;
         if ($this->privateLesson) {
             $expiryDate  = new \DateTime($this->privateLesson->expiryDate);
+            if ($currentDate > $expiryDate && $this->status == self::STATUS_UNSCHEDULED) {         
+               $isExpired = true;
+            }
         }
-        return !empty($this->privateLesson) ? $currentDate > $expiryDate : false;
-    }
+    return $isExpired;    
+}
 
     public function beforeSave($insert)
     {
