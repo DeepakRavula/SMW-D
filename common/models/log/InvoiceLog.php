@@ -4,6 +4,7 @@ namespace common\models\log;
 use Yii;
 use common\models\Invoice;
 use common\models\log\Log;
+use common\models\log\LessonLog;
 use yii\helpers\Url;
 
 class InvoiceLog extends Log
@@ -22,6 +23,22 @@ class InvoiceLog extends Log
         $activity       =   LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
         $locationId     =   $invoiceModel->location_id;
         $this->addLog($object, $activity, $invoice, $locationId, $invoiceModel, $loggedUser);
+    }
+    public function addInvoice($event)
+    {
+        if (is_a(Yii::$app, 'yii\console\Application')) {
+            $baseUrl = Yii::$app->getUrlManager()->baseUrl;
+        } else {
+            $baseUrl = Yii::$app->request->hostInfo;
+        }
+        $invoiceModel = $event->sender;
+        $invoice = Invoice::find()->andWhere(['id' => $invoiceModel->id])->asArray()->one();
+        $loggedUser     =   end($event->data);
+        $object         =   LogObject::findOne(['name' => LogObject::TYPE_INVOICE]);
+        $activity       =   LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
+        $locationId     =   $invoiceModel->location_id;
+        $this->addLog($object, $activity, $invoice, $locationId, $invoiceModel, $loggedUser);
+        
     }
 
     public function addLog($object, $activity, $data, $locationId, $model, $loggedUser)
