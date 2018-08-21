@@ -135,6 +135,7 @@ class InvoiceSearch extends Invoice
         } elseif ($this->customerId) {
             $query->andFilterWhere(['user.id' => $this->customerId ]); 
         }
+        $query->groupBy('invoice.id');
        	$dataProvider->setSort([
             'attributes' => [
                 'number' => [
