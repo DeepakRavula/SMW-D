@@ -473,17 +473,28 @@ class LessonController extends BaseController
         ]);
     }
 
-    public function actionFetchConflict($courseId)
+    public function actionFetchConflict()
     {
+        $scenario = Lesson::SCENARIO_REVIEW;
         $model = new LessonReview();
-        $courseModel = Course::findOne(['id' => $courseId]);
-        $draftLessons = Lesson::find()
-            ->notDeleted()
-            ->andWhere(['courseId' => $courseModel->id])
-            ->notConfirmed()
-            ->all();
-        if ($model->enrolmentIds) {
-            $scenario = Lesson::SCENARIO_REVIEW_TEACHER;
+        $request = Yii::$app->request;
+        $model->load($request->get());
+        if ($model->courseId) {
+            $courseModel = Course::findOne(['id' => $model->courseId]);
+            $draftLessons = Lesson::find()
+                ->notDeleted()
+                ->andWhere(['courseId' => $courseModel->id])
+                ->notConfirmed()
+                ->all();
+        } else if ($model->enrolmentIds) {
+            $changesFrom = (new \DateTime($model->changesFrom))->format('Y-m-d');
+            $draftLessons = Lesson::find()
+                ->notDeleted()
+                ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
+                ->enrolment($model->enrolmentIds)
+                ->notCanceled()
+                ->notConfirmed()
+                ->all();
         }
         $conflictedLessons = $model->getConflicts($draftLessons, $scenario);
 
