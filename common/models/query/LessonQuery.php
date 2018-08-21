@@ -244,9 +244,6 @@ class LessonQuery extends \yii\db\ActiveQuery
         $this->joinWith(['course' => function ($query) {
             $query->joinWith(['program' => function ($query) {
                 $query->andWhere(['program.type' => Program::TYPE_PRIVATE_PROGRAM]);
-            }])
-            ->joinWith(['enrolment' => function ($query) {
-                $query->joinWith('student');
             }]);
         }]);
 

@@ -55,7 +55,7 @@ class StudentQuery extends ActiveQuery
         $this->joinWith(['enrolments' => function ($query) use ($fromDate, $toDate) {
             $query->joinWith(['course' => function ($query) use ($fromDate, $toDate) {
                 $query->joinWith(['lessons' => function ($query) {
-                    $query->andWhere(['NOT',['lesson.id' => null]]);
+                    $query->andWhere(['NOT', ['lesson.id' => null]]);
                 }])
                     ->overlap($fromDate, $toDate)
 		            ->regular()

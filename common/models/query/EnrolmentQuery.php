@@ -23,7 +23,7 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
         }
         return $this->joinWith(['course' => function ($query) use ($fromDate, $toDate) {
                 $query->joinWith(['lessons' => function ($query) {
-                $query->andWhere(['NOT',['lesson.id' => null]]);
+                $query->andWhere(['NOT', ['lesson.id' => null]]);
             }])
                 ->overlap($fromDate, $toDate)
                 ->regular()
