@@ -35,4 +35,30 @@ class LessonReview extends Model
                 'changesFrom', 'teacherId'], 'safe']
         ];
     }
+
+    public function getConflicts($lessons, $scenario = null)
+    {
+        $conflicts = [];
+        $conflictedLessonIds = [];
+        $holidayConflictedLessonIds = [];
+        foreach ($lessons as $draftLesson) {
+            if ($scenario) {
+                $draftLesson->setScenario($scenario);
+            }
+            if (!$draftLesson->validate()) {
+                $conflictedLessonIds[] = $draftLesson->id;
+            }
+            $conflicts[$draftLesson->id] = $draftLesson->getErrors('date');
+            if ($draftLesson->isHolidayLesson()) {
+                $holidayConflictedLessonIds[] = $draftLesson->id;
+            }
+        }
+
+        $conflictedLessonIds = array_diff($conflictedLessonIds, $holidayConflictedLessonIds);
+        return [
+            'conflicts' => $conflicts,
+            'lessonIds' => $conflictedLessonIds,
+            'holidayConflictedLessonIds' => $holidayConflictedLessonIds
+        ];
+    }
 }

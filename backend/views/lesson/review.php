@@ -10,16 +10,16 @@ $this->title = 'Review Lessons';
     <div class="col-md-6">
         <?= $this->render('review/_details', [
             'model' => $model,
-            'courseModel' => $courseModel,
+            'courseModel' => $courseModel
         ]); ?>
     </div>
     <div class="col-md-6">
-        <?php if (empty($rescheduleBeginDate)) : ?>
+        <?php if (!$model->rescheduleBeginDate) : ?>
             <?= $this->render('review/_summary', [
                 'holidayConflictedLessonIds' => $holidayConflictedLessonIds,
                 'unscheduledLessonCount' => $unscheduledLessonCount,
                 'lessonCount' => $lessonCount,
-                'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
+                'conflictedLessonIdsCount' => $conflictedLessonIdsCount
             ]); ?>
         <?php endif; ?>
     </div>
@@ -43,11 +43,8 @@ if ($conflictedLessonIdsCount > 0) {
 
 <?= $this->render('review/_button', [
     'hasConflict' => $hasConflict,
-    'rescheduleBeginDate' => $rescheduleBeginDate,
-    'rescheduleEndDate' => $rescheduleEndDate,
-    'courseId' => $courseId,
-    'courseModel' => $courseModel,
-    'enrolmentType' => $enrolmentType,
+    'model' => $model,
+    'courseModel' => $courseModel
 ]); ?>
 
 <div id="enrolment-loader" class="spinner" style="display:none">
@@ -59,7 +56,7 @@ if ($conflictedLessonIdsCount > 0) {
     var review = {
         onEditableGridSuccess: function () {
             $.ajax({
-                url: "<?php echo Url::to(['lesson/fetch-conflict', 'courseId' => $courseId]); ?>",
+                url: "<?php echo Url::to(['lesson/fetch-conflict', 'courseId' => $model->courseId, 'LessonReview[enrolmentIds]' => $model->enrolmentIds]); ?>",
                 type: "GET",
                 dataType: "json",
                 success: function (response)
@@ -91,8 +88,8 @@ if ($conflictedLessonIdsCount > 0) {
         
     $(document).on('change', '#lessonsearch-showallreviewlessons', function () {
         var showAllReviewLessons = $(this).is(":checked");
-        var startDate = '<?= $rescheduleBeginDate; ?>';
-        var endDate = '<?= $rescheduleEndDate; ?>';
+        var startDate = '<?= $model->rescheduleBeginDate; ?>';
+        var endDate = '<?= $model->rescheduleEndDate; ?>';
         if (startDate && endDate) {
             var params = $.param({
                 'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
@@ -109,8 +106,11 @@ if ($conflictedLessonIdsCount > 0) {
     });
 
     $(document).on('click', '.review-lesson-edit-button', function () {
+        var params = $.param({
+            'id': $(this).parent().parent().data('key')
+        });
         $.ajax({
-            url: '<?= Url::to(['lesson/update-field']); ?>?id=' + $(this).parent().parent().data('key'),
+            url: '<?= Url::to(['lesson/update-field', 'LessonReview[enrolmentIds]' => $model->enrolmentIds]); ?>&' + params,
             type: 'get',
             dataType: "json",
             success: function (response)
