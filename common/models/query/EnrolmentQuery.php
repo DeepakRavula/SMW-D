@@ -12,10 +12,24 @@ use common\models\Enrolment;
  */
 class EnrolmentQuery extends \yii\db\ActiveQuery
 {
-    /*public function active()
+    public function active()
     {
-        return $this->andWhere('[[status]]=1');
-    }*/
+        $fromDate = null;
+        $toDate = null;
+        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+        if (!$fromDate && !$toDate) {
+            $fromDate = $currentDate;
+            $toDate = $currentDate;
+        }
+        return $this->joinWith(['course' => function ($query) use ($fromDate, $toDate) {
+                $query->joinWith(['lessons' => function ($query) {
+                $query->andWhere(['NOT',['lesson.id' => null]]);
+            }])
+                ->overlap($fromDate, $toDate)
+                ->regular()
+                ->confirmed();
+        }]);
+    }
 
     /**
      * {@inheritdoc}
