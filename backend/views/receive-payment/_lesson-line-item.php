@@ -74,7 +74,7 @@ use yii\bootstrap\ActiveForm;
             'filterType' => KartikGridView::FILTER_SELECT2,
             'filter' => ArrayHelper::map(Student::find()
                 ->orderBy(['first_name' => SORT_ASC])
-                ->joinWith(['enrolment' => function ($query) {
+                ->joinWith(['enrolments' => function ($query) {
                     $query->joinWith(['course' => function ($query) {
                         $query->confirmed()
                             ->location(Location::findOne(['slug' => \Yii::$app->location])->id);

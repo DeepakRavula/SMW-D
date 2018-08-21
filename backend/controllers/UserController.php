@@ -149,8 +149,8 @@ class UserController extends BaseController
     {
         $query = Student::find()
             ->notDeleted()
-            ->andWhere(['customer_id' => $id])
-            ->active();
+            ->andWhere(['customer_id' => $id]);
+
         return new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -185,8 +185,7 @@ class UserController extends BaseController
     protected function getEnrolledStudentDataProvider($id, $locationId)
     {
         $query = Student::find()->notDeleted()
-                ->teacherStudents($locationId, $id)
-                ->active();
+                ->teacherStudents($locationId, $id);
 
         return new ActiveDataProvider([
             'query' => $query,
@@ -208,19 +207,15 @@ class UserController extends BaseController
         $currentdate = new \DateTime();
         $currentDate = $currentdate->format('Y-m-d');
         $enrolmentQuery = Enrolment::find()
-            ->location($locationId)
-            ->joinWith(['course' => function ($query) use ($locationId) {
-                $query->location($locationId)
-                        ->confirmed();
-            }])
             ->joinWith(['student' => function ($query) use ($id) {
-                $query->andWhere(['customer_id' => $id])
-                ->active();
+                $query->andWhere(['customer_id' => $id]);
             }])
-            ->andWhere(['>=', 'course.endDate', $currentDate])
             ->notDeleted()
             ->isConfirmed()
-            ->isRegular();
+            ->isRegular()
+            ->location($locationId)
+            ->groupBy(['enrolment.id'])
+            ->active();
 
         return new ActiveDataProvider([
             'query' => $enrolmentQuery,

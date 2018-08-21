@@ -129,7 +129,7 @@ class EmailController extends BaseController
         $model = Lesson::findOne($id);
         $students = Student::find()
             ->notDeleted()
-            ->joinWith('enrolment')
+            ->joinWith('enrolments')
             ->andWhere(['courseId' => $model->courseId])
             ->all();
         $emails = ArrayHelper::getColumn($students, 'customer.email', 'customer.email');
