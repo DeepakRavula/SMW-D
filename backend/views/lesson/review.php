@@ -2,6 +2,7 @@
 
 use yii\helpers\Url;
 use kartik\datetime\DateTimePickerAsset;
+use yii\helpers\Json;
 DateTimePickerAsset::register($this);
 $this->title = 'Review Lessons';
 ?>
@@ -56,7 +57,7 @@ if ($conflictedLessonIdsCount > 0) {
     var review = {
         onEditableGridSuccess: function () {
             $.ajax({
-                url: "<?= Url::to(['lesson/fetch-conflict', 'LessonReview[courseId]' => $model->courseId, 
+                url: "<?= Url::to(['lesson/fetch-conflict', 'LessonReview[courseId]' => $model->courseId, 'LessonReview[isTeacherOnlyChanged]' => $model->isTeacherOnlyChanged,
                     'LessonReview[enrolmentIds]' => $model->enrolmentIds, 'LessonReview[changesFrom]' => $model->changesFrom]); ?>",
                 type: "GET",
                 dataType: "json",
@@ -91,14 +92,17 @@ if ($conflictedLessonIdsCount > 0) {
         var showAllReviewLessons = $(this).is(":checked");
         var startDate = '<?= $model->rescheduleBeginDate; ?>';
         var endDate = '<?= $model->rescheduleEndDate; ?>';
+        var isTeacherOnlyChanged = '<?= $model->isTeacherOnlyChanged ?>'
         if (startDate && endDate) {
             var params = $.param({
                 'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-                'LessonReview[CourseStartDate]': startDate, 'LessonReview[CourseEndDate]': endDate
+                'LessonReview[rescheduleBeginDate]': startDate, 'LessonReview[rescheduleEndDate]': endDate,
+                'LessonReview[isTeacherOnlyChanged]': isTeacherOnlyChanged
             });
         } else {
             var params = $.param({
                 'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
+                'LessonReview[isTeacherOnlyChanged]': isTeacherOnlyChanged
             });
         }
         var url = "<?php echo Url::to(['lesson/review', 'LessonReview[courseId]' => $courseModel ? $courseModel->id : null, 
@@ -108,10 +112,11 @@ if ($conflictedLessonIdsCount > 0) {
 
     $(document).on('click', '.review-lesson-edit-button', function () {
         var params = $.param({
-            'id': $(this).parent().parent().data('key')
+            'id': $(this).parent().parent().data('key'),
+            'LessonReview[enrolmentIds]': <?= Json::encode($model->enrolmentIds); ?>
         });
         $.ajax({
-            url: '<?= Url::to(['lesson/update-field', 'LessonReview[enrolmentIds]' => $model->enrolmentIds]); ?>&' + params,
+            url: '<?= Url::to(['lesson/update-field']); ?>?' + params,
             type: 'get',
             dataType: "json",
             success: function (response)
@@ -138,8 +143,10 @@ if ($conflictedLessonIdsCount > 0) {
     });
 
     $(document).on('modal-success', function(event, params) {
+        var isTeacherOnlyChanged = '<?= $model->isTeacherOnlyChanged ?>'
         var showAllReviewLessons = $('#lessonsearch-showallreviewlessons').is(":checked");
-        var param = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0)});
+        var param = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0), 
+            'LessonReview[isTeacherOnlyChanged]': isTeacherOnlyChanged });
         var url = "<?php echo Url::to(['lesson/review', 'LessonReview[courseId]' => $courseModel ? $courseModel->id : null, 
             'LessonReview[enrolmentIds]' => $model->enrolmentIds]); ?>&" + param;
         if ($('#review-lesson-listing').length !== 0) {

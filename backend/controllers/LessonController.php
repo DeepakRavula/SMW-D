@@ -424,6 +424,9 @@ class LessonController extends BaseController
         if ($model->courseId) {
             $scenario = Lesson::SCENARIO_REVIEW;
             $courseModel = Course::findOne(['id' => $model->courseId]);
+            if ($model->isTeacherOnlyChanged) {
+                $scenario = Lesson::SCENARIO_REVIEW_TEACHER;
+            }
             $lessons = Lesson::find()
                 ->notDeleted()
                 ->notConfirmed()

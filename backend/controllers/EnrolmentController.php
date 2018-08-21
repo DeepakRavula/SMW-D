@@ -479,10 +479,16 @@ class EnrolmentController extends BaseController
             $startDate = new \DateTime($courseReschedule->dateToChangeSchedule);
             $endDate = new \DateTime($model->endDate);
             if ($courseReschedule->validate()) {
+                $isTeacherOnlyChanged = false;
+                $day = (new \DateTime($courseReschedule->dayTime))->format('N');
+                $fromTime = (new \DateTime($courseReschedule->dayTime))->format('H:i:s');
+                if ($day == $course->courseSchedule->day && $fromTime == $course->courseSchedule->fromTime && $courseReschedule->teacherId != $course->teacherId) {
+                    $isTeacherOnlyChanged = true;
+                }
                 $lastLessonDate = $courseReschedule->reschdeule();
                 $rescheduleBeginDate = $startDate->format('d-m-Y');
                 $rescheduleEndDate = (new \DateTime($lastLessonDate))->format('d-m-Y');
-                $url = Url::to(['/lesson/review', 'LessonReview[courseId]' => $course->id,
+                $url = Url::to(['/lesson/review', 'LessonReview[courseId]' => $course->id, 'LessonReview[isTeacherOnlyChanged]' => $isTeacherOnlyChanged,
                     'LessonSearch[showAllReviewLessons]' => false, 'LessonReview[rescheduleBeginDate]' => $rescheduleBeginDate,
                     'LessonReview[rescheduleEndDate]' => $rescheduleEndDate]);
                 $response = [
