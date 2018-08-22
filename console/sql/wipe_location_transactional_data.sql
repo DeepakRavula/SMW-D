@@ -8,6 +8,12 @@ LEFT JOIN log_history lh ON lh.`logId`= lo.`id`
 LEFT JOIN log_link ll ON ll.`logId`= lo.`id`
 where l.id = :locationToWipe;
 
+DELETE   pfi, pfii, pfli, pfil FROM proforma_invoice pfi
+LEFT JOIN proforma_line_item pfli ON pfli.`proformaInvoiceId`= pfi.`id`
+LEFT JOIN proforma_item_invoice pfii ON pfii.`proformaLineItemId`= pfli.`id`
+LEFT JOIN proforma_item_lesson pfil ON pfil.`proformaLineItemId`= pfli.`id`
+where pfi.locationId = :locationToWipe;
+
 DELETE   cl, cu, tr FROM classroom cl
 LEFT JOIN classroom_unavailability cu ON cu.`classroomId`= cl.`id`
 LEFT JOIN teacher_room tr ON tr.`classroomId`= cl.`id`
@@ -45,7 +51,7 @@ LEFT JOIN transaction t1 ON t1.`id`= iv.`transactionId`
 LEFT JOIN transaction t2 ON t2.`id`= p.`transactionId`
 where iv.location_id = :locationToWipe;
 
-DELETE   co, ce, cg, cpr, cs, e, ed, pc, py, cu3, cu4, t3, pcl, v, le, lp, lsu, lh1, lh2, pl  FROM course co
+DELETE   co, ce, cg, cpr, cs, e, ed, pc, py, cu3, cu4, t3, pcl, le, ld, lp, lsu, lh1, lh2, pl  FROM course co
 LEFT JOIN course_extra ce ON ce.`courseId`= co.`id`
 LEFT JOIN course_group cg ON cg.`courseId`= co.`id`
 LEFT JOIN course_program_rate cpr ON cpr.`courseId`= co.`id`
@@ -54,8 +60,8 @@ LEFT JOIN enrolment e ON e.`courseId`= co.`id`
 LEFT JOIN enrolment_discount ed ON ed.`enrolmentId`= e.`id`
 LEFT JOIN payment_cycle pc ON pc.`enrolmentId`= e.`id`
 LEFT JOIN payment_cycle_lesson pcl ON pcl.`paymentCycleId`= pc.`id`
-LEFT JOIN vacation v ON v.`enrolmentId`= e.`id`
 LEFT JOIN lesson le ON le.`courseId`= co.`id`
+LEFT JOIN lesson_discount lp ON ld.`lessonId`= le.`id`
 LEFT JOIN lesson_payment lp ON lp.`lessonId`= le.`id`
 LEFT JOIN payment py ON py.`id`= lp.`paymentId`
 LEFT JOIN credit_usage cu3 ON cu3.`credit_payment_id`= py.`id`
