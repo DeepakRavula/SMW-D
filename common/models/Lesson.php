@@ -99,6 +99,7 @@ class Lesson extends \yii\db\ActiveRecord
     public $splittedLessonId;
     public $applyFullDiscount;
     public $lessonIds;
+    public $lessonId;
     public $paymentAmount;
 
     /**
@@ -155,7 +156,8 @@ class Lesson extends \yii\db\ActiveRecord
             ['programRate', 'required', 'on' => self::SCENARIO_CREATE_GROUP],
             [['date', 'programId','colorCode', 'classroomId', 'isDeleted', 'applyFullDiscount',
                 'isExploded', 'applyContext', 'isConfirmed', 'createdByUserId', 'updatedByUserId',
-                 'isPresent', 'programRate', 'teacherRate', 'splittedLessonId','tax', 'updatedOn', 'createdOn'], 'safe'],
+                'isPresent', 'programRate', 'teacherRate', 'splittedLessonId','tax', 'updatedOn', 
+                'createdOn', 'lessonId'], 'safe'],
             [['classroomId'], ClassroomValidator::className(),
                 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),

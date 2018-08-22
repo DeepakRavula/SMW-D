@@ -309,7 +309,7 @@ class LessonController extends BaseController
         }
     }
 
-    public function fetchConflictedLesson($course, $scenario = null)
+    public function fetchConflictedLesson($course)
     {
         $model = new LessonReview();
         $lessons = Lesson::find()
@@ -318,7 +318,7 @@ class LessonController extends BaseController
             ->notConfirmed()
             ->scheduled()
             ->all();
-        $conflictedLessons = $model->getConflicts($lessons, $scenario);
+        $conflictedLessons = $model->getConflicts($lessons);
         if (!empty($conflictedLessons['lessonIds'])) {
             $lessons = Lesson::find()
                 ->orderBy(['lesson.date' => SORT_ASC])
@@ -402,12 +402,7 @@ class LessonController extends BaseController
             if ($model->isResolveSingleLesson()) {
                 $response = $this->resolveSingleLesson($model, $existingDate);
             } else {
-                if ($lessonReview->enrolmentIds) {
-                    $scenario = Lesson::SCENARIO_REVIEW_TEACHER;
-                } else {
-                    $scenario = null;
-                }
-                $conflictedLessons = $this->fetchConflictedLesson($model->course, $scenario);
+                $conflictedLessons = $this->fetchConflictedLesson($model->course);
                 $response = $this->resolveAllLesson($conflictedLessons, $model);
             }
         }
@@ -422,27 +417,51 @@ class LessonController extends BaseController
         $model->load($request->get());
         $searchModel->load($request->get());
         if ($model->courseId) {
-            $scenario = Lesson::SCENARIO_REVIEW;
             $courseModel = Course::findOne(['id' => $model->courseId]);
-            if ($model->isTeacherOnlyChanged) {
-                $scenario = Lesson::SCENARIO_REVIEW_TEACHER;
-            }
             $lessons = Lesson::find()
                 ->notDeleted()
                 ->notConfirmed()
                 ->andWhere(['courseId' => $model->courseId])
+                ->orderBy(['lesson.date' => SORT_ASC])
                 ->all();
+            if ($model->rescheduleBeginDate) {
+                $startDate = new \DateTime($model->rescheduleBeginDate);
+                $oldLessonsRe = Lesson::find()
+                    ->andWhere(['courseId' => $courseModel->id])
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->statusScheduled()
+                    ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
+                    ->orderBy(['lesson.date' => SORT_ASC])
+                    ->all();
+                foreach ($lessons as $i => $lesson) {
+                    $lesson->lessonId = $oldLessonsRe[$i]->id;
+                }
+            }
         } else if ($model->enrolmentIds) {
-            $scenario = Lesson::SCENARIO_REVIEW_TEACHER;
+            $changesFrom = (new \DateTime($model->changesFrom))->format('Y-m-d');
+            $oldLessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
+                ->enrolment($model->enrolmentIds)
+                ->notCanceled()
+                ->orderBy(['lesson.date' => SORT_ASC])
+                ->all();
             $lessons = Lesson::find()
                 ->notDeleted()
                 ->notConfirmed()
+                ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
                 ->enrolment($model->enrolmentIds)
                 ->notCanceled()
+                ->orderBy(['lesson.date' => SORT_ASC])
                 ->all();
+            foreach ($lessons as $i => $lesson) {
+                $lesson->lessonId = $oldLessons[$i]->id;
+            }
         }
         $model->teacherId = end($lessons)->teacherId;
-        $conflictedLessons = $model->getConflicts($lessons, $scenario);
+        $conflictedLessons = $model->getConflicts($lessons);
         $lessonCount = count($lessons);
         $conflictedLessonIdsCount = count($conflictedLessons['lessonIds']);
         $lessonIds = ArrayHelper::getColumn($lessons, function ($element) {
@@ -478,7 +497,6 @@ class LessonController extends BaseController
 
     public function actionFetchConflict()
     {
-        $scenario = Lesson::SCENARIO_REVIEW;
         $model = new LessonReview();
         $request = Yii::$app->request;
         $model->load($request->get());
@@ -499,7 +517,7 @@ class LessonController extends BaseController
                 ->notConfirmed()
                 ->all();
         }
-        $conflictedLessons = $model->getConflicts($draftLessons, $scenario);
+        $conflictedLessons = $model->getConflicts($draftLessons);
 
         return [
             'hasConflict' => !empty($conflictedLessons['lessonIds'])
@@ -522,12 +540,15 @@ class LessonController extends BaseController
                 ->notConfirmed()
                 ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
                 ->enrolment($model->enrolmentIds)
+                ->orderBy(['lesson.date' => SORT_ASC])
                 ->notCanceled()
                 ->all();
         } else {
             $lessons = Lesson::find()
+                ->notDeleted()
                 ->andWhere(['courseId' => $courseModel->id])
                 ->notConfirmed()
+                ->orderBy(['lesson.date' => SORT_ASC])
                 ->all();
         }
         $lesson = end($lessons);

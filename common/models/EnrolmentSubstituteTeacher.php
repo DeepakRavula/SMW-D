@@ -93,6 +93,7 @@ class EnrolmentSubstituteTeacher extends Model
             ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
             ->enrolment($this->enrolmentIds)
             ->notCanceled()
+            ->orderBy(['lesson.date' => SORT_ASC])
             ->all();
         foreach ($lessons as $lesson) {
             $newLesson = new Lesson();
