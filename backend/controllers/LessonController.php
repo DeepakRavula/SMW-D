@@ -506,16 +506,43 @@ class LessonController extends BaseController
                 ->notDeleted()
                 ->andWhere(['courseId' => $courseModel->id])
                 ->notConfirmed()
+                ->orderBy(['lesson.date' => SORT_ASC])
                 ->all();
+            if ($model->rescheduleBeginDate) {
+                $startDate = new \DateTime($model->rescheduleBeginDate);
+                $oldLessonsRe = Lesson::find()
+                    ->andWhere(['courseId' => $courseModel->id])
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->statusScheduled()
+                    ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
+                    ->orderBy(['lesson.date' => SORT_ASC])
+                    ->all();
+                foreach ($draftLessons as $i => $lesson) {
+                    $lesson->lessonId = $oldLessonsRe[$i]->id;
+                }
+            }
         } else if ($model->enrolmentIds) {
             $changesFrom = (new \DateTime($model->changesFrom))->format('Y-m-d');
+            $oldLessons = Lesson::find()
+                ->notDeleted()
+                ->isConfirmed()
+                ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
+                ->enrolment($model->enrolmentIds)
+                ->notCanceled()
+                ->orderBy(['lesson.date' => SORT_ASC])
+                ->all();
             $draftLessons = Lesson::find()
                 ->notDeleted()
                 ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
                 ->enrolment($model->enrolmentIds)
                 ->notCanceled()
                 ->notConfirmed()
+                ->orderBy(['lesson.date' => SORT_ASC])
                 ->all();
+            foreach ($lessons as $i => $lesson) {
+                $lesson->lessonId = $oldLessons[$i]->id;
+            }
         }
         $conflictedLessons = $model->getConflicts($draftLessons);
 

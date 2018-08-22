@@ -57,8 +57,8 @@ if ($conflictedLessonIdsCount > 0) {
     var review = {
         onEditableGridSuccess: function () {
             $.ajax({
-                url: "<?= Url::to(['lesson/fetch-conflict', 'LessonReview[courseId]' => $model->courseId, 'LessonReview[isTeacherOnlyChanged]' => $model->isTeacherOnlyChanged,
-                    'LessonReview[enrolmentIds]' => $model->enrolmentIds, 'LessonReview[changesFrom]' => $model->changesFrom]); ?>",
+                url: "<?= Url::to(['lesson/fetch-conflict', 'LessonReview[courseId]' => $model->courseId, 'LessonReview[rescheduleBeginDate]' => $model->rescheduleBeginDate,
+                    'LessonReview[enrolmentIds]' => $model->enrolmentIds, 'LessonReview[rescheduleEndDate]' => $model->rescheduleEndDate, 'LessonReview[changesFrom]' => $model->changesFrom]); ?>",
                 type: "GET",
                 dataType: "json",
                 success: function (response)
