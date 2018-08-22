@@ -37,15 +37,13 @@ class LessonReview extends Model
         ];
     }
 
-    public function getConflicts($lessons, $scenario = null)
+    public function getConflicts($lessons)
     {
         $conflicts = [];
         $conflictedLessonIds = [];
         $holidayConflictedLessonIds = [];
         foreach ($lessons as $draftLesson) {
-            if ($scenario) {
-                $draftLesson->setScenario($scenario);
-            }
+            $draftLesson->setScenario(Lesson::SCENARIO_REVIEW);
             if (!$draftLesson->validate()) {
                 $conflictedLessonIds[] = $draftLesson->id;
             }

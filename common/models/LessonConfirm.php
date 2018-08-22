@@ -126,16 +126,24 @@ class LessonConfirm extends Model
     public function confirmEnrolmentTeacherChange()
     {
         $changesFrom = (new \DateTime($this->changesFrom))->format('Y-m-d');
-        $query = Lesson::find()
+        $oldLessons = Lesson::find()
             ->notDeleted()
             ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
             ->enrolment($this->enrolmentIds)
             ->notCanceled()
-            ->orderBy(['lesson.date' => SORT_ASC]);
-        $oldLessons = $query->isConfirmed()->all();
-        $lessons = $query->notConfirmed()->all();
+            ->orderBy(['lesson.date' => SORT_ASC])
+            ->isConfirmed()
+            ->all();
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->andWhere(['>=', 'DATE(lesson.date)', $changesFrom])
+            ->enrolment($this->enrolmentIds)
+            ->notCanceled()
+            ->orderBy(['lesson.date' => SORT_ASC])
+            ->notConfirmed()
+            ->all();
         foreach ($lessons as $i => $lesson) {
-            $oldLesson = $oldLessons[$i];
+            $oldLesson = Lesson::findOne($oldLessons[$i]->id);
             $oldLesson->cancel();
             $oldLesson->rescheduleTo($lesson);
             $bulkReschedule = new BulkRescheduleLesson();

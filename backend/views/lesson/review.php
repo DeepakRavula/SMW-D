@@ -57,8 +57,8 @@ if ($conflictedLessonIdsCount > 0) {
     var review = {
         onEditableGridSuccess: function () {
             $.ajax({
-                url: "<?= Url::to(['lesson/fetch-conflict', 'LessonReview[courseId]' => $model->courseId, 'LessonReview[isTeacherOnlyChanged]' => $model->isTeacherOnlyChanged,
-                    'LessonReview[enrolmentIds]' => $model->enrolmentIds, 'LessonReview[changesFrom]' => $model->changesFrom]); ?>",
+                url: "<?= Url::to(['lesson/fetch-conflict', 'LessonReview[courseId]' => $model->courseId, 'LessonReview[rescheduleBeginDate]' => $model->rescheduleBeginDate,
+                    'LessonReview[enrolmentIds]' => $model->enrolmentIds, 'LessonReview[rescheduleEndDate]' => $model->rescheduleEndDate, 'LessonReview[changesFrom]' => $model->changesFrom]); ?>",
                 type: "GET",
                 dataType: "json",
                 success: function (response)
@@ -92,21 +92,18 @@ if ($conflictedLessonIdsCount > 0) {
         var showAllReviewLessons = $(this).is(":checked");
         var startDate = '<?= $model->rescheduleBeginDate; ?>';
         var endDate = '<?= $model->rescheduleEndDate; ?>';
-        var isTeacherOnlyChanged = '<?= $model->isTeacherOnlyChanged ?>'
         if (startDate && endDate) {
             var params = $.param({
                 'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-                'LessonReview[rescheduleBeginDate]': startDate, 'LessonReview[rescheduleEndDate]': endDate,
-                'LessonReview[isTeacherOnlyChanged]': isTeacherOnlyChanged
+                'LessonReview[rescheduleBeginDate]': startDate, 'LessonReview[rescheduleEndDate]': endDate
             });
         } else {
             var params = $.param({
-                'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0),
-                'LessonReview[isTeacherOnlyChanged]': isTeacherOnlyChanged
+                'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0)
             });
         }
         var url = "<?php echo Url::to(['lesson/review', 'LessonReview[courseId]' => $courseModel ? $courseModel->id : null, 
-            'LessonReview[enrolmentIds]' => $model->enrolmentIds]); ?>&" + params;
+            'LessonReview[enrolmentIds]' => $model->enrolmentIds, 'LessonReview[changesFrom]' => $model->changesFrom]); ?>&" + params;
         $.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000});  //Reload GridView
     });
 
@@ -143,12 +140,10 @@ if ($conflictedLessonIdsCount > 0) {
     });
 
     $(document).on('modal-success', function(event, params) {
-        var isTeacherOnlyChanged = '<?= $model->isTeacherOnlyChanged ?>'
         var showAllReviewLessons = $('#lessonsearch-showallreviewlessons').is(":checked");
-        var param = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0), 
-            'LessonReview[isTeacherOnlyChanged]': isTeacherOnlyChanged });
+        var param = $.param({'LessonSearch[showAllReviewLessons]': (showAllReviewLessons | 0) });
         var url = "<?php echo Url::to(['lesson/review', 'LessonReview[courseId]' => $courseModel ? $courseModel->id : null, 
-            'LessonReview[enrolmentIds]' => $model->enrolmentIds]); ?>&" + param;
+            'LessonReview[enrolmentIds]' => $model->enrolmentIds, 'LessonReview[changesFrom]' => $model->changesFrom]); ?>&" + param;
         if ($('#review-lesson-listing').length !== 0) {
             $.pjax.reload({url: url, container: "#review-lesson-listing", replace: false, timeout: 4000, async: false});
         }

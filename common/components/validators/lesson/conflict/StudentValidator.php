@@ -30,13 +30,13 @@ class StudentValidator extends Validator
             $date->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));
             $date->modify('-1 second');
             $lessonEndTime = $date->format('H:i:s');
+            $lessonId = [$model->id, $model->lessonId];
             $studentLessons = Lesson::find()
                 ->studentLessons($locationId, $studentId)
-                ->andWhere(['NOT', ['lesson.id' => $model->id]])
+                ->andWhere(['NOT', ['lesson.id' => $lessonId]])
                 ->isConfirmed()
                 ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
                 ->all();
-
             if ($studentLessons) {
                 $this->addError($model, $attribute, 'Lesson time conflicts with student\'s another lesson');
             }

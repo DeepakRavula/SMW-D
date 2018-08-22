@@ -18,9 +18,10 @@ class TeacherLessonOverlapValidator extends Validator
             $date->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));
             $date->modify('-1 second');
             $lessonEndTime = $date->format('H:i:s');
+            $lessonId = [$model->id, $model->lessonId];
             $teacherLessons = Lesson::find()
                 ->teacherLessons($locationId, $model->teacherId)
-                ->andWhere(['NOT', ['lesson.id' => $model->id]])
+                ->andWhere(['NOT', ['lesson.id' => $lessonId]])
                 ->isConfirmed()
                 ->present()
                 ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
