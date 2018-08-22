@@ -632,28 +632,36 @@ class Enrolment extends \yii\db\ActiveRecord
         }
     }
 
+    public function hasPaymentCycles()
+    {
+        return !empty($this->paymentCycles);
+    }
+
     public function setPaymentCycle($startDate)
     {
-        $enrolmentStartDate      = new \DateTime($startDate);
-        $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
-        for ($i = 0; $i <= (int) 24 / $this->paymentsFrequency->frequencyLength; $i++) {
-            if ($i !== 0) {
-                $paymentCycleStartDate     = $endDate->modify('First day of next month');
-            }
-            $paymentCycle              = new PaymentCycle();
-            $paymentCycle->enrolmentId = $this->id;
-            $paymentCycle->startDate   = $paymentCycleStartDate->format('Y-m-d');
-            $endDate = $paymentCycleStartDate->modify('+' . $this->paymentsFrequency->frequencyLength . ' month, -1 day');
-            $paymentCycle->id          = null;
-            $paymentCycle->isNewRecord = true;
-            $paymentCycle->endDate     = $endDate->format('Y-m-d');
-            if ((new \DateTime($this->course->endDate))->format('Y-m-d') < $paymentCycle->endDate) {
-                $paymentCycle->endDate = (new \DateTime($this->course->endDate))->format('Y-m-t');
-            }
-            if ((new \DateTime($this->course->endDate))->format('Y-m-d') > $paymentCycle->startDate) {
-                $paymentCycle->save();
+        if (!$this->hasPaymentCycles()) {
+            $enrolmentStartDate      = new \DateTime($startDate);
+            $paymentCycleStartDate   = \DateTime::createFromFormat('Y-m-d', $enrolmentStartDate->format('Y-m-1'));
+            for ($i = 0; $i <= (int) 24 / $this->paymentsFrequency->frequencyLength; $i++) {
+                if ($i !== 0) {
+                    $paymentCycleStartDate     = $endDate->modify('First day of next month');
+                }
+                $paymentCycle              = new PaymentCycle();
+                $paymentCycle->enrolmentId = $this->id;
+                $paymentCycle->startDate   = $paymentCycleStartDate->format('Y-m-d');
+                $endDate = $paymentCycleStartDate->modify('+' . $this->paymentsFrequency->frequencyLength . ' month, -1 day');
+                $paymentCycle->id          = null;
+                $paymentCycle->isNewRecord = true;
+                $paymentCycle->endDate     = $endDate->format('Y-m-d');
+                if ((new \DateTime($this->course->endDate))->format('Y-m-d') < $paymentCycle->endDate) {
+                    $paymentCycle->endDate = (new \DateTime($this->course->endDate))->format('Y-m-t');
+                }
+                if ((new \DateTime($this->course->endDate))->format('Y-m-d') > $paymentCycle->startDate) {
+                    $paymentCycle->save();
+                }
             }
         }
+        return true;
     }
 
     public function hasExplodedLesson()

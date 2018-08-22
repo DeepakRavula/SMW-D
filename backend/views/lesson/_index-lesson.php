@@ -182,7 +182,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         bulkAction.setAction();
     });
 
-    $(document).on('click', '#substitute-teacher', function(){
+    $(document).off('click', '#substitute-teacher').on('click', '#substitute-teacher', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
         if ($.isEmptyObject(lessonIds)) {
             $('#index-error-notification').html("Choose any lessons to substitute teacher").fadeIn().delay(5000).fadeOut();
@@ -220,12 +220,11 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                     if (response.status) {
                         $('#modal-content').html(response.data);
                         $('#popup-modal').modal('show');
+                    } else {
+                        if (response.message) {
+                            $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                        }
                     }
-		    else {
-                                    if (response.message) {
-                                        $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
-                                    }
-                                }
                 }
             });
             return false;

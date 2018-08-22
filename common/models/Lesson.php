@@ -56,6 +56,7 @@ class Lesson extends \yii\db\ActiveRecord
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA = 2;
 
+    const SCENARIO_REVIEW_TEACHER = 'review-teacher';
     const SCENARIO_CREATE_GROUP = 'group-extra-lesson-create';
     const SCENARIO_SUBSTITUTE_TEACHER = 'substitute-teacher';
     const SCENARIO_LESSON_EDIT_ON_SCHEDULE = 'lesson-edit-schedule';
@@ -159,16 +160,18 @@ class Lesson extends \yii\db\ActiveRecord
                 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['date'], HolidayValidator::className(),
                 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE, self::SCENARIO_CREATE_GROUP,
-                self::SCENARIO_REVIEW, self::SCENARIO_EDIT, self::SCENARIO_EDIT_REVIEW_LESSON]],
+                self::SCENARIO_REVIEW, self::SCENARIO_EDIT, self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_REVIEW_TEACHER]],
             [['date'], StudentValidator::className(), 'on' => [self::SCENARIO_CREATE, self::SCENARIO_MERGE,
                 self::SCENARIO_GROUP_ENROLMENT_REVIEW]],
             [['programId','date', 'duration'], 'required', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_CREATE_GROUP]],
             ['date', TeacherEligibleValidator::className(), 'on' => [
                 self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT,
-                self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_LESSON_EDIT_ON_SCHEDULE]],
+                self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_LESSON_EDIT_ON_SCHEDULE, 
+                self::SCENARIO_REVIEW_TEACHER]],
             ['date', TeacherLessonOverlapValidator::className(), 'on' => [
                 self::SCENARIO_EDIT_REVIEW_LESSON, self::SCENARIO_EDIT, self::SCENARIO_CREATE_GROUP,
-                self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_LESSON_EDIT_ON_SCHEDULE]],
+                self::SCENARIO_MERGE, self::SCENARIO_REVIEW, self::SCENARIO_LESSON_EDIT_ON_SCHEDULE, 
+                self::SCENARIO_REVIEW_TEACHER]],
             [['date'], StudentValidator::className(), 'on' => [
                 self::SCENARIO_EDIT_REVIEW_LESSON,
                 self::SCENARIO_REVIEW, self::SCENARIO_EDIT], 'when' => function ($model, $attribute) {
@@ -1455,6 +1458,14 @@ class Lesson extends \yii\db\ActiveRecord
     public function getPaidStatus($enrolmentId) 
     {
         return $this->isOwing($enrolmentId) ? 'Unpaid' : 'Paid';
+    }
+
+    public function isHolidayLesson()
+    {
+        $holiday = Holiday::find()
+            ->andWhere(['DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')])
+            ->all();
+        return $holiday ? true : false;
     }
 
     public function hasPaymentRequest()

@@ -193,7 +193,7 @@ class StudentController extends BaseController
                 }
             }
         }
-        return $this->redirect(['lesson/review', 'courseId' => $courseModel->id, 'Enrolment[type]' => $courseDetail->isReverse ? Enrolment::TYPE_REVERSE : null, 
+        return $this->redirect(['lesson/review', 'LessonReview[courseId]' => $courseModel->id, 'LessonReview[EnrolmentType]' => $courseDetail->isReverse ? Enrolment::TYPE_REVERSE : null, 
             'LessonSearch[showAllReviewLessons]' => false]);
     }
 
