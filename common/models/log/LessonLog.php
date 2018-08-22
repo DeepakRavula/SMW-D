@@ -27,9 +27,10 @@ class LessonLog extends Log
         $log->locationId    = $lessonModel->enrolment->student->customer->userLocation->location_id;
         $studentIndex       = $lessonModel->enrolment->student->fullName;
         $studentPath        = Url::to(['/student/view', 'id' => $lessonModel->enrolment->student->id]);
+        $baseUrl = Yii::$app->request->hostInfo;
         if ($log->save()) {
             $this->addHistory($log, $lessonModel, $object);
-            $this->addLink($log, $studentIndex, $studentPath);
+            $this->addLink($log, $studentIndex, $studentPath, $baseUrl);
         }
     }
     public function addInvoice($event)
