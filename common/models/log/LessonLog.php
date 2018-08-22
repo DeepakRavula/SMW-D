@@ -15,7 +15,7 @@ class LessonLog extends Log
         $lessonModel        = $event->sender;
         $loggedUser         = end($event->data);
         $data               = Lesson::find(['id' => $lessonModel->id])->asArray()->one();
-        $message            = $loggedUser->publicIdentity.' created new lesson for {{'.$lessonModel->enrolment->student->fullName.'}}';
+        $message            = $loggedUser->publicIdentity.' created new extra lesson for {{'.$lessonModel->enrolment->student->fullName.'}}';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_LESSON]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
         $log                = new Log();
