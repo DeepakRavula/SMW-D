@@ -10,6 +10,8 @@ use common\models\User;
 use yii\db\Query;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use backend\models\UserForm;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 /**
  * This is the model class for table "location".
  *
@@ -47,6 +49,17 @@ class Location extends \yii\db\ActiveRecord
                 'attribute' => 'name',
                 //'slugAttribute' => slug,
             ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
+            ],
         ];
     }
 
@@ -64,7 +77,7 @@ class Location extends \yii\db\ActiveRecord
             [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code', 'royaltyValue', 'advertisementValue', 'email'], 'required'],
             [['email'], 'unique'],
             [['email'], 'email'],
-            [['slug', 'conversionDate', 'email', 'isDeleted'], 'safe'],
+            [['slug', 'conversionDate', 'email', 'isDeleted', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
             [['royaltyValue', 'advertisementValue'], 'number'],
             [['city_id', 'province_id', 'country_id'], 'integer'],
             [['name'], 'string', 'max' => 32],

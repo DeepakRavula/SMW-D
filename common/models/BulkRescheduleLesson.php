@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 
 /**
  * This is the model class for table "bulk_reschedule_lesson".
@@ -28,6 +30,7 @@ class BulkRescheduleLesson extends \yii\db\ActiveRecord
         return [
             [['lessonId'], 'required'],
             [['lessonId'], 'integer'],
+            [['createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
         ];
     }
 
@@ -39,6 +42,23 @@ class BulkRescheduleLesson extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'lessonId' => 'Lesson ID',
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
+            ],
         ];
     }
 }

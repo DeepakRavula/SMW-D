@@ -2,6 +2,8 @@
 
 namespace common\models;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 
 /**
  * This is the model class for table "blog".
@@ -32,7 +34,7 @@ class Blog extends \yii\db\ActiveRecord
             [['user_id'], 'integer'],
             [['title', 'content'], 'string'],
             [['title', 'content'], 'trim'],
-            [['date', 'isDeleted'], 'safe'],
+            [['date', 'isDeleted', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
         ];
     }
 
@@ -59,6 +61,17 @@ class Blog extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
+            ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
             ],
         ];
     }

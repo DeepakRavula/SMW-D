@@ -5,6 +5,8 @@ namespace common\models;
 use Yii;
 use common\models\query\ProgramQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 
 /**
  * This is the model class for table "program".
@@ -48,7 +50,7 @@ class Program extends \yii\db\ActiveRecord
             [['name'], 'string', 'min' => 3, 'max' => 255],
             [['rate'], 'number','numberPattern' => '/^\d+(.\d{1,2})?$/', 'message' => 'Maximum of 2 digits is allowed after decimal point.'],
             [['status'], 'integer'],
-            [['type', 'isDeleted'], 'safe'],
+            [['type', 'isDeleted', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
         ];
     }
 
@@ -76,6 +78,17 @@ class Program extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
+            ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
             ],
         ];
     }
