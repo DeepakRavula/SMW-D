@@ -16,7 +16,10 @@ class IntraEnrolledLessonValidator extends Validator
         $date->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));
         $date->modify('-1 second');
         $lessonEndTime = $date->format('H:i:s');
-        $lessonId = [$model->id, $model->lessonId];
+        $lessonId = [$model->id];
+        if ($model->lessonId) {
+            array_push($lessonId,$model->lessonId);
+        }
         $draftLessons = Lesson::find()
             ->andWhere(['courseId' => $model->courseId, 'isConfirmed' => false])
             ->andWhere(['NOT', ['id' => $lessonId]])

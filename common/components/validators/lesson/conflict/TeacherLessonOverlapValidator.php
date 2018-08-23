@@ -9,6 +9,7 @@ class TeacherLessonOverlapValidator extends Validator
 {
     public function validateAttribute($model, $attribute)
     {
+        
         if ($model->duration) {
             $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
             $lessonDate = (new \DateTime($model->date))->format('Y-m-d');
@@ -18,10 +19,13 @@ class TeacherLessonOverlapValidator extends Validator
             $date->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));
             $date->modify('-1 second');
             $lessonEndTime = $date->format('H:i:s');
-            $lessonId = [$model->id, $model->lessonId];
+            $lessonId = [$model->id];
+            if ($model->lessonId) {
+                array_push($lessonId,$model->lessonId);
+            }
             $teacherLessons = Lesson::find()
                 ->teacherLessons($locationId, $model->teacherId)
-                ->andWhere(['NOT', ['lesson.id' => $lessonId]])
+                ->andWhere(['NOT', ['in', 'lesson.id', $lessonId]])
                 ->isConfirmed()
                 ->present()
                 ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
