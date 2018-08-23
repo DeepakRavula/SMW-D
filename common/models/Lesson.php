@@ -696,7 +696,7 @@ class Lesson extends \yii\db\ActiveRecord
         if ($this->rootLesson && empty($this->colorCode)) {
             if ($this->isRescheduled()) {
                 $class = 'lesson-rescheduled';
-            } elseif ($this->rootLesson->teacherId !== $this->teacherId) {
+            } elseif ($this->rootLesson->teacherId !== $this->teacherId && !$this->bulkRescheduleLesson) {
                 $class = 'teacher-substituted';
             }
         }
