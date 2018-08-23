@@ -1,6 +1,8 @@
 <?php
 
 namespace common\models;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 
 /**
  * This is the model class for table "province".
@@ -32,6 +34,7 @@ class Province extends \yii\db\ActiveRecord
             [['name'], 'string', 'max' => 16],
             [['tax_rate'], 'compare', 'operator' => '>', 'compareValue' => 0],
             [['name'], 'trim'],
+            [['createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
         ];
     }
 
@@ -53,5 +56,22 @@ class Province extends \yii\db\ActiveRecord
     public function getCountry()
     {
         return $this->hasOne(Country::className(), ['id' => 'country_id']);
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
+            ],
+        ];
     }
 }

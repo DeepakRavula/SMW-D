@@ -7,6 +7,8 @@ use common\models\timelineEvent\TimelineEventStudent;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\models\query\StudentQuery;
 use common\models\Location;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 /**
  * This is the model class for table "student".
  *
@@ -55,7 +57,7 @@ class Student extends \yii\db\ActiveRecord
             [[ 'status'], 'integer'],
             [['birth_date'], 'date', 'format' => 'M d,Y', 'message' => 'Date format shoule be in M d,Y format',
                 'except' => [self::SCENARIO_MERGE, self::SCENARIO_CUSTOMER_MERGE]],
-            [['customer_id', 'isDeleted', 'gender'], 'safe'],
+            [['customer_id', 'isDeleted', 'gender', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
         ];
     }
 
@@ -77,7 +79,18 @@ class Student extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
-            ]
+            ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
+            ],
         ];
     }
 

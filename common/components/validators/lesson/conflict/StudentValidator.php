@@ -30,7 +30,10 @@ class StudentValidator extends Validator
             $date->add(new \DateInterval('PT' . $lessonDuration[0] . 'H' . $lessonDuration[1] . 'M'));
             $date->modify('-1 second');
             $lessonEndTime = $date->format('H:i:s');
-            $lessonId = [$model->id, $model->lessonId];
+            $lessonId = [$model->id];
+            if ($model->lessonId) {
+                array_push($lessonId, $model->lessonId);
+            }
             $studentLessons = Lesson::find()
                 ->studentLessons($locationId, $studentId)
                 ->andWhere(['NOT', ['lesson.id' => $lessonId]])
