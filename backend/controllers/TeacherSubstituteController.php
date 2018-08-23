@@ -225,13 +225,20 @@ class TeacherSubstituteController extends BaseController
             ]);
             if (Yii::$app->request->isPost) {
                 $model->load(Yii::$app->request->post());
-                $model->substitute();
-                
-                $response = [
-                    'status' => true,
-                    'url' => Url::to(['/lesson/review', 'LessonReview[enrolmentIds]' => $model->enrolmentIds, 
-                        'LessonReview[changesFrom]' => $model->changesFrom]),
-                ];
+                if ($model->validate()) {
+                    $model->substitute();
+                    $response = [
+                        'status' => true,
+                        'url' => Url::to(['/lesson/review', 'LessonReview[enrolmentIds]' => $model->enrolmentIds, 
+                            'LessonReview[changesFrom]' => $model->changesFrom]),
+                    ];  
+                } else {
+                    $response = [
+                        'status' => false,
+                        'errors' => ActiveForm::validate($model),
+                    ];  
+                }
+               
             } else {
                 $response = [
                     'status' => true,
