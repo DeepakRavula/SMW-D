@@ -5,6 +5,8 @@ namespace common\models;
 use Yii;
 use common\models\query\TeacherUnavailabilityQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 
 /**
  * This is the model class for table "classroom_unavailability".
@@ -45,7 +47,7 @@ class TeacherUnavailability extends \yii\db\ActiveRecord
             [['dateRange'], 'required'],
             [['teacherId'], 'integer'],
             [['fromDate', 'toDate'], 'safe'],
-            [['fromTime', 'toTime', 'reason'], 'safe'],
+            [['fromTime', 'toTime', 'reason', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
         ];
     }
 
@@ -74,6 +76,17 @@ class TeacherUnavailability extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
+            ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
             ],
         ];
     }

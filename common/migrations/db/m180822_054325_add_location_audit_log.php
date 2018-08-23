@@ -36,11 +36,6 @@ class m180822_054325_add_location_audit_log extends Migration
 		$this->addColumn('country', 'updatedOn', $this->timeStamp()->defaultValue(null));
 		$this->addColumn('country', 'createdByUserId', $this->integer()->unsigned()->notNull());
         $this->addColumn('country', 'updatedByUserId', $this->integer()->unsigned()->notNull());
-        $this->addColumn('credit_usage', 'createdOn', $this->timeStamp()->defaultValue(null));
-		$this->addColumn('credit_usage', 'updatedOn', $this->timeStamp()->defaultValue(null));
-		$this->addColumn('credit_usage', 'createdByUserId', $this->integer()->unsigned()->notNull());
-		$this->addColumn('credit_usage', 'updatedByUserId', $this->integer()->unsigned()->notNull());
-        $this->addColumn('email_template', 'updatedByUserId', $this->integer()->unsigned()->notNull());
         $this->addColumn('program', 'createdOn', $this->timeStamp()->defaultValue(null));
 		$this->addColumn('program', 'updatedOn', $this->timeStamp()->defaultValue(null));
 		$this->addColumn('program', 'createdByUserId', $this->integer()->unsigned()->notNull());
@@ -49,10 +44,6 @@ class m180822_054325_add_location_audit_log extends Migration
 		$this->addColumn('province', 'updatedOn', $this->timeStamp()->defaultValue(null));
 		$this->addColumn('province', 'createdByUserId', $this->integer()->unsigned()->notNull());
 		$this->addColumn('province', 'updatedByUserId', $this->integer()->unsigned()->notNull());
-		$this->addColumn('release_notes', 'createdOn', $this->timeStamp()->defaultValue(null));
-		$this->addColumn('release_notes', 'updatedOn', $this->timeStamp()->defaultValue(null));
-		$this->addColumn('release_notes', 'createdByUserId', $this->integer()->unsigned()->notNull());
-		$this->addColumn('release_notes', 'updatedByUserId', $this->integer()->unsigned()->notNull());
 		$this->addColumn('reminder_note', 'createdOn', $this->timeStamp()->defaultValue(null));
 		$this->addColumn('reminder_note', 'updatedOn', $this->timeStamp()->defaultValue(null));
 		$this->addColumn('reminder_note', 'createdByUserId', $this->integer()->unsigned()->notNull());
@@ -71,8 +62,6 @@ class m180822_054325_add_location_audit_log extends Migration
         $this->addColumn('teacher_unavailability', 'updatedByUserId', $this->integer()->unsigned()->notNull());    
         $this->addColumn('test_email', 'updatedOn', $this->timeStamp()->defaultValue(null));
 		$this->addColumn('test_email', 'updatedByUserId', $this->integer()->unsigned()->notNull());
-        $this->addColumn('user', 'createdByUserId', $this->integer()->unsigned()->notNull());
-        $this->addColumn('user', 'updatedByUserId', $this->integer()->unsigned()->notNull());
     }
 
     /**

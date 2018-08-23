@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 /**
  * This is the model class for table "email-object".
  *
@@ -26,6 +28,7 @@ class TestEmail extends \yii\db\ActiveRecord
         return [
             [['email'], 'required'],
             [['email'], 'trim'],
+            [['updatedByUserId', 'updatedOn',], 'safe'],
         ];
     }
 
@@ -37,6 +40,21 @@ class TestEmail extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'email' => 'Email',
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'updatedByAttribute' => 'updatedByUserId'
+            ],
         ];
     }
 }
