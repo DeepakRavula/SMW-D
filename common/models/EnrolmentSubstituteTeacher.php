@@ -32,7 +32,13 @@ class EnrolmentSubstituteTeacher extends Model
             [['teacherId', 'changesFrom'], 'required', 'on' => self::SCENARIO_CHANGE],
             ['enrolmentIds', 'validateSameTeacher'],
             ['enrolmentIds', 'validateSameProgram'],
-            ['changesFrom', 'validatePastDate'],
+            ['changesFrom', function ($attribute, $params) {
+                $currentDate = (new \DateTime());
+                $changesFrom = (new \DateTime($this->changesFrom));
+                if ($currentDate > $changesFrom) {
+                    return $this->addError($attribute, 'From date must be less than or equal to "To Date"');
+                }
+            }, 'on' => self::SCENARIO_CHANGE],
         ];
     }
 
@@ -58,14 +64,6 @@ class EnrolmentSubstituteTeacher extends Model
         }
     }
 
-    public function validatePastDate($attributes)
-    {
-        $currentDate = new \DateTime();
-        die;
-            if ($this->changesFrom < $currentDate) {
-                $this->addError($attributes, "Schedule can be changed from past dates!");
-            }
-    }
 
     public function validateSameProgram($attributes)
     {
