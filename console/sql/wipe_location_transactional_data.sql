@@ -8,7 +8,8 @@ LEFT JOIN log_history lh ON lh.`logId`= lo.`id`
 LEFT JOIN log_link ll ON ll.`logId`= lo.`id`
 where l.id = :locationToWipe;
 
-DELETE   pfi, pfii, pfli, pfil FROM proforma_invoice pfi
+DELETE   pfi, pfii, pfli, n4, pfil FROM proforma_invoice pfi
+LEFT JOIN note n4 ON n4.`instanceId`= pfi.`id` AND n4.`instanceType` = 5
 LEFT JOIN proforma_line_item pfli ON pfli.`proformaInvoiceId`= pfi.`id`
 LEFT JOIN proforma_item_invoice pfii ON pfii.`proformaLineItemId`= pfli.`id`
 LEFT JOIN proforma_item_lesson pfil ON pfil.`proformaLineItemId`= pfli.`id`
@@ -19,8 +20,9 @@ LEFT JOIN classroom_unavailability cu ON cu.`classroomId`= cl.`id`
 LEFT JOIN teacher_room tr ON tr.`classroomId`= cl.`id`
 where cl.locationId = :locationToWipe;
 
-DELETE   ul, u, up, ut, uc, uph, ue, ua, cd, py, cu3, cu4, t3, cpp, rbacaa, s, er, q, tu, tad  FROM user_location ul
+DELETE   ul, u, up, ut, uc, uph, ue, ua, cd, py, n1, n2, cu3, cu4, t3, cpp, rbacaa, s, er, q, tu, tad  FROM user_location ul
 LEFT JOIN user u ON u.`id`= ul.`user_id`
+LEFT JOIN note n2 ON n2.`instanceId`= u.`id` AND n2.`instanceType` = 2
 LEFT JOIN payment py ON py.`user_id`= ul.`user_id`
 LEFT JOIN credit_usage cu3 ON cu3.`credit_payment_id`= py.`id`
 LEFT JOIN credit_usage cu4 ON cu4.`debit_payment_id`= py.`id`
@@ -35,13 +37,15 @@ LEFT JOIN user_address ua ON ua.`userContactId`= uc.`id`
 LEFT JOIN customer_discount cd ON cd.`customerId`= u.`id`
 LEFT JOIN customer_payment_preference cpp ON cpp.`userId`= u.`id`
 LEFT JOIN student s ON s.`customer_id`= u.`id`
+LEFT JOIN note n1 ON n1.`instanceId`= s.`id` AND n1.`instanceType` = 1
 LEFT JOIN exam_result er ON er.`studentId`= s.`id`
 LEFT JOIN qualification q ON q.`teacher_id`= u.`id`
 LEFT JOIN teacher_unavailability tu ON tu.`teacherId`= u.`id`
 LEFT JOIN teacher_availability_day tad ON tad.`teacher_location_id`= ul.`location_id`
 where ul.location_id = :locationToWipe;
 
-DELETE   iv, ip, ili, iil, iipcl, iie, pfpf, t2, ilid, ir FROM invoice iv
+DELETE   iv, ip, ili, iil, iipcl, iie, n3, pfpf, t2, ilid, ir FROM invoice iv
+LEFT JOIN note n3 ON n3.`instanceId`= iv.`id` AND n3.`instanceType` = 4
 LEFT JOIN proforma_payment_frequency pfpf ON pfpf.`invoiceId`= iv.`id`
 LEFT JOIN invoice_line_item ili ON ili.`invoice_id`= iv.`id`
 LEFT JOIN invoice_item_lesson iil ON iil.`invoiceLineItemId`= ili.`id`
@@ -76,8 +80,9 @@ LEFT JOIN lesson le ON le.`courseId`= co.`id`
 LEFT JOIN lesson_discount ld ON ld.`lessonId`= le.`id`
 where co.locationId = :locationToWipe;
 
-DELETE lp  FROM course co
+DELETE lp, n5  FROM course co
 LEFT JOIN lesson le ON le.`courseId`= co.`id`
+LEFT JOIN note n5 ON n5.`instanceId`= le.`id` AND n5.`instanceType` = 3
 LEFT JOIN lesson_payment lp ON lp.`lessonId`= le.`id`
 where co.locationId = :locationToWipe;
 

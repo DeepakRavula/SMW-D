@@ -55,8 +55,7 @@ class InvoiceItemLesson extends \yii\db\ActiveRecord
 
     public function getInvoiceLineItem()
     {
-        return $this->hasOne(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId'])
-                ->onCondition(['invoice_line_item.item_type_id' => ItemType::TYPE_PRIVATE_LESSON]);
+        return $this->hasOne(InvoiceLineItem::className(), ['id' => 'invoiceLineItemId']);
     }
 
     public function getLineItemEnrolment()

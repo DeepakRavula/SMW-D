@@ -28,6 +28,17 @@ class LocationController extends Controller
         $migration = new Migration();
         return $migration->execute(file_get_contents($file), [':locationToWipe' => $this->locationId]);
     }
+    
+    public function actionWipeUnlinkedTransactionalData()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        
+        $file = Yii::getAlias('@console') . '/sql/wipe_unlinked_transactional_data.sql';
+        
+        $migration = new Migration();
+        return $migration->execute(file_get_contents($file));
+    }
 
     public function actionWipeCustomers()
     {
