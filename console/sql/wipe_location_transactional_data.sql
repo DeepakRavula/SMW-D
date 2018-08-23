@@ -41,7 +41,7 @@ LEFT JOIN teacher_unavailability tu ON tu.`teacherId`= u.`id`
 LEFT JOIN teacher_availability_day tad ON tad.`teacher_location_id`= ul.`location_id`
 where ul.location_id = :locationToWipe;
 
-DELETE   iv, ip, ili, iil, iipcl, iie, pfpf, ilid, ir FROM invoice iv
+DELETE   iv, ip, ili, iil, iipcl, iie, pfpf, t2, ilid, ir FROM invoice iv
 LEFT JOIN proforma_payment_frequency pfpf ON pfpf.`invoiceId`= iv.`id`
 LEFT JOIN invoice_line_item ili ON ili.`invoice_id`= iv.`id`
 LEFT JOIN invoice_item_lesson iil ON iil.`invoiceLineItemId`= ili.`id`
@@ -50,10 +50,10 @@ LEFT JOIN invoice_item_payment_cycle_lesson iipcl ON iipcl.`invoiceLineItemId`= 
 LEFT JOIN invoice_line_item_discount ilid ON ilid.`invoiceLineItemId`= ili.`id`
 LEFT JOIN invoice_payment ip ON ip.`invoice_id`= iv.`id`
 LEFT JOIN invoice_reverse ir ON ir.`invoiceId`= iv.`id`
-LEFT JOIN transaction t2 ON t2.`id`= p.`transactionId`
+LEFT JOIN transaction t2 ON t2.`id`= iv.`transactionId`
 where iv.location_id = :locationToWipe;
 
-DELETE   co, ce, cg, cpr, cs, e, ed, pc, brl, pcl, le, ld, lp, lsu, lh1, lh2, pl  FROM course co
+DELETE ce, cg, cpr, cs, e, ed, pc, pcl  FROM course co
 LEFT JOIN course_extra ce ON ce.`courseId`= co.`id`
 LEFT JOIN course_group cg ON cg.`courseId`= co.`id`
 LEFT JOIN course_program_rate cpr ON cpr.`courseId`= co.`id`
@@ -62,14 +62,33 @@ LEFT JOIN enrolment e ON e.`courseId`= co.`id`
 LEFT JOIN enrolment_discount ed ON ed.`enrolmentId`= e.`id`
 LEFT JOIN payment_cycle pc ON pc.`enrolmentId`= e.`id`
 LEFT JOIN payment_cycle_lesson pcl ON pcl.`paymentCycleId`= pc.`id`
+where co.locationId = :locationToWipe;
+
+DELETE brl, lsu, pl  FROM course co
 LEFT JOIN lesson le ON le.`courseId`= co.`id`
 LEFT JOIN bulk_reschedule_lesson brl ON brl.`lessonId`= le.`id`
-LEFT JOIN lesson_discount ld ON ld.`lessonId`= le.`id`
-LEFT JOIN lesson_payment lp ON lp.`lessonId`= le.`id`
 LEFT JOIN lesson_split_usage lsu ON lsu.`lessonId`= le.`id`
+LEFT JOIN private_lesson pl ON pl.`lessonId`= le.`id`
+where co.locationId = :locationToWipe;
+
+DELETE ld  FROM course co
+LEFT JOIN lesson le ON le.`courseId`= co.`id`
+LEFT JOIN lesson_discount ld ON ld.`lessonId`= le.`id`
+where co.locationId = :locationToWipe;
+
+DELETE lp  FROM course co
+LEFT JOIN lesson le ON le.`courseId`= co.`id`
+LEFT JOIN lesson_payment lp ON lp.`lessonId`= le.`id`
+where co.locationId = :locationToWipe;
+
+DELETE lh1, lh2  FROM course co
+LEFT JOIN lesson le ON le.`courseId`= co.`id`
 LEFT JOIN lesson_hierarchy lh1 ON lh1.`lessonId`= le.`id`
 LEFT JOIN lesson_hierarchy lh2 ON lh2.`childLessonId`= le.`id`
-LEFT JOIN private_lesson pl ON pl.`lessonId`= le.`id`
+where co.locationId = :locationToWipe;
+
+DELETE co, le  FROM course co
+LEFT JOIN lesson le ON le.`courseId`= co.`id`
 where co.locationId = :locationToWipe;
 
 SET FOREIGN_KEY_CHECKS = 1;

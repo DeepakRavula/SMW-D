@@ -20,6 +20,9 @@ class LocationController extends Controller
     
     public function actionWipeTransactionalData()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        
         $file = Yii::getAlias('@console') . '/sql/wipe_location_transactional_data.sql';
         
         $migration = new Migration();
@@ -28,6 +31,8 @@ class LocationController extends Controller
 
     public function actionWipeCustomers()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $customers = User::find()
             ->excludeWalkin()
             ->location($this->locationId)
