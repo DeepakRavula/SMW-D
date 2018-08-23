@@ -262,18 +262,18 @@ class Course extends \yii\db\ActiveRecord
         if (empty($this->type)) {
             $this->type = self::TYPE_REGULAR;
         }
-        if ((int) $this->program->isGroup() && !$this->isExtra()) {
+        if ($this->program->isGroup() && !$this->isExtra()) {
             $startDate = new \DateTime($this->startDate);
             $this->startDate = (new \DateTime($this->startDate))->format('Y-m-d H:i:s');
             $weeks = $this->weeksCount;
             $endDate = $startDate->add(new \DateInterval('P' . $weeks .'W'));
             $this->endDate = $endDate->format('Y-m-d H:i:s');
         } else {
-            $lessonsCount   =     $this->lessonsCount;
-            if($this->isExtra()){
+            $lessonsCount = $this->lessonsCount;
+            if ($this->isExtra()) {
                 $endDate = (new Carbon($this->startDate))->addMonths(23);
-            }else{
-            $endDate = (new Carbon($this->startDate))->add(new \DateInterval('P' . $lessonsCount .'W'));
+            } else {
+                $endDate = (new Carbon($this->startDate))->add(new \DateInterval('P' . $lessonsCount .'W'));
             }
             $startDate = new \DateTime($this->startDate);
             $this->startDate = $startDate->format('Y-m-d H:i:s');
@@ -297,7 +297,7 @@ class Course extends \yii\db\ActiveRecord
             $courseProgramRate->applyFullDiscount = false;
             $courseProgramRate->save();
         }
-        if ((int) $this->program->isGroup() && !$this->isExtra()) {
+        if ($this->program->isGroup() && !$this->isExtra()) {
             $groupCourse = new CourseGroup();
             $groupCourse->courseId = $this->id;
             $groupCourse->weeksCount = $this->weeksCount;

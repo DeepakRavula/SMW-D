@@ -15,7 +15,7 @@ use yii\helpers\Url;
 ?>
 <?php $form = ActiveForm::begin([
     'id' => 'modal-form',
-    'action' => Url::to(['lesson/update-field', 'id' => $model->id]),
+    'action' => Url::to(['lesson/update-field', 'id' => $model->id, 'LessonReview[enrolmentIds]' => $lessonReview->enrolmentIds]),
     'enableAjaxValidation' => true,
     'enableClientValidation' => false,
     'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id]),
@@ -115,13 +115,11 @@ use yii\helpers\Url;
     });
     
     $(document).off('click', '.modal-save-all').on('click', '.modal-save-all', function() {
-        
         if ($('#lesson-applycontext').length !== 0) {
             $('#lesson-applycontext').val($(this).val());
         }
-     
         $.ajax({
-            url: '<?= Url::to(['lesson/update-field', 'id' => $model->id]); ?>',
+            url: '<?= Url::to(['lesson/update-field', 'id' => $model->id, 'LessonReview[enrolmentIds]' => $lessonReview->enrolmentIds]); ?>',
             type: 'post',
             dataType: "json",
             data: $('#modal-form').serialize(),

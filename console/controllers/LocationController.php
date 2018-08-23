@@ -14,7 +14,7 @@ class LocationController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'wipe-transactional-data' ? ['locationId'] : []
+            $actionID == 'wipe-transactional-data' || 'wipe-customers' ? ['locationId'] : []
         );
     }
     
@@ -30,7 +30,7 @@ class LocationController extends Controller
     {
         $customers = User::find()
             ->excludeWalkin()
-            ->location(8)
+            ->location($this->locationId)
             ->all();
         foreach ($customers as $customer) {
             $customer->delete();

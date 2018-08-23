@@ -214,7 +214,7 @@ class CourseController extends BaseController
                         $transaction->commit();
                         $model->createLessons();
                         $model->trigger(Course::EVENT_CREATE);
-                        return $this->redirect(['lesson/review', 'courseId' => $model->id]);
+                        return $this->redirect(['lesson/review', 'LessonReview[courseId]' => $model->id]);
                     }
                 } catch (Exception $e) {
                     $transaction->rollBack();

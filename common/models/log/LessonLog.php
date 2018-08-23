@@ -15,7 +15,7 @@ class LessonLog extends Log
         $lessonModel        = $event->sender;
         $loggedUser         = end($event->data);
         $data               = Lesson::find(['id' => $lessonModel->id])->asArray()->one();
-        $message            = $loggedUser->publicIdentity.' created new lesson for {{'.$lessonModel->enrolment->student->fullName.'}}';
+        $message            = $loggedUser->publicIdentity.' created new extra lesson for {{'.$lessonModel->enrolment->student->fullName.'}}';
         $object             = LogObject::findOne(['name' => LogObject::TYPE_LESSON]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
         $log                = new Log();
@@ -27,9 +27,10 @@ class LessonLog extends Log
         $log->locationId    = $lessonModel->enrolment->student->customer->userLocation->location_id;
         $studentIndex       = $lessonModel->enrolment->student->fullName;
         $studentPath        = Url::to(['/student/view', 'id' => $lessonModel->enrolment->student->id]);
+        $baseUrl = Yii::$app->request->hostInfo;
         if ($log->save()) {
             $this->addHistory($log, $lessonModel, $object);
-            $this->addLink($log, $studentIndex, $studentPath);
+            $this->addLink($log, $studentIndex, $studentPath, $baseUrl);
         }
     }
     public function addInvoice($event)

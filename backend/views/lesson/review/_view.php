@@ -2,6 +2,7 @@
 
 use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\widgets\Pjax;
 
 ?>
 
@@ -50,19 +51,17 @@ $columns = [
 	<?= $this->render('_show-all', [
         'searchModel' => $searchModel
     ]);?>
-	<?php yii\widgets\Pjax::begin([
+	<?php Pjax::begin([
         'id' => 'review-lesson-listing',
         'timeout' => 6000,
     ]) ?>
-	<?=
-    GridView::widget([
+	<?= GridView::widget([
         'dataProvider' => $lessonDataProvider,
         'columns' => $columns,
-                'summary' => false,
-                'emptyText' => 'No conflicts here! You are ready to confirm!',
-    ]);
-    ?>
-<?php \yii\widgets\Pjax::end(); ?>
+        'summary' => false,
+        'emptyText' => 'No conflicts here! You are ready to confirm!',
+    ]); ?>
+<?php Pjax::end(); ?>
 </div>
 	
 	
