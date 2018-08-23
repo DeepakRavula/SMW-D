@@ -32,7 +32,7 @@ class StudentValidator extends Validator
             $lessonEndTime = $date->format('H:i:s');
             $lessonId = [$model->id];
             if ($model->lessonId) {
-                array_push($lessond, $model->lessonId);
+                array_push($lessonId, $model->lessonId);
             }
             $studentLessons = Lesson::find()
                 ->studentLessons($locationId, $studentId)
