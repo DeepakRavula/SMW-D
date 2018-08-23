@@ -540,7 +540,7 @@ class LessonController extends BaseController
                 ->notConfirmed()
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->all();
-            foreach ( $draftLessons as $i => $lesson) {
+            foreach ($draftLessons as $i => $lesson) {
                 $lesson->lessonId = $oldLessons[$i]->id;
             }
         }

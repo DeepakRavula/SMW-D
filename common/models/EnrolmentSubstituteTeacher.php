@@ -31,7 +31,14 @@ class EnrolmentSubstituteTeacher extends Model
         return [
             [['teacherId', 'changesFrom'], 'required', 'on' => self::SCENARIO_CHANGE],
             ['enrolmentIds', 'validateSameTeacher'],
-            ['enrolmentIds', 'validateSameProgram']
+            ['enrolmentIds', 'validateSameProgram'],
+            ['changesFrom', function ($attribute, $params) {
+                $currentDate = (new \DateTime());
+                $changesFrom = (new \DateTime($this->changesFrom));
+                if ($currentDate > $changesFrom) {
+                    return $this->addError($attribute, 'From date must be less than or equal to "To Date"');
+                }
+            }, 'on' => self::SCENARIO_CHANGE],
         ];
     }
 
@@ -56,6 +63,7 @@ class EnrolmentSubstituteTeacher extends Model
             }
         }
     }
+
 
     public function validateSameProgram($attributes)
     {
