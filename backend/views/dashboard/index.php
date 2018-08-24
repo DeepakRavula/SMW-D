@@ -160,7 +160,7 @@ $this->params['action-button'] = $this->render('_search', ['model' => $searchMod
 	<div class="col-md-4">
 		<div class="box box-success">
             <div class="box-header with-border">
-				<h3 class="box-title">Instruction Hours</h3>
+				<h3 class="box-title">Instruction Hours(<?= $instructionHoursCount; ?>)</h3>
 				<div class="box-tools pull-right">
 					<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
 					</button>
