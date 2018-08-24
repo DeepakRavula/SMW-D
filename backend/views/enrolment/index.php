@@ -81,6 +81,12 @@ $this->params['show-all'] = $this->render('_button', [
                 'opens' => 'left'
             ]
         ]
+    ],
+    [
+        'label' => 'End Date',
+        'value' => function ($data) {
+            return Yii::$app->formatter->asDate($data->course->endDate);
+        },
     ]
 ]; ?>
 
