@@ -115,6 +115,8 @@ use yii\helpers\Url;
     });
     
     $(document).off('click', '.modal-save-all').on('click', '.modal-save-all', function() {
+        $('#modal-spinner').show();
+        modal.disableButtons();
         if ($('#lesson-applycontext').length !== 0) {
             $('#lesson-applycontext').val($(this).val());
         }

@@ -316,9 +316,10 @@ class LessonController extends BaseController
             ->notDeleted()
             ->andWhere(['courseId' => $course->id])
             ->notConfirmed()
-            ->scheduled()
+            ->notCanceled()
             ->all();
         $conflictedLessons = $model->getConflicts($lessons);
+        $lessons = [];
         if (!empty($conflictedLessons['lessonIds'])) {
             $lessons = Lesson::find()
                 ->orderBy(['lesson.date' => SORT_ASC])
@@ -330,7 +331,7 @@ class LessonController extends BaseController
 
     public function resolveSingleLesson($lesson, $oldDate)
     {
-        if (! empty($lesson->date)) {
+        if ($lesson->date) {
             $lesson->setScenario(Lesson::SCENARIO_EDIT_REVIEW_LESSON);
             $lesson->date = (new \DateTime($lesson->date))->format('Y-m-d H:i:s');
         } else {
