@@ -108,7 +108,7 @@ public function behaviors()
 
         $completedPrograms = [];
         $programs = Lesson::find()
-                    ->select(['sum(lesson.duration) as hours, program.name as program_name, lesson.type'])
+                    ->select(['sum(TIME_TO_SEC(lesson.duration)) as hours, program.name as program_name, lesson.type'])
                     ->joinWith(['course' => function ($query) {
                         $query->joinWith('program')
                             ->confirmed();
@@ -123,7 +123,7 @@ public function behaviors()
         foreach ($programs as $program) {
             $completedProgram = [];
             $completedProgram['name'] = $program->program_name;
-            $completedProgram['y'] = $program->hours / 6000;
+            $completedProgram['y'] = $program->hours / 3600;
             array_push($completedPrograms, $completedProgram);
         }
 
@@ -187,9 +187,10 @@ public function behaviors()
             ->notCanceled()
             ->isConfirmed()
             ->notDeleted()
-            ->location($locationId) 
-            ->sum('lesson.duration');
-        $instructionHoursCount = $instructionHours / 6000;
+            ->location($locationId)
+            ->sum('TIME_TO_SEC(lesson.duration)');
+        $instructionHoursCount = $instructionHours / 3600;
+        
         return $this->render('index', [
             'searchModel' => $searchModel,
             'enrolments' => $enrolments,
