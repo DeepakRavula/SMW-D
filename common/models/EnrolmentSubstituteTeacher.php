@@ -33,10 +33,10 @@ class EnrolmentSubstituteTeacher extends Model
             ['enrolmentIds', 'validateSameTeacher'],
             ['enrolmentIds', 'validateSameProgram'],
             ['changesFrom', function ($attribute, $params) {
-                $currentDate = (new \DateTime());
-                $changesFrom = (new \DateTime($this->changesFrom));
+                $currentDate = (new \DateTime())->format('Y-m-d');
+                $changesFrom = (new \DateTime($this->changesFrom))->format('Y-m-d');
                 if ($currentDate > $changesFrom) {
-                    return $this->addError($attribute, 'From date must be less than or equal to "To Date"');
+                    return $this->addError($attribute, 'Effect from cannot be in past date');
                 }
             }, 'on' => self::SCENARIO_CHANGE],
         ];
