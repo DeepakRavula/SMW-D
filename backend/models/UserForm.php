@@ -160,7 +160,12 @@ class UserForm extends Model
             $isNewRecord = $model->getIsNewRecord();
             $model->username = $this->username;
             if ($isNewRecord) {
-                $model->status = User::STATUS_ACTIVE;
+                if ($this->roles == User::ROLE_CUSTOMER) {
+                    $status = User::STATUS_NOT_ACTIVE;
+                } else {
+                    $status = User::STATUS_ACTIVE;
+                }
+                $model->status = $status;
             } else {
                 $model->status = $this->status;
             }
