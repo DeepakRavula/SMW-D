@@ -19,6 +19,9 @@ class EnrolmentSearch extends Enrolment
     public $student;
     public $user_profile;
     public $teacher;
+    public $enddate;
+    public $endBeginDate;
+    public $endEndDate;
     public $startdate;
     public $startBeginDate;
     public $startEndDate;
@@ -31,8 +34,8 @@ class EnrolmentSearch extends Enrolment
     {
         return [
             [['id', 'courseId', 'studentId', 'isDeleted'], 'integer'],
-            [['showAllEnrolments','program','course','student','startdate','teacher','startBeginDate',
-                            'startEndDate','studentView','studentId'], 'safe']
+            [['showAllEnrolments', 'program', 'course', 'student', 'startdate', 'teacher', 'endEndDate',  
+            'startBeginDate', 'startEndDate', 'studentView', 'studentId', 'enddate', 'endBeginDate'], 'safe']
         ];
     }
 
@@ -55,8 +58,8 @@ class EnrolmentSearch extends Enrolment
     public function search($params)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-         $currentdate= $currentDate = new \DateTime();
-       $currentDate = $currentdate->format('Y-m-d');
+        $currentdate = $currentDate = new \DateTime();
+        $currentDate = $currentdate->format('Y-m-d');
         $query = Enrolment::find()
             ->joinWith(['course' => function ($query) use ($locationId) {
                 $query->location($locationId)
@@ -65,8 +68,8 @@ class EnrolmentSearch extends Enrolment
             ->notDeleted()
             ->isConfirmed()
             ->isRegular();
-             if ($this->studentView) {
-                 if (!$this->showAllEnrolments) {
+        if ($this->studentView) {
+            if (!$this->showAllEnrolments) {
                 $query->andWhere(['>=', 'course.endDate', $currentDate]);
             } 
             $query->andWhere(['enrolment.studentId' => $this->studentId]);
@@ -85,24 +88,28 @@ class EnrolmentSearch extends Enrolment
             'attributes' => [
                 'program' => [
                     'asc' => ['p.name' => SORT_ASC],
-                    'desc' => ['p.name' => SORT_DESC],
+                    'desc' => ['p.name' => SORT_DESC]
                 ],
                 'student' => [
                     'asc' => ['student.first_name' => SORT_ASC],
-                    'desc' => ['student.first_name' => SORT_DESC],
+                    'desc' => ['student.first_name' => SORT_DESC]
                 ],
                 'teacher' => [
                     'asc' => ['up.firstname' => SORT_ASC],
-                    'desc' => ['up.firstname' => SORT_DESC],
+                    'desc' => ['up.firstname' => SORT_DESC]
                 ],
-		'startdate' => [
+		        'startdate' => [
                     'asc' => ['course.startDate' => SORT_ASC],
-                    'desc' => ['course.startDate' => SORT_DESC],
+                    'desc' => ['course.startDate' => SORT_DESC]
+                ],
+                'enddate' => [
+                    'asc' => ['course.endDate' => SORT_ASC],
+                    'desc' => ['course.endDate' => SORT_DESC]
                 ]
             ]
         ]);
-         $dataProvider->sort->defaultOrder = [
-            'program' => SORT_ASC,
+        $dataProvider->sort->defaultOrder = [
+            'program' => SORT_ASC
         ];
         $query->andFilterWhere(['like', 'p.name', $this->program]);
         $query->andFilterWhere(['or', ['like', 'student.first_name', trim($this->student)],['like', 'student.last_name', trim($this->student)]]);
@@ -113,8 +120,15 @@ class EnrolmentSearch extends Enrolment
                     (new \DateTime($this->startBeginDate))->format('Y-m-d'),
                     (new \DateTime($this->startEndDate))->format('Y-m-d')]);
         }
+
+        if ($this->enddate) {
+            list($this->endBeginDate, $this->endEndDate) = explode(' - ', $this->enddate);
+            $query->andWhere(['between', 'DATE(course.endDate)',
+                    (new \DateTime($this->endBeginDate))->format('Y-m-d'),
+                    (new \DateTime($this->endEndDate))->format('Y-m-d')]);
+        }
        
-        if (! $this->showAllEnrolments) {
+        if (!$this->showAllEnrolments) {
             $query->andWhere(['>=', 'DATE(course.endDate)', (new \DateTime())->format('Y-m-d')])
                 ->isConfirmed()
                 ->isRegular();
