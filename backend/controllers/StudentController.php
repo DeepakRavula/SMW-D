@@ -102,7 +102,7 @@ class StudentController extends BaseController
         ]);
         if ($model->load($request->post())) {
             $model->customer_id = $user['id'];
-            $model->status = Student::STATUS_ACTIVE;
+            $model->status = Student::STATUS_INACTIVE;
             if ($model->save()) {
                 $response = [
                     'status' => true,
