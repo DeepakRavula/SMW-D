@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use common\models\timelineEvent\TimelineEventPayment;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -84,11 +83,6 @@ class InvoicePayment extends \yii\db\ActiveRecord
     public function getPayment()
     {
         return $this->hasOne(Payment::className(), ['id' => 'payment_id']);
-    }
-
-    public function getTimelineEventPayment()
-    {
-        return $this->hasOne(TimelineEventPayment::className(), ['paymentId' => 'payment_id']);
     }
 
     public function getInvoice()

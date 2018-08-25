@@ -3,7 +3,6 @@
 namespace common\models;
 
 use Yii;
-use common\models\timelineEvent\TimelineEventStudent;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\models\query\StudentQuery;
 use common\models\Location;
@@ -168,11 +167,6 @@ class Student extends \yii\db\ActiveRecord
     public function getExamResults()
     {
         return $this->hasMany(ExamResult::className(), ['studentId' => 'id']);
-    }
-
-    public function getLogs()
-    {
-        return $this->hasMany(TimelineEventStudent::className(), ['studentId' => 'id']);
     }
 
     public function getNotes()
