@@ -45,6 +45,11 @@ class StudentQuery extends ActiveQuery
         }]);
     }
 
+    public function statusActive()
+    {
+        return $this->andWhere(['student.status' => Student::STATUS_ACTIVE]);
+    }
+
     public function active($fromDate = null, $toDate = null)
     {
         $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
@@ -52,7 +57,7 @@ class StudentQuery extends ActiveQuery
             $fromDate = $currentDate;
             $toDate = $currentDate;
         }
-        $this->joinWith(['enrolments' => function ($query) use ($fromDate, $toDate) {
+        return $this->joinWith(['enrolments' => function ($query) use ($fromDate, $toDate) {
             $query->joinWith(['course' => function ($query) use ($fromDate, $toDate) {
                 $query->joinWith(['lessons' => function ($query) {
                     $query->andWhere(['NOT', ['lesson.id' => null]]);
@@ -65,8 +70,6 @@ class StudentQuery extends ActiveQuery
             ->isConfirmed()
             ->andWhere(['not', ['enrolment.studentId' => null]]);
         }]);
-
-        return $this;
     }
 
     public function groupCourseEnrolled($courseId)

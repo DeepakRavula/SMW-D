@@ -98,7 +98,7 @@ class ProgramController extends BaseController
                     ->andWhere(['course.programId' => $id])
                     ->isConfirmed();
                 }])
-            ->active();
+                ->statusActive();
 
         $studentDataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -88,7 +88,7 @@ class StudentSearch extends Student
             ->groupBy('student.id');
 
         if (!$this->showAllStudents) {
-            $query->active();
+            $query->statusActive();
         }
         return $dataProvider;
     }

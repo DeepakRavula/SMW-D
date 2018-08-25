@@ -84,19 +84,10 @@ class UserSearch extends User
             return $dataProvider;
         }
         
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'status' => $this->status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'logged_at' => $this->logged_at,
-        ]);
-
-        $query->leftJoin(['rbac_auth_assignment aa'], 'user.id = aa.user_id');
-        $query->leftJoin(['rbac_auth_item ai'], 'aa.item_name = ai.name');
-        $query->leftJoin(['user_location ul'], 'ul.user_id = user.id');
+        $query->leftJoin(['rbac_auth_assignment aa'], 'user.id = aa.user_id')
+            ->andWhere(['aa.item_name' => $this->role_name]);
         $query->leftJoin(['user_profile uf'], 'uf.user_id = user.id');
-        $query->joinWith(['userContacts uc' => function ($query) {
+        $query->joinWith(['userContacts' => function ($query) {
 		    $query->joinWith('phone');
         }]);
 	    $query->joinWith('emails');
@@ -121,7 +112,7 @@ class UserSearch extends User
             ]
         ]);
 	    $dataProvider->sort->defaultOrder = [
-          'lastname' => SORT_ASC,
+          'lastname' => SORT_ASC
 	    ];
         $query->joinWith(['emails' => function ($query) {
             $query->andFilterWhere(['like', 'email', $this->email]);
@@ -129,27 +120,17 @@ class UserSearch extends User
         $query->andFilterWhere(['like', 'uf.firstname', $this->firstname])
             ->andFilterWhere(['like', 'uf.lastname', $this->lastname]);
 
-        $query->andFilterWhere(['ai.name' => $this->role_name]);
-
         if ($this->role_name !== USER::ROLE_ADMINISTRATOR) {
-            $query->andFilterWhere([ 'ul.location_id' =>  $locationId]);
+            $query->joinWith(['userLocation' => function ($query) use ($locationId) {
+                $query->andWhere([ 'user_location.location_id' => $locationId]);
+                if ($this->role_name === USER::ROLE_TEACHER && !$this->showAll) {
+                    $query->joinWith(['teacherAvailability' => function ($query) {
+                        $query->andWhere(['NOT', [ 'teacher_availability_day.id' =>  null]]);
+                    }]);
+                }
+            }]);
         }
 
-        if ($this->role_name === USER::ROLE_CUSTOMER) {
-            if (!$this->showAll) {
-                $query->joinWith(['student' => function ($query) {
-                    $query->active();
-                }]);
-            }
-           
-        }
-        if ($this->role_name === USER::ROLE_TEACHER) {
-            if (!$this->showAll) {
-                $query->joinWith(['userLocation' => function ($query) {
-                    $query->joinWith('teacherAvailability');
-                }]);
-            }
-        }
         if (!$this->showAll) {
             $query->active();
         }

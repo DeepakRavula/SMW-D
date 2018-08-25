@@ -218,7 +218,7 @@ class Location extends \yii\db\ActiveRecord
                 }]);
             }])
             ->andWhere(['location.id' => $this->id])
-            ->active()
+            ->statusActive()
             ->distinct(['enrolment.studentId'])
             ->count();
         return $activeStudentsCount;

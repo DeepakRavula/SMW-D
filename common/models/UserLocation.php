@@ -48,7 +48,7 @@ class UserLocation extends \yii\db\ActiveRecord
     public function getTeacherAvailability()
     {
         return $this->hasOne(TeacherAvailability::className(), ['teacher_location_id' => 'id'])
-            ->andWhere(['not', ['teacher_availability_day.id' => null]]);
+            ->onCondition(['teacher_availability_day.isDeleted' => false]);
     }
 
     public function getLocation()
@@ -58,7 +58,8 @@ class UserLocation extends \yii\db\ActiveRecord
     
     public function getTeacherAvailabilities()
     {
-        return $this->hasMany(TeacherAvailability::className(), ['teacher_location_id' => 'id']);
+        return $this->hasMany(TeacherAvailability::className(), ['teacher_location_id' => 'id'])
+            ->andWhere(['teacher_availability_day.isDeleted' => false]);
     }
     
     public function getUser()
