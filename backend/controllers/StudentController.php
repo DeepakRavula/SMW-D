@@ -266,7 +266,7 @@ class StudentController extends BaseController
         $model->on(Student::EVENT_MERGE, [new StudentLog(), 'merge'], ['loggedUser' => $loggedUser]);
         $model->setScenario(Student::SCENARIO_MERGE);
         $students   = Student::find()
-            ->active()
+            ->statusActive()
             ->notDeleted()
             ->customer($model->customer_id)
             ->location($locationId)

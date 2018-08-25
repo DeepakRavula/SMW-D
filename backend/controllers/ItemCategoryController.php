@@ -16,6 +16,7 @@ use backend\models\search\InvoiceLineItemSearch;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 use common\models\InvoiceLineItem;
+use common\models\Location;
 /**
  * ItemCategoryController implements the CRUD actions for ItemCategory model.
  */
@@ -194,8 +195,7 @@ class ItemCategoryController extends BaseController
 
     public function actionItems()
     {
-        $session        = Yii::$app->session;
-        $locationId     = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
+        $locationId     = Location::findOne(['slug' => \Yii::$app->location])->id;
         $itemCategoryId = $_POST['depdrop_parents'][0];
         $items          = Item::find()
                             ->notDeleted()

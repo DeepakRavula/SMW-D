@@ -208,6 +208,11 @@ class Student extends \yii\db\ActiveRecord
         return null;
     }
 
+    public function isActive()
+    {
+        return $this->status != self::STATUS_ACTIVE;
+    }
+
     public function beforeSave($insert)
     {
         if (!empty($this->birth_date)) {
@@ -235,6 +240,7 @@ class Student extends \yii\db\ActiveRecord
         }
         return parent::afterSave($insert, $changedAttributes);
     }
+
     public function getStudentIdentity()
     {
         if ($this->getFullname()) {
@@ -263,7 +269,7 @@ class Student extends \yii\db\ActiveRecord
         $students = self::find()
             ->location($locationId)
             ->notDeleted()
-            ->active()
+            ->statusActive()
             ->all();
         return count($students);
     }
