@@ -27,7 +27,7 @@ LteBox::begin([
 	<dt class="m-r-10">Qty</dt>
     <dd class = "total-horizontal-dd text-right"><?= $model->unit; ?></dd>
     <dt class="m-r-10">Lesson Price</dt>
-    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->grossPrice); ?></dd>
+    <dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency(round($model->grossPrice, 2)); ?></dd>
     <dt class="m-r-10">Discount</dt>
 	<dd class = "total-horizontal-dd text-right"><?= Yii::$app->formatter->asCurrency($model->discount); ?></dd>
 	<dt class="m-r-10">SubTotal</dt>

@@ -109,7 +109,9 @@ class CourseQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['course.type' => Course::TYPE_EXTRA]);
     }
-    public function overlap($from, $to) {
+
+    public function overlap($from, $to) 
+    {
         return $this->andWhere(['OR',
                     [
                             'between', 'DATE(course.startDate)', $from, $to

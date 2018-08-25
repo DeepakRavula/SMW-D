@@ -247,22 +247,27 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getUserContacts()
     {
-        return $this->hasMany(UserContact::className(), ['userId' => 'id']);
+        return $this->hasMany(UserContact::className(), ['userId' => 'id'])
+            ->onCondition(['user_contact.isDeleted' => false]);
     }
+
     public function getUserToken()
     {
         return $this->hasOne(UserToken::className(), ['user_id' => 'id']);
     }
+
     public function getPrimaryContact()
     {
         return $this->hasMany(UserContact::className(), ['userId' => 'id'])
-            ->onCondition(['user_contact.isPrimary' => true]);
+            ->onCondition(['user_contact.isPrimary' => true, 'user_contact.isDeleted' => false]);
     }
+
     public function getBillingContact()
     {
         return $this->hasMany(UserContact::className(), ['userId' => 'id'])
-            ->onCondition(['user_contact.labelId' => Label::LABEL_BILLING]);
+            ->onCondition(['user_contact.labelId' => Label::LABEL_BILLING, 'user_contact.isDeleted' => false]);
     }
+
     public function getUserLocation()
     {
         return $this->hasOne(UserLocation::className(), ['user_id' => 'id']);
@@ -292,27 +297,35 @@ class User extends ActiveRecord implements IdentityInterface
     public function getAddresses()
     {
         return $this->hasMany(UserAddress::className(), ['userContactId' => 'id'])
+            ->onCondition(['user_address.isDeleted' => false])
             ->via('userContacts');
     }
     
     public function getPrimaryAddress()
     {
         return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
+            ->onCondition(['user_address.isDeleted' => false])
             ->via('primaryContact');
     }
+
     public function getPrimaryEmail()
     {
         return $this->hasOne(UserEmail::className(), ['userContactId' => 'id'])
+            ->onCondition(['user_email.isDeleted' => false])
             ->via('primaryContact');
     }
+
     public function getBillingAddress()
     {
         return $this->hasOne(UserAddress::className(), ['userContactId' => 'id'])
+            ->onCondition(['user_address.isDeleted' => false])
             ->via('billingContact');
     }
+
     public function getQualifications()
     {
-        return $this->hasMany(Qualification::className(), ['teacher_id' => 'id']);
+        return $this->hasMany(Qualification::className(), ['teacher_id' => 'id'])
+            ->onCondition(['qualification.isDeleted' => false]);
     }
 
     public function getLocationWalkin()
@@ -371,19 +384,24 @@ class User extends ActiveRecord implements IdentityInterface
     public function getPhoneNumbers()
     {
         return $this->hasMany(UserPhone::className(), ['userContactId' => 'id'])
+            ->onCondition(['user_phone.isDeleted' => false])
             ->via('userContacts');
     }
+
     public function getPhoneNumber()
     {
         return $this->hasOne(UserPhone::className(), ['userContactId' => 'id'])
+            ->onCondition(['user_phone.isDeleted' => false])
             ->via('userContacts');
     }
+
     public function getPrimaryPhoneNumber()
     {
         return $this->hasOne(UserContact::className(), ['id' => 'userContactId'])
             ->via('phoneNumbers')
-            ->onCondition(['user_contact.isPrimary' => true]);
+            ->onCondition(['user_contact.isPrimary' => true, 'user_contact.isDeleted' => CURLOPT_SSL_FALSESTART]);
     }
+
     public function getCustomerDiscount()
     {
         return $this->hasOne(CustomerDiscount::className(), ['customerId' => 'id']);
@@ -392,6 +410,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function getEmails()
     {
         return $this->hasMany(UserEmail::className(), ['userContactId' => 'id'])
+            ->onCondition(['user_email.isDeleted' => false])
             ->via('userContacts');
     }
 
@@ -425,21 +444,25 @@ class User extends ActiveRecord implements IdentityInterface
     public function getAvailabilities()
     {
         return $this->hasMany(TeacherAvailability::className(), ['teacher_location_id' => 'id'])
-          ->viaTable('user_location', ['user_id' => 'id']);
+            ->onCondition(['teacher_availability_day.isDeleted' => false])
+            ->viaTable('user_location', ['user_id' => 'id']);
     }
 
     public function getQualification()
     {
-        return $this->hasOne(Qualification::className(), ['teacher_id' => 'id']);
+        return $this->hasOne(Qualification::className(), ['teacher_id' => 'id'])
+            ->onCondition(['qualification.isDeleted' => false]);
     }
 
     public function getStudent()
     {
-        return $this->hasMany(Student::className(), ['customer_id' => 'id']);
+        return $this->hasMany(Student::className(), ['customer_id' => 'id'])
+            ->onCondition(['student.isDeleted' => false]);
     }
     public function getCourses()
     {
-        return $this->hasMany(Course::className(), ['teacherId' => 'id']);
+        return $this->hasMany(Course::className(), ['teacherId' => 'id'])
+            ->onCondition(['course.isConfirmed' => true]);
     }
     
     public function getEmail()

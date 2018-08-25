@@ -10,6 +10,8 @@ $schedule->command('enrolment/auto-renewal')->dailyAt('00:01');
 
 // This command will execute console command of your application every 11pm
 $schedule->command('invoice/all-completed-lessons')->dailyAt('23:00');
+$schedule->command('student/set-status')->dailyAt('02:00');
+$schedule->command('customer/set-status')->dailyAt('02:30');
 $schedule->command('invoice/all-expired-lessons')->dailyAt('23:00');
 $schedule->command('payment-request/create')->dailyAt('23:00');
 $schedule->command('payment-preference/create')->dailyAt('23:00');
