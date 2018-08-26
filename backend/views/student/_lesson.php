@@ -122,7 +122,8 @@ use common\models\Lesson;
                 $(".more-lesson").show();
                 var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
                 var studentId = '<?= $model->id ?>';
-                var params = $.param({'LessonSearch[studentId]': studentId, 'LessonSearch[type]': type, 'LessonSearch[isSeeMore]': 1});
+                var studentFirstName = '<?= $model->first_name ?>';
+                var params = $.param({'LessonSearch[student]': studentFirstName, 'LessonSearch[studentId]': studentId, 'LessonSearch[type]': type, 'LessonSearch[isSeeMore]': 1});
                 var url = '<?= Url::to(['lesson/index']); ?>?' + params;
                 $('.see-more').attr("href", url);
         } else {
