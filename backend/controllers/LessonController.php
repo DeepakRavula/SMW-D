@@ -68,7 +68,7 @@ class LessonController extends BaseController
                         'actions' => [
                             'index', 'view', 'credit-transfer', 'validate-on-update', 'edit-price',' edit-tax', 
 							'fetch-duration','edit-classroom', 'update', 'update-field', 'review',
-							'fetch-conflict', 'confirm', 'invoice', 'take-payment', 'modify-classroom',
+							'fetch-conflict', 'confirm', 'invoice', 'modify-classroom',
                             'payment', 'substitute', 'unschedule', 'edit-cost', 'edit-tax', 
                         ],
                         'roles' => ['managePrivateLessons', 
@@ -652,24 +652,6 @@ class LessonController extends BaseController
 
             return $this->redirect(['lesson/view', 'id' => $id]);
         }
-    }
-
-    public function actionTakePayment($id)
-    {
-        $model = Lesson::findOne(['id' => $id]);
-        if ($model->paymentCycle) {
-            $model->paymentCycle->setScenario(PaymentCycle::SCENARIO_CAN_RAISE_PFI);
-            if (!$model->paymentCycle->validate()) {
-                $errors	 = ActiveForm::validate($model->paymentCycle);
-                Yii::$app->session->setFlash('alert', [
-                    'options' => ['class' => 'alert-danger'],
-                    'body' => end($errors['paymentcycle-id']),
-                ]);
-                return $this->redirect(['lesson/view', 'id' => $id]);
-            }
-        }
-        $invoice = $model->takePayment();
-        return $this->redirect(['invoice/view', 'id' => $invoice->id]);
     }
 
     public function actionModifyClassroom($id, $classroomId)

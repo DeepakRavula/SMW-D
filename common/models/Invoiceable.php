@@ -233,42 +233,6 @@ trait Invoiceable
         return true;
     }
 
-    public function createProFormaInvoice()
-    {
-        if ($this->hasProFormaInvoice()) {
-            return $this->proFormaInvoice;
-        }
-        $locationId = $this->student->customer->userLocation->location_id;
-        $user = User::findOne(['id' => $this->student->customer->id]);
-        $invoice = new Invoice();
-        $invoice->on(Invoice::EVENT_CREATE, [new InvoiceLog(), 'create']);
-        if (is_a(Yii::$app, 'yii\console\Application')) {
-            $roleUser = User::findByRole(User::ROLE_BOT);
-            $botUser = end($roleUser);
-            $loggedUser = User::findOne(['id' => $botUser->id]);
-        } else {
-            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-        }
-        $invoice->userName = $loggedUser->userProfile->fullName;
-        $invoice->user_id = $user->id;
-        $invoice->location_id = $locationId;
-        $invoice->dueDate = (new \DateTime($this->firstLesson->date))->format('Y-m-d');
-        $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
-        $invoice->createdUserId = Yii::$app->user->id;
-        $invoice->updatedUserId = Yii::$app->user->id;
-        if (!$invoice->save()) {
-            Yii::error('Create Invoice: ' . VarDumper::dumpAsString($invoice->getErrors()));
-        }
-        foreach ($this->lessons as $lesson) {
-            $lesson->enrolmentId = $this->id;
-            $lesson->addGroupLessonLineItem($invoice);
-        }
-        if (!$invoice->save()) {
-            Yii::error('Create Invoice: ' . VarDumper::dumpAsString($invoice->getErrors()));
-        }
-        return $invoice;
-    }
-    
     public function addLessonCreditInvoice()
     {
         $invoice = new Invoice();

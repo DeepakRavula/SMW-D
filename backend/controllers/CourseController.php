@@ -400,22 +400,11 @@ class CourseController extends BaseController
                     $payment = new Payment();
                     if ($newLesson->save()) {
                         $newLesson->makeAsRoot();
-                        $invoice = $newLesson->takePayment();
-                        if ($lesson->hasLessonCredit($enrolmentId)) {
-                            if ($invoice->balance < $lesson->getLessonCreditAmount($enrolmentId)) {
-                                $amount = $invoice->balance;
-                                if (!$hasCreditInvoice) {
-                                    $creditInvoice = $lesson->addLessonCreditInvoice();
-                                    $creditInvoice->save();
-                                }
-                                $payment->amount = $lesson->getLessonCreditAmount($enrolmentId) - $amount;
-                                $creditInvoice->addPayment($lesson, $payment);
-                                $hasCreditInvoice = true;
-                            } else {
-                                $amount = $lesson->getLessonCreditAmount($enrolmentId);
+                        foreach ($lesson->lessonPayments as $lessonPayment) {
+                            $lessonPayment->updateAttributes(['lessonId' => $newLesson->id]);
+                            if ($lessonPayment->payment->creditUsage) {
+                                $lessonPayment->payment->creditUsage->debitUsagePayment->updateAttributes(['reference' => $newLesson->lessonNumber]);
                             }
-                            $payment->amount = $amount;
-                            $invoice->addPayment($lesson, $payment);
                         }
                         $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                         $newLesson->on(
