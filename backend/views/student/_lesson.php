@@ -120,7 +120,7 @@ use common\models\Lesson;
         var lesson_count = '<?= $lessonCount; ?>';
         if (lesson_count > 12) {
                 $(".more-lesson").show();
-                var url = '<?= Url::to(['lesson/index', 'LessonSearch[studentId]' => $model->id, 'LessonSearch[student]' => $model->fullName, 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON, 'LessonSearch[isSeeMore]' => 1]); ?>';
+                var url = '<?= Url::to(['lesson/index', 'LessonSearch[studentId]' => $model->id, 'LessonSearch[student]' => $model->fullName, 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON, 'LessonSearch[isSeeMore]' => true]); ?>';
                 $('.see-more').attr("href", url);
         } else {
             $(".more-lesson").hide();
