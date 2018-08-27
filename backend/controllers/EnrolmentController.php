@@ -171,7 +171,6 @@ class EnrolmentController extends BaseController
             foreach ($course->extraCourses as $extraCourse) {
                 $extraCourse->studentId = $studentId;
                 $enrolment = $extraCourse->createExtraLessonEnrolment();
-                $enrolment->createProFormaInvoice();
             }
         }
         $enrolmentModel = new Enrolment();

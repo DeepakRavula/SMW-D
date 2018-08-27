@@ -81,25 +81,6 @@ class ExtraLesson extends Lesson
         return $course;
     }
     
-    public function takePayment()
-    {
-        if (!$this->hasProFormaInvoice()) {
-            $locationId = $this->customer->userLocation->location_id;
-            $invoice = new Invoice();
-            $invoice->user_id = $this->customer->id;
-            $invoice->location_id = $locationId;
-            $invoice->type = INVOICE::TYPE_PRO_FORMA_INVOICE;
-            $invoice->createdUserId = Yii::$app->user->id;
-            $invoice->updatedUserId = Yii::$app->user->id;
-            $invoice->save();
-            $this->addPrivateLessonLineItem($invoice);
-            $invoice->save();
-        } else {
-            $invoice = $this->proFormaInvoice;
-        }
-        return $invoice;
-    }
-    
     public function getProFormaLineItem()
     {
         $lessonId = $this->id;

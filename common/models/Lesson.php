@@ -1224,22 +1224,6 @@ class Lesson extends \yii\db\ActiveRecord
         return true;
     }
     
-    public function takePayment()
-    {
-        if (!$this->hasProFormaInvoice()) {
-            if (!$this->paymentCycle->hasProFormaInvoice()) {
-                $this->paymentCycle->createProFormaInvoice();
-            } else {
-                $lineItem = $this->addPrivateLessonLineItem($this->paymentCycle->proFormaInvoice);
-                $lineItem->invoice->save();
-            }
-        } else {
-            $this->proFormaInvoice->makeInvoicePayment($this);
-        }
-        
-        return $this->paymentCycle->proFormaInvoice;
-    }
-    
     public static function instantiate($row)
     {
         switch ($row['type']) {

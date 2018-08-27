@@ -66,7 +66,7 @@ class InvoiceController extends BaseController
                             'note', 'view', 'fetch-user', 'add-misc','fetch-summary-and-status',
                             'compute-tax', 'create', 'update', 'delete', 'update-mail-status',
                             'all-completed-lessons', 'adjust-tax', 'revert-invoice', 'enrolment',
-                            'invoice-payment-cycle', 'group-lesson','get-payment-amount', 'void',
+                            'group-lesson','get-payment-amount', 'void',
                             'post-distribute', 'retract-credits', 'unpost', 'distribute', 'post', 'show-items',
                             'edit-walkin'
                         ],
@@ -601,42 +601,6 @@ class InvoiceController extends BaseController
         return $this->redirect(['view', 'id' => $creditInvoice->id]);
     }
     
-    public function actionInvoicePaymentCycle($id)
-    {
-        $paymentCycle = PaymentCycle::findOne($id);
-        if (!$paymentCycle) {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-        if ($paymentCycle->canRaiseProformaInvoice()) {
-            $invoice = $paymentCycle->createProFormaInvoice();
-            if ($invoice) {
-                return $this->redirect(['view', 'id' => $invoice->id]);
-            }
-        } else {
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-danger'],
-                'body' => 'ProForma-Invoice can be generated only for current and next payment cycle only.',
-            ]);
-            return $this->redirect(['enrolment/view', 'id' => $paymentCycle->enrolment->id, '#' => 'payment-cycle']);
-        }
-    }
-
-    public function actionEnrolment($id)
-    {
-        $enrolment = Enrolment::findOne($id);
-
-        if (!$enrolment->hasProFormaInvoice()) {
-            $invoice = $enrolment->createProFormaInvoice();
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'ProForma Invoice has been successfully created',
-            ]);
-            return $this->redirect(['view', 'id' => $invoice->id]);
-        } else {
-            return $this->redirect(['view', 'id' => $enrolment->proFormaInvoice->id]);
-        }
-    }
-
     public function actionGroupLesson($lessonId, $enrolmentId = null)
     {
         $lesson      = Lesson::findOne($lessonId);

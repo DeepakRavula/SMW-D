@@ -37,7 +37,7 @@ class CustomerController extends Controller
             ->all();
         foreach ($customers as $customer) {
             $inactiveCount = 0;
-            $studentCount = $customer->studentsCount;
+            $studentCount = $customer->students ? $customer->studentsCount : 0;
             foreach ($customer->students as $student) {
                 if (!$student->isActive()) {
                     $inactiveCount ++;

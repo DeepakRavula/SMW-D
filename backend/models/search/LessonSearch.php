@@ -15,7 +15,7 @@ use common\models\Location;
 class LessonSearch extends Lesson
 {
     const STATUS_INVOICED = 'Yes';
-    const STATUS_UNINVOICED='No';
+    const STATUS_UNINVOICED ='No';
     
     public $lessonStatus;
     public $invoiceStatus;
@@ -135,11 +135,7 @@ class LessonSearch extends Lesson
         } elseif ((int)$this->lessonStatus === Lesson::STATUS_EXPIRED){
             $query->expired()->unscheduled()->groupBy('lesson.id');
         }
-        if ($this->attendanceStatus === Lesson::STATUS_PRESENT) {
-            $query->andFilterWhere(['lesson.isPresent' => true]);
-        } elseif ($this->attendanceStatus === Lesson::STATUS_ABSENT) {
-            $query->andFilterWhere(['lesson.isPresent' => false]);
-        }
+        
         if ($this->invoiceStatus === self::STATUS_INVOICED) {
             $query->invoiced();
         } elseif ($this->invoiceStatus === self::STATUS_UNINVOICED) {
