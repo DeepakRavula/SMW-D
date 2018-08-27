@@ -196,10 +196,7 @@ $this->params['action-button'] = $this->render('_action-button', [
             var private = <?= $model->course->program->isPrivate(); ?>;
             if (private) {
                 $(".more-lesson").show();
-                var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
-                var programId = '<?= $model->program->id ?>'; 
-                var studentFullName = '<?= $model->student->fullName ?>'; 
-                var params = $.param({'LessonSearch[programId]': programId, 'LessonSearch[type]': type,'LessonSearch[student]': studentFullName, 'LessonSearch[isSeeMore]': 1});
+                var params = $.param({'LessonSearch[studentId]': '<?= $model->student->id ?>', 'LessonSearch[programId]': '<?= $model->program->id ?>', 'LessonSearch[type]': '<?= Lesson::TYPE_PRIVATE_LESSON ?>', 'LessonSearch[student]': '<?= $model->student->fullName ?>', 'LessonSearch[isSeeMore]': 1});
                 var url = '<?= Url::to(['lesson/index']); ?>?' + params;
                 $('.see-more').attr("href", url);
             }

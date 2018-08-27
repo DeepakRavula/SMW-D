@@ -94,6 +94,8 @@ class LessonSearch extends Lesson
         $query->joinWith(['student']);
         if ($this->student) {
             $query->andFilterWhere(['like', "CONCAT(first_name, ' ', last_name)", $this->student]);
+        } elseif ($this->studentId) {
+            $query->andFilterWhere(['like', "CONCAT(first_name, ' ', last_name)", $this->student]);
         }
         if ($this->program) {
             $query->andFilterWhere(['like', 'program.name', $this->program]);

@@ -120,9 +120,7 @@ use common\models\Lesson;
         var lesson_count = '<?= $lessonCount; ?>';
         if (lesson_count > 12) {
                 $(".more-lesson").show();
-                var type = <?= Lesson::TYPE_PRIVATE_LESSON ?>;
-                var studentFullName = '<?= $model->fullName ?>';
-                var params = $.param({'LessonSearch[student]': studentFullName, 'LessonSearch[type]': type, 'LessonSearch[isSeeMore]': 1});
+                var params = $.param({'LessonSearch[studentId]': '<?= $model->id ?>', 'LessonSearch[student]': '<?= $model->fullName ?>', 'LessonSearch[type]': <?= Lesson::TYPE_PRIVATE_LESSON ?>, 'LessonSearch[isSeeMore]': 1});
                 var url = '<?= Url::to(['lesson/index']); ?>?' + params;
                 $('.see-more').attr("href", url);
         } else {
