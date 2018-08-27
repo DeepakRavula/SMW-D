@@ -322,6 +322,14 @@ echo Menu::widget([
             'visible' => Yii::$app->user->can('manageBlogs'),
             'active' => (Yii::$app->controller->id === 'terms-of-service') ? true : false,
         ],
+        [
+            'label' => Yii::t('backend', 'Referral Sources'),
+            'icon' => '<i class="fa fa-table"></i>',
+            'url' => ['/referral-sources/index'],
+            'visible' => Yii::$app->user->can('manageBlogs'),
+            'active' => (Yii::$app->controller->id === 'referral-source') ? true : false,
+           
+        ],
                 
             ]
         ],
