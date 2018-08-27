@@ -2,13 +2,12 @@
 namespace common\models\log;
 
 use Yii;
-use common\models\Student;
+use common\models\Payment;
 use common\models\log\Log;
 use yii\helpers\Json;
 use yii\helpers\Url;
-use common\models\Enrolment;
-use common\models\ExamResult;
-use common\models\Course;
+use common\models\log\LogObject;
+use common\models\log\LogActivity;
 
 class PaymentLog extends Log
 {
@@ -16,15 +15,31 @@ class PaymentLog extends Log
     {
         $PaymentModel       = $event->sender;
         $loggedUser         = end($event->data);
-        $data               = Student::find(['id' => $studentModel->id])->asArray()->one();
-        $index       = $studentModel->fullName;
-        $path        = Url::to(['/student/view', 'id' => $studentModel->id]);
-        $message            = $loggedUser->publicIdentity.' created new student {{'.$index.'}}';
-        $object             = LogObject::findOne(['name' => LogObject::TYPE_STUDENT]);
+        $data               = Payment::find(['id' => $PaymentModel->id])->asArray()->one();
+        $index       = $PaymentModel->user->publicIdentity;
+        $path        = Url::to(['/user/view','UserSearch[role_name]' => 'customer', 'id' => $PaymentModel->user_id]);
+        $message            = $loggedUser->publicIdentity.' Added new payment {{'.$index.'}}'.$PaymentModel->amount;
+        $object             = LogObject::findOne(['name' => LogObject::TYPE_PAYMENT]);
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
-        $locationId = $studentModel->customer->userLocation->location->id;
-        $this->addLog($object, $activity, $message, $data, $loggedUser, $studentModel, $locationId, $index, $path);
+        $locationId = $PaymentModel->user->userLocation->location->id;
+        $this->addLog($object, $activity, $message, $data, $loggedUser, $PaymentModel, $locationId, $index, $path);
     }
+
+    public function addLog($object, $activity, $message, $data, $loggedUser, $model, $locationId, $index, $path)
+    {
+        $log                = new Log();
+        $log->logObjectId   = $object->id;
+        $log->logActivityId = $activity->id;
+        $log->message       = $message;
+        $log->data          = Json::encode($data);
+        $log->createdUserId = $loggedUser->id;
+        $log->locationId    = $locationId;
+        if ($log->save()) {
+            $this->addHistory($log, $model, $object);
+            $this->addLink($log, $index, $path);
+        }
+    }
+    
     public function addLink($log, $index, $path)
     {
         $logLink          = new LogLink();
@@ -34,6 +49,7 @@ class PaymentLog extends Log
         $logLink->path    = $path;
         $logLink->save();
     }
+
     public function addHistory($log, $model, $object)
     {
         $logHistory= new LogHistory();

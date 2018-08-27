@@ -31,6 +31,7 @@ class PaymentForm extends Model
     const SCENARIO_CUSTOMER = 'enrollment-customer';
     const SCENARIO_STUDENT = 'enrolment-student';
     const SCENARIO_DATE_DETAILED = 'enrolment-start-date';
+    
 
     public $invoiceIds;
     public $date;
