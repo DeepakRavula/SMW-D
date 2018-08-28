@@ -31,7 +31,7 @@ Select2Asset::register($this);
             ->notDeleted()
             ->all();
             $referralSourceList = ArrayHelper::map($referralSource, 'id', 'name');
-                if($model->roles == User::ROLE_CUSTOMER) {
+                if ($model->roles == User::ROLE_CUSTOMER) {
                     echo  $form->field($customerReferralSource, 'referralSourceId')->radioList($referralSourceList)->label('How did you find us?');
                     echo  $form->field($customerReferralSource, 'description')->textInput()->label(false);
                 }
