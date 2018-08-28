@@ -143,6 +143,7 @@ class Program extends \yii\db\ActiveRecord
     {
         return (int) $this->type === self::TYPE_GROUP_PROGRAM;
     }
+    
     public function deletable()
     {
         $course = Course::find()

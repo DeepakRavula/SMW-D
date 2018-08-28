@@ -672,6 +672,7 @@ class EnrolmentController extends BaseController
                 } else if ($lastLessonDate < $newEndDate) {
                     $model->extend();
                 }
+                $model->setStatus();
                 if ($message) {
                     $message = 'Enrolment end date succesfully updated!';
                 }
