@@ -23,6 +23,8 @@ class PaymentLog extends Log
         $activity           = LogActivity::findOne(['name' => LogActivity::TYPE_CREATE]);
         $locationId = $PaymentModel->user->userLocation->location->id;
         $this->addLog($object, $activity, $message, $data, $loggedUser, $PaymentModel, $locationId, $index, $path);
+        $userObject             = LogObject::findOne(['name' => LogObject::TYPE_USER]);
+        $this->addLog($userObject, $activity, $message, $data, $loggedUser, $PaymentModel->user, $locationId, $index, $path);
     }
 
     public function addLog($object, $activity, $message, $data, $loggedUser, $model, $locationId, $index, $path)
