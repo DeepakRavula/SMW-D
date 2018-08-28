@@ -79,4 +79,10 @@ class CustomerReferralSources extends \yii\db\ActiveRecord
     {
         return $this->hasOne(ReferralSources::className(), ['id' => 'referralSourceId']);
     }
+
+    public function setModel($model)
+    {
+        $this->referralSourceId = $model->referralSourceId;
+        return $this;
+    }
 }
