@@ -3,7 +3,7 @@
 namespace backend\controllers;
 
 use common\components\controllers\BaseController;
-use common\models\ReferralSources;
+use common\models\ReferralSource;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -13,9 +13,9 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * ReferralSourcesController implements the CRUD actions for ReferralSources model.
+ * ReferralSourceController implements the CRUD actions for ReferralSource model.
  */
-class ReferralSourcesController extends BaseController
+class ReferralSourceController extends BaseController
 {
     public function behaviors()
     {
@@ -54,7 +54,7 @@ class ReferralSourcesController extends BaseController
      */
     public function actionIndex()
     {
-        $query = ReferralSources::find()
+        $query = ReferralSource::find()
             ->notDeleted();
 
         $dataProvider = new ActiveDataProvider([
@@ -67,7 +67,7 @@ class ReferralSourcesController extends BaseController
     }
 
     /**
-     * Displays a single ReferralSources model.
+     * Displays a single ReferralSource model.
      *
      * @param string $id
      *
@@ -81,21 +81,29 @@ class ReferralSourcesController extends BaseController
     }
 
     /**
-     * Creates a new ReferralSources model.
+     * Creates a new ReferralSource model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new ReferralSources();
+        $model = new ReferralSource();
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
             return [
                 'status' => true,
             ];
+            }  else {
+                return [
+                    'status' => false,
+                    'errors' => Activeform::validate(),
+                ];
+
+            }
         } else {
             return [
                 'status' => true,
@@ -105,7 +113,7 @@ class ReferralSourcesController extends BaseController
     }
 
     /**
-     * Updates an existing ReferralSources model.
+     * Updates an existing ReferralSource model.
      * If update is successful, the browser will be redirected to the 'view' page.
      *
      * @param string $id
@@ -131,7 +139,7 @@ class ReferralSourcesController extends BaseController
     }
 
     /**
-     * Deletes an existing ReferralSources model.
+     * Deletes an existing ReferralSource model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      *
      * @param string $id
@@ -146,18 +154,18 @@ class ReferralSourcesController extends BaseController
     }
 
     /**
-     * Finds the ReferralSources model based on its primary key value.
+     * Finds the ReferralSource model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      *
      * @param string $id
      *
-     * @return ReferralSources the loaded model
+     * @return ReferralSource the loaded model
      *
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = ReferralSources::findOne($id)) !== null) {
+        if (($model = ReferralSource::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

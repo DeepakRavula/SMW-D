@@ -1,7 +1,7 @@
 <?php
 
 use yii\db\Migration;
-use common\models\ReferralSources;
+use common\models\ReferralSource;
 use common\models\User;
 /**
  * Class m180826_182345_add_referal_source
@@ -36,7 +36,7 @@ class m180826_182345_add_referal_source extends Migration
         }
         $sourceNames = ['Drive By', 'Arcadia\'s Website', 'Newspaper Advertisment', 'Other',];
             foreach ($sourceNames as $sourceName) {
-                $referralSource       = new ReferralSources();
+                $referralSource       = new ReferralSource();
                 $referralSource->name = $sourceName;
                 $referralSource->save();
             }

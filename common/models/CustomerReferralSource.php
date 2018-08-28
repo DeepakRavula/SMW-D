@@ -5,7 +5,7 @@ namespace common\models;
 use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
-use common\models\ReferralSources;
+use common\models\ReferralSource;
 
 /**
  * This is the model class for table "customer_referral_sources".
@@ -19,7 +19,7 @@ use common\models\ReferralSources;
  * @property int $createdByUserId
  * @property int $updatedByUserId
  */
-class CustomerReferralSources extends \yii\db\ActiveRecord
+class CustomerReferralSource extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
@@ -77,12 +77,13 @@ class CustomerReferralSources extends \yii\db\ActiveRecord
     }
     public function getReferralSource()
     {
-        return $this->hasOne(ReferralSources::className(), ['id' => 'referralSourceId']);
+        return $this->hasOne(ReferralSource::className(), ['id' => 'referralSourceId']);
     }
 
     public function setModel($model)
     {
         $this->referralSourceId = $model->referralSourceId;
+        $this->description = $model->description;
         return $this;
     }
 }

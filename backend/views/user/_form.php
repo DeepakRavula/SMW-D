@@ -4,7 +4,7 @@ use yii\bootstrap\ActiveForm;
 use kartik\select2\Select2Asset;
 use yii\helpers\Url;
 use common\models\User;
-use common\models\ReferralSources;
+use common\models\ReferralSource;
 use yii\helpers\ArrayHelper;
 Select2Asset::register($this);
 
@@ -27,12 +27,12 @@ Select2Asset::register($this);
         <?= $form->field($emailModel, 'email')->textInput(['maxlength' => true])->label('Email (Work)') ?>
         <div id = "referal-source">
             <?php 
-            $referralSources = ReferralSources::find()
+            $referralSource = ReferralSource::find()
             ->notDeleted()
             ->all();
-            $referralSourcesList = ArrayHelper::map($referralSources, 'id', 'name');
+            $referralSourceList = ArrayHelper::map($referralSource, 'id', 'name');
                 if($model->roles == User::ROLE_CUSTOMER) {
-            echo  $form->field($customerReferralSources, 'referralSourceId')->radioList($referralSourcesList)->label('How did you find us?');
+            echo  $form->field($customerReferralSource, 'referralSourceId')->radioList($referralSourceList)->label('How did you find us?');
                 }
             ?>
         </div>
@@ -42,12 +42,12 @@ Select2Asset::register($this);
 </div>
 
 <script>
-    $(document).off('click', 'input:radio[name="CustomerReferralSources[referralSourceId]"]').on('click', 'input:radio[name="CustomerReferralSources[referralSourceId]"]', function () {
-        var referralSourceId = $('input:radio[name="CustomerReferralSources[referralSourceId]"]:checked').val();
+    $(document).off('click', 'input:radio[name="CustomerReferralSource[referralSourceId]"]').on('click', 'input:radio[name="CustomerReferralSource[referralSourceId]"]', function () {
+        var referralSourceId = $('input:radio[name="CustomerReferralSource[referralSourceId]"]:checked').val();
         if(referralSourceId == '4') {
-            $('#customerreferralsources-referralsourceid').hide();
+            $('#customerreferralsource-referralsourceid').hide();
             $('#referal-source').append(
-            '<input class="form-control" id="customer-referral-source-description" name="CustomerReferralSources[description]" type="input" placeholder=""name="Description"/>');
+            '<input class="form-control" id="customer-referral-source-description" name="CustomerReferralSource[description]" type="input" placeholder=""name="Description"/>');
         }
     });
 

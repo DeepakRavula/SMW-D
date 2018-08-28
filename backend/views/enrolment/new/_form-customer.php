@@ -9,7 +9,7 @@ use kartik\select2\Select2;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\widgets\MaskedInput;
-use common\models\ReferralSources;
+use common\models\ReferralSource;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
@@ -142,11 +142,11 @@ use common\models\ReferralSources;
         <div class="col-xs-9">
         <div id = "referal-source">
             <?php 
-            $referralSources = ReferralSources::find()
+            $referralSource = ReferralSource::find()
             ->notDeleted()
             ->all();
-            $referralSourcesList = ArrayHelper::map($referralSources, 'id', 'name');
-            echo  $form->field($courseDetail, 'referralSourceId')->radioList($referralSourcesList)->label(false);
+            $referralSourceList = ArrayHelper::map($referralSource, 'id', 'name');
+            echo  $form->field($courseDetail, 'referralSourceId')->radioList($referralSourceList)->label(false);
             ?>
         </div>
         </div>
@@ -187,7 +187,7 @@ use common\models\ReferralSources;
     $(document).off('click', 'input:radio[name="EnrolmentForm[referralSourceId]"]').on('click', 'input:radio[name="EnrolmentForm[referralSourceId]"]', function () {
         var referralSourceId = $('input:radio[name="EnrolmentForm[referralSourceId]"]:checked').val();
         if(referralSourceId == '4') {
-            $('#customerreferralsources-referralsourceid').hide();
+            $('#customerreferralsource-referralsourceid').hide();
             $('#referal-source').append(
             '<input class="form-control" id="customer-referral-source-description" name="EnrolmentForm[description]" type="input" placeholder="description"/>');
         }

@@ -10,7 +10,7 @@ use yii\filters\ContentNegotiator;
 use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
-use common\models\CustomerReferralSources;
+use common\models\CustomerReferralSource;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.

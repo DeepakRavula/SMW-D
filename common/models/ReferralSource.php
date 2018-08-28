@@ -2,7 +2,7 @@
 
 namespace common\models;
 
-use common\models\query\ReferralSourcesQuery;
+use common\models\query\ReferralSourceQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use Yii;
 use yii\behaviors\BlameableBehavior;
@@ -14,7 +14,7 @@ use yii\behaviors\TimestampBehavior;
  * @property int $id
  * @property string $source_name
  */
-class ReferralSources extends \yii\db\ActiveRecord
+class ReferralSource extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
@@ -38,7 +38,7 @@ class ReferralSources extends \yii\db\ActiveRecord
 
     public static function find()
     {
-        return new \common\models\query\ReferralSourcesQuery(get_called_class());
+        return new \common\models\query\ReferralSourceQuery(get_called_class());
     }
 
     public function behaviors()

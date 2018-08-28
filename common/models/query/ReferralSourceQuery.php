@@ -9,7 +9,7 @@ use yii\db\ActiveQuery;
  *
  * @see \common\models\Holiday
  */
-class ReferralSourcesQuery extends ActiveQuery
+class ReferralSourceQuery extends ActiveQuery
 {
     /*public function active()
     {

@@ -38,7 +38,7 @@ use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 use common\models\Payment;
 use common\models\Transaction;
-use common\models\CustomerReferralSources;
+use common\models\CustomerReferralSource;
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -536,7 +536,7 @@ class UserController extends BaseController
     {
         $model = new UserForm();
         $emailModel = new UserEmail();
-        $customerReferralSources = new CustomerReferralSources();
+        $customerReferralSource = new CustomerReferralSource();
         $model->roles = Yii::$app->request->queryParams['role_name'];
         if ($model->roles !== User::ROLE_STAFFMEMBER) {
             $canLogin = true;
@@ -550,16 +550,16 @@ class UserController extends BaseController
         $data = $this->renderAjax('_form', [
             'model' => $model,
             'emailModel' => $emailModel,
-            'customerReferralSources' => $customerReferralSources,
+            'customerReferralSource' => $customerReferralSource,
         ]);
         $model->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $request = Yii::$app->request;
         if ($request->post()) {
             if ($model->load($request->post()) && $emailModel->load($request->post())) {
                 $model->save();
-               if($customerReferralSources->load($request->post())) {
-                   $customerReferralSources->userId = $model->getModel()->id;
-                   $customerReferralSources->save();
+               if($customerReferralSource->load($request->post())) {
+                   $customerReferralSource->userId = $model->getModel()->id;
+                   $customerReferralSource->save();
                }
                 if (!empty($emailModel->email)) {
                     $userContact = new UserContact();
