@@ -9,6 +9,7 @@ use kartik\select2\Select2;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\widgets\MaskedInput;
+use common\models\ReferralSource;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Program */
@@ -134,6 +135,23 @@ use yii\widgets\MaskedInput;
             <?= $form->field($courseDetail, 'postalCode')->textInput(['placeholder' => 'Postal Code'])->label(false); ?>
         </div>
     </div>
+    <div class="row">
+        <div class="col-xs-3">
+            <label class="modal-form-label">How did you find us?</label>
+        </div>
+        <div class="col-xs-9">
+        <div id = "referal-source">
+            <?php 
+            $referralSource = ReferralSource::find()
+            ->notDeleted()
+            ->all();
+            $referralSourceList = ArrayHelper::map($referralSource, 'id', 'name');
+            echo  $form->field($courseDetail, 'referralSourceId')->radioList($referralSourceList)->label(false);
+            echo  $form->field($courseDetail, 'description')->textInput()->label(false);
+            ?>
+        </div>
+        </div>
+    </div>
 </div>
 <?php ActiveForm::end(); ?>
 
@@ -146,6 +164,7 @@ use yii\widgets\MaskedInput;
         $('#modal-spinner').hide();
         $('#modal-back').removeClass();
         $('#modal-back').addClass('btn btn-info add-customer-back');
+        $("#enrolmentform-description").hide();
     });
 
     $(document).off('click', '.add-customer-back').on('click', '.add-customer-back', function () {
@@ -167,4 +186,12 @@ use yii\widgets\MaskedInput;
         });
         return false;
     });
+    $(document).off('click', 'input:radio[name="EnrolmentForm[referralSourceId]"]').on('click', 'input:radio[name="EnrolmentForm[referralSourceId]"]', function () {
+        var referralSourceId = $('input:radio[name="EnrolmentForm[referralSourceId]"]:checked').val();
+        if(referralSourceId == '4') {
+            $("#enrolmentform-description").show();
+        }  else {
+            $("#enrolmentform-description").hide();
+        }
+    });   
 </script>

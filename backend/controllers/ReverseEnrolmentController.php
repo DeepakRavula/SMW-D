@@ -10,6 +10,7 @@ use yii\filters\ContentNegotiator;
 use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
+use common\models\CustomerReferralSource;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -54,7 +55,7 @@ class ReverseEnrolmentController extends BaseController
             $courseDetail->load(Yii::$app->request->get());
         }
         $data = $this->renderAjax('/enrolment/new/_form-customer', [
-            'courseDetail' => $courseDetail
+            'courseDetail' => $courseDetail,
         ]);
         $courseDetail->setScenario(EnrolmentForm::SCENARIO_CUSTOMER);
         if (Yii::$app->request->post()) {

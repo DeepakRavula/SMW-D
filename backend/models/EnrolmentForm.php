@@ -58,6 +58,9 @@ class EnrolmentForm extends Model
     public $birth_date;
     public $gender;
 
+    public $referralSourceId;
+    public $description;
+
     /**
      * {@inheritdoc}
      */
@@ -79,7 +82,7 @@ class EnrolmentForm extends Model
             [['firstname', 'lastname', 'email', 'labelId', 'number', 'phoneLabelId',
                 'addressLabelId', 'address', 'cityId', 'countryId', 'provinceId'],
                 'safe'],
-            [['postalCode', 'extension', 'first_name', 'last_name', 'gender', 'birth_date','lessonsCount','autoRenew'], 'safe'],
+            [['postalCode', 'extension', 'first_name', 'last_name', 'gender', 'birth_date', 'lessonsCount', 'autoRenew', 'referralSourceId', 'description'], 'safe'],
         ];
     }
 }
