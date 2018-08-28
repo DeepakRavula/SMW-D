@@ -40,6 +40,7 @@ Select2Asset::register($this);
     
 <?php ActiveForm::end(); ?>
 </div>
+
 <script>
     $(document).off('click', 'input:radio[name="CustomerReferralSources[referralSourceId]"]').on('click', 'input:radio[name="CustomerReferralSources[referralSourceId]"]', function () {
         var referralSourceId = $('input:radio[name="CustomerReferralSources[referralSourceId]"]:checked').val();
