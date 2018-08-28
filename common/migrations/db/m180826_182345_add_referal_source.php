@@ -22,13 +22,11 @@ class m180826_182345_add_referal_source extends Migration
     public function safeUp()
     {
         $tableSchema = Yii::$app->db->schema->getTableSchema('referral_sources');
-        // if ($tableSchema) {
-        //     $this->dropTable('proforma_invoice');
-        // }
+
         if ($tableSchema == null) {
             $this->createTable('referral_sources', [
                 'id' => $this->primaryKey(),
-                'source_name' => $this->string()->notNull(),
+                'name' => $this->string(255)->notNull(),
                 'createdOn' => $this->timeStamp()->defaultValue(null),
                 'updatedOn' => $this->timeStamp()->defaultValue(null),
 		        'createdByUserId' =>  $this->integer()->notNull(),
@@ -39,7 +37,7 @@ class m180826_182345_add_referal_source extends Migration
         $sourceNames = ['Drive By', 'Arcadia\'s Website', 'Newspaper Advertisment', 'Other',];
             foreach ($sourceNames as $sourceName) {
                 $referralSource       = new ReferralSources();
-                $referralSource->source_name = $sourceName;
+                $referralSource->name = $sourceName;
                 $referralSource->save();
             }
 

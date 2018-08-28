@@ -18,7 +18,7 @@ use yii\helpers\Url;
         'id' => 'modal-form',
         'action' => $url,
     ]);?>
-        <?=$form->field($model, 'source_name')->textInput();?>
+        <?=$form->field($model, 'name')->textInput();?>
     <?php ActiveForm::end();?>
 
 </div>

@@ -19,6 +19,8 @@ class ReferralSources extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    const REFERRAL_SOURCE_OTHER = '4';
+    
     public static function tableName()
     {
         return 'referral_sources';
@@ -30,7 +32,7 @@ class ReferralSources extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['source_name'], 'string', 'max' => 255],
+            [['name'], 'string', 'max' => 255],
         ];
     }
 
@@ -70,7 +72,7 @@ class ReferralSources extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'source_name' => 'Source Name',
+            'name' => 'Name',
         ];
     }
 }

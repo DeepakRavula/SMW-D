@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'tableOptions' => ['class' => 'table table-bordered m-0'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
-            'source_name',
+            'name',
         ],
     ]); ?> 
 <?php Pjax::end(); ?>
