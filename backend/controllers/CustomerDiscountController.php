@@ -87,8 +87,8 @@ class CustomerDiscountController extends BaseController
         if (empty($customerDiscountModel)) {
             $customerDiscountModel = new CustomerDiscount();
             $customerDiscountModel->customerId = $id;
-            $customerDiscountModel->on(CustomerDiscount::EVENT_CREATE, [new CustomerDiscountLog(), 'create']);
-            $customerDiscountModel->userName = $userModel->publicIdentity;
+            //$customerDiscountModel->on(CustomerDiscount::EVENT_CREATE, [new CustomerDiscountLog(), 'create']);
+            //$customerDiscountModel->userName = $userModel->publicIdentity;
             $message = 'Discount has been added successfully.';
         } else {
             $message = 'Discount has been updated successfully.';
