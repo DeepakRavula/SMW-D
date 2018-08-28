@@ -7,6 +7,7 @@ use kartik\datetime\DateTimePickerAsset;
 DateTimePickerAsset::register($this);
 ?>
 <br>
+<div id="enrolment-edit" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="row">
 	<div class="col-md-6">
         <?php Pjax::begin(['id' => 'enrolment-view']); ?>
@@ -100,6 +101,8 @@ Modal::begin([
                     $('#modal-content').html(response.data);
                     $('.modal-save').show();
                     $('.modal-save').text('Save');
+                } else {
+                    $('#enrolment-edit').html(response.message).fadeIn().delay(3000).fadeOut();
                 }
             }
         });
