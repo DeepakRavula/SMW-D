@@ -28,7 +28,8 @@ use common\models\PaymentReceipt;
 use common\models\Location;
 use common\models\ProformaInvoice;
 use yii\helpers\Url;
-
+use common\models\User;
+use common\models\Log\PaymentLog;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
@@ -593,6 +594,8 @@ class PaymentController extends BaseController
             $payment->date = (new \DateTime($payment->date))->format('Y-m-d H:i:s');
             $payment->notes = $model->notes;
             if (round($payment->amount, 2) > 0.00) {
+                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                $payment->on(Payment::EVENT_AFTER_INSERT, [new PaymentLog(), 'create'], ['loggedUser' => $loggedUser]);
                 $payment->save();
             }
             
