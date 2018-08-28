@@ -82,6 +82,9 @@ class LessonSearch extends Lesson
         if (!empty($params) && !($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
+        if (!$this->showAll) {
+            $query->notCompleted();
+        }
         if (!empty($this->ids)) {
             $lessonQuery = Lesson::find()
                     ->andWhere(['id' => $this->ids]);
