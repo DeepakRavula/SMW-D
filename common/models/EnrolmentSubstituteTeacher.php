@@ -31,7 +31,7 @@ class EnrolmentSubstituteTeacher extends Model
         return [
             [['teacherId', 'changesFrom'], 'required', 'on' => self::SCENARIO_CHANGE],
             ['enrolmentIds', 'validateSameTeacher'],
-            ['enrolmentIds', 'validateSameProgram'],
+            //['enrolmentIds', 'validateSameProgram'],
             ['changesFrom', function ($attribute, $params) {
                 $currentDate = (new \DateTime())->format('Y-m-d');
                 $changesFrom = (new \DateTime($this->changesFrom))->format('Y-m-d');

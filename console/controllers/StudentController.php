@@ -40,5 +40,12 @@ class StudentController extends Controller
         foreach ($inactiveStudents as $student) {
             $student->updateAttributes(['status' => Student::STATUS_INACTIVE]);
         }
+        $activeStudents = Student::find()
+            ->notDeleted()
+            ->active()
+            ->all();
+        foreach ($activeStudents as $student) {
+            $student->updateAttributes(['status' => Student::STATUS_ACTIVE]);
+        }
     }
 }

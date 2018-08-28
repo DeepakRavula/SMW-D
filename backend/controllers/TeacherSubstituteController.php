@@ -17,6 +17,7 @@ use yii\filters\AccessControl;
 use common\models\EnrolmentSubstituteTeacher;
 use common\models\Enrolment;
 use yii\helpers\ArrayHelper;
+use common\models\Program;
 /**
  * TeacherAvailabilityController implements the CRUD actions for TeacherAvailability model.
  */
@@ -211,12 +212,25 @@ class TeacherSubstituteController extends BaseController
                 ->andWhere(['id' => $model->enrolmentIds])
                 ->all();
             $teacherId = end($enrolments)->course->teacherId;
-            $programId = end($enrolments)->course->programId;
-            $teachers = ArrayHelper::map(User::find()
-                ->teachers($programId, $locationId)
-                ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = ul.user_id')
+            $programIds = ArrayHelper::getColumn(Program::find()
+                ->enrollment($model->enrolmentIds)
+                ->all(), function ($element) {
+                return $element->id;
+            });
+            $teachers = User::find()
+                ->teachersInLocation($locationId)
                 ->notDeleted()
                 ->andWhere(['NOT', ['user.id' => $teacherId]])
+                ->all();
+            $teacherIds = [];
+            foreach ($teachers as $teacher) {
+                if ($teacher->hasQualified($programIds)) {
+                    $teacherIds [] = $teacher->id;
+                }
+            }
+            $teachers = ArrayHelper::map(User::find()
+                ->andWhere(['user.id' => $teacherIds])
+                ->join('LEFT JOIN', 'user_profile', 'user_profile.user_id = user.id')
                 ->orderBy(['user_profile.firstname' => SORT_ASC])
                 ->all(), 'id', 'publicIdentity');
             $data = $this->renderAjax('enrolment/_form', [
