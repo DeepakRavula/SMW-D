@@ -122,10 +122,19 @@ class ReferralSourceController extends BaseController
      */
     public function actionUpdate($id)
     {
+
         $model = $this->findModel($id);
-        $data = $this->renderAjax('_form', [
-            'model' => $model,
-        ]);
+        if ($model->isOther()) {
+            return [
+                'status' => false,
+                'message' => 'This referral source cannot be modified from Backend.'
+            ];
+           
+        } else {
+            $data = $this->renderAjax('_form', [
+                'model' => $model,
+            ]);
+        }
         if ($model->load(Yii::$app->request->post())) { 
             if ($model->save()) {
                 return [

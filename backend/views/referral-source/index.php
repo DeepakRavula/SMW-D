@@ -17,7 +17,7 @@ $addButton = Html::a(Yii::t('backend', '<i class="fa fa-plus f-s-18 m-l-10 aria-
 $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? $addButton : null;
 $this->params['breadcrumbs'][] = $this->title;
 ?> 	
-
+<div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div class="referral-sources-index "> 
     <?php Pjax::begin([
         'id' => 'referral-sources-listing',
@@ -61,6 +61,8 @@ $(document).ready(function () {
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Referral Sources</h4>');
 			            $('#popup-modal .modal-dialog').css({'width': '400px'});
                         $('#modal-content').html(response.data);
+                    } else {
+                        $('#error-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                     }
                 }
             });

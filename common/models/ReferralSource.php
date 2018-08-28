@@ -75,4 +75,9 @@ class ReferralSource extends \yii\db\ActiveRecord
             'name' => 'Name',
         ];
     }
+
+    public function isOther()
+    {
+        return $this->id == self::REFERRAL_SOURCE_OTHER;
+    }
 }
