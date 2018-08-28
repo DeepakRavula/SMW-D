@@ -100,7 +100,7 @@ class ReferralSourceController extends BaseController
             }  else {
                 return [
                     'status' => false,
-                    'errors' => Activeform::validate(),
+                    'errors' => Activeform::validate($model),
                 ];
 
             }
@@ -126,10 +126,17 @@ class ReferralSourceController extends BaseController
         $data = $this->renderAjax('_form', [
             'model' => $model,
         ]);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return [
-                'status' => true,
-            ];
+        if ($model->load(Yii::$app->request->post())) { 
+            if ($model->save()) {
+                return [
+                    'status' => true,
+                ];
+            } else {
+                return [
+                    'status' => false,
+                    'errors' => ActiveForm::validate($model),
+                ];
+            }
         } else {
             return [
                 'status' => true,
