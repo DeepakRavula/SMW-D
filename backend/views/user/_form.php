@@ -48,9 +48,9 @@ Select2Asset::register($this);
     });
     $(document).off('click', 'input:radio[name="CustomerReferralSource[referralSourceId]"]').on('click', 'input:radio[name="CustomerReferralSource[referralSourceId]"]', function () {
         var referralSourceId = $('input:radio[name="CustomerReferralSource[referralSourceId]"]:checked').val();
-        if(referralSourceId == '4') {
+        if (referralSourceId == '4') {
             $("#customerreferralsource-description").show();
-        }  else {
+        } else {
             $("#customerreferralsource-description").hide();
         }
     });
