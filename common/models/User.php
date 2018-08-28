@@ -13,6 +13,7 @@ use yii\web\IdentityInterface;
 use backend\models\UserForm;
 use common\models\Location;
 use common\models\discount\CustomerDiscount;
+use common\models\CustomerReferralSource;
 use common\models\Label;
 
 /**
@@ -379,6 +380,11 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasOne(CustomerPaymentPreference::className(), ['userId' => 'id'])
                 ->andWhere(['customer_payment_preference.isDeleted' => false]);
+    } 
+
+    public function getCustomerReferralSource()
+    {
+        return $this->hasOne(CustomerReferralSource::className(), ['userId' => 'id']);
     }
     
     public function getPhoneNumbers()

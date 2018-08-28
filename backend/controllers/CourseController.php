@@ -35,6 +35,7 @@ use common\models\log\LogHistory;
 use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
 use common\models\Payment;
+use common\models\CustomerReferralSource;
 
 /**
  * CourseController implements the CRUD actions for Course model.
