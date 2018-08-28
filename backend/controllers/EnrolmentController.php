@@ -39,6 +39,7 @@ use yii\data\ArrayDataProvider;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 use backend\models\search\EnrolmentPaymentSearch;
+use common\models\CustomerReferralSources;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -353,12 +354,14 @@ class EnrolmentController extends BaseController
         $userEmail = new UserEmail();
         $userLocation = new UserLocation();
         $student = new Student();
+        $customerReferralSources = new CustomerReferralSources();
             
         $userProfile->setModel($courseDetail);
         $phoneNumber->setModel($courseDetail);
         $address->setModel($courseDetail);
         $userEmail->setModel($courseDetail);
         $student->setModel($courseDetail);
+        $customerReferralSources->setModel($courseDetail);
         $user->status = User::STATUS_NOT_ACTIVE;
         $user->canLogin = true;
         $user->isDeleted = true;
@@ -374,6 +377,8 @@ class EnrolmentController extends BaseController
             $userContact = $this->createUserContact($user->id, $userEmail->labelId);
             $userEmail->userContactId = $userContact->id;
             $userEmail->save();
+            $customerReferralSources->userId = $user->id;
+            $customerReferralSources->save();
             
             //save address and phone number
             if (!empty($address->address)) {
