@@ -29,7 +29,7 @@ use common\models\Location;
 use common\models\ProformaInvoice;
 use yii\helpers\Url;
 use common\models\User;
-use common\models\Log\PaymentLog;
+use common\models\log\PaymentLog;
 
 /**
  * PaymentsController implements the CRUD actions for Payments model.
