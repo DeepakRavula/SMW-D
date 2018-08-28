@@ -35,6 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?> 
 <?php Pjax::end(); ?>
 </div> 
+
 <script>
 $(document).ready(function () {
     $(document).on('click', '.action-button,#referral-sources-listing  tbody > tr', function () {

@@ -75,6 +75,7 @@ class CustomerReferralSource extends \yii\db\ActiveRecord
             'updatedByUserId' => 'Updated By User ID',
         ];
     }
+    
     public function getReferralSource()
     {
         return $this->hasOne(ReferralSource::className(), ['id' => 'referralSourceId']);
