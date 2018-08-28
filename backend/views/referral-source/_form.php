@@ -10,9 +10,9 @@ use yii\helpers\Url;
 
 <div class="release-notes-form">
 
-  <?php $url = Url::to(['referral-sources/update', 'id' => $model->id]);
+  <?php $url = Url::to(['referral-source/update', 'id' => $model->id]);
     if ($model->isNewRecord) {
-        $url = Url::to(['referral-sources/create']);
+        $url = Url::to(['referral-source/create']);
     }
     $form = ActiveForm::begin([
         'id' => 'modal-form',
@@ -24,7 +24,7 @@ use yii\helpers\Url;
 </div>
 <script>
 $(document).on('modal-success', function(event, params) {
-        var url = "<?php echo Url::to(['referral-sources/index']); ?>";
+        var url = "<?php echo Url::to(['referral-source/index']); ?>";
         $.pjax.reload({url: url, container: "#referral-sources-listing", replace: false, timeout: 4000});
         return false;
     });

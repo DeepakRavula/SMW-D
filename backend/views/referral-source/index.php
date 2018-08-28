@@ -9,7 +9,7 @@ use common\models\User;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Referral Sources';
+$this->title = 'Referral Source';
 $roles = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
 $lastRole = end($roles);
 
@@ -40,10 +40,10 @@ $(document).ready(function () {
     $(document).on('click', '.action-button,#referral-sources-listing  tbody > tr', function () {
             var referralSourceId = $(this).data('key');
              if (referralSourceId === undefined) {
-                    var customUrl = '<?= Url::to(['referral-sources/create']); ?>';
+                    var customUrl = '<?= Url::to(['referral-source/create']); ?>';
             } else {
-                var customUrl = '<?= Url::to(['referral-sources/update']); ?>?id=' + referralSourceId;
-                var url = '<?= Url::to(['referral-sources/delete']); ?>?id=' + referralSourceId;
+                var customUrl = '<?= Url::to(['referral-source/update']); ?>?id=' + referralSourceId;
+                var url = '<?= Url::to(['referral-source/delete']); ?>?id=' + referralSourceId;
                 $('.modal-delete').show();
                 $(".modal-delete").attr("action",url);
             }

@@ -325,7 +325,7 @@ echo Menu::widget([
         [
             'label' => Yii::t('backend', 'Referral Sources'),
             'icon' => '<i class="fa fa-table"></i>',
-            'url' => ['/referral-sources/index'],
+            'url' => ['/referral-source/index'],
             'visible' => Yii::$app->user->can('manageBlogs'),
             'active' => (Yii::$app->controller->id === 'referral-source') ? true : false,
            
