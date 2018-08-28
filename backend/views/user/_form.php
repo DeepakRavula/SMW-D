@@ -32,7 +32,8 @@ Select2Asset::register($this);
             ->all();
             $referralSourceList = ArrayHelper::map($referralSource, 'id', 'name');
                 if($model->roles == User::ROLE_CUSTOMER) {
-            echo  $form->field($customerReferralSource, 'referralSourceId')->radioList($referralSourceList)->label('How did you find us?');
+                    echo  $form->field($customerReferralSource, 'referralSourceId')->radioList($referralSourceList)->label('How did you find us?');
+                    echo  $form->field($customerReferralSource, 'description')->textInput()->label(false);
                 }
             ?>
         </div>
@@ -42,12 +43,15 @@ Select2Asset::register($this);
 </div>
 
 <script>
+    $(document).ready(function(){
+        $("#customerreferralsource-description").hide();
+    });
     $(document).off('click', 'input:radio[name="CustomerReferralSource[referralSourceId]"]').on('click', 'input:radio[name="CustomerReferralSource[referralSourceId]"]', function () {
         var referralSourceId = $('input:radio[name="CustomerReferralSource[referralSourceId]"]:checked').val();
         if(referralSourceId == '4') {
-            $('#customerreferralsource-referralsourceid').hide();
-            $('#referal-source').append(
-            '<input class="form-control" id="customer-referral-source-description" name="CustomerReferralSource[description]" type="input" placeholder=""name="Description"/>');
+            $("#customerreferralsource-description").show();
+        }  else {
+            $("#customerreferralsource-description").hide();
         }
     });
 

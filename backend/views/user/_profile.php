@@ -39,7 +39,7 @@ $boxTools = ['<i title="Edit" class="fa fa-pencil user-edit-button m-r-10"></i>'
 		<?php endif;?>
         <?php if($model->isCustomer()) : ?>
 		<dt>Referral Source</dt>
-		<dd><?=  !empty($model->customerReferralSource->description) ? $model->customerReferralSource->description : $model->customerReferralSource->referralSource->name; ?></dd>
+		<dd><?=  $model->customerReferralSource ? $model->customerReferralSource->description ? $model->customerReferralSource->description : $model->customerReferralSource->referralSource->name: null; ?></dd>
 		<?php endif;?>
 	</dl>
 	<?php LteBox::end() ?>

@@ -8,7 +8,7 @@ use yii\helpers\Url;
 /* @var $form yii\bootstrap\ActiveForm */
 ?>
 
-<div class="release-notes-form">
+<div class="referral-sources-form">
 
   <?php $url = Url::to(['referral-source/update', 'id' => $model->id]);
     if ($model->isNewRecord) {
@@ -22,6 +22,7 @@ use yii\helpers\Url;
     <?php ActiveForm::end();?>
 
 </div>
+
 <script>
 $(document).on('modal-success', function(event, params) {
         var url = "<?php echo Url::to(['referral-source/index']); ?>";
