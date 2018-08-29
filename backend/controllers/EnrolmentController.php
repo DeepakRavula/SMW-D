@@ -503,6 +503,7 @@ class EnrolmentController extends BaseController
                 $url = Url::to(['/lesson/review', 'LessonReview[courseId]' => $course->id, 'LessonReview[isTeacherOnlyChanged]' => $isTeacherOnlyChanged,
                     'LessonSearch[showAllReviewLessons]' => false, 'LessonReview[rescheduleBeginDate]' => $rescheduleBeginDate,
                     'LessonReview[rescheduleEndDate]' => $rescheduleEndDate]);
+                $model->setStatus();
                 $response = [
                     'status' => true,
                     'url' => $url
@@ -530,6 +531,7 @@ class EnrolmentController extends BaseController
             $model->revertLessonsCredit($lessons);
             $message = 'Lesson credits has been credited to ' . $model->customer->publicIdentity . ' account.';
             $model->deleteWithOutTransactionalData();
+            $model->setStatus();
             $response = [
                 'status' => true,
                 'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
@@ -546,10 +548,12 @@ class EnrolmentController extends BaseController
     public function actionFullDelete($id)
     {
         $model = $this->findModel($id);
+        $student = clone $model->student;
         $studentId = $model->studentId;
         if (Yii::$app->request->isPost) {
             if ($model->course->program->isPrivate()) {
                 $model->deleteWithTransactionalData();
+                $student->setStatus();
                 $response = [
                     'status' => true,
                     'url' => Url::to(['student/view', 'id' => $studentId])
