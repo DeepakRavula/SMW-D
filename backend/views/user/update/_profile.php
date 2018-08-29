@@ -116,6 +116,7 @@ $loggedUser = User::findOne(Yii::$app->user->id);
 <?php ActiveForm::end(); ?>
 
 <script>
+    
     $(document).ready(function() {
         $("#customerreferralsource-description").hide();
 		var canLogin = <?= $model->canLogin ?>;
@@ -125,7 +126,7 @@ $loggedUser = User::findOne(Yii::$app->user->id);
             $('.can-login').hide();
         }
         var referralSource = '<?= $model->getModel()->customerReferralSource ? $model->getModel()->customerReferralSource->referralSourceId : null  ?>';
-        if(!$.isEmptyObject(referralSource) && referralSource == 4 ) {
+        if (!$.isEmptyObject(referralSource) && referralSource == 4 ) {
             $("#customerreferralsource-description").show();
         }
     });

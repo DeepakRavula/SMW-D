@@ -607,7 +607,7 @@ class UserController extends BaseController
             if ($model->save()) {              
                 $userProfile->save();
                 $customerReferralSource->load($request->post());
-                if(!$customerReferralSource->referralSource->isOther()) {
+                if (!$customerReferralSource->referralSource->isOther()) {
                     $customerReferralSource->description = "";
                 }
                 $customerReferralSource->userId = $userModel->id;
