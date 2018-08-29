@@ -46,6 +46,7 @@ Select2Asset::register($this);
     $(document).ready(function(){
         $("#customerreferralsource-description").hide();
     });
+    
     $(document).off('click', 'input:radio[name="CustomerReferralSource[referralSourceId]"]').on('click', 'input:radio[name="CustomerReferralSource[referralSourceId]"]', function () {
         var referralSourceId = $('input:radio[name="CustomerReferralSource[referralSourceId]"]:checked').val();
         if (referralSourceId == '4') {

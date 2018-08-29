@@ -519,3 +519,6 @@ dl {
     vertical-align: baseline;
     border-radius: .25em;
 }
+.referral-source {
+    width: 190px;
+}
