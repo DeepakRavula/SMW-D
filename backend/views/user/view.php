@@ -13,6 +13,7 @@ use common\models\User;
 use kartik\date\DatePickerAsset;
 use kartik\time\TimePickerAsset;
 use kartik\select2\Select2Asset;
+use common\models\CustomerReferralSource;
 Select2Asset::register($this);
 TimePickerAsset::register($this);
 DatePickerAsset::register($this);
@@ -332,8 +333,15 @@ $this->params['action-button'] = $this->render('_action-button', [
 ]); ?>
 <div id="customer-merge-content"></div>
 <?php Modal::end(); ?>
-<?php $userForm = new UserForm();
-    $userForm->setModel($model);?>
+<?php $userForm = new UserForm(); 
+    $userForm->setModel($model);
+    $userModel = $userForm->getModel();
+    if ($userModel->customerReferralSource) {
+      $customerReferralSource = $userModel->customerReferralSource;
+    } else {
+    $customerReferralSource = new CustomerReferralSource();  
+    }
+    ?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0"> Edit</h4>',
     'id' => 'user-edit-modal',
@@ -341,6 +349,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 <?= $this->render('update/_profile', [
     'model' => $userForm,
     'userProfile' => $model->userProfile,
+    'customerReferralSource' => $customerReferralSource,
 ]);?>
 <?php Modal::end(); ?>
 <?php Pjax::begin([

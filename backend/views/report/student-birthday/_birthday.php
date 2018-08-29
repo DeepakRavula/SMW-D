@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use yii\helpers\Url;
-
+use Carbon\Carbon;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
@@ -16,7 +16,7 @@ $this->title = 'Student Birthdays';
 ]);
    ?>
 <div>
-    <h3><strong>Student Birthday Report From  <?= $searchModel->fromDate->format('F jS') . ' to ' . $searchModel->toDate->format('F jS'); ?></strong></h3></div>
+    <h3><strong>Student Birthday Report From  <?= Carbon::parse($searchModel->fromDate)->format('M d') . ' to ' . Carbon::parse($searchModel->toDate)->format('M d'); ?></strong></h3></div>
     <?php
     echo GridView::widget([
         'dataProvider' => $dataProvider,
@@ -38,12 +38,10 @@ $this->title = 'Student Birthdays';
                 ],
         'columns' => [
             [
-                'label' => 'First Name',
-                'value' => 'first_name',
-            ],
-            [
-                'label' => 'Last Name',
-                'value' => 'last_name',
+                'label' => 'Name',
+                'value' => function ($data) {
+                    return $data->fullName;
+                },
             ],
             [
                 'label' => 'Birth Date',
