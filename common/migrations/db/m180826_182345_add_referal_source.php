@@ -38,7 +38,6 @@ class m180826_182345_add_referal_source extends Migration
             foreach ($sourceNames as $sourceName) {
                 $referralSource       = new ReferralSource();
                 $referralSource->name = $sourceName;
-                $referralSource->isDeleted = false;
                 $referralSource->save();
             }
 
