@@ -28,7 +28,8 @@ $this->params['show-all'] = $this->render('_button', [
 <?php $columns = [
     [
         'class' => '\kartik\grid\CheckboxColumn',
-        'mergeHeader' => false
+        'mergeHeader' => false,
+        'contentOptions' => ['style' => 'width:3%'],
     ],
     [
         'attribute' => 'program',
@@ -44,7 +45,7 @@ $this->params['show-all'] = $this->render('_button', [
         'value' => function ($data) {
             return $data->student->fullName;
         },
-        'contentOptions' => ['style' => 'width:17%'],
+        'contentOptions' => ['style' => 'width:20%'],
     ],
     [
         'attribute' => 'teacher',
@@ -52,7 +53,7 @@ $this->params['show-all'] = $this->render('_button', [
         'value' => function ($data) {
             return $data->course->teacher->publicIdentity;
         },
-        'contentOptions' => ['style' => 'width:17%'],
+        'contentOptions' => ['style' => 'width:20%'],
     ],
     [
         'attribute' => 'startdate',
@@ -127,10 +128,13 @@ $this->params['show-all'] = $this->render('_button', [
         'summary' => false,
         'emptyText' => false,
         'toolbar' =>  [
+            ['content' =>  Html::a(Yii::t('backend', '<i class="fa fa-plus fa-2x" aria-hidden="true"></i>'), '#',
+                ['class' => 'new-enrol-btn'])
+            ],
             '{toggleData}'
         ],
         'panel' => [
-            'type' => GridView::TYPE_PRIMARY
+            'type' => GridView::TYPE_DEFAULT
         ],
         'toggleDataOptions' => ['minCount' => 20],
         'filterModel' => $searchModel,

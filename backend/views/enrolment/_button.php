@@ -2,26 +2,30 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
 
 ?>
-<?php
-$form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
+
+<?php $form = ActiveForm::begin([
+    'action' => ['index'],
+    'method' => 'get',
     'fieldConfig' => [
         'options' => [
-            'tag' => false,
-        ],
+            'tag' => false
+        ]
     ],
-    ]);
-?>
-<?php yii\widgets\Pjax::begin() ?>
+]); ?>
+
+<?php Pjax::begin() ?>
+
 <div class="show-all-top">
-<div class="checkbox">
-<div id="show-all">
-<?= $form->field($searchModel, 'showAllEnrolments')->checkbox(['data-pjax' => true]); ?>
+    <div class="checkbox">
+        <div id="show-all">
+            <?= $form->field($searchModel, 'showAllEnrolments')->checkbox(['data-pjax' => true]); ?>
+        </div>
+    </div>
 </div>
-</div>
-</div>
-<?php \yii\widgets\Pjax::end(); ?>
+
+<?php Pjax::end(); ?>
+
 <?php ActiveForm::end(); ?>
