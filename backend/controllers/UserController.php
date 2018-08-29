@@ -608,7 +608,7 @@ class UserController extends BaseController
                 $userProfile->save();
                 $customerReferralSource->load($request->post());
                 if (!$customerReferralSource->referralSource->isOther()) {
-                    $customerReferralSource->description = "";
+                    $customerReferralSource->description = null;
                 }
                 $customerReferralSource->userId = $userModel->id;
                 $customerReferralSource->save();
