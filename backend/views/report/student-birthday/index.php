@@ -30,8 +30,12 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['i
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
-            'first_name',
-            'last_name',
+            [
+                'label' => 'Name',
+                'value' => function ($data) {
+                    return $data->fullName;
+                },
+            ],
             'birth_date:date',
             [
                 'label' => 'Customer',
