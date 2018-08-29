@@ -35,6 +35,7 @@ $this->params['show-all'] = $this->render('_button', [
         'value' => function ($data) {
             return $data->course->program->name;
         },
+        'contentOptions' => ['style' => 'width:17%'],
     ],
     [
         'attribute' => 'student',
@@ -42,6 +43,7 @@ $this->params['show-all'] = $this->render('_button', [
         'value' => function ($data) {
             return $data->student->fullName;
         },
+        'contentOptions' => ['style' => 'width:17%'],
     ],
     [
         'attribute' => 'teacher',
@@ -49,6 +51,7 @@ $this->params['show-all'] = $this->render('_button', [
         'value' => function ($data) {
             return $data->course->teacher->publicIdentity;
         },
+        'contentOptions' => ['style' => 'width:17%'],
     ],
     [
         'attribute' => 'startdate',
