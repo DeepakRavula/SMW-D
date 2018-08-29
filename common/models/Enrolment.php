@@ -680,6 +680,29 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->course->type === self::TYPE_EXTRA;
     }
 
+    public function setStatus()
+    {
+        $today = (new \DateTime())->format('Y-m-d');
+        $courseStartDate = (new \DateTime($this->course->startDate))->format('Y-m-d');
+        $courseEndDate = (new \DateTime($this->course->endDate))->format('Y-m-d');
+        if ($today >= $courseStartDate && $today <= $courseEndDate) {
+            $studentStatus = Student::STATUS_ACTIVE;
+            $customerStatus = USER::STATUS_ACTIVE;
+        } else {
+            $studentStatus = Student::STATUS_INACTIVE;
+            $customerStatus = USER::STATUS_NOT_ACTIVE;
+        }
+        $this->student->updateAttributes([
+            'status' => $studentStatus,
+            'isDeleted' => false
+        ]);
+        $this->customer->updateAttributes([
+            'status' => $customerStatus,
+            'isDeleted' => false
+        ]);
+        return true;
+    }
+
     public function hasPaymentFrequencyDiscount()
     {
         return !empty($this->paymentFrequencyDiscount);

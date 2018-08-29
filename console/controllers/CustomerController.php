@@ -36,16 +36,7 @@ class CustomerController extends Controller
             ->notDeleted()
             ->all();
         foreach ($customers as $customer) {
-            $inactiveCount = 0;
-            $studentCount = $customer->students ? $customer->studentsCount : 0;
-            foreach ($customer->students as $student) {
-                if (!$student->isActive()) {
-                    $inactiveCount ++;
-                }
-            }
-            if ($inactiveCount == $studentCount) {
-                $customer->updateAttributes(['status' => User::STATUS_NOT_ACTIVE]);
-            }
+            $customer->setActiveStatus();
         }
     }
 }

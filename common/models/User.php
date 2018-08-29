@@ -329,6 +329,39 @@ class User extends ActiveRecord implements IdentityInterface
             ->onCondition(['qualification.isDeleted' => false]);
     }
 
+    public function setActiveStatus()
+    {
+        $inactiveCount = 0;
+        $studentCount = $this->students ? $this->studentsCount : 0;
+        foreach ($this->students as $student) {
+            if (!$student->isActive()) {
+                $inactiveCount ++;
+            }
+        }
+        if ($inactiveCount == $studentCount) {
+            $this->updateAttributes(['status' => self::STATUS_NOT_ACTIVE]);
+        }
+        return true;
+    }
+
+    public function getQualifi($programId)
+    {
+        return Qualification::find()
+            ->notDeleted()
+            ->andWhere(['teacher_id' => $this->id, 'program_id' => $programId])
+            ->one();
+    }
+
+    public function hasQualified($programIds)
+    {
+        foreach ($programIds as $programId) {
+            if (!$this->getQualifi($programId)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public function getLocationWalkin()
     {
         return $this->hasMany(LocationWalkinCustomer::className(), ['customerId' => 'id']);
