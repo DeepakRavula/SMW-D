@@ -6,6 +6,7 @@ use Yii;
 use common\models\discount\EnrolmentDiscount;
 use yii\helpers\ArrayHelper;
 use yii\behaviors\BlameableBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 use yii\behaviors\TimestampBehavior;
 use valentinek\behaviors\ClosureTable;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -136,6 +137,20 @@ class Lesson extends \yii\db\ActiveRecord
                 'class' => BlameableBehavior::className(),
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
+            ],
+            'audittrail'=>[
+                'class'=>AuditTrailBehavior::className(),
+                
+                // some of the optional configurations
+                //'ignoredAttributes'=>['created_at','updated_at'],
+                'consoleUserId'=>1, 
+                'attributeOutput'=>[
+                    'desktop_id'=>function ($value) {
+                        $model = Desktop::findOne($value);
+                        return sprintf('%s %s', $model->manufacturer, $model->device_name);
+                    },
+                    'last_checked'=>'datetime',
+                ],
             ],
         ];
     }
