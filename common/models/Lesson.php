@@ -142,7 +142,6 @@ class Lesson extends \yii\db\ActiveRecord
                 'class'=>AuditTrailBehavior::className(),
                 
                 // some of the optional configurations
-                //'ignoredAttributes'=>['created_at','updated_at'],
                 'consoleUserId'=>1, 
                 'attributeOutput'=>[
                     'desktop_id'=>function ($value) {
