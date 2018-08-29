@@ -60,12 +60,11 @@ $loggedUser = User::findOne(Yii::$app->user->id);
                         $referralSource = ReferralSource::find()
                         ->notDeleted()
                         ->all();
-                        $referralSourceList = ArrayHelper::map($referralSource, 'id', 'name');
-                            if ($model->roles == User::ROLE_CUSTOMER) {
-                                echo  $form->field($customerReferralSource, 'referralSourceId')->radioList($referralSourceList)->label(false);
-                                echo  $form->field($customerReferralSource, 'description')->textInput()->label(false);
-                            }
-                        ?>
+                        $referralSourceList = ArrayHelper::map($referralSource, 'id', 'name'); ?>
+                           <?php if ($model->roles == User::ROLE_CUSTOMER) :?>
+                               <?php echo  $form->field($customerReferralSource, 'referralSourceId')->radioList($referralSourceList)->label(false); ?>
+                               <?php echo  $form->field($customerReferralSource, 'description')->textInput()->label(false); ?>
+                            <?php endif; ?>  
                     </div>
                 </div> 
             </div>
@@ -116,7 +115,7 @@ $loggedUser = User::findOne(Yii::$app->user->id);
 <?php ActiveForm::end(); ?>
 
 <script>
-    
+
     $(document).ready(function() {
         $("#customerreferralsource-description").hide();
 		var canLogin = <?= $model->canLogin ?>;
