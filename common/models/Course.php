@@ -202,6 +202,19 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasOne(Course::className(), ['id' => 'courseId'])
                 ->viaTable('course_extra', ['extraCourseId' => 'id']);
     }
+
+    public function updateDates()
+    {
+        if ($this->firstLesson) {
+            $firstLessonDate = (new \DateTime($this->firstLesson->date))->format('Y-m-d H:i:s');
+            $lastLessonDate = (new \DateTime($this->lastLesson->date))->format('Y-m-d H:i:s');
+            $this->updateAttributes([
+                'startDate' => $firstLessonDate,
+                'endDate' => $lastLessonDate
+            ]);
+        }
+        return true;
+    }
     
     public function getExtraCourses()
     {
@@ -220,6 +233,24 @@ class Course extends \yii\db\ActiveRecord
                 ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
                     'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
                         Lesson::STATUS_UNSCHEDULED]]);
+    }
+
+    public function getFirstLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['courseId' => 'id'])
+            ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
+                'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                    Lesson::STATUS_UNSCHEDULED]])
+            ->orderBy(['lesson.date' => SORT_ASC]);
+    }
+
+    public function getLastLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['courseId' => 'id'])
+            ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
+                'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                    Lesson::STATUS_UNSCHEDULED]])
+            ->orderBy(['lesson.date' => SORT_DESC]);
     }
     
     public function getExtraLessons()
