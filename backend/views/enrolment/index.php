@@ -35,7 +35,6 @@ $this->params['show-all'] = $this->render('_button', [
         'value' => function ($data) {
             return $data->course->program->name;
         },
-        'contentOptions' => ['style' => 'width:17%'],
     ],
     [
         'attribute' => 'student',
@@ -43,7 +42,6 @@ $this->params['show-all'] = $this->render('_button', [
         'value' => function ($data) {
             return $data->student->fullName;
         },
-        'contentOptions' => ['style' => 'width:17%'],
     ],
     [
         'attribute' => 'teacher',
@@ -51,7 +49,6 @@ $this->params['show-all'] = $this->render('_button', [
         'value' => function ($data) {
             return $data->course->teacher->publicIdentity;
         },
-        'contentOptions' => ['style' => 'width:17%'],
     ],
     [
         'attribute' => 'startdate',
@@ -59,7 +56,7 @@ $this->params['show-all'] = $this->render('_button', [
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->course->startDate);
         },
-        'contentOptions' => ['style' => 'width:17%'],
+        'contentOptions' => ['style' => 'width:20%'],
         'filterType' => KartikGridView::FILTER_DATE_RANGE,
         'filterWidgetOptions' => [
             'id' => 'enrolment-startdate-search',
@@ -88,7 +85,7 @@ $this->params['show-all'] = $this->render('_button', [
     [
         'label' => 'End Date',
         'attribute' => 'enddate',
-        'contentOptions' => ['style' => 'width:200px'],
+        'contentOptions' => ['style' => 'width:20%'],
         'value' => function ($data) {
             return Yii::$app->formatter->asDate($data->course->endDate);
         },
