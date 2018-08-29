@@ -590,7 +590,13 @@ class UserController extends BaseController
         $request = Yii::$app->request;
         $model = new UserForm();
         $model->setModel($this->findModel($id));
-        $userProfile  = $model->getModel()->userProfile;
+        $userModel = $model->getModel();
+        $userProfile  = $userModel->userProfile;
+        if ($userModel->customerReferralSource) {
+            $customerReferralSource = $userModel->customerReferralSource;
+        } else {
+            $customerReferralSource = new CustomerReferralSource(); 
+        }
         if ($model->load($request->post()) && $userProfile->load($request->post())) {
             if (!empty($model->password)) {
                 $model->getModel()->setPassword($model->password);
@@ -598,8 +604,14 @@ class UserController extends BaseController
             if (!empty($model->pin)) {
                 $model->getModel()->setPin($model->pin);
             }
-            if ($model->save()) {
+            if ($model->save()) {              
                 $userProfile->save();
+                $customerReferralSource->load($request->post());
+                if(!$customerReferralSource->referralSource->isOther()) {
+                    $customerReferralSource->description = "";
+                }
+                $customerReferralSource->userId = $userModel->id;
+                $customerReferralSource->save();
                 return [
                    'status' => true,
                 ];

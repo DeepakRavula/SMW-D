@@ -6,7 +6,8 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use trntv\filekit\widget\Upload;
 use yii\jui\DatePicker;
-
+use common\models\ReferralSource;
+use yii\helpers\ArrayHelper;
 $loggedUser = User::findOne(Yii::$app->user->id);
 ?>
 <?php
@@ -47,6 +48,27 @@ $loggedUser = User::findOne(Yii::$app->user->id);
 				])->textInput(['placeholder' => 'Select Date'])->label('Birth Date');
 				?>
 			</div>
+		<?php endif; ?>
+        <?php if ($model->getModel()->isCustomer()) : ?>
+            <div class = "col-xs-12">    
+                <div class="col-xs-6">
+                    <label class="modal-form-label">How did you find us?</label>
+                </div>    
+                <div class="col-xs-4">
+                    <div class = "referral-source">
+                        <?php 
+                        $referralSource = ReferralSource::find()
+                        ->notDeleted()
+                        ->all();
+                        $referralSourceList = ArrayHelper::map($referralSource, 'id', 'name');
+                            if ($model->roles == User::ROLE_CUSTOMER) {
+                                echo  $form->field($customerReferralSource, 'referralSourceId')->radioList($referralSourceList)->label(false);
+                                echo  $form->field($customerReferralSource, 'description')->textInput()->label(false);
+                            }
+                        ?>
+                    </div>
+                </div> 
+            </div>
 		<?php endif; ?>
         <div class="col-xs-4">
         <?php if ($loggedUser->canManagePin()) : ?>
@@ -95,11 +117,16 @@ $loggedUser = User::findOne(Yii::$app->user->id);
 
 <script>
     $(document).ready(function() {
+        $("#customerreferralsource-description").hide();
 		var canLogin = <?= $model->canLogin ?>;
         if (canLogin) {
             $('.can-login').show();
         } else {
             $('.can-login').hide();
+        }
+        var referralSource = '<?= $model->getModel()->customerReferralSource ? $model->getModel()->customerReferralSource->referralSourceId : null  ?>';
+        if(!$.isEmptyObject(referralSource) && referralSource == 4 ) {
+            $("#customerreferralsource-description").show();
         }
     });
     
@@ -107,6 +134,14 @@ $loggedUser = User::findOne(Yii::$app->user->id);
         userProfile.managePasswordField();
     });
     
+    $(document).off('click', 'input:radio[name="CustomerReferralSource[referralSourceId]"]').on('click', 'input:radio[name="CustomerReferralSource[referralSourceId]"]', function () {
+        var referralSourceId = $('input:radio[name="CustomerReferralSource[referralSourceId]"]:checked').val();
+        if (referralSourceId == '4') {
+            $("#customerreferralsource-description").show();
+        } else {
+            $("#customerreferralsource-description").hide();
+        }
+    });
     var userProfile = {
         managePasswordField :function() {
             if ($('#userform-canlogin').is(':checked')) {
