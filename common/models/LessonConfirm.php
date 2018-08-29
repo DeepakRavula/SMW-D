@@ -109,6 +109,7 @@ class LessonConfirm extends Model
 
     public function confirmCustomer()
     {
+        $courseModel = Course::findOne($this->courseId);
         $enrolmentModel = Enrolment::findOne(['id' => $courseModel->enrolment->id]);
         $enrolmentModel->setStatus();
         $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
