@@ -8,6 +8,7 @@ use common\models\Program;
 use common\models\Student;
 use common\models\UserProfile;
 use common\components\gridView\KartikGridView;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\EnrolmentSearch */
@@ -122,6 +123,13 @@ $this->params['show-all'] = $this->render('_button', [
         'options' => ['id' => 'enrolment-listing-grid'],
         'summary' => false,
         'emptyText' => false,
+        'toolbar' =>  [
+            '{toggleData}'
+        ],
+        'panel' => [
+            'type' => GridView::TYPE_PRIMARY
+        ],
+        'toggleDataOptions' => ['minCount' => 20],
         'filterModel' => $searchModel,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
