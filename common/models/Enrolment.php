@@ -695,6 +695,8 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function setStatus()
     {
+        $studentStatus = Student::STATUS_INACTIVE;
+        $customerStatus = USER::STATUS_NOT_ACTIVE;
         foreach ($this->student->enrolments as $enrolment) {
             if (!$enrolment->isActive()) {
                 $studentStatus = Student::STATUS_INACTIVE;
