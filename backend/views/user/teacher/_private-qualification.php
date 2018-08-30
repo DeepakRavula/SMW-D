@@ -9,7 +9,7 @@ use insolita\wgadminlte\LteConst;
 <?php
     LteBox::begin([
         'type' => LteConst::TYPE_DEFAULT,
-        'title' => 'Private Qualifications',
+        'title' => '<i class="fa fa-plus pull-left" data-widget="collapse"></i> Private Qualifications',
         'boxTools' => '<i class="fa fa-plus add-new-qualification"></i>',
         'withBorder' => true,
     ])

@@ -254,6 +254,8 @@ class Student extends \yii\db\ActiveRecord
 
     public function setStatus()
     {
+        $studentStatus = Student::STATUS_INACTIVE;
+        $customerStatus = USER::STATUS_NOT_ACTIVE;
         foreach ($this->enrolments as $enrolment) {
             if (!$enrolment->isActive()) {
                 $studentStatus = Student::STATUS_INACTIVE;
@@ -306,5 +308,19 @@ class Student extends \yii\db\ActiveRecord
             break;
         }
         return $gender;
+    }
+
+    public function getStudentStatus() 
+    {
+        $status = null;
+        switch ($this->status) {
+            case self::STATUS_ACTIVE:
+                $status = 'Active';
+            break;
+            case self::STATUS_INACTIVE:
+                $status = 'InActive';
+            break;
+        }
+        return $status;
     }
 }
