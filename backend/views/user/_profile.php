@@ -40,6 +40,8 @@ $boxTools = ['<i title="Edit" class="fa fa-pencil user-edit-button m-r-10"></i>'
         <?php if($model->isCustomer()) : ?>
 		<dt>Referral Source</dt>
 		<dd><?=  $model->customerReferralSource ? $model->customerReferralSource->description ? $model->customerReferralSource->description : $model->customerReferralSource->referralSource->name: null; ?></dd>
+        <dt>Status</dt>
+		<dd><?= $model->getStatus(); ?></dd>
 		<?php endif;?>
 	</dl>
 	<?php LteBox::end() ?>

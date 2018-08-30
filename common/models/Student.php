@@ -309,4 +309,18 @@ class Student extends \yii\db\ActiveRecord
         }
         return $gender;
     }
+
+    public function getStatus() 
+    {
+        $status = null;
+        switch ($this->status) {
+            case self::STATUS_ACTIVE:
+                $status = 'Active';
+            break;
+            case self::STATUS_INACTIVE:
+                $status = 'InActive';
+            break;
+        }
+        return $status;
+    }
 }
