@@ -3,18 +3,23 @@
 use yii\grid\GridView;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+use yii\widgets\Pjax;
 
 ?>
- <?php yii\widgets\Pjax::begin(['id' => 'group-grid']); ?>
-<?php
-    LteBox::begin([
-        'type' => LteConst::TYPE_DEFAULT,
-        'title' => 'Group Qualifications',
-        'boxTools' => '<i class="fa fa-plus add-new-group-qualification"></i>',
-        'withBorder' => true,
-    ])
-    ?>
-			<?php echo GridView::widget([
+
+<?php Pjax::Begin(['id' => 'group-grid'])?>
+<div class="box box-default collapsed-box">
+            <div class="box-header with-border">
+            <i class="fa fa-plus pull-left" data-widget="collapse"></i>
+              <h3 class="box-title">Group Qualifications</h3>
+                <div class="box-tools pull-right">
+                <i title="Add" class="fa fa-plus add-new-group-qualification"></i>                
+              </div>
+              <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body" style="display: none;">
+            <?php echo GridView::widget([
              'id' => 'qualification-grid',
                 'dataProvider' => $groupQualificationDataProvider,
                 'tableOptions' => ['class' => 'table table-condensed'],
@@ -33,5 +38,7 @@ use insolita\wgadminlte\LteConst;
                 ]
             ],
             ]); ?>	
-	<?php LteBox::end() ?>
-<?php yii\widgets\Pjax::end(); ?>
+            </div>
+            <!-- /.box-body -->
+          </div>
+<?php Pjax::end();?>

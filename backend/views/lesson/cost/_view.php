@@ -31,8 +31,4 @@ use yii\widgets\Pjax;
             </div>
             <!-- /.box-body -->
           </div>
-<?php Pjax::end();?>	
-
-<script>
-
-</script>				
+<?php Pjax::end();?>				
