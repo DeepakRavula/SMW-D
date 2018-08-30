@@ -310,7 +310,7 @@ class Student extends \yii\db\ActiveRecord
         return $gender;
     }
 
-    public function getStatus() 
+    public function getStudentStatus() 
     {
         $status = null;
         switch ($this->status) {
