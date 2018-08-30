@@ -418,6 +418,18 @@ class Enrolment extends \yii\db\ActiveRecord
         return $isExpiring;
     }
 
+    public function isActive()
+    {
+        $isActive = true;
+        $startDate = (new \DateTime($this->course->startDate))->format('Y-m-d');
+        $endDate = (new \DateTime($this->course->endDate))->format('Y-m-d');
+        $currentDate = (new \DateTime())->format('Y-m-d');
+        if (($startDate > $currentDate && $currentDate < $endDate) || ($startDate < $currentDate && $currentDate > $endDate)) {
+            $isActive = false;
+        }
+        return $isActive;
+    }
+
     public function beforeSave($insert)
     {
         if ($insert) {
@@ -468,6 +480,7 @@ class Enrolment extends \yii\db\ActiveRecord
         $this->course->save();
         return true;
     }
+
     public function generateLessons($period, $isConfirmed = null)
     {
         if (!$isConfirmed) {
@@ -682,15 +695,17 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function setStatus()
     {
-        $today = (new \DateTime())->format('Y-m-d');
-        $courseStartDate = (new \DateTime($this->course->startDate))->format('Y-m-d');
-        $courseEndDate = (new \DateTime($this->course->endDate))->format('Y-m-d');
-        if ($today >= $courseStartDate && $today <= $courseEndDate) {
-            $studentStatus = Student::STATUS_ACTIVE;
-            $customerStatus = USER::STATUS_ACTIVE;
-        } else {
-            $studentStatus = Student::STATUS_INACTIVE;
-            $customerStatus = USER::STATUS_NOT_ACTIVE;
+        $studentStatus = Student::STATUS_INACTIVE;
+        $customerStatus = USER::STATUS_NOT_ACTIVE;
+        foreach ($this->student->enrolments as $enrolment) {
+            if (!$enrolment->isActive()) {
+                $studentStatus = Student::STATUS_INACTIVE;
+                $customerStatus = USER::STATUS_NOT_ACTIVE;
+            } else {
+                $studentStatus = Student::STATUS_ACTIVE;
+                $customerStatus = USER::STATUS_ACTIVE;
+                break;
+            }
         }
         $this->student->updateAttributes([
             'status' => $studentStatus,

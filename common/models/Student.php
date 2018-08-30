@@ -252,6 +252,31 @@ class Student extends \yii\db\ActiveRecord
         ];
     }
 
+    public function setStatus()
+    {
+        $studentStatus = Student::STATUS_INACTIVE;
+        $customerStatus = USER::STATUS_NOT_ACTIVE;
+        foreach ($this->enrolments as $enrolment) {
+            if (!$enrolment->isActive()) {
+                $studentStatus = Student::STATUS_INACTIVE;
+                $customerStatus = USER::STATUS_NOT_ACTIVE;
+            } else {
+                $studentStatus = Student::STATUS_ACTIVE;
+                $customerStatus = USER::STATUS_ACTIVE;
+                break;
+            }
+        }
+        $this->updateAttributes([
+            'status' => $studentStatus,
+            'isDeleted' => false
+        ]);
+        $this->customer->updateAttributes([
+            'status' => $customerStatus,
+            'isDeleted' => false
+        ]);
+        return true;
+    }
+
     public function isDraft()
     {
         return (int) $this->status === (int) self::STATUS_DRAFT;
@@ -283,5 +308,19 @@ class Student extends \yii\db\ActiveRecord
             break;
         }
         return $gender;
+    }
+
+    public function getStudentStatus() 
+    {
+        $status = null;
+        switch ($this->status) {
+            case self::STATUS_ACTIVE:
+                $status = 'Active';
+            break;
+            case self::STATUS_INACTIVE:
+                $status = 'InActive';
+            break;
+        }
+        return $status;
     }
 }

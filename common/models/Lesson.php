@@ -889,6 +889,7 @@ class Lesson extends \yii\db\ActiveRecord
             foreach ($this->getCreditAppliedPayment($this->enrolment->id) as $lessonPayment) {
                 $lessonPayment->delete();
             }
+            $this->course->updateDates();
         }
         return true;
     }
@@ -943,6 +944,7 @@ class Lesson extends \yii\db\ActiveRecord
                     }
                 }
             }
+            $this->course->updateDates();
         }
         
         return parent::afterSave($insert, $changedAttributes);
