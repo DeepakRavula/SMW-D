@@ -10,7 +10,8 @@ use yii\widgets\Pjax;
 <?php Pjax::Begin(['id' => 'private-grid'])?>
 <div class="box box-default collapsed-box">
             <div class="box-header with-border">
-            <i class="fa fa-plus pull-left" data-widget="collapse"></i>
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+            </button>
               <h3 class="box-title">Private Qualifications</h3>
                 <div class="box-tools pull-right">
                 <i title="Add" class="fa fa-plus add-new-qualification"></i>                
