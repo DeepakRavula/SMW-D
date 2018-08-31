@@ -166,8 +166,8 @@ class ScheduleController extends BaseController
             }]);
         if ($showAll && empty($teacherId) && empty($programId)) {
             $availableUserQuery = User::find()
-                ->joinWith(['availabilities a' => function ($query) use ($formatedDay) {
-                    $query->andWhere(['a.day' => $formatedDay]);
+                ->joinWith(['availabilities' => function ($query) use ($formatedDay) {
+                    $query->andWhere(['teacher_availability_day.day' => $formatedDay]);
                 }])
                 ->location($locationId);
             $query->union($availableUserQuery);
@@ -223,13 +223,13 @@ class ScheduleController extends BaseController
             }]);
         }
         if ($teacherId) {
-            $availabilityQuery->joinWith(['userLocation ul' => function ($query) use ($teacherId) {
-                $query->andWhere(['ul.user_id' => $teacherId]);
+            $availabilityQuery->joinWith(['userLocation' => function ($query) use ($teacherId) {
+                $query->andWhere(['user_location.user_id' => $teacherId]);
             }]);
         }
         if ($programId) {
-            $availabilityQuery->joinWith(['userLocation ulo' => function ($query) use ($locationId, $programId) {
-                $query->andWhere(['ulo.location_id' => $locationId]);
+            $availabilityQuery->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
+                $query->andWhere(['user_location.location_id' => $locationId]);
                 $query->joinWith(['qualifications'  => function ($query) use ($programId) {
                     $query->andWhere(['qualification.program_id' => $programId]);
                 }]);
