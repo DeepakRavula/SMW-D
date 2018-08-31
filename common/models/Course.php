@@ -113,10 +113,6 @@ class Course extends \yii\db\ActiveRecord
                 'class'=>AuditTrailBehavior::className(), 
                 'consoleUserId'=>1, 
                 'attributeOutput'=>[
-                    'desktop_id'=>function ($value) {
-                        $model = Desktop::findOne($value);
-                        return sprintf('%s %s', $model->manufacturer, $model->device_name);
-                    },
                     'last_checked'=>'datetime',
                 ],
             ],

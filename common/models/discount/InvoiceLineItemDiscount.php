@@ -4,6 +4,7 @@ namespace common\models\discount;
 
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "invoice_line_item_discount".
@@ -56,6 +57,19 @@ class InvoiceLineItemDiscount extends \yii\db\ActiveRecord
             'value' => 'Value',
             'valueType' => 'Value Type',
             'type' => 'Type',
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'audittrail'=>[
+                'class'=>AuditTrailBehavior::className(), 
+                'consoleUserId'=>1, 
+                'attributeOutput'=>[
+                    'last_checked'=>'datetime',
+                ],
+            ],
         ];
     }
 

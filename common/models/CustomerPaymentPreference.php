@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "customer_payment_preference".
@@ -58,6 +59,17 @@ class CustomerPaymentPreference extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
+            ],
+            'audittrail'=>[
+                'class'=>AuditTrailBehavior::className(), 
+                'consoleUserId'=>1, 
+                'attributeOutput'=>[
+                    'desktop_id'=>function ($value) {
+                        $model = Desktop::findOne($value);
+                        return sprintf('%s %s', $model->manufacturer, $model->device_name);
+                    },
+                    'last_checked'=>'datetime',
+                ],
             ],
         ];
     }

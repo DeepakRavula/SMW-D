@@ -8,6 +8,7 @@ use common\models\query\StudentQuery;
 use common\models\Location;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 /**
  * This is the model class for table "student".
  *
@@ -89,6 +90,13 @@ class Student extends \yii\db\ActiveRecord
                 'class' => BlameableBehavior::className(),
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
+            ],
+            'audittrail'=>[
+                'class'=>AuditTrailBehavior::className(), 
+                'consoleUserId'=>1, 
+                'attributeOutput'=>[
+                    'last_checked'=>'datetime',
+                ],
             ],
         ];
     }

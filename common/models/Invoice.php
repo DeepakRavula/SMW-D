@@ -9,6 +9,7 @@ use common\models\query\InvoiceQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\TimestampBehavior;
 use common\models\payment\ProformaPaymentFrequency;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "invoice".
@@ -79,6 +80,13 @@ class Invoice extends \yii\db\ActiveRecord
                 'class' => BlameableBehavior::className(),
                 'createdByAttribute' => 'createdUserId',
                 'updatedByAttribute' => 'updatedUserId',
+            ],
+            'audittrail'=>[
+                'class'=>AuditTrailBehavior::className(), 
+                'consoleUserId'=>1, 
+                'attributeOutput'=>[
+                    'last_checked'=>'datetime',
+                ],
             ],
         ];
     }

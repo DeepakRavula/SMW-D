@@ -8,6 +8,7 @@ use common\models\TaxStatus;
 use common\models\query\InvoiceLineItemQuery;
 use common\models\discount\InvoiceLineItemDiscount;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "invoice_line_item".
@@ -59,7 +60,14 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
-            ]
+            ],
+            'audittrail'=>[
+                'class'=>AuditTrailBehavior::className(), 
+                'consoleUserId'=>1, 
+                'attributeOutput'=>[
+                    'last_checked'=>'datetime',
+                ],
+            ],
         ];
     }
 

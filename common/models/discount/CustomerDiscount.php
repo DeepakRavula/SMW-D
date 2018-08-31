@@ -5,6 +5,7 @@ namespace common\models\discount;
 use common\models\User;
 use common\models\query\CustomerDiscountQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "customer_discount".
@@ -42,6 +43,13 @@ class CustomerDiscount extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
+            ],
+            'audittrail'=>[
+                'class'=>AuditTrailBehavior::className(), 
+                'consoleUserId'=>1, 
+                'attributeOutput'=>[
+                    'last_checked'=>'datetime',
+                ],
             ],
         ];
     }
