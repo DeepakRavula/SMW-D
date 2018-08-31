@@ -957,7 +957,7 @@ class User extends ActiveRecord implements IdentityInterface
             case self::STATUS_ACTIVE:
                 $status = 'Active';
             break;
-            case self::STATUS_INACTIVE:
+            case self::STATUS_NOT_ACTIVE:
                 $status = 'InActive';
             break;
         }
