@@ -558,8 +558,10 @@ class UserController extends BaseController
             if ($model->load($request->post()) && $emailModel->load($request->post())) {
                 $model->save();
                if ($customerReferralSource->load($request->post())) {
+                   if($customerReferralSource->referralSourceId) {
                    $customerReferralSource->userId = $model->getModel()->id;
                    $customerReferralSource->save();
+                   }
                }
                 if (!empty($emailModel->email)) {
                     $userContact = new UserContact();
@@ -607,11 +609,13 @@ class UserController extends BaseController
             if ($model->save()) {              
                 $userProfile->save();
                 $customerReferralSource->load($request->post());
-                if (!$customerReferralSource->referralSource->isOther()) {
-                    $customerReferralSource->description = null;
-                }
+                if($customerReferralSource->referralSourceId) {
+                    if (!$customerReferralSource->referralSource->isOther()) {
+                        $customerReferralSource->description = null;
+                    }
                 $customerReferralSource->userId = $userModel->id;
                 $customerReferralSource->save();
+                }
                 return [
                    'status' => true,
                 ];
