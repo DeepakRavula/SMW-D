@@ -160,13 +160,12 @@ class ViewAction extends Action
     {
        $searchModel = new EnrolmentSearch();
        $request = Yii::$app->request;
-       $searchModel->studentView=true;
-       $searchModel->studentId=$id;
+       $searchModel->studentView = true;
+       $searchModel->studentId = $id;
         if ($searchModel->load($request->get())) {
             $enrolmentRequest = $request->get('EnrolmentSearch');
             $searchModel->showAllEnrolments = $enrolmentRequest['showAllEnrolments'];
         }
-       
        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
        return $dataProvider;
     }
