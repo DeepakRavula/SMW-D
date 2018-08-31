@@ -599,7 +599,7 @@ class LessonController extends BaseController
             $lesson->save();
             $lesson->setDiscount();
         }
-        if (!$model->rescheduleBeginDate && !$model->changesFrom) {
+        if (!$model->rescheduleBeginDate && !$model->changesFrom && $courseModel->isPrivate()) {
             $model->confirmEnrolment();
         }
         if (!$model->courseId) {

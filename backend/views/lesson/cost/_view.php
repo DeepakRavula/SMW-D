@@ -8,12 +8,11 @@ use yii\widgets\Pjax;
 <?php Pjax::Begin(['id' => 'lesson-cost'])?>
 <div class="box box-default collapsed-box">
             <div class="box-header with-border">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+            </button>
               <h3 class="box-title">Cost</h3>
-
-              <div class="box-tools pull-right">
-                <i title="Edit" class="fa fa-pencil edit-cost"></i>
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
-                </button>
+                <div class="box-tools pull-right">
+                <i title="Edit" class="fa fa-pencil edit-cost"></i>                
               </div>
               <!-- /.box-tools -->
             </div>
@@ -33,4 +32,4 @@ use yii\widgets\Pjax;
             </div>
             <!-- /.box-body -->
           </div>
-<?php Pjax::end();?>					
+<?php Pjax::end();?>				

@@ -40,6 +40,8 @@ Pjax::begin([
 			<dd><?= $age; ?></dd>
 			<dt>Gender</dt>
 			<dd><?= $model->getGenderName(); ?></dd>
+			<dt>Status</dt>
+			<dd><?= $model->getStudentStatus(); ?></dd>
 		</dl>
 		<?php LteBox::end() ?>
 		</div> 

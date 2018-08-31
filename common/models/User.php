@@ -949,4 +949,18 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return !empty($this->primaryEmail);
     }
+
+    public function getStatus() 
+    {
+        $status = null;
+        switch ($this->status) {
+            case self::STATUS_ACTIVE:
+                $status = 'Active';
+            break;
+            case self::STATUS_NOT_ACTIVE:
+                $status = 'InActive';
+            break;
+        }
+        return $status;
+    }
 }
