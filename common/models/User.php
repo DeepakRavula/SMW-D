@@ -15,6 +15,7 @@ use common\models\Location;
 use common\models\discount\CustomerDiscount;
 use common\models\CustomerReferralSource;
 use common\models\Label;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * User model.
@@ -129,7 +130,14 @@ class User extends ActiveRecord implements IdentityInterface
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
-            ]
+            ],
+            'audittrail'=>[
+                'class'=>AuditTrailBehavior::className(), 
+                'consoleUserId'=>1, 
+                'attributeOutput'=>[
+                    'last_checked'=>'datetime',
+                ],
+            ],
         ];
     }
 
