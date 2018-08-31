@@ -339,8 +339,11 @@ class User extends ActiveRecord implements IdentityInterface
             }
         }
         if ($inactiveCount == $studentCount) {
-            $this->updateAttributes(['status' => self::STATUS_NOT_ACTIVE]);
+            $status = self::STATUS_NOT_ACTIVE;
+        } else {
+            $status = self::STATUS_ACTIVE;
         }
+        $this->updateAttributes(['status' => $status]);
         return true;
     }
 
@@ -958,7 +961,7 @@ class User extends ActiveRecord implements IdentityInterface
                 $status = 'Active';
             break;
             case self::STATUS_NOT_ACTIVE:
-                $status = 'InActive';
+                $status = 'Inactive';
             break;
         }
         return $status;

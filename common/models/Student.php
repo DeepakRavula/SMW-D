@@ -204,7 +204,7 @@ class Student extends \yii\db\ActiveRecord
 
     public function isActive()
     {
-        return $this->status != self::STATUS_ACTIVE;
+        return $this->status == self::STATUS_ACTIVE;
     }
 
     public function beforeSave($insert)

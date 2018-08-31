@@ -70,7 +70,7 @@ class EnrolmentSearch extends Enrolment
             ->isRegular();
         if ($this->studentView) {
             if (!$this->showAllEnrolments) {
-                $query->andWhere(['>=', 'course.endDate', $currentDate]);
+                $query->active();
             } 
             $query->andWhere(['enrolment.studentId' => $this->studentId]);
         }

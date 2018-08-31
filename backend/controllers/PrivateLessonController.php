@@ -136,7 +136,10 @@ class PrivateLessonController extends BaseController
     {
         $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
         $isBulk = Yii::$app->request->get('PrivateLesson')['isBulk'];
-        $lessons = Lesson::findAll($lessonIds);
+        $lessons = Lesson::find()
+            ->andWhere(['id' => $lessonIds])
+            ->orderBy(['date' => SORT_DESC])
+            ->all();
         foreach ($lessons as $lesson) {
             if (!$lesson->isDeletable()) {
                 return [
