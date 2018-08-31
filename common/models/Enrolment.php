@@ -9,6 +9,7 @@ use yii\behaviors\BlameableBehavior;
 use common\models\discount\EnrolmentDiscount;
 use DateInterval;
 use common\models\discount\LessonDiscount;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 /**
  * This is the model class for table "enrolment".
  *
@@ -70,6 +71,17 @@ class Enrolment extends \yii\db\ActiveRecord
                 'class' => BlameableBehavior::className(),
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
+            ],
+            'audittrail'=>[
+                'class'=>AuditTrailBehavior::className(), 
+                'consoleUserId'=>1, 
+                'attributeOutput'=>[
+                    'desktop_id'=>function ($value) {
+                        $model = Desktop::findOne($value);
+                        return sprintf('%s %s', $model->manufacturer, $model->device_name);
+                    },
+                    'last_checked'=>'datetime',
+                ],
             ],
         ];
     }

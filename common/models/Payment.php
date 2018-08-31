@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "payments".
@@ -171,6 +172,17 @@ class Payment extends ActiveRecord
                 'class' => BlameableBehavior::className(),
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
+            ],
+            'audittrail'=>[
+                'class'=>AuditTrailBehavior::className(), 
+                'consoleUserId'=>1, 
+                'attributeOutput'=>[
+                    'desktop_id'=>function ($value) {
+                        $model = Desktop::findOne($value);
+                        return sprintf('%s %s', $model->manufacturer, $model->device_name);
+                    },
+                    'last_checked'=>'datetime',
+                ],
             ],
         ];
     }

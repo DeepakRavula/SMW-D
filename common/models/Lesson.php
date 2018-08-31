@@ -140,8 +140,6 @@ class Lesson extends \yii\db\ActiveRecord
             ],
             'audittrail'=>[
                 'class'=>AuditTrailBehavior::className(),
-                
-                // some of the optional configurations
                 'consoleUserId'=>1, 
                 'attributeOutput'=>[
                     'desktop_id'=>function ($value) {
