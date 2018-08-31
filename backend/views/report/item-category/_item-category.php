@@ -312,7 +312,7 @@ var report = {
         var cols = "";
         var totalReportValue=<?= Yii::$app->formatter->asDecimal($totalReportValue, 2) ?>;
         var groupByMethod = $("#group-by-method").is(":checked");
-        colSpanValue=3;
+        colSpanValue=5;
         if(groupByMethod) {
         colSpanValue=1;
         }
