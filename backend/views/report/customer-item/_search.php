@@ -14,6 +14,7 @@ use common\models\User;
 <?php $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id; ?>
 
     <?php $form = ActiveForm::begin([
+        'id' => 'customer-item-search-form',
         'action' => ['report/customer-items'],
         'method' => 'get',
     ]); ?>
@@ -62,8 +63,13 @@ use common\models\User;
             ?>
         </div>
         <?= $form->field($model, 'isCustomerReport')->hiddenInput()->label(false); ?>
-        <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary']) ?>
         <?= Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class'=> 'btn btn-box-tool']); ?>
         </div>
     </div>
     <?php ActiveForm::end(); ?>
+
+<script>
+    $(document).on('change', '#invoicelineitemsearch-daterange', function() {
+        $("#customer-item-search-form").submit();
+    });
+</script>

@@ -46,7 +46,6 @@ use kartik\grid\GridView;
             ]);
            ?>
         </div>
-	   <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary']) ?>
     <?php ActiveForm::end(); ?>
 <script>
     $(document).ready(function () {
@@ -55,5 +54,8 @@ use kartik\grid\GridView;
         	$.pjax.reload({container: "#locations-listing", replace: false, timeout: 6000, data: $(this).serialize()});   
 			return false
         });
+    });
+    $(document).on('change', '#reportsearch-daterange', function() {
+        $("#all-locations-search-form").submit();
     });
 </script>

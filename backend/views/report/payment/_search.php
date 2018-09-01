@@ -13,6 +13,7 @@ use kartik\daterange\DateRangePicker;
 
     <?php
     $form = ActiveForm::begin([
+            'id' => 'payment-reports-form',
             'action' => ['report/payment'],
             'method' => 'get',
     ]);
@@ -44,6 +45,11 @@ use kartik\daterange\DateRangePicker;
         ]);
         ?>
     </div>
-<?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary btn-sm']) ?>      
 <?php ActiveForm::end(); ?>
 </div>
+
+<script>
+    $(document).on('change', '#paymentreportsearch-daterange', function() {
+        $("#payment-reports-form").submit();
+    });
+</script>

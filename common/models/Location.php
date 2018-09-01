@@ -210,7 +210,7 @@ class Location extends \yii\db\ActiveRecord
     {
         $activeStudentsCount = Student::find()
             ->notDeleted()
-            ->andWhere(['location.id' => $this->id])
+            ->location($this->id)
             ->statusActive()
             ->distinct(['enrolment.studentId'])
             ->count();
