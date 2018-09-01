@@ -47,6 +47,7 @@ use kartik\grid\GridView;
            ?>
         </div>
     <?php ActiveForm::end(); ?>
+    
 <script>
     $(document).ready(function () {
         $("#birthday-search-form").on("submit", function () {
@@ -55,7 +56,8 @@ use kartik\grid\GridView;
 			return false
         });
     });
-    $(document).on('change', '#studentbirthdaysearch-daterange', function() {
+
+    $(document).off('change', '#studentbirthdaysearch-daterange').on('change', '#studentbirthdaysearch-daterange', function() {
         $("#birthday-search-form").submit();
     });
 </script>

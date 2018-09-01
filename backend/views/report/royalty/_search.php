@@ -50,7 +50,7 @@ $form = ActiveForm::begin([
 <?php ActiveForm::end(); ?>
 
 <script>
-    $(document).on('change', '#reportsearch-daterange', function() {
+    $(document).off('change', '#reportsearch-daterange').on('change', '#reportsearch-daterange', function() {
         $("#royalty-search-form").submit();
     });
 </script>

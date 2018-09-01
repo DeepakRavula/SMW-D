@@ -55,7 +55,7 @@ use kartik\grid\GridView;
 			return false
         });
     });
-    $(document).on('change', '#reportsearch-daterange', function() {
+    $(document).off('change', '.reportsearch-daterange').on('change', '#reportsearch-daterange', function() {
         $("#all-locations-search-form").submit();
     });
 </script>

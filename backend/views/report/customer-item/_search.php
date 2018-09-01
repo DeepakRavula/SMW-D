@@ -69,7 +69,7 @@ use common\models\User;
     <?php ActiveForm::end(); ?>
 
 <script>
-    $(document).on('change', '#invoicelineitemsearch-daterange', function() {
+    $(document).off('change', '#invoicelineitemsearch-daterange').on('change', '#invoicelineitemsearch-daterange', function() {
         $("#customer-item-search-form").submit();
     });
 </script>

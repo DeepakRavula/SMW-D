@@ -49,7 +49,7 @@ use kartik\daterange\DateRangePicker;
 </div>
 
 <script>
-    $(document).on('change', '#paymentreportsearch-daterange', function() {
+    $(document).off('change', '#paymentreportsearch-daterange').on('change', '#paymentreportsearch-daterange', function() {
         $("#payment-reports-form").submit();
     });
 </script>

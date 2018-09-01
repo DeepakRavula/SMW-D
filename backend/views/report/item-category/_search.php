@@ -46,7 +46,7 @@ use kartik\daterange\DateRangePicker;
 </div>
 
 <script>
-    $(document).on('change', '#invoicelineitemsearch-daterange', function() {
+    $(document).off('change', '#invoicelineitemsearch-daterange').on('change', '#invoicelineitemsearch-daterange', function() {
         $("#item-category-search-form").submit();
     });
 </script>
