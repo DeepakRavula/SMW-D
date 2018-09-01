@@ -73,6 +73,7 @@ class EnrolmentSearch extends Enrolment
                 $query->active();
             } 
             $query->andWhere(['enrolment.studentId' => $this->studentId]);
+            $query->groupBy(['enrolment.id']);
         }
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
