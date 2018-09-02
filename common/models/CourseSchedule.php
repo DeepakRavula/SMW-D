@@ -22,6 +22,10 @@ class CourseSchedule extends \yii\db\ActiveRecord
     public $programRate;
     public $discount;
     public $isAutoRenew;
+    public $startDate;
+    public $endDate;
+    public $teacherId;
+
 
     /**
      * @inheritdoc
@@ -39,7 +43,7 @@ class CourseSchedule extends \yii\db\ActiveRecord
         return [
             [['day', 'fromTime'], 'required'],
             [['courseId', 'paymentFrequency'], 'integer'],
-            [['fromTime', 'duration', 'discount', 'paymentFrequency', 'programRate','isAutoRenew'], 'safe'],
+            [['fromTime', 'duration', 'discount', 'paymentFrequency', 'programRate', 'isAutoRenew', 'startDate', 'endDate', 'teacherId'], 'safe'],
         ];
     }
 

@@ -5,6 +5,7 @@ namespace common\models;
 use yii\base\Model;
 use Yii;
 use common\models\log\StudentLog;
+use Carbon\Carbon;
 /**
  * This is the model class for table "course".
  *
@@ -74,6 +75,10 @@ class LessonConfirm extends Model
             $bulkReschedule = new BulkRescheduleLesson();
             $bulkReschedule->lessonId = $lesson->id;
             $bulkReschedule->save();
+        }
+        if (!empty($lessons)) {
+            $lessonModel = end($lessons);
+            $this->createCourseSchedule($lessonModel);
         }
         return true;
     }
@@ -147,5 +152,24 @@ class LessonConfirm extends Model
             }
         }
         return true;
+    }
+
+    public function createCourseSchedule($lessonModel) {
+        $courseSchedule = new CourseSchedule();
+        $courseSchedule->courseId = $lessonModel->course->id;
+        $courseSchedule->fromTime = Carbon::parse($lessonModel->date)->format('H:i:s');
+        $courseSchedule->duration = Carbon::parse($lessonModel->duration)->format('H:i:s');
+        $courseSchedule->day = Carbon::parse($lessonModel->date)->format('N');
+        $oldCourseSchedules = $lessonModel->course->courseSchedule;
+        if (!empty( $oldCourseSchedules)) {
+        $oldCourseSchedule = end($oldCourseSchedules);
+        $courseSchedule->startDate = $oldCourseSchedule->startDate;
+        $courseSchedule->endDate = $oldCourseSchedule->endDate;
+        } else {
+        $courseSchedule->startDate = $lessonModel->course->startDate;
+        $courseSchedule->endDate = $lessonModel->course->endDate;    
+        }
+
+        $courseSchedule->save();
     }
 }
