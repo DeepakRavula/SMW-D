@@ -24,7 +24,7 @@ use yii\helpers\Html;
     'id' => 'student-grid',
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
-    'summary' => false,
+    'summary' => "Showing {begin} - {end} of {totalCount} items",
     'emptyText' => false,
     'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
         $url = Url::to(['student/view', 'id' => $model->id]);

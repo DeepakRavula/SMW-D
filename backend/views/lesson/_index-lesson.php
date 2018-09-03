@@ -12,6 +12,7 @@ use common\models\Program;
 use common\models\Location;
 use common\models\Student;
 use common\models\UserProfile;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -156,6 +157,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         'dataProvider' => $dataProvider,
         'options' => ['id' => 'lesson-index-1'],
         'filterModel' => $searchModel,
+        'summary' => "Showing {begin} - {end} of {totalCount} items",
         'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[showAll]' => $searchModel->showAll]),
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['lesson/view', 'id' => $model->id]);
