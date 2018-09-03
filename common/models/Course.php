@@ -179,7 +179,7 @@ class Course extends \yii\db\ActiveRecord
 
     public function getCourseSchedule()
     {
-        return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id']);
+        return $this->hasMany(CourseSchedule::className(), ['courseId' => 'id']);
     }
 
     public function getCourseGroup()

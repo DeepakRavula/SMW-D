@@ -460,10 +460,12 @@ class EnrolmentController extends BaseController
         if (Yii::$app->request->isPost) {
             if ($courseReschedule->load(Yii::$app->request->post()) && $courseReschedule->validate()) {
                 $courseReschedule->setScenario($courseReschedule::SCENARIO_DETAILED);
+                $courseSchedules = $model->course->courseSchedule;
+                $courseSchedule = end($courseSchedules);
                 $courseRescheduleData = $this->renderAjax('/enrolment/bulk-reschedule/_form-detail', [
                     'courseReschedule' => $courseReschedule,
                     'course' => $model->course,
-                    'courseSchedule' => $model->course->courseSchedule,
+                    'courseSchedule' => $courseSchedule,
                     'model' => $model
                 ]);
                 $response = [

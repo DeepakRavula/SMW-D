@@ -163,6 +163,7 @@ class LessonConfirm extends Model
         $oldCourseSchedules = $lessonModel->course->courseSchedule;
         if (!empty( $oldCourseSchedules)) {
         $oldCourseSchedule = end($oldCourseSchedules);
+        print_r($oldCourseSchedules);die('coming');
         $courseSchedule->startDate = $oldCourseSchedule->startDate;
         $courseSchedule->endDate = $oldCourseSchedule->endDate;
         } else {
