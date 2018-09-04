@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\User;
 
 /**
  * This is the model class for table "course_schedule".
@@ -22,9 +23,6 @@ class CourseSchedule extends \yii\db\ActiveRecord
     public $programRate;
     public $discount;
     public $isAutoRenew;
-    public $startDate;
-    public $endDate;
-    public $teacherId;
 
 
     /**
@@ -59,6 +57,9 @@ class CourseSchedule extends \yii\db\ActiveRecord
             'day' => 'Day',
             'fromTime' => 'From Time',
             'duration' => 'Duration',
+            'startDate' => 'Start Date',
+            'endDate' => 'End Date',
+            'teacherId' => 'Teacher',
         ];
     }
 
@@ -125,5 +126,9 @@ class CourseSchedule extends \yii\db\ActiveRecord
         $this->duration = $model->duration;
         $this->paymentFrequency = $model->paymentFrequency;
         return $this;
+    }
+
+    public function getTeacher() {
+        return $this->hasOne(User::className(), ['id' => 'teacherId']);
     }
 }

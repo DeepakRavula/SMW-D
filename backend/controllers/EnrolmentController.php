@@ -494,9 +494,11 @@ class EnrolmentController extends BaseController
             $endDate = new \DateTime($model->endDate);
             if ($courseReschedule->validate()) {
                 $isTeacherOnlyChanged = false;
+                $courseSchedules = $course->courseSchedule;
+                $courseSchedule = end($courseSchedules);
                 $day = (new \DateTime($courseReschedule->dayTime))->format('N');
                 $fromTime = (new \DateTime($courseReschedule->dayTime))->format('H:i:s');
-                if ($day == $course->courseSchedule->day && $fromTime == $course->courseSchedule->fromTime && $courseReschedule->teacherId != $course->teacherId) {
+                if ($day == $courseSchedule->day && $fromTime == $courseSchedule->fromTime && $courseReschedule->teacherId != $course->teacherId) {
                     $isTeacherOnlyChanged = true;
                 }
                 $lastLessonDate = $courseReschedule->reschdeule();

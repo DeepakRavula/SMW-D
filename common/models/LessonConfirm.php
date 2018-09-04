@@ -78,7 +78,7 @@ class LessonConfirm extends Model
         }
         if (!empty($lessons)) {
             $lessonModel = end($lessons);
-            $this->createCourseSchedule($lessonModel);
+            $this->createCourseSchedule($lessonModel, $startDate, $endDate);
         }
         return true;
     }
@@ -151,10 +151,16 @@ class LessonConfirm extends Model
                 $lesson->course->updateAttributes(['teacherId' => $this->teacherId]);
             }
         }
+        $startDate = Carbon::parse($changesFrom);
+        $endDate = Carbon::parse($lesson->course->endDate);
+        if (!empty($lessons)) {
+            $lessonModel = end($lessons);
+            $this->createCourseSchedule($lessonModel, $startDate, $endDate);
+        }
         return true;
     }
 
-    public function createCourseSchedule($lessonModel) {
+    public function createCourseSchedule($lessonModel, $startDate, $endDate) {
         $courseSchedule = new CourseSchedule();
         $courseSchedule->courseId = $lessonModel->course->id;
         $courseSchedule->fromTime = Carbon::parse($lessonModel->date)->format('H:i:s');
@@ -163,14 +169,13 @@ class LessonConfirm extends Model
         $oldCourseSchedules = $lessonModel->course->courseSchedule;
         if (!empty( $oldCourseSchedules)) {
         $oldCourseSchedule = end($oldCourseSchedules);
-        print_r($oldCourseSchedules);die('coming');
-        $courseSchedule->startDate = $oldCourseSchedule->startDate;
-        $courseSchedule->endDate = $oldCourseSchedule->endDate;
+        $courseSchedule->startDate = $startDate->format('Y-m-d H:i:s');
+        $courseSchedule->endDate = $endDate->format('Y-m-d H:i:s');
         } else {
         $courseSchedule->startDate = $lessonModel->course->startDate;
         $courseSchedule->endDate = $lessonModel->course->endDate;    
         }
-
+        $courseSchedule->teacherId = $lessonModel->teacherId;
         $courseSchedule->save();
     }
 }

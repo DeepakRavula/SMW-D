@@ -51,7 +51,8 @@ $this->params['show-all'] = $this->render('_button', [
         'attribute' => 'teacher',
         'label' => 'Teacher',
         'value' => function ($data) {
-            return $data->course->teacher->publicIdentity;
+            
+            return $data->course->getTeachers();
         },
         'contentOptions' => ['style' => 'width:20%'],
     ],

@@ -180,6 +180,9 @@ class StudentController extends BaseController
         if ($courseModel->save()) {
             $courseSchedule->isAutoRenew = $courseDetail->autoRenew;
             $courseSchedule->courseId = $courseModel->id;
+            $courseSchedule->startDate = $courseModel->startDate;
+            $courseSchedule->endDate = $courseModel->endDate->format('Y-m-d H:i:s');
+            $courseSchedule->teacherId = $courseModel->teacherId;
             if ($courseSchedule->save()) {
                 if (!empty($courseDetail->enrolmentDiscount)) {
                     $multipleEnrolmentDiscount->discount = $courseDetail->enrolmentDiscount;
@@ -191,6 +194,8 @@ class StudentController extends BaseController
                     $paymentFrequencyDiscount->enrolmentId = $courseModel->enrolment->id;
                     $paymentFrequencyDiscount->save();
                 }
+            } else {
+                die($courseSchedule->getErrors());
             }
         }
         return $this->redirect(['lesson/review', 'LessonReview[courseId]' => $courseModel->id, 'LessonReview[EnrolmentType]' => $courseDetail->isReverse ? Enrolment::TYPE_REVERSE : null, 

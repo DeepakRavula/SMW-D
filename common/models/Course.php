@@ -182,6 +182,12 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasMany(CourseSchedule::className(), ['courseId' => 'id']);
     }
 
+    public function getRecentCourseSchedule()
+    {
+        return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
+        ->orderBy(['course_schedule.id' => SORT_DESC]);
+    }
+
     public function getCourseGroup()
     {
         return $this->hasOne(CourseGroup::className(), ['courseId' => 'id']);
@@ -310,7 +316,7 @@ class Course extends \yii\db\ActiveRecord
             $this->startDate = $startDate->format('Y-m-d H:i:s');
             $this->endDate = $endDate->endOfMonth();
         }
-
+        
         return parent::beforeSave($insert);
     }
 
@@ -461,7 +467,7 @@ class Course extends \yii\db\ActiveRecord
             'teacherId' => $this->teacherId,
             'status' => $status,
             'date' => $day->format('Y-m-d H:i:s'),
-            'duration' => $this->courseSchedule->duration,
+            'duration' => $this->recentCourseSchedule->duration,
             'isConfirmed' => $isConfirmed,
         ]);
         $lesson->save();
@@ -548,5 +554,17 @@ class Course extends \yii\db\ActiveRecord
     public function hasExtraCourse()
     {
         return !empty($this->extraCourses);
+    }
+
+    public function getTeachers() 
+    {
+        $teachers = [];
+        $courseSchedules = $this->courseSchedule;
+        foreach($courseSchedules as $courseSchedule) {
+            if (array_search($courseSchedule->teacher->publicIdentity,$teachers) != $courseSchedule->teacher->publicIdentity ) {
+            $teachers[] = $courseSchedule->teacher->publicIdentity;
+            }
+        }
+        return implode(", ", $teachers);
     }
 }
