@@ -194,8 +194,6 @@ class StudentController extends BaseController
                     $paymentFrequencyDiscount->enrolmentId = $courseModel->enrolment->id;
                     $paymentFrequencyDiscount->save();
                 }
-            } else {
-                die($courseSchedule->getErrors());
             }
         }
         return $this->redirect(['lesson/review', 'LessonReview[courseId]' => $courseModel->id, 'LessonReview[EnrolmentType]' => $courseDetail->isReverse ? Enrolment::TYPE_REVERSE : null, 

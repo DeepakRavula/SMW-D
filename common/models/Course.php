@@ -177,7 +177,7 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasOne(CourseProgramRate::className(), ['courseId' => 'id']);
     }
 
-    public function getCourseSchedule()
+    public function getCourseSchedules()
     {
         return $this->hasMany(CourseSchedule::className(), ['courseId' => 'id']);
     }
@@ -185,6 +185,15 @@ class Course extends \yii\db\ActiveRecord
     public function getRecentCourseSchedule()
     {
         return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
+        ->orderBy(['course_schedule.id' => SORT_DESC]);
+    }
+
+    public function getCourseSchedule()
+    {
+        $currentDate = new \DateTime();
+        $currentDate = $currentDate->format('Y-m-d h:i:s');
+        return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
+        ->andFilterWhere(['OR', ['>=', 'course_schedule.startDate', $currentDate], ['<=', 'course_schedule.endDate', $currentDate]])
         ->orderBy(['course_schedule.id' => SORT_DESC]);
     }
 
@@ -559,7 +568,7 @@ class Course extends \yii\db\ActiveRecord
     public function getTeachers() 
     {
         $teachers = [];
-        $courseSchedules = $this->courseSchedule;
+        $courseSchedules = $this->courseSchedules;
         foreach($courseSchedules as $courseSchedule) {
             if (array_search($courseSchedule->teacher->publicIdentity,$teachers) != $courseSchedule->teacher->publicIdentity ) {
             $teachers[] = $courseSchedule->teacher->publicIdentity;

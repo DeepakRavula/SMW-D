@@ -27,8 +27,6 @@ LteBox::begin([
 		<dt>Period</dt>
 		<dd><?= Yii::$app->formatter->asDate($courseModel->startDate) . ' to ' . Yii::$app->formatter->asDate($courseModel->endDate)?></dd>
 		<dt>Time</dt>
-		<?php $courseSchedules = $courseModel->courseSchedule; ?>
-		<?php $courseSchedule = end($courseSchedules);?>
 		<dd><?= (new \DateTime($courseSchedule->fromTime))->format('h:i A');?></dd>
 	<?php elseif ($model->enrolmentIds) : ?>
 	<?php $enrolment = Enrolment::findOne(end($model->enrolmentIds));

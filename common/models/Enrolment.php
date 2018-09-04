@@ -120,9 +120,15 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId']);
     }
+    public function getCourseSchedules()
+    {
+        return $this->hasMany(CourseSchedule::className(), ['courseId' => 'id'])
+            ->via('course');
+    }
     public function getCourseSchedule()
     {
         return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
+            ->orderBy(['course_schedule.id' => SORT_DESC])    
             ->via('course');
     }
     public function getPaymentsFrequency()

@@ -63,10 +63,10 @@ class LessonConfirm extends Model
             $courseModel->updateAttributes([
                 'teacherId' => $oneLesson->teacherId,
             ]);
-            $courseModel->courseSchedule->updateAttributes([
-                'day' => (new \DateTime($oneLesson->date))->format('N'),
-                'fromTime' => (new \DateTime($oneLesson->date))->format('H:i:s'),
-            ]);
+            // $courseModel->courseSchedule->updateAttributes([
+            //     'day' => (new \DateTime($oneLesson->date))->format('N'),
+            //     'fromTime' => (new \DateTime($oneLesson->date))->format('H:i:s'),
+            // ]);
         }
         foreach ($lessons as $i => $lesson) {
             $oldLesson = $oldLessons[$i];
@@ -166,7 +166,7 @@ class LessonConfirm extends Model
         $courseSchedule->fromTime = Carbon::parse($lessonModel->date)->format('H:i:s');
         $courseSchedule->duration = Carbon::parse($lessonModel->duration)->format('H:i:s');
         $courseSchedule->day = Carbon::parse($lessonModel->date)->format('N');
-        $oldCourseSchedules = $lessonModel->course->courseSchedule;
+        $oldCourseSchedules = $lessonModel->course->courseSchedules;
         if (!empty( $oldCourseSchedules)) {
         $oldCourseSchedule = end($oldCourseSchedules);
         $courseSchedule->startDate = $startDate->format('Y-m-d H:i:s');
