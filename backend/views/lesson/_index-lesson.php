@@ -340,7 +340,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
     });  
 
-    $(document).off('click', '#add-remove-button').on('click', '#add-remove-button', function(){
+    $(document).off('click', '#add-remove-button').on('click', '#add-remove-button', function() {
         var dateRange = $("#lessonsearch-daterange").val();
         if (dateRange != "") {
             $("#lessonsearch-daterange").val('').trigger('change');
