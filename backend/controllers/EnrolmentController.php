@@ -382,8 +382,10 @@ class EnrolmentController extends BaseController
             $userContact = $this->createUserContact($user->id, $userEmail->labelId);
             $userEmail->userContactId = $userContact->id;
             $userEmail->save();
+            if($customerReferralSource->referralSourceId) {
             $customerReferralSource->userId = $user->id;
             $customerReferralSource->save();
+            }
             
             //save address and phone number
             if (!empty($address->address)) {

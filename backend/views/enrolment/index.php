@@ -125,7 +125,7 @@ $this->params['show-all'] = $this->render('_button', [
     <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'options' => ['id' => 'enrolment-listing-grid'],
-        'summary' => false,
+        'summary' => "Showing {begin} - {end} of {totalCount} items",
         'emptyText' => false,
         'toolbar' =>  [
             ['content' =>  Html::a(Yii::t('backend', '<i class="fa fa-plus fa-2x" aria-hidden="true"></i>'), '#',

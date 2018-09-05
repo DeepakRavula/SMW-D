@@ -11,6 +11,7 @@ use kartik\daterange\DateRangePicker;
 <div class="user-search">
 
     <?php $form = ActiveForm::begin([
+        'id' => 'item-category-search-form',
         'action' => ['report/item-category'],
         'method' => 'get',
     ]); ?>
@@ -41,7 +42,11 @@ use kartik\daterange\DateRangePicker;
             ]);
            ?>
     </div>
-    <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary btn-sm']) ?>
     <?php ActiveForm::end(); ?>
-
 </div>
+
+<script>
+    $(document).off('change', '#invoicelineitemsearch-daterange').on('change', '#invoicelineitemsearch-daterange', function() {
+        $("#item-category-search-form").submit();
+    });
+</script>

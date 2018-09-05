@@ -456,7 +456,14 @@ class LessonController extends BaseController
                 $lesson->lessonId = $oldLessons[$i]->id;
             }
         }
-        $model->teacherId = end($lessons)->teacherId;
+        if (!$model->courseId) {
+            $enrolment = Enrolment::findOne(end($model->enrolmentIds));
+            $course = Course::findOne($enrolment->courseId);
+            $teacherId = $course->teacherId;
+        } else {
+            $teacherId = $courseModel->teacherId;
+        }
+        $model->teacherId = $teacherId;
         $conflictedLessons = $model->getConflicts($lessons);
         $lessonCount = count($lessons);
         $conflictedLessonIdsCount = count($conflictedLessons['lessonIds']);

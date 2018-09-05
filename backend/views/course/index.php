@@ -24,7 +24,7 @@ $this->params['show-all'] = $this->render('_button', [
         'dataProvider' => $dataProvider,
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
-        'summary' => false,
+        'summary' => "Showing {begin} - {end} of {totalCount} items",
         'emptyText' => false,
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['course/view', 'id' => $model->id]);

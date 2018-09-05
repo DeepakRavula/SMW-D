@@ -5,6 +5,8 @@ use yii\helpers\Url;
 use common\models\Student;
 use common\components\gridView\KartikGridView;
 use common\models\Location;
+use kartik\grid\GridView;
+use yii\helpers\Html;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -22,7 +24,7 @@ use common\models\Location;
     'id' => 'student-grid',
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
-    'summary' => false,
+    'summary' => "Showing {begin} - {end} of {totalCount} items",
     'emptyText' => false,
     'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
         $url = Url::to(['student/view', 'id' => $model->id]);
@@ -71,6 +73,15 @@ use common\models\Location;
             },
         ],
     ],
+    'toolbar' =>  [
+        '{export}',
+    ],
+    'export' => [
+        'fontAwesome' => true,
+    ],  
+    'panel' => [
+            'type' => GridView::TYPE_DEFAULT
+        ],
 ]);
 ?>
 <?php Pjax::end(); ?>

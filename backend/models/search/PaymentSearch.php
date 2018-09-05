@@ -59,7 +59,8 @@ class PaymentSearch extends Payment
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
+        $query->joinWith(['userProfile']);
+        $query->joinWith(['paymentMethod']);    
         $dataProvider->setSort([
             'attributes' => [
                 'customer' => [
@@ -103,9 +104,7 @@ class PaymentSearch extends Payment
 
         if ($this->paymentMethod) {
             $paymentMethod = $this->paymentMethod;
-            $query->joinWith(['paymentMethod' => function ($query) use ($paymentMethod) {
                 $query->andFilterWhere(['payment_method.name' => $paymentMethod]);
-            }]);
         }
 
         if ($this->amount) {
@@ -114,9 +113,7 @@ class PaymentSearch extends Payment
 
         if ($this->customer) {
             $customer = $this->customer;
-            $query->joinWith(['userProfile' => function ($query) use ($customer) {
                 $query->andFilterWhere(['or', ['like', 'user_profile.firstname', trim($this->customer)], ['like', 'user_profile.lastname', trim($this->customer)]]);
-            }]);
         }
         return $dataProvider;
     }

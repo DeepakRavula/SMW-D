@@ -110,12 +110,12 @@ $this->params['show-all'] = $this->render('_button', [
         'dataProvider' => $dataProvider,
         'id' => 'proforma-invoice-grid',
         'filterModel' => $searchModel,
+        'summary' => "Showing {begin} - {end} of {totalCount} items",
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['proforma-invoice/view', 'id' => $model->id]);
 
             return ['data-url' => $url];
         },
-        'summary' => false,
         'emptyText' => false,
         'columns' => $columns,
     ]); ?>

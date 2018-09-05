@@ -93,7 +93,7 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
     ]); ?>
         <?= KartikGridView::widget([
             'dataProvider' => $dataProvider,
-            'summary' => false,
+            'summary' => "Showing {begin} - {end} of {totalCount} items",
             'emptyText' => false,
             'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel, $roleName, $originalInvoice) {
                 $url = Url::to(['user/view', 'UserSearch[role_name]' => $roleName, 'id' => $model->id]);

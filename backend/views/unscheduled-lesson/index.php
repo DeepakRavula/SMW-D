@@ -84,6 +84,7 @@ $this->params['show-all'] = $this->render('_button', [
 			'dataProvider' => $dataProvider,
 			'options' => ['id' => 'lesson-index-1'],
 			'filterModel' => $searchModel,
+			'summary' => "Showing {begin} - {end} of {totalCount} items",
 			'rowOptions' => function ($model, $key, $index, $grid) {
 				$url = Url::to(['lesson/view', 'id' => $model->id]);
 

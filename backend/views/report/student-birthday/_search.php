@@ -46,8 +46,8 @@ use kartik\grid\GridView;
             ]);
            ?>
         </div>
-	   <?php echo Html::submitButton(Yii::t('backend', 'Go'), ['class' => 'btn btn-primary']) ?>
     <?php ActiveForm::end(); ?>
+    
 <script>
     $(document).ready(function () {
         $("#birthday-search-form").on("submit", function () {
@@ -55,5 +55,9 @@ use kartik\grid\GridView;
         	$.pjax.reload({container: "#birthday-listing", replace: false, timeout: 6000, data: $(this).serialize()});   
 			return false
         });
+    });
+
+    $(document).off('change', '#studentbirthdaysearch-daterange').on('change', '#studentbirthdaysearch-daterange', function() {
+        $("#birthday-search-form").submit();
     });
 </script>

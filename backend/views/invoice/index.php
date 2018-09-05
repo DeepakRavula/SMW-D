@@ -272,7 +272,7 @@ $this->params['action-button'] = $actionButton; ?>
     <?php echo KartikGridView::widget([
         'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,
-        'summary' => false,
+        'summary' => "Showing {begin} - {end} of {totalCount} items",
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'rowOptions' => function ($model, $key, $index, $grid) {
