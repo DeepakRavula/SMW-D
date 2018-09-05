@@ -343,7 +343,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
 
     $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
         var dateRange = $("#lessonsearch-daterange").val();
-        if ($.isEmptyObject(!dateRange)) {
+        if (!$.isEmptyObject(dateRange)) {
             $("#lessonsearch-daterange").val('').trigger('change');
         }
     });
