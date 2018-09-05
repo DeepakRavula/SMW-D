@@ -91,6 +91,25 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'pageSummary' => 'Page Total',
             'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left'],
         ],
+        [
+            'label' => 'Subtotal',
+            'format' => ['decimal', 2],
+            'value' => function ($data) {
+                return Yii::$app->formatter->asDecimal($data->netPrice);
+            },
+            'contentOptions' => ['class' => 'text-right'],
+            'hAlign' => 'right',
+        ],
+
+        [
+            'label' => 'Tax',
+            'format' => ['decimal', 2],
+            'value' => function ($data) {
+                return Yii::$app->formatter->asDecimal(round($data->tax_rate, 2));
+            },
+            'contentOptions' => ['class' => 'text-right'],
+            'hAlign' => 'right',
+        ],
 
         [
             'label' => 'Total',
