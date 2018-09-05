@@ -57,7 +57,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
             [
                 'label' => 'Date',
                 'attribute' => 'dateRange',
-                'filter' => '<div class="input-group drp-container">'.DateRangePicker::widget([
+                'filter' => '<div class="input-group drp-container">'. DateRangePicker::widget([
                     'model' => $searchModel,
                     'convertFormat' => true,
                     'initRangeExpr' => true,
@@ -79,7 +79,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                         ],
                         'opens' => 'left'
                     ]
-                ]) .'<span class="input-group-addon remove-button" title="Clear field"><span class="glyphicon glyphicon-remove" ></span></span></div>',
+                ]) . '<span class="input-group-addon remove-button" title="Clear field"><span class="glyphicon glyphicon-remove" ></span></span></div>',
                 'value' => function ($data) {
                     $date = Yii::$app->formatter->asDate($data->date);
                     $lessonTime = (new \DateTime($data->date))->format('H:i:s');
