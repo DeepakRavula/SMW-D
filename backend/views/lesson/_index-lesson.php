@@ -28,7 +28,9 @@ $this->params['show-all'] = $this->render('_show-all-button', [
 
 <div class="grid-row-open p-10">
     <?php Pjax::begin(['id' => 'lesson-index','timeout' => 6000,]); ?>
-    <?php $columns = [
+    <?php
+    
+     $columns = [
             [
                 'class' => '\kartik\grid\CheckboxColumn',
                 'mergeHeader' => false
@@ -57,7 +59,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
             [
                 'label' => 'Date',
                 'attribute' => 'dateRange',
-                'filter' => DateRangePicker::widget([
+                'filter' => '<div class="input-group drp-container">'.DateRangePicker::widget([
                     'model' => $searchModel,
                     'convertFormat' => true,
                     'initRangeExpr' => true,
@@ -76,7 +78,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                         ],
                         'opens' => 'left'
                     ]
-                ]),
+                ]) .'<span class="input-group-addon" id = "remove-id" title="Clear field"><span class="glyphicon glyphicon-remove" ></span></span></div>',
                 'value' => function ($data) {
                     $date = Yii::$app->formatter->asDate($data->date);
                     $lessonTime = (new \DateTime($data->date))->format('H:i:s');
@@ -337,5 +339,15 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         var url = "<?= Url::to(['lesson/index']); ?>?"+params;
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
     });  
+
+    $(document).off('click', '#remove-id').on('click', '#remove-id', function(){
+        debugger;
+        var ncncn=var vnvnvn;
+        debugger;
+        alert("somthing ");
+        // var dateRange = $("#lessonsearch-daterange").val();
+        // alert(dateRange);
+        // alert("cvcvcvc");
+    });
 </script>
 
