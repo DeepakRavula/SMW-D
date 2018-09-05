@@ -78,7 +78,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                         ],
                         'opens' => 'left'
                     ]
-                ]) .'<span class="input-group-addon" id = "remove-id" title="Clear field"><span class="glyphicon glyphicon-remove" ></span></span></div>',
+                ]) .'<span class="input-group-addon" id = "add-remove-button" title="Clear field"><span class="glyphicon glyphicon-remove" ></span></span></div>',
                 'value' => function ($data) {
                     $date = Yii::$app->formatter->asDate($data->date);
                     $lessonTime = (new \DateTime($data->date))->format('H:i:s');
@@ -340,14 +340,11 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
     });  
 
-    $(document).off('click', '#remove-id').on('click', '#remove-id', function(){
-        debugger;
-        var ncncn=var vnvnvn;
-        debugger;
-        alert("somthing ");
-        // var dateRange = $("#lessonsearch-daterange").val();
-        // alert(dateRange);
-        // alert("cvcvcvc");
+    $(document).off('click', '#add-remove-button').on('click', '#add-remove-button', function(){
+        var dateRange = $("#lessonsearch-daterange").val();
+        if (dateRange != "") {
+            $("#lessonsearch-daterange").val('').trigger('change');
+        }
     });
 </script>
 
