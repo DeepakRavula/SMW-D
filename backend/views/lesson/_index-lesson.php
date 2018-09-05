@@ -28,8 +28,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
 
 <div class="grid-row-open p-10">
     <?php Pjax::begin(['id' => 'lesson-index','timeout' => 6000,]); ?>
-    <?php
-     $columns = [
+    <?php $columns = [
             [
                 'class' => '\kartik\grid\CheckboxColumn',
                 'mergeHeader' => false
