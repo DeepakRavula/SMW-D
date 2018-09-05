@@ -2,7 +2,8 @@
 
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
-
+use yii\helpers\Url;
+use common\models\User;
 ?>
 
 <?php $boxTools = '';?>
@@ -39,11 +40,11 @@ LteBox::begin([
 	<?= $model->course->program->name; ?>
 	</dd>
   <?php 
-  $currentCourseSchedule = $model->course->currentCourseSchedule;
+  $CurrentCourseSchedule = $model->course->currentCourseSchedule;
   $courseSchedules = $model->course->courseSchedules; 
   foreach ($courseSchedules as $courseSchedule) {
     echo '<dt>Teacher ('.Yii::$app->formatter->asDate($courseSchedule->startDate).' - '.Yii::$app->formatter->asDate($courseSchedule->endDate).')</dt>
-    <dd> '.$currentCourseSchedule->teacher->publicIdentity.'</dd>';
+    <dd> '.$courseSchedule->teacher->publicIdentity.'</dd>';
   }
   ?>
 	
@@ -55,5 +56,19 @@ LteBox::begin([
 	<dd><?= $model->isAutoRenew ? "Enabled" : 'Disabled' ; ?></dd>
 	<dt>Duration</dt>
 	<dd><?= (new \DateTime($model->courseSchedule->duration))->format('H:i'); ?></dd>
+  <?php if ($model->course->program->isPrivate()) : ?>
+  <dt>Student</dt>
+    <dd>
+        <a href= "<?= Url::to(['student/view', 'id' => $model->student->id]) ?>">
+            <?= $model->student->fullName ?? null; ?>
+        </a></dd>
+    <dt>Customer</dt>
+    <dd>
+        <a href= "<?= Url::to(['user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER,
+                'id' => $model->student->customer->id]) ?>">
+            <?= $model->student->customer->publicIdentity ?? null; ?>
+        </a>
+    </dd>
+    <?php endif; ?> 
 </dl>
 <?php LteBox::end()?>

@@ -6,7 +6,6 @@ use yii\helpers\Json;
 DateTimePickerAsset::register($this);
 $this->title = 'Review Lessons';
 ?>
-
 <div class="row">
     <div class="col-md-6">
         <?= $this->render('review/_details', [

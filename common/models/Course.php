@@ -188,7 +188,7 @@ class Course extends \yii\db\ActiveRecord
         ->orderBy(['course_schedule.id' => SORT_DESC]);
     }
 
-    public function getCourseSchedule()
+    public function getCurrentCourseSchedule()
     {
         $currentDate = new \DateTime();
         $currentDate = $currentDate->format('Y-m-d h:i:s');
