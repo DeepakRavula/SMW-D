@@ -12,9 +12,9 @@ class m180830_053038_changing_course_schedule_details extends Migration
      */
     public function safeUp()
     {
-        $this->addColumn('course_details', 'startDate', $this->timeStamp()->notNull());
-        $this->addColumn('course_details', 'endDate', $this->timeStamp()->notNull());
-        $this->addColumn('course_details', 'teacherId', $this->integer()->notNull());
+        $this->addColumn('course_schedule', 'startDate', $this->timeStamp()->notNull());
+        $this->addColumn('course_schedule', 'endDate', $this->timeStamp()->notNull());
+        $this->addColumn('course_schedule', 'teacherId', $this->integer()->notNull());
 
     }
 
