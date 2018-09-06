@@ -118,7 +118,7 @@ class EnrolmentController extends BaseController
         $model = $this->findModel($id);
         $scheduleHistoryDataProvider = new ActiveDataProvider([
             'query' => CourseSchedule::find()
-            ->andWhere(['courseId' => $id]),
+            ->andWhere(['courseId' => $model->courseId]),
         ]);
 	    $lessonCount = Lesson::find()
 			->andWhere(['courseId' => $model->course->id])

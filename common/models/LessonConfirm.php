@@ -72,7 +72,7 @@ class LessonConfirm extends Model
             $bulkReschedule->lessonId = $lesson->id;
             $bulkReschedule->save();
         }
-        if (!empty($lessons)) {
+        if ($lessons) {
             $lessonModel = end($lessons);
             $this->createCourseSchedule($lessonModel, $startDate, $endDate);
         }
@@ -149,14 +149,15 @@ class LessonConfirm extends Model
         }
         $startDate = Carbon::parse($changesFrom);
         $endDate = Carbon::parse($lesson->course->endDate);
-        if (!empty($lessons)) {
+        if ($lessons) {
             $lessonModel = end($lessons);
             $this->createCourseSchedule($lessonModel, $startDate, $endDate);
         }
         return true;
     }
 
-    public function createCourseSchedule($lessonModel, $startDate, $endDate) {
+    public function createCourseSchedule($lessonModel, $startDate, $endDate)
+     {
         $lastEndDate = $startDate;
         $lastEndDate = $lastEndDate->modify('-1days');
         $lessonModel->course->recentCourseSchedule->updateAttributes([
@@ -168,7 +169,7 @@ class LessonConfirm extends Model
         $courseSchedule->duration = Carbon::parse($lessonModel->duration)->format('H:i:s');
         $courseSchedule->day = Carbon::parse($lessonModel->date)->format('N');
         $oldCourseSchedules = $lessonModel->course->courseSchedules;
-        if (!empty( $oldCourseSchedules)) {
+        if ($oldCourseSchedules) {
         $oldCourseSchedule = end($oldCourseSchedules);
         $courseSchedule->startDate = $startDate->format('Y-m-d H:i:s');
         $courseSchedule->endDate = $endDate->format('Y-m-d H:i:s');
