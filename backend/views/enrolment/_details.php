@@ -40,14 +40,9 @@ LteBox::begin([
 	<?= $model->course->program->name; ?>
 	</dd>
   <?php 
-  $CurrentCourseSchedule = $model->course->currentCourseSchedule;
-  $courseSchedules = $model->course->courseSchedules; 
-  foreach ($courseSchedules as $courseSchedule) {
-    echo '<dt>Teacher ('.Yii::$app->formatter->asDate($courseSchedule->startDate).' - '.Yii::$app->formatter->asDate($courseSchedule->endDate).')</dt>
-    <dd> '.$courseSchedule->teacher->publicIdentity.'</dd>';
-  }
-  ?>
-	
+  $currentCourseSchedule = $model->course->currentCourseSchedule; ?>
+    <dt>Teacher</dt>
+    <dd> <?= $currentCourseSchedule->teacher->publicIdentity ?></dd>
         <?php foreach ($model->courseProgramRates as $courseProgramRate) : ?>
 	<dt>Rate From <?= Yii::$app->formatter->asDate($courseProgramRate->startDate) . ' To ' . Yii::$app->formatter->asDate($courseProgramRate->endDate) ?></dt>
 	<dd><?= $courseProgramRate->programRate; ?></dd>
