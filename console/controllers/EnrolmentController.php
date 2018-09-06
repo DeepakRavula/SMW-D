@@ -57,7 +57,7 @@ class EnrolmentController extends Controller
             $end = new \DateTime($renewalEndDate);
             $period = new \DatePeriod($start, $interval, $end);
             foreach ($period as $day) {
-                $checkDay = (int) $day->format('N') === (int) $course->courseSchedule->day;
+                $checkDay = (int) $day->format('N') === (int) $course->recentCourseSchedule->day;
                 if ($checkDay) {
                     if ($course->isProfessionalDevelopmentDay($day)) {
                         continue;

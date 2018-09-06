@@ -23,6 +23,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 
 <?= $this->render('_view-enrolment', [
     'model' => $model,
+    'scheduleHistoryDataProvider' => $scheduleHistoryDataProvider
 ]); ?>
 
 <div id="enrolment-view-loader" class="spinner" style="display:none">

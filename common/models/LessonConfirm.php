@@ -5,6 +5,7 @@ namespace common\models;
 use yii\base\Model;
 use Yii;
 use common\models\log\StudentLog;
+use Carbon\Carbon;
 /**
  * This is the model class for table "course".
  *
@@ -62,10 +63,6 @@ class LessonConfirm extends Model
             $courseModel->updateAttributes([
                 'teacherId' => $oneLesson->teacherId,
             ]);
-            $courseModel->courseSchedule->updateAttributes([
-                'day' => (new \DateTime($oneLesson->date))->format('N'),
-                'fromTime' => (new \DateTime($oneLesson->date))->format('H:i:s'),
-            ]);
         }
         foreach ($lessons as $i => $lesson) {
             $oldLesson = $oldLessons[$i];
@@ -74,6 +71,10 @@ class LessonConfirm extends Model
             $bulkReschedule = new BulkRescheduleLesson();
             $bulkReschedule->lessonId = $lesson->id;
             $bulkReschedule->save();
+        }
+        if ($lessons) {
+            $lessonModel = end($lessons);
+            $this->createCourseSchedule($lessonModel, $startDate, $endDate);
         }
         return true;
     }
@@ -146,6 +147,37 @@ class LessonConfirm extends Model
                 $lesson->course->updateAttributes(['teacherId' => $this->teacherId]);
             }
         }
+        $startDate = Carbon::parse($changesFrom);
+        $endDate = Carbon::parse($lesson->course->endDate);
+        if ($lessons) {
+            $lessonModel = end($lessons);
+            $this->createCourseSchedule($lessonModel, $startDate, $endDate);
+        }
         return true;
+    }
+
+    public function createCourseSchedule($lessonModel, $startDate, $endDate)
+     {
+        $lastEndDate = $startDate;
+        $lastEndDate = $lastEndDate->modify('-1days');
+        $lessonModel->course->recentCourseSchedule->updateAttributes([
+            'endDate' => ($lastEndDate)->format('Y-m-d H:i:s'),
+        ]);
+        $courseSchedule = new CourseSchedule();
+        $courseSchedule->courseId = $lessonModel->course->id;
+        $courseSchedule->fromTime = Carbon::parse($lessonModel->date)->format('H:i:s');
+        $courseSchedule->duration = Carbon::parse($lessonModel->duration)->format('H:i:s');
+        $courseSchedule->day = Carbon::parse($lessonModel->date)->format('N');
+        $oldCourseSchedules = $lessonModel->course->courseSchedules;
+        if ($oldCourseSchedules) {
+        $oldCourseSchedule = end($oldCourseSchedules);
+        $courseSchedule->startDate = $startDate->format('Y-m-d H:i:s');
+        $courseSchedule->endDate = $endDate->format('Y-m-d H:i:s');
+        } else {
+        $courseSchedule->startDate = $lessonModel->course->startDate;
+        $courseSchedule->endDate = $lessonModel->course->endDate;    
+        }
+        $courseSchedule->teacherId = $lessonModel->teacherId;
+        $courseSchedule->save();
     }
 }

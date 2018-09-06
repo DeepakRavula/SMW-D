@@ -40,6 +40,7 @@ use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 use backend\models\search\EnrolmentPaymentSearch;
 use common\models\CustomerReferralSource;
+use common\models\CourseSchedule;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -115,6 +116,10 @@ class EnrolmentController extends BaseController
     public function actionView($id)
     {
         $model = $this->findModel($id);
+        $scheduleHistoryDataProvider = new ActiveDataProvider([
+            'query' => CourseSchedule::find()
+            ->andWhere(['courseId' => $model->courseId]),
+        ]);
 	    $lessonCount = Lesson::find()
 			->andWhere(['courseId' => $model->course->id])
             ->notDeleted()
@@ -161,6 +166,7 @@ class EnrolmentController extends BaseController
             'lessonDataProvider' => $lessonDataProvider,
             'paymentCycleDataProvider' => $paymentCycleDataProvider,
             'logDataProvider' => $logDataProvider,
+            'scheduleHistoryDataProvider' => $scheduleHistoryDataProvider,
 	        'lessonCount' => $lessonCount,
         ]);
     }
@@ -462,10 +468,11 @@ class EnrolmentController extends BaseController
         if (Yii::$app->request->isPost) {
             if ($courseReschedule->load(Yii::$app->request->post()) && $courseReschedule->validate()) {
                 $courseReschedule->setScenario($courseReschedule::SCENARIO_DETAILED);
+               
                 $courseRescheduleData = $this->renderAjax('/enrolment/bulk-reschedule/_form-detail', [
                     'courseReschedule' => $courseReschedule,
                     'course' => $model->course,
-                    'courseSchedule' => $model->course->courseSchedule,
+                    'courseSchedule' => $model->course->recentCourseSchedule,
                     'model' => $model
                 ]);
                 $response = [
@@ -496,7 +503,7 @@ class EnrolmentController extends BaseController
                 $isTeacherOnlyChanged = false;
                 $day = (new \DateTime($courseReschedule->dayTime))->format('N');
                 $fromTime = (new \DateTime($courseReschedule->dayTime))->format('H:i:s');
-                if ($day == $course->courseSchedule->day && $fromTime == $course->courseSchedule->fromTime && $courseReschedule->teacherId != $course->teacherId) {
+                if ($day == $course->recentCourseSchedule->day && $fromTime == $course->recentCourseSchedule->fromTime && $courseReschedule->teacherId != $course->teacherId) {
                     $isTeacherOnlyChanged = true;
                 }
                 $lastLessonDate = $courseReschedule->reschdeule();

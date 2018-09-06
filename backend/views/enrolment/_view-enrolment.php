@@ -37,8 +37,9 @@ DateTimePickerAsset::register($this);
             </div>
         <?php Pjax::end(); ?>
         <div class="col-md-6">
-            <?= $this->render('_student', [
+            <?= $this->render('_schedule-history', [
                 'model' => $model,
+                'scheduleHistoryDataProvider' => $scheduleHistoryDataProvider
             ]); ?>
         </div>
     </div>        
