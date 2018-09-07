@@ -85,7 +85,7 @@ class m180113_061641_trim_space extends Migration
                 'type' => trim($examResult->type),
             ]);
         }
-        $holidays = Holiday::find()->notDeleted()->all();
+        $holidays = Holiday::find()->all();
         foreach ($holidays as $holiday) {
             $holiday->updateAttributes([
                 'description' => trim($holiday->description),

@@ -75,19 +75,23 @@ class ScheduleController extends BaseController
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
         $date = new \DateTime();
         $scheduleVisibilities = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->scheduleVisibilityHours()
             ->all();
         $scheduleVisibility = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->day($date->format('N'))
             ->scheduleVisibilityHours()
             ->one();
         $locationAvailabilities = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->locationaAvailabilityHours()
             ->all();
         $locationAvailability = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->day($date->format('N'))
             ->locationaAvailabilityHours()
@@ -404,6 +408,7 @@ class ScheduleController extends BaseController
             ])
             ->all();
         $locationAvailability = LocationAvailability::find()
+            ->notDeleted()
             ->location(Location::findOne(['slug' => Yii::$app->location])->id)
             ->day($date->format('N'))
             ->scheduleVisibilityHours()

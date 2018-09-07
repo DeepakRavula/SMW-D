@@ -465,11 +465,13 @@ class UserController extends BaseController
         $request = Yii::$app->request;
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $minLocationAvailability = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->locationaAvailabilityHours()
             ->orderBy(['fromTime' => SORT_ASC])
             ->one();
         $maxLocationAvailability = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->locationaAvailabilityHours()
             ->orderBy(['toTime' => SORT_DESC])

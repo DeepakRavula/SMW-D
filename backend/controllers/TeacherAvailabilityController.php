@@ -197,6 +197,7 @@ class TeacherAvailabilityController extends BaseController
             ];
         }
         $query = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId);
         if (!$locationVisibility) {
             $query->scheduleVisibilityHours();
