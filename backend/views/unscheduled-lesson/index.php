@@ -12,6 +12,7 @@ use common\models\Program;
 use common\models\Location;
 use common\models\UserProfile;
 use common\models\Student;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -93,6 +94,17 @@ $this->params['show-all'] = $this->render('_button', [
 			'tableOptions' => ['class' => 'table table-bordered'],
 			'headerRowOptions' => ['class' => 'bg-light-gray'],
 			'columns' => $columns,
+			'toolbar' =>  [
+				'{export}',
+				'{toggleData}'
+			],
+			'export' => [
+				'fontAwesome' => true,
+			],  
+			'panel' => [
+					'type' => GridView::TYPE_DEFAULT
+				],
+			'toggleDataOptions' => ['minCount' => 20],
 		]);
 		?>
 	</div>
