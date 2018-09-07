@@ -162,6 +162,7 @@ class UserContactController extends Controller
             ];
         } elseif ((int)$contactType === UserContact::TYPE_PHONE) {
             $primaryPhone = UserPhone::find()
+                    ->notDeleted()
                     ->joinWith(['userContact' => function ($query) {
                         $query->primary();
                     }])

@@ -31,4 +31,9 @@ class UserPhoneQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+	
+	public function notDeleted()
+    {
+        return $this->andWhere(['user_phone.isDeleted' => false]);
+    }
 }
