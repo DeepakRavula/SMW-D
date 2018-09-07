@@ -57,6 +57,12 @@ $this->params['label'] = $this->render('_title', [
             'allEnrolments' => $allEnrolments,
         ]);
 
+        $completedLessonContent = $this->render('_completed-lesson', [
+            'completedLessonDataProvider' => $completedLessonDataProvider,
+            'model' => $model,
+            'allEnrolments' => $allEnrolments,
+        ]);
+
         $unscheduledLessonContent = $this->render('_unscheduledLesson', [
             'model' => $model,
             'unscheduledLessonSearchModel' => $unscheduledLessonSearchModel,
@@ -93,6 +99,13 @@ $this->params['label'] = $this->render('_title', [
                 'content' => $groupLessonContent,
                 'options' => [
                     'id' => 'group-lesson',
+                ],
+            ],
+            [
+                'label' => 'Past Lessons',
+                'content' => $completedLessonContent,
+                'options' => [
+                    'id' => 'completed-lesson',
                 ],
             ],
                 [

@@ -404,6 +404,11 @@ class LessonQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['lesson.isPresent' => true]);
     }
+
+    public function notPresent()
+    {
+        return $this->andWhere(['lesson.isPresent' => false]);
+    }
      
     public function paymentCycleLessonExcluded()
     {
