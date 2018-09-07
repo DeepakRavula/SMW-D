@@ -41,7 +41,7 @@ class CitySearch extends City
     public function search($params)
     {
         $query = City::find()
-                ->andWhere(['city.isDeleted' => false]);
+                ->notDeleted();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

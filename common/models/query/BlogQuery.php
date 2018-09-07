@@ -7,7 +7,7 @@ namespace common\models\query;
  *
  * @see \common\models\Holiday
  */
-class HolidayQuery extends \yii\db\ActiveQuery
+class BlogQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
@@ -36,6 +36,6 @@ class HolidayQuery extends \yii\db\ActiveQuery
 
     public function notDeleted() 
     {
-        return $this->andWhere(['holiday.isDeleted' => false]);
+        return $this->andWhere(['blog.isDeleted' => false]);
     }
 }

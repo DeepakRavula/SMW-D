@@ -47,7 +47,7 @@ use yii\helpers\Url;
 		<?= $form->field($addressModel, "address")->textInput(['maxlength' => true])->label('Address') ?>
 		<?=
         $form->field($addressModel, "cityId")->widget(Select2::classname(), [
-        'data' => ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
+        'data' => ArrayHelper::map(City::find()->notDeleted()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
         'options' => [
             'id' => 'city-label'
         ],

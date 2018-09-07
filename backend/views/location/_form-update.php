@@ -44,7 +44,7 @@ $this->title = 'Edit Location';
 		<div class="col-md-4">
 			<?php
             echo $form->field($model, 'city_id')->dropDownList(ArrayHelper::map(
-                            City::find()->orderBy(['name' => SORT_ASC])->all(),
+                            City::find()->notDeleted()->orderBy(['name' => SORT_ASC])->all(),
     'id',
     'name'
             ))
