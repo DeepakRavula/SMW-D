@@ -119,7 +119,7 @@ class PrintController extends BaseController
     public function actionEvaluation($studentId)
     {
         $studentModel = Student::findOne(['id' => $studentId]);
-        $examResults = ExamResult::find()->andWhere(['studentId' => $studentId]);
+        $examResults = ExamResult::find()->notDeleted()->andWhere(['studentId' => $studentId]);
         $examResultDataProvider = new ActiveDataProvider([
             'query' => $examResults,
         ]);
