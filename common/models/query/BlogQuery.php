@@ -17,7 +17,7 @@ class BlogQuery extends \yii\db\ActiveQuery
     /**
      * {@inheritdoc}
      *
-     * @return \common\models\Holiday[]|array
+     * @return \common\models\Blog[]|array
      */
     public function all($db = null)
     {
@@ -27,7 +27,7 @@ class BlogQuery extends \yii\db\ActiveQuery
     /**
      * {@inheritdoc}
      *
-     * @return \common\models\Holiday|array|null
+     * @return \common\models\Blog|array|null
      */
     public function one($db = null)
     {
