@@ -37,6 +37,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     const STATUS_DEFAULT = 'Default';
     const STATUS_NO_TAX = 'No Tax';
     const STATUS_GST_ONLY = 'GST Only';
+    const CONSOLE_USER_ID  = 727;
 
     public $userName;
     public $price;
@@ -61,11 +62,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                 ],
                 'replaceRegularDelete' => true
             ],
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(), 
-                'consoleUserId'=>1, 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
                 ],
             ],
         ];

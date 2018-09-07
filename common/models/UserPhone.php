@@ -18,6 +18,8 @@ class UserPhone extends \yii\db\ActiveRecord
 {
     private $labelId;
 
+    const CONSOLE_USER_ID  = 727;
+
     public function getLabelId()
     {
         return $this->labelId;
@@ -58,11 +60,11 @@ class UserPhone extends \yii\db\ActiveRecord
                 ],
                 'replaceRegularDelete' => true
             ],
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(), 
-                'consoleUserId'=>1, 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
                 ],
             ],
         ];

@@ -43,6 +43,7 @@ class Enrolment extends \yii\db\ActiveRecord
     const ENROLMENT_EXPIRY = 90;
     const EVENT_CREATE = 'create';
     const EVENT_GROUP = 'group-course-enroll';
+    const CONSOLE_USER_ID  = 727;
     /**
      * {@inheritdoc}
      */
@@ -72,11 +73,11 @@ class Enrolment extends \yii\db\ActiveRecord
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
             ],
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(), 
-                'consoleUserId'=>1, 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
                 ],
             ],
         ];

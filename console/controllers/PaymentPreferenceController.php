@@ -24,7 +24,6 @@ class PaymentPreferenceController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-
         $currentDate = new \DateTime();
         $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
         $enrolments = Enrolment::find()

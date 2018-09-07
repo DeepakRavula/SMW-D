@@ -22,6 +22,8 @@ class InvoicePayment extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
     public $receiptId;
+
+    const CONSOLE_USER_ID  = 727;
     public static function tableName()
     {
         return 'invoice_payment';
@@ -73,11 +75,11 @@ class InvoicePayment extends \yii\db\ActiveRecord
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
             ],
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(), 
-                'consoleUserId'=>1, 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
                 ],
             ],
         ];

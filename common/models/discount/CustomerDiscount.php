@@ -23,7 +23,7 @@ class CustomerDiscount extends \yii\db\ActiveRecord
      */
     const EVENT_CREATE = 'event-create';
     const EVENT_EDIT = 'event-edit';
-
+    const CONSOLE_USER_ID = 727;
     public static function tableName()
     {
         return 'customer_discount';
@@ -44,11 +44,11 @@ class CustomerDiscount extends \yii\db\ActiveRecord
                 ],
                 'replaceRegularDelete' => true
             ],
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(), 
-                'consoleUserId'=>1, 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
                 ],
             ],
         ];

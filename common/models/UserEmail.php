@@ -20,6 +20,8 @@ class UserEmail extends \yii\db\ActiveRecord
 {
     const SCENARIO_USER_CREATE = 'user-create';
 
+    const CONSOLE_USER_ID  = 727;
+
     private $labelId;
 
     public function getLabelId()
@@ -79,11 +81,11 @@ class UserEmail extends \yii\db\ActiveRecord
                 ],
                 'replaceRegularDelete' => true
             ],
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(), 
-                'consoleUserId'=>1, 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
                 ],
             ],
         ];

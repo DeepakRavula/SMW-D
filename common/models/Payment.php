@@ -48,6 +48,8 @@ class Payment extends ActiveRecord
     const SCENARIO_CREDIT_USED_EDIT = 'credit-used-edit';
     const SCENARIO_ACCOUNT_ENTRY = 'account-entry';
     const SCENARIO_LESSON_CREDIT = 'lesson-credit';
+
+    const CONSOLE_USER_ID  = 727;
     
     const EVENT_CREATE = 'create';
     const EVENT_EDIT = 'edit';
@@ -173,11 +175,11 @@ class Payment extends ActiveRecord
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
             ],
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(), 
-                'consoleUserId'=>1, 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
                 ],
             ],
         ];
@@ -373,7 +375,7 @@ class Payment extends ActiveRecord
             $lessonPayment->enrolmentId = $this->enrolmentId;
             $lessonPayment->save();
         }
-        $this->trigger(self::EVENT_CREATE);
+        //$this->trigger(self::EVENT_CREATE);
         
         return parent::afterSave($insert, $changedAttributes);
     }

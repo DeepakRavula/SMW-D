@@ -19,6 +19,7 @@ class LessonDiscount extends \yii\db\ActiveRecord
 {
     const VALUE_TYPE_PERCENTAGE = 1;
     const VALUE_TYPE_DOLLAR      = 0;
+    const CONSOLE_USER_ID  = 727;
 
     const FULL_DISCOUNT = 100.00;
     const TYPE_CUSTOMER = 1;
@@ -63,11 +64,11 @@ class LessonDiscount extends \yii\db\ActiveRecord
     public function behaviors()
     {
         return [
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(), 
-                'consoleUserId'=>1, 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
                 ],
             ],
         ];

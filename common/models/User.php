@@ -59,6 +59,8 @@ class User extends ActiveRecord implements IdentityInterface
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_DELETE = 'delete';
 
+    const CONSOLE_USER_ID  = 727;
+
     public $customerIds;
     public $customerId;
     public $fromDate;
@@ -131,11 +133,11 @@ class User extends ActiveRecord implements IdentityInterface
                 ],
                 'replaceRegularDelete' => true
             ],
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(), 
-                'consoleUserId'=>1, 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
                 ],
             ],
         ];

@@ -44,6 +44,7 @@ class Course extends \yii\db\ActiveRecord
     public $duration;
     public $autoRenewal;
 
+    const CONSOLE_USER_ID = 727;
     /**
      * {@inheritdoc}
      */
@@ -109,11 +110,11 @@ class Course extends \yii\db\ActiveRecord
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
             ],
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(), 
-                'consoleUserId'=>1, 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
                 ],
             ],
         ];

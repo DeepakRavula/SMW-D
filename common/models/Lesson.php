@@ -53,6 +53,8 @@ class Lesson extends \yii\db\ActiveRecord
     const STATUS_PRESENT='Yes';
     const STATUS_ABSENT='No';
 
+    const CONSOLE_USER_ID  = 727;
+
     const MAXIMUM_LIMIT = 48;
     const TYPE_REGULAR = 1;
     const TYPE_EXTRA = 2;
@@ -138,11 +140,11 @@ class Lesson extends \yii\db\ActiveRecord
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
             ],
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(),
-                'consoleUserId'=>1, 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
                 ],
             ],
         ];

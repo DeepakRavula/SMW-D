@@ -65,7 +65,6 @@ class EnrolmentDiscount extends \yii\db\ActiveRecord
         return [
             'audittrail'=>[
                 'class'=>AuditTrailBehavior::className(), 
-                'consoleUserId'=>1, 
                 'attributeOutput'=>[
                     'last_checked'=>'datetime',
                 ],

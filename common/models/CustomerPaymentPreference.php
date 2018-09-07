@@ -19,6 +19,8 @@ class CustomerPaymentPreference extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+    const CONSOLE_USER_ID  = 727;
+
     public static function tableName()
     {
         return 'customer_payment_preference';
@@ -60,11 +62,11 @@ class CustomerPaymentPreference extends \yii\db\ActiveRecord
                 ],
                 'replaceRegularDelete' => true
             ],
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(), 
-                'consoleUserId'=>1, 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
                 ],
             ],
         ];

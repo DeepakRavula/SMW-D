@@ -41,6 +41,7 @@ class Invoice extends \yii\db\ActiveRecord
     const SCENARIO_DISCOUNT = 'discount';
     const EVENT_CREATE = 'addInvoice';
     const EVENT_DELETE = 'deleteInvoice';
+    const CONSOLE_USER_ID  = 727;
     
     public $customer_id;
     public $credit;
@@ -81,11 +82,11 @@ class Invoice extends \yii\db\ActiveRecord
                 'createdByAttribute' => 'createdUserId',
                 'updatedByAttribute' => 'updatedUserId',
             ],
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(), 
-                'consoleUserId'=>1, 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
                 ],
             ],
         ];
