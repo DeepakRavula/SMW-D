@@ -61,7 +61,7 @@ class LocationController extends BaseController
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Location::find(),
+            'query' => Location::find()->notDeleted(),
         ]);
 	$dataProvider->sort->defaultOrder = [
             'name' => SORT_ASC,

@@ -18,4 +18,9 @@ class LocationQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+	
+    public function notDeleted()
+    {
+        return $this->andWhere(['exam_result.isDeleted' =>  false]);
+    }
 }

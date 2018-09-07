@@ -196,6 +196,7 @@ class UserController extends BaseController
     protected function getLocationDataProvider($id)
     {
         $query = Location::find()
+                ->notDeleted()
                 ->joinWith('userLocations')
                 ->andWhere(['user_id' => $id]);
         return new ActiveDataProvider([
