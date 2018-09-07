@@ -181,6 +181,7 @@ class UserContactController extends BaseController
         $model = User::findOne(['id' => $id]);
         if ((int)$contactType === UserContact::TYPE_EMAIL) {
             $primaryEmail = UserEmail::find()
+                    ->notDeleted()
                     ->joinWith(['userContact' => function ($query) {
                         $query->primary();
                     }])

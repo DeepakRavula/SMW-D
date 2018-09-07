@@ -518,6 +518,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function getEmail()
     {
         $email = UserEmail::find()
+            ->notDeleted()
             ->joinWith(['userContact' => function ($query) {
                 $query->andWhere(['userId' => $this->id, 'isPrimary' => true]);
             }])

@@ -15,6 +15,7 @@ use common\models\UserEmail;
     $data = null;
     if (!empty($userModel)) {
         $data = ArrayHelper::map(UserEmail::find()
+            ->notDeleted()
             ->joinWith('userContact')
             ->andWhere(['user_contact.userId' => $userModel->id])
             ->orderBy('user_email.email')
