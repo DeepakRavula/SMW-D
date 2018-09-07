@@ -27,7 +27,7 @@ use common\models\Lesson;
             [
                 'label' => 'Teacher',
                 'value' => function ($data) {
-                    return !empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
+                    return $data->teacher->publicIdentity;
                 },
             ],
             [
@@ -40,7 +40,7 @@ use common\models\Lesson;
             [
                 'label' => 'Invoice ID',
                 'value' => function ($data) {
-                    return $data->getStatus();
+                    return ($data->hasInvoice()) ? $data->invoice->getInvoiceNumber() : "";
                 },
             ],
         ];
