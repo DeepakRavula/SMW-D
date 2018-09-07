@@ -14,6 +14,7 @@ class HolidayValidator extends Validator
         $currentDate->setDate($currentDate->format('Y'), 01, 01);
         $firstDayOfCurrentYear = $currentDate->format('Y-m-d');
         $holidays = Holiday::find()
+            ->notDeleted()
             ->andWhere(['>=', 'DATE(date)', $firstDayOfCurrentYear])
             ->all();
         $holidayDates = ArrayHelper::getColumn($holidays, function ($element) {

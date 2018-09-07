@@ -421,6 +421,7 @@ class Course extends \yii\db\ActiveRecord
         $lessons = Lesson::findAll(['courseId' => $this->id, 'isConfirmed' => false]);
         $startDate = (new \DateTime($this->startDate))->format('Y-m-d');
         $holidays = Holiday::find()
+            ->notDeleted()
             ->andWhere(['>=', 'DATE(date)', $startDate])
             ->all();
         $holidayDates = ArrayHelper::getColumn($holidays, function ($element) {
