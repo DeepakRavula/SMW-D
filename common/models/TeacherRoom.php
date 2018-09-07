@@ -141,6 +141,7 @@ class TeacherRoom extends \yii\db\ActiveRecord
             ->andWhere(['day' => $this->day, 'teacher_location_id' => $this->teacher_location_id])
             ->andWhere(['NOT', ['id' => $this->availabilityId]])
             ->between($this->from_time, $this->to_time)
+            ->notDeleted()
             ->all();
         
         if (!empty($availabilities)) {
