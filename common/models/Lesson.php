@@ -1360,7 +1360,7 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getNetPrice()
     {
-        return $this->subTotal + $this->tax;
+        return round($this->subTotal, 2) + round($this->tax, 2);
     }
 
     public function getNetCost()
