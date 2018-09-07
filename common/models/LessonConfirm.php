@@ -161,7 +161,7 @@ class LessonConfirm extends Model
         $lastEndDate = $startDate;
         $lastEndDate = $lastEndDate->modify('-1days');
         $lessonModel->course->recentCourseSchedule->updateAttributes([
-            'endDate' => ($lastEndDate)->format('Y-m-d H:i:s'),
+            'endDate' => ($lastEndDate)->format('Y-m-d'),
         ]);
         $courseSchedule = new CourseSchedule();
         $courseSchedule->courseId = $lessonModel->course->id;
@@ -171,12 +171,11 @@ class LessonConfirm extends Model
         $oldCourseSchedules = $lessonModel->course->courseSchedules;
         if ($oldCourseSchedules) {
         $oldCourseSchedule = end($oldCourseSchedules);
-        $courseSchedule->startDate = $startDate->format('Y-m-d H:i:s');
-        $courseSchedule->endDate = $endDate->format('Y-m-d H:i:s');
+        $courseSchedule->startDate = Carbon::parse($oldCourseSchedule->endDate)->modify('+1days')->format('Y-m-d H:i:s');
         } else {
         $courseSchedule->startDate = $lessonModel->course->startDate;
-        $courseSchedule->endDate = $lessonModel->course->endDate;    
         }
+        $courseSchedule->endDate = $endDate->format('Y-m-d H:i:s');    
         $courseSchedule->teacherId = $lessonModel->teacherId;
         $courseSchedule->save();
     }
