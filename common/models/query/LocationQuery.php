@@ -21,6 +21,6 @@ class LocationQuery extends \yii\db\ActiveQuery
 	
     public function notDeleted()
     {
-        return $this->andWhere(['exam_result.isDeleted' =>  false]);
+        return $this->andWhere(['location.isDeleted' =>  false]);
     }
 }
