@@ -41,7 +41,7 @@ use common\models\UserProfile;
 		'contentOptions' => ['class' => 'text-right'],
         'headerOptions' => ['class' => 'text-right'],
 	    'value' => function ($data) {
-		    return Yii::$app->formatter->asCurrency($data->netPrice);
+		    return Yii::$app->formatter->asCurrency(round($data->netPrice, 2));
 	    },
 	],
 	[
