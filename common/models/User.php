@@ -520,6 +520,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function getEmail()
     {
         $email = UserEmail::find()
+            ->notDeleted()
             ->joinWith(['userContact' => function ($query) {
                 $query->andWhere(['userId' => $this->id, 'isPrimary' => true]);
             }])
@@ -718,6 +719,7 @@ class User extends ActiveRecord implements IdentityInterface
                 $query->andWhere(['user_profile.user_id' => $id]);
             }]);
         }])
+		->notDeleted()
         ->all();
         $availableHours = [];
         foreach ($teacherAvailabilities as $teacherAvailability) {

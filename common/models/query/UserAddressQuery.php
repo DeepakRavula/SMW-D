@@ -3,11 +3,11 @@
 namespace common\models\query;
 
 /**
- * This is the ActiveQuery class for [[\common\models\UserPhone]].
+ * This is the ActiveQuery class for [[\common\models\UserContact]].
  *
- * @see \common\models\UserPhone
+ * @see \common\models\UserContact
  */
-class UserPhoneQuery extends \yii\db\ActiveQuery
+class UserAddressQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
@@ -16,7 +16,7 @@ class UserPhoneQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return \common\models\UserPhone[]|array
+     * @return \common\models\UserAddress[]|array
      */
     public function all($db = null)
     {
@@ -25,15 +25,15 @@ class UserPhoneQuery extends \yii\db\ActiveQuery
 
     /**
      * @inheritdoc
-     * @return \common\models\UserPhone|array|null
+     * @return \common\models\UserAddress|array|null
      */
     public function one($db = null)
     {
         return parent::one($db);
     }
-	
-	public function notDeleted()
+
+    public function notDeleted()
     {
-        return $this->andWhere(['user_phone.isDeleted' => false]);
+        return $this->andWhere(['user_address.isDeleted' => false]);
     }
 }

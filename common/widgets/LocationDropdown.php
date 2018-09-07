@@ -42,7 +42,7 @@ class LocationDropdown extends Dropdown
             foreach ($users as $user) {
                 $locationIds[] = $user->userLocation->location_id;
             }
-            $locations = ArrayHelper::map(Location::find()->andWhere(['id' => $locationIds])->all(), 'slug', 'slug');
+            $locations = ArrayHelper::map(Location::find()->notDeleted()->andWhere(['id' => $locationIds])->all(), 'slug', 'slug');
         } else {
             $locations = Yii::$app->urlManager->locations;
         }
@@ -81,7 +81,7 @@ class LocationDropdown extends Dropdown
     public static function label($code)
     {
         if (self::$_labels === null) {
-            $locations = ArrayHelper::map(Location::find()->all(), 'slug', 'name');
+            $locations = ArrayHelper::map(Location::find()->notDeleted()->all(), 'slug', 'name');
             self::$_labels = $locations;
         }
         return isset(self::$_labels[$code]) ? self::$_labels[$code] : null;

@@ -61,7 +61,7 @@ class LocationController extends BaseController
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Location::find(),
+            'query' => Location::find()->notDeleted(),
         ]);
 	$dataProvider->sort->defaultOrder = [
             'name' => SORT_ASC,
@@ -156,6 +156,7 @@ class LocationController extends BaseController
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
         $availabilityModel = LocationAvailability::find()
+            ->notDeleted()
             ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
             ->one();
         $availabilityModel->fromTime = $startTime;
@@ -167,8 +168,9 @@ class LocationController extends BaseController
      {
          $location = Location::findOne(['slug' => Yii::$app->location]);
          $availabilityModel = LocationAvailability::find()
-             ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
-             ->one();
+            ->notDeleted()
+            ->where(['locationId' => $location->id, 'day' => $resourceId, 'type' => $type])
+            ->one();
         return $availabilityModel->delete();
     }
 
@@ -187,6 +189,7 @@ class LocationController extends BaseController
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
         $availabilities= LocationAvailability::find()
+                ->notDeleted()
                 ->location($location->id)
                 ->type($type)
                 ->notDeleted()
@@ -240,6 +243,7 @@ class LocationController extends BaseController
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
         $availabilityModel = LocationAvailability::find()
+            ->notDeleted()
             ->where(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
             ->one();
         $response = [
@@ -267,6 +271,7 @@ class LocationController extends BaseController
     {
         $location = Location::findOne(['slug' => Yii::$app->location]);
         if (($model = LocationAvailability::find()
+                        ->notDeleted()
                         ->location($location->id)
                         ->day($id)
                         ->type($type)
@@ -283,6 +288,7 @@ class LocationController extends BaseController
         LocationAvailability::deleteAll(['locationId' => $location->id,
             'type' => LocationAvailability::TYPE_SCHEDULE_TIME]);
         $locationAvailabilities = LocationAvailability::find()
+                        ->notDeleted()
                         ->location($location->id)
                         ->locationaAvailabilityHours()
                         ->all();

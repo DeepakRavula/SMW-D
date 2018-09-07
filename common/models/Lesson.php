@@ -1054,6 +1054,7 @@ class Lesson extends \yii\db\ActiveRecord
                 ['<=', 'from_time', $start->format('H:i:s')],
                 ['>=', 'to_time', $end->format('H:i:s')]
             ])
+			->notDeleted()
             ->one();
 
         if (!empty($teacherAvailability->teacherRoom)) {
@@ -1204,6 +1205,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $startDate = (new \DateTime($this->course->startDate))->format('Y-m-d');
         $holidays = Holiday::find()
+            ->notDeleted()
             ->andWhere(['>=', 'DATE(date)', $startDate])
             ->all();
         $holidayDates = ArrayHelper::getColumn($holidays, function ($element) {
@@ -1461,6 +1463,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function isHolidayLesson()
     {
         $holiday = Holiday::find()
+            ->notDeleted()
             ->andWhere(['DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')])
             ->all();
         return $holiday ? true : false;

@@ -159,6 +159,7 @@ class UserController extends BaseController
     protected function getTeacherDataProvider($id)
     {
         $query = TeacherAvailability::find()
+                ->notDeleted()
                 ->joinWith('userLocation')
                 ->andWhere(['user_id' => $id]);
         return new ActiveDataProvider([
@@ -195,6 +196,7 @@ class UserController extends BaseController
     protected function getLocationDataProvider($id)
     {
         $query = Location::find()
+                ->notDeleted()
                 ->joinWith('userLocations')
                 ->andWhere(['user_id' => $id]);
         return new ActiveDataProvider([
@@ -447,6 +449,7 @@ class UserController extends BaseController
                 $query->andWhere(['user_location.location_id' => $locationId, 'user_id' => $id]);
             }])
             ->groupBy(['teacher_availability_day.id','day'])
+            ->notDeleted()
             ->all();
     }
         
@@ -463,11 +466,13 @@ class UserController extends BaseController
         $request = Yii::$app->request;
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $minLocationAvailability = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->locationaAvailabilityHours()
             ->orderBy(['fromTime' => SORT_ASC])
             ->one();
         $maxLocationAvailability = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->locationaAvailabilityHours()
             ->orderBy(['toTime' => SORT_DESC])

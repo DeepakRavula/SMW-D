@@ -7,7 +7,7 @@ namespace common\models\query;
  *
  * @see \common\models\Holiday
  */
-class HolidayQuery extends \yii\db\ActiveQuery
+class CityQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
@@ -17,7 +17,7 @@ class HolidayQuery extends \yii\db\ActiveQuery
     /**
      * {@inheritdoc}
      *
-     * @return \common\models\Holiday[]|array
+     * @return \common\models\City[]|array
      */
     public function all($db = null)
     {
@@ -27,7 +27,7 @@ class HolidayQuery extends \yii\db\ActiveQuery
     /**
      * {@inheritdoc}
      *
-     * @return \common\models\Holiday|array|null
+     * @return \common\models\City|array|null
      */
     public function one($db = null)
     {
@@ -36,6 +36,6 @@ class HolidayQuery extends \yii\db\ActiveQuery
 
     public function notDeleted() 
     {
-        return $this->andWhere(['holiday.isDeleted' => false]);
+        return $this->andWhere(['city.isDeleted' => false]);
     }
 }

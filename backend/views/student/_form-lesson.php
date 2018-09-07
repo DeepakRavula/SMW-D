@@ -26,6 +26,7 @@ use kartik\time\TimePicker;
 <div class="row">
         <div class="col-md-3 lesson-program">
             <?php $query = Program::find()
+                            ->notDeleted()
                             ->active()
                             ->privateProgram();
 

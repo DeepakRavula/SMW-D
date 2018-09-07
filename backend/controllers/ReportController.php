@@ -423,7 +423,7 @@ class ReportController extends BaseController
             $toDate = $currentDate;
         }
 
-        $location = Location::find();
+        $location = Location::find()->notDeleted();
         $dataProvider = new ActiveDataProvider([
             'query' => $location,
         ]);

@@ -38,6 +38,7 @@ class TeacherSubstituteValidator extends Validator
         $teacherAvailabilityDay = TeacherAvailability::find()
             ->teacher($model->teacherId)
             ->day($day)
+			->notDeleted()
             ->all();
         
         if (empty($teacherAvailabilityDay)) {
@@ -47,6 +48,7 @@ class TeacherSubstituteValidator extends Validator
             ->teacher($model->teacherId)
             ->day($day)
             ->time($lessonStartTime, $lessonEndTime)
+			->notDeleted()
             ->all();
         if (empty($availableTime)) {
             $this->addError($model, $attribute, Lesson::TEACHER_UNSCHEDULED_ERROR_MESSAGE);

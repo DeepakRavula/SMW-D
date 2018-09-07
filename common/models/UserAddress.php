@@ -85,6 +85,11 @@ class UserAddress extends \yii\db\ActiveRecord
         ];
     }
 
+    public static function find()
+    {
+        return new \common\models\query\UserAddressQuery(get_called_class());
+    }
+
     public function getUserContact()
     {
         return $this->hasOne(UserContact::className(), ['id' => 'userContactId']);

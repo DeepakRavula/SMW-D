@@ -68,6 +68,7 @@ $this->params['action-button'] = $this->render('_button');
                     Select2::widget([
                         'name' => 'program',
                         'data' => ArrayHelper::map(Program::find()
+                            ->notDeleted()
                             ->active()
                             ->orderBy(['name' => SORT_ASC])
                             ->all(), 'id', 'name'),

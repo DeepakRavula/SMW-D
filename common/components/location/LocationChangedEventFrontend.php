@@ -33,6 +33,7 @@ class LocationChangedEventFrontend extends Event
             $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
             $userLogged = User::findOne(Yii::$app->user->id);
             $userEmail = UserEmail::find()
+                ->notDeleted()
                 ->andWhere(['email' => $userLogged->email])
                 ->joinWith(['userContact' => function ($query) use ($locationId) {
                     $query->joinWith(['user' => function ($query) use ($locationId) {

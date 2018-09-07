@@ -144,6 +144,7 @@ class ProformaInvoiceController extends BaseController
             $customer  = User::findOne(['id' => $model->userId]);
             $userModel = UserProfile::findOne(['user_id' => $customer->id]);
             $userEmail = UserEmail::find()
+                ->notDeleted()
                 ->joinWith(['userContact uc' => function ($query) use ($model) {
                     $query->andWhere(['uc.userId' => $model->userId]);
                 }])

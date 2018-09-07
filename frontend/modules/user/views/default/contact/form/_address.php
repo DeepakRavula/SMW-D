@@ -52,7 +52,7 @@ use yii\helpers\Url;
              <div class="col-md-12">
 		<?=
         $form->field($addressModel, "cityId")->dropDownList(
-            ArrayHelper::map(City::find()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
+            ArrayHelper::map(City::find()->notDeleted()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
             ['class' => 'city form-control']
         )->label('City')
         ?>

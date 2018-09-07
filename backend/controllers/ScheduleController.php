@@ -75,19 +75,23 @@ class ScheduleController extends BaseController
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
         $date = new \DateTime();
         $scheduleVisibilities = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->scheduleVisibilityHours()
             ->all();
         $scheduleVisibility = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->day($date->format('N'))
             ->scheduleVisibilityHours()
             ->one();
         $locationAvailabilities = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->locationaAvailabilityHours()
             ->all();
         $locationAvailability = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->day($date->format('N'))
             ->locationaAvailabilityHours()
@@ -209,9 +213,11 @@ class ScheduleController extends BaseController
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $formatedDate = $date->format('Y-m-d');
         $availabilityQuery = TeacherAvailability::find()
+            ->notDeleted()
             ->andWhere(['day' => $date->format('N')]);
         if ($showAll && empty($teacherId) && empty($programId)) {
             $availabilityDayQuery = TeacherAvailability::find()
+                ->notDeleted()
                 ->location($locationId)
                 ->andWhere(['day' => $date->format('N')]);
             $availabilityQuery->union($availabilityDayQuery);
@@ -402,6 +408,7 @@ class ScheduleController extends BaseController
             ])
             ->all();
         $locationAvailability = LocationAvailability::find()
+            ->notDeleted()
             ->location(Location::findOne(['slug' => Yii::$app->location])->id)
             ->day($date->format('N'))
             ->scheduleVisibilityHours()

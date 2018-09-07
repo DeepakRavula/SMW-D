@@ -141,6 +141,7 @@ class CourseController extends BaseController
     public function actionFetchTeacherAvailability($teacherId)
     {
         $query = TeacherAvailability::find()
+                ->notDeleted()
                 ->joinWith('userLocation')
                 ->andWhere(['user_id' => $teacherId]);
         $teacherDataProvider = new ActiveDataProvider([

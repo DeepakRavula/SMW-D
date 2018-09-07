@@ -88,4 +88,9 @@ class Blog extends \yii\db\ActiveRecord
         }
         return parent::beforeSave($insert);
     }
+
+    public static function find()
+    {
+        return new \common\models\query\BlogQuery(get_called_class());
+    }
 }

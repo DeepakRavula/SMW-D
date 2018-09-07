@@ -106,4 +106,9 @@ class ExamResult extends \yii\db\ActiveRecord
         $this->trigger(self::EVENT_UPDATE);
         return parent::afterSave($insert, $changedAttributes);
     }
+
+    public static function find()
+    {
+        return new \common\models\query\ExamResultQuery(get_called_class());
+    }
 }

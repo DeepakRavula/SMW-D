@@ -19,6 +19,7 @@ use common\models\Location;
 
 <div class="user-create-form">
     <?php $privatePrograms = ArrayHelper::map(Program::find()
+            ->notDeleted()
             ->active()
             ->privateProgram()
             ->all(), 'id', 'name');

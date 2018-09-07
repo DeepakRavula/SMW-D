@@ -153,7 +153,7 @@ class UrlManager extends \codemix\localeurls\UrlManager
      */
     public function init()
     {
-        $this->locations = ArrayHelper::map(Location::find()->all(), 'slug', 'slug');
+        $this->locations = ArrayHelper::map(Location::find()->notDeleted()->all(), 'slug', 'slug');
         if ($this->enableLocaleUrls && $this->locations) {
             if (!$this->enablePrettyUrl) {
                 throw new InvalidConfigException('Locale URL support requires enablePrettyUrl to be set to true.');
