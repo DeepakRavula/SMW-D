@@ -716,6 +716,7 @@ class User extends ActiveRecord implements IdentityInterface
                 $query->andWhere(['user_profile.user_id' => $id]);
             }]);
         }])
+		->notDeleted()
         ->all();
         $availableHours = [];
         foreach ($teacherAvailabilities as $teacherAvailability) {

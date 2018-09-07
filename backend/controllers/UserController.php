@@ -159,6 +159,7 @@ class UserController extends BaseController
     protected function getTeacherDataProvider($id)
     {
         $query = TeacherAvailability::find()
+                ->notDeleted()
                 ->joinWith('userLocation')
                 ->andWhere(['user_id' => $id]);
         return new ActiveDataProvider([
@@ -447,6 +448,7 @@ class UserController extends BaseController
                 $query->andWhere(['user_location.location_id' => $locationId, 'user_id' => $id]);
             }])
             ->groupBy(['teacher_availability_day.id','day'])
+            ->notDeleted()
             ->all();
     }
         

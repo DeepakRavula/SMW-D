@@ -1052,6 +1052,7 @@ class Lesson extends \yii\db\ActiveRecord
                 ['<=', 'from_time', $start->format('H:i:s')],
                 ['>=', 'to_time', $end->format('H:i:s')]
             ])
+			->notDeleted()
             ->one();
 
         if (!empty($teacherAvailability->teacherRoom)) {

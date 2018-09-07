@@ -182,6 +182,7 @@ class TeacherAvailabilityController extends BaseController
                         $query->andWhere(['user_profile.user_id' => $id]);
                     }]);
                 }])
+                ->notDeleted()
                 ->all();
         }
         $data =  $this->renderAjax('/layouts/datepicker', ['isShowAllChecked' => $locationVisibility]);
@@ -248,6 +249,7 @@ class TeacherAvailabilityController extends BaseController
         $roomModel->to_time   = $toTime->format('g:i A');
         $post             = Yii::$app->request->post();
         $roomModel->setScenario(TeacherRoom::SCENARIO_AVAILABIITY_EDIT);
+
         $roomModel->day = $teacherAvailabilityModel->day;
         $data =  $this->renderAjax('/user/teacher/_form-teacher-availability', [
             'model' => $teacherModel,

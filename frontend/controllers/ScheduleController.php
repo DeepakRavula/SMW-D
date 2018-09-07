@@ -155,6 +155,7 @@ class ScheduleController extends FrontendBaseController
             ->joinWith(['userLocation ul' => function ($query) use ($teacherId) {
                 $query->andWhere(['ul.user_id' => $teacherId]);
             }])
+			->notDeleted()
             ->all();
         return $availabilities;
     }
