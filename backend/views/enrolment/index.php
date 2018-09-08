@@ -132,6 +132,7 @@ $this->params['show-all'] = $this->render('_button', [
             ['content' =>  Html::a(Yii::t('backend', '<i class="fa fa-plus fa-2x" aria-hidden="true"></i>'), '#',
                 ['class' => 'new-enrol-btn'])
             ],
+            '{export}',
             '{toggleData}'
         ],
         'panel' => [
