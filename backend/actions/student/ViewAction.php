@@ -186,7 +186,7 @@ class ViewAction extends Action
     {
         $lessons = Lesson::find()
                 ->studentEnrolment($locationId, $id)
-                ->notPresent()
+                ->absent()
                 ->completed()
                 ->isConfirmed()
                 ->orderBy(['lesson.date' => SORT_ASC])

@@ -405,7 +405,7 @@ class LessonQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['lesson.isPresent' => true]);
     }
 
-    public function notPresent()
+    public function absent()
     {
         return $this->andWhere(['lesson.isPresent' => false]);
     }
