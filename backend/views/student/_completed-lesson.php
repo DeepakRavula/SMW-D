@@ -5,6 +5,7 @@ use yii\helpers\Json;
 use common\models\Enrolment;
 use yii\grid\GridView;
 use common\models\Lesson;
+use yii\helpers\Html;
 
 ?>
 
@@ -39,8 +40,10 @@ use common\models\Lesson;
             ],
             [
                 'label' => 'Invoice ID',
+                'format' => 'raw',
                 'value' => function ($data) {
-                    return ($data->hasInvoice()) ? $data->invoice->getInvoiceNumber() : "";
+                    return  ($data->hasInvoice()) ? Html::a($data->invoice->getInvoiceNumber(), [ 'invoice/view',
+                    'id' => $data->invoice->id ], ['target' => '_blank']) : "";
                 },
             ],
         ];
