@@ -7,6 +7,7 @@ use common\models\Location;
 use common\components\gridView\KartikGridView;
 use backend\models\search\InvoiceSearch;
 use yii\helpers\ArrayHelper;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -281,6 +282,17 @@ $this->params['action-button'] = $actionButton; ?>
             return ['data-url' => $url];
         },
         'columns' => $columns,
+        'toolbar' =>  [
+            '{export}',
+            '{toggleData}'
+        ],
+        'export' => [
+            'fontAwesome' => true,
+        ],  
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT
+        ],
+        'toggleDataOptions' => ['minCount' => 20],
     ]); ?>
 	<?php \yii\widgets\Pjax::end(); ?>
     </div>

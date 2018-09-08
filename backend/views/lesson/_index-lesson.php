@@ -170,6 +170,15 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => $columns,
+        'toolbar' =>  [
+            '{export}',
+        ],
+        'export' => [
+            'fontAwesome' => true,
+        ],  
+        'panel' => [
+                'type' => GridView::TYPE_DEFAULT
+            ],
     ]); ?>
 	</div>
 	<?php Pjax::end(); ?>

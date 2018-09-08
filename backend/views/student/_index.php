@@ -75,6 +75,7 @@ use yii\helpers\Html;
     ],
     'toolbar' =>  [
         '{export}',
+        '{toggleData}'
     ],
     'export' => [
         'fontAwesome' => true,
@@ -82,6 +83,7 @@ use yii\helpers\Html;
     'panel' => [
             'type' => GridView::TYPE_DEFAULT
         ],
+    'toggleDataOptions' => ['minCount' => 20],
 ]);
 ?>
 <?php Pjax::end(); ?>
