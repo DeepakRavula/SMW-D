@@ -22,7 +22,7 @@ use yii\helpers\Html;
             [
                 'label' => 'Program',
                 'value' => function ($data) {
-                    return !empty($data->enrolment->program->name) ? $data->enrolment->program->name : null;
+                    return $data->enrolment->program->name;
                 },
             ],
             [
@@ -42,7 +42,7 @@ use yii\helpers\Html;
                 'label' => 'Invoice ID',
                 'format' => 'raw',
                 'value' => function ($data) {
-                    return  ($data->hasInvoice()) ? Html::a($data->invoice->getInvoiceNumber(), [ 'invoice/view',
+                    return  $data->hasInvoice() ? Html::a($data->invoice->getInvoiceNumber(), [ 'invoice/view',
                     'id' => $data->invoice->id ], ['target' => '_blank']) : "";
                 },
             ],
