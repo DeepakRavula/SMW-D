@@ -2,6 +2,11 @@ Options FollowSymLinks
 AddDefaultCharset utf-8
               
 <ifmodule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^dev.arcadiamusicacademy\.com [NC]
+RewriteCond %{SERVER_PORT} 80
+RewriteRule ^(.*)$ https://dev.arcadiamusicacademy.com/$1 [R,L]
+
   RewriteEngine On
   # the main rewrite rule for the frontend application
  RewriteCond %{REQUEST_URI} !^/(backend/web|admin)

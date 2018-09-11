@@ -15,7 +15,7 @@ use yii\helpers\Url;
 <?= $this->render('calendar'); ?>
 <?php $this->endContent(); ?>
 <body>
-    <script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
+    <script type="text/javascript" src="https://assets.freshdesk.com/widget/freshwidget.js"></script>
 <script type="text/javascript">
 	FreshWidget.init("", {
 		"queryString": "&widgetType=popup&helpdesk_ticket[requester]=<?= Html::encode(Yii::$app->user->identity->email); ?>&helpdesk_ticket[subject]=<?= Html::encode($this->title); ?>",
