@@ -48,7 +48,8 @@ class TeacherRoomQuery extends \yii\db\ActiveQuery
     public function day($day)
     {
         $this->joinWith(['teacherAvailability' => function ($query) use ($day) {
-            $query->andWhere(['day' => $day]);
+            $query->andWhere(['day' => $day])
+                ->notDeleted();
         }]);
 
         return $this;

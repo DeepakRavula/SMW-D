@@ -331,6 +331,7 @@ class InvoiceController extends BaseController
         $userModel = UserProfile::findOne(['user_id' => $model->user_id]);
         $user_id = $model->user_id;
         $userEmail = UserEmail::find()
+            ->notDeleted()
             ->joinWith(['userContact uc' => function ($query) use ($user_id) {
                 $query->andWhere(['uc.userId' => $user_id]);
             }])

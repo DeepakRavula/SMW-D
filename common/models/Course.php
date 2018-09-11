@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use common\models\CourseGroup;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "course".
@@ -43,6 +44,7 @@ class Course extends \yii\db\ActiveRecord
     public $duration;
     public $autoRenewal;
 
+    const CONSOLE_USER_ID = 727;
     /**
      * {@inheritdoc}
      */
@@ -107,6 +109,13 @@ class Course extends \yii\db\ActiveRecord
                 'class' => BlameableBehavior::className(),
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
+            ],
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
+                ],
             ],
         ];
     }
@@ -177,9 +186,24 @@ class Course extends \yii\db\ActiveRecord
         return $this->hasOne(CourseProgramRate::className(), ['courseId' => 'id']);
     }
 
-    public function getCourseSchedule()
+    public function getCourseSchedules()
     {
-        return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id']);
+        return $this->hasMany(CourseSchedule::className(), ['courseId' => 'id']);
+    }
+
+    public function getRecentCourseSchedule()
+    {
+        return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
+        ->orderBy(['course_schedule.id' => SORT_DESC]);
+    }
+
+    public function getCurrentCourseSchedule()
+    {
+        $currentDate = new \DateTime();
+        $currentDate = $currentDate->format('Y-m-d h:i:s');
+        return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
+        ->andFilterWhere(['OR', ['>=', 'course_schedule.startDate', $currentDate], ['<=', 'course_schedule.endDate', $currentDate]])
+        ->orderBy(['course_schedule.id' => SORT_DESC]);
     }
 
     public function getCourseGroup()
@@ -310,7 +334,7 @@ class Course extends \yii\db\ActiveRecord
             $this->startDate = $startDate->format('Y-m-d H:i:s');
             $this->endDate = $endDate->endOfMonth();
         }
-
+        
         return parent::beforeSave($insert);
     }
 
@@ -398,6 +422,7 @@ class Course extends \yii\db\ActiveRecord
         $lessons = Lesson::findAll(['courseId' => $this->id, 'isConfirmed' => false]);
         $startDate = (new \DateTime($this->startDate))->format('Y-m-d');
         $holidays = Holiday::find()
+            ->notDeleted()
             ->andWhere(['>=', 'DATE(date)', $startDate])
             ->all();
         $holidayDates = ArrayHelper::getColumn($holidays, function ($element) {
@@ -461,7 +486,7 @@ class Course extends \yii\db\ActiveRecord
             'teacherId' => $this->teacherId,
             'status' => $status,
             'date' => $day->format('Y-m-d H:i:s'),
-            'duration' => $this->courseSchedule->duration,
+            'duration' => $this->recentCourseSchedule->duration,
             'isConfirmed' => $isConfirmed,
         ]);
         $lesson->save();
@@ -548,5 +573,17 @@ class Course extends \yii\db\ActiveRecord
     public function hasExtraCourse()
     {
         return !empty($this->extraCourses);
+    }
+
+    public function getTeachers() 
+    {
+        $teachers = [];
+        $courseSchedules = $this->courseSchedules;
+        foreach($courseSchedules as $courseSchedule) {
+            if (array_search($courseSchedule->teacher->publicIdentity,$teachers) != $courseSchedule->teacher->publicIdentity ) {
+            $teachers[] = $courseSchedule->teacher->publicIdentity;
+            }
+        }
+        return implode(", ", $teachers);
     }
 }

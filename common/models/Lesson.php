@@ -6,6 +6,7 @@ use Yii;
 use common\models\discount\EnrolmentDiscount;
 use yii\helpers\ArrayHelper;
 use yii\behaviors\BlameableBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 use yii\behaviors\TimestampBehavior;
 use valentinek\behaviors\ClosureTable;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -51,6 +52,8 @@ class Lesson extends \yii\db\ActiveRecord
     const DEFAULT_EXPLODE_DURATION_SEC = 900;
     const STATUS_PRESENT='Yes';
     const STATUS_ABSENT='No';
+
+    const CONSOLE_USER_ID  = 727;
 
     const MAXIMUM_LIMIT = 48;
     const TYPE_REGULAR = 1;
@@ -136,6 +139,13 @@ class Lesson extends \yii\db\ActiveRecord
                 'class' => BlameableBehavior::className(),
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
+            ],
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
+                ],
             ],
         ];
     }
@@ -1044,6 +1054,7 @@ class Lesson extends \yii\db\ActiveRecord
                 ['<=', 'from_time', $start->format('H:i:s')],
                 ['>=', 'to_time', $end->format('H:i:s')]
             ])
+			->notDeleted()
             ->one();
 
         if (!empty($teacherAvailability->teacherRoom)) {
@@ -1194,6 +1205,7 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $startDate = (new \DateTime($this->course->startDate))->format('Y-m-d');
         $holidays = Holiday::find()
+            ->notDeleted()
             ->andWhere(['>=', 'DATE(date)', $startDate])
             ->all();
         $holidayDates = ArrayHelper::getColumn($holidays, function ($element) {
@@ -1451,6 +1463,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function isHolidayLesson()
     {
         $holiday = Holiday::find()
+            ->notDeleted()
             ->andWhere(['DATE(date)' => (new \DateTime($this->date))->format('Y-m-d')])
             ->all();
         return $holiday ? true : false;

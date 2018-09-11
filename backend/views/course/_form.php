@@ -21,7 +21,7 @@ use kartik\select2\Select2;
 		<div class="col-md-10">
 			<?php
             echo $form->field($model, 'programId')->widget(Select2::classname(), [
-                'data' =>ArrayHelper::map(Program::find()->group()->active()
+                'data' =>ArrayHelper::map(Program::find()->notDeleted()->group()->active()
                         ->all(), 'id', 'name'),
                             'options' => [
                                     'id' => 'course-programid'

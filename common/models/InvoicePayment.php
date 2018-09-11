@@ -5,6 +5,7 @@ namespace common\models;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "payments".
@@ -21,6 +22,8 @@ class InvoicePayment extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
     public $receiptId;
+
+    const CONSOLE_USER_ID  = 727;
     public static function tableName()
     {
         return 'invoice_payment';
@@ -71,6 +74,13 @@ class InvoicePayment extends \yii\db\ActiveRecord
                 'class' => BlameableBehavior::className(),
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
+            ],
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
+                ],
             ],
         ];
     }

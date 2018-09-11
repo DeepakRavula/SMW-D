@@ -3,6 +3,7 @@
 namespace common\models\discount;
 
 use Yii;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "enrolment_discount".
@@ -57,5 +58,17 @@ class EnrolmentDiscount extends \yii\db\ActiveRecord
     public function getDiscountPerLesson()
     {
         return $this->discount / 4;
+    }
+
+    public function behaviors()
+    {
+        return [
+            'audittrail'=>[
+                'class'=>AuditTrailBehavior::className(), 
+                'attributeOutput'=>[
+                    'last_checked'=>'datetime',
+                ],
+            ],
+        ];
     }
 }

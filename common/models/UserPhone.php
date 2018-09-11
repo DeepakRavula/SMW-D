@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "user_phone".
@@ -16,6 +17,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 class UserPhone extends \yii\db\ActiveRecord
 {
     private $labelId;
+
+    const CONSOLE_USER_ID  = 727;
 
     public function getLabelId()
     {
@@ -56,6 +59,13 @@ class UserPhone extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
+            ],
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
+                ],
             ],
         ];
     }

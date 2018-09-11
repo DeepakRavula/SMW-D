@@ -51,7 +51,8 @@ $this->params['show-all'] = $this->render('_button', [
         'attribute' => 'teacher',
         'label' => 'Teacher',
         'value' => function ($data) {
-            return $data->course->teacher->publicIdentity;
+            
+            return $data->course->getTeachers();
         },
         'contentOptions' => ['style' => 'width:20%'],
     ],
@@ -125,12 +126,13 @@ $this->params['show-all'] = $this->render('_button', [
     <?= KartikGridView::widget([
         'dataProvider' => $dataProvider,
         'options' => ['id' => 'enrolment-listing-grid'],
-        'summary' => false,
+        'summary' => "Showing {begin} - {end} of {totalCount} items",
         'emptyText' => false,
         'toolbar' =>  [
             ['content' =>  Html::a(Yii::t('backend', '<i class="fa fa-plus fa-2x" aria-hidden="true"></i>'), '#',
                 ['class' => 'new-enrol-btn'])
             ],
+            '{export}',
             '{toggleData}'
         ],
         'panel' => [

@@ -40,7 +40,8 @@ class HolidaySearch extends Holiday
      */
     public function search($params)
     {
-        $query = Holiday::find();
+        $query = Holiday::find()
+            ->notDeleted();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -15,6 +15,7 @@ use common\models\Location;
 use common\models\discount\CustomerDiscount;
 use common\models\CustomerReferralSource;
 use common\models\Label;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * User model.
@@ -57,6 +58,8 @@ class User extends ActiveRecord implements IdentityInterface
 
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_DELETE = 'delete';
+
+    const CONSOLE_USER_ID  = 727;
 
     public $customerIds;
     public $customerId;
@@ -129,7 +132,14 @@ class User extends ActiveRecord implements IdentityInterface
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
-            ]
+            ],
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
+                ],
+            ],
         ];
     }
 
@@ -510,6 +520,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function getEmail()
     {
         $email = UserEmail::find()
+            ->notDeleted()
             ->joinWith(['userContact' => function ($query) {
                 $query->andWhere(['userId' => $this->id, 'isPrimary' => true]);
             }])
@@ -708,6 +719,7 @@ class User extends ActiveRecord implements IdentityInterface
                 $query->andWhere(['user_profile.user_id' => $id]);
             }]);
         }])
+		->notDeleted()
         ->all();
         $availableHours = [];
         foreach ($teacherAvailabilities as $teacherAvailability) {

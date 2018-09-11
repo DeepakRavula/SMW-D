@@ -83,4 +83,9 @@ class City extends \yii\db\ActiveRecord
         }
         return parent::beforeSave($insert);
     }
+
+    public static function find()
+    {
+        return new \common\models\query\CityQuery(get_called_class());
+    }
 }

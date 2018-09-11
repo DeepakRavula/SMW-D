@@ -40,7 +40,8 @@ class TeacherAvailabilitySearch extends TeacherAvailability
      */
     public function search($params)
     {
-        $query = TeacherAvailability::find();
+        $query = TeacherAvailability::find()
+                ->notDeleted();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

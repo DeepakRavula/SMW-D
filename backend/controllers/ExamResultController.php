@@ -57,7 +57,7 @@ class ExamResultController extends BaseController
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => ExamResult::find(),
+            'query' => ExamResult::find()->notDeleted(),
         ]);
 
         return $this->render('index', [

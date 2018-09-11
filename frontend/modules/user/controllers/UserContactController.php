@@ -146,6 +146,7 @@ class UserContactController extends Controller
         $model = User::findOne(['id' => $id]);
         if ((int)$contactType === UserContact::TYPE_EMAIL) {
             $primaryEmail = UserEmail::find()
+                    ->notDeleted()
                     ->joinWith(['userContact' => function ($query) {
                         $query->primary();
                     }])
@@ -161,6 +162,7 @@ class UserContactController extends Controller
             ];
         } elseif ((int)$contactType === UserContact::TYPE_PHONE) {
             $primaryPhone = UserPhone::find()
+                    ->notDeleted()
                     ->joinWith(['userContact' => function ($query) {
                         $query->primary();
                     }])
@@ -176,6 +178,7 @@ class UserContactController extends Controller
             ];
         } elseif ((int)$contactType === UserContact::TYPE_ADDRESS) {
             $primaryAddress = UserAddress::find()
+                    ->notDeleted()
                     ->joinWith(['userContact' => function ($query) {
                         $query->primary();
                     }])

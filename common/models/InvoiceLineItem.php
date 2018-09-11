@@ -8,6 +8,7 @@ use common\models\TaxStatus;
 use common\models\query\InvoiceLineItemQuery;
 use common\models\discount\InvoiceLineItemDiscount;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "invoice_line_item".
@@ -36,6 +37,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     const STATUS_DEFAULT = 'Default';
     const STATUS_NO_TAX = 'No Tax';
     const STATUS_GST_ONLY = 'GST Only';
+    const CONSOLE_USER_ID  = 727;
 
     public $userName;
     public $price;
@@ -59,7 +61,14 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
-            ]
+            ],
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
+                ],
+            ],
         ];
     }
 

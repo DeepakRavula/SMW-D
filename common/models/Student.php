@@ -8,6 +8,7 @@ use common\models\query\StudentQuery;
 use common\models\Location;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 /**
  * This is the model class for table "student".
  *
@@ -22,6 +23,8 @@ class Student extends \yii\db\ActiveRecord
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
     const STATUS_DRAFT = 3;
+
+    const CONSOLE_USER_ID  = 727;
     
     const EVENT_MERGE = 'merge';
     
@@ -89,6 +92,13 @@ class Student extends \yii\db\ActiveRecord
                 'class' => BlameableBehavior::className(),
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
+            ],
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
+                ],
             ],
         ];
     }

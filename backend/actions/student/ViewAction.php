@@ -62,6 +62,7 @@ class ViewAction extends Action
                     'unscheduledLessonSearchModel' => $unscheduledLessonSearchModel,
                     'lessonCount' => $lessonCount,
                     'groupLessonDataProvider' => $this->getGroupLessons($id, $locationId),
+                    'completedLessonDataProvider' => $this->getCompletedLessons($id, $locationId)
                     ]);
         } else {
             $this->controller->redirect(['index', 'StudentSearch[showAllStudents]' => false]);
@@ -134,7 +135,7 @@ class ViewAction extends Action
     protected function getExamResults($id)
     {
         $examResults = ExamResult::find()
-                ->andWhere(['exam_result.isDeleted' => false])
+                ->notDeleted()
                 ->andWhere(['studentId' => $id]);
 
         return new ActiveDataProvider([
@@ -179,5 +180,20 @@ class ViewAction extends Action
             ->andWhere(['student.id' => $id])
             ->one();
         return $model;
+    }
+
+    protected function getCompletedLessons($id, $locationId)
+    {
+        $lessons = Lesson::find()
+                ->studentEnrolment($locationId, $id)
+                ->absent()
+                ->completed()
+                ->isConfirmed()
+                ->orderBy(['lesson.date' => SORT_ASC])
+                ->notDeleted();
+
+        return new ActiveDataProvider([
+                'query' => $lessons,
+        ]);
     }
 }

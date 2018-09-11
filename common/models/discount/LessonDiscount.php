@@ -4,6 +4,7 @@ namespace common\models\discount;
 
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "lesson_discount".
@@ -18,6 +19,7 @@ class LessonDiscount extends \yii\db\ActiveRecord
 {
     const VALUE_TYPE_PERCENTAGE = 1;
     const VALUE_TYPE_DOLLAR      = 0;
+    const CONSOLE_USER_ID  = 727;
 
     const FULL_DISCOUNT = 100.00;
     const TYPE_CUSTOMER = 1;
@@ -59,6 +61,18 @@ class LessonDiscount extends \yii\db\ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
+                ],
+            ],
+        ];
+    }
     /**
      * @inheritdoc
      * @return \common\models\query\LessonDiscountQuery the active query used by this AR class.

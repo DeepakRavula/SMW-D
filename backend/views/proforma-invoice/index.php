@@ -6,6 +6,7 @@ use yii\helpers\Url;
 use common\models\Location;
 use yii\widgets\Pjax;
 use backend\models\search\ProformaInvoiceSearch;
+use kartik\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\PrivateLessonSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -110,14 +111,25 @@ $this->params['show-all'] = $this->render('_button', [
         'dataProvider' => $dataProvider,
         'id' => 'proforma-invoice-grid',
         'filterModel' => $searchModel,
+        'summary' => "Showing {begin} - {end} of {totalCount} items",
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['proforma-invoice/view', 'id' => $model->id]);
 
             return ['data-url' => $url];
         },
-        'summary' => false,
         'emptyText' => false,
         'columns' => $columns,
+        'toolbar' =>  [
+            '{export}',
+            '{toggleData}'
+        ],
+        'export' => [
+            'fontAwesome' => true,
+        ],  
+        'panel' => [
+            'type' => GridView::TYPE_DEFAULT
+        ],
+        'toggleDataOptions' => ['minCount' => 20],
     ]); ?>
 </div>
     <?php Pjax::end(); ?>

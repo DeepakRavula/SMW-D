@@ -12,6 +12,7 @@ use common\models\Program;
 use common\models\Location;
 use common\models\Student;
 use common\models\UserProfile;
+use kartik\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -56,12 +57,15 @@ $this->params['show-all'] = $this->render('_show-all-button', [
             [
                 'label' => 'Date',
                 'attribute' => 'dateRange',
-                'filter' => DateRangePicker::widget([
+                'filter' => '<div class="input-group drp-container">'. DateRangePicker::widget([
                     'model' => $searchModel,
                     'convertFormat' => true,
                     'initRangeExpr' => true,
                     'attribute' => 'dateRange',
-                    'convertFormat' => true,
+                    'options' => [
+                        'class' => 'form-control',
+                        'readOnly' => true
+                    ],
                     'pluginOptions' => [
                         'autoApply' => true,
                         'ranges' => [
@@ -75,7 +79,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                         ],
                         'opens' => 'left'
                     ]
-                ]),
+                ]) . '<span class="input-group-addon remove-button" title="Clear field"><span class="glyphicon glyphicon-remove" ></span></span></div>',
                 'value' => function ($data) {
                     $date = Yii::$app->formatter->asDate($data->date);
                     $lessonTime = (new \DateTime($data->date))->format('H:i:s');
@@ -156,6 +160,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         'dataProvider' => $dataProvider,
         'options' => ['id' => 'lesson-index-1'],
         'filterModel' => $searchModel,
+        'summary' => "Showing {begin} - {end} of {totalCount} items",
         'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[showAll]' => $searchModel->showAll]),
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['lesson/view', 'id' => $model->id]);
@@ -165,6 +170,15 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         'tableOptions' => ['class' => 'table table-bordered'],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => $columns,
+        'toolbar' =>  [
+            '{export}',
+        ],
+        'export' => [
+            'fontAwesome' => true,
+        ],  
+        'panel' => [
+                'type' => GridView::TYPE_DEFAULT
+            ],
     ]); ?>
 	</div>
 	<?php Pjax::end(); ?>
@@ -335,5 +349,12 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         var url = "<?= Url::to(['lesson/index']); ?>?"+params;
         $.pjax.reload({url: url, container: "#lesson-index", replace: false, timeout: 4000});  //Reload GridView
     });  
+
+    $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
+        var dateRange = $("#lessonsearch-daterange").val();
+        if (!$.isEmptyObject(dateRange)) {
+            $("#lessonsearch-daterange").val('').trigger('change');
+        }
+    });
 </script>
 

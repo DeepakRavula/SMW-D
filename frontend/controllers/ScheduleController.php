@@ -72,19 +72,23 @@ class ScheduleController extends FrontendBaseController
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
         $date = new \DateTime();
         $scheduleVisibilities = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->scheduleVisibilityHours()
             ->all();
         $scheduleVisibility = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->day($date->format('N'))
             ->scheduleVisibilityHours()
             ->one();
         $locationAvailabilities = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->locationaAvailabilityHours()
             ->all();
         $locationAvailability = LocationAvailability::find()
+            ->notDeleted()
             ->location($locationId)
             ->day($date->format('N'))
             ->locationaAvailabilityHours()
@@ -155,6 +159,7 @@ class ScheduleController extends FrontendBaseController
             ->joinWith(['userLocation ul' => function ($query) use ($teacherId) {
                 $query->andWhere(['ul.user_id' => $teacherId]);
             }])
+			->notDeleted()
             ->all();
         return $availabilities;
     }

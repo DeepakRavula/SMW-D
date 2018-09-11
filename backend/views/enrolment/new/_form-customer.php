@@ -114,7 +114,7 @@ use common\models\ReferralSource;
         <div class="col-xs-3"></div>
         <div class="col-xs-4">
             <?= $form->field($courseDetail, 'cityId')->dropDownList(
-                ArrayHelper::map(City::find()->all(), 'id', 'name')
+                ArrayHelper::map(City::find()->notDeleted()->all(), 'id', 'name')
             )->label(false);
             ?>
         </div>

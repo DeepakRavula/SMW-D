@@ -213,6 +213,7 @@ class TeacherSubstituteController extends BaseController
                 ->all();
             $teacherId = end($enrolments)->course->teacherId;
             $programIds = ArrayHelper::getColumn(Program::find()
+                ->notDeleted()
                 ->enrollment($model->enrolmentIds)
                 ->all(), function ($element) {
                 return $element->id;

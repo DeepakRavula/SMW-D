@@ -21,6 +21,7 @@ $this->render('_view-enrolment', [
 <div class="smw-box col-md-10 m-l-10 m-b-10 monthly-estimate">
 <?php
     $query = TeacherAvailability::find()
+                ->notDeleted()
                 ->joinWith('userLocation')
                 ->andWhere(['user_id' => $model->teacherId]);
         $teacherDataProvider = new ActiveDataProvider([

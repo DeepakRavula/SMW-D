@@ -180,6 +180,9 @@ class StudentController extends BaseController
         if ($courseModel->save()) {
             $courseSchedule->isAutoRenew = $courseDetail->autoRenew;
             $courseSchedule->courseId = $courseModel->id;
+            $courseSchedule->startDate = $courseModel->startDate;
+            $courseSchedule->endDate = $courseModel->endDate->format('Y-m-d H:i:s');
+            $courseSchedule->teacherId = $courseModel->teacherId;
             if ($courseSchedule->save()) {
                 if (!empty($courseDetail->enrolmentDiscount)) {
                     $multipleEnrolmentDiscount->discount = $courseDetail->enrolmentDiscount;

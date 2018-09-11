@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use common\components\gridView\AdminLteGridView;
 use kartik\select2\Select2Asset;
 use common\components\gridView\KartikGridView;
+use kartik\grid\GridView;
 
 Select2Asset::register($this);
 
@@ -93,7 +94,7 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
     ]); ?>
         <?= KartikGridView::widget([
             'dataProvider' => $dataProvider,
-            'summary' => false,
+            'summary' => "Showing {begin} - {end} of {totalCount} items",
             'emptyText' => false,
             'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel, $roleName, $originalInvoice) {
                 $url = Url::to(['user/view', 'UserSearch[role_name]' => $roleName, 'id' => $model->id]);
@@ -135,6 +136,17 @@ $last_names = ArrayHelper::map($last_name, 'user_id','lastname');
                 },
             ]
         ],
+        'toolbar' =>  [
+            '{export}',
+            '{toggleData}'
+        ],
+        'export' => [
+            'fontAwesome' => true,
+        ],  
+        'panel' => [
+                'type' => GridView::TYPE_DEFAULT
+            ],
+        'toggleDataOptions' => ['minCount' => 20],
     ]); ?>
 <?php yii\widgets\Pjax::end(); ?>
 </div>

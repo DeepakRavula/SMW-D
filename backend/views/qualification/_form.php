@@ -29,7 +29,7 @@ $form = ActiveForm::begin([
         ->andWhere(['teacher_id' => $model->teacher_id])
         ->all();
         $teacherQualificationIds = ArrayHelper::getColumn($qualifications, 'program_id');
-        $query = Program::find()->active();
+        $query = Program::find()->notDeleted()->active();
         if ($model->isNewRecord) {
             $query->andWhere(['NOT IN', 'program.id', $teacherQualificationIds]);
         }

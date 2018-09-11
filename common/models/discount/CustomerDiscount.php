@@ -5,6 +5,7 @@ namespace common\models\discount;
 use common\models\User;
 use common\models\query\CustomerDiscountQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "customer_discount".
@@ -22,7 +23,7 @@ class CustomerDiscount extends \yii\db\ActiveRecord
      */
     const EVENT_CREATE = 'event-create';
     const EVENT_EDIT = 'event-edit';
-
+    const CONSOLE_USER_ID = 727;
     public static function tableName()
     {
         return 'customer_discount';
@@ -42,6 +43,13 @@ class CustomerDiscount extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
+            ],
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
+                ],
             ],
         ];
     }

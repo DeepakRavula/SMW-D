@@ -1,7 +1,9 @@
 <?php
 
 namespace common\models;
+
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "user_address".
@@ -13,6 +15,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 class UserAddress extends \yii\db\ActiveRecord
 {
     private $labelId;
+
+    const CONSOLE_USER_ID  = 727;
 
     public function getLabelId()
     {
@@ -71,7 +75,19 @@ class UserAddress extends \yii\db\ActiveRecord
                 ],
                 'replaceRegularDelete' => true
             ],
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
+                ],
+            ],
         ];
+    }
+
+    public static function find()
+    {
+        return new \common\models\query\UserAddressQuery(get_called_class());
     }
 
     public function getUserContact()

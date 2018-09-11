@@ -32,7 +32,7 @@ class FrontendBaseController extends Controller
             foreach ($users as $user) {
                 $locationIds[] = $user->userLocation->location_id;
             }
-            $locations = ArrayHelper::getColumn(Location::find()->andWhere(['id' => $locationIds])->all(), 'slug');
+            $locations = ArrayHelper::getColumn(Location::find()->notDeleted()->andWhere(['id' => $locationIds])->all(), 'slug');
             if (!$this->isLogoutkRoute() && !$this->isLoginkRoute()) {
                 if (!in_array(Yii::$app->location, $locations)) {
                     Yii::$app->location = current($locations);

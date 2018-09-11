@@ -61,7 +61,7 @@ class BlogController extends \common\components\controllers\BaseController
    public function actionIndex()
     {
         $blog = Blog::find()
-            ->andWhere(['blog.isDeleted' => false])
+            ->notDeleted()
             ->orderBy(['date' => SORT_DESC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $blog,
@@ -180,7 +180,7 @@ class BlogController extends \common\components\controllers\BaseController
 	public function actionList()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Blog::find(),
+            'query' => Blog::find()->notDeleted(),
             'sort' => [
                 'defaultOrder' => [
                     'id' => SORT_DESC,

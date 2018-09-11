@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use common\models\query\UserEmailQuery;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
  * This is the model class for table "user_email".
@@ -18,6 +19,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
 class UserEmail extends \yii\db\ActiveRecord
 {
     const SCENARIO_USER_CREATE = 'user-create';
+
+    const CONSOLE_USER_ID  = 727;
 
     private $labelId;
 
@@ -77,6 +80,13 @@ class UserEmail extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
+            ],
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
+                ],
             ],
         ];
     }

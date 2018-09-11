@@ -150,6 +150,7 @@ $columns = [
     <?= KartikGridView::widget([
 		'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,
+		'summary' => "Showing {begin} - {end} of {totalCount} items",
 		'options' => ['class' => ''],
 		'headerRowOptions' => ['class' => 'bg-light-gray'],
 		'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed', 'id' => 'payment'],

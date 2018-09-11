@@ -63,7 +63,7 @@ if ($model->isNewRecord) {
     </div>
 	<div class="col-md-6">
 		<?= $form->field($model, 'programId')->widget(Select2::classname(), [
-                'data' => ArrayHelper::map(Program::find()->active()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
+                'data' => ArrayHelper::map(Program::find()->notDeleted()->active()->orderBy(['name' => SORT_ASC])->all(), 'id', 'name'),
                 'options' => [
                                     'id' => 'examresult-programid'
                 ],

@@ -9,6 +9,7 @@ use yii\behaviors\BlameableBehavior;
 use common\models\discount\EnrolmentDiscount;
 use DateInterval;
 use common\models\discount\LessonDiscount;
+use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 /**
  * This is the model class for table "enrolment".
  *
@@ -42,6 +43,7 @@ class Enrolment extends \yii\db\ActiveRecord
     const ENROLMENT_EXPIRY = 90;
     const EVENT_CREATE = 'create';
     const EVENT_GROUP = 'group-course-enroll';
+    const CONSOLE_USER_ID  = 727;
     /**
      * {@inheritdoc}
      */
@@ -70,6 +72,13 @@ class Enrolment extends \yii\db\ActiveRecord
                 'class' => BlameableBehavior::className(),
                 'createdByAttribute' => 'createdByUserId',
                 'updatedByAttribute' => 'updatedByUserId'
+            ],
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(), 
+                'consoleUserId' => self::CONSOLE_USER_ID, 
+                'attributeOutput' => [
+                    'last_checked' => 'datetime',
+                ],
             ],
         ];
     }
@@ -120,9 +129,15 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId']);
     }
+    public function getCourseSchedules()
+    {
+        return $this->hasMany(CourseSchedule::className(), ['courseId' => 'id'])
+            ->via('course');
+    }
     public function getCourseSchedule()
     {
         return $this->hasOne(CourseSchedule::className(), ['courseId' => 'id'])
+            ->orderBy(['course_schedule.id' => SORT_DESC])    
             ->via('course');
     }
     public function getPaymentsFrequency()

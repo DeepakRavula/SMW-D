@@ -20,6 +20,7 @@ use kartik\switchinput\SwitchInput;
             'isReverse' => $isReverse, 'EnrolmentForm' => $model])
     ]);
     $privatePrograms = ArrayHelper::map(Program::find()
+            ->notDeleted()
             ->active()
             ->andWhere(['type' => Program::TYPE_PRIVATE_PROGRAM])
             ->all(), 'id', 'name')

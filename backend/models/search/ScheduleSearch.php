@@ -41,7 +41,8 @@ class ScheduleSearch extends Model
      */
     public function search($params)
     {
-        $query = City::find();
+        $query = City::find()
+            ->notDeleted();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
