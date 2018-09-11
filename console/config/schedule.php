@@ -13,8 +13,8 @@ $schedule->command('invoice/all-completed-lessons')->dailyAt('23:00');
 $schedule->command('student/set-status')->dailyAt('02:00');
 $schedule->command('customer/set-status')->dailyAt('02:30');
 $schedule->command('invoice/all-expired-lessons')->dailyAt('23:00');
-$schedule->command('payment-request/create')->dailyAt('23:00');
-$schedule->command('payment-preference/create')->dailyAt('23:00');
+$schedule->command('payment-request/create')->dailyAt('03:00');
+$schedule->command('payment-preference/create')->dailyAt('05:00');
 $schedule->command('tools/backup')->dailyAt('23:00');
 
 
