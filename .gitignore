@@ -29,4 +29,3 @@ phpunit.phar
 # Vagrant
 /.vagrant
 /vagrant.yaml
-.htaccess

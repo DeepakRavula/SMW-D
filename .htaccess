@@ -2,10 +2,6 @@ Options FollowSymLinks
 AddDefaultCharset utf-8
               
 <ifmodule mod_rewrite.c>
-RewriteEngine On
-RewriteCond %{HTTPS} off
-RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
-
   RewriteEngine On
   # the main rewrite rule for the frontend application
  RewriteCond %{REQUEST_URI} !^/(backend/web|admin)
