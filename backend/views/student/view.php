@@ -102,7 +102,7 @@ $this->params['label'] = $this->render('_title', [
                 ],
             ],
             [
-                'label' => 'Past Lessons',
+                'label' => 'Absent Lessons',
                 'content' => $completedLessonContent,
                 'options' => [
                     'id' => 'completed-lesson',

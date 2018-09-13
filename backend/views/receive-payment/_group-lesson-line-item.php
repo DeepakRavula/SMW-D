@@ -80,6 +80,7 @@ use yii\bootstrap\ActiveForm;
             },
             'filterType' => KartikGridView::FILTER_SELECT2,
             'filter' => ArrayHelper::map(Student::find()
+                ->notDeleted()
                 ->orderBy(['first_name' => SORT_ASC])
                 ->joinWith(['enrolments' => function ($query) {
                     $query->joinWith(['course' => function ($query) {
