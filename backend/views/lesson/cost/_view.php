@@ -10,7 +10,7 @@ use yii\widgets\Pjax;
             <div class="box-header with-border">
               <h3 class="box-title">Cost</h3>
                 <div class="box-tools pull-right">
-				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-eye"></i>
+				<button type="button" class="btn btn-box-tool" id= 'show_hide_bt' data-widget="collapse"><i class="fa fa-eye"></i>
             	</button>
                 <i title="Edit" class="fa fa-pencil edit-cost"></i>                
               </div>
@@ -33,3 +33,9 @@ use yii\widgets\Pjax;
             <!-- /.box-body -->
           </div>
 <?php Pjax::end();?>				
+
+<script>
+    $("#show_hide_bt").click(function(event) {
+    $(this).find('i').toggleClass('fa-eye-slash');
+});
+</script>

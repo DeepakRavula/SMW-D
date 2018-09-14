@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
             <div class="box-header with-border">
               <h3 class="box-title">Group Qualifications</h3>
                 <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-eye"></i>
+                <button type="button" class="btn btn-box-tool" id= 'show_hide_button' data-widget="collapse"><i class="fa fa-eye"></i>
                 </button>
                 <i title="Add" class="fa fa-plus add-new-group-qualification"></i>                
               </div>
@@ -43,3 +43,9 @@ use yii\widgets\Pjax;
             <!-- /.box-body -->
           </div>
 <?php Pjax::end();?>
+
+<script>
+    $("#show_hide_button").click(function(event) {
+    $(this).find('i').toggleClass('fa-eye-slash');
+});
+</script>
