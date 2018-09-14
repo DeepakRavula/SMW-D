@@ -46,7 +46,7 @@ class StudentController extends BaseController
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => [
-                    'create', 'update', 'merge', 'fetch-program-rate', 'validate'
+                    'create', 'update','delete', 'merge', 'fetch-program-rate', 'validate'
                 ],
                 'formats' => [
                         'application/json' => Response::FORMAT_JSON,
@@ -57,7 +57,7 @@ class StudentController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'create', 'update', 'merge', 'fetch-program-rate',
+                        'actions' => ['index', 'create', 'update','delete', 'merge', 'fetch-program-rate',
                             'create-enrolment', 'validate', 'print', 'view'],
                         'roles' => ['manageStudents'],
                     ],
@@ -334,5 +334,24 @@ class StudentController extends BaseController
         if ($model->load($request->post())) {
             return  ActiveForm::validate($model);
         }
+    }
+
+    public function actionDelete($id)
+    {
+        $model = $this->findModel($id);
+        if (!$model->hasEnrolment() && !$model->hasLesson()) {
+            $model->delete();
+            $message = null;
+            $response = [
+                'status' => true,
+                'url' => Url::to(['student/index', 'StudentSearch[showAllStudents]' => false]),
+                'message' => $message
+            ];
+        } else {
+            $response = [
+                'status' => false,
+            ];
+        }
+        return $response;
     }
 }

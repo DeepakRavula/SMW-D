@@ -26,7 +26,7 @@ Pjax::begin([
 		<?php
         LteBox::begin([
             'type' => LteConst::TYPE_DEFAULT,
-            'boxTools' => $this->render('_details-button'),
+            'boxTools' => $this->render('_details-button', ['model' => $model]),
             'title' => 'Details',
             'withBorder' => true,
         ])

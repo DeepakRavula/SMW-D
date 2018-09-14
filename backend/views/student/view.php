@@ -17,6 +17,7 @@ $this->title = $model->fullName;
 $this->params['label'] = $this->render('_title', [
     'model' => $model,
 ]);?>
+<div id="student-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete" style="display: none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-delete-success" style="display: none;" class="alert-success alert fade in"></div>
 <script src="/plugins/bootbox/bootbox.min.js"></script>
@@ -411,6 +412,32 @@ $this->params['label'] = $this->render('_title', [
                     $('#popup-modal').modal('show');
                     $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Profile</h4>');
                     $('#modal-content').html(response.data);
+                }
+            }
+        });
+        return false;
+    });
+
+     $(document).on('click', '.student-delete', function () {
+        bootbox.confirm({
+            message: "Are you sure you want to delete this student?",
+            callback: function (result) {
+                if (result) {
+                    $('.bootbox').modal('hide');
+                    $.ajax({
+                        url: '<?= Url::to(['student/delete', 'id' => $model->id]); ?>',
+                        type   : 'post',
+                        dataType: "json",
+                        data: $(this).serialize(),
+                        success: function (response)
+                        {
+                            if (response.status) {
+                                window.location.href = response.url;
+                            } else {
+                                $('#student-delete').html('You are not allowed to delete this student.').fadeIn().delay(3000).fadeOut();
+                            }
+                        }
+                    });
                 }
             }
         });

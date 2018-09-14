@@ -333,4 +333,15 @@ class Student extends \yii\db\ActiveRecord
         }
         return $status;
     }
+
+    public function hasEnrolment() 
+    {
+        return !empty($this->oneEnrolment);
+    }
+
+    public function hasLesson() 
+    {
+        return !empty($this->Lesson);
+    }
+
 }
