@@ -327,12 +327,6 @@ $this->params['action-button'] = $this->render('_action-button', [
         <div class="clearfix"></div>
 </div>
 
-<?php Modal::begin([
-    'header' => '<h4 class="m-0">Merge '. $model->publicIdentity . '</h4>',
-    'id' => 'customer-merge-modal',
-]); ?>
-<div id="customer-merge-content"></div>
-<?php Modal::end(); ?>
 <?php $userForm = new UserForm(); 
     $userForm->setModel($model);
     $userModel = $userForm->getModel();
@@ -652,10 +646,8 @@ $this->params['action-button'] = $this->render('_action-button', [
             {
                 if(response.status)
                 {
-                    $('#customer-merge-content').html(response.data);
-                    $('#customer-merge-modal').modal('show');
-                    $('#warning-notification').html('Merging another customer will \n\
-                    delete all of their contact data. This can not be undone.').fadeIn();
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
                 }
             }
         });

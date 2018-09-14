@@ -16,25 +16,6 @@ use yii\helpers\Html;
             'id' => 'customer-merge-form',
     ]); ?>
     <div class="row">
-        <div class="col-md-5">
-            <?= $form->field($model, "customerId")->dropDownList(
-                    ArrayHelper::map(User::find()->excludeWalkin()->customers($locationId)->notDeleted()->active()
-                        ->andWhere(['NOT', ['user.id' => $model->id]])
-                        ->all(), 'id', 'publicIdentity'),
-        ['multiple' => 'multiple', 'size' => '10']
-    ); ?>
-
-        </div>
-        <div class="col-xs-2">
-            <button type="button" id="user-customerid_undo" class="btn btn-primary btn-block">undo</button>
-            <button type="button" id="user-customerid_rightSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
-            <button type="button" id="user-customerid_leftSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
-            <button type="button" id="user-customerid_redo" class="btn btn-warning btn-block">redo</button>
-        </div>
-        <div class="col-md-5">
-            <?= $form->field($model, 'customerIds')->dropDownList([], ['multiple' => 'multiple',
-                    'id' => 'user-customerid_to', 'size' => '10']); ?>
-        </div>
     </div>
     <div class="row">
         <div class="col-md-12">
