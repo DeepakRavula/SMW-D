@@ -46,7 +46,7 @@ class StudentController extends BaseController
             [
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => [
-                    'create', 'update','delete', 'merge', 'fetch-program-rate', 'validate'
+                    'create', 'update', 'delete', 'merge', 'fetch-program-rate', 'validate'
                 ],
                 'formats' => [
                         'application/json' => Response::FORMAT_JSON,
@@ -57,7 +57,7 @@ class StudentController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'create', 'update','delete', 'merge', 'fetch-program-rate',
+                        'actions' => ['index', 'create', 'update', 'delete', 'merge', 'fetch-program-rate',
                             'create-enrolment', 'validate', 'print', 'view'],
                         'roles' => ['manageStudents'],
                     ],
