@@ -58,10 +58,11 @@ use yii\widgets\ActiveForm;
 <?php ActiveForm::end(); ?>
 
 <script>
-    $(document).on("click", '.choose-merge-customer', function() {
+    $(document).off('click', '.choose-merge-customer').on('click', '.choose-merge-customer', function() {
         $('#modal-spinner').show();
         var customerId = $(this).attr('data-key');
         $('#user-customerid').val(customerId);
+        $( ".choose-merge-customer" ).addClass("multiselect-disable");
         $.ajax({
             url    : '<?= Url::to(['customer/merge' ,'id' => $model->id]); ?>',
             type   : 'post',
@@ -72,6 +73,10 @@ use yii\widgets\ActiveForm;
                 if (response.status) {
                     $('#modal-spinner').hide();
                     $('#success-notification').html(response.message).fadeIn().delay(8000).fadeOut();
+                    $.pjax.reload({container: "#customer-student-listing", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#customer-enrolment-listing", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#customer-lesson-listing", replace: false, async: false, timeout: 6000});
+                    $.pjax.reload({container: "#user-log", replace: false, async: false, timeout: 6000}); 
                     $('#popup-modal').modal('hide');
 
                 }

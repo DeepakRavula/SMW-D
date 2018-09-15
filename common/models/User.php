@@ -59,6 +59,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     const EVENT_AFTER_SIGNUP = 'afterSignup';
     const EVENT_AFTER_LOGIN = 'afterLogin';
+    const EVENT_AFTER_MERGE = 'afterMerge';
 
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_DELETE = 'delete';

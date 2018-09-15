@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
 use common\models\OpeningBalance;
 use backend\models\search\CustomerSearch;
-
+use common\models\log\UserLog;
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -128,7 +128,11 @@ class CustomerController extends UserController
                         $log->userId = $id;
                         $log->save();
                     }
-                    $customer->softDelete();
+                    $customer->on(
+                        User::EVENT_AFTER_MERGE,
+                        [new UserLog(), 'afterCustomerMerge']
+                    );
+                    $customer->trigger(User::EVENT_AFTER_MERGE);
                 return [
                     'status' => true,
                     'message' => 'Customer successfully merged!'
