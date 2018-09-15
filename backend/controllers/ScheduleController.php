@@ -232,15 +232,15 @@ class ScheduleController extends BaseController
             $availabilityQuery->andWhere(['user_location.user_id' => $teacherId]);
         }
         if ($programId) {
-            $availabilityQuery->joinWith(['teacher' => function ($query) use ($locationId, $programId) {
-                $query->andWhere(['user_location.location_id' => $locationId]);
-                    $query->joinWith(['qualifications'  => function ($query) use ($programId) {
-                        $query->andWhere(['qualification.program_id' => $programId]);
+            $availabilityQuery->joinWith(['userLocation ul' => function ($query) use ($locationId, $programId) {
+                $query->andWhere(['ul.location_id' => $locationId]);
+                $query->joinWith(['qualifications'  => function ($query) use ($programId) {
+                    $query->andWhere(['qualification.program_id' => $programId]);
                 }]);
-            }]);    
-         } else {
+            }]);
+        } else {
             $availabilityQuery->location($locationId);
-         }
+        }
         
         $availabilities = $availabilityQuery->all();
         return $availabilities;
