@@ -45,7 +45,7 @@ use yii\widgets\Pjax;
 <?php Pjax::end();?>
 
 <script>
-    $("#show_hide_button").click(function(event) {
-    $(this).find('i').toggleClass('fa-eye-slash');
-});
+    $(document).off('click', '#show_hide_button').on('click', '#show_hide_button', function () {
+        $(this).find('i').toggleClass('fa-eye-slash');
+    });
 </script>
