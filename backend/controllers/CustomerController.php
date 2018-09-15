@@ -14,6 +14,7 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
 use common\models\OpeningBalance;
+use backend\models\search\CustomerSearch;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -97,16 +98,23 @@ class CustomerController extends UserController
 
     public function actionMerge($id)
     {
+        $request = Yii::$app->request;
         $model = $this->findModel($id);
         $model->setScenario(User::SCENARIO_MERGE);
-        $data       = $this->renderAjax('/user/customer/_merge', [
+        $customerSearchModel = new CustomerSearch();
+        $customerDataProvider = $customerSearchModel->search($request->getQueryParams());
+        $customerDataProvider->pagination = false;
+        $data       = $this->renderAjax('/user/customer/_list', [
             'model' => $model,
+            'customerDataProvider' => $customerDataProvider,
+            'searchModel' => $customerSearchModel,
         ]);
         $post = Yii::$app->request->post();
+        
         if ($model->load($post)) {
             if ($model->validate()) {
-                foreach ($model->customerIds as $customerId) {
-                    $customer = User::findOne($customerId);
+                    $customer = User::findOne($model->customerId);
+                   
                     foreach ($customer->students as $student) {
                         $student->setScenario(Student::SCENARIO_CUSTOMER_MERGE);
                         $student->customer_id = $id;
@@ -121,7 +129,6 @@ class CustomerController extends UserController
                         $log->save();
                     }
                     $customer->softDelete();
-                }
                 return [
                     'status' => true,
                     'message' => 'Customer successfully merged!'
