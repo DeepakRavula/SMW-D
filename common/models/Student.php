@@ -341,7 +341,7 @@ class Student extends \yii\db\ActiveRecord
 
     public function hasLesson() 
     {
-        return !empty($this->Lesson);
+        return !empty($this->lesson);
     }
 
 }
