@@ -102,6 +102,8 @@ class CustomerController extends UserController
         $model = $this->findModel($id);
         $model->setScenario(User::SCENARIO_MERGE);
         $customerSearchModel = new CustomerSearch();
+        $customerSearchModel->isStudentMerge = true;
+        $customerSearchModel->customerId = $model->id;
         $customerDataProvider = $customerSearchModel->search($request->getQueryParams());
         $customerDataProvider->pagination = false;
         $data       = $this->renderAjax('/user/customer/_list', [

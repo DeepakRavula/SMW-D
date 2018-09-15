@@ -25,7 +25,8 @@ class CustomerSearch extends User
     public $showAll;
     public $email;
     public $phone;
-    
+    public $isStudentMerge;
+    public $customerId;
    
     /**
      * {@inheritdoc}
@@ -35,7 +36,7 @@ class CustomerSearch extends User
         return [
             [['id', 'status', 'created_at', 'updated_at', 'logged_at'], 'integer'],
             [['username', 'auth_key', 'password_hash', 'email', 'role_name', 'firstname',
-                'lastname', 'query','phone','showAll'], 'safe'],
+                'lastname', 'query','phone','showAll', 'isStudentMerge', 'customerId'], 'safe'],
         ];
     }
 
@@ -94,7 +95,9 @@ class CustomerSearch extends User
 	    $dataProvider->sort->defaultOrder = [
           'lastname' => SORT_ASC
         ];
-        
+        if($this->isStudentMerge && $this->customerId) {
+            $query->andWhere(['NOT', ['user.id' => $this->customerId]]);
+        }
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
