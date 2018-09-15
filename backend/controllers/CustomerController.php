@@ -118,9 +118,7 @@ class CustomerController extends UserController
                     foreach ($customer->students as $student) {
                         $student->setScenario(Student::SCENARIO_CUSTOMER_MERGE);
                         $student->customer_id = $id;
-                        
                         $student->save();
-                        die('coming');
                     }
                     foreach ($customer->notes as $note) {
                         $note->instanceId = $id;
