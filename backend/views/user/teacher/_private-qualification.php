@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
             <div class="box-header with-border">
               <h3 class="box-title">Private Qualifications</h3>
                 <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-eye"></i>
+                <button type="button" class="btn btn-box-tool" id="show_hide_bt"data-widget="collapse"><i class="fa fa-eye"></i>
                 </button>
                 <i title="Add" class="fa fa-plus add-new-qualification"></i>                
               </div>
@@ -42,4 +42,10 @@ use yii\widgets\Pjax;
             </div>
             <!-- /.box-body -->
           </div>
-<?php Pjax::end();?>				
+<?php Pjax::end();?>	
+
+<script>
+    $(document).off('click', '#show_hide_bt').on('click', '#show_hide_bt', function () {
+    $(this).find('i').toggleClass('fa-eye-slash');
+});
+</script>
