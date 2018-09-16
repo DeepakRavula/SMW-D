@@ -73,9 +73,8 @@ class PaymentPreferenceController extends Controller
                 $payment = new Payment();
                 $payment->amount = $amount;
                 $day = $enrolment->customer->customerPaymentPreference->dayOfMonth;
-                $currentPaymentCycleStartDate = new \DateTime($enrolment->currentPaymentCycle->startDate);
-                $month = $currentPaymentCycleStartDate->format('m');
-                $year = $currentPaymentCycleStartDate->format('Y');
+                $month = $fromDate->format('m');
+                $year = $fromDate->format('Y');
                 $formatedDate = $day . '-' . $month . '-' . $year;
                 $date = (new \DateTime($formatedDate))->format('Y-m-d H:i:s');
                 $payment->date = $date;
