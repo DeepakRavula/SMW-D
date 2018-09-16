@@ -8,6 +8,7 @@ use common\components\gridView\KartikGridView;
 use backend\models\search\InvoiceSearch;
 use yii\helpers\ArrayHelper;
 use kartik\grid\GridView;
+use kartik\daterange\DateRangePicker;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -174,14 +175,16 @@ $this->params['action-button'] = $actionButton; ?>
                 [
 					'attribute' => 'invoiceDateRange',
 					'label' => 'Date',
-					'filterType' => KartikGridView::FILTER_DATE_RANGE,
-			  'filterWidgetOptions' => [
+                    'filter' => '<div class="input-group drp-container">'. DateRangePicker::widget([
                     'model' => $searchModel,
                     'convertFormat' => true,
                     'initRangeExpr' => true,
                     'attribute' => 'invoiceDateRange',
-                    'convertFormat' => true,
-                    'pluginOptions'=>[
+                        'options' => [
+                            'class' => 'form-control',
+                            'readOnly' => true
+                        ],
+                        'pluginOptions' => [
                         'autoApply' => true,
                         'ranges' => [
                             Yii::t('kvdrp', 'Today') => ["moment().startOf('day')", "moment()"],
@@ -192,9 +195,9 @@ $this->params['action-button'] = $actionButton; ?>
                         'locale' => [
                             'format' => 'M d, Y',
                         ],
-                        'opens' => 'right'
-                    ],
-                ],
+                            'opens' => 'right'
+                        ]
+                    ]) . '<span class="input-group-addon remove-button" title="Clear field"><span class="glyphicon glyphicon-remove" ></span></span></div>',
                     'value' => function ($data) {
                         $date = Yii::$app->formatter->asDate($data->date);
 
@@ -296,3 +299,11 @@ $this->params['action-button'] = $actionButton; ?>
     ]); ?>
 	<?php \yii\widgets\Pjax::end(); ?>
     </div>
+    <script>
+        $(document).off('click', '.remove-button').on('click', '.remove-button', function() {
+        var dateRange = $("#invoicesearch-invoicedaterange").val();
+        if (!$.isEmptyObject(dateRange)) {
+            $("#invoicesearch-invoicedaterange").val('').trigger('change');
+        }
+    });
+    </script>
