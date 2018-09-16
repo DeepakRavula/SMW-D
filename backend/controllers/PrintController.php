@@ -310,7 +310,7 @@ class PrintController extends BaseController
                         'location_id' => $locationId,
                         'type' => Invoice::TYPE_INVOICE,
                     ])
-                    ->andWhere(['between', 'date', $searchModel->fromDate->format('Y-m-d'), $searchModel->toDate->format('Y-m-d')])
+                    ->andWhere(['between', 'date', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d')])
                     ->notDeleted();
             }])
             ->royaltyFree();
