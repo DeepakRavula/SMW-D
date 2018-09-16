@@ -73,15 +73,8 @@ class PaymentPreferenceController extends Controller
                 $payment = new Payment();
                 $payment->amount = $amount;
                 $day = $enrolment->customer->customerPaymentPreference->dayOfMonth;
-                $currentDate = new \DateTime();
-                if ($currentDate->format('d') <= $enrolment->customer->customerPaymentPreference->dayOfMonth) {
-                    $month = $currentDate->format('m');
-                    $year = $currentDate->format('Y');
-                } else {
-                    $nextMonth = (new \DateTime())->modify('next month');
-                    $month = $nextMonth->format('m');
-                    $year = $nextMonth->format('Y');
-                }
+                $month = $fromDate->format('m');
+                $year = $fromDate->format('Y');
                 $formatedDate = $day . '-' . $month . '-' . $year;
                 $date = (new \DateTime($formatedDate))->format('Y-m-d H:i:s');
                 $payment->date = $date;
