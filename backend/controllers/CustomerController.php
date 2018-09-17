@@ -127,8 +127,9 @@ class CustomerController extends UserController
                         $note->save();
                     }
                     foreach ($customer->logs as $log) {
-                        $log->logHistory->instanceId = $id;
-                        $log->save();
+                        $logHistory = $log->logHistory;
+                        $logHistory->instanceId = $id;
+                        $logHistory->save();
                     }
                     $customer->on(
                         User::EVENT_AFTER_MERGE,
