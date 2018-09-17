@@ -77,7 +77,7 @@ class Location extends \yii\db\ActiveRecord
             [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code', 'royaltyValue', 'advertisementValue', 'email'], 'required'],
             [['email'], 'unique'],
             [['email'], 'email'],
-            [['slug', 'conversionDate', 'email', 'isDeleted', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
+            [['slug', 'conversionDate', 'email', 'isDeleted', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn', 'isEnableCron'], 'safe'],
             [['royaltyValue', 'advertisementValue'], 'number'],
             [['city_id', 'province_id', 'country_id'], 'integer'],
             [['name'], 'string', 'max' => 32],
@@ -104,6 +104,7 @@ class Location extends \yii\db\ActiveRecord
             'slug' => 'Slug',
             'royaltyValue' => 'Royalty (%)',
             'advertisementValue' => 'Advertisement (%)',
+            'isEnableCron' => 'Enable Cron',
         ];
     }
     

@@ -24,6 +24,11 @@ class PaymentPreferenceController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
+        $locationIds = [];
+        $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
+        foreach($location as $location) {
+            $locationIds = $location->id;
+        }
         $currentDate = new \DateTime();
         $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
         $enrolments = Enrolment::find()
@@ -34,12 +39,14 @@ class PaymentPreferenceController extends Controller
             ->isRegular()
             ->joinWith(['course' => function ($query) use ($priorDate) {
                 $query->andWhere(['>=', 'DATE(course.endDate)', $priorDate])
-                        ->location([14, 15, 16])
+                        ->location($locationIds)
                         ->confirmed();
             }])
             ->paymentPrefered()
             ->all();
         foreach ($enrolments as $enrolment) {
+            $currentPaymentCycle = $enrolment->getCurrentPaymentCycle($priorDate);
+            if($currentPaymentCycle->isEnableCron) {
             $dateRange = $enrolment->getCurrentPaymentCycleDateRange($priorDate);
             list($from_date, $to_date) = explode(' - ', $dateRange);
             $fromDate = new \DateTime($from_date);
@@ -94,7 +101,7 @@ class PaymentPreferenceController extends Controller
                 }
             }
         }
-        
+    }    
         return true;
     }
 }
