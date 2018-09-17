@@ -232,9 +232,9 @@ class User extends ActiveRecord implements IdentityInterface
     {
        
             $customer = self::findOne($this->customerId);
-            if ($customer->hasInvoice() || $customer->hasPayments() ) {
+            if ($customer->hasInvoice() || $customer->hasPayments() || $customer->hasPaymentRequests()) {
                 $this->addError($attribute, 'Sorry! You can not merge '
-                    . $customer->publicIdentity . ' has payments/invoice history.');
+                    . $customer->publicIdentity . ' has payments/invoice/payment requests history.');
             }
     }
 
@@ -309,6 +309,12 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(Payment::className(), ['user_id' => 'id'])
         ->onCondition(['payment.isDeleted' => false]);
+    }
+
+    public function getPaymentRequests()
+    {
+        return $this->hasMany(ProformaInvoice::className(), ['userId' => 'id'])
+        ->onCondition(['proforma_invoice.isDeleted' => false]);
     }
     
     public function getTeacherLessons()
@@ -926,6 +932,11 @@ class User extends ActiveRecord implements IdentityInterface
     public function hasPayments()
     {
         return !empty($this->payments);
+    }
+
+    public function hasPaymentRequests()
+    {
+        return !empty($this->paymentRequests);
     }
     
     public function isOwner()
