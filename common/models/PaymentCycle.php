@@ -183,7 +183,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ->between($fromDate, $toDate)
             ->all();
         foreach ($lessons as $lesson) {
-            if (!$lesson->invoice && !$lesson->hasPayment()) {
+            if (!$lesson->invoice && !round($lesson->getOwingAmount($this->enrolment->id), 2) == 0.00) {
                 $status = true;
                 break;
             }
