@@ -62,30 +62,41 @@ use yii\widgets\ActiveForm;
         $('#modal-spinner').show();
         var customerId = $(this).attr('data-key');
         $('#user-customerid').val(customerId);
-        $( ".choose-merge-customer" ).addClass("multiselect-disable");
-        $.ajax({
-            url    : '<?= Url::to(['customer/merge' ,'id' => $model->id]); ?>',
-            type   : 'post',
-            dataType: "json",
-            data   : $('#modal-form').serialize(),
-            success: function(response)
-            {
-                if (response.status) {
-                    $('#modal-spinner').hide();
-                    $('#success-notification').html(response.message).fadeIn().delay(8000).fadeOut();
-                    $.pjax.reload({container: "#customer-student-listing", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#customer-enrolment-listing", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#customer-lesson-listing", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#user-log", replace: false, async: false, timeout: 6000}); 
-                    $('#popup-modal').modal('hide');
+        bootbox.confirm({
+            message: "Are you sure you want to merge? <hr> <div class = 'apply-credit-error-alert'> Operations Performed cannot be revoked !!! </div>",
+            callback: function (result) {
+                if (result) {
+                    $('.bootbox').modal('hide');
+                    $( ".choose-merge-customer" ).addClass("multiselect-disable");
+                    $.ajax({
+                        url    : '<?= Url::to(['customer/merge' ,'id' => $model->id]); ?>',
+                        type   : 'post',
+                        dataType: "json",
+                        data   : $('#modal-form').serialize(),
+                        success: function(response)
+                        {
+                            if (response.status) {
+                                $('#modal-spinner').hide();
+                                $('#success-notification').html(response.message).fadeIn().delay(8000).fadeOut();
+                                $.pjax.reload({container: "#customer-student-listing", replace: false, async: false, timeout: 6000});
+                                $.pjax.reload({container: "#customer-enrolment-listing", replace: false, async: false, timeout: 6000});
+                                $.pjax.reload({container: "#customer-lesson-listing", replace: false, async: false, timeout: 6000});
+                                $.pjax.reload({container: "#user-log", replace: false, async: false, timeout: 6000}); 
+                                $('#popup-modal').modal('hide');
 
-                }
-                else {
+                            }
+                            else {
+                                $('#modal-spinner').hide();
+                                $('#error-notification').html(response.errors).fadeIn().delay(8000).fadeOut();
+                            }
+                        }
+                    });
+                } else {
                     $('#modal-spinner').hide();
-                    $('#error-notification').html(response.errors).fadeIn().delay(8000).fadeOut();
+                    $('#popup-modal').modal('hide');
                 }
             }
-        });
+                });
         return false;
     });
 

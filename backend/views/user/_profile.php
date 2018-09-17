@@ -11,7 +11,7 @@ $boxTools = ['<i title="Edit" class="fa fa-pencil user-edit-button m-r-10"></i>'
 <?php if ($model->isCustomer()) : ?>
     <?php if ($loggedUser->canMerge) : ?>
         <?php $merge[]  = '<i class="fa fa-angle-down fa-lg dropdown-toggle" data-toggle="dropdown"></i><ul class="dropdown-menu dropdown-menu-right" id="menu-shown">
-        <li><a id="customer-merge" href="#" class = "multiselect-disable">Merge</a></li>
+        <li><a id="customer-merge" href="#" >Merge</a></li>
     </ul>'; ?>
         <?php $boxTools = array_merge($boxTools, $merge); ?>
     <?php endif; ?>
