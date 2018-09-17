@@ -127,7 +127,7 @@ class CustomerController extends UserController
                         $note->save();
                     }
                     foreach ($customer->logs as $log) {
-                        $log->userId = $id;
+                        $log->logHistory->instanceId = $id;
                         $log->save();
                     }
                     $customer->on(
