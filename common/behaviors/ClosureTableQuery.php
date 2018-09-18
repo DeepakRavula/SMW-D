@@ -26,25 +26,4 @@ class ClosureTableQuery extends \valentinek\behaviors\ClosureTableQuery
         $query->andWhere('ct2.' . $parentAttribute . ' IS NULL');
         return $query;
     }
-
-    public function leaf() 
-    {
-        $query = $this->owner;
-        $modelClass = $query->modelClass;
-        $db = $modelClass::getDb();
-        $childAttribute = $db->quoteColumnName($this->childAttribute);
-        $parentAttribute = $db->quoteColumnName($this->parentAttribute);
-        $primaryKeyName = $db->quoteColumnName($modelClass::primaryKey()[0]);
-         if ($query->select === null) {
-            $query->addSelect('*');
-            $query->addSelect("ISNULL(ctleaf." . $parentAttribute . ") AS " . $this->isLeafParameter);
-        }
-         $query->leftJoin($this->tableName . ' as ctleaf',
-            'ctleaf.' . $parentAttribute . '=' . $primaryKeyName
-            . ' AND ctleaf.' . $parentAttribute . '!= ctleaf.' . $childAttribute
-        );
-	$query->andWhere("ISNULL(ctleaf." . $parentAttribute . ') = 1' );
-        $query->addGroupBy($primaryKeyName);
-         return $query;
-    }
 }

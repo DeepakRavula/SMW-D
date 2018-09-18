@@ -21,17 +21,13 @@ class m180917_151132_fix_lessons_cost extends Migration
             ->notCanceled()
             ->all();
             foreach ($lessons as $lesson) {
-                //print_r($lesson);die;
                 if ($lesson->hasRootLesson()) {
-                   print_r('id '.$lesson->id);
                     if ($lesson->teacherId != $lesson->rootLesson->teacherId) {
                         $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId,
                         'program_id' => $lesson->course->program->id]);
-                        print_r('rate->'.$qualification->rate);die;
             $lesson->updateAttributes(['teacherRate' => $qualification->rate ?? 0]);
                     }
-                }
-                
+                }       
             }
     }
 
