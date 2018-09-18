@@ -43,7 +43,12 @@
 	    </div>
         <?php endif; ?>
 </div>
- <div style="clear:both; margin-top: 20px; position: relative;">
+<div class="col-md-3 pull-right">
+    <?= $this->render('/proforma-invoice/_view-bottom-summary', [
+                'model' => $model,
+            ]); ?>
+</div>
+<div style="clear:both; margin-top: 20px; position: relative;">
         <?php if (!empty($model->notes)):?>
         <strong> Notes: </strong><?php echo $model->notes; ?>
 		<?php endif;?>
