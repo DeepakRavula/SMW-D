@@ -46,8 +46,6 @@ class PaymentPreferenceController extends Controller
             ->paymentPrefered()
             ->all();
         foreach ($enrolments as $enrolment) {
-            $currentPaymentCycle = $enrolment->getCurrentPaymentCycle($priorDate);
-            if($currentPaymentCycle->isEnableCron) {
             $dateRange = $enrolment->getCurrentPaymentCycleDateRange($priorDate);
             list($from_date, $to_date) = explode(' - ', $dateRange);
             $fromDate = new \DateTime($from_date);
@@ -101,7 +99,6 @@ class PaymentPreferenceController extends Controller
                     $lessonPayment->save();
                 }
             }
-        }
     }    
         return true;
     }
