@@ -9,6 +9,7 @@ use common\models\Payment;
 use common\models\User;
 use common\models\Lesson;
 use common\models\LessonPayment;
+use common\models\Location;
 
 class PaymentPreferenceController extends Controller
 {
@@ -37,7 +38,7 @@ class PaymentPreferenceController extends Controller
             ->privateProgram()
             ->andWhere(['NOT', ['enrolment.paymentFrequencyId' => 0]])
             ->isRegular()
-            ->joinWith(['course' => function ($query) use ($priorDate) {
+            ->joinWith(['course' => function ($query) use ($priorDate, $locationIds) {
                 $query->andWhere(['>=', 'DATE(course.endDate)', $priorDate])
                         ->location($locationIds)
                         ->confirmed();
