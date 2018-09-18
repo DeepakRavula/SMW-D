@@ -13,13 +13,13 @@ class m180917_065828_disable_automatic_payments_for_location extends Migration
      */
     public function safeUp()
     {
-        $this->addColumn('location', 'isEnableCron', $this->boolean()->notNull());
-        $this->addColumn('payment_cycle', 'isEnableCron', $this->boolean()->notNull());
+        // $this->addColumn('location', 'isEnabledCron', $this->boolean()->notNull());
+        // $this->addColumn('payment_cycle', 'isEnabledCron', $this->boolean()->notNull());
 
         $productionLocationIds = [14,15,16];
         foreach ($productionLocationIds as $productionLocationId) {
             $productionLocation       = Location::find()->andWhere(['id' => $productionLocationId])->one();
-            $productionLocation->updateAttributes(['isEnableCron' => true]);
+            $productionLocation->updateAttributes(['isEnabledCron' => true]);
         }
 
     }

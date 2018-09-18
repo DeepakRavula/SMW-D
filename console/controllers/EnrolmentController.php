@@ -9,6 +9,7 @@ use common\models\Enrolment;
 use yii\console\Controller;
 use common\models\Course;
 use common\models\CourseProgramRate;
+use common\models\Location;
 
 class EnrolmentController extends Controller
 {
