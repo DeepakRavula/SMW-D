@@ -25,7 +25,7 @@ class m180917_151132_fix_lessons_cost extends Migration
                     if ($lesson->teacherId != $lesson->rootLesson->teacherId) {
                         $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId,
                         'program_id' => $lesson->course->program->id]);
-            $lesson->updateAttributes(['teacherRate' => $qualification->rate ?? 0]);
+                        $lesson->updateAttributes(['teacherRate' => $qualification->rate ?? 0]);
                     }
                 }       
             }
