@@ -43,7 +43,7 @@
 	    </div>
         <?php endif; ?>
 </div>
-<div class="col-md-3 pull-right">
+<div class="col-xs-3 pull-right">
     <?= $this->render('/proforma-invoice/_view-bottom-summary', [
                 'model' => $model,
             ]); ?>
