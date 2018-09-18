@@ -31,6 +31,12 @@ use yii\widgets\Pjax;
                     }
                     return $status;
                 }
+            ],
+            [
+                'label' => 'Is Enabled',
+                'value' => function ($data) {
+                    return $data->getStatus();
+                }
             ]
         ]
     ]); ?>
