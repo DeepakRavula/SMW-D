@@ -25,7 +25,7 @@ class LocationController extends BaseController
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
                'only' => ['create', 'update', 'edit-availability', 'add-availability', 
-                   'render-events', 'check-availability', 'validate','delete-availability', 'copy-availability'
+                   'render-events', 'check-availability', 'validate','delete-availability', 'copy-availability', 'update-cron-status'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -39,7 +39,7 @@ class LocationController extends BaseController
                         'allow' => true,
                         'actions' => ['view', 'add-availability', 'edit-availability', 'render-events',
                             'check-availability', 'validate', 'delete-availability',
-                            'copy-availability'
+                            'copy-availability', 'update-cron-status'
                         ],
                         'roles' => ['manageLocations']
                     ],
@@ -94,6 +94,20 @@ class LocationController extends BaseController
         return $this->render('view', [
             'model' => $this->findModel($location->id),
         ]);
+    }
+
+    public function actionUpdateCronStatus()
+    {   
+        $location = Location::findOne(['slug' => Yii::$app->location]);
+        $model = $this->findModel($location->id);
+        $model->setScenario(Location::SCENARIO_UPDATE_CRON_STATUS);
+        if ($model->load(Yii::$app->request->post())) {
+           $model->save();
+            return [
+                'status' => true
+            ];
+        } 
+        
     }
 
     /**
