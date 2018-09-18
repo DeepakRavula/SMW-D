@@ -9,6 +9,7 @@ use common\models\Lesson;
 use common\models\Enrolment;
 use common\models\ProformaInvoice;
 use common\models\ProformaLineItem;
+use common\models\Location;
 
 class PaymentRequestController extends Controller
 {

@@ -26,7 +26,7 @@ class PaymentPreferenceController extends Controller
         ini_set('memory_limit', '-1');
         $locationIds = [];
         $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
-        foreach($location as $location) {
+        foreach($locations as $location) {
             $locationIds = $location->id;
         }
         $currentDate = new \DateTime();
