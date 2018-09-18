@@ -56,6 +56,8 @@ class PaymentRequestController extends Controller
 
     public function actionSave()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $prs = ProformaInvoice::find()->all();
         foreach ($prs as $pr) {
             $pr->save();
@@ -64,6 +66,8 @@ class PaymentRequestController extends Controller
 
     public function actionDelete()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $prs = ProformaInvoice::find()->all();
         foreach ($prs as $pr) {
             $pr->updateAttributes(['isDeleted' => true]);
@@ -73,6 +77,8 @@ class PaymentRequestController extends Controller
 
     public function actionTruncate()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         Yii::$app->db->createCommand()->truncateTable('proforma_invoice')->execute();
         Yii::$app->db->createCommand()->truncateTable('proforma_item_invoice')->execute();
         Yii::$app->db->createCommand()->truncateTable('proforma_item_lesson')->execute();

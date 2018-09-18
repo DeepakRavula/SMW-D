@@ -29,6 +29,8 @@ class InvoiceController extends Controller
 
     public function actionAllCompletedLessons()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $query = Lesson::find()
                 ->location([14, 15, 16])
                 ->isConfirmed()
@@ -53,6 +55,8 @@ class InvoiceController extends Controller
 
     public function actionAllExpiredLessons()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $lessons = Lesson::find()
             ->privateLessons()
             ->location([14, 15, 16])
@@ -75,6 +79,8 @@ class InvoiceController extends Controller
     
     public function actionTriggerSave()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $locationId = $this->locationId;
         $invoices = Invoice::find()
                     ->notDeleted()

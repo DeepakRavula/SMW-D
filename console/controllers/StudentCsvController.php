@@ -10,6 +10,8 @@ class StudentCsvController extends Controller
 {
     public function actionWipeTransactionalData()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         if (env('YII_ENV') === 'dev') {
             $files = [];
             $files[] = Yii::getAlias('@console') . '/sql/wipe_csv_transactional_data_course.sql';
