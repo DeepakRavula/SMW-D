@@ -96,6 +96,14 @@ $this->title = 'Edit Location';
             ]);
             ?>
 		</div>
+		<div class="col-md-8">
+			<div class = "col-md-6">
+			<label> Enable Cron </label>
+			<?php 
+				echo $form->field($model, 'isEnabledCron')->checkbox(['data-pjax' => true, 'style' => 'align:center'])->label(false);
+            ?>
+			</div>
+		</div>
 	</div>
 	<div class="clearfix"></div>
 <div class="row">
