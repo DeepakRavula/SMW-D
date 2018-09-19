@@ -37,6 +37,13 @@ class UserLog extends Log
         );
     }
 
+    public function afterCustomerMerge($event)
+    {
+        $userModel    = $event->sender;
+        $user = User::findOne($userModel->id);
+        $user->delete();
+    }
+
     public function addLog(
         $object,
         $activity,

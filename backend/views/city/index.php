@@ -69,7 +69,7 @@ $this->params['action-button'] = $lastRole->name === User::ROLE_ADMINISTRATOR ? 
                     {
                         $('#popup-modal').modal('show');
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">City</h4>');
-			$('#popup-modal .modal-dialog').css({'width': '400px'});
+			            $('#popup-modal .modal-dialog').css({'width': '400px'});
                         $('#modal-content').html(response.data);
                     }
                 }

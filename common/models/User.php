@@ -16,6 +16,10 @@ use common\models\discount\CustomerDiscount;
 use common\models\CustomerReferralSource;
 use common\models\Label;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
+use common\models\log\LogHistory;
+use common\models\log\LogObject;
+use common\models\log\Log;
+use common\models\Payment;
 
 /**
  * User model.
@@ -55,6 +59,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     const EVENT_AFTER_SIGNUP = 'afterSignup';
     const EVENT_AFTER_LOGIN = 'afterLogin';
+    const EVENT_AFTER_MERGE = 'afterMerge';
 
     const SCENARIO_MERGE = 'merge';
     const SCENARIO_DELETE = 'delete';
@@ -168,8 +173,8 @@ class User extends ActiveRecord implements IdentityInterface
             ['email', 'validateOnDelete', 'on' => self::SCENARIO_DELETE],
             ['status', 'in', 'range' => array_keys(self::statuses())],
             [['username'], 'filter', 'filter' => '\yii\helpers\Html::encode'],
-            [['customerIds'], 'required', 'on' => self::SCENARIO_MERGE],
-            ['customerIds', 'validateCanMerge', 'on' => self::SCENARIO_MERGE],
+            [['customerId'], 'required', 'on' => self::SCENARIO_MERGE],
+            ['customerId', 'validateCanMerge', 'on' => self::SCENARIO_MERGE],
             [['hasEditable', 'privateLessonHourlyRate', 'groupLessonHourlyRate', 'locationId',
                 'customerId', 'isDeleted', 'pin_hash', 'canLogin', 'canMerge', 'roles'], 'safe']
         ];
@@ -225,13 +230,12 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function validateCanMerge($attribute)
     {
-        foreach ($this->customerIds as $customerId) {
-            $customer = self::findOne($customerId);
-            if ($customer->hasInvoice()) {
+       
+            $customer = self::findOne($this->customerId);
+            if ($customer->hasInvoice() || $customer->hasPayments() || $customer->hasPaymentRequests()) {
                 $this->addError($attribute, 'Sorry! You can not merge '
-                    . $customer->publicIdentity . ' has payments/invoice history.');
+                    . $customer->publicIdentity . ' has payments/invoice/payment requests history.');
             }
-        }
     }
 
     public function isDefaultAdmin()
@@ -292,7 +296,25 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function getLogs()
     {
-        return $this->hasMany(timelineEvent\TimelineEventUser::className(), ['userId' => 'id']);
+        return $this->hasMany(Log::className(), ['id' => 'logId'], ['logObjectId' => LogObject::TYPE_USER ])
+            ->via('logHistorys');
+    }
+
+    public function getLogHistorys()
+    {
+        return $this->hasMany(LogHistory::className(), ['instanceId' => 'id']);
+    }
+
+    public function getPayments()
+    {
+        return $this->hasMany(Payment::className(), ['user_id' => 'id'])
+        ->onCondition(['payment.isDeleted' => false]);
+    }
+
+    public function getPaymentRequests()
+    {
+        return $this->hasMany(ProformaInvoice::className(), ['userId' => 'id'])
+        ->onCondition(['proforma_invoice.isDeleted' => false]);
     }
     
     public function getTeacherLessons()
@@ -905,6 +927,16 @@ class User extends ActiveRecord implements IdentityInterface
     public function hasInvoice()
     {
         return !empty($this->invoice);
+    }
+
+    public function hasPayments()
+    {
+        return !empty($this->payments);
+    }
+
+    public function hasPaymentRequests()
+    {
+        return !empty($this->paymentRequests);
     }
     
     public function isOwner()
