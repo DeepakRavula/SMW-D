@@ -640,6 +640,7 @@ class Lesson extends \yii\db\ActiveRecord
         return !empty($qualification->rate) ? $qualification->rate : 0.00;
     }
 
+
     public function hasMerged()
     {
         return !empty($this->lessonSplitUsage);
@@ -1172,6 +1173,21 @@ class Lesson extends \yii\db\ActiveRecord
     }
 
     public function hasPayment()
+    {
+        return $this->lessonPayment;
+    }
+
+    public function hasFullPayment()
+    {
+        return $this->lessonPayment;
+    }
+
+    public function hasPartialPayment()
+    {
+        return $this->lessonPayment;
+    }
+
+    public function hasNonPayment()
     {
         return $this->lessonPayment;
     }
