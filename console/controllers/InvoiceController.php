@@ -35,7 +35,7 @@ class InvoiceController extends Controller
         $locationIds = [];
         $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
         foreach ($locations as $location) {
-            $locationIds = $location->id;
+            $locationIds[] = $location->id;
         }
         $query = Lesson::find()
                 ->location($locationIds)
@@ -66,7 +66,7 @@ class InvoiceController extends Controller
         $locationIds = [];
         $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
         foreach ($locations as $location) {
-            $locationIds = $location->id;
+            $locationIds[] = $location->id;
         }
         $lessons = Lesson::find()
             ->privateLessons()

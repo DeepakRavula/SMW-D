@@ -35,7 +35,7 @@ class PaymentRequestController extends Controller
         $locationIds = [];
         $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
         foreach ($locations as $location) {
-            $locationIds = $location->id;
+            $locationIds[] = $location->id;
         }
         $currentDate = new \DateTime();
         $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
