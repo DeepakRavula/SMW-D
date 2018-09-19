@@ -29,6 +29,18 @@ class StudentController extends Controller
         }
     }
 
+    public function actionSetStatusInActive()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $students = Student::find()
+            ->notDeleted()
+            ->all();
+        foreach ($students as $student) {
+            $student->updateAttributes(['status' => Student::STATUS_INACTIVE]);
+        }
+    }
+
     public function actionSetStatus()
     {
         set_time_limit(0);
