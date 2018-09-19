@@ -60,30 +60,20 @@ use yii\widgets\ActiveForm;
 <script>
     $(document).off('click', '.choose-merge-customer').on('click', '.choose-merge-customer', function() {
         $('#modal-spinner').show();
+        var id = '<?= $model->id; ?>';
         var customerId = $(this).attr('data-key');
-        $('#user-customerid').val(customerId);
-        bootbox.confirm({
-            message: "Are you sure you want to merge? <hr> <div class = 'apply-credit-error-alert'> Operations Performed cannot be revoked !!! </div>",
-            callback: function (result) {
-                if (result) {
-                    $('.bootbox').modal('hide');
-                    $( ".choose-merge-customer" ).addClass("multiselect-disable");
+        $( ".choose-merge-customer" ).addClass("multiselect-disable");
+        var params = $.param({ id: id, customerId: customerId });
                     $.ajax({
-                        url    : '<?= Url::to(['customer/merge' ,'id' => $model->id]); ?>',
-                        type   : 'post',
+                        url    : '<?= Url::to(['customer/merge-preview']); ?>?'+params,
+                        type   : 'get',
                         dataType: "json",
-                        data   : $('#modal-form').serialize(),
                         success: function(response)
                         {
                             if (response.status) {
                                 $('#modal-spinner').hide();
-                                $('#success-notification').html(response.message).fadeIn().delay(8000).fadeOut();
-                                $.pjax.reload({container: "#customer-student-listing", replace: false, async: false, timeout: 6000});
-                                $.pjax.reload({container: "#customer-enrolment-listing", replace: false, async: false, timeout: 6000});
-                                $.pjax.reload({container: "#customer-lesson-listing", replace: false, async: false, timeout: 6000});
-                                $.pjax.reload({container: "#user-log", replace: false, async: false, timeout: 6000}); 
-                                $('#popup-modal').modal('hide');
-
+                                 $('#modal-content').html(response.data);
+                                 $('#popup-modal').modal('show');                             
                             }
                             else {
                                 $('#modal-spinner').hide();
@@ -91,12 +81,6 @@ use yii\widgets\ActiveForm;
                             }
                         }
                     });
-                } else {
-                    $('#modal-spinner').hide();
-                    $('#popup-modal').modal('hide');
-                }
-            }
-                });
         return false;
     });
 
