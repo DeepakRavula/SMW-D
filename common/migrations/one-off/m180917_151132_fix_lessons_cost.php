@@ -22,8 +22,7 @@ class m180917_151132_fix_lessons_cost extends Migration
             ->all();
             foreach ($lessons as $lesson) {
                 if (($lesson->teacherRate != $lesson->teacherCost) && ($lesson->teacherRate > 5)) {
-                    $lesson->teacherRate = $lesson->teacherCost;
-                    $lesson->updateAttributes(['teacherRate' => $lesson->teacherRate ?? 0]);
+                    $lesson->updateAttributes(['teacherRate' => $lesson->teacherCost]);
                 }       
             }
     }
