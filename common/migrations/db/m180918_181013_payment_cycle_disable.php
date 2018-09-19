@@ -12,7 +12,7 @@ class m180918_181013_payment_cycle_disable extends Migration
      */
     public function safeUp()
     {
-        $this->addColumn('payment_cycle', 'isEnabled', $this->boolean()->notNull());
+        $this->addColumn('payment_cycle', 'isPreferredPaymentEnabled', $this->boolean()->notNull());
     }
 
     /**

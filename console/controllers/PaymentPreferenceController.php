@@ -41,7 +41,7 @@ class PaymentPreferenceController extends Controller
             ->all();
         foreach ($enrolments as $enrolment) {
             $currentPaymentCycle = $enrolment->getCurrentPaymentCycle($priorDate);
-            if($currentPaymentCycle->isEnabled) {
+            if ($currentPaymentCycle->isPreferredPaymentEnabled) {
             $dateRange = $enrolment->getCurrentPaymentCycleDateRange($priorDate);
             list($from_date, $to_date) = explode(' - ', $dateRange);
             $fromDate = new \DateTime($from_date);

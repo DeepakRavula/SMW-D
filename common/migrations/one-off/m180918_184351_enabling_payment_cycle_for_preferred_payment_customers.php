@@ -36,7 +36,7 @@ class m180918_184351_enabling_payment_cycle_for_preferred_payment_customers exte
             ->all();
             
            foreach($paymentCycles as $paymentCycle) {
-               $paymentCycle->updateAttributes(['isEnabled' => true]);
+               $paymentCycle->updateAttributes(['isPreferredPaymentEnabled' => true]);
            } 
         }    
 

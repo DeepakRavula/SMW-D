@@ -33,7 +33,7 @@ use yii\widgets\Pjax;
                 }
             ],
             [
-                'label' => 'Is Enabled',
+                'label' => 'Prefered Payment',
                 'value' => function ($data) {
                     return $data->getStatus();
                 }

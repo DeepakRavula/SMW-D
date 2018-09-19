@@ -37,7 +37,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 
 <div class='row'>
     <?php if ($model->course->program->isPrivate()) : ?>
-    <div class='col-md-8'>
+    <div class='col-md-12'>
     <?php else : ?>
     <div class='col-md-12'>
     <?php endif ; ?>
@@ -68,8 +68,11 @@ $this->params['action-button'] = $this->render('_action-button', [
 
     <?php LteBox::end() ?>
     </div>
+</div>
+
     <?php if ($model->course->program->isPrivate()) : ?>
-    <div class='col-md-4'>
+<div class = "row">    
+    <div class='col-md-12'>
         <?php LteBox::begin([
             'type' => LteConst::TYPE_DEFAULT,
             'boxTools' => false,
@@ -83,9 +86,8 @@ $this->params['action-button'] = $this->render('_action-button', [
         ]); ?>
         <?php LteBox::end() ?>
     </div>
+</div>    
     <?php endif ; ?>
-    
-</div>
 
 <?php LteBox::begin([
 	'type' => LteConst::TYPE_DEFAULT,
