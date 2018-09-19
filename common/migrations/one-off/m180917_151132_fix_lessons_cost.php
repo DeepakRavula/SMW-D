@@ -21,12 +21,9 @@ class m180917_151132_fix_lessons_cost extends Migration
             ->notCanceled()
             ->all();
             foreach ($lessons as $lesson) {
-                if ($lesson->hasRootLesson()) {
-                    if ($lesson->teacherId != $lesson->rootLesson->teacherId) {
-                        $qualification = Qualification::findOne(['teacher_id' => $lesson->teacherId,
-                        'program_id' => $lesson->course->program->id]);
-                        $lesson->updateAttributes(['teacherRate' => $qualification->rate ?? 0]);
-                    }
+                if (($lesson->teacherRate != $lesson->teacherCost) && ($lesson->teacherRate > 5)) {
+                    $lesson->teacherRate = $lesson->teacherCost;
+                    $lesson->updateAttributes(['teacherRate' => $lesson->teacherRate ?? 0]);
                 }       
             }
     }
@@ -40,19 +37,4 @@ class m180917_151132_fix_lessons_cost extends Migration
 
         return false;
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m180917_151132_fix_lessons_cost cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }
