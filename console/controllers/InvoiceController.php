@@ -30,9 +30,11 @@ class InvoiceController extends Controller
 
     public function actionAllCompletedLessons()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $locationIds = [];
         $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
-        foreach($locations as $location) {
+        foreach ($locations as $location) {
             $locationIds = $location->id;
         }
         $query = Lesson::find()
@@ -59,9 +61,11 @@ class InvoiceController extends Controller
 
     public function actionAllExpiredLessons()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $locationIds = [];
         $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
-        foreach($locations as $location) {
+        foreach ($locations as $location) {
             $locationIds = $location->id;
         }
         $lessons = Lesson::find()
@@ -86,6 +90,8 @@ class InvoiceController extends Controller
     
     public function actionTriggerSave()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $locationId = $this->locationId;
         $invoices = Invoice::find()
                     ->notDeleted()

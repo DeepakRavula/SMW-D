@@ -32,6 +32,8 @@ class EnrolmentController extends Controller
     
     public function actionAutoRenewal()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $priorDate = (new Carbon())->addDays(Enrolment::AUTO_RENEWAL_DAYS_FROM_END_DATE);
         $courses = Course::find()
                 ->regular()

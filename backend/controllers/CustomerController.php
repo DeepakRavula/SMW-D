@@ -16,6 +16,7 @@ use yii\filters\AccessControl;
 use common\models\OpeningBalance;
 use backend\models\search\CustomerSearch;
 use common\models\log\UserLog;
+use yii\data\ActiveDataProvider;
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -32,7 +33,7 @@ class CustomerController extends UserController
             ],
             [
                 'class' => 'yii\filters\ContentNegotiator',
-                'only' => ['merge', 'add-opening-balance'],
+                'only' => ['merge', 'add-opening-balance', 'merge-preview'],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
                 ],
@@ -42,7 +43,7 @@ class CustomerController extends UserController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['add-opening-balance', 'merge'],
+                        'actions' => ['add-opening-balance', 'merge',  'merge-preview'],
                         'roles' => ['manageCustomers'],
                     ],
                 ],
@@ -106,17 +107,16 @@ class CustomerController extends UserController
         $customerSearchModel->customerId = $model->id;
         $customerDataProvider = $customerSearchModel->search($request->getQueryParams());
         $customerDataProvider->pagination = false;
+        $customerId = Yii::$app->request->get('customerId');
         $data       = $this->renderAjax('/user/customer/_list', [
             'model' => $model,
             'customerDataProvider' => $customerDataProvider,
             'searchModel' => $customerSearchModel,
         ]);
-        $post = Yii::$app->request->post();
-        
-        if ($model->load($post)) {
+        if ($customerId) {
+            $model->customerId = $customerId;
             if ($model->validate()) {
                     $customer = User::findOne($model->customerId);
-                   
                     foreach ($customer->students as $student) {
                         $student->setScenario(Student::SCENARIO_CUSTOMER_MERGE);
                         $student->customer_id = $id;
@@ -153,5 +153,31 @@ class CustomerController extends UserController
                 'data' => $data
             ];
         }
+    }
+
+    public function actionMergePreview()
+    {
+        $id = Yii::$app->request->get('id');
+        $customerId = Yii::$app->request->get('customerId');
+        $model = $this->findModel($id);
+        $model->setScenario(User::SCENARIO_MERGE);
+        $mergeUserModel = $this->findModel($customerId);
+        $students = Student::find()
+            ->andWhere(['customer_id' => $customerId])
+            ->notDeleted()
+            ->orderBy(['first_name' => SORT_ASC]);
+        $studentDataProvider = new ActiveDataProvider([
+            'query' => $students,
+        ]);
+
+        $data       = $this->renderAjax('/user/customer/_merge-preview', [
+            'model' => $model,
+            'studentDataProvider' => $studentDataProvider,
+            'mergeUserModel' => $mergeUserModel,
+        ]);
+        return [
+                'status' => true,
+                'data' => $data
+            ];
     }
 }
