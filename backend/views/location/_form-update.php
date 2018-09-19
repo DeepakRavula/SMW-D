@@ -10,6 +10,7 @@ use kartik\date\DatePicker;
 use Carbon\Carbon;
 use yii\helpers\Url;
 use yii\widgets\MaskedInput;
+use kartik\switchinput\SwitchInput;
 /* @var $this yii\web\View */
 /* @var $model common\models\Location */
 /* @var $form yii\bootstrap\ActiveForm */
@@ -96,15 +97,10 @@ $this->title = 'Edit Location';
             ]);
             ?>
 		</div>
-		<div class="col-md-8">
 			<div class = "col-md-6">
-			<label> Enable Cron </label>
-			<?php 
-				echo $form->field($model, 'isEnabledCron')->checkbox(['data-pjax' => true, 'style' => 'align:center'])->label(false);
-            ?>
+					<?= $form->field($model, 'isEnabledCron')->widget(SwitchInput::classname(), []);?> 
 			</div>
 		</div>
-	</div>
 	<div class="clearfix"></div>
 <div class="row">
     <div class="col-md-12">
