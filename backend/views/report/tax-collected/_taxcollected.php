@@ -116,39 +116,44 @@ use common\models\Invoice;
     <?php else : ?>
     <?php
     $columns = [
-        'invoice.date:date',
+        [
+            'label' => 'Date',
+            'value' => function ($data) {
+                return (new \DateTime($data->date))->format('M d, Y');
+            },
+        ],
             [
             'label' => 'Subtotal',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency(round($data->subTotal, 2));
             },
-            'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
+            'pageSummary' => function ($summary, $data, $widget) use ($subtotalSum) { 
+                return Yii::$app->formatter->asCurrency(round($subtotalSum, 2)); 
+            }
         ],
             [
             'label' => 'Tax',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency($data->tax);
             },
-            'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
+            'pageSummary' => function ($summary, $data, $widget) use ($taxSum) { 
+                return Yii::$app->formatter->asCurrency(round($taxSum, 2)); 
+            }
         ],
             [
             'label' => 'Total',
             'value' => function ($data) {
                 return Yii::$app->formatter->asCurrency(round($data->total, 2));
             },
-            'format' => ['decimal', 2],
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
-            'pageSummary' => true,
-            'pageSummaryFunc' => GridView::F_SUM
+            'pageSummary' => function ($summary, $data, $widget) use ($totalSum) { 
+                return Yii::$app->formatter->asCurrency(round($totalSum, 2)); 
+            }
         ],
     ];
 
