@@ -17,7 +17,6 @@ use yii\widgets\ActiveForm;
         'dataProvider' => $customerDataProvider,
         'summary' => false,
         'emptyText' => false,
-        //'rowOptions' => ['class' => 'choose-merge-customer'],
         'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
             $url = Url::to(['student/view', 'id' => $model->id]);
             $data = ['data-url' => $url];
