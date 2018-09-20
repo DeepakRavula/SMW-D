@@ -121,6 +121,33 @@ use common\models\Invoice;
             'value' => function ($data) {
                 return (new \DateTime($data->date))->format('M d, Y');
             },
+            'group' => true,
+            // 'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
+            // 'groupedRow' => true,
+            // 'groupFooter' => function ($model, $key, $index, $widget) use ($locationId) {
+            //     $invoiceTaxes = Invoice::find()
+            //         ->notDeleted()
+            //         ->location($locationId)
+            //         ->invoice()
+            //         ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($model->date))->format('Y-m-d'), 
+            //             (new \DateTime($model->date))->format('Y-m-d')])
+            //         ->andWhere(['>', 'tax', 0]);
+                    
+            //     return [
+            //         'mergeColumns' => [[1, 2]],
+            //         'content' => [
+            //             3 => Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('subTotal'), 2)),
+            //             4 => Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('tax'), 2)),
+            //             5 => Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('total'), 2)),
+            //         ],
+            //         'contentOptions' => [
+            //             3 => ['style' => 'text-align:right'],
+            //             4 => ['style' => 'text-align:right'],
+            //             5 => ['style' => 'text-align:right'],
+            //         ],
+            //         'options' => ['style' => 'font-weight:bold;']
+            //     ];
+            // }
         ],
             [
             'label' => 'Subtotal',
