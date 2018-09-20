@@ -20,11 +20,15 @@ class m180917_151132_fix_lessons_cost extends Migration
             ->location([14,15])
             ->notCanceled()
             ->all();
-            foreach ($lessons as $lesson) {
-                if (($lesson->teacherRate != $lesson->teacherCost) && ($lesson->teacherCost > 5)) {
-                    $lesson->updateAttributes(['teacherRate' => $lesson->teacherCost]);
-                }       
-            }
+                foreach ($lessons as $lesson) {
+                    if ($lesson->hasRootLesson()) {
+                        if ($lesson->teacherId != $lesson->rootLesson->teacherId) {
+                            if (($lesson->teacherRate != $lesson->teacherCost) && ($lesson->teacherCost > 5) && ($lesson->teacherRate > 5)) {
+                                $lesson->updateAttributes(['teacherRate' => $lesson->teacherCost]);
+                            }     
+                        }  
+                    }
+                }
     }
 
     /**
