@@ -15,7 +15,7 @@ class m180919_091124_add_old_teacher_rate extends Migration
 
     public function safeUp()
     {
-        $this->addColumn('lesson', 'teacherRateOld', $this->decimal(10, 4)->notNull());
+        $this->addColumn('lesson', 'teacherRateOld', $this->decimal(10, 4)->notNull()->after('teacherRate'));
     }
 
     /**
