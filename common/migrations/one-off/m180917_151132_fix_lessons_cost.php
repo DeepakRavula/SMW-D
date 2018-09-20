@@ -21,7 +21,7 @@ class m180917_151132_fix_lessons_cost extends Migration
             ->notCanceled()
             ->all();
             foreach ($lessons as $lesson) {
-                if (($lesson->teacherRate != $lesson->teacherCost) && ($lesson->teacherRate > 5)) {
+                if (($lesson->teacherRate != $lesson->teacherCost) && ($lesson->teacherCost > 5)) {
                     $lesson->updateAttributes(['teacherRate' => $lesson->teacherCost]);
                 }       
             }
