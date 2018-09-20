@@ -17,6 +17,7 @@ use common\models\OpeningBalance;
 use backend\models\search\CustomerSearch;
 use common\models\log\UserLog;
 use yii\data\ActiveDataProvider;
+use common\models\Enrolment;
 /**
  * UserController implements the CRUD actions for User model.
  */
@@ -162,22 +163,37 @@ class CustomerController extends UserController
         $model = $this->findModel($id);
         $model->setScenario(User::SCENARIO_MERGE);
         $mergeUserModel = $this->findModel($customerId);
-        $students = Student::find()
-            ->andWhere(['customer_id' => $customerId])
-            ->notDeleted()
-            ->orderBy(['first_name' => SORT_ASC]);
-        $studentDataProvider = new ActiveDataProvider([
-            'query' => $students,
-        ]);
-
+        $paymentRequestDataProvider = $mergeUserModel->paymentRequests;
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;    
         $data       = $this->renderAjax('/user/customer/_merge-preview', [
             'model' => $model,
-            'studentDataProvider' => $studentDataProvider,
+            'enrolmentDataProvider' => $this->getEnrolmentDataProvider($mergeUserModel->id, $locationId),
             'mergeUserModel' => $mergeUserModel,
+            'paymentRequestDataProvider' => $paymentRequestDataProvider,
         ]);
         return [
                 'status' => true,
                 'data' => $data
             ];
+    }
+
+    protected function getEnrolmentDataProvider($id, $locationId)
+    {
+        $currentdate = new \DateTime();
+        $currentDate = $currentdate->format('Y-m-d');
+        $enrolmentQuery = Enrolment::find()
+            ->joinWith(['student' => function ($query) use ($id) {
+                $query->andWhere(['customer_id' => $id]);
+            }])
+            ->notDeleted()
+            ->isConfirmed()
+            ->isRegular()
+            ->location($locationId)
+            ->groupBy(['enrolment.id'])
+            ->active();
+
+        return new ActiveDataProvider([
+            'query' => $enrolmentQuery,
+        ]);
     }
 }

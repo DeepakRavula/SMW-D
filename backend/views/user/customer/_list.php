@@ -17,7 +17,16 @@ use yii\widgets\ActiveForm;
         'dataProvider' => $customerDataProvider,
         'summary' => false,
         'emptyText' => false,
-        'rowOptions' => ['class' => 'choose-merge-customer'],
+        'rowOptions' => function ($model, $key, $index, $grid) use ($searchModel) {
+            $url = Url::to(['student/view', 'id' => $model->id]);
+            $data = ['data-url' => $url];
+                if ($model->status === User::STATUS_NOT_ACTIVE) {
+                    $data = array_merge($data, ['class' => 'danger inactive choose-merge-customer']);
+                } elseif ($model->status === User::STATUS_ACTIVE) {
+                    $data = array_merge($data, ['class' => 'info active choose-merge-customer']);
+                }
+            return $data;
+        },
         'tableOptions' => ['class' => 'table table-condensed'],
         'filterModel' => $searchModel,
         'filterUrl' => Url::to(['customer/merge', 'id' => $model->id, "UserSearch[role_name]" => User::ROLE_CUSTOMER, 
