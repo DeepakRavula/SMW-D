@@ -30,8 +30,9 @@ use common\models\Invoice;
 }
 </style>
     <?php
-    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-    $columns = [
+    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id; ?>
+    <?php if (!$searchModel->summarizeResults) : ?>
+    <?php $columns = [
         [
             'value' => function ($data) {
                 return (new \DateTime($data->date))->format('l, F jS, Y');
@@ -112,6 +113,47 @@ use common\models\Invoice;
     ];
 
     ?>  
+    <?php else : ?>
+    <?php
+    $columns = [
+        'invoice.date:date',
+            [
+            'label' => 'Subtotal',
+            'value' => function ($data) {
+                return Yii::$app->formatter->asCurrency(round($data->subTotal, 2));
+            },
+            'format' => ['decimal', 2],
+            'contentOptions' => ['class' => 'text-right'],
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
+        ],
+            [
+            'label' => 'Tax',
+            'value' => function ($data) {
+                return Yii::$app->formatter->asCurrency($data->tax);
+            },
+            'format' => ['decimal', 2],
+            'contentOptions' => ['class' => 'text-right'],
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
+        ],
+            [
+            'label' => 'Total',
+            'value' => function ($data) {
+                return Yii::$app->formatter->asCurrency(round($data->total, 2));
+            },
+            'format' => ['decimal', 2],
+            'contentOptions' => ['class' => 'text-right'],
+            'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
+        ],
+    ];
+
+    ?>
+<?php endif; ?>
 
 <div class="box">
     <?= GridView::widget([
