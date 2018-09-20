@@ -5,6 +5,8 @@ namespace common\models;
 use Yii;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use common\models\query\QualificationQuery;
+use yii\behaviors\TimestampBehavior;
+use yii\behaviors\BlameableBehavior;
 
 /**
  * This is the model class for table "qualification".
@@ -41,7 +43,7 @@ class Qualification extends \yii\db\ActiveRecord
             }],
             [['teacher_id', 'program_id', 'type',], 'integer'],
             [['rate'], 'number', 'min' => 1.00, 'max' => 2000.00, 'message' => 'Invalid rate'],
-            [['isDeleted'], 'safe']
+            [['isDeleted', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe']
         ];
     }
 
@@ -54,6 +56,17 @@ class Qualification extends \yii\db\ActiveRecord
                     'isDeleted' => true,
                 ],
                 'replaceRegularDelete' => true
+            ],
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'createdOn',
+                'updatedAtAttribute' => 'updatedOn',
+                'value' => (new \DateTime())->format('Y-m-d H:i:s'),
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'createdByAttribute' => 'createdByUserId',
+                'updatedByAttribute' => 'updatedByUserId'
             ],
         ];
     }
