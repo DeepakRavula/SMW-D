@@ -434,7 +434,8 @@ $this->params['label'] = $this->render('_title', [
                             if (response.status) {
                                 window.location.href = response.url;
                             } else {
-                                $('#student-delete').html('Unable to delete the student. Student has enrolment/lesson/invoice history associated with them.').fadeIn().delay(3000).fadeOut();
+                                //$('#student-delete').html().fadeIn().delay(3000).fadeOut();
+                                bootbox.alert('Unable to delete the student. Student has enrolment/lesson/invoice history associated with them.');   
                             }
                         }
                     });
