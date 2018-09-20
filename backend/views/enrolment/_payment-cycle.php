@@ -29,8 +29,20 @@ use yii\widgets\Pjax;
                     }
                     if ($data->isFullyPaid()) {
                         $status = 'Paid';
-                    }
+                    } 
                     return $status;
+                }
+            ],
+            [
+                'label' => 'Invoiced',
+                'value' => function ($data) {
+                    $invoiceStatus = null;
+                    if ($data->hasInvoicedLesson()) {
+                        $invoiceStatus = 'Invoiced';
+                    } else {
+                        $invoiceStatus = 'Not Invocied';
+                    }
+                    return $invoiceStatus;
                 }
             ]
         ]

@@ -212,6 +212,27 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return $status;
     }
 
+    public function hasInvoicedLesson()
+    {
+        $status = false;
+        $fromDate = new \DateTime($this->startDate);
+        $toDate = new \DateTime($this->endDate);
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->course($this->enrolment->courseId)
+            ->between($fromDate, $toDate)
+            ->all();
+        foreach ($lessons as $lesson) {
+            if ($lesson->invoice) {
+                $status = true;
+                break;
+            }
+        }
+        return $status;
+    }
+
     public function createPaymentCycleLesson()
     {
         $startDate  = new \DateTime($this->startDate);

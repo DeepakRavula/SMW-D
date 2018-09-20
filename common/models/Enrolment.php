@@ -361,7 +361,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getFirstUnPaidPaymentCycle()
     {
         foreach ($this->paymentCycles as $paymentCycle) {
-            if (!$paymentCycle->hasPaidLesson()) {
+            if (!$paymentCycle->isFullyPaid() && !$paymentCycle->hasInvoicedLesson()) {
                 return $paymentCycle;
             }
         }
@@ -385,7 +385,7 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         $models = [];
         foreach ($this->paymentCycles as $paymentCycle) {
-            if (!$paymentCycle->hasPaidLesson()) {
+            if (!$paymentCycle->isFullyPaid()) {
                 $models[] = $paymentCycle;
             }
         }
