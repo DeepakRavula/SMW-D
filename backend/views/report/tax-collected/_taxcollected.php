@@ -28,6 +28,12 @@ use common\models\Invoice;
 .table > tbody + tbody {
      border-top: none;
 }
+td.kv-group-even {
+    background-color: white!important;
+}
+td.kv-group-odd {
+    background-color: white!important;
+}
 </style>
     <?php
     $locationId = Location::findOne(['slug' => \Yii::$app->location])->id; ?>
@@ -119,41 +125,25 @@ use common\models\Invoice;
         [
             'label' => 'Date',
             'value' => function ($data) {
-                return (new \DateTime($data->date))->format('M d, Y');
+                return (new \DateTime($data->date))->format('l, F jS, Y');
             },
             'group' => true,
-            // 'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left','class'=>'main-group'],
-            // 'groupedRow' => true,
-            // 'groupFooter' => function ($model, $key, $index, $widget) use ($locationId) {
-            //     $invoiceTaxes = Invoice::find()
-            //         ->notDeleted()
-            //         ->location($locationId)
-            //         ->invoice()
-            //         ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($model->date))->format('Y-m-d'), 
-            //             (new \DateTime($model->date))->format('Y-m-d')])
-            //         ->andWhere(['>', 'tax', 0]);
-                    
-            //     return [
-            //         'mergeColumns' => [[1, 2]],
-            //         'content' => [
-            //             3 => Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('subTotal'), 2)),
-            //             4 => Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('tax'), 2)),
-            //             5 => Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('total'), 2)),
-            //         ],
-            //         'contentOptions' => [
-            //             3 => ['style' => 'text-align:right'],
-            //             4 => ['style' => 'text-align:right'],
-            //             5 => ['style' => 'text-align:right'],
-            //         ],
-            //         'options' => ['style' => 'font-weight:bold;']
-            //     ];
-            // }
+            'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left;','class'=>'main-group'],
         ],
             [
             'label' => 'Subtotal',
-            'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency(round($data->subTotal, 2));
+            'value' => function ($data) use ($locationId) {
+                $invoiceTaxes = Invoice::find()
+                    ->notDeleted()
+                    ->location($locationId)
+                    ->invoice()
+                    ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($data->date))->format('Y-m-d'), 
+                        (new \DateTime($data->date))->format('Y-m-d')])
+                    ->andWhere(['>', 'tax', 0]);
+                return Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('subTotal'), 2));
             },
+            'group' => true,
+            'subGroupOf' => 0,
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
             'pageSummary' => function ($summary, $data, $widget) use ($subtotalSum) { 
@@ -162,9 +152,18 @@ use common\models\Invoice;
         ],
             [
             'label' => 'Tax',
-            'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->tax);
+            'value' => function ($data) use ($locationId) {
+                $invoiceTaxes = Invoice::find()
+                    ->notDeleted()
+                    ->location($locationId)
+                    ->invoice()
+                    ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($data->date))->format('Y-m-d'), 
+                        (new \DateTime($data->date))->format('Y-m-d')])
+                    ->andWhere(['>', 'tax', 0]);
+                return Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('tax'), 2));
             },
+            'group' => true,
+            'subGroupOf' => 0,
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
             'pageSummary' => function ($summary, $data, $widget) use ($taxSum) { 
@@ -173,9 +172,18 @@ use common\models\Invoice;
         ],
             [
             'label' => 'Total',
-            'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency(round($data->total, 2));
+            'value' => function ($data) use ($locationId) {
+                $invoiceTaxes = Invoice::find()
+                    ->notDeleted()
+                    ->location($locationId)
+                    ->invoice()
+                    ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($data->date))->format('Y-m-d'), 
+                        (new \DateTime($data->date))->format('Y-m-d')])
+                    ->andWhere(['>', 'tax', 0]);
+                return Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('total'), 2));
             },
+            'group' => true,
+            'subGroupOf' => 0,
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
             'pageSummary' => function ($summary, $data, $widget) use ($totalSum) { 
