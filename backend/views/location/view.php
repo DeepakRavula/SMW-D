@@ -310,25 +310,5 @@ function showCalendars(id,type) {
             }
         });
     });
-
-        $(document).off('change', '#location-isenabledcron').on('change', '#location-isenabledcron', function(){
-            var isEnabledCron = $(this).is(":checked");
-            var params = $.param({'status': ( isEnabledCron | 0)});
-        $.ajax({
-            url    : '<?= Url::to(['location/update-cron-status', 'id' => $model->id]); ?>&'+params,
-            type   : 'post',
-            dataType: "json",
-            data   : $(this).serialize(),
-            success: function(response)
-            {
-                if(response.status) {
-        			
-                } else {
-					$('#location-form').yiiActiveForm('updateMessages',
-					response.errors, true);
-				}
-            }
-        });
-    }); 
 </script>
 <?php Pjax::end(); ?>

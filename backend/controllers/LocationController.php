@@ -96,20 +96,6 @@ class LocationController extends BaseController
         ]);
     }
 
-    public function actionUpdateCronStatus()
-    {   
-        $location = Location::findOne(['slug' => Yii::$app->location]);
-        $model = $this->findModel($location->id);
-        $model->setScenario(Location::SCENARIO_UPDATE_CRON_STATUS);
-        if ($model->load(Yii::$app->request->post())) {
-           $model->save();
-            return [
-                'status' => true
-            ];
-        } 
-        
-    }
-
     /**
      * Creates a new Location model.
      * If creation is successful, the browser will be redirected to the 'view' page.
