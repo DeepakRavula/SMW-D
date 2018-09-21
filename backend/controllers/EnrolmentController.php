@@ -214,13 +214,13 @@ class EnrolmentController extends BaseController
         }
         $paymentFrequencyDiscount->enrolmentId = $id;
         $multipleEnrolmentDiscount->enrolmentId = $id;
-        if (!$model->fullyUnPaidPaymentCycle) {
+        if (!$model->hasPartialyPaidPaymentCycle()) {
             return [
                 'status' => false,
                 'message' => 'You can\'t edit PF & discounts.',
             ];
         }
-        $startDate = Carbon::parse($model->fullyUnPaidPaymentCycle->startDate)->format('M d, Y');
+        $startDate = Carbon::parse($model->partilayPaidPaymentCycle->startDate)->format('M d, Y');
         $endDate = Carbon::parse($model->lastPaymentCycle->endDate)->format('M d, Y');
         $dates = [$startDate, $endDate];
         $dateRange = implode(' - ', $dates);

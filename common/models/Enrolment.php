@@ -361,7 +361,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getFirstUnPaidPaymentCycle()
     {
         foreach ($this->paymentCycles as $paymentCycle) {
-            if (!$paymentCycle->lesson->hasPayment() && !$paymentCycle->lesson->hasInvoice()) {
+            if (!$paymentCycle->isFullyPaid() && !$paymentCycle->hasInvoicedLesson()) {
                 return $paymentCycle;
             }
         }
@@ -369,15 +369,19 @@ class Enrolment extends \yii\db\ActiveRecord
         return null;
     }
 
-    public function getFullyUnPaidPaymentCycle()
+    public function getPartialyPaidPaymentCycle()
     {
         foreach ($this->paymentCycles as $paymentCycle) {
-            if (!$paymentCycle->isFullyPaid() && !$paymentCycle->hasInvoicedLesson()) {
+            if (!$paymentCycle->isFullyPaid() && !$paymentCycle->hasInvoicedLesson() && $paymentCycle->hasPartialyPaidLesson()) {
                 return $paymentCycle;
             }
         }
-
         return null;
+    }
+
+    public function hasPartialyPaidPaymentCycle()
+    {
+        return !empty($this->partialyPaidPaymentCycle());
     }
 
     public function getUnInvoicedProFormaPaymentCycles()
@@ -603,9 +607,9 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function resetPaymentRequest()
     {
-        if ($this->fullyUnpaidPaymentCycle) {
+        if ($this->firstUnpaidPaymentCycle) {
             $this->deletePaymentRequest();
-            $startDate = (new \DateTime($this->fullyUnpaidPaymentCycle->startDate))->format('Y-m-d');
+            $startDate = (new \DateTime($this->firstUnpaidPaymentCycle->startDate))->format('Y-m-d');
             $currentDate = new \DateTime();
             $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
             $paymentCycles = PaymentCycle::find()
@@ -643,8 +647,8 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function resetPaymentCycle()
     {
-        if ($this->fullyUnPaidPaymentCycle) {
-            $startDate = new \DateTime($this->fullyUnPaidPaymentCycle->startDate);
+        if ($this->firstUnpaidPaymentCycle) {
+            $startDate = new \DateTime($this->firstUnpaidPaymentCycle->startDate);
             $enrolmentLastPaymentCycleEndDate = new \DateTime($this->course->endDate);
             $intervalMonths = $this->diffInMonths($startDate, $enrolmentLastPaymentCycleEndDate);
             $this->deleteUnPaidPaymentCycles();
@@ -819,8 +823,8 @@ class Enrolment extends \yii\db\ActiveRecord
         } else {
             $type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
         }
-        if ($this->fullyUnpaidPaymentCycle) {
-            $fromDate = new \DateTime($this->fullyUnpaidPaymentCycle->startDate);
+        if ($this->partilayPaidPaymentCycle) {
+            $fromDate = new \DateTime($this->partilayPaidPaymentCycle->startDate);
             $toDate = new \DateTime($this->course->endDate);
             $lessons = Lesson::find()
                 ->notDeleted()
