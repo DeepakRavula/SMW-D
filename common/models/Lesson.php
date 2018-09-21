@@ -1177,21 +1177,6 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->lessonPayment;
     }
 
-    public function hasFullPayment()
-    {
-        return $this->lessonPayment;
-    }
-
-    public function hasPartialPayment()
-    {
-        return $this->lessonPayment;
-    }
-
-    public function hasNonPayment()
-    {
-        return $this->lessonPayment;
-    }
-
     public function hasPaymentCycleLesson()
     {
         return !empty($this->paymentCycleLesson);

@@ -99,6 +99,13 @@ class PaymentCycle extends \yii\db\ActiveRecord
                 ->onCondition(['lesson.isDeleted' => false]);
     }
 
+    public function getLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['id' => 'lessonId'])
+                ->via('paymentCycleLessons')
+                ->onCondition(['lesson.isDeleted' => false]);
+    }
+
     public function beforeSoftDelete()
     {
         if ($this->proFormaInvoice && !$this->proFormaInvoice->hasPayments()) {
