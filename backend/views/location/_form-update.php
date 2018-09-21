@@ -97,9 +97,9 @@ $this->title = 'Edit Location';
             ]);
             ?>
 		</div>
-			<div class = "col-md-6">
-					<?= $form->field($model, 'isEnabledCron')->widget(SwitchInput::classname(), []);?> 
-			</div>
+			<!-- <div class = "col-md-6">
+					 $form->field($model, 'isEnabledCron')->widget(SwitchInput::classname(), []);
+			</div> -->
 		</div>
 	<div class="clearfix"></div>
 <div class="row">

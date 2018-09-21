@@ -63,8 +63,8 @@ if ($loggedUser->isAdmin()) {
 			<dd><?= !empty($model->advertisement->value) ?  $model->advertisement->value . '%' : null; ?></dd>
 			<dt>Conversion Date</dt>
             <dd><?= !empty($model->conversionDate) ?  Yii::$app->formatter->asDate($model->conversionDate) : null; ?></dd>
-            <dt> Is Cron Enabled</dt>
-            <dd><?= $model->getCronStatus(); ?></dd>
+            <!-- <dt> Is Cron Enabled</dt>
+            <dd> $model->getCronStatus(); </dd> -->
         <?php endif; ?>
 		</dl>
 		<?php LteBox::end() ?>
