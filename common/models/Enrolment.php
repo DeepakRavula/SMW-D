@@ -372,7 +372,7 @@ class Enrolment extends \yii\db\ActiveRecord
     public function getPartialyPaidPaymentCycle()
     {
         foreach ($this->paymentCycles as $paymentCycle) {
-            if (!$paymentCycle->isFullyPaid() && !$paymentCycle->hasInvoicedLesson() && $paymentCycle->hasPartialyPaidLesson()) {
+            if ((!$paymentCycle->isFullyPaid() || $paymentCycle->hasPartialyPaidLesson()) && !$paymentCycle->hasInvoicedLesson()) {
                 return $paymentCycle;
             }
         }
@@ -381,7 +381,7 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function hasPartialyPaidPaymentCycle()
     {
-        return !empty($this->partialyPaidPaymentCycle());
+        return !empty($this->partialyPaidPaymentCycle);
     }
 
     public function getUnInvoicedProFormaPaymentCycles()
@@ -823,8 +823,8 @@ class Enrolment extends \yii\db\ActiveRecord
         } else {
             $type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
         }
-        if ($this->partilayPaidPaymentCycle) {
-            $fromDate = new \DateTime($this->partilayPaidPaymentCycle->startDate);
+        if ($this->partialyPaidPaymentCycle) {
+            $fromDate = new \DateTime($this->partialyPaidPaymentCycle->startDate);
             $toDate = new \DateTime($this->course->endDate);
             $lessons = Lesson::find()
                 ->notDeleted()
