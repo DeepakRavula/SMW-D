@@ -177,7 +177,7 @@ class CustomerController extends UserController
             ];
     }
 
-    protected function getEnrolmentDataProvider($id, $locationId)
+    protected function getEnrolmentDataProvider($id)
     {
         $currentdate = new \DateTime();
         $currentDate = $currentdate->format('Y-m-d');
@@ -188,7 +188,6 @@ class CustomerController extends UserController
             ->notDeleted()
             ->isConfirmed()
             ->isRegular()
-            ->location($locationId)
             ->groupBy(['enrolment.id'])
             ->active();
 
