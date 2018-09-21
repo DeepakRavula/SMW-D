@@ -21,7 +21,7 @@ use yii\widgets\Pjax;
                 'label' => 'Status',
                 'value' => function ($data) {
                     $status = null;
-                    if ($data->hasLessonPayment()) {
+                    if (!$data->hasLessonPayment()) {
                         $status = 'Owing';
                     }
                     if ($data->hasPartialyPaidLesson()) {

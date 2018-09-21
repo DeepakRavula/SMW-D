@@ -179,7 +179,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
 
     public function hasLessonPayment()
     {
-        $status = true;
+        $status = false;
         $fromDate = new \DateTime($this->startDate);
         $toDate = new \DateTime($this->endDate);
         $lessons = Lesson::find()
@@ -191,7 +191,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ->all();
         foreach ($lessons as $lesson) {
             if ($lesson->hasPayment()) {
-                $status = false;
+                $status = true;
                 break;
             }
         }
