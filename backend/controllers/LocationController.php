@@ -25,7 +25,7 @@ class LocationController extends BaseController
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
                'only' => ['create', 'update', 'edit-availability', 'add-availability', 
-                   'render-events', 'check-availability', 'validate','delete-availability', 'copy-availability', 'update-cron-status'
+                   'render-events', 'check-availability', 'validate','delete-availability', 'copy-availability'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -39,7 +39,7 @@ class LocationController extends BaseController
                         'allow' => true,
                         'actions' => ['view', 'add-availability', 'edit-availability', 'render-events',
                             'check-availability', 'validate', 'delete-availability',
-                            'copy-availability', 'update-cron-status'
+                            'copy-availability'
                         ],
                         'roles' => ['manageLocations']
                     ],

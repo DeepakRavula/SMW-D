@@ -31,7 +31,6 @@ class Location extends \yii\db\ActiveRecord
     public $royaltyValue;
     public $advertisementValue;
 
-    const SCENARIO_UPDATE_CRON_STATUS = 'updateCronStatus';
     
     /**
       * {@inheritdoc}
@@ -76,7 +75,7 @@ class Location extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code', 'royaltyValue', 'advertisementValue', 'email'], 'required', 'except' => self::SCENARIO_UPDATE_CRON_STATUS],
+            [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code', 'royaltyValue', 'advertisementValue', 'email'], 'required'],
             [['email'], 'unique'],
             [['email'], 'email'],
             [['slug', 'conversionDate', 'email', 'isDeleted', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn', 'isEnabledCron'], 'safe'],
