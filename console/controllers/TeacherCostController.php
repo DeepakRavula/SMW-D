@@ -44,6 +44,8 @@ class TeacherCostController extends Controller
 
     public function actionFixLineItemCost()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $locationId = $this->locationId;
         $lineItems = InvoiceLineItem::find()
                     ->notDeleted()

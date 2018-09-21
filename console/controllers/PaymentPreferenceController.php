@@ -9,6 +9,7 @@ use common\models\Payment;
 use common\models\User;
 use common\models\Lesson;
 use common\models\LessonPayment;
+use common\models\Location;
 
 class PaymentPreferenceController extends Controller
 {
@@ -24,6 +25,11 @@ class PaymentPreferenceController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
+        $locationIds = [];
+        $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
+        foreach($locations as $location) {
+            $locationIds[] = $location->id;
+        }
         $currentDate = new \DateTime();
         $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
         $enrolments = Enrolment::find()
@@ -32,9 +38,9 @@ class PaymentPreferenceController extends Controller
             ->privateProgram()
             ->andWhere(['NOT', ['enrolment.paymentFrequencyId' => 0]])
             ->isRegular()
-            ->joinWith(['course' => function ($query) use ($priorDate) {
+            ->joinWith(['course' => function ($query) use ($priorDate, $locationIds) {
                 $query->andWhere(['>=', 'DATE(course.endDate)', $priorDate])
-                        ->location([14, 15, 16])
+                        ->location($locationIds)
                         ->confirmed();
             }])
             ->paymentPrefered()
@@ -93,8 +99,7 @@ class PaymentPreferenceController extends Controller
                     $lessonPayment->save();
                 }
             }
-        }
-        
+    }    
         return true;
     }
 }

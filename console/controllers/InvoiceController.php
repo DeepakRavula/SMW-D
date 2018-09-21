@@ -7,6 +7,7 @@ use yii\console\Controller;
 use common\models\Invoice;
 use common\models\User;
 use common\models\Lesson;
+use common\models\Location;
 
 class InvoiceController extends Controller
 {
@@ -29,8 +30,15 @@ class InvoiceController extends Controller
 
     public function actionAllCompletedLessons()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $locationIds = [];
+        $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
+        foreach ($locations as $location) {
+            $locationIds[] = $location->id;
+        }
         $query = Lesson::find()
-                ->location([14, 15, 16])
+                ->location($locationIds)
                 ->isConfirmed()
                 ->notDeleted();
         $privateLessons = $query->completedUnInvoicedPrivate()->all();
@@ -53,9 +61,16 @@ class InvoiceController extends Controller
 
     public function actionAllExpiredLessons()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $locationIds = [];
+        $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
+        foreach ($locations as $location) {
+            $locationIds[] = $location->id;
+        }
         $lessons = Lesson::find()
             ->privateLessons()
-            ->location([14, 15, 16])
+            ->location($locationIds)
 			->isConfirmed()
             ->notDeleted()
             ->unscheduled()
@@ -75,6 +90,8 @@ class InvoiceController extends Controller
     
     public function actionTriggerSave()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $locationId = $this->locationId;
         $invoices = Invoice::find()
                     ->notDeleted()
