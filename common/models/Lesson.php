@@ -640,7 +640,6 @@ class Lesson extends \yii\db\ActiveRecord
         return !empty($qualification->rate) ? $qualification->rate : 0.00;
     }
 
-
     public function hasMerged()
     {
         return !empty($this->lessonSplitUsage);
