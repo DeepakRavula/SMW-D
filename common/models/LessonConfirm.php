@@ -57,7 +57,7 @@ class LessonConfirm extends Model
             ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
             ->orderBy(['lesson.date' => SORT_ASC])
             ->all();
-        $oldLessonIds = [];
+        
         $courseDate = (new \DateTime($courseModel->endDate))->format('d-m-Y');
         if ($endDate->format('d-m-Y') == $courseDate && !empty($oneLesson)) {
             $courseModel->updateAttributes([

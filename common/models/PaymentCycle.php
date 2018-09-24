@@ -39,7 +39,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ['id', 'validateCanRaisePFI', 'on' => self::SCENARIO_CAN_RAISE_PFI],
             [['enrolmentId', 'startDate', 'endDate'], 'required'],
             [['enrolmentId'], 'integer'],
-            [['startDate', 'endDate', 'validFrom', 'validThru', 'isDeleted'], 'safe'],
+            [['startDate', 'endDate', 'validFrom', 'validThru', 'isDeleted', 'isPreferredPaymentEnabled'], 'safe'],
         ];
     }
 
@@ -55,6 +55,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
             'endDate' => 'End Date',
             'validFrom' => 'Valid From',
             'validThru' => 'Valid Thru',
+            'isPreferredPaymentEnabled' => 'Preferred Payment',
         ];
     }
 
@@ -231,6 +232,11 @@ class PaymentCycle extends \yii\db\ActiveRecord
             }
         }
         return $status;
+    }
+    
+    public function getStatus()
+    {
+        return $this->isPreferredPaymentEnabled ? 'Enabled' : 'Disabled';
     }
 
     public function createPaymentCycleLesson()

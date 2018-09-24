@@ -371,6 +371,10 @@ class Course extends \yii\db\ActiveRecord
         $day = $dayList[(new \DateTime($dayTime))->format('N')];
         $nextWeekScheduledDate = $startDate;
         foreach ($lessons as $lesson) {
+            $isUnscheduled = false;
+            if ($lesson->isUnscheduled()) {
+                $isUnscheduled = true;
+            }
             $lesson->id = null;
             $lesson->isNewRecord = true;
             $lesson->teacherId = $teacherId;
@@ -379,12 +383,14 @@ class Course extends \yii\db\ActiveRecord
             $nextWeekScheduledDate->setTime($hour, $minute, $second);
             $lesson->date = $nextWeekScheduledDate->format('Y-m-d H:i:s');
             $lesson->isConfirmed = false;
-            if ($this->isProfessionalDevelopmentDay($nextWeekScheduledDate)) {
+            if ($this->isProfessionalDevelopmentDay($nextWeekScheduledDate) || $lesson->isHolidayLesson()) {
                 $startDate->modify('next ' . $day);
                 $nextWeekScheduledDate->setTime($hour, $minute, $second);
                 $lesson->date = $nextWeekScheduledDate->format('Y-m-d H:i:s');
             }
-            $lesson->save();
+            if (!$isUnscheduled) {
+                $lesson->save();
+            }
             $startDate->modify('next ' . $day);
         }
         return $lesson->date;

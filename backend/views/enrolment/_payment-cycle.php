@@ -44,7 +44,13 @@ use yii\widgets\Pjax;
                     }
                     return $invoiceStatus;
                 }
-            ]
+            ],
+            [
+                'label' => 'Prefered Payment',
+                'value' => function ($data) {
+                    return $data->getStatus();
+                }
+            ],
         ]
     ]); ?>
 <?php Pjax::end(); ?>

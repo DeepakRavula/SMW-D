@@ -36,11 +36,7 @@ $this->params['action-button'] = $this->render('_action-button', [
 ]); ?>
 
 <div class='row'>
-    <?php if ($model->course->program->isPrivate()) : ?>
-    <div class='col-md-8'>
-    <?php else : ?>
-    <div class='col-md-12'>
-    <?php endif ; ?>
+    <div class= 'col-md-6'>
         <?php LteBox::begin([
             'type' => LteConst::TYPE_DEFAULT,
             'boxTools' => false,
@@ -48,43 +44,43 @@ $this->params['action-button'] = $this->render('_action-button', [
             'withBorder' => true,
         ]) ?>
 
-        <?php if ($model->course->program->isPrivate()) :
+        <?php if ($model->course->program->isPrivate()) {
             echo $this->render('_private-lesson', [
-            'model' => $model,
-            'lessonDataProvider' => $lessonDataProvider,
-            'lessonCount' => $lessonCount
+                'model' => $model,
+                'lessonDataProvider' => $lessonDataProvider,
+                'lessonCount' => $lessonCount
             ]);
-        else:
+        } else {
             echo $this->render('_private-lesson', [
-            'model' => $model,
-            'groupLessonDataProvider' => $groupLessonDataProvider,
-            'lessonCount' => $lessonCount
+                'model' => $model,
+                'groupLessonDataProvider' => $groupLessonDataProvider,
+                'lessonCount' => $lessonCount
             ]);    
-        endif; ?>
+        } ?>
 
         <div class="more-lesson pull-right" id = "admin-login" style = "display:none">
             <a class = "see-more" href = "">Show More</a>
         </div>
 
-    <?php LteBox::end() ?>
-    </div>
-    <?php if ($model->course->program->isPrivate()) : ?>
-    <div class='col-md-4'>
-        <?php LteBox::begin([
-            'type' => LteConst::TYPE_DEFAULT,
-            'boxTools' => false,
-            'title' => 'Payment Cycles',
-            'withBorder' => true,
-        ]) ?>
-
-        <?= $this->render('_payment-cycle', [
-            'model' => $model,
-            'paymentCycleDataProvider' => $paymentCycleDataProvider,
-        ]); ?>
         <?php LteBox::end() ?>
     </div>
-    <?php endif ; ?>
     
+    <?php if ($model->course->program->isPrivate()) : ?>
+        <div class='col-md-6'>
+            <?php LteBox::begin([
+                'type' => LteConst::TYPE_DEFAULT,
+                'boxTools' => false,
+                'title' => 'Payment Cycles',
+                'withBorder' => true,
+            ]) ?>
+
+            <?= $this->render('_payment-cycle', [
+                'model' => $model,
+                'paymentCycleDataProvider' => $paymentCycleDataProvider,
+            ]); ?>
+            <?php LteBox::end() ?>
+        </div>
+    <?php endif; ?>
 </div>
 
 <?php LteBox::begin([
@@ -186,11 +182,6 @@ $this->params['action-button'] = $this->render('_action-button', [
         return false;
     });
     
-    $(document).on('modal-next', function(event, params) {
-        paymentFrequency.onEditableSuccess();
-        return false;
-    });
-
     $(document).ready(function () {
         var lesson_count = '<?= $lessonCount; ?>';
         if (lesson_count > 12) {

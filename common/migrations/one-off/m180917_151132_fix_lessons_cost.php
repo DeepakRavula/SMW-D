@@ -14,6 +14,8 @@ class m180917_151132_fix_lessons_cost extends Migration
      */
     public function safeUp()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $lessons = Lesson::find()
             ->notDeleted()
             ->isConfirmed()
