@@ -186,11 +186,6 @@ $this->params['action-button'] = $this->render('_action-button', [
         return false;
     });
     
-    $(document).on('modal-next', function(event, params) {
-        paymentFrequency.onEditableSuccess();
-        return false;
-    });
-
     $(document).ready(function () {
         var lesson_count = '<?= $lessonCount; ?>';
         if (lesson_count > 12) {
