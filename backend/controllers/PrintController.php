@@ -489,6 +489,7 @@ class PrintController extends BaseController
             }]);
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonLineItems,
+            'pagination' => false,
         ]);
 	$invoiceLineItems = Invoice::find()
             ->joinWith(['proformaInvoiceItem' => function ($query) use ($model) {

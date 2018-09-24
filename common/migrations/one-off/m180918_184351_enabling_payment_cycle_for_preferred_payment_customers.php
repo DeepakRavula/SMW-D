@@ -29,15 +29,15 @@ class m180918_184351_enabling_payment_cycle_for_preferred_payment_customers exte
             }])
             ->paymentPrefered()
             ->all();
-        foreach($enrolments as $enrolment) {
-           $paymentCycles = PaymentCycle::find()
-            ->notDeleted()
-            ->andWhere(['enrolmentId' => $enrolment->id])
-            ->all();
+        foreach ($enrolments as $enrolment) {
+            $paymentCycles = PaymentCycle::find()
+                ->notDeleted()
+                ->andWhere(['enrolmentId' => $enrolment->id])
+                ->all();
             
-           foreach($paymentCycles as $paymentCycle) {
-               $paymentCycle->updateAttributes(['isPreferredPaymentEnabled' => true]);
-           } 
+            foreach($paymentCycles as $paymentCycle) {
+                $paymentCycle->updateAttributes(['isPreferredPaymentEnabled' => true]);
+            } 
         }    
 
     }

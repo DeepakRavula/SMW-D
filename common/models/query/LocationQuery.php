@@ -23,4 +23,9 @@ class LocationQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['location.isDeleted' =>  false]);
     }
+
+    public function cronEnabledLocations()
+    {
+        return $this->andWhere(['location.isEnabledCron' =>  true]);
+    }
 }

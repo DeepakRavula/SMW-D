@@ -108,10 +108,6 @@ class CustomerSearch extends User
         }]);
         $query->andFilterWhere(['like', 'uf.firstname', $this->firstname])
             ->andFilterWhere(['like', 'uf.lastname', $this->lastname]);
-
-        if (!$this->showAll) {
-            $query->active();
-        }
 	    $query->groupBy('user.id');
         return $dataProvider;
     }

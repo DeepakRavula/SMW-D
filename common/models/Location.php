@@ -30,6 +30,7 @@ class Location extends \yii\db\ActiveRecord
     const DEFAULT_LOCATION = 1;
     public $royaltyValue;
     public $advertisementValue;
+
     
     /**
       * {@inheritdoc}
@@ -77,7 +78,7 @@ class Location extends \yii\db\ActiveRecord
             [['name', 'address', 'phone_number', 'city_id', 'province_id', 'postal_code', 'royaltyValue', 'advertisementValue', 'email'], 'required'],
             [['email'], 'unique'],
             [['email'], 'email'],
-            [['slug', 'conversionDate', 'email', 'isDeleted', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
+            [['slug', 'conversionDate', 'email', 'isDeleted', 'createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn', 'isEnabledCron'], 'safe'],
             [['royaltyValue', 'advertisementValue'], 'number'],
             [['city_id', 'province_id', 'country_id'], 'integer'],
             [['name'], 'string', 'max' => 32],
@@ -104,6 +105,7 @@ class Location extends \yii\db\ActiveRecord
             'slug' => 'Slug',
             'royaltyValue' => 'Royalty (%)',
             'advertisementValue' => 'Advertisement (%)',
+            'isEnabledCron' => 'Enable Cron',
         ];
     }
     
@@ -152,6 +154,11 @@ class Location extends \yii\db\ActiveRecord
     public function getUserLocations()
     {
         return $this->hasMany(UserLocation::className(), ['location_id' => 'id']);
+    }
+
+    public function getCronStatus()
+    {
+        return $this->isEnabledCron ? 'Yes' : 'No';
     }
 
     /**

@@ -204,7 +204,7 @@ class UserController extends BaseController
         ]);
     }
 
-    protected function getEnrolmentDataProvider($id, $locationId)
+    protected function getEnrolmentDataProvider($id)
     {
         $currentdate = new \DateTime();
         $currentDate = $currentdate->format('Y-m-d');
@@ -215,7 +215,6 @@ class UserController extends BaseController
             ->notDeleted()
             ->isConfirmed()
             ->isRegular()
-            ->location($locationId)
             ->groupBy(['enrolment.id'])
             ->active();
 
@@ -516,7 +515,7 @@ class UserController extends BaseController
             'teacherDataProvider' => $this->getTeacherDataProvider($id),
             'lessonDataProvider' => $this->getLessonDataProvider($id, $locationId),
             'locationDataProvider' => $this->getLocationDataProvider($id),
-            'enrolmentDataProvider' => $this->getEnrolmentDataProvider($id, $locationId),
+            'enrolmentDataProvider' => $this->getEnrolmentDataProvider($id),
             'invoiceDataProvider' => $this->getInvoiceDataProvider($model, $locationId),
             'studentDataProvider' => $this->getEnrolledStudentDataProvider($id, $locationId),
             'paymentDataProvider' => $this->getPaymentDataProvider($id),

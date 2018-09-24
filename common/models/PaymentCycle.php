@@ -150,7 +150,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return !empty($this->proFormaInvoice);
     }
 
-    public function hasPaidLesson()
+    public function hasPartialyPaidLesson()
     {
         $status = false;
         $fromDate = new \DateTime($this->startDate);
@@ -163,7 +163,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ->between($fromDate, $toDate)
             ->all();
         foreach ($lessons as $lesson) {
-            if ($lesson->invoice || $lesson->hasPayment()) {
+            if (($lesson->hasPayment() && round($lesson->getOwingAmount($this->enrolment->id), 2) != 0.00)) {
                 $status = true;
                 break;
             }
@@ -171,7 +171,7 @@ class PaymentCycle extends \yii\db\ActiveRecord
         return $status;
     }
 
-    public function hasUnpaidLesson()
+    public function hasLessonPayment()
     {
         $status = false;
         $fromDate = new \DateTime($this->startDate);
@@ -184,7 +184,49 @@ class PaymentCycle extends \yii\db\ActiveRecord
             ->between($fromDate, $toDate)
             ->all();
         foreach ($lessons as $lesson) {
-            if (!$lesson->invoice && !$lesson->hasPayment()) {
+            if ($lesson->hasPayment()) {
+                $status = true;
+                break;
+            }
+        }
+        return $status;
+    }
+
+    public function isFullyPaid()
+    {
+        $status = true;
+        $fromDate = new \DateTime($this->startDate);
+        $toDate = new \DateTime($this->endDate);
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->course($this->enrolment->courseId)
+            ->between($fromDate, $toDate)
+            ->all();
+        foreach ($lessons as $lesson) {
+            if (round($lesson->getOwingAmount($this->enrolment->id), 2) != 0.00) {
+                $status = false;
+                break;
+            }
+        }
+        return $status;
+    }
+
+    public function hasInvoicedLesson()
+    {
+        $status = false;
+        $fromDate = new \DateTime($this->startDate);
+        $toDate = new \DateTime($this->endDate);
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->isConfirmed()
+            ->notCanceled()
+            ->course($this->enrolment->courseId)
+            ->between($fromDate, $toDate)
+            ->all();
+        foreach ($lessons as $lesson) {
+            if ($lesson->invoice) {
                 $status = true;
                 break;
             }

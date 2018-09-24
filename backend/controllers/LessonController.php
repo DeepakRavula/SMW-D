@@ -414,14 +414,16 @@ class LessonController extends BaseController
         $searchModel->load($request->get());
         if ($model->courseId) {
             $courseModel = Course::findOne(['id' => $model->courseId]);
+            $startDate = new \DateTime($model->rescheduleBeginDate);
             $lessons = Lesson::find()
                 ->notDeleted()
                 ->notConfirmed()
+                ->statusScheduled()
                 ->andWhere(['courseId' => $model->courseId])
+                ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->all();
             if ($model->rescheduleBeginDate) {
-                $startDate = new \DateTime($model->rescheduleBeginDate);
                 $oldLessonsRe = Lesson::find()
                     ->andWhere(['courseId' => $courseModel->id])
                     ->notDeleted()
