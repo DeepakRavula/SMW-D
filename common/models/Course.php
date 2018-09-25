@@ -372,7 +372,7 @@ class Course extends \yii\db\ActiveRecord
         $nextWeekScheduledDate = $startDate;
         foreach ($lessons as $lesson) {
             $isUnscheduled = false;
-            if ($lesson->isUnscheduled() && !$this->isProfessionalDevelopmentDay($nextWeekScheduledDate)) {
+            if ($lesson->isUnscheduled()) {
                 $isUnscheduled = true;
             }
             $lesson->id = null;
@@ -383,6 +383,9 @@ class Course extends \yii\db\ActiveRecord
             $nextWeekScheduledDate->setTime($hour, $minute, $second);
             $lesson->date = $nextWeekScheduledDate->format('Y-m-d H:i:s');
             $lesson->isConfirmed = false;
+            if ($lesson->isUnscheduled() && !$this->isProfessionalDevelopmentDay($nextWeekScheduledDate)) {
+                $lesson->status = Lesson::STATUS_UNSCHEDULED;
+            }
             if ($this->isProfessionalDevelopmentDay($nextWeekScheduledDate) || $lesson->isHolidayLesson()) {
                 $startDate->modify('next ' . $day);
                 $nextWeekScheduledDate->setTime($hour, $minute, $second);
