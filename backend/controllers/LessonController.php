@@ -432,8 +432,9 @@ class LessonController extends BaseController
                     ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
                     ->orderBy(['lesson.date' => SORT_ASC])
                     ->all();
+                $oldLessonsReIds = ArrayHelper::getColumn($oldLessonsRe, 'id');
                 foreach ($lessons as $i => $lesson) {
-                    $lesson->lessonId = $oldLessonsRe[$i]->id;
+                    $lesson->lessonId = $oldLessonsReIds;
                 }
             }
         } else if ($model->enrolmentIds) {
@@ -454,8 +455,9 @@ class LessonController extends BaseController
                 ->notCanceled()
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->all();
+            $oldLessonsIds = ArrayHelper::getColumn($oldLessons, 'id');
             foreach ($lessons as $i => $lesson) {
-                $lesson->lessonId = $oldLessons[$i]->id;
+                $lesson->lessonId = $oldLessonsIds;
             }
         }
         if (!$model->courseId) {

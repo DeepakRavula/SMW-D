@@ -378,12 +378,15 @@ class Course extends \yii\db\ActiveRecord
             $lesson->id = null;
             $lesson->isNewRecord = true;
             $lesson->teacherId = $teacherId;
-            $lesson->duration = (new \DateTime($duration))->format('H:i:s');;
+            $lesson->duration = (new \DateTime($duration))->format('H:i:s');
             $lesson->status = Lesson::STATUS_SCHEDULED;
             $nextWeekScheduledDate->setTime($hour, $minute, $second);
             $lesson->date = $nextWeekScheduledDate->format('Y-m-d H:i:s');
             $lesson->isConfirmed = false;
-            if ($this->isProfessionalDevelopmentDay($nextWeekScheduledDate) || $lesson->isHolidayLesson()) {
+            if ($lesson->isHolidayLesson()) {
+                $lesson->status = Lesson::STATUS_UNSCHEDULED;
+            }
+            if ($this->isProfessionalDevelopmentDay($nextWeekScheduledDate)) {
                 $startDate->modify('next ' . $day);
                 $nextWeekScheduledDate->setTime($hour, $minute, $second);
                 $lesson->date = $nextWeekScheduledDate->format('Y-m-d H:i:s');
