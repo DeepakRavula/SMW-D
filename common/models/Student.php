@@ -232,19 +232,6 @@ class Student extends \yii\db\ActiveRecord
         return parent::beforeSave($insert);
     }
 
-    public function isChangeBirthDate($changedAttributes)
-    {
-        return isset($changedAttributes['birth_date']) && new \DateTime($this->birth_date) != new \DateTime($changedAttributes['birth_date']);
-    }
-    
-    public function afterSave($insert, $changedAttributes)
-    {
-        if (!$insert && $this->isChangeBirthDate($changedAttributes)) {
-            $this->trigger(self::EVENT_AFTER_UPDATE);
-        }
-        return parent::afterSave($insert, $changedAttributes);
-    }
-
     public function getStudentIdentity()
     {
         if ($this->getFullname()) {

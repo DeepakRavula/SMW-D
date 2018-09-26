@@ -4,6 +4,7 @@ namespace common\models\discount;
 
 use common\models\Invoice;
 use common\models\InvoiceLineItem;
+use common\models\Lesson;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
 
 /**
@@ -95,5 +96,13 @@ class LessonDiscount extends \yii\db\ActiveRecord
     public function isMeDiscount()
     {
         return (int) $this->type === (int) self::TYPE_MULTIPLE_ENROLMENT;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (!$insert) {
+            $this->lesson->save();
+        }
+        return parent::afterSave($insert, $changedAttributes);
     }
 }
