@@ -59,7 +59,7 @@ class EnrolmentController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['add', 'delete', 'edit', 'schedule', 'group', 'update', 'full-delete',
-                    'edit-end-date', 'edit-program-rate', 'reschedule'
+                    'edit-end-date', 'edit-program-rate', 'reschedule', 'update-preferred-payment-status'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -73,7 +73,7 @@ class EnrolmentController extends BaseController
                         'allow' => true,
                         'actions' => ['index', 'view', 'group', 'edit', 'edit-program-rate', 
                             'create', 'add', 'confirm', 'update', 'delete', 'edit-end-date',
-                            'reschedule', 'cancel'
+                            'reschedule', 'cancel', 'update-preferred-payment-status'
                         ],
                         'roles' => ['manageEnrolments'],
                     ],
@@ -719,5 +719,17 @@ class EnrolmentController extends BaseController
             ];
         }
         return $response;
+    }
+
+    public function actionUpdatePreferredPaymentStatus($state, $paymentCycleId)
+    {
+        $model = PaymentCycle::find()
+                ->andWhere([
+                    'id' => $paymentCycleId,
+                ])
+                ->notDeleted()
+                ->one();
+        $model->isPreferredPaymentEnabled = $state;
+        $model->save();
     }
 }
