@@ -42,12 +42,6 @@ use kartik\switchinput\SwitchInput;
                 }
             ],
             [
-                'label' => 'Prefered Payment',
-                'value' => function ($data) {
-                    return $data->getStatus();
-                }
-            ], 
-            [
                 'class' => 'kartik\grid\ActionColumn',
                 'template' => '{switch}',
                 'header' => 'Preferred Payment Status',
