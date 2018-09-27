@@ -17,6 +17,7 @@ use common\models\LocationAvailability;
 use common\models\ClassroomUnavailability;
 use common\models\Classroom;
 use common\models\TeacherUnavailability;
+use common\models\Invoice;
 use League\Period\Period;
 use Carbon\Carbon;
 use common\models\User;
@@ -70,6 +71,8 @@ class ScheduleController extends BaseController
      */
     public function actionIndex()
     {
+        $invoice  = Invoice::findOne(1998);
+        $invoice->save();die;
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $searchModel = new ScheduleSearch();
         $searchModel->goToDate = Yii::$app->formatter->asDate(new \DateTime());
