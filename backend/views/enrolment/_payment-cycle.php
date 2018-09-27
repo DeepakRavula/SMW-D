@@ -87,7 +87,7 @@ use kartik\switchinput\SwitchInput;
         var paymentCycleId = ($(this).parents('tr') ).data('key');
         var params = $.param({'state' : state | 0, 'paymentCycleId' : paymentCycleId});
 	    $.ajax({
-            url    : '<?= Url::to(['enrolment/update-preferred-payment-status', 'id' => $model->id]) ?>&' + params,
+            url    : '<?= Url::to(['enrolment/update-preferred-payment-status']) ?>?' + params,
             type   : 'POST',
             dataType: "json",
             data   : $(this).serialize()
@@ -95,5 +95,3 @@ use kartik\switchinput\SwitchInput;
         return false;
     });
 </script>
-    
-

@@ -730,6 +730,16 @@ class EnrolmentController extends BaseController
                 ->notDeleted()
                 ->one();
         $model->isPreferredPaymentEnabled = $state;
-        $model->save();
+        if ($model->save()) {
+            $response = [
+                'status' => true,
+            ]; 
+        } else {
+            $response = [
+                'status' => false,
+                'errors' =>$model->getErrors()
+            ];
+        }
+        return $response;
     }
 }
