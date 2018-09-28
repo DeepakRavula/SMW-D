@@ -35,7 +35,7 @@ use kartik\select2\Select2;
                 'dateFormat' => 'php:M d, Y',
                 'clientOptions' => [
                     'changeMonth' => true,
-                    'yearRange' => '-70:-4',
+                    'yearRange' => '-70:+0',
                     'changeYear' => true,
                 ],
             ])->textInput(['placeholder' => 'Select Date']);

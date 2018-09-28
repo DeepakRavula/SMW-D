@@ -33,7 +33,7 @@ use kartik\select2\Select2;
             'clientOptions' => [
                 'defaultDate' => (new \DateTime($model->birth_date))->format('M d, Y'),
                 'changeMonth' => true,
-                'yearRange' => '-70:-4',
+                'yearRange' => '-70:+0',
                 'changeYear' => true,
             ],
             ])->textInput(['placeholder' => 'Select Date']);

@@ -37,7 +37,7 @@ use kartik\select2\Select2;
             'clientOptions' => [
                 'changeMonth' => true,
 		'changeYear' => true,
-                'yearRange' => '-70:-3',
+                'yearRange' => '-70:+0',
             ],
         ])->textInput(['placeholder' => 'Select Date'])->label(false);?>
     </div>
