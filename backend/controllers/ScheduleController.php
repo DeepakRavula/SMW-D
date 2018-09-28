@@ -17,7 +17,6 @@ use common\models\LocationAvailability;
 use common\models\ClassroomUnavailability;
 use common\models\Classroom;
 use common\models\TeacherUnavailability;
-use common\models\Invoice;
 use League\Period\Period;
 use Carbon\Carbon;
 use common\models\User;
