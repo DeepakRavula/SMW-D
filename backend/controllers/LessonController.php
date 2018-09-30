@@ -424,6 +424,13 @@ class LessonController extends BaseController
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->all();
             if ($model->rescheduleBeginDate) {
+                $oldLessons = Lesson::find()
+                    ->andWhere(['courseId' => $courseModel->id])
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
+                    ->orderBy(['lesson.date' => SORT_ASC])
+                    ->all();
                 $oldLessonsRe = Lesson::find()
                     ->andWhere(['courseId' => $courseModel->id])
                     ->notDeleted()
@@ -474,6 +481,12 @@ class LessonController extends BaseController
         $lessonIds = ArrayHelper::getColumn($lessons, function ($element) {
             return $element->id;
         });
+        $oldLessonIds[] = null;
+        if ($model->rescheduleBeginDate) {
+            $oldLessonIds = ArrayHelper::getColumn($oldLessons, function ($element) {
+                return $element->id;
+            });
+        }
         $unscheduledLessonCount = Lesson::find()
             ->andWhere(['id' => $lessonIds])
             ->andWhere(['NOT', ['id' => $conflictedLessons['holidayConflictedLessonIds']]])
@@ -489,6 +502,22 @@ class LessonController extends BaseController
             'query' => $query,
             'pagination' => false
         ]);
+        $unscheduledLesson = Lesson::find()
+            ->andWhere(['id' => $oldLessonIds])
+            ->unscheduled()
+            ->orderBy(['lesson.date' => SORT_ASC]);
+        $unscheduledLessonDataProvider = new ActiveDataProvider([
+            'query' => $unscheduledLesson,
+            'pagination' => false
+        ]);
+        $rescheduledLesson = Lesson::find()
+            ->andWhere(['id' => $oldLessonIds])
+            ->rescheduled()
+            ->orderBy(['lesson.date' => SORT_ASC]);
+        $rescheduledLessonDataProvider = new ActiveDataProvider([
+            'query' => $rescheduledLesson,
+            'pagination' => false
+        ]);
         return $this->render('review', [
             'courseModel' => $courseModel ?? null,
             'lessonDataProvider' => $lessonDataProvider,
@@ -499,6 +528,8 @@ class LessonController extends BaseController
             'lessonCount' => $lessonCount,
             'conflictedLessonIdsCount' => $conflictedLessonIdsCount,
             'unscheduledLessonCount' => $unscheduledLessonCount,
+            'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider, 
+            'rescheduledLessonDataProvider' => $rescheduledLessonDataProvider,
         ]);
     }
 
