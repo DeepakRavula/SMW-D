@@ -26,19 +26,4 @@ class m180930_145310_extra_lesson_enrolment_delete extends Migration
 
         return false;
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m180930_145310_extra_lesson_enrolment_delete cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }
