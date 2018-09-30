@@ -195,7 +195,6 @@ class Student extends \yii\db\ActiveRecord
     public function getLesson()
     {
         return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
-            ->onCondition(['lesson.isDeleted' => false])
             ->viaTable('enrolment', ['studentId' => 'id']);
     }
 
