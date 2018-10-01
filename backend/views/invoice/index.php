@@ -22,6 +22,10 @@ $this->title = (int) $searchModel->type === Invoice::TYPE_PRO_FORMA_INVOICE ? 'P
 $this->params['action-button'] = $actionButton; ?>
 <div class="clearfix"></div>
 <div class="grid-row-open">
+<?php yii\widgets\Pjax::begin([
+        'id' => 'invoice-listing',
+        'timeout' => 6000,
+    ]) ?>
 	<?php
 	$locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         if ((int) $searchModel->type === (int) Invoice::TYPE_PRO_FORMA_INVOICE) {
@@ -182,7 +186,7 @@ $this->params['action-button'] = $actionButton; ?>
                     'attribute' => 'invoiceDateRange',
                         'options' => [
                             'class' => 'form-control',
-                            'readOnly' => true
+                            'readOnly' => true,
                         ],
                         'pluginOptions' => [
                         'autoApply' => true,
@@ -200,9 +204,8 @@ $this->params['action-button'] = $actionButton; ?>
                     ]) . '<span class="input-group-addon remove-button" title="Clear field"><span class="glyphicon glyphicon-remove" ></span></span></div>',
                     'value' => function ($data) {
                         $date = Yii::$app->formatter->asDate($data->date);
-
                         return !empty($date) ? $date : null;
-                    },
+                    }
                 ],
                 [
 		    'attribute' => 'customer',
@@ -269,10 +272,7 @@ $this->params['action-button'] = $actionButton; ?>
         }
 
         ?>
-	<?php yii\widgets\Pjax::begin([
-        'id' => 'invoice-listing',
-        'timeout' => 6000,
-    ]) ?>
+	
     <?php echo KartikGridView::widget([
         'dataProvider' => $dataProvider,
 		'filterModel' => $searchModel,
