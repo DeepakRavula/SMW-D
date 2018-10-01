@@ -885,9 +885,6 @@ class Lesson extends \yii\db\ActiveRecord
             foreach ($this->getCreditAppliedPayment($this->enrolment->id) as $lessonPayment) {
                 $lessonPayment->delete();
             }
-            if ($this->isExtra()) {
-                $this->enrolment->delete();
-            }
             $this->course->updateDates();
         }
         return true;
