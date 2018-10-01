@@ -52,8 +52,7 @@ td.kv-group-odd {
                     ->location($locationId)
                     ->invoice()
                     ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($model->date))->format('Y-m-d'), 
-                        (new \DateTime($model->date))->format('Y-m-d')])
-                    ->andWhere(['>', 'tax', 0]);
+                        (new \DateTime($model->date))->format('Y-m-d')]);
                     
                 return [
                     'mergeColumns' => [[1, 2]],
@@ -128,7 +127,7 @@ td.kv-group-odd {
                 return (new \DateTime($data->date))->format('l, F jS, Y');
             },
             'group' => true,
-            'contentOptions' => ['style' => 'font-weight:bold;font-size:14px;text-align:left;','class'=>'main-group'],
+            'contentOptions' => ['style' => 'font-size:14px;text-align:left;','class'=>'main-group'],
         ],
             [
             'label' => 'Subtotal',
@@ -138,8 +137,7 @@ td.kv-group-odd {
                     ->location($locationId)
                     ->invoice()
                     ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($data->date))->format('Y-m-d'), 
-                        (new \DateTime($data->date))->format('Y-m-d')])
-                    ->andWhere(['>', 'tax', 0]);
+                        (new \DateTime($data->date))->format('Y-m-d')]);
                 return Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('subTotal'), 2));
             },
             'group' => true,
@@ -158,8 +156,7 @@ td.kv-group-odd {
                     ->location($locationId)
                     ->invoice()
                     ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($data->date))->format('Y-m-d'), 
-                        (new \DateTime($data->date))->format('Y-m-d')])
-                    ->andWhere(['>', 'tax', 0]);
+                        (new \DateTime($data->date))->format('Y-m-d')]);
                 return Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('tax'), 2));
             },
             'group' => true,
@@ -178,8 +175,7 @@ td.kv-group-odd {
                     ->location($locationId)
                     ->invoice()
                     ->andWhere(['between', 'DATE(invoice.date)', (new \DateTime($data->date))->format('Y-m-d'), 
-                        (new \DateTime($data->date))->format('Y-m-d')])
-                    ->andWhere(['>', 'tax', 0]);
+                        (new \DateTime($data->date))->format('Y-m-d')]);
                 return Yii::$app->formatter->asCurrency(round($invoiceTaxes->sum('total'), 2));
             },
             'group' => true,
