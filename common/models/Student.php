@@ -163,7 +163,9 @@ class Student extends \yii\db\ActiveRecord
 
     public function getOneEnrolment()
     {
-        return $this->hasOne(Enrolment::className(), ['studentId' => 'id']);
+        return $this->hasOne(Enrolment::className(), ['studentId' => 'id'])
+        ->isRegular()
+        ->onCondition(['enrolment.isDeleted' => false, 'enrolment.isConfirmed' => true]);
     }
 
     public function getFirstPrivateCourse()
@@ -194,6 +196,7 @@ class Student extends \yii\db\ActiveRecord
     public function getLesson()
     {
         return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
+            ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true])
             ->viaTable('enrolment', ['studentId' => 'id']);
     }
 
