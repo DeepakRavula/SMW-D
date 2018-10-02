@@ -44,7 +44,7 @@ class LessonDiscount extends \yii\db\ActiveRecord
         return [
             [['lessonId', 'valueType', 'type'], 'required'],
             [['lessonId', 'valueType', 'type'], 'integer'],
-            [['value'], 'number', 'min' => 0],
+            [['value'], 'number'],
         ];
     }
 
