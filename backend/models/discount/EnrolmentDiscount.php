@@ -25,7 +25,7 @@ class EnrolmentDiscount extends Model
     {
         return [
             [['enrolmentId', 'discountType', 'type'], 'integer'],
-            [['discount'], 'number', 'max' => 100],
+            [['discount'], 'number', 'min' => 0, 'max' => 100],
         ];
     }
     
