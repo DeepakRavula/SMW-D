@@ -215,35 +215,23 @@ class ScheduleController extends BaseController
         $availabilityQuery = TeacherAvailability::find()
             ->notDeleted()
             ->andWhere(['day' => $date->format('N')]);
-        if ($showAll && empty($teacherId) && empty($programId)) {
-            $availabilityDayQuery = TeacherAvailability::find()
-                ->notDeleted()
-                ->location($locationId)
-                ->andWhere(['day' => $date->format('N')]);
-            $availabilityQuery->union($availabilityDayQuery);
-        } else {
-            $availabilityQuery->joinWith(['teacher' => function ($query) use ($formatedDate) {
-                $query->joinWith(['teacherLessons' => function ($query) use ($formatedDate) {
-                    $query->andWhere(['DATE(lesson.date)' => $formatedDate]);
+        $availabilityQuery->joinWith(['userLocation' => function ($query) use ($teacherId, $programId, $locationId, $showAll, $formatedDate) {
+            if (!$showAll) {
+                $query->joinWith(['user' => function ($query) use ($formatedDate) {
+                    $query->joinWith(['teacherLessons' => function ($query) use ($formatedDate) {
+                        $query->andWhere(['DATE(lesson.date)' => $formatedDate]);
+                    }]);
                 }]);
-            }]);
-        }
-        if ($teacherId) {
-            $availabilityQuery->joinWith(['userLocation' => function ($query) use ($teacherId) {
+            }
+            if ($teacherId) {
                 $query->andWhere(['user_location.user_id' => $teacherId]);
-            }]);
-        }
-        if ($programId) {
-            $availabilityQuery->joinWith(['userLocation' => function ($query) use ($locationId, $programId) {
-                $query->andWhere(['user_location.location_id' => $locationId]);
+            } else if ($programId) {
                 $query->joinWith(['qualifications'  => function ($query) use ($programId) {
                     $query->andWhere(['qualification.program_id' => $programId]);
                 }]);
-            }]);
-        } else {
-            $availabilityQuery->location($locationId);
-        }
-        
+            }
+            $query->andWhere(['user_location.location_id' => $locationId]);
+        }]);
         $availabilities = $availabilityQuery->all();
         return $availabilities;
     }
