@@ -23,18 +23,6 @@ $columns = [
         'headerOptions' => ['class' => 'kv-sticky-column bg-light-gray'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
     ],
-    [
-        'class' => 'yii\grid\ActionColumn',
-        'template' => '{edit}',
-        'buttons' => [
-            'edit' => function ($url, $model) {
-                return  Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>', '#', [
-                    'id' => 'edit-button-' . $model->id,
-                    'class' => 'review-lesson-edit-button m-l-20'
-                ]);
-            },
-        ],
-    ],
 ];
 ?>
 	
