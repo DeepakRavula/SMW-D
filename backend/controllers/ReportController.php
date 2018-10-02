@@ -45,6 +45,11 @@ class ReportController extends BaseController
                         'actions' => ['payment'],
                         'roles' => ['managePayments'],
                     ],
+                    [
+                        'allow' => true,
+                        'actions' => ['sales-and-payment'],
+                        'roles' => ['managePayments'],
+                    ],
 					[
                         'allow' => true,
                         'actions' => ['royalty'],
@@ -430,6 +435,44 @@ class ReportController extends BaseController
 
         return $this->render('all-locations/index', [
                 'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionSalesAndPayment()
+    {
+        $request = Yii::$app->request;
+        $salesSearchModel                      = new InvoiceLineItemSearch();
+        $salesSearchModel->groupByItemCategory = true;
+        $salesSearchModel->fromDate            = (new \DateTime())->format('M d,Y');
+        $salesSearchModel->toDate              = (new \DateTime())->format('M d,Y');
+        $salesSearchModel->dateRange           = $salesSearchModel->fromDate.' - '.$salesSearchModel->toDate;
+        $request = Yii::$app->request;
+        if ($salesSearchModel->load($request->get())) {
+            $salesAndPaymentRequest = $request->get('SalesAndPaymentSearch');
+            $salesSearchModel->dateRange = $salesAndPaymentRequest['dateRange'];
+        }
+        
+
+        $paymentSearchModel = new PaymentReportSearch();
+        $currentDate = new \DateTime();
+        $paymentSearchModel->fromDate = $currentDate->format('M d,Y');
+        $paymentSearchModel->toDate = $currentDate->format('M d,Y');
+        $paymentSearchModel->dateRange = $paymentSearchModel->fromDate . ' - ' .$paymentSearchModel->toDate;
+        $request = Yii::$app->request;
+        $paymentSearchModel->load($request->get());
+        $dataProvider = $paymentSearchModel->search(Yii::$app->request->queryParams);
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $paymentsAmount = Payment::find()
+            ->exceptAutoPayments()
+            ->exceptGiftCard()
+            ->location($locationId)
+            ->notDeleted()
+            ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($paymentSearchModel->fromDate))->format('Y-m-d'), 
+                (new \DateTime($paymentSearchModel->toDate))->format('Y-m-d')])
+            ->sum('payment.amount');
+        return $this->render('sales-and-payment/index',
+                [
                 'dataProvider' => $dataProvider,
         ]);
     }
