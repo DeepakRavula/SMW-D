@@ -41,28 +41,6 @@ use kartik\switchinput\SwitchInput;
                     return $invoiceStatus;
                 }
             ],
-            [
-                'class' => 'kartik\grid\ActionColumn',
-                'template' => '{switch}',
-                'header' => 'Preferred Payment Status',
-                'buttons' => [
-                    'switch' => function ($url, $data, $key) {
-                        return SwitchInput::widget([
-                                'name' => 'preferred-payment-status',
-                                'value' => $data->isPreferredPaymentEnabled,
-                                'options' => ['class' => 'enrolment-preferred-payment'],
-                                'pluginOptions' => [
-                                    'handleWidth' => 30,
-                                    'onColor' => 'success',
-                                    'offColor' => 'danger',
-                                    'onText' => 'Enable',
-                                    'offText' => 'Disable',
-                                    'size' => 'mini'
-                                ],
-                        ]);
-                    },
-                ],
-            ]
         ] ?>
 <?php Pjax::begin(['id' => 'payment-cycle-listing']); ?>
     <?= KartikGridView::widget([
