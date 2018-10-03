@@ -36,7 +36,7 @@ $this->params['show-all'] = $this->render('_button', [
 				return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName
 						: null;
 			},
-			'contentOptions' => ['style' => 'width:17%'],
+			'contentOptions' => ['style' => 'width:17%;white-space:nowrap;overflow: hidden'],
 		],
 		[
 			'label' => 'Program',
@@ -44,7 +44,7 @@ $this->params['show-all'] = $this->render('_button', [
 			'value' => function ($data) {
 				return !empty($data->course->program->name) ? $data->course->program->name : null;
 			},
-			'contentOptions' => ['style' => 'width:17%'],
+			'contentOptions' => ['style' => 'width:17%;white-space:nowrap;overflow: hidden'],
 		],
 		[
 			'label' => 'Teacher',
@@ -53,7 +53,7 @@ $this->params['show-all'] = $this->render('_button', [
 				return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity
 						: null;
 			},
-			'contentOptions' => ['style' => 'width:17%'],
+			'contentOptions' => ['style' => 'width:17%;white-space:nowrap;overflow: hidden'],
 		],
 		[
 			'label' => 'Duration',
@@ -61,7 +61,7 @@ $this->params['show-all'] = $this->render('_button', [
 				return !empty($data->duration) ? (new \DateTime($data->duration))->format('H:i')
 						: null;
 			},
-			'contentOptions' => ['style' => 'width:5%'],
+			'contentOptions' => ['style' => 'width:5%;white-space:nowrap;overflow: hidden'],
 		],
 		[
 			'label' => 'Date',
@@ -70,7 +70,7 @@ $this->params['show-all'] = $this->render('_button', [
 
 				return !empty($date) ? $date : null;
 			},
-			'contentOptions' => ['style' => 'width:15%'],
+			'contentOptions' => ['style' => 'width:15%;white-space:nowrap;overflow: hidden'],
 		],
 		[
 			'label' => 'Expiry Date',
@@ -80,7 +80,7 @@ $this->params['show-all'] = $this->render('_button', [
 				}
 				return !empty($date) ? $date : null;
 			},
-			'contentOptions' => ['style' => 'width:17%'],
+			'contentOptions' => ['style' => 'width:17%;white-space:nowrap;overflow: hidden'],
 		],
 	];
 	?>

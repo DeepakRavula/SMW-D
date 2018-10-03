@@ -3,6 +3,8 @@
 use yii\helpers\Url;
 use kartik\datetime\DateTimePickerAsset;
 use yii\helpers\Json;
+use insolita\wgadminlte\LteConst;
+use insolita\wgadminlte\LteBox;
 DateTimePickerAsset::register($this);
 $this->title = 'Review Lessons';
 ?>
@@ -23,6 +25,41 @@ $this->title = 'Review Lessons';
             ]); ?>
         <?php endif; ?>
     </div>
+</div>
+
+<div class="row">
+<?php if ($model->rescheduleBeginDate) : ?>
+<div class="col-md-6">
+<?php LteBox::begin([
+            'type' => LteConst::TYPE_DEFAULT,
+            'boxTools' => false,
+            'title' => 'Unscheduled Lessons',
+            'withBorder' => false,
+        ]) ?>
+        <?= $this->render('review/_unscheduled-lesson', [
+            'searchModel' => $searchModel,
+            'unscheduledLessonDataProvider' => $unscheduledLessonDataProvider,
+            'conflicts' => $conflicts
+        ]); ?>
+<?php LteBox::end() ?>
+</div>
+<?php endif; ?>
+<?php if ($model->rescheduleBeginDate) : ?>
+<div class="col-md-6">
+<?php LteBox::begin([
+            'type' => LteConst::TYPE_DEFAULT,
+            'boxTools' => false,
+            'title' => 'Rescheduled Lessons',
+            'withBorder' => false,
+        ]) ?>
+        <?= $this->render('review/_rescheduled-lesson', [
+            'searchModel' => $searchModel,
+            'rescheduledLessonDataProvider' => $rescheduledLessonDataProvider,
+            'conflicts' => $conflicts
+        ]); ?>
+<?php LteBox::end() ?>
+</div>
+<?php endif; ?>
 </div>
 
 <?php
