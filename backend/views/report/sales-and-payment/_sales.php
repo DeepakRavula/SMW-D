@@ -66,10 +66,6 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'value' => function ($data) {
                 return $data->itemCategory->name;
             },
-            'pageSummary' => 'Page Total',
-            'contentOptions' => ['style' => 'font-weight:bold;font-style:italic;font-size:14px;text-align:left', 'class' => 'main-group'],
-            'pageSummary' => 'Page Total',
-            'contentOptions' => ['style' => 'font-size:14px;text-align:left'],
         ],
         [
             'label' => 'Subtotal',
@@ -84,6 +80,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             },
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
 
         [
@@ -99,6 +97,8 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             },
             'contentOptions' => ['class' => 'text-right'],
             'hAlign' => 'right',
+            'pageSummary' => true,
+            'pageSummaryFunc' => GridView::F_SUM
         ],
 
         [
@@ -135,6 +135,7 @@ GridView::widget([
     'headerRowOptions' => ['class' => 'bg-light-gray'],
     'tableOptions' => ['class' => 'table table-bordered table-responsive table-condensed table-itemcategory-report', 'id' => 'payment'],
     'pjax' => true,
+    'showPageSummary' => true,
     'pjaxSettings' => [
         'neverTimeout' => true,
         'options' => [

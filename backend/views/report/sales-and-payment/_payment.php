@@ -70,10 +70,12 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                         $amount += $payment->amount;
                     }
 
-                    return Yii::$app->formatter->asCurrency(round($amount, 2));
+                    return Yii::$app->formatter->asDecimal(round($amount, 2));
                 },
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
+                'pageSummary' => true,
+                'pageSummaryFunc' => GridView::F_SUM
             ],
         ];
         ?>
