@@ -54,7 +54,7 @@ use yii\helpers\Url;
     </div>
     <div class="row">
         <div class="col-xs-7 pull-left">
-            <label class="dollar-symbol">Multiple Enrollment Discount(per month)</label>
+            <label class="dollar-symbol">Multiple Enrollment Discount</label>
         </div>
         <div class="col-xs-2">
         </div>

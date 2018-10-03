@@ -25,7 +25,7 @@ class Base extends Model
     {
         return [
             [['lessonId', 'valueType', 'type'], 'integer'],
-            [['value'], 'number', 'min' => 0, 'max' => 100]
+            [['value'], 'number', 'max' => 100]
         ];
     }
     
