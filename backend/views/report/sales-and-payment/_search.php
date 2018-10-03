@@ -13,7 +13,7 @@ use kartik\daterange\DateRangePicker;
 
 <?php
 $form = ActiveForm::begin([
-        'id' => 'royalty-search-form',
+        'id' => 'sales-payment-search-form',
         'method' => 'get',
     ]);
 
@@ -51,7 +51,7 @@ $form = ActiveForm::begin([
 
 <script>
     $(document).off('change', '#reportsearch-daterange').on('change', '#reportsearch-daterange', function() {
-        $("#royalty-search-form").submit();
+        $("#sales-payment-search-form").submit();
     });
 </script>
 

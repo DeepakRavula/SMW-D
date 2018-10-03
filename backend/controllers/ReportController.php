@@ -441,39 +441,58 @@ class ReportController extends BaseController
 
     public function actionSalesAndPayment()
     {
-        $request = Yii::$app->request;
-        $salesSearchModel                      = new InvoiceLineItemSearch();
-        $salesSearchModel->groupByItemCategory = true;
-        $salesSearchModel->fromDate            = (new \DateTime())->format('M d,Y');
-        $salesSearchModel->toDate              = (new \DateTime())->format('M d,Y');
-        $salesSearchModel->dateRange           = $salesSearchModel->fromDate.' - '.$salesSearchModel->toDate;
-        $request = Yii::$app->request;
-        if ($salesSearchModel->load($request->get())) {
-            $salesAndPaymentRequest = $request->get('SalesAndPaymentSearch');
-            $salesSearchModel->dateRange = $salesAndPaymentRequest['dateRange'];
-        }
-        
-
-        $paymentSearchModel = new PaymentReportSearch();
+        $searchModel = new ReportSearch();
         $currentDate = new \DateTime();
-        $paymentSearchModel->fromDate = $currentDate->format('M d,Y');
-        $paymentSearchModel->toDate = $currentDate->format('M d,Y');
-        $paymentSearchModel->dateRange = $paymentSearchModel->fromDate . ' - ' .$paymentSearchModel->toDate;
+        $searchModel->fromDate = Yii::$app->formatter->asDate($currentDate);
+        $searchModel->toDate = Yii::$app->formatter->asDate($currentDate);
+        $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;     
         $request = Yii::$app->request;
-        $paymentSearchModel->load($request->get());
-        $dataProvider = $paymentSearchModel->search(Yii::$app->request->queryParams);
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
-        $paymentsAmount = Payment::find()
-            ->exceptAutoPayments()
-            ->exceptGiftCard()
-            ->location($locationId)
+        if ($searchModel->load($request->get())) {
+            $reportRequest = $request->get('ReportSearch');
+            $searchModel->dateRange = $reportRequest['dateRange']; 
+        }
+        $salesQuery = InvoiceLineItem::find()
             ->notDeleted()
-            ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($paymentSearchModel->fromDate))->format('Y-m-d'), 
-                (new \DateTime($paymentSearchModel->toDate))->format('Y-m-d')])
-            ->sum('payment.amount');
-        return $this->render('sales-and-payment/index',
-                [
-                'dataProvider' => $dataProvider,
-        ]);
-    }
+            ->joinWith(['invoice' => function ($query) use ($locationId, $searchModel) {
+            $query->notDeleted()
+                ->notCanceled()
+                ->notReturned()
+                ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
+                ->location($locationId)
+                ->between((new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d'))
+                ->orderBy([
+                        'DATE(invoice.date)' => SORT_ASC,
+                    ]);
+            }])
+            ->joinWith(['itemCategory' => function ($query) {
+                $query->groupBy('item_category.id');
+            }]);
+           
+
+        $salesDataProvider = new ActiveDataProvider([
+            'query' => $salesQuery,
+        ]);   
+            $paymentsQuery = Payment::find()
+                ->exceptAutoPayments()
+                ->exceptGiftCard()
+                ->location($locationId)
+                ->notDeleted()
+                ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), 
+                    (new \DateTime($searchModel->toDate))->format('Y-m-d')])
+                ->groupBy('payment.payment_method_id');    
+        $paymentsDataProvider = new ActiveDataProvider([
+            'query' => $paymentsQuery,
+        ]);       
+        
+                return $this->render(
+                    'sales-and-payment/index',
+                        [
+                        'searchModel' => $searchModel,
+                        'salesDataProvider' => $salesDataProvider,
+                        'paymentsDataProvider' => $paymentsDataProvider,
+                ]
+                );
+            }
+
 }
