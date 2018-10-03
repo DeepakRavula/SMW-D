@@ -49,7 +49,7 @@ class PrintController extends BaseController
                             'time-voucher', 'customer-invoice', 'account-view', 
                             'royalty', 'royalty-free', 'tax-collected', 'user', 
                             'customer-items-print', 'proforma-invoice','payment',
-                            'receipt'
+                            'receipt', 'sales-and-payment'
                         ],
                         'roles' => ['administrator', 'staffmember', 'owner'],
                     ],
@@ -633,5 +633,61 @@ $results[] = [
         'customer'                     =>   $customer,
     ]);
     }	
-}		
+}	
+
+public function actionSalesAndPayment()
+{
+    $searchModel = new ReportSearch();
+    $currentDate = new \DateTime();
+    $searchModel->fromDate = Yii::$app->formatter->asDate($currentDate);
+    $searchModel->toDate = Yii::$app->formatter->asDate($currentDate);
+    $searchModel->dateRange = $searchModel->fromDate . ' - ' . $searchModel->toDate;     
+    $request = Yii::$app->request;
+    $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+    if ($searchModel->load($request->get())) {
+        $reportRequest = $request->get('ReportSearch');
+        $searchModel->dateRange = $reportRequest['dateRange']; 
+    }
+    $salesQuery = InvoiceLineItem::find()
+        ->notDeleted()
+        ->joinWith(['invoice' => function ($query) use ($locationId, $searchModel) {
+        $query->notDeleted()
+            ->notCanceled()
+            ->notReturned()
+            ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
+            ->location($locationId)
+            ->between((new \DateTime($searchModel->fromDate))->format('Y-m-d'), (new \DateTime($searchModel->toDate))->format('Y-m-d'))
+            ->orderBy([
+                    'DATE(invoice.date)' => SORT_ASC,
+                ]);
+        }])
+        ->joinWith(['itemCategory' => function ($query) {
+            $query->groupBy('item_category.id');
+        }]);
+       
+
+    $salesDataProvider = new ActiveDataProvider([
+        'query' => $salesQuery,
+    ]);   
+        $paymentsQuery = Payment::find()
+            ->exceptAutoPayments()
+            ->exceptGiftCard()
+            ->location($locationId)
+            ->notDeleted()
+            ->andWhere(['between', 'DATE(payment.date)', (new \DateTime($searchModel->fromDate))->format('Y-m-d'), 
+                (new \DateTime($searchModel->toDate))->format('Y-m-d')])
+            ->groupBy('payment.payment_method_id');    
+    $paymentsDataProvider = new ActiveDataProvider([
+        'query' => $paymentsQuery,
+    ]);       
+    
+    $this->layout = '/print';
+            return $this->render('/report/sales-and-payment/_print',
+                    [
+                    'searchModel' => $searchModel,
+                    'salesDataProvider' => $salesDataProvider,
+                    'paymentsDataProvider' => $paymentsDataProvider,
+            ]
+            );
+        }
 }

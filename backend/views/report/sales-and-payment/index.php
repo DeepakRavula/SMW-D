@@ -10,7 +10,7 @@ use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 
 $this->title = 'Sales and Payments Summary';
-//$this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class' => 'btn btn-box-tool']);
+$this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['id' => 'print', 'class' => 'btn btn-box-tool']);
 
 ?>
 <div class="col-xs-12 col-md-6 form-group form-inline">
@@ -49,3 +49,13 @@ $this->title = 'Sales and Payments Summary';
 <?php LteBox::end() ?>
 </div>
 <div class="clearfix"></div>
+<script>
+    $(document).ready(function () {
+        $(document).on("click", "#print", function () {
+            var dateRange = $('#reportsearch-daterange').val();
+            var params = $.param({'ReportSearch[dateRange]': dateRange});
+            var url = '<?php echo Url::to(['print/sales-and-payment']); ?>?' + params;
+            window.open(url, '_blank');
+        });
+    });
+</script>
