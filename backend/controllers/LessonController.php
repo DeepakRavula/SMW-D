@@ -412,6 +412,7 @@ class LessonController extends BaseController
         $request = Yii::$app->request;
         $model->load($request->get());
         $searchModel->load($request->get());
+        $oldLessonIds[] = null;
         if ($model->courseId) {
             $courseModel = Course::findOne(['id' => $model->courseId]);
             $startDate = new \DateTime($model->rescheduleBeginDate);
@@ -431,6 +432,9 @@ class LessonController extends BaseController
                     ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
                     ->orderBy(['lesson.date' => SORT_ASC])
                     ->all();
+                $oldLessonIds = ArrayHelper::getColumn($oldLessons, function ($element) {
+                    return $element->id;
+                });
                 $oldLessonsRe = Lesson::find()
                     ->andWhere(['courseId' => $courseModel->id])
                     ->notDeleted()
@@ -481,12 +485,6 @@ class LessonController extends BaseController
         $lessonIds = ArrayHelper::getColumn($lessons, function ($element) {
             return $element->id;
         });
-        $oldLessonIds[] = null;
-        if ($model->rescheduleBeginDate) {
-            $oldLessonIds = ArrayHelper::getColumn($oldLessons, function ($element) {
-                return $element->id;
-            });
-        }
         $unscheduledLessonCount = Lesson::find()
             ->andWhere(['id' => $lessonIds])
             ->andWhere(['NOT', ['id' => $conflictedLessons['holidayConflictedLessonIds']]])
