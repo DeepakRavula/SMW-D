@@ -198,6 +198,13 @@ echo Menu::widget([
 					'visible' => Yii::$app->user->can('manageDiscountReport'),
                     'active' => Yii::$app->controller->action->id === 'discount',
                 ],
+                [
+                    'label' => Yii::t('backend', 'Sales & Payment Report'),
+                    'icon' => '<i class="fa fa-dollar"></i>',
+                    'url' => ['/report/sales-and-payment'],
+					'visible' => Yii::$app->user->can('manageItemCategoryReport'),
+                    'active' => (Yii::$app->controller->action->id === 'sales-and-payment') ? true : false,
+                ],
                     [
                     'label' => Yii::t('backend', 'All Locations'),
                     'icon' => '<i class="fa fa-cny"></i>',
