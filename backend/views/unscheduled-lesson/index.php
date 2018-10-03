@@ -33,7 +33,7 @@ $this->params['show-all'] = $this->render('_button', [
 			'label' => 'Student',
 			'attribute' => 'student',
 			'value' => function ($data) {
-				return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName
+				return !empty($data->course->enrolment->student->fullName) ? substr($data->course->enrolment->student->fullName, 0, 25)
 						: null;
 			},
 			'contentOptions' => ['style' => 'width:15%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'],
@@ -42,7 +42,7 @@ $this->params['show-all'] = $this->render('_button', [
 			'label' => 'Program',
 			'attribute' => 'program',
 			'value' => function ($data) {
-				return !empty($data->course->program->name) ? $data->course->program->name : null;
+				return !empty($data->course->program->name) ? substr($data->course->program->name, 0, 25) : null;
 			},
 			'contentOptions' => ['style' => 'width:15%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'],
 		],
@@ -50,7 +50,7 @@ $this->params['show-all'] = $this->render('_button', [
 			'label' => 'Teacher',
 			'attribute' => 'teacher',
 			'value' => function ($data) {
-				return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity
+				return !empty($data->teacher->publicIdentity) ? substr($data->teacher->publicIdentity, 0, 25)
 						: null;
 			},
 			'contentOptions' => ['style' => 'width:15%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'],
