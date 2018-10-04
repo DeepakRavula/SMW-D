@@ -67,11 +67,9 @@ if ($loggedUser->isAdmin()) {
             <dd><?= !empty($model->conversionDate) ?  Yii::$app->formatter->asDate($model->conversionDate) : null; ?></dd>
             <!-- <dt> Is Cron Enabled</dt>
             <dd> $model->getCronStatus(); </dd> -->
-            <?php $locationPaymentPreference = LocationPaymentPreference::find()
-                                            ->andWhere(['locationId' => $model->id])
-                                            ->one(); ?>
+            <?php $locationPaymentPreference = $model->locationPaymentPreference->isPreferredPaymentEnabled; ?>
             <dt>Payment Preference</dt>
-            <dd> <?= SwitchInput::widget(['value' => $locationPaymentPreference->isPreferredPaymentEnabled, 'name'=>'payment-preference-status', 'id'=>'location-payment-preferrence', 'pluginOptions'=>['handleWidth'=>35, 'onText'=>'Enable', 'offText'=>'Disable']]); ?> </dd>
+            <dd> <?= SwitchInput::widget(['value' => $locationPaymentPreference, 'name'=>'payment-preference-status', 'id'=>'location-payment-preferrence', 'pluginOptions'=>['handleWidth'=>35, 'onText'=>'Enable', 'offText'=>'Disable']]); ?> </dd>
         <?php endif; ?>
 		</dl>
 		<?php LteBox::end() ?>
