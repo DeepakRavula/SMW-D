@@ -36,24 +36,24 @@ $this->params['show-all'] = $this->render('_button', [
 				return !empty($data->course->enrolment->student->fullName) ? substr($data->course->enrolment->student->fullName, 0, 21)
 						: null;
 			},
-			'contentOptions' => ['style' => 'width:22%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'],
+			'contentOptions' => ['class' => 'text-ellipsis display-22'],
 		],
 		[
 			'label' => 'Program',
 			'attribute' => 'program',
 			'value' => function ($data) {
-				return !empty($data->course->program->name) ? substr($data->course->program->name, 0, 20) : null;
+				return !empty($data->course->program->name) ? $data->course->program->name : null;
 			},
-			'contentOptions' => ['style' => 'width:22%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'],
+			'contentOptions' => ['class' => 'text-ellipsis display-22'],
 		],
 		[
 			'label' => 'Teacher',
 			'attribute' => 'teacher',
 			'value' => function ($data) {
-				return !empty($data->teacher->publicIdentity) ? substr($data->teacher->publicIdentity, 0, 25)
+				return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity
 						: null;
 			},
-			'contentOptions' => ['style' => 'width:22%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'],
+			'contentOptions' => ['class' => 'text-ellipsis display-22'],
 		],
 		[
 			'label' => 'Duration',
@@ -61,7 +61,7 @@ $this->params['show-all'] = $this->render('_button', [
 				return !empty($data->duration) ? (new \DateTime($data->duration))->format('H:i')
 						: null;
 			},
-			'contentOptions' => ['style' => 'width:6%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'],
+			'contentOptions' => ['class' => 'text-ellipsis display-6'],
 		],
 		[
 			'label' => 'Date',
@@ -70,7 +70,7 @@ $this->params['show-all'] = $this->render('_button', [
 
 				return !empty($date) ? $date : null;
 			},
-			'contentOptions' => ['style' => 'width:14%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'],
+			'contentOptions' => ['class' => 'text-ellipsis display-14'],
 		],
 		[
 			'label' => 'Expiry Date',
@@ -80,7 +80,7 @@ $this->params['show-all'] = $this->render('_button', [
 				}
 				return !empty($date) ? $date : null;
 			},
-			'contentOptions' => ['style' => 'width:14%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'],
+			'contentOptions' => ['class' => 'text-ellipsis display-14'],
 		],
 	];
 	?>
