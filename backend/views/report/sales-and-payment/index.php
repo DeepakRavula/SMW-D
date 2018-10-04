@@ -36,7 +36,7 @@ $this->params['action-button'] = Html::a('<i class="fa fa-print"></i>', '#', ['i
     <?php
     LteBox::begin([
         'type' => LteConst::TYPE_DEFAULT,
-        'title' => 'Payment',
+        'title' => 'Payments',
         'withBorder' => true,
     ]);
     echo $this->render('_payment', [

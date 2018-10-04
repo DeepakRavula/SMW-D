@@ -68,7 +68,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             },
         ],
         [
-            'label' => 'Subtotal',
+            'label' => 'Subtotal($)',
             'format' => ['decimal', 2],
             'value' => function ($data) use ($searchModel)  {
                 $payments = getInvoiceLineItems($data, $searchModel);
@@ -85,7 +85,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ],
 
         [
-            'label' => 'Tax',
+            'label' => 'Tax($)',
             'format' => ['decimal', 2],
             'value' => function ($data) use ($searchModel){
                 $payments = getInvoiceLineItems($data, $searchModel);
@@ -102,7 +102,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
         ],
 
         [
-            'label' => 'Total',
+            'label' => 'Total($)',
             'format' => ['decimal', 2],
             'value' => function ($data) use ($searchModel) {
                 $payments = getInvoiceLineItems($data, $searchModel);
