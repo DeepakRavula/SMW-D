@@ -33,7 +33,7 @@ $this->params['show-all'] = $this->render('_button', [
 			'label' => 'Student',
 			'attribute' => 'student',
 			'value' => function ($data) {
-				return !empty($data->course->enrolment->student->fullName) ? substr($data->course->enrolment->student->fullName, 0, 21)
+				return !empty($data->course->enrolment->student->fullName) ? $data->course->enrolment->student->fullName
 						: null;
 			},
 			'contentOptions' => ['class' => 'text-ellipsis display-22'],
