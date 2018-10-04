@@ -199,7 +199,7 @@ echo Menu::widget([
                     'active' => Yii::$app->controller->action->id === 'discount',
                 ],
                 [
-                    'label' => Yii::t('backend', 'Sales & Payment Report'),
+                    'label' => Yii::t('backend', 'Sales & Payments Report'),
                     'icon' => '<i class="fa fa-dollar"></i>',
                     'url' => ['/report/sales-and-payment'],
 					'visible' => Yii::$app->user->can('manageItemCategoryReport'),

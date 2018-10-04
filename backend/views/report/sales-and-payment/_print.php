@@ -12,7 +12,7 @@ use common\models\Location;
 ]);
    ?>
 <div>
-    <h1><strong>Sales and Payment Report </strong></h1>
+    <h1><strong>Sales and Payments Report </strong></h1>
     <?php if ($searchModel->fromDate === $searchModel->toDate): ?>
     <h2> for <?=  Yii::$app->formatter->asDate($searchModel->toDate) ?></h2>
     <?php else: ?>
