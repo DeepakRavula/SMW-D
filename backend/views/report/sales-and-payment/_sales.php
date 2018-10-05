@@ -43,7 +43,6 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 .table > tbody >tr.warning >td:first-child:before {
     content : '';
 }
-.table > thead:first-child > tr:first-child > th{
 </style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 <?php $totalReportValue = ItemCategory::getTotal($salesDataProvider->query->all()); ?>
