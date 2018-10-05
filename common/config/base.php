@@ -187,6 +187,14 @@ $config = [
             'zh-CN' => '简体中文',
         ],
     ],
+    'container' => [
+        'definitions' => [
+            'yii\widgets\LinkPager' => [
+                'firstPageLabel' => 'First',
+                'lastPageLabel'  => 'Last', 
+            ]
+        ]
+    ]
 ];
 
 if (YII_ENV_PROD) {
