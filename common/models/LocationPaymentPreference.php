@@ -58,4 +58,9 @@ class LocationPaymentPreference extends \yii\db\ActiveRecord
             ],
         ];
     }
+    
+    public static function find()
+    {
+        return new \common\models\query\LocationPaymentPreferenceQuery(get_called_class());
+    }
 }
