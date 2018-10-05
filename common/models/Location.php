@@ -416,4 +416,9 @@ class Location extends \yii\db\ActiveRecord
         $walkin->save();
         return true;
     }
+
+    public function getLocationPaymentPreference()
+    {
+        return $this->hasOne(LocationPaymentPreference::className(), ['locationId' => 'id']);
+    }
 }

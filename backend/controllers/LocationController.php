@@ -13,7 +13,7 @@ use yii\web\NotFoundHttpException;
 use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
-
+use common\models\LocationPaymentPreference;
 /**
  * LocationController implements the CRUD actions for Location model.
  */
@@ -25,7 +25,7 @@ class LocationController extends BaseController
             'contentNegotiator' => [
                'class' => ContentNegotiator::className(),
                'only' => ['create', 'update', 'edit-availability', 'add-availability', 
-                   'render-events', 'check-availability', 'validate','delete-availability', 'copy-availability'
+                   'render-events', 'check-availability', 'validate','delete-availability', 'copy-availability', 'update-preferred-payment-status'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -39,7 +39,7 @@ class LocationController extends BaseController
                         'allow' => true,
                         'actions' => ['view', 'add-availability', 'edit-availability', 'render-events',
                             'check-availability', 'validate', 'delete-availability',
-                            'copy-availability'
+                            'copy-availability', 'update-preferred-payment-status'
                         ],
                         'roles' => ['manageLocations']
                     ],
@@ -302,5 +302,26 @@ class LocationController extends BaseController
         return [
             'status' => true
         ];
+    }
+
+    public function actionUpdatePreferredPaymentStatus($state, $locationId)
+    {
+        $model = LocationPaymentPreference::find()
+                ->andWhere([
+                    'locationId' => $locationId,
+                ])
+                ->one();
+        $model->isPreferredPaymentEnabled = $state;
+        if ($model->save()) {
+            $response = [
+                'status' => true,
+            ]; 
+        } else {
+            $response = [
+                'status' => false,
+                'errors' =>$model->getErrors()
+            ];
+        }
+        return $response;
     }
 }

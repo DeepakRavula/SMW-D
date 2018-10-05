@@ -27,8 +27,10 @@ class PaymentPreferenceController extends Controller
         ini_set('memory_limit', '-1');
         $locationIds = [];
         $locations = Location::find()->notDeleted()->cronEnabledLocations()->all();
-        foreach($locations as $location) {
-            $locationIds[] = $location->id;
+        foreach ($locations as $location) {
+                if ($location->locationPaymentPreference->isPreferredPaymentEnabled == true) {
+                    $locationIds[] = $location->id;
+                }
         }
         $currentDate = new \DateTime();
         $priorDate = $currentDate->modify('+ 15 days')->format('Y-m-d');
