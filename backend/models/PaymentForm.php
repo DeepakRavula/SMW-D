@@ -85,7 +85,7 @@ class PaymentForm extends Model
         if ($this->lessonIds) {
             $lessons = Lesson::find()
                 ->where(['id' => $this->lessonIds])
-                ->orderBy(['id' => SORT_ASC])
+                ->orderBy(['date' => SORT_ASC])
                 ->all();
         }
         if ($this->groupLessonIds) {
