@@ -72,7 +72,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
                     return Yii::$app->formatter->asDecimal(round($amount, 2));
                 },
-                'contentOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right dollar'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
                 'pageSummaryFunc' => GridView::F_SUM

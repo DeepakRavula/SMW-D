@@ -37,6 +37,13 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 .table > tbody + tbody {
      border-top: none;
 }
+.table > tbody >tr.warning >td:before {
+    content : '$';
+}
+.table > tbody >tr.warning >td:first-child:before {
+    content : '';
+}
+.table > thead:first-child > tr:first-child > th{
 </style>
 <script type='text/javascript' src="<?php echo Url::base(); ?>/js/kv-grid-group.js"></script>
 <?php $totalReportValue = ItemCategory::getTotal($salesDataProvider->query->all()); ?>
@@ -78,7 +85,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 }
                 return Yii::$app->formatter->asDecimal($subTotal);
             },
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right dollar'],
             'hAlign' => 'right',
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM
@@ -95,7 +102,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 }
                 return Yii::$app->formatter->asDecimal(round($tax_rate, 2));
             },
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right dollar'],
             'hAlign' => 'right',
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM
@@ -113,7 +120,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
 
                 return Yii::$app->formatter->asDecimal($amount, 2);
             },
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right dollar'],
             'hAlign' => 'right',
             'pageSummary' => true,
             'pageSummaryFunc' => GridView::F_SUM
