@@ -210,7 +210,7 @@ class Location extends \yii\db\ActiveRecord
 
             $locationPaymentPreference = new LocationPaymentPreference();
             $locationPaymentPreference->locationId = $this->id;
-            $locationPaymentPreference->isPreferredPaymentEnabled = true;
+            $locationPaymentPreference->isPreferredPaymentEnabled = false;
             $locationPaymentPreference->save();
 
             $this->addPermission();
