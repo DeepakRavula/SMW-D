@@ -544,3 +544,8 @@ dl {
     max-width: 150px;
     min-width: 150px;
 }
+
+.dollar:before {
+    content:"$";
+     }
+     
