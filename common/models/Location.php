@@ -4,6 +4,7 @@ namespace common\models;
 
 use yii\behaviors\SluggableBehavior;
 use common\models\LocationDebt;
+use common\models\LocationPaymentPreference;
 use Carbon\Carbon;
 use Yii;
 use common\models\User;
@@ -206,6 +207,11 @@ class Location extends \yii\db\ActiveRecord
             $locationDebt->type = LocationDebt::TYPE_ADVERTISEMENT;
             $locationDebt->value = $this->advertisementValue;
             $locationDebt->save();
+
+            $locationPaymentPreference = new LocationPaymentPreference();
+            $locationPaymentPreference->locationId = $this->id;
+            $locationPaymentPreference->isPreferredPaymentEnabled = true;
+            $locationPaymentPreference->save();
 
             $this->addPermission();
             $this->addWalkinCustomer();
