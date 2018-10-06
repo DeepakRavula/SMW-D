@@ -52,7 +52,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                 },
             ],
             [
-                'label' => 'Subtotal($)',
+                'label' => 'Subtotal',
                 'value' => function ($data) use ($searchModel) {
                     $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
                     $amount = 0;
