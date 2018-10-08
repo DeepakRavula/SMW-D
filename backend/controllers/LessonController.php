@@ -53,7 +53,7 @@ class LessonController extends BaseController
                 'only' => ['modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom',
                     'payment', 'substitute','update','unschedule', 'credit-transfer',
-                    'edit-price', 'edit-tax', 'edit-cost', 'fetch-conflict'
+                    'edit-price', 'edit-tax', 'edit-cost', 'fetch-conflict','new-index',
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -69,7 +69,7 @@ class LessonController extends BaseController
                             'index', 'view', 'credit-transfer', 'validate-on-update', 'edit-price',' edit-tax', 
 							'fetch-duration','edit-classroom', 'update', 'update-field', 'review',
 							'fetch-conflict', 'confirm', 'invoice', 'modify-classroom',
-                            'payment', 'substitute', 'unschedule', 'edit-cost', 'edit-tax', 
+                            'payment', 'substitute', 'unschedule', 'edit-cost', 'edit-tax', 'new-index',
                         ],
                         'roles' => ['managePrivateLessons', 
 							'manageGroupLessons'],
@@ -92,6 +92,39 @@ class LessonController extends BaseController
         $dataProvider->pagination->pageSize = 200;
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    public function actionNewIndex()
+    {
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $lessonIds = [];
+        $lessons = Lesson::find()
+        ->notDeleted()
+        ->isconfirmed()
+        ->notCanceled()
+        ->regular()
+        ->location($locationId)
+        ->activePrivateLessons()
+        ->andWhere(['between', 'lesson.id', 9000, 120000])
+        ->all();
+        foreach($lessons as $lesson)  {
+            if($lesson->enrolment){
+                $owingAmount = $lesson->getOwingAmount($lesson->enrolment->id);
+                if($owingAmount>=1 && $owingAmount<=5){
+                    $lessonIds[] = $lesson->id;
+                } 
+            }
+    }
+       $newLessons = Lesson::find()
+       ->where(['id' => $lessonIds])
+       ->orderBy(['date' => SORT_ASC]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $newLessons,
+        ]);
+        $dataProvider->pagination->pageSize = 200;
+        return $this->render('newindex', [
             'dataProvider' => $dataProvider,
         ]);
     }
