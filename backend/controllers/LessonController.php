@@ -33,6 +33,7 @@ use common\models\LessonPayment;
 use common\models\LessonReview;
 use yii\helpers\ArrayHelper;
 use common\models\LessonConfirm;
+use common\models\LessonOwing;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -69,7 +70,7 @@ class LessonController extends BaseController
                             'index', 'view', 'credit-transfer', 'validate-on-update', 'edit-price',' edit-tax', 
 							'fetch-duration','edit-classroom', 'update', 'update-field', 'review',
 							'fetch-conflict', 'confirm', 'invoice', 'modify-classroom',
-                            'payment', 'substitute', 'unschedule', 'edit-cost', 'edit-tax', 
+                            'payment', 'substitute', 'unschedule', 'edit-cost', 'edit-tax', 'new-index'
                         ],
                         'roles' => ['managePrivateLessons', 
 							'manageGroupLessons'],
@@ -92,6 +93,28 @@ class LessonController extends BaseController
         $dataProvider->pagination->pageSize = 200;
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    public function actionNewIndex()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
+        $lessonIds =  ArrayHelper::map(
+            LessonOwing::find()->all(),
+                'lessonId', 'lessonId'
+            );
+        $newLessons = Lesson::find()
+        ->location($locationId)
+        ->where(['lesson.id' => $lessonIds])
+        ->orderBy(['date' => SORT_ASC]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $newLessons,
+        ]);
+        $dataProvider->pagination->pageSize = 200;
+        return $this->render('newindex', [
             'dataProvider' => $dataProvider,
         ]);
     }

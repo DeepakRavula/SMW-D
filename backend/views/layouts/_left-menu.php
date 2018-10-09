@@ -69,6 +69,13 @@ echo Menu::widget([
             'active' => (Yii::$app->controller->id === 'lesson') ? true : false,
         ],
         [
+            'label' => Yii::t('backend', 'Private Lessons[Review]'),
+            'url' => ['/lesson/new-index'],
+            'icon' => '<i class="fa fa-music"></i>',
+            'visible' => Yii::$app->user->can('manageAdminArea'),
+            'active' => (Yii::$app->controller->id === 'lesson') ? true : false,
+        ],
+        [
             'label' => Yii::t('backend', 'Group Lessons'),
             'url' => ['/course/index', 'CourseSearch[type]' => Lesson::TYPE_GROUP_LESSON],
             'icon' => '<i class="fa fa-music"></i>',

@@ -695,6 +695,12 @@ class EnrolmentController extends BaseController
                     $model->shrink();
                 } else if ($lastLessonDate < $newEndDate) {
                     $model->extend();
+                    if($model->multipleEnrolmentDiscount) {
+                        $model->resetDiscount($model->multipleEnrolmentDiscount->type, $model->multipleEnrolmentDiscount->discount);
+                    }
+                    if($model->paymentFrequencyDiscount) {
+                        $model->resetDiscount($model->paymentFrequencyDiscount->type, $model->paymentFrequencyDiscount->discount);   
+                    }
                 }
                 $model->setStatus();
                 if ($message) {
