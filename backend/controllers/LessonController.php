@@ -70,7 +70,7 @@ class LessonController extends BaseController
                             'index', 'view', 'credit-transfer', 'validate-on-update', 'edit-price',' edit-tax', 
 							'fetch-duration','edit-classroom', 'update', 'update-field', 'review',
 							'fetch-conflict', 'confirm', 'invoice', 'modify-classroom',
-                            'payment', 'substitute', 'unschedule', 'edit-cost', 'edit-tax', 'new-index',
+                            'payment', 'substitute', 'unschedule', 'edit-cost', 'edit-tax', 'new-index'
                         ],
                         'roles' => ['managePrivateLessons', 
 							'manageGroupLessons'],
@@ -103,12 +103,12 @@ class LessonController extends BaseController
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
         $lessonIds =  ArrayHelper::map(
             LessonOwing::find()->all(),
-                'lessonId','lessonId'
+                'lessonId', 'lessonId'
             );
-       $newLessons = Lesson::find()
-       ->location($locationId)
-       ->where(['lesson.id' => $lessonIds])
-       ->orderBy(['date' => SORT_ASC]);
+        $newLessons = Lesson::find()
+        ->location($locationId)
+        ->where(['lesson.id' => $lessonIds])
+        ->orderBy(['date' => SORT_ASC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $newLessons,

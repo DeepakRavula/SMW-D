@@ -17,6 +17,7 @@ class m181008_155327_listing_lessons_with_owing_amount extends Migration
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
+
         $tableSchema = Yii::$app->db->schema->getTableSchema('lesson_owing');
         if ($tableSchema == null) {
             $this->createTable('lesson_owing', [
@@ -36,10 +37,10 @@ class m181008_155327_listing_lessons_with_owing_amount extends Migration
         ->location(['14','15'])
         ->activePrivateLessons()
         ->all();
-        foreach ($lessons as $lesson)  {
-            if ($lesson->enrolment){
+        foreach ($lessons as $lesson) {
+            if ($lesson->enrolment) {
                 $owingAmount = $lesson->getOwingAmount($lesson->enrolment->id);
-                if ($owingAmount>=1 && $owingAmount<=10){
+                if ($owingAmount >= 1 && $owingAmount <= 10) {
                     $lessonOwing = new LessonOwing();
                     $lessonOwing->lessonId = $lesson->id;
                     $lessonOwing->save();
@@ -58,19 +59,4 @@ class m181008_155327_listing_lessons_with_owing_amount extends Migration
 
         return false;
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m181008_155327_listing_lessons_with_owing_amount cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }
