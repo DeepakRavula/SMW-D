@@ -39,12 +39,6 @@ class LessonOwing extends \yii\db\ActiveRecord
         ];
     }
 
-    public function behaviors()
-    {
-        return [
-        ];
-    }
-
     public static function find()
     {
         return new \common\models\query\LessonOwingQuery(get_called_class());

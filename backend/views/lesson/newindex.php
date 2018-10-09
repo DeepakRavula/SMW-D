@@ -18,10 +18,6 @@ use kartik\grid\GridView;
     <?php Pjax::begin(['id' => 'lesson-index','timeout' => 6000,]); ?>
     <?php $columns = [
             [
-                'class' => '\kartik\grid\CheckboxColumn',
-                'mergeHeader' => false
-            ],
-            [
                 'label' => 'Student',
                 'attribute' => 'student',
                 'value' => function ($data) {
@@ -92,7 +88,6 @@ use kartik\grid\GridView;
         'dataProvider' => $dataProvider,
         'options' => ['id' => 'new-lesson-index-1'],
         'summary' => "Showing {begin} - {end} of {totalCount} items",
-        //'filterUrl' => Url::to(['lesson/index', 'LessonSearch[type]' => true, 'LessonSearch[showAll]' => $searchModel->showAll]),
         'rowOptions' => function ($model, $key, $index, $grid) {
             $url = Url::to(['lesson/view', 'id' => $model->id]);
 
