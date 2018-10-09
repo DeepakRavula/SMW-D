@@ -5,7 +5,7 @@
 use common\models\Location;
 
 ?>
-<div>
+
 <?php $reportText = 'Summary'; ?>
 <?php $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]); ?>
 <?php
@@ -13,7 +13,12 @@ use common\models\Location;
        'locationModel'=>$model,
 ]);
    ?>
-<div><h3><?= "Items Sold by Category Report for ". (new \DateTime($searchModel->fromDate))->format('F jS, Y') . ' to ' . (new \DateTime($searchModel->toDate))->format('F jS, Y');?></h3></div>
+<h3><strong><?= "Items Sold by Category Report" ?></strong></h3>
+<?php if ($searchModel->fromDate === $searchModel->toDate): ?>
+    <h3><?=  (new \DateTime($searchModel->toDate))->format('F jS, Y'); ?></h3>
+    <?php else: ?>
+    <h3><?=  (new \DateTime($searchModel->fromDate))->format('F jS, Y'); ?> to <?=  (new \DateTime($searchModel->toDate))->format('F jS, Y') ?></h3>
+    <?php endif; ?>
 <?php echo $this->render('_item-category', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]); ?>
 
 <script>

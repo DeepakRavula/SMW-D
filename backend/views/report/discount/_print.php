@@ -13,7 +13,11 @@ use common\models\Location;
    ?>
 <div>
 <h3><strong>Discount Report </strong></h3></div>
-<div><h3><?= $searchModel->fromDate->format('F jS, Y') . ' to ' . $searchModel->toDate->format('F jS, Y');?></h3></div>
+<div><?php if ($searchModel->fromDate === $searchModel->toDate): ?>
+    <h3><?=  (new \DateTime($searchModel->toDate))->format('F jS, Y'); ?></h3>
+    <?php else: ?>
+    <h3><?=  (new \DateTime($searchModel->fromDate))->format('F jS, Y'); ?> to <?=  (new \DateTime($searchModel->toDate))->format('F jS, Y') ?></h3>
+    <?php endif; ?></div>
 <?php echo $this->render('_discount', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]); ?>
 
 <script>

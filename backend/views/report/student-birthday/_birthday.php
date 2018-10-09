@@ -16,7 +16,12 @@ $this->title = 'Student Birthdays';
 ]);
    ?>
 <div>
-    <h3><strong>Student Birthday Report From  <?= Carbon::parse($searchModel->fromDate)->format('M d') . ' to ' . Carbon::parse($searchModel->toDate)->format('M d'); ?></strong></h3></div>
+    <h3><strong>Student Birthday Report</strong></h3>
+    <?php if ($searchModel->fromDate === $searchModel->toDate): ?>
+    <h3><?=  (new \DateTime($searchModel->toDate))->format('F jS'); ?></h3>
+    <?php else: ?>
+    <h3><?=  (new \DateTime($searchModel->fromDate))->format('F jS'); ?> to <?=  (new \DateTime($searchModel->toDate))->format('F jS, Y') ?></h3>
+    <?php endif; ?>
     <?php
     echo GridView::widget([
         'dataProvider' => $dataProvider,
