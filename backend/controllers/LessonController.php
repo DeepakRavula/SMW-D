@@ -33,6 +33,7 @@ use common\models\LessonPayment;
 use common\models\LessonReview;
 use yii\helpers\ArrayHelper;
 use common\models\LessonConfirm;
+use common\models\LessonOwing;
 
 /**
  * LessonController implements the CRUD actions for Lesson model.
@@ -53,7 +54,7 @@ class LessonController extends BaseController
                 'only' => ['modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom',
                     'payment', 'substitute','update','unschedule', 'credit-transfer',
-                    'edit-price', 'edit-tax', 'edit-cost', 'fetch-conflict','new-index',
+                    'edit-price', 'edit-tax', 'edit-cost', 'fetch-conflict',
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -97,27 +98,16 @@ class LessonController extends BaseController
     }
     public function actionNewIndex()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
         $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $lessonIds = [];
-        $lessons = Lesson::find()
-        ->notDeleted()
-        ->isconfirmed()
-        ->notCanceled()
-        ->regular()
-        ->location($locationId)
-        ->activePrivateLessons()
-        ->andWhere(['between', 'lesson.id', 9000, 120000])
-        ->all();
-        foreach($lessons as $lesson)  {
-            if($lesson->enrolment){
-                $owingAmount = $lesson->getOwingAmount($lesson->enrolment->id);
-                if($owingAmount>=1 && $owingAmount<=5){
-                    $lessonIds[] = $lesson->id;
-                } 
-            }
-    }
+        $lessonIds =  ArrayHelper::map(
+            LessonOwing::find()->all(),
+                'lessonId','lessonId'
+            );
        $newLessons = Lesson::find()
-       ->where(['id' => $lessonIds])
+       ->location($locationId)
+       ->where(['lesson.id' => $lessonIds])
        ->orderBy(['date' => SORT_ASC]);
 
         $dataProvider = new ActiveDataProvider([
