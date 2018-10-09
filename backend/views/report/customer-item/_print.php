@@ -11,6 +11,7 @@ $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => 
        'locationModel'=>$model,
 ]);
    ?>
+<div><h3><strong>Customer Items Report </strong></h3></div>
 <div><?php if ($searchModel->fromDate === $searchModel->toDate): ?>
     <h3><?=  (new \DateTime($searchModel->toDate))->format('F jS, Y'); ?></h3>
     <?php else: ?>

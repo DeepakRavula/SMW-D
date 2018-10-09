@@ -11,6 +11,7 @@ use common\models\Location;
        'locationModel'=>$model,
 ]);
    ?>
+<div><h3><strong>Items Report </strong></h3></div>
 <div><?php if ($searchModel->fromDate === $searchModel->toDate): ?>
     <h3><?=  (new \DateTime($searchModel->toDate))->format('F jS, Y'); ?></h3>
     <?php else: ?>
