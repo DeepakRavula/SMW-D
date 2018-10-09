@@ -54,7 +54,7 @@ class LessonController extends BaseController
                 'only' => ['modify-classroom', 'merge', 'update-field',
                     'validate-on-update', 'modify-lesson', 'edit-classroom',
                     'payment', 'substitute','update','unschedule', 'credit-transfer',
-                    'edit-price', 'edit-tax', 'edit-cost', 'fetch-conflict',
+                    'edit-price', 'edit-tax', 'edit-cost', 'fetch-conflict'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
