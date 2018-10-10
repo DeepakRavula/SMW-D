@@ -38,9 +38,16 @@ use kartik\grid\GridView;
                     return !empty($data->teacher->publicIdentity) ? $data->teacher->publicIdentity : null;
                 },
             ],
+            [
+                'label' => 'Date',
+                'value' => function ($data) {
+                    $date = Yii::$app->formatter->asDate($data->date);
+                    $lessonTime = (new \DateTime($data->date))->format('H:i:s');
+                    return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
+                }
+            ],
 	        [
                 'label' => 'Duration',
-                'attribute' => 'duration',
                 'value' => function ($data) {
                     $lessonDuration = (new \DateTime($data->duration))->format('H:i');
                     return $lessonDuration;
