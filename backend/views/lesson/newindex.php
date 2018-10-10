@@ -48,7 +48,6 @@ use kartik\grid\GridView;
             ],
 	        [
                 'label' => 'Duration',
-                'attribute' => 'duration',
                 'value' => function ($data) {
                     $lessonDuration = (new \DateTime($data->duration))->format('H:i');
                     return $lessonDuration;
