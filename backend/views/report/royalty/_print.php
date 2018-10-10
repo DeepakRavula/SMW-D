@@ -11,8 +11,14 @@ use common\models\Location;
        'locationModel'=>$model,
 ]);
    ?>
+<div class = "print-report">
 <div>
-    <h3><strong>Royalty Items Report </strong></h3></div>
+    <h3><strong>Royalty Report </strong></h3>
+    <?php if ($searchModel->fromDate === $searchModel->toDate): ?>
+    <h3><?=  (new \DateTime($searchModel->toDate))->format('F jS, Y'); ?></h3>
+    <?php else: ?>
+    <h3><?=  (new \DateTime($searchModel->fromDate))->format('F jS, Y'); ?> to <?=  (new \DateTime($searchModel->toDate))->format('F jS, Y') ?></h3>
+    <?php endif; ?></div>
 <?php
 echo $this->render('_royalty', [
     'searchModel' => $searchModel,
@@ -21,8 +27,8 @@ echo $this->render('_royalty', [
     'royaltyFreeAmount' => $royaltyFreeAmount,
     'giftCardPayments' => $giftCardPayments,
 ]);
-
 ?>
+</div> 
 
 <script>
     $(document).ready(function () {
