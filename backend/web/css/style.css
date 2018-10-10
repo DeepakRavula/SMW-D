@@ -249,6 +249,10 @@ dl {
     }
 }
 @media print {
+    .print-report {
+        margin-left:35px;
+        margin-right:35px;
+    }
     .dl-invoice-summary dt {
         text-align: left;
         float:left;
@@ -548,4 +552,8 @@ dl {
 .dollar:before {
     content:"$";
      }
+.print-report {
+    margin-left:35px;
+    margin-right:35px;
+}
      

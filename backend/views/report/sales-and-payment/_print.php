@@ -11,6 +11,7 @@ use common\models\Location;
        'locationModel'=>$model,
 ]);
    ?>
+<div class = "print-report">
 <div>
     <h3><strong>Sales and Payments Report </strong></h3>
     <?php if ($searchModel->fromDate === $searchModel->toDate): ?>
@@ -28,9 +29,9 @@ use common\models\Location;
     'searchModel' => $searchModel, 
     'paymentsDataProvider' => $paymentsDataProvider,
 ]);
-
-
 ?>
+</div>
+
 <script>
     $(document).ready(function () {
         window.print();

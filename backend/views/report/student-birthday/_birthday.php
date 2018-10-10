@@ -15,6 +15,7 @@ $this->title = 'Student Birthdays';
        'locationModel'=>$model,
 ]);
    ?>
+<div class = "print-report">
 <div>
     <h3><strong>Student Birthday Report</strong></h3>
     <?php if ($searchModel->fromDate === $searchModel->toDate): ?>
@@ -70,4 +71,5 @@ $this->title = 'Student Birthdays';
     ]);
 
     ?>
+</div>
 </div>

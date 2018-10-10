@@ -11,6 +11,7 @@ use Carbon\Carbon;
        'locationModel' => $model,
 ]);
    ?>
+<div class = "print-report">
 <div>
     <h3><strong>Tax Collected Report </strong></h3></div>
 <div><?php if ($searchModel->fromDate === $searchModel->toDate): ?>
@@ -25,6 +26,7 @@ use Carbon\Carbon;
     'subtotalSum' => $subtotalSum,
     'totalSum' => $totalSum
 ]); ?>
+</div>
 
 <script>
     $(document).ready(function () {

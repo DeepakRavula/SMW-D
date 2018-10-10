@@ -13,6 +13,7 @@ use common\models\Location;
        'locationModel'=>$model,
 ]);
    ?>
+<div class = "print-report">
 <h3><strong><?= "Items Sold by Category Report" ?></strong></h3>
 <?php if ($searchModel->fromDate === $searchModel->toDate): ?>
     <h3><?=  (new \DateTime($searchModel->toDate))->format('F jS, Y'); ?></h3>
@@ -20,6 +21,7 @@ use common\models\Location;
     <h3><?=  (new \DateTime($searchModel->fromDate))->format('F jS, Y'); ?> to <?=  (new \DateTime($searchModel->toDate))->format('F jS, Y') ?></h3>
     <?php endif; ?>
 <?php echo $this->render('_item-category', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider]); ?>
+</div>
 
 <script>
 	$(document).ready(function(){

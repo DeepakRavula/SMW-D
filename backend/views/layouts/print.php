@@ -12,5 +12,4 @@ $bundle = BackendAsset::register($this);
 	<?php echo $content ?>
 </div>
 </div>
-
 <?php $this->endContent(); ?>

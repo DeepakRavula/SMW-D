@@ -11,6 +11,7 @@ use common\models\Location;
        'locationModel'=>$model,
 ]);
    ?>
+<div class = "print-report">
 <div>
 <?php $reportText = 'Detail'; ?>
 <?php if ($searchModel->groupByMethod) : ?>
@@ -23,7 +24,7 @@ use common\models\Location;
     <h3><?=  (new \DateTime($searchModel->fromDate))->format('F jS, Y'); ?> to <?=  (new \DateTime($searchModel->toDate))->format('F jS, Y') ?></h3>
     <?php endif; ?></div>
 <?php echo $this->render('_payment', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider, 'paymentsAmount' => $paymentsAmount]); ?>
-
+</div>
 <script>
 	$(document).ready(function(){
 		window.print();
