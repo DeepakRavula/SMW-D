@@ -326,14 +326,11 @@ var report = {
         var cols = "";
         var totalReportValue=<?= Yii::$app->formatter->asDecimal($totalReportValue, 2) ?>;
         var groupByMethod = $("#group-by-method").is(":checked");
-        colSpanValue=5;
+        colSpanValue=6;
         if(groupByMethod) {
         colSpanValue=1;
         }
-       
-        cols += '<td colspan='+colSpanValue+'>Grand Total</td>';
-        cols += '<td class="text-right">'+totalReportValue+'</td>';
-        
+        cols += '<td colspan='+colSpanValue+' class="text-right">'+totalReportValue+'</td>';   
         newRow.append(cols);
         newSummaryContainer.append(newRow);
         $("table.table-itemcategory-report").append(newSummaryContainer);
