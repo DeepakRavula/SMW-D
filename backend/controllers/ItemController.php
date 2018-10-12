@@ -195,6 +195,7 @@ class ItemController extends BaseController
         return $this->render('/report/item/_print', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            'pagination' => false,
         ]);
     }
     
