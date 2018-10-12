@@ -107,6 +107,7 @@ class LessonController extends BaseController
             );
         $newLessons = Lesson::find()
         ->location($locationId)
+        ->unInvoiced()
         ->where(['lesson.id' => $lessonIds])
         ->orderBy(['date' => SORT_ASC]);
 

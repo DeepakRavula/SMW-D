@@ -20,16 +20,18 @@ class m181011_081034_extend_enrolment_discount extends Migration
                     ->joinWith(['enrolmentDiscount' => function ($query) {
                         $query->andWhere(['NOT', ['enrolment_discount.enrolmentId' => null]]);
                     }])
-                    ->location([15])
+                    ->location([14,15])
                     ->notDeleted()
                     ->isConfirmed()
                    ->all();
        foreach($enrolments as $enrolment) {
             foreach($enrolment->lessons as $lesson){
-                if ($lesson->grossPrice == $lesson->netPrice && $lesson->getOwingAmount($lesson->enrolment->id) > 0) {
-                   $lessonOwing = new LessonOwing();
-                   $lessonOwing->lessonId = $lesson->id;
-                   $lessonOwing->save();
+                if (!$lesson->lessonDiscount) {
+                    if ($lesson->grossPrice == $lesson->netPrice && $lesson->getOwingAmount($lesson->enrolment->id) > 0) {
+                    $lessonOwing = new LessonOwing();
+                    $lessonOwing->lessonId = $lesson->id;
+                    $lessonOwing->save();
+                    }
                 }
             }
     }
