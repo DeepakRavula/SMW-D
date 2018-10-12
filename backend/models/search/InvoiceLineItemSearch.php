@@ -125,6 +125,7 @@ class InvoiceLineItemSearch extends InvoiceLineItem
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => false,
         ]);
 
         if (!($this->load($params) && $this->validate())) {

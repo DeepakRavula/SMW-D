@@ -216,7 +216,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'value' => function ($data) {
                 return $data->invoice->getInvoiceNumber();
             },
-            'contentOptions' => ['style' => 'font-size:14px;text-align:left'],
+            'contentOptions' => ['style' => 'width: 8%;font-size:14px;text-align:left'],
 
         ],
         [
@@ -224,7 +224,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'value' => function ($data) {
                 return !empty($data->invoice->user->publicIdentity) ? $data->invoice->user->publicIdentity : null;
             },
-
+            'contentOptions' => ['style' => 'width: 25%'],
         ],
 
         [
@@ -243,7 +243,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->netPrice);
             },
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right;width: 4%'],
             'hAlign' => 'right',
         ],
 
@@ -253,7 +253,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal(round($data->tax_rate, 2));
             },
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right;width: 4%'],
             'hAlign' => 'right',
         ],
 
@@ -263,7 +263,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'value' => function ($data) {
                 return Yii::$app->formatter->asDecimal($data->itemTotal);
             },
-            'contentOptions' => ['class' => 'text-right'],
+            'contentOptions' => ['class' => 'text-right;width: 4%'],
             'hAlign' => 'right',
         ],
     ];
