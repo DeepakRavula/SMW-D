@@ -18,7 +18,7 @@ class m181011_081034_extend_enrolment_discount extends Migration
         $this->truncateTable('lesson_owing');
         $enrolments = Enrolment::find()
                     ->joinWith(['enrolmentDiscount' => function ($query) {
-                        $query->andWhere(['NOT', ['enrolment_discount.enrolmentId' => null]]);
+                        $query->andWhere(['NOT', [ 'OR', ['enrolment_discount.id' => null], ['enrolment_discount.discount' => NULL]]]);
                     }])
                     ->location([14,15])
                     ->notDeleted()

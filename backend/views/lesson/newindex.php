@@ -46,6 +46,12 @@ use kartik\grid\GridView;
                     return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
                 }
             ],
+            [
+                'label' => 'Enrolment',
+                'value' => function ($data) {
+                    return $data->enrolment->id;
+                }
+            ],
 	        [
                 'label' => 'Duration',
                 'value' => function ($data) {
