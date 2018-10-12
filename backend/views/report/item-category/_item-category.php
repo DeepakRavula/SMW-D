@@ -6,6 +6,7 @@ use common\models\InvoiceLineItem;
 use backend\assets\CustomGridAsset;
 use common\models\ItemCategory;
 use common\models\Invoice;
+use common\models\Location;
 
 CustomGridAsset::register($this);
 Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
@@ -160,19 +161,38 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'group' => true,
             'groupedRow' => true,
             'groupFooter' => function ($model, $key, $index, $widget) { // Closure method
+                $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+                $subTotal = 0;
+                $taxRate = 0;
+                $itemTotal = 0;
+                $invoiceLineItems = InvoiceLineItem::find()
+                ->notDeleted()
+                ->joinWith(['invoice' => function ($query) use ($locationId, $model) {
+                        $query->notDeleted()
+                            ->notCanceled()
+                            ->notReturned()
+                            ->andWhere(['invoice.type' => Invoice::TYPE_INVOICE])
+                            ->location($locationId)
+                            ->between((new \DateTime($model->invoice->date))->format('Y-m-d'), (new \DateTime($model->invoice->date))->format('Y-m-d'));
+            }])
+                ->all();
+                foreach ($invoiceLineItems as $invoiceLineItem) {
+                    $subTotal += $invoiceLineItem->netPrice;
+                    $taxRate  += $invoiceLineItem->tax_rate;
+                    $itemTotal += $invoiceLineItem->itemTotal;
+                }
                 return [
-                    'mergeColumns' => [[2, 6]], // columns to merge in summary
+                    'mergeColumns' => [[2,4]], // columns to merge in summary
                     'content' => [  
                         // content to show in each summary cell
-                        7 => GridView::F_SUM,
-
-                    ],
-                    'contentFormats' => [      // content reformatting for each summary cell
-                        7 => ['format' => 'number', 'decimals' => 2],
-
+                        5 => round($subTotal, 2),
+                        6 => round($taxRate, 2),
+                        7 => round($itemTotal, 2),
                     ],
                     'contentOptions' => [      // content html attributes for each summary cell
                         2 => ['style' => 'text-align:left;font-style:italic'],
+                        5 => ['style' => 'text-align:right;font-style:italic'],
+                        6 => ['style' => 'text-align:right;font-style:italic'],
                         7 => ['style' => 'text-align:right;font-style:italic'],
 
                     ],
