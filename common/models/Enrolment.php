@@ -328,7 +328,7 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasMany(Lesson::className(), ['courseId' => 'courseId'])
                 ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
                     'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
-                        Lesson::STATUS_UNSCHEDULED, Lesson::STATUS_COMPLETED]]);
+                        Lesson::STATUS_UNSCHEDULED]]);
     }
 
     public function getFirstPaymentCycle()
