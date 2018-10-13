@@ -1,8 +1,10 @@
 <?php
 
 use yii\db\Migration;
-use common\models\LessonOwing;
+use common\models\discount\LessonDiscount;
 use common\models\Enrolment;
+use common\models\User;
+
 /**
  * Class m181011_081034_extend_enrolment_discount
  */
@@ -11,10 +13,19 @@ class m181011_081034_extend_enrolment_discount extends Migration
     /**
      * {@inheritdoc}
      */
+    public function init()
+    {
+        parent::init();
+        $user = User::findByRole(User::ROLE_BOT);
+        $botUser = end($user);
+        Yii::$app->user->setIdentity(User::findOne(['id' => $botUser->id]));
+    }
+
     public function safeUp()
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
+        $this->truncateTable('lesson_owing');
         $enrolments = Enrolment::find()
                     ->joinWith(['enrolmentDiscount' => function ($query) {
                         $query->andWhere(['NOT', [ 'OR', ['enrolment_discount.id' => null], ['enrolment_discount.discount' => NULL]]]);
@@ -27,9 +38,16 @@ class m181011_081034_extend_enrolment_discount extends Migration
             foreach($enrolment->lessons as $lesson){
                 if (!$lesson->lessonDiscount) {
                     if ($lesson->grossPrice == $lesson->netPrice && $lesson->getOwingAmount($lesson->enrolment->id) > 0) {
-                    $lessonOwing = new LessonOwing();
-                    $lessonOwing->lessonId = $lesson->id;
-                    $lessonOwing->save();
+                        if ($lesson->enrolment->enrolmentDiscount) {
+                            foreach($lesson->enrolment->enrolmentDiscount as $enrolmentDiscount) {
+                                $lessonDiscount = new LessonDiscount();
+                                $lessonDiscount->lessonId = $lesson->id;
+                                $lessonDiscount->value = $enrolmentDiscount->discount;
+                                $lessonDiscount->valueType = $enrolmentDiscount->type;
+                                $lessonDiscount->type = $enrolmentDiscount->discountType;
+                                $lessonDiscount->save();
+                            }
+                        }					   
                     }
                 }
             }
