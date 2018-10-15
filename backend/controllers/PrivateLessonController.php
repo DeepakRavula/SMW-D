@@ -334,7 +334,6 @@ class PrivateLessonController extends BaseController
     {
         $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
         $lessonId = end($lessonIds);
-      
         foreach ($lessonIds as $lessonId) {
             $model = $this->findModel($lessonId);
             if (!$model->isEditable()) {
@@ -347,8 +346,7 @@ class PrivateLessonController extends BaseController
         $model = new Lesson();
         $data = $this->renderAjax('_form-edit-classroom', [
             'lessonIds' => $lessonIds,
-            'model' => $model,
-            
+            'model' => $model,   
         ]);
         $post = Yii::$app->request->post();
         if ($post) {   
