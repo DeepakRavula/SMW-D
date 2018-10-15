@@ -929,4 +929,8 @@ class Enrolment extends \yii\db\ActiveRecord
         }
         return $this->delete();
     }
+    public function getEnrolmentDiscount()
+    {
+        return $this->hasMany(EnrolmentDiscount::className(), ['enrolmentId' => 'id']);
+    }
 }

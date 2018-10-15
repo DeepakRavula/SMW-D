@@ -1594,4 +1594,9 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->grossPrice - $this->discount;
     }
+
+    public function getLessonDiscount()
+    {
+        return $this->hasMany(LessonDiscount::className(), ['lessonId' => 'id']);
+    }
 }
