@@ -1594,4 +1594,28 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->grossPrice - $this->discount;
     }
+
+    public function isClassroomNotAvailable($id, $classroomId)
+    {
+        $lesson = Lesson::findOne($id);
+        $start = new \DateTime($lesson->date);
+        $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
+        $lessonStartTime = $start->format('H:i:s');
+        $duration = (new \DateTime($lesson->duration));
+        $start->add(new \DateInterval('PT' . $duration->format('H') . 'H' . $duration->format('i') . 'M'));
+        $start->modify('-1 second');
+        $lessonEndTime = $start->format('H:i:s');
+        $overLapLessons = Lesson::find()
+                ->andWhere(['lesson.id' => $id])
+                ->andWhere(['classroomId' => $classroomId])
+                ->isConfirmed()
+                ->scheduledOrRescheduled()
+                ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
+                ->all();
+        if ($overLapLessons) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

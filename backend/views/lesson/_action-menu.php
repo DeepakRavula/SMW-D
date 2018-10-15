@@ -6,6 +6,7 @@
             <li><a class="multiselect-disable" id="lesson-discount" href="#">Edit Discount</a></li>
             <li><a class="multiselect-disable" id="lesson-duration-edit" href="#">Edit Duration</a></li>
             <li><a class="multiselect-disable" id="lesson-delete" href="#">Delete</a></li>
+            <li><a class="multiselect-disable" id="lesson-classroom-edit" href="#">Edit Classroom</a></li>
         </ul>
     </div>
 </div>

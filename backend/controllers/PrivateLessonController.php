@@ -15,6 +15,7 @@ use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 use backend\models\lesson\discount\LessonMultiDiscount;
+use common\models\ClassroomUnavailability;
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
@@ -31,7 +32,7 @@ class PrivateLessonController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'merge', 'update-attendance', 'delete', 'apply-discount','edit-duration',
+                    'merge', 'update-attendance', 'delete', 'apply-discount','edit-duration', 'edit-classroom', 
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -45,7 +46,7 @@ class PrivateLessonController extends BaseController
                         'allow' => true,
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance',
-                                'apply-discount','edit-duration'
+                                'apply-discount','edit-duration', 'edit-classroom'
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
@@ -322,6 +323,56 @@ class PrivateLessonController extends BaseController
             ];
         } else {
             return [
+                'status' => true,
+                'data' => $data
+            ];
+        }
+        return $response;
+    }
+
+    public function actionEditClassroom()
+    {
+        $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
+        $lessonId = end($lessonIds);
+      
+        foreach ($lessonIds as $lessonId) {
+            $model = $this->findModel($lessonId);
+            if (!$model->isEditable()) {
+                return [
+                    'status' => false,
+                    'message' => ' One of the chosen lesson is invoiced. You can\'t edit classroom for this lessons',
+                ]; 
+            }
+        }
+        $model = new Lesson();
+        $data = $this->renderAjax('_form-edit-classroom', [
+            'lessonIds' => $lessonIds,
+            'model' => $model,
+            
+        ]);
+        $post = Yii::$app->request->post();
+        if ($post) {   
+            foreach ($lessonIds as $lessonId) {
+                $model = $this->findModel($lessonId);
+                if ($model->isClassroomNotAvailable($model->id, $model->classroomId)) {
+                    $response = [
+                        'status' => false,
+                        'error' => 'Classroom already chosen.',
+                    ]; 
+                }
+            }
+            foreach ($lessonIds as $lessonId) {
+                $model = $this->findModel($lessonId);
+                $model->load($post);
+                $model->save();
+                $response = [
+                    'status' => true,
+                    'message' => 'Lesson Classroom Edited Sucessfully',
+                ];
+            }
+        return $response;
+        } else {
+              $response = [
                 'status' => true,
                 'data' => $data
             ];
