@@ -189,7 +189,7 @@ class ItemController extends BaseController
         }
         $searchModel->groupByItem = true;
         $dataProvider             = $searchModel->search(Yii::$app->request->queryParams);
-
+        $dataProvider->pagination = false;
         $this->layout             = '/print';
 
         return $this->render('/report/item/_print', [

@@ -21,7 +21,7 @@ $this->title = 'Student Birthdays';
     <?php if ($searchModel->fromDate === $searchModel->toDate): ?>
     <h3><?=  (new \DateTime($searchModel->toDate))->format('F jS'); ?></h3>
     <?php else: ?>
-    <h3><?=  (new \DateTime($searchModel->fromDate))->format('F jS'); ?> to <?=  (new \DateTime($searchModel->toDate))->format('F jS, Y') ?></h3>
+    <h3><?=  (new \DateTime($searchModel->fromDate))->format('F jS'); ?> to <?=  (new \DateTime($searchModel->toDate))->format('F jS') ?></h3>
     <?php endif; ?>
     <?php
     echo GridView::widget([
@@ -52,6 +52,8 @@ $this->title = 'Student Birthdays';
             [
                 'label' => 'Birth Date',
                 'value' => 'birth_date',
+                'headerOptions' => ['style' => 'width:12%'],
+                'contentOptions' => ['style' => 'width:12%'],
             ],
             [
                 'label' => 'Customer',
@@ -60,6 +62,8 @@ $this->title = 'Student Birthdays';
             [
                 'label' => 'Phone',
                 'value' => 'customer.phoneNumber.number',
+                'headerOptions' => ['style' => 'width:15%'],
+                'contentOptions' => ['style' => 'width:15%'],
             ],
             [
                 'label'=>'Email',
