@@ -109,7 +109,7 @@ class LessonController extends BaseController
         ->location($locationId)
         ->unInvoiced()
         ->where(['lesson.id' => $lessonIds])
-        ->orderBy(['course.id' => SORT_ASC]);
+        ->orderBy(['date' => SORT_ASC]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $newLessons,
