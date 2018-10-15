@@ -354,8 +354,9 @@ class PrivateLessonController extends BaseController
         if ($post) {   
             foreach ($lessonIds as $lessonId) {
                 $model = $this->findModel($lessonId);
+                $model->load($post);
                 if ($model->isClassroomNotAvailable($model->id, $model->classroomId)) {
-                    $response = [
+                    return [
                         'status' => false,
                         'error' => 'Classroom already chosen.',
                     ]; 
@@ -365,12 +366,11 @@ class PrivateLessonController extends BaseController
                 $model = $this->findModel($lessonId);
                 $model->load($post);
                 $model->save();
-                $response = [
-                    'status' => true,
-                    'message' => 'Lesson Classroom Edited Sucessfully',
-                ];
             }
-        return $response;
+            $response = [
+                'status' => true,
+                'message' => 'Lesson Classroom Edited Sucessfully',
+            ];
         } else {
               $response = [
                 'status' => true,

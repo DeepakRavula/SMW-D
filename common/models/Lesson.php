@@ -1606,7 +1606,7 @@ class Lesson extends \yii\db\ActiveRecord
         $start->modify('-1 second');
         $lessonEndTime = $start->format('H:i:s');
         $overLapLessons = Lesson::find()
-                ->andWhere(['lesson.id' => $id])
+                ->andWhere(['NOT',['lesson.id' => $id]])
                 ->andWhere(['classroomId' => $classroomId])
                 ->isConfirmed()
                 ->scheduledOrRescheduled()

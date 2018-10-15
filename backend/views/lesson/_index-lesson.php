@@ -341,12 +341,14 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 $('#popup-modal').modal('hide');
                 $('#index-success-notification').text(params.message).fadeIn().delay(5000).fadeOut();
             }
-            if (params.error) {
-                alert("shshsh");
-                alert(params.error);
-                $('#popup-modal').modal('hide');
-                $('#index-error-notification').text(params.error).fadeIn().delay(5000).fadeOut();
-            }
+        }
+        return false;
+    });
+
+    $(document).on('modal-error', function(event, params) {
+        if (params.error) {
+            $('#popup-modal').modal('hide');
+            $('#index-error-notification').text(params.error).fadeIn().delay(5000).fadeOut();
         }
         return false;
     });
