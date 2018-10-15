@@ -96,7 +96,7 @@ use kartik\grid\GridView;
         'options' => ['id' => 'new-lesson-index-1'],
         'summary' => "Showing {begin} - {end} of {totalCount} items",
         'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::to(['lesson/view', 'id' => $model->enrolment->id]);
+            $url = Url::to(['lesson/view', 'id' => $model->id]);
 
             return ['data-url' => $url];
         },
