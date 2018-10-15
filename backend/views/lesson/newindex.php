@@ -46,12 +46,6 @@ use kartik\grid\GridView;
                     return !empty($date) ? $date.' @ '.Yii::$app->formatter->asTime($lessonTime) : null;
                 }
             ],
-            [
-                'label' => 'Enrolment',
-                'value' => function ($data) {
-                    return $data->enrolment->id;
-                }
-            ],
 	        [
                 'label' => 'Duration',
                 'value' => function ($data) {
@@ -102,7 +96,7 @@ use kartik\grid\GridView;
         'options' => ['id' => 'new-lesson-index-1'],
         'summary' => "Showing {begin} - {end} of {totalCount} items",
         'rowOptions' => function ($model, $key, $index, $grid) {
-            $url = Url::to(['enrolment/view', 'id' => $model->enrolment->id]);
+            $url = Url::to(['lesson/view', 'id' => $model->enrolment->id]);
 
             return ['data-url' => $url];
         },
