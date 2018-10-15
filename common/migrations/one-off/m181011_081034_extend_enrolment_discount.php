@@ -4,6 +4,7 @@ use yii\db\Migration;
 use common\models\discount\LessonDiscount;
 use common\models\Enrolment;
 use common\models\User;
+use common\models\discount\EnrolmentDiscount;
 
 /**
  * Class m181011_081034_extend_enrolment_discount
@@ -43,14 +44,20 @@ class m181011_081034_extend_enrolment_discount extends Migration
                                 $lessonDiscount = new LessonDiscount();
                                 $lessonDiscount->lessonId = $lesson->id;
                                 $lessonDiscount->value = $enrolmentDiscount->discount;
-                                $lessonDiscount->valueType = $enrolmentDiscount->type;
-                                $lessonDiscount->type = $enrolmentDiscount->discountType;
+                                if ($enrolmentDiscount->discountType === EnrolmentDiscount::VALUE_TYPE_PERCENTAGE) {
+                                    $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_PERCENTAGE;
+                                }
+                                else {
+                                    $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
+                                }
+                                $lessonDiscount->type = $enrolmentDiscount->type;
                                 $lessonDiscount->save();
                             }
                         }					   
                     }
                 }
             }
+           
     }
 }
 
