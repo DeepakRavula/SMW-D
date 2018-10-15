@@ -26,7 +26,6 @@ class m181011_081034_extend_enrolment_discount extends Migration
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        $this->truncateTable('lesson_owing');
         $enrolments = Enrolment::find()
                     ->joinWith(['enrolmentDiscount' => function ($query) {
                         $query->andWhere(['NOT', [ 'OR', ['enrolment_discount.id' => null], ['enrolment_discount.discount' => NULL]]]);
