@@ -9,7 +9,7 @@ use common\models\discount\EnrolmentDiscount;
 /**
  * Class m181011_081034_extend_enrolment_discount
  */
-class m181011_081034_extend_enrolment_discount extends Migration
+class m181011_081034_fix_extend_enrolment_discount extends Migration
 {
     /**
      * {@inheritdoc}
