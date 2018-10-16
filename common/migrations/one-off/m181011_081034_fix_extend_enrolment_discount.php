@@ -30,7 +30,7 @@ class m181011_081034_fix_extend_enrolment_discount extends Migration
                     ->joinWith(['enrolmentDiscount' => function ($query) {
                         $query->andWhere(['NOT', [ 'OR', ['enrolment_discount.id' => null], ['enrolment_discount.discount' => NULL]]]);
                     }])
-                    ->location([14,15])
+                    ->location([15])
                     ->notDeleted()
                     ->isConfirmed()
                    ->all();
