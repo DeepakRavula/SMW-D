@@ -36,7 +36,7 @@ class m181011_081034_fix_extend_enrolment_discount extends Migration
                    ->all();
        foreach($enrolments as $enrolment) {
             foreach($enrolment->lessons as $lesson){
-                if (!$lesson->lessonDiscount) {
+                if ($lesson->lessonDiscount) {
                     if ($lesson->grossPrice == $lesson->netPrice && $lesson->getOwingAmount($lesson->enrolment->id) > 0) {
                         if ($lesson->enrolment->enrolmentDiscount) {
                             foreach($lesson->enrolment->enrolmentDiscount as $enrolmentDiscount) {
