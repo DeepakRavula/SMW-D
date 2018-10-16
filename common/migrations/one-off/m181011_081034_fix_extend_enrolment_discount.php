@@ -49,7 +49,12 @@ class m181011_081034_fix_extend_enrolment_discount extends Migration
                                 else {
                                     $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
                                 }
-                                $lessonDiscount->type = $enrolmentDiscount->type;
+                                if($enrolmentDiscount->type === EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY) {
+                                $lessonDiscount->type = LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
+                                }
+                                elseif($enrolmentDiscount->type === EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT) {
+                                    $lessonDiscount->type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
+                                }
                                 $lessonDiscount->save();
                             }
                         }					   
