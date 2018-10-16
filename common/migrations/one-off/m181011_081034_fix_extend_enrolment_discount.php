@@ -26,11 +26,13 @@ class m181011_081034_fix_extend_enrolment_discount extends Migration
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
+        $enrolmentIds = ['230','246','278','279','280','300','329','335','337','357','362','403','404','504','531','546','593','657','820','855','901','913','948','988','1048','1217','1233','1269','1272','1323'];
         $enrolments = Enrolment::find()
                     ->joinWith(['enrolmentDiscount' => function ($query) {
                         $query->andWhere(['NOT', [ 'OR', ['enrolment_discount.id' => null], ['enrolment_discount.discount' => NULL]]]);
                     }])
-                    ->location([15])
+                    ->location([14])
+                    ->andWhere(['enrolment.id' => $enrolmentIds])
                     ->notDeleted()
                     ->isConfirmed()
                    ->all();
