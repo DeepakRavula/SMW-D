@@ -353,10 +353,20 @@ class PrivateLessonController extends BaseController
             foreach ($lessonIds as $lessonId) {
                 $model = $this->findModel($lessonId);
                 $model->load($post);
-                if ($model->isClassroomNotAvailable($model->id, $model->classroomId)) {
+                if ($model->isClassroomChosen($model->id, $model->classroomId)) {
                     return [
                         'status' => false,
                         'error' => 'Classroom already chosen.',
+                    ]; 
+                }
+            }
+            foreach ($lessonIds as $lessonId) {
+                $model = $this->findModel($lessonId);
+                $model->load($post);
+                if ($model->isClassroomUnAvailable($model->id, $model->classroomId)) {
+                    return [
+                        'status' => false,
+                        'error' => 'Classroom is unavailable.',
                     ]; 
                 }
             }

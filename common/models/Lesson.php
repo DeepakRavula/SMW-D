@@ -1595,7 +1595,7 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->grossPrice - $this->discount;
     }
 
-    public function isClassroomNotAvailable($id, $classroomId)
+    public function isClassroomChosen($id, $classroomId)
     {
         $lesson = Lesson::findOne($id);
         $start = new \DateTime($lesson->date);
@@ -1613,6 +1613,24 @@ class Lesson extends \yii\db\ActiveRecord
                 ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
                 ->all();
         if ($overLapLessons) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function isClassroomUnavailable($id, $classroomId) 
+    {
+        $lesson = Lesson::findOne($id);
+        $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
+        $classroomUnavailabilities = ClassroomUnavailability::find()
+                ->andWhere(['classroomId' => $classroomId])
+                ->andWhere(['AND',
+                        ['<=', 'DATE(fromDate)', $lessonDate],
+                        ['>=', 'DATE(toDate)', $lessonDate]
+                ])
+                ->all();
+        if ($classroomUnavailabilities) {
             return true;
         } else {
             return false;
