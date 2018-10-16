@@ -86,6 +86,7 @@ class ItemCategoryController extends BaseController
             'query'   => Item::find()
                             ->andWhere(['itemCategoryId' => $id])
                             ->location($locationId),
+                            ->notDeleted()
         ]);
 
         return $this->render('view', [
