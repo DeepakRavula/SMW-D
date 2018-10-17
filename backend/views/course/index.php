@@ -62,9 +62,9 @@ $this->params['show-all'] = $this->render('_button', [
                 'headerOptions' => ['style' => 'text-align:right'],
                 'contentOptions' => ['style' => 'text-align:right'],
                 'value' => function ($data) {
-                    $length = \DateTime::createFromFormat('H:i:s', $data->courseSchedule->duration);
+                    $length = \DateTime::createFromFormat('H:i:s', $data->recentCourseSchedule->duration);
 
-                    return !empty($data->courseSchedule->duration) ? $length->format('H:i') : null;
+                    return !empty($data->recentCourseSchedule->duration) ? $length->format('H:i') : null;
                 },
             ],
             [
