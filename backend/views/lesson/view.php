@@ -51,21 +51,24 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         <?php endif; ?>
         <?php $loggedUser = User::findOne(Yii::$app->user->id); ?>
         <?php if ($loggedUser->isAdmin() || $loggedUser->isOwner()): ?>
+            <?php if (!$model->isGroup()): ?>
             <div id="cost-panel">
                 <?= $this->render('cost/_view', [
                     'model' => $model,
                 ]); ?>	
             </div>
+            <?php endif; ?> 
         <?php endif; ?>     
     </div>
     <div class="col-md-6">      
         <?= $this->render('schedule/_view', [
             'model' => $model,
         ]); ?>
-        
+        <?php if (!$model->isGroup()): ?>
         <?= $this->render('_total-details', [
             'model' => $model,
         ]); ?>
+        <?php endif; ?>
     </div>
 </div>
 
