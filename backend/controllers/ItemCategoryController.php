@@ -85,7 +85,7 @@ class ItemCategoryController extends BaseController
         $dataProvider = new ActiveDataProvider([
             'query'   => Item::find()
                             ->andWhere(['itemCategoryId' => $id])
-                            ->location($locationId),
+                            ->location($locationId)
                             ->notDeleted()
         ]);
 
