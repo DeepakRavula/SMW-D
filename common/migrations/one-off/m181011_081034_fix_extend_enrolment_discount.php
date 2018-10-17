@@ -25,20 +25,18 @@ class m181011_081034_fix_extend_enrolment_discount extends Migration
     public function safeUp()
     {
         set_time_limit(0);
-        ini_set('memory_limit', '-1');
-        $enrolmentIds = ['230','246','278','279','280','300','329','335','337','357','362','403','404','504','531','546','593','657','820','855','901','913','948','988','1048','1217','1233','1269','1272','1323'];
+        ini_set('memory_limit', '-1');  
         $enrolments = Enrolment::find()
                     ->joinWith(['enrolmentDiscount' => function ($query) {
                         $query->andWhere(['NOT', [ 'OR', ['enrolment_discount.id' => null], ['enrolment_discount.discount' => NULL]]]);
                     }])
-                    ->location([14])
-                    ->andWhere(['enrolment.id' => $enrolmentIds])
+                    ->location([15])
                     ->notDeleted()
                     ->isConfirmed()
                    ->all();
        foreach($enrolments as $enrolment) {
             foreach($enrolment->lessons as $lesson){
-                if ($lesson->lessonDiscount) {
+                if (!$lesson->lessonDiscount) {
                     if ($lesson->grossPrice == $lesson->netPrice && $lesson->getOwingAmount($lesson->enrolment->id) > 0) {
                         if ($lesson->enrolment->enrolmentDiscount) {
                             foreach($lesson->enrolment->enrolmentDiscount as $enrolmentDiscount) {
