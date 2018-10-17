@@ -103,7 +103,7 @@ class LessonConfirm extends Model
         $enrolmentModel->isConfirmed = true;
         $enrolmentModel->save();
         $enrolmentModel->setPaymentCycle($enrolmentModel->firstLesson->date);
-        if($enrolmentModel->course->isPrivate()) {
+        if ($enrolmentModel->course->isPrivate()) {
             $enrolmentModel->course->updateDates();
         }
         $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT, [new StudentLog(), 'addEnrolment'],
