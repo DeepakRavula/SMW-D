@@ -201,6 +201,8 @@ class CourseController extends BaseController
                         foreach ($courseScheduleModels as $courseScheduleModel) {
                             $courseScheduleModel->courseId = $model->id;
                             $courseScheduleModel->duration = $model->duration;
+                            $courseScheduleModel->teacherId = $model->teacherId;
+                            $courseScheduleModel->endDate = $model->endDate;
                             $dayList                       = Course::getWeekdaysList();
                             $courseScheduleModel->day      = array_search(
                                 $courseScheduleModel->day,
