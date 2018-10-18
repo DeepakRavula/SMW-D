@@ -472,7 +472,7 @@ class Course extends \yii\db\ActiveRecord
                         'DAYNAME(date)' => $dayName,
                         'TIME(date)' => $time
                     ])
-                    ->scheduled()
+                    //->scheduled()
                     ->count();
                 
                 $checkLimit = $lessonCount < $lessonLimit;
