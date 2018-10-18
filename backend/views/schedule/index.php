@@ -458,7 +458,7 @@ var schedule = {
         if(resourceCount <= 8) {
             $(selector).find('.fc-view .fc-row tr th.fc-resource-cell').css({'width': 'auto'});
         } else {
-           $(selector).find('.fc-view .fc-row tr th.fc-resource-cell').css({'width': '150px'});
+           $(selector).find('.fc-view .fc-row tr th.fc-resource-cell').css({'width': '100px'});
         }
         var theadWidth = $(selector).find('.fc-widget-header table thead').width();
         $(selector).find('table').width(theadWidth);
