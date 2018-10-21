@@ -67,9 +67,6 @@ if ($loggedUser->isAdmin()) {
             <dd><?= !empty($model->conversionDate) ?  Yii::$app->formatter->asDate($model->conversionDate) : null; ?></dd>
             <!-- <dt> Is Cron Enabled</dt>
             <dd> $model->getCronStatus(); </dd> -->
-            <?php $locationPaymentPreference = $model->locationPaymentPreference->isPreferredPaymentEnabled; ?>
-            <dt>Payment Preference</dt>
-            <dd> <?= SwitchInput::widget(['value' => $locationPaymentPreference, 'name'=>'payment-preference-status', 'id'=>'location-payment-preferrence', 'pluginOptions'=>['handleWidth'=>35, 'onText'=>'Enable', 'offText'=>'Disable']]); ?> </dd>
         <?php endif; ?>
 		</dl>
 		<?php LteBox::end() ?>
@@ -314,18 +311,6 @@ function showCalendars(id,type) {
                 }
             }
         });
-    });
-
-     $('#location-payment-preferrence').on('switchChange.bootstrapSwitch', function(event, state) {
-        var locationId = <?= $model->id; ?>;
-        var params = $.param({'state' : state | 0, 'locationId' : locationId});
-	    $.ajax({
-            url    : '<?= Url::to(['location/update-preferred-payment-status']) ?>?' + params,
-            type   : 'POST',
-            dataType: "json",
-            data   : $(this).serialize()
-        });
-        return false;
     });
 </script>
 <?php Pjax::end(); ?>

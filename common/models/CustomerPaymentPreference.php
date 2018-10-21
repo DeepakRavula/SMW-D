@@ -35,7 +35,7 @@ class CustomerPaymentPreference extends \yii\db\ActiveRecord
             [['userId', 'dayOfMonth', 'paymentMethodId'], 'required'],
             [['userId', 'dayOfMonth', 'paymentMethodId'], 'integer'],
             ['dayOfMonth', 'integer', 'min' => 1, 'max' => 31],
-            [['expiryDate', 'isDeleted'], 'safe']
+            [['expiryDate', 'isDeleted', 'isPreferredPaymentEnabled'], 'safe']
         ];
     }
 
