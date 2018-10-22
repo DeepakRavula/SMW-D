@@ -44,4 +44,9 @@ class CustomerPaymentPreferenceQuery extends \yii\db\ActiveQuery
             ['customer_payment_preference.expiryDate' => null]])
             ->andWhere(['NOT', ['customer_payment_preference.id' => null]]);
     }
+
+    public function notDeleted() 
+    {
+        return $this->andWhere(['customer_payment_preference.isDeleted' => false]);
+    }
 }

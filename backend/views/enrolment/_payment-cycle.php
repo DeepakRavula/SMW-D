@@ -40,29 +40,7 @@ use kartik\switchinput\SwitchInput;
                     }
                     return $invoiceStatus;
                 }
-            ],
-            [
-                'class' => 'kartik\grid\ActionColumn',
-                'template' => '{switch}',
-                'header' => 'Preferred Payment Status',
-                'buttons' => [
-                'switch' => function ($url, $data, $key) {
-                return SwitchInput::widget([
-                    'name' => 'preferred-payment-status',
-                    'value' => $data->isPreferredPaymentEnabled,
-                    'options' => ['class' => 'enrolment-preferred-payment'],
-                    'pluginOptions' => [
-                        'handleWidth' => 30,
-                        'onColor' => 'success',
-                        'offColor' => 'danger',
-                        'onText' => 'Enable',
-                        'offText' => 'Disable',
-                        'size' => 'mini'
-                    ],
-                ]);
-                },
-                ],
-            ]            
+            ],           
         ] ?>
 <?php Pjax::begin(['id' => 'payment-cycle-listing']); ?>
     <?= KartikGridView::widget([
@@ -75,17 +53,3 @@ use kartik\switchinput\SwitchInput;
         'columns' => $columns,
     ]); ?>
 <?php Pjax::end(); ?>
-
-<script>
-    $('.enrolment-preferred-payment').on('switchChange.bootstrapSwitch', function(event, state) {
-        var paymentCycleId = ($(this).parents('tr') ).data('key');
-        var params = $.param({'state' : state | 0, 'paymentCycleId' : paymentCycleId});
-	    $.ajax({
-            url    : '<?= Url::to(['enrolment/update-preferred-payment-status']) ?>?' + params,
-            type   : 'POST',
-            dataType: "json",
-            data   : $(this).serialize()
-        });
-        return false;
-    });
-</script>
