@@ -32,7 +32,7 @@ class CustomerPaymentPreferenceController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['modify', 'delete'],
+                'only' => ['modify', 'delete', 'customer-preferred-payment-status'],
                 'formatParam' => '_format',
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -43,7 +43,7 @@ class CustomerPaymentPreferenceController extends BaseController
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'update', 'view', 'modify', 'delete'],
+                        'actions' => ['index', 'update', 'view', 'modify', 'delete', 'customer-preferred-payment-status'],
                         'roles' => ['manageCustomers'],
                     ],
                 ],
@@ -165,5 +165,27 @@ class CustomerPaymentPreferenceController extends BaseController
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionCustomerPreferredPaymentStatus($state, $id)
+    {
+        $model = CustomerPaymentPreference::find()
+                ->andWhere([
+                    'id' => $id,
+                ])
+                ->notDeleted()
+                ->one();
+        $model->isPreferredPaymentEnabled = $state;
+        if ($model->save()) {
+            $response = [
+                'status' => true,
+            ]; 
+        } else {
+            $response = [
+                'status' => false,
+                'errors' =>$model->getErrors()
+            ];
+        }
+        return $response;
     }
 }

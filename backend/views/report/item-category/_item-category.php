@@ -186,7 +186,7 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
                     'content' => [  
                         // content to show in each summary cell
                         5 => round($subTotal, 2),
-                        6 => round($taxRate, 2),
+                        6 => round($taxRate, 2) == 0 ? '0.00' : round($taxRate, 2),
                         7 => round($itemTotal, 2),
                     ],
                     'contentOptions' => [      // content html attributes for each summary cell
@@ -212,17 +212,22 @@ Yii::$app->assetManager->bundles['kartik\grid\GridGroupAsset'] = false;
             'subGroupOf' => 0,
             'groupFooter' => function ($model, $key, $index, $widget) { // Closure method
                 return [
-                    'mergeColumns' => [[2, 6]],// columns to merge in summary
-                    'content' => [              // content to show in each summary cell
+                    'mergeColumns' => [[2, 4]],// columns to merge in summary
+                    'content' => [    
+                        5 => GridView::F_SUM,
+                        6 => GridView::F_SUM,         // content to show in each summary cell
                         7 => GridView::F_SUM,
 
                     ],
                     'contentFormats' => [      // content reformatting for each summary cell
-
+                        5 => ['format' => 'number', 'decimals' => 2],
+                        6 => ['format' => 'number', 'decimals' => 2],
                         7 => ['format' => 'number', 'decimals' => 2],
 
                     ],
                     'contentOptions' => [
+                        5 => ['style' => 'text-align:right'],
+                        6 => ['style' => 'text-align:right'],
                         7 => ['style' => 'text-align:right'],
 
                     ],

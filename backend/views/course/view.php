@@ -48,9 +48,9 @@ $this->params['action-button'] = Html::a('<i title="Print" class="fa fa-print f-
 		<dl class="dl-horizontal">
 			<dt>Duration</dt>
 			<dd>
-				<?= (new \DateTime($model->courseSchedule->duration))->format('H:i'); ?></dd>
+				<?= (new \DateTime($model->recentCourseSchedule->duration))->format('H:i'); ?></dd>
 			<dt>Time</dt>
-			<dd><?= Yii::$app->formatter->asTime($model->courseSchedule->fromTime) ?></dd>
+			<dd><?= Yii::$app->formatter->asTime($model->recentCourseSchedule->fromTime) ?></dd>
 			<dt>Period</dt>
 			<dd><?= Yii::$app->formatter->asDate($model->startDate) . ' to ' . Yii::$app->formatter->asDate($model->endDate)?></dd>
 		</dl>

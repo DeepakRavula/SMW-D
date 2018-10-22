@@ -5,6 +5,7 @@ use common\models\PaymentMethod;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\jui\DatePicker;
+use kartik\switchinput\SwitchInput;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -47,6 +48,23 @@ use yii\jui\DatePicker;
                 ['prompt' => 'Select payment method'])->label('Payment Method');
             ?>
         </div>
+        <div class="col-md-12">
+            <?php echo $form->field($model, 'isPreferredPaymentEnabled')->widget(SwitchInput::classname(), [])->label('Automatic Payment');?>
+        </div>
     </div>
     <?php ActiveForm::end(); ?>
 </div>
+
+<script>
+    $('#customerpaymentpreference-ispreferredpaymentenabled').on('switchChange.bootstrapSwitch', function(event, state) {
+        var customerPaymentPreferenceId = <?= $model->id; ?>;
+        var params = $.param({'state' : state | 0, 'id' : customerPaymentPreferenceId});
+	    $.ajax({
+            url    : '<?= Url::to(['customer-payment-preference/customer-preferred-payment-status']) ?>?' + params,
+            type   : 'POST',
+            dataType: "json",
+            data   : $(this).serialize()
+        });
+        return false;
+    });
+</script> 
