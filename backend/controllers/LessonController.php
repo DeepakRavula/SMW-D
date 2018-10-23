@@ -448,16 +448,6 @@ class LessonController extends BaseController
                 ->orderBy(['lesson.date' => SORT_ASC])
                 ->all();
             if ($model->rescheduleBeginDate) {
-                $oldLessons = Lesson::find()
-                    ->andWhere(['courseId' => $courseModel->id])
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
-                    ->orderBy(['lesson.date' => SORT_ASC])
-                    ->all();
-                $oldLessonIds = ArrayHelper::getColumn($oldLessons, function ($element) {
-                    return $element->id;
-                });
                 $oldLessonsRe = Lesson::find()
                     ->andWhere(['courseId' => $courseModel->id])
                     ->notDeleted()
@@ -466,7 +456,9 @@ class LessonController extends BaseController
                     ->andWhere(['>=', 'DATE(lesson.date)', $startDate->format('Y-m-d')])
                     ->orderBy(['lesson.date' => SORT_ASC])
                     ->all();
-                $oldLessonsReIds = ArrayHelper::getColumn($oldLessonsRe, 'id');
+                $oldLessonsReIds = ArrayHelper::getColumn($oldLessonsRe, function ($element) {
+                    return $element->id;
+                });
                 foreach ($lessons as $i => $lesson) {
                     $lesson->lessonId = $oldLessonsReIds;
                 }

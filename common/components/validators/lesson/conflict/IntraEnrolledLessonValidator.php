@@ -18,7 +18,8 @@ class IntraEnrolledLessonValidator extends Validator
         $lessonEndTime = $date->format('H:i:s');
         $lessonId = [$model->id];
         if ($model->lessonId) {
-            array_push($lessonId,$model->lessonId);
+            $lessonId = $model->lessonId;
+            array_push($lessonId, $model->id);
         }
         $draftLessons = Lesson::find()
             ->andWhere(['courseId' => $model->courseId, 'isConfirmed' => false])
