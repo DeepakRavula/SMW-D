@@ -16,6 +16,7 @@ use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 use backend\models\lesson\discount\LessonMultiDiscount;
 use common\models\ClassroomUnavailability;
+use common\models\EditClassroom;
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
@@ -349,32 +350,15 @@ class PrivateLessonController extends BaseController
             'model' => $model,   
         ]);
         $post = Yii::$app->request->post();
-        if ($post) {   
-            foreach ($lessonIds as $lessonId) {
+        if ($post) {
+            if ($model->validate()) {
+                foreach ($lessonIds as $lessonId) {
                 $model = $this->findModel($lessonId);
                 $model->load($post);
-                if ($model->isClassroomChosen($model->id, $model->classroomId)) {
-                    return [
-                        'status' => false,
-                        'error' => 'Classroom already chosen.',
-                    ]; 
-                }
-            }
-            foreach ($lessonIds as $lessonId) {
-                $model = $this->findModel($lessonId);
-                $model->load($post);
-                if ($model->isClassroomUnAvailable($model->id, $model->classroomId)) {
-                    return [
-                        'status' => false,
-                        'error' => 'Classroom is unavailable.',
-                    ]; 
-                }
-            }
-            foreach ($lessonIds as $lessonId) {
-                $model = $this->findModel($lessonId);
-                $model->load($post);
+                $model->setScenario(LESSON::SCENARIO_EDIT_CLASSROOM);
                 $model->save();
             }
+        }
             $response = [
                 'status' => true,
                 'message' => 'Lesson Classroom Edited Sucessfully',
