@@ -34,6 +34,7 @@ use yii\widgets\Pjax;
 
 <script>
     $(document).on('click', '#split-lesson', function () {
+        $( "#split-lesson" ).addClass("multiselect-disable");
         $.ajax({
             url    : '<?= Url::to(['private-lesson/split', 'id' => $model->id]); ?>',
             type   : 'get',

@@ -206,6 +206,9 @@ class PrivateLessonController extends BaseController
     public function actionSplit($id)
     {
         $model = $this->findModel($id);
+        if (!$model->canExplode()) {
+            return false;
+        }
         $model->privateLesson->split();
         Yii::$app->session->setFlash('alert', [
             'options' => ['class' => 'alert-success'],
