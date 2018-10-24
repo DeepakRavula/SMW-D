@@ -96,28 +96,6 @@ class LessonController extends BaseController
             'dataProvider' => $dataProvider,
         ]);
     }
-    public function actionNewIndex()
-    {
-        set_time_limit(0);
-        ini_set('memory_limit', '-1');
-        $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
-        $lessonIds =  ArrayHelper::map(
-            LessonOwing::find()->all(),
-                'lessonId', 'lessonId'
-            );
-        $newLessons = Lesson::find()
-        ->location($locationId)
-        ->where(['lesson.id' => $lessonIds])
-        ->orderBy(['date' => SORT_ASC]);
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $newLessons,
-        ]);
-        $dataProvider->pagination->pageSize = 200;
-        return $this->render('newindex', [
-            'dataProvider' => $dataProvider,
-        ]);
-    }
 
     /**
      * Displays a single Lesson model.
