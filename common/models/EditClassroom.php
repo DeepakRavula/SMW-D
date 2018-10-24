@@ -37,6 +37,7 @@ class EditClassroom extends Model
             [['classroomId', 'lessonId', 'lessonIds'], 'safe'],
             [['lessonIds'], 'validateOnInvoiced', 'on' => [self::SCENARIO_BEFORE_EDIT_CLASSROOM]],
             [['lessonIds'], 'validateClassRoom', 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
+            [['classroomId'], 'validateClassRoomAvailability', 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
         ];
     }
     public function validateOnInvoiced($attribute)
