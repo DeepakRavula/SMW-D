@@ -59,8 +59,8 @@ $form = ActiveForm::begin([
             [
                 'label' => 'Original Date',
                 'value' => function ($data) {
-                    $date = Yii::$app->formatter->asDate($data->rootLesson->date);
-                    return !empty($date) ? $date : null;
+                    $date = Yii::$app->formatter->asDate($data->date);
+                    return $data->rootLesson ? Yii::$app->formatter->asDate($data->rootLesson->date) : $date;
                 },
             ],
             [
