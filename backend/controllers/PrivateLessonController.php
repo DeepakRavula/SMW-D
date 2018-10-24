@@ -333,42 +333,43 @@ class PrivateLessonController extends BaseController
 
     public function actionEditClassroom()
     {
-        $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
-        $lessonId = end($lessonIds);
-        foreach ($lessonIds as $lessonId) {
-            $model = $this->findModel($lessonId);
-            if (!$model->isEditable()) {
-                return [
-                    'status' => false,
-                    'message' => ' One of the chosen lesson is invoiced. You can\'t edit classroom for this lessons',
-                ]; 
-            }
-        }
-        $model = new Lesson();
+        $editClassroomModel = new EditClassroom();
+        $editClassroomModel->setScenario(EditClassroom::SCENARIO_BEFORE_EDIT_CLASSROOM);
+        $editClassroomModel->lessonIds = Yii::$app->request->get('PrivateLesson')['lessonIds'];
+        if($editClassroomModel->validate()) {
         $data = $this->renderAjax('_form-edit-classroom', [
-            'lessonIds' => $lessonIds,
-            'model' => $model,   
+            'model' => $editClassroomModel,
         ]);
+        $response = [
+            'status' => true,
+            'data' => $data
+        ];
+        } else {
+            $response = [
+                'status' => false,
+                'errors' => $editClassroomModel->getErrors('lessonIds'),
+            ];
+        }
         $post = Yii::$app->request->post();
         if ($post) {
-            if ($model->validate()) {
-                foreach ($lessonIds as $lessonId) {
+            $editClassroomModel->setScenario(EditClassroom::SCENARIO_EDIT_CLASSROOM);
+            if ($editClassroomModel->load($post) && $editClassroomModel->validate()) {
+                foreach ($editClassroomModel->lessonIds as $lessonId) {
                 $model = $this->findModel($lessonId);
-                $model->load($post);
-                $model->setScenario(LESSON::SCENARIO_EDIT_CLASSROOM);
                 $model->save();
+                }
             }
-        }
+            else {
+                $response = [
+                    'status' => false,
+                    'message' => $model->getErrors('lessonIds','classroomId'),
+                ];
+            }
             $response = [
                 'status' => true,
                 'message' => 'Lesson Classroom Edited Sucessfully',
             ];
-        } else {
-              $response = [
-                'status' => true,
-                'data' => $data
-            ];
-        }
+        } 
         return $response;
     }
 }

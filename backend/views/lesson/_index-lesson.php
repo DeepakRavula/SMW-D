@@ -373,7 +373,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
 
      $(document).off('click', '#lesson-classroom-edit').on('click', '#lesson-classroom-edit', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
-        var params = $.param({ 'PrivateLesson[ids]': lessonIds, 'PrivateLesson[isBulk]': true });
+        var params = $.param({ 'PrivateLesson[lessonIds]': lessonIds});
                     $.ajax({
                         url    : '<?= Url::to(['private-lesson/edit-classroom']) ?>?' +params,
                         type   : 'post',
@@ -386,6 +386,9 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                             else {
                                 if (response.message) {
                                     $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                }
+                                if (response.errors) {
+                                    $('#index-error-notification').text(response.errors).fadeIn().delay(5000).fadeOut();
                                 }
                             }
                         }

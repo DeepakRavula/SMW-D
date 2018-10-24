@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\base\Model;
+use common\models\Lesson;
 use common\components\validators\lesson\conflict\ClassroomValidator;
 
 /**
@@ -20,7 +21,8 @@ use common\components\validators\lesson\conflict\ClassroomValidator;
  */
 class EditClassroom extends Model
 {
-    const SCENARIO_EDIT_CLASSROOM = 'classroom-unavailability';
+    const SCENARIO_EDIT_CLASSROOM = 'classroom-edit';
+    const SCENARIO_BEFORE_EDIT_CLASSROOM = 'before-classroom-edit';
 
     public $lessonIds;
     public $lessonId;
@@ -32,14 +34,24 @@ class EditClassroom extends Model
     public function rules()
     {
         return [
-            [['classroomId', 'lessonId'], 'safe'],
-            [['classroomId'], ClassroomValidator::className(), 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
+            [['classroomId', 'lessonId', 'lessonIds'], 'safe'],
+            [['lessonIds'], 'validateOnInvoiced', 'on' => [self::SCENARIO_BEFORE_EDIT_CLASSROOM]],
+            [['lessonIds'], 'validateClassRoom', 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
         ];
     }
-    
-    public function ValidateAttribute()
+    public function validateOnInvoiced($attribute)
     {
-        $lesson = Lesson::findOne($this->lessonId);
+       foreach($this->lessonIds as $lessonId) {
+          $lesson = Lesson::findOne($lessonId);
+          if ($lesson->hasInvoice()) {
+            $this->addError($attribute, "One of the selected lessons is invoiced. Invoiced lessons can't be edited.");
+        }
+      }
+    }
+    public function validateClassRoom($attribute)
+    {
+        foreach($this->lessonIds as $lessonId) { 
+        $lesson = Lesson::findOne($lessonId);
         $start = new \DateTime($lesson->date);
         $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
         $lessonStartTime = $start->format('H:i:s');
@@ -48,7 +60,7 @@ class EditClassroom extends Model
         $start->modify('-1 second');
         $lessonEndTime = $start->format('H:i:s');
         $overLapLessons = Lesson::find()
-                ->andWhere(['NOT',['lesson.id' => $id]])
+                ->andWhere(['NOT',['lesson.id' => $lessonId]])
                 ->andWhere(['classroomId' => $this->classroomId])
                 ->isConfirmed()
                 ->scheduledOrRescheduled()
@@ -57,6 +69,10 @@ class EditClassroom extends Model
         if ($overLapLessons) {
             $this->addError($model, $attribute, 'Classroom already chosen!');
         }
+    }
+}
+public function validateClassRoomAvailability($attribute)
+{
         $lesson = Lesson::findOne($this->lessonId);
         $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
         $classroomUnavailabilities = ClassroomUnavailability::find()

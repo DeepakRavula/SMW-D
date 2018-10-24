@@ -16,15 +16,10 @@ use common\models\Location;
         width: 23%;
     }
 </style>
-<?php   $placeholder = '[multiple]';
-        if (count($lessonIds) < 2) {
-            $placeholder = '';
-        }
-?>
 <div id="edit-classroom" class="edit-classroom">
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['private-lesson/edit-classroom', 'PrivateLesson[ids]' => $lessonIds]),
+        'action' => Url::to(['private-lesson/edit-classroom', 'PrivateLesson[lessonIds]' => $model->lessonIds]),
     ]); ?>
        <div class="row">
         <div class="col-md-6">
