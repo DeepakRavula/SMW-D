@@ -336,14 +336,14 @@ class PrivateLessonController extends BaseController
         $editClassroomModel = new EditClassroom();
         $editClassroomModel->setScenario(EditClassroom::SCENARIO_BEFORE_EDIT_CLASSROOM);
         $editClassroomModel->lessonIds = Yii::$app->request->get('PrivateLesson')['lessonIds'];
-        if($editClassroomModel->validate()) {
-        $data = $this->renderAjax('_form-edit-classroom', [
-            'model' => $editClassroomModel,
-        ]);
-        $response = [
-            'status' => true,
-            'data' => $data
-        ];
+        if ($editClassroomModel->validate()) {
+            $data = $this->renderAjax('_form-edit-classroom', [
+                'model' => $editClassroomModel,
+            ]);
+            $response = [
+                'status' => true,
+                'data' => $data
+            ];
         } else {
             $response = [
                 'status' => false,
@@ -355,8 +355,9 @@ class PrivateLessonController extends BaseController
             $editClassroomModel->setScenario(EditClassroom::SCENARIO_EDIT_CLASSROOM);
             if ($editClassroomModel->load($post) && $editClassroomModel->validate()) {
                 foreach ($editClassroomModel->lessonIds as $lessonId) {
-                $model = $this->findModel($lessonId);
-                $model->save();
+                    $model = $this->findModel($lessonId);
+                    $model->classroomId = $editClassroomModel->classroomId;
+                    $model->save();
                 }
             }
             else {
