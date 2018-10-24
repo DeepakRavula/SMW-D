@@ -1598,46 +1598,5 @@ class Lesson extends \yii\db\ActiveRecord
     public function getLessonDiscount()
     {
         return $this->hasMany(LessonDiscount::className(), ['lessonId' => 'id']);
-    }
-    public function isClassroomChosen($id, $classroomId)
-    {
-        $lesson = Lesson::findOne($id);
-        $start = new \DateTime($lesson->date);
-        $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
-        $lessonStartTime = $start->format('H:i:s');
-        $duration = (new \DateTime($lesson->duration));
-        $start->add(new \DateInterval('PT' . $duration->format('H') . 'H' . $duration->format('i') . 'M'));
-        $start->modify('-1 second');
-        $lessonEndTime = $start->format('H:i:s');
-        $overLapLessons = Lesson::find()
-                ->andWhere(['NOT',['lesson.id' => $id]])
-                ->andWhere(['classroomId' => $classroomId])
-                ->isConfirmed()
-                ->scheduledOrRescheduled()
-                ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
-                ->all();
-        if ($overLapLessons) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public function isClassroomUnavailable($id, $classroomId) 
-    {
-        $lesson = Lesson::findOne($id);
-        $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
-        $classroomUnavailabilities = ClassroomUnavailability::find()
-                ->andWhere(['classroomId' => $classroomId])
-                ->andWhere(['AND',
-                        ['<=', 'DATE(fromDate)', $lessonDate],
-                        ['>=', 'DATE(toDate)', $lessonDate]
-                ])
-                ->all();
-        if ($classroomUnavailabilities) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    }   
 }
