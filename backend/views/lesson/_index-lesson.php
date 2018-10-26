@@ -373,7 +373,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
 
      $(document).off('click', '#lesson-classroom-edit').on('click', '#lesson-classroom-edit', function(){
         var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
-        var params = $.param({ 'PrivateLesson[lessonIds]': lessonIds});
+        var params = $.param({ 'EditClassroom[lessonIds]': lessonIds});
                     $.ajax({
                         url    : '<?= Url::to(['private-lesson/edit-classroom']) ?>?' +params,
                         type   : 'post',

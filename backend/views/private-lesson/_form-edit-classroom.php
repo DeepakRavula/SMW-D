@@ -19,7 +19,7 @@ use common\models\Location;
 <div id="edit-classroom" class="edit-classroom">
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['private-lesson/edit-classroom', 'PrivateLesson[lessonIds]' => $model->lessonIds]),
+        'action' => Url::to(['private-lesson/edit-classroom', 'EditClassroom[lessonIds]' => $model->lessonIds]),
     ]); ?>
        <div class="row">
         <div class="col-md-6">

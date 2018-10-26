@@ -335,7 +335,7 @@ class PrivateLessonController extends BaseController
     {
         $editClassroomModel = new EditClassroom();
         $editClassroomModel->setScenario(EditClassroom::SCENARIO_BEFORE_EDIT_CLASSROOM);
-        $editClassroomModel->lessonIds = Yii::$app->request->get('PrivateLesson')['lessonIds'];
+        $editClassroomModel->load(Yii::$app->request->get());
         if ($editClassroomModel->validate()) {
             $data = $this->renderAjax('_form-edit-classroom', [
                 'model' => $editClassroomModel,

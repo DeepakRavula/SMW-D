@@ -25,7 +25,6 @@ class EditClassroom extends Model
     const SCENARIO_BEFORE_EDIT_CLASSROOM = 'before-classroom-edit';
 
     public $lessonIds;
-    public $lessonId;
     public $classroomId;
     
     /**
@@ -34,7 +33,7 @@ class EditClassroom extends Model
     public function rules()
     {
         return [
-            [['classroomId', 'lessonId', 'lessonIds'], 'safe'],
+            [['classroomId', 'lessonIds'], 'safe'],
             [['lessonIds'], 'validateOnInvoiced', 'on' => [self::SCENARIO_BEFORE_EDIT_CLASSROOM]],
             [['lessonIds'], 'validateClassRoom', 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
             [['classroomId'], 'validateClassRoomAvailability', 'on' => [self::SCENARIO_EDIT_CLASSROOM]],
