@@ -49,7 +49,7 @@ use kartik\switchinput\SwitchInput;
             ?>
         </div>
         <div class="col-md-12">
-            <?php echo $form->field($model, 'isPreferredPaymentEnabled')->widget(SwitchInput::classname(), [])->label('Automatic Payment');?>
+            <?php echo $form->field($model, 'isPreferredPaymentEnabled')->widget(SwitchInput::classname(), [])->label('Automatic Payments');?>
         </div>
     </div>
     <?php ActiveForm::end(); ?>
