@@ -51,39 +51,41 @@ class EditClassroom extends Model
     public function validateClassRoom($attribute)
     {
         foreach($this->lessonIds as $lessonId) { 
-        $lesson = Lesson::findOne($lessonId);
-        $start = new \DateTime($lesson->date);
-        $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
-        $lessonStartTime = $start->format('H:i:s');
-        $duration = (new \DateTime($lesson->duration));
-        $start->add(new \DateInterval('PT' . $duration->format('H') . 'H' . $duration->format('i') . 'M'));
-        $start->modify('-1 second');
-        $lessonEndTime = $start->format('H:i:s');
-        $overLapLessons = Lesson::find()
-                ->andWhere(['NOT',['lesson.id' => $lessonId]])
-                ->andWhere(['classroomId' => $this->classroomId])
-                ->isConfirmed()
-                ->scheduledOrRescheduled()
-                ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
-                ->all();
+            $lesson = Lesson::findOne($lessonId);
+            $start = new \DateTime($lesson->date);
+            $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
+            $lessonStartTime = $start->format('H:i:s');
+            $duration = (new \DateTime($lesson->duration));
+            $start->add(new \DateInterval('PT' . $duration->format('H') . 'H' . $duration->format('i') . 'M'));
+            $start->modify('-1 second');
+            $lessonEndTime = $start->format('H:i:s');
+            $overLapLessons = Lesson::find()
+                    ->andWhere(['NOT',['lesson.id' => $lessonId]])
+                    ->andWhere(['classroomId' => $this->classroomId])
+                    ->isConfirmed()
+                    ->scheduledOrRescheduled()
+                    ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
+                    ->all();
         if ($overLapLessons) {
-            $this->addError($model, $attribute, 'Classroom already chosen!');
+            $this->addError($attribute, 'Classroom already chosen!');
         }
     }
 }
 public function validateClassRoomAvailability($attribute)
 {
-        $lesson = Lesson::findOne($this->lessonId);
+    foreach($this->lessonIds as $lessonId) {
+        $lesson = Lesson::findOne($lessonId);
         $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
         $classroomUnavailabilities = ClassroomUnavailability::find()
-                ->andWhere(['classroomId' => $classroomId])
+                ->andWhere(['classroomId' => $this->classroomId])
                 ->andWhere(['AND',
                         ['<=', 'DATE(fromDate)', $lessonDate],
                         ['>=', 'DATE(toDate)', $lessonDate]
                 ])
                 ->all();
         if ($classroomUnavailabilities) {
-            $this->addError($model, $attribute, 'Classroom is unavailable');
+            $this->addError($attribute, 'Classroom is unavailable');
         }
     }
+}
 }
