@@ -66,26 +66,26 @@ class EditClassroom extends Model
                     ->scheduledOrRescheduled()
                     ->overlap($lessonDate, $lessonStartTime, $lessonEndTime)
                     ->all();
-        if ($overLapLessons) {
-            $this->addError($attribute, 'Classroom already chosen!');
+            if ($overLapLessons) {
+                $this->addError($attribute, 'Classroom already chosen!');
+            }
         }
     }
-}
-public function validateClassRoomAvailability($attribute)
-{
-    foreach($this->lessonIds as $lessonId) {
-        $lesson = Lesson::findOne($lessonId);
-        $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
-        $classroomUnavailabilities = ClassroomUnavailability::find()
-                ->andWhere(['classroomId' => $this->classroomId])
-                ->andWhere(['AND',
-                        ['<=', 'DATE(fromDate)', $lessonDate],
-                        ['>=', 'DATE(toDate)', $lessonDate]
-                ])
-                ->all();
-        if ($classroomUnavailabilities) {
-            $this->addError($attribute, 'Classroom is unavailable');
+    public function validateClassRoomAvailability($attribute)
+    {
+        foreach($this->lessonIds as $lessonId) {
+            $lesson = Lesson::findOne($lessonId);
+            $lessonDate = (new \DateTime($lesson->date))->format('Y-m-d');
+            $classroomUnavailabilities = ClassroomUnavailability::find()
+                    ->andWhere(['classroomId' => $this->classroomId])
+                    ->andWhere(['AND',
+                            ['<=', 'DATE(fromDate)', $lessonDate],
+                            ['>=', 'DATE(toDate)', $lessonDate]
+                    ])
+                    ->all();
+            if ($classroomUnavailabilities) {
+                $this->addError($attribute, 'Classroom is unavailable');
+            }
         }
     }
-}
 }
