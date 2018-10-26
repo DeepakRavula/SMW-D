@@ -69,9 +69,9 @@ use insolita\wgadminlte\LteConst;
                             $(".modal-delete").attr("action", url);
                         }
                         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Payment Preference</h4>');
-                        $('#popup-modal .modal-dialog').css({'width': '500px'});
+                        $('#popup-modal .modal-dialog').css({'width': '450px'});
                         $('#modal-popup-warning-notification').html('Use this feature to instruct the system to \n\
-                        automatically applied payment to the customer/ts account each payment cycle. Just indicate \n\
+                        automatically applied payment to the customer\'s account each payment cycle. Just indicate \n\
                         how the customer pays and the day of the month the payment should be recorded.\n\
                         The expiry date can be used turn this feature off when post-date cheques run out \n\
                         or when a credit card on file is set to expire. You can temporarily disable this feature, if needed.').fadeIn();
