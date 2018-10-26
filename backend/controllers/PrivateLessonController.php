@@ -359,16 +359,17 @@ class PrivateLessonController extends BaseController
                     $model->classroomId = $editClassroomModel->classroomId;
                     $model->save();
                 }
+                $response = [
+                    'status' => true,
+                    'message' => 'Lesson Classroom Edited Sucessfully',
+                ];
             } else {
                 $response = [
                     'status' => false,
                     'message' => $editClassroomModel->getErrors('lessonIds','classroomId'),
                 ];
             }
-            $response = [
-                'status' => true,
-                'message' => 'Lesson Classroom Edited Sucessfully',
-            ];
+           
         } 
         return $response;
     }
