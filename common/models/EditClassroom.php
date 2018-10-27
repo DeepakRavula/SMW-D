@@ -68,6 +68,7 @@ class EditClassroom extends Model
                     ->all();
             if ($overLapLessons) {
                 $this->addError($attribute, 'Classroom already chosen!');
+                break;
             }
         }
     }
@@ -85,6 +86,7 @@ class EditClassroom extends Model
                     ->all();
             if ($classroomUnavailabilities) {
                 $this->addError($attribute, 'Classroom is unavailable');
+                break;
             }
         }
     }
