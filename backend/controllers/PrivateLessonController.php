@@ -334,22 +334,7 @@ class PrivateLessonController extends BaseController
     public function actionEditClassroom()
     {
         $editClassroomModel = new EditClassroom();
-        $editClassroomModel->setScenario(EditClassroom::SCENARIO_BEFORE_EDIT_CLASSROOM);
         $editClassroomModel->load(Yii::$app->request->get());
-        if ($editClassroomModel->validate()) {
-            $data = $this->renderAjax('_form-edit-classroom', [
-                'model' => $editClassroomModel,
-            ]);
-            $response = [
-                'status' => true,
-                'data' => $data
-            ];
-        } else {
-            $response = [
-                'status' => false,
-                'errors' => $editClassroomModel->getErrors('lessonIds'),
-            ];
-        }
         $post = Yii::$app->request->post();
         if ($post) {
             $editClassroomModel->setScenario(EditClassroom::SCENARIO_EDIT_CLASSROOM);
@@ -366,11 +351,26 @@ class PrivateLessonController extends BaseController
             } else {
                 $response = [
                     'status' => false,
-                    'errors' => $editClassroomModel->getErrors('lessonIds','classroomId'),
+                    'error' => $editClassroomModel->getErrors('lessonIds','classroomId'),
                 ];
             }
-           
-        } 
+        } else {
+            $editClassroomModel->setScenario(EditClassroom::SCENARIO_BEFORE_EDIT_CLASSROOM);
+            if ($editClassroomModel->validate()) {
+                $data = $this->renderAjax('_form-edit-classroom', [
+                    'model' => $editClassroomModel,
+                ]);
+                $response = [
+                    'status' => true,
+                    'data' => $data
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'error' => $editClassroomModel->getErrors('lessonIds'),
+                ];
+            }
+        }
         return $response;
     }
 }

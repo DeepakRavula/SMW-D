@@ -387,8 +387,8 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                                 if (response.message) {
                                     $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
                                 }
-                                if (response.errors) {
-                                    $('#index-error-notification').text(response.errors).fadeIn().delay(5000).fadeOut();
+                                if (response.error) {
+                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
                                 }
                             }
                         }
