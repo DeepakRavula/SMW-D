@@ -15,6 +15,8 @@ use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
 use backend\models\lesson\discount\LessonMultiDiscount;
+use common\models\ClassroomUnavailability;
+use common\models\EditClassroom;
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
@@ -31,7 +33,7 @@ class PrivateLessonController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'merge', 'update-attendance', 'delete', 'apply-discount','edit-duration',
+                    'merge', 'update-attendance', 'delete', 'apply-discount','edit-duration', 'edit-classroom', 
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -45,7 +47,7 @@ class PrivateLessonController extends BaseController
                         'allow' => true,
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance',
-                                'apply-discount','edit-duration'
+                                'apply-discount','edit-duration', 'edit-classroom'
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
@@ -328,6 +330,49 @@ class PrivateLessonController extends BaseController
                 'status' => true,
                 'data' => $data
             ];
+        }
+        return $response;
+    }
+
+    public function actionEditClassroom()
+    {
+        $editClassroomModel = new EditClassroom();
+        $editClassroomModel->load(Yii::$app->request->get());
+        $post = Yii::$app->request->post();
+        if ($post) {
+            $editClassroomModel->setScenario(EditClassroom::SCENARIO_EDIT_CLASSROOM);
+            if ($editClassroomModel->load($post) && $editClassroomModel->validate()) {
+                foreach ($editClassroomModel->lessonIds as $lessonId) {
+                    $model = $this->findModel($lessonId);
+                    $model->classroomId = $editClassroomModel->classroomId;
+                    $model->save();
+                }
+                $response = [
+                    'status' => true,   
+                    'message' => 'Lesson Classroom Edited Sucessfully',
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'error' => $editClassroomModel->getErrors('lessonIds','classroomId'),
+                ];
+            }
+        } else {
+            $editClassroomModel->setScenario(EditClassroom::SCENARIO_BEFORE_EDIT_CLASSROOM);
+            if ($editClassroomModel->validate()) {
+                $data = $this->renderAjax('_form-edit-classroom', [
+                    'model' => $editClassroomModel,
+                ]);
+                $response = [
+                    'status' => true,
+                    'data' => $data
+                ];
+            } else {
+                $response = [
+                    'status' => false,
+                    'error' => $editClassroomModel->getErrors('lessonIds'),
+                ];
+            }
         }
         return $response;
     }

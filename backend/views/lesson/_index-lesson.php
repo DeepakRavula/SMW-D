@@ -258,11 +258,13 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 $('#lesson-discount').addClass('multiselect-disable');
                 $('#lesson-delete').addClass('multiselect-disable');
                 $('#lesson-duration-edit').addClass('multiselect-disable');
+                $('#lesson-classroom-edit').addClass('multiselect-disable');
             } else {
                 $('#substitute-teacher').removeClass('multiselect-disable');
                 $('#lesson-discount').removeClass('multiselect-disable');
                 $('#lesson-delete').removeClass('multiselect-disable');
                 $('#lesson-duration-edit').removeClass('multiselect-disable');
+                $('#lesson-classroom-edit').removeClass('multiselect-disable');
             }
             return false;
         }
@@ -335,6 +337,18 @@ $this->params['show-all'] = $this->render('_show-all-button', [
             window.location.href = params.url;
         } else if(params.status) {
             $.pjax.reload({container: "#lesson-index-1",timeout: 6000, async:false});
+            if (params.message) {
+                $('#popup-modal').modal('hide');
+                $('#index-success-notification').text(params.message).fadeIn().delay(5000).fadeOut();
+            }
+        }
+        return false;
+    });
+
+    $(document).on('modal-error', function(event, params) {
+        if (params.error) {
+            $('#popup-modal').modal('hide');
+            $('#index-error-notification').text(params.error).fadeIn().delay(5000).fadeOut();
         }
         return false;
     });
@@ -355,6 +369,31 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         if (!$.isEmptyObject(dateRange)) {
             $("#lessonsearch-daterange").val('').trigger('change');
         }
+    });
+
+     $(document).off('click', '#lesson-classroom-edit').on('click', '#lesson-classroom-edit', function(){
+        var lessonIds = $('#lesson-index-1').yiiGridView('getSelectedRows');
+        var params = $.param({ 'EditClassroom[lessonIds]': lessonIds});
+                    $.ajax({
+                        url    : '<?= Url::to(['private-lesson/edit-classroom']) ?>?' +params,
+                        type   : 'post',
+                        success: function(response)
+                        {    
+                            if (response.status) {
+                                    $('#modal-content').html(response.data);
+                                    $('#popup-modal').modal('show');
+                                }
+                            else {
+                                if (response.message) {
+                                    $('#index-error-notification').text(response.message).fadeIn().delay(5000).fadeOut();
+                                }
+                                if (response.error) {
+                                    $('#index-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                                }
+                            }
+                        }
+                    });
+        return false;
     });
 </script>
 
