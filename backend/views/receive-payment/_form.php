@@ -259,7 +259,7 @@ use yii\bootstrap\Html;
             $('.amount-to-apply').text((amountToDistribute).toFixed(2));
             var amountReceived = $('#paymentform-amount').val();
             if (!lockTextBox) {
-                var amountReceived = amountNeeded - creditAmount < 0 ? '' : (-(creditAmount - amountNeeded)).toFixed(2);
+                var amountReceived = amountNeeded - creditAmount < 0 ? '0.00' : (-(creditAmount - amountNeeded)).toFixed(2);
                 $('#paymentform-amount').val(amountReceived);
             }
             var amountToCredit = parseFloat(creditAmount) + (amountReceived == '' ? parseFloat('0.00') : parseFloat(amountReceived)) - amountToDistribute;
