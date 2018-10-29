@@ -64,7 +64,7 @@ class PaymentForm extends Model
     {
         return [
             ['amount', 'validateAmount'],
-            ['amount', 'match', 'pattern' => '^\d+\.\d{0,2}$^'],
+            ['amount', 'match', 'pattern' => '^[1-9]\d*(\.\d+)?$^'],
             [['date', 'amountNeeded', 'invoiceIds', 'canUseInvoiceCredits', 'selectedCreditValue',
                 'lessonIds', 'canUsePaymentCredits', 'invoiceCreditIds', 'amount', 'userId',
                 'amountToDistribute', 'invoicePayments', 'lessonPayments','paymentId',
