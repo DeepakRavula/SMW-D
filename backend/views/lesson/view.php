@@ -140,15 +140,6 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 <?php endif; ?>
 
 <?php Modal::begin([
-    'header' => '<h4 class="m-0">Edit Details</h4>',
-    'id' => 'classroom-edit-modal',
-]); ?>
-<?= $this->render('classroom/_form', [
-    'model' => $model,
-]);?>
-<?php Modal::end(); ?>
-
-<?php Modal::begin([
     'header' => '<h4 class="m-0">Payment Details</h4>',
     'id' => 'lesson-payment-modal',
 ]); ?>
@@ -167,12 +158,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 ]);?>
 <?php Modal::end(); ?>
 
-<script>
-    $(document).on('click', '.edit-lesson-detail', function () {
-        $('#classroom-edit-modal').modal('show');
-        return false;
-    });
-    
+<script>   
     $(document).on('click', '.edit-attendance', function () {
         $('#attendance-modal').modal('show');
         $('#attendance-modal .modal-dialog').css({'width': '400px'});
@@ -198,29 +184,6 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                 if(response.status) {
                     $('#lesson-payment-modal').modal('show');
                     $('#lesson-payment-content').html(response.data);
-                }
-            }
-        });
-        return false;
-    });
-    
-    $(document).on('click', '.lesson-detail-cancel', function () {
-        $('#classroom-edit-modal').modal('hide');
-        return false;
-    });
-    
-    $(document).on('beforeSubmit', '#classroom-form', function (e) {
-        $.ajax({
-            url    : $(this).attr('action'),
-            type   : 'post',
-            dataType: "json",
-            data   : $(this).serialize(),
-            success: function(response)
-            {
-                if(response.status)
-                {
-                    $('#classroom-edit-modal').modal('hide');
-                    $.pjax.reload({container: '#lesson-detail', timeout: 6000});
                 }
             }
         });
@@ -526,4 +489,30 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         $.pjax.reload({container: "#lesson-schedule-buttons", replace: false, async: false, timeout: 6000});
         return false;
     });
+
+    $(document).on('click', '.edit-lesson-detail', function () {
+        var customUrl = '<?= Url::to(['lesson/edit-classroom', 'id' => $model->id]); ?>';
+        $.ajax({
+            url    : customUrl,
+            type   : 'get',
+            dataType: "json",
+            data   : $(this).serialize(),
+            success: function(response)
+            {
+                if(response.status)
+                {
+                    $('#popup-modal').modal('show');
+                    $('#modal-content').html(response.data);
+                } 
+            }
+        });
+        return false;
+    });
+
+    // $(document).on('modal-error', function (event, params) {
+    //     alert('somthingssss');
+    //     if (params.error) {
+    //         $('#modal-popup-error-notification').html(params.message).fadeIn().delay(5000).fadeOut();
+    //     }
+    // });
 </script>

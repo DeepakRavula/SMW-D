@@ -195,17 +195,25 @@ class LessonController extends BaseController
         $request = Yii::$app->request;
         $model = $this->findModel($id);
         $model->setScenario(Lesson::SCENARIO_EDIT_CLASSROOM);
-        if ($model->load($request->post())) {
-            if ($model->save()) {
+        $data = $this->renderAjax('classroom/_form', [
+            'model' => $model,
+        ]);
+        if ($request->post()) {
+            if($model->load($request->post()) && $model->save()) {
                 return [
                     'status' => true
                 ];
             } else {
-                return [
+            return [
                     'status' => false,
-                    'errors' => ActiveForm::validate($model)
+                    'error' =>$model->getErrors()
                 ];
             }
+        } else {
+            return [
+                'status' => true,
+                'data' => $data
+            ];
         }
     }
 

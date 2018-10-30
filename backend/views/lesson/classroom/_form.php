@@ -16,7 +16,7 @@ use common\models\Location;
 
 <div class="lesson-qualify">
 <?php $form = ActiveForm::begin([
-        'id' => 'classroom-form',
+        'id' => 'modal-form',
         'enableAjaxValidation' => true,
         'enableClientValidation' => false,
         'validationUrl' => Url::to(['lesson/validate-on-update', 'id' => $model->id, 'teacherId' => null]),
@@ -47,13 +47,12 @@ use common\models\Location;
         ?>
         </div>
     <div class="clearfix"></div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="pull-right">
-        <?= Html::a('Cancel', '#', ['class' => 'btn btn-default lesson-detail-cancel']); ?>
-        <?= Html::submitButton(Yii::t('backend', 'Save'), ['id' => 'lesson-edit-save', 'class' => 'btn btn-info', 'name' => 'button']) ?>
-	</div>
-                </div>
-        </div>
 	<?php ActiveForm::end(); ?>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Details</h4>');
+        $('#popup-modal .modal-dialog').css({'width': '500px'});
+    });
+</script>
