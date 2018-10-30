@@ -135,6 +135,7 @@ class ProgramController extends BaseController
     public function actionCreate($type)
     {
         $model = new Program();
+        $model->type = $type;
         $data  = $this->renderAjax(
             '_form',
             [
