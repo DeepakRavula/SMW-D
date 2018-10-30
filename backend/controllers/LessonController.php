@@ -206,7 +206,7 @@ class LessonController extends BaseController
             } else {
             return [
                     'status' => false,
-                    'error' =>$model->getErrors()
+                    'errors' => ActiveForm::validate($model),
                 ];
             }
         } else {
