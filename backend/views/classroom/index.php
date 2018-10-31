@@ -14,14 +14,6 @@ $this->title = 'Classrooms';
 $addButton = Html::a('<i class="fa fa-plus" aria-hidden="true"></i>', '#', ['class' => 'f-s-18', 'id' => 'add-classroom']);
 $this->params['action-button'] = $addButton;
 ?>
-<?php Modal::begin([
-        'header' => '<h4 class="m-0">Classroom</h4>',
-        'id' => 'classroom-modal',
-    ]); ?>
-<?= $this->render('_form', [
-    'model' => new Classroom(),
-]);?>
- <?php  Modal::end(); ?>
 <?php yii\widgets\Pjax::begin([
     'id' => 'classroom-listing'
 ]); ?>
@@ -45,31 +37,22 @@ $this->params['action-button'] = $addButton;
 </div>
 <?php yii\widgets\Pjax::end(); ?>
 <script>
-    $(document).ready(function() {
-        $(document).on('click', '#add-classroom', function () {
-           	$('#classroom-modal').modal('show'); 
-           	$('#classroom-modal .modal-dialog').addClass('classroom-dialog'); 
-            return false;
-        });
-        $(document).on('click', '#classroom-cancel', function () {
-            $('#classroom-modal').modal('hide');
-            return false;
-        });
-		$(document).on('beforeSubmit', '#classroom-form', function () {
+    $(document).on('click', '#add-classroom', function () {
+        var customUrl = '<?= Url::to(['classroom/create']); ?>';
             $.ajax({
-                url    : $(this).attr('action'),
-                type   : 'post',
+                url    : customUrl,
+                type   : 'get',
                 dataType: "json",
                 data   : $(this).serialize(),
                 success: function(response)
                 {
-                    if(response.status) {
-                        $.pjax.reload({container: '#classroom-listing', timeout: 6000});
-                        $('#classroom-modal').modal('hide');
+                    if(response.status)
+                    {
+                        $('#popup-modal').modal('show');
+                        $('#modal-content').html(response.data);
                     }
                 }
             });
-            return false;
-        });
+        return false;
     });
 </script>

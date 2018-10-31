@@ -7,14 +7,6 @@ use yii\bootstrap\Modal;
 /* @var $this yii\web\View */
 /* @var $model common\models\ClassRoom */
 ?>
-<?php Modal::begin([
-        'header' => '<h4 class="m-0">Edit Classroom</h4>',
-        'id' => 'classroom-detail-model',
-    ]); ?>
-<?= $this->render('_form', [
-    'model' => $model,
-]);?>
- <?php  Modal::end(); ?>
 <br>
 <div class="row">
 	<div class="col-md-6">	
@@ -34,33 +26,30 @@ use yii\bootstrap\Modal;
 	</div>
 </div>
 <script>
-	$(document).ready(function () {
-        $(document).on('click', '#edit-classroom', function () {
-           	$('#classroom-detail-model').modal('show'); 
-           	$('#classroom-detail-model .modal-dialog').addClass('classroom-dialog'); 
-            return false;
-        });
-		$(document).on('beforeSubmit', '#classroom-form', function () {
+	$(document).on('click', '#edit-classroom', function () {
+        var classroomId = '<?= $model->id; ?>';
+		var customUrl = '<?= Url::to(['classroom/update']); ?>?id=' + classroomId;
+		var url = '<?= Url::to(['classroom/delete']); ?>?id=' + classroomId;
+		$('.modal-delete').show();
+		$(".modal-delete").attr("action",url);
             $.ajax({
-                url    : $(this).attr('action'),
-                type   : 'post',
+                url    : customUrl,
+                type   : 'get',
                 dataType: "json",
                 data   : $(this).serialize(),
                 success: function(response)
                 {
-                    if(response.status) {
-                        $('#classroom-detail-model').modal('hide');
-						$.pjax.reload({container: "#classroom-details", replace: false, async: false, timeout: 4000});
-						$.pjax.reload({container: "#classroom-view", replace: false, async: false, timeout: 4000});
+                    if(response.status)
+                    {
+                        $('#popup-modal').modal('show');
+                        $('#modal-content').html(response.data);
                     }
                 }
             });
-            return false;
-        });
-		 $(document).on('click', '#classroom-cancel', function () {
-            $('#classroom-detail-model').modal('hide');
-            return false;
-        });
+        return false;
+    });
+	
+	$(document).ready(function () {
 		$(document).on("click", ".classroom-unavailability,#classroom-unavailability-grid tbody > tr", function () {
 			var unavailabilityId = $(this).data('key');
 			var classroomId = <?= $model->id ?>;

@@ -13,6 +13,7 @@ use yii\widgets\ActiveForm;
 use yii\web\Response;
 use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
+use common\models\Location;
 
 /**
  * ClassRoomController implements the CRUD actions for Classroom model.
@@ -95,14 +96,23 @@ class ClassroomController extends BaseController
     public function actionCreate()
     {
         $model = new Classroom();
-        if ($model->load(Yii::$app->request->post())) {
-            $model->locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
-            $model->save();
-            return $this->redirect(['view', 'id' => $model->id]);
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+        ]);
+        if (Yii::$app->request->post()) {
+            $model->locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+            if($model->load(Yii::$app->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            } else {
+                return [
+                        'status' => false,
+                        'errors' =>ActiveForm::validate($model)
+                    ];
+                }
         } else {
             return [
-                'status' => false,
-                'errors' => ActiveForm::validate($model)
+                'status' => true,
+                'data' => $data
             ];
         }
     }
@@ -116,15 +126,24 @@ class ClassroomController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return [
-                'status' => true,
-            ];
+        $data = $this->renderAjax('_form', [
+            'model' => $model,
+        ]);
+        if (Yii::$app->request->post()) {
+            if($model->load(Yii::$app->request->post()) && $model->save()) {
+                return [
+                    'status' => true
+                ];
+            } else {
+                return [
+                        'status' => false,
+                        'errors' =>ActiveForm::validate($model)
+                    ];
+            }
         } else {
             return [
-                'status' => false,
-                'errors' => ActiveForm::validate($model)
+                'status' => true,
+                'data' => $data
             ];
         }
     }

@@ -17,7 +17,7 @@ use yii\helpers\Url;
         $url = Url::to(['classroom/create']);
     }
     $form = ActiveForm::begin([
-        'id' => 'classroom-form',
+        'id' => 'modal-form',
         'action' => $url,
     ]); ?>
 
@@ -25,9 +25,11 @@ use yii\helpers\Url;
     	<?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
     	<?php echo $form->field($model, 'description')->textArea(['maxlength' => true]) ?>
 	</div>
-    <div class="row pull-right">
-         <?= Html::a('Cancel', '#', ['class' => 'btn btn-default' , 'id' => 'classroom-cancel']);?>
-        <?php echo Html::submitButton('Save', ['class' => 'btn btn-info']) ?>
-    </div>
     <?php ActiveForm::end(); ?>
 </div>
+<script>
+    $(document).ready(function() {
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Classroom</h4>');
+        $('#popup-modal .modal-dialog').addClass('classroom-dialog'); 
+    });
+</script>
