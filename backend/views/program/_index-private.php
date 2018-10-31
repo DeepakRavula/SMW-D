@@ -9,6 +9,7 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
+use backend\models\search\ProgramSearch;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -28,6 +29,32 @@ $lastRole = end($roles);
 ]); ?>
     <div class="m-t-10">
     <?php Pjax::begin(['id' => 'program-listing', 'enablePushState' => false]) ?>
+    <?php 
+        $columns = [
+            [
+                'attribute' => 'name',
+                'contentOptions' => ['style' => 'width:250px;'],
+                'value' => function ($data) {
+                    return $data->name;
+                },
+            ],
+        ];
+        if ($searchModel->type == ProgramSearch::PROGRAM_TYPE_PRIVATE) {
+            $label = 'Rate Per Hour';
+        } else {
+            $label = 'Rate Per Course';
+        }
+            array_push($columns, [
+                'label' => $label,
+                'attribute' => 'rate',
+                'format' => 'currency',
+                'headerOptions' => ['class' => 'text-right'],
+                'contentOptions' => ['class' => 'text-right', 'style' => 'width:100px;'],
+                'value' => function ($data) {
+                    return !empty($data->rate) ? $data->rate : null;
+                },
+            ]);
+    ?>
     <?php
     echo GridView::widget([
         'dataProvider' => $dataProvider,
@@ -40,25 +67,7 @@ $lastRole = end($roles);
                     }
                 }
             },
-        'columns' => [
-            [
-                'attribute' => 'name',
-                'contentOptions' => ['style' => 'width:250px;'],
-                'value' => function ($data) {
-                    return $data->name;
-                },
-            ],
-            [
-                'label' => 'Rate Per Hour',
-                'attribute' => 'rate',
-                'format' => 'currency',
-                'headerOptions' => ['class' => 'text-right'],
-                'contentOptions' => ['class' => 'text-right', 'style' => 'width:100px;'],
-                'value' => function ($data) {
-                    return !empty($data->rate) ? $data->rate : null;
-                },
-            ],
-        ],
+        'columns' => $columns,
     ]);
     ?>
 <?php Pjax::end(); ?>
