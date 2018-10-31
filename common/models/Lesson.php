@@ -342,7 +342,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function canExplode()
     {
         return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded
-            && !$this->isExpired() && !$this->isExtra() && !$this->hasInvoice();
+            && !$this->isExpired() && !$this->hasInvoice();
     }
 
     public function getEnrolment()
