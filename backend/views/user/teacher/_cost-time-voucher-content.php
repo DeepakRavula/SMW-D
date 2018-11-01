@@ -117,6 +117,7 @@ use common\models\InvoiceLineItem;
                     $invoiceDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->invoice->date);
                     return $invoiceDate->format('l, F jS, Y');
                 },
+                'group' => true,
             ],
             [
                 'label' => 'Duration(hrs)',

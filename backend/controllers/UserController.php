@@ -501,6 +501,7 @@ class UserController extends BaseController
         if (!empty($invoiceSearch)) {
             $invoiceSearchModel->dateRange = $invoiceSearch['dateRange'];
             list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
+            $invoiceSearchModel->summariseReport = $invoiceSearch['summariseReport'];
         }
 
         return $this->render('view', [
