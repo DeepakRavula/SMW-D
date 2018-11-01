@@ -23,7 +23,8 @@ use common\models\InvoiceLineItem;
                 'groupFooter' => function ($model, $key, $index, $widget) use ($teacherId) {
                     $fromDate = $model->invoice->date;
                     $toDate = $model->invoice->date;
-                    $costSum = InvoiceLineItem::find()
+                    $costSum = 0.00;
+                    $invoiceLineItems = InvoiceLineItem::find()
                         ->notDeleted()
                         ->joinWith(['invoice' => function ($query) use ($fromDate, $toDate) {
                             $query->notDeleted()
@@ -34,7 +35,11 @@ use common\models\InvoiceLineItem;
                             $query->andWhere(['lesson.teacherId' => $teacherId])
                             ->groupBy('lesson.id');
                         }])
-                        ->sum('cost');
+                        ->all();
+                        foreach($invoiceLineItems as $invoiceLineItem) {
+                           
+                            $costSum += $invoiceLineItem->cost;
+                        }
                     return [
                         'mergeColumns' => [[1, 3]],
                         'content' => [
@@ -103,7 +108,11 @@ use common\models\InvoiceLineItem;
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => function ($summary, $data, $widget) use ($timeVoucherDataProvider) {
-                    $costSum = $timeVoucherDataProvider->query->sum('cost');
+                    $invoiceLineItems = $timeVoucherDataProvider->query->all();
+                    $costSum = 0.00;
+                        foreach($invoiceLineItems as $invoiceLineItem) {
+                            $costSum += $invoiceLineItem->cost;
+                        }
                     return Yii::$app->formatter->asCurrency($costSum);
                 },
                 'visible' => Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')
