@@ -222,6 +222,9 @@ class PrivateLessonController extends BaseController
     public function actionMerge($id)
     {
         $model = $this->findModel($id);
+        if (!$model->canMerge()) {
+            return false;
+        }
         $model->setScenario(Lesson::SCENARIO_MERGE);
         $post = Yii::$app->request->post();
         $additionalDuration = new \DateTime(Lesson::DEFAULT_MERGE_DURATION);
