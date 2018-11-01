@@ -9,14 +9,14 @@ use yii\helpers\Html;
 ?>
 
 <?php
-$enrolmentId = $model->enrolment->id;
+$studentId = $model->student->id;
 $locationId = $model->course->locationId;
 $lessons = Lesson::find()
         ->split()
         ->notCanceled()
         ->notDeleted()
         ->unscheduled()
-        ->enrolment($enrolmentId);
+        ->student($studentId);
 $splitLessonDataProvider = new ActiveDataProvider([
     'query' => $lessons,
     'pagination' => false

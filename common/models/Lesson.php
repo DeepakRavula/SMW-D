@@ -324,6 +324,11 @@ class Lesson extends \yii\db\ActiveRecord
         foreach ($splitLesson->discounts as $discount) {
             $splitLessonDiscountValues[] = $discount->value;
         }
+        $lessonProgramRate = $this->programRate;
+        $splitLessonProgramRate = $splitLesson->rootLesson->programRate;
+        if (($lessonProgramRate - $splitLessonProgramRate) != 0) {
+            $this->addError($attribute, "Lesson cost varied lesson's can't be merged");
+        }
         if (array_diff($lessonDiscountValues, $splitLessonDiscountValues)) {
             $this->addError($attribute, "Discount varied lesson's can't be merged");
         }
@@ -342,7 +347,7 @@ class Lesson extends \yii\db\ActiveRecord
     public function canExplode()
     {
         return $this->isPrivate() && $this->isUnscheduled() && !$this->isExploded
-            && !$this->isExpired() && !$this->isExtra() && !$this->hasInvoice();
+            && !$this->isExpired() && !$this->hasInvoice();
     }
 
     public function getEnrolment()
@@ -954,7 +959,7 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function canMerge()
     {
-        if ($this->enrolment->hasExplodedLesson() && !$this->isExploded && !$this->isExtra() && !$this->hasInvoice() && !$this->isCanceled()) {
+        if ($this->student->hasExplodedLesson() && !$this->isExploded && !$this->isExtra() && !$this->hasInvoice() && !$this->isCanceled()) {
             $lessonDuration = new \DateTime($this->duration);
             $date = new \DateTime($this->date);
             $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));

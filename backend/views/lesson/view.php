@@ -508,11 +508,4 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         });
         return false;
     });
-
-    // $(document).on('modal-error', function (event, params) {
-    //     alert('somthingssss');
-    //     if (params.error) {
-    //         $('#modal-popup-error-notification').html(params.message).fadeIn().delay(5000).fadeOut();
-    //     }
-    // });
 </script>
