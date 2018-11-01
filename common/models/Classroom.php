@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
+use common\components\validators\lesson\conflict\ClassroomValidator;
 
 /**
  * This is the model class for table "class_room".
@@ -14,6 +15,7 @@ use yii\behaviors\BlameableBehavior;
  */
 class Classroom extends \yii\db\ActiveRecord
 {
+    const SCENARIO_DELETE_CLASSROOM = 'classroom-delete';
     /**
      * @inheritdoc
      */
@@ -29,6 +31,8 @@ class Classroom extends \yii\db\ActiveRecord
     {
         return [
             [['name','description'], 'required'],
+            [['name'], ClassroomValidator::className(),
+                'on' => [self::SCENARIO_DELETE_CLASSROOM]],
             [['name'], 'trim'],
             [['locationId'], 'integer'],
             [['name'], 'string', 'max' => 30],

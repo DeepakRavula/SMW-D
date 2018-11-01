@@ -156,8 +156,9 @@ class ClassroomController extends BaseController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        $model = $this->findModel($id);
+        $model->setScenario(Classroom::SCENARIO_DELETE_CLASSROOM);
+        $model->delete();
         return $this->redirect(['index']);
     }
 
