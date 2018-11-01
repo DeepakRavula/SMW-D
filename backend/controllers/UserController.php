@@ -424,7 +424,8 @@ class UserController extends BaseController
                     ->between((new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d'));
             }])
             ->joinWith(['lesson' => function ($query) use ($id) {
-                $query->andWhere(['lesson.teacherId' => $id]);
+                $query->andWhere(['lesson.teacherId' => $id])
+                ->groupBy('lesson.id');
             }])
            ->orderBy(['invoice.date' => SORT_ASC]);
             
