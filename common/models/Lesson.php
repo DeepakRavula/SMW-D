@@ -946,6 +946,12 @@ class Lesson extends \yii\db\ActiveRecord
                 }
             }
             $this->course->updateDates();
+        } else {
+            if($this->enrolment) {
+                if($this->enrolment->enrolmentDiscount) {
+                    
+                }
+            }
         }
         
         return parent::afterSave($insert, $changedAttributes);

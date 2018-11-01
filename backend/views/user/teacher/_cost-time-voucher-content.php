@@ -31,7 +31,8 @@ use common\models\InvoiceLineItem;
                                 ->between((new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d'));
                         }])
                         ->joinWith(['lesson' => function ($query) use ($teacherId) {
-                            $query->andWhere(['lesson.teacherId' => $teacherId]);
+                            $query->andWhere(['lesson.teacherId' => $teacherId])
+                            ->groupBy('lesson.id');
                         }])
                         ->sum('cost');
                     return [
