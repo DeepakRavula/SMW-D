@@ -324,6 +324,11 @@ class Lesson extends \yii\db\ActiveRecord
         foreach ($splitLesson->discounts as $discount) {
             $splitLessonDiscountValues[] = $discount->value;
         }
+        $lessonProgramRate = $this->programRate;
+        $splitLessonProgramRate = $splitLesson->rootLesson->programRate;
+        if (($lessonProgramRate - $splitLessonProgramRate) != 0) {
+            $this->addError($attribute, "Lesson cost varied lesson's can't be merged");
+        }
         if (array_diff($lessonDiscountValues, $splitLessonDiscountValues)) {
             $this->addError($attribute, "Discount varied lesson's can't be merged");
         }
