@@ -489,14 +489,13 @@ class UserController extends BaseController
         }
         $searchModel = new UserSearch();
         $searchModel->accountView = false;
-        $db = $searchModel->search(Yii::$app->request->queryParams);
+        $request = Yii::$app->request;
+        $db = $searchModel->search($request->queryParams);
         $lessonSearchModel=new LessonSearch();
         $lessonSearchModel->dateRange=(new\DateTime())->format('M d,Y').' - '.(new\DateTime())->format('M d,Y');
-        $lessonSearch = $request->get('LessonSearch');
-        $lessonSearchModel->summariseReport=$lessonSearch['summariseReport'];
+        $lessonSearchModel->load($request->get());
         $invoiceSearchModel = new InvoiceSearch();
         $invoiceSearchModel->dateRange = (new\DateTime())->format('M d,Y') . ' - ' . (new\DateTime())->format('M d,Y');
-        $request = Yii::$app->request;
         if ($invoiceSearchModel->load($request->get())) {
             list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
         }
