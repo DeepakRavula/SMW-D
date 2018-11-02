@@ -89,7 +89,7 @@ class LessonController extends BaseController
     {
         $searchModel = new LessonSearch();
         $request = Yii::$app->request;
-        $dataProvider = $searchModel->search($request->queryParams); 
+        $dataProvider = $searchModel->search($request->queryParams);
         $dataProvider->pagination->pageSize = 200;
         return $this->render('index', [
             'searchModel' => $searchModel,
