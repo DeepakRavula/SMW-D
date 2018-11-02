@@ -138,7 +138,7 @@ td.kv-group-odd {
             [
                 'label' => 'Duration(hrs)',
                 'value' => function ($data) {
-                    return $data->getLessonDuration($data->invoice->date, $data->lesson->teacherId);
+                    return $data->unit;
                 },
                 'group' => true,
                 'subGroupOf' => 0,
