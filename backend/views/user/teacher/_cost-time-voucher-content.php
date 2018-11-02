@@ -138,14 +138,21 @@ td.kv-group-odd {
             [
                 'label' => 'Duration(hrs)',
                 'value' => function ($data) {
-                    return $data->unit;
+                    return $data->getLessonDuration($data->invoice->date, $data->lesson->teacherId);
                 },
                 'group' => true,
                 'subGroupOf' => 0,
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM
+                'pageSummary' => function ($summary, $data, $widget) use ($timeVoucherDataProvider) {
+                    $invoiceLineItems = $timeVoucherDataProvider->query->all();
+                    $sumDuration = 0.00;
+                        foreach($invoiceLineItems as $invoiceLineItem) {
+                            $sumDuration += $invoiceLineItem->unit;
+                        }
+                    return $sumDuration;
+                },
             ],
             [
                 'label' => 'Cost',

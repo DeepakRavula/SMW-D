@@ -415,8 +415,9 @@ class UserController extends BaseController
         ]);
     }
 
-    protected function getTimeVoucherDataProvider($id, $fromDate, $toDate)
+    protected function getTimeVoucherDataProvider($id, $fromDate, $toDate, $summariseReport)
     {
+        
         $timeVoucher = InvoiceLineItem::find()
             ->notDeleted()
             ->joinWith(['invoice' => function ($query) use ($fromDate,$toDate) {
@@ -428,7 +429,9 @@ class UserController extends BaseController
                 ->groupBy('lesson.id');
             }])
            ->orderBy(['invoice.date' => SORT_ASC]);
-            
+        if($summariseReport) { 
+            $timeVoucher->groupBy('invoice.date');
+        }    
         return new ActiveDataProvider([
             'query' => $timeVoucher,
             'pagination' => false,
@@ -527,7 +530,7 @@ class UserController extends BaseController
             'teachersAvailabilities' => $this->getTeacherAvailabilities($id, $locationId),
             'privateQualificationDataProvider' => $this->getPrivateQualificationDataProvider($id),
             'groupQualificationDataProvider' => $this->getGroupQualificationDataProvider($id),
-            'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate),
+            'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate,$invoiceSearchModel->summariseReport),
             'unavailability' => $this->getUnavailabilityDataProvider($id),
             'logDataProvider' => $this->getLogDataProvider($id),
 	        'invoiceCount' => $this->getInvoiceCount($model, $locationId),
