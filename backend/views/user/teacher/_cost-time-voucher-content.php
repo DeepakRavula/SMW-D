@@ -8,7 +8,14 @@ use common\models\InvoiceLineItem;
  */
 
 ?>
-
+<style>
+td.kv-group-even {
+    background-color: white!important;
+}
+td.kv-group-odd {
+    background-color: white!important;
+}
+</style>
 <?php 
     $teacherId = $model->id;
     if (!$searchModel->summariseReport) {
@@ -126,26 +133,45 @@ use common\models\InvoiceLineItem;
                     $invoiceDate = \DateTime::createFromFormat('Y-m-d H:i:s', $data->invoice->date);
                     return $invoiceDate->format('l, F jS, Y');
                 },
+                'group' => true,
             ],
             [
                 'label' => 'Duration(hrs)',
                 'value' => function ($data) {
                     return $data->getLessonDuration($data->invoice->date, $data->lesson->teacherId);
                 },
+                'group' => true,
+                'subGroupOf' => 0,
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign' => 'right',
                 'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM
+                'pageSummary' => function ($summary, $data, $widget) use ($timeVoucherDataProvider) {
+                    $invoiceLineItems = $timeVoucherDataProvider->query->all();
+                    $sumDuration = 0.00;
+                        foreach($invoiceLineItems as $invoiceLineItem) {
+                            $sumDuration += $invoiceLineItem->unit;
+                        }
+                    return $sumDuration;
+                },
             ],
             [
                 'label' => 'Cost',
                 'value' => function ($data) {
                     return $data->getLessonCost($data->invoice->date, $data->lesson->teacherId);
                 },
+                'group' => true,
+                'subGroupOf' => 0,
                 'contentOptions' => ['class' => 'text-right'],
                 'hAlign'=>'right',
                 'pageSummary' => true,
-                'pageSummaryFunc' => GridView::F_SUM,
+                'pageSummary' => function ($summary, $data, $widget) use ($timeVoucherDataProvider) {
+                    $invoiceLineItems = $timeVoucherDataProvider->query->all();
+                    $costSum = 0.00;
+                        foreach($invoiceLineItems as $invoiceLineItem) {
+                            $costSum += $invoiceLineItem->cost;
+                        }
+                    return Yii::$app->formatter->asCurrency($costSum);
+                },
                 'visible' => Yii::$app->user->can('administrator') || Yii::$app->user->can('owner')
             ]
         ];

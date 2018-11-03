@@ -801,6 +801,7 @@ class Enrolment extends \yii\db\ActiveRecord
             ->roots()
             ->andWhere(['lesson.courseId' => $this->courseId])
             ->orderby(['lesson.date' => SORT_DESC])
+            ->notDeleted()
             ->one();
     }
 
