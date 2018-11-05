@@ -11,6 +11,7 @@ use yii\helpers\Url;
 use common\models\Lesson;
 use yii\filters\ContentNegotiator;
 use yii\web\Response;
+use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
 use common\components\controllers\BaseController;
 use yii\filters\AccessControl;
@@ -226,7 +227,23 @@ class PrivateLessonController extends BaseController
             return false;
         }
         $model->setScenario(Lesson::SCENARIO_MERGE);
+        $studentId = $model->student->id;
+        $lessons = Lesson::find()
+        ->split()
+        ->notCanceled()
+        ->notDeleted()
+        ->unscheduled()
+        ->student($studentId);
+        $splitLessonDataProvider = new ActiveDataProvider([
+            'query' => $lessons,
+            'pagination' => false
+        ]);
+        $data = $this->renderAjax('/lesson/_merge-lesson', [
+            'splitLessonDataProvider' => $splitLessonDataProvider,
+            'model' => $model,            
+        ]);
         $post = Yii::$app->request->post();
+        if($post) {
         $additionalDuration = new \DateTime(Lesson::DEFAULT_MERGE_DURATION);
         $lessonDuration = new \DateTime($model->duration);
         $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
@@ -250,6 +267,13 @@ class PrivateLessonController extends BaseController
                 'status' => false
             ];
         }
+    }
+    else {
+           return [
+               'status' => true,
+               'data' => $data,
+           ];
+    }
     }
     
     public function actionUpdateAttendance($id)

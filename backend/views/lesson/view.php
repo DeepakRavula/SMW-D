@@ -133,11 +133,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     <span class="sr-only">Loading...</span>
 </div>
 
-<?php if (!$model->isGroup()): ?>
-    <?= $this->render('_merge-lesson', [
-    'model' => $model,
-    ]); ?>
-<?php endif; ?>
+
 
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Payment Details</h4>',
@@ -285,7 +281,23 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     });
 
     $(document).on('click', '#merge-lesson', function (e) {
-        $('#merge-lesson-modal').modal('show');
+        $.ajax({
+            url    : '<?= Url::to(['private-lesson/merge', 'id' => $model->id]) ?>',
+            type   : 'get',
+            success: function(response) 
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('#popup-modal .modal-dialog').css({'width': '600px'});
+                    $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Lesson Merge</h4>');
+                    $('.modal-save').show();
+                    $('.modal-save').text('Merge');
+                } else {
+                    $('#merge-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
+                }
+            }
+        });
         return false;
     });
 
