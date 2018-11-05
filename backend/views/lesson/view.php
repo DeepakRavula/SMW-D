@@ -1,13 +1,13 @@
 <?php
 
+use common\models\Note;
+use common\models\PrivateLesson;
+use common\models\User;
+use kartik\select2\Select2Asset;
+use kartik\time\TimePickerAsset;
+use yii\bootstrap\Modal;
 use yii\bootstrap\Tabs;
 use yii\helpers\Url;
-use common\models\User;
-use common\models\Note;
-use yii\bootstrap\Modal;
-use common\models\PrivateLesson;
-use kartik\time\TimePickerAsset;
-use kartik\select2\Select2Asset;
 Select2Asset::register($this);
 TimePickerAsset::register($this);
 /* @var $this yii\web\View */
@@ -30,45 +30,45 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 <div class="m-b-10"> </div>
 <div class="row">
 	<div class="col-md-6">
-   
-		<?= $this->render('_details', [
-            'model' => $model,
-        ]); ?>
-       
+
+		<?=$this->render('_details', [
+    'model' => $model,
+]);?>
+
         <?php if (!$model->isGroup()): ?>
-        
-            <?= $this->render('_student', [
-                'model' => $model,
-            ]); ?>
+
+            <?=$this->render('_student', [
+    'model' => $model,
+]);?>
 
             <?php if ($model->isPrivate() && !$model->isUnscheduled()): ?>
                 <div id="attendance-panel">
-                    <?= $this->render('attendance/_view', [
-                        'model' => $model,
-                    ]); ?>	
+                    <?=$this->render('attendance/_view', [
+    'model' => $model,
+]);?>
                 </div>
-            <?php endif; ?>            
-        <?php endif; ?>
-        <?php $loggedUser = User::findOne(Yii::$app->user->id); ?>
+            <?php endif;?>
+        <?php endif;?>
+        <?php $loggedUser = User::findOne(Yii::$app->user->id);?>
         <?php if ($loggedUser->isAdmin() || $loggedUser->isOwner()): ?>
             <?php if (!$model->isGroup()): ?>
             <div id="cost-panel">
-                <?= $this->render('cost/_view', [
-                    'model' => $model,
-                ]); ?>	
+                <?=$this->render('cost/_view', [
+    'model' => $model,
+]);?>
             </div>
-            <?php endif; ?> 
-        <?php endif; ?>     
+            <?php endif;?>
+        <?php endif;?>
     </div>
-    <div class="col-md-6">      
-        <?= $this->render('schedule/_view', [
-            'model' => $model,
-        ]); ?>
+    <div class="col-md-6">
+        <?=$this->render('schedule/_view', [
+    'model' => $model,
+]);?>
         <?php if (!$model->isGroup()): ?>
-        <?= $this->render('_total-details', [
-            'model' => $model,
-        ]); ?>
-        <?php endif; ?>
+        <?=$this->render('_total-details', [
+    'model' => $model,
+]);?>
+        <?php endif;?>
     </div>
 </div>
 
@@ -76,56 +76,56 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 	<div class="col-md-12">
 		<div class="nav-tabs-custom">
 				<?php
-                $paymentContent = $this->render('payment/view', [
-                    'paymentsDataProvider' => $paymentsDataProvider
-                ]);
-                                $studentContent = $this->render('student/view', [
-                    'studentDataProvider' => $studentDataProvider,
-                                        'lessonModel' => $model
-                ]);
-                $noteContent = $this->render('note/view', [
-                    'model' => new Note(),
-                    'noteDataProvider' => $noteDataProvider
-                ]);
+$paymentContent = $this->render('payment/view', [
+    'paymentsDataProvider' => $paymentsDataProvider,
+]);
+$studentContent = $this->render('student/view', [
+    'studentDataProvider' => $studentDataProvider,
+    'lessonModel' => $model,
+]);
+$noteContent = $this->render('note/view', [
+    'model' => new Note(),
+    'noteDataProvider' => $noteDataProvider,
+]);
 
-                $logContent = $this->render('log', [
-                    'model' => $model,
-                                        'logDataProvider' => $logDataProvider,
-                ]);
+$logContent = $this->render('log', [
+    'model' => $model,
+    'logDataProvider' => $logDataProvider,
+]);
 
-                $privateItem = [
-                    [
-                        'label' => 'Payments',
-                        'content' => $paymentContent,
-                    ]
-                                ];
-                                $groupItem = [
-                    [
-                        'label' => 'Students',
-                        'content' => $studentContent,
-                    ]
-                                ];
-                                $items = [
-                    [
-                        'label' => 'Comments',
-                        'content' => $noteContent,
-                    ],
-                    [
-                        'label' => 'History',
-                        'content' => $logContent,
-                    ],
-                ];
-                                if (!$model->isGroup()) {
-                                    $lessonItems = array_merge($privateItem, $items);
-                                } else {
-                                    $lessonItems = array_merge($groupItem, $items);
-                                }
-                echo Tabs::widget([
-                    'items' => $lessonItems,
-                ]);
-                ?>
+$privateItem = [
+    [
+        'label' => 'Payments',
+        'content' => $paymentContent,
+    ],
+];
+$groupItem = [
+    [
+        'label' => 'Students',
+        'content' => $studentContent,
+    ],
+];
+$items = [
+    [
+        'label' => 'Comments',
+        'content' => $noteContent,
+    ],
+    [
+        'label' => 'History',
+        'content' => $logContent,
+    ],
+];
+if (!$model->isGroup()) {
+    $lessonItems = array_merge($privateItem, $items);
+} else {
+    $lessonItems = array_merge($groupItem, $items);
+}
+echo Tabs::widget([
+    'items' => $lessonItems,
+]);
+?>
 			</div>
-		</div>	
+		</div>
 </div>
 
 <div id="loader" class="spinner" style="display:none">
@@ -138,39 +138,39 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Payment Details</h4>',
     'id' => 'lesson-payment-modal',
-]); ?>
+]);?>
 <div id="lesson-payment-content"></div>
-<?php Modal::end(); ?>
+<?php Modal::end();?>
 
-<?php if ($model->hasExpiryDate()) :?>
+<?php if ($model->hasExpiryDate()): ?>
 	<?php $privateLessonModel = PrivateLesson::findOne(['lessonId' => $model->id]);?>
-<?php endif; ?>
+<?php endif;?>
 <?php Modal::begin([
     'header' => '<h4 class="m-0">Edit Attendance</h4>',
     'id' => 'attendance-modal',
-]); ?>
-<?= $this->render('attendance/_form', [
+]);?>
+<?=$this->render('attendance/_form', [
     'model' => $model,
 ]);?>
-<?php Modal::end(); ?>
+<?php Modal::end();?>
 
-<script>   
+<script>
     $(document).on('click', '.edit-attendance', function () {
         $('#attendance-modal').modal('show');
         $('#attendance-modal .modal-dialog').css({'width': '400px'});
         return false;
     });
-    
+
     $(document).on('click', '.attendance-cancel', function () {
         $('#attendance-modal').modal('hide');
         return false;
     });
-    
+
     $(document).on("click", '.mail-view-cancel-button', function() {
         $('#lesson-mail-modal').modal('hide');
         return false;
     });
-    
+
     $(document).on('click', '#view-payment', function () {
         $.ajax({
             url    : $(this).attr('url'),
@@ -185,7 +185,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         });
         return false;
     });
-    
+
     $(document).on('beforeSubmit', '#mail-form', function (e) {
         $.ajax({
             url    : $(this).attr('action'),
@@ -196,7 +196,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
             {
                 if(response.status)
                 {
-                    $('#spinner').hide();		
+                    $('#spinner').hide();
                     $('#lesson-mail-modal').modal('hide');
                     $('#success-notification').html(response.message).fadeIn().delay(5000).fadeOut();
                 }
@@ -208,7 +208,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     $(document).on("click", "#payment-grid tbody > tr", function() {
         var lessonPaymentId = $(this).data('key');
         var params = $.param({'PaymentEditForm[lessonPaymentId]': lessonPaymentId });
-        var customUrl = '<?= Url::to(['payment/view']); ?>?' + params;
+        var customUrl = '<?=Url::to(['payment/view']);?>?' + params;
         $.ajax({
             url: customUrl,
             type: 'get',
@@ -226,7 +226,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     });
 
     $(document).off("click", ".edit-cost").on("click", ".edit-cost", function() {
-        var customUrl = '<?= Url::to(['lesson/edit-cost', 'id' => $model->id]); ?>';
+        var customUrl = '<?=Url::to(['lesson/edit-cost', 'id' => $model->id]);?>';
         $.ajax({
             url: customUrl,
             type: 'get',
@@ -242,10 +242,10 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         });
         return false;
     });
-    
+
     $(document).on('beforeSubmit', '#lesson-note-form', function (e) {
         $.ajax({
-            url    : '<?= Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON]); ?>',
+            url    : '<?=Url::to(['note/create', 'instanceId' => $model->id, 'instanceType' => Note::INSTANCE_TYPE_LESSON]);?>',
             type   : 'post',
             dataType: "json",
             data   : $(this).serialize(),
@@ -259,10 +259,10 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         });
         return false;
     });
-    
+
     $(document).on('click', '#lesson-mail-button', function () {
         $.ajax({
-            url    : '<?= Url::to(['email/lesson', 'id' => $model->id]); ?>',
+            url    : '<?=Url::to(['email/lesson', 'id' => $model->id]);?>',
             type   : 'get',
             dataType: 'json',
             success: function(response)
@@ -282,9 +282,9 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 
     $(document).on('click', '#merge-lesson', function (e) {
         $.ajax({
-            url    : '<?= Url::to(['private-lesson/merge', 'id' => $model->id]) ?>',
+            url    : '<?=Url::to(['private-lesson/merge', 'id' => $model->id])?>',
             type   : 'get',
-            success: function(response) 
+            success: function(response)
             {
                 if (response.status) {
                     $('#modal-content').html(response.data);
@@ -322,29 +322,11 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     });
 
      $(document).on('modal-next', function(event, params) {
-        $.pjax.reload({container: "#lesson-payment-listing", replace: false, async: false, timeout: 6000}); 
+        $.pjax.reload({container: "#lesson-payment-listing", replace: false, async: false, timeout: 6000});
         $.pjax.reload({ container: "#lesson-price-details", replace: false, timeout: 4000});
         return false;
     });
-    
-    $(document).on('beforeSubmit', '#merge-lesson-form', function (e) {
-        $.ajax({
-            url    : '<?= Url::to(['private-lesson/merge', 'id' => $model->id]) ?>',
-            type   : 'POST',
-            dataType: "json",
-            data   : $('#merge-lesson-form').serialize(),
-            success: function(response) 
-            {
-                if (response.status) {
-                    $('#merge-lesson-modal').modal('hide');
-                } else {
-                    $('#merge-error-notification').text(response.error).fadeIn().delay(5000).fadeOut();
-                }
-            }
-        });
-        return false;
-    });
-        
+
     $(document).on('beforeSubmit', '#attendance-form', function (e) {
         $.ajax({
             url    : $(this).attr('action'),
@@ -362,17 +344,17 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
         });
         return false;
     });
-    
+
     $(document).on('click', '#lesson-delete', function () {
-        var id = '<?= $model->id;?>';
+        var id = '<?=$model->id;?>';
         var params = $.param({ 'PrivateLesson[ids]': [id], 'PrivateLesson[isBulk]': false });
-        bootbox.confirm({ 
-            message: "Are you sure you want to delete this lesson?", 
+        bootbox.confirm({
+            message: "Are you sure you want to delete this lesson?",
             callback: function(result){
                 if(result) {
                     $('.bootbox').modal('hide');
                     $.ajax({
-                        url: '<?= Url::to(['private-lesson/delete']); ?>?' + params,
+                        url: '<?=Url::to(['private-lesson/delete']);?>?' + params,
                         type: 'post',
                         success: function (response)
                         {
@@ -385,17 +367,17 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                             }
                         }
                     });
-                    return false;	
+                    return false;
                 }
             }
-        });	
+        });
         return false;
     });
-    
+
     $(document).on('click', '#lesson-unschedule', function () {
         $('#loader').show();
         $.ajax({
-            url: '<?= Url::to(['lesson/unschedule', 'id' => $model->id]); ?>',
+            url: '<?=Url::to(['lesson/unschedule', 'id' => $model->id]);?>',
             type: 'post',
             dataType: "json",
             data: $(this).serialize(),
@@ -409,7 +391,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                     $.pjax.reload({container: '#lesson-detail', replace: false, async: false, timeout: 6000});
                     if ($('#lesson-more-action').length) {
                         $.pjax.reload({container: "#lesson-more-action", replace: false, async: false, timeout: 6000});
-                    }               
+                    }
                     $('#attendance-panel').hide();
                     $('#loader').hide();
                 } else {
@@ -424,7 +406,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     $(document).off('click', '#credit-transfer').on('click', '#credit-transfer', function () {
         $('#loader').show();
         $.ajax({
-            url: '<?= Url::to(['lesson/credit-transfer', 'id' => $model->id]); ?>',
+            url: '<?=Url::to(['lesson/credit-transfer', 'id' => $model->id]);?>',
             type: 'post',
             dataType: "json",
             data: $(this).serialize(),
@@ -447,11 +429,11 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     $(document).off('click', '#lesson-discount').on('click', '#lesson-discount', function(){
         var message = 'Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.';
         $('#modal-popup-warning-notification').text(message).fadeIn();
-        var lessonId = '<?= $model->id; ?>';
+        var lessonId = '<?=$model->id;?>';
         var lessonIds = [lessonId];
         var params = $.param({ 'PrivateLesson[ids]': lessonIds });
         $.ajax({
-            url    : '<?= Url::to(['private-lesson/apply-discount']) ?>?' + params,
+            url    : '<?=Url::to(['private-lesson/apply-discount'])?>?' + params,
             type   : 'get',
             success: function(response)
             {
@@ -466,7 +448,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 
     $(document).off('click', '#lesson-price').on('click', '#lesson-price', function(){
         $.ajax({
-            url    : '<?= Url::to(['lesson/edit-price', 'id' => $model->id]) ?>',
+            url    : '<?=Url::to(['lesson/edit-price', 'id' => $model->id])?>',
             type   : 'get',
             success: function(response)
             {
@@ -481,7 +463,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
 
     $(document).off('click', '#edit-lesson-tax').on('click', '#edit-lesson-tax', function(){
         $.ajax({
-            url    : '<?= Url::to(['lesson/edit-tax', 'id' => $model->id]) ?>',
+            url    : '<?=Url::to(['lesson/edit-tax', 'id' => $model->id])?>',
             type   : 'get',
             success: function(response)
             {
@@ -503,7 +485,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
     });
 
     $(document).on('click', '.edit-lesson-detail', function () {
-        var customUrl = '<?= Url::to(['lesson/edit-classroom', 'id' => $model->id]); ?>';
+        var customUrl = '<?=Url::to(['lesson/edit-classroom', 'id' => $model->id]);?>';
         $.ajax({
             url    : customUrl,
             type   : 'get',
@@ -515,7 +497,7 @@ $this->params['action-button'] = $this->render('_more-action-menu', [
                 {
                     $('#popup-modal').modal('show');
                     $('#modal-content').html(response.data);
-                } 
+                }
             }
         });
         return false;
