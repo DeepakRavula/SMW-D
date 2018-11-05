@@ -18,6 +18,8 @@ use yii\widgets\Pjax;
 	<dl class="dl-horizontal">
 		<dt>Name</dt>
 		<dd><?= $model->name; ?></dd>
+        <dt> Long Name</dt>
+		<dd><?= $model->description; ?></dd>
 	</dl>
 	<?php LteBox::end() ?>
 <?php Pjax::end(); ?>
