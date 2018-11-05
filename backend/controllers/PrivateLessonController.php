@@ -2,22 +2,22 @@
 
 namespace backend\controllers;
 
-use Yii;
-use common\models\PrivateLesson;
+use backend\models\lesson\discount\LessonMultiDiscount;
 use backend\models\search\PrivateLessonSearch;
-use yii\web\NotFoundHttpException;
+use common\components\controllers\BaseController;
+use common\models\EditClassroom;
+use common\models\Lesson;
+use common\models\PrivateLesson;
+use Yii;
+use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
+use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
-use common\models\Lesson;
-use yii\filters\ContentNegotiator;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use yii\data\ActiveDataProvider;
 use yii\widgets\ActiveForm;
-use common\components\controllers\BaseController;
-use yii\filters\AccessControl;
-use backend\models\lesson\discount\LessonMultiDiscount;
-use common\models\ClassroomUnavailability;
-use common\models\EditClassroom;
+
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
@@ -34,26 +34,26 @@ class PrivateLessonController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'merge', 'update-attendance', 'delete', 'apply-discount','edit-duration', 'edit-classroom', 
+                    'merge', 'update-attendance', 'delete', 'apply-discount', 'edit-duration', 'edit-classroom',
                 ],
                 'formatParam' => '_format',
                 'formats' => [
-                   'application/json' => Response::FORMAT_JSON,
+                    'application/json' => Response::FORMAT_JSON,
                 ],
             ],
-			'access' => [
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
                         'allow' => true,
                         'actions' => [
                             'index', 'update', 'view', 'delete', 'create', 'split', 'merge', 'update-attendance',
-                                'apply-discount','edit-duration', 'edit-classroom'
+                            'apply-discount', 'edit-duration', 'edit-classroom',
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
                 ],
-            ], 
+            ],
         ];
     }
 
@@ -160,7 +160,7 @@ class PrivateLessonController extends BaseController
             $response = [
                 'status' => true,
                 'url' => Url::to(['lesson/index', 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON]),
-                'message' => $message
+                'message' => $message,
             ];
         }
 
@@ -170,21 +170,21 @@ class PrivateLessonController extends BaseController
     {
         $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
         $lessonId = end($lessonIds);
-      
+
         foreach ($lessonIds as $lessonId) {
             $model = $this->findModel($lessonId);
-            if(!$model->isEditable()){
+            if (!$model->isEditable()) {
                 return [
                     'status' => false,
                     'message' => ' One of the chosen lesson is invoiced. You can\'t edit duration for this lessons',
-                ]; 
+                ];
             }
         }
         $model = new Lesson();
         $data = $this->renderAjax('_form-edit-duration', [
             'lessonIds' => $lessonIds,
             'model' => $model,
-            
+
         ]);
         $post = Yii::$app->request->post();
         if ($post) {
@@ -198,9 +198,9 @@ class PrivateLessonController extends BaseController
                 'message' => 'Lesson Duration Edited Sucessfully',
             ];
         } else {
-              $response = [
+            $response = [
                 'status' => true,
-                'data' => $data
+                'data' => $data,
             ];
         }
         return $response;
@@ -217,9 +217,9 @@ class PrivateLessonController extends BaseController
             'options' => ['class' => 'alert-success'],
             'body' => 'The Lesson has been exploded successfully.',
         ]);
-        return $this->redirect(['student/view', 'id' => $model->enrolment->student->id, '#'=> 'unscheduledLesson']);
+        return $this->redirect(['student/view', 'id' => $model->enrolment->student->id, '#' => 'unscheduledLesson']);
     }
-    
+
     public function actionMerge($id)
     {
         $model = $this->findModel($id);
@@ -229,53 +229,52 @@ class PrivateLessonController extends BaseController
         $model->setScenario(Lesson::SCENARIO_MERGE);
         $studentId = $model->student->id;
         $lessons = Lesson::find()
-        ->split()
-        ->notCanceled()
-        ->notDeleted()
-        ->unscheduled()
-        ->student($studentId);
+            ->split()
+            ->notCanceled()
+            ->notDeleted()
+            ->unscheduled()
+            ->student($studentId);
         $splitLessonDataProvider = new ActiveDataProvider([
             'query' => $lessons,
-            'pagination' => false
+            'pagination' => false,
         ]);
         $data = $this->renderAjax('/lesson/_merge-lesson', [
             'splitLessonDataProvider' => $splitLessonDataProvider,
-            'model' => $model,            
+            'model' => $model,
         ]);
         $post = Yii::$app->request->post();
-        if($post) {
-        $additionalDuration = new \DateTime(Lesson::DEFAULT_MERGE_DURATION);
-        $lessonDuration = new \DateTime($model->duration);
-        $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
-            . 'H' . $additionalDuration->format('i') . 'M'));
-        $model->duration = $lessonDuration->format('H:i:s');
-        $model->save();
-        $splitLesson = $this->findModel($post['radioButtonSelection']);
-        $model->splittedLessonId = $splitLesson->id;
-        if ($model->validate()) {
-            $splitLesson->privateLesson->merge($model);
-            Yii::$app->session->setFlash('alert', [
-                'options' => ['class' => 'alert-success'],
-                'body' => 'The Lesson has been extended successfully.',
-            ]);
+        if ($post) {
+            $additionalDuration = new \DateTime(Lesson::DEFAULT_MERGE_DURATION);
+            $lessonDuration = new \DateTime($model->duration);
+            $lessonDuration->add(new \DateInterval('PT' . $additionalDuration->format('H')
+                . 'H' . $additionalDuration->format('i') . 'M'));
+            $model->duration = $lessonDuration->format('H:i:s');
+            $model->save();
+            $splitLesson = $this->findModel($post['radioButtonSelection']);
+            $model->splittedLessonId = $splitLesson->id;
+            if ($model->validate()) {
+                $splitLesson->privateLesson->merge($model);
+                Yii::$app->session->setFlash('alert', [
+                    'options' => ['class' => 'alert-success'],
+                    'body' => 'The Lesson has been extended successfully.',
+                ]);
 
-            return $this->redirect(['lesson/view', 'id' => $id]);
+                return $this->redirect(['lesson/view', 'id' => $id]);
+            } else {
+                $errors = ActiveForm::validate($model);
+                return [
+                    'error' => end($errors),
+                    'status' => false,
+                ];
+            }
         } else {
-            $errors = ActiveForm::validate($model);
             return [
-                'error' => end($errors),
-                'status' => false
+                'status' => true,
+                'data' => $data,
             ];
         }
     }
-    else {
-           return [
-               'status' => true,
-               'data' => $data,
-           ];
-    }
-    }
-    
+
     public function actionUpdateAttendance($id)
     {
         $model = $this->findModel($id);
@@ -312,11 +311,11 @@ class PrivateLessonController extends BaseController
         $model = $this->findModel($lessonId);
         foreach ($lessonIds as $lessonId) {
             $model = $this->findModel($lessonId);
-            if(!$model->isEditable()){
+            if (!$model->isEditable()) {
                 return [
                     'status' => false,
                     'message' => ' One of the chosen lesson is invoiced. You can\'t edit discount for this lessons',
-                ]; 
+                ];
             }
         }
         $lineItemDiscount = LessonMultiDiscount::loadLineItemDiscount($lessonIds);
@@ -329,7 +328,7 @@ class PrivateLessonController extends BaseController
             'customerDiscount' => $customerDiscount,
             'paymentFrequencyDiscount' => $paymentFrequencyDiscount,
             'lineItemDiscount' => $lineItemDiscount,
-            'multiEnrolmentDiscount' => $multiEnrolmentDiscount
+            'multiEnrolmentDiscount' => $multiEnrolmentDiscount,
         ]);
         $post = Yii::$app->request->post();
         if ($post) {
@@ -350,12 +349,12 @@ class PrivateLessonController extends BaseController
             }
             $model->save();
             $response = [
-                'status' => true
+                'status' => true,
             ];
         } else {
             return [
                 'status' => true,
-                'data' => $data
+                'data' => $data,
             ];
         }
         return $response;
@@ -375,13 +374,13 @@ class PrivateLessonController extends BaseController
                     $model->save();
                 }
                 $response = [
-                    'status' => true,   
+                    'status' => true,
                     'message' => 'Lesson Classroom Edited Sucessfully',
                 ];
             } else {
                 $response = [
                     'status' => false,
-                    'error' => $editClassroomModel->getErrors('lessonIds','classroomId'),
+                    'error' => $editClassroomModel->getErrors('lessonIds', 'classroomId'),
                 ];
             }
         } else {
@@ -392,7 +391,7 @@ class PrivateLessonController extends BaseController
                 ]);
                 $response = [
                     'status' => true,
-                    'data' => $data
+                    'data' => $data,
                 ];
             } else {
                 $response = [
