@@ -62,7 +62,7 @@ class CustomerDiscount extends \yii\db\ActiveRecord
             [['customerId', 'value'], 'required'],
             [['customerId'], 'integer'],
             [['isDeleted'], 'safe'],
-            [['value'], 'number', 'min' => 0.10, 'max' => 100.00, 'message' => 'Invalid discount'],
+            [['value'], 'number', 'max' => 100.00, 'message' => 'Invalid discount'],
         ];
     }
 
