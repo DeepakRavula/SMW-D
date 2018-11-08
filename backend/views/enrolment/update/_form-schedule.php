@@ -106,6 +106,12 @@ $columns = [
     $(document).on('change', '#course-enddate', function () {
         $('#modal-spinner').show();
         var endDate = $(this).val();
+        alert("hi");
+        var startDate = '<?= $model->course->startDate ?>';
+        alert(startDate);
+        if (!(endDate <= startDate)) {
+            $('#modal-popup-error-notification').html('Merging another customer will delete all of their contact data. This can not be undone.').fadeIn();
+        }
         var url = '<?= Url::to(['enrolment/edit-end-date', 'id' => $model->id]); ?>&endDate=' + endDate;
         $.pjax.reload({url: url, container: "#after-end-date-changed-listing", replace: false, async: false, timeout: 4000});
         return false;
@@ -113,5 +119,13 @@ $columns = [
 
     $(document).on('pjax:complete', function(event) {
         $('#modal-spinner').hide();
+    });
+
+    $(document).on('modal-error', function (event, params) {
+        alert("somthing");
+        if (params.error) {
+            $('#popup-modal').modal('hide');
+            $('#enrolment-edit-end-date').html(params.error).fadeIn().delay(5000).fadeOut();
+        }
     });
 </script>

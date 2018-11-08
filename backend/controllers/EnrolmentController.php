@@ -647,12 +647,12 @@ class EnrolmentController extends BaseController
         $action = null;
         $dateRange = null;
         $previewDataProvider = null;
-        if (!($changedEndDate <= $model->course->startDate)) {
-            return $response = [
-                'status' => false,
-                'error' => 'Enrolment end date not less than enrolment start date'
-            ];
-        }
+        // if (!($changedEndDate <= $model->course->startDate)) {
+        //     return $response = [
+        //         'status' => false,
+        //         'error' => 'Enrolment end date not less than enrolment start date'
+        //     ];
+        // }
         if ($changedEndDate) {
             $date = Carbon::parse($changedEndDate);
             $objects = ['Lessons'];
@@ -691,12 +691,12 @@ class EnrolmentController extends BaseController
         $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
         $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
         if ($post) {
-            // if (!($course->endDate <= $model->course->startDate)) {
-            //     return $response = [
-            //         'status' => false,
-            //         'error' => 'Enrolment end date not less than enrolment start date'
-            //     ];
-            // }
+            if (!($course->endDate <= $model->course->startDate)) {
+                return $response = [
+                    'status' => false,
+                    'error' => 'Enrolment end date not less than enrolment start date'
+                ];
+            }
             $message = null;
             $course->updateAttributes([
                 'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
