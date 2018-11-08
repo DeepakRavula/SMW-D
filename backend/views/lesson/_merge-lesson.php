@@ -9,29 +9,15 @@ use yii\helpers\Html;
 ?>
 
 <?php
-$studentId = $model->student->id;
+
 $locationId = $model->course->locationId;
-$lessons = Lesson::find()
-        ->split()
-        ->notCanceled()
-        ->notDeleted()
-        ->unscheduled()
-        ->student($studentId);
-$splitLessonDataProvider = new ActiveDataProvider([
-    'query' => $lessons,
-    'pagination' => false
-]);
 ?>
 <div>
-    <?php
-    Modal::begin([
-        'header' => '<h4 class="m-0">Merge Lesson</h4>',
-        'id'=>'merge-lesson-modal',
-    ]);?>
+   
     <div id="merge-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
     <h5><strong><?= 'Please choose the lesson that should be merged.'; ?></strong></h5>
 	<?php $form = ActiveForm::begin([
-        'id' => 'merge-lesson-form',
+        'id' => 'modal-form',
     ]); ?>
 	<div>
 	<?php
@@ -91,7 +77,5 @@ $splitLessonDataProvider = new ActiveDataProvider([
     ]);
     ?>
 	</div>
-	<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 	<?php ActiveForm::end(); ?>
-<?php Modal::end(); ?>
 </div>

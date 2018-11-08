@@ -959,7 +959,7 @@ class Lesson extends \yii\db\ActiveRecord
     
     public function canMerge()
     {
-        if ($this->student->hasExplodedLesson() && !$this->isExploded && !$this->isExtra() && !$this->hasInvoice() && !$this->isCanceled()) {
+        if ($this->student->hasExplodedLesson() && !$this->isExploded && !$this->hasInvoice() && !$this->isCanceled()) {
             $lessonDuration = new \DateTime($this->duration);
             $date = new \DateTime($this->date);
             $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));
