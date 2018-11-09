@@ -86,9 +86,9 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     {
         return $this->joinWith(['student' => function ($query) {
             $query->joinWith(['customerPaymentPreference' => function ($query) {
-                $query->andWhere(['OR', ['customer_payment_preference.id' => null], 
-                    ['<', 'DATE(customer_payment_preference.expiryDate)', (new \DateTime())->format('Y-m-d')]]);
-            }]);
+                $query->andWhere(['OR', ['customer_payment_preference.id' => null], ['customer_payment_preference.isDeleted' => true],
+                    ['>', 'DATE(customer_payment_preference.expiryDate)', (new \DateTime())->format('Y-m-d')]]);
+                }]);
         }]);
     }
 

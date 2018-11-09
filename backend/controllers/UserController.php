@@ -615,7 +615,6 @@ class UserController extends BaseController
             if ($model->save()) {  
                 $userProfile->firstname = $model->firstname;
                 $userProfile->lastname = $model->lastname;
-                if($userProfile->save()){
                 $customerReferralSource->load($request->post());
                 if($customerReferralSource->referralSourceId) {
                     if (!$customerReferralSource->referralSource->isOther()) {
@@ -627,10 +626,6 @@ class UserController extends BaseController
                 return [
                    'status' => true,
                 ];
-            }
-            else {
-                print_r($userProfile->getErrors());die('coming');
-            }
             } else {
                 $errors = ActiveForm::validate($model);
                 return [
