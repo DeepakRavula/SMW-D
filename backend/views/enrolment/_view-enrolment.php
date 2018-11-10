@@ -7,7 +7,6 @@ use kartik\datetime\DateTimePickerAsset;
 DateTimePickerAsset::register($this);
 ?>
 <br>
-
 <div id="enrolment-edit" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="row">
 	<div class="col-md-6">
