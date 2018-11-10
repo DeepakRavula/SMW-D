@@ -116,7 +116,6 @@ $columns = [
     });
 
     $(document).on('modal-error', function (event, params) {
-        alert("somthing");
         if (params.error) {
             $('#enrolment-edit-end-date').html(params.error).fadeIn().delay(5000).fadeOut();
         }
