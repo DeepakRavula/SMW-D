@@ -6,11 +6,6 @@ use common\models\Location;
 
 ?>
 <?php $model = Location::findOne(['id' => \common\models\Location::findOne(['slug' => \Yii::$app->location])->id]); ?>
-<?php
-   echo $this->render('/print/_header', [
-       'locationModel'=>$model,
-]);
-   ?>
 <div class = "print-report">
 <div>
 <h3><strong>Discount Report </strong></h3></div>

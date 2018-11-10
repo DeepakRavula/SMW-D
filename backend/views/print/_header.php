@@ -15,12 +15,12 @@
                 <br>
                 <b>Duration:</b>
                 <?php
-                $length = \DateTime::createFromFormat('H:i:s', $courseModel->courseSchedule->duration);
+                $length = \DateTime::createFromFormat('H:i:s', $courseModel->recentCourseSchedule->duration);
                 echo $length->format('H:i');
                 ?> <br>
                 <b>Time:</b>
                 <?php
-                $fromTime = \DateTime::createFromFormat('H:i:s', $courseModel->courseSchedule->fromTime);
+                $fromTime = \DateTime::createFromFormat('H:i:s', $courseModel->recentCourseSchedule->fromTime);
                 echo $fromTime->format('h:i A');
                 ?><br>
 <?php endif; ?>
