@@ -685,9 +685,10 @@ class EnrolmentController extends BaseController
         $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
         $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
         if ($post) {
-        $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
-        $startDate = Carbon::parse($model->course->startDate)->format('d-m-Y');
-            if (DATE($endDate) < DATE($startDate)) {
+            $startDate = Carbon::parse($model->course->startDate)->format('d-m-Y');
+            $end_date = new \DateTime($endDate);
+            $startDate = new \DateTime($startDate);
+            if ($end_date < $start_date) {
                 return $response = [
                     'status' => false,
                     'error' => 'Enrolment end date not less than enrolment start date'
