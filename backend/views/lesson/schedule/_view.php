@@ -33,9 +33,7 @@ LteBox::begin([
         </a></dd>
     <?php if ($model->isRescheduled() || $model->isUnscheduled()) : ?>
     <?php if ($model->bulkRescheduleLesson) : ?>
-        <?php $date = $model->rootLesson ? $model->rootLesson->date : $model->date ; ?>
-<?php else: ?>
-<?php $date = $model->bulkRescheduleLesson ? $model->bulkRescheduleLesson->date : $model->date ; ?>
+        <?php $date = $model->rootLesson ? $model->bulkRescheduleLesson ? $model->bulkRescheduleLesson->date : $model->date : $model->date ; ?>
     <?php endif; ?>
         <dt>Original Date</dt>
         <dd><?= (new \DateTime($date))->format('l, F jS, Y'); ?></dd>
