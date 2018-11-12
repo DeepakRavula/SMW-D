@@ -4,6 +4,7 @@ use insolita\wgadminlte\LteBox;
 use insolita\wgadminlte\LteConst;
 use yii\helpers\Url;
 use common\models\User;
+use common\models\Lesson;
 
 ?>
 <?php yii\widgets\Pjax::begin([
@@ -32,9 +33,15 @@ LteBox::begin([
             <?= $model->teacher->publicIdentity ?>
         </a></dd>
     <?php if ($model->isRescheduled() || $model->isUnscheduled()) : ?>
-    <?php if ($model->bulkRescheduleLesson) : ?>
-        <?php $date = $model->rootLesson ? $model->bulkRescheduleLesson ? $model->bulkRescheduleLesson->date : $model->date : $model->date ; ?>
-    <?php endif; ?>
+    <?php $ancestors = Lesson::find()->ancestorsOf($model->id)->orderBy(['id' => SORT_DESC])->all(); 
+          $ancestors[] = $model;
+         $date = $model->rootLesson->date;
+         foreach($ancestors as $ancestor) {
+            if($ancestor->bulkRescheduleLesson){
+                $date = $ancestor->date;
+            }
+         }
+    ?>
         <dt>Original Date</dt>
         <dd><?= (new \DateTime($date))->format('l, F jS, Y'); ?></dd>
     <?php endif; ?>
