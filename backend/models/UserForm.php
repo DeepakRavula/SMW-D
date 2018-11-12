@@ -110,7 +110,7 @@ class UserForm extends Model
             'name'
         );
         $this->roles = end($this->roles);
-
+      
         $userFirstName = UserProfile::findOne(['user_id' => $model->getId()]);
         if (!empty($userFirstName)) {
             $this->firstname = $userFirstName->firstname;

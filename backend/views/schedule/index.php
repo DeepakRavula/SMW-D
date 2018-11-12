@@ -464,4 +464,7 @@ var schedule = {
         $(selector).find('table').width(theadWidth);
     }
 };
+$(document).off('click', '#calendar').on('click', '#calendar', function () {
+    $('#schedule-go-to-datepicker').trigger('blur');
+});
 </script>
