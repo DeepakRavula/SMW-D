@@ -69,7 +69,7 @@ class Course extends \yii\db\ActiveRecord
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
             [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId','duration','lessonsCount'], 'safe'],
-          
+            ['endDate', 'validateEndDate'],
         ];
     }
 
@@ -593,5 +593,13 @@ class Course extends \yii\db\ActiveRecord
             }
         }
         return implode(", ", $teachers);
+    }
+
+    public function validateEndDate($attribute) {
+        $startDate = (new \DateTime($this->startDate))->format('Y-m-d');
+        $endDate = (new \DateTime($this->endDate))->format('Y-m-d');
+        if ($endDate < $startDate) {
+            $this->addError($attribute, "Enrolment end date must be greater than start date");
+        }
     }
 }
