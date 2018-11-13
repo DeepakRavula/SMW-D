@@ -7,6 +7,7 @@ use kartik\datetime\DateTimePickerAsset;
 DateTimePickerAsset::register($this);
 ?>
 <br>
+<div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <div id="enrolment-edit" style="display: none;" class="alert-danger alert fade in"></div>
 <div class="row">
 	<div class="col-md-6">
@@ -121,7 +122,8 @@ Modal::begin([
                 {
                     $('#popup-modal').modal('show');
                     $('#modal-content').html(response.data);
-                }
+                } else {
+                    $('#error-notification').html(response.message).fadeIn().delay(5000).fadeOut();                }
             }
         });
         return false;

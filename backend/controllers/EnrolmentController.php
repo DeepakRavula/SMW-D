@@ -643,6 +643,12 @@ class EnrolmentController extends BaseController
         $changedEndDate = Yii::$app->request->get('endDate');
         $model = $this->findModel($id);
         $lastLesson = $model->lastRootLesson;
+        if (!$lastLesson) {
+            return [
+                'status' => false,
+                'message' => 'There are no lessons in the enrolment so end date cannnot be adjusted.',
+            ];
+        }
         $lastLessonDate = Carbon::parse($lastLesson->date);
         $action = null;
         $dateRange = null;
