@@ -36,8 +36,8 @@ LteBox::begin([
     <?php $ancestors = Lesson::find()->ancestorsOf($model->id)->orderBy(['id' => SORT_DESC])->all(); 
           $ancestors[] = $model;
          $date = $date = $model->rootLesson ? $model->rootLesson->date : $model->date ;
-         foreach($ancestors as $ancestor) {
-            if($ancestor->bulkRescheduleLesson){
+         foreach ($ancestors as $ancestor) {
+            if ($ancestor->bulkRescheduleLesson) {
                 $date = $ancestor->date;
             }
          }

@@ -63,8 +63,8 @@ $form = ActiveForm::begin([
                     $ancestors = Lesson::find()->ancestorsOf($data->id)->orderBy(['id' => SORT_DESC])->all(); 
                     $ancestors[] = $data;
                     $lesson_date = $data->rootLesson ? $data->rootLesson->date : $data->date ;
-                    foreach($ancestors as $ancestor) {
-                        if($ancestor->bulkRescheduleLesson){
+                    foreach ($ancestors as $ancestor) {
+                        if ($ancestor->bulkRescheduleLesson) {
                             $lesson_date = $ancestor->date;
                         }
                     }
