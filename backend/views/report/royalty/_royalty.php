@@ -46,7 +46,7 @@ if ($total < 0) {
     <dd>
 	<?= Yii::$app->formatter->asCurrency(round($royaltyAmount, 2));?>			
     <dt>Subtotal</dt>
-    <?php $subtotal = $royaltyAmount + $advertisementAmount; ?> 
+    <?php $subtotal = round($royaltyAmount, 2) +round($advertisementAmount, 2); ?>  
     <dd>
 	<?= Yii::$app->formatter->asCurrency(round($subtotal, 2)); ?>			
     <dt>Tax</dt>
