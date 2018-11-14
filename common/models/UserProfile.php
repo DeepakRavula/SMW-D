@@ -73,7 +73,7 @@ class UserProfile extends ActiveRecord
                     $query->andWhere(['not', ['id' => Yii::$app->user->getId()]]);
                 },
             ],
-            [['birthDate'], 'date', 'format' => 'M d, Y', 'message' => 'Date format shoule be in M d, Y format'],
+            [['birthDate'], 'date', 'format' => 'M d, Y', 'message' => 'Date format should be in M d, Y format'],
         ];
     }
 

@@ -688,7 +688,7 @@ $this->params['action-button'] = $this->render('_action-button', [
                         $.pjax.reload({container: '#user-header', timeout: 6000});
                     });
                 } else {
-                  $('#user-update-form').yiiActiveForm('updateMessages', response.errors, true); 
+                    $('#user-update-form').yiiActiveForm('updateMessages', response.errors, true); 
                 }
             }
         });
