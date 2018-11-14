@@ -319,7 +319,9 @@ class Lesson extends \yii\db\ActiveRecord
         $splitLessonDiscountValues = [];
         $splitLesson = self::findOne($this->splittedLessonId);
         foreach ($this->discounts as $discount) {
-            $lessonDiscountValues[] = $discount->value;
+            if ($discount->value > 0.00) {
+                $lessonDiscountValues[] = $discount->value;
+            }
         }
         foreach ($splitLesson->discounts as $discount) {
             $splitLessonDiscountValues[] = $discount->value;
