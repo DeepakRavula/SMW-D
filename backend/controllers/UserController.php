@@ -613,8 +613,8 @@ class UserController extends BaseController
                 $model->getModel()->setPin($model->pin);
             }
             if ($model->save()) {  
-                $userProfile->firstname = $model->firstname;
-                $userProfile->lastname = $model->lastname;
+               if ($userProfile->validate()) {
+                   $userProfile->save();
                 $customerReferralSource->load($request->post());
                 if($customerReferralSource->referralSourceId) {
                     if (!$customerReferralSource->referralSource->isOther()) {
@@ -626,6 +626,13 @@ class UserController extends BaseController
                 return [
                    'status' => true,
                 ];
+            }
+            else {  
+                return [
+                    'status' => false,
+                    'errors' => $userProfile->getErrors(),
+                ];
+            }
             } else {
                 $errors = ActiveForm::validate($model);
                 return [
