@@ -50,6 +50,7 @@ class CourseSearch extends Course
         $query = Course::find()
                 ->groupProgram($locationId)
                 ->regular()
+                ->notDeleted()
                 ->confirmed();
 
         $dataProvider = new ActiveDataProvider([

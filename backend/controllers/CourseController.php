@@ -55,7 +55,7 @@ class CourseController extends BaseController
                 'class' => 'yii\filters\ContentNegotiator',
                 'only' => ['fetch-teacher-availability', 'fetch-lessons', 
                     'fetch-group', 'change', 'teachers', 'create-enrolment-basic',
-                    'create-enrolment-detail', 'create-enrolment-date-detail'
+                    'create-enrolment-detail', 'create-enrolment-date-detail', 'group-course-delete'
                 ],
                 'formats' => [
                     'application/json' => Response::FORMAT_JSON,
@@ -69,7 +69,7 @@ class CourseController extends BaseController
                         'actions' => ['index', 'view', 'fetch-teacher-availability',
                             'course-date', 'create', 'update', 'delete', 'teachers',
                             'fetch-group', 'change', 'create-enrolment-basic',
-                            'create-enrolment-detail', 'create-enrolment-date-detail'
+                            'create-enrolment-detail', 'create-enrolment-date-detail', 'group-course-delete'
                         ],
                         'roles' => ['manageGroupLessons'],
                     ],
@@ -356,6 +356,7 @@ class CourseController extends BaseController
             ->isConfirmed();
         $groupCourses = Course::find()
             ->regular()
+            ->notDeleted()
             ->joinWith(['program' => function ($query) {
                 $query->group();
             }])
@@ -610,5 +611,24 @@ class CourseController extends BaseController
             ];
         }
         return $response;
+    }
+
+    public function actionGroupCourseDelete($id)
+    {
+        $model = $this->findModel($id);   
+        if (!$model->enrolment) {
+            $model->delete();
+            $response = [
+                'status' => true,
+                'url' => Url::to(['course/index', 'CourseSearch[type]' => 2]),
+                'message' => "Course has been deleted"
+            ];
+        } else {
+            $response = [
+                'status' => false,
+                'error' => "Course not deleted because course associated with enrolment"
+            ];
+        }
+    return $response;
     }
 }
