@@ -40,6 +40,7 @@ class EnrolmentController extends Controller
                 ->confirmed()
                 ->needToRenewal($priorDate)
                 ->privateProgram()
+                ->notDeleted()
                 ->all();
         foreach ($courses as $course) {
             $lastPaymentCycle = $course->enrolment->lastPaymentCycle;

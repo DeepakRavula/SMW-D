@@ -536,7 +536,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function getCourses()
     {
         return $this->hasMany(Course::className(), ['teacherId' => 'id'])
-            ->onCondition(['course.isConfirmed' => true]);
+            ->onCondition(['course.isConfirmed' => true, 'course.isDeleted' => false]);
     }
     
     public function getEmail()
