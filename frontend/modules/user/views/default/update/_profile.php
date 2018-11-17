@@ -22,10 +22,10 @@ foreach ($Roles as $name => $description) {
     ?>
 <div class="row">
 	<div class="col-xs-6">
-		<?php echo $form->field($model, 'firstname') ?>
+		<?php echo $form->field($userProfile, 'firstname') ?>
 	</div>
 	<div class="col-xs-6">
-	<?php echo $form->field($model, 'lastname') ?>
+	<?php echo $form->field($userProfile, 'lastname') ?>
 	</div>
 </div>
 <div class="row">
