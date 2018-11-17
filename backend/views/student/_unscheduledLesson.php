@@ -60,7 +60,7 @@ $form = ActiveForm::begin([
             [
                 'label' => 'Original Date',
                 'value' => function ($data) {
-                    return $data->rootLesson ? Yii::$app->formatter->asDate($data->getOriginalDate()) : $data->date;
+                    return $data->rootLesson ? Yii::$app->formatter->asDate($data->getOriginalDate()) : Yii::$app->formatter->asDate($data->date);
                 },
             ],
             [
