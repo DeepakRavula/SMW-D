@@ -599,7 +599,7 @@ class Course extends \yii\db\ActiveRecord
         $startDate = (new \DateTime($this->startDate))->format('Y-m-d');
         $endDate = (new \DateTime($this->endDate))->format('Y-m-d');
         if ($endDate < $startDate) {
-            $this->addError($attribute, "Enrolment end date must be greater than start date");
+            $this->addError($attribute, "Enrolment end date must be greater than or equal to start date");
         }
     }
 }
