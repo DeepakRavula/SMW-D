@@ -324,7 +324,9 @@ class Lesson extends \yii\db\ActiveRecord
             }
         }
         foreach ($splitLesson->discounts as $discount) {
-            $splitLessonDiscountValues[] = $discount->value;
+            if ($discount->value > 0.00) {
+                $splitLessonDiscountValues[] = $discount->value;
+            }
         }
         $lessonProgramRate = $this->programRate;
         $splitLessonProgramRate = $splitLesson->rootLesson->programRate;
