@@ -333,10 +333,7 @@ class Lesson extends \yii\db\ActiveRecord
         if (($lessonProgramRate - $splitLessonProgramRate) != 0) {
             $this->addError($attribute, "Lesson cost varied lesson's can't be merged");
         }
-        if (array_diff($lessonDiscountValues, $splitLessonDiscountValues)) {
-            $this->addError($attribute, "Discount varied lesson's can't be merged");
-        }
-        if (array_diff($splitLessonDiscountValues, $lessonDiscountValues)) {
+        if (array_diff($lessonDiscountValues, $splitLessonDiscountValues) || array_diff($splitLessonDiscountValues, $lessonDiscountValues)) {
             $this->addError($attribute, "Discount varied lesson's can't be merged");
         }
     }
