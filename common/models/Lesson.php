@@ -336,6 +336,9 @@ class Lesson extends \yii\db\ActiveRecord
         if (array_diff($lessonDiscountValues, $splitLessonDiscountValues)) {
             $this->addError($attribute, "Discount varied lesson's can't be merged");
         }
+        if (array_diff($splitLessonDiscountValues, $lessonDiscountValues)) {
+            $this->addError($attribute, "Discount varied lesson's can't be merged");
+        }
     }
 
     public function isEditable()
