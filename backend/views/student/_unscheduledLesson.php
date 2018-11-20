@@ -60,16 +60,7 @@ $form = ActiveForm::begin([
             [
                 'label' => 'Original Date',
                 'value' => function ($data) {
-                    $ancestors = Lesson::find()->ancestorsOf($data->id)->orderBy(['id' => SORT_DESC])->all(); 
-                    $ancestors[] = $data;
-                    $lesson_date = $data->rootLesson ? $data->rootLesson->date : $data->date ;
-                    foreach ($ancestors as $ancestor) {
-                        if ($ancestor->bulkRescheduleLesson) {
-                            $lesson_date = $ancestor->date;
-                        }
-                    }
-                    $date = Yii::$app->formatter->asDate($data->date);
-                    return $data->rootLesson ? Yii::$app->formatter->asDate($lesson_date) : $date;
+                    return $data->rootLesson ? Yii::$app->formatter->asDate($data->getOriginalDate()) : Yii::$app->formatter->asDate($data->date);
                 },
             ],
             [

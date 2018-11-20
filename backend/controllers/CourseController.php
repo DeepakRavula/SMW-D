@@ -113,6 +113,7 @@ class CourseController extends BaseController
                 ->notDeleted()
                 ->groupCourseEnrolled($id)
                 ->active(),
+            'pagination' => false
         ]);
 
         $lessonDataProvider = new ActiveDataProvider([

@@ -15,6 +15,7 @@ use frontend\models\UserForm;
 use yii\web\Response;
 use yii\helpers\ArrayHelper;
 use yii\base\Model;
+use common\models\UserProfile;
 
 class DefaultController extends Controller
 {
@@ -108,8 +109,9 @@ class DefaultController extends Controller
         $model = new UserForm();
         $model->setModel($this->findModel($id));
         $userProfile  = $model->getModel()->userProfile;
-        if ($model->load($request->post()) && $userProfile->load($request->post())) {
+        if ($userProfile->load($request->post())) { 
             if ($model->save()) {
+                $userProfile->setScenario(UserProfile::SCENARIO_FRONT_END_USER_EDIT);
                 $userProfile->save();
                 return [
                    'status' => true,

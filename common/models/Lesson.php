@@ -324,14 +324,16 @@ class Lesson extends \yii\db\ActiveRecord
             }
         }
         foreach ($splitLesson->discounts as $discount) {
-            $splitLessonDiscountValues[] = $discount->value;
+            if ($discount->value > 0.00) {
+                $splitLessonDiscountValues[] = $discount->value;
+            }
         }
         $lessonProgramRate = $this->programRate;
         $splitLessonProgramRate = $splitLesson->rootLesson->programRate;
         if (($lessonProgramRate - $splitLessonProgramRate) != 0) {
             $this->addError($attribute, "Lesson cost varied lesson's can't be merged");
         }
-        if (array_diff($lessonDiscountValues, $splitLessonDiscountValues)) {
+        if (array_diff($lessonDiscountValues, $splitLessonDiscountValues) || array_diff($splitLessonDiscountValues, $lessonDiscountValues)) {
             $this->addError($attribute, "Discount varied lesson's can't be merged");
         }
     }
@@ -1613,4 +1615,16 @@ class Lesson extends \yii\db\ActiveRecord
     {
         return $this->hasMany(LessonDiscount::className(), ['lessonId' => 'id']);
     }   
+    public function getOriginalDate() 
+    {
+        $ancestors = Lesson::find()->ancestorsOf($this->id)->orderBy(['id' => SORT_DESC])->all(); 
+        $ancestors[] = $this;
+        $lessonDate = $this->rootLesson ? $this->rootLesson->date : $this->date ;
+        foreach ($ancestors as $ancestor) {
+            if ($ancestor->bulkRescheduleLesson) {
+                $lessonDate = $ancestor->date;
+            }
+        }
+        return $lessonDate;
+    }
 }
