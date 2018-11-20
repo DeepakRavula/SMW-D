@@ -8,8 +8,12 @@ use common\models\Qualification;
     <!-- title row -->
       <!-- /.col -->
       <div class="col-md-12">
-          <h1> Time Voucher For  <?php echo $model->publicIdentity.'     '; ?></h1>  
-          <h2><?php echo  $fromDate->format('F jS, Y') . '  to   ' . $toDate->format('F jS, Y');?> </h2>
+            <h1> Time Voucher For  <?php echo $model->publicIdentity.'     '; ?></h1>
+            <?php if ($fromDate->format('F jS, Y') === $toDate->format('F jS, Y')): ?>
+            <h2><?=  $toDate->format('F jS, Y'); ?></h2>
+            <?php else: ?>
+            <h2><?=  $fromDate->format('F jS, Y'); ?> to <?= $toDate->format('F jS, Y') ?></h2>
+            <?php endif; ?>  
       <!-- /.col -->
     <!-- /.row -->
       </div>
