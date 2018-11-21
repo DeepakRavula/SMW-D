@@ -145,6 +145,7 @@ class ScheduleController extends FrontendBaseController
             $query->andWhere(['lesson.teacherId' => $userId]);
         }
         $query->scheduledOrRescheduled()
+             ->present()  
             ->andWhere(['DATE(lesson.date)' => $date->format('Y-m-d')])
             ->notDeleted();
         $lessons = $query->all();
