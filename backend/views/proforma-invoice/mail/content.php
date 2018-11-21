@@ -1,6 +1,8 @@
+<?php use yii\bootstrap\Html; ?>
 <?= $emailTemplate->header ?? 'Please find the proforma invoice below:'; ?><Br>
 <?php $lessonCount = $lessonLineItemsDataProvider->getCount(); ?>
 <?php if ($lessonCount > 0) : ?>
+<?= Html::label('Lessons', ['class' => 'admin-login']) ?>
 	<table style="width:100%">
     	<tr>
 			<td>
@@ -13,11 +15,12 @@
     	</tr>
 	</table>
 <?php endif; ?>
-<div class="row">
+<div class="row"> 
     <!-- /.col -->
     <div class="table-responsive">
 	<?php $invoiceCount = $invoiceLineItemsDataProvider->getCount(); ?>
         <?php if ($invoiceCount > 0) : ?>
+		<?= Html::label('Invoices', ['class' => 'admin-login']) ?>
             <table class="table table-invoice-total" style="width: 100%;">
             <tbody>
             	<tr>
