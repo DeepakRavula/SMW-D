@@ -244,8 +244,8 @@ class LocationController extends BaseController
         $location = Location::findOne(['slug' => Yii::$app->location]);
         $availabilityModel = LocationAvailability::find()
             ->notDeleted()
-            ->where(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
-            ->one();
+            ->andWhere(['locationId' => $location->id, 'day' => $resourceId,'type' => $type])
+            ->one();   
         $response = [
             'status' => true,
         ];
