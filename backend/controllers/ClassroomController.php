@@ -31,7 +31,7 @@ class ClassroomController extends BaseController
             ],
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
-                'only' => ['create', 'update'],
+                'only' => ['create', 'update','delete'],
                 'formatParam' => '_format',
                 'formats' => [
                    'application/json' => Response::FORMAT_JSON,
@@ -158,8 +158,16 @@ class ClassroomController extends BaseController
     {
         $model = $this->findModel($id);
         $model->setScenario(Classroom::SCENARIO_DELETE_CLASSROOM);
-        $model->delete();
-        return $this->redirect(['index']);
+        if ($model->validate()) {
+            $model->delete();
+            return $this->redirect(['index']);
+        } else {
+            $errors = ActiveForm::validate($model);
+            return [
+                'error' => end($errors),
+                'status' => false,
+            ];
+        }
     }
 
     /**

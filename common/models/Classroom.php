@@ -31,8 +31,7 @@ class Classroom extends \yii\db\ActiveRecord
     {
         return [
             [['name','description'], 'required'],
-            [['name'], ClassroomValidator::className(),
-                'on' => [self::SCENARIO_DELETE_CLASSROOM]],
+            ['name', 'validateOnDelete', 'on' => self::SCENARIO_DELETE_CLASSROOM],
             [['name'], 'trim'],
             [['locationId'], 'integer'],
             [['name'], 'string', 'max' => 30],
@@ -72,5 +71,18 @@ class Classroom extends \yii\db\ActiveRecord
                 'updatedByAttribute' => 'updatedByUserId'
             ],
         ];
+    }
+
+    public function validateOnDelete($attribute) {
+        $lesson = Lesson::find()
+                ->notDeleted()
+                ->andWhere(['classroomId' => $this->id])
+                ->one();
+        $teacherRoom = TeacherRoom::find()
+                ->andWhere(['classroomId' => $this->id])
+                ->one();
+        if ($lesson || $teacherRoom) {
+            $this->addError($attribute, "Lessons or teacher availability associated with this classroom so it can't be deleted");
+        }
     }
 }

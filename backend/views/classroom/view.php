@@ -106,4 +106,10 @@ use yii\bootstrap\Modal;
 			$('#classroom-unavailability-modal').modal('hide');
 		});
 	});
+
+	$(document).on('modal-error', function (event, params) {
+        if (params.error) {
+            $('#modal-popup-error-notification').html(params.error).fadeIn().delay(5000).fadeOut();
+        }
+    });	
 </script>
