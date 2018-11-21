@@ -56,6 +56,11 @@ class Classroom extends \yii\db\ActiveRecord
         return $this->hasMany(Lesson::className(), ['classroomId' => 'id']);
     }
 
+    public static function find()
+    {
+        return new \common\models\query\ClassroomQuery(get_called_class());
+    }
+
     public function behaviors()
     {
         return [
