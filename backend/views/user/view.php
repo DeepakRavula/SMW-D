@@ -214,7 +214,7 @@ $this->params['action-button'] = $this->render('_action-button', [
                     ],
                 ],
                 [
-                    'label' => 'Lessons',
+                    'label' => 'Invoiced Lessons',
                     'content' => $timeVoucherContent,
                     'options' => [
                         'id' => 'lesson',

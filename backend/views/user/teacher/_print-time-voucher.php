@@ -11,7 +11,12 @@ use kartik\grid\GridView;
 
 <div class="row">
     <div class="col-xs-12 table-responsive">
-        <h2 class="col-md-12"><b><?= $model->publicIdentity . '\'s Time Voucher for ' . (new\DateTime($fromDate))->format('F jS, Y') . ' to ' . (new\DateTime($toDate))->format('F jS, Y');?></b></h2>
+        <h1><?= $model->publicIdentity . '\'s Invoiced Lessons'?></h1>
+        <?php if ($fromDate === $toDate): ?>
+        <h2><?=  (new \DateTime($toDate))->format('F jS, Y'); ?></h2>
+        <?php else: ?>
+        <h2><?=  (new \DateTime($fromDate))->format('F jS, Y'); ?> to <?=  (new \DateTime($toDate))->format('F jS, Y') ?></h2>
+        <?php endif; ?>
         <div class="report-grid">
             <?= $this->render('_cost-time-voucher-content', [
                 'model' => $model,
@@ -22,21 +27,8 @@ use kartik\grid\GridView;
     </div>
 </div>
 
-<div class="boxed col-md-12 pull-right">
-    <div class="sign">
-        Teacher Signature <span></span>
-    </div>
-    <div class="sign">
-        Authorizing Signature <span></span>
-    </div>
-    <div class="sign">
-        Date <span></span>
-    </div>
-</div>
-
-
 <script>
     $(document).ready(function () {
-        window.print();
+        setTimeout(function(){window.print()},2000);
     });
 </script>

@@ -84,4 +84,13 @@ use kartik\daterange\DateRangePicker;
         $('#print-btn').attr('href', url);
         return false;
     });
+
+    $(document).on('click', '#print-btn', function () {
+        var summariesOnly = $(this).is(":checked");
+        var dateRange = $('#lessonsearch-daterange').val();
+        var params = $.param({ 'LessonSearch[dateRange]': dateRange,'LessonSearch[summariseReport]': summariesOnly | 0});
+        var url = '<?= Url::to(['print/teacher-lessons', 'id' => $model->id]); ?>&' + params;
+        window.open(url, '_blank');
+        return false;
+    });
 </script>
