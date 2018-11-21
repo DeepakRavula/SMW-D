@@ -6,17 +6,14 @@ use common\models\Qualification;
 
 ?>
     <!-- title row -->
-    <?php
-   echo $this->render('/print/_report-header', [
-       'userModel'=>$model,
-       'locationModel'=>$model->userLocation->location,
-]);
-   ?>
       <!-- /.col -->
       <div class="col-md-12">
-          <div class="report-h1"> Time Voucher For  <?php echo $model->publicIdentity.'     '; ?></div>
-          
-          <div class="report-h2"><?php echo  $fromDate->format('F jS, Y') . '  to   ' . $toDate->format('F jS, Y');?> </div>
+            <h1> Time Voucher For  <?php echo $model->publicIdentity.'     '; ?></h1>
+            <?php if ($fromDate->format('F jS, Y') === $toDate->format('F jS, Y')): ?>
+            <h2><?=  $toDate->format('F jS, Y'); ?></h2>
+            <?php else: ?>
+            <h2><?=  $fromDate->format('F jS, Y'); ?> to <?= $toDate->format('F jS, Y') ?></h2>
+            <?php endif; ?>  
       <!-- /.col -->
     <!-- /.row -->
       </div>
@@ -45,6 +42,6 @@ Authorizing Signature <span></span>
 </div>
 <script>
     $(document).ready(function () {
-        window.print();
+        setTimeout(function(){window.print()},2000);
     });
 </script>
