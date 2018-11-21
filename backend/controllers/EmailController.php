@@ -212,6 +212,7 @@ class EmailController extends BaseController
             }]);
         $lessonLineItemsDataProvider = new ActiveDataProvider([
             'query' => $lessonLineItems,
+            'pagination' => false,
         ]);
 	$invoiceLineItems = Invoice::find()
             ->joinWith(['proformaInvoiceItem' => function ($query) use ($model) {
@@ -221,6 +222,7 @@ class EmailController extends BaseController
             }]);
         $invoiceLineItemsDataProvider = new ActiveDataProvider([
             'query' => $invoiceLineItems,
+            'pagination' => false,
         ]);
             $emailTemplate = EmailTemplate::findOne(['emailTypeId' => EmailObject::OBJECT_PFI]);
        
