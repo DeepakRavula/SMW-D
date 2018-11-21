@@ -29,7 +29,7 @@ use common\models\Location;
 		   <?php $locationId = Location::findOne(['slug' => \Yii::$app->location])->id; ?>
 		   <?=
            $form->field($model, 'classroomId')->widget(Select2::classname(), [
-               'data' => ArrayHelper::map(Classroom::find()->orderBy(['name' => SORT_ASC])
+               'data' => ArrayHelper::map(Classroom::find()->notDeleted()->orderBy(['name' => SORT_ASC])
                        ->andWhere(['locationId' => $locationId])->all(), 'id', 'name'),
                'pluginOptions' => [
                    'placeholder' => 'Select Classroom',

@@ -26,7 +26,7 @@ use common\models\Location;
             <?php
             $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
             $classrooms = ArrayHelper::map(
-                Classroom::find()->andWhere(['locationId' => $locationId])->orderBy(['name' => SORT_ASC])->all(),
+                Classroom::find()->notDeleted()->andWhere(['locationId' => $locationId])->orderBy(['name' => SORT_ASC])->all(),
                     'id', 'name');
             echo $form->field($model, 'classroomId')->widget(Select2::classname(), [
                 'data' => $classrooms,

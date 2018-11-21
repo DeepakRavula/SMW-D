@@ -141,6 +141,7 @@ class ScheduleController extends BaseController
         $resources = [];
         $classrooms = Classroom::find()
                 ->andWhere(['locationId' => Location::findOne(['slug' => Yii::$app->location])->id])
+                ->notDeleted()
                 ->all();
         foreach ($classrooms as $classroom) {
             $resources[] = [
