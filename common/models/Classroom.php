@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
+use common\components\validators\lesson\conflict\ClassroomValidator;
 
 /**
  * This is the model class for table "class_room".
@@ -14,6 +15,7 @@ use yii\behaviors\BlameableBehavior;
  */
 class Classroom extends \yii\db\ActiveRecord
 {
+    const SCENARIO_DELETE_CLASSROOM = 'classroom-delete';
     /**
      * @inheritdoc
      */
@@ -29,6 +31,7 @@ class Classroom extends \yii\db\ActiveRecord
     {
         return [
             [['name','description'], 'required'],
+            ['name', 'validateOnDelete', 'on' => self::SCENARIO_DELETE_CLASSROOM],
             [['name'], 'trim'],
             [['locationId'], 'integer'],
             [['name'], 'string', 'max' => 30],
@@ -68,5 +71,18 @@ class Classroom extends \yii\db\ActiveRecord
                 'updatedByAttribute' => 'updatedByUserId'
             ],
         ];
+    }
+
+    public function validateOnDelete($attribute) {
+        $lesson = Lesson::find()
+                ->notDeleted()
+                ->andWhere(['classroomId' => $this->id])
+                ->one();
+        $teacherRoom = TeacherRoom::find()
+                ->andWhere(['classroomId' => $this->id])
+                ->one();
+        if ($lesson || $teacherRoom) {
+            $this->addError($attribute, "Lessons or teacher availability associated with this classroom so it can't be deleted");
+        }
     }
 }
