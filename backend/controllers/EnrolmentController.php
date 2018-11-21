@@ -643,6 +643,12 @@ class EnrolmentController extends BaseController
         $changedEndDate = Yii::$app->request->get('endDate');
         $model = $this->findModel($id);
         $lastLesson = $model->lastRootLesson;
+        if (!$lastLesson) {
+            return [
+                'status' => false,
+                'message' => 'There are no lessons in the enrolment so end date cannnot be adjusted.',
+            ];
+        }
         $lastLessonDate = Carbon::parse($lastLesson->date);
         $action = null;
         $dateRange = null;
@@ -685,32 +691,34 @@ class EnrolmentController extends BaseController
         $endDate = Carbon::parse($course->endDate)->format('d-m-Y');
         $course->load(Yii::$app->getRequest()->getBodyParams(), 'Course');
         if ($post) {
-            $message = null;
-            $course->updateAttributes([
-                'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
-            ]);
-            $newEndDate = Carbon::parse($course->endDate);
-            if ($endDate !== $newEndDate) {
-                if ($lastLessonDate > $newEndDate) {
-                    $model->shrink();
-                } else if ($lastLessonDate < $newEndDate) {
-                    $model->extend();
-                    if($model->multipleEnrolmentDiscount) {
-                        $model->resetDiscount($model->multipleEnrolmentDiscount->type, $model->multipleEnrolmentDiscount->discount);
+            if ($course->validate()) {
+                $message = null;
+                $course->updateAttributes([
+                    'endDate' => Carbon::parse($course->endDate)->format('Y-m-d 23:59:59')
+                ]);
+                $newEndDate = Carbon::parse($course->endDate);
+                if ($endDate !== $newEndDate) {
+                    if ($lastLessonDate > $newEndDate) {
+                        $model->shrink();
+                    } else if ($lastLessonDate < $newEndDate) {
+                        $model->extend();
                     }
-                    if($model->paymentFrequencyDiscount) {
-                        $model->resetDiscount($model->paymentFrequencyDiscount->type, $model->paymentFrequencyDiscount->discount);   
+                    $model->setStatus();
+                    if ($message) {
+                        $message = 'Enrolment end date succesfully updated!';
                     }
                 }
-                $model->setStatus();
-                if ($message) {
-                    $message = 'Enrolment end date succesfully updated!';
-                }
-            }
-            $response = [
-                'status' => true,
-                'message' => $message
-            ];
+                $response = [
+                    'status' => true,
+                    'message' => $message
+                ];
+            } else {
+                $errors = ActiveForm::validate($course);
+                $response = [
+                    'error' => end($errors),
+                    'status' => false,
+                ];
+        }
         } else {
             $data = $this->renderAjax('update/_form-schedule', [
                 'model' => $model,

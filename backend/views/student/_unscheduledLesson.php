@@ -4,6 +4,7 @@ use yii\grid\GridView;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
+use common\models\Lesson;
 
 ?>
 
@@ -59,8 +60,7 @@ $form = ActiveForm::begin([
             [
                 'label' => 'Original Date',
                 'value' => function ($data) {
-                    $date = Yii::$app->formatter->asDate($data->date);
-                    return $data->rootLesson ? Yii::$app->formatter->asDate($data->rootLesson->date) : $date;
+                    return $data->rootLesson ? Yii::$app->formatter->asDate($data->getOriginalDate()) : Yii::$app->formatter->asDate($data->date);
                 },
             ],
             [

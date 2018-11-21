@@ -18,10 +18,10 @@ $loggedUser = User::findOne(Yii::$app->user->id);
     ?>
     <div class="row">
 	<div class="col-xs-6">
-            <?php echo $form->field($model, 'firstname') ?>
+            <?php echo $form->field($userProfile, 'firstname') ?>
 	</div>
 	<div class="col-xs-6">
-            <?php echo $form->field($model, 'lastname') ?>
+            <?php echo $form->field($userProfile, 'lastname') ?>
 	</div>
     </div>
         <div class="row">
@@ -35,6 +35,9 @@ $loggedUser = User::findOne(Yii::$app->user->id);
     <div class="row">
 		<?php if ($model->getModel()->isTeacher()) : ?>
 	        <div class="col-xs-4">
+            <?php if (!($userProfile->isNewRecord) &&  ($userProfile->birthDate)) : ?>
+                <?php $userProfile->birthDate = (new \DateTime($userProfile->birthDate))->format('M d, Y'); ?>
+            <?php endif; ?>
 				<?php
 				echo $form->field($userProfile, 'birthDate')->widget(DatePicker::classname(),
 					[
@@ -42,10 +45,10 @@ $loggedUser = User::findOne(Yii::$app->user->id);
             'clientOptions' => [
                 'defaultDate' => (new \DateTime($userProfile->birthDate))->format('M d, Y'),
                 'changeMonth' => true,
-                'yearRange' => '-70:-4',
+                'yearRange' => '-70:+0',
                 'changeYear' => true,
                 ],
-				])->textInput(['placeholder' => 'Select Date'])->label('Birth Date');
+				])->textInput(['placeholder' => 'Select Date', 'readOnly' => true])->label('Birth Date');
 				?>
 			</div>
 		<?php endif; ?>

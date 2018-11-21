@@ -9,7 +9,6 @@ use yii\base\Exception;
 use yii\base\Model;
 use Yii;
 use yii\helpers\ArrayHelper;
-use common\models\timelineEvent\UserLog;
 
 /**
  * Create user form.
@@ -147,12 +146,7 @@ class UserForm extends Model
             $userProfileModel->lastname = $lastname;
             $userProfileModel->firstname = $firstname;
             $userProfileModel->save();
-            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-            $userProfileModel->loggedUser = $loggedUser->publicIdentity;
-            $roles = Yii::$app->authManager->getRolesByUser($userProfileModel->user_id);
-            $role=end($roles);
-            $userProfileModel->on(UserProfile::EVENT_USER_CREATE, [new UserLog(), 'userCreate'], ['role' => $role->name]);
-            $userProfileModel->trigger(UserProfile::EVENT_USER_CREATE);
+           
             return !$model->hasErrors();
         }
 

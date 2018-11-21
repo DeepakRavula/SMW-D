@@ -36,7 +36,7 @@ use kartik\switchinput\SwitchInput;
                     if ($data->hasInvoicedLesson()) {
                         $invoiceStatus = 'Invoiced';
                     } else {
-                        $invoiceStatus = 'Not Invocied';
+                        $invoiceStatus = 'Not Invoiced';
                     }
                     return $invoiceStatus;
                 }

@@ -7,7 +7,7 @@ use kartik\grid\GridView;
 use yii\widgets\Pjax;
 
 ?>
-
+<div id="enrolment-edit-end-date" style="display: none;" class="alert-danger alert fade in"></div>
 <?php
     $form = ActiveForm::begin([
         'id' => 'modal-form',
@@ -113,5 +113,11 @@ $columns = [
 
     $(document).on('pjax:complete', function(event) {
         $('#modal-spinner').hide();
+    });
+
+    $(document).on('modal-error', function (event, params) {
+        if (params.error) {
+            $('#enrolment-edit-end-date').html(params.error).fadeIn().delay(5000).fadeOut();
+        }
     });
 </script>

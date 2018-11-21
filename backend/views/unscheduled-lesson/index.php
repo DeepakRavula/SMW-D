@@ -66,8 +66,7 @@ $this->params['show-all'] = $this->render('_button', [
 		[
 			'label' => 'Date',
 			'value' => function ($data) {
-				$date = Yii::$app->formatter->asDate($data->date);
-
+				$date = Yii::$app->formatter->asDate($data->getOriginalDate());
 				return !empty($date) ? $date : null;
 			},
 			'contentOptions' => ['class' => 'text-ellipsis display-14'],

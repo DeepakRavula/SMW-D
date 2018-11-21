@@ -415,8 +415,9 @@ class UserController extends BaseController
         ]);
     }
 
-    protected function getTimeVoucherDataProvider($id, $fromDate, $toDate)
+    protected function getTimeVoucherDataProvider($id, $fromDate, $toDate, $summariseReport)
     {
+        
         $timeVoucher = InvoiceLineItem::find()
             ->notDeleted()
             ->joinWith(['invoice' => function ($query) use ($fromDate,$toDate) {
@@ -424,10 +425,13 @@ class UserController extends BaseController
                     ->between((new \DateTime($fromDate))->format('Y-m-d'), (new \DateTime($toDate))->format('Y-m-d'));
             }])
             ->joinWith(['lesson' => function ($query) use ($id) {
-                $query->andWhere(['lesson.teacherId' => $id]);
+                $query->andWhere(['lesson.teacherId' => $id])
+                ->groupBy('lesson.id');
             }])
            ->orderBy(['invoice.date' => SORT_ASC]);
-            
+        if($summariseReport) { 
+            $timeVoucher->groupBy('invoice.date');
+        }    
         return new ActiveDataProvider([
             'query' => $timeVoucher,
             'pagination' => false,
@@ -488,17 +492,14 @@ class UserController extends BaseController
         }
         $searchModel = new UserSearch();
         $searchModel->accountView = false;
-        $db = $searchModel->search(Yii::$app->request->queryParams);
+        $request = Yii::$app->request;
+        $db = $searchModel->search($request->queryParams);
         $lessonSearchModel=new LessonSearch();
         $lessonSearchModel->dateRange=(new\DateTime())->format('M d,Y').' - '.(new\DateTime())->format('M d,Y');
-        $lessonSearch = $request->get('LessonSearch');
-        $lessonSearchModel->summariseReport=$lessonSearch['summariseReport'];
+        $lessonSearchModel->load($request->get());
         $invoiceSearchModel = new InvoiceSearch();
         $invoiceSearchModel->dateRange = (new\DateTime())->format('M d,Y') . ' - ' . (new\DateTime())->format('M d,Y');
-        $invoiceSearch = $request->get('InvoiceSearch');
-        
-        if (!empty($invoiceSearch)) {
-            $invoiceSearchModel->dateRange = $invoiceSearch['dateRange'];
+        if ($invoiceSearchModel->load($request->get())) {
             list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
         }
 
@@ -529,7 +530,7 @@ class UserController extends BaseController
             'teachersAvailabilities' => $this->getTeacherAvailabilities($id, $locationId),
             'privateQualificationDataProvider' => $this->getPrivateQualificationDataProvider($id),
             'groupQualificationDataProvider' => $this->getGroupQualificationDataProvider($id),
-            'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate),
+            'timeVoucherDataProvider' => $this->getTimeVoucherDataProvider($id, $invoiceSearchModel->fromDate, $invoiceSearchModel->toDate,$invoiceSearchModel->summariseReport),
             'unavailability' => $this->getUnavailabilityDataProvider($id),
             'logDataProvider' => $this->getLogDataProvider($id),
 	        'invoiceCount' => $this->getInvoiceCount($model, $locationId),
@@ -604,14 +605,16 @@ class UserController extends BaseController
             $customerReferralSource = new CustomerReferralSource(); 
         }
         if ($model->load($request->post()) && $userProfile->load($request->post())) {
+           
             if (!empty($model->password)) {
                 $model->getModel()->setPassword($model->password);
             }
             if (!empty($model->pin)) {
                 $model->getModel()->setPin($model->pin);
             }
-            if ($model->save()) {              
-                $userProfile->save();
+            if ($model->save()) {  
+               if ($userProfile->validate()) {
+                   $userProfile->save();
                 $customerReferralSource->load($request->post());
                 if($customerReferralSource->referralSourceId) {
                     if (!$customerReferralSource->referralSource->isOther()) {
@@ -623,6 +626,13 @@ class UserController extends BaseController
                 return [
                    'status' => true,
                 ];
+            }
+            else {  
+                return [
+                    'status' => false,
+                    'errors' => $userProfile->getErrors(),
+                ];
+            }
             } else {
                 $errors = ActiveForm::validate($model);
                 return [

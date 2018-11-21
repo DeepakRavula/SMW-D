@@ -92,8 +92,8 @@ class CustomerDiscountController extends BaseController
             $message = 'Discount has been added successfully.';
         } else {
             $message = 'Discount has been updated successfully.';
-            $customerDiscountModel->on(CustomerDiscount::EVENT_EDIT, [new CustomerDiscountLog(), 'edit'], ['oldAttributes' => $customerDiscountModel->getOldAttributes()]);
-            $customerDiscountModel->userName = $userModel->publicIdentity;
+            // $customerDiscountModel->on(CustomerDiscount::EVENT_EDIT, [new CustomerDiscountLog(), 'edit'], ['oldAttributes' => $customerDiscountModel->getOldAttributes()]);
+            // $customerDiscountModel->userName = $userModel->publicIdentity;
         }
         if ($customerDiscountModel->load(Yii::$app->request->post()) && $customerDiscountModel->save()) {
             return [

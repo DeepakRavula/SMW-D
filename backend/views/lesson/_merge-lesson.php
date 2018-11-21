@@ -9,29 +9,15 @@ use yii\helpers\Html;
 ?>
 
 <?php
-$enrolmentId = $model->enrolment->id;
+
 $locationId = $model->course->locationId;
-$lessons = Lesson::find()
-        ->split()
-        ->notCanceled()
-        ->notDeleted()
-        ->unscheduled()
-        ->enrolment($enrolmentId);
-$splitLessonDataProvider = new ActiveDataProvider([
-    'query' => $lessons,
-    'pagination' => false
-]);
 ?>
 <div>
-    <?php
-    Modal::begin([
-        'header' => '<h4 class="m-0">Merge Lesson</h4>',
-        'id'=>'merge-lesson-modal',
-    ]);?>
+   
     <div id="merge-error-notification" style="display:none;" class="alert-danger alert fade in"></div>
     <h5><strong><?= 'Please choose the lesson that should be merged.'; ?></strong></h5>
 	<?php $form = ActiveForm::begin([
-        'id' => 'merge-lesson-form',
+        'id' => 'modal-form',
     ]); ?>
 	<div>
 	<?php
@@ -91,7 +77,12 @@ $splitLessonDataProvider = new ActiveDataProvider([
     ]);
     ?>
 	</div>
-	<?php echo Html::submitButton(Yii::t('backend', 'Save'), ['class' => 'btn btn-info', 'name' => 'signup-button']) ?>
 	<?php ActiveForm::end(); ?>
-<?php Modal::end(); ?>
 </div>
+<script>
+    $(document).on('modal-error', function (event, params) {
+        if (params.error) {
+            $('#modal-popup-error-notification').html(params.error).fadeIn().delay(5000).fadeOut();
+        }
+    });
+</script>

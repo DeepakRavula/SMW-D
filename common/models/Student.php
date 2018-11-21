@@ -334,4 +334,13 @@ class Student extends \yii\db\ActiveRecord
         return !empty($this->lesson);
     }
 
+    public function hasExplodedLesson()
+    {
+        $lessonSplits = Lesson::find()
+                    ->split()
+                    ->unscheduled()
+                    ->student($this->id)
+                    ->all();
+        return !empty($lessonSplits);
+    }
 }

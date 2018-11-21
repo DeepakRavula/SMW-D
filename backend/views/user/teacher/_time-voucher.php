@@ -42,6 +42,10 @@ use common\models\InvoiceLineItem;
         <div class="col-md-1 form-group">
             <?= Html::a('<i class="fa fa-print"></i> Print', null, ['id' => 'time-voucher-print-btn', 'class' => 'btn btn-default m-r-10']) ?>
         </div>
+        <div class="pull-right checkbox">
+            <?= $form->field($searchModel, 'summariseReport')->checkbox(['data-pjax' => true]); ?>
+        </div>
+        <div class="clearfix"></div>
     </div>
 
     <?php ActiveForm::end(); ?>
@@ -70,5 +74,15 @@ use common\models\InvoiceLineItem;
         var url = '<?= Url::to(['print/time-voucher', 'id' => $model->id]); ?>&' + params;
         window.open(url, '_blank');
         return false;
+    });
+
+    $("#invoicesearch-summarisereport").on("change", function() {
+        var summariesOnly = $(this).is(":checked");
+        var dateRange = $('#invoicesearch-daterange').val();
+        var params = $.param({ 'InvoiceSearch[dateRange]': dateRange,'InvoiceSearch[summariseReport]': (summariesOnly | 0) });
+        var url = '<?php echo Url::to(['user/view', 'UserSearch[role_name]' => 'teacher', 'id' => $model->id]); ?>&' + params;
+        $.pjax.reload({url:url,container:"#time-voucher-grid",replace:false,  timeout: 4000});  //Reload GridView
+		var printUrl = '<?= Url::to(['print/time-voucher', 'id' => $model->id]); ?>&' + params;
+		$('#time-voucher-print-btn').attr('href', printUrl);
     });
 </script>
