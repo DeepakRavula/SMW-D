@@ -15,6 +15,9 @@ td.kv-group-even {
 td.kv-group-odd {
     background-color: white!important;
 }
+.table > tbody > tr > td, .table > tfoot > tr > td {
+        padding: 0px;  
+}
 </style>
 <?php 
     $teacherId = $model->id;
