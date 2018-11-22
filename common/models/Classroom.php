@@ -5,7 +5,7 @@ namespace common\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
-use common\components\validators\lesson\conflict\ClassroomValidator;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "class_room".
@@ -35,7 +35,7 @@ class Classroom extends \yii\db\ActiveRecord
             [['name'], 'trim'],
             [['locationId'], 'integer'],
             [['name'], 'string', 'max' => 30],
-            [['createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
+            [['createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn', 'isDeleted'], 'safe'],
         ];
     }
 
@@ -56,9 +56,21 @@ class Classroom extends \yii\db\ActiveRecord
         return $this->hasMany(Lesson::className(), ['classroomId' => 'id']);
     }
 
+    public static function find()
+    {
+        return new \common\models\query\ClassroomQuery(get_called_class());
+    }
+
     public function behaviors()
     {
         return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
             [
                 'class' => TimestampBehavior::className(),
                 'createdAtAttribute' => 'createdOn',

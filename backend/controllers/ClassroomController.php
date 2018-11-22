@@ -59,6 +59,7 @@ class ClassroomController extends BaseController
         $locationId = \common\models\Location::findOne(['slug' => \Yii::$app->location])->id;
         $dataProvider = new ActiveDataProvider([
             'query' => Classroom::find()
+                ->notDeleted()
                 ->andWhere(['locationId' => $locationId]),
         ]);
 
