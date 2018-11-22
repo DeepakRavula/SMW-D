@@ -7,9 +7,11 @@ use yii\helpers\Url;
     <i class="fa fa-gear dropdown-toggle" data-toggle="dropdown"></i>
     <ul class="dropdown-menu dropdown-menu-right">
         <li><a id="receive-payments" href="#">Receive Payment</a></li>
+        <?php if ($model->course->program->isPrivate()) : ?>
         <li><a class="enrolment-delete" id="enrolment-delete-" href="<?= Url::to(['enrolment/delete', 'id' => $model->id]);?>">Delete</a></li>
         <?php if (Yii::$app->user->can('administrator')) : ?>
             <li><a class="enrolment-full-delete" id="enrolment-full-delete-" href="#">Full Delete</a></li>
+        <?php endif; ?>
         <?php endif; ?>
     </ul>
 </div>
