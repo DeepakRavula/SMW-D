@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "class_room".
@@ -14,6 +15,7 @@ use yii\behaviors\BlameableBehavior;
  */
 class Classroom extends \yii\db\ActiveRecord
 {
+    const SCENARIO_DELETE_CLASSROOM = 'classroom-delete';
     /**
      * @inheritdoc
      */
@@ -29,10 +31,11 @@ class Classroom extends \yii\db\ActiveRecord
     {
         return [
             [['name','description'], 'required'],
+            ['name', 'validateOnDelete', 'on' => self::SCENARIO_DELETE_CLASSROOM],
             [['name'], 'trim'],
             [['locationId'], 'integer'],
             [['name'], 'string', 'max' => 30],
-            [['createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
+            [['createdByUserId', 'updatedByUserId', 'updatedOn', 'createdOn', 'isDeleted'], 'safe'],
         ];
     }
 
@@ -53,9 +56,21 @@ class Classroom extends \yii\db\ActiveRecord
         return $this->hasMany(Lesson::className(), ['classroomId' => 'id']);
     }
 
+    public static function find()
+    {
+        return new \common\models\query\ClassroomQuery(get_called_class());
+    }
+
     public function behaviors()
     {
         return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
             [
                 'class' => TimestampBehavior::className(),
                 'createdAtAttribute' => 'createdOn',
@@ -68,5 +83,18 @@ class Classroom extends \yii\db\ActiveRecord
                 'updatedByAttribute' => 'updatedByUserId'
             ],
         ];
+    }
+
+    public function validateOnDelete($attribute) {
+        $lesson = Lesson::find()
+                ->notDeleted()
+                ->andWhere(['classroomId' => $this->id])
+                ->one();
+        $teacherRoom = TeacherRoom::find()
+                ->andWhere(['classroomId' => $this->id])
+                ->one();
+        if ($lesson || $teacherRoom) {
+            $this->addError($attribute, "Lessons or teacher availability associated with this classroom so it can't be deleted");
+        }
     }
 }

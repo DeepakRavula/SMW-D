@@ -77,7 +77,7 @@ class PrivateLesson extends \yii\db\ActiveRecord
             $lesson->id = null;
             $lesson->duration = Lesson::DEFAULT_MERGE_DURATION;
             $lesson->status = Lesson::STATUS_UNSCHEDULED;
-            $duration = gmdate('H:i:s', Lesson::DEFAULT_EXPLODE_DURATION_SEC * ($i +1));
+            $duration = gmdate('H:i:s', Lesson::DEFAULT_EXPLODE_DURATION_SEC * ($i));
             $lessonDuration = new \DateTime($duration);
             $date = new \DateTime($model->date);
             $date->add(new \DateInterval('PT' . $lessonDuration->format('H') . 'H' . $lessonDuration->format('i') . 'M'));

@@ -196,7 +196,8 @@ class PrintController extends BaseController
                     ->between((new\DateTime($invoiceSearchModel->fromDate))->format('Y-m-d'), (new\DateTime($invoiceSearchModel->toDate))->format('Y-m-d'));
             }])
             ->joinWith(['lesson' => function ($query) use ($model) {
-                $query->andWhere(['lesson.teacherId' => $model->id]);
+                $query->andWhere(['lesson.teacherId' => $model->id])
+                ->groupBy('lesson.id');
             }])
 			->orderBy(['invoice.date' => SORT_ASC]);
             

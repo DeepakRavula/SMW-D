@@ -417,7 +417,8 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function getClassroom()
     {
-        return $this->hasOne(Classroom::className(), ['id' => 'classroomId']);
+        return $this->hasOne(Classroom::className(), ['id' => 'classroomId'])
+            ->onCondition(['classroom.isDeleted' => false]);
     }
 
     public function isOwing($enrolmentId)

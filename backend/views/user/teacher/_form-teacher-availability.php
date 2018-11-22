@@ -45,7 +45,7 @@ use yii\helpers\Url;
             <?=
             $form->field($roomModel, 'classroomId')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(
-                    Classroom::find()->andWhere(['locationId' => $locationId])->orderBy(['name' => SORT_ASC])->all(),
+                    Classroom::find()->notDeleted()->andWhere(['locationId' => $locationId])->orderBy(['name' => SORT_ASC])->all(),
                         'id',
                     'name'
                 ),
