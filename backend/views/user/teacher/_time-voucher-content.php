@@ -6,6 +6,13 @@ use common\models\Lesson;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+?>
+<style>
+.table > tbody > tr > td, .table > tfoot > tr > td {
+        padding: 0px;  
+}
+</style>
+<?php
 if (!$searchModel->summariseReport) {
 $columns = [
         [
