@@ -142,7 +142,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                 'headerOptions' => ['class' => 'text-right'],
                 'value' => function ($data) {
                     if ($data->hasInvoice()) {
-                        $owingAmount = $data->invoice->balance;
+                        $owingAmount = $data->invoice->balance > 0.09 ? $data->invoice->balance : 0.00;
                     } else {
                         $owingAmount = $data->getOwingAmount($data->enrolment->id);
                     }
