@@ -245,6 +245,7 @@ $this->params['action-button'] = $actionButton; ?>
                             } else {
                                 return round($data->invoiceBalance, 2);
                             }
+                            
                         }
                     },
                     'headerOptions' => ['class' => 'text-right'],

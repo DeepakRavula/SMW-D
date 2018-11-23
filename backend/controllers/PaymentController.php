@@ -579,7 +579,9 @@ class PaymentController extends BaseController
             $invoicesQuery->notDeleted()
                 ->invoice()
                 ->customer($searchModel->userId)
-                ->unpaid();
+                ->unpaid()
+                ->andWhere(['>','invoice.balance' , 0.09]);
+
         }
         $invoicesQuery->orderBy(['invoice.id' => SORT_ASC]);
         $invoiceLineItemsDataProvider = new ActiveDataProvider([

@@ -783,7 +783,11 @@ class Invoice extends \yii\db\ActiveRecord
         
         switch ($this->status) {
             case self::STATUS_OWING:
+                if($this->balance > 0.09) {
+                    $status = (int) $this->type === self::TYPE_INVOICE ? 'Paid' : 'Unpaid';
+                } else {
                 $status = (int) $this->type === self::TYPE_INVOICE ? 'Owing' : 'Unpaid';
+                }
             break;
             case self::STATUS_PAID:
                 $status = (int) $this->type === self::TYPE_INVOICE ? 'Paid' : 'Paid';
