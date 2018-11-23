@@ -151,6 +151,7 @@ class Program extends \yii\db\ActiveRecord
             ->innerJoinWith(['program' =>function ($query) {
                 $query->andWhere(['programId' => $this->id]);
             }])
+            ->notDeleted()
             ->exists();
         return empty($course);
     }
