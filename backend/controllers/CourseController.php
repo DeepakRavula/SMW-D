@@ -617,7 +617,7 @@ class CourseController extends BaseController
     public function actionGroupCourseDelete($id)
     {
         $model = $this->findModel($id);   
-        if (!$model->enrolment) {
+        if (!$model->enrolment && $model->program->isGroup()) {
             $model->delete();
             $response = [
                 'status' => true,
