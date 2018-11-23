@@ -122,7 +122,8 @@ class CourseController extends BaseController
                 ->notCanceled()
                 ->isConfirmed()
                 ->notDeleted()
-                ->orderBy(['lesson.date' => SORT_ASC]),
+                ->orderBy(['lesson.date' => SORT_ASC]), 
+            'pagination' =>  [ 'pageSize' => 200, ],
         ]);
         $logDataProvider    = new ActiveDataProvider([
             'query' => LogHistory::find()
