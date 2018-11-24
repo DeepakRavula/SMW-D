@@ -31,7 +31,7 @@ $this->params['show-all'] = $this->render('_button', [
 
             return ['data-url' => $url];
         },
-        'columns' => [ 
+        'columns' => [
             [
                 'attribute' => 'program',
                 'label' => 'Course',
