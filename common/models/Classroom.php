@@ -94,7 +94,8 @@ class Classroom extends \yii\db\ActiveRecord
                 ->one();
         $teacherRoom = TeacherRoom::find()
         ->joinWith(['teacherAvailability' => function ($query) use ($locationId) {
-                    $query->notDeleted();
+                    $query->notDeleted()
+                    ->location($locationId);
         }])
                 ->andWhere(['classroomId' => $this->id])
                 ->one();
