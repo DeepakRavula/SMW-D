@@ -30,3 +30,6 @@ phpunit.phar
 /.vagrant
 /vagrant.yaml
 .htaccess
+
+#rest-asset
+rest/runtime

@@ -317,6 +317,9 @@ echo Tabs::widget([
             if ($('#lesson-payment-listing').length) {
                 $.pjax.reload({container: "#lesson-payment-listing", replace: false, async: false, timeout: 6000});
             }
+            if ($('#group-lesson-discount').length) {
+                $.pjax.reload({container: "#group-lesson-discount", replace: false, async: false, timeout: 6000});
+            }
         }
         return false;
     });
@@ -426,14 +429,19 @@ echo Tabs::widget([
         return false;
     });
 
-    $(document).off('click', '#lesson-discount').on('click', '#lesson-discount', function(){
+    $(document).off('click', '#lesson-discount, .group-lesson-discount').on('click', '#lesson-discount, .group-lesson-discount', function(){
         var message = 'Warning: You have entered a non-approved Arcadia discount. All non-approved discounts must be submitted in writing and approved by Head Office prior to entering a discount, otherwise you are in breach of your agreement.';
         $('#modal-popup-warning-notification').text(message).fadeIn();
-        var lessonId = '<?=$model->id;?>';
-        var lessonIds = [lessonId];
-        var params = $.param({ 'PrivateLesson[ids]': lessonIds });
+        if ($(this).attr('action-url')) {
+            var url = $(this).attr('action-url');
+        } else {
+            var lessonId = '<?=$model->id;?>';
+            var lessonIds = [lessonId];
+            var params = $.param({ 'LessonDiscount[ids]': lessonIds });
+            var url = '<?=Url::to(['private-lesson/apply-discount'])?>?' + params;
+        }
         $.ajax({
-            url    : '<?=Url::to(['private-lesson/apply-discount'])?>?' + params,
+            url    : url,
             type   : 'get',
             success: function(response)
             {

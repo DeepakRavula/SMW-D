@@ -225,7 +225,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
         if ($.isEmptyObject(lessonIds)) {
             $('#index-error-notification').html("Choose any lessons to edit discount").fadeIn().delay(5000).fadeOut();
         } else {
-            var params = $.param({ 'PrivateLesson[ids]': lessonIds });
+            var params = $.param({ 'LessonDiscount[ids]': lessonIds });
             $.ajax({
                 url    : '<?= Url::to(['private-lesson/apply-discount']) ?>?' +params,
                 type   : 'get',

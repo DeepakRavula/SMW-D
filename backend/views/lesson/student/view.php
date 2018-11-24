@@ -15,6 +15,7 @@ use common\models\LessonPayment;
 	<div class="grid-row-open">
     <?php yii\widgets\Pjax::begin([
         'timeout' => 6000,
+        'id' => 'group-lesson-discount'
     ]) ?>
     <?php echo GridView::widget([
         'dataProvider' => $studentDataProvider,
@@ -40,19 +41,49 @@ use common\models\LessonPayment;
                     return !empty($data->customer->publicIdentity) ? $data->customer->publicIdentity : null;
                 },
             ],
+            [
+                'label' => 'Gross Price',
+                'contentOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right'],
+                'value' => function ($data) use ($lessonModel) {
+                    return Yii::$app->formatter->asCurrency(round($lessonModel->grossPrice, 2));
+                },
+            ],
+            [
+                'label' => 'Discount',
+                'contentOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right'],
+                'value' => function ($data) use ($lessonModel) {
+                    $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
+                            ->andWhere(['courseId' => $lessonModel->courseId])
+                            ->andWhere(['studentId' => $data->id])->one();
+                    return Yii::$app->formatter->asCurrency($lessonModel->getGroupDiscount($enrolment));
+                },
+            ],
+            [
+                'label' => 'Net Price',
+                'contentOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right'],
+                'value' => function ($data) use ($lessonModel) {
+                    $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
+                            ->andWhere(['courseId' => $lessonModel->courseId])
+                            ->andWhere(['studentId' => $data->id])->one();
+                    return Yii::$app->formatter->asCurrency(round($lessonModel->getGroupNetPrice($enrolment), 2));
+                },
+            ],
             ['class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {create} {payment}',
+                'template' => '{edit} {view} {create} {payment}',
                 'buttons' => [
-                    'create' => function ($url, $model) use ($lessonModel) {
+                    'edit' => function ($url, $model) use ($lessonModel) {
                         $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
                             ->andWhere(['courseId' => $lessonModel->courseId])
                             ->andWhere(['studentId' => $model->id])->one();
-                    
-                        $url = Url::to(['invoice/group-lesson', 'lessonId' => $lessonModel->id, 'enrolmentId' => $enrolment->id]);
                         if (!$enrolment->hasInvoice($lessonModel->id)) {
-                            return Html::a('Create Invoice', $url, [
-                                'title' => Yii::t('yii', 'Create Invoice'),
-                                                            'class' => ['btn-success btn-sm']
+                            $url = Url::to(['group-lesson/apply-discount', 'GroupLesson[enrolmentId]' => $enrolment->id, 'GroupLesson[lessonId]' => [$lessonModel->id]]);
+                            return Html::a('Edit Discount', '#', [
+                                'title' => Yii::t('yii', 'Edit Discount'),
+                                'class' => ['btn-info btn-sm group-lesson-discount'],
+                                'action-url' => $url
                             ]);
                         }
                     },
@@ -65,6 +96,19 @@ use common\models\LessonPayment;
                             return Html::a('View Invoice', $url, [
                                 'title' => Yii::t('yii', 'View Invoice'),
                                 'class' => ['btn-info btn-sm']
+                            ]);
+                        }
+                    },
+                    'create' => function ($url, $model) use ($lessonModel) {
+                        $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
+                            ->andWhere(['courseId' => $lessonModel->courseId])
+                            ->andWhere(['studentId' => $model->id])->one();
+                    
+                        $url = Url::to(['invoice/group-lesson', 'lessonId' => $lessonModel->id, 'enrolmentId' => $enrolment->id]);
+                        if (!$enrolment->hasInvoice($lessonModel->id)) {
+                            return Html::a('Create Invoice', $url, [
+                                'title' => Yii::t('yii', 'Create Invoice'),
+                                                            'class' => ['btn-success btn-sm']
                             ]);
                         }
                     },

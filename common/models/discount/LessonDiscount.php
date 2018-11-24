@@ -28,6 +28,7 @@ class LessonDiscount extends \yii\db\ActiveRecord
     const TYPE_MULTIPLE_ENROLMENT = 3;
     const TYPE_LINE_ITEM = 4;
 
+    public $ids;
     /**
      * @inheritdoc
      */
@@ -43,8 +44,9 @@ class LessonDiscount extends \yii\db\ActiveRecord
     {
         return [
             [['lessonId', 'valueType', 'type'], 'required'],
-            [['lessonId', 'valueType', 'type'], 'integer'],
+            [['lessonId', 'valueType', 'type', 'enrolmentId'], 'integer'],
             [['value'], 'number'],
+            [['enrolmentId', 'ids'], 'safe']
         ];
     }
 
@@ -102,5 +104,15 @@ class LessonDiscount extends \yii\db\ActiveRecord
     {
         $this->lesson->save();
         return parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            if (empty($this->enrolmentId)) {
+                $this->enrolmentId = $this->lesson->enrolment->id;
+            }
+        }
+        return parent::beforeSave($insert);
     }
 }

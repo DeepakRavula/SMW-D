@@ -340,7 +340,8 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isEditable()
     {
-        return !$this->hasInvoice() && $this->isPrivate();
+        $enrolment = Enrolment::findOne($this->enrolmentId);
+        return !$this->isPrivate() ? !$enrolment->hasInvoice($this->id) : !$this->hasInvoice();
     }
 
     public function getLastHierarchy()
@@ -951,12 +952,6 @@ class Lesson extends \yii\db\ActiveRecord
                 }
             }
             $this->course->updateDates();
-        } else {
-            if($this->enrolment) {
-                if($this->enrolment->enrolmentDiscount) {
-                    
-                }
-            }
         }
         
         return parent::afterSave($insert, $changedAttributes);
@@ -1383,6 +1378,11 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->subTotal + $this->tax;
     }
 
+    public function getGroupNetPrice($enrolment)
+    {
+        return $this->getGroupSubTotal($enrolment) + $this->tax;
+    }
+
     public function getNetCost()
     {
         return $this->teacherRate * $this->unit;
@@ -1419,6 +1419,51 @@ class Lesson extends \yii\db\ActiveRecord
         }
         if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
             $discount += ($this->enrolmentPaymentFrequencyDiscount->value / 100) * $lessonPrice;
+        }
+        
+        return $discount;
+    }
+
+    public function getGroupDiscount($enrolment)
+    {
+        $discount = 0.0;
+        $lessonPrice = $this->grossPrice;
+        $lessonMultiEnrolmentDiscount = LessonDiscount::find()
+            ->multiEnrolmentDiscount()
+            ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolment->id])
+            ->one();
+        if ($lessonMultiEnrolmentDiscount) {
+            $discount += $lessonPrice < 0 ? 0 :
+                $lessonMultiEnrolmentDiscount->value;
+            $lessonPrice = $this->grossPrice - $discount;
+        }
+        $lessonLineItemDiscount = LessonDiscount::find()
+            ->lineItemDiscount()
+            ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolment->id])
+            ->one();
+        if ($lessonLineItemDiscount) {
+            if ($lessonLineItemDiscount->valueType) {
+                $discount += ($lessonLineItemDiscount->value / 100) * $lessonPrice;
+            } else {
+                $discount += $lessonPrice < 0 ? 0 :
+                    $this->lineItemDiscount->value;
+            }
+            $lessonPrice = $this->grossPrice - $discount;
+        }
+        $lessonCustomerDiscount = LessonDiscount::find()
+            ->customerDiscount()
+            ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolment->id])
+            ->one();
+        if ($lessonCustomerDiscount) {
+            $discount += ($lessonCustomerDiscount->value / 100) * $lessonPrice;
+            $lessonPrice = $this->grossPrice - $discount;
+        }
+        $lessonEnrolmentPaymentFrequencyDiscount = LessonDiscount::find()
+            ->paymentFrequencyDiscount()
+            ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolment->id])
+            ->one();
+        if ($lessonEnrolmentPaymentFrequencyDiscount) {
+            $discount += ($lessonEnrolmentPaymentFrequencyDiscount->value / 100) * $lessonPrice;
         }
         
         return $discount;
@@ -1609,6 +1654,11 @@ class Lesson extends \yii\db\ActiveRecord
     public function getSubTotal()
     {
         return $this->grossPrice - $this->discount;
+    }
+
+    public function getGroupSubTotal($enrolment = null)
+    {
+        return $this->grossPrice - $this->getGroupDiscount($enrolment);
     }
 
     public function getLessonDiscount()

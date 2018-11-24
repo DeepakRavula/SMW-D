@@ -17,6 +17,7 @@ use yii\helpers\Url;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use common\models\discount\LessonDiscount;
 
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
@@ -306,7 +307,9 @@ class PrivateLessonController extends BaseController
 
     public function actionApplyDiscount()
     {
-        $lessonIds = Yii::$app->request->get('PrivateLesson')['ids'];
+        $lessonDiscount = new LessonDiscount();
+        $lessonDiscount->load(Yii::$app->request->get());
+        $lessonIds = $lessonDiscount->ids;
         $lessonId = end($lessonIds);
         $model = $this->findModel($lessonId);
         foreach ($lessonIds as $lessonId) {

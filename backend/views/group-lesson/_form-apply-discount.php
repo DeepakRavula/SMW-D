@@ -12,15 +12,10 @@ use yii\helpers\Url;
         width: 23%;
     }
 </style>
-<?php   $placeholder = '[multiple]';
-        if (count($lessonIds) < 2) {
-            $placeholder = '';
-        }
-?>
 <div id="apply-discount-modal" class="apply-discount-form">
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['private-lesson/apply-discount', 'LessonDiscount[ids]' => $lessonIds]),
+        'action' => Url::to(['group-lesson/apply-discount', 'GroupLesson[lessonId]' => $groupLesson->lessonId, 'GroupLesson[enrolmentId]' => $groupLesson->enrolmentId]),
     ]); ?>
     <div class="row">
         <div class="col-xs-7 pull-left">
@@ -31,7 +26,7 @@ use yii\helpers\Url;
         <div class="col-xs-3">
             <div class="col-xs-1">
             </div>
-            <?= $form->field($paymentFrequencyDiscount, 'value')->textInput(['placeholder' => $placeholder,
+            <?= $form->field($paymentFrequencyDiscount, 'value')->textInput([
                     'value' => Yii::$app->formatter->asDecimal($paymentFrequencyDiscount->value, 2),
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
@@ -46,7 +41,7 @@ use yii\helpers\Url;
         <div class="col-xs-3">
             <div class="col-xs-1">
             </div>
-            <?= $form->field($customerDiscount, 'value')->textInput(['placeholder' => $placeholder,
+            <?= $form->field($customerDiscount, 'value')->textInput([
                     'value' => Yii::$app->formatter->asDecimal($customerDiscount->value, 2),
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
@@ -62,7 +57,7 @@ use yii\helpers\Url;
             <div class="col-xs-1">
                 <label class="discount-dollar-symbol">$</label>
             </div>
-            <?= $form->field($multiEnrolmentDiscount, 'value')->textInput(['placeholder' => $placeholder,
+            <?= $form->field($multiEnrolmentDiscount, 'value')->textInput([
                     'value' => Yii::$app->formatter->asDecimal($multiEnrolmentDiscount->value, 2),
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
@@ -79,7 +74,7 @@ use yii\helpers\Url;
             <div class="col-xs-1 discount-edit-label">
                 <label class="off discount-dollar-symbol on-off-symbol">$</label>
             </div>
-            <?= $form->field($lineItemDiscount, 'value')->textInput(['placeholder' => $placeholder,
+            <?= $form->field($lineItemDiscount, 'value')->textInput([
                     'value' => Yii::$app->formatter->asDecimal($lineItemDiscount->value, 2),
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
