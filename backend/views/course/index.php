@@ -31,7 +31,7 @@ $this->params['show-all'] = $this->render('_button', [
 
             return ['data-url' => $url];
         },
-        'columns' => [
+        'columns' => [ 
             [
                 'attribute' => 'program',
                 'label' => 'Course',
@@ -54,6 +54,12 @@ $this->params['show-all'] = $this->render('_button', [
                 'format' => 'currency',
                 'value' => function ($data) {
                     return !empty($data->program->rate) ? $data->program->rate : null;
+                },
+            ],
+            [
+                'label' => 'From Time',
+                'value' => function ($data) {
+                    return Yii::$app->formatter->asTime($data->startDate);
                 },
             ],
             [
