@@ -48,7 +48,7 @@ LteBox::begin([
     </dd>
     <dt class="m-r-10">Owing</dt>
     <dd class = "total-horizontal-dd text-right">
-         <?= round($model->invoice->balance,2) > 0.09 ? Yii::$app->formatter->asCurrency(round($model->invoice->balance,2)) : 0.00; ?>
+         <?= round($model->invoice->balance,2) > 0.09 ? Yii::$app->formatter->asCurrency(round($model->invoice->balance,2)) : Yii::$app->formatter->asCurrency(round(0.00, 2)); ?>
     </dd>
     <?php endif; ?>
 </dl>
