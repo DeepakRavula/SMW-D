@@ -85,6 +85,7 @@ use yii\bootstrap\ActiveForm;
                 ->joinWith(['enrolments' => function ($query) {
                     $query->joinWith(['course' => function ($query) {
                         $query->confirmed()
+                            ->notDeleted()
                             ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
                     }]);
                 }])

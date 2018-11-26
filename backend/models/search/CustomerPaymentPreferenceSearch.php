@@ -48,7 +48,8 @@ class CustomerPaymentPreferenceSearch extends CustomerPaymentPreference
         $customers =  Enrolment::find()
             ->joinWith(['course' => function ($query) use ($locationId) {
                 $query->location($locationId)
-                        ->confirmed();
+                        ->confirmed()
+                        ->notDeleted();
             }])
             ->notDeleted()
             ->paymentPrefered()

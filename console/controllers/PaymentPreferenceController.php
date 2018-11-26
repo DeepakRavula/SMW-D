@@ -41,7 +41,8 @@ class PaymentPreferenceController extends Controller
             ->joinWith(['course' => function ($query) use ($priorDate, $locationIds) {
                 $query->andWhere(['>=', 'DATE(course.endDate)', $priorDate])
                         ->location($locationIds)
-                        ->confirmed();
+                        ->confirmed()
+                        ->notDeleted();
             }])
             ->paymentPrefered()
             ->all();

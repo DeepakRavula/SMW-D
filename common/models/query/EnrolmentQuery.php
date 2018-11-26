@@ -27,7 +27,8 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
             }])
                 ->overlap($fromDate, $toDate)
                 ->regular()
-                ->confirmed();
+                ->confirmed()
+                ->notDeleted();
         }]);
     }
 
@@ -64,14 +65,16 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     public function isRegular()
     {
         return $this->joinWith(['course' => function ($query) {
-            $query->andWhere(['course.type' => Enrolment::TYPE_REGULAR]);
+            $query->andWhere(['course.type' => Enrolment::TYPE_REGULAR])
+            ->notDeleted();
         }]);
     }
     
     public function extra()
     {
         return $this->joinWith(['course' => function ($query) {
-            $query->andWhere(['course.type' => Enrolment::TYPE_EXTRA]);
+            $query->andWhere(['course.type' => Enrolment::TYPE_EXTRA])
+            ->notDeleted();
         }]);
     }
 
@@ -108,7 +111,8 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     {
         $this->joinWith(['course' => function ($query) {
             $query->joinWith(['program' => function ($query) {
-            }]);
+            }])
+            ->notDeleted();
         }]);
 
         return $this;
@@ -117,14 +121,16 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
     public function privateProgram()
     {
         return $this->joinWith(['course' => function ($query) {
-            $query->andWhere(['course.type' => Program::TYPE_PRIVATE_PROGRAM]);
+            $query->andWhere(['course.type' => Program::TYPE_PRIVATE_PROGRAM])
+            ->notDeleted();
         }]);
     }
     
     public function location($locationId)
     {
         $this->joinWith(['course' => function ($query) use ($locationId) {
-            $query->andWhere(['locationId' => $locationId]);
+            $query->andWhere(['locationId' => $locationId])
+            ->notDeleted();
         }]);
 
         return $this;

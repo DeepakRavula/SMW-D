@@ -64,6 +64,7 @@ public function behaviors()
                     $query->privateProgram();
                 }])
                 ->confirmed()
+                ->notDeleted()
 	            ->overlap($from, $to)
                 ->andWhere(['course.type' => Course::TYPE_REGULAR])
                 ->location($locationId);
@@ -77,6 +78,7 @@ public function behaviors()
                     $query->group();
                 }])
                 ->confirmed()
+                ->notDeleted()
 		        ->overlap($from, $to)
                 ->andWhere(['course.type' => Course::TYPE_REGULAR])
                 ->location($locationId);
@@ -100,7 +102,8 @@ public function behaviors()
                     ->select(['sum(TIME_TO_SEC(lesson.duration)) as hours, program.name as program_name, lesson.type'])
                     ->joinWith(['course' => function ($query) {
                         $query->joinWith('program')
-                            ->confirmed();
+                            ->confirmed()
+                            ->notDeleted();
                     }])
                     ->between($fromDate, $toDate)
                     ->privateLessons()
@@ -124,6 +127,7 @@ public function behaviors()
                 $query->joinWith(['program' => function ($query) {
                 }])
                 ->confirmed()
+                ->notDeleted()
                 ->location($locationId)
                 ->between($fromDate, $toDate);
             }])
@@ -142,6 +146,7 @@ public function behaviors()
                 $query->joinWith(['program' => function ($query) {
                 }])
                 ->confirmed()
+                ->notDeleted()
                 ->location($locationId)
                 ->betweenEndDate($fromDate, $toDate);
             }])
@@ -159,6 +164,7 @@ public function behaviors()
                 $query->joinWith(['program' => function ($query) {
                 }])
                 ->confirmed()
+                ->notDeleted()
                 ->location($locationId)
                 ->between($fromDate, $toDate);
             }])
@@ -168,6 +174,7 @@ public function behaviors()
                 $query->joinWith(['program' => function ($query) {
                 }])
                 ->confirmed()
+                ->notDeleted()
                 ->location($locationId)
                 ->betweenEndDate($fromDate, $toDate);
             }])

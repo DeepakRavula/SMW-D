@@ -350,6 +350,7 @@ class TeacherAvailabilityController extends BaseController
                 ->joinWith(['course' => function ($query) use ($locationId, $enrolmentId) {
                     $query->location($locationId)
                         ->confirmed()
+                        ->notDeleted()
                         ->andWhere(['NOT', ['course.id' => null]]);
                     if ($enrolmentId) {
                         $query->joinWith(['enrolments' => function ($query) use ($enrolmentId) {
@@ -376,6 +377,7 @@ class TeacherAvailabilityController extends BaseController
                 }]);
                 $query->location($locationId)
                     ->confirmed()
+                    ->notDeleted()
                     ->andWhere(['NOT', ['course.id' => null]]);
             }])
             ->scheduledOrRescheduled()
