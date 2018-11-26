@@ -8,6 +8,7 @@ use common\models\log\InvoiceLog;
 use common\models\User;
 use common\models\log\LessonLog;
 use common\models\Lesson;
+use common\models\discount\LessonDiscount;
 
 /**
  * This is the model class for table "invoice".
@@ -103,6 +104,36 @@ trait Invoiceable
                 $invoiceLineItem->addFullDiscount();
             }
             $invoiceLineItem->addLineItemDetails($this);
+            if (!$this->isPrivate()) {
+                $lessonMultiEnrolmentDiscount = LessonDiscount::find()
+                    ->multiEnrolmentDiscount()
+                    ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolment->id])
+                    ->one();
+                $lessonLineItemDiscount = LessonDiscount::find()
+                    ->lineItemDiscount()
+                    ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolment->id])
+                    ->one();
+                $lessonCustomerDiscount = LessonDiscount::find()
+                    ->customerDiscount()
+                    ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolment->id])
+                    ->one();
+                $lessonEnrolmentPaymentFrequencyDiscount = LessonDiscount::find()
+                    ->paymentFrequencyDiscount()
+                    ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolment->id])
+                    ->one();
+                if ($lessonCustomerDiscount) {
+                    $invoiceLineItem->addCustomerDiscount(null, $lessonCustomerDiscount);
+                }
+                if ($lessonLineItemDiscount) {
+                    $invoiceLineItem->addLineItemDiscount($lessonLineItemDiscount);
+                }
+                if ($lessonEnrolmentPaymentFrequencyDiscount) {
+                    $invoiceLineItem->addEnrolmentPaymentFrequencyDiscount(null, $lessonEnrolmentPaymentFrequencyDiscount);
+                }
+                if ($lessonMultiEnrolmentDiscount) {
+                    $invoiceLineItem->addMultiEnrolmentDiscount(null, $lessonMultiEnrolmentDiscount);
+                }
+            }
             return $invoiceLineItem;
         }
     }

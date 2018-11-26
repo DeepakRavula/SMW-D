@@ -1632,19 +1632,14 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function copyDiscount($lesson)
     {
-        if ($this->isPrivate()) {
-            if ($this->hasCustomerDiscount()) {
-                $lesson->addCustomerDiscount($this->customerDiscount);
-            }
-            if ($this->hasEnrolmentPaymentFrequencyDiscount()) {
-                $lesson->addPFDiscount($this->enrolmentPaymentFrequencyDiscount);
-            }
-            if ($this->hasMultiEnrolmentDiscount()) {
-                $lesson->addEnrolmentDiscount($this->multiEnrolmentDiscount);
-            }
-            if ($this->hasLineItemDiscount()) {
-                $lesson->addLineItemDiscount($this->lineItemDiscount);
-            }
+        $lessonDiscounts = LessonDiscount::find()
+            ->andWhere(['lessonId' => $this->id])
+            ->all();
+        foreach ($lessonDiscounts as $lessonDiscount) {
+            $lessonDiscount->id = null;
+            $lessonDiscount->isNewRecord = true;
+            $lessonDiscount->lessonId = $lesson->id;
+            $lessonDiscount->save();
         }
         return true;
     }
