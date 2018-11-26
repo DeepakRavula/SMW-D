@@ -241,9 +241,9 @@ $this->params['action-button'] = $actionButton; ?>
                     'value' => function ($data) {
                         if ((int) $data->type === Invoice::TYPE_INVOICE) {
                             if ($data->isPaid()) {
-                                return round($data->total, 2);
+                                return (round($data->total, 2) > 0.00 && round($data->total, 2) <= 0.09) || (round($data->total, 2) < 0.00 && round($data->total, 2) >= -0.09) ? 0.00  : round($data->total, 2) ;
                             } else {
-                                return round($data->invoiceBalance, 2);
+                                return (round($data->invoiceBalance, 2) > 0.00 && round($data->invoiceBalance, 2) <= 0.09) || (round($data->invoiceBalance, 2) < 0.00 && round($data->invoiceBalance, 2) >= -0.09) ? 0.00  : round($data->invoiceBalance, 2) ;
                             }
                             
                         }
