@@ -627,8 +627,12 @@ class CourseController extends BaseController
         if (!$model->enrolment && $model->program->isGroup()) {
             if ($extraCourses) {
                 foreach ($extraCourses as $extraCourse) {
+                    $extraCourse->lesson->delete();
                     $extraCourse->delete();
                 }
+            }
+            foreach ($model->lessons as $lesson) {
+                $lesson->delete();
             }
             $model->delete();
             $response = [
