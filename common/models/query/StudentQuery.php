@@ -64,7 +64,8 @@ class StudentQuery extends ActiveQuery
                 }])
                     ->overlap($fromDate, $toDate)
 		            ->regular()
-                    ->confirmed();
+                    ->confirmed()
+                    ->notDeleted();
             }])
             ->notDeleted()
             ->isConfirmed()
@@ -77,7 +78,8 @@ class StudentQuery extends ActiveQuery
         $this->joinWith(['enrolments' => function ($query) use ($courseId) {
             $query->joinWith(['course' => function ($query) use ($courseId) {
                 $query->andWhere(['course.id' => $courseId])
-                        ->confirmed();
+                        ->confirmed()
+                        ->notDeleted();
             }])
             ->andWhere(['NOT', ['studentId' => null]])
             ->isConfirmed();
@@ -101,7 +103,8 @@ class StudentQuery extends ActiveQuery
             ->select(['student.id', 'student.first_name', 'student.last_name'])
             ->joinWith(['enrolments' => function ($query) use ($courseId) {
                 $query->joinWith(['course' => function ($query) use ($courseId) {
-                    $query->andWhere(['course.id' => $courseId]);
+                    $query->andWhere(['course.id' => $courseId])
+                        ->notDeleted();
                 }]);
             }]);
 

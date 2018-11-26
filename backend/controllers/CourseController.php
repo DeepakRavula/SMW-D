@@ -105,6 +105,7 @@ class CourseController extends BaseController
     {
         $extraCourse = CourseExtra::find()
                 ->andWhere(['courseId' => $id])
+                ->notDeleted()
                 ->all();
         $courseId = ArrayHelper::map($extraCourse, 'extraCourseId', 'extraCourseId');
         $courseId[] = $id;
@@ -352,7 +353,8 @@ class CourseController extends BaseController
             ->select(['courseId'])
             ->joinWith(['course' => function ($query) use ($locationId) {
                 $query->groupProgram($locationId)
-                        ->confirmed();
+                        ->confirmed()
+                        ->notDeleted();
             }])
             ->andWhere(['enrolment.studentId' => $studentId])
             ->isConfirmed();
@@ -618,7 +620,16 @@ class CourseController extends BaseController
     public function actionGroupCourseDelete($id)
     {
         $model = $this->findModel($id);   
+        $extraCourses = CourseExtra::find()
+                ->andWhere(['courseId' => $model->id])
+                ->notDeleted()
+                ->all();
         if (!$model->enrolment && $model->program->isGroup()) {
+            if ($extraCourses) {
+                foreach ($extraCourses as $extraCourse) {
+                    $extraCourse->delete();
+                }
+            }
             $model->delete();
             $response = [
                 'status' => true,

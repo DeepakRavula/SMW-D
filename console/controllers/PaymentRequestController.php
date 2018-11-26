@@ -48,7 +48,8 @@ class PaymentRequestController extends Controller
             ->isRegular()
             ->joinWith(['course' => function ($query) use ($priorDate) {
                 $query->andWhere(['>=', 'DATE(course.endDate)', $priorDate])
-                        ->confirmed();
+                        ->confirmed()
+                        ->notDeleted();
             }])
             ->notPaymentPrefered()
             ->all();

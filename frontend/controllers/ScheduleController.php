@@ -132,7 +132,8 @@ class ScheduleController extends FrontendBaseController
             ->isConfirmed()
             ->joinWith(['course' => function ($query) use ($locationId) {
                 $query->andWhere(['course.locationId' => $locationId])
-                        ->confirmed();
+                        ->confirmed()
+                        ->notDeleted();
             }]);
         if (!empty($studentIds)) {
             $query->joinWith(['enrolment' => function ($query) use ($studentIds) {

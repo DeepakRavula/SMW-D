@@ -257,6 +257,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 $query->joinWith(['enrolment' =>function ($query) {
                     $query->andWhere(['enrolment.id' => $this->id]);
                 }])
+                ->notDeleted()
                 ->confirmed();
             }])
             ->isConfirmed()

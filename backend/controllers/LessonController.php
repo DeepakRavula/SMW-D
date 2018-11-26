@@ -127,7 +127,8 @@ class LessonController extends BaseController
                     $query->joinWith(['lessons' => function ($query) use ($id) {
                         $query->andWhere(['lesson.id' => $id]);
                     }])
-                    ->confirmed();
+                    ->confirmed()
+                    ->notDeleted();
                 }])
                 ->notDeleted()
                 ->isConfirmed();

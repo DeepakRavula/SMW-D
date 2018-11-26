@@ -757,7 +757,8 @@ class User extends ActiveRecord implements IdentityInterface
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {
                 $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id])
-                        ->confirmed();
+                        ->confirmed()
+                        ->notDeleted();
             }])
             ->andWhere(['lesson.teacherId' => $id])
             ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED]]])
