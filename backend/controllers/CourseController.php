@@ -618,7 +618,15 @@ class CourseController extends BaseController
     public function actionGroupCourseDelete($id)
     {
         $model = $this->findModel($id);   
+        $extraCourses = CourseExtra::find()
+                ->andWhere(['courseId' => $model->id])
+                ->all();
         if (!$model->enrolment && $model->program->isGroup()) {
+            if ($extraCourses) {
+                foreach ($extraCourses as $extraCourse) {
+                    $extraCourse->delete();
+                }
+            }
             $model->delete();
             $response = [
                 'status' => true,

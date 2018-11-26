@@ -1,6 +1,7 @@
 <?php
 
 namespace common\models;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 use Yii;
 
@@ -29,6 +30,20 @@ class CourseExtra extends \yii\db\ActiveRecord
         return [
             [['courseId', 'extraCourseId'], 'required'],
             [['courseId', 'extraCourseId'], 'integer'],
+            [['isDeleted'], 'safe'],
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
+            ],
         ];
     }
 
