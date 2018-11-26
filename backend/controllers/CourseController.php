@@ -105,6 +105,7 @@ class CourseController extends BaseController
     {
         $extraCourse = CourseExtra::find()
                 ->andWhere(['courseId' => $id])
+                ->notDeleted()
                 ->all();
         $courseId = ArrayHelper::map($extraCourse, 'extraCourseId', 'extraCourseId');
         $courseId[] = $id;
@@ -620,6 +621,7 @@ class CourseController extends BaseController
         $model = $this->findModel($id);   
         $extraCourses = CourseExtra::find()
                 ->andWhere(['courseId' => $model->id])
+                ->notDeleted()
                 ->all();
         if (!$model->enrolment && $model->program->isGroup()) {
             if ($extraCourses) {
