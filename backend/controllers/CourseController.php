@@ -628,7 +628,11 @@ class CourseController extends BaseController
             if ($extraCourses) {
                 foreach ($extraCourses as $extraCourse) {
                     $extraCourse->delete();
+                    $extraCourse->lesson->delete();
                 }
+            }
+            foreach ($model->lessons as $lesson) {
+                $lesson->delete();
             }
             $model->delete();
             $response = [
