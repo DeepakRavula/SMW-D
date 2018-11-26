@@ -536,7 +536,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function getCourses()
     {
         return $this->hasMany(Course::className(), ['teacherId' => 'id'])
-            ->onCondition(['course.isConfirmed' => true]);
+            ->onCondition(['course.isConfirmed' => true, 'course.isDeleted' => false]);
     }
     
     public function getEmail()
@@ -757,7 +757,8 @@ class User extends ActiveRecord implements IdentityInterface
         $lessons = Lesson::find()
             ->joinWith(['course' => function ($query) {
                 $query->andWhere(['locationId' => Location::findOne(['slug' => \Yii::$app->location])->id])
-                        ->confirmed();
+                        ->confirmed()
+                        ->notDeleted();
             }])
             ->andWhere(['lesson.teacherId' => $id])
             ->andWhere(['NOT', ['lesson.status' => [Lesson::STATUS_CANCELED]]])

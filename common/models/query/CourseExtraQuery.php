@@ -31,4 +31,8 @@ class CourseExtraQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+    public function notDeleted() {
+        return $this->andWhere(['course_extra.isDeleted' => false]);
+    }
 }

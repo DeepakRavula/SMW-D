@@ -130,7 +130,8 @@ class Enrolment extends \yii\db\ActiveRecord
 
     public function getCourse()
     {
-        return $this->hasOne(Course::className(), ['id' => 'courseId']);
+        return $this->hasOne(Course::className(), ['id' => 'courseId'])
+            ->onCondition(['course.isDeleted' => false]);
     }
     public function getCourseSchedules()
     {
@@ -302,6 +303,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 $query->joinWith(['enrolment' =>function ($query) {
                     $query->andWhere(['enrolment.id' => $this->id]);
                 }])
+                ->notDeleted()
                 ->confirmed();
             }])
             ->isConfirmed()

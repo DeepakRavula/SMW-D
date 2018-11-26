@@ -76,6 +76,12 @@ use yii\helpers\Url;
                 },
             ],
             [
+                'label' => 'From Time',
+                'value' => function ($data) {
+                    return Yii::$app->formatter->asTime($data->startDate);
+                },
+            ],
+            [
                 'label' => 'Duration',
                 'value' => function ($data) {
                     $length = \DateTime::createFromFormat('H:i:s', $data->recentCourseSchedule->duration);

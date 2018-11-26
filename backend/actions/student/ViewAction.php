@@ -26,7 +26,8 @@ class ViewAction extends Action
             $locationId = Location::findOne(['slug' => Yii::$app->location])->id;
             $enrolments = Enrolment::find()
                     ->joinWith(['course' => function ($query) {
-                        $query->isConfirmed();
+                        $query->isConfirmed()
+                            ->notDeleted();
                     }])
                     ->location($locationId)
                     ->notDeleted()

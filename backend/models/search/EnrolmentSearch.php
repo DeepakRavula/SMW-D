@@ -63,7 +63,8 @@ class EnrolmentSearch extends Enrolment
         $query = Enrolment::find()
             ->joinWith(['course' => function ($query) use ($locationId) {
                 $query->location($locationId)
-                        ->confirmed();
+                        ->confirmed()
+                        ->notDeleted();
             }])
             ->notDeleted()
             ->isConfirmed()

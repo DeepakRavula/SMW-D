@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
+use common\models\Location;
 
 /**
  * This is the model class for table "class_room".
@@ -86,11 +87,16 @@ class Classroom extends \yii\db\ActiveRecord
     }
 
     public function validateOnDelete($attribute) {
+        $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
         $lesson = Lesson::find()
                 ->notDeleted()
                 ->andWhere(['classroomId' => $this->id])
                 ->one();
         $teacherRoom = TeacherRoom::find()
+        ->joinWith(['teacherAvailability' => function ($query) use ($locationId) {
+                    $query->notDeleted()
+                    ->location($locationId);
+        }])
                 ->andWhere(['classroomId' => $this->id])
                 ->one();
         if ($lesson || $teacherRoom) {

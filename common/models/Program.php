@@ -131,7 +131,8 @@ class Program extends \yii\db\ActiveRecord
 
     public function getCourse()
     {
-        return $this->hasMany(Course::className(), ['programId' => 'id']);
+        return $this->hasMany(Course::className(), ['programId' => 'id'])
+            ->onCondition(['course.isDeleted' => false]);
     }
 
     public function isPrivate()
@@ -150,6 +151,7 @@ class Program extends \yii\db\ActiveRecord
             ->innerJoinWith(['program' =>function ($query) {
                 $query->andWhere(['programId' => $this->id]);
             }])
+            ->notDeleted()
             ->exists();
         return empty($course);
     }

@@ -11,6 +11,7 @@ use common\models\CourseGroup;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
+use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
  * This is the model class for table "course".
@@ -65,7 +66,7 @@ class Course extends \yii\db\ActiveRecord
             }, 'except' => self::SCENARIO_EXTRA_GROUP_COURSE],
             [['startDate'], 'required', 'except' => self::SCENARIO_GROUP_COURSE],
             [['startDate', 'endDate', 'programRate', 'createdByUserId', 
-            'updatedByUserId', 'updatedOn', 'createdOn'], 'safe'],
+            'updatedByUserId', 'updatedOn', 'createdOn','isDeleted'], 'safe'],
             [['startDate', 'endDate'], 'safe', 'on' => self::SCENARIO_GROUP_COURSE],
             [['programId', 'teacherId', 'weeksCount', 'lessonsPerWeekCount'], 'integer'],
             [['locationId', 'rescheduleBeginDate', 'isConfirmed', 'studentId','duration','lessonsCount'], 'safe'],
@@ -116,6 +117,13 @@ class Course extends \yii\db\ActiveRecord
                 'attributeOutput' => [
                     'last_checked' => 'datetime',
                 ],
+            ],
+            'softDeleteBehavior' => [
+                'class' => SoftDeleteBehavior::className(),
+                'softDeleteAttributeValues' => [
+                    'isDeleted' => true,
+                ],
+                'replaceRegularDelete' => true
             ],
         ];
     }
@@ -224,6 +232,7 @@ class Course extends \yii\db\ActiveRecord
     public function getRegularCourse()
     {
         return $this->hasOne(Course::className(), ['id' => 'courseId'])
+                ->onCondition(['course.isDeleted' => false])
                 ->viaTable('course_extra', ['extraCourseId' => 'id']);
     }
 
@@ -243,6 +252,7 @@ class Course extends \yii\db\ActiveRecord
     public function getExtraCourses()
     {
         return $this->hasMany(Course::className(), ['id' => 'extraCourseId'])
+                ->onCondition(['course.isDeleted' => false])
                 ->viaTable('course_extra', ['courseId' => 'id']);
     }
     
@@ -305,6 +315,9 @@ class Course extends \yii\db\ActiveRecord
     
     public function beforeSave($insert)
     {
+        if ($insert) {
+            $this->isDeleted = false;
+        }
         if (!$insert) {
             return parent::beforeSave($insert);
         }

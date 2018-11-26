@@ -57,6 +57,12 @@ $this->params['show-all'] = $this->render('_button', [
                 },
             ],
             [
+                'label' => 'From Time',
+                'value' => function ($data) {
+                    return Yii::$app->formatter->asTime($data->startDate);
+                },
+            ],
+            [
 		'attribute' => 'duration',
                 'label' => 'Duration',
                 'headerOptions' => ['style' => 'text-align:right'],

@@ -130,6 +130,9 @@ class CourseQuery extends \yii\db\ActiveQuery
 
                     ]
             ]);
-	}
-
+    }
+    
+    public function notDeleted()  {
+        return $this->andwhere(['course.isDeleted' => false]);
+    }
 }

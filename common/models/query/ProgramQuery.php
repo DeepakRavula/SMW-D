@@ -44,7 +44,8 @@ class ProgramQuery extends ActiveQuery
                         ->notDeleted()
                         ->isConfirmed();
             }])
-                ->isConfirmed();
+                ->isConfirmed()
+                ->notDeleted();
         }]);
     }
 
@@ -56,7 +57,8 @@ class ProgramQuery extends ActiveQuery
                         ->notDeleted()
                         ->isConfirmed();
             }])
-                ->isConfirmed();
+                ->isConfirmed()
+                ->notDeleted();
         }]);
     }
 

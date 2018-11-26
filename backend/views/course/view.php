@@ -15,8 +15,11 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 $this->params['label'] = $this->render('_title', [
     'model' => $model,
 ]);
-$this->params['action-button'] = Html::a('<i title="Print" class="fa fa-print f-s-18"></i>', ['print/course', 'id' => $model->id], ['class' => 'pull-left', 'target' => '_blank']);
+$this->params['action-button'] = $this->render('_more-action-menu', [
+    'model' => $model,
+]); 
 ?>
+<div id="error-notification" style="display:none;" class="alert-danger alert fade in"></div>
 <br>
 <div class="row">
 	<div class="col-md-6">

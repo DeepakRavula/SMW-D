@@ -110,7 +110,8 @@ class UserProfile extends ActiveRecord
 
     public function getCourses()
     {
-        return $this->hasMany(Course::className(), ['teacherId' => 'user_id']);
+        return $this->hasMany(Course::className(), ['teacherId' => 'user_id'])
+            ->onCondition(['course.isDeleted' => false]);;
     }
 
     /**
