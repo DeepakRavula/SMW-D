@@ -39,21 +39,11 @@ use yii\helpers\Url;
     Modal::end();
 ?>
 
-<?php Modal::begin([
-    'header' => $this->render('_group-modal-header'),
-    'id' => 'group-enrol-modal',
-]); ?>
-
-<div id="group-course-content"></div>
-
-<?php Modal::end(); ?>
 <script>
-$(document).ready(function(){
-  $("#enrolmentsearch-showallenrolments").on("click", function() {
-      var showAllEnrolments = $(this).is(":checked");
-       var params=$.param({ 'EnrolmentSearch[showAllEnrolments]':(showAllEnrolments | 0),'EnrolmentSearch[studentView]':1,'EnrolmentSearch[studentId]':<?= $model->id ?>,});
-      var url = "<?php echo Url::to(['student/view', 'id' => $model->id]); ?>&"+params;
-       $.pjax.reload({url: url,container: "#student-enrolment-list", replace: false, timeout: 6000});  //Reload GridView //Reload GridView
-          });
-});
-  </script>
+    $(document).on("click", "#enrolmentsearch-showallenrolments", function() {
+        var showAllEnrolments = $(this).is(":checked");
+        var params=$.param({ 'EnrolmentSearch[showAllEnrolments]':(showAllEnrolments | 0),'EnrolmentSearch[studentView]':1,'EnrolmentSearch[studentId]':<?= $model->id ?>,});
+        var url = "<?php echo Url::to(['student/view', 'id' => $model->id]); ?>&"+params;
+        $.pjax.reload({url: url,container: "#student-enrolment-list", replace: false, timeout: 6000});  //Reload GridView //Reload GridView
+    });
+</script>

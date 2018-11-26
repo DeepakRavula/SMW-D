@@ -51,7 +51,6 @@ LteBox::begin([
 	<dd><?= $model->isAutoRenew ? "Enabled" : 'Disabled' ; ?></dd>
 	<dt>Duration</dt>
 	<dd><?= (new \DateTime($model->courseSchedule->duration))->format('H:i'); ?></dd>
-  <?php if ($model->course->program->isPrivate()) : ?>
   <dt>Student</dt>
     <dd>
         <a href= "<?= Url::to(['student/view', 'id' => $model->student->id]) ?>">
@@ -64,6 +63,5 @@ LteBox::begin([
             <?= $model->student->customer->publicIdentity ?? null; ?>
         </a>
     </dd>
-    <?php endif; ?> 
 </dl>
 <?php LteBox::end()?>

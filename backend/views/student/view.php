@@ -196,25 +196,28 @@ $this->params['label'] = $this->render('_title', [
         return false;
     });
 
-    $(document).on('click', '#add-group-enrol', function () {
+    $(document).off('click', '#add-group-enrol').on('click', '#add-group-enrol', function () {
+        var header = '<?= $this->render('_group-modal-header'); ?>';
         $.ajax({
             url    : $(this).attr('href'),
             type: 'get',
             dataType: "json",
             success: function (response)
             {
-                if (response.status)
-                {
-                    $('#group-enrol-modal .modal-body').html(response.data);
-                    $('#group-enrol-modal').modal('show');
-                    $('#group-enrol-modal .modal-dialog').css({'width': '800px'});
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('.modal-save').show();
+                    $('.modal-save').text('Next');
+                    $('#popup-modal .modal-header').html(header);
+                    $('#popup-modal .modal-dialog').css({'width': '800px'});
                 } 
             }
         });
         return false;
     });
 
-    $(document).on('change keyup paste', '#course-name', function (e) {
+    $(document).off('change keyup paste', '#course-name').on('change keyup paste', '#course-name', function (e) {
         var courseName = $(this).val();
         var id = '<?= $model->id; ?>';
         var params = $.param({'studentId' : id, 'courseName' : courseName});
@@ -224,8 +227,8 @@ $this->params['label'] = $this->render('_title', [
             dataType: 'json',
             success: function(response)
             {
-                if(response.status) {
-                    $('#group-enrol-modal .modal-body').html(response.data);
+                if (response.status) {
+                    $('#modal-content').html(response.data);
                 }
             }
         });
@@ -249,30 +252,6 @@ $this->params['label'] = $this->render('_title', [
         });
         return false;
     });
-
-    $(document).on('click', '.group-enrol-btn', function() {
-        $('#course-spinner').show();
-        var courseId = $(this).attr('data-key');
-        var params = $.param({'courseId': courseId });
-        $.ajax({
-            url    : '<?= Url::to(['enrolment/group', 'studentId' => $model->id]); ?>&' + params,
-            type: 'post',
-            success: function(response) {
-                if (response.status) {
-                    $('#course-spinner').hide();
-                    $.pjax.reload({container: "#enrolment-list", replace: false, async: false, timeout: 6000});
-                    $.pjax.reload({container: "#student-log", replace: false, async: false, timeout: 6000});
-                    $('#group-enrol-modal').modal('hide');
-                    $('#course-spinner').hide();
-                    $('#group-enrol-modal').modal('hide');
-                    window.location.href = response.url;
-                }
-            }
-        });
-        return false;
-    });
- 
-
    
     $(document).on('click', '.note-cancel-button', function (e) {
         $('#student-note-modal').modal('hide');

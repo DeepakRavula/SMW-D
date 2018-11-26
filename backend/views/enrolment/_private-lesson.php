@@ -40,8 +40,8 @@ use common\models\UserProfile;
 		'attribute' => 'price',
 		'contentOptions' => ['class' => 'text-right'],
         'headerOptions' => ['class' => 'text-right'],
-	    'value' => function ($data) {
-		    return Yii::$app->formatter->asCurrency(round($data->netPrice, 2));
+	    'value' => function ($data) use ($model) {
+		    return Yii::$app->formatter->asCurrency(round($data->isPrivate() ? $data->netPrice : $data->getGroupNetPrice($model), 2));
 	    },
 	],
 	[
@@ -49,8 +49,8 @@ use common\models\UserProfile;
 		'attribute' => 'owing',
 		'contentOptions' => ['class' => 'text-right'],
         'headerOptions' => ['class' => 'text-right'],
-	    'value' => function ($data) {
-		    return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
+	    'value' => function ($data) use ($model) {
+		    return Yii::$app->formatter->asCurrency($data->getOwingAmount($model->id));
 	    },
 	],
     ];

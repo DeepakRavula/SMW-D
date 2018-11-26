@@ -1,9 +1,0 @@
-<?php
-
-?>
-<h4 class="m-0 pull-left">Add Group Enrolment</h4>
-<div class="pull-right">
-	<div class="form-group field-invoice-username">
-		<input type="text" id="course-name" class="h-30 m-l-15 form-control" placeholder="Search">
-	</div>
-</div>

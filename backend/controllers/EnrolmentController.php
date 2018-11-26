@@ -41,6 +41,7 @@ use yii\filters\AccessControl;
 use backend\models\search\EnrolmentPaymentSearch;
 use common\models\CustomerReferralSource;
 use common\models\CourseSchedule;
+use backend\models\GroupCourseForm;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -59,7 +60,8 @@ class EnrolmentController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['add', 'delete', 'edit', 'schedule', 'group', 'update', 'full-delete',
-                    'edit-end-date', 'edit-program-rate', 'reschedule', 'update-preferred-payment-status'
+                    'edit-end-date', 'edit-program-rate', 'reschedule', 'update-preferred-payment-status',
+                    'group-confirm'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -73,7 +75,7 @@ class EnrolmentController extends BaseController
                         'allow' => true,
                         'actions' => ['index', 'view', 'group', 'edit', 'edit-program-rate', 
                             'create', 'add', 'confirm', 'update', 'delete', 'edit-end-date',
-                            'reschedule', 'cancel', 'update-preferred-payment-status'
+                            'reschedule', 'cancel', 'update-preferred-payment-status', 'group-confirm'
                         ],
                         'roles' => ['manageEnrolments'],
                     ],
@@ -171,37 +173,68 @@ class EnrolmentController extends BaseController
         ]);
     }
 
-    public function actionGroup($courseId, $studentId)
+    public function actionGroup($studentId)
     {
-        $course = Course::findOne($courseId);
-        if ($course->hasExtraCourse()) {
-            foreach ($course->extraCourses as $extraCourse) {
-                $extraCourse->studentId = $studentId;
-                $enrolment = $extraCourse->createExtraLessonEnrolment();
-            }
-        }
-        $enrolmentModel = new Enrolment();
-        $enrolmentModel->courseId = $courseId;
-        $enrolmentModel->studentId = $studentId;
-        $enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
-        $enrolmentModel->isConfirmed = true;
-        if ($enrolmentModel->save()) {
-            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-            $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
-                [new StudentLog(), 'addGroupEnrolment'],
-                ['loggedUser' => $loggedUser]
-            );
-            $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
+        $model = new GroupCourseForm();
+        $model->studentId = $studentId;
+        $post = Yii::$app->request->post();
+        if ($post) {
+            $model->load($post);
+            $data = $this->renderAjax('/student/enrolment/_form-group-discount', [
+                'model' => $model
+            ]);
             return [
                 'status' => true,
-                'url' => Url::to(['/course/view', 'id' => $course->id])
+                'data' => $data
             ];
+        }
+    }
+
+    public function actionGroupConfirm()
+    {
+        $model = new GroupCourseForm();
+        $model->load(Yii::$app->request->get());
+        $enrolmentModel = new Enrolment();
+        $enrolmentModel->studentId = $model->studentId;
+        $enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
+        $enrolmentModel->isConfirmed = true;
+        $enrolmentModel->courseId = $model->courseId;
+        $course = Course::findOne($model->courseId);
+        $post = Yii::$app->request->post();
+        if ($model->load($post)) {
+            if ($course->hasExtraCourse()) {
+                foreach ($course->extraCourses as $extraCourse) {
+                    $extraCourse->studentId = $model->studentId;
+                    $enrolment = $extraCourse->createExtraLessonEnrolment();
+                }
+            }
+            if ($enrolmentModel->save()) {
+                $model->enrolmentId = $enrolmentModel->id;
+                $model->setDiscount();
+                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+                $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
+                    [new StudentLog(), 'addGroupEnrolment'],
+                    ['loggedUser' => $loggedUser]
+                );
+                $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
+                return [
+                    'status' => true,
+                    'url' => Url::to(['/course/view', 'id' => $course->id])
+                ];
+            }
         }
     }
 
     public function actionEdit($id)
     {
         $model = $this->findModel($id);
+        $model->setScenario(Enrolment::SCENARIO_EDIT);
+        if (!$model->validate()) {
+            return [
+                'status' => false,
+                'message' => ActiveForm::validate($model)['enrolment-courseid']
+            ];
+        }
         $paymentFrequencyDiscount = new PaymentFrequencyEnrolmentDiscount();
         $multipleEnrolmentDiscount = new MultiEnrolmentDiscount();
         $oldMultipleEnrolmentDiscount = $model->getMultipleEnrolmentDiscountValue();
@@ -214,18 +247,20 @@ class EnrolmentController extends BaseController
         }
         $paymentFrequencyDiscount->enrolmentId = $id;
         $multipleEnrolmentDiscount->enrolmentId = $id;
-        if (!$model->hasPartialyPaidPaymentCycle()) {
-            return [
-                'status' => false,
-                'message' => 'You can\'t edit PF & discounts.',
-            ];
+        
+        $objects = ["Lesson's Discount"];
+        $classes = ["lesson-discount"];
+        if ($model->course->isPrivate()) {
+            $startDate = Carbon::parse($model->partialyPaidPaymentCycle->startDate)->format('M d, Y');
+            $endDate = Carbon::parse($model->lastPaymentCycle->endDate)->format('M d, Y');
+            array_merge($objects, ["Payment Cycles", "Payment Request"]);
+            array_merge($classes, ["payment-cycle", "payment-request"]);
+        } else {
+            $startDate = Carbon::parse($model->firstUnpaidLesson->date)->format('M d, Y');
+            $endDate = Carbon::parse($model->lastLesson->date)->format('M d, Y');
         }
-        $startDate = Carbon::parse($model->partialyPaidPaymentCycle->startDate)->format('M d, Y');
-        $endDate = Carbon::parse($model->lastPaymentCycle->endDate)->format('M d, Y');
         $dates = [$startDate, $endDate];
         $dateRange = implode(' - ', $dates);
-        $objects = ["Payment Cycles", "Lesson's Discount", "Payment Request"];
-        $classes = ["payment-cycle", "lesson-discount", "payment-request"];
         foreach ($objects as $i => $value) {
             $results[] = [
                 'objects' => $value,
@@ -233,13 +268,14 @@ class EnrolmentController extends BaseController
                 'date_range' => 'within ' . $dateRange,
                 'class' => $classes[$i]
             ]; 
-        }
+        }   
         $previewDataProvider = new ArrayDataProvider([
             'allModels' => $results,
             'sort' => [
                 'attributes' => ['objects', 'action', 'date_range', 'class']
             ]
         ]);
+        
         $data = $this->renderAjax('update/_form', [
             'model' => $model,
             'multipleEnrolmentDiscount' => $multipleEnrolmentDiscount,

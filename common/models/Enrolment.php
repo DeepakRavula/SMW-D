@@ -44,6 +44,8 @@ class Enrolment extends \yii\db\ActiveRecord
     const EVENT_CREATE = 'create';
     const EVENT_GROUP = 'group-course-enroll';
     const CONSOLE_USER_ID  = 727;
+
+    const SCENARIO_EDIT = 'scenario-edit';
     /**
      * {@inheritdoc}
      */
@@ -94,6 +96,7 @@ class Enrolment extends \yii\db\ActiveRecord
             [['paymentFrequencyId', 'isDeleted', 'isConfirmed', 'createdAt',
                 'hasEditable', 'isAutoRenew', 'applyFullDiscount', 'updatedAt', 'createdByUserId', 
                 'updatedByUserId'], 'safe'],
+            ['courseId', 'validateOnEdit', 'on' => self::SCENARIO_EDIT]
         ];
     }
 
@@ -175,10 +178,53 @@ class Enrolment extends \yii\db\ActiveRecord
         return $startDate->format('Y-m-d') . ' - ' . $endDate->format('Y-m-d');
     }
 
+    public function validateOnEdit($attribute)
+    {
+        if ($this->course->isPrivate()) {
+            if (!$this->hasPartialyPaidPaymentCycle()) {
+                $this->addError($attribute, "You can't edit PF & discounts.");
+            }
+        } else {
+            if (!$this->hasUnpaidLesson()) {
+                $this->addError($attribute, "You can't edit discounts.");
+            }
+        }
+    }
+
     public function getCustomer()
     {
         return $this->hasOne(User::className(), ['id' => 'customer_id'])
             ->via('student');
+    }
+
+    public function getFirstUnpaidLesson()
+    {
+        foreach ($this->lessonsByDate as $lesson) {
+            $payment = LessonPayment::find()
+                ->notDeleted()
+                ->andWhere(['enrolmentId' => $this->id, 'lessonId' => $lesson->id])
+                ->one();
+            if (!$payment) {
+                return $lesson;
+            }
+        }
+        return null;
+    }
+
+    public function hasUnpaidLesson()
+    {
+        $status = false;
+        foreach ($this->lessonsByDate as $lesson) {
+            $payment = LessonPayment::find()
+                ->notDeleted()
+                ->andWhere(['enrolmentId' => $this->id, 'lessonId' => $lesson->id])
+                ->one();
+            if (!$payment) {
+                $status = true;
+                break;
+            }
+        }
+        return $status;
     }
 
     public function getPaymentCycles()
@@ -329,6 +375,24 @@ class Enrolment extends \yii\db\ActiveRecord
                 ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
                     'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
                         Lesson::STATUS_UNSCHEDULED]]);
+    }
+
+    public function getLessonsByDate()
+    {
+        return $this->hasMany(Lesson::className(), ['courseId' => 'courseId'])
+                ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
+                    'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                        Lesson::STATUS_UNSCHEDULED]])
+                ->orderBy(['lesson.date' => SORT_ASC]);
+    }
+
+    public function getLastLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
+                ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
+                    'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                        Lesson::STATUS_UNSCHEDULED]])
+                ->orderBy(['lesson.date' => SORT_DESC]);
     }
 
     public function getFirstPaymentCycle()
@@ -828,9 +892,13 @@ class Enrolment extends \yii\db\ActiveRecord
         } else {
             $type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
         }
-        if ($this->partialyPaidPaymentCycle) {
-            $fromDate = new \DateTime($this->partialyPaidPaymentCycle->startDate);
-            $toDate = new \DateTime($this->course->endDate);
+        if (($this->course->isPrivate() && $this->partialyPaidPaymentCycle) || (!$this->course->isPrivate() && $this->firstUnpaidLesson)) {
+            if ($this->course->isPrivate()) {
+                $fromDate = new \DateTime($this->partialyPaidPaymentCycle->startDate);
+            } else {
+                $fromDate = new \DateTime($this->firstUnpaidLesson->date);
+            }
+            $toDate = new \DateTime($this->lastLesson->date);
             $lessons = Lesson::find()
                 ->notDeleted()
                 ->andWhere(['courseId' => $this->courseId])
@@ -840,7 +908,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 ->all();
             foreach ($lessons as $lesson) {
                 $lessonDiscount = LessonDiscount::find()
-                    ->andWhere(['type' => $type, 'lessonId' => $lesson->id])
+                    ->andWhere(['type' => $type, 'lessonId' => $lesson->id, 'enrolmentId' => $this->id])
                     ->one();
                 if ($lessonDiscount) {
                     if ($lessonDiscount->isPfDiscount()) {
@@ -861,6 +929,7 @@ class Enrolment extends \yii\db\ActiveRecord
                         $lessonDiscount->value = $value / 4;
                         $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
                     }
+                    $lessonDiscount->enrolmentId = $this->id;
                     $lessonDiscount->save();
                 }
             }

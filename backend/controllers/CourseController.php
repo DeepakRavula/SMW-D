@@ -36,6 +36,7 @@ use yii\filters\AccessControl;
 use common\components\controllers\BaseController;
 use common\models\Payment;
 use common\models\CustomerReferralSource;
+use backend\models\GroupCourseForm;
 
 /**
  * CourseController implements the CRUD actions for Course model.
@@ -344,9 +345,12 @@ class CourseController extends BaseController
 
         return $result;
     }
+    
     public function actionFetchGroup($studentId, $courseName = null)
     {
         $locationId = Location::findOne(['slug' => \Yii::$app->location])->id;
+        $model = new GroupCourseForm();
+        $model->studentId = $studentId;
         $groupEnrolments = Enrolment::find()
             ->select(['courseId'])
             ->joinWith(['course' => function ($query) use ($locationId) {
@@ -373,6 +377,7 @@ class CourseController extends BaseController
 
         $data = $this->renderAjax('/student/enrolment/_form-group', [
             'groupDataProvider' => $groupDataProvider,
+            'model' => $model,
             'student' => Student::findOne(['id' => $studentId])
         ]);
         return [

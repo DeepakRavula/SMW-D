@@ -28,7 +28,7 @@ DateTimePickerAsset::register($this);
 	</div>	
 </div>
 
-<?php if ($model->course->program->isPrivate()) : ?>
+
     <div class="row">
         <?php Pjax::begin(['id' => 'enrolment-pfi']); ?>
 			<div class="col-md-6">
@@ -37,14 +37,16 @@ DateTimePickerAsset::register($this);
                 ]); ?>
             </div>
         <?php Pjax::end(); ?>
-        <div class="col-md-6">
-            <?= $this->render('_schedule-history', [
-                'model' => $model,
-                'scheduleHistoryDataProvider' => $scheduleHistoryDataProvider
-            ]); ?>
-        </div>
+        <?php if ($model->course->program->isPrivate()) : ?>
+            <div class="col-md-6">
+                <?= $this->render('_schedule-history', [
+                    'model' => $model,
+                    'scheduleHistoryDataProvider' => $scheduleHistoryDataProvider
+                ]); ?>
+            </div>
+        <?php endif; ?>
     </div>        
-<?php endif; ?>
+        
 <?php
 Modal::begin([
     'header' => '<h4 class="m-0">Edit</h4>',
@@ -124,27 +126,6 @@ Modal::begin([
                     $('#modal-content').html(response.data);
                 } else {
                     $('#error-notification').html(response.message).fadeIn().delay(5000).fadeOut();                }
-            }
-        });
-        return false;
-    });
-
-    $(document).on('beforeSubmit', '#enrolment-update-form', function(){
-        $.ajax({
-            url    : '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',
-            type   : 'post',
-            dataType: "json",
-            data: $(this).serialize(),
-            success: function(response)
-            {
-               $('#spinner').hide(); 
-                if(response.status)
-                {
-                    $('#enrolment-edit-modal').modal('hide');
-                    paymentFrequency.onEditableSuccess();
-                    $('#enrolment-enddate-alert').html(response.message).fadeIn().delay(5000).fadeOut();
-
-                }
             }
         });
         return false;

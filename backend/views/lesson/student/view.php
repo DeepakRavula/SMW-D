@@ -71,6 +71,18 @@ use common\models\LessonPayment;
                     return Yii::$app->formatter->asCurrency(round($lessonModel->getGroupNetPrice($enrolment), 2));
                 },
             ],
+            [
+                'label' => 'Owing',
+                'attribute' => 'owing',
+                'contentOptions' => ['class' => 'text-right'],
+                'headerOptions' => ['class' => 'text-right'],
+                'value' => function ($data) use ($lessonModel) {
+                    $enrolment = Enrolment::find()->notDeleted()->isConfirmed()
+                            ->andWhere(['courseId' => $lessonModel->courseId])
+                            ->andWhere(['studentId' => $data->id])->one();
+                    return Yii::$app->formatter->asCurrency($lessonModel->getOwingAmount($enrolment->id));
+                },
+            ],
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{edit} {view} {create} {payment}',
                 'buttons' => [

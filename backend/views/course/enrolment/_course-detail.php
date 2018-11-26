@@ -110,7 +110,7 @@ use kartik\select2\Select2;
         var event = $('#week-view-calendar').fullCalendar('clientEvents', 'newEnrolment');
         var newevent = $('#week-view-calendar').fullCalendar('clientEvents', 3);
         var time = $('#enrolmentform-fromtime').val();
-        if ($.isEmptyObject(event) && $.isEmptyObject(newevent) && !$.isEmptyObject(time)) {debugger
+        if ($.isEmptyObject(event) && $.isEmptyObject(newevent) && !$.isEmptyObject(time)) {
             var duration = '<?= $model->duration; ?>';
             var durationMinutes = moment.duration(duration).asMinutes();
             var start = moment($('#enrolmentform-startdate').val() + ' ' + $('#enrolmentform-fromtime').val());

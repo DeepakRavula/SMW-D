@@ -423,12 +423,14 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function isOwing($enrolmentId)
     {
-        return (round($this->getCreditAppliedAmount($enrolmentId), 2) - round($this->netPrice, 2)) < -0.09;
+        $enrolment = Enrolment::findOne($enrolmentId);
+        return (round($this->getCreditAppliedAmount($enrolmentId), 2) - round($this->isPrivate() ? $this->netPrice  : $this->getGroupNetPrice($enrolment), 2)) < -0.09;
     }
 
     public function getOwingAmount($enrolmentId)
     {
-        return round($this->netPrice, 2) - round($this->getCreditAppliedAmount($enrolmentId), 2);
+        $enrolment = Enrolment::findOne($enrolmentId);
+        return round($this->isPrivate() ? $this->netPrice  : $this->getGroupNetPrice($enrolment), 2) - round($this->getCreditAppliedAmount($enrolmentId), 2);
     }
 
     public function getPaymentCycle()
@@ -1163,7 +1165,8 @@ class Lesson extends \yii\db\ActiveRecord
 
     public function hasCredit($enrolmentId)
     {
-        return round($this->getCreditAppliedAmount($enrolmentId), 2) > round($this->netPrice, 2)
+        $enrolment = Enrolment::findOne($enrolmentId);
+        return round($this->getCreditAppliedAmount($enrolmentId), 2) > round($this->isPrivate() ? $this->netPrice  : $this->getGroupNetPrice($enrolment), 2)
             && round($this->getCreditAppliedAmount($enrolmentId), 2) > round($this->getCreditUsedAmount($enrolmentId), 2);
     }
 
@@ -1656,7 +1659,7 @@ class Lesson extends \yii\db\ActiveRecord
         return $this->grossPrice - $this->discount;
     }
 
-    public function getGroupSubTotal($enrolment = null)
+    public function getGroupSubTotal($enrolment)
     {
         return $this->grossPrice - $this->getGroupDiscount($enrolment);
     }

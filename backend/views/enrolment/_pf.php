@@ -6,16 +6,24 @@ use common\models\Course;
 
 ?>
 <?php
+
+if ($model->course->isPrivate()) {
+	$title = 'PF & Discounts';
+} else {
+	$title = 'Discounts';
+}
 LteBox::begin([
     'type' => LteConst::TYPE_DEFAULT,
     'boxTools' => '<i class="fa fa-pencil edit-enrolment"></i>',
-    'title' => 'PF & Discounts',
+    'title' => $title,
     'withBorder' => true,
 ])
 ?>
 <dl class="dl-horizontal">
+	<?php if ($model->course->isPrivate()) : ?>
 	<dt>Payment Frequency</dt>
 	<dd><?= $model->getPaymentFrequency(); ?></dd>
+	<?php endif ; ?>
 	<dt>PF Discount</dt>
 	<dd><?= $model->getPaymentFrequencyDiscountValue(); ?></dd>
 	<dt>Multiple Enrol. Discount</dt>

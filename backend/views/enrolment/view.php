@@ -169,7 +169,9 @@ $this->params['action-button'] = $this->render('_action-button', [
             $.pjax.reload({url: url, container: "#enrolment-log", replace: false, async: false, timeout: 4000});
             $.pjax.reload({url: url, container: "#lesson-schedule", replace: false, async: false, timeout: 4000});
             $.pjax.reload({url: url, container: "#enrolment-lesson-index", replace: false, async: false, timeout: 4000});
-            $.pjax.reload({url: url, container: "#payment-cycle-listing", replace: false, async: false, timeout: 4000});
+            if ($('#payment-cycle-listing').length > 0) {
+                $.pjax.reload({url: url, container: "#payment-cycle-listing", replace: false, async: false, timeout: 4000});
+            }
         }
     };
 
@@ -185,7 +187,7 @@ $this->params['action-button'] = $this->render('_action-button', [
     $(document).ready(function () {
         var lesson_count = '<?= $lessonCount; ?>';
         if (lesson_count > 12) {
-            var private = <?= $model->course->program->isPrivate(); ?>;
+            var private = <?= $model->course->program->isPrivate() | 0; ?>;
             if (private) {
                 $(".more-lesson").show();
                 var url = '<?= Url::to(['lesson/index', 'LessonSearch[studentId]' => $model->student->id, 'LessonSearch[programId]' => $model->program->id, 'LessonSearch[type]' => Lesson::TYPE_PRIVATE_LESSON, 'LessonSearch[student]' => $model->student->fullName, 'LessonSearch[isSeeMore]'=> true]); ?>';

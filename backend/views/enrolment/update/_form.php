@@ -22,11 +22,13 @@ use yii\grid\GridView;
     ]); ?>
 
     <div class="row">
+        <?php if ($model->course->isPrivate()) : ?>
         <div class="col-md-8">
             <?= $form->field($model, 'paymentFrequencyId')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')]); 
             ?>
         </div>
+        <?php endif; ?>
         <div class="col-md-6">
             <?= $form->field($paymentFrequencyDiscount, 'discount')->textInput()
                 ->label('Payment Frequency Discount'); 

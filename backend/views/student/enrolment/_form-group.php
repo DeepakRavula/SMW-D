@@ -15,6 +15,16 @@ use yii\helpers\Url;
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
     <span class="sr-only">Loading...</span>
 </div>    
+
+<?php $form = ActiveForm::begin([
+    'action' => Url::to(['enrolment/group', 'studentId' => $student->id]),
+    'id' => 'modal-form'
+]); ?>
+
+<?= $form->field($model, 'courseId')->hiddenInput()->label(false); ?>
+
+<?php ActiveForm::end(); ?>
+
 <div class="user-create-index"> 
     <?php echo GridView::widget([
         'dataProvider' => $groupDataProvider,
@@ -22,8 +32,21 @@ use yii\helpers\Url;
         'rowOptions' => ['class' => 'group-enrol-btn'],
         'summary' => false,
         'emptyText' => false,
+        'options' => [
+            'id' => 'group-course-listing'
+        ],
         'headerRowOptions' => ['class' => 'bg-light-gray'],
         'columns' => [
+            [
+                'class' => 'yii\grid\RadioButtonColumn',
+                'radioOptions' => function ($model) {
+                    return [
+                        'value' => $model['id'],
+                        'checked' => true,
+                        'class' => 'group-course-grid'
+                    ];
+                }
+            ],
             [
                 'label' => 'Course',
                 'value' => function ($data) {
@@ -75,3 +98,21 @@ use yii\helpers\Url;
         ],
     ]); ?>
 </div>
+
+
+<script>
+    $(document).ready(function () {
+        groupCourse.setGroupCourseId();
+    });
+
+    var groupCourse = {
+        setGroupCourseId: function() {
+            var courseId = $("input[type='radio']:checked").val();
+            $('#groupcourseform-courseid').val(courseId);
+        }
+    };
+
+    $(document).on('change', "input[type='radio']", function() {
+        groupCourse.setGroupCourseId();
+    });
+</script>
