@@ -144,7 +144,7 @@ $this->params['show-all'] = $this->render('_show-all-button', [
                     if ($data->hasInvoice()) {
                         $owingAmount = $data->invoice->balance > 0.09 ? $data->invoice->balance : 0.00;
                     } else {
-                        $owingAmount = $data->getOwingAmount($data->enrolment->id);
+                        $owingAmount = $data->getOwingAmount($data->enrolment->id) > 0.09 ? $data->getOwingAmount($data->enrolment->id) : 0.00;
                     }
                     return Yii::$app->formatter->asCurrency(round($owingAmount, 2));
                 },
