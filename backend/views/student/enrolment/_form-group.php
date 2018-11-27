@@ -17,7 +17,7 @@ use yii\helpers\Url;
 </div>    
 
 <?php $form = ActiveForm::begin([
-    'action' => Url::to(['enrolment/group', 'studentId' => $student->id]),
+    'action' => Url::to(['enrolment/group', 'GroupCourseForm[studentId]' => $student->id]),
     'id' => 'modal-form'
 ]); ?>
 

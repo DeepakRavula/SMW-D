@@ -32,8 +32,8 @@ class GroupCourseForm extends Model
             $discount = new EnrolmentDiscount();
             $discount->enrolmentId = $this->enrolmentId;
             $discount->discount = $this->pfDiscount;
-            $discount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLLAR;
-            $discount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
+            $discount->discountType = EnrolmentDiscount::VALUE_TYPE_PERCENTAGE;
+            $discount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
             $discount->save();
         }
 
@@ -41,8 +41,8 @@ class GroupCourseForm extends Model
             $discount = new EnrolmentDiscount();
             $discount->enrolmentId = $this->enrolmentId;
             $discount->discount = $this->enrolmentDiscount;
-            $discount->discountType = EnrolmentDiscount::VALUE_TYPE_PERCENTAGE;
-            $discount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
+            $discount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLLAR;
+            $discount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
             $discount->save();
         }
 

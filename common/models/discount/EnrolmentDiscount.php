@@ -63,12 +63,12 @@ class EnrolmentDiscount extends \yii\db\ActiveRecord
     public function behaviors()
     {
         return [
-            'audittrail'=>[
-                'class'=>AuditTrailBehavior::className(), 
-                'attributeOutput'=>[
-                    'last_checked'=>'datetime',
-                ],
-            ],
+            'audittrail' => [
+                'class' => AuditTrailBehavior::className(),
+                'attributeOutput' => [
+                    'last_checked' => 'datetime'
+                ]
+            ]
         ];
     }
 }

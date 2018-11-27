@@ -103,9 +103,15 @@ $logContent = $this->render('log', [
     ],
 ]); ?>
 <div class="clearfix"></div>
- </div>
+</div>
+
 <script type="text/javascript">
-jQuery(document).ready(function($) {
-    $('#enrolment-studentid').multiselect();
-});
+    jQuery(document).ready(function($) {
+        $('#enrolment-studentid').multiselect();
+    });
+
+    $(document).on('modal-success', function(event, params) {
+        $.pjax.reload({container: '#group-course-student', timeout: 6000, async:false});
+        return false;
+    });
 </script>

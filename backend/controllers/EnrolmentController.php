@@ -173,21 +173,19 @@ class EnrolmentController extends BaseController
         ]);
     }
 
-    public function actionGroup($studentId)
+    public function actionGroup()
     {
         $model = new GroupCourseForm();
-        $model->studentId = $studentId;
+        $model->load(Yii::$app->request->get());
         $post = Yii::$app->request->post();
-        if ($post) {
-            $model->load($post);
-            $data = $this->renderAjax('/student/enrolment/_form-group-discount', [
-                'model' => $model
-            ]);
-            return [
-                'status' => true,
-                'data' => $data
-            ];
-        }
+        $model->load($post);
+        $data = $this->renderAjax('/student/enrolment/_form-group-discount', [
+            'model' => $model
+        ]);
+        return [
+            'status' => true,
+            'data' => $data
+        ];
     }
 
     public function actionGroupConfirm()
@@ -208,6 +206,7 @@ class EnrolmentController extends BaseController
                     $enrolment = $extraCourse->createExtraLessonEnrolment();
                 }
             }
+            $enrolmentModel->studentId = $model->studentId;
             if ($enrolmentModel->save()) {
                 $model->enrolmentId = $enrolmentModel->id;
                 $model->setDiscount();
