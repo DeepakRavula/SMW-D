@@ -59,7 +59,7 @@ class EnrolmentController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => ['add', 'delete', 'edit', 'schedule', 'group', 'update', 'full-delete',
-                    'edit-end-date', 'edit-program-rate', 'reschedule', 'update-preferred-payment-status'
+                    'edit-end-date', 'edit-program-rate', 'reschedule', 'update-preferred-payment-status', 'group-enrolment-delete'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -73,7 +73,7 @@ class EnrolmentController extends BaseController
                         'allow' => true,
                         'actions' => ['index', 'view', 'group', 'edit', 'edit-program-rate', 
                             'create', 'add', 'confirm', 'update', 'delete', 'edit-end-date',
-                            'reschedule', 'cancel', 'update-preferred-payment-status'
+                            'reschedule', 'cancel', 'update-preferred-payment-status', 'group-enrolment-delete'
                         ],
                         'roles' => ['manageEnrolments'],
                     ],
@@ -756,4 +756,24 @@ class EnrolmentController extends BaseController
         }
         return $response;
     }
+
+    public function actionGroupEnrolmentDelete($id)
+    {
+        $model = $this->findModel($id);
+        if ($model->course->program->isGroup() && !$model->lesson->hasInvoice() && !$model->lesson->hasPayment()) {
+            $model->delete();
+            $response = [
+                'status' => true,
+                'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
+                'message' => 'Enrolment has been deleted.'
+            ];
+        } else {
+            $response = [
+                'status' => false,
+                'error' => 'Enrolment not deleted because it associated with invoice and payments.'
+            ];
+        }
+        return $response;
+    }
+
 }

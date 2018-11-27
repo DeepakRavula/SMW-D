@@ -940,4 +940,12 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasMany(EnrolmentDiscount::className(), ['enrolmentId' => 'id']);
     }
+
+    public function getLesson()
+    {
+        return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
+                ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
+                    'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                        Lesson::STATUS_UNSCHEDULED]]);
+    }
 }
