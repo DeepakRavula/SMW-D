@@ -2,6 +2,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 ?>
+
 <div class="dropdown">
     <i class="fa fa-gear dropdown-toggle" data-toggle="dropdown"></i>
     <ul class="dropdown-menu dropdown-menu-right">
@@ -19,6 +20,23 @@ use yii\helpers\Url;
 </div>
 
 <script>
+    $(document).off('click', '#receive-payments').on('click', '#receive-payments', function () {
+        $.ajax({
+            url    : '<?= Url::to(['payment/receive', 'PaymentFormLessonSearch[userId]' => $model->customer->id,
+                'PaymentFormGroupLessonSearch[userId]' => $model->customer->id ]); ?>',
+            type   : 'get',
+            dataType: 'json',
+            success: function(response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                }
+            }
+        });
+        return false;
+    });
+
 	$(document).off('click', '#group-enrolment-delete').on('click', '#group-enrolment-delete', function () {
         $.ajax({
             url    : '<?= Url::to(['enrolment/group-enrolment-delete', 'id' => $model->id ]); ?>',
