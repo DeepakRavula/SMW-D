@@ -13,7 +13,7 @@ class m181123_093558_add_enrolment_details_to_lesson_discount extends Migration
      */
     public function safeUp()
     {
-        //$this->addColumn('lesson_discount', 'enrolmentId', $this->integer());
+        $this->addColumn('lesson_discount', 'enrolmentId', $this->integer());
 
         set_time_limit(0);
         ini_set('memory_limit', '-1');
