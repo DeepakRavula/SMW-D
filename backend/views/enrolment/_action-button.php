@@ -45,7 +45,6 @@ use yii\helpers\Url;
             success: function(response)
             {
                 if (response.status) {
-                    alert(response.message);
                     window.location.href = response.url;
                 } else {
                     $('#group-enrolment-error-notification').html(response.error).fadeIn().delay(5000).fadeOut();
