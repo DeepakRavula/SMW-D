@@ -760,8 +760,12 @@ class EnrolmentController extends BaseController
     public function actionGroupEnrolmentDelete($id)
     {
         $model = $this->findModel($id);
-        if ($model->course->program->isGroup() && !$model->lesson->hasInvoice() && !$model->lesson->hasPayment()) {
-            $model->delete();
+        if ($model->course->program->isGroup()) {
+            foreach ($model->lessons as $lesson) {
+                if (!$lesson->hasInvoice() && !$lesson->hasPayment()) {
+                    $model->delete();
+                }
+            }
             $response = [
                 'status' => true,
                 'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
