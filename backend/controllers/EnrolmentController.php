@@ -761,8 +761,8 @@ class EnrolmentController extends BaseController
     {
         $model = $this->findModel($id);
         if ($model->course->program->isGroup()) {
-            foreach ($model->lessons as $lesson) {
-                if (!$lesson->hasInvoice() && !$lesson->hasPayment()) {
+            foreach ($model->lessons as $lesson) {        
+                if (!$model->hasInvoice($lesson->id) || !$model->hasPayment()) {
                     $model->delete();
                 }
             }

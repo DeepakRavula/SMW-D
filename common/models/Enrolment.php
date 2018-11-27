@@ -329,7 +329,7 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Lesson::className(), ['courseId' => 'courseId'])
                 ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
-                    'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
+                    'lesson.status' => [Lesson::STATUS_COMPLETED, Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
                         Lesson::STATUS_UNSCHEDULED]]);
     }
 
@@ -941,11 +941,14 @@ class Enrolment extends \yii\db\ActiveRecord
         return $this->hasMany(EnrolmentDiscount::className(), ['enrolmentId' => 'id']);
     }
 
-    public function getLesson()
+    public function getLessonPayment()
     {
-        return $this->hasOne(Lesson::className(), ['courseId' => 'courseId'])
-                ->onCondition(['lesson.isDeleted' => false, 'lesson.isConfirmed' => true,
-                    'lesson.status' => [Lesson::STATUS_RESCHEDULED, Lesson::STATUS_SCHEDULED,
-                        Lesson::STATUS_UNSCHEDULED]]);
+        return $this->hasOne(LessonPayment::className(), ['enrolmentId' => 'id'])
+            ->onCondition(['lesson_payment.isDeleted' => false]);
+    }
+
+    public function hasPayment()
+    {
+        return $this->lessonPayment;
     }
 }
