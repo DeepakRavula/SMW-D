@@ -82,7 +82,7 @@ $boxTools = $this->render('_invoice-buttons', [
             'contentOptions' => ['class' => 'text-right'],
             'enableSorting' => false,
             'value' => function ($data) {
-                return round($data->balance, 2);
+                return (round($data->balance, 2) > 0.00 && round($data->balance, 2) <= 0.09) || (round($data->balance, 2) < 0.00 && round($data->balance, 2) >= -0.09) ? 0.00  : round($data->balance, 2) ;
             },
         ],
     ],

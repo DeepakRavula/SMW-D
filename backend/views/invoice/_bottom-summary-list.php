@@ -33,7 +33,7 @@
         ]]);
         ?>
     <dt><b>Balance</b></dt>
-    <dd><b> <?= (round($model->balance, 2) > 0.00 && round($model->balance, 2) <= 0.09) || (round($model->balance, 2) < 0.00 && round($model->balance, 2) >= -0.09)  ?Yii::$app->formatter->format(round('0.00', 2), ['currency', 'USD', [
+    <dd><b> <?= (round($model->balance, 2) > 0.00 && round($model->balance, 2) <= 0.09) || (round($model->balance, 2) < 0.00 && round($model->balance, 2) >= -0.09)  ? Yii::$app->formatter->format(round('0.00', 2), ['currency', 'USD', [
                 \NumberFormatter::MIN_FRACTION_DIGITS => 2,
                 \NumberFormatter::MAX_FRACTION_DIGITS => 2,
         ]]): Yii::$app->formatter->format(round($model->balance, 2), ['currency', 'USD', [

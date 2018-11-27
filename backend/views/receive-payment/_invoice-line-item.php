@@ -64,7 +64,7 @@ use yii\bootstrap\ActiveForm;
         'contentOptions' => ['class' => 'text-right invoice-value'],
         'label' => 'Balance',
         'value' => function ($data) {
-            return !empty($data->balance) ? Yii::$app->formatter->asCurrency(round($data->balance, 2)) : null;
+            return !empty($data->balance) ? (round($data->balance, 2) > 0.00 && round($data->balance, 2) <= 0.09) || (round($data->balance, 2) < 0.00 && round($data->balance, 2) >= -0.09) ? Yii::$app->formatter->asCurrency(round(0.00, 2)):Yii::$app->formatter->asCurrency(round($data->balance, 2)) : null;
         }
     ]);
     if (isset($changeGridId)) {
