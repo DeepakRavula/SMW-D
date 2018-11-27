@@ -6,6 +6,7 @@ use yii\console\Controller;
 use Yii;
 use yii\db\Migration;
 use common\models\User;
+use common\models\discount\LessonDiscount;
 
 class LocationController extends Controller
 {
@@ -14,7 +15,7 @@ class LocationController extends Controller
     public function options($actionID)
     {
         return array_merge(parent::options($actionID),
-            $actionID == 'wipe-transactional-data' || 'wipe-customers' ? ['locationId'] : []
+            $actionID == 'wipe-transactional-data' || 'wipe-customers' || 'migrate-lesson-discount' ? ['locationId'] : []
         );
     }
     
@@ -52,5 +53,21 @@ class LocationController extends Controller
             $customer->delete();
         }
         return true;
+    }
+
+    public function actionMigrateLessonDiscount()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        $locationId = $this->locationId;
+        $lessonDiscounts = LessonDiscount::find()
+            ->joinWith(['lesson' => function ($query) use ($locationId) {
+                $query->location($locationId);
+            }])
+            ->all();
+
+        foreach ($lessonDiscounts as $lessonDiscount) {
+            $lessonDiscount->updateAttributes(['enrolmentId' => $lessonDiscount->lesson->enrolment->id]);
+        }
     }
 }

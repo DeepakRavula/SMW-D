@@ -17,20 +17,6 @@ class m181123_093558_add_enrolment_details_to_lesson_discount extends Migration
         if (!isset($table->columns['enrolmentId'])) {
             $this->addColumn('lesson_discount', 'enrolmentId', $this->integer());
         }
-        
-        set_time_limit(0);
-        ini_set('memory_limit', '-1');
-        $lessonDiscounts = LessonDiscount::find()
-            ->joinWith(['lesson' => function ($query) {
-                $query->isConfirmed()
-                    ->notCanceled()
-                    ->notDeleted();
-            }])
-            ->all();
-
-        foreach ($lessonDiscounts as $lessonDiscount) {
-            $lessonDiscount->updateAttributes(['enrolmentId' => $lessonDiscount->lesson->enrolment->id]);
-        }
     }
 
     /**
