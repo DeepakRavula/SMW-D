@@ -60,7 +60,7 @@ class GroupCourseForm extends Model
                 $lessonDiscount = new LessonDiscount();
                 $lessonDiscount->lessonId = $lesson->id;
                 $lessonDiscount->enrolmentId = $this->enrolmentId;
-                $lessonDiscount->value = $this->enrolmentDiscount;
+                $lessonDiscount->value = $this->enrolmentDiscount / 4;
                 $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
                 $lessonDiscount->type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
                 $lessonDiscount->save();
