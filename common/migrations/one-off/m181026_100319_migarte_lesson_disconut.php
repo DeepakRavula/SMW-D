@@ -4,28 +4,19 @@ use yii\db\Migration;
 use common\models\discount\LessonDiscount;
 
 /**
- * Class m181123_093558_add_enrolment_details_to_lesson_discount
+ * Class m181025_100313_enable_customer_payment_preference_richmond_hill
  */
-class m181123_093558_add_enrolment_details_to_lesson_discount extends Migration
+class m181026_100319_migarte_lesson_disconut extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $table = Yii::$app->db->schema->getTableSchema('lesson_discount');
-        if (!isset($table->columns['enrolmentId'])) {
-            $this->addColumn('lesson_discount', 'enrolmentId', $this->integer());
-        }
-        
         set_time_limit(0);
         ini_set('memory_limit', '-1');
         $lessonDiscounts = LessonDiscount::find()
-            ->joinWith(['lesson' => function ($query) {
-                $query->isConfirmed()
-                    ->notCanceled()
-                    ->notDeleted();
-            }])
+            ->andWhere(['enrolmentId' => null])
             ->all();
 
         foreach ($lessonDiscounts as $lessonDiscount) {
@@ -38,7 +29,7 @@ class m181123_093558_add_enrolment_details_to_lesson_discount extends Migration
      */
     public function safeDown()
     {
-        echo "m181123_093558_add_enrolment_details_to_lesson_discount cannot be reverted.\n";
+        echo "m181025_100313_enable_customer_payment_preference_richmond_hill cannot be reverted.\n";
 
         return false;
     }
@@ -52,7 +43,7 @@ class m181123_093558_add_enrolment_details_to_lesson_discount extends Migration
 
     public function down()
     {
-        echo "m181123_093558_add_enrolment_details_to_lesson_discount cannot be reverted.\n";
+        echo "m181025_100313_enable_customer_payment_preference_richmond_hill cannot be reverted.\n";
 
         return false;
     }
