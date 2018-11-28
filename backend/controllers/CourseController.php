@@ -357,6 +357,7 @@ class CourseController extends BaseController
                         ->notDeleted();
             }])
             ->andWhere(['enrolment.studentId' => $studentId])
+            ->notDeleted()
             ->isConfirmed();
         $groupCourses = Course::find()
             ->regular()
