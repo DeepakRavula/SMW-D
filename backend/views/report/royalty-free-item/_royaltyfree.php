@@ -25,7 +25,7 @@ $columns = [
         [
         'label' => 'Total',
         'value' => function ($data) {
-            return $data->amount;
+            return $data->invoice->total;
         },
         'format' => ['decimal', 2],
         'contentOptions' => ['class' => 'text-right'],
