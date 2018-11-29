@@ -25,17 +25,17 @@ use yii\grid\GridView;
         <?php if ($model->course->isPrivate()) : ?>
         <div class="col-md-8">
             <?= $form->field($model, 'paymentFrequencyId')->widget(Select2::classname(), [
-                'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')]); 
+                'data' => ArrayHelper::map(PaymentFrequency::find()->all(), 'id', 'name')]);
             ?>
         </div>
         <?php endif; ?>
         <div class="col-md-6">
-            <?= $form->field($paymentFrequencyDiscount, 'discount')->textInput()
+            <?= $form->field($paymentFrequencyDiscount, 'discount')->textInput(['class' => 'text-right form-control'])
                 ->label('Payment Frequency Discount'); 
             ?>
         </div>
         <div class="col-md-6">
-            <?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput()
+            <?= $form->field($multipleEnrolmentDiscount, 'discount')->textInput(['class' => 'text-right form-control'])
                 ->label('Multiple Enrolment Discount'); 
             ?>
         </div>
