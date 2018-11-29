@@ -302,7 +302,7 @@ class Course extends \yii\db\ActiveRecord
     
     public function getEnrolmentsCount()
     {
-        return $this->getEnrolments()->count();
+        return $this->getEnrolments()->notDeleted()->count();
     }
 
     public static function lessonStatuses()

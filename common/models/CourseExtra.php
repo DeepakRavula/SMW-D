@@ -67,4 +67,9 @@ class CourseExtra extends \yii\db\ActiveRecord
     {
         return new \common\models\query\CourseExtraQuery(get_called_class());
     }
+
+    public function getlesson()
+    {
+        return $this->hasOne(Lesson::className(), ['courseId' => 'extraCourseId']);
+    }
 }
