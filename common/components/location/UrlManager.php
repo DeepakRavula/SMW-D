@@ -423,7 +423,7 @@ class UrlManager extends \codemix\localeurls\UrlManager
                 ]));
             }
         }
-        if ($this->hasEventHandlers(self::EVENT_LOCATION_CHANGED_FRONTEND)) {die;
+        if ($this->hasEventHandlers(self::EVENT_LOCATION_CHANGED_FRONTEND)) {
             $oldLocation = $this->loadPersistedLocation();
             if ($oldLocation !== $location) {
                 Yii::trace("Triggering locationChanged event: $oldLocation -> $location", __METHOD__);
