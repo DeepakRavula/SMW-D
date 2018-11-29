@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use common\models\discount\EnrolmentDiscount;
 use common\models\Enrolment;
+use common\models\Student;
 use common\models\discount\LessonDiscount;
 
 class GroupCourseForm extends Model
@@ -25,12 +26,21 @@ class GroupCourseForm extends Model
         return [
             [['studentId', 'courseId', 'enrolmentId'], 'safe'],
             [['enrolmentDiscount', 'pfDiscount'], 'safe'],
+            ['studentId', 'required']
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'studentId' => 'Student'
         ];
     }
 
     public function setDiscount() 
     {
         $enrolment = Enrolment::findOne($this->enrolmentId);
+        $student = Student::findOne($this->studentId);
         if ($this->pfDiscount) {
             $discount = new EnrolmentDiscount();
             $discount->enrolmentId = $this->enrolmentId;
@@ -63,6 +73,18 @@ class GroupCourseForm extends Model
                 $lessonDiscount->value = $this->enrolmentDiscount / 4;
                 $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
                 $lessonDiscount->type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
+                $lessonDiscount->save();
+            }
+        }
+
+        if ($student->customer->hasDiscount()) {
+            foreach ($enrolment->lessons as $lesson) {
+                $lessonDiscount = new LessonDiscount();
+                $lessonDiscount->lessonId = $lesson->id;
+                $lessonDiscount->enrolmentId = $this->enrolmentId;
+                $lessonDiscount->value = $student->customer->customerDiscount->value;
+                $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_PERCENTAGE;
+                $lessonDiscount->type = LessonDiscount::TYPE_CUSTOMER;
                 $lessonDiscount->save();
             }
         }
