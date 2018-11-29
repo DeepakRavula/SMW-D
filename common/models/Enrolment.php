@@ -1009,4 +1009,15 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasMany(EnrolmentDiscount::className(), ['enrolmentId' => 'id']);
     }
+
+    public function getLessonPayment()
+    {
+        return $this->hasOne(LessonPayment::className(), ['enrolmentId' => 'id'])
+            ->onCondition(['lesson_payment.isDeleted' => false]);
+    }
+
+    public function hasPayment()
+    {
+        return $this->lessonPayment;
+    }
 }

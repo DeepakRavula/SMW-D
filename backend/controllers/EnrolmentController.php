@@ -61,7 +61,7 @@ class EnrolmentController extends BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => ['add', 'delete', 'edit', 'schedule', 'group', 'update', 'full-delete',
                     'edit-end-date', 'edit-program-rate', 'reschedule', 'update-preferred-payment-status',
-                    'group-confirm'
+                    'group-confirm', 'group-enrolment-delete'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -75,7 +75,7 @@ class EnrolmentController extends BaseController
                         'allow' => true,
                         'actions' => ['index', 'view', 'group', 'edit', 'edit-program-rate', 
                             'create', 'add', 'confirm', 'update', 'delete', 'edit-end-date',
-                            'reschedule', 'cancel', 'update-preferred-payment-status', 'group-confirm'
+                            'reschedule', 'cancel', 'update-preferred-payment-status', 'group-confirm', 'group-enrolment-delete'
                         ],
                         'roles' => ['manageEnrolments'],
                     ],
@@ -791,4 +791,32 @@ class EnrolmentController extends BaseController
         }
         return $response;
     }
+
+    public function actionGroupEnrolmentDelete($id)
+    {
+        $model = $this->findModel($id);
+        $status = false;
+        if ($model->course->program->isGroup()) {
+            foreach ($model->lessons as $lesson) {        
+                if ($model->hasInvoice($lesson->id) || $model->hasPayment()) {
+                  $status = true;
+                  break;
+                }
+            }
+            if (!$status) {
+                $model->delete();
+            } else {
+                return $response = [
+                    'status' => false,
+                    'error' => 'Enrolment not deleted because it associated with invoice and payments.'
+                ];
+            }
+            return $response = [
+                'status' => true,
+                'url' => Url::to(['enrolment/index', 'EnrolmentSearch[showAllEnrolments]' => false]),
+                'message' => 'Enrolment has been deleted.'
+            ];
+        }
+    }
+
 }

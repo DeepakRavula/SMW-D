@@ -75,7 +75,8 @@ class LessonQuery extends \yii\db\ActiveQuery
         $this ->joinWith(['course' => function ($query) use ($locationId, $studentId) {
             $query->joinWith(['enrolments' => function ($query) use ($studentId) {
                 $query->andWhere(['enrolment.studentId' => $studentId])
-                                ->isConfirmed();
+                                ->isConfirmed()
+                                ->notDeleted();
             }])
             ->andWhere(['course.locationId' => $locationId])
             ->notDeleted();

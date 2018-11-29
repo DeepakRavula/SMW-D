@@ -78,7 +78,7 @@ use yii\bootstrap\Html;
             'attribute' => 'balance',
             'label' => 'Balance',
             'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency(round($data->getOwingAmount($data->enrolment->id), 2));
+                return (round($data->getOwingAmount($data->enrolment->id), 2) > 0.00 && round($data->getOwingAmount($data->enrolment->id), 2) <= 0.09) || (round($data->getOwingAmount($data->enrolment->id), 2) < 0.00 && round($data->getOwingAmount($data->enrolment->id), 2) >= -0.09)  ? Yii::$app->formatter->asCurrency(round('0.00', 2)): Yii::$app->formatter->asCurrency(round($data->getOwingAmount($data->enrolment->id), 2));
             },
             'headerOptions' => ['class' => 'text-right'],
             'contentOptions' => ['class' => 'text-right invoice-value']
