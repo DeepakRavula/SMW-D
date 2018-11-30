@@ -1432,42 +1432,18 @@ class Lesson extends \yii\db\ActiveRecord
     {
         $discount = 0.0;
         $lessonPrice = $this->grossPrice;
-        $lessonMultiEnrolmentDiscount = LessonDiscount::find()
-            ->multiEnrolmentDiscount()
+        $groupDiscount = LessonDiscount::find()
+            ->groupDiscount()
             ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolment->id])
             ->one();
-        if ($lessonMultiEnrolmentDiscount) {
-            $discount += $lessonPrice < 0 ? 0 :
-                $lessonMultiEnrolmentDiscount->value;
-            $lessonPrice = $this->grossPrice - $discount;
-        }
-        $lessonLineItemDiscount = LessonDiscount::find()
-            ->lineItemDiscount()
-            ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolment->id])
-            ->one();
-        if ($lessonLineItemDiscount) {
-            if ($lessonLineItemDiscount->valueType) {
-                $discount += ($lessonLineItemDiscount->value / 100) * $lessonPrice;
+        if ($groupDiscount) {
+            if ($groupDiscount->valueType) {
+                $discount += ($groupDiscount->value / 100) * $lessonPrice;
             } else {
                 $discount += $lessonPrice < 0 ? 0 :
-                    $this->lineItemDiscount->value;
+                    $groupDiscount->value;
             }
             $lessonPrice = $this->grossPrice - $discount;
-        }
-        $lessonCustomerDiscount = LessonDiscount::find()
-            ->customerDiscount()
-            ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolment->id])
-            ->one();
-        if ($lessonCustomerDiscount) {
-            $discount += ($lessonCustomerDiscount->value / 100) * $lessonPrice;
-            $lessonPrice = $this->grossPrice - $discount;
-        }
-        $lessonEnrolmentPaymentFrequencyDiscount = LessonDiscount::find()
-            ->paymentFrequencyDiscount()
-            ->andWhere(['lessonId' => $this->id, 'enrolmentId' => $enrolment->id])
-            ->one();
-        if ($lessonEnrolmentPaymentFrequencyDiscount) {
-            $discount += ($lessonEnrolmentPaymentFrequencyDiscount->value / 100) * $lessonPrice;
         }
         
         return $discount;

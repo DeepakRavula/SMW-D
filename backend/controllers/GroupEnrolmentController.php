@@ -10,11 +10,13 @@ use common\models\GroupLesson;
 use yii\filters\ContentNegotiator;
 use common\components\controllers\BaseController;
 use common\models\Lesson;
+use common\models\Enrolment;
+use common\models\discount\EnrolmentDiscount;
 
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
  */
-class GroupLessonController extends BaseController
+class GroupEnrolmentController extends BaseController
 {
     public function behaviors()
     {
@@ -27,7 +29,7 @@ class GroupLessonController extends BaseController
             'contentNegotiator' => [
                 'class' => ContentNegotiator::className(),
                 'only' => [
-                    'apply-discount'
+                    'edit-discount'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -40,7 +42,7 @@ class GroupLessonController extends BaseController
                     [
                         'allow' => true,
                         'actions' => [
-                            'apply-discount'
+                            'edit-discount'
                         ],
                         'roles' => ['managePrivateLessons'],
                     ],
@@ -49,34 +51,42 @@ class GroupLessonController extends BaseController
         ];
     }
 
-    public function actionApplyDiscount()
+    public function actionEditDiscount($enrolmentId)
     {
-        $groupLesson = new GroupLesson();
-        $groupLesson->load(Yii::$app->request->get());
-        $model = Lesson::findOne($groupLesson->lessonId);
-        $model->enrolmentId = $groupLesson->enrolmentId;
-        if (!$model->isEditable()) {
+        $model = Enrolment::findOne($enrolmentId);
+        $model->setScenario(Enrolment::SCENARIO_EDIT);
+        if (!$model->validate()) {
             return [
                 'status' => false,
-                'message' => 'Lesson is invoiced. You can\'t edit discount for this lessons',
+                'message' => ActiveForm::validate($model)['enrolment-courseid']
             ];
         }
-        $discount = $groupLesson->loadDiscount();
+        if ($model->hasGroupDiscount()) {
+            $discount = $model->groupDiscount;
+        } else {
+            $discount = new EnrolmentDiscount();
+            $discount->enrolmentId = $enrolmentId;
+            $discount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLLAR;
+            $discount->type = EnrolmentDiscount::TYPE_GROUP;
+        }
+        $oldDiscount = $model->groupDiscount ? clone $model->groupDiscount : null;
         $data = $this->renderAjax('_form-apply-discount', [
             'model' => $model,
-            'groupLesson' => $groupLesson,
             'discount' => $discount
         ]);
         $post = Yii::$app->request->post();
         if ($post) {
             $discount->load($post);
             $discount->save();
-            $model->save();
+            if (!$oldDiscount || ($oldDiscount->discount != $discount->discount || $oldDiscount->discountType != $discount->discountType)) {
+                $model = Enrolment::findOne($enrolmentId);
+                $model->resetGroupDiscount();
+            }
             $response = [
                 'status' => true,
             ];
         } else {
-            return [
+            $response = [
                 'status' => true,
                 'data' => $data,
             ];

@@ -68,7 +68,6 @@ class Base extends Model
             $lessonDiscount->enrolmentId = $this->enrolmentId;
             $lessonDiscount->type = $this->type;
             if (!$lessonDiscount->save()) {
-                print_r($lessonDiscount->getErrors());die;
                 Yii::error('Line item discount error: '.VarDumper::dumpAsString($lessonDiscount->getErrors()));
             }
             return !$lessonDiscount->hasErrors();

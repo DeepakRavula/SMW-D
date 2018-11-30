@@ -54,4 +54,9 @@ class LessonDiscountQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['lesson_discount.type' => LessonDiscount::TYPE_LINE_ITEM]);
     }
+
+    public function groupDiscount()
+    {
+        return $this->andWhere(['lesson_discount.type' => LessonDiscount::TYPE_GROUP]);
+    }
 }

@@ -23,10 +23,13 @@ LteBox::begin([
 	<?php if ($model->course->isPrivate()) : ?>
 	<dt>Payment Frequency</dt>
 	<dd><?= $model->getPaymentFrequency(); ?></dd>
-	<?php endif ; ?>
 	<dt>PF Discount</dt>
 	<dd><?= $model->getPaymentFrequencyDiscountValue(); ?></dd>
 	<dt>Multiple Enrol. Discount</dt>
 	<dd><?= $model->getMultipleEnrolmentDiscountValue(); ?></dd>
+	<?php else: ?>
+	<dt>Discount</dt>
+	<dd><?= $model->getGroupDiscountValue(); ?></dd>
+	<?php endif ; ?>
 </dl>
 <?php LteBox::end()?>

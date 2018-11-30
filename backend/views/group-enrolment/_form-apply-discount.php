@@ -15,7 +15,7 @@ use yii\helpers\Url;
 <div id="apply-discount-modal" class="apply-discount-form">
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['group-lesson/apply-discount', 'GroupLesson[lessonId]' => $groupLesson->lessonId, 'GroupLesson[enrolmentId]' => $groupLesson->enrolmentId]),
+        'action' => Url::to(['group-enrolment/edit-discount', 'enrolmentId' => $model->id]),
     ]); ?>
     <div class="row">
         <div class="col-xs-7 pull-left">
@@ -29,13 +29,13 @@ use yii\helpers\Url;
             <div class="col-xs-1 discount-edit-label">
                 <label class="off discount-dollar-symbol on-off-symbol">$</label>
             </div>
-            <?= $form->field($discount, 'value')->textInput([
-                    'value' => Yii::$app->formatter->asDecimal($discount->value, 2),
+            <?= $form->field($discount, 'discount')->textInput([
+                    'value' => Yii::$app->formatter->asDecimal($discount->discount, 2),
                     'class' => 'text-right form-control'])->label(false); ?>
         </div>
         <label class="on percent dollar-symbol on-off-symbol">%</label>
     </div>
-    <?= $form->field($discount, 'valueType')->hiddenInput()->label(false); ?>
+    <?= $form->field($discount, 'discountType')->hiddenInput()->label(false); ?>
     <?php ActiveForm::end(); ?>
 </div>
 
@@ -45,7 +45,7 @@ use yii\helpers\Url;
         $('#off').removeClass('btn-info');
         $('.on').show();
         $('.off').hide();
-        $('#lessondiscount-valuetype').val(1);
+        $('#enrolmentdiscount-discounttype').val(0);
         return false;
     });
 
@@ -54,15 +54,15 @@ use yii\helpers\Url;
         $('#on').removeClass('btn-info');
         $('.on').hide();
         $('.off').show();
-        $('#lessondiscount-valuetype').val(0);
+        $('#enrolmentdiscount-discounttype').val(1);
         return false;
     });
 
     $(document).ready(function() {
         $('#popup-modal .modal-dialog').css({'width': '600px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Discount</h4>');
-        var button = '<?= $discount->valueType;?>';
-        if (button == '1') {
+        var button = '<?= $discount->discountType;?>';
+        if (button == '0') {
             $('#on').addClass('btn-info');
             $('#off').removeClass('btn-info');
             $('.on').show();
