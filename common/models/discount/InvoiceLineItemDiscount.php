@@ -25,6 +25,7 @@ class InvoiceLineItemDiscount extends \yii\db\ActiveRecord
     const TYPE_ENROLMENT_PAYMENT_FREQUENCY = 2;
     const TYPE_MULTIPLE_ENROLMENT = 3;
     const TYPE_LINE_ITEM = 4;
+    const TYPE_GROUP = 5;
 
     /**
      * @inheritdoc
