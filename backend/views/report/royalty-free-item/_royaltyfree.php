@@ -25,7 +25,7 @@ $columns = [
         [
         'label' => 'Total',
         'value' => function ($data) {
-            return $data->unit * $data->amount;
+            return $data->netPrice;
         },
         'format' => ['decimal', 2],
         'contentOptions' => ['class' => 'text-right'],
