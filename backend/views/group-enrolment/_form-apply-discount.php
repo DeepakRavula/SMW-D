@@ -18,10 +18,10 @@ use yii\helpers\Url;
         'action' => Url::to(['group-enrolment/edit-discount', 'enrolmentId' => $model->id]),
     ]); ?>
     <div class="row">
-        <div class="col-xs-7 pull-left">
+        <div class="col-xs-5 pull-left">
             <label class="dollar-symbol">Discount</label>
         </div>
-        <div class="col-xs-2 btn-group on-off">
+        <div class="col-xs-4 btn-group on-off">
             <button class="btn btn-default" data-size="mini" id="off">$</button>
             <button class="btn btn-default" data-size="mini" id="on">%</button>
         </div>
@@ -59,7 +59,7 @@ use yii\helpers\Url;
     });
 
     $(document).ready(function() {
-        $('#popup-modal .modal-dialog').css({'width': '600px'});
+        $('#popup-modal .modal-dialog').css({'width': '400px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Discount</h4>');
         var button = '<?= $discount->discountType;?>';
         if (button == '0') {

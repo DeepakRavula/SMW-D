@@ -481,6 +481,12 @@ class Enrolment extends \yii\db\ActiveRecord
         return $models;
     }
 
+    public function getGroupDiscountValue()
+    {
+        return $this->groupDiscount ? $this->groupDiscount->discountType == EnrolmentDiscount::VALUE_TYPE_DOLLAR ? '$' . $this->groupDiscount->discount : 
+            $this->groupDiscount->discount . '%' : 'Not set';
+    }
+
     public function getlastPaymentCycle()
     {
         return $this->hasOne(PaymentCycle::className(), ['enrolmentId' => 'id'])
@@ -847,15 +853,6 @@ class Enrolment extends \yii\db\ActiveRecord
     public function hasGroupDiscount()
     {
         return !empty($this->groupDiscount);
-    }
-
-    public function getGroupDiscountValue()
-    {
-        if (!$this->groupDiscount) {
-            return 'Not set';
-        }
-        return $this->groupDiscount->discountType == EnrolmentDiscount::VALUE_TYPE_DOLLAR ? '$' . $this->groupDiscount->discount : 
-            $this->groupDiscount->discount . '%';
     }
 
     public function getCustomerModeOfPay()
