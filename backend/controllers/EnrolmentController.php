@@ -210,6 +210,7 @@ class EnrolmentController extends BaseController
             if ($enrolmentModel->save()) {
                 $model->enrolmentId = $enrolmentModel->id;
                 $model->setDiscount();
+                $enrolmentModel->setStatus();
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
                     [new StudentLog(), 'addGroupEnrolment'],
