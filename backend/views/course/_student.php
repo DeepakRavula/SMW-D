@@ -46,6 +46,8 @@ use common\models\Enrolment;
                 'label' => 'Discount',
                 'value' => function ($data) use ($courseModel) {
                     $enrolment = Enrolment::find()
+                        ->notDeleted()
+                        ->isConfirmed()
                         ->andWhere(['studentId' => $data->id, 'courseId' => $courseModel->id])
                         ->one();
                     return $enrolment->groupDiscountValue;
@@ -56,6 +58,8 @@ use common\models\Enrolment;
                 'buttons' => [
                     'edit' => function ($url, $model) use ($courseModel) {
                         $enrolment = Enrolment::find()
+                            ->notDeleted()
+                            ->isConfirmed()
                             ->andWhere(['studentId' => $model->id, 'courseId' => $courseModel->id])
                             ->one();
                         $url = Url::to(['group-enrolment/edit-discount', 'enrolmentId' => $enrolment->id]);
