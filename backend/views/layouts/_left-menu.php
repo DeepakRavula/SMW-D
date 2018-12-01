@@ -69,11 +69,11 @@ echo Menu::widget([
             'active' => (Yii::$app->controller->id === 'lesson') ? true : false,
         ],
         [
-            'label' => Yii::t('backend', 'Group Lessons'),
+            'label' => Yii::t('backend', 'Group Courses'),
             'url' => ['/course/index', 'CourseSearch[type]' => Lesson::TYPE_GROUP_LESSON],
             'icon' => '<i class="fa fa-music"></i>',
             'visible' => Yii::$app->user->can('manageGroupLessons'),
-            'active' => (isset(Yii::$app->request->queryParams['CourseSearch']['type']) && Yii::$app->request->queryParams['CourseSearch']['type'] == Lesson::TYPE_GROUP_LESSON) ? true : false,
+            'active' => (Yii::$app->controller->id === 'course') ? true : false,
         ],
 	[
             'label' => Yii::t('backend', 'Unscheduled Lessons'),

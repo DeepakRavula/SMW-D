@@ -21,6 +21,11 @@ use kartik\select2\Select2;
     'id' => 'modal-form'
 ]); ?>
 
+<style>
+    .col-xs-3 {
+        width: 23%;
+    }
+</style>
     <?php if (!$model->studentId) : ?>
         <?php $courseId = $model->courseId; 
             $enroledStudents = Student::find()
@@ -34,10 +39,10 @@ use kartik\select2\Select2;
                 ->location(Location::findOne(['slug' => \Yii::$app->location])->id);
         ?>
     <div class="row">
-        <div class="col-xs-5">
-            <label class="modal-form-label">Student</label>
+        <div class="col-xs-5 pull-left">
+            <label class="dollar-symbol">Student</label>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-7">
             <?= $form->field($model, 'studentId')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(Student::find()
                     ->notDeleted()
@@ -51,28 +56,27 @@ use kartik\select2\Select2;
                 ]
             ])->label(false); ?>
         </div>
-        <div class="col-xs-1 enrolment-text"></div>
     </div>
     <?php endif; ?>
     <div class="row">
-        <div class="col-xs-6">
-            <label class="modal-form-label">Payment Frequency Discount</label>
+        <div class="col-xs-3 pull-left">
+            <label class="dollar-symbol">Discount</label>
         </div>
         <div class="col-xs-2"></div>
+        <div class="col-xs-4 btn-group on-off">
+            <button class="btn btn-default" data-size="mini" id="off">$</button>
+            <button class="btn btn-default" data-size="mini" id="on">%</button>
+        </div>
         <div class="col-xs-3">
-            <?= $form->field($model, 'pfDiscount')->textInput(['class' => 'form-control text-right'])->label(false); ?>
+            <div class="col-xs-1 discount-edit-label">
+                <label class="off discount-dollar-symbol on-off-symbol">$</label>
+            </div>
+            <?= $form->field($model, 'discount')->textInput([
+                    'value' => Yii::$app->formatter->asDecimal($model->discount, 2),
+                    'class' => 'text-right form-control'])->label(false); ?>
         </div>
-        <div class="col-xs-1 enrolment-text"><label class="text-muted">%</label></div>
-    </div>
-    <div class="row">
-        <div class="col-xs-6">
-            <label class="modal-form-label">Multiple Enrol. Discount (per month)</label>
-        </div>
-        <div class="col-xs-2 enrolment-dollar"><label class="text-muted">$</label></div>
-        <div class="col-xs-3">
-            <?= $form->field($model, 'enrolmentDiscount')->textInput(['class' => 'form-control text-right'])->label(false); ?>
-        </div>
-        <div class="col-xs-1 enrolment-text"><label class="text-muted">/mn</label></div>
+        <label class="on percent dollar-symbol on-off-symbol">%</label>
+        <?= $form->field($model, 'discountType')->hiddenInput()->label(false); ?>
     </div>
 
 <?php ActiveForm::end(); ?>
@@ -89,6 +93,40 @@ use kartik\select2\Select2;
         if (!studentId) {
             $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Enrolment Detail</h4>');
         }
-        $('#popup-modal .modal-dialog').css({'width': '600px'});
+        $('#popup-modal .modal-dialog').css({'width': '400px'});
+        
+    });
+
+    $(document).off('click', '#on').on('click', '#on', function () {
+        $('#on').addClass('btn-info');
+        $('#off').removeClass('btn-info');
+        $('.on').show();
+        $('.off').hide();
+        $('#groupcourseform-discounttype').val(0);
+        return false;
+    });
+
+    $(document).off('click', '#off').on('click', '#off', function () {
+        $('#off').addClass('btn-info');
+        $('#on').removeClass('btn-info');
+        $('.on').hide();
+        $('.off').show();
+        $('#groupcourseform-discounttype').val(1);
+        return false;
+    });
+
+    $(document).ready(function() {
+        var button = '<?= $model->discountType;?>';
+        if (button == '0') {
+            $('#on').addClass('btn-info');
+            $('#off').removeClass('btn-info');
+            $('.on').show();
+            $('.off').hide();
+        } else {
+            $('#off').addClass('btn-info');
+            $('#on').removeClass('btn-info');
+            $('.on').hide();
+            $('.off').show();
+        }
     });
 </script>

@@ -18,6 +18,7 @@ class EnrolmentDiscount extends \yii\db\ActiveRecord
 {
     const TYPE_PAYMENT_FREQUENCY  = 1;
     const TYPE_MULTIPLE_ENROLMENT = 2;
+    const TYPE_GROUP = 3;
 
     const VALUE_TYPE_PERCENTAGE = 0;
     const VALUE_TYPE_DOLLAR      = 1;

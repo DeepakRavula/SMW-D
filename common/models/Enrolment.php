@@ -10,6 +10,7 @@ use common\models\discount\EnrolmentDiscount;
 use DateInterval;
 use common\models\discount\LessonDiscount;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
+use yii\data\ArrayDataProvider;
 /**
  * This is the model class for table "enrolment".
  *
@@ -153,6 +154,12 @@ class Enrolment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(EnrolmentDiscount::className(), ['enrolmentId' => 'id'])
             ->onCondition(['type' => EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY]);
+    }
+
+    public function getGroupDiscount()
+    {
+        return $this->hasOne(EnrolmentDiscount::className(), ['enrolmentId' => 'id'])
+            ->onCondition(['type' => EnrolmentDiscount::TYPE_GROUP]);
     }
 
     public function getMultipleEnrolmentDiscount()
@@ -472,6 +479,12 @@ class Enrolment extends \yii\db\ActiveRecord
         }
 
         return $models;
+    }
+
+    public function getGroupDiscountValue()
+    {
+        return $this->groupDiscount ? $this->groupDiscount->discountType == EnrolmentDiscount::VALUE_TYPE_DOLLAR ? '$' . $this->groupDiscount->discount : 
+            $this->groupDiscount->discount . '%' : 'Not set';
     }
 
     public function getlastPaymentCycle()
@@ -837,6 +850,11 @@ class Enrolment extends \yii\db\ActiveRecord
         return '$' . $this->multipleEnrolmentDiscount->discount;
     }
 
+    public function hasGroupDiscount()
+    {
+        return !empty($this->groupDiscount);
+    }
+
     public function getCustomerModeOfPay()
     {
         return $this->paymentsFrequency->frequencyLength == 1 ? 'pays every month'
@@ -891,7 +909,7 @@ class Enrolment extends \yii\db\ActiveRecord
         } else {
             $type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
         }
-        if (($this->course->isPrivate() && $this->partialyPaidPaymentCycle) || (!$this->course->isPrivate() && $this->firstUnpaidLesson)) {
+        if ($this->course->isPrivate() && $this->partialyPaidPaymentCycle) {
             if ($this->course->isPrivate()) {
                 $fromDate = new \DateTime($this->partialyPaidPaymentCycle->startDate);
             } else {
@@ -934,6 +952,71 @@ class Enrolment extends \yii\db\ActiveRecord
             }
         }
         return true;
+    }
+
+    public function resetGroupDiscount()
+    {
+        $type = LessonDiscount::TYPE_GROUP;
+        $fromDate = new \DateTime($this->firstUnpaidLesson->date);
+        $toDate = new \DateTime($this->lastLesson->date);
+        $lessons = Lesson::find()
+            ->notDeleted()
+            ->andWhere(['courseId' => $this->courseId])
+            ->between($fromDate, $toDate)
+            ->isConfirmed()
+            ->notCanceled()
+            ->all();
+        foreach ($lessons as $lesson) {
+            $lessonDiscount = LessonDiscount::find()
+                ->andWhere(['type' => $type, 'lessonId' => $lesson->id, 'enrolmentId' => $this->id])
+                ->one();
+            if (!$lessonDiscount) {
+                $lessonDiscount = new LessonDiscount();
+                $lessonDiscount->lessonId = $lesson->id;
+                $lessonDiscount->type = LessonDiscount::TYPE_GROUP;
+                $lessonDiscount->enrolmentId = $this->id;
+            }
+            if ((int) $this->groupDiscount->discountType === (int) EnrolmentDiscount::VALUE_TYPE_PERCENTAGE) {
+                $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_PERCENTAGE;
+                $lessonDiscount->value = $this->groupDiscount->discount;
+            } else {
+                $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
+                $lessonDiscount->value = $this->groupDiscount->discount / count($this->course->lessons);
+            }
+            $lessonDiscount->save();
+        }
+        return true;
+    }
+
+    public function getPreviewDataProvider()
+    {
+        $objects = ["Lesson's Discount"];
+        $classes = ["lesson-discount"];
+        if ($this->course->isPrivate()) {
+            $startDate = Carbon::parse($this->partialyPaidPaymentCycle->startDate)->format('M d, Y');
+            $endDate = Carbon::parse($this->lastPaymentCycle->endDate)->format('M d, Y');
+            array_merge($objects, ["Payment Cycles", "Payment Request"]);
+            array_merge($classes, ["payment-cycle", "payment-request"]);
+        } else {
+            $startDate = Carbon::parse($this->firstUnpaidLesson->date)->format('M d, Y');
+            $endDate = Carbon::parse($this->lastLesson->date)->format('M d, Y');
+        }
+        $dates = [$startDate, $endDate];
+        $dateRange = implode(' - ', $dates);
+        foreach ($objects as $i => $value) {
+            $results[] = [
+                'objects' => $value,
+                'action' => 'will be modified',
+                'date_range' => 'within ' . $dateRange,
+                'class' => $classes[$i]
+            ]; 
+        }   
+        return new ArrayDataProvider([
+            'allModels' => $results,
+            'sort' => [
+                'attributes' => ['objects', 'action', 'date_range', 'class']
+            ]
+        ]);
     }
 
     public function shrink()

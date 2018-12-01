@@ -95,7 +95,7 @@ Modal::begin([
 
     $(document).on('click', '.edit-enrolment', function(){
         $.ajax({
-            url    : '<?= Url::to(['enrolment/edit', 'id' => $model->id]); ?>',
+            url    : '<?= $model->course->isPrivate() ? Url::to(['enrolment/edit', 'id' => $model->id]) : Url::to(['group-enrolment/edit-discount', 'enrolmentId' => $model->id]); ?>',
             type   : 'get',
             dataType: "json",
             success: function(response)

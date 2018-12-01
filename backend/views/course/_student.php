@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use common\models\User;
 use yii\widgets\Pjax;
+use common\models\Enrolment;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\search\GroupCourseSearch */
@@ -40,8 +41,33 @@ use yii\widgets\Pjax;
                     $url = Url::to(['/user/view', 'UserSearch[role_name]' => User::ROLE_CUSTOMER, 'id' => $data->customer->id]);
                     return Html::a($data->customer->publicIdentity, $url);
                 },
+            ],
+            [
+                'label' => 'Discount',
+                'value' => function ($data) use ($courseModel) {
+                    $enrolment = Enrolment::find()
+                        ->andWhere(['studentId' => $data->id, 'courseId' => $courseModel->id])
+                        ->one();
+                    return $enrolment->groupDiscountValue;
+                },
+            ],
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{edit}',
+                'buttons' => [
+                    'edit' => function ($url, $model) use ($courseModel) {
+                        $enrolment = Enrolment::find()
+                            ->andWhere(['studentId' => $model->id, 'courseId' => $courseModel->id])
+                            ->one();
+                        $url = Url::to(['group-enrolment/edit-discount', 'enrolmentId' => $enrolment->id]);
+                        return Html::a('Edit Discount', '#', [
+                            'title' => Yii::t('yii', 'Edit Discount'),
+                            'class' => ['btn-info btn-sm group-enrolment-discount'],
+                            'action-url' => $url
+                        ]);
+                    }
+                ]
             ]
-        ],
+        ]
     ]); ?>
 </div>
 <?php Pjax::end(); ?>
@@ -60,6 +86,26 @@ use yii\widgets\Pjax;
                     $('.modal-save').show();
                     $('.modal-save').text('Confirm');
                     $('#popup-modal .modal-dialog').css({'width': '600px'});
+                } 
+            }
+        });
+        return false;
+    });
+
+    $(document).off('click', '.group-enrolment-discount').on('click', '.group-enrolment-discount', function () {
+        var url = $(this).attr('action-url');
+        $.ajax({
+            url    : url,
+            type: 'get',
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                    $('.modal-save').show();
+                    $('.modal-save').text('save');
+                    $('#popup-modal .modal-dialog').css({'width': '400px'});
                 } 
             }
         });

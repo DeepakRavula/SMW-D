@@ -42,6 +42,7 @@ use backend\models\search\EnrolmentPaymentSearch;
 use common\models\CustomerReferralSource;
 use common\models\CourseSchedule;
 use backend\models\GroupCourseForm;
+use common\models\discount\EnrolmentDiscount;
 
 /**
  * EnrolmentController implements the CRUD actions for Enrolment model.
@@ -179,6 +180,7 @@ class EnrolmentController extends BaseController
         $model->load(Yii::$app->request->get());
         $post = Yii::$app->request->post();
         $model->load($post);
+        $model->discountType = EnrolmentDiscount::VALUE_TYPE_DOLLAR;
         $data = $this->renderAjax('/student/enrolment/_form-group-discount', [
             'model' => $model
         ]);
@@ -249,33 +251,7 @@ class EnrolmentController extends BaseController
         $paymentFrequencyDiscount->enrolmentId = $id;
         $multipleEnrolmentDiscount->enrolmentId = $id;
         
-        $objects = ["Lesson's Discount"];
-        $classes = ["lesson-discount"];
-        if ($model->course->isPrivate()) {
-            $startDate = Carbon::parse($model->partialyPaidPaymentCycle->startDate)->format('M d, Y');
-            $endDate = Carbon::parse($model->lastPaymentCycle->endDate)->format('M d, Y');
-            array_merge($objects, ["Payment Cycles", "Payment Request"]);
-            array_merge($classes, ["payment-cycle", "payment-request"]);
-        } else {
-            $startDate = Carbon::parse($model->firstUnpaidLesson->date)->format('M d, Y');
-            $endDate = Carbon::parse($model->lastLesson->date)->format('M d, Y');
-        }
-        $dates = [$startDate, $endDate];
-        $dateRange = implode(' - ', $dates);
-        foreach ($objects as $i => $value) {
-            $results[] = [
-                'objects' => $value,
-                'action' => 'will be modified',
-                'date_range' => 'within ' . $dateRange,
-                'class' => $classes[$i]
-            ]; 
-        }   
-        $previewDataProvider = new ArrayDataProvider([
-            'allModels' => $results,
-            'sort' => [
-                'attributes' => ['objects', 'action', 'date_range', 'class']
-            ]
-        ]);
+        $previewDataProvider = $model->getPreviewDataProvider();
         
         $data = $this->renderAjax('update/_form', [
             'model' => $model,

@@ -31,72 +31,22 @@ class GroupLesson extends Model
             [['lessonId', 'enrolmentId'], 'safe']
         ];
     }
-
-    public function loadCustomerDiscount()
-    {
-        $lesson = Lesson::findOne($this->lessonId);
-        $customerDiscount = new CustomerLessonDiscount();
-        $lessonCustomerDiscount = LessonDiscount::find()
-            ->customerDiscount()
-            ->andWhere(['lessonId' => $this->lessonId, 'enrolmentId' => $this->enrolmentId])
-            ->one();
-        if ($lessonCustomerDiscount) {
-            $customerDiscount = $customerDiscount->setModel($lessonCustomerDiscount);
-        }
-        $customerDiscount->lessonId = (int) $lesson->id;
-        $customerDiscount->enrolmentId = $this->enrolmentId;
-        return $customerDiscount;
-    }
     
-    public function loadPaymentFrequencyDiscount()
+    public function loadDiscount()
     {
         $lesson = Lesson::findOne($this->lessonId);
-        $paymentFrequencyDiscount = new PaymentFrequencyLessonDiscount();
-        $lessonEnrolmentPaymentFrequencyDiscount = LessonDiscount::find()
-            ->paymentFrequencyDiscount()
+        $discount = LessonDiscount::find()
+            ->groupDiscount()
             ->andWhere(['lessonId' => $this->lessonId, 'enrolmentId' => $this->enrolmentId])
             ->one();
-        if ($lessonEnrolmentPaymentFrequencyDiscount) {
-            $paymentFrequencyDiscount = $paymentFrequencyDiscount->setModel(
-                    $lessonEnrolmentPaymentFrequencyDiscount
-            );
+        if (!$discount) {
+            $discount = new LessonDiscount();
+            $discount->lessonId = $lesson->id;
+            $discount->enrolmentId = $this->enrolmentId;
+            $discount->type = LessonDiscount::TYPE_GROUP;
+            $discount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
         }
-        $paymentFrequencyDiscount->lessonId = $lesson->id;
-        $paymentFrequencyDiscount->enrolmentId = $this->enrolmentId;
-        return $paymentFrequencyDiscount;
-    }
-    
-    public function loadLineItemDiscount()
-    {
-        $lesson = Lesson::findOne($this->lessonId);
-        $lineItemDiscount = new LineItemLessonDiscount();
-        $lessonLineItemDiscount = LessonDiscount::find()
-            ->lineItemDiscount()
-            ->andWhere(['lessonId' => $this->lessonId, 'enrolmentId' => $this->enrolmentId])
-            ->one();
-        if ($lessonLineItemDiscount) {
-            $lineItemDiscount = $lineItemDiscount->setModel($lessonLineItemDiscount);
-        }
-        $lineItemDiscount->lessonId = $lesson->id;
-        $lineItemDiscount->enrolmentId = $this->enrolmentId;
-        return $lineItemDiscount;
-    }
-    
-    public function loadMultiEnrolmentDiscount()
-    {
-        $lesson = Lesson::findOne($this->lessonId);
-        $multiEnrolmentDiscount = new EnrolmentLessonDiscount();
-        $lessonMultiEnrolmentDiscount = LessonDiscount::find()
-            ->multiEnrolmentDiscount()
-            ->andWhere(['lessonId' => $this->lessonId, 'enrolmentId' => $this->enrolmentId])
-            ->one();
-        if ($lessonMultiEnrolmentDiscount) {
-            $multiEnrolmentDiscount = $multiEnrolmentDiscount->setModel(
-                    $lessonMultiEnrolmentDiscount
-            );
-        }
-        $multiEnrolmentDiscount->lessonId = $lesson->id;
-        $multiEnrolmentDiscount->enrolmentId = $this->enrolmentId;
-        return $multiEnrolmentDiscount;
+        
+        return $discount;
     }
 }

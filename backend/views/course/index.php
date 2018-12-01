@@ -11,7 +11,7 @@ require_once Yii::$app->basePath . '/web/plugins/fullcalendar-time-picker/modal-
 /* @var $searchModel backend\models\search\GroupCourseSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Group Lessons';
+$this->title = 'Group Courses';
 $this->params['action-button'] = Html::a('<i class="fa fa-plus f-s-18 m-l-10" aria-hidden="true"></i>', ['course/create'], ['class' => 'group-course-create']);
 $this->params['show-all'] = $this->render('_button', [
     'searchModel' => $searchModel

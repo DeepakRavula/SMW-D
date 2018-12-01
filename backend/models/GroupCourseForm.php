@@ -15,8 +15,8 @@ class GroupCourseForm extends Model
     public $courseId;
     public $enrolmentId;
 
-    public $pfDiscount;
-    public $enrolmentDiscount;
+    public $discount;
+    public $discountType;
 
     /**
      * {@inheritdoc}
@@ -25,7 +25,7 @@ class GroupCourseForm extends Model
     {
         return [
             [['studentId', 'courseId', 'enrolmentId'], 'safe'],
-            [['enrolmentDiscount', 'pfDiscount'], 'safe'],
+            [['discount', 'discountType'], 'safe'],
             ['studentId', 'required']
         ];
     }
@@ -41,50 +41,25 @@ class GroupCourseForm extends Model
     {
         $enrolment = Enrolment::findOne($this->enrolmentId);
         $student = Student::findOne($this->studentId);
-        if ($this->pfDiscount) {
+        if ($this->discount) {
             $discount = new EnrolmentDiscount();
             $discount->enrolmentId = $this->enrolmentId;
-            $discount->discount = $this->pfDiscount;
-            $discount->discountType = EnrolmentDiscount::VALUE_TYPE_PERCENTAGE;
-            $discount->type = EnrolmentDiscount::TYPE_PAYMENT_FREQUENCY;
+            $discount->discount = $this->discount;
+            $discount->discountType = $this->discountType;
+            $discount->type = EnrolmentDiscount::TYPE_GROUP;
             $discount->save();
             foreach ($enrolment->lessons as $lesson) {
                 $lessonDiscount = new LessonDiscount();
                 $lessonDiscount->lessonId = $lesson->id;
                 $lessonDiscount->enrolmentId = $this->enrolmentId;
-                $lessonDiscount->value = $this->pfDiscount;
-                $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_PERCENTAGE;
-                $lessonDiscount->type = LessonDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY;
-                $lessonDiscount->save();
-            }
-        }
-
-        if ($this->enrolmentDiscount) {
-            $discount = new EnrolmentDiscount();
-            $discount->enrolmentId = $this->enrolmentId;
-            $discount->discount = $this->enrolmentDiscount;
-            $discount->discountType = EnrolmentDiscount::VALUE_TYPE_DOLLAR;
-            $discount->type = EnrolmentDiscount::TYPE_MULTIPLE_ENROLMENT;
-            $discount->save();
-            foreach ($enrolment->lessons as $lesson) {
-                $lessonDiscount = new LessonDiscount();
-                $lessonDiscount->lessonId = $lesson->id;
-                $lessonDiscount->enrolmentId = $this->enrolmentId;
-                $lessonDiscount->value = $this->enrolmentDiscount / 4;
-                $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
-                $lessonDiscount->type = LessonDiscount::TYPE_MULTIPLE_ENROLMENT;
-                $lessonDiscount->save();
-            }
-        }
-
-        if ($student->customer->hasDiscount()) {
-            foreach ($enrolment->lessons as $lesson) {
-                $lessonDiscount = new LessonDiscount();
-                $lessonDiscount->lessonId = $lesson->id;
-                $lessonDiscount->enrolmentId = $this->enrolmentId;
-                $lessonDiscount->value = $student->customer->customerDiscount->value;
-                $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_PERCENTAGE;
-                $lessonDiscount->type = LessonDiscount::TYPE_CUSTOMER;
+                if ($this->discountType == EnrolmentDiscount::VALUE_TYPE_DOLLAR) {
+                    $lessonDiscount->value = $this->discount / count($enrolment->course->lessons);
+                    $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
+                } else {
+                    $lessonDiscount->value = $this->discount;
+                    $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_PERCENTAGE;
+                }
+                $lessonDiscount->type = LessonDiscount::TYPE_GROUP;
                 $lessonDiscount->save();
             }
         }

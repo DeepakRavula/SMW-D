@@ -9,6 +9,7 @@ use common\models\query\InvoiceLineItemQuery;
 use common\models\discount\InvoiceLineItemDiscount;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 use asinfotrack\yii2\audittrail\behaviors\AuditTrailBehavior;
+use backend\models\discount\LineItemDiscount;
 
 /**
  * This is the model class for table "invoice_line_item".
@@ -215,6 +216,12 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     {
         return $this->hasOne(InvoiceLineItemDiscount::className(), ['invoiceLineItemId' => 'id'])
             ->onCondition(['invoice_line_item_discount.type' => InvoiceLineItemDiscount::TYPE_ENROLMENT_PAYMENT_FREQUENCY]);
+    }
+
+    public function getGroupDiscount()
+    {
+        return $this->hasOne(InvoiceLineItemDiscount::className(), ['invoiceLineItemId' => 'id'])
+            ->onCondition(['invoice_line_item_discount.type' => InvoiceLineItemDiscount::TYPE_GROUP]);
     }
 
     public function getMultiEnrolmentDiscount()
@@ -477,6 +484,15 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
             }
             $lineItemPrice = $this->grossPrice - $discount;
         }
+        if ($this->hasGroupDiscount()) {
+            if ((int) $this->groupDiscount->valueType) {
+                $discount += ($this->groupDiscount->value / 100) * $lineItemPrice;
+            } else {
+                $discount += $lineItemPrice < 0 ? - ($this->groupDiscount->value) :
+                    $this->groupDiscount->value;
+            }
+            $lineItemPrice = $this->grossPrice - $discount;
+        }
         if ($this->hasCustomerDiscount()) {
             $discount += ($this->customerDiscount->value / 100) * $lineItemPrice;
             $lineItemPrice = $this->grossPrice - $discount;
@@ -633,6 +649,11 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         return !empty($this->customerDiscount);
     }
 
+    public function hasGroupDiscount()
+    {
+        return !empty($this->groupDiscount);
+    }
+
     public function hasEnrolmentPaymentFrequencyDiscount()
     {
         return !empty($this->enrolmentPaymentFrequencyDiscount);
@@ -650,6 +671,16 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
         $invoiceLineItemDiscount->value     = $lineItemDiscount->value;
         $invoiceLineItemDiscount->valueType = $lineItemDiscount->valueType;
         $invoiceLineItemDiscount->type      = $lineItemDiscount->type;
+        return $invoiceLineItemDiscount->save();
+    }
+
+    public function addGroupDiscount($groupDiscount)
+    {
+        $invoiceLineItemDiscount            = new InvoiceLineItemDiscount();
+        $invoiceLineItemDiscount->invoiceLineItemId = $this->id;
+        $invoiceLineItemDiscount->value     = $groupDiscount->value;
+        $invoiceLineItemDiscount->valueType = $groupDiscount->valueType;
+        $invoiceLineItemDiscount->type      = InvoiceLineItemDiscount::TYPE_GROUP;
         return $invoiceLineItemDiscount->save();
     }
 
