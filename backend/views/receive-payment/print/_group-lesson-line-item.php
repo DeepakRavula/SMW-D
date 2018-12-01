@@ -67,7 +67,7 @@ use yii\bootstrap\ActiveForm;
                     ->notDeleted()
                     ->isConfirmed()
                     ->andWhere(['courseId' => $data->courseId])
-                    ->customer($searchModel->userId)
+                    ->customer($model->userId)
                     ->one();
                 return Yii::$app->formatter->asCurrency(round($data->getGroupNetPrice($enrolment), 2));
             },
