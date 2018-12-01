@@ -3,6 +3,7 @@
 use common\models\Lesson;
 use yii\helpers\Url;
 use yii\grid\GridView;
+use common\models\Enrolment;
 
 ?>
 <div class="grid-row-open">
@@ -60,8 +61,14 @@ echo GridView::widget([
             'attribute' => 'price',
             'contentOptions' => ['class' => 'text-right'],
             'headerOptions' => ['class' => 'text-right'],
-            'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->netPrice);
+            'value' => function ($data) use ($model) {
+                $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['courseId' => $data->courseId])
+                    ->customer($model->id)
+                    ->one();
+                return Yii::$app->formatter->asCurrency(round($data->isPrivate() ? $data->netPrice : $data->getGroupNetPrice($enrolment), 2));
             },
         ],
         [
@@ -69,8 +76,17 @@ echo GridView::widget([
             'attribute' => 'owing',
             'contentOptions' => ['class' => 'text-right'],
             'headerOptions' => ['class' => 'text-right'],
-            'value' => function ($data) {
-                return Yii::$app->formatter->asCurrency($data->getOwingAmount($data->enrolment->id));
+            'value' => function ($data) use ($model) {
+                $enrolment = Enrolment::find()
+                    ->notDeleted()
+                    ->isConfirmed()
+                    ->andWhere(['courseId' => $data->courseId])
+                    ->customer($model->id)
+                    ->one();
+                if ($data->isPrivate()) {
+                    $enrolment = $data->enrolment;
+                }
+                return Yii::$app->formatter->asCurrency($data->getOwingAmount($enrolment->id));
             },
         ],
     ],

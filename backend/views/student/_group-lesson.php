@@ -47,7 +47,7 @@ use common\models\Lesson;
                         ->andWhere(['courseId' => $data->courseId])
                         ->student($model->id)
                         ->one();
-                    return Yii::$app->formatter->asCurrency($data->getGroupNetPrice($enrolment));
+                    return Yii::$app->formatter->asCurrency(round($data->getGroupNetPrice($enrolment), 2));
                 },
             ],
             [
