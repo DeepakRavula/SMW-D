@@ -605,14 +605,17 @@ class UserController extends BaseController
             $customerReferralSource = new CustomerReferralSource(); 
         }
         if ($model->load($request->post()) && $userProfile->load($request->post())) {
+           
             if (!empty($model->password)) {
                 $model->getModel()->setPassword($model->password);
             }
             if (!empty($model->pin)) {
                 $model->getModel()->setPin($model->pin);
             }
-            if ($model->save()) {              
-                $userProfile->save();
+            if ($model->save()) {  
+                $userProfile->firstname = $model->firstname;
+                $userProfile->lastname = $model->lastname;
+                if($userProfile->save()){
                 $customerReferralSource->load($request->post());
                 if($customerReferralSource->referralSourceId) {
                     if (!$customerReferralSource->referralSource->isOther()) {
@@ -624,6 +627,10 @@ class UserController extends BaseController
                 return [
                    'status' => true,
                 ];
+            }
+            else {
+                print_r($userProfile->getErrors());die('coming');
+            }
             } else {
                 $errors = ActiveForm::validate($model);
                 return [
