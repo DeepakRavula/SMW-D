@@ -40,8 +40,14 @@ use common\models\Lesson;
                 'attribute' => 'price',
                 'contentOptions' => ['class' => 'text-right'],
                 'headerOptions' => ['class' => 'text-right'],
-                'value' => function ($data) {
-                    return Yii::$app->formatter->asCurrency($data->netPrice);
+                'value' => function ($data) use ($model) {
+                    $enrolment = Enrolment::find()
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->andWhere(['courseId' => $data->courseId])
+                        ->student($model->id)
+                        ->one();
+                    return Yii::$app->formatter->asCurrency(round($data->getGroupNetPrice($enrolment), 2));
                 },
             ],
             [
@@ -49,13 +55,13 @@ use common\models\Lesson;
                 'attribute' => 'owing',
                 'contentOptions' => ['class' => 'text-right'],
                 'headerOptions' => ['class' => 'text-right'],
-                'value' => function ($data) use ($model){
+                'value' => function ($data) use ($model) {
                     $enrolment = Enrolment::find()
-                    ->notDeleted()
-                    ->isConfirmed()
-                    ->andWhere(['courseId' => $data->courseId])
-                    ->student($model->id)
-                    ->one();
+                        ->notDeleted()
+                        ->isConfirmed()
+                        ->andWhere(['courseId' => $data->courseId])
+                        ->student($model->id)
+                        ->one();
                     return Yii::$app->formatter->asCurrency($data->getOwingAmount($enrolment->id));
                 },
             ],
