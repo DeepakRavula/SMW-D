@@ -62,7 +62,7 @@ use yii\bootstrap\ActiveForm;
         array_push($columns, [
             'label' => 'Amount',
             'attribute' => 'amount',
-            'value' => function ($data) {
+            'value' => function ($data) use($model) {
                 $enrolment = Enrolment::find()
                     ->notDeleted()
                     ->isConfirmed()
