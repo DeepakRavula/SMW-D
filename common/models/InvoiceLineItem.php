@@ -382,7 +382,7 @@ class InvoiceLineItem extends \yii\db\ActiveRecord
     public function canApplyCustomerDiscount()
     {
         return $this->invoice->user->hasDiscount() && !$this->invoice->isReversedInvoice()
-                && !$this->isOpeningBalance();
+                && !$this->isOpeningBalance() && !$this->isGroupLesson();
     }
 
     public function afterSave($insert, $changedAttributes)
