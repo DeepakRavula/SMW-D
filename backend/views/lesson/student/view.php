@@ -120,7 +120,7 @@ use common\models\LessonPayment;
                         if (!$enrolment->hasInvoice($lessonModel->id)) {
                             return Html::a('Create Invoice', $url, [
                                 'title' => Yii::t('yii', 'Create Invoice'),
-                                                            'class' => ['btn-success btn-sm']
+                                'class' => ['btn-success btn-sm']
                             ]);
                         }
                     },
@@ -138,7 +138,7 @@ use common\models\LessonPayment;
                                 'id' => 'view-payment',
                                 'url' => $url,
                                 'title' => Yii::t('yii', 'View Payment'),
-                                                            'class' => ['btn-info btn-sm']
+                                'class' => ['btn-info btn-sm']
                             ]);
                         }
                     }
