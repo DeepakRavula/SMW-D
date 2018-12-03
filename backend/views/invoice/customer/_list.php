@@ -38,12 +38,12 @@ use yii\widgets\ActiveForm;
             ],
             'email',
             [
-                'attribute' => 'phone',
-                'label' => 'Phone',
+                'attribute' => 'student',
+                'label' => 'student',
                 'value' => function ($data) {
-                    return !empty($data->user->phoneNumber->number) ? $data->user->phoneNumber->number : null;
-                },
-            ]
+                    return !empty($data->student) ? $data->getStudentsList() : null;
+                }
+            ],
         ]
     ]); ?>
 <?php Pjax::end(); ?>

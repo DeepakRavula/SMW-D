@@ -34,6 +34,7 @@ class InvoiceSearch extends Invoice
     public $summariseReport = false;
     public $number;
     public $customer;
+    public $student;
     public $proFormaInvoiceStatus;
     public $customerId;
     /**
@@ -45,7 +46,7 @@ class InvoiceSearch extends Invoice
             [['fromDate', 'toDate'], 'date', 'format' => 'php:M d,Y'],
             [['mailStatus', 'invoiceStatus', 'proFormaInvoiceStatus'], 'integer'],
             [['type', 'query', 'toggleAdditionalColumns', 'dateRange', 'invoiceDateRange',
-                'customer', 'dueFromDate', 'dueToDate', 'number', 'phone', 'summariseReport', 
+                'customer', 'student',  'dueFromDate', 'dueToDate', 'number', 'phone', 'summariseReport', 
                 'isPrint', 'isWeb', 'isMail', 'customerId'], 'safe'],
         ];
     }
@@ -124,7 +125,9 @@ class InvoiceSearch extends Invoice
 		}]);
 		$query->joinWith(['userContacts' => function ($query){
 				$query->joinWith(['phone']);
-			}]);
+            }]);
+            $query->joinWith(['student' => function ($query) {
+            }]);   
         }]);
         if ($this->number) {
 		    $query->andFilterWhere(['invoice.id' => $this->number]);
@@ -154,6 +157,10 @@ class InvoiceSearch extends Invoice
                     'asc' => ['date' => SORT_ASC],
                     'desc' => ['date' => SORT_DESC],
                 ],
+                'student' => [
+                    'asc' => ['student.first_name' => SORT_ASC],
+                    'desc' => ['student.first_name' => SORT_DESC],
+                ],    
             ]
         ]);
 	$dataProvider->sort->defaultOrder = [

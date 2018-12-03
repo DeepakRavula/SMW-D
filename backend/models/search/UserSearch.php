@@ -90,7 +90,9 @@ class UserSearch extends User
         $query->joinWith(['userContacts' => function ($query) {
 		    $query->joinWith('phone');
         }]);
-	    $query->joinWith('emails');
+        $query->joinWith('emails');
+        $query->joinWith(['student' => function ($query) {
+        }]);
         $dataProvider->setSort([
             'attributes' => [
                 'firstname' => [
@@ -105,9 +107,9 @@ class UserSearch extends User
                     'asc' => ['user_email.email' => SORT_ASC],
                     'desc' => ['user_email.email' => SORT_DESC],
                 ],
-		         'phone' => [
-                    'asc' => ['user_phone.number' => SORT_ASC],
-                    'desc' => ['user_phone.number' => SORT_DESC],
+		         'student' => [
+                    'asc' => ['student.first_name' => SORT_ASC],
+                    'desc' => ['student.first_name' => SORT_DESC],
                 ]
             ]
         ]);

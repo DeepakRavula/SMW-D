@@ -215,6 +215,13 @@ $this->params['action-button'] = $actionButton; ?>
                     },
                 ],
                 [
+                    'attribute' => 'student',
+                    'label' => 'Student',
+                    'value' => function ($data) {
+                        return !empty($data->user && $data->user->student) ? $data->user->getStudentsList() : null;
+                    },
+                ],
+                [
 		    'attribute' => 'phone',
                     'label' => 'Phone',
                     'value' => function ($data) {
