@@ -138,6 +138,10 @@ class InvoiceSearch extends Invoice
         } elseif ($this->customerId) {
             $query->andFilterWhere(['user.id' => $this->customerId ]); 
         }
+        if ($this->student) {
+		    $query->andFilterWhere(['like', 'student.first_name', $this->student])
+                  ->orFilterWhere(['like', 'student.last_name', $this->student]);
+        }
         $query->groupBy('invoice.id');
        	$dataProvider->setSort([
             'attributes' => [
