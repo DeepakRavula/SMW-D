@@ -226,7 +226,8 @@ class Course extends \yii\db\ActiveRecord
 
     public function getEnrolment()
     {
-        return $this->hasOne(Enrolment::className(), ['courseId' => 'id']);
+        return $this->hasOne(Enrolment::className(), ['courseId' => 'id'])
+            ->onCondition(['enrolment.isDeleted' => false]);
     }
     
     public function getRegularCourse()
