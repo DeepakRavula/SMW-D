@@ -46,12 +46,20 @@ use dosamigos\ckeditor\CKEditor;
 <script>
 	$(document).ready(function(){
 		$('#popup-modal .modal-dialog').css({'width': '1000px'});
-                        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
-                        $('.modal-save').show();
-                        $('.modal-save').text('Send');
-                        $('.modal-back').hide();
-                        $('.modal-mail').hide();
-                        $('.modal-button').hide();
-                        $('.modal-save-all').hide();
-	});
+        $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Email Preview</h4>');
+        $('.modal-save').show();
+        $('.modal-save').text('Send');
+        $('.modal-back').hide();
+        $('.modal-mail').hide();
+        $('.modal-button').hide();
+        $('.modal-save-all').hide();
+        CKEDITOR.on("instanceReady", function(e) {
+            var $frame = $(e.editor.container.$).find(".cke_wysiwyg_frame");
+            if ($frame) {
+                $frame.attr("title", "");
+            }
+        });
+    });
+
+
 	</script>
