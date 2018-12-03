@@ -1,5 +1,4 @@
 <?php
-
 $config = [
     'name' => 'Arcadia Academy of Music',
     'vendorPath' => dirname(dirname(__DIR__)).'/vendor',
@@ -35,7 +34,7 @@ $config = [
         ],
 
         'formatter' => [
-            'class' => 'yii\i18n\Formatter',
+            'class' => 'common\components\formatter\CustomFormatter',
             'dateFormat' => 'php:M d, Y',
             'datetimeFormat' => 'php:M d, Y g:i a',
             'timeFormat' => 'php:h:i a',
@@ -45,8 +44,8 @@ $config = [
             'timeZone' => 'US/Eastern',
             'defaultTimeZone' => 'US/Eastern',
             'numberFormatterOptions' => [
-// 			   NumberFormatter::MIN_FRACTION_DIGITS => 2,
-//			   NumberFormatter::MAX_FRACTION_DIGITS => 2,
+ 			//    NumberFormatter::MIN_FRACTION_DIGITS => 2,
+			//    NumberFormatter::MAX_FRACTION_DIGITS => 2,
             ]
         ],
 
