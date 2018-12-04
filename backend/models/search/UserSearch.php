@@ -92,7 +92,7 @@ class UserSearch extends User
 		    $query->joinWith('phone');
         }]);
         $query->joinWith('emails');
-        $query->joinWith(['student' => function ($query) use($locationId) {
+        $query->joinWith(['student' => function ($query) {
         }]);
         $dataProvider->setSort([
             'attributes' => [
