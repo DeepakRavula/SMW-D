@@ -533,6 +533,15 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->hasMany(Student::className(), ['customer_id' => 'id'])
             ->onCondition(['student.isDeleted' => false]);
     }
+    public function getStudentsList() 
+    {
+        $studentsList = [];
+        $students = $this->student;
+        foreach($students as $student) {
+            $studentsList[] = $student->fullName;
+        }
+        return implode(", ", $studentsList);
+    }
     public function getCourses()
     {
         return $this->hasMany(Course::className(), ['teacherId' => 'id'])
