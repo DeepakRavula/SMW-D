@@ -120,14 +120,14 @@ class InvoiceSearch extends Invoice
             } 
         }
         $query->andFilterWhere(['type' => $this->type]);
-		$query->joinWith(['user' => function ($query) {
+		$query->joinWith(['user' => function ($query) use($locationId) {
 			$query->joinWith(['userProfile' => function ($query) {
 		}]);
 		$query->joinWith(['userContacts' => function ($query){
 				$query->joinWith(['phone']);
             }]);
-            $query->joinWith(['student' => function ($query) {
-               
+            $query->joinWith(['student' => function ($query) use($locationId) {
+               $query->location($locationId);
             }]);   
         }]);
         if ($this->number) {
