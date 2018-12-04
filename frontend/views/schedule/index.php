@@ -69,11 +69,6 @@ $this->title = 'Schedule ';
                 ])->label(false);
             ?>
         </div>
-        <div id="admin-login" class="pull-center">
-            <h2>
-                Schedule for <?= (new \DateTime())->format('l, F jS, Y') . ' ' . $name; ?>
-            </h2>
-        </div>
         <div id="show-all" class="m-t-35 pull-right">
             <label>
                 <input type="checkbox" id="schedule-show-all" name="Schedule[showAll]"> 
