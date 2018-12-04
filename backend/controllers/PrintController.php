@@ -183,10 +183,7 @@ class PrintController extends BaseController
         $request = Yii::$app->request;
         $invoiceSearchModel = new InvoiceSearch();
         $invoiceSearchModel->dateRange = (new\DateTime())->format('M d,Y') . ' - ' . (new\DateTime())->format('M d,Y');
-        $invoiceSearch = $request->get('InvoiceSearch');
-        
-        if (!empty($invoiceSearch)) {
-            $invoiceSearchModel->dateRange = $invoiceSearch['dateRange'];
+        if ($invoiceSearchModel->load($request->get())) {
             list($invoiceSearchModel->fromDate, $invoiceSearchModel->toDate) = explode(' - ', $invoiceSearchModel->dateRange);
         }
         $timeVoucher = InvoiceLineItem::find()
