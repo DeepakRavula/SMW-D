@@ -93,7 +93,6 @@ class UserSearch extends User
         }]);
         $query->joinWith('emails');
         $query->joinWith(['student' => function ($query) use($locationId) {
-            $query->location($locationId);
         }]);
         $dataProvider->setSort([
             'attributes' => [
