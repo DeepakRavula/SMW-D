@@ -72,9 +72,7 @@ class GroupLessonController extends BaseController
             $discount->load($post);
             $discount->save();
             $model->save();
-            $response = [
-                'status' => true,
-            ];
+            return $this->redirect(['/enrolment/group-preview', 'enrolmentId' => $groupLesson->enrolmentId]);
         } else {
             return [
                 'status' => true,

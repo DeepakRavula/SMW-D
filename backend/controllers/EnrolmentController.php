@@ -62,7 +62,7 @@ class EnrolmentController extends BaseController
                 'class' => ContentNegotiator::className(),
                 'only' => ['add', 'delete', 'edit', 'schedule', 'group', 'update', 'full-delete',
                     'edit-end-date', 'edit-program-rate', 'reschedule', 'update-preferred-payment-status',
-                    'group-confirm', 'group-enrolment-delete'
+                    'group-confirm', 'group-enrolment-delete', 'group-apply', 'group-preview'
                 ],
                 'formatParam' => '_format',
                 'formats' => [
@@ -76,7 +76,8 @@ class EnrolmentController extends BaseController
                         'allow' => true,
                         'actions' => ['index', 'view', 'group', 'edit', 'edit-program-rate', 
                             'create', 'add', 'confirm', 'update', 'delete', 'edit-end-date',
-                            'reschedule', 'cancel', 'update-preferred-payment-status', 'group-confirm', 'group-enrolment-delete'
+                            'reschedule', 'cancel', 'update-preferred-payment-status', 'group-confirm', 
+                            'group-enrolment-delete', 'group-apply', 'group-preview'
                         ],
                         'roles' => ['manageEnrolments'],
                     ],
@@ -178,6 +179,12 @@ class EnrolmentController extends BaseController
     {
         $model = new GroupCourseForm();
         $model->load(Yii::$app->request->get());
+        $unconfirmedEnrolments = Enrolment::find()
+            ->notConfirmed()
+            ->all();
+        foreach ($unconfirmedEnrolments as $unconfirmedEnrolment) {
+            $unconfirmedEnrolment->delete();
+        }
         $post = Yii::$app->request->post();
         $model->load($post);
         $model->discountType = EnrolmentDiscount::VALUE_TYPE_DOLLAR;
@@ -190,28 +197,75 @@ class EnrolmentController extends BaseController
         ];
     }
 
-    public function actionGroupConfirm()
+    public function actionGroupApply()
     {
         $model = new GroupCourseForm();
         $model->load(Yii::$app->request->get());
         $enrolmentModel = new Enrolment();
         $enrolmentModel->studentId = $model->studentId;
         $enrolmentModel->paymentFrequencyId = PaymentFrequency::LENGTH_FULL;
-        $enrolmentModel->isConfirmed = true;
+        $enrolmentModel->isConfirmed = false;
         $enrolmentModel->courseId = $model->courseId;
         $course = Course::findOne($model->courseId);
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
+            $enrolmentModel->studentId = $model->studentId;
+            if ($enrolmentModel->save()) {
+                $model->enrolmentId = $enrolmentModel->id;
+                $model->setDiscount();
+                $lessonDataProvider = new ActiveDataProvider([
+                    'query' => Lesson::find()
+                        ->andWhere(['courseId' => $course->id])
+                        ->notCanceled()
+                        ->isConfirmed()
+                        ->notDeleted()
+                        ->orderBy(['lesson.date' => SORT_ASC]),
+                    'pagination' => false,
+                ]);
+                $data = $this->renderAjax('/student/enrolment/_group-enrolment-preview', [
+                    'model' => $enrolmentModel,
+                    'lessonDataProvider' => $lessonDataProvider
+                ]);
+                return $this->actionGroupPreview($enrolmentModel->id);
+            }
+        }
+    }
+
+    public function actionGroupPreview($enrolmentId)
+    {
+        $enrolmentModel = Enrolment::findOne($enrolmentId);
+        $lessonDataProvider = new ActiveDataProvider([
+            'query' => Lesson::find()
+                ->andWhere(['courseId' => $enrolmentModel->course->id])
+                ->notCanceled()
+                ->isConfirmed()
+                ->notDeleted()
+                ->orderBy(['lesson.date' => SORT_ASC]),
+            'pagination' => false,
+        ]);
+        $data = $this->renderAjax('/student/enrolment/_group-enrolment-preview', [
+            'model' => $enrolmentModel,
+            'lessonDataProvider' => $lessonDataProvider
+        ]);
+        return [
+            'status' => true,
+            'data' => $data
+        ];
+    }
+
+    public function actionGroupConfirm($enrolmentId)
+    {
+        $enrolmentModel = Enrolment::findOne($enrolmentId);
+        $enrolmentModel->isConfirmed = true;
+        $post = Yii::$app->request->post();
+        if ($post) {
             if ($course->hasExtraCourse()) {
                 foreach ($course->extraCourses as $extraCourse) {
                     $extraCourse->studentId = $model->studentId;
                     $enrolment = $extraCourse->createExtraLessonEnrolment();
                 }
             }
-            $enrolmentModel->studentId = $model->studentId;
             if ($enrolmentModel->save()) {
-                $model->enrolmentId = $enrolmentModel->id;
-                $model->setDiscount();
                 $enrolmentModel->setStatus();
                 $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
                 $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
