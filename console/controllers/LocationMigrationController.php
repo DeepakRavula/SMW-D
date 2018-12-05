@@ -77,7 +77,6 @@ class LocationMigrationController extends Controller
                 if(!$newLocationAvailability->save()){
                     print_r($newLocationAvailability->getErrors());
                 }
-                $locationAvailability->delete();
             }
 
                 
