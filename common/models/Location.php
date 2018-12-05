@@ -181,21 +181,21 @@ class Location extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         if ($insert) {
-            $model = new LocationAvailability();
-            $model->locationId = $this->id;
-            $model->fromTime   = LocationAvailability::DEFAULT_FROM_TIME;
-            $model->toTime     = LocationAvailability::DEFAULT_TO_TIME;
-            for ($day = 1; $day < 8; $day ++) {
-                $model->id          = null;
-                $model->isNewRecord = true;
-                $model->day         = $day;
-                $model->type        = LocationAvailability::TYPE_OPERATION_TIME;
-                $model->save();
-                $model->id          = null;
-                $model->isNewRecord = true;
-                $model->type        = LocationAvailability::TYPE_SCHEDULE_TIME;
-                $model->save();
-            }
+            // $model = new LocationAvailability();
+            // $model->locationId = $this->id;
+            // $model->fromTime   = LocationAvailability::DEFAULT_FROM_TIME;
+            // $model->toTime     = LocationAvailability::DEFAULT_TO_TIME;
+            // for ($day = 1; $day < 8; $day ++) {
+            //     $model->id          = null;
+            //     $model->isNewRecord = true;
+            //     $model->day         = $day;
+            //     $model->type        = LocationAvailability::TYPE_OPERATION_TIME;
+            //     $model->save();
+            //     $model->id          = null;
+            //     $model->isNewRecord = true;
+            //     $model->type        = LocationAvailability::TYPE_SCHEDULE_TIME;
+            //     $model->save();
+            // }
             $locationDebt = new LocationDebt();
             $locationDebt->locationId = $this->id;
             $locationDebt->type = LocationDebt::TYPE_ROYALTY;
