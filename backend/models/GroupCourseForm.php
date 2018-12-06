@@ -48,12 +48,21 @@ class GroupCourseForm extends Model
             $discount->discountType = $this->discountType;
             $discount->type = EnrolmentDiscount::TYPE_GROUP;
             $discount->save();
-            foreach ($enrolment->lessons as $lesson) {
+            $lessonCount = count($enrolment->course->lessons);
+            if ($this->discountType == EnrolmentDiscount::VALUE_TYPE_DOLLAR) {
+                $lastLessonPrice = $this->discount - (round($this->discount / $lessonCount, 2) * ($lessonCount - 1));
+                $pricePerLesson = round($this->discount / $lessonCount, 2);
+            }
+            foreach ($enrolment->lessons as $i => $lesson) {
                 $lessonDiscount = new LessonDiscount();
                 $lessonDiscount->lessonId = $lesson->id;
                 $lessonDiscount->enrolmentId = $this->enrolmentId;
                 if ($this->discountType == EnrolmentDiscount::VALUE_TYPE_DOLLAR) {
-                    $lessonDiscount->value = $this->discount / count($enrolment->course->lessons);
+                    if ($i == ($lessonCount -1)) {
+                        $lessonDiscount->value = $lastLessonPrice;
+                    } else {
+                        $lessonDiscount->value = $pricePerLesson;
+                    }
                     $lessonDiscount->valueType = LessonDiscount::VALUE_TYPE_DOLLAR;
                 } else {
                     $lessonDiscount->value = $this->discount;
