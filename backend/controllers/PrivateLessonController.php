@@ -337,14 +337,14 @@ class PrivateLessonController extends BaseController
         if ($post) {
             foreach ($lessonIds as $lessonId) {
                 $model = $this->findModel($lessonId);
-                $lineItemDiscount = LessonMultiDiscount::loadLineItemDiscount([$lessonId]);
-                $customerDiscount = LessonMultiDiscount::loadCustomerDiscount([$lessonId]);
+                $lineItemDiscount = LessonMultiDiscount::loadLineItemDiscounts($lessonId);
+                $customerDiscount = LessonMultiDiscount::loadCustomerDiscounts($lessonId);
                 $lineItemDiscount->load($post);
                 $customerDiscount->load($post);
                 $lineItemDiscount->save();
                 $customerDiscount->save();
-                $paymentFrequencyDiscount = LessonMultiDiscount::loadPaymentFrequencyDiscount([$lessonId]);
-                $multiEnrolmentDiscount = LessonMultiDiscount::loadEnrolmentDiscount([$lessonId]);
+                $paymentFrequencyDiscount = LessonMultiDiscount::loadPaymentFrequencyDiscounts($lessonId);
+                $multiEnrolmentDiscount = LessonMultiDiscount::loadEnrolmentDiscounts($lessonId);
                 $paymentFrequencyDiscount->load($post);
                 $multiEnrolmentDiscount->load($post);
                 $paymentFrequencyDiscount->save();

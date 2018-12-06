@@ -4,6 +4,7 @@ namespace backend\models\lesson\discount;
 
 use yii\base\Model;
 use common\models\Lesson;
+use common\models\discount\LessonDiscount;
 
 /**
  * Create user form.
@@ -44,7 +45,6 @@ class LessonMultiDiscount extends Model
         }
         $lessonId = end($lessonIds);
         return $model->loadPaymentFrequencyDiscount($isPaymentFrequencyDiscountValueDiff);
-        ;
     }
     
     public static function loadCustomerDiscount($lessonIds)
@@ -80,6 +80,34 @@ class LessonMultiDiscount extends Model
             }
         }
         $lessonId = end($lessonIds);
+        return $model->loadMultiEnrolmentDiscount($isMultiEnrolmentDiscountValueDiff);
+    }
+
+    public static function loadLineItemDiscounts($lessonId)
+    {
+        $isLessonDiscountValueDiff = false;
+        $model = Lesson::findOne($lessonId);
+        return $model->loadLineItemDiscount($isLessonDiscountValueDiff);
+    }
+    
+    public static function loadPaymentFrequencyDiscounts($lessonId)
+    {
+        $isPaymentFrequencyDiscountValueDiff = false;
+        $model = Lesson::findOne($lessonId);
+        return $model->loadPaymentFrequencyDiscount($isPaymentFrequencyDiscountValueDiff);
+    }
+    
+    public static function loadCustomerDiscounts($lessonId)
+    {
+        $isCustomerDiscountValueDiff = false;
+        $model = Lesson::findOne($lessonId);
+        return $model->loadCustomerDiscount($isCustomerDiscountValueDiff);
+    }
+    
+    public static function loadEnrolmentDiscounts($lessonId)
+    {
+        $isMultiEnrolmentDiscountValueDiff = false;
+        $model = Lesson::findOne($lessonId);
         return $model->loadMultiEnrolmentDiscount($isMultiEnrolmentDiscountValueDiff);
     }
 }

@@ -17,7 +17,6 @@ class LineItemLessonDiscount extends Base
      */
     public function setModel($model, $value = null)
     {
-        $this->lessonId = $model->lessonId;
         $this->value = $model->value;
         $this->valueType = $model->valueType;
         if ($value) {

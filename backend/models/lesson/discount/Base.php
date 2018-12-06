@@ -59,13 +59,13 @@ class Base extends Model
                 $lesson = Lesson::findOne($this->lessonId);
                 $enrolmentId = $lesson->enrolment->id;
             }
-            $lessonDiscount = $this->getDiscountModel($this->enrolmentId);
+            $lessonDiscount = $this->getDiscountModel($enrolmentId);
             $lessonDiscount->lessonId = $this->lessonId;
-            if (round($lessonDiscount->value, 2) !== round($this->value, 2)) {
+            if (round($lessonDiscount->value, 2) !== round($this->value, 2) || $this->value) {
                 $lessonDiscount->value = $this->value;
             }
             $lessonDiscount->valueType = (int) $this->valueType;
-            $lessonDiscount->enrolmentId = $this->enrolmentId;
+            $lessonDiscount->enrolmentId = $enrolmentId;
             $lessonDiscount->type = $this->type;
             if (!$lessonDiscount->save()) {
                 Yii::error('Line item discount error: '.VarDumper::dumpAsString($lessonDiscount->getErrors()));

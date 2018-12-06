@@ -17,7 +17,6 @@ class EnrolmentLessonDiscount extends Base
      */
     public function setModel($model, $value = null)
     {
-        $this->lessonId = $model->lessonId;
         $this->value = $model->value;
         if ($value) {
             $this->value = null;
