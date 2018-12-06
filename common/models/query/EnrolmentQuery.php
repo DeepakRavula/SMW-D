@@ -62,6 +62,11 @@ class EnrolmentQuery extends \yii\db\ActiveQuery
         return $this->andWhere(['enrolment.isConfirmed' => true]);
     }
 
+    public function notConfirmed()
+    {
+        return $this->andWhere(['enrolment.isConfirmed' => false]);
+    }
+
     public function isRegular()
     {
         return $this->joinWith(['course' => function ($query) {

@@ -10,6 +10,7 @@ use common\models\GroupLesson;
 use yii\filters\ContentNegotiator;
 use common\components\controllers\BaseController;
 use common\models\Lesson;
+use yii\helpers\Url;
 
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.
@@ -74,9 +75,10 @@ class GroupLessonController extends BaseController
             $model->save();
             $response = [
                 'status' => true,
+                'dataUrl' => Url::to(['/enrolment/group-preview', 'enrolmentId' => $groupLesson->enrolmentId])
             ];
         } else {
-            return [
+            $response = [
                 'status' => true,
                 'data' => $data,
             ];

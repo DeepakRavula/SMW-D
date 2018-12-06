@@ -52,6 +52,22 @@ Modal::begin([
             $('.modal-mail').hide();
             $('.modal-save').attr('message', null);
             $('#modal-popup-warning-notification').fadeOut();
+        },
+        renderUrlData: function(url) {
+            $.ajax({
+                url : url,
+                type   : 'get',
+                dataType: "json",
+                success: function(response)
+                {
+                    $('#modal-spinner').hide();
+                    if (response.status) {
+                        $('#modal-content').html(response.data);
+                    } else {
+                        $(document).trigger("modal-error", response);
+                    }
+                }
+            });
         }
     };
 
@@ -85,6 +101,8 @@ Modal::begin([
                         $('#modal-content').html(response.data);
                         $('.modal-back').show();
                         $(document).trigger("modal-next", response);
+                    } else if (!$.isEmptyObject(response.dataUrl)) {
+                        modal.renderUrlData(response.dataUrl);
                     } else {
                         $(document).trigger("modal-success", response);
                         $('#popup-modal').modal('hide'); 

@@ -12,6 +12,7 @@ use common\components\controllers\BaseController;
 use common\models\Lesson;
 use common\models\Enrolment;
 use common\models\discount\EnrolmentDiscount;
+use yii\bootstrap\ActiveForm;
 
 /**
  * PrivateLessonController implements the CRUD actions for PrivateLesson model.

@@ -194,7 +194,7 @@ class Enrolment extends \yii\db\ActiveRecord
                 $this->addError($attribute, "You can't edit PF & discounts.");
             }
         } else {
-            if (!$this->hasUnpaidLesson()) {
+            if ($this->hasPaidLesson()) {
                 $this->addError($attribute, "You can't edit discounts.");
             }
         }
@@ -229,6 +229,22 @@ class Enrolment extends \yii\db\ActiveRecord
                 ->andWhere(['enrolmentId' => $this->id, 'lessonId' => $lesson->id])
                 ->one();
             if (!$payment) {
+                $status = true;
+                break;
+            }
+        }
+        return $status;
+    }
+
+    public function hasPaidLesson()
+    {
+        $status = false;
+        foreach ($this->lessonsByDate as $lesson) {
+            $payment = LessonPayment::find()
+                ->notDeleted()
+                ->andWhere(['enrolmentId' => $this->id, 'lessonId' => $lesson->id])
+                ->one();
+            if ($payment) {
                 $status = true;
                 break;
             }

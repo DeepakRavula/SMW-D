@@ -160,15 +160,13 @@ $this->params['label'] = $this->render('_title', [
     $(document).on('modal-success', function(event, params) {
         if (!$.isEmptyObject(params.url)) {
             window.location.href = params.url;
-        }
-        else
-        {
-                    $.pjax.reload({container: "#enrolment-list",timeout: 6000, async:false});
-                    $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
-                    $.pjax.reload({container: "#student-log",timeout: 6000, async:false});
-                    $.pjax.reload({container: "#student-exam-result-listing",timeout: 6000, async:false});
-                    $.pjax.reload({container: "#student-note",timeout: 6000, async:false});
-                    $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
+        } else {
+            $.pjax.reload({container: "#enrolment-list",timeout: 6000, async:false});
+            $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
+            $.pjax.reload({container: "#student-log",timeout: 6000, async:false});
+            $.pjax.reload({container: "#student-exam-result-listing",timeout: 6000, async:false});
+            $.pjax.reload({container: "#student-note",timeout: 6000, async:false});
+            $.pjax.reload({container: "#lesson-index",timeout: 6000, async:false});
         }
         return false;
     });

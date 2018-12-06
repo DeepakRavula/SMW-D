@@ -17,7 +17,7 @@ use kartik\select2\Select2;
 ?>  
 
 <?php $form = ActiveForm::begin([
-    'action' => Url::to(['enrolment/group-confirm', 'GroupCourseForm[studentId]' => $model->studentId, 'GroupCourseForm[courseId]' => $model->courseId]),
+    'action' => Url::to(['enrolment/group-apply', 'GroupCourseForm[studentId]' => $model->studentId, 'GroupCourseForm[courseId]' => $model->courseId]),
     'id' => 'modal-form'
 ]); ?>
 
@@ -85,10 +85,10 @@ use kartik\select2\Select2;
 <script>
     $(document).ready(function () {
         var studentId = '<?= $model->studentId ?>';
-        $('#popup-modal').modal('show');
+        //$('#popup-modal').modal('show');
         $('.modal-save').show();
         $('#modal-back').hide();
-        $('.modal-save').text('Confirm');
+        $('.modal-save').text('Preview');
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Discount Detail</h4>');
         if (!studentId) {
             $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Enrolment Detail</h4>');
