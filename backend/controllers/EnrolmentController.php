@@ -256,28 +256,26 @@ class EnrolmentController extends BaseController
     public function actionGroupConfirm($enrolmentId)
     {
         $enrolmentModel = Enrolment::findOne($enrolmentId);
+        $course = Course::findOne($enrolmentModel->courseId);
         $enrolmentModel->isConfirmed = true;
-        $post = Yii::$app->request->post();
-        if ($post) {
-            if ($course->hasExtraCourse()) {
-                foreach ($course->extraCourses as $extraCourse) {
-                    $extraCourse->studentId = $model->studentId;
-                    $enrolment = $extraCourse->createExtraLessonEnrolment();
-                }
+        if ($course->hasExtraCourse()) {
+            foreach ($course->extraCourses as $extraCourse) {
+                $extraCourse->studentId = $enrolmentModel->studentId;
+                $enrolment = $extraCourse->createExtraLessonEnrolment();
             }
-            if ($enrolmentModel->save()) {
-                $enrolmentModel->setStatus();
-                $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
-                $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
-                    [new StudentLog(), 'addGroupEnrolment'],
-                    ['loggedUser' => $loggedUser]
-                );
-                $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
-                return [
-                    'status' => true,
-                    'url' => Url::to(['/course/view', 'id' => $course->id])
-                ];
-            }
+        }
+        if ($enrolmentModel->save()) {
+            $enrolmentModel->setStatus();
+            $loggedUser = User::findOne(['id' => Yii::$app->user->id]);
+            $enrolmentModel->on(Enrolment::EVENT_AFTER_INSERT,
+                [new StudentLog(), 'addGroupEnrolment'],
+                ['loggedUser' => $loggedUser]
+            );
+            $enrolmentModel->trigger(Enrolment::EVENT_AFTER_INSERT);
+            return [
+                'status' => true,
+                'url' => Url::to(['/course/view', 'id' => $course->id])
+            ];
         }
     }
 
