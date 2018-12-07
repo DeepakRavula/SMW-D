@@ -22,13 +22,14 @@ use yii\base\Model;
  */
 class GroupLesson extends Model
 {
+    public $isPreview = false;
     public $lessonId;
     public $enrolmentId;
 
     public function rules()
     {
         return [
-            [['lessonId', 'enrolmentId'], 'safe']
+            [['lessonId', 'enrolmentId', 'isPreview'], 'safe']
         ];
     }
     

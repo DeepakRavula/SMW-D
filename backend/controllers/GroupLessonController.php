@@ -75,7 +75,7 @@ class GroupLessonController extends BaseController
             $model->save();
             $response = [
                 'status' => true,
-                'dataUrl' => Url::to(['/enrolment/group-preview', 'enrolmentId' => $groupLesson->enrolmentId])
+                'dataUrl' => $groupLesson->isPreview ? Url::to(['/enrolment/group-preview', 'enrolmentId' => $groupLesson->enrolmentId]) : null
             ];
         } else {
             $response = [
