@@ -960,6 +960,15 @@ class Invoice extends \yii\db\ActiveRecord
         return !$this->lineItem->isLessonCredit() && !$this->lineItem->isOpeningBalance()
             && !$this->lineItem->isMisc();
     }
+    public function getStudentName()
+    {
+        if (empty($this->lineItem) || !$this->hasStudent()) {
+            return null;
+        } else {
+            return !empty($this->lineItem->enrolment->student->fullName) ?
+                $this->lineItem->enrolment->student->fullName : null;
+        }
+    }
 
     public function hasManualPayments()
     {
