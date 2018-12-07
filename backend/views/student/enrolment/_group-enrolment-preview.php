@@ -84,13 +84,14 @@ use yii\helpers\Url;
 <script>
     $(document).ready(function () {
         $('.modal-save').show();
+        $('.modal-cancel').show();
         $('#modal-back').hide();
         $('.modal-save').text('Confirm');
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Lesson Detail</h4>');
         $('#popup-modal .modal-dialog').css({'width': '800px'});
     });
 
-    $(document).on('click', '.group-lesson-discount-edit', function () {
+    $(document).off('click', '.group-lesson-discount-edit').on('click', '.group-lesson-discount-edit', function () {
         var url =  $(this).attr('action-url');
         $.ajax({
             url    : url,

@@ -66,7 +66,8 @@ class GroupLessonController extends BaseController
         $data = $this->renderAjax('_form-apply-discount', [
             'model' => $model,
             'groupLesson' => $groupLesson,
-            'discount' => $discount
+            'discount' => $discount,
+            'isPreview' => $groupLesson->isPreview
         ]);
         $post = Yii::$app->request->post();
         if ($post) {

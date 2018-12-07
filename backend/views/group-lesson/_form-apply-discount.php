@@ -15,7 +15,8 @@ use yii\helpers\Url;
 <div id="apply-discount-modal" class="apply-discount-form">
     <?php $form = ActiveForm::begin([
         'id' => 'modal-form',
-        'action' => Url::to(['group-lesson/apply-discount', 'GroupLesson[lessonId]' => $groupLesson->lessonId, 'GroupLesson[enrolmentId]' => $groupLesson->enrolmentId]),
+        'action' => Url::to(['group-lesson/apply-discount', 'GroupLesson[lessonId]' => $groupLesson->lessonId, 
+            'GroupLesson[enrolmentId]' => $groupLesson->enrolmentId, 'GroupLesson[isPreview]' => $isPreview]),
     ]); ?>
     <div class="row">
         <div class="col-xs-3 pull-left">
@@ -63,6 +64,10 @@ use yii\helpers\Url;
         $('#popup-modal .modal-dialog').css({'width': '400px'});
         $('#popup-modal').find('.modal-header').html('<h4 class="m-0">Edit Discount</h4>');
         var button = '<?= $discount->valueType;?>';
+        var isPreview = '<?= $isPreview;?>';
+        if (isPreview) {
+            $('.modal-cancel').hide();
+        }
         if (button == '1') {
             $('#on').addClass('btn-info');
             $('#off').removeClass('btn-info');
