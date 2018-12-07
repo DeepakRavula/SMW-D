@@ -133,10 +133,8 @@ use common\models\LessonPayment;
                             ->andWhere(['enrolmentId' => $enrolment->id, 'lessonId' => $lessonModel->id])
                             ->all();
                         if ($lessonPayment) {
-                            $url = Url::to(['lesson/payment', 'lessonId' => $lessonModel->id, 'enrolmentId' => $enrolment->id]);
-                            return Html::a('View Payment', null, [
+                                return Html::a('View Payment', null, [
                                 'id' => 'view-payment',
-                                'url' => $url,
                                 'title' => Yii::t('yii', 'View Payment'),
                                 'class' => ['btn-info btn-sm']
                             ]);
@@ -149,3 +147,26 @@ use common\models\LessonPayment;
     <?php \yii\widgets\Pjax::end(); ?>
 	</div>
 </div>
+
+<script>
+    $(document).on("click", "#view-payment", function() {
+        var lessonPaymentId = <?= $lessonModel->lessonPayment->id; ?>;
+        alert(lessonPaymentId)
+        var params = $.param({'PaymentEditForm[lessonPaymentId]': lessonPaymentId });
+        var customUrl = '<?=Url::to(['payment/view']);?>?' + params;
+        $.ajax({
+            url: customUrl,
+            type: 'get',
+            dataType: "json",
+            data: $(this).serialize(),
+            success: function (response)
+            {
+                if (response.status) {
+                    $('#modal-content').html(response.data);
+                    $('#popup-modal').modal('show');
+                }
+            }
+        });
+        return false;
+    }); 
+</script>
