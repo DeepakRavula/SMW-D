@@ -869,7 +869,8 @@ class Lesson extends \yii\db\ActiveRecord
                 $this->isExploded = false;
             }
             if (empty($this->programRate)) {
-                $this->programRate = $this->courseProgramRate->programRate;
+                $rate = $this->courseProgramRate->programRate;
+                $this->programRate = $rate;
             }
             if (empty($this->teacherRate)) {
                 $qualification = Qualification::findOne(['teacher_id' => $this->teacherId,

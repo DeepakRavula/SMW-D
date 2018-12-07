@@ -23,7 +23,7 @@ use yii\helpers\Url;
     <?php echo GridView::widget([
         'dataProvider' => $lessonDataProvider,
         'tableOptions' => ['class' => 'table table-condensed'],
-        'rowOptions' => ['class' => 'group-lesson-discount-edit'],
+        'rowOptions' => ['class' => 'group-lesson-discount'],
         'summary' => false,
         'emptyText' => false,
         'options' => [
@@ -60,6 +60,21 @@ use yii\helpers\Url;
                 'value' => function ($data) use ($model) {
                     return Yii::$app->formatter->asCurrency(round($data->getGroupSubTotal($model), 2));
                 },
+            ],
+            [
+                'contentOptions' => ['style' => 'width:80px;'],
+                'class' => 'yii\grid\ActionColumn',              
+                'template' => '{update}', 
+                'buttons' => [
+                    'update' => function ($url, $lesson) use ($model) {
+                        $action = Url::to(['group-lesson/apply-discount', 'GroupLesson[lessonId]' => $lesson->id, 'GroupLesson[enrolmentId]' => $model->id, 'GroupLesson[isPreview]' => true]);
+                        return Html::a('', '#', [
+                            'title' => Yii::t('yii', 'Update'),
+                            'class' => ['glyphicon glyphicon-pencil group-lesson-discount-edit'],
+                            'action-url' => $action
+                        ]);
+                    }
+                ]
             ]
         ],
     ]); ?>
@@ -76,9 +91,9 @@ use yii\helpers\Url;
     });
 
     $(document).on('click', '.group-lesson-discount-edit', function () {
-        var params = $.param({ 'GroupLesson[lessonId]': $(this).data('key') });
+        var url =  $(this).attr('action-url');
         $.ajax({
-            url    : '<?= Url::to(['group-lesson/apply-discount', 'GroupLesson[enrolmentId]' => $model->id]); ?>&' + params,
+            url    : url,
             type   : 'get',
             dataType: "json",
             success: function(response)

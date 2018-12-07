@@ -182,9 +182,6 @@ class EnrolmentController extends BaseController
         $unconfirmedEnrolments = Enrolment::find()
             ->notConfirmed()
             ->all();
-        foreach ($unconfirmedEnrolments as $unconfirmedEnrolment) {
-            $unconfirmedEnrolment->delete();
-        }
         $post = Yii::$app->request->post();
         $model->load($post);
         $model->discountType = EnrolmentDiscount::VALUE_TYPE_DOLLAR;
