@@ -27,7 +27,7 @@ $columns = [
         'attribute' => 'amount',
         'format' => 'currency',
         'value' => function ($data) {
-            return round($data->amount, 2);
+            return round($data->payment->amount, 2);
         },
         'headerOptions' => ['class' => 'text-right'],
         'contentOptions' => ['class' => 'text-right']
