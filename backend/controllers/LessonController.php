@@ -730,15 +730,15 @@ class LessonController extends BaseController
 
     public function actionPayment($lessonId, $enrolmentId)
     {
-        $groupLessonpayments = Lesson::find()
-                ->groupLessons()
-                ->notDeleted()
-                ->joinWith(['lessonPayment' => function ($query) use ($lessonId, $enrolmentId) {
-                    $query->andWhere(['lesson_payment.lessonId' => $lessonId,
-                            'lesson_payment.enrolmentId' => $enrolmentId]);
-                }]);
+        $payments = LessonPayment::find()
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted();
+        }])
+        ->andWhere(['lesson_payment.lessonId' => $lessonId, 'lesson_payment.enrolmentId' => $enrolmentId])
+        ->notDeleted();
+       
         $paymentsDataProvider = new ActiveDataProvider([
-            'query' => $groupLessonpayments,
+            'query' => $payments,
         ]);
         $data = $this->renderAjax('payment/view', [
             'paymentsDataProvider' => $paymentsDataProvider
