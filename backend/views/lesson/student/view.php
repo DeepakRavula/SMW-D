@@ -134,7 +134,7 @@ use common\models\LessonPayment;
                             ->all();
                         if ($lessonPayment) {
                             $url = Url::to(['lesson/payment', 'lessonId' => $lessonModel->id, 'enrolmentId' => $enrolment->id]);
-                                return Html::a('View Payment', null, [
+                            return Html::a('View Payment', null, [
                                 'id' => 'view-payment',
                                 'url' => $url,
                                 'title' => Yii::t('yii', 'View Payment'),
