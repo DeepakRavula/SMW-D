@@ -19,7 +19,7 @@ use yii\bootstrap\ActiveForm;
 <?php $lessonCount = $lessonDataProvider->getCount(); ?>
 <?php $groupLessonCount = $groupLessonDataProvider->getCount(); ?>
 <?php $invoiceCount = $invoiceDataProvider->getCount(); ?>
-<?php if ($lessonCount <= 0 && $invoiceCount<=0 && $model->amount>0) : ?>
+<?php if ($lessonCount <= 0 && $groupLessonCount <= 0 && $invoiceCount<=0 && $model->amount>0) : ?>
 <div class="text-center"><h2>You didn't select any lessons or invoices</h2><br/><h4>so we'll save this payment as credit to your customer account</h4> </div>
 <?php else:?>
 <?php if ($lessonCount > 0) : ?>

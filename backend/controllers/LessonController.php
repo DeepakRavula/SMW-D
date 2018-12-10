@@ -730,11 +730,13 @@ class LessonController extends BaseController
 
     public function actionPayment($lessonId, $enrolmentId)
     {
-        $payments = Payment::find()
-                ->joinWith(['lessonCredit' => function ($query) use ($lessonId, $enrolmentId) {
-                    $query->andWhere(['lesson_payment.lessonId' => $lessonId,
-                            'lesson_payment.enrolmentId' => $enrolmentId]);
-                }]);
+        $payments = LessonPayment::find()
+            ->joinWith(['payment' => function ($query) {
+                $query->notDeleted();
+        }])
+        ->andWhere(['lesson_payment.lessonId' => $lessonId, 'lesson_payment.enrolmentId' => $enrolmentId])
+        ->notDeleted();
+       
         $paymentsDataProvider = new ActiveDataProvider([
             'query' => $payments,
         ]);
